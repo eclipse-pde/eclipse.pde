@@ -71,7 +71,7 @@ class LogReader {
 				state = TEXT_STATE;
 
 			if (state == STACK_STATE) {
-				String sline = line.substring(7);
+				String sline = line.substring(6);
 				swriter = new StringWriter();
 				writer = new PrintWriter(swriter, true);
 				writer.println(sline);

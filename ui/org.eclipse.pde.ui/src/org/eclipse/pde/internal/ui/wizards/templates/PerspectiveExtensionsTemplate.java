@@ -89,12 +89,12 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		addOption(
 			KEY_VIEW_SHORTCUT,
 			PDEPlugin.getResourceString(NL_VIEW_SHORTCUT_ID),
-			"org.eclipse.jdt.ui.wizards.NewProjectCreationWizard",
+			"org.eclipse.jdt.ui.TypeHierarchy",
 			0);
 		addOption(
 			KEY_WIZARD_SHORTCUT,
 			PDEPlugin.getResourceString(NL_WIZARD_SHORTCUT_ID),
-			"org.eclipse.jdt.ui.TypeHierarchy",
+			"org.eclipse.jdt.ui.wizards.NewProjectCreationWizard",
 			0);
 
 		// add options to second page 
