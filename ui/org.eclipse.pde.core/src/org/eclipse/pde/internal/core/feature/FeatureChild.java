@@ -49,13 +49,13 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		version = getNodeAttribute(node, "version");
-		name = getNodeAttribute(node, "name");
-		optional = getBooleanAttribute(node, "optional");
-		os = getNodeAttribute(node, "os");
-		ws = getNodeAttribute(node, "ws");
-		arch = getNodeAttribute(node, "arch");
-		String matchName = getNodeAttribute(node, "match");
+		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		optional = getBooleanAttribute(node, "optional"); //$NON-NLS-1$
+		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		String matchName = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (matchName != null) {
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
 				if (matchName.equals(RULE_NAME_TABLE[i])) {
@@ -64,15 +64,15 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 				}
 			}
 		}
-		String searchLocationName = getNodeAttribute(node, "search_location");
+		String searchLocationName = getNodeAttribute(node, "search_location"); //$NON-NLS-1$
 		if (searchLocationName == null)
-			searchLocationName = getNodeAttribute(node, "search-location");
+			searchLocationName = getNodeAttribute(node, "search-location"); //$NON-NLS-1$
 		if (searchLocationName != null) {
-			if (searchLocationName.equals("root"))
+			if (searchLocationName.equals("root")) //$NON-NLS-1$
 				searchLocation = ROOT;
-			else if (searchLocationName.equals("self"))
+			else if (searchLocationName.equals("self")) //$NON-NLS-1$
 				searchLocation = SELF;
-			else if (searchLocationName.equals("both"))
+			else if (searchLocationName.equals("both")) //$NON-NLS-1$
 				searchLocation = BOTH;
 		}
 		hookWithWorkspace();
@@ -239,45 +239,45 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	 * @see IWritable#write(String, PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<includes");
+		writer.print(indent + "<includes"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
 		if (getId() != null) {
 			writer.println();
-			writer.print(indent2 + "id=\"" + getId() + "\"");
+			writer.print(indent2 + "id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getVersion() != null) {
 			writer.println();
-			writer.print(indent2 + "version=\"" + getVersion() + "\"");
+			writer.print(indent2 + "version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getName() != null) {
 			writer.println();
-			writer.print(indent2 + "name=\"" + getName() + "\"");
+			writer.print(indent2 + "name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (isOptional()) {
 			writer.println();
-			writer.print(indent2 + "optional=\"true\"");
+			writer.print(indent2 + "optional=\"true\""); //$NON-NLS-1$
 		}
 		if (match!=NONE) {
 			writer.println();
-			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[match]+"\"");
+			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[match]+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getOS() != null) {
 			writer.println();
-			writer.print(indent2 + "os=\""+getOS() + "\"");
+			writer.print(indent2 + "os=\""+getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getWS() != null) {
 			writer.println();
-			writer.print(indent2 + "ws=\""+getWS() + "\"");
+			writer.print(indent2 + "ws=\""+getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getArch() != null) {
 			writer.println();
-			writer.print(indent2 + "arch=\""+getArch() + "\"");
+			writer.print(indent2 + "arch=\""+getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (searchLocation!=ROOT) {
 			writer.println();
-			String value=searchLocation==SELF?"self":"both";
-			writer.print(indent2 + "search_location=\""+value+"\"");
+			String value=searchLocation==SELF?"self":"both"; //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "search_location=\""+value+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 }

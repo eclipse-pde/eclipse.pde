@@ -42,7 +42,7 @@ public class FeatureData
 	
 	public boolean exists() {
 		String location = getModel().getInstallLocation();
-		if (location.startsWith("file:"))
+		if (location.startsWith("file:")) //$NON-NLS-1$
 		   location = location.substring(5);
 		File file = new File(location + File.separator+getId());
 		return file.exists();
@@ -51,45 +51,45 @@ public class FeatureData
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		os = getNodeAttribute(node, "os");
-		ws = getNodeAttribute(node, "ws");
-		nl = getNodeAttribute(node, "nl");
-		arch = getNodeAttribute(node, "arch");
-		downloadSize = getIntegerAttribute(node, "download-size");
-		installSize = getIntegerAttribute(node, "install-size");
+		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		nl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
+		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		downloadSize = getIntegerAttribute(node, "download-size"); //$NON-NLS-1$
+		installSize = getIntegerAttribute(node, "install-size"); //$NON-NLS-1$
 	}
 	protected void writeAttributes(String indent2, PrintWriter writer) {
 		if (getId() != null) {
 			writer.println();
-			writer.print(indent2 + "id=\"" + getId() + "\"");
+			writer.print(indent2 + "id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getOS() != null) {
 			writer.println();
-			writer.print(indent2 + "os=\"" + getOS() + "\"");
+			writer.print(indent2 + "os=\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getWS() != null) {
 			writer.println();
-			writer.print(indent2 + "ws=\"" + getWS() + "\"");
+			writer.print(indent2 + "ws=\"" + getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getNL() != null) {
 			writer.println();
-			writer.print(indent2 + "nl=\"" + getNL() + "\"");
+			writer.print(indent2 + "nl=\"" + getNL() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getArch() != null) {
 			writer.println();
-			writer.print(indent2 + "arch=\"" + getArch() + "\"");
+			writer.print(indent2 + "arch=\"" + getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println();
-		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\"");
+		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
-		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\"");
+		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<data");
+		writer.print(indent + "<data"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
 		writeAttributes(indent2, writer);
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 		//writer.println(indent + "</data>");
 	}
 

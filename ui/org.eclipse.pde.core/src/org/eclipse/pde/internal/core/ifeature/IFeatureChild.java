@@ -17,11 +17,11 @@ import org.eclipse.pde.core.plugin.*;
  * The reference to a plug-in that is part of this feature.
  */
 public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRules, IEnvironment {
-	String P_VERSION = "version";
-	String P_OPTIONAL = "optional";
-	String P_NAME = "name";
-	String P_MATCH = "match";
-	String P_SEARCH_LOCATION = "search-location";
+	String P_VERSION = "version"; //$NON-NLS-1$
+	String P_OPTIONAL = "optional"; //$NON-NLS-1$
+	String P_NAME = "name"; //$NON-NLS-1$
+	String P_MATCH = "match"; //$NON-NLS-1$
+	String P_SEARCH_LOCATION = "search-location"; //$NON-NLS-1$
 	
 	int ROOT = 0;
 	int SELF = 1;

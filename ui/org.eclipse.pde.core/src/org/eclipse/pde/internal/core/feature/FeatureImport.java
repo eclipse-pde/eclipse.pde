@@ -81,18 +81,18 @@ public class FeatureImport
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		this.id = getNodeAttribute(node, "plugin");
+		this.id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
 		if (id != null)
 			type = PLUGIN;
 		else {
-			this.id = getNodeAttribute(node, "feature");
+			this.id = getNodeAttribute(node, "feature"); //$NON-NLS-1$
 			if (id != null)
 				type = FEATURE;
 		}
-		this.os = getNodeAttribute(node, "os");
-		this.ws = getNodeAttribute(node, "ws");
-		this.arch = getNodeAttribute(node, "arch");
-		String mvalue = getNodeAttribute(node, "match");
+		this.os = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		this.ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		this.arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		String mvalue = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (mvalue != null && mvalue.length() > 0) {
 			String[] choices = RULE_NAME_TABLE;
 			for (int i = 0; i < choices.length; i++) {
@@ -102,13 +102,13 @@ public class FeatureImport
 				}
 			}
 		}
-		mvalue = getNodeAttribute(node, "id-match");
+		mvalue = getNodeAttribute(node, "id-match"); //$NON-NLS-1$
 
 		if (mvalue != null && mvalue.length() > 0) {
 			if (mvalue.equalsIgnoreCase(RULE_PREFIX))
 				idMatch = PREFIX;
 		}
-		patch = getBooleanAttribute(node, "patch");
+		patch = getBooleanAttribute(node, "patch"); //$NON-NLS-1$
 		if (id != null) {
 			if (type == PLUGIN)
 				setPlugin(
@@ -211,30 +211,30 @@ public class FeatureImport
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		String typeAtt = type == FEATURE ? "feature" : "plugin";
-		writer.print(indent + "<import " + typeAtt + "=\"" + getId() + "\"");
+		String typeAtt = type == FEATURE ? "feature" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(indent + "<import " + typeAtt + "=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (getVersion() != null) {
-			writer.print(" version=\"" + getVersion() + "\"");
+			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (!patch && match != NONE) {
-			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
+			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (idMatch == PREFIX) {
-			writer.print(" id-match=\"prefix\"");
+			writer.print(" id-match=\"prefix\""); //$NON-NLS-1$
 		}
 		if (os != null) {
-			writer.print(" os=\"" + getOS() + "\"");
+			writer.print(" os=\"" + getOS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (ws != null) {
-			writer.print(" ws=\"" + getWS() + "\"");
+			writer.print(" ws=\"" + getWS() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (arch != null) {
-			writer.print(" arch=\"" + getArch() + "\"");
+			writer.print(" arch=\"" + getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (patch) {
-			writer.print(" patch=\"true\"");
+			writer.print(" patch=\"true\""); //$NON-NLS-1$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 	public String toString() {
 		if (plugin != null)

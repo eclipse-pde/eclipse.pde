@@ -24,10 +24,10 @@ import org.w3c.dom.*;
  */
 public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	private static final String KEY_INFO_DESCRIPTION =
-		"FeatureInfo.description";
-	private static final String KEY_INFO_LICENSE = "FeatureInfo.license";
+		"FeatureInfo.description"; //$NON-NLS-1$
+	private static final String KEY_INFO_LICENSE = "FeatureInfo.license"; //$NON-NLS-1$
 	private static final String KEY_INFO_COPYRIGHT =
-		"FeatureInfo.copyright";
+		"FeatureInfo.copyright"; //$NON-NLS-1$
 	private String url;
 	private String description;
 	private int index;
@@ -89,7 +89,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
-		url = getNodeAttribute(node, "url");
+		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		Node firstChild = node.getFirstChild();
 		if (firstChild!=null)
 			description = getNormalizedText(firstChild.getNodeValue());
@@ -99,13 +99,13 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		String indent2 = indent + Feature.INDENT;
 		String desc = description!=null?getWritableString(description.trim()):null;
 		writer.println();
-		writer.print(indent + "<" + getTag());
+		writer.print(indent + "<" + getTag()); //$NON-NLS-1$
 		if (url != null) {
-			writer.print(" url=\"" + url + "\"");
+			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		if (desc!=null) writer.println(indent2 + desc);
-		writer.println(indent + "</" + getTag() + ">");
+		writer.println(indent + "</" + getTag() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public boolean isEmpty() {

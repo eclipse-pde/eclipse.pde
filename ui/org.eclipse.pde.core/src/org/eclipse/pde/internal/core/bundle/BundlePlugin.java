@@ -41,11 +41,11 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			String id = iimport.getId();
-			if (id.equals("org.eclipse.core.runtime.compatibility")) {
+			if (id.equals("org.eclipse.core.runtime.compatibility")) { //$NON-NLS-1$
 				compatibilityMode = true;
 				break;
 			}
 		}
-		return compatibilityMode ? "Plugin-Class" : Constants.BUNDLE_ACTIVATOR;
+		return compatibilityMode ? "Plugin-Class" : Constants.BUNDLE_ACTIVATOR; //$NON-NLS-1$
 	}
 }

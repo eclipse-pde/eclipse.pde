@@ -21,7 +21,7 @@ public class BundleObject {
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException("Illegal attempt to change read-only build.properties");
+			throwCoreException(PDECore.getResourceString("BundleObject.readOnlyException")); //$NON-NLS-1$
 		}
 	}
 	public IBundleModel getModel() {

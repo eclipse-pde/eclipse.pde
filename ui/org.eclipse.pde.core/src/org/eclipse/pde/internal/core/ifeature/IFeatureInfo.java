@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.*;
  * @author
  */
 public interface IFeatureInfo extends IFeatureObject {
-	String P_URL = "p_url";
-	String P_DESC = "p_desc";
+	String P_URL = "p_url"; //$NON-NLS-1$
+	String P_DESC = "p_desc"; //$NON-NLS-1$
 	
 	public String getURL();
 	public String getDescription();

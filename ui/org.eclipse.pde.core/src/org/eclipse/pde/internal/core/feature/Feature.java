@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
 public class Feature extends VersionableObject implements IFeature {
-	final static String INDENT = "   ";
+	final static String INDENT = "   "; //$NON-NLS-1$
 	private String providerName;
 	private IFeatureURL url;
 	private IFeatureInfo[] infos = new IFeatureInfo[3];
@@ -145,17 +145,17 @@ public class Feature extends VersionableObject implements IFeature {
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		providerName = getNodeAttribute(node, "provider-name");
-		plugin = getNodeAttribute(node, "plugin");
-		os = getNodeAttribute(node, "os");
-		ws = getNodeAttribute(node, "ws");
-		nl = getNodeAttribute(node, "nl");
-		arch = getNodeAttribute(node, "arch");
-		imageName = getNodeAttribute(node, "image");
-		colocationAffinity = getNodeAttribute(node, "colocation-affinity");
-		application = getNodeAttribute(node, "application");
-		primary = getBooleanAttribute(node, "primary");
-		exclusive = getBooleanAttribute(node, "exclusive");
+		providerName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
+		plugin = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
+		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		nl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
+		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		imageName = getNodeAttribute(node, "image"); //$NON-NLS-1$
+		colocationAffinity = getNodeAttribute(node, "colocation-affinity"); //$NON-NLS-1$
+		application = getNodeAttribute(node, "application"); //$NON-NLS-1$
+		primary = getBooleanAttribute(node, "primary"); //$NON-NLS-1$
+		exclusive = getBooleanAttribute(node, "exclusive"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		valid=true;
 
@@ -163,46 +163,46 @@ public class Feature extends VersionableObject implements IFeature {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase();
-				if (tag.equals("description")) {
+				if (tag.equals("description")) { //$NON-NLS-1$
 					IFeatureInfo info =
 						getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_DESCRIPTION] = info;
-				} else if (tag.equals("license")) {
+				} else if (tag.equals("license")) { //$NON-NLS-1$
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_LICENSE] = info;
-				} else if (tag.equals("copyright")) {
+				} else if (tag.equals("copyright")) { //$NON-NLS-1$
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_COPYRIGHT] = info;
-				} else if (tag.equals("url")) {
+				} else if (tag.equals("url")) { //$NON-NLS-1$
 					if (url == null) {
 						url = getModel().getFactory().createURL();
 						((FeatureURL) url).setInTheModel(true);
 						((FeatureURL) url).parse(child, lineTable);
 					}
-				} else if (tag.equals("requires")) {
+				} else if (tag.equals("requires")) { //$NON-NLS-1$
 					parseRequires(child, lineTable);
-				} else if (tag.equals("install-handler")) {
+				} else if (tag.equals("install-handler")) { //$NON-NLS-1$
 					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
 					((FeatureInstallHandler) handler).parse(child, lineTable);
 					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.handler = handler;
-				} else if (tag.equals("plugin")) {
+				} else if (tag.equals("plugin")) { //$NON-NLS-1$
 					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
 					((FeaturePlugin) plugin).parse(child, lineTable);
 					((FeaturePlugin) plugin).setInTheModel(true);
 					plugins.add(plugin);
-				} else if (tag.equals("data")) {
+				} else if (tag.equals("data")) { //$NON-NLS-1$
 					IFeatureData newData = getModel().getFactory().createData();
 					((FeatureData) newData).parse(child, lineTable);
 					((FeatureData) newData).setInTheModel(true);
 					data.add(newData);
-				} else if (tag.equals("includes")) {
+				} else if (tag.equals("includes")) { //$NON-NLS-1$
 					IFeatureChild newChild = getModel().getFactory().createChild();
 					((FeatureChild) newChild).parse(child, lineTable);
 					((FeatureChild) newChild).setInTheModel(true);
@@ -217,7 +217,7 @@ public class Feature extends VersionableObject implements IFeature {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equalsIgnoreCase("import")) {
+				if (child.getNodeName().equalsIgnoreCase("import")) { //$NON-NLS-1$
 					IFeatureImport iimport = getModel().getFactory().createImport();
 					((FeatureImport) iimport).parse(child, lineTable);
 					((FeatureImport) iimport).setInTheModel(true);
@@ -603,40 +603,40 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<feature");
+		writer.print(indent + "<feature"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
-		writeIfDefined(indenta, writer, "id", getId());
-		writeIfDefined(indenta, writer, "label", getWritableString(getLabel()));
-		writeIfDefined(indenta, writer, "version", getVersion());
+		writeIfDefined(indenta, writer, "id", getId()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "label", getWritableString(getLabel())); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "version", getVersion()); //$NON-NLS-1$
 		writeIfDefined(
 			indenta,
 			writer,
-			"provider-name",
+			"provider-name", //$NON-NLS-1$
 			getWritableString(providerName));
 		writeIfDefined(
 			indenta,
 			writer,
-			"plugin",
+			"plugin", //$NON-NLS-1$
 			getPlugin());
-		writeIfDefined(indenta, writer, "os", os);
-		writeIfDefined(indenta, writer, "ws", ws);
-		writeIfDefined(indenta, writer, "nl", nl);
-		writeIfDefined(indenta, writer, "arch", arch);
+		writeIfDefined(indenta, writer, "os", os); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "ws", ws); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "nl", nl); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "arch", arch); //$NON-NLS-1$
 		if (imageName!=null)
-			writeIfDefined(indenta, writer, "image", getWritableString(imageName));
+			writeIfDefined(indenta, writer, "image", getWritableString(imageName)); //$NON-NLS-1$
 		if (isPrimary()) {
 			writer.println();
-			writer.print(indenta + "primary=\"true\"");
+			writer.print(indenta + "primary=\"true\""); //$NON-NLS-1$
 		}
 		if (isExclusive()) {
 			writer.println();
-			writer.print(indenta + "exclusive=\"true\"");
+			writer.print(indenta + "exclusive=\"true\""); //$NON-NLS-1$
 		}
-		writeIfDefined(indenta, writer, "colocation-affinity", colocationAffinity);
-		writeIfDefined(indenta, writer, "application", application);
+		writeIfDefined(indenta, writer, "colocation-affinity", colocationAffinity); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "application", application); //$NON-NLS-1$
 
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		if (handler != null) {
 			writer.println();
 			handler.write(indent2, writer);
@@ -659,12 +659,12 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 		if (imports.size() > 0) {
 			writer.println();
-			writer.println(indent2 + "<requires>");
+			writer.println(indent2 + "<requires>"); //$NON-NLS-1$
 			for (int i = 0; i < imports.size(); i++) {
 				IFeatureImport iimport = (IFeatureImport) imports.get(i);
 				iimport.write(indenta, writer);
 			}
-			writer.println(indent2 + "</requires>");
+			writer.println(indent2 + "</requires>"); //$NON-NLS-1$
 		}
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin plugin = (IFeaturePlugin) plugins.elementAt(i);
@@ -677,7 +677,7 @@ public class Feature extends VersionableObject implements IFeature {
 			entry.write(indent2, writer);
 		}
 		writer.println();
-		writer.println(indent + "</feature>");
+		writer.println(indent + "</feature>"); //$NON-NLS-1$
 	}
 	private void writeIfDefined(
 		String indent,
@@ -687,7 +687,7 @@ public class Feature extends VersionableObject implements IFeature {
 		if (attValue == null)
 			return;
 		writer.println();
-		writer.print(indent + attName + "=\"" + attValue + "\"");
+		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * Gets the imageName.

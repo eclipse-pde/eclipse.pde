@@ -51,9 +51,9 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase();
 				int urlType = -1;
-				if (tag.equals("update")) {
+				if (tag.equals("update")) { //$NON-NLS-1$
 					urlType = IFeatureURLElement.UPDATE;
-				} else if (tag.equals("discovery")) {
+				} else if (tag.equals("discovery")) { //$NON-NLS-1$
 					urlType = IFeatureURLElement.DISCOVERY;
 				}
 				if (urlType != -1) {
@@ -86,7 +86,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		fireStructureChanged(update, IModelChangedEvent.REMOVE);
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<url>");
+		writer.println(indent + "<url>"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT;
 		for (int i = 0; i < updates.size(); i++) {
 			IFeatureURLElement element = (IFeatureURLElement) updates.elementAt(i);
@@ -96,6 +96,6 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 			IFeatureURLElement element = (IFeatureURLElement) discoveries.elementAt(i);
 			element.write(indent2, writer);
 		}
-		writer.println(indent + "</url>");
+		writer.println(indent + "</url>"); //$NON-NLS-1$
 	}
 }

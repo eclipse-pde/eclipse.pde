@@ -92,28 +92,28 @@ public class FeatureInstallHandler
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
-		String urlName = getNodeAttribute(node, "url");
+		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		if (urlName != null) {
 			try {
 				url = new URL(urlName);
 			} catch (MalformedURLException e) {
 			}
 		}
-		library = getNodeAttribute(node, "library");
-		handlerName = getNodeAttribute(node, "handler");
+		library = getNodeAttribute(node, "library"); //$NON-NLS-1$
+		handlerName = getNodeAttribute(node, "handler"); //$NON-NLS-1$
 	}
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<install-handler");
+		writer.print(indent + "<install-handler"); //$NON-NLS-1$
 		if (url != null) {
-			writer.print(" url=\"" + url.toString() + "\"");
+			writer.print(" url=\"" + url.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (library != null) {
-			writer.print(" library=\"" + library + "\"");
+			writer.print(" library=\"" + library + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (handlerName != null) {
-			writer.print(" handler=\"" + handlerName + "\"");
+			writer.print(" handler=\"" + handlerName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 		//writer.println(indent + "</install-handler>");
 	}
 }

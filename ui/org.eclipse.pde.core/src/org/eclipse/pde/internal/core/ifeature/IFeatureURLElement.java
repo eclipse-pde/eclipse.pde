@@ -41,12 +41,12 @@ public interface IFeatureURLElement extends IFeatureObject {
 	 * This property name will be used to notify
 	 * about changes in the "URL" field.
 	 */
-	public static final String P_URL = "url";
+	public static final String P_URL = "url"; //$NON-NLS-1$
 	/**
 	 * This property name will be used to notify
 	 * about changes in the 'siteType' field. 
 	 */
-	public static final String P_SITE_TYPE = "siteType";
+	public static final String P_SITE_TYPE = "siteType"; //$NON-NLS-1$
 	/**
 	 * Returns the type of this URL element (UPDATE or DISCOVERY)
 	 */

@@ -20,50 +20,50 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * The name of the property that will be used to notify
 	 * about changes in "description" field
 	 */
-	public static final String P_DESCRIPTION = "description";
+	public static final String P_DESCRIPTION = "description"; //$NON-NLS-1$
 	/**
 	 * The name of the property that will be used to notify
 	 * about changes in "copyright" field
 	 */
-	public static final String P_COPYRIGHT = "copyright";
+	public static final String P_COPYRIGHT = "copyright"; //$NON-NLS-1$
 	/**
 	 * The name of the property that will be used to notify
 	 * about changes in "license" field
 	 */
-	public static final String P_LICENSE = "license";
+	public static final String P_LICENSE = "license"; //$NON-NLS-1$
 	/**
 	 * The name of the property that will be used to notify
 	 * about changes in "provider" field
 	 */
-	public static final String P_PROVIDER = "provider";
+	public static final String P_PROVIDER = "provider"; //$NON-NLS-1$
 	/**
 	 * The name of the property that will be used to notify
 	 * about changes in "image" field
 	 */
-	public static final String P_IMAGE = "image";
+	public static final String P_IMAGE = "image"; //$NON-NLS-1$
 	/**
 	 * The name of the property that will be used to notify
 	 * about changes in "url" field
 	 */
-	public static final String P_URL = "url";
+	public static final String P_URL = "url"; //$NON-NLS-1$
 
-	public static final String P_INSTALL_HANDLER = "installHandler";
+	public static final String P_INSTALL_HANDLER = "installHandler"; //$NON-NLS-1$
 
-	public static final String P_NL = "nl";
+	public static final String P_NL = "nl"; //$NON-NLS-1$
 
-	public static final String P_PRIMARY = "primary";
-	public static final String P_EXCLUSIVE = "exclusive";
-	public static final String P_PLUGIN = "plugin";
+	public static final String P_PRIMARY = "primary"; //$NON-NLS-1$
+	public static final String P_EXCLUSIVE = "exclusive"; //$NON-NLS-1$
+	public static final String P_PLUGIN = "plugin"; //$NON-NLS-1$
 
-	public static final String P_COLLOCATION_AFFINITY = "colocation-affinity";
-	public static final String P_APPLICATION = "application";
+	public static final String P_COLLOCATION_AFFINITY = "colocation-affinity"; //$NON-NLS-1$
+	public static final String P_APPLICATION = "application"; //$NON-NLS-1$
 
 	public static final int INFO_DESCRIPTION = 0;
 	public static final int INFO_COPYRIGHT = 1;
 	public static final int INFO_LICENSE = 2;
 
 	public static final String[] INFO_TAGS =
-		{ "description", "copyright", "license" };
+		{ "description", "copyright", "license" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	/**
 	 * Adds a plug-in reference to this feature.
 	 * This method may throw a CoreException if

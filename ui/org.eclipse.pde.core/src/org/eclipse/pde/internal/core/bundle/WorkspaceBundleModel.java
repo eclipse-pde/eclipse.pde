@@ -99,7 +99,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("8859_1"));
+				new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {

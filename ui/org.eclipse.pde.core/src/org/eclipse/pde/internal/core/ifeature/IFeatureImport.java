@@ -17,9 +17,9 @@ import org.eclipse.pde.core.plugin.*;
  * @author
  */
 public interface IFeatureImport extends IFeatureObject, IPluginReference, IEnvironment {
-	String P_TYPE = "type";
-	String P_PATCH = "patch";
-	String P_ID_MATCH = "id-match";
+	String P_TYPE = "type"; //$NON-NLS-1$
+	String P_PATCH = "patch"; //$NON-NLS-1$
+	String P_ID_MATCH = "id-match"; //$NON-NLS-1$
 	
 	int PLUGIN = 0;
 	int FEATURE = 1;

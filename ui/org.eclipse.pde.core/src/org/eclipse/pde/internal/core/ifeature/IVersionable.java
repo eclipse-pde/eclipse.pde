@@ -22,7 +22,7 @@ public interface IVersionable extends IIdentifiable {
  * A property that will be carried by the change event
  * if 'version' field of this object is changed.
  */
-public static final String P_VERSION = "version";
+public static final String P_VERSION = "version"; //$NON-NLS-1$
 /**
  * Returns a version of this object.
  * @return the version of this object

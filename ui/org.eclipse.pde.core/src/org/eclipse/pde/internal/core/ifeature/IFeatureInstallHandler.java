@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.*;
  * @author
  */
 public interface IFeatureInstallHandler extends IFeatureObject {
-	String P_URL = "url";
-	String P_LIBRARY = "library";
-	String P_HANDLER_NAME = "handlerName";
+	String P_URL = "url"; //$NON-NLS-1$
+	String P_LIBRARY = "library"; //$NON-NLS-1$
+	String P_HANDLER_NAME = "handlerName"; //$NON-NLS-1$
 
 	public URL getURL();
 	public String getLibrary();

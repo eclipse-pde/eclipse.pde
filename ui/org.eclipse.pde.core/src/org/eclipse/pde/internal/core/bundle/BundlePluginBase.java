@@ -27,7 +27,7 @@ public class BundlePluginBase
 	}
 	
 	public String getSchemaVersion() {
-		return "3.0";
+		return "3.0"; //$NON-NLS-1$
 	}
 	
 	public void setSchemaVersion(String value) throws CoreException {
@@ -115,7 +115,7 @@ public class BundlePluginBase
 				IPluginLibrary library = (IPluginLibrary)libraries.get(i);
 				buffer.append(library.getName());
 				if (i < libraries.size() - 1)
-					buffer.append(",");
+					buffer.append(","); //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();
@@ -141,14 +141,14 @@ public class BundlePluginBase
 				IPluginImport iimport = (IPluginImport)imports.get(i);
 				buffer.append(iimport.getId());
 				if (iimport.isOptional())
-					buffer.append(";" + Constants.OPTIONAL_ATTRIBUTE + "=true");
+					buffer.append(";" + Constants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (iimport.isReexported())
-					buffer.append(";" + Constants.REPROVIDE_ATTRIBUTE + "=true");
+					buffer.append(";" + Constants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				String version = iimport.getVersion();
 				if (version != null && version.trim().length() > 0)
-					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\"");
+					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (i < imports.size() - 1) {
-					buffer.append("," + System.getProperty("line.separator") + " ");
+					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
@@ -495,7 +495,7 @@ public class BundlePluginBase
 			StringBuffer buffer = new StringBuffer(id);
 			String singleton = getAttribute(Constants.BUNDLE_SYMBOLICNAME, Constants.SINGLETON_ATTRIBUTE);
 			if (singleton != null && singleton.trim().length() > 0) 
-				buffer.append(";" + Constants.SINGLETON_ATTRIBUTE + "=" + singleton.trim());
+				buffer.append(";" + Constants.SINGLETON_ATTRIBUTE + "=" + singleton.trim()); //$NON-NLS-1$ //$NON-NLS-2$
 			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}

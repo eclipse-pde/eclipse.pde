@@ -44,13 +44,13 @@ public class FeatureURLElement
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		String urlName = getNodeAttribute(node, "url");
+		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		try {
 			url = new URL(urlName);
 		} catch (MalformedURLException e) {
 		}
-		String typeName = getNodeAttribute(node, "type");
-		if (typeName != null && typeName.equals("web"))
+		String typeName = getNodeAttribute(node, "type"); //$NON-NLS-1$
+		if (typeName != null && typeName.equals("web")) //$NON-NLS-1$
 			siteType = WEB_SITE;
 	}
 
@@ -89,24 +89,24 @@ public class FeatureURLElement
 		String tag = null;
 		switch (elementType) {
 			case UPDATE :
-				tag = "update";
+				tag = "update"; //$NON-NLS-1$
 				break;
 			case DISCOVERY :
-				tag = "discovery";
+				tag = "discovery"; //$NON-NLS-1$
 				break;
 		}
 		if (tag == null)
 			return;
-		writer.print(indent + "<" + tag);
+		writer.print(indent + "<" + tag); //$NON-NLS-1$
 		if (label != null) {
-			writer.print(" label=\"" + getWritableString(label) + "\"");
+			writer.print(" label=\"" + getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (url != null) {
-			writer.print(" url=\"" + getWritableString(url.toString()) + "\"");
+			writer.print(" url=\"" + getWritableString(url.toString()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (siteType == WEB_SITE) {
-			writer.print(" type=\"web\"");
+			writer.print(" type=\"web\""); //$NON-NLS-1$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 }

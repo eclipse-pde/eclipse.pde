@@ -44,10 +44,10 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		try {
 			IPath path = file.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
-			if (installLocation.startsWith("file:") == false)
-				installLocation = "file:" + installLocation;
-			URL url = new URL(installLocation + "/");
-			String name = "feature";
+			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+				installLocation = "file:" + installLocation; //$NON-NLS-1$
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
+			String name = "feature"; //$NON-NLS-1$
 			NLResourceHelper helper = new NLResourceHelper(name, new URL[]{url});
 			//helper.setFile(file);
 			return helper;
@@ -126,7 +126,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8"));
+					.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -140,9 +140,9 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			//writer.println("<!DOCTYPE feature SYSTEM \"dtd/feature.dtd\">");
-			feature.write("", writer);
+			feature.write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);
 	}

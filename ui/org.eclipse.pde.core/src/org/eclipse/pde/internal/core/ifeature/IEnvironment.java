@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.*;
  * Window>Preferences>Java>Code Generation.
  */
 public interface IEnvironment {
-	static final String P_OS = "os";
-	static final String P_WS = "ws";
-	static final String P_ARCH = "arch";
+	static final String P_OS = "os"; //$NON-NLS-1$
+	static final String P_WS = "ws"; //$NON-NLS-1$
+	static final String P_ARCH = "arch"; //$NON-NLS-1$
 	
 	String getOS();
 	String getWS();

@@ -16,12 +16,12 @@ import org.eclipse.pde.core.*;
  * The reference to a plug-in that is part of this feature.
  */
 public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
-	String P_OS = "p_os";
-	String P_WS = "p_ws";
-	String P_NL = "p_nl";
-	String P_ARCH = "p_arch";
-	String P_DOWNLOAD_SIZE = "p_download_size";
-	String P_INSTALL_SIZE = "p_install_size";
+	String P_OS = "p_os"; //$NON-NLS-1$
+	String P_WS = "p_ws"; //$NON-NLS-1$
+	String P_NL = "p_nl"; //$NON-NLS-1$
+	String P_ARCH = "p_arch"; //$NON-NLS-1$
+	String P_DOWNLOAD_SIZE = "p_download_size"; //$NON-NLS-1$
+	String P_INSTALL_SIZE = "p_install_size"; //$NON-NLS-1$
 
 	/**
 	 * Returns a comma-separated list of the operating systems this plug-in supports.

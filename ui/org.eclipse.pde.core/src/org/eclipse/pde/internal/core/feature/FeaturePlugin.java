@@ -65,9 +65,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
-		version = getNodeAttribute(node, "version");
-		String f = getNodeAttribute(node, "fragment");
-		if (f != null && f.equalsIgnoreCase("true"))
+		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
+		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$
 			fragment = true;
 		if (id!=null && version!=null) hookWithWorkspace();
 	}
@@ -99,18 +99,18 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<plugin");
+		writer.print(indent + "<plugin"); //$NON-NLS-1$
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
 		writeAttributes(indent2, writer);
 		if (getVersion() != null) {
 			writer.println();
-			writer.print(indent2 + "version=\"" + getVersion() + "\"");
+			writer.print(indent2 + "version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (isFragment()) {
 			writer.println();
-			writer.print(indent2 + "fragment=\"true\"");
+			writer.print(indent2 + "fragment=\"true\""); //$NON-NLS-1$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 		//writer.println(indent + "</plugin>");
 	}
 
