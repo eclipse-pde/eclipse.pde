@@ -72,9 +72,12 @@ public class PDEState {
 	
 	
 	public BundleDescription addBundle(File bundleLocation) {
-		Dictionary manifest = loadManifest(bundleLocation);
+		Dictionary manifest =  loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			try {
+				if (!new File(bundleLocation, "plugin.xml").exists() &&  //$NON-NLS-1$
+						!new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
+					return null;
 				PluginConverter converter = acquirePluginConverter();
 				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), false);
 				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
