@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -40,6 +41,7 @@ import org.eclipse.ui.part.PageBookView;
 
 public class DependenciesView extends PageBookView implements
 		IPreferenceConstants, IHelpContextIds {
+	
 	static class DummyPart implements IWorkbenchPart {
 		public void addPropertyListener(IPropertyListener listener) {/* dummy */
 		}
@@ -184,6 +186,8 @@ public class DependenciesView extends PageBookView implements
 	protected static final IWorkbenchPart PART_CALLERS_TREE = new DummyPart();
 
 	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
+	
+	protected static final String MEMENTO_KEY_INPUT = "inputPluginId"; //$NON-NLS-1$
 
 	private Map fPagesToParts;
 
@@ -355,6 +359,13 @@ public class DependenciesView extends PageBookView implements
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+		String id = memento.getString(MEMENTO_KEY_INPUT);
+		if (id != null) {
+			IPlugin plugin = PDECore.getDefault().findPlugin(id);
+			if (plugin != null) {
+				fInput = plugin.getModel();
+			}
+		}
 	}
 
 	/*
@@ -378,6 +389,11 @@ public class DependenciesView extends PageBookView implements
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
+		if (fInput != null && fInput instanceof IPluginModelBase) {
+			String inputPluginId = ((IPluginModelBase) fInput).getPluginBase()
+					.getId();
+			memento.putString(MEMENTO_KEY_INPUT, inputPluginId);
+		}
 	}
 
 	void setPresentation(boolean listNotTree) {
@@ -459,4 +475,5 @@ public class DependenciesView extends PageBookView implements
 		}
 		setTitleToolTip(getTitle());
 	}
+	
 }
