@@ -23,8 +23,6 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -33,6 +31,8 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class IncludedFeaturesDetailsSection extends PDESection implements
 		IFormPart, IPartSelectionListener {
@@ -69,7 +69,6 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEPlugin.getResourceString(SECTION_TITLE),
 				PDEPlugin.getResourceString(SECTION_DESC), SWT.NULL);
-		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	public IncludedFeaturesDetailsSection(PDEFormPage page, Composite parent,
@@ -92,7 +91,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
+		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
@@ -110,14 +109,13 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 					}
 			}
 		});
-		limitTextWidth(fNameText);
 		fNameText.setEditable(isEditable());
 
 		fOptionalButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_OPTIONAL), SWT.CHECK);
 
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
 		fOptionalButton.setLayoutData(gd);
 		fOptionalButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -130,17 +128,17 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			}
 		});
 		Label fSearchLocationDescLabel = toolkit.createLabel(container,
-				PDEPlugin.getResourceString(SECTION_SEARCH_LOCATION));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+				PDEPlugin.getResourceString(SECTION_SEARCH_LOCATION), SWT.WRAP);
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
 		fSearchLocationDescLabel.setLayoutData(gd);
 
 		fSearchRootButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_ROOT), SWT.RADIO);
 		fSearchRootButton.setSelection(true);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 5;
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
+		gd.indent = 5;
 		fSearchRootButton.setLayoutData(gd);
 		fSearchRootButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -157,9 +155,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		fSearchSelfButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_SELF), SWT.RADIO);
 		fSearchSelfButton.setSelection(true);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 5;
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
+		gd.indent = 5;
 		fSearchSelfButton.setLayoutData(gd);
 		fSearchSelfButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -176,9 +174,9 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		fSearchBothButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_BOTH), SWT.RADIO);
 		fSearchBothButton.setSelection(true);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		gd.horizontalIndent = 5;
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
+		gd.indent = 5;
 		fSearchBothButton.setLayoutData(gd);
 		fSearchBothButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -213,11 +211,6 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		if (model != null)
 			model.addModelChangedListener(this);
 		super.initialize(form);
-	}
-
-	protected void limitTextWidth(FormEntry entry) {
-		GridData gd = (GridData) entry.getText().getLayoutData();
-		gd.widthHint = 30;
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
