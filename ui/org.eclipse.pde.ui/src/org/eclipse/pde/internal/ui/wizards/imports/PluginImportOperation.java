@@ -233,7 +233,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				monitor.worked(2);
 			}
 
-			boolean needsJavaNature = project.getFile(".classpath").exists();
+			boolean needsJavaNature = true;
 
 			setProjectDescription(project, needsJavaNature, monitor);
 
