@@ -15,7 +15,7 @@ import org.eclipse.pde.internal.core.*;
 public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEditable {
 	private boolean dirty;
 	private IFile file;
-	private boolean editable;
+	private boolean editable=true;
 
 public WorkspaceFeatureModel() {
 	super();
@@ -142,6 +142,6 @@ public void setEditable(boolean newEditable) {
 }
 public void setFile(IFile newFile) {
 	file = newFile;
-	setEditable(newFile.isReadOnly()==false);
+	//setEditable(newFile.isReadOnly()==false);
 }
 }

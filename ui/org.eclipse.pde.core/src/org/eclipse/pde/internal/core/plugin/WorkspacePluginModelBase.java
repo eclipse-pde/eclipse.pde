@@ -169,6 +169,6 @@ public abstract class WorkspacePluginModelBase
 	}
 	public void setFile(IFile newFile) {
 		file = newFile;
-		setEditable(newFile.isReadOnly()==false);
+		//setEditable(newFile.isReadOnly()==false);
 	}
 }

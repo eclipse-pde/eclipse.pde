@@ -118,6 +118,6 @@ public void setEditable(boolean newEditable) {
 }
 public void setFile(IFile newFile) {
 	file = newFile;
-	setEditable(file.isReadOnly()==false);
+	//setEditable(file.isReadOnly()==false);
 }
 }

@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
@@ -52,6 +53,7 @@ public abstract class PDEMultiPageEditor
 	private boolean disposed;
 	protected IModelUndoManager undoManager;
 	protected Clipboard clipboard;
+	private boolean validated;
 
 	public PDEMultiPageEditor() {
 		formWorkbook = new CustomWorkbook();
@@ -95,10 +97,12 @@ public abstract class PDEMultiPageEditor
 		IDocumentProvider documentProvider = null;
 		if (input instanceof IFile)
 			documentProvider = new FileDocumentProvider() {
-			public IDocument createDocument(Object element) throws CoreException {
+			public IDocument createDocument(Object element)
+				throws CoreException {
 				IDocument document = super.createDocument(element);
 				if (document != null) {
-					IDocumentPartitioner partitioner = createDocumentPartitioner();
+					IDocumentPartitioner partitioner =
+						createDocumentPartitioner();
 					if (partitioner != null) {
 						partitioner.connect(document);
 						document.setDocumentPartitioner(partitioner);
@@ -108,10 +112,11 @@ public abstract class PDEMultiPageEditor
 			}
 		};
 		else if (input instanceof File) {
-			documentProvider = new SystemFileDocumentProvider(createDocumentPartitioner());
-		}
-		else if (input instanceof IStorage) {
-			documentProvider = new StorageDocumentProvider(createDocumentPartitioner());
+			documentProvider =
+				new SystemFileDocumentProvider(createDocumentPartitioner());
+		} else if (input instanceof IStorage) {
+			documentProvider =
+				new StorageDocumentProvider(createDocumentPartitioner());
 		}
 		return documentProvider;
 	}
@@ -166,7 +171,8 @@ public abstract class PDEMultiPageEditor
 			amodel.disconnect(documentProvider.getDocument(input));
 		documentProvider.disconnect(input);
 		if (modelListener != null && model instanceof IModelChangeProvider) {
-			((IModelChangeProvider) model).removeModelChangedListener(modelListener);
+			((IModelChangeProvider) model).removeModelChangedListener(
+				modelListener);
 			undoManager.disconnect((IModelChangeProvider) model);
 		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -177,7 +183,8 @@ public abstract class PDEMultiPageEditor
 		commitFormPages(true);
 		updateDocument();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			public void execute(final IProgressMonitor monitor) throws CoreException {
+			public void execute(final IProgressMonitor monitor)
+				throws CoreException {
 				documentProvider.saveDocument(
 					monitor,
 					input,
@@ -211,6 +218,25 @@ public abstract class PDEMultiPageEditor
 		PDEEditorContributor contributor = getContributor();
 		if (contributor != null)
 			contributor.updateActions();
+		validateEdit();
+	}
+	
+	private void validateEdit() {
+		if (!isDirty()) return;
+		if (!validated) {
+			IEditorInput input = getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput) input).getFile();
+				Shell shell = formWorkbook.getControl().getShell();
+				IStatus validateStatus =
+					PDEPlugin.getWorkspace().validateEdit(
+						new IFile[] { file },
+						shell);
+				if (validateStatus.getCode()!=IStatus.OK)
+					ErrorDialog.openError(shell, getTitle(), null, validateStatus);
+			}
+			validated = true;
+		}
 	}
 	public IAction getAction(String id) {
 		return getContributor().getGlobalAction(id);
@@ -282,9 +308,15 @@ public abstract class PDEMultiPageEditor
 		throws PartInitException {
 
 		if (isValidContentType(input) == false) {
-			String message = PDEPlugin.getFormattedMessage(WRONG_EDITOR, input.getName());
+			String message =
+				PDEPlugin.getFormattedMessage(WRONG_EDITOR, input.getName());
 			IStatus s =
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
+				new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					message,
+					null);
 			throw new PartInitException(s);
 		}
 
@@ -335,14 +367,16 @@ public abstract class PDEMultiPageEditor
 						fireSaveNeeded();
 				}
 			};
-			((IModelChangeProvider) model).addModelChangedListener(modelListener);
+			((IModelChangeProvider) model).addModelChangedListener(
+				modelListener);
 			undoManager.connect((IModelChangeProvider) model);
 		}
 
 		try {
 			IEditorInput editorInput = getEditorInput();
 			documentProvider.connect(editorInput);
-			IAnnotationModel amodel = documentProvider.getAnnotationModel(editorInput);
+			IAnnotationModel amodel =
+				documentProvider.getAnnotationModel(editorInput);
 			if (amodel != null)
 				amodel.connect(documentProvider.getDocument(editorInput));
 		} catch (CoreException e) {
@@ -515,7 +549,9 @@ public abstract class PDEMultiPageEditor
 		// set the clipboard contents
 		clipboard.setContents(
 			new Object[] { objects, textVersion },
-			new Transfer[] { ModelDataTransfer.getInstance(), TextTransfer.getInstance()});
+			new Transfer[] {
+				ModelDataTransfer.getInstance(),
+				TextTransfer.getInstance()});
 	}
 
 	public boolean canPasteFromClipboard() {
