@@ -108,7 +108,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				try {
 					String value = text.getValue();
 					if (value != null && value.length() > 0) {
-						if (isOsgiMode()) {
+						if (!isOsgiMode()) {
 							PluginVersionIdentifier pvi = new PluginVersionIdentifier(
 									text.getValue());
 							String formatted = pvi.toString();
@@ -215,13 +215,16 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	}
 	private void applyVersion(String version) {
 		try {
+			boolean changed=false;
 			if (currentImport != null) {
 				currentImport.setVersion(version);
+				changed=true;
 			} else if (multiSelection != null) {
 				for (Iterator iter = multiSelection.iterator(); iter.hasNext();) {
 					IPluginReference reference = (IPluginReference) iter.next();
 					reference.setVersion(version);
 				}
+				changed=true;
 			}
 		} catch (CoreException ex) {
 			PDEPlugin.logException(ex);
