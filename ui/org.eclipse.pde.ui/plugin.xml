@@ -516,6 +516,16 @@
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             id="org.eclipse.pde.ui.featureEditor">
       </editor>
+<!--
+      <editor
+            name="%editors.featureManifest.name"
+            icon="icons/obj16/ftr_xml_obj.gif"
+            filenames="feature.xml"
+            contributorClass="org.eclipse.pde.internal.ui.neweditor.feature.FeatureEditorContributor"
+            class="org.eclipse.pde.internal.ui.neweditor.feature.FeatureEditor"
+            id="org.eclipse.pde.ui.newFeatureEditor">
+      </editor>
+-->
       <editor
             name="%editors.siteManifest.name"
             default="true"

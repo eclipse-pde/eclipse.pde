@@ -57,7 +57,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return inputContextManager.getCommonProject();
 	}
 	public IBaseModel getAggregateModel() {
-		return inputContextManager.getAggregateModel();
+		if (inputContextManager!=null)
+			return inputContextManager.getAggregateModel();
+		return null;
 	}
 	
 	protected abstract InputContextManager createInputContextManager();
@@ -384,15 +386,22 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (page instanceof PDESourcePage) {
 			outline = ((PDESourcePage)page).getContentOutline();
 		}
-		else
+		else {
 			outline = getFormOutline();
+			if (outline instanceof FormOutlinePage)
+				((FormOutlinePage)outline).refresh();
+		}
 		contentOutline.setPageActive(outline);
+	}
+	
+	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
+		return ((PDEFormPage)page).getPropertySheetPage();
 	}
 	
 	void updatePropertySheet(IFormPage page) {
 		if (propertySheet==null) return;
 		if (page instanceof PDEFormPage) {
-			IPropertySheetPage propertySheetPage = ((PDEFormPage)page).getPropertySheetPage();
+			IPropertySheetPage propertySheetPage = getPropertySheet((PDEFormPage)page);
 			if (propertySheetPage != null) {
 				propertySheet.setPageActive(propertySheetPage);
 			}

@@ -8,90 +8,87 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.neweditor.plugin;
+package org.eclipse.pde.internal.ui.neweditor.feature;
+
 import java.io.File;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
+import org.eclipse.pde.internal.ui.neweditor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
-public class ManifestEditor extends MultiSourceEditor {
+
+public class FeatureEditor extends MultiSourceEditor {
+	public static final String UNRESOLVED_TITLE =
+		"FeatureEditor.Unresolved.title";
+	public static final String VERSION_TITLE = "FeatureEditor.Version.title";
+	public static final String VERSION_MESSAGE =
+		"FeatureEditor.Version.message";
+	public static final String VERSION_EXISTS = "FeatureEditor.Version.exists";
+	public static final String UNRESOLVED_MESSAGE =
+		"FeatureEditor.Unresolved.message";
+	public static final String FEATURE_PAGE_TITLE =
+		"FeatureEditor.FeaturePage.title";
+	public static final String REFERENCE_PAGE_TITLE =
+		"FeatureEditor.ReferencePage.title";
+	public static final String ADVANCED_PAGE_TITLE =
+		"FeatureEditor.AdvancedPage.title";
+	public static final String INFO_PAGE_TITLE = "FeatureEditor.InfoPage.title";
+	private boolean storageModel=false;
+
+	public FeatureEditor() {
+	}
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();
 		IProject project = file.getProject();
-		IFile manifestFile = null;
 		IFile buildFile = null;
-		IFile pluginFile = null;
-		boolean fragment = false;
+		IFile featureFile = null;
+
 		String name = file.getName().toLowerCase();
-		if (name.equals("manifest.mf")) {
-			manifestFile = file;
+		if (name.equals("feature.xml")) {
+			featureFile = file;
 			buildFile = project.getFile("build.properties");
-			pluginFile = createPluginFile(project);
 		} else if (name.equals("build.properties")) {
 			buildFile = file;
-			pluginFile = createPluginFile(project);
-			manifestFile = project.getFile("META-INF/MANIFEST.MF");
-		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) {
-			pluginFile = file;
-			fragment = name.equals("fragment.xml");
-			buildFile = project.getFile("build.properties");
-			manifestFile = project.getFile("META-INF/MANIFEST.MF");
+			featureFile = createFeatureFile(project);
 		}
-		if (manifestFile.exists()) {
-			IEditorInput in = new FileEditorInput(manifestFile);
-			manager.putContext(in, new BundleInputContext(this, in,
-					file == manifestFile));
-		}
-		if (pluginFile.exists()) {
-			FileEditorInput in = new FileEditorInput(pluginFile);
-			manager.putContext(in, new PluginInputContext(this, in,
-					file == pluginFile, fragment));
+		if (featureFile.exists()) {
+			FileEditorInput in = new FileEditorInput(featureFile);
+			manager.putContext(in, new FeatureInputContext(this, in,
+					file == featureFile));
 		}
 		if (buildFile.exists()) {
 			FileEditorInput in = new FileEditorInput(buildFile);
 			manager.putContext(in, new BuildInputContext(this, in,
 					file == buildFile));
 		}
-		manager.monitorFile(manifestFile);
-		manager.monitorFile(pluginFile);
+		manager.monitorFile(featureFile);
 		manager.monitorFile(buildFile);
 	}
 	
 	protected InputContextManager createInputContextManager() {
-		PluginInputContextManager manager =  new PluginInputContextManager();
+		FeatureInputContextManager manager =  new FeatureInputContextManager();
 		//manager.setUndoManager(new PluginUndoManager(this));
 		return manager;
 	}
 	
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
-		if (name.equalsIgnoreCase("MANIFEST.MF")) {
+		 if (name.equalsIgnoreCase("feature.xml")) {
 			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new BundleInputContext(this, in, false));
-		}
-		else if (name.equalsIgnoreCase("plugin.xml")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));						
-		}
-		else if (name.equalsIgnoreCase("fragment.xml")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
+			inputContextManager.putContext(in, new FeatureInputContext(this, in, false));						
 		}
 		else if (name.equalsIgnoreCase("build.properties")) {
 			IEditorInput in = new FileEditorInput(file);
@@ -117,35 +114,22 @@ public class ManifestEditor extends MultiSourceEditor {
 	protected void createSystemFileContexts(InputContextManager manager,
 			SystemFileEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
-		File manifestFile = null;
 		File buildFile = null;
-		File pluginFile = null;
+		File featureFile = null;
 		String name = file.getName().toLowerCase();
-		if (name.equals("manifest.mf")) {
-			manifestFile = file;
-			File dir = file.getParentFile().getParentFile();
+		if (name.equals("feature.xml")) {
+			featureFile = file;
+			File dir = file.getParentFile();
 			buildFile = new File(dir, "build.properties");
-			pluginFile = createPluginFile(dir);
 		} else if (name.equals("build.properties")) {
 			buildFile = file;
 			File dir = file.getParentFile();
-			pluginFile = createPluginFile(dir);
-			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
-		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) {
-			manifestFile = file;
-			File dir = file.getParentFile();
-			buildFile = new File(dir, "build.properties");
-			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
+			featureFile = createFeatureFile(dir);
 		}
-		if (manifestFile.exists()) {
-			IEditorInput in = new SystemFileEditorInput(manifestFile);
-			manager.putContext(in, new BundleInputContext(this, in,
-					file == manifestFile));
-		}
-		if (pluginFile.exists()) {
-			SystemFileEditorInput in = new SystemFileEditorInput(pluginFile);
-			manager.putContext(in, new PluginInputContext(this, in,
-					file == pluginFile, false));
+		if (featureFile.exists()) {
+			SystemFileEditorInput in = new SystemFileEditorInput(featureFile);
+			manager.putContext(in, new FeatureInputContext(this, in,
+					file == featureFile));
 		}
 		if (buildFile.exists()) {
 			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
@@ -153,73 +137,49 @@ public class ManifestEditor extends MultiSourceEditor {
 					file == buildFile));
 		}
 	}
-	private File createPluginFile(File dir) {
+	private File createFeatureFile(File dir) {
 		File pluginFile = new File(dir, "plugin.xml");
-		if (!pluginFile.exists())
-			pluginFile = new File(dir, "fragment.xml");
 		return pluginFile;
 	}
-	private IFile createPluginFile(IProject project) {
-		IFile pluginFile = project.getFile("plugin.xml");
-		if (!pluginFile.exists())
-			pluginFile = project.getFile("fragment.xml");
-		return pluginFile;
+	private IFile createFeatureFile(IProject project) {
+		IFile featureFile = project.getFile("feature.xml");
+		return featureFile;
 	}
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (name.equals("manifest.mf")) {
-			manager
-					.putContext(input,
-							new BundleInputContext(this, input, true));
-		} else if (name.equals("build.properties")) {
+		if (name.equals("build.properties")) {
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.equals("plugin.xml")) {
-			manager.putContext(input, new PluginInputContext(this, input, true,
-					false));
-		} else if (name.equals("fragment.xml")) {
-			manager.putContext(input, new PluginInputContext(this, input, true,
-					true));
+		} else if (name.equals("feature.xml")) {
+			manager.putContext(input, new FeatureInputContext(this, input, true));
 		}
 	}
-	protected void contextMenuAboutToShow(IMenuManager manager) {
-		super.contextMenuAboutToShow(manager);
-	}
 
+	public boolean canCopy(ISelection selection) {
+		return true;
+	}
+	
 	protected void addPages() {
 		try {
-			addPage(new OverviewPage(this));
-			addPage(new DependenciesPage(this));
-			addPage(new RuntimePage(this));
-			addPage(new ExtensionsPage(this));
-			addPage(new ExtensionPointsPage(this));
+			addPage(new FeatureFormPage(this, PDEPlugin.getResourceString(FEATURE_PAGE_TITLE)));
+			addPage(new InfoFormPage(this, PDEPlugin.getResourceString(INFO_PAGE_TITLE)));
 			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
-				addPage(new BuildPage(this));
+				addPage(new BuildPage(this));			
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
-		addSourcePage(BundleInputContext.CONTEXT_ID);
-		addSourcePage(PluginInputContext.CONTEXT_ID);
+		addSourcePage(FeatureInputContext.CONTEXT_ID);
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
-
 
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
 			InputContext primary = inputContextManager.getPrimaryContext();
-			boolean isBundle = inputContextManager
-					.hasContext(BundleInputContext.CONTEXT_ID);
-			if (primary.getId().equals(BuildInputContext.CONTEXT_ID))
-				firstPageId = BuildPage.PAGE_ID;
-			else if (primary.getId().equals(PluginInputContext.CONTEXT_ID)) {
-				if (isBundle)
-					firstPageId = ExtensionsPage.PAGE_ID;
-				else
-					firstPageId = OverviewPage.PAGE_ID;
-			}
+			if (primary.getId().equals(FeatureInputContext.CONTEXT_ID))
+				firstPageId = FeatureFormPage.PAGE_ID;
 			if (firstPageId == null)
-				firstPageId = OverviewPage.PAGE_ID;
+				firstPageId = FeatureFormPage.PAGE_ID;
 		}
 		return firstPageId;
 	}
@@ -228,11 +188,48 @@ public class ManifestEditor extends MultiSourceEditor {
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
 	protected PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name) {
-		return new ManifestSourcePage(editor, title, name);
+		return new FeatureSourcePage(editor, title, name);
 	}
 	
 	protected IContentOutlinePage createContentOutline() {
-		return new ManifestOutlinePage(this);
+		return new FeatureOutlinePage(this);
+	}
+	
+	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
+		return null;
+	}
+
+	public String getTitle() {
+		if (!isModelCorrect(getAggregateModel()))
+			return super.getTitle();
+		IFeatureModel model = (IFeatureModel) getAggregateModel();
+		String name = model.getFeature().getLabel();
+		if (name == null)
+			return super.getTitle();
+		return model.getResourceString(name);
+	}
+
+	protected boolean isModelCorrect(Object model) {
+		return model != null ? ((IFeatureModel) model).isValid() : false;
+	}
+	protected boolean hasKnownTypes() {
+		try {
+			TransferData[] types = getClipboard().getAvailableTypes();
+			Transfer[] transfers =
+				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			for (int i = 0; i < types.length; i++) {
+				for (int j = 0; j < transfers.length; j++) {
+					if (transfers[j].isSupportedType(types[i]))
+						return true;
+				}
+			}
+		} catch (SWTError e) {
+		}
+		return false;
+	}
+
+	public void updateTitle() {
+		firePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
@@ -240,5 +237,5 @@ public class ManifestEditor extends MultiSourceEditor {
 			return null;
 		}
 		return super.getAdapter(key);
-	}
+	}	
 }

@@ -24,6 +24,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public class FormOutlinePage extends ContentOutlinePage
 		implements
 			IModelChangedListener {
+	private boolean stale;
 	public class BasicContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
@@ -98,8 +99,18 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		treeViewer.refresh();
-		treeViewer.expandAll();
+		IFormPage page = editor.getActivePageInstance();
+		stale=true;
+		if (page.isEditor()==false)
+			refresh();
+	}
+	
+	public void refresh() {
+		if (stale) {
+			treeViewer.refresh();
+			treeViewer.expandAll();
+			stale=false;
+		}
 	}
 	
 	protected String getParentPageId(Object item) {

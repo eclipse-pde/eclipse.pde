@@ -186,6 +186,14 @@ public class FormEntry {
 	public Text getText() {
 		return text;
 	}
+	
+	/**
+	 * Returns the browse button control.
+	 * @return
+	 */
+	public Button getButton() {
+		return browse;
+	}
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
