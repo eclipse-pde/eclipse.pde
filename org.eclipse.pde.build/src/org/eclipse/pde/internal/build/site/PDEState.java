@@ -108,13 +108,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public boolean addBundle(File bundleLocation) {
 		Dictionary manifest;
 		manifest = loadManifest(bundleLocation);
-		if (manifest == null) {
-			if (!bundleLocation.getName().equals("feature.xml")) {
-				IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, Policy.bind("exception.missingFile", bundleLocation.getAbsolutePath()), null); //$NON-NLS-1$
-				BundleHelper.getDefault().getLog().log(status);
-			}
+		if (manifest == null)
 			return false;
-		}
 		try {
 			String symbolicHeader = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (symbolicHeader != null && ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicHeader)[0].getValue().equals("org.eclipse.osgi")) {
