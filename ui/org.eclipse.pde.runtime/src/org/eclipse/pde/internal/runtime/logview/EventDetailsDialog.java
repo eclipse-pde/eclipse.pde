@@ -72,7 +72,7 @@ public class EventDetailsDialog extends Dialog {
 		labelProvider = new LogViewLabelProvider();
 		this.provider = (TableTreeViewer) provider;
 		this.entry = (LogEntry)selection;
-		setShellStyle(SWT.MODELESS | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
+		setShellStyle(SWT.MODELESS | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
 		clipboard = new Clipboard(parentShell.getDisplay());
 		initialize();
 		createImages();
