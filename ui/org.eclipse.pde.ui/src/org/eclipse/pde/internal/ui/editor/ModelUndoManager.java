@@ -162,9 +162,9 @@ public abstract class ModelUndoManager
 	private void updateActions() {
 		if (undoAction!=null && redoAction!=null) {
 			undoAction.setEnabled(isUndoable());
-			//undoAction.setText(getUndoText());
+			undoAction.setText(getUndoText());
 			redoAction.setEnabled(isRedoable());
-			//redoAction.setText(getRedoText());
+			redoAction.setText(getRedoText());
 		}
 	}
 	

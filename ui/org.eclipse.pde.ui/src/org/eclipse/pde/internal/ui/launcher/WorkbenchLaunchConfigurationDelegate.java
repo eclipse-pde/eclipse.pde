@@ -243,24 +243,29 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 2);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 3);
 		try {
 			File propertiesFile =
 				TargetPlatform.createPropertiesFile(plugins, targetWorkspace);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
-			int exCount = tracing ? 8 : 6;
+			int exCount = tracing ?12:10;
 			String[] fullProgArgs = new String[progArgs.length + exCount];
-			fullProgArgs[0] = appname;
-			fullProgArgs[1] = propertiesFile.getPath();
-			fullProgArgs[2] = "-dev";
-			fullProgArgs[3] = getBuildOutputFolders();
-			fullProgArgs[4] = "-data";
-			fullProgArgs[5] = targetWorkspace.toOSString();
+			int i=0;
+			fullProgArgs[i++] = "-application";
+			fullProgArgs[i++] = appname;
+			fullProgArgs[i++] = "-plugins";
+			fullProgArgs[i++] = "file:"+propertiesFile.getPath();
+			fullProgArgs[i++] = "-dev";
+			fullProgArgs[i++] = getBuildOutputFolders();
+			fullProgArgs[i++] = "-data";
+			fullProgArgs[i++] = targetWorkspace.toOSString();
+			fullProgArgs[i++] = "-showsplash";
+			fullProgArgs[i++] = computeShowsplashArgument(new SubProgressMonitor(monitor, 1));
 			if (tracing) {
-				fullProgArgs[6] = "-debug";
-				fullProgArgs[7] = getTracingFileArgument(config);
+				fullProgArgs[i++] = "-debug";
+				fullProgArgs[i++] = getTracingFileArgument(config);
 			}
 			System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
 
@@ -272,7 +277,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 
 			VMRunnerConfiguration runnerConfig =
-				new VMRunnerConfiguration("EclipseRuntimeLauncher", classpath);
+				new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
 			
@@ -328,6 +333,12 @@ public class WorkbenchLaunchConfigurationDelegate
 				result.append(",");
 		}
 		return result.toString();
+	}
+	
+	private String computeShowsplashArgument(IProgressMonitor monitor) {
+		IPath eclipseHome = ExternalModelManager.getEclipseHome(monitor);
+		IPath fullPath = eclipseHome.append("eclipse.exe");
+		return fullPath.toOSString()+" -showsplash 600";
 	}
 	
 	private String getTracingFileArgument(ILaunchConfiguration config) {
@@ -436,8 +447,14 @@ public class WorkbenchLaunchConfigurationDelegate
 	 */
 	private String[] constructClasspath(IPluginModelBase[] plugins)
 		throws CoreException {
+		/*
 		File slimLauncher =
 			PDEPlugin.getFileInPlugin(new Path("launcher/slimlauncher.jar"));
+		*/
+		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		File slimLauncher = eclipsePath.append("startup.jar").toFile();
+			
+
 		if (slimLauncher == null || !slimLauncher.exists()) {
 			PDEPlugin.logErrorMessage(
 				PDEPlugin.getResourceString(KEY_SLIMLAUNCHER));
