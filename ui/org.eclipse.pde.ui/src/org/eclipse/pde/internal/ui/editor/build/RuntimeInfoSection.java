@@ -237,6 +237,17 @@ public class RuntimeInfoSection extends PDESection
 			if (!isSelected && libPath.segmentCount() == 1
 					&& binIncl.contains("*.jar")) { //$NON-NLS-1$
 				addAllJarsToBinIncludes(binIncl, project, model);
+			} else if (!isSelected && libPath.segmentCount() > 1){
+				IPath parent = libPath.removeLastSegments(1);
+				String parentPath = parent.toString() + Path.SEPARATOR;
+				if (binIncl.contains(parentPath) && !project.exists(parent)){
+					binIncl.removeToken(parentPath);
+				} else if (parent.segmentCount() > 1){
+					parent = parent.removeLastSegments(1);
+					parentPath = parent.toString() + Path.SEPARATOR;
+					if (binIncl.contains(parentPath) && !project.exists(parent))
+						binIncl.removeToken(parentPath);
+				}
 			}
 			if (isSelected && !binIncl.contains(libName)) {
 				binIncl.addToken(libName);
