@@ -24,6 +24,7 @@ public class SchemaPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testLoadAllSchemas() throws Exception {
+		tagAsSummary("Loading all schemas", Dimension.USED_JAVA_HEAP);
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getAllPlugins();
 		startMeasuring();
 		for (int i = 0; i < models.length; i++) {

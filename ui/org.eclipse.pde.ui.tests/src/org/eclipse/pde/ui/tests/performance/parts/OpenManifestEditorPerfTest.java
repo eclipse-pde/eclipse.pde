@@ -23,7 +23,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testOpen() throws Exception {
-		tagAsGlobalSummary("Open Plug-in Editor", Dimension.CPU_TIME); //$NON-NLS-1$
+		tagAsSummary("Open Plug-in Editor", Dimension.CPU_TIME); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
 		for (int i = 0; i < 20; i++) {
