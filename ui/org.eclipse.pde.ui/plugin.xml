@@ -595,6 +595,22 @@
                id="org.eclipse.pde.ui.OpenDependenciesAction3">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="plugin.xml"
+            id="org.eclipse.pde.ui.search.PluginReferences">
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.PluginNature">
+         </filter>
+         <action
+               label="%PluginSearch.references"
+               class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.SearchReferences">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -1010,8 +1026,8 @@
          point="org.eclipse.search.searchPages">
       <page
             showScopeSection="true"
-            enabled="true"
             label="%PluginSearchPage.label"
+            enabled="true"
             icon="icons/full/obj16/psearch_obj.gif"
             extensions="xml:90"
             class="org.eclipse.pde.internal.ui.search.PluginSearchPage"

@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.actions;
+package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;

@@ -94,9 +94,6 @@ the actual selection.
                   a fully qualified name of the class or interface that all the objects in the 
 selection must subclass or implement.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="nameFilter" type="string">
