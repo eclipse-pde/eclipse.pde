@@ -33,6 +33,14 @@ public class ConvertSchemaToHTML extends Task {
 	private SchemaTransformer transformer = new SchemaTransformer();
 	private String manifest;
 	private String destination;
+	private URL cssURL;
+
+	public ConvertSchemaToHTML(){
+		try {
+			cssURL = new URL ("file:\\../book.css");
+		} catch (MalformedURLException e) {
+		}
+	}
 
 	public void execute() throws BuildException {
 		if (!validateDestination())
@@ -80,8 +88,9 @@ public class ConvertSchemaToHTML extends Task {
 					new File(
 						directory,
 						extPoints[i].getFullId().replace('.', '_') + ".html");
+				
 				out = new PrintWriter(new FileWriter(file), true);
-				transformer.transform(out, schema);
+				transformer.transform(out, schema, cssURL);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
 					System.out.println(e.getMessage());
@@ -105,7 +114,22 @@ public class ConvertSchemaToHTML extends Task {
 		this.destination = destination;
 	}
 	
-
+	public URL getCSSURL(){
+		return cssURL;
+	}
+	
+	public void setCSSURL(String url){
+		try {
+			cssURL = new URL(url);
+		} catch (MalformedURLException e) {
+			PDE.logException(e);
+		}
+	}
+	
+	public void setCSSURL(URL url){
+		cssURL = url;
+	}
+	
 	private IPluginModelBase readManifestFile() {
 		if (manifest == null) {
 			System.out.println(

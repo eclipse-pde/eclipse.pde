@@ -31,6 +31,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		"Builders.Schema.removing";
 
 	private ISchemaTransformer transformer;
+	private URL cssURL;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -127,7 +128,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			}
 			catch (MalformedURLException e) {
 			}
-			transform(url, source, pwriter, reporter);
+
+			transform(url, source, pwriter, reporter, cssURL);
 			stringWriter.close();
 			if (reporter.getErrorCount() == 0
 				&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
@@ -219,6 +221,23 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public String getSchemaLocation() {
 		return "schema";
 	}
+	
+	public URL getCSSURL(){
+		return cssURL;
+	}
+	
+	public void setCSSURL(String url){
+		try {
+			cssURL = new URL(url);
+		} catch (MalformedURLException e) {
+			PDE.logException(e);
+		}
+	}
+	
+	public void setCSSURL(URL url){
+		cssURL = url;
+	}
+	
 	private boolean isSchemaFile(IFile file) {
 		String name = file.getName();
 		return name.endsWith(".exsd") || name.endsWith(".xsd");
@@ -251,7 +270,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		URL schemaURL,
 		InputStream input,
 		PrintWriter output,
-		PluginErrorReporter reporter) {
-		transformer.transform(schemaURL, input, output, reporter);
+		PluginErrorReporter reporter,
+		URL cssURL) {
+		transformer.transform(schemaURL, input, output, reporter, cssURL);
 	}
 }

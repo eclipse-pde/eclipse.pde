@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -17,9 +21,12 @@ import java.net.URL;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceDOMParser;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -55,16 +62,17 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private static final String COLOR_CSTRING = "#008000";
 	private static final String COLOR_DTD = "#800000";
 	private static final String COLOR_COPYRIGHT = "#336699";
+	private File tempCSSFile;
 
 	private void appendAttlist(
 		PrintWriter out,
 		ISchemaAttribute att,
 		int maxWidth) {
 		// add three spaces
-		out.print("<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		out.print("<br><samp class=dtd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		// add name
 		out.print(att.getName());
-		// fill spaces to allign data type
+		// fill spaces to align data type
 		int delta = maxWidth - att.getName().length();
 		for (int i = 0; i < delta + 1; i++) {
 			out.print("&nbsp;");
@@ -151,11 +159,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 			return true;
 		return false;
 	}
+	
 	public void transform(
 		URL schemaURL,
 		InputStream is,
 		PrintWriter out,
 		PluginErrorReporter reporter) {
+			transform(schemaURL,is,out,reporter,null);
+	}
+		
+	public void transform(
+		URL schemaURL,
+		InputStream is,
+		PrintWriter out,
+		PluginErrorReporter reporter,
+		URL cssURL) {
 		SourceDOMParser parser = createDOMTree(is, reporter);
 		if (parser == null)
 			return;
@@ -167,7 +185,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			&& verifySections(schema, reporter)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_OPEN_TAGS))
-			transform(out, schema);
+			transform(out, schema,cssURL);
 	}
 
 	private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
@@ -270,55 +288,79 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 		return errors;
 	}
+	
+	public void addPlatformCSS(PrintWriter out, URL cssURL){
+		File cssFile;
 
+		if (cssURL ==null){
+			cssFile = new File(((PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user")).getInstallURLInternal().getFile() + "book.css");
+		} else {
+			cssFile = new File (cssURL.getFile());
+		}
+		try {
+			tempCSSFile = PDECore.getDefault().getTempFileManager().createTempFile(this,"book", ".css");
+			FileReader freader = new FileReader(cssFile);
+			BufferedReader breader = new BufferedReader(freader);
+			PrintWriter pwriter = new PrintWriter(new FileOutputStream(tempCSSFile));
+			while (breader.ready()){
+				pwriter.println(breader.readLine());
+			}
+			out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+tempCSSFile.getName()+"\"/>");
+			pwriter.close();
+			breader.close();
+			freader.close();
+		} catch (Exception e) {
+			// do nothing if problem with css as it will only affect formatting.  
+			// may want to log this error in the future.
+		}
+	}
+	
 	public void transform(PrintWriter out, ISchema schema) {
+		transform(out, schema, null);
+	}
+
+	public void transform(PrintWriter out, ISchema schema, URL cssURL) {
 		out.println(
 			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
 		out.print("<HEAD>");
 		out.println(
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
 		addStyle(out);
+		addPlatformCSS(out, cssURL);
+			
 		out.println("</HEAD>");
 		out.println("<HTML>");
 		out.println("<BODY>");
 		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
-		out.print("<b><i>Identifier: </i></b>");
+		out.print("<div class=header>Identifier: </div>");
 		out.print(schema.getQualifiedPointId());
 		out.println("<p>");
 		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
 		transformDescription(out, schema);
-		out.println("<p><b><i>Configuration Markup:</i></b><p>");
+		out.println("<p><div class=header>Configuration Markup:</div></p>");
 		transformMarkup(out, schema);
 		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
-		transformSection(
-			out,
-			schema,
-			"API Information:",
-			IDocumentSection.API_INFO);
-		transformSection(
-			out,
-			schema,
-			"Supplied Implementation:",
-			IDocumentSection.IMPLEMENTATION);
-		out.println("<font size=\"-1\" color=\"" + COLOR_COPYRIGHT + "\">");
+		transformSection(out, schema, "API Information:", IDocumentSection.API_INFO);
+		transformSection(out, schema, "Supplied Implementation:", IDocumentSection.IMPLEMENTATION);
+		out.println("<div class=copyright-text>");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
-		out.println("</font>");
+		out.println("</div>");
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
 
 	private void addStyle(PrintWriter out) {
 		out.println("<STYLE type=\"text/css\">");
-		out.println("div.dtd-fragment {");
-		out.println("	width: 100%;");
-		out.println("	border: none;");
-		out.println("	background-color: #eee;");
-		out.println("}");
+		out.println(".header {font-family: serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
+		out.println(".copyright-text {font-size: 10px; color: "+COLOR_COPYRIGHT+"; display:inline }");
+		out.println("samp.dtd {color: "+COLOR_DTD +"; display: inline}");
+		out.println(".tag {color: "+COLOR_TAG +"; display:inline}");
+		out.println(".cstring {color: "+COLOR_CSTRING +"; display:inline}");
 		out.println("</STYLE>");
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
-		out.print("<b><i>Description: </i></b>");
+		out.print("<div class=header>Description: </div>");
 		transformText(out, schema.getDescription());
 		ISchemaInclude[] includes = schema.getIncludes();
 		for (int i = 0; i < includes.length; i++) {
@@ -337,13 +379,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>";
 		//out.print("<div class=\"dtd-fragment\">");
 		out.print(
-			"<p><samp><font color=\""
-				+ COLOR_DTD
-				+ "\">&nbsp;&nbsp; &lt;!ELEMENT "
+			"<p><samp class=dtd>&nbsp;&nbsp; &lt;!ELEMENT "
 				+ nameLink
 				+ " "
 				+ dtd);
-		out.println("&gt;</font></samp>");
+		out.println("&gt;</samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 		String description = element.getDescription();
@@ -361,16 +401,14 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (attributes.length > 0) {
 			out.println(
-				"<samp><font color=\""
-					+ COLOR_DTD
-					+ "\">&nbsp;&nbsp; &lt;!ATTLIST "
+				"<samp class=dtd>&nbsp;&nbsp; &lt;!ATTLIST "
 					+ name
 					+ "</samp>");
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
 				appendAttlist(out, attributes[i], maxWidth);
 			}
-			out.println("<br><samp>&nbsp;&nbsp; &gt;</font></samp>");
+			out.println("<br><samp class=dtd>&nbsp;&nbsp; &gt;</samp>");
 		}
 		//out.println("</div>");
 		if (attributes.length == 0)
@@ -425,10 +463,75 @@ public class SchemaTransformer implements ISchemaTransformer {
 		return null;
 	}
 
-	private boolean verifySections(ISchema schema, PluginErrorReporter reporter){
+	private String verifyDescription(String desc){
 		boolean openTag = false;
+		boolean isPre = false;
+		Stack tagStack = new Stack();
+		if (desc !=null && desc.trim().length()!=0){
+			StringTokenizer text = new StringTokenizer(desc, "<>", true);
+			openTag = false;
+	
+			while (text.countTokens() >0){
+
+				if (text.nextToken().equals("<")){
+					openTag = true;
+			
+					if (text.hasMoreTokens()){
+						String tag = text.nextToken().trim();
+						
+						// ignore eol char
+						if (tag.indexOf('\n')!=-1)
+							tag = tag.replace('\n', ' ');
+						
+						int loc = tag.indexOf(" ");
+						int locEnd = tag.indexOf("/");
+						
+						// ignore opened tag if it ends itself or is a comment
+						if (tag.equalsIgnoreCase(">")  
+							|| (locEnd==tag.length()-1 && text.hasMoreTokens() && text.nextToken().equals(">"))
+							|| (tag.indexOf("!")==0 && text.hasMoreTokens() && text.nextToken().equals(">"))){
+							openTag = false;
+							continue;
+						}
+
+						if (locEnd!=0){ // assert it is not an end tag
+							tag = (loc == -1 ? tag.substring(0) : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
+							if (tag.equalsIgnoreCase("pre")){
+								isPre = true;		
+							} else if (!isPre){					
+								tagStack.add(tag);	
+							}							
+						} else {
+							tag = (loc == -1 ? tag.substring(1) : tag.substring(1,loc));  // take off "/" prefix and all existing attributes
+							if (isPre){
+								if (tag.equalsIgnoreCase("pre"))
+									isPre = false;
+							} else if (!tagStack.isEmpty() && tagStack.peek().toString().equalsIgnoreCase(tag)){
+								tagStack.pop();
+							} else {
+								return (!tagStack.isEmpty() ? tagStack.peek().toString(): tag);
+							}
+						}
+				
+						if (text.hasMoreTokens() && text.nextToken().equals(">")){
+							openTag = false;
+						} else {
+							return tag;
+						}
+					}
+				}
+		
+			}
+			if ( isPre || openTag || !tagStack.isEmpty()){
+				return (!tagStack.isEmpty() ? tagStack.peek().toString() : "");
+			}
+		}
+		return null;
+	}
+
+	private boolean verifySections(ISchema schema, PluginErrorReporter reporter){
+		boolean hasError = false;
 		IDocumentSection section = null;
-		Stack tagStack = null;
 		String sectionIds[] =
 			{	IDocumentSection.API_INFO,
 				IDocumentSection.EXAMPLES,
@@ -436,55 +539,30 @@ public class SchemaTransformer implements ISchemaTransformer {
 				IDocumentSection.P_DESCRIPTION,
 				IDocumentSection.COPYRIGHT,
 				IDocumentSection.SINCE };
-			
+		String errTag;
 		for (int i = 0; i < sectionIds.length; i++) {
 			section = findSection(schema.getDocumentSections(), sectionIds[i]);
 			if (section !=null){
-				tagStack = new Stack();
 				String desc = section.getDescription();
-				if (desc !=null && desc.trim().length()!=0){
-					StringTokenizer text = new StringTokenizer(desc, "<>", true);
-					openTag = false;
-					
-					while (text.countTokens() >0){
-						if (text.nextToken().equals("<")){
-							openTag = true;
-							
-							if (text.hasMoreTokens()){
-								String tag = text.nextToken().trim();
-								int loc = tag.indexOf(" ");
-								if (tag.indexOf("/")==-1){
-									tag = (loc == -1 ? tag.substring(0) : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
-									tagStack.add(tag);
-								} else {
-									tag = (loc == -1 ? tag.substring(1) : tag.substring(1,loc+1));  // take off "/" prefix
-									if (!tagStack.isEmpty() && tagStack.peek().equals(tag)){
-										tagStack.pop();
-									} else {
-										reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
-										return false;
-									}
-								}
-								
-								if (text.hasMoreTokens() && text.nextToken().equals(">")){
-									openTag = false;
-								} else {
-									reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
-									return false;
-								}
-							}
-						}
-						
-					}
-					if ( openTag || !tagStack.isEmpty()){
-						reporter.reportError(schema.getName() + " " + sectionIds[i] + ": Unmatched tags in documentation." );
-						return false;
-					}
+				errTag = verifyDescription(desc);
+				if (errTag!=null){
+					if (errTag.equals(""))
+						reporter.report(sectionIds[i] + ": Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+					else
+						reporter.report(sectionIds[i] + ": Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
 				}
 			}
 		}
-		
-		return (!openTag && tagStack.isEmpty());
+		errTag = verifyDescription(schema.getDescription());
+		if (errTag!=null){
+			if (errTag.equals(""))
+				reporter.report("description: Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+			else
+				reporter.report("description: Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+			hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+		}
+		return !hasError;
 	}
 
 	private void transformSection(
@@ -501,7 +579,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (description == null || description.trim().length() == 0)
 			return;
 		if (title != null)
-			out.print("<b><i>" + title + " </i></b>");
+			out.print("<div class=header>" + title + " </div>");
 		transformText(out, description);
 		out.println("<p>");
 	}
@@ -534,12 +612,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 				switch (c) {
 					case '<' :
 						inTag = true;
-						out.print("<font color=\"" + COLOR_TAG + "\">");
+						out.print("<div class=tag>");
 						out.print("&lt;");
 						break;
 					case '>' :
 						out.print("&gt;");
-						out.print("</font>");
+						out.print("</div>");
 						inTag = false;
 						inCstring = false;
 						break;
@@ -553,12 +631,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 						if (inTag) {
 							if (inCstring) {
 								out.print("&quot;");
-								out.print("</font>");
+								out.print("</div>");
 								inCstring = false;
 							} else {
 								inCstring = true;
-								out.print(
-									"<font color=\"" + COLOR_CSTRING + "\">");
+								out.print("<div class=cstring>");
 								out.print("&quot;");
 							}
 						}
@@ -570,4 +647,6 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.print(c);
 		}
 	}
+	
+
 }
