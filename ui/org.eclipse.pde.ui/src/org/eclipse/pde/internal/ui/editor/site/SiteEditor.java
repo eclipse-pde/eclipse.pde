@@ -13,9 +13,12 @@
  */
 package org.eclipse.pde.internal.ui.editor.site;
 import java.io.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
@@ -164,5 +167,20 @@ public class SiteEditor extends MultiSourceEditor {
 	
 	protected IContentOutlinePage createContentOutline() {
 		return null;//return new SiteOutlinePage(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isDirty()
+	 */
+	public boolean isDirty() {
+		
+		InputContext context = 	inputContextManager.findContext(SiteInputContext.CONTEXT_ID);
+		if (context==null)
+			return super.isDirty();
+		
+		ISiteBuildModel fBuildModel = ((ISiteModel)context.getModel()).getBuildModel();
+		if (fBuildModel != null && ((WorkspaceSiteBuildModel)fBuildModel).isDirty())
+			return true;
+		return super.isDirty();
 	}
 }
