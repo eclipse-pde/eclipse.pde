@@ -92,7 +92,7 @@ public class UnusedDependenciesJob extends Job {
 				return false;
 			
 			IJavaProject jProject = JavaCore.create(project);
-			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject);
+			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
 			SearchEngine engine = new SearchEngine();
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			for (int i = 0; i < packageFragments.length; i++) {

@@ -111,7 +111,7 @@ public class DependencyExtentOperation {
 				return;
 			
 			IJavaProject jProject = JavaCore.create(fProject);
-			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject);
+			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			SearchEngine engine = new SearchEngine();
 			for (int i = 0; i < packageFragments.length; i++) {
