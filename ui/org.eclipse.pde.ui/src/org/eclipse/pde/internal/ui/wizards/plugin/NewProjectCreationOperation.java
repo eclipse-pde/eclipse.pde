@@ -41,14 +41,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEPlugin.getResourceString("NewProjectCreationOperation.creating"), getNumberOfWorkUnits());
+		monitor.beginTask(PDEPlugin.getResourceString("NewProjectCreationOperation.creating"), getNumberOfWorkUnits()); //$NON-NLS-1$
 		
-		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.project"));
+		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.project")); //$NON-NLS-1$
 		IProject project = createProject();
 		monitor.worked(1);
 	
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.setClasspath"));
+			monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
 			setClasspath(project, fData);
 			monitor.worked(1);
 		}
@@ -58,11 +58,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 		}
 		
-		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.manifestFile"));
+		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.manifestFile")); //$NON-NLS-1$
 		createManifest(project);
 		monitor.worked(1);
 		
-		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.buildPropertiesFile"));
+		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.buildPropertiesFile")); //$NON-NLS-1$
 		createBuildPropertiesFile(project);
 		monitor.worked(1);
 		
@@ -74,11 +74,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fModel.save();
 		
 		if (fData.hasBundleStructure()) {
-			String filename = (fData instanceof IFragmentFieldData)? "fragment.xml" : "plugin.xml";
+			String filename = (fData instanceof IFragmentFieldData)? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 			PDEPluginConverter.convertToOSGIFormat(project, filename, new SubProgressMonitor(monitor, 1));
 			trimModel(fModel.getPluginBase());
 			fModel.save();
-			openFile(project.getFile("META-INF/MANIFEST.MF"));
+			openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		} else {
 			openFile((IFile)fModel.getUnderlyingResource());
 		}
@@ -159,14 +159,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	
 	private void createManifest(IProject project) throws CoreException {
 		if (fData instanceof IFragmentFieldData) {
-			fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml"));
+			fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
 		} else {
-			fModel = new WorkspacePluginModel(project.getFile("plugin.xml"));
+			fModel = new WorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
 		}
 		
 		IPluginBase pluginBase = fModel.getPluginBase();
 		if (!fData.isLegacy())
-			pluginBase.setSchemaVersion("3.0");
+			pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$
 		pluginBase.setId(fData.getId());
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
@@ -202,17 +202,17 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	
 	private void createBuildPropertiesFile(IProject project)
 			throws CoreException {
-		IFile file = project.getFile("build.properties");
+		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildModelFactory factory = model.getFactory();
 			IBuildEntry binEntry = factory
 					.createEntry(IBuildEntry.BIN_INCLUDES);
 			binEntry.addToken(fData instanceof IFragmentFieldData
-					? "fragment.xml"
-					: "plugin.xml");
+					? "fragment.xml" //$NON-NLS-1$
+					: "plugin.xml"); //$NON-NLS-1$
 			if (fData.hasBundleStructure())
-				binEntry.addToken("META-INF/");
+				binEntry.addToken("META-INF/"); //$NON-NLS-1$
 			if (!fData.isSimple()) {
 				binEntry.addToken(fData.getLibraryName());
 				if (fContentWizard!=null) {
@@ -260,7 +260,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		if (fContentWizard!=null) {
-			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0");
+			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0"); //$NON-NLS-1$
 			for (int j = 0; j < refs.length; j++) {
 				if (!result.contains(refs[j]))
 					result.add(refs[j]);

@@ -26,11 +26,11 @@ import org.eclipse.ui.dialogs.*;
 public class SiteHTMLPage extends WizardPage {
 	private boolean createSite = false;
 	
-	public static final String HTML_PAGE_TITLE = "SiteHTMLPage.HTMLPage.title";
-	public static final String HTML_PAGE_DESC = "SiteHTMLPage.HTMLPage.desc";
-	public static final String HTML_CHECK_LABEL = "SiteHTMLPage.HTMLPage.checkLabel";
-	public static final String HTML_WEB_LABEL = "SiteHTMLPage.HTMLPage.webLabel";
-	public static final String WEB_ERR = "SiteHTMLPage.HTMLPage.webError";
+	public static final String HTML_PAGE_TITLE = "SiteHTMLPage.HTMLPage.title"; //$NON-NLS-1$
+	public static final String HTML_PAGE_DESC = "SiteHTMLPage.HTMLPage.desc"; //$NON-NLS-1$
+	public static final String HTML_CHECK_LABEL = "SiteHTMLPage.HTMLPage.checkLabel"; //$NON-NLS-1$
+	public static final String HTML_WEB_LABEL = "SiteHTMLPage.HTMLPage.webLabel"; //$NON-NLS-1$
+	public static final String WEB_ERR = "SiteHTMLPage.HTMLPage.webError"; //$NON-NLS-1$
 	private static final int SIZING_TEXT_FIELD_WIDTH = 350;
 
 	protected Text webText;
@@ -43,7 +43,7 @@ public class SiteHTMLPage extends WizardPage {
 	};
 	
 	public SiteHTMLPage(WizardNewProjectCreationPage mainPage) {
-		super("htmlPage");
+		super("htmlPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(HTML_PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(HTML_PAGE_DESC));
 	}
@@ -73,7 +73,7 @@ public class SiteHTMLPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		webText.setLayoutData(gd);
-		webText.setText("web");
+		webText.setText("web"); //$NON-NLS-1$
 		webText.setEnabled(createSite);
 		webLabel.setEnabled(createSite);
 		webText.addListener(SWT.Modify, textModifyListener);
@@ -95,7 +95,7 @@ public class SiteHTMLPage extends WizardPage {
 	}
 
 	public String getStatusString(){
-		if (createSite && getWebLocation().equals(""))
+		if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
 			return PDEPlugin.getResourceString(WEB_ERR);
 		
 		return null;
@@ -106,14 +106,14 @@ public class SiteHTMLPage extends WizardPage {
 		
 	public String getWebLocation(){
 		String text = webText.getText();
-		if (text.startsWith(File.separator) || text.startsWith("/"))
+		if (text.startsWith(File.separator) || text.startsWith("/")) //$NON-NLS-1$
 			text = text.substring(1);
-		if (text.endsWith(File.separator) || text.endsWith("/"))
+		if (text.endsWith(File.separator) || text.endsWith("/")) //$NON-NLS-1$
 			text= text.substring(0,text.length()-1);
 		return text;
 	}
 
 	protected boolean validatePage() {
-		return !(createSite && getWebLocation().equals(""));
+		return !(createSite && getWebLocation().equals("")); //$NON-NLS-1$
 	}
 }

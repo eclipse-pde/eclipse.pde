@@ -33,11 +33,11 @@ public class ProjectStructurePage extends WizardPage {
 	public ProjectStructurePage(String pageName, IProjectProvider provider, AbstractFieldData data, boolean isFragment) {
 		super(pageName);
 		if (isFragment) {
-			setTitle(PDEPlugin.getResourceString("ProjectStructurePage.ftitle"));
+			setTitle(PDEPlugin.getResourceString("ProjectStructurePage.ftitle")); //$NON-NLS-1$
 		} else {
-			setTitle(PDEPlugin.getResourceString("ProjectStructurePage.title"));
+			setTitle(PDEPlugin.getResourceString("ProjectStructurePage.title")); //$NON-NLS-1$
 		}
-		setDescription(PDEPlugin.getResourceString("ProjectStructurePage.desc"));
+		setDescription(PDEPlugin.getResourceString("ProjectStructurePage.desc")); //$NON-NLS-1$
 		fIsFragment = isFragment;
 		fProjectProvider = provider;
 		fData = data;
@@ -59,14 +59,14 @@ public class ProjectStructurePage extends WizardPage {
 	
 	private void createProjectTypeGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("ProjectStructurePage.settings"));
+		group.setText(PDEPlugin.getResourceString("ProjectStructurePage.settings")); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fSimpleButton = createButton(group);
-		fSimpleButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.simple"));
+		fSimpleButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.simple")); //$NON-NLS-1$
 		fSimpleButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = !fSimpleButton.getSelection();
@@ -81,19 +81,19 @@ public class ProjectStructurePage extends WizardPage {
 		});
 		
 		fJavaButton = createButton(group);
-		fJavaButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.java"));
+		fJavaButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.java")); //$NON-NLS-1$
 		fJavaButton.setSelection(true);
 		
-		fLibraryLabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.library"));
+		fLibraryLabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.library")); //$NON-NLS-1$
 		fLibraryText = createText(group);
 		
-		fSourceLabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.source"));
+		fSourceLabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.source")); //$NON-NLS-1$
 		fSourceText = createText(group);
-		fSourceText.setText("src");
+		fSourceText.setText("src"); //$NON-NLS-1$
 		
-		fOutputlabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.output"));
+		fOutputlabel = createLabel(group, PDEPlugin.getResourceString("ProjectStructurePage.output")); //$NON-NLS-1$
 		fOutputText = createText(group);
-		fOutputText.setText("bin");		
+		fOutputText.setText("bin");		 //$NON-NLS-1$
 	}
 	
 	private Label createLabel(Composite container, String text) {
@@ -126,18 +126,18 @@ public class ProjectStructurePage extends WizardPage {
 	
 	private void createBundleStructureGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("ProjectStructurePage.alternateFormat"));
+		group.setText(PDEPlugin.getResourceString("ProjectStructurePage.alternateFormat")); //$NON-NLS-1$
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fBundleCheck = new Button(group, SWT.CHECK);
 		if (fIsFragment)
-			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.fbundle"));
+			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.fbundle")); //$NON-NLS-1$
 		else
-			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.pbundle"));
+			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.pbundle")); //$NON-NLS-1$
 		
 		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("ProjectStructurePage.note"));
+		label.setText(PDEPlugin.getResourceString("ProjectStructurePage.note")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		gd.horizontalIndent = 30;
@@ -148,11 +148,11 @@ public class ProjectStructurePage extends WizardPage {
 		if (visible && fFirstVisible) {
 			fFirstVisible = false;
 			String fullName = fProjectProvider.getProjectName().trim();
-			StringTokenizer tok = new StringTokenizer(fullName, ".");
+			StringTokenizer tok = new StringTokenizer(fullName, "."); //$NON-NLS-1$
 			while (tok.hasMoreTokens()) {
 				String token = tok.nextToken();
 				if (!tok.hasMoreTokens())
-					fLibraryText.setText(token + ".jar");
+					fLibraryText.setText(token + ".jar"); //$NON-NLS-1$
 			}
 		}
 		if (!visible) updateData();
@@ -163,9 +163,9 @@ public class ProjectStructurePage extends WizardPage {
 		String errorMessage = null;
 		if (fJavaButton.getSelection()) {
 			if (fLibraryText.getText().trim().length() == 0) {
-				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noLibrary");
+				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noLibrary"); //$NON-NLS-1$
 			} else if (fOutputText.getText().trim().length() == 0) {
-				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noOutput");
+				errorMessage = PDEPlugin.getResourceString("ProjectStructurePage.noOutput"); //$NON-NLS-1$
 			}
 		}
 		setErrorMessage(errorMessage);

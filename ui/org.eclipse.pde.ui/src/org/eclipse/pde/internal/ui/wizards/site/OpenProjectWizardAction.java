@@ -18,7 +18,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @param text
 	 */
 	public OpenProjectWizardAction() {
-		super("OpenProject");
+		super("OpenProject"); //$NON-NLS-1$
 	}
 	
 	/**

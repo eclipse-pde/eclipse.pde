@@ -29,7 +29,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	
 	public NewFragmentProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("NewFragmentProjectWizard.title"));
+		setWindowTitle(PDEPlugin.getResourceString("NewFragmentProjectWizard.title")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fFragmentData = new FragmentFieldData();
@@ -39,9 +39,9 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new WizardNewProjectCreationPage("main");
-		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.ftitle"));
-		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.fdesc"));
+		fMainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.ftitle")); //$NON-NLS-1$
+		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.fdesc")); //$NON-NLS-1$
 		addPage(fMainPage);
 		
 		fProjectProvider = new IProjectProvider() {
@@ -56,8 +56,8 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 			}
 		};
 		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fFragmentData, true);
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fFragmentData, true);
+		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fFragmentData, true); //$NON-NLS-1$
+		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fFragmentData, true); //$NON-NLS-1$
 		addPage(fStructurePage);
 		addPage(fContentPage);
 	}

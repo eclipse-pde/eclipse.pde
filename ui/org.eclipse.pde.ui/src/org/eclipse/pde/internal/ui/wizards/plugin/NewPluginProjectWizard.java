@@ -16,10 +16,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  *
  */
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
-	public static final String PLUGIN_POINT = "pluginContent";
-	public static final String TAG_WIZARD = "wizard";
-	public static final String DEF_PROJECT_NAME = "project_name";
-	public static final String DEF_TEMPLATE_ID = "template-id";
+	public static final String PLUGIN_POINT = "pluginContent"; //$NON-NLS-1$
+	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
+	public static final String DEF_PROJECT_NAME = "project_name"; //$NON-NLS-1$
+	public static final String DEF_TEMPLATE_ID = "template-id"; //$NON-NLS-1$
 
 	private IConfigurationElement fConfig;
 	private PluginFieldData fPluginData;
@@ -32,7 +32,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEPlugin.getResourceString("NewProjectWizard.title"));
+		setWindowTitle(PDEPlugin.getResourceString("NewProjectWizard.title")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new PluginFieldData();
@@ -42,9 +42,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new WizardNewProjectCreationPage("main");
-		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.title"));
-		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.desc"));
+		fMainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.title")); //$NON-NLS-1$
+		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.desc")); //$NON-NLS-1$
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname!=null)
 			fMainPage.setInitialProjectName(pname);
@@ -62,9 +62,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			}
 		};
 		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false);
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false);
-		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
+		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false); //$NON-NLS-1$
+		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false); //$NON-NLS-1$
+		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates")); //$NON-NLS-1$
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
 		if (tid!=null)
 			fWizardListPage.setInitialTemplateId(tid);
@@ -131,7 +131,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	}
 
 	public ElementList getAvailableCodegenWizards() {
-		ElementList wizards = new ElementList("CodegenWizards");
+		ElementList wizards = new ElementList("CodegenWizards"); //$NON-NLS-1$
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint point =
 			registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);

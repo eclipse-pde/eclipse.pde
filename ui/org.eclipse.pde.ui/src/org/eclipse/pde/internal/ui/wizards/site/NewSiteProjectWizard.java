@@ -33,24 +33,24 @@ import org.eclipse.ui.wizards.newresource.*;
 public class NewSiteProjectWizard
 	extends NewWizard
 	implements IExecutableExtension {
-	public static final String KEY_WTITLE = "NewSiteWizard.wtitle";
-	public static final String MAIN_PAGE_TITLE = "NewSiteWizard.MainPage.title";
+	public static final String KEY_WTITLE = "NewSiteWizard.wtitle"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_TITLE = "NewSiteWizard.MainPage.title"; //$NON-NLS-1$
 	public static final String CREATING_PROJECT =
-		"NewSiteWizard.creatingProject";
+		"NewSiteWizard.creatingProject"; //$NON-NLS-1$
 	public static final String CREATING_FOLDERS =
-		"NewSiteWizard.creatingFolders";
+		"NewSiteWizard.creatingFolders"; //$NON-NLS-1$
 	public static final String CREATING_MANIFEST =
-		"NewSiteWizard.creatingManifest";
-	public static final String MAIN_PAGE_DESC = "NewSiteWizard.MainPage.desc";
-	public static final String OVERWRITE_SITE = "NewFeatureWizard.overwriteSite";
-	public static final String DEF_PROJECT_NAME ="project-name";
+		"NewSiteWizard.creatingManifest"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_DESC = "NewSiteWizard.MainPage.desc"; //$NON-NLS-1$
+	public static final String OVERWRITE_SITE = "NewFeatureWizard.overwriteSite"; //$NON-NLS-1$
+	public static final String DEF_PROJECT_NAME ="project-name"; //$NON-NLS-1$
 
 	private WizardNewProjectCreationPage mainPage;
 	private SiteHTMLPage htmlPage;
 	private IConfigurationElement config;
 	private boolean createdProject = false;
-	public static final String DEFAULT_PLUGIN_DIR = "plugins";
-	public static final String DEFAULT_FEATURE_DIR = "features";
+	public static final String DEFAULT_PLUGIN_DIR = "plugins"; //$NON-NLS-1$
+	public static final String DEFAULT_FEATURE_DIR = "features"; //$NON-NLS-1$
 
 	public NewSiteProjectWizard() {
 		super();
@@ -60,7 +60,7 @@ public class NewSiteProjectWizard
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 	public void addPages() {
-		mainPage = new WizardNewProjectCreationPage("main");
+		mainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -75,7 +75,7 @@ public class NewSiteProjectWizard
 		IProject project,
 		SiteData data)
 		throws CoreException {
-		IFile file = project.getFile("site.xml");
+		IFile file = project.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists()) return file;
 		WorkspaceSiteModel model = new WorkspaceSiteModel();
 		model.setFile(file);
@@ -108,7 +108,7 @@ public class NewSiteProjectWizard
 	
 	private void createHTMLFile(IProject project){
 		try {
-		IFile file = project.getFile("index.html");
+		IFile file = project.getFile("index.html"); //$NON-NLS-1$
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		
@@ -170,7 +170,7 @@ public class NewSiteProjectWizard
 
 		writer.flush();
 		swrite.close();
-		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8"));
+		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8")); //$NON-NLS-1$
 		if (file.exists()){
 			file.setContents(stream, false, false, null);
 		} else {
@@ -184,7 +184,7 @@ public class NewSiteProjectWizard
 		
 	private void createCSSFile(IProject project){
 		try {
-		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.css");
+		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.css"); //$NON-NLS-1$
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		writer.println("<STYLE type=\"text/css\">");
@@ -202,7 +202,7 @@ public class NewSiteProjectWizard
 
 		writer.flush();
 		swrite.close();
-		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8"));
+		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8")); //$NON-NLS-1$
 		if (file.exists()){
 			file.setContents(stream, false, false, null);
 		} else {
@@ -216,7 +216,7 @@ public class NewSiteProjectWizard
 
 	private void createXSLFile(IProject project){
 		try {
-		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.xsl");
+		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.xsl"); //$NON-NLS-1$
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
 		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\">");
@@ -436,7 +436,7 @@ public class NewSiteProjectWizard
 
 		writer.flush();
 		swrite.close();
-		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8"));
+		ByteArrayInputStream stream = new ByteArrayInputStream(swrite.toString().getBytes("UTF8")); //$NON-NLS-1$
 		if (file.exists()){
 			file.setContents(stream, false, false, null);
 		} else {
@@ -482,7 +482,7 @@ public class NewSiteProjectWizard
 		} else {
 			if (!project.isOpen())
 				project.open(monitor);
-			IFile siteFile = project.getFile("site.xml");
+			IFile siteFile = project.getFile("site.xml"); //$NON-NLS-1$
 			if (siteFile.exists())
 				openSiteManifest(siteFile);
 			monitor.worked(4);
