@@ -140,7 +140,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			
 			setProjectDescription(project, model);
 
-			if (project.hasNature(JavaCore.NATURE_ID))
+			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null)
 				setClasspath(project, model);
 		} finally {
 			monitor.done();
@@ -206,9 +206,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						new SubProgressMonitor(monitor, 1));
 				} else {
 					String fileName = sourceFile.getName();
-					// Ignore .classpath and .project in the plug-in.
-					// These files will be created, so ignore the imported ones.
-					if (!fileName.equals(".classpath") && !fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
+					// Ignore .project in the plug-in.
+					// This file will be created, so ignore the imported one.
+					if (!fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
 						IFile file = project.getFile(fileName);
 						file.createLink(
 							new Path(sourceFile.getPath()),
@@ -266,12 +266,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 		}
 		buildModel.save();
-		// Give the project a binary property if no source was extracted.
-		// the model contains at minimum the bin.includes key
-		if (buildModel.getBuild().getBuildEntries().length < 2)
-			project.setPersistentProperty(
-					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					PDECore.BINARY_PROJECT_VALUE);
 		monitor.done();
 	}
 	
