@@ -43,7 +43,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		String month = (monthNbr < 10 ? "0" : empty) + monthNbr; //$NON-NLS-1$
 
 		int dayNbr = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-		String day = (monthNbr < 10 ? "0" : empty) + dayNbr; //$NON-NLS-1$
+		String day = (dayNbr < 10 ? "0" : empty) + dayNbr; //$NON-NLS-1$
 
 		int hourNbr = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 		String hour = (hourNbr < 10 ? "0" : empty) + hourNbr; //$NON-NLS-1$
