@@ -21,11 +21,15 @@ import org.eclipse.pde.internal.core.*;
  * @version 	1.0
  * @author
  */
-public class BinaryProjectDecorator extends LabelProvider implements ILabelDecorator, IResourceChangeListener {
+public class BinaryProjectDecorator
+	extends LabelProvider
+	implements ILabelDecorator, IResourceChangeListener {
 	private Hashtable registry = new Hashtable();
-	
-	public BinaryProjectDecorator () {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
+
+	public BinaryProjectDecorator() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+			this,
+			IResourceChangeEvent.POST_AUTO_BUILD);
 	}
 
 	/*
@@ -36,7 +40,8 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 		if (property != null) {
 			if (property.equalsIgnoreCase(PDECore.EXTERNAL_PROJECT_VALUE)) {
 				return findImage(image, true);
-			} else if (property.equalsIgnoreCase(PDECore.BINARY_PROJECT_VALUE)) {
+			} else if (
+				property.equalsIgnoreCase(PDECore.BINARY_PROJECT_VALUE)) {
 				return findImage(image, false);
 			}
 		}
@@ -48,7 +53,9 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 		Image image = (Image) registry.get(key);
 		if (image == null) {
 			ImageDescriptor desc =
-				external ? PDEPluginImages.DESC_EXTERNAL_CO : PDEPluginImages.DESC_BINARY_CO;
+				external
+					? PDEPluginImages.DESC_EXTERNAL_CO
+					: PDEPluginImages.DESC_BINARY_CO;
 			ImageDescriptor overDesc =
 				new ImageOverlayIcon(srcImage, new ImageDescriptor[][] { {
 				}, {
@@ -68,13 +75,12 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 			project = (IProject) element;
 		else if (element instanceof IJavaProject)
 			project = ((IJavaProject) element).getProject();
-		/*
-		else if (element instanceof IResource)
-			project = ((IResource)element).getProject();
-		*/
 		if (project != null) {
+			if (!WorkspaceModelManager.isBinaryPluginProject(project))
+				return null;
 			try {
-				return project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
+				return project.getPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY);
 			} catch (CoreException e) {
 			}
 		}
@@ -105,7 +111,8 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 		final ArrayList events = new ArrayList();
 		try {
 			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
+				public boolean visit(IResourceDelta delta)
+					throws CoreException {
 					IResource resource = delta.getResource();
 					//skip workspace root
 					if (resource.getType() == IResource.ROOT) {
@@ -116,7 +123,8 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 						return false;
 					}
 					if (resource.getType() == IResource.PROJECT) {
-						if (WorkspaceModelManager.isPluginProject((IProject)resource)) {
+						if (WorkspaceModelManager
+							.isPluginProject((IProject) resource)) {
 							events.add(createLabelEvent(resource));
 						}
 						return false;
@@ -128,20 +136,22 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 			PDEPlugin.log(e.getStatus());
 		}
 		//convert event list to array
-		LabelProviderChangedEvent[] result = new LabelProviderChangedEvent[events.size()];
+		LabelProviderChangedEvent[] result =
+			new LabelProviderChangedEvent[events.size()];
 		events.toArray(result);
 		return result;
-	}	
-	
+	}
+
 	protected LabelProviderChangedEvent createLabelEvent(IResource resource) {
 		return new LabelProviderChangedEvent(this, resource);
 	}
-	
+
 	public void resourceChanged(IResourceChangeEvent event) {
 		//first collect the label change events
-		final LabelProviderChangedEvent[] events = processDelta(event.getDelta());
+		final LabelProviderChangedEvent[] events =
+			processDelta(event.getDelta());
 		Shell shell = PDEPlugin.getActiveWorkbenchShell();
-		
+
 		//now post the change events to the UI thread
 		if (events.length > 0 && shell != null && !shell.isDisposed()) {
 			shell.getDisplay().asyncExec(new Runnable() {

@@ -10,6 +10,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -26,7 +27,8 @@ import org.eclipse.ui.PlatformUI;
  * @author
  */
 public class PDELabelProvider extends SharedLabelProvider {
-	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
+	private static final String KEY_OUT_OF_SYNC =
+		"PluginModelManager.outOfSync";
 
 	public PDELabelProvider() {
 
@@ -60,7 +62,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectText((FeatureImport) obj);
 		}
 		if (obj instanceof IFeatureModel) {
-			return getObjectText((IFeatureModel)obj);
+			return getObjectText((IFeatureModel) obj);
 		}
 		if (obj instanceof FeatureChild) {
 			return getObjectText((FeatureChild) obj);
@@ -70,7 +72,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(IPluginBase pluginBase) {
 		String name =
-			isFullNameModeEnabled() ? pluginBase.getTranslatedName() : pluginBase.getId();
+			isFullNameModeEnabled()
+				? pluginBase.getTranslatedName()
+				: pluginBase.getId();
 		String version = pluginBase.getVersion();
 
 		String text;
@@ -91,7 +95,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(IPluginExtensionPoint point) {
-		return isFullNameModeEnabled() ? point.getTranslatedName() : point.getId();
+		return isFullNameModeEnabled()
+			? point.getTranslatedName()
+			: point.getId();
 	}
 
 	public String getObjectText(ImportObject obj) {
@@ -128,8 +134,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (pluginBase != null)
 			return getObjectText(pluginBase);
 		String name =
-			isFullNameModeEnabled() ? obj.getTranslatableLabel() :
-									   obj.getId();
+			isFullNameModeEnabled() ? obj.getTranslatableLabel() : obj.getId();
 		String version = obj.getVersion();
 
 		String text;
@@ -148,11 +153,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return obj.getId();
 	}
-	
+
 	public String getObjectText(IFeatureModel obj) {
 		IFeature feature = obj.getFeature();
 		return feature.getId() + " (" + feature.getVersion() + ")";
-		
+
 	}
 
 	public String getObjectText(FeatureChild obj) {
@@ -256,13 +261,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else {
 			IProject project = resource.getProject();
 			try {
-				String property =
-					project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
-				if (property != null) {
-					if (property.equals(PDECore.EXTERNAL_PROJECT_VALUE))
-						flags |= F_EXTERNAL;
-					else if (property.equals(PDECore.BINARY_PROJECT_VALUE))
-						flags |= F_BINARY;
+				if (WorkspaceModelManager.isBinaryPluginProject(project)) {
+					String property =
+						project.getPersistentProperty(
+							PDECore.EXTERNAL_PROJECT_PROPERTY);
+					if (property != null) {
+						if (property.equals(PDECore.EXTERNAL_PROJECT_VALUE))
+							flags |= F_EXTERNAL;
+						else if (property.equals(PDECore.BINARY_PROJECT_VALUE))
+							flags |= F_BINARY;
+					}
 				}
 			} catch (CoreException e) {
 			}
@@ -369,7 +377,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (!data.exists())
 			flags = F_ERROR;
 		ImageDescriptor desc =
-			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(data.getId());
+			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
+				data.getId());
 		return get(desc, flags);
 	}
 
