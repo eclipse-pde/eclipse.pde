@@ -158,8 +158,10 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 		pageBook.setLayoutData(gd);
 	}
 	public void dispose() {
-		toolkit.dispose();
-		fImage.dispose();
+		if (toolkit != null)
+			toolkit.dispose();
+		if (fImage != null)
+			fImage.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
