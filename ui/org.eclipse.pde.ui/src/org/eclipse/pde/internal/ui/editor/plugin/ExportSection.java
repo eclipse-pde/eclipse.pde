@@ -359,8 +359,10 @@ public class ExportSection extends TableSection
 				name = ((IPackageFragment)names[i]).getElementName();
 			else
 				name = names[i].toString();
-			if (i>0) buf.append(',');
+			
 			buf.append(name);
+			if (i < names.length - 1)
+				buf.append("," + System.getProperty("line.separator") + " ");
 		}
 		IBundleModel model = getBundleModel();
 		IBundle bundle = model.getBundle();
