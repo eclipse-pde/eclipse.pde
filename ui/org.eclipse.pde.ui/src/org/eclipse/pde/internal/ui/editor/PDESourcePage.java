@@ -16,23 +16,19 @@
  */
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.*;
-
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.model.IEditingModel;
+import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.*;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
 	private PDEFormEditor editor;
@@ -48,11 +44,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
 		this.id = id;
 		initialize(editor);
-		ArrayList stores= new ArrayList(2);
-		stores.add(PDEPlugin.getDefault().getPreferenceStore());
-		stores.add(EditorsUI.getPreferenceStore());
-		IPreferenceStore combinedStore= new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
-		setPreferenceStore(combinedStore);
+		IPreferenceStore[] stores = new IPreferenceStore[2];
+		stores[0] = PDEPlugin.getDefault().getPreferenceStore();
+		stores[1] = EditorsUI.getPreferenceStore();
+		setPreferenceStore(new ChainedPreferenceStore(stores));
 		setRangeIndicator(new DefaultRangeIndicator());
 	}
 	/* (non-Javadoc)
