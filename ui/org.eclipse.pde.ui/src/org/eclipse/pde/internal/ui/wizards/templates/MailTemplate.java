@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
@@ -108,7 +109,12 @@ public class MailTemplate extends PDETemplateSection {
 		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
-		createCommandExtension();
+        if ("3.1".compareTo(((PluginBase) model.getPluginBase()).getTargetVersion()) <= 0) { //$NON-NLS-1$
+            createCommandExtension(false);
+            createBindingsExtension();
+        } else {
+            createCommandExtension(true);
+        }
 		createProductExtension();
 	}
 	
@@ -174,12 +180,12 @@ public class MailTemplate extends PDETemplateSection {
 			plugin.add(extension);
 	}
 	
-	private void createCommandExtension() throws CoreException {
-		IPluginBase plugin = model.getPluginBase();	
-		String id = plugin.getId();
-		IPluginExtension extension = createExtension("org.eclipse.ui.commands", true); //$NON-NLS-1$
+    private void createCommandExtension(boolean generateKeyBindings) throws CoreException {
+        IPluginBase plugin = model.getPluginBase(); 
+        String id = plugin.getId();
+        IPluginExtension extension = createExtension("org.eclipse.ui.commands", true); //$NON-NLS-1$
 
-		IPluginElement element = model.getPluginFactory().createElement(extension);
+        IPluginElement element = model.getPluginFactory().createElement(extension);
         element.setName("category"); //$NON-NLS-1$
         element.setAttribute("id", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
         element.setAttribute("name", "Mail"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -192,47 +198,79 @@ public class MailTemplate extends PDETemplateSection {
         element.setAttribute("id", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
         element.setAttribute("categoryId", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
         extension.add(element);
-		
-		element = model.getPluginFactory().createElement(extension);
-		element.setName("command"); //$NON-NLS-1$
-		element.setAttribute("description", "Open a message dialog"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("name", "Open Message Dialog"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("id", id + ".openMessage");	 //$NON-NLS-1$ //$NON-NLS-2$
+        
+        element = model.getPluginFactory().createElement(extension);
+        element.setName("command"); //$NON-NLS-1$
+        element.setAttribute("description", "Open a message dialog"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("name", "Open Message Dialog"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("id", id + ".openMessage");     //$NON-NLS-1$ //$NON-NLS-2$
         element.setAttribute("categoryId", id + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
-		
-		element = model.getPluginFactory().createElement(extension);
-		element.setName("keyConfiguration"); //$NON-NLS-1$
-		element.setAttribute("description", "The key configuration for this sample"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("name", id + ".keyConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("id", id + ".keyConfiguration");	 //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
-		
-		element = model.getPluginFactory().createElement(extension);
-		element.setName("keyBinding"); //$NON-NLS-1$
-		element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keySequence", "CTRL+2"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");	 //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
-		
-		element = model.getPluginFactory().createElement(extension);
-		element.setName("keyBinding"); //$NON-NLS-1$
-		element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keySequence", "CTRL+3"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");	 //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
-		
-		element = model.getPluginFactory().createElement(extension);
-		element.setName("keyBinding"); //$NON-NLS-1$
-		element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keySequence", "CTRL+X"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");	 //$NON-NLS-1$ //$NON-NLS-2$
-		extension.add(element);
-		
-		if (!extension.isInTheModel())
-			plugin.add(extension);
-	}
-	
+        extension.add(element);
+        
+        if(generateKeyBindings){
+            element = model.getPluginFactory().createElement(extension);
+            element.setName("keyConfiguration"); //$NON-NLS-1$
+            element.setAttribute("description", "The key configuration for this sample"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("name", id + ".keyConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("id", id + ".keyConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+            extension.add(element);
+            
+            element = model.getPluginFactory().createElement(extension);
+            element.setName("keyBinding"); //$NON-NLS-1$
+            element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keySequence", "CTRL+2"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+            extension.add(element);
+            
+            element = model.getPluginFactory().createElement(extension);
+            element.setName("keyBinding"); //$NON-NLS-1$
+            element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keySequence", "CTRL+3"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+            extension.add(element);
+            
+            element = model.getPluginFactory().createElement(extension);
+            element.setName("keyBinding"); //$NON-NLS-1$
+            element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keySequence", "CTRL+X"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+            extension.add(element);
+        }
+        
+        if (!extension.isInTheModel())
+            plugin.add(extension);
+    }
+    
+    private void createBindingsExtension() throws CoreException {
+        IPluginBase plugin = model.getPluginBase(); 
+        String id = plugin.getId();
+        IPluginExtension extension = createExtension("org.eclipse.ui.bindings", true); //$NON-NLS-1$
+
+        IPluginElement element = model.getPluginFactory().createElement(extension);
+        element.setName("key"); //$NON-NLS-1$
+        element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("sequence", "CTRL+2"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+        extension.add(element);
+        
+        element = model.getPluginFactory().createElement(extension);
+        element.setName("key"); //$NON-NLS-1$
+        element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("sequence", "CTRL+3"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+        extension.add(element);
+        
+        element = model.getPluginFactory().createElement(extension);
+        element.setName("key"); //$NON-NLS-1$
+        element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("sequence", "CTRL+X"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
+        extension.add(element);
+        
+        if (!extension.isInTheModel())
+            plugin.add(extension);
+    }
+    
 	private void createProductExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
