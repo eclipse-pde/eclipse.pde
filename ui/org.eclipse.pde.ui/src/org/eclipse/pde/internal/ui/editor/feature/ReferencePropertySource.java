@@ -106,7 +106,7 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 		if (name.equals(P_REF_VERSION)) {
 			return getOriginalVersion();
 		}
-		return null;
+		return super.getPropertyValue(name);
 	}
 	public void setElement(IFeaturePlugin plugin) {
 		object = plugin;
@@ -120,7 +120,7 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 				getPluginReference().setLabel(realValue);
 			} else if (name.equals(P_VERSION)) {
 				getPluginReference().setVersion(realValue);
-			}
+			} else super.setPropertyValue(name, value);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
