@@ -55,7 +55,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private static String SETTINGS_IMPORTTYPE = "importType";
 	private static String SETTINGS_DOOTHER = "doother";
 	private static String SETTINGS_DROPLOCATION = "droplocation";
-	private static String SETTTINGS_SCAN_ALL = "scanAll";
+	private static String SETTINGS_SCAN_ALL = "scanAll";
 	
 	private Button runtimeLocationButton;
 	private Button browseButton;
@@ -102,11 +102,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		importChoices.setLayout(new GridLayout());
 		importChoices.setLayoutData(new GridData(GridData.FILL_BOTH));
 				
-		importButton = new Button(importChoices, SWT.RADIO);
-		importButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importPrereqs"));
-		
 		scanButton = new Button(importChoices, SWT.RADIO);
 		scanButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.scanAll"));		
+		
+		importButton = new Button(importChoices, SWT.RADIO);
+		importButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importPrereqs"));
 		
 	}
 	
@@ -206,7 +206,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			sourceButton.setSelection(true);
 		}
 		
-		boolean scan = settings.getBoolean(SETTTINGS_SCAN_ALL);
+		boolean scan = true;
+		if (settings.get(SETTINGS_SCAN_ALL) != null) {
+			scan = settings.getBoolean(SETTINGS_SCAN_ALL);
+		}
 		scanButton.setSelection(scan);
 		importButton.setSelection(!scan);
 		
@@ -359,7 +362,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 		settings.put(SETTINGS_DOOTHER, other);
 		settings.put(SETTINGS_IMPORTTYPE, getImportType());
-		settings.put(SETTTINGS_SCAN_ALL, getScanAllPlugins());
+		settings.put(SETTINGS_SCAN_ALL, getScanAllPlugins());
 	}
 	
 	public void dispose() {

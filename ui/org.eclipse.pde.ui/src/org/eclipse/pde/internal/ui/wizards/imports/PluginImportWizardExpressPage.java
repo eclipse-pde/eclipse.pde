@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
@@ -77,9 +78,12 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			setPageComplete(getSelectionCount() > 0);
 		}
 		
-		
-
+		protected void handleSelectAll(boolean select) {
+			super.handleSelectAll(select);
+			setPageComplete(getSelectionCount() > 0);
+		}		
 	}
+	
 	public PluginImportWizardExpressPage(String pageName, PluginImportWizardFirstPage page, IStructuredSelection selection) {
 		super(pageName, page);
 		this.initialSelection = selection;
@@ -95,8 +99,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		initialize();
 		setControl(container);
 		Dialog.applyDialogFont(container);
-
 	}
+	
 	private Composite createTablePart(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -149,9 +153,24 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i < wModels.length; i++) {
 			addDependencies((IPluginModelBase)wModels[i], true);
 		}
+		removeCheckedModels();
 		return super.getModelsToImport();
 	}
 	
+	private void removeCheckedModels() {
+		HashSet set = new HashSet();
+		Object[] wModels = tablePart.getSelection();
+		for (int i = 0; i < wModels.length; i++) {
+			set.add(((IPluginModelBase)wModels[i]).getPluginBase().getId());
+		}
+		
+		for (int i = 0; i < selected.size(); i++) {
+			IPluginModelBase model = (IPluginModelBase)selected.get(i);
+			if (set.contains(model.getPluginBase().getId()))
+				selected.remove(model);
+		}
+	}
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		setPageComplete(visible && tablePart.getSelectionCount() > 0);

@@ -77,7 +77,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 
 	private IPluginModelBase[] getModelsToImport() {
-		return ((BaseImportWizardSecondPage)page1.getNextPage()).getModelsToImport();
+		if (page1.getNextPage().equals(page2))
+			return page2.getModelsToImport();
+		return page3.getModelsToImport();
 	}
 
 	public boolean performFinish() {
