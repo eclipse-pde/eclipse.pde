@@ -303,20 +303,23 @@ public class WorkbenchLaunchConfigurationDelegate
 						JavaCore
 							.create(project)
 							.getOutputLocation()
-							.lastSegment());
+							.removeFirstSegments(
+							1));
 				}
 			} catch (JavaModelException e) {
 			} catch (CoreException e) {
 			}
 		}
 		StringBuffer result = new StringBuffer();
-		for (Iterator iter=set.iterator(); iter.hasNext();) {
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
 			String folder = iter.next().toString();
 			result.append(folder);
-			if (iter.hasNext()) result.append(",");
+			if (iter.hasNext())
+				result.append(",");
 		}
 		return result.toString();
 	}
+	
 	private String getTracingFileArgument(ILaunchConfiguration config) {
 		TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 		Map options;
