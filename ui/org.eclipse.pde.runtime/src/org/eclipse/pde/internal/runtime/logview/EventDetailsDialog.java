@@ -60,6 +60,12 @@ public class EventDetailsDialog extends Dialog {
 	private IDialogSettings dialogSettings;
 	private Point dialogLocation;
 	private Point dialogSize;
+	
+	// externalize strings
+	private String EVENT_NO_STACK = "EventDetailsDialog.noStack";
+	private String EVENT_PREVIOUS = "EventDetailsDialog.previous";
+	private String EVENT_NEXT = "EventDetailsDialog.next";
+	private String EVENT_COPY = "EventDetailsDialog.copy";
 
 	/**
 	 * @param parentShell
@@ -277,7 +283,7 @@ public class EventDetailsDialog extends Dialog {
 		if (stack != null) {
 			stackTraceText.setText(stack);
 		} else {
-			stackTraceText.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.noStack"));
+			stackTraceText.setText(PDERuntimePlugin.getResourceString(EVENT_NO_STACK));
 		}
 		LogSession session = entry.getSession();
 		if (session != null && session.getSessionData() != null)
@@ -376,21 +382,23 @@ public class EventDetailsDialog extends Dialog {
 		gd.verticalSpan = 1;
 		backButton.setLayoutData(gd);
 		backButton.setImage(elementNum == 0 ? imgPrevDisabled : imgPrevEnabled);
-
+		backButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_PREVIOUS));
+		
 		nextButton = createButton(container, IDialogConstants.NEXT_ID, "", false);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		nextButton.setLayoutData(gd);
 		nextButton.setImage(elementNum == totalElementCount - 1 ? imgNextDisabled : imgNextEnabled);
-
+		nextButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_NEXT));
+		
 		copyButton = createButton(container, COPY_ID, "", false);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.verticalSpan = 1;
 		copyButton.setLayoutData(gd);
 		copyButton.setImage(imgCopyEnabled);
-
+		copyButton.setToolTipText(PDERuntimePlugin.getResourceString(EVENT_COPY));
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
