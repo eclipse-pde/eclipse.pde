@@ -46,9 +46,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 				}
 			}
 		} else if (element instanceof IPackageFragmentRoot) {
-			if (delta.getKind() == IJavaElementDelta.CHANGED) {
-				handleChildDeltas(delta);
-			} 
+			handleChildDeltas(delta);
 		}
 	}
 	
@@ -56,8 +54,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 		IJavaElementDelta[] deltas = delta.getAffectedChildren();
 		for (int i = 0; i < deltas.length; i++) {
 			IJavaElement element = deltas[i].getElement();		
-			if ((element instanceof IPackageFragmentRoot || element instanceof IPackageFragment)
-					&& isInterestingDelta(deltas[i])) {
+			if (element instanceof IPackageFragment && isInterestingDelta(deltas[i])) {
 				updateTable(element);
 				break;
 			}
