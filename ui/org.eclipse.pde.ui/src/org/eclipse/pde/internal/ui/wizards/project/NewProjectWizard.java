@@ -13,7 +13,6 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IProjectProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewProjectWizard
 	extends NewWizard
@@ -76,7 +75,8 @@ public class NewProjectWizard
 				structurePage,
 				getAvailableCodegenWizards(),
 				PDEPlugin.getResourceString(KEY_CODEGEN_MESSAGE),
-				isFragmentWizard());
+				isFragmentWizard(),
+				config);
 		addPage(codegenPage);
 	}
 	public boolean canFinish() {
@@ -147,9 +147,10 @@ public class NewProjectWizard
 	}
 	public boolean performFinish() {
 		if (structurePage.finish()) {
-			if (structurePage.getNextPage() == null || codegenPage.finish()) {
-				BasicNewProjectResourceWizard.updatePerspective(config);
-				revealSelection(mainPage.getProjectHandle());
+			boolean hasCodegen = structurePage.getNextPage()!=null;
+			
+			if (!hasCodegen || codegenPage.finish()) {
+				revealSelection(mainPage.getProjectHandle()); 
 				return true;
 			}
 		}

@@ -85,7 +85,9 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	}
 	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url");
-		description = getNormalizedText(node.getFirstChild().getNodeValue());
+		Node firstChild = node.getFirstChild();
+		if (firstChild!=null)
+			description = getNormalizedText(firstChild.getNodeValue());
 	}
 
 	public void write(String indent, PrintWriter writer) {

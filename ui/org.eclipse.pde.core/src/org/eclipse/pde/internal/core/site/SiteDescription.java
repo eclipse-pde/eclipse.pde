@@ -64,7 +64,9 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		for (int i=0; i<children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType()==Node.TEXT_NODE) {
-				text = getNormalizedText(node.getFirstChild().getNodeValue());
+				Node firstChild = node.getFirstChild();
+				if (firstChild!=null)
+					text = getNormalizedText(firstChild.getNodeValue());
 				break;
 			}
 		}

@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private Button blankPageRadio;
@@ -53,18 +54,20 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private static final String KEY_FDESC =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.fdesc";
 	private ProjectStructurePage projectStructurePage;
-
+	private IConfigurationElement config;
 
 	public ProjectCodeGeneratorsPage(
 		IProjectProvider provider,
 		ProjectStructurePage projectStructurePage,
 		ElementList wizardElements,
 		String message,
-		boolean fragment) {
+		boolean fragment,
+		IConfigurationElement config) {
 		super(wizardElements, message);
 		this.fragment = fragment;
 		this.provider = provider;
 		this.projectStructurePage = projectStructurePage;
+		this.config = config;
 
 		setTitle(
 			PDEPlugin.getResourceString(fragment ? KEY_FTITLE : KEY_TITLE));
@@ -131,7 +134,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			public IBasePluginWizard createWizard() throws CoreException {
 				IPluginContentWizard wizard =
 					(IPluginContentWizard) wizardElement.createExecutableExtension();
-				wizard.init(provider, projectStructurePage.getStructureData(), fragment);
+				wizard.init(provider, projectStructurePage.getStructureData(), fragment, config);
 				return wizard;
 			}
 		};
@@ -197,6 +200,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 				try {
 					boolean exists = createBlankManifest(project, structureData, monitor);
 					setJavaSettings(project, structureData, !exists, monitor);
+					BasicNewProjectResourceWizard.updatePerspective(config);					
 				} catch (JavaModelException e) {
 					PDEPlugin.logException(e);
 				} catch (CoreException e) {

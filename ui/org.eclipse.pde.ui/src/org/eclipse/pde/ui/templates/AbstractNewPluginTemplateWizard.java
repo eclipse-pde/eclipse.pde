@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
  * <p>
@@ -51,6 +52,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	private boolean fragment;
 	private FirstTemplateWizardPage firstPage;
 	private ITemplateSection[] activeSections;
+	private IConfigurationElement config;
 
 	/**
 	 * Creates a new template wizard.
@@ -82,10 +84,12 @@ public abstract class AbstractNewPluginTemplateWizard
 	public void init(
 		IProjectProvider provider,
 		IPluginStructureData structureData,
-		boolean fragment) {
+		boolean fragment,
+		IConfigurationElement config) {
 		this.provider = provider;
 		this.structureData = structureData;
 		this.fragment = fragment;
+		this.config = config;
 		setWindowTitle(
 			PDEPlugin.getResourceString(fragment ? KEY_WFTITLE : KEY_WTITLE));
 	}
@@ -388,6 +392,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	}
 
 	private void openPluginFile(final IFile file) {
+		BasicNewProjectResourceWizard.updatePerspective(config);		
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 
 		final IWorkbenchPage page = ww.getActivePage();
