@@ -26,7 +26,8 @@
 	<!-- Process the directory.txt to create unzipper.xml, and run unzipper.xml-->
 	<target name="prepareResources">
 		<eclipse.unzipperBuilder 	workingDirectory="${workingDirectory}" 
-											configInfo="${config}"/>
+											configInfo="${config}"
+											packagePropertyFile="${packagingPropertyFile}"/>
 		<ant antfile="${workingDirectory}/unzipper.xml"/>
 	</target>
 
