@@ -169,7 +169,7 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private Composite createComposite(Composite parent, FormToolkit toolkit, String text) {
-		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE|ExpandableComposite.CLIENT_INDENT);
+		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE);
 		ec.setText(text);
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
