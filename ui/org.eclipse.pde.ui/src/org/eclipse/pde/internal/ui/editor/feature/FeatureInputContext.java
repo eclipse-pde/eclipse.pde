@@ -25,10 +25,7 @@ import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.ui.*;
 
 /**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
  */
 public class FeatureInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID="feature-context";

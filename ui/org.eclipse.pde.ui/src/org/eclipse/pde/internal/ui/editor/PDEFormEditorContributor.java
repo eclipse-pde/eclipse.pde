@@ -291,6 +291,8 @@ public class PDEFormEditorContributor
 		registerGlobalAction(ActionFactory.PASTE.getId());
 		registerGlobalAction(ActionFactory.SELECT_ALL.getId());
 		registerGlobalAction(ActionFactory.FIND.getId());
+		// hook revert
+		getActionBars().setGlobalActionHandler(ActionFactory.REVERT.getId(), revertAction);
 	}
 	private void registerGlobalAction(String id) {
 		IAction action = getGlobalAction(id);

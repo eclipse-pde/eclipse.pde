@@ -31,7 +31,7 @@ public WorkspaceFeatureModel(IFile file) {
 }
 public void fireModelChanged(IModelChangedEvent event) {
 	if (event.getChangeType()!=IModelChangedEvent.WORLD_CHANGED)
-		dirty = true;
+		setDirty(dirty);
 	super.fireModelChanged(event);
 }
 
@@ -140,7 +140,7 @@ public void save(PrintWriter writer) {
 		//writer.println("<!DOCTYPE feature SYSTEM \"dtd/feature.dtd\">");
 		feature.write("", writer);
 	}
-	dirty = false;
+	setDirty(false);
 }
 public void setDirty(boolean dirty) {
 	this.dirty = dirty;
