@@ -14,7 +14,8 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -124,50 +125,100 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		return "?"; //$NON-NLS-1$
 	}
 
-	int processLogLine(String line, boolean root) {
-		//!ENTRY <pluginID> <severity> <code> <date>
-		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
-		StringTokenizer stok = new StringTokenizer(line, " ", true); //$NON-NLS-1$
-		StringBuffer dateBuffer = new StringBuffer();
 
-		int dateCount = 5;
-		int depth = 0;
-		for (int i = 0; stok.hasMoreTokens();) {
+	void processEntry(String line) {
+		//!ENTRY <pluginID> <severity> <code> <date>
+		//!ENTRY <pluginID> <date> if logged by the framework!!!
+		StringTokenizer stok = new StringTokenizer(line, " "); //$NON-NLS-1$
+		int tokenCount = stok.countTokens();		
+		boolean byFrameWork = stok.countTokens() < 5;
+		
+		if (byFrameWork) {
+			severity = 4;
+			code = 0;
+		}
+		StringBuffer dateBuffer = new StringBuffer();
+		for (int i = 0; i < tokenCount; i++) {
 			String token = stok.nextToken();
-			if (i >= dateCount) {
-				dateBuffer.append(token);
-				continue;
-			} else if (token.equals(" ")) //$NON-NLS-1$
-				continue;
 			switch (i) {
-				case 0 : // entry or subentry
-					if (root)
-						i += 2;
-					else
-						i++;
+				case 0:
 					break;
-				case 1 : // depth
-					depth = parseInteger(token);
-					i++;
-					break;
-				case 2 :
+				case 1:
 					pluginId = token;
-					i++;
 					break;
-				case 3 : // severity
-					severity = parseInteger(token);
-					i++;
+				case 2:
+					if (byFrameWork) {
+						if (dateBuffer.length() > 0)
+							dateBuffer.append(" "); //$NON-NLS-1$
+						dateBuffer.append(token);
+					} else {
+						severity = parseInteger(token);
+					}
 					break;
-				case 4 : // code
-					code = parseInteger(token);
-					i++;
+				case 3:
+					if (byFrameWork) {
+						if (dateBuffer.length() > 0)
+							dateBuffer.append(" "); //$NON-NLS-1$
+						dateBuffer.append(token);
+					} else
+						code = parseInteger(token);
 					break;
+				default:
+					if (dateBuffer.length() > 0)
+						dateBuffer.append(" "); //$NON-NLS-1$
+					dateBuffer.append(token);
 			}
 		}
-		date = dateBuffer.toString().trim();
-		return depth;
+		date = dateBuffer.toString();
 	}
-
+	
+	int processSubEntry(String line) {
+		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
+		//!SUBENTRY  <depth> <pluginID> <date>if logged by the framework!!!
+		StringTokenizer stok = new StringTokenizer(line, " "); //$NON-NLS-1$
+		int tokenCount = stok.countTokens();		
+		boolean byFrameWork = stok.countTokens() < 5;
+		
+		StringBuffer dateBuffer = new StringBuffer();
+		int depth = 0;
+		for (int i = 0; i < tokenCount; i++) {
+			String token = stok.nextToken();
+			switch (i) {
+				case 0:
+					break;
+				case 1:
+					depth = parseInteger(token);
+					break;
+				case 2:
+					pluginId = token;
+					break;
+				case 3:
+					if (byFrameWork) {
+						if (dateBuffer.length() > 0)
+							dateBuffer.append(" "); //$NON-NLS-1$
+						dateBuffer.append(token);
+					} else {
+						severity = parseInteger(token);
+					}
+					break;
+				case 4:
+					if (byFrameWork) {
+						if (dateBuffer.length() > 0)
+							dateBuffer.append(" "); //$NON-NLS-1$
+						dateBuffer.append(token);
+					} else
+						code = parseInteger(token);
+					break;
+				default:
+					if (dateBuffer.length() > 0)
+						dateBuffer.append(" "); //$NON-NLS-1$
+					dateBuffer.append(token);
+			}
+		}
+		date = dateBuffer.toString();
+		return depth;	
+	}
+	
 	private int parseInteger(String token) {
 		try {
 			return Integer.parseInt(token);

@@ -102,7 +102,7 @@ class LogReader {
 				} else if (state == ENTRY_STATE) {
 					LogEntry entry = new LogEntry();
 					entry.setSession(session);
-					entry.processLogLine(line, true);
+					entry.processEntry(line);
 					setNewParent(parents, entry, 0);
 					current = entry;
 					addEntry(current, entries, memento, false);
@@ -110,7 +110,7 @@ class LogReader {
 					if (parents.size() > 0) {
 						LogEntry entry = new LogEntry();
 						entry.setSession(session);
-						int depth = entry.processLogLine(line, false);
+						int depth = entry.processSubEntry(line);
 						setNewParent(parents, entry, depth);
 						current = entry;
 						LogEntry parent = (LogEntry) parents.get(depth - 1);
@@ -215,7 +215,7 @@ class LogReader {
 				} else if (state == ENTRY_STATE) {
 					LogEntry entry = new LogEntry();
 					entry.setSession(session);
-					entry.processLogLine(line, true);
+					entry.processEntry(line);
 					setNewParent(parents, entry, 0);
 					current = entry;
 					addEntry(current, entries, memento, false);
@@ -223,7 +223,7 @@ class LogReader {
 					if (parents.size() > 0) {
 						LogEntry entry = new LogEntry();
 						entry.setSession(session);
-						int depth = entry.processLogLine(line, false);
+						int depth = entry.processSubEntry(line);
 						setNewParent(parents, entry, depth);
 						current = entry;
 						LogEntry parent = (LogEntry) parents.get(depth - 1);

@@ -15,11 +15,12 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
@@ -39,290 +40,349 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 
-
 public class LogView extends ViewPart implements ILogListener {
-    private TableTreeViewer tableTreeViewer;
-    private ArrayList logs = new ArrayList();
     public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
     public static final String P_LOG_ERROR = "error"; //$NON-NLS-1$
     public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
     public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$
     public static final String P_USE_LIMIT = "useLimit"; //$NON-NLS-1$
     public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
-    private static final String P_COLUMN_1 = "column1"; //$NON-NLS-1$
-    private static final String P_COLUMN_2 = "column2"; //$NON-NLS-1$
-    private static final String P_COLUMN_3 = "column3"; //$NON-NLS-1$
-    private static final String P_COLUMN_4 = "column4"; //$NON-NLS-1$
+    private static final String P_COLUMN_1 = "column2"; //$NON-NLS-1$
+    private static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
+    private static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
     public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
     public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
     public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
+    
     private int MESSAGE_ORDER;
     private int PLUGIN_ORDER;
     private int DATE_ORDER;
+    
     public final static byte MESSAGE = 0x0;
     public final static byte PLUGIN = 0x1;
     public final static byte DATE = 0x2;
-    private static int ASCENDING = 1;
-    private static int DESCENDING = -1;
-    private Action clearAction;
-    private Action copyAction;
-    private Action readLogAction;
-    private Action deleteLogAction;
-    private Action exportAction;
-    private Action importAction;
-    private Action activateViewAction;
-    private Action propertiesAction;
-    private Action viewLogAction;
-    private Action filterAction;
-    private Clipboard clipboard;
-    private IMemento memento;
-    private File inputFile;
-    private String directory;
-    private TableColumn column0;
-    private TableColumn column1;
-    private TableColumn column2;
-    private TableColumn column3;
-    private TableColumn column4;
-    private static Font boldFont;
+    public static int ASCENDING = 1;
+    public static int DESCENDING = -1;
+    
+    private ArrayList fLogs = new ArrayList();
+
+    private Clipboard fClipboard;
+    
+    private IMemento fMemento;
+    private File fInputFile;
+    private String fDirectory;
+
     private Comparator comparator;
     private Collator collator;
+    
     // hover text
     private boolean canOpenTextShell;
     private Text textLabel;
     private Shell textShell;
-    private boolean firstEvent = true;
+
+    private boolean fFirstEvent = true;
+    
+	private TreeColumn fColumn1;
+	private TreeColumn fColumn2;
+	private TreeColumn fColumn3;
+	
+	private Tree fTree;
+	private TreeViewer fTreeViewer;
+	
+	private Action fPropertiesAction;
+	private Action fDeleteLogAction;
+	private Action fReadLogAction;
+	private Action fCopyAction;
+	private Action fActivateViewAction;
+	private Action fOpenLogAction;
 
     public LogView() {
-        logs = new ArrayList();
-        inputFile = Platform.getLogFileLocation().toFile();
+        fLogs = new ArrayList();
+        fInputFile = Platform.getLogFileLocation().toFile();
     }
 
     public void createPartControl(Composite parent) {
         readLogFile();
-        TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
-        tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-        createColumns(tableTree.getTable());
-        createViewer(tableTree);
-        createPopupMenuManager(tableTree);
-        makeActions(tableTree.getTable());
-        fillToolBar();
-        Platform.addLogListener(this);
-        getSite().setSelectionProvider(tableTreeViewer);
-        clipboard = new Clipboard(tableTree.getDisplay());
-        WorkbenchHelp.setHelp(tableTree, IHelpContextIds.LOG_VIEW);
-        tableTreeViewer.getTableTree().getTable().setToolTipText(""); //$NON-NLS-1$
-        initializeFonts();
+        createViewer(parent);
+        createActions();
+        fClipboard = new Clipboard(fTree.getDisplay());
+        fTree.setToolTipText(""); //$NON-NLS-1$
+        getSite().setSelectionProvider(fTreeViewer);
         initializeViewerSorter();
-        applyFonts();
+        
+        Platform.addLogListener(this);
+        WorkbenchHelp.setHelp(fTree, IHelpContextIds.LOG_VIEW);
     }
 
-    private void initializeFonts() {
-        Font tableFont = tableTreeViewer.getTableTree().getFont();
-        FontData[] fontDataList = tableFont.getFontData();
-        FontData fontData;
-        if (fontDataList.length > 0)
-            fontData = fontDataList[0];
-        else
-            fontData = new FontData();
-        fontData.setStyle(SWT.BOLD);
-        boldFont = new Font(tableTreeViewer.getTableTree().getDisplay(), fontData);
-    }
-
-    /*
-     * Set all rows where the tableTreeItem has children to have a <b>bold </b>
-     * font.
-     */
-    private void applyFonts() {
-        if (tableTreeViewer == null || tableTreeViewer.getTableTree().isDisposed())
-            return;
-        int max = tableTreeViewer.getTableTree().getItemCount();
-        int index = 0, tableIndex = 0;
-        while (index < max) {
-            LogEntry entry = (LogEntry) tableTreeViewer.getElementAt(index);
-            if (entry == null)
-                return;
-            if (entry.hasChildren()) {
-                tableTreeViewer.getTableTree().getItems()[index].setFont(boldFont);
-                tableIndex = applyChildFonts(entry, tableIndex);
-            } else {
-                tableTreeViewer.getTableTree().getItems()[index].setFont(tableTreeViewer
-                        .getTableTree().getFont());
-            }
-            index++;
-            tableIndex++;
-        }
-    }
-
-    private int applyChildFonts(LogEntry parent, int index) {
-        if (!tableTreeViewer.getExpandedState(parent) || !parent.hasChildren())
-            return index;
-        LogEntry[] children = getEntryChildren(parent);
-        for (int i = 0; i < children.length; i++) {
-            index++;
-            if (children[i].hasChildren()) {
-                TableItem tableItem = getTableItem(index);
-                if (tableItem != null) {
-                    tableItem.setFont(boldFont);
-                }
-                index = applyChildFonts(children[i], index);
-            } else {
-                TableItem tableItem = getTableItem(index);
-                if (tableItem != null) {
-                    tableItem.setFont(tableTreeViewer.getTableTree().getFont());
-                }
-            }
-        }
-        return index;
-    }
-
-    private LogEntry[] getEntryChildren(LogEntry parent) {
-        Object[] entryChildren = parent.getChildren(parent);
-        if (comparator != null)
-            Arrays.sort(entryChildren, comparator);
-        LogEntry[] children = new LogEntry[entryChildren.length];
-        System.arraycopy(entryChildren, 0, children, 0, entryChildren.length);
-        return children;
-    }
-
-    private TableItem getTableItem(int index) {
-        TableItem[] tableItems = tableTreeViewer.getTableTree().getTable().getItems();
-        if (index > tableItems.length - 1)
-            return null;
-        return tableItems[index];
-    }
-
-    private void fillToolBar() {
+     private void createActions() {
         IActionBars bars = getViewSite().getActionBars();
-        bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+        
+        fCopyAction = createCopyAction();
+        bars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
+        
         IToolBarManager toolBarManager = bars.getToolBarManager();
+        
+        final Action exportAction = createExportAction();
         toolBarManager.add(exportAction);
-        toolBarManager.add(importAction);
+        
+        final Action importLogAction = createImportLogAction();
+        toolBarManager.add(importLogAction);
+        
         toolBarManager.add(new Separator());
+        
+        final Action clearAction = createClearAction();
         toolBarManager.add(clearAction);
-        toolBarManager.add(deleteLogAction);
-        toolBarManager.add(viewLogAction);
-        toolBarManager.add(readLogAction);
+        
+        fDeleteLogAction = createDeleteLogAction();
+        toolBarManager.add(fDeleteLogAction);
+        
+        fOpenLogAction = createOpenLogAction();
+        toolBarManager.add(fOpenLogAction);
+        
+        fReadLogAction = createReadLogAction();
+        toolBarManager.add(fReadLogAction);
+        
         toolBarManager.add(new Separator());
+        
         IMenuManager mgr = bars.getMenuManager();
-        mgr.add(filterAction);
+        mgr.add(createFilterAction());
         mgr.add(new Separator());
-        mgr.add(activateViewAction);
-    }
-
-    private void createViewer(TableTree tableTree) {
-        tableTreeViewer = new TableTreeViewer(tableTree);
-        tableTreeViewer.setContentProvider(new LogViewContentProvider(this));
-        tableTreeViewer.setLabelProvider(new LogViewLabelProvider());
-        tableTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent e) {
-                handleSelectionChanged(e.getSelection());
-                if (propertiesAction.isEnabled())
-                    ((EventDetailsDialogAction) propertiesAction).resetSelection();
-            }
-        });
-        tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                ((EventDetailsDialogAction) propertiesAction).setComparator(comparator);
-                propertiesAction.run();
-            }
-        });
-        tableTreeViewer.addTreeListener(new ITreeViewerListener() {
-            public void treeCollapsed(TreeExpansionEvent event) {
-                applyFonts();
-            }
-
-            public void treeExpanded(TreeExpansionEvent event) {
-                applyFonts();
-            }
-        });
-        addMouseListeners();
-        tableTreeViewer.setInput(Platform.class);
-    }
-
-    private void createPopupMenuManager(TableTree tableTree) {
+        
+        fActivateViewAction = createActivateViewAction();
+        mgr.add(fActivateViewAction);
+        
+        createPropertiesAction();
+        
         MenuManager popupMenuManager = new MenuManager();
         IMenuListener listener = new IMenuListener() {
-            public void menuAboutToShow(IMenuManager mng) {
-                fillContextMenu(mng);
+            public void menuAboutToShow(IMenuManager manager) {
+                manager.add(fCopyAction);
+                manager.add(new Separator());
+                manager.add(clearAction);
+                manager.add(fDeleteLogAction);
+                manager.add(fOpenLogAction);
+                manager.add(fReadLogAction);
+                manager.add(new Separator());
+                manager.add(exportAction);
+                manager.add(importLogAction);
+                manager.add(new Separator());
+                ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                manager.add(fPropertiesAction);
             }
         };
         popupMenuManager.addMenuListener(listener);
         popupMenuManager.setRemoveAllWhenShown(true);
-        Menu menu = popupMenuManager.createContextMenu(tableTree);
-        tableTree.setMenu(menu);
+        Menu menu = popupMenuManager.createContextMenu(fTree);
+        fTree.setMenu(menu);
+    }
+     
+     private Action createActivateViewAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) { //$NON-NLS-1$       	
+            public void run() {
+            	fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        };
+        action.setChecked(fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+        return action;
+     }
+     
+     private Action createClearAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) { //$NON-NLS-1$
+            public void run() {
+                handleClear();
+            }
+        };
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_DISABLED);
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.clear.tooltip")); //$NON-NLS-1$
+        action.setText(PDERuntimePlugin.getResourceString("LogView.clear")); //$NON-NLS-1$
+    	return action;
+    }
+     
+    private Action createCopyAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) { //$NON-NLS-1$
+            public void run() {
+                copyToClipboard(fTreeViewer.getSelection());
+            }
+        };
+        action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+    	return action;
+    }
+    
+    private Action createDeleteLogAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.delete")) { //$NON-NLS-1$
+            public void run() {
+                doDeleteLog();
+            }
+        };
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.delete.tooltip")); //$NON-NLS-1$
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
+        action.setEnabled(fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
+        return action;
     }
 
-    private void createColumns(Table table) {
-        column0 = new TableColumn(table, SWT.NULL);
-        column0.setText(""); //$NON-NLS-1$
-        column1 = new TableColumn(table, SWT.NULL);
-        column1.setText(PDERuntimePlugin.getResourceString("LogView.column.severity")); //$NON-NLS-1$
-        column1.addControlListener(new ControlListener(){
-			public void controlMoved(ControlEvent e) {
-			}
-
-			public void controlResized(ControlEvent e) {
-				memento.putInteger(P_COLUMN_1, column1.getWidth());
-			}
-        	
+    private Action createExportAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.export")) { //$NON-NLS-1$
+            public void run() {
+                handleExport();
+            }
+        };
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.export.tooltip")); //$NON-NLS-1$
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_DISABLED);
+    	return action;
+    }
+    
+    private Action createFilterAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) { //$NON-NLS-1$
+            public void run() {
+                handleFilter();
+            }
+        };
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter")); //$NON-NLS-1$
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
+    	return action;
+    }
+    
+    private Action createImportLogAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.import")) { //$NON-NLS-1$
+            public void run() {
+                handleImport();
+            }
+        };
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.import.tooltip")); //$NON-NLS-1$
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_DISABLED);
+        return action;
+    }
+    
+    private Action createOpenLogAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")) { //$NON-NLS-1$
+            public void run() {
+                if (fInputFile.exists()) {
+                    if (fInputFile.length() > LogReader.MAX_FILE_LENGTH) {
+                        OpenLogDialog openDialog = new OpenLogDialog(getViewSite()
+                                .getShell(), fInputFile);
+                        openDialog.create();
+                        openDialog.open();
+                        return;
+                    } 
+                    if (!Program.launch(fInputFile.getAbsolutePath())) {
+                        Program p = Program.findProgram(".txt"); //$NON-NLS-1$
+                        if (p != null)
+                            p.execute(fInputFile.getAbsolutePath());
+                        else {
+                            OpenLogDialog openDialog = new OpenLogDialog(
+                                    getViewSite().getShell(), fInputFile);
+                            openDialog.create();
+                            openDialog.open();
+                        }                  
+                    }
+                }
+            }
+        };
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG_DISABLED);
+        action.setEnabled(fInputFile.exists());
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip")); //$NON-NLS-1$
+    	return action;
+    }
+    
+    private void createPropertiesAction() {
+        fPropertiesAction = new EventDetailsDialogAction(fTree.getShell(), fTreeViewer);
+        fPropertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
+        fPropertiesAction
+                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
+        fPropertiesAction.setToolTipText(PDERuntimePlugin
+                .getResourceString("LogView.properties.tooltip")); //$NON-NLS-1$
+        fPropertiesAction.setEnabled(false);
+    }
+    
+    private Action createReadLogAction() {
+        Action action = new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) { //$NON-NLS-1$
+            public void run() {
+                fInputFile = Platform.getLogFileLocation().toFile();
+                reloadLog();
+            }
+        };
+        action.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.restore.tooltip")); //$NON-NLS-1$
+        action.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
+        action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
+    	return action;
+    }
+    
+    private void createViewer(Composite parent) {
+        fTreeViewer = new TreeViewer(parent, SWT.FULL_SELECTION);
+        fTree = fTreeViewer.getTree();
+        createColumns(fTree);
+        fTreeViewer.setContentProvider(new LogViewContentProvider(this));
+        fTreeViewer.setLabelProvider(new LogViewLabelProvider());
+        fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent e) {
+                handleSelectionChanged(e.getSelection());
+                if (fPropertiesAction.isEnabled())
+                    ((EventDetailsDialogAction) fPropertiesAction).resetSelection();
+            }
         });
-        column2 = new TableColumn(table, SWT.NULL);
-        column2.setText(PDERuntimePlugin.getResourceString("LogView.column.message")); //$NON-NLS-1$
-        column2.addSelectionListener(new SelectionAdapter() {
+        fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                fPropertiesAction.run();
+            }
+			
+        });
+        fTreeViewer.setInput(this);
+        addMouseListeners();
+   }
+
+    private void createColumns(Tree tree) {
+        fColumn1 = new TreeColumn(tree, SWT.LEFT);
+        fColumn1.setText(PDERuntimePlugin.getResourceString("LogView.column.message")); //$NON-NLS-1$
+        fColumn1.setWidth(fMemento.getInteger(P_COLUMN_1).intValue());
+        fColumn1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 MESSAGE_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(MESSAGE);
-                tableTreeViewer.setSorter(sorter);
+                fTreeViewer.setSorter(sorter);
                 collator = sorter.getCollator();
-                boolean isComparatorSet = ((EventDetailsDialogAction) propertiesAction)
+                boolean isComparatorSet = ((EventDetailsDialogAction) fPropertiesAction)
                         .resetSelection(MESSAGE, MESSAGE_ORDER);
                 setComparator(MESSAGE);
                 if (!isComparatorSet)
-                    ((EventDetailsDialogAction) propertiesAction)
+                    ((EventDetailsDialogAction) fPropertiesAction)
                             .setComparator(comparator);
-                applyFonts();
-                memento.putInteger(P_ORDER_VALUE, MESSAGE_ORDER);
-                memento.putInteger(P_ORDER_TYPE, MESSAGE);
+                fMemento.putInteger(P_ORDER_VALUE, MESSAGE_ORDER);
+                fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
             }
         });
-        column2.addControlListener(new ControlListener(){
-			public void controlMoved(ControlEvent e) {
-			}
 
-			public void controlResized(ControlEvent e) {
-				memento.putInteger(P_COLUMN_2, column2.getWidth());
-			}
-        });
-        column3 = new TableColumn(table, SWT.NULL);
-        column3.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin")); //$NON-NLS-1$
-        column3.addSelectionListener(new SelectionAdapter() {
+        fColumn2 = new TreeColumn(tree, SWT.LEFT);
+        fColumn2.setText(PDERuntimePlugin.getResourceString("LogView.column.plugin")); //$NON-NLS-1$
+        fColumn2.setWidth(fMemento.getInteger(P_COLUMN_2).intValue());
+        fColumn2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PLUGIN_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(PLUGIN);
-                tableTreeViewer.setSorter(sorter);
+                fTreeViewer.setSorter(sorter);
                 collator = sorter.getCollator();
-                boolean isComparatorSet = ((EventDetailsDialogAction) propertiesAction)
+                boolean isComparatorSet = ((EventDetailsDialogAction) fPropertiesAction)
                         .resetSelection(PLUGIN, PLUGIN_ORDER);
                 setComparator(PLUGIN);
                 if (!isComparatorSet)
-                    ((EventDetailsDialogAction) propertiesAction)
+                    ((EventDetailsDialogAction) fPropertiesAction)
                             .setComparator(comparator);
-                applyFonts();
-                memento.putInteger(P_ORDER_VALUE, PLUGIN_ORDER);
-                memento.putInteger(P_ORDER_TYPE, PLUGIN);
+                fMemento.putInteger(P_ORDER_VALUE, PLUGIN_ORDER);
+                fMemento.putInteger(P_ORDER_TYPE, PLUGIN);
             }
         });
-        column3.addControlListener(new ControlListener(){
-        	public void controlMoved(ControlEvent e){
-        	}
-        	
-        	public void controlResized(ControlEvent e){
-        		memento.putInteger(P_COLUMN_3, column3.getWidth());
-        	}
-        });
-        column4 = new TableColumn(table, SWT.NULL);
-        column4.setText(PDERuntimePlugin.getResourceString("LogView.column.date")); //$NON-NLS-1$
-        column4.addSelectionListener(new SelectionAdapter() {
+
+        fColumn3 = new TreeColumn(tree, SWT.LEFT);
+        fColumn3.setText(PDERuntimePlugin.getResourceString("LogView.column.date"));//$NON-NLS-1$
+        fColumn3.setWidth(fMemento.getInteger(P_COLUMN_3).intValue());
+        fColumn3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (DATE_ORDER == ASCENDING) {
                     DATE_ORDER = DESCENDING;
@@ -330,205 +390,57 @@ public class LogView extends ViewPart implements ILogListener {
                     DATE_ORDER = ASCENDING;
                 }
                 ViewerSorter sorter = getViewerSorter(DATE);
-                tableTreeViewer.setSorter(sorter);
+                fTreeViewer.setSorter(sorter);
                 collator = sorter.getCollator();
-                boolean isComparatorSet = ((EventDetailsDialogAction) propertiesAction)
+                boolean isComparatorSet = ((EventDetailsDialogAction) fPropertiesAction)
                         .resetSelection(DATE, DATE_ORDER);
                 setComparator(DATE);
-                if (!isComparatorSet)
-                    ((EventDetailsDialogAction) propertiesAction)
-                            .setComparator(comparator);
-                applyFonts();
-                memento.putInteger(P_ORDER_VALUE, DATE_ORDER);
-                memento.putInteger(P_ORDER_TYPE, DATE);
+				((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
+                fMemento.putInteger(P_ORDER_TYPE, DATE);
             }
         });
-        column4.addControlListener(new ControlListener(){
-        	public void controlMoved(ControlEvent e){
-        	}
-        	public void controlResized(ControlEvent e){
-        		memento.putInteger(P_COLUMN_4, column4.getWidth());
-        	}
-        });
         
-        TableLayout tlayout = new TableLayout();
-        tlayout.addColumnData(new ColumnPixelData(21));
-        tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_1)
-                .intValue()));
-        tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_2)
-                .intValue()));
-        tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_3)
-                .intValue()));
-        tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_4)
-                .intValue()));
-        table.setLayout(tlayout);
-        table.setHeaderVisible(true);
+        tree.setHeaderVisible(true);
     }
 
 	private void initializeViewerSorter() {
-        ViewerSorter sorter = getViewerSorter(memento.getInteger(P_ORDER_TYPE).byteValue());
-        tableTreeViewer.setSorter(sorter);
+        ViewerSorter sorter = getViewerSorter(fMemento.getInteger(P_ORDER_TYPE).byteValue());
+        fTreeViewer.setSorter(sorter);
 	}
-
-	private void makeActions(Table table) {
-        propertiesAction = new EventDetailsDialogAction(table.getShell(), tableTreeViewer);
-        propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
-        propertiesAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
-        propertiesAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.properties.tooltip")); //$NON-NLS-1$
-        propertiesAction.setEnabled(false);
-        clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) { //$NON-NLS-1$
-            public void run() {
-                handleClear();
-            }
-        };
-        clearAction.setImageDescriptor(PDERuntimePluginImages.DESC_CLEAR);
-        clearAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_CLEAR_DISABLED);
-        clearAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.clear.tooltip")); //$NON-NLS-1$
-        clearAction.setText(PDERuntimePlugin.getResourceString("LogView.clear")); //$NON-NLS-1$
-        readLogAction = new Action(PDERuntimePlugin
-                .getResourceString("LogView.readLog.restore")) { //$NON-NLS-1$
-            public void run() {
-                inputFile = Platform.getLogFileLocation().toFile();
-                reloadLog();
-            }
-        };
-        readLogAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.readLog.restore.tooltip")); //$NON-NLS-1$
-        readLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG);
-        readLogAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
-        deleteLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.delete")) { //$NON-NLS-1$
-            public void run() {
-                doDeleteLog();
-            }
-        };
-        deleteLogAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.delete.tooltip")); //$NON-NLS-1$
-        deleteLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG);
-        deleteLogAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
-        deleteLogAction.setEnabled(inputFile.exists()
-                && inputFile.equals(Platform.getLogFileLocation().toFile()));
-        copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) { //$NON-NLS-1$
-            public void run() {
-                copyToClipboard(tableTreeViewer.getSelection());
-            }
-        };
-        copyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-                .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-        filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) { //$NON-NLS-1$
-            public void run() {
-                handleFilter();
-            }
-        };
-        filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter")); //$NON-NLS-1$
-        filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
-        filterAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
-        exportAction = new Action(PDERuntimePlugin.getResourceString("LogView.export")) { //$NON-NLS-1$
-            public void run() {
-                handleExport();
-            }
-        };
-        exportAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.export.tooltip")); //$NON-NLS-1$
-        exportAction.setImageDescriptor(PDERuntimePluginImages.DESC_EXPORT);
-        exportAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_EXPORT_DISABLED);
-        importAction = new Action(PDERuntimePlugin.getResourceString("LogView.import")) { //$NON-NLS-1$
-            public void run() {
-                handleImport();
-            }
-        };
-        importAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.import.tooltip")); //$NON-NLS-1$
-        importAction.setImageDescriptor(PDERuntimePluginImages.DESC_IMPORT);
-        importAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_DISABLED);
-        activateViewAction = new Action(PDERuntimePlugin
-                .getResourceString("LogView.activate")) { //$NON-NLS-1$
-            public void run() {
-            	memento.putString(P_ACTIVATE, activateViewAction.isChecked()?"true": "false"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        };
-        activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
-        viewLogAction = new Action(PDERuntimePlugin
-                .getResourceString("LogView.view.currentLog")) { //$NON-NLS-1$
-            public void run() {
-                if (inputFile.exists()) {
-                    if (inputFile.length() > LogReader.MAX_FILE_LENGTH) {
-                        OpenLogDialog openDialog = new OpenLogDialog(getViewSite()
-                                .getShell(), inputFile);
-                        openDialog.create();
-                        openDialog.open();
-                    } else {
-                        boolean canLaunch = Program.launch(inputFile.getAbsolutePath());
-                        if (!canLaunch) {
-                            Program p = Program.findProgram(".txt"); //$NON-NLS-1$
-                            if (p != null)
-                                p.execute(inputFile.getAbsolutePath());
-                            else {
-                                OpenLogDialog openDialog = new OpenLogDialog(
-                                        getViewSite().getShell(), inputFile);
-                                openDialog.create();
-                                openDialog.open();
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
-        viewLogAction
-                .setDisabledImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG_DISABLED);
-        viewLogAction.setEnabled(inputFile.exists());
-        viewLogAction.setToolTipText(PDERuntimePlugin
-                .getResourceString("LogView.view.currentLog.tooltip")); //$NON-NLS-1$
-    }
 
     public void dispose() {
         writeSettings();
         Platform.removeLogListener(this);
-        clipboard.dispose();
+        fClipboard.dispose();
         LogReader.reset();
-        boldFont.dispose();
         super.dispose();
     }
 
     private void handleImport() {
         FileDialog dialog = new FileDialog(getViewSite().getShell());
         dialog.setFilterExtensions(new String[] { "*.log" }); //$NON-NLS-1$
-        if (directory != null)
-            dialog.setFilterPath(directory);
+        if (fDirectory != null)
+            dialog.setFilterPath(fDirectory);
         String path = dialog.open();
         if (path != null && new Path(path).toFile().exists()) {
-            inputFile = new Path(path).toFile();
-            directory = inputFile.getParent();
+            fInputFile = new Path(path).toFile();
+            fDirectory = fInputFile.getParent();
             IRunnableWithProgress op = new IRunnableWithProgress() {
                 public void run(IProgressMonitor monitor)
                         throws InvocationTargetException, InterruptedException {
-                    monitor
-                            .beginTask(
-                                    PDERuntimePlugin
-                                            .getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                    monitor.beginTask(PDERuntimePlugin.getResourceString("LogView.operation.importing"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                     readLogFile();
                 }
             };
-            ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite()
-                    .getShell());
+            ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
             try {
                 pmd.run(true, true, op);
             } catch (InvocationTargetException e) {
             } catch (InterruptedException e) {
             } finally {
-                readLogAction.setText(PDERuntimePlugin
-                        .getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
-                readLogAction.setToolTipText(PDERuntimePlugin
-                        .getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
+                fReadLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
+                fReadLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload")); //$NON-NLS-1$
                 asyncRefresh(false);
                 resetDialogButtons();
             }
@@ -538,23 +450,22 @@ public class LogView extends ViewPart implements ILogListener {
     private void handleExport() {
         FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.SAVE);
         dialog.setFilterExtensions(new String[] { "*.log" }); //$NON-NLS-1$
-        if (directory != null)
-            dialog.setFilterPath(directory);
+        if (fDirectory != null)
+            dialog.setFilterPath(fDirectory);
         String path = dialog.open();
         if (path != null) {
             if (!path.endsWith(".log")) //$NON-NLS-1$
                 path += ".log"; //$NON-NLS-1$
             File outputFile = new Path(path).toFile();
-            directory = outputFile.getParent();
+            fDirectory = outputFile.getParent();
             if (outputFile.exists()) {
                 String message = PDERuntimePlugin.getFormattedMessage(
                         "LogView.confirmOverwrite.message", //$NON-NLS-1$
                         outputFile.toString());
-                if (!MessageDialog.openQuestion(getViewSite().getShell(), exportAction
-                        .getText(), message))
+                if (!MessageDialog.openQuestion(getViewSite().getShell(), PDERuntimePlugin.getResourceString("LogView.exportLog"), message)) //$NON-NLS-1$
                     return;
             }
-            copy(inputFile, outputFile);
+            copy(fInputFile, outputFile);
         }
     }
 
@@ -584,7 +495,7 @@ public class LogView extends ViewPart implements ILogListener {
     
     private void handleFilter() {
     	FilterDialog dialog = new FilterDialog(
-    			PDERuntimePlugin.getActiveWorkbenchShell(), memento);
+    			PDERuntimePlugin.getActiveWorkbenchShell(), fMemento);
     	dialog.create();
     	dialog.getShell().setText(
     			PDERuntimePlugin.getResourceString("LogView.FilterDialog.title")); //$NON-NLS-1$
@@ -596,40 +507,28 @@ public class LogView extends ViewPart implements ILogListener {
     	String title = PDERuntimePlugin.getResourceString("LogView.confirmDelete.title"); //$NON-NLS-1$
     	String message = PDERuntimePlugin
     	.getResourceString("LogView.confirmDelete.message"); //$NON-NLS-1$
-    	if (!MessageDialog.openConfirm(tableTreeViewer.getControl().getShell(), title,
+    	if (!MessageDialog.openConfirm(fTree.getShell(), title,
     			message))
     		return;
-    	if (inputFile.delete()) {
-    		logs.clear();
+    	if (fInputFile.delete()) {
+    		fLogs.clear();
             asyncRefresh(false);
             resetDialogButtons();
         }
     }
 
     public void fillContextMenu(IMenuManager manager) {
-        manager.add(copyAction);
-        manager.add(new Separator());
-        manager.add(clearAction);
-        manager.add(deleteLogAction);
-        manager.add(viewLogAction);
-        manager.add(readLogAction);
-        manager.add(new Separator());
-        manager.add(exportAction);
-        manager.add(importAction);
-        manager.add(new Separator());
-        ((EventDetailsDialogAction) propertiesAction).setComparator(comparator);
-        manager.add(propertiesAction);
     }
 
     public LogEntry[] getLogs() {
-        return (LogEntry[]) logs.toArray(new LogEntry[logs.size()]);
+        return (LogEntry[]) fLogs.toArray(new LogEntry[fLogs.size()]);
     }
 
     protected void handleClear() {
-        BusyIndicator.showWhile(tableTreeViewer.getControl().getDisplay(),
+        BusyIndicator.showWhile(fTree.getDisplay(),
                 new Runnable() {
                     public void run() {
-                        logs.clear();
+                        fLogs.clear();
                         asyncRefresh(false);
                         resetDialogButtons();
                     }
@@ -652,9 +551,9 @@ public class LogView extends ViewPart implements ILogListener {
         } catch (InvocationTargetException e) {
         } catch (InterruptedException e) {
         } finally {
-            readLogAction.setText(PDERuntimePlugin
+            fReadLogAction.setText(PDERuntimePlugin
                     .getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
-            readLogAction.setToolTipText(PDERuntimePlugin
+            fReadLogAction.setToolTipText(PDERuntimePlugin
                     .getResourceString("LogView.readLog.restore")); //$NON-NLS-1$
             asyncRefresh(false);
             resetDialogButtons();
@@ -662,22 +561,22 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     private void readLogFile() {
-        logs.clear();
-        if (!inputFile.exists())
+        fLogs.clear();
+        if (!fInputFile.exists())
             return;
-        if (inputFile.length() > LogReader.MAX_FILE_LENGTH)
-            LogReader.parseLargeFile(inputFile, logs, memento);
+        if (fInputFile.length() > LogReader.MAX_FILE_LENGTH)
+            LogReader.parseLargeFile(fInputFile, fLogs, fMemento);
         else
-            LogReader.parseLogFile(inputFile, logs, memento);
+            LogReader.parseLogFile(fInputFile, fLogs, fMemento);
     }
 
     public void logging(IStatus status, String plugin) {
-        if (!inputFile.equals(Platform.getLogFileLocation().toFile()))
+        if (!fInputFile.equals(Platform.getLogFileLocation().toFile()))
             return;
-        if (firstEvent) {
+        if (fFirstEvent) {
             readLogFile();
             asyncRefresh();
-            firstEvent = false;
+            fFirstEvent = false;
         } else {
             pushStatus(status);
         }
@@ -685,7 +584,7 @@ public class LogView extends ViewPart implements ILogListener {
 
     private void pushStatus(IStatus status) {
         LogEntry entry = new LogEntry(status);
-        LogReader.addEntry(entry, logs, memento, true);
+        LogReader.addEntry(entry, fLogs, fMemento, true);
         asyncRefresh();
     }
 
@@ -694,41 +593,39 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     private void asyncRefresh(final boolean activate) {
-        final Control control = tableTreeViewer.getControl();
-        if (control.isDisposed())
+        if (fTree.isDisposed())
             return;
-        Display display = control.getDisplay();
+        Display display = fTree.getDisplay();
         final ViewPart view = this;
         if (display != null) {
             display.asyncExec(new Runnable() {
                 public void run() {
-                    if (!control.isDisposed()) {
-                        tableTreeViewer.refresh();
-                        deleteLogAction.setEnabled(inputFile.exists()
-                                && inputFile.equals(Platform.getLogFileLocation()
+                    if (!fTree.isDisposed()) {
+                        fTreeViewer.refresh();
+                        fDeleteLogAction.setEnabled(fInputFile.exists()
+                                && fInputFile.equals(Platform.getLogFileLocation()
                                         .toFile()));
-                        viewLogAction.setEnabled(inputFile.exists());
-                        if (activate && activateViewAction.isChecked()) {
+                        fOpenLogAction.setEnabled(fInputFile.exists());
+                        if (activate && fActivateViewAction.isChecked()) {
                             IWorkbenchPage page = PDERuntimePlugin.getActivePage();
                             if (page != null)
                                 page.bringToTop(view);
                         }
                     }
-                    applyFonts();
                 }
             });
         }
     }
 
     public void setFocus() {
-        if (tableTreeViewer != null && !tableTreeViewer.getTableTree().isDisposed())
-            tableTreeViewer.getTableTree().getTable().setFocus();
+        if (fTree != null && !fTree.isDisposed())
+            fTree.setFocus();
     }
 
     private void handleSelectionChanged(ISelection selection) {
         updateStatus(selection);
-        copyAction.setEnabled(!selection.isEmpty());
-        propertiesAction.setEnabled(!selection.isEmpty());
+        fCopyAction.setEnabled(!selection.isEmpty());
+        fPropertiesAction.setEnabled(!selection.isEmpty());
     }
 
     private void updateStatus(ISelection selection) {
@@ -738,8 +635,8 @@ public class LogView extends ViewPart implements ILogListener {
         else {
             LogEntry entry = (LogEntry) ((IStructuredSelection) selection)
                     .getFirstElement();
-            status.setMessage(((LogViewLabelProvider) tableTreeViewer.getLabelProvider())
-                    .getColumnText(entry, 2));
+            status.setMessage(((LogViewLabelProvider) fTreeViewer.getLabelProvider())
+                    .getColumnText(entry, 0));
         }
     }
 
@@ -759,7 +656,7 @@ public class LogView extends ViewPart implements ILogListener {
         }
         if (textVersion.trim().length() > 0) {
 	        // set the clipboard contents
-	        clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer
+	        fClipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer
 	                .getInstance() });
         }
     }
@@ -767,74 +664,77 @@ public class LogView extends ViewPart implements ILogListener {
     public void init(IViewSite site, IMemento memento) throws PartInitException {
         super.init(site, memento);
         if (memento == null)
-            this.memento = XMLMemento.createWriteRoot("LOGVIEW"); //$NON-NLS-1$
+            this.fMemento = XMLMemento.createWriteRoot("LOGVIEW"); //$NON-NLS-1$
         else
-            this.memento = memento;
+            this.fMemento = memento;
         readSettings();
         
         // initialize column ordering 
-        final byte type = this.memento.getInteger(P_ORDER_TYPE).byteValue();
+        final byte type = this.fMemento.getInteger(P_ORDER_TYPE).byteValue();
         switch (type){
         case DATE:
-        	DATE_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	DATE_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
         	MESSAGE_ORDER = -1;
         	PLUGIN_ORDER = -1;
         	break;
         case MESSAGE:
-        	MESSAGE_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	MESSAGE_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
         	DATE_ORDER = -1;
         	PLUGIN_ORDER = -1;
         	break;
         case PLUGIN:
-        	PLUGIN_ORDER = this.memento.getInteger(P_ORDER_VALUE).intValue();
+        	PLUGIN_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
         	MESSAGE_ORDER = -1;
         	DATE_ORDER = -1;
         	break;
+		default:
+			DATE_ORDER = -1;
+			MESSAGE_ORDER = -1;
+			PLUGIN_ORDER = -1;
         }
+		if (collator == null)
+			collator = Collator.getInstance();
+		setComparator(fMemento.getInteger(P_ORDER_TYPE).byteValue());
     }
 
     private void initializeMemento() {
-        if (memento.getString(P_USE_LIMIT) == null)
-            memento.putString(P_USE_LIMIT, "true"); //$NON-NLS-1$
-        if (memento.getInteger(P_LOG_LIMIT) == null)
-            memento.putInteger(P_LOG_LIMIT, 50);
-        if (memento.getString(P_LOG_INFO) == null)
-            memento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
-        if (memento.getString(P_LOG_WARNING) == null)
-            memento.putString(P_LOG_WARNING, "true"); //$NON-NLS-1$
-        if (memento.getString(P_LOG_ERROR) == null)
-            memento.putString(P_LOG_ERROR, "true"); //$NON-NLS-1$
-        if (memento.getString(P_SHOW_ALL_SESSIONS) == null)
-            memento.putString(P_SHOW_ALL_SESSIONS, "true"); //$NON-NLS-1$
-        Integer width = memento.getInteger(P_COLUMN_1);
+        if (fMemento.getString(P_USE_LIMIT) == null)
+            fMemento.putString(P_USE_LIMIT, "true"); //$NON-NLS-1$
+        if (fMemento.getInteger(P_LOG_LIMIT) == null);
+            fMemento.putInteger(P_LOG_LIMIT, 50);
+        if (fMemento.getString(P_LOG_INFO) == null)
+            fMemento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
+        if (fMemento.getString(P_LOG_WARNING) == null)
+            fMemento.putString(P_LOG_WARNING, "true"); //$NON-NLS-1$
+        if (fMemento.getString(P_LOG_ERROR) == null)
+            fMemento.putString(P_LOG_ERROR, "true"); //$NON-NLS-1$
+        if (fMemento.getString(P_SHOW_ALL_SESSIONS) == null)
+            fMemento.putString(P_SHOW_ALL_SESSIONS, "true"); //$NON-NLS-1$
+        Integer width = fMemento.getInteger(P_COLUMN_1);
         if (width == null || width.intValue() == 0)
-            memento.putInteger(P_COLUMN_1, 20);
-        width = memento.getInteger(P_COLUMN_2);
+            fMemento.putInteger(P_COLUMN_1, 300);
+        width = fMemento.getInteger(P_COLUMN_2);
         if (width == null || width.intValue() == 0)
-            memento.putInteger(P_COLUMN_2, 300);
-        width = memento.getInteger(P_COLUMN_3);
+            fMemento.putInteger(P_COLUMN_2, 150);
+        width = fMemento.getInteger(P_COLUMN_3);
         if (width == null || width.intValue() == 0)
-            memento.putInteger(P_COLUMN_3, 150);
-        width = memento.getInteger(P_COLUMN_4);
-        if (width == null || width.intValue() == 0)
-            memento.putInteger(P_COLUMN_4, 150);
-        if (memento.getString(P_ACTIVATE) == null)
-            memento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
+            fMemento.putInteger(P_COLUMN_3, 150);
+        if (fMemento.getString(P_ACTIVATE) == null)
+            fMemento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
         
-       	memento.putInteger(P_ORDER_VALUE, -1);
-        memento.putInteger(P_ORDER_TYPE, MESSAGE);
+       	fMemento.putInteger(P_ORDER_VALUE, -1);
+        fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
     }
 
     public void saveState(IMemento memento) {
-        if (this.memento == null || memento == null)
+        if (this.fMemento == null || memento == null)
             return;
-        this.memento.putInteger(P_COLUMN_1, column1.getWidth());
-        this.memento.putInteger(P_COLUMN_2, column2.getWidth());
-        this.memento.putInteger(P_COLUMN_3, column3.getWidth());
-        this.memento.putInteger(P_COLUMN_4, column4.getWidth());
-        this.memento.putString(P_ACTIVATE,
-                activateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-        memento.putMemento(this.memento);
+        this.fMemento.putInteger(P_COLUMN_1, fColumn1.getWidth());
+        this.fMemento.putInteger(P_COLUMN_2, fColumn2.getWidth());
+        this.fMemento.putInteger(P_COLUMN_3, fColumn3.getWidth());
+        this.fMemento.putString(P_ACTIVATE,
+                fActivateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+        memento.putMemento(this.fMemento);
         writeSettings();
     }
 
@@ -856,18 +756,16 @@ public class LogView extends ViewPart implements ILogListener {
         };
         int[] tableEvents = new int[] { SWT.MouseDown, SWT.MouseMove, SWT.MouseHover };
         for (int i = 0; i < tableEvents.length; i++) {
-            tableTreeViewer.getTableTree().getTable().addListener(tableEvents[i],
-                    tableListener);
+            fTree.addListener(tableEvents[i], tableListener);
         }
     }
 
     private void makeHoverShell() {
-        Control control = tableTreeViewer.getControl();
-        textShell = new Shell(control.getShell(), SWT.NO_FOCUS | SWT.ON_TOP);
+        textShell = new Shell(fTree.getShell(), SWT.NO_FOCUS | SWT.ON_TOP);
         Display display = textShell.getDisplay();
         textShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         GridLayout layout = new GridLayout(1, false);
-        int border = ((control.getShell().getStyle() & SWT.NO_TRIM) == 0) ? 0 : 1;
+        int border = ((fTree.getShell().getStyle() & SWT.NO_TRIM) == 0) ? 0 : 1;
         layout.marginHeight = border;
         layout.marginWidth = border;
         textShell.setLayout(layout);
@@ -884,9 +782,9 @@ public class LogView extends ViewPart implements ILogListener {
         gd.widthHint = 100;
         gd.grabExcessHorizontalSpace = true;
         textLabel.setLayoutData(gd);
-        Color c = control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+        Color c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
         textLabel.setBackground(c);
-        c = control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+        c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
         textLabel.setForeground(c);
         textLabel.setEditable(false);
         textShell.addDisposeListener(new DisposeListener() {
@@ -913,8 +811,7 @@ public class LogView extends ViewPart implements ILogListener {
             return;
         canOpenTextShell = false;
         Point point = new Point(e.x, e.y);
-        TableTree table = tableTreeViewer.getTableTree();
-        TableTreeItem item = table.getItem(point);
+		TreeItem item = fTree.getItem(point);
         if (item == null)
             return;
         String message = ((LogEntry) item.getData()).getStack();
@@ -923,23 +820,35 @@ public class LogView extends ViewPart implements ILogListener {
         makeHoverShell();
         textLabel.setText(message);
         int x = point.x + 5;
-        int y = point.y - (table.getItemHeight() * 2) - 20;
-        textShell.setLocation(table.toDisplay(x, y));
-        textShell.setSize(tableTreeViewer.getTableTree().getSize().x - x, 125);
+        int y = point.y - (fTree.getItemHeight() * 2) - 20;
+        textShell.setLocation(fTree.toDisplay(x, y));
+        textShell.setSize(fTree.getColumn(0).getWidth(), 125);
         textShell.open();
         setFocus();
     }
 
     void onMouseMove(Event e) {
-        if (textShell != null && !textShell.isDisposed()) {
+        if (textShell != null && !textShell.isDisposed())
             textShell.close();
-            canOpenTextShell = textShell.isDisposed() && e.x > column0.getWidth()
-                    && e.x < (column0.getWidth() + column1.getWidth());
-        } else {
-            canOpenTextShell = e.x > column0.getWidth()
-                    && e.x < (column0.getWidth() + column1.getWidth());
-        }
-    }
+		
+		Point point = new Point(e.x, e.y);
+		TreeItem item = fTree.getItem(point);
+		if (item == null) 
+			return;
+		Image image= item.getImage();
+		LogEntry entry = (LogEntry)item.getData();
+		int parentCount = getNumberOfParents(entry);
+		int startRange = 20 + Math.max(image.getBounds().width + 2, 7 + 2)*parentCount;
+		int endRange = startRange + 16;
+		canOpenTextShell = e.x >= startRange && e.x <= endRange;
+	}
+	
+	private int getNumberOfParents(LogEntry entry){
+		LogEntry parent = (LogEntry)entry.getParent(entry);
+		if (parent ==null)
+			return 0;
+		return 1 + getNumberOfParents(parent);
+	}
 
     public Comparator getComparator() {
         return comparator;
@@ -949,17 +858,17 @@ public class LogView extends ViewPart implements ILogListener {
         if (sortType == DATE) {
             comparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
-                    try {
-                        SimpleDateFormat formatter = new SimpleDateFormat(
-                                "MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
-                        Date date1 = formatter.parse(((LogEntry) e1).getDate());
-                        Date date2 = formatter.parse(((LogEntry) e2).getDate());
-                        if (DATE_ORDER == ASCENDING)
-                            return date1.before(date2) ? -1 : 1;
-                        return date1.after(date2) ? -1 : 1;
-                    } catch (ParseException e) {
-                    }
-                    return 0;
+					try {
+						SimpleDateFormat formatter = new SimpleDateFormat(
+						"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+						Date date1 = formatter.parse(((LogEntry) e1).getDate());
+						Date date2 = formatter.parse(((LogEntry) e2).getDate());
+						if (DATE_ORDER == ASCENDING)
+							return date1.before(date2) ? -1 : 1;
+						return date1.after(date2) ? -1 : 1;
+					} catch (ParseException e) {
+					}
+					return 0;
                 }
             };
         } else if (sortType == PLUGIN) {
@@ -1006,28 +915,25 @@ public class LogView extends ViewPart implements ILogListener {
             };
         } else {
             return new ViewerSorter() {
-                public int compare(Viewer viewer, Object e1, Object e2) {
-                    try {
-//                    	previous date format for error log
-//                        SimpleDateFormat formatter = new SimpleDateFormat(
-//                                "MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
-                    	SimpleDateFormat formatter = new SimpleDateFormat(
-                    	"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
-                        Date date1 = formatter.parse(((LogEntry) e1).getDate());
-                        Date date2 = formatter.parse(((LogEntry) e2).getDate());
-                        if (DATE_ORDER == ASCENDING)
-                            return date1.before(date2) ? -1 : 1;
-                        return date1.after(date2) ? -1 : 1;
-                    } catch (ParseException e) {
-                    }
-                    return 0;
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					try {
+						SimpleDateFormat formatter = new SimpleDateFormat(
+						"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
+						Date date1 = formatter.parse(((LogEntry) e1).getDate());
+						Date date2 = formatter.parse(((LogEntry) e2).getDate());
+						if (DATE_ORDER == ASCENDING)
+							return date1.before(date2) ? -1 : 1;
+						return date1.after(date2) ? -1 : 1;
+					} catch (ParseException e) {
+					}
+					return 0;
                 }
             };
         }
     }
 
     private void resetDialogButtons() {
-        ((EventDetailsDialogAction) propertiesAction).resetDialogButtons();
+        ((EventDetailsDialogAction) fPropertiesAction).resetDialogButtons();
     }
     
     /**
@@ -1057,28 +963,26 @@ public class LogView extends ViewPart implements ILogListener {
             return;
         }
         try {
-			memento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
-			memento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1));
-			memento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2));
-			memento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3));
-			memento.putInteger(P_COLUMN_4, p.getInt(P_COLUMN_4));
-			memento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
+			fMemento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1));
+			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2));
+			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3));
+			fMemento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			int order = p.getInt(P_ORDER_VALUE);
-			memento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
-			memento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
+			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
+			fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
 		} catch (NumberFormatException e) {
-			memento.putInteger(P_LOG_LIMIT, 50);
-			memento.putInteger(P_COLUMN_1, 20);
-			memento.putInteger(P_COLUMN_2, 300);
-			memento.putInteger(P_COLUMN_3, 150);
-			memento.putInteger(P_COLUMN_4, 150);
-			memento.putInteger(P_ORDER_TYPE, MESSAGE);
-			memento.putInteger(P_ORDER_VALUE, -1);
+			fMemento.putInteger(P_LOG_LIMIT, 50);
+			fMemento.putInteger(P_COLUMN_1, 300);
+			fMemento.putInteger(P_COLUMN_2, 150);
+			fMemento.putInteger(P_COLUMN_3, 150);
+			fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
+			fMemento.putInteger(P_ORDER_VALUE, -1);
 		}
     }
     
@@ -1091,23 +995,22 @@ public class LogView extends ViewPart implements ILogListener {
         IDialogSettings settings = getLogSettings();
         if (settings == null)
             settings = PDERuntimePlugin.getDefault().getDialogSettings().addNewSection(getClass().getName());
-        settings.put(P_USE_LIMIT, memento.getString(P_USE_LIMIT).equals("true")); //$NON-NLS-1$
-        settings.put(P_LOG_LIMIT, memento.getInteger(P_LOG_LIMIT).intValue());
-        settings.put(P_LOG_INFO, memento.getString(P_LOG_INFO).equals("true")); //$NON-NLS-1$
-        settings.put(P_LOG_WARNING, memento.getString(P_LOG_WARNING).equals("true")); //$NON-NLS-1$
-        settings.put(P_LOG_ERROR, memento.getString(P_LOG_ERROR).equals("true")); //$NON-NLS-1$
-        settings.put(P_SHOW_ALL_SESSIONS, memento.getString(P_SHOW_ALL_SESSIONS).equals("true")); //$NON-NLS-1$
+        settings.put(P_USE_LIMIT, fMemento.getString(P_USE_LIMIT).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_LIMIT, fMemento.getInteger(P_LOG_LIMIT).intValue());
+        settings.put(P_LOG_INFO, fMemento.getString(P_LOG_INFO).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_WARNING, fMemento.getString(P_LOG_WARNING).equals("true")); //$NON-NLS-1$
+        settings.put(P_LOG_ERROR, fMemento.getString(P_LOG_ERROR).equals("true")); //$NON-NLS-1$
+        settings.put(P_SHOW_ALL_SESSIONS, fMemento.getString(P_SHOW_ALL_SESSIONS).equals("true")); //$NON-NLS-1$
     }
     
     private void writeViewSettings(){
         Preferences preferences = getLogPreferences();
-        preferences.setValue(P_COLUMN_1, memento.getInteger(P_COLUMN_1).intValue());
-        preferences.setValue(P_COLUMN_2, memento.getInteger(P_COLUMN_2).intValue());
-        preferences.setValue(P_COLUMN_3, memento.getInteger(P_COLUMN_3).intValue());
-        preferences.setValue(P_COLUMN_4, memento.getInteger(P_COLUMN_4).intValue());
-        preferences.setValue(P_ACTIVATE, memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
-        int order = memento.getInteger(P_ORDER_VALUE).intValue();
+        preferences.setValue(P_COLUMN_1, fMemento.getInteger(P_COLUMN_1).intValue());
+        preferences.setValue(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
+        preferences.setValue(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
+        preferences.setValue(P_ACTIVATE, fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+        int order = fMemento.getInteger(P_ORDER_VALUE).intValue();
         preferences.setValue(P_ORDER_VALUE, order == 0 ? -1 : order);
-        preferences.setValue(P_ORDER_TYPE, memento.getInteger(P_ORDER_TYPE).intValue());
+        preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
     }
 }

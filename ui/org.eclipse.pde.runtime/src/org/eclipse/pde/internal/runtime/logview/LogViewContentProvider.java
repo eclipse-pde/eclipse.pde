@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import org.eclipse.jface.viewers.*;
 
-public class LogViewContentProvider
-	implements ITreeContentProvider, IStructuredContentProvider {
+public class LogViewContentProvider implements ITreeContentProvider {
 	private LogView logView;
 
 	public LogViewContentProvider(LogView logView) {

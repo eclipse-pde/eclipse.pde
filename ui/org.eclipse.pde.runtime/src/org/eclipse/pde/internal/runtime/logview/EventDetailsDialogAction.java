@@ -70,7 +70,10 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	
 	public void setComparator(Comparator comparator){
 		this.comparator = comparator;
+		if (propertyDialog != null && propertyDialog.isOpen())
+			propertyDialog.setComparator(comparator);
 	}
+	
 	public void run(){
 		if (propertyDialog != null && propertyDialog.isOpen()){
 			resetSelection();
@@ -82,10 +85,9 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		if (element == null)
 			return;
 		
-		propertyDialog = new EventDetailsDialog(shell, element, provider);
+		propertyDialog = new EventDetailsDialog(shell, element, provider, comparator);
 		propertyDialog.create();
 		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title")); //$NON-NLS-1$
-		propertyDialog.setComparator(comparator);
 		propertyDialog.open();
 	}
 }

@@ -38,13 +38,13 @@ public class LogViewLabelProvider
 	}
 	public Image getColumnImage(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
-		if (columnIndex == 1) {
+		if (columnIndex == 0) {
 			switch (entry.getSeverity()) {
 				case IStatus.INFO :
 					return infoImage;
 				case IStatus.WARNING :
 					return warningImage;
-				case IStatus.ERROR :
+				default :
 					return (entry.getStack() == null ? errorImage : errorWithStackImage);
 			}
 		}
@@ -54,11 +54,11 @@ public class LogViewLabelProvider
 	public String getColumnText(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
 		switch (columnIndex) {
-			case 2 :
+			case 0 :
 				return entry.getMessage();
-			case 3 :
+			case 1 :
 				return entry.getPluginId();
-			case 4 :
+			case 2 :
 				return entry.getDate();
 		}
 		return ""; //$NON-NLS-1$
