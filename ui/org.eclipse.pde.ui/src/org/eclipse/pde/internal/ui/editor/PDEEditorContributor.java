@@ -38,7 +38,6 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private ClipboardAction copyAction;
 	private ClipboardAction pasteAction;
 	private Hashtable globalActions = new Hashtable();
-	private String menuName;
 	private BasicTextEditorActionContributor sourceContributor;
 
 	class GlobalAction extends Action implements IUpdate {
@@ -134,7 +133,6 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	}
 
 	public PDEEditorContributor(String menuName) {
-		this.menuName = menuName;
 		sourceContributor = new BasicTextEditorActionContributor();
 		makeActions();
 	}

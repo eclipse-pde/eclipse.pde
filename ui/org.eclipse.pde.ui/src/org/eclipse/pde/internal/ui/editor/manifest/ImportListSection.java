@@ -46,7 +46,6 @@ public class ImportListSection
 	extends TableSection
 	implements IModelChangedListener, IModelProviderListener {
 	private TableViewer importTable;
-	private FormWidgetFactory factory;
 	public static final String SECTION_TITLE =
 		"ManifestEditor.ImportListSection.title";
 	public static final String SECTION_DESC =
@@ -97,7 +96,6 @@ public class ImportListSection
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 		createViewerPartControl(container, SWT.MULTI, 2, factory);
 		TablePart tablePart = getTablePart();

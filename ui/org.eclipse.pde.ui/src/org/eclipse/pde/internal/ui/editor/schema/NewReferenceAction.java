@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.*;
 
 public class NewReferenceAction extends Action {
-	private ISchemaElement source;
 	private Object object;
 	private ISchemaElement referencedElement;
 
@@ -25,7 +24,6 @@ public NewReferenceAction(
 	ISchemaElement source,
 	Object object,
 	ISchemaElement referencedElement) {
-	this.source = source;
 	this.object = object;
 	this.referencedElement = referencedElement;
 	setText(referencedElement.getName());

@@ -52,7 +52,6 @@ public class DetailExtensionPointSection
 	public static final String POPUP_OPEN_SCHEMA =
 		"ManifestEditor.DetailExtensionPointSection.openSchema";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	private FormWidgetFactory factory;
 	private TableViewer pointTable;
 
 	class TableContentProvider
@@ -75,7 +74,6 @@ public class DetailExtensionPointSection
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);

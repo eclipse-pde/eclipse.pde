@@ -52,8 +52,6 @@ public class InfoSection extends PDEFormSection {
 	private Button resetButton;
 	private Object element;
 	private int elementIndex;
-	private IColorManager colorManager;
-	private FormWidgetFactory factory;
 	private boolean ignoreChange;
 
 	public InfoSection(PDEFormPage page, IColorManager colorManager) {
@@ -62,7 +60,6 @@ public class InfoSection extends PDEFormSection {
 		setAddSeparator(false);
 		String description = PDEPlugin.getResourceString(SECTION_DESC);
 		setDescription(TextUtil.createMultiLine(description, 80));
-		this.colorManager = colorManager;
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -86,7 +83,6 @@ public class InfoSection extends PDEFormSection {
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;

@@ -48,7 +48,6 @@ public class DetailExtensionSection
 	implements IModelChangedListener {
 	//private TableTreeViewer extensionTree;
 	private TreeViewer extensionTree;
-	private FormWidgetFactory factory;
 	private Image extensionImage;
 	public static final String SECTION_TITLE =
 		"ManifestEditor.DetailExtensionSection.title";
@@ -166,7 +165,6 @@ public class DetailExtensionSection
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 

@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 public class PortabilityChoicesDialog extends Dialog {
 	private static final String KEY_CHOICES =
 		"FeatureEditor.PortabilityChoicesDialog.choices";
-	private Button okButton;
 	private String value;
 	private Choice[] choices;
 	private CheckboxTableViewer choiceViewer;
@@ -66,8 +65,7 @@ public class PortabilityChoicesDialog extends Dialog {
 
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
-		okButton =
-			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(
 			parent,
 			IDialogConstants.CANCEL_ID,

@@ -50,8 +50,6 @@ public class NewDependencyWizardPage extends WizardPage {
 	private IPluginModelBase modelBase;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Text filterText;
-	private Image pluginImage;
-	private Image errorPluginImage;
 	private Image pluginsImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
@@ -116,9 +114,6 @@ public class NewDependencyWizardPage extends WizardPage {
 		this.modelBase = modelBase;
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		provider.connect(this);
-		pluginImage = provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
-		errorPluginImage =
-			provider.get(PDEPluginImages.DESC_PLUGIN_OBJ, PDELabelProvider.F_ERROR);
 		pluginsImage = provider.get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));

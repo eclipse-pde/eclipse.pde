@@ -22,12 +22,10 @@ public class PDEMultiPageContentOutline
 	implements IContentOutlinePage, ISelectionChangedListener {
 	private PageBook pagebook;
 	private PDEMultiSelectionProvider selectionProvider;
-	private PDEMultiPageEditor editor;
 	private IContentOutlinePage currentPage;
 	private boolean disposed;
 
 	public PDEMultiPageContentOutline(PDEMultiPageEditor editor) {
-		this.editor = editor;
 		selectionProvider = new PDEMultiSelectionProvider();
 	}
 	public void addFocusListener(

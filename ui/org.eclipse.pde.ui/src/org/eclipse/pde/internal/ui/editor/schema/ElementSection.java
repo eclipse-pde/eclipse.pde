@@ -42,7 +42,6 @@ public class ElementSection extends TreeSection {
 		"SchemaEditor.ElementSection.newAttribute";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	private FormWidgetFactory factory;
 	private PropertiesAction propertiesAction;
 
 	class ContentProvider
@@ -81,7 +80,6 @@ public class ElementSection extends TreeSection {
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 		createTree(container, factory);
 		factory.paintBordersFor(container);

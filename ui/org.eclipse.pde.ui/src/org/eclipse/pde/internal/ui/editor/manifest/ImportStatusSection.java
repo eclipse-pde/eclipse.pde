@@ -34,10 +34,8 @@ public class ImportStatusSection
 	extends PDEFormSection
 	implements IModelChangedListener {
 	private TreeViewer statusTree;
-	private FormWidgetFactory factory;
 	private Image pluginImage;
 	private Image fragmentImage;
-	private Image importImage;
 	private Image warningLoopImage;
 	private Image loopNodeImage;
 	private CCombo combo;
@@ -111,7 +109,6 @@ public ImportStatusSection(ManifestDependenciesPage page) {
 }
 
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	this.factory = factory;
 	initializeImages();
 	Composite container = factory.createComposite(parent);
 	GridLayout layout = new GridLayout();
@@ -225,7 +222,6 @@ public void initializeImages() {
 	pluginImage = provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
 	fragmentImage = provider.get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 
-	importImage = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
 	loopNodeImage = provider.get(PDEPluginImages.DESC_LOOP_NODE_OBJ);
 	warningLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ, PDELabelProvider.F_WARNING);
 }

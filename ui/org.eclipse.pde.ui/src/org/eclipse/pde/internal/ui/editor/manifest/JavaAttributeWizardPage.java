@@ -102,7 +102,6 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private Button openFileButton;
 
 	private ModifyListener modifyListener;
-	private IPluginModelBase model;
 
 	private IPackageFragmentRoot[] sourceFolders;
 	
@@ -126,7 +125,6 @@ public class JavaAttributeWizardPage extends WizardPage {
 		String className) {
 		super("classPage");
 		this.project = project;
-		this.model = model;
 		this.attInfo = attInfo;
 		this.className = className;
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));

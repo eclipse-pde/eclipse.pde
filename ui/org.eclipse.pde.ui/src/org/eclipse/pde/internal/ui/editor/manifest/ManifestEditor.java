@@ -64,7 +64,6 @@ public class ManifestEditor
 		"ManifestEditor.ExtensionPointsPage.title";
 	public static final String NO_PLATFORM_HOME =
 		"ManifestEditor.noPlatformHome";
-	private boolean storageModel = false;
 
 	public ManifestEditor() {
 		super();
@@ -136,7 +135,6 @@ public class ManifestEditor
 			stream.close();
 		} catch (IOException e) {
 		}
-		storageModel = true;
 		return model;
 	}
 	protected Object createModel(Object input) throws CoreException {

@@ -36,9 +36,7 @@ public class PointUsageSection extends TableSection {
 	public static final String SECTION_FDESC =
 		"ManifestEditor.PointUsageSection.fdesc";
 	public static final String POPUP_OPEN = "Actions.open.label";
-	private FormWidgetFactory factory;
 	private TableViewer tableViewer;
-	private boolean needsUpdate = false;
 
 	class UsageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -79,7 +77,6 @@ public class PointUsageSection extends TableSection {
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 		TablePart part = getTablePart();
 		createViewerPartControl(container, SWT.SINGLE, 2, factory);
@@ -208,6 +205,5 @@ public class PointUsageSection extends TableSection {
 	}
 	public void update() {
 		tableViewer.refresh();
-		needsUpdate = false;
 	}
 }

@@ -43,7 +43,6 @@ public class LibrarySection
 	public static final String NEW_LIBRARY_ENTRY =
 		"ManifestEditor.LibrarySection.newLibraryEntry";
 
-	private FormWidgetFactory factory;
 	private TableViewer libraryTable;
 
 	class TableContentProvider
@@ -73,7 +72,6 @@ public class LibrarySection
 			setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getFormPage().getModel();

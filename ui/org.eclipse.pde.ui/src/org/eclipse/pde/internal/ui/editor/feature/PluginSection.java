@@ -59,7 +59,6 @@ public class PluginSection
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
-	private Object[] references;
 	private OpenReferenceAction openAction;
 	private PropertiesAction propertiesAction;
 	private TableViewer pluginViewer;
@@ -281,7 +280,6 @@ public class PluginSection
 
 	public void update() {
 		if (updateNeeded) {
-			references = null;
 			this.update(getFormPage().getModel());
 		}
 	}

@@ -20,9 +20,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 
 public class SiteSourceOutlinePage extends ContentOutlinePage {
-	private IDocumentProvider documentProvider;
 	private IEditorInput input;
-	private AbstractTextEditor textEditor;
 	private TreeViewer treeViewer;
 
 	class ContentProvider
@@ -44,8 +42,6 @@ public class SiteSourceOutlinePage extends ContentOutlinePage {
 
 public SiteSourceOutlinePage(IEditorInput input, IDocumentProvider provider, AbstractTextEditor editor) {
 	this.input = input;
-	this.documentProvider = provider;
-	this.textEditor = editor;
 }
 public void createControl(Composite parent) {
 	treeViewer = new TreeViewer(new Tree(parent, SWT.MULTI));

@@ -15,13 +15,11 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 
 public class ReferenceWizard extends Wizard {
-	private IFeatureModel model;
 	private ReferenceWizardPage page;
 
 	public ReferenceWizard(
 		IFeatureModel model,
 		ReferenceWizardPage page) {
-		this.model = model;
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);

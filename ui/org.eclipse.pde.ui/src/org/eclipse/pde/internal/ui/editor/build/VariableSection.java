@@ -36,7 +36,6 @@ public class VariableSection
 	public static final String POPUP_DELETE = "BuildEditor.VariableSection.delete";
 	public static final String SECTION_NEW = "BuildEditor.VariableSection.new";
 	public static final String SECTION_DESC = "BuildEditor.VariableSection.desc";
-	private FormWidgetFactory factory;
 	private TableViewer variableTable;
 
 	class TableContentProvider
@@ -57,7 +56,6 @@ public class VariableSection
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
 
 		EditableTablePart tablePart = getTablePart();

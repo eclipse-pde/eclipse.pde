@@ -36,7 +36,6 @@ public class TokenSection
 	public static final String ENTRY = "BuildEditor.TokenSection.entry";
 	public static final String SECTION_NEW = "BuildEditor.TokenSection.new";
 	public static final String SECTION_DESC = "BuildEditor.TokenSection.desc";
-	private FormWidgetFactory factory;
 	private TableViewer entryTable;
 	private IBuildEntry currentVariable;
 
@@ -88,7 +87,6 @@ public class TokenSection
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 

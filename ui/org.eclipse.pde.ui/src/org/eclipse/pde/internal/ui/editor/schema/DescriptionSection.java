@@ -51,13 +51,11 @@ public class DescriptionSection extends PDEFormSection {
 	private IDocumentPartitioner partitioner;
 	private ISchema schema;
 	private boolean ignoreChange = false;
-	private IColorManager colorManager;
 
 	public DescriptionSection(PDEFormPage page, IColorManager colorManager) {
 		super(page);
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		this.colorManager = colorManager;
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =

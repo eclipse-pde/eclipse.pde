@@ -32,7 +32,6 @@ public class BodyTextSection
 	public static final String KEY_APPLY = "Actions.apply.flabel";
 	public static final String KEY_RESET = "Actions.reset.flabel";
 	public static final String KEY_DELETE = "Actions.delete.flabel";
-	private FormWidgetFactory factory;
 	private Button applyButton;
 	private Button resetButton;
 	private IPluginElement currentElement;
@@ -55,7 +54,6 @@ public class BodyTextSection
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		GridData gd;
 
 		Composite container = factory.createComposite(parent);

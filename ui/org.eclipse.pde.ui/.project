@@ -5,6 +5,7 @@
 	<projects>
 		<project>org.apache.xerces</project>
 		<project>org.eclipse.ant.core</project>
+		<project>org.eclipse.ant.ui</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>

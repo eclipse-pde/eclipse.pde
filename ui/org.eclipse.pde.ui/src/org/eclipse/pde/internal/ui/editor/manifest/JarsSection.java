@@ -42,7 +42,6 @@ import org.eclipse.update.ui.forms.internal.*;
 public class JarsSection
 	extends TableSection
 	implements IModelChangedListener {
-	private FormWidgetFactory factory;
 	private TableViewer entryTable;
 	private Image entryImage;
 	private IPluginLibrary currentLibrary;
@@ -105,7 +104,6 @@ public class JarsSection
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		this.factory = factory;
 		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);

@@ -19,15 +19,11 @@ import org.eclipse.ui.texteditor.*;
 
 
 public class SchemaSourceOutlinePage extends ContentOutlinePage {
-	private IDocumentProvider documentProvider;
 	private IEditorInput input;
-	private AbstractTextEditor textEditor;
 	private TreeViewer treeViewer;
 
 public SchemaSourceOutlinePage(IEditorInput input, IDocumentProvider provider, AbstractTextEditor editor) {
 	this.input = input;
-	this.documentProvider = provider;
-	this.textEditor = editor;
 }
 public void createControl(Composite parent) {
 	treeViewer = new TreeViewer(new Tree(parent, SWT.MULTI));

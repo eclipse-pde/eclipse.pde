@@ -54,11 +54,8 @@ public class DocSection extends PDEFormSection {
 	private Button applyButton;
 	private Button resetButton;
 	private Object element;
-	private IColorManager colorManager;
 	//private TableTreeViewer topicTree;
-	private FormWidgetFactory factory;
 	private boolean ignoreChange;
-	private boolean updateNeeded;
 
 	public DocSection(PDEFormPage page, IColorManager colorManager) {
 		super(page);
@@ -66,7 +63,6 @@ public class DocSection extends PDEFormSection {
 		setAddSeparator(false);
 		String description = PDEPlugin.getResourceString(SECTION_DESC);
 		setDescription(TextUtil.createMultiLine(description, 80));
-		this.colorManager = colorManager;
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -88,7 +84,6 @@ public class DocSection extends PDEFormSection {
 	public Composite createClient(
 		Composite parent,
 		FormWidgetFactory factory) {
-		this.factory = factory;
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -366,7 +361,6 @@ public class DocSection extends PDEFormSection {
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
 			if (getFormPage().isVisible()) {
 				update();
 			}

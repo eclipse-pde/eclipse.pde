@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.ui.*;
 import java.util.Hashtable;
 
 public class TypeRestrictionDialog extends Dialog {
-	private Button okButton;
 	public static final String KEY_RESTRICTION_TYPE ="SchemaEditor.RestrictionDialog.type";
 	private static final String T_ENUMERATION = "enumeration";
 	private static final String T_NONE = "none";
@@ -41,7 +40,7 @@ public TypeRestrictionDialog(Shell shell, ISchemaRestriction restriction) {
 }
 protected void createButtonsForButtonBar(Composite parent) {
 	// create OK and Cancel buttons by default
-	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
 protected Control createDialogArea(Composite parent) {
