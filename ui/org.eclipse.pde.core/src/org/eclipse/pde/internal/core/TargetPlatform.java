@@ -193,15 +193,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 			configDir.mkdirs();
 		File file = new File(configDir, "config.ini"); //$NON-NLS-1$
 		try {
-			FileOutputStream stream = new FileOutputStream(file);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "8859_1"); //$NON-NLS-1$
-			BufferedWriter bWriter = new BufferedWriter(writer);
-			
-			bWriter.write("#Eclipse Runtime Configuration File"); //$NON-NLS-1$
-			bWriter.newLine();
-			bWriter.write("osgi.install.area=file:" + ExternalModelManager.getEclipseHome().toString()); //$NON-NLS-1$
-			bWriter.newLine();
-			
+			Properties properties = new Properties();
+			properties.put("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			if (primaryFeatureId != null) {
 				String splashPath = getBundleURL(primaryFeatureId, pluginMap);
 				if (splashPath == null) {
@@ -212,16 +205,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 					}
 				}
 				if (splashPath != null) {
-					bWriter.write("osgi.splashPath=" + splashPath); //$NON-NLS-1$
-					bWriter.newLine();
+					properties.put("osgi.splashPath", splashPath); //$NON-NLS-1$
 				}
 			}
 			
-			bWriter.write("osgi.configuration.cascaded=false"); //$NON-NLS-1$
-			bWriter.newLine();
-			
-			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap)); //$NON-NLS-1$ //$NON-NLS-2$
-			bWriter.newLine();
+			properties.put("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put("osgi.framework", getBundleURL("org.eclipse.osgi", pluginMap)); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			Iterator iter = autoStartPlugins.keySet().iterator();
 			StringBuffer buffer = new StringBuffer();
@@ -256,16 +245,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 			}
 			
 			if (buffer.length() > 0) {
-				bWriter.write("osgi.bundles=" + buffer.toString()); //$NON-NLS-1$
-				bWriter.newLine();
+				properties.put("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 			}	
 			
-			bWriter.write("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$
-			bWriter.newLine();
+			properties.put("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			bWriter.write("eof=eof"); //$NON-NLS-1$
-			bWriter.flush();
-			bWriter.close();
+			FileOutputStream stream = new FileOutputStream(file);
+			properties.store(stream, "Eclipse Runtime Configuration File"); //$NON-NLS-1$
+			stream.flush();
+			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
