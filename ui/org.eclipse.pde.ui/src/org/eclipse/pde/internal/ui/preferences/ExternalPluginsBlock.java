@@ -246,7 +246,7 @@ public class ExternalPluginsBlock {
 		return allModels;
 	}
 
-	void handleReload() {
+	protected void handleReload() {
 		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
 			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
