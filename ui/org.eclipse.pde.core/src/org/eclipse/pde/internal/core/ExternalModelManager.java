@@ -34,6 +34,10 @@ public class ExternalModelManager {
 		return getCorrectPath(ppath.toOSString());
 	}
 	
+	public static boolean isTargetEqualToHost(String platformPath) {
+		return arePathsEqual(new Path(platformPath), new Path(computeDefaultPlatformPath()));
+	}
+	
 	private static String getCorrectPath(String path) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
@@ -59,6 +63,18 @@ public class ExternalModelManager {
 	public static IPath getEclipseHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return new Path(preferences.getString(ICoreConstants.PLATFORM_PATH));
+	}
+
+	public static boolean arePathsEqual(IPath path1, IPath path2) {
+		String device = path1.getDevice();
+		if (device != null)
+			path1 = path1.setDevice(device.toUpperCase());
+		
+		device = path2.getDevice();
+		if (device != null)
+			path2 = path2.setDevice(device.toUpperCase());
+		
+		return path1.equals(path2);
 	}
 
 	public void addModelProviderListener(IModelProviderListener listener) {

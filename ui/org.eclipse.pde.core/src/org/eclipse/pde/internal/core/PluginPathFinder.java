@@ -57,6 +57,9 @@ public class PluginPathFinder {
 	}
 	
 	public static URL[] getPluginPaths(String platformHome) {
+		if (ExternalModelManager.isTargetEqualToHost(platformHome))
+			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
+		
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {

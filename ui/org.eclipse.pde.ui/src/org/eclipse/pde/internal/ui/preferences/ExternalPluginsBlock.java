@@ -261,7 +261,7 @@ public class ExternalPluginsBlock {
 		IPath newPath = new Path(page.getPlatformPath());
 		IPath defaultPath = new Path(ExternalModelManager.computeDefaultPlatformPath());
 		String mode =
-			arePathsEqual(newPath, defaultPath)
+			ExternalModelManager.arePathsEqual(newPath, defaultPath)
 				? ICoreConstants.VALUE_USE_THIS
 				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
@@ -285,19 +285,6 @@ public class ExternalPluginsBlock {
 		}
 	}
 	
-	public static boolean arePathsEqual(IPath path1, IPath path2) {
-		String device = path1.getDevice();
-		if (device != null)
-			path1 = path1.setDevice(device.toUpperCase());
-		
-		device = path2.getDevice();
-		if (device != null)
-			path2 = path2.setDevice(device.toUpperCase());
-		
-		return path1.equals(path2);
-	}
-
-
 	private void selectNotInWorkspace() {
 		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsModels = wm.getAllModels();
