@@ -181,6 +181,12 @@ public class ClasspathUtilCore {
 				if (!result.contains(entry))
 					result.add(entry);
 			}
+			if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
+				IFragment[] fragments = PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
+				for (int i = 0; i < fragments.length; i++) {
+					addDependency(fragments[i], isExported, result, alreadyAdded);
+				}
+			}
 			return;
 		}
 
