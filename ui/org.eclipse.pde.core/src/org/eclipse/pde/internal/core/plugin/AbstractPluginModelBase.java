@@ -100,18 +100,28 @@ public abstract class AbstractPluginModelBase
 	public abstract URL getNLLookupLocation();
 
 	protected URL[] getNLLookupLocations() {
+		ArrayList list = new ArrayList();
 		URL thisLocation = getNLLookupLocation();
-		if (isFragmentModel())
-			return (thisLocation!=null) ? new URL[] {thisLocation} : new URL[0];
-		
-		URL[] fragmentLocations = getFragmentLocations();
-		URL[] locations = new URL[(thisLocation!=null ? 1 :0) + fragmentLocations.length];
 		if (thisLocation != null)
-			locations[0] = thisLocation;
-		for (int i = 1; i < locations.length; i++) {
-			locations[i] = fragmentLocations[i - 1];
+			list.add(thisLocation);
+		
+		if (isFragmentModel()) {
+			IFragment fragment = (IFragment)getPluginBase();
+			String parentId = fragment.getPluginId();
+			if (parentId != null) {
+				IPlugin plugin = PDECore.getDefault().findPlugin(parentId);
+				if (plugin != null) {
+					try {
+						list.add(new URL("file:" + plugin.getModel().getInstallLocation())); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+					}		
+				}	
+			}
+		} else {
+			list.add(Arrays.asList(getFragmentLocations()));
 		}
-		return locations;	
+		
+		return (URL[])list.toArray(new URL[list.size()]);	
 	}
 
 	protected URL[] getFragmentLocations() {

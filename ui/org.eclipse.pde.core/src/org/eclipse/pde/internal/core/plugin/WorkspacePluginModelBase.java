@@ -31,8 +31,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	private IBuildModel fBuildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = isFragmentModel() ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
-		return new NLResourceHelper(name,getNLLookupLocations());
+		return new NLResourceHelper("plugin" ,getNLLookupLocations()); //$NON-NLS-1$
 	}
 
 	public URL getNLLookupLocation() {
