@@ -120,10 +120,9 @@ public class PropertiesUtil {
 				for (int j = 0; j < indentLength; j++) {
 					buffer.append(" ");
 				}
-			} else {
-				buffer.append(System.getProperty("line.separator"));
 			}
 		}	
+		buffer.append(System.getProperty("line.separator"));
 		return buffer.toString();
 	}
 }

@@ -69,7 +69,7 @@ public class RuntimeInfoSection
 	protected StructuredViewerPart fLibraryPart;
 	protected StructuredViewerPart fFolderPart;
 	private IBuildEntry currentLibrary;
-	private Button jarIncludeButton;
+	private Button fIncludeLibraryButton;
 	private boolean fEnabled = true;
 
 	class RenameAction extends Action {
@@ -328,18 +328,18 @@ public class RuntimeInfoSection
 		createLeftSection(container, toolkit);
 		createRightSection(container, toolkit);
 
-		jarIncludeButton =
+		fIncludeLibraryButton =
 			toolkit.createButton(
 				container,
 				PDEPlugin.getResourceString(JAR_INCLUDE),
 				SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		jarIncludeButton.setLayoutData(gd);
-		jarIncludeButton.setVisible(false);
-		jarIncludeButton.addSelectionListener(new SelectionAdapter(){
+		fIncludeLibraryButton.setLayoutData(gd);
+		fIncludeLibraryButton.setVisible(false);
+		fIncludeLibraryButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
-				handleLibInBinBuild(jarIncludeButton.getSelection());
+				handleLibInBinBuild(fIncludeLibraryButton.getSelection());
 			}
 		});
 		toolkit.paintBordersFor(container);
@@ -537,6 +537,7 @@ public class RuntimeInfoSection
 		fLibraryPart.setButtonEnabled(0, false);
 		fLibraryPart.setButtonEnabled(2, false);
 		fLibraryPart.setButtonEnabled(3, false);
+		fIncludeLibraryButton.setEnabled(false);
 	}
 
 	public void enableSection() {
@@ -544,6 +545,7 @@ public class RuntimeInfoSection
 		fLibraryPart.setButtonEnabled(0, true);
 		fLibraryPart.setButtonEnabled(2, false);
 		fLibraryPart.setButtonEnabled(3, false);
+		fIncludeLibraryButton.setEnabled(true);
 
 		fFolderPart.setButtonEnabled(0, !fLibraryViewer.getSelection().isEmpty());
 	}
@@ -649,11 +651,11 @@ public class RuntimeInfoSection
 		if (item instanceof IBuildEntry) {
 			update((IBuildEntry) item);
 			updateDirectionalButtons();
-			jarIncludeButton.setVisible(true);
+			fIncludeLibraryButton.setVisible(true);
 			String name = ((IBuildEntry)item).getName();
 			if (name.startsWith(IBuildEntry.JAR_PREFIX))
 				name = name.substring(IBuildEntry.JAR_PREFIX.length());
-			jarIncludeButton.setSelection(isJarIncluded(name));
+			fIncludeLibraryButton.setSelection(isJarIncluded(name));
 		}
 	}
 
@@ -712,7 +714,7 @@ public class RuntimeInfoSection
 		fLibraryViewer.setSelection(null);
 		fFolderViewer.setInput(null);
 		fFolderPart.setButtonEnabled(0,false);
-		jarIncludeButton.setVisible(false);
+		fIncludeLibraryButton.setVisible(false);
 		updateDirectionalButtons();
 		super.refresh();
 	}
@@ -756,7 +758,7 @@ public class RuntimeInfoSection
 						build.add(library);
 						fLibraryViewer.refresh();
 						fLibraryViewer.setSelection(new StructuredSelection(library));
-						jarIncludeButton.setSelection(true);
+						fIncludeLibraryButton.setSelection(true);
 						handleLibInBinBuild(true);
 
 						if (fLibraryViewer.getTable().getItemCount()>1)
@@ -830,7 +832,7 @@ public class RuntimeInfoSection
 					fFolderPart.setButtonEnabled(0,false);
 					fLibraryViewer.setSelection(null);
 					fFolderViewer.setInput(null);
-					jarIncludeButton.setVisible(false);
+					fIncludeLibraryButton.setVisible(false);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
