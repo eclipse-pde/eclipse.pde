@@ -120,7 +120,6 @@ public class JavaAttributeWizardPage extends WizardPage {
 		createSearchSection(container);
 		createGenerateSection(container);
 		
-		enableSearchSection(true);
 		enableGenerateSection(false);
 		
 		setControl(container);
