@@ -41,7 +41,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		ScrolledForm form = managedForm.getForm();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginWidth = 10;
+		//layout.marginWidth = 10;
 		layout.horizontalSpacing=15;
 		form.getBody().setLayout(layout);
 

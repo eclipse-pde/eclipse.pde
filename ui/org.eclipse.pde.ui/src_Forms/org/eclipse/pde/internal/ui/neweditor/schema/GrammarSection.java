@@ -107,7 +107,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
-		layout.verticalSpacing = 1;
+		layout.verticalSpacing = toolkit.getBorderStyle()==SWT.BORDER?0:1;
 		container.setLayout(layout);
 
 		Control tree = createTree(container, toolkit);
@@ -251,7 +251,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
-		//manager.add(new PropertiesAction(getFormPage().getEditor()));
+		manager.add(new PropertiesAction(getPage().getPDEEditor()));
 	}
 	private void handleDelete(Object object) {
 		if (object instanceof SchemaCompositor) {
