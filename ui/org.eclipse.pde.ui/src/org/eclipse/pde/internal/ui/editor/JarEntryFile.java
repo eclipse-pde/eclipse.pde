@@ -71,5 +71,15 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 			return new File(fZipFile.getName());
 		return super.getAdapter(adapter);
 	}
+	
+	public String toString() {
+		return "JarEntryFile["+ fZipFile.getName() + "::" + fEntryName + "]"; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
+	}
+	
+	public boolean equals(Object obj) {
+		if (!(obj instanceof JarEntryFile))
+			return false;
+		return obj.toString().equals(obj.toString());
+	}
 
 }
