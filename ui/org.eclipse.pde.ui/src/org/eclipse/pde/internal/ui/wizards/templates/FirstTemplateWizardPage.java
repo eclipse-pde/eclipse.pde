@@ -388,7 +388,6 @@ public class FirstTemplateWizardPage extends WizardPage {
 			}
 		}
 		setErrorMessage(null);
-		setPageComplete(false);
 	}
 
 	
