@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -50,9 +51,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	private Label countLabel;
-	private TableViewer availableListViewer;
-	private Text filterText;
+	private Label fCountLabel;
+	private TableViewer fAvailableListViewer;
+	private Text fFilterText;
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
@@ -92,7 +93,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void addViewerListeners() {
-		availableListViewer.addDoubleClickListener(new IDoubleClickListener() {
+		fAvailableListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleAdd();
 			}
@@ -104,7 +105,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		});
 		
-		filterText.addModifyListener(new ModifyListener(){
+		fFilterText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e) {
 				handleFilter();
 			}
@@ -129,11 +130,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		gd.heightHint = 200;
 		table.setLayoutData(gd);
 
-		availableListViewer = new TableViewer(table);
-		availableListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		availableListViewer.setContentProvider(new ContentProvider());
-		availableListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		availableListViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fAvailableListViewer = new TableViewer(table);
+		fAvailableListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fAvailableListViewer.setContentProvider(new ContentProvider());
+		fAvailableListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fAvailableListViewer.setSorter(ListUtil.PLUGIN_SORTER);
 
 		return container;
 	}
@@ -237,8 +238,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		});
 		SWTUtil.setButtonDimensionHint(button);
 		
-		countLabel = new Label(comp, SWT.NONE);
-		countLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));		
+		fCountLabel = new Label(comp, SWT.NONE);
+		fCountLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));		
 		return container;
 	}
 	
@@ -256,10 +257,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Label filterLabel = new Label(container, SWT.NONE);
 		filterLabel.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.search")); //$NON-NLS-1$
 		
-		filterText = new Text(container, SWT.BORDER);
-		filterText.setText(""); //$NON-NLS-1$
+		fFilterText = new Text(container, SWT.BORDER);
+		fFilterText.setText(""); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		filterText.setLayoutData(gd);
+		fFilterText.setLayoutData(gd);
 			
 		return container;
 	}
@@ -269,7 +270,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		
 	}
 	protected void refreshPage() {
-		availableListViewer.refresh();
+		fAvailableListViewer.refresh();
 		importListViewer.getTable().removeAll();		
 		pageChanged();
 	}
@@ -279,21 +280,21 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		setPageComplete(importListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
-		countLabel.setText(
+		fCountLabel.setText(
 			PDEPlugin.getFormattedMessage(
 				"ImportWizard.DetailedPage.count", //$NON-NLS-1$
 				new String[] {
 					new Integer(importListViewer.getTable().getItemCount()).toString(),
 					new Integer(models.length).toString()}));
-		countLabel.getParent().layout();
+		fCountLabel.getParent().layout();
 	}
 	
 	private void handleAdd() {
-		IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)fAvailableListViewer.getSelection();
 		if (ssel.size() > 0) {
-			Table table = availableListViewer.getTable();
+			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			availableListViewer.remove(ssel.toArray());
+			fAvailableListViewer.remove(ssel.toArray());
 			importListViewer.add(ssel.toArray());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
@@ -301,7 +302,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleAddAll() {
-		TableItem[] items = availableListViewer.getTable().getItems();
+		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
 		ArrayList data = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
@@ -309,35 +310,34 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (data.size() > 0) {
 			importListViewer.add(data.toArray());
-			availableListViewer.remove(data.toArray());
+			fAvailableListViewer.remove(data.toArray());
 			pageChanged();
 		}
 	}
 	
 	private void handleFilter() {
-		if (filterText == null ||filterText.getText().trim().length() == 0)
+		if (fFilterText == null ||fFilterText.getText().trim().length() == 0)
 			return;
 
-		String text = filterText.getText().trim();
-		if (text.indexOf('*') == -1 && text.indexOf('?') == -1)
-			text += "*"; //$NON-NLS-1$
-		
-		StringMatcher stringMatcher = new StringMatcher(text, false, false);
-		TableItem[] tableItems = availableListViewer.getTable().getItems();
+		String text = fFilterText.getText().trim();
+		if (!text.endsWith("*"))
+			text += "*";
+		Pattern pattern = PatternConstructor.createPattern(text, true);
+		TableItem[] tableItems = fAvailableListViewer.getTable().getItems();
 		ArrayList results = new ArrayList();
 		for (int i = 0; i<tableItems.length; i++){
 			Object data = tableItems[i].getData();
 			if (data instanceof IPluginModelBase){
 				IPluginModelBase model = (IPluginModelBase)data;
-				if (stringMatcher.match(model.getPluginBase().getId()))
+				if (pattern.matcher(model.getPluginBase().getId()).matches())
 					results.add(tableItems[i]);
 			}
 		}
 		if (results.size()>0){
 			TableItem[] selectionList = (TableItem[])results.toArray(new TableItem[results.size()]);
-			availableListViewer.getTable().setSelection(selectionList);
+			fAvailableListViewer.getTable().setSelection(selectionList);
 		} else {
-			availableListViewer.setSelection(null);
+			fAvailableListViewer.setSelection(null);
 		}
 	}
 	
@@ -347,7 +347,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			Table table = importListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			importListViewer.remove(ssel.toArray());
-			availableListViewer.add(ssel.toArray());
+			fAvailableListViewer.add(ssel.toArray());
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
 		}		
@@ -365,14 +365,14 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(items[i].getData());
 		}
 		if (data.size() > 0) {
-			availableListViewer.add(data.toArray());
+			fAvailableListViewer.add(data.toArray());
 			importListViewer.remove(data.toArray());
 			pageChanged();
 		}		
 	}
 	
 	private void handleSwap() {
-		TableItem[] aItems = availableListViewer.getTable().getItems();
+		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
 		TableItem[] iItems = importListViewer.getTable().getItems();
 		
 		ArrayList data = new ArrayList();
@@ -380,7 +380,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			data.add(iItems[i].getData());
 		}
 		if (data.size() > 0) {
-			availableListViewer.add(data.toArray());
+			fAvailableListViewer.add(data.toArray());
 			importListViewer.remove(data.toArray());
 		}
 		
@@ -390,7 +390,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (data.size() > 0) {
 			importListViewer.add(data.toArray());
-			availableListViewer.remove(data.toArray());
+			fAvailableListViewer.remove(data.toArray());
 		}
 		pageChanged();		
 	}
@@ -410,7 +410,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (result.size() > 0) {
 			importListViewer.add(result.toArray());
-			availableListViewer.remove(result.toArray());
+			fAvailableListViewer.remove(result.toArray());
 		}
 		pageChanged();		
 	}
@@ -430,7 +430,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 		if (result.size() > 0) {
 			importListViewer.add(result.toArray());
-			availableListViewer.remove(result.toArray());
+			fAvailableListViewer.remove(result.toArray());
 		}
 		pageChanged();		
 	}
@@ -453,7 +453,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		handleRemoveAll(false);
 		importListViewer.add(result.toArray());
-		availableListViewer.remove(result.toArray());
+		fAvailableListViewer.remove(result.toArray());
 		pageChanged();		
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -19,20 +20,21 @@ import org.eclipse.pde.internal.core.util.*;
 
 
 public class PluginSearchOperation {
-	protected PluginSearchInput input;
-	private ISearchResultCollector collector;
-	private StringMatcher stringMatcher;
+	protected PluginSearchInput fInput;
+	private ISearchResultCollector fCollector;
+	private Pattern fPattern;
 	
 	public PluginSearchOperation(
 		PluginSearchInput input,
 		ISearchResultCollector collector) {
-		this.input = input;
-		this.collector = collector;
-		this.stringMatcher =new StringMatcher(input.getSearchString(),!input.isCaseSensitive(),false);
+		this.fInput = input;
+		this.fCollector = collector;
+		this.fPattern = PatternConstructor.createPattern(
+				input.getSearchString(), input.isCaseSensitive());
 	}
 	
 	public void execute(IProgressMonitor monitor) {
-		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
+		IPluginModelBase[] entries = fInput.getSearchScope().getMatchingModels();
 		monitor.beginTask("", entries.length); //$NON-NLS-1$
 
 		try {
@@ -49,14 +51,14 @@ public class PluginSearchOperation {
 	private void visit(IPluginModelBase model) {
 		ArrayList matches = findMatch(model);
 		for (int i = 0; i < matches.size(); i++) {
-			collector.accept((IPluginObject)matches.get(i));
+			fCollector.accept(matches.get(i));
 		}
 	}
 	
 	private ArrayList findMatch(IPluginModelBase model) {
 		ArrayList result = new ArrayList();
-		int searchLimit = input.getSearchLimit();
-		switch (input.getSearchElement()) {
+		int searchLimit = fInput.getSearchLimit();
+		switch (fInput.getSearchElement()) {
 			case PluginSearchInput.ELEMENT_PLUGIN :
 				if (searchLimit != PluginSearchInput.LIMIT_REFERENCES)
 					findPluginDeclaration(model, result);
@@ -81,13 +83,14 @@ public class PluginSearchOperation {
 		ArrayList result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (pluginBase instanceof IFragment
-			&& stringMatcher.match(pluginBase.getId())) {
+				&& fPattern.matcher(pluginBase.getId()).matches()) {
 			result.add(pluginBase); }
 	}
 				
 	private void findPluginDeclaration(IPluginModelBase model, ArrayList result) {
 		IPluginBase pluginBase = model.getPluginBase();
-		if (pluginBase instanceof IPlugin && stringMatcher.match(pluginBase.getId()))
+		if (pluginBase instanceof IPlugin
+				&& fPattern.matcher(pluginBase.getId()).matches())
 			result.add(pluginBase);
 	}
 	
@@ -96,12 +99,13 @@ public class PluginSearchOperation {
 		ArrayList result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (pluginBase instanceof IFragment) {
-			if (stringMatcher.match(((IFragment) pluginBase).getPluginId()))
+			if (fPattern.matcher(((IFragment) pluginBase).getPluginId())
+					.matches())
 				result.add(pluginBase);
 		}
 		IPluginImport[] imports = pluginBase.getImports();
 		for (int i = 0; i < imports.length; i++) {
-			if (stringMatcher.match(imports[i].getId()))
+			if (fPattern.matcher(imports[i].getId()).matches())
 				result.add(imports[i]);
 		}
 	}
@@ -112,7 +116,7 @@ public class PluginSearchOperation {
 		IPluginExtensionPoint[] extensionPoints =
 			model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extensionPoints.length; i++) {
-			if (stringMatcher.match(extensionPoints[i].getFullId()))
+			if (fPattern.matcher(extensionPoints[i].getFullId()).matches())
 				result.add(extensionPoints[i]);
 		}
 	}
@@ -120,7 +124,7 @@ public class PluginSearchOperation {
 	private void findExtensionPointReferences(IPluginModelBase model, ArrayList result) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			if (stringMatcher.match(extensions[i].getPoint()))
+			if (fPattern.matcher(extensions[i].getPoint()).matches())
 				result.add(extensions[i]);
 		}
 	}
