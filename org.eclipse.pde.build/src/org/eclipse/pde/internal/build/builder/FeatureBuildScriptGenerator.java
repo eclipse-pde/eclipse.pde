@@ -583,7 +583,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// to clear all inherited values. Must remember to setup anything that
 		// is really expected.
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, "false", params); //$NON-NLS-1$
-		script.printJarTask(getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar", featureTempFolder + '/' + featureFolderName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.printJarTask(getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar", featureTempFolder + '/' + featureFolderName, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printTargetEnd();
 	}

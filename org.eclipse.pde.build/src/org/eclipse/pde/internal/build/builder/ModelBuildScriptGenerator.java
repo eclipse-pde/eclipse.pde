@@ -748,12 +748,22 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			FileSet[] binFolder = new FileSet[] {new FileSet(destdir, null, null, null, null, null, null)};
 			script.printCopyTask(null, jarLocation, binFolder, true);
 		} else {
-			script.printJarTask(jarLocation, destdir);
+			script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
 		}
 		script.printDeleteTask(destdir, null, null);
 		script.printTargetEnd();
 	}
 
+	private String getEmbeddedManifestFile(CompiledEntry jarEntry, String destdir) {
+		try {
+			String manifestName = getBuildProperties().getProperty(PROPERTY_MANIFEST_PREFIX + jarEntry.getName(true));
+			if (manifestName == null)
+				return null;
+			return destdir + '/' + manifestName;
+		} catch (CoreException e) {
+			return null;
+		}
+	}
 	/**
 	 * 
 	 * @param properties

@@ -89,11 +89,12 @@ public class AntScript {
 	 * @param jarFile the destination file name
 	 * @param basedir the base directory
 	 */
-	public void printJarTask(String jarFile, String basedir) {
+	public void printJarTask(String jarFile, String basedir, String manifestAttribute) {
 		printTab();
 		output.print("<jar"); //$NON-NLS-1$
 		printAttribute("jarfile", jarFile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
+		printAttribute("manifest", manifestAttribute, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
 
