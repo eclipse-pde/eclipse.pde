@@ -15,4 +15,5 @@ public interface ISchemaInclude extends ISchemaObject {
 	String getLocation();
 	void setLocation(String location) throws CoreException;
 	ISchema getIncludedSchema();
+	void dispose();
 }

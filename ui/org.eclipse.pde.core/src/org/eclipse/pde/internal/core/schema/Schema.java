@@ -114,6 +114,12 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	public void dispose() {
+		if (includes != null) {
+			for (int i = 0; i < includes.size(); i++) {
+				ISchemaInclude include = (ISchemaInclude) includes.get(i);
+				include.dispose();
+			}
+		}
 		reset();
 		disposed = true;
 	}
@@ -121,10 +127,20 @@ public class Schema extends PlatformObject implements ISchema {
 	public ISchemaElement findElement(String name) {
 		if (!isLoaded())
 			load();
+		
 		for (int i = 0; i < elements.size(); i++) {
 			ISchemaElement element = (ISchemaElement) elements.elementAt(i);
 			if (element.getName().equals(name))
 				return element;
+		}
+		if (includes!=null) {
+			for (int i=0; i<includes.size(); i++) {
+				ISchemaInclude include = (ISchemaInclude)includes.get(i);
+				ISchema ischema = include.getIncludedSchema();
+				if (ischema==null) continue;
+				ISchemaElement element = ischema.findElement(name);
+				if (element!=null) return element;
+			}
 		}
 		return null;
 	}
@@ -291,6 +307,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public boolean isEditable() {
 		return false;
 	}
+	
 	public boolean isLoaded() {
 		return loaded;
 	}
@@ -874,24 +891,24 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println("<!-- Schema file written by PDE -->");
 		writer.println("<schema targetNamespace=\"" + pluginId + "\">");
 		String indent2 = INDENT + INDENT;
-		String indent3 = indent2 + INDENT; 
-		writer.println(indent+"<annotation>");
+		String indent3 = indent2 + INDENT;
+		writer.println(indent + "<annotation>");
 		writer.println(indent2 + "<appInfo>");
 		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\"");
 		writer.print(" id=\"" + pointId + "\"");
 		writer.println(" name=\"" + getName() + "\"/>");
 		writer.println(indent2 + "</appInfo>");
 		writer.println(indent2 + "<documentation>");
-		writer.println(indent3
-			+ SchemaObject.getWritableDescription(getDescription()));
+		writer.println(
+			indent3 + SchemaObject.getWritableDescription(getDescription()));
 		writer.println(indent2 + "</documentation>");
 		writer.println(INDENT + "</annotation>");
 		writer.println();
-		
+
 		// add includes, if defined
-		if (includes!=null) {
-			for (int i=0; i<includes.size(); i++) {
-				ISchemaInclude include = (ISchemaInclude)includes.get(i);
+		if (includes != null) {
+			for (int i = 0; i < includes.size(); i++) {
+				ISchemaInclude include = (ISchemaInclude) includes.get(i);
 				include.write(INDENT, writer);
 				writer.println();
 			}

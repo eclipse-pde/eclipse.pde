@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.core.schema;
  */
 
 import java.io.File;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -30,12 +31,7 @@ public class SchemaRegistry
 	}
 
 	private AbstractSchemaDescriptor getSchemaDescriptor(String extensionPointId) {
-		if (workspaceDescriptors == null) {
-			initializeDescriptors();
-		}
-		if (dirtyWorkspaceModels != null && dirtyWorkspaceModels.size() > 0) {
-			updateWorkspaceDescriptors();
-		}
+		ensureCurrent();
 		AbstractSchemaDescriptor descriptor =
 			(AbstractSchemaDescriptor) workspaceDescriptors.get(
 				extensionPointId);
@@ -50,6 +46,15 @@ public class SchemaRegistry
 		return null;
 	}
 
+	private void ensureCurrent() {
+		if (workspaceDescriptors == null) {
+			initializeDescriptors();
+		}
+		if (dirtyWorkspaceModels != null && dirtyWorkspaceModels.size() > 0) {
+			updateWorkspaceDescriptors();
+		}
+	}
+
 	public ISchema getSchema(String extensionPointId) {
 		AbstractSchemaDescriptor descriptor =
 			getSchemaDescriptor(extensionPointId);
@@ -57,7 +62,36 @@ public class SchemaRegistry
 			return null;
 		return descriptor.getSchema();
 	}
-	
+
+	public ISchema getIncludedSchema(
+		ISchemaDescriptor parent,
+		String schemaLocation) {
+		ensureCurrent();
+		Hashtable descriptors = null;
+
+		if (parent instanceof FileSchemaDescriptor)
+			descriptors = workspaceDescriptors;
+		else if (parent instanceof ExternalSchemaDescriptor)
+			descriptors = externalDescriptors;
+		if (descriptors == null)
+			return null;
+		try {
+			URL url =
+				IncludedSchemaDescriptor.computeURL(
+					parent.getSchemaURL(),
+					schemaLocation);
+			String key = url.toString();
+			ISchemaDescriptor desc = (ISchemaDescriptor) descriptors.get(key);
+			if (desc == null) {
+				desc = new IncludedSchemaDescriptor(parent, schemaLocation);
+				descriptors.put(key, desc);
+			}
+			return desc.getSchema();
+		} catch (MalformedURLException e) {
+		}
+		return null;
+	}
+
 	private void initializeDescriptors() {
 		workspaceDescriptors = new Hashtable();
 		externalDescriptors = new Hashtable();
@@ -246,19 +280,29 @@ public class SchemaRegistry
 		for (Enumeration enum = workspaceDescriptors.keys();
 			enum.hasMoreElements();
 			) {
-			String pointId = (String) enum.nextElement();
-			Object desc = workspaceDescriptors.get(pointId);
+			String key = (String) enum.nextElement();
+			Object desc = workspaceDescriptors.get(key);
 			if (desc instanceof FileSchemaDescriptor) {
 				FileSchemaDescriptor fd = (FileSchemaDescriptor) desc;
 				if (fd.getFile().equals(file)) {
-					workspaceDescriptors.remove(pointId);
-					fd.getSchema().dispose();
+					workspaceDescriptors.remove(key);
+					fd.dispose();
+					return;
+				}
+			}
+			if (desc instanceof IncludedSchemaDescriptor) {
+				IncludedSchemaDescriptor id = (IncludedSchemaDescriptor) desc;
+				if (file.equals(id.getFile())) {
+					workspaceDescriptors.remove(key);
+					id.dispose();
+					return;
 				}
 			}
 		}
 	}
 	private void removeWorkspaceDescriptors(IPluginModelBase model) {
 		IPluginBase pluginInfo = model.getPluginBase();
+		IProject project = model.getUnderlyingResource().getProject();
 		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
 		for (int i = 0; i < points.length; i++) {
 			IPluginExtensionPoint point = points[i];
@@ -266,16 +310,28 @@ public class SchemaRegistry
 			if (descObj != null && descObj instanceof FileSchemaDescriptor) {
 				FileSchemaDescriptor desc = (FileSchemaDescriptor) descObj;
 				IFile schemaFile = desc.getFile();
-				if (model
-					.getUnderlyingResource()
-					.getProject()
-					.equals(schemaFile.getProject())) {
+				if (project.equals(schemaFile.getProject())) {
 					// same project - remove
 					workspaceDescriptors.remove(point.getFullId());
 				}
 			}
 		}
+		// Also remove all included descriptors from the same project
+		for (Enumeration enum = workspaceDescriptors.keys();
+			enum.hasMoreElements();
+			) {
+			String key = (String) enum.nextElement();
+			Object desc = workspaceDescriptors.get(key);
+			if (desc instanceof IncludedSchemaDescriptor) {
+				IncludedSchemaDescriptor id = (IncludedSchemaDescriptor) desc;
+				IFile file = id.getFile();
+				if (file != null && file.getProject().equals(project))
+					workspaceDescriptors.remove(key);
+				id.dispose();
+			}
+		}
 	}
+
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 			IResourceDelta delta = event.getDelta();
@@ -321,12 +377,15 @@ public class SchemaRegistry
 			) {
 			AbstractSchemaDescriptor sd =
 				(AbstractSchemaDescriptor) iter.next();
+			IFile schemaFile = null;
 			if (sd instanceof FileSchemaDescriptor) {
-				IFile schemaFile = ((FileSchemaDescriptor) sd).getFile();
-				if (schemaFile.equals(file)) {
-					sd.dispose();
-					break;
-				}
+				schemaFile = ((FileSchemaDescriptor) sd).getFile();
+			} else if (sd instanceof IncludedSchemaDescriptor) {
+				schemaFile = ((IncludedSchemaDescriptor) sd).getFile();
+			}
+			if (schemaFile != null && schemaFile.equals(file)) {
+				sd.dispose();
+				break;
 			}
 		}
 	}

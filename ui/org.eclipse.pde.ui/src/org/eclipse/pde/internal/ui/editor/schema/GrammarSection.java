@@ -171,12 +171,12 @@ public class GrammarSection extends PDEFormSection {
 			new NewCompositorAction(sourceElement, object, ISchemaCompositor.GROUP));
 		submenu.add(cmenu);
 
-		if (schema.getElementCount() > 1
+		if (schema.getResolvedElementCount() > 1
 			&& object != null
 			&& object instanceof SchemaCompositor) {
 			MenuManager refMenu =
 				new MenuManager(PDEPlugin.getResourceString(SECTION_REFERENCE));
-			ISchemaElement[] elements = schema.getElements();
+			ISchemaElement[] elements = schema.getResolvedElements();
 			for (int i = 0; i < elements.length; i++) {
 				ISchemaElement element = elements[i];
 				if (element == sourceElement)

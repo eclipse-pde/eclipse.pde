@@ -36,6 +36,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_NAME = "BaseExtensionPoint.name"; //$NON-NLS-1$
 	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema"; //$NON-NLS-1$
 	public static final String KEY_EDIT = "BaseExtensionPoint.edit"; //$NON-NLS-1$
+	public static final String KEY_SHARED = "BaseExtensionPoint.shared"; //$NON-NLS-1$
 	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_SINCE = "BaseExtensionPoint.sections.since"; //$NON-NLS-1$
@@ -52,6 +53,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected Text nameText;
 	protected Text schemaText;
 	protected Button openSchemaButton;
+	protected Button sharedSchemaButton;
 
 	public BaseExtensionPointMainPage(IContainer container) {
 		super("newExtensionPoint"); //$NON-NLS-1$
@@ -102,6 +104,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		schemaText.setLayoutData(gd);
 		//schemaText.setEditable(false);
 
+		if (isSharedSchemaSwitchNeeded()) {
+			sharedSchemaButton = new Button(container, SWT.CHECK);
+			sharedSchemaButton.setText(PDEPlugin.getResourceString(KEY_SHARED));
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			sharedSchemaButton.setLayoutData(gd);
+		}
+
 		openSchemaButton = new Button(container, SWT.CHECK);
 		openSchemaButton.setText(PDEPlugin.getResourceString(KEY_EDIT));
 		openSchemaButton.setSelection(true);
@@ -119,7 +129,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	private InputStream createSchemaStream(
 		String pluginId,
 		String pointId,
-		String name) {
+		String name,
+		boolean shared) {
 		if (name.length() == 0)
 			name = pointId;
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name);
@@ -131,27 +142,31 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SINCE));
 		schema.addDocumentSection(section);
 
-		SchemaElement element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
-		SchemaComplexType complexType = new SchemaComplexType(schema);
-		element.setType(complexType);
-		SchemaCompositor compositor =
-			new SchemaCompositor(element, ISchemaCompositor.SEQUENCE);
-		complexType.setCompositor(compositor);
+		SchemaElement element;
 
-		SchemaAttribute attribute = new SchemaAttribute(element, "point"); //$NON-NLS-1$
-		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
-		attribute.setUse(ISchemaAttribute.REQUIRED);
-		complexType.addAttribute(attribute);
+		if (!shared) {
+			element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
+			SchemaComplexType complexType = new SchemaComplexType(schema);
+			element.setType(complexType);
+			SchemaCompositor compositor =
+				new SchemaCompositor(element, ISchemaCompositor.SEQUENCE);
+			complexType.setCompositor(compositor);
 
-		attribute = new SchemaAttribute(element, "id"); //$NON-NLS-1$
-		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
-		complexType.addAttribute(attribute);
+			SchemaAttribute attribute = new SchemaAttribute(element, "point"); //$NON-NLS-1$
+			attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
+			attribute.setUse(ISchemaAttribute.REQUIRED);
+			complexType.addAttribute(attribute);
 
-		attribute = new SchemaAttribute(element, "name"); //$NON-NLS-1$
-		attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
-		complexType.addAttribute(attribute);
+			attribute = new SchemaAttribute(element, "id"); //$NON-NLS-1$
+			attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
+			complexType.addAttribute(attribute);
 
-		schema.addElement(element);
+			attribute = new SchemaAttribute(element, "name"); //$NON-NLS-1$
+			attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
+			complexType.addAttribute(attribute);
+
+			schema.addElement(element);
+		}
 
 		section = new DocumentSection(schema, IDocumentSection.EXAMPLES, "Examples"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_USAGE));
@@ -188,6 +203,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		String pluginId,
 		String id,
 		String name,
+		boolean shared,
 		String schema,
 		IProgressMonitor monitor)
 		throws CoreException {
@@ -200,7 +216,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (path.isEmpty() == false)
 			JavaCodeGenerator.ensureFoldersExist(container.getProject(), path.toString(), "/"); //$NON-NLS-1$
 
-		InputStream source = createSchemaStream(pluginId, id, name);
+		InputStream source = createSchemaStream(pluginId, id, name, shared);
 
 		IPath filePath = container.getFullPath().append(schema);
 
@@ -223,6 +239,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		final String id = idText.getText();
 		final String name = nameText.getText();
 		final String schema = schemaText.getText();
+		final boolean shared =
+			sharedSchemaButton != null
+				? sharedSchemaButton.getSelection()
+				: false;
 
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
@@ -232,6 +252,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 							getPluginId(),
 							id,
 							name,
+							shared,
 							schema,
 							monitor);
 					if (file != null && openFile)
@@ -263,7 +284,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 					items.add(curr);
 				}
 			}
-			pluginIdText.setItems((String[]) items.toArray(new String[items.size()]));
+			pluginIdText.setItems(
+				(String[]) items.toArray(new String[items.size()]));
 		}
 	}
 
@@ -287,6 +309,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return null;
 	}
 	protected boolean isPluginIdNeeded() {
+		return false;
+	}
+
+	protected boolean isSharedSchemaSwitchNeeded() {
 		return false;
 	}
 	private void openSchemaFile(final IFile file) {

@@ -1,8 +1,10 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
+import java.net.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 
 /**
@@ -16,7 +18,8 @@ import org.eclipse.pde.internal.core.ischema.*;
 public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	private String location;
 	private ISchema includedSchema;
-	
+	private boolean internal;
+
 	public SchemaInclude(ISchemaObject parent, String location) {
 		super(parent, location);
 		this.location = location;
@@ -33,10 +36,14 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#setLocation(java.lang.String)
 	 */
 	public void setLocation(String location) throws CoreException {
-		String oldValue = (String)this.location;
+		String oldValue = (String) this.location;
 		this.location = location;
 		includedSchema = null;
-		getSchema().fireModelObjectChanged(this, P_LOCATION, oldValue, location);
+		getSchema().fireModelObjectChanged(
+			this,
+			P_LOCATION,
+			oldValue,
+			location);
 	}
 
 	/**
@@ -44,15 +51,50 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.println("<include schemaLocation=\""+location+"\"/>");
+		writer.println("<include schemaLocation=\"" + location + "\"/>");
 	}
-	
+
 	public ISchema getIncludedSchema() {
-		if (includedSchema!=null && includedSchema.isDisposed())
+		if (includedSchema != null && includedSchema.isDisposed()) {
 			includedSchema = null;
-		if (includedSchema==null) {
+		}
+		if (includedSchema == null) {
 			// load it relative to the parent schema
+			ISchemaDescriptor descriptor = getSchema().getSchemaDescriptor();
+			if (descriptor != null) {
+				includedSchema =
+					PDECore.getDefault().getSchemaRegistry().getIncludedSchema(
+						descriptor,
+						location);
+				internal = false;
+			} else {
+				URL url = getSchema().getURL();
+				if (url != null) {
+					includedSchema = createInternalSchema(url, location);
+					if (includedSchema != null)
+						internal = true;
+
+				}
+			}
 		}
 		return includedSchema;
+	}
+	private ISchema createInternalSchema(URL parentURL, String location) {
+		try {
+			URL schemaURL =
+				IncludedSchemaDescriptor.computeURL(parentURL, location);
+			Schema ischema = new Schema(null, schemaURL);
+			ischema.load();
+			return ischema;
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+	public void dispose() {
+		if (internal && includedSchema!=null && !includedSchema.isDisposed()) {
+			includedSchema.dispose();
+			includedSchema = null;
+			internal = false;
+		}
 	}
 }

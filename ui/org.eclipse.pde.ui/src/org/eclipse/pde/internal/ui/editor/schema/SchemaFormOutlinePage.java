@@ -79,7 +79,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 
 	Object[] getMarkup() {
 		ISchema schema = (ISchema) formPage.getModel();
-		return schema.getElements();
+		return schema.getResolvedElements();
 	}
 
 	String getObjectLabel(Object obj) {

@@ -34,4 +34,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	protected boolean isPluginIdNeeded() {
 		return true;
 	}
+	protected boolean isSharedSchemaSwitchNeeded() {
+		return true;
+	}
 }
