@@ -420,7 +420,7 @@ public abstract class PDEFormEditor extends FormEditor
 		//TODO hack until the move to the new search
 		PDESourcePage sourcePage = (PDESourcePage) setActivePage(PluginInputContext.CONTEXT_ID);
 		if (sourcePage != null)
-			sourcePage.selectReveal(marker);
+			IDE.gotoMarker(sourcePage, marker);
 
 		/*
 		 * if (EditorPreferencePage.getUseSourcePage() || getEditorInput()
@@ -488,6 +488,16 @@ public abstract class PDEFormEditor extends FormEditor
 				((FormOutlinePage) outline).refresh();
 		}
 		contentOutline.setPageActive(outline);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#setActivePage(java.lang.String)
+	 */
+	public IFormPage setActivePage(String pageId) {
+		IFormPage page = super.setActivePage(pageId);
+		if (page != null)
+			updateContentOutline(page);
+		return page;
 	}
 	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
 		return page.getPropertySheetPage();
