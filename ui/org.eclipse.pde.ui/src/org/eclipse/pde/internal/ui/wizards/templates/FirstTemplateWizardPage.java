@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -203,6 +204,18 @@ public class FirstTemplateWizardPage extends WizardPage {
 	
 	private void addPluginSpecificControls(Composite parent) {
 			classField = createField(parent, PDEPlugin.getResourceString(KEY_CLASS));
+			classField.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent arg0) {
+					IStatus status = JavaConventions.validateJavaTypeName(classField.getText());
+					if (status.getSeverity() == IStatus.ERROR) {
+						setErrorMessage(status.getMessage());
+						setPageComplete(false);
+					} else {
+						setErrorMessage(null);
+						setPageComplete(true);
+					}
+				}
+			});
 
 			new Label(parent, SWT.NONE);
 			generateMainClass = new Button(parent, SWT.CHECK);
