@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -25,8 +26,7 @@ public class BuildPluginAction extends BaseBuildAction {
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 	
-		ModelBuildScriptGenerator generator;
-		generator = new ModelBuildScriptGenerator();
+		ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 		ModelBuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
@@ -34,7 +34,8 @@ public class BuildPluginAction extends BaseBuildAction {
 		
 		IProject project = file.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
-		generator.setDevEntries("bin"); // FIXME: look at bug #5747
+		URL url = getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties");
+		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin"));
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 		generator.setBuildingOSGi(true);
 		try {

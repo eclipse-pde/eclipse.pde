@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -48,6 +49,8 @@ public class BuildFeatureAction extends BaseBuildAction {
 		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		
 		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
+		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties");
+		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin"));
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setAnalyseChildren(true);
 		generator.setFeature(model.getFeature().getId());

@@ -1,19 +1,29 @@
 package org.eclipse.pde.internal.ui.build;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.ant.internal.ui.launchConfigurations.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
 
@@ -167,5 +177,69 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 		} catch (CoreException e) {
 		}
 	}
-
+	
+	public static URL getDevEntriesProperties(String fileName) {
+		Properties properties = new Properties();
+		properties.put("*", "bin");
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IPluginModelBase[] models = manager.getAllModels();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (id == null)
+				continue;
+			String entry = getDevEntry(models[i]);
+			if (entry != null)
+				properties.put(id, entry);
+		}
+		
+		try {
+			FileOutputStream stream = new FileOutputStream(fileName);
+			properties.store(stream, "");
+			stream.flush();
+			stream.close();
+			return new URL("file:" + fileName);
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+		return null;
+	}
+	
+	
+	private static String getDevEntry(IPluginModelBase model) {
+		ArrayList result = new ArrayList();
+		IProject project = model.getUnderlyingResource().getProject();
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				addPath(result, jProject.getOutputLocation());
+				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
+						addPath(result, roots[i].getRawClasspathEntry().getOutputLocation());
+				}
+			}
+		} catch (JavaModelException e) {
+		} catch (CoreException e) {
+		}
+		if (result.size() == 0)
+			return null;
+		
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < result.size(); i++) {
+			buffer.append(result.get(i).toString());
+			if (i < result.size() - 1)
+				buffer.append(",");
+		}
+		return buffer.toString();
+	}
+	
+	private static void addPath(ArrayList result, IPath path) {
+		if (path != null) {
+			if (path.getDevice() != null) {
+				result.add(path);
+			} else if (path.segmentCount() > 1) {
+				result.add(path.removeFirstSegments(1));
+			}
+		}
+	}		
 }

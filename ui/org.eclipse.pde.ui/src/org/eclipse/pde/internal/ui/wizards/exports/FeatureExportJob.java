@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
@@ -26,6 +27,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.BaseBuildAction;
 import org.eclipse.swt.widgets.*;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
@@ -47,6 +49,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
 	// Location where the build takes place
 	protected String fBuildTempLocation;
+	private URL fDevProperties;
 	
 	protected HashMap fBuildProperties;
 
@@ -57,7 +60,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fItems = items;
-		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toOSString();
+		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString();
 		setRule(null);
 	}
 	
@@ -186,6 +189,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
+		generator.setDevEntries(getDevProperties());
 		generator.setElements(new String[] {"feature@" + featureID});
 		generator.setPluginPath(getPaths());
 		generator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder");
@@ -193,6 +197,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setConfigInfo("*,*,*");
 		generator.generate();	
+	}
+	
+	private String getDevProperties() {
+		if (fDevProperties == null) {
+			fDevProperties = BaseBuildAction.getDevEntriesProperties(fBuildTempLocation + "/dev.properties");
+		}
+		return (fDevProperties != null) ? fDevProperties.toString() : "bin";
 	}
 
 	protected void runScript(String location, String[] targets, Map properties,
