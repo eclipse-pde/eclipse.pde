@@ -46,9 +46,9 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.pde.internal.runtime.logview.StatusAdapter"
+            objectClass="org.eclipse.pde.internal.runtime.logview.LogEntry"
             name="%propertyPages.details.name"
-            class="org.eclipse.pde.internal.runtime.logview.StatusPropertyPage"
+            class="org.eclipse.pde.internal.runtime.logview.LogEntryPropertyPage"
             id="org.eclipse.pde.runtime.StatusDetails">
       </page>
    </extension>

@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 
@@ -61,10 +62,12 @@ public class PreviewAction extends Action {
 		IFile file = input.getFile();
 		IPath fullPath = Platform.getLocation().append(file.getFullPath());
 		try {
-			URL url = new URL("file:" + fullPath.toOSString());
+			File systemFile = fullPath.toFile();
+			URL url = systemFile.toURL();
 			FeatureReference fref = new FeatureReference();
 			fref.setURL(url);
-			fref.setType("org.eclipse.update.core.installed");
+			
+			fref.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
 			return fref.getFeature();
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
