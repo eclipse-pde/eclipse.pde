@@ -24,9 +24,7 @@ public class ShowDescriptionAction extends Action {
 	private File previewFile;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
-		this.client = "SchemaDescriptionAction";
-		this.pointId = point.getFullId();
-		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label"));
+		setExtensionPoint(point);
 	}
 	
 	public ShowDescriptionAction(Object client, ISchema schema) {
@@ -37,6 +35,13 @@ public class ShowDescriptionAction extends Action {
 	public void setSchema(ISchema schema) {
 		this.schema = schema;
 		this.pointId = schema.getQualifiedPointId();
+	}
+	
+	public void setExtensionPoint(IPluginExtensionPoint point) {
+		this.client = "SchemaDescriptionAction";
+		this.pointId = point.getFullId();
+		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label"));
+		schema = null;
 	}
 	
 	public void run() {
