@@ -112,6 +112,8 @@ public class BundleLoader {
 		try {
 			String localLocation = new URL(location).getFile();
 			IPath path = new Path(localLocation).removeTrailingSeparator();
+			if (path.getDevice() != null)
+				path = path.setDevice(path.getDevice().toUpperCase());
 			model.setInstallLocation(path.toOSString());
 			model.getPluginBase();
 		} catch (MalformedURLException e) {
