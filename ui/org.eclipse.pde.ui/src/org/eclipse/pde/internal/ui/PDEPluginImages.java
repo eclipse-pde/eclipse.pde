@@ -116,6 +116,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_EXPORT_CO   = create(PATH_OVR, "export_co.gif");
 	public static final ImageDescriptor DESC_EXTERNAL_CO   = create(PATH_OVR, "external_co.gif");
 	public static final ImageDescriptor DESC_BINARY_CO   = create(PATH_OVR, "binary_co.gif");
+	public static final ImageDescriptor DESC_JAVA_CO   = create(PATH_OVR, "java_co.gif");
 
 	/**
 	 * TOOL16

@@ -2,13 +2,11 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
+import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -20,12 +18,13 @@ import org.eclipse.ui.*;
  * Insert the type's description here.
  * @see WizardPage
  */
-public class RequiredPluginsContainerPage extends WizardPage implements IClasspathContainerPage {
+public class RequiredPluginsContainerPage extends WizardPage implements IClasspathContainerPage, IClasspathContainerPageExtension {
 	private IClasspathEntry entry;
 	private CheckboxTableViewer viewer;
 	private Image projectImage;
 	private Image libraryImage;
 	private IClasspathEntry [] realEntries;
+	private IJavaProject javaProject;
 	
 	class EntryContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object [] getElements(Object parent) {
@@ -128,6 +127,10 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	public IClasspathEntry getSelection()  {
 		return entry;
 	}
+	
+	public void initialize(IJavaProject project, IClasspathEntry [] currentEntries) {
+		javaProject = project;
+	}
 
 	/**
 	 * Insert the method's description here.
@@ -150,6 +153,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 			}
 		}
 	}
+/*
 	
 	private IJavaProject getJavaProject() {
 		if (entry==null) return null;
@@ -159,6 +163,11 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project==null) return null;
 		return JavaCore.create(project);
+	}
+*/
+
+	private IJavaProject getJavaProject() {
+		return javaProject;
 	}
 	
 	private void initializeView() {

@@ -1,43 +1,33 @@
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.ui.*;
-import org.eclipse.jdt.ui.text.IJavaColorConstants;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.pde.internal.core.*;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
-import org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
-import java.io.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.internal.ui.wizards.imports.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.*;
 
 public class PluginsView extends ViewPart {
 	private static final int TEMP_FILE_LIMIT = 10;
@@ -54,6 +44,9 @@ public class PluginsView extends ViewPart {
 	private Action openManifestAction;
 	private Action openSystemEditorAction;
 	private Action openTextEditorAction;
+	private Action selectDependentAction;
+	private Action addToJavaSearchAction;
+	private Action removeFromJavaSearchAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
 	private ShowInWorkspaceAction showInPackagesAction;
 	private DisabledFilter disabledFilter = new DisabledFilter();
@@ -101,7 +94,10 @@ public class PluginsView extends ViewPart {
 	}
 
 	public void dispose() {
-		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
+		PDEPlugin
+			.getDefault()
+			.getPreferenceStore()
+			.removePropertyChangeListener(
 			propertyListener);
 		purgeTempFiles();
 		super.dispose();
@@ -111,12 +107,15 @@ public class PluginsView extends ViewPart {
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		treeViewer =
+			new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		treeViewer.setContentProvider(new PluginsContentProvider(this, manager));
+		treeViewer.setContentProvider(
+			new PluginsContentProvider(this, manager));
 		treeViewer.setLabelProvider(new PluginsLabelProvider());
-		treeViewer.setSorter(ListUtil.PLUGIN_SORTER);;
+		treeViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		;
 		initDragAndDrop();
 		makeActions();
 		initFilters();
@@ -124,7 +123,8 @@ public class PluginsView extends ViewPart {
 		contributeToActionBars(actionBars);
 		hookContextMenu();
 		hookDoubleClickAction();
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		treeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 			}
@@ -156,7 +156,7 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openAction.setText("Open");
-		
+
 		importBinaryAction = new Action() {
 			public void run() {
 				handleImport(false);
@@ -219,10 +219,33 @@ public class PluginsView extends ViewPart {
 
 		copyAction = new CopyToClipboardAction(clipboard);
 		copyAction.setText("Copy");
-		
-		showInNavigatorAction = new ShowInWorkspaceAction(IPageLayout.ID_RES_NAV, treeViewer);
+
+		selectDependentAction = new Action() {
+			public void run() {
+				handleSelectDependent();
+			}
+		};
+		selectDependentAction.setText("Select Dependent Plug-ins");
+
+		addToJavaSearchAction = new Action() {
+			public void run() {
+				handleJavaSearch(true);
+			}
+		};
+		addToJavaSearchAction.setText("Add to Java Search");
+
+		removeFromJavaSearchAction = new Action() {
+			public void run() {
+				handleJavaSearch(false);
+			}
+		};
+		removeFromJavaSearchAction.setText("Remove from Java Search");
+
+		showInNavigatorAction =
+			new ShowInWorkspaceAction(IPageLayout.ID_RES_NAV, treeViewer);
 		showInNavigatorAction.setText("Show In Resource Navigator");
-		showInPackagesAction = new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
+		showInPackagesAction =
+			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
 		showInPackagesAction.setText("Show In Packages View");
 	}
 	private FileAdapter getSelectedFile() {
@@ -256,7 +279,7 @@ public class PluginsView extends ViewPart {
 			}
 		}
 		if (selection.size() > 0) {
-			boolean addSeparator=false;
+			boolean addSeparator = false;
 			if (showInNavigatorAction.isApplicable()) {
 				manager.add(showInNavigatorAction);
 				addSeparator = true;
@@ -275,9 +298,23 @@ public class PluginsView extends ViewPart {
 				manager.add(importMenu);
 				manager.add(new Separator());
 			}
+			addSeparator = false;
+			if (canDoJavaSearchOperation(selection, true)) {
+				manager.add(addToJavaSearchAction);
+				addSeparator = true;
+			}
+			if (canDoJavaSearchOperation(selection, false)) {
+				manager.add(removeFromJavaSearchAction);
+				addSeparator = true;
+			}
+			if (addSeparator) {
+				manager.add(new Separator());
+			}
 		}
 		copyAction.setSelection(selection);
 		manager.add(copyAction);
+		if (selection.size() > 0)
+			manager.add(selectDependentAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions"));
@@ -288,14 +325,16 @@ public class PluginsView extends ViewPart {
 
 		String fileName = adapter.getFile().getName();
 		ImageDescriptor desc =
-			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
+			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
+				fileName);
 		if (fileName.equalsIgnoreCase("plugin.xml")
 			|| fileName.equalsIgnoreCase("fragment.xml")) {
 			openManifestAction.setImageDescriptor(desc);
 			manager.add(openManifestAction);
 			manager.add(new Separator());
 			openManifestAction.setChecked(
-				editorId != null && editorId.equals(PDEPlugin.MANIFEST_EDITOR_ID));
+				editorId != null
+					&& editorId.equals(PDEPlugin.MANIFEST_EDITOR_ID));
 		}
 		manager.add(openTextEditorAction);
 		openTextEditorAction.setChecked(
@@ -307,16 +346,36 @@ public class PluginsView extends ViewPart {
 	}
 
 	private boolean canImport(IStructuredSelection selection) {
+		int nexternal = 0;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof ModelEntry) {
 				ModelEntry entry = (ModelEntry) obj;
-				if (entry.getWorkspaceModel() != null)
-					return false;
+				if (entry.getWorkspaceModel() == null)
+					nexternal++;
 			} else
 				return false;
 		}
-		return true;
+		return nexternal > 0;
+	}
+
+	private boolean canDoJavaSearchOperation(
+		IStructuredSelection selection,
+		boolean add) {
+		int nhits = 0;
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			Object obj = iter.next();
+			if (obj instanceof ModelEntry) {
+				ModelEntry entry = (ModelEntry) obj;
+				if (entry.getWorkspaceModel() == null) {
+					if (add && entry.isInJavaSearch() == false)
+						nhits++;
+					if (!add && entry.isInJavaSearch())
+						nhits++;
+				}
+			}
+		}
+		return nhits > 0;
 	}
 
 	protected void initDragAndDrop() {
@@ -372,7 +431,9 @@ public class PluginsView extends ViewPart {
 		if (obj instanceof FileAdapter) {
 			FileAdapter adapter = (FileAdapter) obj;
 			if (adapter.isDirectory()) {
-				treeViewer.setExpandedState(adapter, !treeViewer.getExpandedState(adapter));
+				treeViewer.setExpandedState(
+					adapter,
+					!treeViewer.getExpandedState(adapter));
 				return;
 			}
 			String editorId = adapter.getEditorId();
@@ -386,24 +447,123 @@ public class PluginsView extends ViewPart {
 	private void handleImport(boolean extractSource) {
 		IStructuredSelection selection =
 			(IStructuredSelection) treeViewer.getSelection();
-		IPluginModelBase[] models = new IPluginModelBase[selection.size()];
-		int i = 0;
+		ArrayList externalModels = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			ModelEntry entry = (ModelEntry) iter.next();
-			models[i++] = entry.getExternalModel();
+			if (entry.getWorkspaceModel() != null)
+				continue;
+			externalModels.add(entry.getExternalModel());
 		}
+		IPluginModelBase[] models =
+			(IPluginModelBase[]) externalModels.toArray(
+				new IPluginModelBase[externalModels.size()]);
 		try {
 			Shell shell = treeViewer.getTree().getShell();
 			ArrayList modelIds = new ArrayList();
 			IRunnableWithProgress op =
-				PluginImportWizard.getImportOperation(shell, true, extractSource, models, modelIds);
+				PluginImportWizard.getImportOperation(
+					shell,
+					true,
+					extractSource,
+					models,
+					modelIds);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
-			UpdateClasspathAction.doUpdateClasspath(new NullProgressMonitor(),getWorkspaceCounterparts(modelIds));
+			UpdateClasspathAction.doUpdateClasspath(
+				new NullProgressMonitor(),
+				getWorkspaceCounterparts(modelIds));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
+	}
+
+	private void handleJavaSearch(final boolean add) {
+		IStructuredSelection selection =
+			(IStructuredSelection) treeViewer.getSelection();
+		if (selection.size() == 0)
+			return;
+
+		ArrayList result = new ArrayList();
+
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			if (entry.getWorkspaceModel() != null)
+				continue;
+			if (entry.isInJavaSearch() == !add)
+				result.add(entry);
+		}
+		if (result.size() == 0)
+			return;
+		final ModelEntry[] array =
+			(ModelEntry[]) result.toArray(new ModelEntry[result.size()]);
+
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
+				PluginModelManager manager =
+					PDECore.getDefault().getModelManager();
+				try {
+					boolean useContainers =
+						BuildpathPreferencePage.getUseClasspathContainers();
+					manager.setInJavaSearch(array, add, useContainers, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+
+		ProgressMonitorDialog pmd =
+			new ProgressMonitorDialog(treeViewer.getTree().getShell());
+		try {
+			pmd.run(false, false, op);
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	private void handleSelectDependent() {
+		IStructuredSelection selection =
+			(IStructuredSelection) treeViewer.getSelection();
+		if (selection.size() == 0)
+			return;
+		HashSet set = new HashSet();
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			set.add(entry);
+			addDependentEntries(entry, set);
+		}
+		treeViewer.setSelection(new StructuredSelection(set.toArray()));
+	}
+
+	private void addDependentEntries(ModelEntry entry, Set set) {
+		if (entry.isEmpty()
+			|| entry.getActiveModel() instanceof WorkspacePluginModelBase)
+			return;
+		IPluginModelBase model = entry.getExternalModel();
+		if (model == null)
+			return;
+		IPluginBase plugin = model.getPluginBase();
+		if (plugin == null)
+			return;
+		IPluginImport[] iimports = plugin.getImports();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		for (int i = 0; i < iimports.length; i++) {
+			IPluginImport iimport = iimports[i];
+			ModelEntry ientry =
+				manager.findEntry(
+					iimport.getId(),
+					iimport.getVersion(),
+					iimport.getMatch());
+			if (ientry != null) {
+				set.add(ientry);
+				addDependentEntries(ientry, set);
+			}
+		}
 	}
 
 	private void handleOpenTextEditor(FileAdapter adapter, String editorId) {
@@ -415,7 +575,9 @@ public class PluginsView extends ViewPart {
 		try {
 			if (editorId == null || editorId.equals("@system"))
 				editorId = DEFAULT_EDITOR_ID;
-			page.openEditor(new SystemFileEditorInput(adapter.getFile()), editorId);
+			page.openEditor(
+				new SystemFileEditorInput(adapter.getFile()),
+				editorId);
 			adapter.setEditorId(editorId);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
@@ -440,7 +602,8 @@ public class PluginsView extends ViewPart {
 		// Start busy indicator.
 		final File file = localFile;
 		final boolean result[] = new boolean[1];
-		BusyIndicator.showWhile(treeViewer.getTree().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(treeViewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				// Open file using shell.
 				String path = file.getAbsolutePath();
@@ -451,7 +614,8 @@ public class PluginsView extends ViewPart {
 		// ShellExecute returns whether call was successful
 		if (!result[0]) {
 			PDEPlugin.logException(
-				new PartInitException("Unable to open external editor: " + file.getName()));
+				new PartInitException(
+					"Unable to open external editor: " + file.getName()));
 		} else {
 			adapter.setEditorId("@system");
 		}
@@ -507,20 +671,19 @@ public class PluginsView extends ViewPart {
 				tempFiles.remove(tempFile);
 		}
 	}
-	
+
 	private void handleSelectionChanged(ISelection selection) {
 		String text = "";
 		Object obj = getSelectedObject();
 		if (obj instanceof ModelEntry) {
-			IPluginModelBase model = ((ModelEntry)obj).getActiveModel();
+			IPluginModelBase model = ((ModelEntry) obj).getActiveModel();
 			text = model.getInstallLocation();
 		}
 		if (obj instanceof FileAdapter) {
-			text = ((FileAdapter)obj).getFile().getAbsolutePath();
+			text = ((FileAdapter) obj).getFile().getAbsolutePath();
 		}
 		getViewSite().getActionBars().getStatusLineManager().setMessage(text);
 	}
-
 
 	private void hookDoubleClickAction() {
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -538,38 +701,43 @@ public class PluginsView extends ViewPart {
 	}
 	void updateTitle(Object newInput) {
 		IConfigurationElement config = getConfigurationElement();
-		if (config==null) return;
+		if (config == null)
+			return;
 		String viewName = config.getAttribute("name");
-		if (newInput == null || newInput.equals(PDECore.getDefault().getModelManager())) {
+		if (newInput == null
+			|| newInput.equals(PDECore.getDefault().getModelManager())) {
 			// restore old
 			setTitle(viewName);
 			setTitleToolTip(getTitle());
-		}
-		else {
-			String name = ((LabelProvider)treeViewer.getLabelProvider()).getText(newInput);
-			setTitle(viewName+": "+name);
+		} else {
+			String name =
+				((LabelProvider) treeViewer.getLabelProvider()).getText(
+					newInput);
+			setTitle(viewName + ": " + name);
 			setTitleToolTip(getInputPath(newInput));
 		}
 	}
 	private String getInputPath(Object input) {
 		if (input instanceof FileAdapter) {
-			return "file: "+((FileAdapter)input).getFile().getAbsolutePath();
+			return "file: " + ((FileAdapter) input).getFile().getAbsolutePath();
 		}
 		if (input instanceof ModelEntry) {
-			IPluginModelBase model = ((ModelEntry)input).getActiveModel();
-			return "plugin: "+model.getInstallLocation();
+			IPluginModelBase model = ((ModelEntry) input).getActiveModel();
+			return "plugin: " + model.getInstallLocation();
 		}
 		return "";
 	}
 	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
-		
-		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+
+		IPluginModelBase[] allModels =
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		ArrayList desiredModels = new ArrayList();
 		for (int i = 0; i < allModels.length; i++) {
 			if (modelIds.contains(allModels[i].getPluginBase().getId()))
-				desiredModels.add(allModels[i]);				
+				desiredModels.add(allModels[i]);
 		}
-		
-		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
+
+		return (IPluginModelBase[]) desiredModels.toArray(
+			new IPluginModelBase[desiredModels.size()]);
 	}
 }

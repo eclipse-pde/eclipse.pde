@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 
 /**
@@ -217,13 +216,25 @@ public class BuildPathUtilCore {
 		result.add(entry);
 	}
 
-	private static void addLibraries(
+	public static void addLibraries(
 		IPluginModelBase model,
 		boolean unconditionallyExport,
 		Vector result) {
+		addLibraries(model, unconditionallyExport, true, result);
+	}
+	
+	public static void addLibraries(
+		IPluginModelBase model,
+		boolean unconditionallyExport,
+		boolean relative,
+		Vector result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		IPluginLibrary[] libraries = pluginBase.getLibraries();
-		IPath rootPath = getRootPath(model);
+		IPath rootPath;
+		
+		if (relative) rootPath = getRootPath(model);
+		else
+			rootPath = new Path(model.getInstallLocation());
 
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
@@ -249,24 +260,23 @@ public class BuildPathUtilCore {
 		Vector result) {
 			
 		IPlugin plugin = (IPlugin) model.getPluginBase();
-		
-		IFragmentModel[] wfmodels =
+		IResource resource = model.getUnderlyingResource();
+
+		IFragmentModel[] fmodels;
+
+		if (resource != null)
+			fmodels =
 				PDECore
 					.getDefault()
 					.getWorkspaceModelManager()
 					.getWorkspaceFragmentModels();
-		IFragmentModel[]extfmodels =
+		else
+			fmodels =
 				PDECore
 					.getDefault()
 					.getExternalModelManager()
 					.getFragmentModels(
 					null);
-		IFragmentModel[] fmodels = new IFragmentModel[wfmodels.length + extfmodels.length];
-
-					
-		System.arraycopy(wfmodels,0,fmodels,0,wfmodels.length);
-		System.arraycopy(extfmodels,0,fmodels,wfmodels.length,extfmodels.length);
-		
 		for (int i = 0; i < fmodels.length; i++) {
 			IFragmentModel fmodel = fmodels[i];
 			if (fmodel.isEnabled() == false)
@@ -282,8 +292,7 @@ public class BuildPathUtilCore {
 					fragment.getRule())) {
 
 				IClasspathEntry entry =
-					PluginPathUpdater.createLibraryEntryFromFragment(
-						fmodel,
+					PluginPathUpdater.createLibraryEntry(
 						library,
 						getRootPath(fmodel),
 						false);

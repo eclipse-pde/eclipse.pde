@@ -16,7 +16,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
-import org.eclipse.pde.internal.ui.util.CoreUtility;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.project.*;
 import org.eclipse.pde.ui.*;

@@ -1,18 +1,11 @@
-package org.eclipse.pde.internal.ui.util;
+package org.eclipse.pde.internal.core;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 
 public class CoreUtility {

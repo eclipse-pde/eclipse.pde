@@ -32,6 +32,7 @@ public class SharedLabelProvider
 	public static final int F_EDIT = 8;
 	public static final int F_BINARY = 16;
 	public static final int F_EXTERNAL = 32;
+	public static final int F_JAVA = 64;
 	Hashtable images = new Hashtable();
 	ArrayList consumers = new ArrayList();
 
@@ -103,6 +104,8 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { PDEPluginImages.DESC_EXPORT_CO };
 		if ((flags & F_EDIT) != 0)
 			return new ImageDescriptor[] { PDEPluginImages.DESC_DOC_CO };
+		if ((flags & F_JAVA) != 0)
+			return new ImageDescriptor[] { PDEPluginImages.DESC_JAVA_CO };
 		return null;
 	}
 	

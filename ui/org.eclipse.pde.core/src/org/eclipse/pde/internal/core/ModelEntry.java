@@ -19,6 +19,7 @@ public class ModelEntry extends PlatformObject {
 	private IPluginModelBase externalModel;
 	private int mode = AUTOMATIC;
 	private IClasspathContainer classpathContainer;
+	private boolean inJavaSearch=false;
 
 	public ModelEntry(String id) {
 		this.id = id;
@@ -45,6 +46,14 @@ public class ModelEntry extends PlatformObject {
 			return adapter.getChildren();
 		}
 		return new Object[0];
+	}
+	
+	public boolean isInJavaSearch() {
+		return inJavaSearch;
+	}
+	
+	void setInJavaSearch(boolean value) {
+		this.inJavaSearch = value;
 	}
 
 	public void setWorkspaceModel(IPluginModelBase model) {

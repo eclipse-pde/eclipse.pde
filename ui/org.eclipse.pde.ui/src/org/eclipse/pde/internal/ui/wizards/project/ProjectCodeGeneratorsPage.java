@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.PDE;
 

@@ -12,6 +12,7 @@ public class PluginModelManager implements IAdaptable {
 	private IModelProviderListener providerListener;
 	private ExternalModelManager externalManager;
 	private WorkspaceModelManager workspaceManager;
+	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
 
 	private Hashtable entries;
@@ -24,6 +25,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 		};
 		listeners = new ArrayList();
+		searchablePluginsManager = new SearchablePluginsManager(this);
 	}
 	
 	public Object getAdapter(Class key) {
@@ -66,13 +68,6 @@ public class PluginModelManager implements IAdaptable {
 		return plugins;
 	}
 	
-	public IPluginModelBase findPlugin(String id, String version, int match) {
-		if (entries == null) initializeTable();
-		ModelEntry entry = (ModelEntry)entries.get(id);
-		if (entry==null) return null;
-		return entry.getActiveModel();
-	}
-	
 	public ModelEntry findEntry(IProject project) {
 		if (entries==null) initializeTable();
 		IModel model = workspaceManager.getWorkspaceModel(project);
@@ -82,6 +77,17 @@ public class PluginModelManager implements IAdaptable {
 		IPluginModelBase modelBase = (IPluginModelBase)model;
 		String id = modelBase.getPluginBase().getId();
 		return (ModelEntry)entries.get(id);
+	}
+	
+	public ModelEntry findEntry(String id, String version, int match) {
+		if (entries == null) initializeTable();
+		return (ModelEntry)entries.get(id);
+	}
+	
+	public IPluginModelBase findPlugin(String id, String version, int match) {
+		ModelEntry entry = findEntry(id, version, match);
+		if (entry==null) return null;
+		return entry.getActiveModel();
 	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
@@ -183,6 +189,7 @@ public class PluginModelManager implements IAdaptable {
 		models = externalManager.getModels();
 		fmodels = externalManager.getFragmentModels(null);
 		addToTable(models, fmodels, false);
+		searchablePluginsManager.initialize();
 	}
 
 	private void addToTable(
@@ -230,5 +237,36 @@ public class PluginModelManager implements IAdaptable {
 			workspaceManager.removeModelProviderListener(providerListener);
 		if (externalManager != null)
 			externalManager.removeModelProviderListener(providerListener);
+		searchablePluginsManager.shutdown();
+	}
+	
+	public void setInJavaSearch(ModelEntry [] entries, boolean value, boolean useContainers, IProgressMonitor monitor) throws CoreException {
+		PluginModelDelta delta = new PluginModelDelta();
+		for (int i=0; i<entries.length; i++) {
+			ModelEntry entry = entries[i];
+			if (entry.isInJavaSearch()!=value) {
+				entry.setInJavaSearch(value);
+				delta.addEntry(entry, PluginModelDelta.CHANGED);
+			}
+		}
+		if (delta.getKind()!=0) {
+			searchablePluginsManager.persistStates(useContainers, monitor);
+			fireDelta(delta);
+		}
+	}
+	 
+	void searchablePluginsRemoved() {
+		ModelEntry [] entries = getEntries();
+		PluginModelDelta delta = new PluginModelDelta();
+		
+		for (int i=0; i<entries.length; i++) {
+			ModelEntry entry = entries[i];
+			if (entry.isInJavaSearch()) {
+				entry.setInJavaSearch(false);
+				delta.addEntry(entry, PluginModelDelta.CHANGED);
+			}
+		}
+		if (delta.getKind()!=0)
+			fireDelta(delta);
 	}
 }

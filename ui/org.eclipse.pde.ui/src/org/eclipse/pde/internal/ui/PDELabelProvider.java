@@ -241,12 +241,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IPlugin plugin) {
-		return getObjectImage(plugin, false);
+		return getObjectImage(plugin, false, false);
 	}
 
-	public Image getObjectImage(IPlugin plugin, boolean checkEnabled) {
+	public Image getObjectImage(IPlugin plugin, boolean checkEnabled, boolean javaSearch) {
 		IPluginModelBase model = plugin.getModel();
 		int flags = getModelFlags(model);
+		
+		if (javaSearch) flags |= F_JAVA;
 		ImageDescriptor desc = PDEPluginImages.DESC_PLUGIN_OBJ;
 		if (checkEnabled && model.isEnabled() == false)
 			desc = PDEPluginImages.DESC_EXT_PLUGIN_OBJ;
@@ -283,12 +285,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IFragment fragment) {
-		return getObjectImage(fragment, false);
+		return getObjectImage(fragment, false, false);
 	}
 	
-	public Image getObjectImage(IFragment fragment, boolean checkEnabled) {
+	public Image getObjectImage(IFragment fragment, boolean checkEnabled, boolean javaSearch) {
 		IPluginModelBase model = fragment.getModel();
 		int flags = getModelFlags(model);
+		if (javaSearch) flags |= F_JAVA;
 		ImageDescriptor desc = PDEPluginImages.DESC_FRAGMENT_OBJ;
 		if (checkEnabled && model.isEnabled() == false)
 			desc = PDEPluginImages.DESC_EXT_FRAGMENT_OBJ;

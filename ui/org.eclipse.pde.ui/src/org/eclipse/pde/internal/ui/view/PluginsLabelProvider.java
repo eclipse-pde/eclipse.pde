@@ -71,9 +71,9 @@ public class PluginsLabelProvider extends LabelProvider {
 		if (model.getUnderlyingResource()!=null)
 			return projectImage;
 		if (model instanceof IPluginModel)
-			return sharedProvider.getObjectImage((IPlugin)model.getPluginBase(), true);
+			return sharedProvider.getObjectImage((IPlugin)model.getPluginBase(), true, entry.isInJavaSearch());
 		else
-			return sharedProvider.getObjectImage((IFragment)model.getPluginBase(), true);
+			return sharedProvider.getObjectImage((IFragment)model.getPluginBase(), true, entry.isInJavaSearch());
 	}
 
 	private Image getImage(FileAdapter fileAdapter) {
