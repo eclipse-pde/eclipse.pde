@@ -120,7 +120,7 @@ public class GrammarSection extends PDESection implements IPartSelectionListener
 		Composite sashCell = sash;
 		if (toolkit.getBorderStyle()==SWT.NULL)
 			sashCell = createSashCell(sash, toolkit, 1);
-		Control tree = createTree(sashCell, toolkit);
+		createTree(sashCell, toolkit);
 		
 		sashCell = sash;
 		if (toolkit.getBorderStyle()==SWT.NULL)
