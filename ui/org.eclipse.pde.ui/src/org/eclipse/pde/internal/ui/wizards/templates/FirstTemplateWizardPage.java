@@ -209,7 +209,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			matchCombo = createMatchCombo(parent);
 	}
 	
-	private void addPluginSpecificControls(Composite parent) {
+	private void addPluginSpecificControls(Composite parent) {  
 			classField = createField(parent, PDEPlugin.getResourceString(KEY_CLASS));
 			classField.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent arg0) {
@@ -451,7 +451,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 				provider = "";
 			}
 		}
-		setErrorMessage(null);
+		evalPageComplete();
 	}
 	
 	private String removeSpaces(String name) {
