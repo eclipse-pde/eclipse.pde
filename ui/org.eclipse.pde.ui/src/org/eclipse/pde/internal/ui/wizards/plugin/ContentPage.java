@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
@@ -95,9 +96,8 @@ public abstract class ContentPage extends WizardPage {
 		if (id.length() == 0)
 			return PDEPlugin.getResourceString("ContentPage.noid"); //$NON-NLS-1$
 
-		for (int i = 0; i<id.length(); i++){
-			if (!id.substring(i,i+1).matches("[a-zA-Z0-9\\._]")) //$NON-NLS-1$
-				return PDEPlugin.getResourceString("ContentPage.invalidId"); //$NON-NLS-1$
+		if (!IdUtil.isValidPluginId(id)) {
+			return PDEPlugin.getResourceString("ContentPage.invalidId"); //$NON-NLS-1$
 		}
 		return null;
 	}
