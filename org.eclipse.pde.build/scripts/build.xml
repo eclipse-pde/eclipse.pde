@@ -17,8 +17,8 @@
 
 <!-- ******* add in the descriptions for each of the top level targets to teh target decl -->
 <target name="main" description="the main build target">	
-  	<antcall target="preBuild" /> 
- 	<antcall target="fetch" />
+  	<!--antcall target="preBuild" /> 
+ 	<antcall target="fetch" /-->
 	<antcall target="generate" /> 
 	<antcall target="process" /> 
 	<antcall target="assemble" />

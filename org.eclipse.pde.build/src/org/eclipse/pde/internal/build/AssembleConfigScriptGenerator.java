@@ -93,20 +93,31 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (embeddedSource)
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
-		if (!outputFormat.equalsIgnoreCase("folder")) { //$NON-NLS-1$
-			if (configInfo.getOs().equalsIgnoreCase(Constants.OS_MACOSX) && !Platform.getOS().equals(Constants.OS_WIN32)) {
-				generateTarTarget();
-				generateGZipTarget();
-			} else {
-				if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
-					generateZipTarget();
-				else
-					generateAntZipTarget();
-			}
-		}
+		generateArchivingSteps();
 		generateEpilogue();
 	}
 
+	private void generateArchivingSteps() {
+		if (outputFormat.equalsIgnoreCase("folder")) //$NON-NLS-1$
+			return;
+		
+		//Windows archived are archived as zip
+		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32)) {
+			if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
+				generateZipTarget();
+			else
+				generateAntZipTarget();
+			return;
+		}
+		
+		//Non-windows platform are archived as tar.gz
+		if (!Platform.getOS().equals(Constants.OS_WIN32)) {
+			generateTarTarget();
+			generateGZipTarget();
+		} else {
+			generateAntTarTarget();
+		}
+	}
 	/**
 	 * 
 	 */
@@ -419,5 +430,30 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] rootFiles = new FileSet[1];
 		rootFiles[0] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null); //$NON-NLS-1$//$NON-NLS-2$
 		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
+	}
+	
+	private void generateAntTarTarget() {
+		FileSet[] filesPlugins = new FileSet[plugins.length];
+		for (int i = 0; i < plugins.length; i++) {
+			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
+			filesPlugins[i] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null);
+		}
+		if (plugins.length != 0)
+			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
+
+		FileSet[] filesFeatures = new FileSet[features.length];
+		for (int i = 0; i < features.length; i++) {
+			Object[] shape = getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE);
+			filesFeatures[i] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null);
+		}
+		if (features.length != 0)
+			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
+
+		if (rootFileProviders.size() == 0)
+			return;
+
+		FileSet[] rootFiles = new FileSet[1];
+		rootFiles[0] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null); //$NON-NLS-1$//$NON-NLS-2$
+		script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 	}
 }

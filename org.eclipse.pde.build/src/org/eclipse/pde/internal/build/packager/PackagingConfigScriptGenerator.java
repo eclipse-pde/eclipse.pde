@@ -230,7 +230,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		if (rootFileProviders.size() == 0) {
 			FileSet[] filesCorrectSize = new FileSet[plugins.length + features.length];
 			System.arraycopy(files, 0, filesCorrectSize, 0, plugins.length + features.length);
-			script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
+			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, files);
 			return;
 		}
 
