@@ -17,7 +17,7 @@
                   <text>Create a full RCP application step by step</text>
                </link>
                <link
-                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.cheatsheets.standbyPart&amp;input=org.eclipse.pde.pde_1"
+                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.pde_1"
                      label="Create a &quot;Hello, World&quot;  plug-in"
                      id="pde-hello-world"
                      class-id="tutorials-link">
