@@ -373,6 +373,9 @@ protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins.length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[i]);
+			if (plugin==null)
+				plugin = getRegistry().getFragment(sortedPlugins[i]);
+			
 			IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getFeatureRootLocation()));
 			script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
