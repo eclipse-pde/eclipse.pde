@@ -33,6 +33,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private static final String COLOR_TAG = "#000080";
 	private static final String COLOR_CSTRING = "#008000";
 	private static final String COLOR_DTD="#800000";
+	private static final String COLOR_COPYRIGHT = "#336699";
 
 	private void appendAttlist(
 		PrintWriter out,
@@ -56,7 +57,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String typeName =
 			type != null ? type.getName().toLowerCase() : "string";
 		if (typeName.equals("boolean")) {
-			out.print("(true | false) \"false\"");
+			out.print("(true | false) ");
 			choices = true;
 		} else if (restriction != null) {
 			appendRestriction(restriction, out);
@@ -273,7 +274,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 			schema,
 			"Supplied Implementation:",
 			IDocumentSection.IMPLEMENTATION);
+		out.println("<font size=\"-1\" color=\""+COLOR_COPYRIGHT+"\">");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
+		out.println("</font>");
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
