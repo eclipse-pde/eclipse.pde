@@ -18,7 +18,6 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -351,13 +350,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		Object object,
 		IMarker marker) {
 		IEditorPart editor = null;
-		ISharedPluginModel model = plugin.getModel();
-		IResource underlyingResource = null;
-		if (model instanceof IBundlePluginModelBase) {
-			underlyingResource = ((IBundlePluginModelBase)model).getExtensionsModel().getUnderlyingResource();
-		} else {
-			underlyingResource = plugin.getModel().getUnderlyingResource();
-		}
+		IResource underlyingResource = plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
 			editor = openExternalPlugin(plugin);
 		} else {
