@@ -156,7 +156,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			return null;
 		
 		addRequiredPlugins(pluginMap);
-					
+		
+		programArgs.add("-version"); //$NON-NLS-1$
+		programArgs.add("3"); //$NON-NLS-1$
+		
 		programArgs.add("-application");
 		programArgs.add(getApplicationName(pluginMap, configuration));
 		
