@@ -257,20 +257,31 @@ public class LauncherUtils {
 		} else {
 			try {
 				list.put("org.eclipse.osgi", new Integer(0));
+				String bundles = null;
 				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
-					list.put("org.eclipse.osgi.services", new Integer(-1));
-					list.put("org.eclipse.osgi.util", new Integer(-1));
-					list.put("org.eclipse.core.runtime", new Integer(2));
-					list.put("org.eclipse.update.configurator", new Integer(3));
+					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome(), "config.ini");
+					if (prop != null)
+						bundles = prop.getProperty("osgi.bundles");
+					if (prop == null || bundles == null) {
+						IPlugin osgi = PDECore.getDefault().findPlugin("org.eclipse.osgi");
+						if (osgi != null) {
+							prop = getConfigIniProperties(new Path(osgi.getModel().getInstallLocation()), "eclipse.properties");
+							if (prop != null)
+								bundles = prop.getProperty("osgi.bundles");
+						}
+					} 
 				} else {
-					String selected = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
-					StringTokenizer tokenizer = new StringTokenizer(selected, ",");
+					bundles = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
+				}
+				if (bundles != null) {
+					StringTokenizer tokenizer = new StringTokenizer(bundles, ",");
 					while (tokenizer.hasMoreTokens()) {
 						String token = tokenizer.nextToken().trim();
-						Integer level = new Integer(token.substring(token.indexOf('@') + 1));
-						list.put(token.substring(0,token.indexOf('@')), level);
-					}		
-				}
+						int index = token.indexOf('@');
+						Integer level = index != -1 ? new Integer(token.substring(index + 1)) : new Integer(-1);
+						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
+					}	
+				}				
 			} catch (CoreException e) {
 			}
 		}		
@@ -283,7 +294,6 @@ public class LauncherUtils {
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			addPluginAndPrereqs("org.eclipse.osgi", map);
 			addPluginAndPrereqs("org.eclipse.osgi.services", map);
-			addPluginAndPrereqs("org.eclipse.osgi.util", map);
 			addPluginAndPrereqs("org.eclipse.update.configurator", map);
 		} else {
 			addPluginAndPrereqs("org.eclipse.core.boot", map);
@@ -308,16 +318,6 @@ public class LauncherUtils {
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
 			addPluginAndPrereqs(imports[i].getId(), map);
-		}
-		
-		if (!map.containsKey("org.apache.ant")) {
-			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				if (extensions[i].getPoint().startsWith("org.eclipse.ant.core")) {
-					addPluginAndPrereqs("org.apache.ant", map);
-					break;
-				}
-			}
 		}
 		
 		if (model instanceof IFragmentModel) {
@@ -591,7 +591,7 @@ public class LauncherUtils {
 	public static String getPrimaryFeatureId() {
 		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		
-		Properties properties = getConfigIniProperties(filename);		
+		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome(), filename);		
 
 		String property = isOSGi ? "eclipse.product" : "feature.default.id";
 		return (properties == null) ? null : properties.getProperty(property);
@@ -601,14 +601,13 @@ public class LauncherUtils {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
 			return "org.eclipse.ui.workbench";
 		
-		Properties properties = getConfigIniProperties("configuration/config.ini");
+		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome(), "configuration/config.ini");
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null;
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench";
 	}
 	
-	public static Properties getConfigIniProperties(String filename) {
-		IPath eclipsePath = ExternalModelManager.getEclipseHome();
-		File iniFile = new File(eclipsePath.toFile(), filename);
+	public static Properties getConfigIniProperties(IPath path, String filename) {
+		File iniFile = new File(path.toFile(), filename);
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
