@@ -13,6 +13,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import java.util.List;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,7 +26,10 @@ import org.eclipse.pde.internal.core.plugin.DocumentModelChangeEvent;
 import org.eclipse.pde.internal.core.plugin.IDocumentModelListener;
 import org.eclipse.pde.internal.core.plugin.IDocumentNode;
 import org.eclipse.pde.internal.core.plugin.XMLCore;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
@@ -129,8 +135,37 @@ public class XMLOutlinePage extends ContentOutlinePage {
 		
 		if (fModel != null)
 			setViewerInput(fModel);
+			
+		createContextMenu();
 	}
 	
+	/**
+	 * 
+	 */
+	private void createContextMenu() {
+		MenuManager manager = new MenuManager();
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				contextMenuAboutToShow(manager);
+			}
+			private void contextMenuAboutToShow(IMenuManager manager) {
+				/*IPluginModelBase model = getPlugin().getModel();
+				if (model instanceof WorkspacePluginModelBase) {
+					manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)model));
+					manager.add(new Separator());
+				}*/
+				PluginSearchActionGroup actionGroup =
+					new PluginSearchActionGroup();
+				actionGroup.setContext(new ActionContext(getSelection()));
+				actionGroup.fillContextMenu(manager);
+			}
+		});
+		Menu menu = manager.createContextMenu(getControl());
+		getControl().setMenu(menu);
+		
+	}
+
 	/**
 	 * Selects the given element in this outline page.
 	 * @param xmlElement
