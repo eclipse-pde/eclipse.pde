@@ -89,14 +89,22 @@ public class PluginPathUpdater {
 		boolean internal = model.getUnderlyingResource() != null;
 
 		if (internal) {
-			IPath projectPath =
-				model.getUnderlyingResource().getProject().getFullPath();
-			if (!isEntryAdded(projectPath,
-				IClasspathEntry.CPE_PROJECT,
-				result)) {
-				IClasspathEntry projectEntry =
-					JavaCore.newProjectEntry(projectPath, element.isExported());
-				result.addElement(projectEntry);
+			try {
+				IPath projectPath =
+					model.getUnderlyingResource().getProject().getFullPath();
+				if (model.getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID) &&
+					!isEntryAdded(projectPath,
+					IClasspathEntry.CPE_PROJECT,
+					result)) {
+					IClasspathEntry projectEntry =
+						JavaCore.newProjectEntry(projectPath, element.isExported());
+					result.addElement(projectEntry);
+				}
+				// Since fragments are not in the parent plug-in's classpath (to avoid cycles), add
+				// fragments which contain "source" to the classpath of the project directly.
+				addWorkspaceFragmentContributions(model,result);
+			} catch (JavaModelException e) {
+			} catch (CoreException e) {
 			}
 			return;
 		}
@@ -164,6 +172,29 @@ public class PluginPathUpdater {
 				PluginEntry ref = new PluginEntry(reference);
 				addToClasspathEntries(ref, relative, false, result);
 			}
+		}
+	}
+
+	private static void addWorkspaceFragmentContributions(IPluginModelBase model, Vector result) {
+		try {
+			IFragment[] fragments = PDECore.getDefault().getWorkspaceModelManager().getFragmentsFor(model.getPluginBase().getId(),model.getPluginBase().getVersion());
+			for (int i = 0; i < fragments.length; i++) {
+				IProject project = fragments[i].getModel().getUnderlyingResource().getProject();
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					IJavaProject jProject = JavaCore.create(project);
+					IClasspathEntry[] entries = jProject.getRawClasspath();
+					for (int j = 0; j < entries.length; j++) {
+						if (entries[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+							IClasspathEntry projectEntry =
+								JavaCore.newProjectEntry(project.getFullPath(), true);
+							result.addElement(projectEntry);
+							break;
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+		} catch (CoreException e) {
 		}
 	}
 
