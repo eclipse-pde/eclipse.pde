@@ -1,13 +1,20 @@
+a#rcp { top : 30px; }
 a#rcp img { background-image : url(graphics/obj_48/rcpapp_obj.gif); }
 a#rcp:hover img { background-image : url(graphics/obj_48/hovrcpapp_obj.gif); }
 
+a#pde-hello-world { top : 30px; left : 425px; }
 a#pde-hello-world img { background-image : url(graphics/obj_48/plugin_obj.gif); }
 a#pde-hello-world:hover img { background-image : url(graphics/obj_48/hovplugin_obj.gif); }
 
+a#features { top : 100px; }
 a#features img { background-image : url(graphics/obj_48/deployfeat_obj.gif); }
 a#features:hover img { background-image : url(graphics/obj_48/hovdeployfeat_obj.gif); }
 
 #pde {
+	width : 850px;
+	height : 150px;
 	position : relative;
-	top : -90px;
+	left : 50%;
+	margin-left : -425px;
+	top : -30px;
 }
