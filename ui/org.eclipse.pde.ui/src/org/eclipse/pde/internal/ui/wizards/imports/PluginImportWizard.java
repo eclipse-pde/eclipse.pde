@@ -127,7 +127,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
 						new PluginImportOperation(models, modelIds, importType, query);
-					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 9));
+					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 8));
 					Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -141,7 +141,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 						if (isAutoBuilding) {
 							PDEPlugin.getWorkspace().run(
 								getActivateAutoBuildOperation(),
-								new NullProgressMonitor());
+								new SubProgressMonitor(monitor, 1));
+						} else {
+							monitor.worked(1);
 						}
 					} catch (CoreException e) {
 					}
