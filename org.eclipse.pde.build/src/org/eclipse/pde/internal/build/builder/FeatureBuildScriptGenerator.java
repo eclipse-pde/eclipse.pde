@@ -66,6 +66,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean generateJnlp = false;
 	private boolean signJars = false;
 
+	//Cache the result of compteElements for performance
+	private List computedElements = null;
+	
 	public FeatureBuildScriptGenerator() {
 		super();
 	}
@@ -89,6 +92,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @throws CoreException
 	 */
 	protected List computeElements() throws CoreException {
+		if (computedElements != null)
+			return computedElements;
+		
 		List result = new ArrayList(5);
 		IPluginEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
