@@ -95,7 +95,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			VersionedIdentifier identifier = entry.getVersionedIdentifier();
 			BundleDescription model;
 
-			// If we ask for 0.0.0, the call to the registry must have null as a parameter
 			String versionRequested = identifier.getVersion().toString();
 			model = getSite(false).getRegistry().getResolvedBundle(identifier.getIdentifier(), versionRequested);
 			if (model == null && getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + identifier.getIdentifier())) {
@@ -673,6 +672,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				String featureId = features[i].getVersionedIdentifier().getIdentifier();
 				String versionId = features[i].getVersionedIdentifier().getVersion().toString();
 				IFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
+				if (includedFeature == null) {
+					String message = Policy.bind("exception.missingFeature", featureId + ' ' + versionId); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+				}
 				String includedFeatureDirectory = includedFeature.getURL().getPath();
 				int j = includedFeatureDirectory.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 				if (j != -1)
