@@ -282,6 +282,20 @@ public class AntScript {
 			output.println("</copy>"); //$NON-NLS-1$
 		}
 	}
+	
+	public void printMoveTask(String todir, FileSet[] fileSets, boolean failOnError) {
+		printTab();
+		output.print("<move"); //$NON-NLS-1$
+		printAttribute("todir", todir, false); //$NON-NLS-1$
+		printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		output.println(">"); //$NON-NLS-1$
+		indent++;
+		for (int i = 0; i < fileSets.length; i++)
+			fileSets[i].print(this);
+		indent--;
+		printTab();
+		output.println("</move>"); //$NON-NLS-1$
+	}
 
 	/**
 	 * Print a <code>copy</code> tak to the script. The source file is specified by

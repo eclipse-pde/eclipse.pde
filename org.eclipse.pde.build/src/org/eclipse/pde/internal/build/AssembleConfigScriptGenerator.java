@@ -104,9 +104,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingSteps() {
-		if (outputFormat.equalsIgnoreCase("folder")) //$NON-NLS-1$
+		if (outputFormat.equalsIgnoreCase("folder")) { //$NON-NLS-1$
+			generateMoveRootFiles();
 			return;
-		
+		}
 		//Windows is archived as zip
 		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32) || configInfo.equals(Config.genericConfig())) {
 			if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
@@ -125,6 +126,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	private void generateMoveRootFiles() {
+		FileSet[] rootFiles = new FileSet[1];
+		rootFiles[0] = new FileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), null, "**/**", null, null, null, null); //$NON-NLS-1$//$NON-NLS-2$	
+		script.printMoveTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE), rootFiles,false);
+		script.printDeleteTask(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), null, null);
+	}
+	
 	protected void generateGatherSourceCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
