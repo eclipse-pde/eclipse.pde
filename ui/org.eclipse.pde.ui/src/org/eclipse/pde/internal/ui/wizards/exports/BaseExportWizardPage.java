@@ -47,9 +47,9 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
-	private Button fSaveAsAntButton;
+	protected Button fSaveAsAntButton;
 	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private Button fJarButton;
+	protected Button fJarButton;
 
 	
 	public BaseExportWizardPage(String name) {
@@ -70,7 +70,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		Dialog.applyDialogFont(container);
 		
 		// load settings
-		IDialogSettings settings = getDialogSettings();	
+		IDialogSettings settings = getDialogSettings();
+		initializeTopSection();
 		initializeExportOptions(settings);
 		initializeDestinationSection(settings);
 		pageChanged();
@@ -80,6 +81,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	protected abstract void createTopSection(Composite parent);
+	
+	protected abstract void initializeTopSection();
 	
 	private void createExportDestinationSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
@@ -132,7 +135,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 				getContainer().updateButtons();
 			}
 		});
-
+		
+		createAntSection(comp);
+		return comp;
+	}
+	
+	protected void createAntSection(Composite comp) {
 		fSaveAsAntButton = new Button(comp, SWT.CHECK);
 		fSaveAsAntButton.setText(PDEPlugin.getResourceString("ExportWizard.antCheck")); //$NON-NLS-1$
 		
@@ -142,9 +150,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fBrowseAnt = new Button(comp, SWT.PUSH);
 		fBrowseAnt.setText(PDEPlugin.getResourceString("ExportWizard.browse2")); //$NON-NLS-1$
 		fBrowseAnt.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(fBrowseAnt);
-		
-		return comp;
+		SWTUtil.setButtonDimensionHint(fBrowseAnt);		
 	}
 	
 	protected abstract String getJarButtonText();
@@ -156,7 +162,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fBrowseDirectory.setEnabled(useDirectory);
 	}
 	
-	private void hookListeners() {
+	protected void hookListeners() {
 		fArchiveFileButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fArchiveFileButton.getSelection();
@@ -277,7 +283,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		return button != null && !button.isDisposed() && button.getSelection();
 	}
 
-	private void initializeExportOptions(IDialogSettings settings) {		
+	protected void initializeExportOptions(IDialogSettings settings) {		
 		fIncludeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		fJarButton.setSelection(settings.getBoolean(S_JAR_FORMAT));
 		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
@@ -295,7 +301,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		initializeCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
 	}
 	
-	private void initializeCombo(IDialogSettings settings, String key, Combo combo) {
+	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(key + String.valueOf(i));
@@ -321,7 +327,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		saveCombo(settings, S_ANT_FILENAME, fAntCombo);
 	}
 	
-	private void saveCombo(IDialogSettings settings, String key, Combo combo) {
+	protected void saveCombo(IDialogSettings settings, String key, Combo combo) {
 		if (combo.getText().trim().length() > 0) {
 			settings.put(key + String.valueOf(0), combo.getText().trim());
 			String[] items = combo.getItems();

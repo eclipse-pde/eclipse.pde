@@ -43,8 +43,6 @@ public class LauncherSection extends PDESection {
 
 	private Button fBmpButton;
 
-	private FormEntry fDirEntry;
-	
 	class IconEntry extends FormEntry {
 		String fIconId;
 		public IconEntry(Composite parent, FormToolkit toolkit, String labelText, String iconId) {
@@ -97,16 +95,6 @@ public class LauncherSection extends PDESection {
 			}
 		});
 		fNameEntry.setEditable(isEditable());
-		
-		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
-		createLabel(client, toolkit, PDEPlugin.getResourceString("LauncherSection.rootLabel"), 2);  //$NON-NLS-1$
-		fDirEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("LauncherSection.root"), null, false); //$NON-NLS-1$
-		fDirEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getLauncherInfo().setRootDirectory(entry.getValue());
-			}
-		});
-		fDirEntry.setEditable(isEditable());
 		
 		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
 		createLabel(client, toolkit, PDEPlugin.getResourceString("LauncherSection.label"), 2); //$NON-NLS-1$
@@ -222,7 +210,6 @@ public class LauncherSection extends PDESection {
 	public void refresh() {
 		ILauncherInfo info = getLauncherInfo();
 		fNameEntry.setValue(info.getLauncherName(), true);
-		fDirEntry.setValue(info.getRootDirectory(), true);
 		boolean useIco = info.usesWinIcoFile();
 		fIcoButton.setSelection(useIco);
 		fBmpButton.setSelection(!useIco);
@@ -271,7 +258,6 @@ public class LauncherSection extends PDESection {
 	
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		fDirEntry.commit();
 		for (int i = 0; i < fIcons.size(); i++)
 			((FormEntry)fIcons.get(i)).commit();
 		super.commit(onSave);
@@ -279,7 +265,6 @@ public class LauncherSection extends PDESection {
 	
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
-		fDirEntry.cancelEdit();
 		for (int i = 0; i < fIcons.size(); i++)
 			((FormEntry)fIcons.get(i)).commit();
 		super.cancelEdit();

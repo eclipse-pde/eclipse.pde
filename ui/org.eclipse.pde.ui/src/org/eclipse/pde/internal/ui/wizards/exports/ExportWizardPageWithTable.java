@@ -99,10 +99,9 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setSorter(ListUtil.PLUGIN_SORTER);
 		fExportPart.getTableViewer().setInput(PDECore.getDefault().getWorkspaceModelManager());
-		checkSelected();	
-	}	
-
-	protected void checkSelected() {
+	}
+	
+	protected void initializeTopSection() {
 		Object[] elems = fSelection.toArray();
 		ArrayList checked = new ArrayList(elems.length);
 

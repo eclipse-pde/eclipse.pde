@@ -96,8 +96,8 @@ public class AboutSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle("Image Selection"); //$NON-NLS-1$
-		dialog.setMessage("Select a GIF image:"); //$NON-NLS-1$
+		dialog.setTitle(PDEPlugin.getResourceString("AboutSection.imgTitle"));  //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("AboutSection.imgMessage"));  //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 

@@ -22,7 +22,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private boolean fUseIcoFile;
 	private Map fIcons = new HashMap();
 	private String fLauncherName;
-	private String fDirectory;
 
 	public LauncherInfo(IProductModel model) {
 		super(model);
@@ -66,7 +65,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			fLauncherName = ((Element)node).getAttribute("name"); //$NON-NLS-1$
-			fDirectory = ((Element)node).getAttribute(P_DIRECTORY);
 			NodeList children = node.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
@@ -126,8 +124,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writer.print(indent + "<launcher"); //$NON-NLS-1$
 		if (fLauncherName != null && fLauncherName.length() > 0)
 			writer.print(" name=\"" + fLauncherName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fDirectory != null && fDirectory.length() > 0)
-			writer.print(" " + P_DIRECTORY + "=\"" + fDirectory + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 		
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$
@@ -181,17 +177,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		String icon = (String)fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
 			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	public String getRootDirectory() {
-		return fDirectory;
-	}
-
-	public void setRootDirectory(String directory) {
-		String old = fDirectory;
-		fDirectory = directory;
-		if (isEditable())
-			firePropertyChanged(P_DIRECTORY, old, fDirectory);
 	}
 
 }

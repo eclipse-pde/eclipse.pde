@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
@@ -68,9 +67,9 @@ public class ProductInfoSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.verticalSpan = 2;
-		section.setLayoutData(gd);
+		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
+		td.colspan = 2;
+		section.setLayoutData(td);
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {

@@ -232,6 +232,19 @@
                class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
+      <wizard
+            name="%ProductExportWizard.label"
+            icon="icons/etool16/exp_product.gif"
+            class="org.eclipse.pde.internal.ui.wizards.exports.ProductExportWizard"
+            id="org.eclipse.pde.ui.productExportWizard">
+         <description>
+            %ProductExportWizard.description
+         </description>
+         <selection
+               name="*.product"
+               class="org.eclipse.core.resources.IFile">
+         </selection>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.pluginContent">

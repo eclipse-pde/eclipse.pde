@@ -32,40 +32,26 @@ import org.osgi.framework.*;
 
 public class ProductExportJob extends FeatureExportJob {
 	
-	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
-
 	private IProduct fProduct;
-
-	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
 
 	private String fFeatureLocation;
 
-	public ProductExportJob(String name, IProductModel model) {
-		super(name);
-		fProduct = model.getProduct();
-		initializeValues();
-	}
+	private String fRoot;
 
-	private void initializeValues() {
+	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName) {
+		super(PDEPlugin.getResourceString("ProductExportJob.jobName")); //$NON-NLS-1$
+		fProduct = model.getProduct();
+		fExportToDirectory = toDirectory;
+		fExportSource = exportSource;
+		fUseJarFormat = false;
+		fDestinationDirectory = destination;
+		fZipFilename = zipFileName;
+		fRoot = productRoot;
 		if (fProduct.useFeatures()) {
 			fItems = getFeatureModels();
 		} else {
 			fItems = getPluginModels();
 		}
-		computeDestination();	
-		fExportToDirectory = false;
-		fUseJarFormat = false;
-		fExportSource = fProduct.includeSource();
-	}
-
-	private void computeDestination() {
-		String location = fProduct.getExportDestination().trim();
-		if (!location.endsWith(fZipExtension))
-			location += fZipExtension;
-		IPath path = new Path(location);
-
-		fZipFilename = path.lastSegment();
-		fDestinationDirectory = path.removeLastSegments(1).toOSString();
 	}
 
 	private IFeatureModel[] getFeatureModels() {
@@ -377,14 +363,8 @@ public class ProductExportJob extends FeatureExportJob {
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
 		}
 		
-		String root = ECLIPSE;
-		if (info != null) {
-			root = info.getRootDirectory();
-			if (root == null || root.trim().length() == 0)
-				root = ECLIPSE;
-		}
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, root); 
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, root); 
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot); 
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, fRoot); 
 		return properties;
 	}
 	
@@ -399,7 +379,7 @@ public class ProductExportJob extends FeatureExportJob {
 				return name;
 			}
 		}
-		return ECLIPSE;	
+		return "eclipse";	 //$NON-NLS-1$
 	}
 	
 	private String getWin32Images(ILauncherInfo info) {

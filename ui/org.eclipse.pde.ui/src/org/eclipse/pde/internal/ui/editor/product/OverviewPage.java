@@ -29,12 +29,12 @@ import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -64,21 +64,23 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		GridLayout layout = new GridLayout();
-		layout.marginBottom = 10;
-		layout.marginTop = 5;
-		layout.marginLeft = 10;
-		layout.marginRight = 10;
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.bottomMargin = 10;
+		layout.topMargin = 5;
+		layout.leftMargin = 10;
+		layout.rightMargin = 10;
 		layout.numColumns = 2;
-		//layout.makeColumnsEqualWidth =true;
+		layout.makeColumnsEqualWidth =true;
 		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
 		// sections
-		managedForm.addPart(new ProductInfoSection(this, body));	
-		createTestingSection(body, toolkit);
-		managedForm.addPart(new ExportSection(this, body));
+		managedForm.addPart(new ProductInfoSection(this, body));
+		if (getModel().isEditable()) {
+			createTestingSection(body, toolkit);
+			createExportingSection(body, toolkit);
+		}
 	}
 	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
@@ -90,7 +92,17 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.addHyperlinkListener(this);
 		section.setClient(text);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+	}
+	
+	private void createExportingSection(Composite parent, FormToolkit toolkit) {
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.setText(PDEPlugin.getResourceString("OverviewPage.exportingTitle")); //$NON-NLS-1$
+		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.exporting"), toolkit); //$NON-NLS-1$
+		text.addHyperlinkListener(this);
+		section.setClient(text);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));		
 	}
 	
 	private FormText createClient(Section section, String content,
@@ -102,7 +114,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			text.setText("", false, false); //$NON-NLS-1$
 		}
 		section.setClient(text);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		return text;
 	}
 	
@@ -131,6 +143,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.RUN_MODE).run();
 		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
 			handleSynchronize();
+		} else if (href.equals("action.export")) { //$NON-NLS-1$
+			if (getPDEEditor().isDirty())
+				getPDEEditor().doSave(null);
+			new ProductExportAction(getPDEEditor()).run();
 		}
 	}
 	

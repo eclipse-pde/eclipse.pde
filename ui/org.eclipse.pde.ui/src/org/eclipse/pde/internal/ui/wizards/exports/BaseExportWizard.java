@@ -32,7 +32,7 @@ public abstract class BaseExportWizard
 	extends Wizard
 	implements IExportWizard, IPreferenceConstants {
 
-	private IStructuredSelection fSelection;
+	protected IStructuredSelection fSelection;
 	protected BaseExportWizardPage fPage1;
 	protected AdvancedPluginExportPage fPage2;
 
@@ -83,7 +83,7 @@ public abstract class BaseExportWizard
 	 * @see Wizard#init
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.fSelection = selection;
+		fSelection = selection;
 	}
 	
 	public boolean canFinish() {
@@ -97,9 +97,13 @@ public abstract class BaseExportWizard
 	public boolean performFinish() {
 		fPage1.saveSettings();
 		fPage2.saveSettings();
-		if (fPage1.doGenerateAntFile()) {
+		
+		if (fPage1.doGenerateAntFile())
 			generateAntBuildFile(fPage1.getAntBuildFileName());
-		}
+		
+		if (!performPreliminaryChecks())
+			return false;
+		
 		if (!fPage1.doExportToDirectory()) {
 			File zipFile = new File(fPage1.getDestination(), fPage1.getFileName());
 			if (zipFile.exists()) {
@@ -111,7 +115,12 @@ public abstract class BaseExportWizard
 				zipFile.delete();
 			}
 		}
+		
 		scheduleExportJob();
+		return true;
+	}
+	
+	protected boolean performPreliminaryChecks() {
 		return true;
 	}
 	
@@ -124,13 +133,24 @@ public abstract class BaseExportWizard
 		if (!dir.exists())
 			dir.mkdirs();
 		
+		FileWriter fwriter = null;
+		PrintWriter writer = null;
 		try {
 			File buildFile = new File(dir, buildFilename);
-			PrintWriter writer = new PrintWriter(new FileWriter(buildFile));
+			fwriter = new FileWriter(buildFile);
+			writer = new PrintWriter(fwriter);
 			generateAntTask(writer);
 			writer.close();
 			setDefaultValues(dir, buildFilename);				
 		} catch (IOException e) {
+		} finally {
+			try {
+				if (fwriter != null) 
+					fwriter.close();
+			} catch (IOException e) {
+			}
+			if (writer != null)
+				writer.close();
 		}
 	}
 	
