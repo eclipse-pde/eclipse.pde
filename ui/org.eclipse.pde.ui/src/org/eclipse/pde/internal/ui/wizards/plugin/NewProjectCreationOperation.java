@@ -234,15 +234,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         if (!file.exists()) {
             WorkspaceBuildModel model = new WorkspaceBuildModel(file);
             IBuildModelFactory factory = model.getFactory();
-            IBuildEntry binEntry = factory
-            .createEntry(IBuildEntry.BIN_INCLUDES);
+			
+			// BIN.INCLUDES
+            IBuildEntry binEntry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
 			if (!fData.hasBundleStructure() || fModel.getPluginBase().getExtensions().length > 0)
 				binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
 									: "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
-            if (!fData.isSimple() && fData.getLibraryName() != null) {
-                binEntry.addToken(fData.getLibraryName());
+			
+			String libraryName = fData.getLibraryName();
+            if (!fData.isSimple() && libraryName != null) {
+				if (!libraryName.equals("."))
+					binEntry.addToken(fData.getLibraryName());
                 if (fContentWizard != null) {
                     String[] files = fContentWizard.getNewFiles();
                     for (int j = 0; j < files.length; j++) {
@@ -250,21 +254,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                             binEntry.addToken(files[j]);
                     }
                 }
-                IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX
-                        + fData.getLibraryName());
+				
+				// SOURCE.<LIBRARY_NAME>
+                IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
                 String srcFolder = fData.getSourceFolderName().trim();
                 if (srcFolder.length() > 0)
-                    entry.addToken(new Path(srcFolder).addTrailingSeparator()
-                            .toString());
+                    entry.addToken(new Path(srcFolder).addTrailingSeparator().toString());
                 else
                     entry.addToken("."); //$NON-NLS-1$
                 model.getBuild().add(entry);
-                entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX
-                        + fData.getLibraryName());
+				
+				// OUTPUT.<LIBRARY_NAME>
+                entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
                 String outputFolder = fData.getOutputFolderName().trim();
                 if (outputFolder.length() > 0)
-                    entry.addToken(new Path(outputFolder)
-                            .addTrailingSeparator().toString());
+                    entry.addToken(new Path(outputFolder).addTrailingSeparator().toString());
                 else
                     entry.addToken("."); //$NON-NLS-1$
                 model.getBuild().add(entry);

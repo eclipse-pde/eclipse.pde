@@ -44,7 +44,7 @@ public class SimpleFeatureTestCase extends NewProjectTest {
 	}
 
 	private void verifyProjectContent(boolean isJava) {
-		assertExistingProject();
+		verifyProjectExistence();
 		assertNatures(isJava);
 		verifyFeatureModel(isJava);
 		verifyBuildProperties(isJava);

@@ -32,13 +32,13 @@ public class FeatureWithPluginTestCase extends NewProjectTest {
 
 	public void testFeatureWithExternalPlugin() {
 		playScript(Catalog.FEATURE_WITH_PLUGIN_1);
-		assertExistingProject();
+		verifyProjectExistence();
 		verifyFeatureModel("org.eclipse.pde.ui");
 	}
 
 	public void testFeatureWithWorkspacePlugin() {
 		playScript(Catalog.FEATURE_WITH_PLUGIN_2);
-		assertExistingProject();
+		verifyProjectExistence();
 		verifyFeatureModel("com.example.test.plugin");
 	}
 

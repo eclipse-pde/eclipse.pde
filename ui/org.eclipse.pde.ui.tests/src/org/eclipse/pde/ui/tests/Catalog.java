@@ -30,4 +30,12 @@ public class Catalog {
 	public static final String SIMPLE_FEATURE_2 = "macro16.emc";
 	public static final String FEATURE_WITH_PLUGIN_1 = "macro17.emc";
 	public static final String FEATURE_WITH_PLUGIN_2 = "macro18.emc";
+	public static final String BASIC_JAVA_PLUGIN_1 = "macro19.emc";
+	public static final String BASIC_JAVA_PLUGIN_2 = "macro20.emc";
+	public static final String BASIC_JAVA_PLUGIN_3 = "macro21.emc";
+	public static final String BASIC_JAVA_PLUGIN_4 = "macro22.emc";
+	public static final String BASIC_JAVA_PLUGIN_5 = "macro23.emc";
+	public static final String BASIC_JAVA_PLUGIN_6 = "macro24.emc";
+	public static final String BASIC_JAVA_PLUGIN_7 = "macro25.emc";
+
 }

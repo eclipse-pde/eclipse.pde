@@ -41,8 +41,9 @@ public class SimplePluginTestCase extends NewProjectTest {
 	}
 	
 	private void verifyProjectContent(boolean isBundle) {
-		assertExistingProject();
-		assertNatures();
+		verifyProjectExistence();
+		verifyNatures();
+		verifyManifestFiles(isBundle);
 		verifyPluginModel();
 		verifyBuildProperties(isBundle);			
 	}
@@ -51,7 +52,17 @@ public class SimplePluginTestCase extends NewProjectTest {
 		return PROJECT_NAME;
 	}
 	
-	private void assertNatures() {
+	private void verifyManifestFiles(boolean isBundle) {
+		if (isBundle) {
+			assertTrue(getProject().getFile("META-INF/MANIFEST.MF").exists());
+			assertFalse(getProject().getFile("plugin.xml").exists());
+		} else {
+			assertTrue(getProject().getFile("plugin.xml").exists());
+			assertFalse(getProject().getFile("META-INF/MANIFEST.MF").exists());
+		}
+	}
+	
+	private void verifyNatures() {
 		assertTrue("Project does not have a PDE nature.", hasNature(PDE.PLUGIN_NATURE));
 		assertFalse("Simple Project has a Java nature.", hasNature(JavaCore.NATURE_ID));
 	}
@@ -87,7 +98,7 @@ public class SimplePluginTestCase extends NewProjectTest {
 		assertNotNull(entry);
 		String[] tokens = entry.getTokens();
 		assertEquals(1, tokens.length);
-		assertEquals(tokens[0], isBundle ? "META-INF/" : "plugin.xml");
+		assertEquals(isBundle ? "META-INF/" : "plugin.xml", tokens[0]);
 	}
 	
 }

@@ -17,7 +17,7 @@ import org.eclipse.pde.ui.tests.*;
 
 public abstract class NewProjectTest extends PDETestCase {
 	
-	protected void assertExistingProject() {
+	protected void verifyProjectExistence() {
 		assertTrue("Project does not exist", getProject().exists());
 	}
 	

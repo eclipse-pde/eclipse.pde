@@ -15,8 +15,9 @@ import junit.framework.*;
 public class AllNewProjectTests {
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite to test new project creation wizards."); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("Test Suite to test the new plug-in project creation wizard."); //$NON-NLS-1$
 		suite.addTest(SimplePluginTestCase.suite());
+		suite.addTest(BasicJavaPluginTestCase.suite());
 		return suite;
 	}
 
