@@ -80,9 +80,6 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			monitor.worked(1);
 			monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Update"));
 			refreshLocal(monitor);
-			IFile buildFile = file.getProject().getFile("build.xml");
-			if (buildFile.exists())
-				buildFile.setDerived(true);
 			monitor.worked(1);
 			setDefaultValues();
 			monitor.worked(1);
@@ -123,7 +120,10 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	}
 	
 	protected void refreshLocal(IProgressMonitor monitor) throws CoreException {
-		file.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		file.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
+		IFile buildFile = file.getProject().getFile("build.xml");
+		if (buildFile.exists())
+			buildFile.setDerived(true);
 	}
 	
 	private void setDefaultValues() {

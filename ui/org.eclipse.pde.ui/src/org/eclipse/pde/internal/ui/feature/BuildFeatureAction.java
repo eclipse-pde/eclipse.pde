@@ -80,9 +80,13 @@ public class BuildFeatureAction extends BaseBuildAction {
 		for (int i = 0; i < references.length; i++) {
 			IPluginModelBase refmodel = feature.getReferencedModel(references[i]);
 			if (refmodel != null) {
-				refmodel.getUnderlyingResource().getProject().refreshLocal(
-					IResource.DEPTH_INFINITE,
+				IProject project = refmodel.getUnderlyingResource().getProject();
+				project.refreshLocal(
+					IResource.DEPTH_ONE,
 					monitor);
+				IFile buildFile = project.getFile("build.xml");
+				if (buildFile.exists())
+					buildFile.setDerived(true);				
 			}
 		}
 	}
