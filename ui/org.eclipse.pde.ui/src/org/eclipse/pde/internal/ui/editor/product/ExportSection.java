@@ -1,12 +1,16 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.lang.reflect.*;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -15,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.progress.*;
 
 
 public class ExportSection extends PDESection implements IHyperlinkListener{
@@ -147,7 +152,7 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 		if (href.equals("action.export"))  { //$NON-NLS-1$
 			getExportAction().run();
 		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
-			
+			handleSynchronize();
 		}
 	}
 	
@@ -160,6 +165,18 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 		if (fExportAction == null)
 			fExportAction = new ProductExportAction(getPage().getPDEEditor());
 		return fExportAction;
+	}
+	
+	private void handleSynchronize() {
+		try {
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
+			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getPage().getSite().getShell());
+			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
+			MessageDialog.openInformation(getPage().getSite().getShell(), "Synchronize", "The product's defining plug-in has been synchronized successfully.");
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {		
+			MessageDialog.openError(getPage().getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
+		}
 	}
 	
 
