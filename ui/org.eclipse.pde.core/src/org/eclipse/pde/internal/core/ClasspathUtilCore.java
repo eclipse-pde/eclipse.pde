@@ -546,8 +546,13 @@ public class ClasspathUtilCore {
 						|| (resource != null && resource.isLinked()))
 						path = JavaCore.getResolvedVariablePath(path);
 				}
+			} else {
+				if (relative)
+					path = EclipseHomeInitializer.createEclipseRelativeHome(path.toOSString());
 			}
 		}
+		
+		
 		return path;
 	}
 
