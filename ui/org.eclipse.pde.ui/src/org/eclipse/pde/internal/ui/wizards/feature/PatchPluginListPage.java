@@ -62,7 +62,6 @@ public class PatchPluginListPage extends BasePluginListPage {
 	public PatchPluginListPage(String pageName, String title,
 			ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		// TODO Auto-generated constructor stub
 	}
 
 	class PluginContentProvider extends DefaultContentProvider

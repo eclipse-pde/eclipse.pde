@@ -147,8 +147,5 @@ public class RenameDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

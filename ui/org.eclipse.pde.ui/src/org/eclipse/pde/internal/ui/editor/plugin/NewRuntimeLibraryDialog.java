@@ -69,7 +69,6 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		// TODO Auto-generated method stub
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
