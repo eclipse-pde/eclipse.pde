@@ -15,7 +15,7 @@ import java.io.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 	
@@ -30,6 +30,35 @@ class UTF8FileDocumentProvider extends FileDocumentProvider {
 			}
 		}
 		return document;
+	}
+	protected void setDocumentContent(IDocument document, InputStream contentStream) throws CoreException {
+		
+		Reader in= null;
+		
+		try {
+			
+			in= new InputStreamReader(new BufferedInputStream(contentStream), "UTF8");
+			StringBuffer buffer= new StringBuffer();
+			char[] readBuffer= new char[2048];
+			int n= in.read(readBuffer);
+			while (n > 0) {
+				buffer.append(readBuffer, 0, n);
+				n= in.read(readBuffer);
+			}
+			
+			document.set(buffer.toString());
+		
+		} catch (IOException x) {
+			IStatus s= new Status(IStatus.ERROR, null, IStatus.OK, x.getMessage(), x);
+			throw new CoreException(s);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException x) {
+				}
+			}
+		}	
 	}
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		if (element instanceof IFileEditorInput) {
