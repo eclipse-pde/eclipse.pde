@@ -152,6 +152,11 @@ public class NewDependencyWizardPage extends WizardPage {
 		c.setLayoutData(gd);
 
 		initialize();
+		
+		gd = (GridData)pluginTreeViewer.getControl().getLayoutData();
+		gd.widthHint = 125;
+		gd.heightHint = 250;
+		
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.MANIFEST_ADD_DEPENDENCIES);
