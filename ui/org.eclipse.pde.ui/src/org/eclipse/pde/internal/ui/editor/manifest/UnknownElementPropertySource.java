@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.*;
 
 public class UnknownElementPropertySource extends ManifestPropertySource {
 	private Vector descriptors;
-	private static final String TAG_NAME = "Tag name";
+	private String TAG_NAME = PDEPlugin.getResourceString("ManifestEditor.PropertyPage.tagName");
 
 public UnknownElementPropertySource(IPluginElement element) {
 	super(element);

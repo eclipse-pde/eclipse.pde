@@ -39,7 +39,7 @@ public class ExtensionElementPropertySource
 	public static final String KEY_FINISH =
 		"ManifestEditor.ExtensionElementPR.finish";
 	private Vector descriptors;
-	private static final String TAG_NAME = "Tag name";
+	private String TAG_NAME = PDEPlugin.getResourceString("ManifestEditor.PropertyPage.tagName");
 
 	class PropertyLabelProvider extends LabelProvider {
 		private Image image;
