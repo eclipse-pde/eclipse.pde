@@ -519,25 +519,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static String createURL(IPluginModelBase model) {
-		String linkedURL = createLinkedURL(model);
-		if (linkedURL != null)
-			return linkedURL;
-		String prefix = "file:" + model.getInstallLocation() + File.separator; //$NON-NLS-1$
-
-		if (model instanceof IPluginModel) {
-			return prefix + "plugin.xml"; //$NON-NLS-1$
-		} else if (model instanceof IFragmentModel) {
-			return prefix + "fragment.xml"; //$NON-NLS-1$
-		} else
-			return ""; //$NON-NLS-1$
-	}
-
-	private static String createLinkedURL(IPluginModelBase model) {
-		IResource resource = model.getUnderlyingResource();
-		if (resource == null || !resource.isLinked())
-			return null;
-		// linked resource - redirect
-		return "file:" + resource.getLocation().toOSString(); //$NON-NLS-1$
+		String location = getPluginLocation(model).addTrailingSeparator().toString();
+		String prefix = "file:" + location; //$NON-NLS-1$
+		return prefix + ((model instanceof IPluginModel) ? "plugin.xml" : "fragment.xml");
 	}
 
 	public static String getOS() {
