@@ -398,7 +398,10 @@ public class RequiresSection
 				if (iobj != null) {
 					if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 						fImports.remove(iobj);
+                        Table table = fImportViewer.getTable();
+                        int index = table.getSelectionIndex();
 						fImportViewer.remove(iobj);
+                        table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 					} else {
 						fImportViewer.update(iobj, null);
 					}

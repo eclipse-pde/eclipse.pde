@@ -376,8 +376,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		if (changeObject instanceof IPluginLibrary) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				fLibraryTable.add(changeObject);
+                fLibraryTable.setSelection(new StructuredSelection(changeObject));
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-				fLibraryTable.remove(changeObject);
+                Table table = fLibraryTable.getTable();
+                int index = table.getSelectionIndex();
+                fLibraryTable.remove(changeObject);
+                table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			} else {
                 fLibraryTable.update(changeObject, null);
 			}
