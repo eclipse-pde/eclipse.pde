@@ -45,7 +45,7 @@ public boolean equals(Object obj) {
 		if (target.getModel().equals(getModel()))
 			return false;
 		if (stringEqualWithNull(getName(), target.getName()) &&
-			stringEqualWithNull(getValue(), getValue()))
+			stringEqualWithNull(getValue(), target.getValue()))
 			return true;
 	}
 	return false;
