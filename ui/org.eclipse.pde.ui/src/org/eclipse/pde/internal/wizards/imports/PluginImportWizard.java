@@ -7,30 +7,30 @@ package org.eclipse.pde.internal.wizards.imports;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.core.runtime.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.pde.internal.base.model.plugin.*;
 
 import org.eclipse.pde.internal.*;
-//import org.eclipse.pde.internal.wizards.imports.PluginImportOperation.IReplaceQuery;
+import org
+	.eclipse
+	.pde
+	.internal
+	.wizards
+	.imports
+	.PluginImportOperation
+	.IReplaceQuery;
 
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
@@ -62,7 +62,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 		page1 = new PluginImportWizardFirstPage();
 		addPage(page1);
-		page2= new PluginImportWizardDetailedPage(page1);
+		page2 = new PluginImportWizardDetailedPage(page1);
 		addPage(page2);
 	}
 
@@ -78,21 +78,17 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		/*
 		try {
-			PluginModel[] plugins = fPage2.getPlugins();
-			if (plugins.length == 0) {
+			IPluginModelBase[] models = page2.getSelectedModels();
+			if (models.length == 0) {
 				MessageDialog.openInformation(
 					getShell(),
 					"Plugin Import",
 					"No plugins found. Check that the chosen directory points to the 'plugins' folder of a SDK drop.");
 				return false;
 			}
-		*/
 
-		page1.storeSettings(true);
-		/*
-
+			page1.storeSettings(true);
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
@@ -100,11 +96,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 						IReplaceQuery query = new ReplaceQuery();
 						PluginImportOperation op =
 							new PluginImportOperation(
-								fPage2.getPlugins(),
-								fPage1.doImportToWorkspace(),
-								fPage1.doExtractPluginSource(),
+								page2.getSelectedModels(),
+								page1.doImportToWorkspace(),
+								page1.doExtractPluginSource(),
 								query);
-						SelfHostingPlugin.getWorkspace().run(op, monitor);
+						PDEPlugin.getWorkspace().run(op, monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					} catch (OperationCanceledException e) {
@@ -115,16 +111,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			String title = "Plugin Import";
-			String message = "Import failed. See log for details.";
-			SelfHostingPlugin.logAndDisplay(
-				e,
-				SelfHostingPlugin.getActiveWorkbenchShell(),
-				title,
-				message);
+			PDEPlugin.logException(e);
 			return true; // exception handled
 		}
-		*/
 		return true;
 	}
 
@@ -179,7 +168,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return fIsForAll;
 		}
 	}
-/*
+
 	private class ReplaceQuery implements IReplaceQuery {
 
 		private int fForAll = -1;
@@ -208,5 +197,4 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return result[0];
 		}
 	}
-*/
 }

@@ -87,7 +87,7 @@ public static void setBuildPath(
  * @param model the plug-in project handle
  */
 
-public static void setBuildPath(IPluginModel model, IProgressMonitor monitor)
+public static void setBuildPath(IPluginModelBase model, IProgressMonitor monitor)
 	throws JavaModelException, CoreException {
 
 	IProject project = model.getUnderlyingResource().getProject();		
@@ -95,7 +95,10 @@ public static void setBuildPath(IPluginModel model, IProgressMonitor monitor)
 	// Set classpath
 	Vector result = new Vector();
 	addSourceFolders(model.getBuildModel(), result);
-	addDependencies(project, model.getPlugin().getImports(), result);
+	if (model instanceof IPluginModel) {
+		IPluginModel pluginModel = (IPluginModel)model;
+		addDependencies(project, pluginModel.getPlugin().getImports(), result);
+	}
 	// add implicit libraries
 	PluginPathUpdater.addImplicitLibraries(result);
 	addJRE(result);

@@ -8,43 +8,28 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.model.LibraryModel;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.base.model.plugin.*;
 
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.*;
 
 import org.eclipse.jdt.launching.JavaRuntime;
 
 public class UpdateClasspathOperation implements IWorkspaceRunnable {
 
-	private IJavaProject fJavaProject;
-	private PluginModel fPlugin;
-	private IClasspathEntry[] fLibraryClasspathEntries;
-	private IPath fOutputLocation;
-	private IWorkspaceRoot fRoot;
+	private IJavaProject javaProject;
+	private IPluginModelBase model;
+	private IClasspathEntry[] libraryClasspathEntries;
+	private IPath outputLocation;
+	private IWorkspaceRoot root;
 
-	public UpdateClasspathOperation(IJavaProject jproject, PluginModel plugin, IClasspathEntry[] libraryClasspathEntries, IPath outputLocation) {
-		fJavaProject= jproject;
-		fPlugin= plugin;
-		fOutputLocation= outputLocation;
-		fLibraryClasspathEntries= libraryClasspathEntries;
-		fRoot= ResourcesPlugin.getWorkspace().getRoot();
+	public UpdateClasspathOperation(IJavaProject jproject, IPluginModelBase model, IClasspathEntry[] libraryClasspathEntries, IPath outputLocation) {
+		this.javaProject= jproject;
+		this.model = model;
+		this.outputLocation= outputLocation;
+		this.libraryClasspathEntries= libraryClasspathEntries;
+		root= ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	/*
@@ -54,20 +39,20 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		monitor.beginTask("Setting class path of '" + fJavaProject.getElementName() + "'...", 1);
+		monitor.beginTask("Setting class path of '" + javaProject.getElementName() + "'...", 1);
 		try {
-			IProject proj= fJavaProject.getProject();
+			IProject proj= javaProject.getProject();
 			
 			// add library entries
 			ArrayList entries= new ArrayList();
 			
-			for (int i= 0; i < fLibraryClasspathEntries.length; i++) {
-				entries.add(fLibraryClasspathEntries[i]);
+			for (int i= 0; i < libraryClasspathEntries.length; i++) {
+				entries.add(libraryClasspathEntries[i]);
 			}
 			
 			// add project prerequisits
 			if (entries.size() > 0) {
-				addProjectClasspathEntries(proj, fPlugin, entries);
+				addProjectClasspathEntries(proj, model, entries);
 			}
 			
 			// add JRE
@@ -75,12 +60,12 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 
 			IClasspathEntry[] newClasspath= (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
 			
-			IStatus validation= JavaConventions.validateClasspath(fJavaProject, newClasspath, fOutputLocation);
+			IStatus validation= JavaConventions.validateClasspath(javaProject, newClasspath, outputLocation);
 			if (!validation.isOK()) {
 				throw new CoreException(validation);
 			}
 			
-			fJavaProject.setRawClasspath(newClasspath, fOutputLocation, new SubProgressMonitor(monitor, 1));
+			javaProject.setRawClasspath(newClasspath, outputLocation, new SubProgressMonitor(monitor, 1));
 		
 		} finally {
 			monitor.done();
@@ -88,40 +73,43 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		
 	}
 	
-	private void addProjectClasspathEntries(IProject project, PluginModel plugin, ArrayList entries) {
+	private void addProjectClasspathEntries(IProject project, IPluginModelBase model, ArrayList entries) {
 		// avoid duplicate project entries
 		HashSet projectsAdded= new HashSet();
 				
 		// boot project & runtime project are implicitly imported
 		String prjName= project.getName();
 		if (!"org.eclipse.core.boot".equals(prjName)) {
-			IProject bootProj= fRoot.getProject("org.eclipse.core.boot");
+			IProject bootProj= root.getProject("org.eclipse.core.boot");
 			entries.add(JavaCore.newProjectEntry(bootProj.getFullPath()));
 			projectsAdded.add(bootProj);
 			if (!"org.eclipse.core.runtime".equals(prjName) && !"org.apache.xerces".equals(prjName)) {
-				IProject runtimeProj= fRoot.getProject("org.eclipse.core.runtime");
+				IProject runtimeProj= root.getProject("org.eclipse.core.runtime");
 				entries.add(JavaCore.newProjectEntry(runtimeProj.getFullPath()));
 				projectsAdded.add(runtimeProj);
 			}
 		}
 		
 		// for fragments add the parent plugin as prerequisit
-		if (plugin instanceof PluginFragmentModel) {
-			String parentPluginName= ((PluginFragmentModel)plugin).getPlugin();
-			IProject parentProject= fRoot.getProject(parentPluginName);
+		if (model instanceof IFragmentModel) {
+			IFragment fragment = ((IFragmentModel)model).getFragment();
+			String parentPluginId= fragment.getPluginId();
+			IProject parentProject= root.getProject(parentPluginId);
 			entries.add(JavaCore.newProjectEntry(parentProject.getFullPath()));
 			projectsAdded.add(parentProject);
 		}
-		
-		PluginPrerequisiteModel[] required= plugin.getRequires();
-		// all required projects
-		if (required != null) {
-			for (int i= 0; i < required.length; i++) {
-				PluginPrerequisiteModel curr= required[i];
-				IProject req= fRoot.getProject(curr.getPlugin());
-				if (!projectsAdded.contains(req)) {
-					IClasspathEntry entry= JavaCore.newProjectEntry(req.getFullPath(), curr.getExport());
-					entries.add(entry);
+		else {
+			IPlugin plugin = ((IPluginModel)model).getPlugin();
+			IPluginImport[] imports= plugin.getImports();
+			// all required projects
+			if (imports.length>0) {
+				for (int i= 0; i < imports.length; i++) {
+					IPluginImport curr= imports[i];
+					IProject req= root.getProject(curr.getId());
+					if (!projectsAdded.contains(req)) {
+						IClasspathEntry entry= JavaCore.newProjectEntry(req.getFullPath(), curr.isReexported());
+						entries.add(entry);
+					}
 				}
 			}
 		}
@@ -142,7 +130,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		return null;
 	}
 
-	private static IPath getLibraryPath(IProject project, LibraryModel curr) {
+	private static IPath getLibraryPath(IProject project, IPluginLibrary curr) {
 		IPath path= new Path(curr.getName());
 		String first= path.segment(0);
 		if (first != null) {
@@ -158,8 +146,8 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		return project.getFullPath().append(path);
 	}
 	
-	public static IClasspathEntry getLibraryEntry(IProject project, LibraryModel libraryModel, boolean exported) {
-		IPath jarPath= getLibraryPath(project, libraryModel);
+	public static IClasspathEntry getLibraryEntry(IProject project, IPluginLibrary library, boolean exported) {
+		IPath jarPath= getLibraryPath(project, library);
 		IPath srcAttach= getSourceAttchmentPath(project, jarPath);
 		IPath srcRoot= srcAttach != null ? Path.EMPTY : null;
 		return JavaCore.newLibraryEntry(jarPath, srcAttach, srcRoot, exported);

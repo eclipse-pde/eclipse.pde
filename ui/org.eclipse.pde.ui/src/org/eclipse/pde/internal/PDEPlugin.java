@@ -216,16 +216,22 @@ public static void logErrorMessage(String message) {
 			message,
 			null));
 }
-public static void logException(Throwable e) {
+
+public static void logException(Throwable e, String title, String message) {
 	if (e instanceof InvocationTargetException) {
 		e = ((InvocationTargetException)e).getTargetException();
 	}
-	String message = e.getMessage();
+	if (message==null)
+		message = e.getMessage();
 	if (message==null)
 	   message = e.toString();
 	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
-	ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
+	ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
 	ResourcesPlugin.getPlugin().getLog().log(status);
+}
+
+public static void logException(Throwable e) {
+	logException(e, null, null);
 }
 public static void registerPlatformLaunchers(IProject project) {
 	try {

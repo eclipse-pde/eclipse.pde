@@ -210,7 +210,7 @@ private IPluginModelBase getWorkspaceModel(IFile file) {
 	else if (name.equals("fragment.xml")) models = workspaceFragmentModels;
 	return getWorkspaceModel(file.getProject(), models);
 }
-private IPluginModelBase getWorkspaceModel(IProject project) {
+public IPluginModelBase getWorkspaceModel(IProject project) {
 	IPath filePath = project.getFullPath().append("plugin.xml");
 	IFile file = project.getWorkspace().getRoot().getFile(filePath);
 	if (file.exists()) {
