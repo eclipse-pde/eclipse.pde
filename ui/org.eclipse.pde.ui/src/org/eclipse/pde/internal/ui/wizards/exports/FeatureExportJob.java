@@ -614,6 +614,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
     }
 
     private boolean doUnpack(IPluginModelBase model) {
+        if (new File(model.getInstallLocation()).isFile())
+            return false;
+        
         IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
         for (int i = 0; i < libraries.length; i++) {
             if (!libraries[i].getName().equals("."))
