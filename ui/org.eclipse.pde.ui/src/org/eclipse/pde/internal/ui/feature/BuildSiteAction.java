@@ -28,6 +28,7 @@ import org.eclipse.ui.*;
 public class BuildSiteAction implements IObjectActionDelegate {
 	
 	private ISiteBuildModel fBuildModel;
+	private IFile siteXML;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -53,6 +54,9 @@ public class BuildSiteAction implements IObjectActionDelegate {
 								monitor.setTaskName(PDEPlugin.getResourceString("SiteBuild.feature") + " " + sbFeatures[i].getId());
 								doBuildFeature(sbFeatures[i], new SubProgressMonitor(monitor, 1));
 							} catch (Exception e) {
+							} finally {
+								if (siteXML != null)
+									siteXML.touch(null);								
 							}
 						}
 					}
@@ -193,7 +197,8 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null && obj instanceof IFile) {
-				IProject project = ((IFile) obj).getProject();
+				siteXML = (IFile)obj;
+				IProject project = siteXML.getProject();
 				IWorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
 				IResource buildFile =
