@@ -132,6 +132,10 @@ class LogReader {
 			try {
 				if (random != null)
 					random.close();
+				if (swriter!= null)
+					swriter.close();
+				if (writer!=null)
+					writer.close();
 			} catch (IOException e1) {
 			}
 		}
@@ -232,13 +236,20 @@ class LogReader {
 						current.setMessage(message);
 					writerState = MESSAGE_STATE;
 				}
-			}
+			} 
+			
+			if (swriter != null && current != null && writerState == STACK_STATE)
+				current.setStack(swriter.toString());
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
 			try {
 				if (reader != null)
 					reader.close();
+				if (swriter!= null)
+					swriter.close();
+				if (writer!=null)
+					writer.close();
 			} catch (IOException e1) {
 			}
 		}
