@@ -16,6 +16,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -80,10 +81,12 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	}
 
 	public void cancelEdit() {
+		fNameText.cancelEdit();
 		super.cancelEdit();
 	}
 
 	public void commit(boolean onSave) {
+		fNameText.commit();
 		super.commit(onSave);
 	}
 
@@ -97,9 +100,18 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 
 		fNameText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_FEATURE_LABEL), null, false);
+		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				if (fInput != null)
+					try {
+						fInput.setName(text.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
 		limitTextWidth(fNameText);
-		fNameText.setEditable(false);
-		fNameText.getText().setEnabled(false);
+		fNameText.setEditable(isEditable());
 
 		fOptionalButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_OPTIONAL), SWT.CHECK);
@@ -231,8 +243,8 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 	}
 
 	public void setFocus() {
-		if (fOptionalButton != null)
-			fOptionalButton.setFocus();
+		if (fNameText != null)
+			fNameText.getText().setFocus();
 	}
 
 	private void update() {
@@ -255,6 +267,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			fSearchSelfButton.setSelection(false);
 			fSearchBothButton.setSelection(false);
 		}
+		fNameText.setEditable(fInput != null && isEditable());
 		fOptionalButton.setEnabled(fInput != null && isEditable());
 		fSearchRootButton.setEnabled(fInput != null && isEditable());
 		fSearchSelfButton.setEnabled(fInput != null && isEditable());

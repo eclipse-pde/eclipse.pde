@@ -432,21 +432,34 @@ public class RequiresSection extends TableSection implements
 				IModel[] added = event.getAddedModels();
 				IModel[] removed = event.getRemovedModels();
 				IModel[] changed = event.getChangedModels();
-				if (hasPluginModels(added) || hasPluginModels(removed)
-						|| hasPluginModels(changed))
+				if (hasModels(added) || hasModels(removed)
+						|| hasModels(changed))
 					markStale();
 			}
 		});
 	}
 
-	private boolean hasPluginModels(IModel[] models) {
+	private boolean hasModels(IModel[] models) {
 		if (models == null)
 			return false;
-		if (models.length == 0)
-			return false;
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeatureImport[] imports = model.getFeature().getImports();
+
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IPluginModelBase)
-				return true;
+			if (models[i] instanceof IPluginModelBase) {
+				for (int j = 0; j < imports.length; j++) {
+					if (((IPluginModelBase) models[i]).getPluginBase().getId()
+							.equals(imports[j].getId()))
+						return true;
+				}
+			}
+			if (models[i] instanceof IFeatureModel) {
+				for (int j = 0; j < imports.length; j++) {
+					if (((IFeatureModel) models[i]).getFeature().getId()
+							.equals(imports[j].getId()))
+						return true;
+				}
+			}
 		}
 		return false;
 	}

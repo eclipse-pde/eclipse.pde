@@ -28,10 +28,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -54,7 +50,7 @@ import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DataSection extends TableSection implements IModelProviderListener {
+public class DataSection extends TableSection {
 	private static final String SECTION_TITLE = "FeatureEditor.DataSection.title"; //$NON-NLS-1$
 
 	private static final String SECTION_DESC = "FeatureEditor.DataSection.desc"; //$NON-NLS-1$
@@ -124,9 +120,6 @@ public class DataSection extends TableSection implements IModelProviderListener 
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
 
@@ -286,9 +279,6 @@ public class DataSection extends TableSection implements IModelProviderListener 
 		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.addModelProviderListener(this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -331,17 +321,6 @@ public class DataSection extends TableSection implements IModelProviderListener 
 		fDeleteAction.setEnabled(model.isEditable());
 		fDeleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 		fOpenAction = new OpenReferenceAction(fDataViewer);
-	}
-
-	public void modelsChanged(IModelProviderEvent event) {
-		getSection().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (getSection().isDisposed()) {
-					return;
-				}
-				markStale();
-			}
-		});
 	}
 
 	public void setFocus() {

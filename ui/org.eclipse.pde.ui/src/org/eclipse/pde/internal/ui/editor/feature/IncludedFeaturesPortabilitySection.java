@@ -210,7 +210,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements
 			}
 		});
 		limitTextWidth(fOsText);
-		fOsText.setEditable(isEditable());
+		fOsText.setEditable(fCurrentInput !=null && isEditable());
 
 		fWsText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_WS), editLabel, false);
@@ -236,7 +236,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements
 			}
 		});
 		limitTextWidth(fWsText);
-		fWsText.setEditable(isEditable());
+		fWsText.setEditable(fCurrentInput !=null && isEditable());
 
 		fNlText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_NL), editLabel, false);
@@ -263,7 +263,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements
 			}
 		});
 		limitTextWidth(fNlText);
-		fNlText.setEditable(isEditable());
+		fNlText.setEditable(fCurrentInput !=null && isEditable());
 
 		fArchText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_ARCH), editLabel, false);
@@ -290,7 +290,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements
 
 		});
 		limitTextWidth(fArchText);
-		fArchText.setEditable(isEditable());
+		fArchText.setEditable(fCurrentInput !=null && isEditable());
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -348,13 +348,18 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements
 	public void refresh() {
 		if (fCurrentInput == null) {
 			clearFields();
-			super.refresh();
-			return;
+		} else {
+			setValue(IEnvironment.P_OS);
+			setValue(IEnvironment.P_WS);
+			setValue(IEnvironment.P_ARCH);
+			setValue(IEnvironment.P_NL);
 		}
-		setValue(IEnvironment.P_OS);
-		setValue(IEnvironment.P_WS);
-		setValue(IEnvironment.P_ARCH);
-		setValue(IEnvironment.P_NL);
+
+		fOsText.setEditable(fCurrentInput != null && isEditable());
+		fWsText.setEditable(fCurrentInput != null && isEditable());
+		fNlText.setEditable(fCurrentInput != null && isEditable());
+		fArchText.setEditable(fCurrentInput != null && isEditable());
+
 		super.refresh();
 	}
 

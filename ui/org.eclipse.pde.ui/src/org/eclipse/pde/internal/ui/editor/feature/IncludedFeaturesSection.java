@@ -364,15 +364,15 @@ public class IncludedFeaturesSection extends TableSection implements
 			return false;
 		if (models == null)
 			return false;
-		if (models.length == 0)
-			return false;
+		IFeatureChild[] includedFeatures = thisFeature.getIncludedFeatures();
 		for (int i = 0; i < models.length; i++) {
 			if (models[i] instanceof IFeatureModel) {
 				IFeature feature = ((IFeatureModel) models[i]).getFeature();
-				if (feature.getId().equals(thisFeature.getId()))
-					continue;
+				for (int j = 0; j < includedFeatures.length; j++) {
+					if (feature.getId().equals(includedFeatures[j].getId()))
+						return true;
+				}
 			}
-			return true;
 		}
 		return false;
 	}

@@ -222,6 +222,8 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 			fUnpackButton.setSelection(true);
 			fBlockNotification = false;
 		}
+		fdownloadSizeText.setEditable(fInput != null && isEditable());
+		fInstallSizeText.setEditable(fInput != null && isEditable());
 		fUnpackButton.setEnabled(fInput != null && isEditable());
 	}
 

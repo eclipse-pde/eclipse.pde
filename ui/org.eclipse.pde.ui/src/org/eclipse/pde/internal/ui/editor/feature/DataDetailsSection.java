@@ -187,6 +187,8 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 			fdownloadSizeText.setValue(null, true); //$NON-NLS-1$
 			fInstallSizeText.setValue(null, true); //$NON-NLS-1$
 		}
+		fdownloadSizeText.setEditable(fInput != null && isEditable());
+		fInstallSizeText.setEditable(fInput != null && isEditable());
 	}
 
 	public boolean isEditable() {

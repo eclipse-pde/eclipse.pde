@@ -370,11 +370,16 @@ public class PluginSection extends TableSection implements
 	private boolean hasPluginModels(IModel[] models) {
 		if (models == null)
 			return false;
-		if (models.length == 0)
-			return false;
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IPluginModelBase)
-				return true;
+			if (models[i] instanceof IPluginModelBase) {
+				for (int j = 0; j < plugins.length; j++) {
+					if (((IPluginModelBase) models[i]).getPluginBase().getId()
+							.equals(plugins[j].getId()))
+						return true;
+				}
+			}
 		}
 		return false;
 	}
