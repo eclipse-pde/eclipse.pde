@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import java.util.*;
-
 /**
  * Objects that implement this interface can
  * have attributes.

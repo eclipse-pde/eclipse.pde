@@ -430,7 +430,7 @@ public class PluginPathUpdater {
 			variable = null;
 		if (variable != null) {
 			path = path.removeFirstSegments(1);
-			return variable + path.SEPARATOR + path.toString();
+			return variable + IPath.SEPARATOR + path.toString();
 		}
 		return source;
 	}

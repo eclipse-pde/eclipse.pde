@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.core.ifeature;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWritable;
 /**
  * A base of all feature model objects.

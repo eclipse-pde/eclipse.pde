@@ -169,7 +169,6 @@ public abstract class PluginBase
 		if (libraryModels == null)
 			return;
 		for (int i = 0; i < libraryModels.length; i++) {
-			LibraryModel libraryModel = libraryModels[i];
 			PluginLibrary library = new PluginLibrary();
 			library.setModel(getModel());
 			library.setInTheModel(true);

@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
 /**
  * Simple schema types can optionally have a restriction
  * objects that narrows the value space for the type.

@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWritable;
 /**
  * Classes that implement this interface define

@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
 

@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.core.ifeature;
  */
 
 import org.eclipse.core.runtime.*;
-import java.net.*;
 /**
  * The container for all URL definitions of this feature.
  */

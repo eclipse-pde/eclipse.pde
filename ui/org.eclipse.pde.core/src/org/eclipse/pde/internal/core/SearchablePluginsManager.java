@@ -6,7 +6,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.core.builder.JavaBuilder;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**

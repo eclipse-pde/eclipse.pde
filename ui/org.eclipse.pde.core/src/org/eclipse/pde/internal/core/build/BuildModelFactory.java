@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.core.build;
  */
 
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
 
 public class BuildModelFactory implements IBuildModelFactory {
 	private IBuildModel model;

@@ -1,9 +1,5 @@
 package org.eclipse.pde.internal.core;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.runtime.*;
 
 /**

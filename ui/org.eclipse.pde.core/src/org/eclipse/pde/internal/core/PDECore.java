@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -243,7 +242,6 @@ public class PDECore extends Plugin {
 
 	public static void logException(
 		Throwable e,
-		final String title,
 		String message) {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
@@ -268,7 +266,7 @@ public class PDECore extends Plugin {
 	}
 
 	public static void logException(Throwable e) {
-		logException(e, null, null);
+		logException(e, null);
 	}
 
 	public static void log(Throwable e) {
@@ -298,7 +296,7 @@ public class PDECore extends Plugin {
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				getExternalModelManager().getEclipseHome(monitor);
+				ExternalModelManager.getEclipseHome(monitor);
 				getSourceLocationManager().initializeClasspathVariables(monitor);
 			}
 		};

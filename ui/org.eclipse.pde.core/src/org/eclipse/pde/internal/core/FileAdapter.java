@@ -15,7 +15,6 @@ public class FileAdapter extends PlatformObject {
 	 */
 	public FileAdapter(FileAdapter parent, File file) {
 		this.file = file;
-		String fileName = file.getName();
 		this.parent = parent;
 	}
 

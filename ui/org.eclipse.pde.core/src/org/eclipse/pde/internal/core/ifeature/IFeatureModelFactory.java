@@ -4,9 +4,6 @@ package org.eclipse.pde.internal.core.ifeature;
  * All Rights Reserved.
  */
 
-import java.net.URL;
-import org.eclipse.core.resources.IResource;
-import org.w3c.dom.*;
 /**
  * This model factory should be used to create
  * model objects of the feature model.

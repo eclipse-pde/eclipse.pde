@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import java.util.*;
 /**
  * Classes that implement this interface represent definition
  * of one element in the extension point schema.

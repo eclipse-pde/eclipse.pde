@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.core.schema;
 import java.net.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 
 public class FileSchemaDescriptor extends AbstractSchemaDescriptor {
 	private IFile file;

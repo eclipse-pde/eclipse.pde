@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.core.runtime.CoreException;
 

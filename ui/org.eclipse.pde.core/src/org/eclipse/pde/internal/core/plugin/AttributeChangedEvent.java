@@ -6,8 +6,6 @@
  */
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 
 /**

@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 
 /**
  * A utility class that can be used by plug-in project
@@ -375,11 +374,6 @@ public class BuildPathUtilCore {
 		Vector result) {
 		IPlugin plugin = findFragmentPlugin(model);
 		if (plugin != null) {
-			IProject project = null;
-			if (plugin.getModel() instanceof WorkspacePluginModel) {
-				project =
-					plugin.getModel().getUnderlyingResource().getProject();
-			}
 			Vector checkedPlugins = new Vector();
 			checkedPlugins.add(new PluginPathUpdater.PluginEntry(plugin));
 			PluginPathUpdater ppu =
@@ -392,7 +386,6 @@ public class BuildPathUtilCore {
 		IPluginModel model,
 		Vector result,
 		IProgressMonitor monitor) {
-		IPlugin plugin = model.getPlugin();
 		ArrayList fragments = new ArrayList();
 		createFragmentList(model, fragments, monitor);
 		for (int i = 0; i < fragments.size(); i++) {

@@ -4,7 +4,6 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import java.util.*;
 /**
  * Compositor is a container that can contain other compositors or
  * references to element defined at the global scope. Compositors
