@@ -39,6 +39,7 @@ public class PluginExportJob extends FeatureExportJob {
 			String featureID = "org.eclipse.pde.container.feature";
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
+			createBuildPropertiesFile(fFeatureLocation);
 			doExport(featureID, fFeatureLocation, monitor);
 		} catch (IOException e) {
 		} finally {
@@ -81,6 +82,17 @@ public class PluginExportJob extends FeatureExportJob {
 		all[0] = fFeatureLocation + File.separator + "feature.xml";
 		System.arraycopy(paths, 0, all, 1, paths.length);
 		return all;
+	}
+	
+	private void createBuildPropertiesFile(String featureLocation) {
+		File file = new File(featureLocation);
+		if (!file.exists() || !file.isDirectory())
+			file.mkdirs();
+		File build = new File(file, "build.properties");
+		try {
+			build.createNewFile();
+		} catch (IOException e) {
+		}		
 	}
 
 }
