@@ -1,39 +1,65 @@
-/*
- * Created on Feb 26, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.ArrayList;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.search.*;
-import org.eclipse.jdt.ui.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.pde.core.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.osgi.bundle.IBundlePluginBase;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.newparts.*;
+import org.eclipse.pde.internal.ui.editor.manifest.JavaAttributeValue;
+import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
+import org.eclipse.pde.internal.ui.neweditor.PDESection;
+import org.eclipse.pde.internal.ui.neweditor.manifest.JavaAttributeWizard;
+import org.eclipse.pde.internal.ui.newparts.ComboPart;
+import org.eclipse.pde.internal.ui.newparts.FormEntry;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.ide.IDE;
 
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class GeneralInfoSection extends PDESection {
 	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch";
 	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect";
@@ -64,22 +90,22 @@ public class GeneralInfoSection extends PDESection {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.title"));
-		//toolkit.createCompositeSeparator(section);
-		section.setDescription(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc"));
-
+		section.setText(PDEPlugin
+				.getResourceString("ManifestEditor.PluginSpecSection.title"));
+		section.setDescription(PDEPlugin
+				.getResourceString("ManifestEditor.PluginSpecSection.desc"));
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = toolkit.getBorderStyle()!=SWT.NULL?0:2;
+		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = 3;
 		client.setLayout(layout);
 		section.setClient(client);
-		
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();		
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
+				.getActionBars();
 		createIDEntry(client, toolkit, actionBars);
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
-		createProviderEntry(client, toolkit, actionBars);		
+		createProviderEntry(client, toolkit, actionBars);
 		if (isFragment()) {
 			createPluginIDEntry(client, toolkit, actionBars);
 			createPluginVersionEntry(client, toolkit, actionBars);
@@ -90,20 +116,19 @@ public class GeneralInfoSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
-			((IModelChangeProvider)model).addModelChangedListener(this);
+			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 	public String getContextId() {
 		if (getPluginBase() instanceof IBundlePluginBase)
 			return BundleInputContext.CONTEXT_ID;
 		return PluginInputContext.CONTEXT_ID;
 	}
-	
 	private IPluginBase getPluginBase() {
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
 	}
-	
-	private void createIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createIDEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
 		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -114,25 +139,25 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
-		fIdEntry.setEditable(isEditable());		
+		fIdEntry.setEditable(isEditable());
 	}
-	
-	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createVersionEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
 		fVersionEntry = new FormEntry(client, toolkit, "Version:", null, false);
-		fVersionEntry
-				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-					public void textValueChanged(FormEntry entry) {
-						try {
-							getPluginBase().setVersion(entry.getValue());
-						} catch (CoreException e) {
-							PDEPlugin.logException(e);
-						}
-					}
-				});
-		fVersionEntry.setEditable(isEditable());		
+		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
+				actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				try {
+					getPluginBase().setVersion(entry.getValue());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
+		fVersionEntry.setEditable(isEditable());
 	}
-	
-	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createNameEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
 		fNameEntry = new FormEntry(client, toolkit, "Name:", null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -145,9 +170,10 @@ public class GeneralInfoSection extends PDESection {
 		});
 		fNameEntry.setEditable(isEditable());
 	}
-	
-	private void createProviderEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fProviderEntry = new FormEntry(client, toolkit, "Provider:", null, false);
+	private void createProviderEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
+		fProviderEntry = new FormEntry(client, toolkit, "Provider:", null,
+				false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -160,40 +186,88 @@ public class GeneralInfoSection extends PDESection {
 		});
 		fProviderEntry.setEditable(isEditable());
 	}
-	
-	private void createClassEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...", true);
-		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				try {
-					((IPlugin)getPluginBase()).setClassName(entry.getValue());
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
-			public void linkActivated(HyperlinkEvent e) {
-				String value = fClassEntry.getValue();
-				if (value.length() > 0)
-					doOpenClass();
-				else
-					doOpenSelectionDialog();
-			}
-			public void browseButtonSelected(FormEntry entry) {
-				doOpenSelectionDialog();
-			}
-		});
-		fClassEntry.setEditable(isEditable());		
+	private void createClassEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
+		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
+				true);
+		fClassEntry
+				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+					public void textValueChanged(FormEntry entry) {
+						try {
+							((IPlugin) getPluginBase()).setClassName(entry
+									.getValue());
+						} catch (CoreException e) {
+							PDEPlugin.logException(e);
+						}
+					}
+					public void linkActivated(HyperlinkEvent e) {
+						String value = fClassEntry.getValue();
+						value = trimNonAlphaChars(value);
+						if (value.length() > 0 && doesClassExist(value))
+							doOpenClass();
+						else {
+							JavaAttributeValue javaAttVal = createJavaAttributeValue();
+							JavaAttributeWizard wizard = new JavaAttributeWizard(
+									javaAttVal);
+							WizardDialog dialog = new WizardDialog(PDEPlugin
+									.getActiveWorkbenchShell(), wizard);
+							dialog.create();
+							SWTUtil.setDialogSize(dialog, 400, 500);
+							int result = dialog.open();
+							if (result == WizardDialog.OK) {
+								String newValue = wizard.getClassName();
+								fClassEntry.setValue(newValue);
+							}
+						}
+					}
+					public void browseButtonSelected(FormEntry entry) {
+						doOpenSelectionDialog();
+					}
+				});
+		fClassEntry.setEditable(isEditable());
 	}
-	
-	private void createPluginIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private String trimNonAlphaChars(String value) {
+		value = value.trim();
+		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
+			value = value.substring(1, value.length());
+		return value;
+	}
+	private boolean doesClassExist(String className) {
+		String name = fClassEntry.getText().getText();
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		name = trimNonAlphaChars(name);
+		String path = name.replace('.', '/') + ".java";
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+
+				IJavaElement result = javaProject.findElement(new Path(path));
+				return result != null;
+			} else {
+				IResource resource = project.findMember(new Path(path));
+				return resource != null;
+			}
+		} catch (JavaModelException e) {
+			return false;
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	private JavaAttributeValue createJavaAttributeValue() {
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		String value = fClassEntry.getValue();
+		return new JavaAttributeValue(project, model, null, value);
+	}
+	private void createPluginIDEntry(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
 		fPluginIdEntry = new FormEntry(client, toolkit, "Plug-in Id:", null,
 				true);
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
-					((IFragment) getPluginBase()).setPluginId(entry
-							.getValue());
+					((IFragment) getPluginBase()).setPluginId(entry.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -201,11 +275,12 @@ public class GeneralInfoSection extends PDESection {
 			public void linkActivated(HyperlinkEvent e) {
 			}
 		});
-		fPluginIdEntry.setEditable(isEditable());		
+		fPluginIdEntry.setEditable(isEditable());
 	}
-	
-	private void createPluginVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fPluginVersionEntry = new FormEntry(client, toolkit,"Plug-in Version:", null, false);
+	private void createPluginVersionEntry(Composite client,
+			FormToolkit toolkit, IActionBars actionBars) {
+		fPluginVersionEntry = new FormEntry(client, toolkit,
+				"Plug-in Version:", null, false);
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -217,10 +292,10 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
-		fPluginVersionEntry.setEditable(isEditable());		
+		fPluginVersionEntry.setEditable(isEditable());
 	}
-	
-	private void createMatchCombo(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createMatchCombo(Composite client, FormToolkit toolkit,
+			IActionBars actionBars) {
 		toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
@@ -244,9 +319,8 @@ public class GeneralInfoSection extends PDESection {
 				}
 			}
 		});
-		fMatchCombo.getControl().setEnabled(isEditable());		
+		fMatchCombo.getControl().setEnabled(isEditable());
 	}
-	
 	private boolean isFragment() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getContextManager().getAggregateModel();
@@ -286,28 +360,35 @@ public class GeneralInfoSection extends PDESection {
 	public void dispose() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
-			((IModelChangeProvider)model).removeModelChangedListener(this);
+			((IModelChangeProvider) model).removeModelChangedListener(this);
 		super.dispose();
 	}
-	
 	private void doOpenClass() {
 		String name = fClassEntry.getText().getText();
+		name = trimNonAlphaChars(name);
 		IProject project = getPage().getPDEEditor().getCommonProject();
-		IJavaProject javaProject = JavaCore.create(project);
 		String path = name.replace('.', '/') + ".java";
 		try {
-			IJavaElement result = javaProject.findElement(new Path(path));
-			if (result != null) {
+			if (project.hasNature(JavaCore.NATURE_ID)){
+				IJavaProject javaProject = JavaCore.create(project);
+				IJavaElement result = javaProject.findElement(new Path(path));
 				JavaUI.openInEditor(result);
+			} else {
+				IResource resource = project.findMember(new Path(path));
+				if (resource!=null && resource instanceof IFile){
+					IWorkbenchPage page = PDEPlugin.getActivePage();
+					IDE.openEditor(page, (IFile)resource, true);
+				}
 			}
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		} catch (JavaModelException e) {
 			// nothing
 			Display.getCurrent().beep();
+		} catch (CoreException e){
+			PDEPlugin.logException(e);
 		}
 	}
-	
 	private void doOpenSelectionDialog() {
 		try {
 			Shell shell = PDEPlugin.getActiveWorkbenchShell();
@@ -315,11 +396,12 @@ public class GeneralInfoSection extends PDESection {
 					.getUnderlyingResource();
 			IProject project = (resource == null) ? null : resource
 					.getProject();
-			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+			if (project != null){
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
 						new ProgressMonitorDialog(shell),
 						getSearchScope(project),
-						IJavaElementSearchConstants.CONSIDER_CLASSES, false, "*");
+						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
+						"*");
 				dialog.setTitle("Select Type");
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
@@ -329,12 +411,10 @@ public class GeneralInfoSection extends PDESection {
 		} catch (CoreException e) {
 		}
 	}
-	
 	private IJavaSearchScope getSearchScope(IProject project) {
 		IJavaProject jProject = JavaCore.create(project);
 		return SearchEngine.createJavaSearchScope(getDirectRoots(jProject));
 	}
-	
 	private IPackageFragmentRoot[] getDirectRoots(IJavaProject project) {
 		ArrayList result = new ArrayList();
 		try {
@@ -347,7 +427,7 @@ public class GeneralInfoSection extends PDESection {
 			}
 		} catch (JavaModelException e) {
 		}
-		
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		return (IPackageFragmentRoot[]) result
+				.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 }
