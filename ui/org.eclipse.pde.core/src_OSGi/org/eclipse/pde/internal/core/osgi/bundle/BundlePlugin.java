@@ -7,6 +7,8 @@
 package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.PrintWriter;
+import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.osgi.bundle.*;
@@ -20,15 +22,24 @@ import org.eclipse.pde.internal.core.PDECore;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
-	private IBundle bundle;
-	private IExtensions extensions;
 	private IBundlePluginModelBase model;
+	private ArrayList libraries;
+	private ArrayList imports;
+	
+	public void reset() {
+		libraries = null;
+		imports = null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#getBundle()
 	 */
 	public IBundle getBundle() {
-		return bundle;
+		if (model!=null) {
+			IBundleModel bmodel = model.getBundleModel();
+			return bmodel!=null?bmodel.getBundle():null;
+		}
+		return null;
 	}
 	
 	public ISharedPluginModel getModel() {
@@ -40,24 +51,14 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#setBundle(org.eclipse.pde.core.osgi.bundle.IBundle)
-	 */
-	public void setBundle(IBundle bundle) {
-		this.bundle = bundle;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#getExtensionsRoot()
 	 */
 	public IExtensions getExtensionsRoot() {
-		return extensions;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#setExtensionsRoot(org.eclipse.pde.core.plugin.IExtensions)
-	 */
-	public void setExtensionsRoot(IExtensions extensions) {
-		this.extensions = extensions;
+		if (model!=null) {
+			IExtensionsModel emodel = model.getExtensionsModel();
+			return emodel!=null?emodel.getExtensions():null;
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -85,20 +86,39 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
 	public IPluginLibrary[] getLibraries() {
-		return new IPluginLibrary[0];
+		if (libraries==null) {
+			libraries = new ArrayList();
+			StringTokenizer stok = new StringTokenizer(getBundle().getHeader(IBundle.KEY_CLASSPATH), ",");
+			while (stok.hasMoreTokens()) {
+				String token = stok.nextToken();
+				try {
+					IPluginLibrary library = model.createLibrary();
+					library.setName(token);
+					libraries.add(library);
+				}
+				catch (CoreException e) {
+					PDECore.logException(e);
+				}
+			}
+		}
+		return (IPluginLibrary[])libraries.toArray(new IPluginLibrary[libraries.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getImports()
 	 */
 	public IPluginImport[] getImports() {
-		return new IPluginImport [0];
+		if (imports==null) {
+			imports = new ArrayList();
+		}
+		return (IPluginImport[])libraries.toArray(new IPluginImport[imports.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
+		IBundle bundle = getBundle();
 		if (bundle==null) return null;
 		return bundle.getHeader(IBundle.KEY_VENDOR);
 	}
@@ -107,6 +127,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
 	 */
 	public String getVersion() {
+		IBundle bundle = getBundle();
 		if (bundle==null) return null;
 		return bundle.getHeader(IBundle.KEY_VERSION);
 	}
@@ -122,6 +143,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
+		IBundle bundle = getBundle();
 		if (bundle!=null) {
 			bundle.setHeader(IBundle.KEY_VENDOR, providerName);
 		}
@@ -131,6 +153,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
+		IBundle bundle = getBundle();
 		if (bundle!=null) {
 			bundle.setHeader(IBundle.KEY_VERSION, version);
 		}
@@ -154,6 +177,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void add(IPluginExtension extension) throws CoreException {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions==null) return;
 		extensions.add(extension);
 	}
@@ -162,6 +186,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
 	public void add(IPluginExtensionPoint point) throws CoreException {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions==null) return;
 		extensions.add(point);
 	}
@@ -170,6 +195,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()
 	 */
 	public IPluginExtensionPoint[] getExtensionPoints() {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions==null) return new IPluginExtensionPoint[0];
 		return extensions.getExtensionPoints();
 	}
@@ -178,6 +204,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensions()
 	 */
 	public IPluginExtension[] getExtensions() {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions==null) return new IPluginExtension[0];
 		return extensions.getExtensions();
 	}
@@ -186,6 +213,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void remove(IPluginExtension extension) throws CoreException {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions!=null)
 			extensions.remove(extension);
 	}
@@ -195,6 +223,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 */
 	public void remove(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
+			IExtensions extensions = getExtensionsRoot();
 			if (extensions!=null)
 				extensions.remove(extensionPoint);
 	}
@@ -204,6 +233,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 */
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 		throws CoreException {
+		IExtensions extensions = getExtensionsRoot();
 		if (extensions!=null)
 			extensions.swap(e1, e2);
 	}
@@ -219,6 +249,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
+		IBundle bundle = getBundle();
 		if (bundle==null) return null;
 		return bundle.getHeader(IBundle.KEY_NAME);
 	}
@@ -227,6 +258,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
+		IBundle bundle = getBundle();
 		if (bundle!=null)
 			bundle.setHeader(IBundle.KEY_NAME, id);
 	}
@@ -243,6 +275,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
+		IBundle bundle = getBundle();
 		if (bundle==null) return null;
 		return bundle.getHeader(IBundle.KEY_DESC);
 	}
@@ -287,6 +320,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
+		IBundle bundle = getBundle();
 		if (bundle!=null)
 			bundle.setHeader(IBundle.KEY_DESC, name);
 	}
@@ -295,6 +329,8 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isValid()
 	 */
 	public boolean isValid() {
+		IBundle bundle = getBundle();
+		IExtensions extensions = getExtensionsRoot();
 		return bundle!=null && bundle.isValid() && (extensions==null || extensions.isValid());
 	}
 

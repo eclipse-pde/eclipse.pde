@@ -19,8 +19,8 @@ import java.util.List;
  * PluginCore.java
  */
 public class XMLCore {
-	
-	public final static boolean NEW_CODE_PATHS= true;
+	//TODO removed 'final' for now to go around IExtensions issue
+	public static boolean NEW_CODE_PATHS= true;
 	public final static boolean VALIDATE= false;
 
 	private static XMLCore fInstance;

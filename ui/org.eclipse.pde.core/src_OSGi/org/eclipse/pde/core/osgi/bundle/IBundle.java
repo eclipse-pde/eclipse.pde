@@ -11,7 +11,6 @@
 package org.eclipse.pde.core.osgi.bundle;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.IPluginBase;
 /**

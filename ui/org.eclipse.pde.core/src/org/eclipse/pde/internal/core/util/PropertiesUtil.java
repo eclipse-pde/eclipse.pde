@@ -7,7 +7,7 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.io.PrintWriter;
-import java.util.Enumeration;
+import java.util.*;
 
 /**
  * @author dejan

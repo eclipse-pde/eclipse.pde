@@ -251,7 +251,7 @@ public abstract class PluginObject
 		}
 	}
 
-	private void bindSourceLocationOrig(Node node, Map lineTable) {
+	protected void bindSourceLocationOrig(Node node, Map lineTable) {
 		Integer[] lines = (Integer[]) lineTable.get(node);
 		if (lines != null) {
 			range = new int[2];

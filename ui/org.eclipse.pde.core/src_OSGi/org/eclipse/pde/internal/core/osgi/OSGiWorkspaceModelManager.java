@@ -16,11 +16,13 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.site.*;
@@ -39,10 +41,16 @@ public class OSGiWorkspaceModelManager
 
 	class ModelChange {
 		IModel model;
-		boolean added;
+		int type;
+		
 		public ModelChange(IModel model, boolean added) {
 			this.model = model;
-			this.added = added;
+			this.type = added?IModelProviderEvent.MODELS_ADDED:
+							 IModelProviderEvent.MODELS_REMOVED;
+		}
+		public ModelChange(IModel model) {
+			this.model = model;
+			this.type = IModelProviderEvent.MODELS_CHANGED;
 		}
 	}
 
@@ -112,8 +120,8 @@ public class OSGiWorkspaceModelManager
 		IPath path = file.getProjectRelativePath();
 		return (
 			path.segmentCount() == 2
-				&& path.segment(1).equals("META-INF")
-				&& path.segment(2).equals("MANIFEST.MF"));
+				&& path.segment(0).equals("META-INF")
+				&& path.segment(1).equals("MANIFEST.MF"));
 	}
 	protected IModel createModel(Object element, boolean editable) {
 		if (element instanceof IFile) {
@@ -179,13 +187,14 @@ public class OSGiWorkspaceModelManager
 		IPath path = new Path("META-INF/MANIFEST.MF");
 		return project.getFile(path);
 	}
+	
 	private IModel createWorkspacePluginModel(IProject project) {
 		IPath pluginPath;
 		IFile pluginFile;
 		if (isBundleProject(project)) {
 			pluginFile = getBundleFile(project);
-		}
-		else {
+			return createWorkspaceBundleModel(pluginFile);
+		} else {
 			pluginPath = project.getFullPath().append("plugin.xml");
 			pluginFile = project.getWorkspace().getRoot().getFile(pluginPath);
 		}
@@ -204,9 +213,38 @@ public class OSGiWorkspaceModelManager
 			return null;
 		connect(featureFile, null, false);
 		IFeatureModel model = (IFeatureModel) getModel(featureFile, null);
-		loadFeatureModel(model);
+		loadModel(model);
 		return model;
 	}
+
+	private IBundlePluginModelBase createWorkspaceBundleModel(IFile bundleFile) {
+		if (bundleFile.exists() == false)
+			return null;
+		connect(bundleFile, null, false);
+		IBundleModel model = (IBundleModel) getModel(bundleFile, null);
+		loadModel(model);
+		IBundlePluginModelBase bmodel = new BundlePluginModelBase();
+		bmodel.setEnabled(true);
+		bmodel.setBundleModel(model);
+		
+		IFile efile = bundleFile.getProject().getFile("extensions.xml");
+		if (efile.exists()) {
+			connect(efile, null, false);
+			IExtensionsModel emodel = (IExtensionsModel)getModel(efile, null);
+			loadModel(emodel);
+			bmodel.setExtensionsModel(emodel);
+		}
+		return bmodel;
+	}
+	
+	private IExtensionsModel createWorkspaceExtensionsModel(IFile extensionsFile) {
+		if (extensionsFile.exists() == false)
+			return null;
+		connect(extensionsFile, null, false);
+		IExtensionsModel model = (IExtensionsModel) getModel(extensionsFile, null);
+		loadModel(model);
+		return model;
+	}	
 
 	private IFeatureModel createWorkspaceFeatureModel(IProject project) {
 		IFile featureFile = project.getFile("feature.xml");
@@ -336,7 +374,10 @@ public class OSGiWorkspaceModelManager
 		return getWorkspaceModel(file.getProject(), models);
 	}
 	public IModel getWorkspaceModel(IProject project) {
-		validate();
+		return getWorkspaceModel(project, true);
+	}
+	public IModel getWorkspaceModel(IProject project, boolean validate) {
+		if (validate) validate();
 
 		if (isBundleProject(project))
 			return getWorkspaceModel(project, workspaceModels);
@@ -374,12 +415,13 @@ public class OSGiWorkspaceModelManager
 		}
 		validate(workspaceModels);
 		ArrayList pluginModels = new ArrayList();
-		for (int i=0; i<workspaceModels.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase)workspaceModels.get(i);
+		for (int i = 0; i < workspaceModels.size(); i++) {
+			IPluginModelBase model = (IPluginModelBase) workspaceModels.get(i);
 			if (model instanceof IPluginModel)
 				pluginModels.add(model);
 		}
-		return (IPluginModel[])pluginModels.toArray(new IPluginModel[pluginModels.size()]);
+		return (IPluginModel[]) pluginModels.toArray(
+			new IPluginModel[pluginModels.size()]);
 	}
 
 	public IPluginModelBase[] getAllModels() {
@@ -397,40 +439,111 @@ public class OSGiWorkspaceModelManager
 		return (IPluginModelBase[]) result.toArray(
 			new IPluginModelBase[result.size()]);
 	}
+	
+	private IBundlePluginModelBase getBundleModel(IProject project, boolean validate) {
+		IModel model = getWorkspaceModel(project, validate);
+		if (model!=null && model instanceof IBundlePluginModelBase)
+			return (IBundlePluginModelBase)model;
+		return null;
+	}
+	
+	private IModel getExtensionsModel(IProject project, boolean validate) {
+		IBundlePluginModelBase bmodel = getBundleModel(project, validate);
+		if (bmodel!=null) return bmodel.getExtensionsModel();
+		else return null;
+	}
+
 	private void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
 		checkTracing(file);
 		if (isSupportedFile(file) == false)
 			return;
+		String fileName = file.getName().toLowerCase();
 
 		if (delta.getKind() == IResourceDelta.ADDED) {
 			// manifest added - add the model
-			IModel model = getWorkspaceModel(file);
+			IModel model;
+			if (fileName.equals("extensions.xml")) {
+				// find the model in the aggregate
+				model = getExtensionsModel(file.getProject(), true);
+			}
+			else 
+				model = getWorkspaceModel(file);
 			if (model == null) {
-				if (file.getName().equalsIgnoreCase("feature.xml"))
+				if (isBundleManifestFile(file)) {
+					model = createWorkspaceBundleModel(file);
+				}
+				else if (fileName.equals("extensions.xml")) {
+					IBundlePluginModelBase bmodel = getBundleModel(file.getProject(), true);
+					if (bmodel!=null) {
+						model = createWorkspaceExtensionsModel(file);
+						bmodel.setExtensionsModel((IExtensionsModel)model);
+						if (modelChanges != null)
+							modelChanges.add(new ModelChange(bmodel));
+					}
+					return;
+				}
+				else if (fileName.equals("feature.xml"))
 					model = createWorkspaceFeatureModel(file);
+				else if (isBundleManifestFile(file))
+					model = createWorkspaceBundleModel(file);
 				else
 					model = createWorkspacePluginModel(file);
+				if (model instanceof IBundlePluginModelBase) {
+					switchToBundleMode((IBundlePluginModelBase)model);
+				}
 				addWorkspaceModel(model);
-			} else if (model instanceof IFeatureModel)
-				reloadFeatureModel((IFeatureModel) model);
-			else
-				reloadWorkspaceModel((IPluginModelBase) model);
+			} else if (model instanceof IExtensionsModel)
+				reloadExtensionsModel((IExtensionsModel)model);
+			else if (model instanceof IFeatureModel)
+				reloadModel(model);
+			else {
+				//see if we need to switch to a budle
+				if (isBundleManifestFile(file)) {
+					if (model instanceof IBundlePluginModelBase) {
+						reloadBundleModel((IBundlePluginModelBase)model);
+					}
+					else {
+						//the current model is not a bundle
+						IBundlePluginModelBase bmodel = createWorkspaceBundleModel(file);
+						switchToBundleMode(bmodel);
+						addWorkspaceModel(bmodel);
+					}
+				}
+				else
+					reloadWorkspaceModel((IPluginModelBase) model);
+			}
 		} else {
-
 			if (delta.getKind() == IResourceDelta.REMOVED) {
-				IModel model = getWorkspaceModel(file, false);
+				IModel model;
+				
+				if (isBundleManifestFile(file)) {
+					model = getBundleModel(file.getProject(), false);
+				}
+				if (fileName.equals("extensions.xml")) {
+					// find the model in the aggregate
+					model = getExtensionsModel(file.getProject(), false);
+				}
+				else 
+					model = getWorkspaceModel(file, false);
 				// manifest has been removed - ditch the model
 				if (model != null)
 					removeWorkspaceModel(model);
+				if (model instanceof IBundlePluginModelBase) {
+					switchToPluginMode((IBundlePluginModelBase)model);
+				}
 			} else if (delta.getKind() == IResourceDelta.CHANGED) {
 				IModel model = getWorkspaceModel(file);
 				if (model == null)
 					return;
 				if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 					// file content modified - sync up
-					if (model instanceof IFeatureModel)
-						reloadFeatureModel((IFeatureModel) model);
+					if (model instanceof IBundlePluginModelBase)
+						reloadBundleModel((IBundlePluginModelBase)model);
+					else if (model instanceof IExtensionsModel)
+						reloadExtensionsModel((IExtensionsModel)model);
+					else if (model instanceof IFeatureModel)
+						reloadModel(model);
 					else
 						reloadWorkspaceModel((IPluginModelBase) model);
 				}
@@ -516,7 +629,11 @@ public class OSGiWorkspaceModelManager
 			IProject project = projects[i];
 			if (!project.isOpen())
 				continue;
-			if (isPluginProject(project)) {
+			if (isBundleProject(project)) {
+				IModel model = createWorkspacePluginModel(project);
+				workspaceModels.add(model);
+			}
+			else if (isPluginProject(project)) {
 				IModel model = createWorkspacePluginModel(project);
 				if (model != null) {
 					if (model instanceof IFragmentModel)
@@ -557,7 +674,7 @@ public class OSGiWorkspaceModelManager
 			return false;
 		return project.exists(new Path("feature.xml"));
 	}
-	
+
 	private static boolean isJavaProject(IProject project) {
 		try {
 			if (!project.hasNature(JavaCore.NATURE_ID))
@@ -567,14 +684,14 @@ public class OSGiWorkspaceModelManager
 			return false;
 		}
 		return true;
-	}	
+	}
 
 	public static boolean isJavaPluginProject(IProject project) {
 		if (!isPluginProject(project))
 			return false;
 		return isJavaProject(project);
 	}
-	
+
 	public static boolean isJavaBundleProject(IProject project) {
 		if (!isBundleProject(project))
 			return false;
@@ -597,9 +714,7 @@ public class OSGiWorkspaceModelManager
 		return false;
 	}
 
-	public static boolean isBinaryPluginProject(IProject project) {
-		if (!isPluginProject(project))
-			return false;
+	private static boolean isBinaryProject(IProject project) {
 		try {
 			String binary =
 				project.getPersistentProperty(
@@ -613,12 +728,29 @@ public class OSGiWorkspaceModelManager
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
-		return false;
+		return false;		
+	}
+	
+	public static boolean isBinaryPluginProject(IProject project) {
+		if (!isPluginProject(project))
+			return false;
+		return isBinaryProject(project);
+	}	
+	
+	public static boolean isBinaryBundleProject(IProject project) {
+		if (!isBundleProject(project))
+			return false;
+		return isBinaryProject(project);
 	}
 
 	public static boolean isUnsharedPluginProject(IProject project) {
 		return RepositoryProvider.getProvider(project) == null
 			|| isBinaryPluginProject(project);
+	}
+	
+	public static boolean isUnsharedBundleProject(IProject project) {
+		return RepositoryProvider.getProvider(project) == null
+			|| isBinaryBundleProject(project);
 	}
 
 	public static boolean isBinaryFeatureProject(IProject project) {
@@ -653,10 +785,13 @@ public class OSGiWorkspaceModelManager
 	}
 
 	private boolean isSupportedFile(IFile file) {
+		if (isBundleManifestFile(file)) return true;
 		String name = file.getName().toLowerCase();
+
 		if (!name.equals("plugin.xml")
 			&& !name.equals("fragment.xml")
-			&& !name.equals("feature.xml"))
+			&& !name.equals("feature.xml")
+			&& !name.equals("extensions.xml"))
 			return false;
 		IPath expectedPath = file.getProject().getFullPath().append(name);
 		// Supported files must be directly under the project
@@ -700,7 +835,7 @@ public class OSGiWorkspaceModelManager
 			PDECore.logException(e);
 		}
 	}
-	private void loadFeatureModel(IFeatureModel model) {
+	private void loadModel(IModel model) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		InputStream stream = null;
 		boolean outOfSync = false;
@@ -713,15 +848,6 @@ public class OSGiWorkspaceModelManager
 			try {
 				stream = file.getContents(true);
 			} catch (CoreException e) {
-				// cannot get file contents - something is
-				// seriously wrong
-				/*
-				 * IFeature feature = model.getFeature(true); try {
-				 * base.setId(file.getProject().getName());
-				 * base.setName(base.getId()); base.setVersion("0.0.0");
-				 * PDECore.log(e); } catch (CoreException ex) {
-				 * PDECore.logException(ex); }
-				 */
 				return;
 			}
 		}
@@ -735,37 +861,70 @@ public class OSGiWorkspaceModelManager
 			PDECore.logException(e);
 		}
 	}
+
 	private void reloadWorkspaceModel(IPluginModelBase model) {
 		loadWorkspaceModel(model);
 		fireModelsChanged(new IModel[] { model });
 		PDECore.getDefault().getTracingOptionsManager().reset();
 	}
-	private void reloadFeatureModel(IFeatureModel model) {
-		loadFeatureModel(model);
+	private void reloadModel(IModel model) {
+		loadModel(model);
 		fireModelsChanged(new IModel[] { model });
+	}
+	private void reloadBundleModel(IBundlePluginModelBase bmodel) {
+		IBundleModel model = bmodel.getBundleModel();
+		if (model!=null) {
+			loadModel(model);
+			//bmodel.reset();
+			fireModelsChanged(new IModel[] { bmodel });
+		}
+	}
+	
+	private void reloadExtensionsModel(IExtensionsModel model) {
+		loadModel(model);
+		IModel bmodel = getBundleModel(model.getUnderlyingResource().getProject(), true);
+		if (bmodel!=null)
+			fireModelsChanged(new IModel[] { bmodel });
 	}
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		listeners.remove(listener);
 	}
 	private void removeWorkspaceModel(IModel model) {
 		// remove
-		if (model instanceof IFragmentModel) {
+		if (model instanceof IExtensionsModel) {
+			IBundlePluginModelBase bmodel = getBundleModel(model.getUnderlyingResource().getProject(), false);
+			if (bmodel!=null) {
+				bmodel.setExtensionsModel(null);
+				if (modelChanges!=null)
+					modelChanges.add(new ModelChange(bmodel));
+			}
+		}
+		else if (model instanceof IFragmentModel) {
 			if (workspaceFragmentModels != null)
 				workspaceFragmentModels.remove(model);
 		}
-		if (model instanceof IFeatureModel) {
+		else if (model instanceof IFeatureModel) {
 			if (workspaceFeatureModels != null)
 				workspaceFeatureModels.remove(model);
 		} else {
 			if (workspaceModels != null)
 				workspaceModels.remove(model);
 		}
-		if (modelChanges != null)
+		if (modelChanges != null && !(model instanceof IExtensionsModel))
 			modelChanges.add(new ModelChange(model, false));
 		// disconnect
 		IResource element = model.getUnderlyingResource();
 		disconnect(element, null);
-		PDECore.getDefault().getTracingOptionsManager().reset();
+		if (model instanceof IBundlePluginModelBase) {
+			IBundlePluginModelBase bmodel = (IBundlePluginModelBase)model;
+			IExtensionsModel emodel = bmodel.getExtensionsModel();
+			if (emodel!=null) {
+				IResource efile = emodel.getUnderlyingResource();
+				disconnect(efile, null);
+			}
+		}
+		if (!(model instanceof IExtensionsModel)) 
+			PDECore.getDefault().getTracingOptionsManager().reset();
 		model.dispose();
 	}
 	public void reset() {
@@ -791,12 +950,6 @@ public class OSGiWorkspaceModelManager
 				handleProjectClosing((IProject) event.getResource());
 				processModelChanges();
 				break;
-				/*
-				 * case IResourceChangeEvent.PRE_DELETE : // project about to
-				 * be deleted if (modelChanges == null) modelChanges = new
-				 * Vector(); handleProjectToBeDeleted((IProject)
-				 * event.getResource()); processModelChanges(); break;
-				 */
 		}
 	}
 
@@ -808,12 +961,19 @@ public class OSGiWorkspaceModelManager
 
 		Vector added = new Vector();
 		Vector removed = new Vector();
+		Vector changed = new Vector();
 		for (int i = 0; i < modelChanges.size(); i++) {
 			ModelChange change = (ModelChange) modelChanges.get(i);
-			if (change.added)
-				added.add(change.model);
-			else
-				removed.add(change.model);
+			switch (change.type) {
+				case IModelProviderEvent.MODELS_ADDED:
+					added.add(change.model);
+					break;
+				case IModelProviderEvent.MODELS_REMOVED:
+					removed.add(change.model);
+					break;
+				case IModelProviderEvent.MODELS_CHANGED:
+					changed.add(change.model);
+			}
 		}
 		IModel[] addedArray =
 			added.size() > 0
@@ -823,11 +983,17 @@ public class OSGiWorkspaceModelManager
 			removed.size() > 0
 				? (IModel[]) removed.toArray(new IModel[removed.size()])
 				: (IModel[]) null;
+		IModel[] changedArray = 
+			changed.size() > 0
+			? (IModel[]) changed.toArray(new IModel[changed.size()])
+			: (IModel[]) null;
 		int type = 0;
 		if (addedArray != null)
 			type |= IModelProviderEvent.MODELS_ADDED;
 		if (removedArray != null)
 			type |= IModelProviderEvent.MODELS_REMOVED;
+		if (changedArray != null)
+			type |= IModelProviderEvent.MODELS_CHANGED;
 		modelChanges = null;
 		if (type != 0) {
 			final ModelProviderEvent event =
@@ -836,7 +1002,7 @@ public class OSGiWorkspaceModelManager
 					type,
 					addedArray,
 					removedArray,
-					null);
+					changedArray);
 			fireModelProviderEvent(event);
 		}
 	}
@@ -938,5 +1104,23 @@ public class OSGiWorkspaceModelManager
 	private boolean hasRootObject(IFeatureModel model) {
 		IFeature feature = model.getFeature();
 		return feature != null;
+	}
+	private void switchToBundleMode(IBundlePluginModelBase bmodel) {
+		// bundle model has been added - remove the plug-in
+		// model for the same project
+		IProject project = bmodel.getUnderlyingResource().getProject();
+		IModel model = getWorkspaceModel(project);
+		if (model instanceof IPluginModel || model instanceof IFragmentModel) {
+			removeWorkspaceModel(model);
+		}
+	}
+	private void switchToPluginMode(IBundlePluginModelBase bmodel) {
+		// bundle model has been removed - add the plug-in
+		// model for the same project
+		IProject project = bmodel.getUnderlyingResource().getProject();
+		IModel model = createWorkspacePluginModel(project);
+		if (model!=null) {
+			addWorkspaceModel(model);
+		}
 	}
 }

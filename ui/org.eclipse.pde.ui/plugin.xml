@@ -39,7 +39,7 @@
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.exsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
-   <extension-point id="alternativeRuntimeUISupport" name="Alternative Runtime UI Support" schema="schema/alternativeRuntimeUISupport.exsd"/>
+   <extension-point id="alternativeRuntimeUISupport" name="%expoint.alternativeRuntimeUI.name" schema="schema/alternativeRuntimeUISupport.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -694,7 +694,6 @@
                id="org.eclipse.pde.ui.PreviewReference">
          </action>
       </objectContribution>
-<!--     
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
@@ -702,7 +701,7 @@
          <action
                label="%PluginToBundleWizardAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.bundles.PluginToBundleAction"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.pde.ui.PluginToBundleWizard1">
@@ -718,14 +717,13 @@
          </filter>
          <action
                menubarPath="additions"
-               class="org.eclipse.pde.internal.ui.wizards.bundles.PluginToBundleAction"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
                label="%PluginToBundleWizardAction.label"
                enablesFor="+"
                id="org.eclipse.pde.ui.PluginToBundleWizard2"
                helpContextId="org.eclipse.pde.doc.user.update_classpath">
          </action>
-      </objectContrubution>
--->
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="*.exsd"

@@ -14,9 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IAdaptable {
@@ -202,24 +200,18 @@ public class PluginModelManager implements IAdaptable {
 	
 	private void initializeTable() {
 		entries = new Hashtable();
-		IPluginModel[] models = workspaceManager.getPluginModels();
-		IFragmentModel[] fmodels = workspaceManager.getFragmentModels();
-		addToTable(models, fmodels, true);
-		models = externalManager.getPluginModels();
-		fmodels = externalManager.getFragmentModels();
-		addToTable(models, fmodels, false);
+		IPluginModelBase[] models = workspaceManager.getAllModels();
+		addToTable(models, true);
+		models = externalManager.getAllModels();
+		addToTable(models, false);
 		searchablePluginsManager.initialize();
 	}
 
 	private void addToTable(
-		IPluginModel[] pmodels,
-		IFragmentModel[] fmodels,
+		IPluginModelBase[] pmodels,
 		boolean workspace) {
 		for (int i = 0; i < pmodels.length; i++) {
 			addToTable(pmodels[i], workspace);
-		}
-		for (int i = 0; i < fmodels.length; i++) {
-			addToTable(fmodels[i], workspace);
 		}
 	}
 

@@ -299,9 +299,9 @@ public class TracingLauncherTab
 		}
 		return section;
 	}
-	private void fillTraceableModelList(IPluginModel[] models, Vector result) {
+	private void fillTraceableModelList(IPluginModelBase[] models, Vector result) {
 		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
+			IPluginModelBase model = models[i];
 			if (TracingOptionsManager.isTraceable(model))
 				result.add(model);
 		}
@@ -331,8 +331,8 @@ public class TracingLauncherTab
 	private Object[] getWorkspaceTraceablePlugins() {
 		if (workspaceList == null) {
 			workspaceList = new Vector();
-			IPluginModel[] models =
-				PDECore.getDefault().getWorkspaceModelManager().getPluginModels();
+			IPluginModelBase[] models =
+				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 			fillTraceableModelList(models, workspaceList);
 		}
 		return workspaceList.toArray();

@@ -19,4 +19,6 @@ public interface IBundlePluginModelBase extends IPluginModelBase {
 	IExtensionsModel getExtensionsModel();
 	void setBundleModel(IBundleModel bundleModel);
 	void setExtensionsModel(IExtensionsModel extensionsModel);
+	IPluginImport createImport();
+	IPluginLibrary createLibrary();
 }

@@ -29,11 +29,11 @@ public abstract class AbstractExtensionsModel
 	private transient static XMLErrorHandler errorHandler;
 	//private DocumentModel documentModel;
 	
-	//static {
-	//	if (!XMLCore.NEW_CODE_PATHS) {
-	//		initializeParser();
-	//	}
-	//}
+	static {
+		//if (!XMLCore.NEW_CODE_PATHS) {
+			initializeParser();
+		//}
+	}
 
 	public AbstractExtensionsModel() {
 		super();
@@ -85,7 +85,10 @@ public abstract class AbstractExtensionsModel
 		//if (XMLCore.NEW_CODE_PATHS) {
 		//	getDocumentModel().load(stream, outOfSync);
 		//} else {
+			boolean savedValue = XMLCore.NEW_CODE_PATHS;
+			XMLCore.NEW_CODE_PATHS = false;
 			loadOrig(stream, outOfSync);
+			XMLCore.NEW_CODE_PATHS = savedValue;
 		//}
 	}
 	

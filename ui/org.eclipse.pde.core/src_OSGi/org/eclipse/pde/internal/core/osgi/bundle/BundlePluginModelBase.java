@@ -14,6 +14,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.plugin.*;
 
 /**
  * @author dejan
@@ -45,14 +46,24 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	public IExtensionsModel getExtensionsModel() {
 		return extensionsModel;
 	}
+	
+	public void dispose() {
+		if (bundleModel!=null) {
+			bundleModel.dispose();
+			bundleModel=null;
+		}
+		if (extensionsModel!=null) {
+			extensionsModel.dispose();
+			extensionsModel=null;
+		}
+		super.dispose();
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.core.osgi.bundle.IBundleModel)
 	 */
 	public void setBundleModel(IBundleModel bundleModel) {
 		this.bundleModel = bundleModel;
-		if (bundlePluginBase!=null)
-			bundlePluginBase.setBundle(bundleModel.getBundle());
 	}
 
 	/* (non-Javadoc)
@@ -60,8 +71,6 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 */
 	public void setExtensionsModel(IExtensionsModel extensionsModel) {
 		this.extensionsModel = extensionsModel;
-		if (bundlePluginBase!=null)
-			bundlePluginBase.setExtensionsRoot(extensionsModel.getExtensions());
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +149,7 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	public boolean isEditable() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -196,5 +205,17 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
 	protected void updateTimeStamp() {
+	}
+	public IPluginImport createImport() {
+		PluginImport iimport = new PluginImport();
+		iimport.setModel(this);
+		iimport.setParent(getPluginBase());
+		return iimport;
+	}
+	public IPluginLibrary createLibrary() {
+		PluginLibrary library = new PluginLibrary();
+		library.setModel(this);
+		library.setParent(getPluginBase());
+		return library;
 	}
 }

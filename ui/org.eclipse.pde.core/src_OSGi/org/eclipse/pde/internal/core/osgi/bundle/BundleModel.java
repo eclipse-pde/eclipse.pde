@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.*;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
@@ -44,9 +45,9 @@ public abstract class BundleModel
 	public abstract void load();
 
 	public void load(InputStream source, boolean outOfSync) {
-		Properties properties = new Properties();
+		Manifest manifest = new Manifest();
 		try {
-			properties.load(source);
+			manifest.read(source);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (IOException e) {
@@ -55,11 +56,14 @@ public abstract class BundleModel
 		}
 		bundle = new Bundle();
 		bundle.setModel(this);
-		for (Enumeration names = properties.propertyNames();
-			names.hasMoreElements();
-			) {
-			String name = names.nextElement().toString();
-			bundle.processHeader(name, (String) properties.get(name));
+		Attributes atts = manifest.getMainAttributes();
+		Set keySet = atts.keySet();
+
+		for (Iterator iter = keySet.iterator(); iter.hasNext();) {
+			Object key = iter.next();
+			Object value = atts.get(key);
+			if (value!=null)
+				bundle.processHeader(key.toString(), value.toString());
 		}
 		loaded = true;
 	}

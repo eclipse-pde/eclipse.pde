@@ -92,6 +92,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_XML_ELEMENT_OBJ = create(PATH_OBJ, "element.gif");
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif");
+	public static final ImageDescriptor DESC_BUNDLE_OBJ   = create(PATH_OBJ, "bundle_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_CONFIGS_OBJ   = create(PATH_OBJ, "plugin_configs_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_CONFIG_OBJ   = create(PATH_OBJ, "plugin_config_obj.gif");

@@ -12,14 +12,11 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.osgi.bundle.IBundle;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.core.util.PropertiesUtil;
+import org.eclipse.pde.core.plugin.*;
 
 public class Bundle extends BundleObject implements IBundle {
 	private Hashtable headers;
@@ -60,13 +57,32 @@ public class Bundle extends BundleObject implements IBundle {
 	
 	public void load(IPluginBase plugin, IProgressMonitor monitor) {
 		reset();
-		monitor.beginTask("", 1);
+		monitor.beginTask("", 2);
 		// migrate from a plug-in
 		headers.put(KEY_NAME, plugin.getId());
 		headers.put(KEY_DESC, plugin.getName());
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());
-		monitor.worked(1);
+		loadLibraries(plugin.getLibraries(), new SubProgressMonitor(monitor, 1));
+		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
+	}
+	
+	private void loadLibraries(IPluginLibrary [] libraries, IProgressMonitor monitor) {
+		StringBuffer classpath = new StringBuffer();
+		//StringBuffer packageExport = new StringBuffer();
+		for (int i=0; i<libraries.length; i++) {
+			IPluginLibrary library = libraries[i];
+			String name = library.getName();
+			if (i>0)
+				classpath.append(",");
+			classpath.append(name);
+		}
+		headers.put(KEY_CLASSPATH, classpath.toString());
+	}
+	
+	private void loadImports(IPluginImport[] imports, IProgressMonitor monitor) {
+		for (int i=0; i<imports.length; i++) {
+		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -75,12 +91,44 @@ public class Bundle extends BundleObject implements IBundle {
 			String value = (String)headers.get(key);
 			if (isCommaSeparated(key)) {
 				StringTokenizer stok = new StringTokenizer(value, ",");
-				PropertiesUtil.writeKeyValuePair("", key, stok, writer);
+				ArrayList list = new ArrayList();
+				while (stok.hasMoreTokens()) {
+					list.add(stok.nextToken().trim());
+				}
+				writeEntry(key, list, writer);
 			}
 			else {
-				PropertiesUtil.writeKeyValuePair("", key, value, writer);
+				writeEntry(key, value, writer);
 			}
 		}
+	}
+
+	private void writeEntry(String key, Collection value, PrintWriter out) {
+		if (value == null || value.size() == 0)
+			return;
+		if (value.size() == 1) {
+			out.println(key + ": " + value.iterator().next());
+			return;
+		}
+		key = key + ": ";
+		out.println(key);
+		out.print(' ');
+		boolean first = true;
+		for (Iterator i = value.iterator(); i.hasNext();) {
+			if (first)
+				first = false;
+			else {
+				out.println(',');
+				out.print(' ');
+			} 
+			out.print(i.next());
+		}
+		out.println();
+	}
+
+	private void writeEntry(String key, String value, PrintWriter out) {
+		if (value != null && value.length() > 0)
+			out.println(key + ": " + value);
 	}
 	
 	private boolean isCommaSeparated(String key) {

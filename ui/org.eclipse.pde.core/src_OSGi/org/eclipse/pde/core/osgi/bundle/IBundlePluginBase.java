@@ -15,8 +15,4 @@ import org.eclipse.pde.core.plugin.*;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public interface IBundlePluginBase extends IPluginBase {
-	IBundle getBundle();
-	void setBundle(IBundle bundle);
-	IExtensions getExtensionsRoot();
-	void setExtensionsRoot(IExtensions extensions);
 }
