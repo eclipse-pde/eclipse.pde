@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.ui.tests.*;
-import org.eclipse.team.core.*;
 
 public class ImportWithLinksTestCase extends PDETestCase {
 
@@ -61,7 +60,7 @@ public class ImportWithLinksTestCase extends PDETestCase {
 
 	private void verifyProject(IProject project) throws CoreException {
 		assertTrue("Project was not created.", project.exists());
-		assertTrue(RepositoryProvider.getProvider(project) instanceof BinaryRepositoryProvider);
+		assertTrue(WorkspaceModelManager.isBinaryPluginProject(project));
 		if (project.hasNature(JavaCore.NATURE_ID))
 			assertTrue(checkSourceAttached(JavaCore.create(project)));
 	}
