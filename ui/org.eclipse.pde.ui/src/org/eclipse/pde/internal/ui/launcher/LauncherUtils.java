@@ -226,7 +226,7 @@ public class LauncherUtils {
 		return map;
 	}
 	
-	private static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
+	public static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
 		TreeMap map = new TreeMap();
 		boolean automaticAdd = config.getAttribute(ILauncherSettings.AUTOMATIC_ADD, true);
 		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();

@@ -16,8 +16,11 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 
 	private boolean fDirty;
 
-	public WorkspaceProductModel(IFile file) {
+	private boolean fEditable;
+
+	public WorkspaceProductModel(IFile file, boolean editable) {
 		fFile = file;
+		fEditable = editable;
 	}
 	
 	/* (non-Javadoc)
@@ -129,6 +132,13 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(true);
 		super.fireModelChanged(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.product.ProductModel#isEditable()
+	 */
+	public boolean isEditable() {
+		return fEditable;
 	}
 	
 }

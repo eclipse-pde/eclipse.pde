@@ -11,15 +11,19 @@ public interface IProduct extends IProductObject {
 	
 	IAboutInfo getAboutInfo();
 	
-	boolean usesProduct();
+	void addPlugin(IProductPlugin plugin);
+	
+	void removePlugin(IProductPlugin plugin);
+	
+	IProductPlugin[] getPlugins();
 
 	void setId(String id);
 	
 	void setName(String name);
 	
-	void setApplication(String application);
+	void setAboutInfo(IAboutInfo info);
 	
-	void setUseProduct(boolean use);
+	void setApplication(String application);
 	
 	void reset();
 	
