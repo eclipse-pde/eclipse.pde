@@ -11,9 +11,12 @@ import java.util.Dictionary;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * @author dejan
@@ -21,57 +24,148 @@ import org.eclipse.ui.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ManifestEditor extends PDEFormEditor {
-	protected void createInputContexts(Dictionary contexts) {
-		IEditorInput input = getEditorInput();
-		IEditorInput [] inputs = getRelevantInputs(input);
-		for (int i=0; i<inputs.length; i++) {
-			contexts.put(inputs[i], createInputContext(inputs[i]));
-		}
-	}
-	protected IEditorInput [] getRelevantInputs(IEditorInput input) {
-		if (input instanceof IFileEditorInput) {
-			// resource - find the project
-			return getRelevantProjectInputs((IFileEditorInput)input);
-		}
-		else if (input instanceof SystemFileEditorInput) {
-			// system file - find the plug-in folder
-			return getRelevantSystemFileInputs((SystemFileEditorInput)input);
-		}
-		return new IEditorInput [] { input };
-	}
+public class ManifestEditor extends MultiSourceEditor {
 	
-	protected IEditorInput [] getRelevantProjectInputs(IFileEditorInput input) {
+	protected void createResourceContexts(Dictionary contexts, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IProject project = file.getProject();
-		return new IEditorInput [] { input };
-	}
+		IFile manifestFile=null;
+		IFile buildFile = null;
+		IFile pluginFile = null;
+		String name = file.getName().toLowerCase();
 
-	protected IEditorInput [] getRelevantSystemFileInputs(SystemFileEditorInput input) {
+		if (name.equals("manifest.mf")) {
+			manifestFile = file;
+			buildFile = project.getFile("build.properties");
+			pluginFile = createPluginFile(project);
+		}
+		else if (name.equals("build.properties")) {
+			buildFile = file;
+			pluginFile = createPluginFile(project);
+			manifestFile = project.getFile("META-INF/MANIFEST.MF");
+		}
+		else if (name.equals("plugin.xml")||name.equals("fragment.xml")) {
+			pluginFile = file;
+			buildFile = project.getFile("build.properties");
+			manifestFile = project.getFile("META-INF/MANIFEST.MF");
+		}
+		if (manifestFile.exists()) {
+			IEditorInput in =new FileEditorInput(manifestFile);
+			contexts.put(in, new BundleInputContext(this, in));
+		}
+		if (pluginFile.exists()) {
+			FileEditorInput in = new FileEditorInput(pluginFile);
+			contexts.put(in, new PluginInputContext(this, in, false));
+		}
+		if (buildFile.exists()) {
+			FileEditorInput in = new FileEditorInput(buildFile);
+			contexts.put(in, new BuildInputContext(this, in));
+		}
+	}
+	protected void createSystemFileContexts(Dictionary contexts, SystemFileEditorInput input) {
 		File file = (File)input.getAdapter(File.class);
 		File manifestFile=null;
 		File buildFile = null;
 		File pluginFile = null;
 		String name = file.getName().toLowerCase();
 		File rootFolder;
+
 		if (name.equals("manifest.mf")) {
 			manifestFile = file;
 			File dir = file.getParentFile().getParentFile();
 			buildFile = new File(dir, "build.properties");
-			pluginFile = new File(dir, "plugin.xml");
-			if (!pluginFile.exists())
-				pluginFile = new File(dir, "fragment.xml");
+			pluginFile = createPluginFile(dir);
 		}
-		return new IEditorInput [] { input };
+		else if (name.equals("build.properties")) {
+			buildFile = file;
+			File dir = file.getParentFile();
+			pluginFile = createPluginFile(dir);
+			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
+		}
+		else if (name.equals("plugin.xml")||name.equals("fragment.xml")) {
+			manifestFile = file;
+			File dir = file.getParentFile();
+			buildFile = new File(dir, "build.properties");
+			manifestFile = new File(dir, "META-INF/MANIFEST.MF");
+		}
+		if (manifestFile.exists()) {
+			IEditorInput in =new SystemFileEditorInput(manifestFile);
+			contexts.put(in, new BundleInputContext(this, in));
+		}
+		if (pluginFile.exists()) {
+			SystemFileEditorInput in = new SystemFileEditorInput(pluginFile);
+			contexts.put(in, new PluginInputContext(this, in, false));
+		}
+		if (buildFile.exists()) {
+			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
+			contexts.put(in, new BuildInputContext(this, in));
+		}
+	}
+	
+	private File createPluginFile(File dir) {
+		File pluginFile = new File(dir, "plugin.xml");
+		if (!pluginFile.exists())
+			pluginFile = new File(dir, "fragment.xml");
+		return pluginFile;
+	}
+	
+	private IFile createPluginFile(IProject project) {
+		IFile pluginFile = project.getFile("plugin.xml");
+		if (!pluginFile.exists())
+			pluginFile = project.getFile("fragment.xml");
+		return pluginFile;
+	}
+
+	protected void createStorageContexts(Dictionary contexts, IStorageEditorInput input) {
+		String name = input.getName().toLowerCase();
+		
+		if (name.equals("manifest.mf")) {
+			contexts.put(input, new BundleInputContext(this, input));
+		}
+		else if (name.equals("build.properties")) {
+			contexts.put(input, new BuildInputContext(this, input));
+		}
+		else if (name.equals("plugin.xml")) {
+			contexts.put(input, new PluginInputContext(this, input, false));
+		}
+		else if(name.equals("fragment.xml")) {
+			contexts.put(input, new PluginInputContext(this, input, true));
+		}
 	}
 
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 	}
 
-	protected InputContext createInputContext(IEditorInput input) {
-		return null;
-	}
-
 	protected void addPages() {
+		addPage(new OverviewPage(this));
+		addPage(new DependenciesPage(this));
+		addPage(new RuntimePage(this));
+		if (findContext(PluginInputContext.CONTEXT_ID)!=null) {
+			addPage(new ExtensionsPage(this));
+			addPage(new ExtensionPointsPage(this));
+		}
+		if (findContext(BuildInputContext.CONTEXT_ID)!=null)
+			addPage(new BuildPage(this));
+		addSourcePage(BundleInputContext.CONTEXT_ID);
+		addSourcePage(PluginInputContext.CONTEXT_ID);
+		addSourcePage(BuildInputContext.CONTEXT_ID);
+	}
+	private void addSourcePage(String contextId) {
+		InputContext context = findContext(contextId);
+		if (context==null) return;
+		PDESourcePage sourcePage;
+		
+		if (context instanceof XMLInputContext)
+			sourcePage = new XMLSourcePage(this, contextId, context.getInput().getName());
+		else
+			sourcePage = new PDESourcePage(this, contextId, context.getInput().getName());
+		sourcePage.setInputContext(context);
+		try {
+			addPage(sourcePage, context.getInput());
+			sourcePage.getSite().setSelectionProvider(sourcePage.getSelectionProvider());
+		}
+		catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 }

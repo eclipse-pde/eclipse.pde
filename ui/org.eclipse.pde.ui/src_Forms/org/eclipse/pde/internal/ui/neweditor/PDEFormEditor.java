@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
@@ -33,7 +33,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public abstract class PDEFormEditor extends FormEditor {
 	private Clipboard clipboard;
 	private Menu contextMenu;
-	private Hashtable inputContexts;
+	protected Hashtable inputContexts;
 	private IContentOutlinePage formOutline;
 	/**
 	 *  
@@ -43,10 +43,6 @@ public abstract class PDEFormEditor extends FormEditor {
 		inputContexts = new Hashtable();
 	}
 	
-	public void init(IEditorInput input, IEditorSite site) throws PartInitException {
-		super.init(site, input);
-		createInputContexts(inputContexts);
-	}
 /**
  * Tests whether this editor has a context with
  * a provided id. The test can be used to check
@@ -66,10 +62,24 @@ public abstract class PDEFormEditor extends FormEditor {
 	
 	protected void createInputContexts(Dictionary contexts) {
 		IEditorInput input = getEditorInput();
-		inputContexts.put(input, createInputContext(input));
+		if (input instanceof IFileEditorInput) {
+			// resource - find the project
+			createResourceContexts(contexts, (IFileEditorInput)input);
+		}
+		else if (input instanceof SystemFileEditorInput) {
+			// system file - find the file system folder
+			createSystemFileContexts(contexts, (SystemFileEditorInput)input);
+		}
+		else if (input instanceof IStorageEditorInput) {
+			createStorageContexts(contexts, (IStorageEditorInput)input);
+		}
 	}
 	
-	protected abstract InputContext createInputContext(IEditorInput input);
+	protected abstract void createResourceContexts(Dictionary contexts, IFileEditorInput input);
+	protected abstract void createSystemFileContexts(Dictionary contexts, SystemFileEditorInput input);
+	protected abstract void createStorageContexts(Dictionary contexts, IStorageEditorInput input);
+	
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -94,7 +104,11 @@ public abstract class PDEFormEditor extends FormEditor {
 		manager.addMenuListener(listener);
 		contextMenu = manager.createContextMenu(getContainer());
 		getContainer().setMenu(contextMenu);
+		createInputContexts(inputContexts);		
 		super.createPages();
+		String pageToShow = getPageToShow();
+		if (pageToShow!=null)
+				setActivePage(pageToShow);
 	}
 	
 	protected abstract void contextMenuAboutToShow(IMenuManager manager);
@@ -152,7 +166,9 @@ public abstract class PDEFormEditor extends FormEditor {
 	
 	private void storeDefaultPage() {
 		IEditorInput input = getEditorInput();
-		String pageId = getActivePageInstance().getId();
+		int lastPage = getCurrentPage();
+		if (lastPage== -1) return;
+		String pageId = ((IFormPage)pages.get(lastPage)).getId();
 
 		if (input instanceof IFileEditorInput) {
 			// load the setting from the resource

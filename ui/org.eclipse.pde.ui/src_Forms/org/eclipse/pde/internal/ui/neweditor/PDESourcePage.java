@@ -90,8 +90,8 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 		
 		WorkbenchHelp.setHelp(control, IHelpContextIds.MANIFEST_SOURCE_PAGE);
 		
-		IDocument document =
-			getDocumentProvider().getDocument(getEditorInput());
+		//IDocument document =
+		//	getDocumentProvider().getDocument(getEditorInput());
 		//unregisterGlobalActions();
 		// Important - must reset the provider to the multi-page
 		// editor.

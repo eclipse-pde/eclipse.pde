@@ -76,8 +76,9 @@ public abstract class InputContext {
 						editor.fireSaveNeeded(input);
 				}
 			};
+			((IModelChangeProvider) model).addModelChangedListener(modelListener);
 		}
-		((IModelChangeProvider) model).addModelChangedListener(modelListener);
+
 		try {
 			documentProvider.connect(input);
 			IAnnotationModel amodel = documentProvider
