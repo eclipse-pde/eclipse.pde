@@ -76,7 +76,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	public void setSelection(Object[] selected) {
 		CheckboxTableViewer viewer = getTableViewer();
 		viewer.setCheckedElements(selected);
-		updateCounter(selected.length);
+		updateCounter(viewer.getCheckedElements().length);
 	}
 
 	public void createControl(Composite parent) {

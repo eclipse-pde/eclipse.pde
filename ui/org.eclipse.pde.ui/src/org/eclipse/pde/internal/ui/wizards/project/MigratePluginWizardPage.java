@@ -8,17 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.imports;
+package org.eclipse.pde.internal.ui.wizards.project;
 
 import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -27,20 +24,17 @@ import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public class UpdateBuildpathWizardPage extends StatusWizardPage {
+public class MigratePluginWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
 	private CheckboxTableViewer pluginListViewer;
-	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
-	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
 	private static final String KEY_PLUGIN_LIST =
 		"UpdateBuildpathWizard.availablePlugins";
 	
 	private TablePart tablePart;
 
-	public class BuildpathContentProvider
+	public class ContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
@@ -68,10 +62,10 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		}
 	}
 
-	public UpdateBuildpathWizardPage(IPluginModelBase[] selected) {
-		super("UpdateBuildpathWizardPage", true);
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+	public MigratePluginWizardPage(IPluginModelBase[] selected) {
+		super("MigrateWizardPage", true);
+		setTitle("Migrate Plug-ins and Fragments");
+		setDescription("Select the plug-ins and fragments to migrate to Eclipse 3.0 compliance");
 
 		this.selected = selected;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
@@ -94,7 +88,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		tablePart.createControl(container);
 
 		pluginListViewer = tablePart.getTableViewer();
-		pluginListViewer.setContentProvider(new BuildpathContentProvider());
+		pluginListViewer.setContentProvider(new ContentProvider());
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
 		GridData gd = (GridData)tablePart.getControl().getLayoutData();
@@ -103,17 +97,16 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(selected);
-			
+	
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
 	}
 
-	public void storeSettings() {
-	}
-
-	public Object[] getSelected() {
-		return tablePart.getSelection();
+	public IPluginModelBase[] getSelected() {
+		Object[] objects = tablePart.getSelection();
+		IPluginModelBase [] models = new IPluginModelBase[objects.length];
+		System.arraycopy(objects, 0, models, 0, objects.length);
+		return models;
 	}
 
 	private void dialogChanged() {
@@ -129,25 +122,15 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 
 	private Object[] getModels() {
 		Vector result = new Vector();
-		try {
-			IPluginModelBase[] models =
-				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-			for (int i = 0; i < models.length; i++) {
-				// We should only care about Java nature, not
-				// libraries. A plug-in may not have library but
-				// it may re-export plug-ins that do.
-				/* 
-				if (models[i].getPluginBase().getLibraries().length == 0)
-					continue;
-				*/
-				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					result.add(models[i]);
+		IPluginModelBase[] models =
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		for (int i = 0; i < models.length; i++) {
+			if (!models[i].getUnderlyingResource().isLinked()
+				&& models[i].isLoaded()
+				&& models[i].getPluginBase().getSchemaVersion() == null) {
+				result.add(models[i]);
 			}
-			
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
-		
 		return result.toArray();
 	}
 

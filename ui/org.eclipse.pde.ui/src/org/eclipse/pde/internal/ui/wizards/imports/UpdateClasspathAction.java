@@ -36,10 +36,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
 	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
-	private static final String KEY_SETTING = "Actions.classpath.setting"; //$NON-NLS-1$
 
-	public static class MissingPluginConfirmation
-		implements IMissingPluginConfirmation {
+	public static class MissingPluginConfirmation implements IMissingPluginConfirmation {
 		private boolean useProjectReference = false;
 		private boolean alreadyAsked = false;
 		public boolean getUseProjectReference() {
@@ -55,8 +53,13 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 			final boolean[] result = new boolean[1];
 			display.syncExec(new Runnable() {
 				public void run() {
-						result[0] = MessageDialog.openQuestion(shell, PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.title"), //$NON-NLS-1$
-	PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.message")); //$NON-NLS-1$
+					result[0] =
+						MessageDialog.openQuestion(
+							shell,
+							PDEPlugin.getResourceString(
+								"UpdateClasspathAction.missingPlugin.title"),
+							PDEPlugin.getResourceString(
+								"UpdateClasspathAction.missingPlugin.message"));
 				}
 			});
 			return result[0];
@@ -124,8 +127,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 					try {
-						IWorkspaceRunnable runnable =
-							new IWorkspaceRunnable() {
+						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
 								throws CoreException {
 								doUpdateClasspath(monitor, models, null);
@@ -159,58 +161,27 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		IPluginModelBase[] models,
 		MissingPluginConfirmation confirmation)
 		throws CoreException {
-		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_UPDATE),
-			models.length);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
 		boolean useContainers = PDEPlugin.getUseClasspathContainers();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
+				monitor.subTask(models[i].getPluginBase().getId());
 				// no reason to compile classpath for a non-Java model
 				IProject project = model.getUnderlyingResource().getProject();
 				if (!project.hasNature(JavaCore.NATURE_ID))
 					continue;
-				IProgressMonitor subMonitor =
-					new SubProgressMonitor(monitor, 1);
-				setProjectBuildpath(
+				ClasspathUtil.setClasspath(
 					model,
 					useContainers,
 					confirmation,
-					subMonitor);
+					new SubProgressMonitor(monitor, 1));
 				if (monitor.isCanceled())
 					break;
 			}
 		} finally {
 			monitor.done();
 		}
-	}
-
-	private static void setProjectBuildpath(
-		IPluginModelBase model,
-		boolean useContainers,
-		IMissingPluginConfirmation confirmation,
-		IProgressMonitor monitor)
-		throws CoreException {
-		IPluginBase pluginBase = model.getPluginBase();
-		String message =
-			PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
-		monitor.beginTask(message, 1);
-		try {
-			ClasspathUtil.setClasspath(
-				model,
-				useContainers,
-				confirmation,
-				monitor);
-			monitor.worked(1);
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/*
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
 	}
 
 	/*

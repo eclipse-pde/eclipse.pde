@@ -66,6 +66,7 @@ public class ClasspathUtilCore {
 			throw new CoreException(validation);
 		}
 		javaProject.setRawClasspath(entries, monitor);
+		monitor.done();
 	}
 
 	private static void computePluginEntries(
