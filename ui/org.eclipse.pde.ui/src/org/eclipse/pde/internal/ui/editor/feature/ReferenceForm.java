@@ -13,6 +13,8 @@ import org.eclipse.update.ui.forms.internal.*;
 
 public class ReferenceForm extends ScrollableSectionForm {
 	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
+	private static final String KEY_P_TITLE = "FeatureEditor.ReferencePage.portabilityTitle";
+	private static final String KEY_P_DESC = "FeatureEditor.ReferencePage.portabilityDesc";
 	private FeatureReferencePage page;
 	private PluginSection pluginSection;
 	private RequiresSection requiresSection;
@@ -63,8 +65,9 @@ protected void createFormClient(Composite parent) {
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
 	
-	String title = "Environment Filtering";
-	String desc = "Use the fields below to use the selected import in specified environments only.";
+	String title = PDEPlugin.getResourceString(KEY_P_TITLE);
+	String desc = PDEPlugin.getResourceString(KEY_P_DESC);
+
 	portabilitySection = new PortabilitySection(page, title, desc, true);
 	control = portabilitySection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
