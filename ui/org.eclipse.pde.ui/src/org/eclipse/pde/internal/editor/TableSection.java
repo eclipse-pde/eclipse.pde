@@ -9,6 +9,7 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.pde.internal.parts.*;
 import org.eclipse.pde.internal.base.model.IModel;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.layout.GridLayout;
 
 /**
  * @version 	1.0
@@ -49,8 +50,17 @@ public abstract class TableSection extends StructuredViewerSection {
 		return tablePart;
 	}
 	
-	protected TablePart getTablePart() {
-		return (TablePart)viewerPart;
+	protected EditableTablePart getTablePart() {
+		return (EditableTablePart)viewerPart;
+	}
+	
+	protected Composite createClientContainer(Composite parent, int span, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 2;
+		layout.numColumns = span;
+		container.setLayout(layout);
+		return container;
 	}
 	
 	protected void entryModified(Object entry, String value) {

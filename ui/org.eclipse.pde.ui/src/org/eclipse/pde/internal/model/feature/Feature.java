@@ -204,8 +204,10 @@ public class Feature extends VersionableObject implements IFeature {
 					pluginImport.getVersion(),
 					pluginImport.getMatch());
 			((FeatureImport) iimport).setPlugin(p);
+			/*
 			if (p != null)
 				addPluginImports(p);
+			*/
 		}
 	}
 

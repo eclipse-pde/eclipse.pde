@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;
 
 public class TokenSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelChangedListener {
 	public static final String SECTION_TITLE = "BuildEditor.TokenSection.title";
 	public static final String POPUP_NEW_TOKEN = "BuildEditor.TokenSection.newToken";
@@ -43,7 +43,6 @@ public class TokenSection
 	public static final String SECTION_DESC = "BuildEditor.TokenSection.desc";
 	private FormWidgetFactory factory;
 	private TableViewer entryTable;
-	private Button newButton;
 	private IBuildEntry currentVariable;
 
 	class Token {
@@ -108,85 +107,44 @@ public class TokenSection
 
 
 public TokenSection(BuildPage page) {
-	super(page);
+	super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	this.factory = factory;
 	initializeImages();
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
+	Composite container = createClientContainer(parent, 2, factory);
+	
+	EditableTablePart tablePart = getTablePart();
+	IModel model = (IModel)getFormPage().getModel();
+	tablePart.setEditable(model.isEditable());
+	
+	createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
 
-	container.setLayout(layout);
-	final Table table = factory.createTable(container, SWT.FULL_SELECTION);
-	TableLayout tlayout = new TableLayout();
-
-	TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-	tableColumn.setText("Point Name");
-	ColumnLayoutData cLayout = new ColumnWeightData(100, true);
-	tlayout.addColumnData(cLayout);
-
-	//table.setLinesVisible(true);
-	//table.setHeaderVisible(true);
-	table.setLayout(tlayout);
-
-	MenuManager popupMenuManager = new MenuManager();
-	IMenuListener listener = new IMenuListener() {
-		public void menuAboutToShow(IMenuManager mng) {
-			fillContextMenu(mng);
-		}
-	};
-	popupMenuManager.addMenuListener(listener);
-	popupMenuManager.setRemoveAllWhenShown(true);
-	Menu menu = popupMenuManager.createContextMenu(table);
-	table.setMenu(menu);
-
-	entryTable = new TableViewer(table);
+	entryTable = tablePart.getTableViewer();
 	entryTable.setContentProvider(new TableContentProvider());
 	entryTable.setLabelProvider(new TableLabelProvider());
 	factory.paintBordersFor(container);
 
-	IModel model = (IModel)getFormPage().getModel();
-	if (model.isEditable()) {
-		CellEditor[] editors = new CellEditor[] { new ModifiedTextCellEditor(table)};
-		String[] properties = { "name" };
-		entryTable.setCellEditors(editors);
-		entryTable.setCellModifier(new NameModifier());
-		entryTable.setColumnProperties(properties);
-	}
-
 	entryTable.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
-			Object item = ((IStructuredSelection) event.getSelection()).getFirstElement();
-			fireSelectionNotification(item);
-			getFormPage().setSelection(event.getSelection());
-		}
-	});
 
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	table.setLayoutData(gd);
-
-	Composite buttonContainer = factory.createComposite(container);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	layout.marginWidth = 0;
-	buttonContainer.setLayout(layout);
-
-	newButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.verticalAlignment = GridData.BEGINNING;
-	newButton.setLayoutData(gd);
-	newButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleNew();
 		}
 	});
 	return container;
 }
+
+protected void buttonSelected(int index) {
+	if (index==0) handleNew();
+}
+
+protected void selectionChanged(IStructuredSelection selection) {
+	Object item = selection.getFirstElement();
+	fireSelectionNotification(item);
+	getFormPage().setSelection(selection);
+}
+
 public void dispose() {
 	IBuildModel model = (IBuildModel)getFormPage().getModel();
 	model.removeModelChangedListener(this);
@@ -199,7 +157,7 @@ public boolean doGlobalAction(String actionId) {
 	}
 	return false;
 }
-private void fillContextMenu(IMenuManager manager) {
+protected void fillContextMenu(IMenuManager manager) {
 	IModel model = (IModel)getFormPage().getModel();
 	if (!model.isEditable())
 		return;
@@ -255,7 +213,7 @@ private void handleNew() {
 public void initialize(Object input) {
 	IBuildModel model = (IBuildModel)input;
 	setReadOnly(!model.isEditable());
-	newButton.setEnabled(model.isEditable());
+	getTablePart().setButtonEnabled(0, model.isEditable());
 	model.addModelChangedListener(this);
 }
 private void initializeImages() {

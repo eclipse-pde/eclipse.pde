@@ -37,7 +37,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	}
 	
 	public void setButtonEnabled(int index, boolean enabled) {
-		if (controls!=null && controls.length>=index) {
+		if (controls!=null && index>0 && controls.length>index) {
 			Control c = controls[index];
 			if (c instanceof Button)
 				c.setEnabled(enabled);
@@ -66,6 +66,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 				if (label!=null) {
 					Button button = createButton(buttonContainer, label, i, factory);
 					button.addSelectionListener(listener);
+					controls[i] = button;
 				}
 				else {
 					createEmptySpace(buttonContainer, 1, factory);

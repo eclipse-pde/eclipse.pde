@@ -40,6 +40,11 @@ String getName();
  * @return array of tokens
  */
 String[] getTokens();
+
+/**
+ * Returns true if the provided token exists in this entry.
+ */
+boolean contains(String token);
 /**
  * Removes the token from the list of tokens for this entry.
  * This method will throw a CoreException if

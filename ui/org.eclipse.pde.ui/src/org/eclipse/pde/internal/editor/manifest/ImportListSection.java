@@ -97,13 +97,9 @@ public ImportListSection(ManifestDependenciesPage page) {
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	this.factory = factory;
 	initializeImages();
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-
-	container.setLayout(layout);
+	Composite container = createClientContainer(parent, 2, factory);
+	createViewerPartControl(container, SWT.MULTI, 2, factory);
 	TablePart tablePart = getTablePart();
-	tablePart.createControl(container, SWT.MULTI, 2, factory);
 	importTable = tablePart.getTableViewer();
 
 	importTable.setContentProvider(new ImportContentProvider());

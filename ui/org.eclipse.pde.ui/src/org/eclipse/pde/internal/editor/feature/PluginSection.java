@@ -31,9 +31,10 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.model.feature.FeaturePlugin;
 import java.util.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.parts.TablePart;
 
 public class PluginSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelProviderListener {
 	private static final String PLUGIN_TITLE =
 		"FeatureEditor.PluginSection.pluginTitle";
@@ -86,7 +87,7 @@ public class PluginSection
 	}
 
 	public PluginSection(FeatureReferencePage page) {
-		super(page);
+		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(PLUGIN_TITLE));
 		setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
 		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
@@ -97,62 +98,27 @@ public class PluginSection
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		Composite container = createClientContainer(parent, 2, factory);
+		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 9;
-		container.setLayout(layout);
 
-		pluginViewer =
-			new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		TablePart tablePart = getTablePart();
+		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(new PluginLabelProvider());
-		pluginViewer.setSorter(ListUtil.NAME_SORTER);
-
-		pluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e);
-			}
-		});
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				openAction.run();
-			}
-		});
-		Table table = pluginViewer.getTable();
-		popupMenuManager.setRemoveAllWhenShown(true);
-		popupMenuManager.addMenuListener(listener);
-		Menu menu = popupMenuManager.createContextMenu(table);
-		table.setMenu(menu);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(gd);
-
-		Composite buttonContainer = factory.createComposite(container);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-		Button button =
-			factory.createButton(
-				buttonContainer,
-				PDEPlugin.getResourceString(KEY_NEW),
-				SWT.PUSH);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleNew();
-			}
-		});
-
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
+	}
+
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		openAction.run();
+	}
+
+	protected void buttonSelected(int index) {
+		if (index == 0)
+			handleNew();
 	}
 
 	private Image createWarningImage(
@@ -182,7 +148,7 @@ public class PluginSection
 			pluginViewer.setSelection(new StructuredSelection(object), true);
 		}
 	}
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
 		// add new
 		manager.add(new Separator());
@@ -271,8 +237,8 @@ public class PluginSection
 		}
 		return false;
 	}
-	private void handleSelectionChanged(SelectionChangedEvent e) {
-		getFormPage().setSelection(e.getSelection());
+	protected void selectionChanged(IStructuredSelection selection) {
+		getFormPage().setSelection(selection);
 	}
 	public void initialize(Object input) {
 		IFeatureModel model = (IFeatureModel) input;

@@ -33,54 +33,30 @@ import org.eclipse.jface.window.*;
 import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.pde.internal.model.build.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.parts.TablePart;
 
 public class JarsSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelChangedListener {
 	private FormWidgetFactory factory;
 	private TableViewer entryTable;
-	private Button newButton;
 	private Image entryImage;
 	private IPluginLibrary currentLibrary;
 	public static final String SECTION_TITLE = "ManifestEditor.JarsSection.title";
 	public static final String SECTION_RTITLE = "ManifestEditor.JarsSection.rtitle";
-	public static final String SECTION_DIALOG_TITLE = "ManifestEditor.JarsSection.dialogTitle";
-	public static final String POPUP_NEW_FOLDER = "ManifestEditor.JarsSection.newFolder";
+	public static final String SECTION_DIALOG_TITLE =
+		"ManifestEditor.JarsSection.dialogTitle";
+	public static final String POPUP_NEW_FOLDER =
+		"ManifestEditor.JarsSection.newFolder";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String SECTION_NEW = "ManifestEditor.JarsSection.new";
 	public static final String SECTION_DESC = "ManifestEditor.JarsSection.desc";
-	public static final String SOURCE_DIALOG_TITLE = "ManifestEditor.JarsSection.missingSource.title";
-	public static final String SOURCE_DIALOG_MESSAGE = "ManifestEditor.JarsSection.missingSource.message";
-
-	class NameModifier implements ICellModifier {
-		public boolean canModify(Object object, String property) {
-			return true;
-		}
-		public void modify(Object object, String property, Object value) {
-			Item item = (Item) object;
-			final String entry = (String) item.getData();
-			IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-			IBuildModel buildModel = model.getBuildModel();
-			String buildKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
-			IBuildEntry buildEntry = buildModel.getBuild().getEntry(buildKey);
-
-			try {
-				buildEntry.renameToken(entry, value.toString());
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-
-			entryTable.getTable().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					entryTable.update(entry, null);
-				}
-			});
-			((WorkspaceBuildModel) buildModel).save();
-		}
-		public Object getValue(Object object, String property) {
-			return object.toString();
-		}
-	}
+	public static final String SOURCE_DIALOG_TITLE =
+		"ManifestEditor.JarsSection.missingSource.title";
+	public static final String SOURCE_DIALOG_MESSAGE =
+		"ManifestEditor.JarsSection.missingSource.message";
+	public static final String DUPLICATE_FOLDER_MESSAGE =
+		"ManifestEditor.JarsSection.missingSource.duplicateFolder";
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -109,260 +85,222 @@ public class JarsSection
 		}
 	}
 
-
-public JarsSection(ManifestRuntimePage page) {
-	super(page);
-	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-}
-public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	this.factory = factory;
-	initializeImages();
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-
-	container.setLayout(layout);
-	final Table table = factory.createTable(container, SWT.FULL_SELECTION);
-	TableLayout tlayout = new TableLayout();
-
-	TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-	tableColumn.setText("Point Name");
-	ColumnLayoutData cLayout = new ColumnWeightData(100, true);
-	tlayout.addColumnData(cLayout);
-
-	//table.setLinesVisible(true);
-	//table.setHeaderVisible(true);
-	table.setLayout(tlayout);
-
-	MenuManager popupMenuManager = new MenuManager();
-	IMenuListener listener = new IMenuListener() {
-		public void menuAboutToShow(IMenuManager mng) {
-			fillContextMenu(mng);
-		}
-	};
-	popupMenuManager.addMenuListener(listener);
-	popupMenuManager.setRemoveAllWhenShown(true);
-	Menu menu = popupMenuManager.createContextMenu(table);
-	table.setMenu(menu);
-
-	entryTable = new TableViewer(table);
-	entryTable.setContentProvider(new TableContentProvider());
-	entryTable.setLabelProvider(new TableLabelProvider());
-	factory.paintBordersFor(container);
-/*
-	if (getFormPage().getModel() instanceof IEditable) {
-
-		CellEditor[] editors = new CellEditor[] { new ModifiedTextCellEditor(table)};
-		String[] properties = { "name" };
-		entryTable.setCellEditors(editors);
-		entryTable.setCellModifier(new NameModifier());
-		entryTable.setColumnProperties(properties);
+	public JarsSection(ManifestRuntimePage page) {
+		super(page, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
+		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
+		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
-*/
+	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+		this.factory = factory;
+		initializeImages();
+		Composite container = createClientContainer(parent, 2, factory);
+		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
+		TablePart tablePart = getTablePart();
+		entryTable = tablePart.getTableViewer();
+		entryTable.setContentProvider(new TableContentProvider());
+		entryTable.setLabelProvider(new TableLabelProvider());
+		factory.paintBordersFor(container);
+		return container;
+	}
 
-	entryTable.addSelectionChangedListener(new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent event) {
-			Object item = ((IStructuredSelection) event.getSelection()).getFirstElement();
-			fireSelectionNotification(item);
-			getFormPage().setSelection(event.getSelection());
-		}
-	});
+	protected void selectionChanged(IStructuredSelection selection) {
+		Object item = selection.getFirstElement();
+		fireSelectionNotification(item);
+		getFormPage().setSelection(selection);
+	}
 
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	table.setLayoutData(gd);
-
-	Composite buttonContainer = factory.createComposite(container);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	layout.marginWidth = 0;
-	buttonContainer.setLayout(layout);
-
-	newButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.verticalAlignment = GridData.BEGINNING;
-	newButton.setLayoutData(gd);
-	newButton.setEnabled(false);
-	newButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
+	protected void buttonSelected(int index) {
+		if (index == 0)
 			handleNew();
-		}
-	});
-	return container;
-}
-public void dispose() {
-	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
-	model.removeModelChangedListener(this);
-	super.dispose();
-}
-public boolean doGlobalAction(String actionId) {
-	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-		handleDelete();
-		return true;
-	}
-	return false;
-}
-private void fillContextMenu(IMenuManager manager) {
-	if (!(getFormPage().getModel() instanceof IEditable)) return;
-	ISelection selection = entryTable.getSelection();
-	
-	if (currentLibrary!=null) {
-		manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
-			public void run() {
-				handleNew();
-			}
-		});
 	}
 
-	if (!selection.isEmpty()) {
+	public void dispose() {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		model.removeModelChangedListener(this);
+		super.dispose();
+	}
+
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			handleDelete();
+			return true;
+		}
+		return false;
+	}
+
+	protected void fillContextMenu(IMenuManager manager) {
+		if (!(getFormPage().getModel() instanceof IEditable))
+			return;
+		ISelection selection = entryTable.getSelection();
+
+		if (currentLibrary != null) {
+			manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
+				public void run() {
+					handleNew();
+				}
+			});
+		}
+
+		if (!selection.isEmpty()) {
+			manager.add(new Separator());
+			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+				public void run() {
+					handleDelete();
+				}
+			});
+		}
 		manager.add(new Separator());
-		manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-			public void run() {
-				handleDelete();
-			}
-		});
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	manager.add(new Separator());
-	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
-}
-private void handleDelete() {
-	IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-	IBuildModel buildModel = model.getBuildModel();
-	if (buildModel.isEditable() == false)
-		return;
-	Object object =
-		((IStructuredSelection) entryTable.getSelection()).getFirstElement();
-	if (object != null && object instanceof String) {
-		String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
-		IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
-		if (entry != null) {
-			try {
-				entry.removeToken(object.toString());
-				entryTable.remove(object);
-				((WorkspaceBuildModel) buildModel).save();
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-	}
-}
-private void handleNew() {
-	IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-	IFile file = (IFile) model.getUnderlyingResource();
-	IProject project = file.getProject();
-	ContainerSelectionDialog dialog =
-		new ContainerSelectionDialog(
-			PDEPlugin.getActiveWorkbenchShell(),
-			project,
-			true,
-			PDEPlugin.getResourceString(SECTION_DIALOG_TITLE));
-	if (dialog.open() == ContainerSelectionDialog.OK) {
-		Object[] result = dialog.getResult();
-		if (result.length == 1) {
-			IPath path = (IPath) result[0];
-			IPath projectPath = project.getFullPath();
-			if (!projectPath.isPrefixOf(path)) return;
-			int matching = path.matchingFirstSegments(projectPath);
-			path = path.removeFirstSegments(matching);
-			String folder = path.toString();
-			if (!verifyFolderExists(project, folder)) return;
-			try {
-				IBuildModel buildModel = model.getBuildModel();
-				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
-				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
-				if (entry == null) {
-					entry = buildModel.getFactory().createEntry(libKey);
-					buildModel.getBuild().add(entry);
+	private void handleDelete() {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IBuildModel buildModel = model.getBuildModel();
+		if (buildModel.isEditable() == false)
+			return;
+		Object object =
+			((IStructuredSelection) entryTable.getSelection()).getFirstElement();
+		if (object != null && object instanceof String) {
+			String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
+			IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+			if (entry != null) {
+				try {
+					entry.removeToken(object.toString());
+					entryTable.remove(object);
+					((WorkspaceBuildModel) buildModel).save();
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
 				}
-				if (!folder.endsWith("/")) folder = folder + "/";
-				entry.addToken(folder);
-				entryTable.add(folder);
-				((WorkspaceBuildModel) buildModel).save();
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
 			}
 		}
 	}
-}
-public void initialize(Object input) {
-	IPluginModelBase model = (IPluginModelBase)input;
-	IBuildModel buildModel = model.getBuildModel();
-	boolean editable = model.isEditable() && buildModel.isEditable();
-	setReadOnly(!editable);
-	model.addModelChangedListener(this);
-	if (buildModel.isEditable()==false) {
-		String header = getHeaderText();
-		setHeaderText(PDEPlugin.getFormattedMessage(SECTION_RTITLE, header));
-	}
-}
-private void initializeImages() {
-	IWorkbench workbench = PlatformUI.getWorkbench();
-	ISharedImages sharedImages = workbench.getSharedImages();
-	entryImage = sharedImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
-}
-public void modelChanged(IModelChangedEvent event) {
-}
-public void sectionChanged(
-	FormSection source,
-	int changeType,
-	Object changeObject) {
-	IPluginLibrary library = (IPluginLibrary) changeObject;
-	update(library);
-}
-public void setFocus() {
-	entryTable.getTable().setFocus();
-}
-private void update(IPluginLibrary library) {
-	currentLibrary = library;
-	entryTable.setInput(currentLibrary);
-	newButton.setEnabled(!isReadOnly() && library!=null);
-}
-private boolean verifyFolderExists(IProject project, String folderName) {
-	IPath path = project.getFullPath().append(folderName);
-	IFolder folder = project.getWorkspace().getRoot().getFolder(path);
-	if (folder.exists() == false) {
-		boolean result =
-			MessageDialog.openQuestion(
+	private void handleNew() {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IFile file = (IFile) model.getUnderlyingResource();
+		IProject project = file.getProject();
+		ContainerSelectionDialog dialog =
+			new ContainerSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(),
-				PDEPlugin.getResourceString(SOURCE_DIALOG_TITLE),
-				PDEPlugin.getFormattedMessage(SOURCE_DIALOG_MESSAGE, folder.getFullPath().toString()));
-		if (result) {
-			try {
-				folder.create(false, true, null);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-				return false;
-			}
-		}
-		else return false;
-	}
-	verifyFolderIsOnBuildPath(project, folder);
-	return true;
-}
-private void verifyFolderIsOnBuildPath(IProject project, IFolder folder) {
-	IJavaProject javaProject = JavaCore.create(project);
-	try {
-		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				IPath path = entry.getPath();
-				if (path.equals(folder.getFullPath())) {
-					// found
+				project,
+				true,
+				PDEPlugin.getResourceString(SECTION_DIALOG_TITLE));
+		if (dialog.open() == ContainerSelectionDialog.OK) {
+			Object[] result = dialog.getResult();
+			if (result.length == 1) {
+				IPath path = (IPath) result[0];
+				IPath projectPath = project.getFullPath();
+				if (!projectPath.isPrefixOf(path))
 					return;
+				int matching = path.matchingFirstSegments(projectPath);
+				path = path.removeFirstSegments(matching);
+				String folder = path.toString();
+				if (!verifyFolderExists(project, folder))
+					return;
+				try {
+					if (!folder.endsWith("/"))
+						folder = folder + "/";
+					IBuildModel buildModel = model.getBuildModel();
+					String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
+					IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+					if (entry == null) {
+						entry = buildModel.getFactory().createEntry(libKey);
+						buildModel.getBuild().add(entry);
+					}
+					else {
+						if (entry.contains(folder)) {
+							String message = PDEPlugin.getFormattedMessage(DUPLICATE_FOLDER_MESSAGE, folder);
+							throw new CoreException(
+								new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null));
+						}
+					}
+					entry.addToken(folder);
+					entryTable.add(folder);
+					((WorkspaceBuildModel) buildModel).save();
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
 				}
 			}
 		}
-		// it is not, so add it
-		IClasspathEntry sourceEntry = JavaCore.newSourceEntry(folder.getFullPath());
-		IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
-		System.arraycopy(entries, 0, newEntries, 0, entries.length);
-		newEntries[entries.length] = sourceEntry;
-		javaProject.setRawClasspath(newEntries, null);
-	} catch (JavaModelException e) {
-		PDEPlugin.logException(e);
 	}
-}
+	public void initialize(Object input) {
+		IPluginModelBase model = (IPluginModelBase) input;
+		IBuildModel buildModel = model.getBuildModel();
+		boolean editable = model.isEditable() && buildModel.isEditable();
+		setReadOnly(!editable);
+		model.addModelChangedListener(this);
+		if (buildModel.isEditable() == false) {
+			String header = getHeaderText();
+			setHeaderText(PDEPlugin.getFormattedMessage(SECTION_RTITLE, header));
+		}
+	}
+	private void initializeImages() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ISharedImages sharedImages = workbench.getSharedImages();
+		entryImage = sharedImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
+	}
+	public void modelChanged(IModelChangedEvent event) {
+	}
+	public void sectionChanged(
+		FormSection source,
+		int changeType,
+		Object changeObject) {
+		IPluginLibrary library = (IPluginLibrary) changeObject;
+		update(library);
+	}
+	public void setFocus() {
+		entryTable.getTable().setFocus();
+	}
+	private void update(IPluginLibrary library) {
+		currentLibrary = library;
+		entryTable.setInput(currentLibrary);
+		getTablePart().setButtonEnabled(0, !isReadOnly() && library != null);
+	}
+	private boolean verifyFolderExists(IProject project, String folderName) {
+		IPath path = project.getFullPath().append(folderName);
+		IFolder folder = project.getWorkspace().getRoot().getFolder(path);
+		if (folder.exists() == false) {
+			boolean result =
+				MessageDialog.openQuestion(
+					PDEPlugin.getActiveWorkbenchShell(),
+					PDEPlugin.getResourceString(SOURCE_DIALOG_TITLE),
+					PDEPlugin.getFormattedMessage(
+						SOURCE_DIALOG_MESSAGE,
+						folder.getFullPath().toString()));
+			if (result) {
+				try {
+					folder.create(false, true, null);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+					return false;
+				}
+			} else
+				return false;
+		}
+		return verifyFolderIsOnBuildPath(project, folder);
+	}
+	private boolean verifyFolderIsOnBuildPath(IProject project, IFolder folder) {
+		IJavaProject javaProject = JavaCore.create(project);
+		try {
+			IClasspathEntry[] entries = javaProject.getRawClasspath();
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry entry = entries[i];
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					IPath path = entry.getPath();
+					if (path.equals(folder.getFullPath())) {
+						// found
+						return true;
+					}
+				}
+			}
+			// it is not, so add it
+			IClasspathEntry sourceEntry = JavaCore.newSourceEntry(folder.getFullPath());
+			IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
+			System.arraycopy(entries, 0, newEntries, 0, entries.length);
+			newEntries[entries.length] = sourceEntry;
+			javaProject.setRawClasspath(newEntries, null);
+			return true;
+		} catch (JavaModelException e) {
+			PDEPlugin.logException(e);
+			return false;
+		}
+	}
 }

@@ -54,7 +54,9 @@ public abstract class SharedPart {
 			label = new Label(parent, SWT.NULL);
 		}
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = span;
+		gd.horizontalSpan= span;
+		gd.widthHint= 0;
+		gd.heightHint= 0;
 		label.setLayoutData(gd);
 		return label;
 	}

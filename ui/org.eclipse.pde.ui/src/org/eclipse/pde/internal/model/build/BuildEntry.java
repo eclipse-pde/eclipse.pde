@@ -34,6 +34,10 @@ public String[] getTokens() {
 	tokens.copyInto(result);
 	return result;
 }
+
+public boolean contains(String token) {
+	return tokens.contains(token);
+}
 void processEntry(String value) {
 	StringTokenizer stok = new StringTokenizer(value, ",");
 	while (stok.hasMoreTokens()) {

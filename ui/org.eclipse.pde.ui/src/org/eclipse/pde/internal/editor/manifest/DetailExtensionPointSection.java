@@ -28,9 +28,10 @@ import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.pde.internal.parts.TablePart;
 
 public class DetailExtensionPointSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelChangedListener {
 	public static final String SECTION_TITLE =
 		"ManifestEditor.DetailExtensionPointSection.title";
@@ -41,7 +42,6 @@ public class DetailExtensionPointSection
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private FormWidgetFactory factory;
 	private TableViewer pointTable;
-	private Button newButton;
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
 	private Image pointImage;
@@ -73,7 +73,7 @@ public class DetailExtensionPointSection
 	}
 
 	public DetailExtensionPointSection(ManifestExtensionPointPage page) {
-		super(page);
+		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
@@ -81,74 +81,26 @@ public class DetailExtensionPointSection
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
 		initializeImages();
-		Composite container = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		//setWidthHint(300);
-
-		container.setLayout(layout);
-		Table table = factory.createTable(container, SWT.FULL_SELECTION);
-		TableLayout tlayout = new TableLayout();
-
-		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("Point Name");
-		ColumnLayoutData cLayout = new ColumnWeightData(100, true);
-		tlayout.addColumnData(cLayout);
-
-		//table.setLinesVisible(true);
-		//table.setHeaderVisible(true);
-		table.setLayout(tlayout);
-
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		popupMenuManager.addMenuListener(listener);
-		popupMenuManager.setRemoveAllWhenShown(true);
-		Menu menu = popupMenuManager.createContextMenu(table);
-		table.setMenu(menu);
-
-		pointTable = new TableViewer(table);
+		Composite container = createClientContainer(parent, 2, factory);
+		
+		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
+		TablePart part = getTablePart();
+		pointTable = part.getTableViewer();
 		pointTable.setContentProvider(new TableContentProvider());
 		pointTable.setLabelProvider(new TableLabelProvider());
 		factory.paintBordersFor(container);
-
-		pointTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object item = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				fireSelectionNotification(item);
-				getFormPage().setSelection(event.getSelection());
-			}
-		});
-
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		
+		GridData gd = (GridData)part.getControl().getLayoutData();
 		gd.widthHint = 200;
-		table.setLayoutData(gd);
-
-		Composite buttonContainer = factory.createComposite(container);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-
-		newButton =
-			factory.createButton(
-				buttonContainer,
-				PDEPlugin.getResourceString(SECTION_NEW),
-				SWT.PUSH);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalAlignment = GridData.BEGINNING;
-		newButton.setLayoutData(gd);
-		newButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleNew();
-			}
-		});
 		return container;
 	}
+	
+	protected void selectionChanged(IStructuredSelection selection) {
+		Object item = selection.getFirstElement();
+		fireSelectionNotification(item);
+		getFormPage().setSelection(selection);
+	}
+	
 	public void dispose() {
 		pointImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
@@ -165,7 +117,7 @@ public class DetailExtensionPointSection
 	public void expandTo(Object object) {
 		pointTable.setSelection(new StructuredSelection(object), true);
 	}
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = pointTable.getSelection();
 
 		manager
@@ -193,6 +145,10 @@ public class DetailExtensionPointSection
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(new PropertiesAction(getFormPage().getEditor()));
+	}
+	
+	protected void buttonSelected(int index) {
+		if (index==0) handleNew();
 	}
 	private void handleDelete() {
 		Object object =
@@ -229,7 +185,7 @@ public class DetailExtensionPointSection
 		IPluginModelBase model = (IPluginModelBase) input;
 		pointTable.setInput(model.getPluginBase());
 		setReadOnly(!model.isEditable());
-		newButton.setEnabled(model.isEditable());
+		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 	}
 	private void initializeImages() {

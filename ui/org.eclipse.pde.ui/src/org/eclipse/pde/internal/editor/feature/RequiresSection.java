@@ -29,9 +29,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
 import org.eclipse.pde.internal.model.feature.FeatureImport;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.parts.TablePart;
 
 public class RequiresSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelProviderListener {
 	private static final String KEY_TITLE = "FeatureEditor.RequiresSection.title";
 	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc";
@@ -67,7 +68,7 @@ public class RequiresSection
 	}
 
 	public RequiresSection(FeatureReferencePage page) {
-		super(page);
+		super(page, new String[] { PDEPlugin.getResourceString(KEY_COMPUTE)});
 		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		pluginImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
@@ -81,10 +82,7 @@ public class RequiresSection
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		container.setLayout(layout);
+		Composite container = createClientContainer(parent, 2, factory);
 
 		syncButton =
 			factory.createButton(
@@ -96,63 +94,19 @@ public class RequiresSection
 		gd.horizontalSpan = 2;
 		syncButton.setLayoutData(gd);
 
-		pluginViewer =
-			new TableViewer(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		createViewerPartControl(container, SWT.MULTI, 2, factory);
+
+		TablePart tablePart = getTablePart();
+		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new ImportContentProvider());
 		pluginViewer.setLabelProvider(new ImportLabelProvider());
-		pluginViewer.setSorter(ListUtil.NAME_SORTER);
-
-		pluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged(e);
-			}
-		});
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				//openAction.run();
-			}
-		});
-		Table table = pluginViewer.getTable();
-		popupMenuManager.setRemoveAllWhenShown(true);
-		popupMenuManager.addMenuListener(listener);
-		Menu menu = popupMenuManager.createContextMenu(table);
-		table.setMenu(menu);
-		gd = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(gd);
-
-		Composite buttonContainer = factory.createComposite(container);
-		layout = new GridLayout();
-		buttonContainer.setLayout(layout);
-		layout.marginWidth = layout.marginHeight = 0;
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-
-		Button computeButton =
-			factory.createButton(
-				buttonContainer,
-				PDEPlugin.getResourceString(KEY_COMPUTE),
-				SWT.PUSH);
-		computeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator.showWhile(syncButton.getDisplay(), new Runnable() {
-					public void run() {
-						recomputeImports();
-					}
-				});
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		computeButton.setLayoutData(gd);
-
 		factory.paintBordersFor(container);
-		//openAction = new OpenReferenceAction(pluginViewer);
 		return container;
+	}
+
+	protected void buttonSelected(int index) {
+		if (index == 0)
+			recomputeImports();
 	}
 
 	private Image createWarningImage(
@@ -182,7 +136,7 @@ public class RequiresSection
 			pluginViewer.setSelection(ssel);
 		}
 	}
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		/*
 		manager.add(openAction);
 		manager.add(propertiesAction);
@@ -210,18 +164,11 @@ public class RequiresSection
 		else
 			return warningPluginImage;
 	}
-	private void handleSelectionChanged(SelectionChangedEvent e) {
-		IFeatureImport iimport =
-			(IFeatureImport) ((IStructuredSelection) e.getSelection()).getFirstElement();
-
-		StructuredSelection selection = null;
-
-		if (iimport != null) {
-			selection = new StructuredSelection(iimport);
-		} else
-			selection = new StructuredSelection();
+	protected void selectionChanged(IStructuredSelection selection) {
+		IFeatureImport iimport = (IFeatureImport) selection.getFirstElement();
 		getFormPage().setSelection(selection);
-		fireSelectionNotification(iimport);
+		if (iimport != null)
+			fireSelectionNotification(iimport);
 	}
 	public void initialize(Object input) {
 		IFeatureModel model = (IFeatureModel) input;

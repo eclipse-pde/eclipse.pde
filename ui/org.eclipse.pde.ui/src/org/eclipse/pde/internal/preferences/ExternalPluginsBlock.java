@@ -57,9 +57,7 @@ public class ExternalPluginsBlock {
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (editor == null || editor.getPlatformPath().length() > 0) {
-				long startTime = System.currentTimeMillis();
 				Object[] models = registry.getModels();
-				long stopTime = System.currentTimeMillis();
 				return models;
 
 			} else
@@ -106,7 +104,7 @@ public class ExternalPluginsBlock {
 		protected void buttonSelected(Button button, int index) {
 			if (index == 0)
 				handleReload();
-			else if (index == 3)
+			else if (index == 4)
 				selectNotInWorkspace();
 			else
 				super.buttonSelected(button, index);
@@ -120,12 +118,13 @@ public class ExternalPluginsBlock {
 		String[] buttonLabels =
 			{
 				PDEPlugin.getResourceString(KEY_RELOAD),
+				null,
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
 				PDEPlugin.getResourceString(KEY_WORKSPACE)};
 		tablePart = new TablePart(buttonLabels);
-		tablePart.setSelectAllIndex(1);
-		tablePart.setDeselectAllIndex(2);
+		tablePart.setSelectAllIndex(2);
+		tablePart.setDeselectAllIndex(3);
 	}
 
 	public Control createContents(Composite parent) {
