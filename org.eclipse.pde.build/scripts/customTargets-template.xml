@@ -1,10 +1,5 @@
 <project name="Build specific targets and properties" default="noDefault" >
 
-<property name="basews" value="win32" />
-<property name="baseos" value="win32" />
-<property name="basearch" value="x86" />
-<property name="basenl" value="en_US" />
-
 <!-- ===================================================================== -->
 <!-- Run a given ${target} on all elements being built -->
 <!-- Add on <ant> task for each top level element being built. -->

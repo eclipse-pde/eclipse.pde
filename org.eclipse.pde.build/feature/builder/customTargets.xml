@@ -16,7 +16,7 @@
 </target>
 
 <!-- ===================================================================== -->
-<!-- Targets to assemble the built elements for particular configurations  -->
+<!-- Targets to assemble the built elements for the pde builder feature -->
 <!-- ===================================================================== -->
 
 <target name="assemble.org.eclipse.pde.builder">
@@ -28,7 +28,6 @@
 <!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 <!-- ===================================================================== -->
 <target name="getMapFiles">
-	<!-- ***  change the repo info -->
 	<property name="cvsRoot" value=":pserver:anonymous@dev.eclipse.org:/home/eclipse" />
 	<property name="mapVersionTag" value="HEAD" />
 	<cvs cvsRoot="${cvsRoot}"
@@ -63,10 +62,10 @@
 </target>
 
 <!-- ===================================================================== -->
-<!-- Steps to do after the fetch -->
+<!-- Steps to do after the fetch. -->
 <!-- ===================================================================== -->
 <target name="postFetch">
-	<replace dir="${install}/plugins" value="${timestamp}" token="@build@">
+	<replace dir="${buildDirectory}/plugins" value="${timestamp}" token="@build@">
 		<include name="**/about.mappings" />
 	</replace>
 </target>
