@@ -32,7 +32,7 @@ public class PluginJavaSearchUtil {
 		return (IPlugin[]) set.toArray(new IPlugin[set.size()]);
 	}
 	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {
-		if (!set.add(plugin))
+		if (plugin == null || !set.add(plugin))
 			return;
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
