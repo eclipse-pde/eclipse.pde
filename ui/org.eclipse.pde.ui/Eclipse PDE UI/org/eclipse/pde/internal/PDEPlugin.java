@@ -219,7 +219,10 @@ public static void logException(Throwable e) {
 	if (e instanceof InvocationTargetException) {
 		e = ((InvocationTargetException)e).getTargetException();
 	}
-	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+	String message = e.getMessage();
+	if (message==null)
+	   message = e.toString();
+	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 	ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }

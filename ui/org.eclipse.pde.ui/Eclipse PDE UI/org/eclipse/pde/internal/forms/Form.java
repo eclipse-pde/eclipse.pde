@@ -221,7 +221,7 @@ private void paint(Control form, GC gc) {
 			gc.setForeground(headingForeground);
 		else
 			gc.setForeground(factory.getForegroundColor());
-		gc.setFont(factory.getTitleFont());
+		gc.setFont(titleFont);
 		gc.drawText(getTitle(), TITLE_HMARGIN, TITLE_VMARGIN, true);
 	} else {
 		gc.setFont(titleFont);
