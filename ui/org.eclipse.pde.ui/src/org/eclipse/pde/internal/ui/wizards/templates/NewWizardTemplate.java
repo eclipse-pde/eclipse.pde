@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.*;
@@ -77,8 +79,12 @@ public class NewWizardTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[] {
-			 new PluginReference("org.eclipse.core.resources", null, 0)};
+		ArrayList result = new ArrayList();
+		result.add(new PluginReference("org.eclipse.core.resources", null, 0));
+		result.add(new PluginReference("org.eclipse.ui", null, 0));
+		if (schemaVersion != null)
+			result.add(new PluginReference("org.eclipse.ui.ide", null, 0));
+		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}
 	
 	public boolean isDependentOnFirstPage() {
