@@ -371,13 +371,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return true;
 
 		String os = associatedEntry.getOS();
+		String ws = associatedEntry.getWS();
+		String arch = associatedEntry.getOSArch();
+		if (os==null && ws == null && arch == null)
+			return true;
+		
 		if (os != null)
 			properties.put("osgi.os", os);
-		String ws = associatedEntry.getWS();
 		if (ws != null)
 			properties.put("osgi.ws",ws);
 		
-		String arch = associatedEntry.getOSArch();
 		if (arch != null)
 			properties.put("osgi.arch", arch);
 		
