@@ -96,14 +96,14 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".properties"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".properties"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME,getFormattedPackageName(pluginId)); 
 	}
 
 	/**
@@ -173,5 +173,15 @@ public class PropertyPageTemplate extends PDETemplateSection {
 			
 		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+     */
+    protected String getFormattedPackageName(String id) {
+        String packageName = super.getFormattedPackageName(id);
+        if (packageName.length() != 0)
+            return packageName + ".properties"; //$NON-NLS-1$
+        return "properties"; //$NON-NLS-1$
+    }
 
 }

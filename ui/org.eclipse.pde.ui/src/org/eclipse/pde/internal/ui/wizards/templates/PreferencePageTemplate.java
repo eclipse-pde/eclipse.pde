@@ -66,14 +66,14 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".preferences"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
 		mainClassName = id + ".PreferenceClass"; //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".preferences"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
 		if (model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
 			mainClassName = plugin.getClassName();
@@ -144,4 +144,14 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+     */
+    protected String getFormattedPackageName(String id) {
+        String packageName = super.getFormattedPackageName(id);
+        if (packageName.length() != 0)
+            return packageName + ".preferences"; //$NON-NLS-1$
+        return "preferences"; //$NON-NLS-1$
+    }
 }

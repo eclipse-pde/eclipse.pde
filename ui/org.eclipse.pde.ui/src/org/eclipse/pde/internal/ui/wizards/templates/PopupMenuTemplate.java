@@ -116,14 +116,14 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".popup.actions"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id)); 
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".popup.actions"); //$NON-NLS-1$
+		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId)); 
 	}
 
 	/**
@@ -209,5 +209,15 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.popupMenus"; //$NON-NLS-1$
 	}
-
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
+     */
+	protected String getFormattedPackageName(String id) {
+	    String packageName = super.getFormattedPackageName(id);
+	    if (packageName.length() !=0)
+	        return packageName + ".popup.actions"; //$NON-NLS-1$
+	    return "popup.actions"; //$NON-NLS-1$
+	}
+	
 }
