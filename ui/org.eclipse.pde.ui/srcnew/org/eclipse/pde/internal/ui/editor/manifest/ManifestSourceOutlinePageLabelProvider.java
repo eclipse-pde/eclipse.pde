@@ -46,13 +46,7 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 			if (result == null) {
 				Node domNode = ((PluginDocumentNode) obj).getDOMNode();
 				if (domNode != null) {
-					result = domNode.getNodeName();
-					if (result.length() > 0) {
-						if (result.equals("XML"))
-							result = "<?xml?>";
-						else 
-							result = "<" + result + "/>";
-					}
+					result = domNode.getNodeName().toLowerCase();
 				}
 			}
 		}
@@ -120,14 +114,19 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 	}
 
 	public Image getImage(Object obj) {
-		if (obj instanceof PluginDocumentNode) {
-			obj= ((PluginDocumentNode)obj).getPluginObjectNode();
-		}
-
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		Image image = provider.getImage(obj);
+		Image image = null;
+		if (obj instanceof PluginDocumentNode) {
+			IPluginObject pluginObject = ((PluginDocumentNode)obj).getPluginObjectNode();
+			if (pluginObject != null) {
+				image = provider.getImage(pluginObject);
+			} else if(((PluginDocumentNode)obj).getDOMNode().getNodeName().equals("XML")) {
+				image = provider.get(PDEPluginImages.DESC_PROCESSING_INST_OBJ);
+			}
+		}
 		if (image != null)
 			return image;
+			
 		return provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 

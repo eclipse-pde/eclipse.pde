@@ -83,6 +83,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_BUILD_VAR_OBJ = create(PATH_OBJ, "build_var_obj.gif");
 	public static final ImageDescriptor DESC_LOOP_OBJ = create(PATH_OBJ, "loop_obj.gif");
 	public static final ImageDescriptor DESC_LOOP_NODE_OBJ = create(PATH_OBJ, "loop_node_obj.gif");
+	public static final ImageDescriptor DESC_PROCESSING_INST_OBJ = create(PATH_OBJ, "processinginst.gif");
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif");
