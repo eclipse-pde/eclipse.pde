@@ -81,10 +81,12 @@ public class ExternalPluginsBlock {
 			savePreferences();
 			if (reloaded) {
 				EclipseHomeInitializer.resetEclipseHomeVariables();
-				PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
 			}
 			updateModels();
 			computeDelta();
+			if (reloaded) {
+				PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
+			}
 		}
 
 	}
