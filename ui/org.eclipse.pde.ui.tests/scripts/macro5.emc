@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<macro version="0.1">
+   <shell id="org.eclipse.ui.internal.WorkbenchWindow" return-code="0">
+      <command type="select" contextId="menus" widgetId="contribid/import">
+         <parent widgetId="file"/>
+      </command>
+      <shell id="org.eclipse.jface.wizard.WizardDialog" return-code="0">
+         <command type="item-select" contextId="wizard-page/singleWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Table#1">
+            <item path="org.eclipse.pde.ui.PluginImportWizard"/>
+         </command>
+         <command type="default-select" contextId="wizard-page/singleWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Table#1"/>
+         <command type="focus" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#1"/>
+         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
+         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
+         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=14"/>
+         <command type="item-select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Table#1">
+            <item path="org.eclipse.ui"/>
+         </command>
+         <command type="default-select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Table#1"/>
+         <command type="select" contextId="wizard-page/detailed" widgetId="org.eclipse.swt.widgets.Button#8"/>
+         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
+         <command type="wait"/>
+         <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
+      </shell>
+      <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
+   </shell>
+</macro>

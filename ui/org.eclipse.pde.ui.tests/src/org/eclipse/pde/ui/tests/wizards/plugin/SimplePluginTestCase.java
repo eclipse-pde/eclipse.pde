@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.ui.tests.*;
 
 public class SimplePluginTestCase extends NewProjectTest {
 	
@@ -30,12 +31,12 @@ public class SimplePluginTestCase extends NewProjectTest {
 	}
 
 	public void testSimplePluginProject() {
-		playScript("macro1.emc");
+		playScript(Catalog.SIMPLE_PLUGIN_1);
 		verifyProjectContent(false);
 	}
 	
 	public void testSimplePluginWithManifest() {
-		playScript("macro2.emc");
+		playScript(Catalog.SIMPLE_PLUGIN_2);
 		verifyProjectContent(true);
 	}
 	

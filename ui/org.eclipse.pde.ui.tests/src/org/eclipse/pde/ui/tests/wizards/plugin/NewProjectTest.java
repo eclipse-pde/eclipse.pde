@@ -13,7 +13,6 @@ package org.eclipse.pde.ui.tests.wizards.plugin;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.tests.*;
 
 public abstract class NewProjectTest extends PDETestCase {
@@ -23,7 +22,7 @@ public abstract class NewProjectTest extends PDETestCase {
 	}
 	
 	protected IProject getProject() {
-		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		return root.getProject(getProjectName());	
 	}
 	
