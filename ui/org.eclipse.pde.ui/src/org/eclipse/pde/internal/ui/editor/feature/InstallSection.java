@@ -26,13 +26,13 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class InstallSection extends PDESection {
 	public static final String SECTION_TITLE = "FeatureEditor.InstallSection.title"; //$NON-NLS-1$
@@ -78,7 +78,7 @@ public class InstallSection extends PDESection {
 
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
+		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 5;
 		layout.horizontalSpacing = 6;
@@ -89,8 +89,8 @@ public class InstallSection extends PDESection {
 
 		fExclusiveButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString(SECTION_EXCLUSIVE), SWT.CHECK);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
 		fExclusiveButton.setLayoutData(gd);
 		fExclusiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -104,9 +104,9 @@ public class InstallSection extends PDESection {
 		});
 
 		Label colocationDescLabel = toolkit.createLabel(container,
-				PDEPlugin.getResourceString(SECTION_COLOCATION_DESC));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+				PDEPlugin.getResourceString(SECTION_COLOCATION_DESC), SWT.WRAP);
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 2;
 		colocationDescLabel.setLayoutData(gd);
 
 		fColocationText = new FormEntry(container, toolkit, PDEPlugin
