@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.pde"
+   name="%name"
+   version="1.0.0"
+   provider-name="International Business Machines Corp.">
+
+   <runtime>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.pde.core"/>
+   </requires>
+
+
+   <extension
+         id="PluginNature"
+         name="%natures.pluginNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.PluginProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="FeatureNature"
+         name="%natures.featureBuilder.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.FeatureProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="ManifestBuilder"
+         name="%builders.manifestBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="SchemaBuilder"
+         name="%builders.schemaBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="FeatureBuilder"
+         name="%builders.featureBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+
+</plugin>
