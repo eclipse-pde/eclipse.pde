@@ -505,8 +505,10 @@ public abstract class PDEMultiPageEditor
 		}
 		else {
 			IPDEEditorPage page = getPageFor(obj);
-			if (page!=null)
+			if (page!=null) {
+				showPage(page);
 				page.openTo(obj);
+			}
 		}
 	}
 	public IPDEEditorPage showPage(final IPDEEditorPage page) {
