@@ -82,7 +82,7 @@ public class LogView extends ViewPart implements ILogListener {
 					public int compare(Viewer viewer, Object e1, Object e2) {
 						LogEntry entry1 = (LogEntry)e1;
 						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * MESSAGE_ORDER;
+						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
 					}
 				});
 				tableTreeViewer.refresh();
@@ -112,7 +112,7 @@ public class LogView extends ViewPart implements ILogListener {
 					public int compare(Viewer viewer, Object e1, Object e2) {
 						LogEntry entry1 = (LogEntry)e1;
 						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * DATE_ORDER;
+						return super.compare(viewer, entry1.getDate(), entry2.getDate()) * DATE_ORDER;
 					}
 				});
 				tableTreeViewer.refresh();
@@ -367,8 +367,6 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 	private void copyToClipboard(ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection) selection;
-		Object[] objects = ssel.toArray();
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
 		
