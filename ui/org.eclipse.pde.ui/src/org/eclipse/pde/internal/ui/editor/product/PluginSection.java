@@ -106,6 +106,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		section.setLayoutData(gd);
 		section.setText(PDEPlugin.getResourceString("Product.PluginSection.title")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString("Product.PluginSection.desc")); //$NON-NLS-1$
+		getProduct().getModel().addModelChangedListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -164,6 +165,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
+		getProduct().getModel().removeModelChangedListener(this);
 		super.dispose();
 	}
 	
