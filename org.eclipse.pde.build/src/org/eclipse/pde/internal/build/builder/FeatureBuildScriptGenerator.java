@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
+import org.eclipse.update.core.model.URLEntryModel;
 
 /**
  * Generates build.xml script for features.
@@ -1154,7 +1155,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		result.setCopyrightModel(featureExample.getCopyrightModel());
 		result.setLicenseModel(featureExample.getLicenseModel());
 		result.setUpdateSiteEntryModel(featureExample.getUpdateSiteEntryModel());
-		result.setDiscoverySiteEntryModels(featureExample.getDiscoverySiteEntryModels());
+		URLEntryModel[] siteEntries = featureExample.getDiscoverySiteEntryModels();
+		result.setDiscoverySiteEntryModels((siteEntries == null || siteEntries.length == 0) ? null : siteEntries);
 		result.setOS(featureExample.getOS());
 		result.setArch(featureExample.getOSArch());
 		result.setWS(featureExample.getWS());
