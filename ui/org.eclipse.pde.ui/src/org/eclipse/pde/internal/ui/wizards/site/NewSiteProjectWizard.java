@@ -120,13 +120,17 @@ public class NewSiteProjectWizard
 		writer.println("	var returnval = 0;"); //$NON-NLS-1$
 		writer.println("	var stylesheet, xmlFile, cache, doc;"); //$NON-NLS-1$
 		writer.println("	function init(){"); //$NON-NLS-1$
-		writer.println("		// NSCP 7.1+ / Mozilla 1.4.1+"); //$NON-NLS-1$
+		writer.println("		// NSCP 7.1+ / Mozilla 1.4.1+ / Safari"); //$NON-NLS-1$
 		writer.println("		// Use the standard DOM Level 2 technique, if it is supported"); //$NON-NLS-1$
 		writer.println("		if (document.implementation && document.implementation.createDocument) {"); //$NON-NLS-1$
 		writer.println("			xmlFile = document.implementation.createDocument(\"\", \"\", null);"); //$NON-NLS-1$
 		writer.println("			stylesheet = document.implementation.createDocument(\"\", \"\", null);"); //$NON-NLS-1$
-		writer.println("			xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
-		writer.println("			stylesheet.load(\""+htmlPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("			if (xmlFile.load){"); //$NON-NLS-1$
+		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
+		writer.println("				stylesheet.load(\""+htmlPage.getWebLocation()+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("			} else {"); //$NON-NLS-1$
+		writer.println("				alert(\"" + PDEPlugin.getResourceString("SiteHTML.loadError") + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println("			}"); //$NON-NLS-1$
 		writer.println("			xmlFile.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$
 		writer.println("			stylesheet.addEventListener(\"load\", transform, false);"); //$NON-NLS-1$
 		writer.println("		}"); //$NON-NLS-1$
