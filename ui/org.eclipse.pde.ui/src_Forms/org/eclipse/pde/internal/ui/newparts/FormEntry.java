@@ -91,6 +91,7 @@ public class FormEntry {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
 			gd.grabExcessHorizontalSpace=(tspan==1);
+			gd.widthHint = 10;
 			text.setLayoutData(gd);
 			if (browse != null) {
 				gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);

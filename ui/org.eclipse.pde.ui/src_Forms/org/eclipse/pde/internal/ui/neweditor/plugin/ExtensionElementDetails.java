@@ -172,6 +172,15 @@ public class ExtensionElementDetails implements IDetailsPage {
 	 * @see org.eclipse.ui.forms.IDetailsPage#isDirty()
 	 */
 	public boolean isDirty() {
+		for (int i = 0; i < rows.size(); i++) {
+			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+			if (row.isDirty())
+				return true;
+		}
+		return false;
+	}
+	public boolean isStale() {
+		// TODO need to implement this
 		return false;
 	}
 	/*

@@ -8,9 +8,9 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.pde.internal.ui.neweditor.EditorEntryAdapter;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.DummyExtension;
+import org.eclipse.pde.internal.ui.newparts.FormEntry;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -26,9 +26,9 @@ import org.eclipse.ui.forms.widgets.*;
 public class ExtensionDetails implements IDetailsPage {
 	private DummyExtension input;
 	private IManagedForm managedForm;
-	private Text id;
-	private Text name;
-	private Text point;
+	private FormEntry id;
+	private FormEntry name;
+	private FormEntry point;
 	private FormText rtext;
 
 	private static final String RTEXT_DATA =
@@ -76,42 +76,39 @@ public class ExtensionDetails implements IDetailsPage {
 		
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		
-		toolkit.createLabel(client, "Id:");
-		id = toolkit.createText(client, "", SWT.SINGLE);
-		id.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+
+		id = new FormEntry(client, toolkit, "Id:", null, false);
+		id.setFormEntryListener(new EditorEntryAdapter() {
+			public void textDirty(FormEntry entry) {
+				managedForm.markDirty();
+			}
+			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("id", id.getText());
+					input.setProperty("id", id.getValue());
 			}
 		});
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.widthHint = 10;
-		id.setLayoutData(gd);
 		
-		toolkit.createLabel(client, "Name:");
-		name = toolkit.createText(client, "", SWT.SINGLE);
-		name.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		name = new FormEntry(client, toolkit, "Name:", null, false);
+		name.setFormEntryListener(new EditorEntryAdapter() {
+			public void textDirty(FormEntry entry) {
+				managedForm.markDirty();
+			}
+			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("name", name.getText());
+					input.setProperty("name", name.getValue());
 			}
 		});
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.widthHint = 10;
-		name.setLayoutData(gd);
 		
-		toolkit.createLabel(client, "Point:");
-		point = toolkit.createText(client, "", SWT.SINGLE);
-		point.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		point = new FormEntry(client, toolkit, "Point:", null, false);
+		point.setFormEntryListener(new EditorEntryAdapter() {
+			public void textDirty(FormEntry entry) {
+				managedForm.markDirty();
+			}
+			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
-					input.setProperty("point", point.getText());
+					input.setProperty("point", point.getValue());
 			}
 		});
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.widthHint = 10;
-		point.setLayoutData(gd);
 		
 		createSpacer(toolkit, client, 2);
 		
@@ -153,19 +150,23 @@ public class ExtensionDetails implements IDetailsPage {
 	}
 	
 	private void update() {
-		id.setText(input!=null && input.getProperty("id")!=null?input.getProperty("id"):"");
-		name.setText(input!=null && input.getProperty("name")!=null?input.getProperty("name"):"");
-		point.setText(input!=null && input.getProperty("point")!=null?input.getProperty("point"):"");
+		id.setValue(input!=null && input.getProperty("id")!=null?input.getProperty("id"):"", true);
+		name.setValue(input!=null && input.getProperty("name")!=null?input.getProperty("name"):"", true);
+		point.setValue(input!=null && input.getProperty("point")!=null?input.getProperty("point"):"", true);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
 	public void commit() {
+		id.commit();
+		name.commit();
+		point.commit();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
 	public void setFocus() {
+		id.getText().setFocus();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#dispose()
@@ -176,6 +177,9 @@ public class ExtensionDetails implements IDetailsPage {
 	 * @see org.eclipse.ui.forms.IDetailsPage#isDirty()
 	 */
 	public boolean isDirty() {
+		return id.isDirty() || name.isDirty() || point.isDirty();
+	}
+	public boolean isStale() {
 		return false;
 	}
 	/* (non-Javadoc)

@@ -21,6 +21,9 @@ public class EditorEntryAdapter implements IFormEntryListener {
 	/**
 	 * 
 	 */
+	public EditorEntryAdapter() {
+		
+	}
 	public EditorEntryAdapter(PDEFormEditor editor) {
 		this.editor = editor;
 	}
@@ -28,7 +31,8 @@ public class EditorEntryAdapter implements IFormEntryListener {
 	 * @see org.eclipse.pde.internal.ui.newparts.IFormEntryListener#textDirty(org.eclipse.pde.internal.ui.newparts.FormEntry)
 	 */
 	public void textDirty(FormEntry entry) {
-		editor.fireDirtyStateChanged();
+		if (editor!=null)
+			editor.fireDirtyStateChanged();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.newparts.IFormEntryListener#textValueChanged(org.eclipse.pde.internal.ui.newparts.FormEntry)
@@ -44,6 +48,7 @@ public class EditorEntryAdapter implements IFormEntryListener {
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkEntered(HyperlinkEvent e) {
+		if (editor==null) return;
 		IStatusLineManager mng = editor.getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
@@ -51,6 +56,7 @@ public class EditorEntryAdapter implements IFormEntryListener {
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkExited(HyperlinkEvent e) {
+		if (editor==null) return;
 		IStatusLineManager mng = editor.getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);
 	}

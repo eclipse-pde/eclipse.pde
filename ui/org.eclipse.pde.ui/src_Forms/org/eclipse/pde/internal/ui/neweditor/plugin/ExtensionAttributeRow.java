@@ -82,6 +82,10 @@ public abstract class ExtensionAttributeRow {
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
 	protected abstract void update();	
 	public abstract void setFocus();
+	public boolean isDirty() {
+		// TODO need to implement this
+		return false;
+	}
 	
 	public void dispose() {
 	}
