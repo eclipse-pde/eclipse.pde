@@ -160,22 +160,20 @@ public class TargetPlatform implements IEnvironmentVariables {
 		store.setDefault(ARCH, BootLoader.getOSArch());
 	}
 	
+	private static Choice[] getKnownChoices(String [] values) {
+		Choice [] choices = new Choice[values.length];
+		for (int i=0; i<choices.length; i++) {
+			choices[i] = new Choice(values[i], values[i]);
+		}
+		return choices;
+	}
+	
 	public static Choice[] getOSChoices() {
-		return new Choice[] {
-			new Choice(BootLoader.OS_WIN32, BootLoader.OS_WIN32),
-			new Choice(BootLoader.OS_LINUX, BootLoader.OS_LINUX),
-			new Choice(BootLoader.OS_AIX, BootLoader.OS_AIX),
-			new Choice(BootLoader.OS_HPUX, BootLoader.OS_HPUX),
-			new Choice(BootLoader.OS_QNX, BootLoader.OS_QNX),
-			new Choice(BootLoader.OS_SOLARIS, BootLoader.OS_SOLARIS)};
+		return getKnownChoices(BootLoader.knownOSValues());
 	}
 
 	public static Choice[] getWSChoices() {
-		return new Choice[] {
-			new Choice(BootLoader.WS_WIN32, BootLoader.WS_WIN32),
-			new Choice(BootLoader.WS_MOTIF, BootLoader.WS_MOTIF),
-			new Choice(BootLoader.WS_GTK, BootLoader.WS_GTK),
-			new Choice(BootLoader.WS_PHOTON, BootLoader.WS_PHOTON)};
+		return getKnownChoices(BootLoader.knownWSValues());
 	}
 
 	public static Choice[] getNLChoices() {
@@ -189,6 +187,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return choices;
 	}
 	public static Choice[] getArchChoices() {
-		return new Choice[] { new Choice(BootLoader.ARCH_X86, BootLoader.ARCH_X86)};
+		return getKnownChoices(BootLoader.knownOSArchValues());
 	}
 }
