@@ -17,10 +17,10 @@ public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {
 	private Hashtable pluginMap = new Hashtable();
-	private boolean isFocusedSearch = false;
-	private String searchTextName = "";
-	private String searchTextId = "";
-	private PluginObjectAdapter[] viewerItems;
+	private String searchText="";
+	private byte searchType, showType;
+	public boolean isInExtensionSet;
+	private TreeViewer viewer;
 	
 	class PluginFolder implements IPluginFolder {
 		private int id;
@@ -45,6 +45,13 @@ public class RegistryBrowserContentProvider
 			return null;
 		}
 	}
+	
+	public RegistryBrowserContentProvider(TreeViewer viewer){
+		super();
+		this.viewer = viewer;
+		searchType = RegistrySearchMenu.NO_SEARCH;
+		showType = ShowPluginsMenu.SHOW_ALL_PLUGINS;
+	}
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IPluginFolder.F_EXTENSIONS)
 			return new ExtensionAdapter(object);
@@ -63,25 +70,16 @@ public class RegistryBrowserContentProvider
 	public void dispose() {
 	}
 	public Object[] getElements(Object element) {
-		if (viewerItems!=null)
-			return viewerItems;
 		return getChildren(element);
 	}
 	public Object[] getChildren(Object element) {
+		
 		if (element instanceof ExtensionAdapter) {
-			return ((ExtensionAdapter) element).getChildren();
+			return null;
 		}
+		isInExtensionSet = false;
 		if (element instanceof ExtensionPointAdapter) {
-			ArrayList configElements = new ArrayList();
-			Object[] children = ((ExtensionPointAdapter) element).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Object[] countChildren = ((ExtensionAdapter) children[i])
-						.getChildren();
-				if (countChildren != null)
-					for (int j = 0; j < countChildren.length; j++) 
-						configElements.add(countChildren[j]);
-			}
-			return configElements.toArray(new Object[configElements.size()]);
+			 return getNonDuplicateLabelChildren(element);
 		}
 		if (element instanceof ConfigurationElementAdapter) {
 			return ((ConfigurationElementAdapter) element).getChildren();
@@ -90,7 +88,12 @@ public class RegistryBrowserContentProvider
 			element = ((PluginObjectAdapter) element).getObject();
 		if (element.equals(Platform.getPluginRegistry())) {
 			Object[] plugins = getPlugins(Platform.getPluginRegistry());
-			if (isFocusedSearch && plugins != null) {
+			
+			if (plugins == null)
+				return new Object[0];
+			
+			if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS || searchType != RegistrySearchMenu.NO_SEARCH){
+				boolean matchesShowCriteria = true, matchesSearchCriteria = true;
 				ArrayList resultList = new ArrayList();
 				for (int i = 0; i < plugins.length; i++) {
 					if (plugins[i] instanceof PluginObjectAdapter) {
@@ -98,20 +101,36 @@ public class RegistryBrowserContentProvider
 								.getObject();
 						if (object instanceof IPluginDescriptor) {
 							IPluginDescriptor desc = (IPluginDescriptor) object;
-							if (searchTextId != null
-									&& desc
-											.getUniqueIdentifier()
-											.toLowerCase()
-											.indexOf(searchTextId.toLowerCase()) != -1)
-								resultList.add(plugins[i]);
-							else if (searchTextName != null
-									&& desc.getLabel().toLowerCase().indexOf(
-											searchTextName.toLowerCase()) != -1)
-								resultList.add(plugins[i]);
+										
+							// handle showing criteria
+							if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS)
+								matchesShowCriteria = (showType == ShowPluginsMenu.SHOW_RUNNING_PLUGINS && desc.isPluginActivated()) ||
+										(showType == ShowPluginsMenu.SHOW_NON_RUNNING_PLUGINS && !desc.isPluginActivated());
+							else
+								matchesShowCriteria = true;
+							
+							// handle search criteria
+							if (searchType != RegistrySearchMenu.NO_SEARCH && searchText!=null) {
+								String compareText;
+								if (searchType == RegistrySearchMenu.ID_SEARCH)
+									compareText = desc.getUniqueIdentifier().toLowerCase();
+								else if (searchType == RegistrySearchMenu.NAME_SEARCH)
+									compareText = desc.getLabel().toLowerCase();
+								else {
+									compareText = desc.getVersionIdentifier().getMajorComponent() + "." +
+									desc.getVersionIdentifier().getMinorComponent() + "." +
+									desc.getVersionIdentifier().getServiceComponent();
+								}
+								
+								matchesSearchCriteria = compareText.indexOf(searchText.toLowerCase()) != -1;
+							} else 
+								matchesSearchCriteria = true;
 						}
 					}
+					if (matchesShowCriteria && matchesSearchCriteria)
+						resultList.add(plugins[i]);
 				}
-				isFocusedSearch = false;
+				searchType = RegistrySearchMenu.NO_SEARCH; 
 				return resultList.toArray(new Object[resultList.size()]);
 			}
 			return plugins;
@@ -123,37 +142,64 @@ public class RegistryBrowserContentProvider
 			if (folders == null) {
 				folders = createPluginFolders(desc);
 				pluginMap.put(desc.getUniqueIdentifier(), folders);
+			} else {
+				ArrayList folderList = new ArrayList();
+				for (int i = 0; i<folders.length; i++){
+					if (((IPluginFolder)folders[i]).getFolderId() != 4 && ((IPluginFolder)folders[i]).getFolderId() != 3)
+						folderList.add(folders[i]);
+					else if (folders[i] != null && ((IPluginFolder)folders[i]).getChildren() != null)
+						folderList.add(folders[i]);
+				}
+				folders = folderList.toArray(new Object[folderList.size()]);
 			}
 			return folders;
 		}
 		if (element instanceof IPluginFolder) {
 			IPluginFolder folder = (IPluginFolder) element;
-			return getFolderChildren(folder);
+			isInExtensionSet = folder.getFolderId() == 1;
+			return getNonDuplicateLabelChildren(folder);
 		}
 		if (element instanceof IConfigurationElement) {
 			return ((IConfigurationElement) element).getChildren();
 		}
 		return null;
 	}
-	public Object[] getFolderChildren(IPluginFolder folder) {
-		Object[] children = folder.getChildren();
-		if (children == null)
-			return null;
-		if (children[0] instanceof ExtensionAdapter) {
-			ArrayList configElements = new ArrayList();
-			for (int i = 0; i < children.length; i++) {
-				Object[] countChildren = ((ExtensionAdapter) children[i])
-						.getChildren();
-				if (countChildren != null)
-					for (int j = 0; j < countChildren.length; j++) {
-						if (((IConfigurationElement) ((ConfigurationElementAdapter) countChildren[j])
-								.getObject()).getAttributeAsIs("id") != null)
-							configElements.add(countChildren[j]);
+	public Object[] getNonDuplicateLabelChildren(Object element) {
+		ArrayList extList = new ArrayList();
+		ArrayList labelList = new ArrayList();
+		if (element instanceof IPluginFolder){
+			Object[] children = ((IPluginFolder)element).getChildren();
+			if (children != null && isInExtensionSet){
+				for (int i = 0; i<children.length; i++){
+					IExtension ext = (IExtension)((ExtensionAdapter)children[i]).getObject();
+					String label = ((RegistryBrowserLabelProvider)viewer.getLabelProvider()).getText(ext);
+					if (label == null || label.length() ==0)
+						continue;
+					if (!labelList.contains(label)){
+						labelList.add(label);
+						extList.add(children[i]);
 					}
+				}
+				return extList.toArray(new Object[extList.size()]);
 			}
-			return configElements.toArray(new Object[configElements.size()]);
+			return children;
+		} else if (element instanceof ExtensionPointAdapter){
+			Object[] children = ((ExtensionPointAdapter) element).getChildren();
+			if (children!=null){
+				for (int i =0; i<children.length; i++){
+					String label = ((RegistryBrowserLabelProvider)viewer.getLabelProvider()).getText(children[i]);
+					if (label == null || label.length() ==0)
+						continue;
+					if (!labelList.contains(label)){
+						labelList.add(label);
+						extList.add(children[i]);
+					}
+				}
+				return extList.toArray(new Object[extList.size()]);
+			}
+			return children;
 		}
-		return children;
+		return new Object[0];
 	}
 	public Object[] getPlugins(IPluginRegistry registry) {
 		IPluginDescriptor[] descriptors = registry.getPluginDescriptors();
@@ -202,23 +248,32 @@ public class RegistryBrowserContentProvider
 	}
 	public void setUniqueIdSearch(String id) {
 		if (id == null || id.length() == 0) {
-			isFocusedSearch = false;
+			searchType = RegistrySearchMenu.NO_SEARCH;
 			return;
 		}
-		searchTextId = id;
-		searchTextName = null;
-		isFocusedSearch = true;
+		searchText = id;
+		searchType = RegistrySearchMenu.ID_SEARCH;
 	}
 	public void setNameSearch(String name) {
 		if (name == null || name.length() == 0) {
-			isFocusedSearch = false;
+			searchType = RegistrySearchMenu.NO_SEARCH;
 			return;
 		}
-		searchTextName = name;
-		searchTextId = null;
-		isFocusedSearch = true;
+		searchText = name;
+		searchType = RegistrySearchMenu.NAME_SEARCH;
 	}
-	public void setViewerPlugins(PluginObjectAdapter[] items){
-		viewerItems = items;
+	public void setVersionSearch(String version) {
+		if (version == null || version.length() == 0) {
+			searchType = RegistrySearchMenu.NO_SEARCH;
+			return;
+		}
+		searchText = version;
+		searchType = RegistrySearchMenu.VERSION_SEARCH;
+	}
+	public void setShowPlugins(byte type){
+		this.showType = type;
+	}
+	public byte getShowType(){
+		return showType;
 	}
 }

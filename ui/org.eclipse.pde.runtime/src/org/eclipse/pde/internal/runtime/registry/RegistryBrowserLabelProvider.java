@@ -10,19 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILibrary;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.internal.runtime.OverlayIcon;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.graphics.*;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image pluginImage;
@@ -41,9 +33,11 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image extensionPointsImage;
 	private Image requiresImage;
 	private Image reqPluginImage;
-	private boolean useUniqueId = false;
+	private boolean isInExtensionSet = false;
+	private TreeViewer viewer;
 	
-	public RegistryBrowserLabelProvider() {
+	public RegistryBrowserLabelProvider(TreeViewer viewer) {
+		this.viewer = viewer;
 		pluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
 		reqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
 		extensionPointImage = PDERuntimePluginImages.DESC_EXT_POINT_OBJ.createImage();
@@ -118,9 +112,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		if (element instanceof PluginObjectAdapter)
 			element = ((PluginObjectAdapter) element).getObject();
 		if (element instanceof IPluginDescriptor) {
-			if (useUniqueId)
-				return ((IPluginDescriptor)element).getUniqueIdentifier();
-			return ((IPluginDescriptor) element).getLabel();
+			return ((IPluginDescriptor)element).getUniqueIdentifier();
 		}
 		if (element instanceof IPluginFolder) {
 			switch (((IPluginFolder) element).getFolderId()) {
@@ -135,10 +127,28 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 		}
 		if (element instanceof IExtension) {
-			return ((IExtension) element).getExtensionPointUniqueIdentifier();
+			if (((RegistryBrowserContentProvider)viewer.getContentProvider()).isInExtensionSet)
+				return ((IExtension) element).getExtensionPointUniqueIdentifier();
+
+			IConfigurationElement[] configElements = ((IExtension) element).getConfigurationElements();
+			String project = configElements[0].getAttributeAsIs("class");
+			if (project == null){
+				String[] attrNames = configElements[0].getAttributeNames();
+				for (int i = 0; i<attrNames.length; i++){
+					if (attrNames[i].toLowerCase().indexOf("id") != -1){
+						project =  configElements[0].getAttribute(attrNames[i]);
+						break;
+					}
+				}
+				if (project == null)
+					return "";
+			} 
+			
+			int classNameLoc = project.lastIndexOf(".");
+			return classNameLoc != -1 ? project.substring(0,classNameLoc) : project;
 		}
 		if (element instanceof IExtensionPoint) {
-			return ((IExtensionPoint) element).getLabel();
+			return ((IExtensionPoint) element).getUniqueIdentifier();
 		}
 		if (element instanceof IPluginPrerequisite) {
 			return ((IPluginPrerequisite) element).getUniqueIdentifier();
@@ -147,8 +157,6 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			return ((ILibrary) element).getPath().toString();
 		}
 		if (element instanceof IConfigurationElement) {
-			ConfigurationElementPropertySource source = new ConfigurationElementPropertySource((IConfigurationElement) element);
-			IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
 			String label = ((IConfigurationElement) element).getAttribute("label");
 			if (label == null){
 				label = ((IConfigurationElement) element).getAttribute("name");
@@ -166,8 +174,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		return super.getText(element);
 	}
 	
-	public void setUseUniqueId(boolean useId){
-		useUniqueId = useId;
+	public void setIsInExtensionSet(boolean inExt){
+		isInExtensionSet = inExt;
 	}
 	
 

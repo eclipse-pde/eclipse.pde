@@ -13,10 +13,9 @@ package org.eclipse.pde.internal.runtime;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.registry.*;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.plugin.*;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
@@ -79,9 +78,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	}
 	public void startup() throws CoreException {
 		IAdapterManager manager = Platform.getAdapterManager();
-		RegistryPropertySourceFactory factory =
-			new RegistryPropertySourceFactory();
-		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
 	
 }

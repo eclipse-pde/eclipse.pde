@@ -20,13 +20,14 @@ import org.eclipse.swt.widgets.*;
 public class RegistrySearchDialog extends Dialog{
 	public static String ENTER_ID = "RegistrySearchDialog.enterId";
 	public static String ENTER_NAME = "RegistrySearchDialog.enterName";
-	private boolean isId;
+	public static String ENTER_VERSION = "RegistrySearchDialog.enterVersion";
+	private byte searchType;
 	private Text text;
 	private String oldText = null;
 	
-	public RegistrySearchDialog(Shell parentShell, boolean isId){
+	public RegistrySearchDialog(Shell parentShell, byte type){
 		super(parentShell);
-		this.isId = isId;
+		this.searchType = type;
 	}
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -38,7 +39,13 @@ public class RegistrySearchDialog extends Dialog{
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(isId ? PDERuntimePlugin.getResourceString(ENTER_ID) : PDERuntimePlugin.getResourceString(ENTER_NAME)); //$NON-NLS-1$
+		if (searchType == RegistrySearchMenu.ID_SEARCH)
+			label.setText(PDERuntimePlugin.getResourceString(ENTER_ID));
+		else if (searchType == RegistrySearchMenu.NAME_SEARCH)
+			label.setText(PDERuntimePlugin.getResourceString(ENTER_NAME));
+		else 
+			label.setText(PDERuntimePlugin.getResourceString(ENTER_VERSION));
+		
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);

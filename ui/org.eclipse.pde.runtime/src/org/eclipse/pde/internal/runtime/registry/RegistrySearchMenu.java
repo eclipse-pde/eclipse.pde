@@ -17,13 +17,18 @@ import org.eclipse.ui.*;
 public class RegistrySearchMenu extends ContributionItem {
 	private Action useUniqueIdSearchAction;
 	private Action usePluginNameSearchAction;
-	private Action refreshAction;
+	private Action usePluginVersionSearchAction;
+
 	private boolean enabled;
 	private IWorkbenchWindow window;
 	private TreeViewer treeViewer;
-	private boolean isId;
+	public static byte ID_SEARCH = 0x0;
+	public static byte NAME_SEARCH = 0x1;
+	public static byte VERSION_SEARCH = 0x2;
+	public static final byte NO_SEARCH = 0x3;
 	private static final String SEARCH_REGISTRY = "RegistrySearchMenu.dialog.title";
 	private static final String PLUGIN_NAME = "RegistryMenu.pluginName";
+	private static final String PLUGIN_VERSION = "RegistryMenu.pluginVersion";
 	private static final String PLUGIN_ID = "RegistryMenu.pluginId";
 	private String searchText;
 	public class UniqueIdSearchAction extends Action {
@@ -40,6 +45,14 @@ public class RegistrySearchMenu extends ContributionItem {
 		}
 		public void run() {
 			handlePluginNameSearch();
+		}
+	}
+	public class PluginVersionSearchAction extends Action {
+		public PluginVersionSearchAction(String text) {
+			super(text);
+		}
+		public void run() {
+			handlePluginVersionSearch();
 		}
 	}
 	/**
@@ -68,11 +81,9 @@ public class RegistrySearchMenu extends ContributionItem {
 	 *            true if menu actions should be enabled
 	 */
 	public RegistrySearchMenu(IMenuManager innerMgr, IWorkbenchWindow window,
-			boolean register, TreeViewer treeViewer,
-			Action refreshAction, boolean isEnabled) {
+			boolean register, TreeViewer treeViewer, boolean isEnabled) {
 		this(window);
 		this.treeViewer = treeViewer;
-		this.refreshAction = refreshAction;
 		this.enabled = isEnabled;
 		fillMenu(innerMgr);
 		// Must be done after constructor to ensure field initialization.
@@ -80,47 +91,44 @@ public class RegistrySearchMenu extends ContributionItem {
 	public RegistrySearchMenu(IWorkbenchWindow window) {
 		super();
 		this.window = window;
-		//		showDlgAction = ActionFactory.NEW.create(window);
 		useUniqueIdSearchAction = new UniqueIdSearchAction("unique id");
 		useUniqueIdSearchAction.setText(PDERuntimePlugin
 				.getResourceString(PLUGIN_ID));
 		usePluginNameSearchAction = new PluginNameSearchAction("plug-in name");
 		usePluginNameSearchAction.setText(PDERuntimePlugin
 				.getResourceString(PLUGIN_NAME));
+		usePluginVersionSearchAction = new PluginVersionSearchAction("plug-in version");
+		usePluginVersionSearchAction.setText(PDERuntimePlugin.getResourceString(PLUGIN_VERSION));
 	}
 	private void fillMenu(IContributionManager innerMgr) {
-		// Remove all.
 		innerMgr.removeAll();
 		innerMgr.add(useUniqueIdSearchAction);
 		useUniqueIdSearchAction.setEnabled(enabled);
 		innerMgr.add(usePluginNameSearchAction);
 		usePluginNameSearchAction.setEnabled(enabled);
+		innerMgr.add(usePluginVersionSearchAction);
+		usePluginVersionSearchAction.setEnabled(enabled);
 	}
 	private void handlePluginIdSearch() {
-		isId = true;
-		openSearchDialog();
+		openSearchDialog(ID_SEARCH);
 		((RegistryBrowserContentProvider) treeViewer.getContentProvider())
 				.setUniqueIdSearch(searchText);
-		if (searchText!=null && searchText.length()!=0){
-			((RegistryBrowserLabelProvider)treeViewer.getLabelProvider()).setUseUniqueId(true);
-			((RegistryBrowserContentProvider) treeViewer.getContentProvider()).setViewerPlugins(null);
-		}
+		treeViewer.refresh();
+	}
+	private void handlePluginVersionSearch(){
+		openSearchDialog(VERSION_SEARCH);
+		((RegistryBrowserContentProvider) treeViewer.getContentProvider()).setVersionSearch(searchText);
 		treeViewer.refresh();
 	}
 	private void handlePluginNameSearch() {
-		isId = false;
-		openSearchDialog();
+		openSearchDialog(NAME_SEARCH);
 		((RegistryBrowserContentProvider) treeViewer.getContentProvider())
 				.setNameSearch(searchText);
-		if (searchText!=null && searchText.length()!=0){
-			((RegistryBrowserLabelProvider)treeViewer.getLabelProvider()).setUseUniqueId(false);
-			((RegistryBrowserContentProvider) treeViewer.getContentProvider()).setViewerPlugins(null);
-		}
 		treeViewer.refresh();
 	}
-	private void openSearchDialog() {
+	private void openSearchDialog(byte searchType) {
 		RegistrySearchDialog dialog = new RegistrySearchDialog(window
-				.getShell(), isId);
+				.getShell(), searchType);
 		dialog.create();
 		dialog.getShell().setText(
 				PDERuntimePlugin.getResourceString(SEARCH_REGISTRY)); //$NON-NLS-1$
