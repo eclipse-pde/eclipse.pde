@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
@@ -72,7 +73,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
@@ -160,7 +161,7 @@ public class ExtensionPointDetails extends PDEDetails {
 							Object element) {
 						if (element instanceof IFile){
 							String ext = ((IFile)element).getFullPath().getFileExtension();
-							return ext.equals("exsd") || ext.equals("mxsd"); //$NON-NLS-1$ //$NON-NLS-2$
+								return "exsd".equals(ext) || "mxsd".equals(ext); //$NON-NLS-1$ //$NON-NLS-2$
 						} else if (element instanceof IContainer){ // i.e. IProject, IFolder
 							try {
 								IResource[] resources = ((IContainer)element).members();
@@ -192,7 +193,7 @@ public class ExtensionPointDetails extends PDEDetails {
 									null);
 						IFile file = (IFile) selection[0];
 						String ext = file.getFullPath().getFileExtension();
-						if (ext.equals("exsd") || ext.equals("mxsd")) //$NON-NLS-1$ //$NON-NLS-2$
+						if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
 							return new Status(IStatus.OK, pluginName,
 									IStatus.OK, "", null); //$NON-NLS-1$
 						return new Status(
@@ -213,7 +214,7 @@ public class ExtensionPointDetails extends PDEDetails {
 					dialog.setInitialSelection(project.getFile(new Path(filePath)));
 				else
 					dialog.setInitialSelection(null);
-				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					Object[] elements = dialog.getResult();
 					if (elements.length >0){
 						IResource elem = (IResource) elements[0];
@@ -303,7 +304,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		d.asyncExec(new Runnable() {
 			public void run() {
 				try {
-					String editorId = PDEPlugin.SCHEMA_EDITOR_ID;
+					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
 					ww.getActivePage().openEditor(
 						new FileEditorInput(file),
 						editorId);
@@ -327,7 +328,7 @@ public class ExtensionPointDetails extends PDEDetails {
 						wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 450);
-				if(dialog.open() == WizardDialog.OK)
+				if(dialog.open() == Window.OK)
 					update();
 			}
 		});
