@@ -13,10 +13,14 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 import java.io.PrintWriter;
 import java.util.*;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.osgi.OSGiWorkspaceModelManager;
 
 public class Bundle extends BundleObject implements IBundle {
 	private Hashtable headers;
@@ -26,7 +30,7 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	public String getHeader(String key) {
-		return (String)headers.get(key);
+		return (String) headers.get(key);
 	}
 
 	public void setHeader(String key, String value) throws CoreException {
@@ -47,14 +51,14 @@ public class Bundle extends BundleObject implements IBundle {
 	public void reset() {
 		headers.clear();
 	}
-	
+
 	public boolean isValid() {
 		// must have an id and a name
-		return headers.containsValue(KEY_NAME) &&
-		headers.containsValue(KEY_DESC) &&
-		headers.containsValue(KEY_VERSION);
+		return headers.containsValue(KEY_NAME)
+			&& headers.containsValue(KEY_DESC)
+			&& headers.containsValue(KEY_VERSION);
 	}
-	
+
 	public void load(IPluginBase plugin, IProgressMonitor monitor) {
 		reset();
 		monitor.beginTask("", 2);
@@ -66,17 +70,23 @@ public class Bundle extends BundleObject implements IBundle {
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());
 		if (plugin instanceof IFragment)
-			loadFragment((IFragment)plugin);
+			loadFragment((IFragment) plugin);
 		else
-			loadPlugin((IPlugin)plugin);
-		loadLibraries(plugin.getLibraries(), new SubProgressMonitor(monitor, 1));
+			loadPlugin((IPlugin) plugin);
+		loadLibraries(
+			plugin.getLibraries(),
+			new SubProgressMonitor(monitor, 1));
 		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
+		if (plugin.getModel().getUnderlyingResource() != null)
+			loadExports(plugin.getModel().getUnderlyingResource().getProject());
 	}
 
 	private void loadPlugin(IPlugin plugin) {
-		headers.put(KEY_ACTIVATOR, "org.eclipse.core.runtime.compatibility.PluginActivator");
+		headers.put(
+			KEY_ACTIVATOR,
+			"org.eclipse.core.runtime.compatibility.PluginActivator");
 		String pluginClass = plugin.getClassName();
-		if (pluginClass!=null)
+		if (pluginClass != null)
 			headers.put(KEY_PLUGIN, pluginClass);
 	}
 
@@ -90,39 +100,84 @@ public class Bundle extends BundleObject implements IBundle {
 		hostBundle.append(pluginVersion);
 		headers.put(KEY_HOST_BUNDLE, hostBundle.toString());
 	}
-	
-	private void loadLibraries(IPluginLibrary [] libraries, IProgressMonitor monitor) {
+
+	private void loadLibraries(
+		IPluginLibrary[] libraries,
+		IProgressMonitor monitor) {
 		StringBuffer classpath = new StringBuffer();
 		//StringBuffer packageExport = new StringBuffer();
-		for (int i=0; i<libraries.length; i++) {
+		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
 			String name = library.getName();
-			if (i>0)
+			if (i > 0)
 				classpath.append(",");
 			classpath.append(name);
 		}
 		headers.put(KEY_CLASSPATH, classpath.toString());
 	}
-	
-	private void loadImports(IPluginImport[] imports, IProgressMonitor monitor) {
+
+	private void loadImports(
+		IPluginImport[] imports,
+		IProgressMonitor monitor) {
 		StringBuffer requires = new StringBuffer();
-		
-		for (int i=0; i<imports.length; i++) {
+
+		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			String id = iimport.getId();
 			String version = iimport.getVersion();
-			if (i>0) requires.append(", ");
+			if (i > 0)
+				requires.append(", ");
 			requires.append(id);
-			if (version!=null) {
+			if (version != null) {
 			}
 		}
 		headers.put(KEY_REQUIRE_BUNDLE, requires.toString());
 	}
 
+	private void loadExports(IProject project) {
+		if (!OSGiWorkspaceModelManager.isJavaPluginProject(project))
+			return;
+		boolean binary = OSGiWorkspaceModelManager.isBinaryPluginProject(project);
+		IJavaProject javaProject = JavaCore.create(project);
+		StringBuffer provides = new StringBuffer();
+		int added=0;
+		try {
+			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
+			for (int i=0; i<roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				if (binary) {
+				}
+				else {
+					if (root.getKind()!=IPackageFragmentRoot.K_SOURCE)
+						continue;
+				}
+				IJavaElement [] children = root.getChildren();
+				for (int j=0; j<children.length; j++) {
+					IJavaElement child = children[j];
+					if (child instanceof IPackageFragment) {
+						IPackageFragment packageChild = (IPackageFragment)child;
+						if (packageChild.containsJavaResources()) {
+							String name = packageChild.getElementName();
+							if (added>0)
+								provides.append(", ");
+							provides.append(name);
+							added++;
+						}
+					}
+				}
+			}
+				
+			if (added>0)
+				headers.put(KEY_PROVIDE_PACKAGE, provides.toString());
+		} catch (JavaModelException e) {
+			PDECore.logException(e);
+		}
+	}
+
 	public void write(String indent, PrintWriter writer) {
 		for (Enumeration enum = headers.keys(); enum.hasMoreElements();) {
-			String key = (String)enum.nextElement();
-			String value = (String)headers.get(key);
+			String key = (String) enum.nextElement();
+			String value = (String) headers.get(key);
 			if (isCommaSeparated(key)) {
 				StringTokenizer stok = new StringTokenizer(value, ",");
 				ArrayList list = new ArrayList();
@@ -130,8 +185,7 @@ public class Bundle extends BundleObject implements IBundle {
 					list.add(stok.nextToken().trim());
 				}
 				writeEntry(key, list, writer);
-			}
-			else {
+			} else {
 				writeEntry(key, value, writer);
 			}
 		}
@@ -154,7 +208,7 @@ public class Bundle extends BundleObject implements IBundle {
 			else {
 				out.println(',');
 				out.print(' ');
-			} 
+			}
 			out.print(i.next());
 		}
 		out.println();
@@ -164,9 +218,9 @@ public class Bundle extends BundleObject implements IBundle {
 		if (value != null && value.length() > 0)
 			out.println(key + ": " + value);
 	}
-	
+
 	private boolean isCommaSeparated(String key) {
-		for (int i=0; i<COMMA_SEPARATED_KEYS.length; i++) {
+		for (int i = 0; i < COMMA_SEPARATED_KEYS.length; i++) {
 			if (COMMA_SEPARATED_KEYS[i].equals(key))
 				return true;
 		}
