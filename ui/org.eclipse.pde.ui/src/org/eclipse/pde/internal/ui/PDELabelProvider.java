@@ -28,10 +28,6 @@ import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * @version 	1.0
- * @author
- */
 public class PDELabelProvider extends SharedLabelProvider {
 	private static final String KEY_OUT_OF_SYNC =
 		"PluginModelManager.outOfSync"; //$NON-NLS-1$
@@ -90,9 +86,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteCategory) {
 			return getObjectText((ISiteCategory) obj);
-		}
-		if (obj instanceof ISiteBuildFeature) {
-			return getObjectText((ISiteBuildFeature) obj);
 		}
 		if (obj instanceof IBuildEntry) {
 			return getObjectText((IBuildEntry)obj);
@@ -234,9 +227,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return preventNull(def.getLabel());
 		return preventNull(obj.getName());
 	}
-	public String getObjectText(ISiteBuildFeature obj) {
-		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IBundlePluginBase) {
@@ -323,9 +313,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteCategory) {
 			return getObjectImage((ISiteCategory) obj);
-		}
-		if (obj instanceof ISiteBuildFeature) {
-			return getObjectImage((ISiteBuildFeature) obj);
 		}
 		return super.getImage(obj);
 	}
@@ -481,9 +468,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	private Image getObjectImage(ISchemaAttribute att) {
 		int flags = getSchemaObjectFlags(att);
-		if (att.getKind() == ISchemaAttribute.JAVA)
+		if (att.getKind() == IMetaAttribute.JAVA)
 			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ, flags);
-		if (att.getKind() == ISchemaAttribute.RESOURCE)
+		if (att.getKind() == IMetaAttribute.RESOURCE)
 			return get(PDEPluginImages.DESC_ATT_FILE_OBJ, flags);
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
 			return get(PDEPluginImages.DESC_ATT_REQ_OBJ, flags);
@@ -607,12 +594,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteCategory obj) {
 		int flags = obj.getDefinition() == null ? F_ERROR : 0;
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
-	}
-
-	public Image getObjectImage(ISiteBuildFeature obj) {
-		if (obj.getReferencedFeature() == null)
-			return get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
-		return get(PDEPluginImages.DESC_FEATURE_OBJ);
 	}
 
 	public boolean isFullNameModeEnabled() {

@@ -77,11 +77,18 @@ public class NewArchiveDialog extends BaseNewDialog {
 	}
 
 	private boolean hasPath(String path) {
+		ISiteArchive thisArchive = (ISiteArchive) getSiteObject();
+		String currentPath = thisArchive != null ? thisArchive.getPath() : null;
+		
 		ISiteModel model = getSiteModel();
 		ISiteArchive[] archives = model.getSite().getArchives();
 		for (int i = 0; i < archives.length; i++) {
 			ISiteArchive archive = archives[i];
 			String apath = archive.getPath();
+			if (currentPath != null && currentPath.equals(path)) {
+				// do not have to change path while editing
+				return false;
+			}
 			if (apath != null && apath.equals(path)) {
 				return true;
 			}

@@ -27,7 +27,6 @@ public abstract class AbstractSiteModel
 	protected transient Site site;
 	private transient ISiteModelFactory factory;
 	private boolean enabled = true;
-	private ISiteBuildModel siteBuildModel;
 
 	public AbstractSiteModel() {
 		super();
@@ -39,12 +38,6 @@ public abstract class AbstractSiteModel
 			this.site = s;
 		}
 		return site;
-	}
-	public ISiteBuildModel getBuildModel() {
-		return siteBuildModel;
-	}
-	public void setBuildModel(ISiteBuildModel buildModel) {
-		this.siteBuildModel = buildModel;
 	}
 	public ISiteModelFactory getFactory() {
 		if (factory == null)

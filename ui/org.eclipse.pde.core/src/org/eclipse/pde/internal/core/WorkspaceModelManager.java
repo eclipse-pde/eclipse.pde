@@ -28,10 +28,6 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.team.core.*;
 
-/**
- * @author melhem
- *
- */
 public class WorkspaceModelManager
 		implements
 			IResourceChangeListener,
@@ -702,9 +698,6 @@ public class WorkspaceModelManager
 		}
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			return new WorkspaceSiteModel(file);
-		}
-		if (name.equals(PDECore.SITEBUILD_PROPERTIES)) {
-			return new WorkspaceSiteBuildModel(file);
 		}
 		return null;
 	}

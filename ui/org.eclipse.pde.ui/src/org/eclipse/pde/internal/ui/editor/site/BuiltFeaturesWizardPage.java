@@ -19,8 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.*;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -33,7 +32,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class BuiltFeaturesWizardPage extends WizardPage {
-	private ISiteBuildModel model;
+	private CategorySection fCategorySection;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer featureViewer;
 
@@ -64,9 +63,9 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 		}
 	}
 
-	public BuiltFeaturesWizardPage(ISiteBuildModel model) {
+	public BuiltFeaturesWizardPage(CategorySection categorySection) {
 		super("BuiltFeaturesWizardPage"); //$NON-NLS-1$
-		this.model = model;
+		fCategorySection = categorySection;
 		setTitle(PDEPlugin.getResourceString("BuildFeatureWizardPage.title")); //$NON-NLS-1$
 		setDescription(PDEPlugin.getResourceString("BuildFeatureWizardPage.desc")); //$NON-NLS-1$
 		setPageComplete(false);
@@ -112,11 +111,11 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	private boolean isOnTheList(IFeatureModel candidate) {
-		ISiteBuildFeature[] features = model.getSiteBuild().getFeatures();
+		ISiteFeature[] features = fCategorySection.getModel().getSite().getFeatures();
 		IFeature cfeature = candidate.getFeature();
 		
 		for (int i = 0; i < features.length; i++) {
-			ISiteBuildFeature bfeature = features[i];
+			ISiteFeature bfeature = features[i];
 			if (bfeature.getId().equals(cfeature.getId()) &&
 				bfeature.getVersion().equals(cfeature.getVersion())) return true;
 		}
@@ -127,7 +126,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	private void initialize() {
-		featureViewer.setInput(model.getSiteBuild());
+		featureViewer.setInput(fCategorySection.getModel().getSite());
 		checkboxTablePart.setSelection(new Object[0]);
 	}
 
@@ -141,7 +140,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doAdd(candidates, monitor);
+					fCategorySection.doAdd(candidates, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -158,24 +157,4 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 		return true;
 	}
 
-	private void doAdd(Object [] candidates, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(
-			PDEPlugin.getResourceString("BuildFeatureWizardPage.adding"), //$NON-NLS-1$
-			candidates.length + 1);
-		ISiteBuild siteBuild = model.getSiteBuild();
-		ISiteBuildFeature[] added = new ISiteBuildFeature[candidates.length];
-		for (int i = 0; i < candidates.length; i++) {
-			IFeatureModel candidate = (IFeatureModel) candidates[i];
-			String name = candidate.getFeature().getLabel();
-			monitor.subTask(candidate.getResourceString(name));
-			SiteBuildFeature child = (SiteBuildFeature) model.createFeature();
-			child.setReferencedFeature(candidate.getFeature());
-			added[i] = child;
-			monitor.worked(1);
-		}
-		monitor.subTask(""); //$NON-NLS-1$
-		monitor.setTaskName(PDEPlugin.getResourceString("BuildFeatureWizardPage.updating")); //$NON-NLS-1$
-		siteBuild.addFeatures(added);
-		monitor.worked(1);
-	}
 }

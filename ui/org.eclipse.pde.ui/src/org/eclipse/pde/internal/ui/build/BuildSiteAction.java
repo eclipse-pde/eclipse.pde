@@ -26,73 +26,89 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.*;
 
-/**
- * @author melhem
- */
-public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConstants {
-	
-	private ISiteBuildModel fBuildModel;
-	private IFile fSiteXML;
-	
+public class BuildSiteAction implements IObjectActionDelegate,
+		IPreferenceConstants {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+	private ISiteModel fModel;
+
+	private IFile fSiteXML;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (fBuildModel == null)
+		if (fModel == null)
 			return;
-		ISiteBuildFeature[] sbFeatures = fBuildModel.getSiteBuild().getFeatures();
+		ISiteFeature[] sbFeatures = fModel.getSite().getFeatures();
+		sbFeatures[0].getModel().getSite().getFeatures();
 		IFeatureModel[] models = getFeatureModels(sbFeatures);
-		
+
 		if (models.length > 0) {
-			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject(), fBuildModel);
+			BuildSiteJob job = new BuildSiteJob(models, fSiteXML.getProject());
 			job.setUser(true);
 			job.schedule();
-			job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_SITE_OBJ);
-		}		
+			job.setProperty(IProgressConstants.ICON_PROPERTY,
+					PDEPluginImages.DESC_SITE_OBJ);
+		}
 	}
-	
-	private IFeatureModel[] getFeatureModels(ISiteBuildFeature[] sbFeatures) {
+
+	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
 		ArrayList list = new ArrayList();
-		for (int i = 0; i < sbFeatures.length; i++) {
-			IFeature feature = sbFeatures[i].getReferencedFeature();
+		for (int i = 0; i < sFeatures.length; i++) {
+			IFeature feature = getFeatureModel(sFeatures[i]);
 			if (feature == null)
 				continue;
 			IFeatureModel model = feature.getModel();
 			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);
-		}	
-		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);		
+		}
+		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
-		
+
+	/**
+	 * 
+	 * @param siteFeature
+	 * @return IFeatureModel or null
+	 */
+	private IFeature getFeatureModel(ISiteFeature siteFeature) {
+		IFeatureModel[] models = PDECore.getDefault()
+				.getWorkspaceModelManager().getFeatureModels();
+		for (int i = 0; i < models.length; i++) {
+			IFeatureModel model = models[i];
+			IFeature feature = model.getFeature();
+			if (feature.getId().equals(siteFeature.getId())
+					&& feature.getVersion().equals(siteFeature.getVersion())) {
+				return feature;
+			}
+		}
+		return null;
+	}
+
 	public void selectionChanged(IAction action, ISelection selection) {
-		fBuildModel = null;
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null && obj instanceof IFile) {
-				fSiteXML = (IFile)obj;
-				IProject project = fSiteXML.getProject();
-				WorkspaceModelManager manager =
-					PDECore.getDefault().getWorkspaceModelManager();
-				IResource buildFile =
-					project.findMember(
-						new Path(PDECore.SITEBUILD_DIR).append(
-							PDECore.SITEBUILD_PROPERTIES));
-				if (buildFile != null && buildFile instanceof IFile) {
-					fBuildModel = (ISiteBuildModel) manager.getModel((IFile)buildFile);
-					try {
-						fBuildModel.load();
-					} catch (CoreException e) {
-					}
+				fSiteXML = (IFile) obj;
+				WorkspaceModelManager manager = PDECore.getDefault()
+						.getWorkspaceModelManager();
+				fModel = (ISiteModel) manager.getModel(fSiteXML);
+				try {
+					fModel.load();
+				} catch (CoreException e) {
 				}
 			}
 		}
 	}
-	
+
 }

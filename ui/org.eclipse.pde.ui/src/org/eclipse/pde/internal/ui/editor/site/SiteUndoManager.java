@@ -11,47 +11,31 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.site.*;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
 import org.eclipse.pde.internal.core.site.SiteObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
 
-/**
- * @version 	1.0
- * @author
- */
 public class SiteUndoManager extends ModelUndoManager {
 	public SiteUndoManager(SiteEditor editor) {
 		super(editor);
 		setUndoLevelLimit(30);
 	}
 
-	/*
-	 * @see IModelUndoManager#execute(ModelUndoOperation)
-	 */
-
-	public void connect(IModelChangeProvider provider) {
-		ISiteModel model = (ISiteModel) provider;
-		ISiteBuildModel buildModel = model.getBuildModel();
-		super.connect(provider);
-		super.connect(buildModel);
-	}
-	
-	public void disconnect(IModelChangeProvider provider) {
-		ISiteModel model = (ISiteModel)provider;
-		ISiteBuildModel buildModel = model.getBuildModel();
-		super.disconnect(provider);
-		super.disconnect(buildModel);
-	}
-
 	protected String getPageId(Object obj) {
 		return FeaturesPage.PAGE_ID;
 	}
-
+	/*
+	 * @see IModelUndoManager#execute(ModelUndoOperation)
+	 */
 	protected void execute(IModelChangedEvent event, boolean undo) {
 		IModelChangeProvider model = event.getChangeProvider();
 		Object[] elements = event.getChangedObjects();
@@ -90,15 +74,6 @@ public class SiteUndoManager extends ModelUndoManager {
 	private void executeAdd(IModelChangeProvider model, Object[] elements) {
 		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
 		ISite site = siteModel!=null?siteModel.getSite():null;
-		ISiteBuild siteBuild = null;
-		ISiteBuildModel siteBuildModel = null;
-		if (siteModel!=null)
-			siteBuildModel = siteModel.getBuildModel();
-		else if (model instanceof ISiteBuildModel)
-			siteBuildModel = (ISiteBuildModel)model;
-		
-		if (siteBuildModel!=null)
-			siteBuild = siteBuildModel.getSiteBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -106,8 +81,6 @@ public class SiteUndoManager extends ModelUndoManager {
 
 				if (element instanceof ISiteFeature) {
 					site.addFeatures(new ISiteFeature [] {(ISiteFeature) element});
-				} else if (element instanceof ISiteBuildFeature) {
-					siteBuild.addFeatures(new ISiteBuildFeature [] {(ISiteBuildFeature) element});
 				} else if (element instanceof ISiteArchive) {
 					site.addArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
@@ -126,24 +99,13 @@ public class SiteUndoManager extends ModelUndoManager {
 	private void executeRemove(IModelChangeProvider model, Object[] elements) {
 		ISiteModel siteModel = (model instanceof ISiteModel)?(ISiteModel)model:null;
 		ISite site = siteModel!=null?siteModel.getSite():null;
-		ISiteBuild siteBuild = null;
-		ISiteBuildModel siteBuildModel = null;
-		if (siteModel!=null)
-			siteBuildModel = siteModel.getBuildModel();
-		else if (model instanceof ISiteBuildModel)
-			siteBuildModel = (ISiteBuildModel)model;
 		
-		if (siteBuildModel!=null)
-			siteBuild = siteBuildModel.getSiteBuild();
-
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 
 				if (element instanceof ISiteFeature) {
 					site.removeFeatures(new ISiteFeature [] {(ISiteFeature) element});
-				} else if (element instanceof ISiteBuildFeature) {
-					siteBuild.removeFeatures(new ISiteBuildFeature [] {(ISiteBuildFeature) element});
 				} else if (element instanceof ISiteArchive) {
 					site.removeArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
@@ -170,15 +132,6 @@ public class SiteUndoManager extends ModelUndoManager {
 			try {
 				sobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-		if (element instanceof SiteBuildObject) {
-			SiteBuildObject sobj = (SiteBuildObject)element;
-			try {
-				sobj.restoreProperty(propertyName, oldValue, newValue);
-			}
-			catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}

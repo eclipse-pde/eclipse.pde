@@ -15,22 +15,21 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 public class BuildSiteJob extends FeatureExportJob {
 	
-	private IProject fSiteProject;
+	private IContainer fSiteContainer;
 
-	public BuildSiteJob(IFeatureModel[] models, IProject project, ISiteBuildModel buildModel) {
+	public BuildSiteJob(IFeatureModel[] models, IContainer folder) {
 		super(EXPORT_AS_UPDATE_JARS, 
 				false, 
-				project.getLocation().toOSString(),
+				folder.getLocation().toOSString(),
 				null,  
 				models);
-		fSiteProject = project;
-		setRule(MultiRule.combine(fSiteProject, getRule()));
+		fSiteContainer = folder;
+		setRule(MultiRule.combine(fSiteContainer.getProject(), getRule()));
 	}
 	
 	/* (non-Javadoc)
@@ -44,13 +43,13 @@ public class BuildSiteJob extends FeatureExportJob {
 	}
 	
 	private void touchSite(IProgressMonitor monitor) {
-		File file = new File(fSiteProject.getLocation().toOSString(), "site.xml"); //$NON-NLS-1$
+		File file = new File(fSiteContainer.getLocation().toOSString(), "site.xml"); //$NON-NLS-1$
 		file.setLastModified(System.currentTimeMillis());
 	}
 	
 	private void refresh(IProgressMonitor monitor) {
 		try {
-			fSiteProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			fSiteContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (CoreException e) {
 		}
 	}

@@ -38,6 +38,9 @@ public class WorkspaceSiteModel
 	}
 
 	protected NLResourceHelper createNLResourceHelper() {
+		if(file == null){
+			return null;
+		}
 		try {
 			IPath path = file.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();

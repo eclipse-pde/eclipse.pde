@@ -43,6 +43,8 @@ public class NewSiteProjectWizard
 	public static final String MAIN_PAGE_DESC = "NewSiteWizard.MainPage.desc"; //$NON-NLS-1$
 	public static final String OVERWRITE_SITE = "NewFeatureWizard.overwriteSite"; //$NON-NLS-1$
 	public static final String DEF_PROJECT_NAME ="project-name"; //$NON-NLS-1$
+	public static final String DEFAULT_PLUGIN_DIR = "plugins"; //$NON-NLS-1$
+	public static final String DEFAULT_FEATURE_DIR = "features"; //$NON-NLS-1$
 
 	private NewSiteProjectCreationPage mainPage;
 	private IConfigurationElement config;
@@ -78,19 +80,9 @@ public class NewSiteProjectWizard
 		// Save the model
 		model.save();
 		model.dispose();
-		
-		// Create and save build model
-		WorkspaceSiteBuildModel buildModel = new WorkspaceSiteBuildModel();
-		IFile buildFile = project.getFile(PDECore.SITEBUILD_FILE);
-		buildModel.setFile(buildFile);
-		ISiteBuild siteBuild = buildModel.getSiteBuild();
-	 	siteBuild.setAutobuild(false);
-	 	siteBuild.setShowConsole(true);
-	 	buildModel.save();
-		buildModel.dispose();
-		
+				
 		// Set the default editor
-		IDE.setDefaultEditor(file, PDEPlugin.SITE_EDITOR_ID);
+		IDE.setDefaultEditor(file, IPDEUIConstants.SITE_EDITOR_ID);
 		return file;
 	}
 	
@@ -488,7 +480,7 @@ public class NewSiteProjectWizard
 	}
 	
 	private void createFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-		String[] names = new String[]{mainPage.getWebLocation(), SiteBuild.DEFAULT_FEATURE_DIR, SiteBuild.DEFAULT_PLUGIN_DIR};
+		String[] names = new String[]{mainPage.getWebLocation(), DEFAULT_FEATURE_DIR, DEFAULT_PLUGIN_DIR};
 		IFolder folder;
 		IPath path;
 		
@@ -507,7 +499,6 @@ public class NewSiteProjectWizard
 				
 		}
 
-		createFolder(project, PDECore.SITEBUILD_DIR, monitor);
 	}
 	
 	private void createFolder(IProject project, String name, IProgressMonitor monitor) throws CoreException {
@@ -534,7 +525,7 @@ public class NewSiteProjectWizard
 		// Open the editor
 
 		FileEditorInput input = new FileEditorInput(manifestFile);
-		String id = PDEPlugin.SITE_EDITOR_ID;
+		String id = IPDEUIConstants.SITE_EDITOR_ID;
 		try {
 			page.openEditor(input, id);
 		} catch (PartInitException e) {

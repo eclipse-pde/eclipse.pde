@@ -9,49 +9,67 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.DetailsPart;
+import org.eclipse.ui.forms.IDetailsPage;
+import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 /**
  * 
  * Features page.
  */
 public class FeaturesPage extends PDEFormPage {
 	public static final String PAGE_ID = "features"; //$NON-NLS-1$
-	private FeatureSection featureSection;
+//	private FeatureSection featureSection;
 	private CategorySection categorySection;
+	private SiteFeaturesBlock block;
+	public class SiteFeaturesBlock extends PDEMasterDetailsBlock {
+		public SiteFeaturesBlock() {
+			super(FeaturesPage.this);
+		}
+		protected PDESection createMasterSection(IManagedForm managedForm,
+				Composite parent) {
+			categorySection = new CategorySection(getPage(), parent);
+			return categorySection;
+		}
+		protected void registerPages(DetailsPart detailsPart) {
+			detailsPart.setPageProvider(new IDetailsPageProvider() {
+				public Object getPageKey(Object object) {
+					if (object instanceof SiteFeatureAdapter)
+						return SiteFeatureAdapter.class;
+					if (object instanceof ISiteCategoryDefinition)
+						return ISiteCategoryDefinition.class;
+					return object.getClass();
+				}
+				public IDetailsPage getPage(Object key) {
+					if (key.equals(SiteFeatureAdapter.class))
+						return new FeatureDetails();
+					if (key.equals(ISiteCategoryDefinition.class))
+						return new CategoryDetails();
+					return null;
+				}
+			});
+		}
+	}
 	
 	public FeaturesPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("SiteEditor.page1")); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("FeaturesPage.title")); //$NON-NLS-1$
+		block = new SiteFeaturesBlock();
 	}
-	protected void createFormContent(IManagedForm mform) {
-		ScrolledForm form = mform.getForm();
-		GridLayout layout = new GridLayout();
-		form.getBody().setLayout(layout);
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.horizontalSpacing = 12;
-		layout.marginWidth = 10;
-		featureSection = new FeatureSection(this, form.getBody());
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 250;
-		featureSection.getSection().setLayoutData(gd);
-		categorySection = new CategorySection(this, form.getBody());
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 250;
-		categorySection.getSection().setLayoutData(gd);
+	protected void createFormContent(IManagedForm managedForm) {
 		
-		mform.addPart(featureSection);
-		mform.addPart(categorySection);
-		//WorkbenchHelp.setHelp(form.getBody(),
-		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
-		ISiteModel model = (ISiteModel) getModel();
-		IEditorInput input = getEditor().getEditorInput();
-		String name = input.getName();
-		form.setText(model.getResourceString(name));
+		super.createFormContent(managedForm);
+		ScrolledForm form = managedForm.getForm();
+		form.setText(PDEPlugin.getResourceString("FeaturesPage.header")); //$NON-NLS-1$
+		block.createContent(managedForm);
+		categorySection.fireSelection();
+
 	}
 }

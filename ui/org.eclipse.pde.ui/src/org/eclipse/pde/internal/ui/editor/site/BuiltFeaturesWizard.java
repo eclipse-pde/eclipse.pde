@@ -11,15 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class BuiltFeaturesWizard extends Wizard {
-	private ISiteBuildModel model;
-	private BuiltFeaturesWizardPage mainPage;
+	private CategorySection fCategorySection;
+	private BuiltFeaturesWizardPage fMainPage;
 
-public BuiltFeaturesWizard(ISiteBuildModel model) {
-	this.model = model;
+public BuiltFeaturesWizard(CategorySection categorySection) {
+	fCategorySection = categorySection;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
@@ -27,12 +26,12 @@ public BuiltFeaturesWizard(ISiteBuildModel model) {
 }
 
 public void addPages() {
-	mainPage = new BuiltFeaturesWizardPage(model);
-	addPage(mainPage);
+	fMainPage = new BuiltFeaturesWizardPage(fCategorySection);
+	addPage(fMainPage);
 }
 
 public boolean performFinish() {
-	return mainPage.finish();
+	return fMainPage.finish();
 }
 
 }

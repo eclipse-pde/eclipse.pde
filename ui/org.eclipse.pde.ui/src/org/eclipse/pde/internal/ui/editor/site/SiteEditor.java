@@ -12,28 +12,32 @@
  * Created on Jan 27, 2004
  */
 package org.eclipse.pde.internal.ui.editor.site;
-import java.io.*;
+import java.io.File;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
 
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class SiteEditor extends MultiSourceEditor {
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
@@ -167,30 +171,18 @@ public class SiteEditor extends MultiSourceEditor {
 	protected ISortableContentOutlinePage createContentOutline() {
 		return null;//return new SiteOutlinePage(this);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isDirty()
-	 */
-	public boolean isDirty() {
 		
-		InputContext context = 	inputContextManager.findContext(SiteInputContext.CONTEXT_ID);
-		if (context==null)
-			return super.isDirty();
-		
-		ISiteBuildModel fBuildModel = ((ISiteModel)context.getModel()).getBuildModel();
-		if (fBuildModel != null && ((WorkspaceSiteBuildModel)fBuildModel).isDirty())
-			return true;
-		return super.isDirty();
-	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISiteObject) {
-			context = inputContextManager.findContext(SiteInputContext.CONTEXT_ID);
-		}		
+			context = inputContextManager
+					.findContext(SiteInputContext.CONTEXT_ID);
+		}
 		return context;
 	}
 

@@ -43,10 +43,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	// Shared instance
 	private static PDECore inst;
-	public static final String SITEBUILD_DIR = ".sitebuild"; //$NON-NLS-1$
-	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml"; //$NON-NLS-1$
-	public static final String SITEBUILD_FILE =
-		SITEBUILD_DIR + "/" + SITEBUILD_PROPERTIES; //$NON-NLS-1$
 	public static final String SITEBUILD_LOG = "build.log"; //$NON-NLS-1$
 	public static final String SITEBUILD_SCRIPTS = "scripts"; //$NON-NLS-1$
 	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$

@@ -12,26 +12,49 @@
  * Created on Sep 29, 2003
  */
 package org.eclipse.pde.internal.ui.editor.site;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.model.*;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 /**
  * 
  */
@@ -39,7 +62,6 @@ public class ArchiveSection extends PDESection {
 	private Table fTable;
 	private TableViewer fViewer;
 	private ISiteModel fModel;
-	private ISiteBuildModel fBuildModel;
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
@@ -102,9 +124,6 @@ public class ArchiveSection extends PDESection {
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
-		fBuildModel = fModel.getBuildModel();
-		if (fBuildModel != null)
-			fBuildModel.addModelChangedListener(this);
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.horizontalSpacing = 9;
@@ -174,7 +193,6 @@ public class ArchiveSection extends PDESection {
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
 		fTable.setLayout(tlayout);
 		fTable.setHeaderVisible(true);
-		fTable.setLinesVisible(true);
 		createContextMenu(fTable);
 	}
 	private void createTableViewer() {
@@ -271,11 +289,5 @@ public class ArchiveSection extends PDESection {
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		control.setMenu(popupMenuManager.createContextMenu(control));
-	}
-	public void commit(boolean onSave) {
-		if (onSave && fBuildModel instanceof WorkspaceSiteBuildModel
-				&& ((WorkspaceSiteBuildModel) fBuildModel).isDirty()) {
-			((WorkspaceSiteBuildModel) fBuildModel).save();
-		}
 	}
 }

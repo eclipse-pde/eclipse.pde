@@ -9,28 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.ui.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+
 public class SiteInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "site-context"; //$NON-NLS-1$
 	private boolean storageModel=false;
@@ -45,41 +47,35 @@ public class SiteInputContext extends XMLInputContext {
 	}
 
 	protected IBaseModel createModel(IEditorInput input) {
-		if (input instanceof IFileEditorInput) {
-			return createWorkspaceModel((IFileEditorInput) input);
-		}
-		if (input instanceof SystemFileEditorInput) {
-			return createExternalModel((SystemFileEditorInput) input);
-		}
+		IBaseModel model = null;
 		if (input instanceof IStorageEditorInput) {
-			return createStorageModel((IStorageEditorInput) input);
+			InputStream is = null;
+			try {
+				if (input instanceof IFileEditorInput) {
+					IFile file = ((IFileEditorInput) input).getFile();
+					is = file.getContents();
+					model = createWorkspaceModel(file, is, true);
+				} else if (input instanceof IStorageEditorInput) {
+					is = ((IStorageEditorInput) input).getStorage()
+							.getContents();
+					model =  createStorageModel(is);
+				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+				return null;
+			}
 		}
-		return null;
+		return model;
 	}
-	private IBaseModel createWorkspaceModel(IFileEditorInput input) {
-		InputStream stream = null;
-		IFile file = input.getFile();
+
+	private IBaseModel createWorkspaceModel(IFile file, InputStream stream,
+			boolean editable) {
+		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		try {
-			stream = file.getContents(false);
-		}
-		catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return null;
-		}
-		ISiteModel model = new WorkspaceSiteModel(file);
-		try {
+			model.setEditable(editable);
 			model.load(stream, false);
 		} catch (CoreException e) {
 		}
-		IPath buildPath = file.getProject().getFullPath().append(
-				PDECore.SITEBUILD_DIR).append(PDECore.SITEBUILD_PROPERTIES);
-		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
-		ISiteBuildModel buildModel = new WorkspaceSiteBuildModel(buildFile);
-		try {
-			buildModel.load();
-		} catch (CoreException e) {
-		}
-		model.setBuildModel(buildModel);
 		try {
 			stream.close();
 		} catch (IOException e) {
@@ -87,21 +83,27 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		return model;
 	}
+	
+	private IBaseModel createStorageModel(InputStream stream) {
+		ExternalSiteModel model = new ExternalSiteModel();
+		try {
+			model.load(stream, true);
+		} catch (CoreException e) {
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e1) {
+			}
+		}
+		return model;
+	}
+
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getModel();
-		ISiteBuildModel buildModel = model.getBuildModel();
 		if (storageModel) {
 			model.dispose();
-			if (buildModel != null)
-				buildModel.dispose();
 		}
 		super.dispose();
-	}
-	private IBaseModel createExternalModel(SystemFileEditorInput input) {
-		return null;
-	}
-	private IBaseModel createStorageModel(IStorageEditorInput input) {
-		return null;
 	}
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
