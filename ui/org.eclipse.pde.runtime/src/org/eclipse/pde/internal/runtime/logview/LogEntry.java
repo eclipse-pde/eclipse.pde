@@ -187,7 +187,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS"); //$NON-NLS-1$
 		date = formatter.format(new Date());
 		message = status.getMessage();
 		Throwable throwable = status.getException();
