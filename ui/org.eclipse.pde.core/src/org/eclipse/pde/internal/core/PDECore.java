@@ -482,9 +482,15 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (runtime == null)
 			return;
 		try {
-			runtimeSupport =
-				(IAlternativeRuntimeSupport) runtime.createExecutableExtension(
-					"class");
+			Object cobj = runtime.createExecutableExtension("class");
+			if (cobj==null) {
+				logErrorMessage("PDE Core: Failed to load runtime support.");
+			}
+			else if (cobj instanceof IAlternativeRuntimeSupport) 
+				runtimeSupport = (IAlternativeRuntimeSupport)cobj;
+			else {
+				logErrorMessage("PDE Core: Runtime support of the wrong type: "+cobj.getClass().getName());
+			}
 		} catch (CoreException e) {
 			logException(e);
 		}
