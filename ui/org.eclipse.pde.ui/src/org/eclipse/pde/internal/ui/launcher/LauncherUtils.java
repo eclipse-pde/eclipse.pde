@@ -259,16 +259,13 @@ public class LauncherUtils {
 				list.put("org.eclipse.osgi", new Integer(0));
 				String bundles = null;
 				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
-					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome(), "config.ini");
+					Properties prop = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini");
 					if (prop != null)
 						bundles = prop.getProperty("osgi.bundles");
 					if (prop == null || bundles == null) {
-						ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi");
-						if (entry != null) {
-							IPluginModelBase model = entry.getExternalModel();
-							if (model != null)
-								prop = getConfigIniProperties(new Path(model.getInstallLocation()), "eclipse.properties");
-						}
+						String path = getOSGiPath();
+						if (path != null)
+							prop = getConfigIniProperties(path, "eclipse.properties");
 						if (prop != null)
 							bundles = prop.getProperty("osgi.bundles");
 					} 
@@ -280,7 +277,7 @@ public class LauncherUtils {
 					while (tokenizer.hasMoreTokens()) {
 						String token = tokenizer.nextToken().trim();
 						int index = token.indexOf('@');
-						Integer level = index != -1 ? new Integer(token.substring(index + 1)) : new Integer(-1);
+						Integer level = index != -1 ? getStartLevel(token.substring(index + 1)) : new Integer(-1);
 						list.put(index != -1 ? token.substring(0,token.indexOf('@')) : token, level);
 					}	
 				}				
@@ -288,6 +285,30 @@ public class LauncherUtils {
 			}
 		}		
 		return list;
+	}
+	
+	private static String getOSGiPath() {
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi");
+		if (entry != null) {
+			IPluginModelBase model = entry.getActiveModel();
+			if (model.getUnderlyingResource() != null) {
+				return model.getUnderlyingResource().getLocation().removeLastSegments(2).toOSString();
+			}
+			return model.getInstallLocation();
+		}
+		return null;	
+	}
+	
+	private static Integer getStartLevel(String text) {
+		StringTokenizer tok = new StringTokenizer(text, ":");
+		while (tok.hasMoreTokens()) {
+			String token = tok.nextToken().trim();
+			try {
+				return new Integer(token);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return new Integer(-1);
 	}
 	
 	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
@@ -597,7 +618,7 @@ public class LauncherUtils {
 	public static String getPrimaryFeatureId() {
 		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		
-		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome(), filename);		
+		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), filename);		
 
 		String property = isOSGi ? "eclipse.product" : "feature.default.id";
 		return (properties == null) ? null : properties.getProperty(property);
@@ -607,13 +628,13 @@ public class LauncherUtils {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
 			return "org.eclipse.ui.workbench";
 		
-		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome(), "configuration/config.ini");
+		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini");
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null;
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench";
 	}
 	
-	public static Properties getConfigIniProperties(IPath path, String filename) {
-		File iniFile = new File(path.toFile(), filename);
+	public static Properties getConfigIniProperties(String directory, String filename) {
+		File iniFile = new File(directory, filename);
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
