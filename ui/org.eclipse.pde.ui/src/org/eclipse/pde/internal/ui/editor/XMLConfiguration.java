@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.presentation.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.presentation.*;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
@@ -23,8 +23,13 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	private IColorManager colorManager;
 
 	public XMLConfiguration(IColorManager colorManager) {
+		setColorManager(colorManager);
+	}
+	
+	public void setColorManager(IColorManager colorManager) {
 		this.colorManager = colorManager;
 	}
+	
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
 			IDocument.DEFAULT_CONTENT_TYPE,
@@ -78,5 +83,9 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();
 	}
-
+	
+	public IColorManager getColorManager(){
+		return colorManager;
+	
+	}
 }

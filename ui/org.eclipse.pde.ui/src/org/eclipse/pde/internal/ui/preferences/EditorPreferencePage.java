@@ -86,9 +86,8 @@ public class EditorPreferencePage
 	}
 
 	public boolean performOk() {
-		boolean value = super.performOk();
 		PDEPlugin.getDefault().savePluginPreferences();
-		return value;
+		return super.performOk();
 	}
 
 	/**

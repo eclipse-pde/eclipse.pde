@@ -11,30 +11,21 @@
 package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class ManifestSourcePage extends PDESourcePage {
+public class ManifestSourcePage extends XMLSourcePage {
 	public static final String MANIFEST_TYPE = "__plugin_manifest";
-	protected IColorManager colorManager = new ColorManager();
 
 	public ManifestSourcePage(ManifestEditor editor) {
 		super(editor);
-		initializeViewerConfiguration();
 	}
-	protected void initializeViewerConfiguration() {
-		setSourceViewerConfiguration(new XMLConfiguration(colorManager));
-	}
+
 	public IContentOutlinePage createContentOutlinePage() {
 		return new ManifestSourceOutlinePage(
 			getEditorInput(),
 			getDocumentProvider(),
 			this);
-	}
-	public void dispose() {
-		colorManager.dispose();
-		super.dispose();
 	}
 	protected void editorContextMenuAboutToShow(MenuManager menu) {
 		getEditor().editorContextMenuAboutToShow(menu);

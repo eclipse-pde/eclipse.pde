@@ -10,22 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class FeatureSourcePage extends PDESourcePage {
-	IColorManager colorManager = new ColorManager();
+public class FeatureSourcePage extends XMLSourcePage {
 
-public FeatureSourcePage(PDEMultiPageEditor editor) {
-	super(editor);
-	setSourceViewerConfiguration(new XMLConfiguration(colorManager));
-}
-public IContentOutlinePage createContentOutlinePage() {
-	return new FeatureSourceOutlinePage(getEditor().getEditorInput(), getDocumentProvider(), this);
-}
-public void dispose() {
-	colorManager.dispose();
-	super.dispose();
-}
+	public FeatureSourcePage(PDEMultiPageEditor editor) {
+		super(editor);
+	}
+
+	public IContentOutlinePage createContentOutlinePage() {
+		return new FeatureSourceOutlinePage(
+			getEditor().getEditorInput(),
+			getDocumentProvider(),
+			this);
+	}
 }

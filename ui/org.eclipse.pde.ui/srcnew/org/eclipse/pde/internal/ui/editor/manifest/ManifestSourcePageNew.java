@@ -40,14 +40,10 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 
 	public ManifestSourcePageNew(ManifestEditor editor) {
 		super(editor);
-		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-	}
-	
-	protected void initializeViewerConfiguration() {
 		dynamicReconcilingLock= new Object();
 		modelNeedsUpdatingLock= new Object();
 		setRangeIndicator(new DefaultRangeIndicator());
-		setSourceViewerConfiguration(new XMLViewerConfiguration(this, colorManager));
+		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 	}
 	
 	public IContentOutlinePage createContentOutlinePage() {
@@ -197,7 +193,8 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 			colorManager.dispose();
 			colorManager = new ColorManager();
 			setSourceViewerConfiguration(new XMLViewerConfiguration(this, colorManager));
-			getSourceViewer().configure(getSourceViewerConfiguration());
+			if (getSourceViewer()!=null)
+				getSourceViewer().configure(getSourceViewerConfiguration());
 			try {
 				doSetInput(getEditorInput());
 			} catch (CoreException e) {
