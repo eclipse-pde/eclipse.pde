@@ -1,0 +1,220 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Eclipse 3.0 M2 News</title>
+</head>
+
+<body>
+<table border="0" cellpadding="10" cellspacing="0">
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">Introduction of new properties in the build.properties file of feature</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">When building an eclipse based product from features, it is now possible to copy files or directories to the eclipse directory. This is achieved thanks to the following properties:
+	<ul>
+	root=a comma separated list of files and directories
+	</ul>
+To refer to a file prefix the name with "file:", to refer to a directory, simply list the name.
+<P>
+It is also possible to set permissions on those root files:
+	<ul>
+	root.permissions.XXX=a comma separated list of files and directories
+	</ul>
+where XXX is a unix chmod style permission description.
+
+
+It is also possible to copy files and apply permissions on a configuration basis
+<ul>
+root.configName=
+root.configName.permissions.XXX=
+</ul>
+where configName is a doted description of the platform (os.ws.arch).
+
+Here an example for org.eclipse.platform
+<ul>
+root=eclipse
+root.macosx.carbon.ppc=macosx.carbon,../../plugins/platform-launcher/bin/macosx
+root.macosx.carbon.ppc.link=Eclipse.app/Contents/MacOS/eclipse,eclipse
+root.macosx.carbon.ppc.permissions.755=Eclipse.app/Contents/MacOS/eclipse
+</ul>
+
+
+It is also possible to trigger the generation of source features and plugins
+<ul>
+  generate.feature@nameOfTheFeatureToGenerate=featureName, plugin@XXXX
+</ul>
+generate a feature called 'nameOfTheFeatureToGenerate' from the plugins contained in the feature called 'featureName' and also include the plugin xxxx
+
+<ul>
+Example : generate.feature@org.eclipse.jdt.source=org.eclipse.jdt, plugin@org.eclipse.jdt.doc.isv</font></p>
+</ul>
+    </td>
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">
+Introduction of new properties in the build.properties file of plugin</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">
+
+For every jar file that is being built three variables can be provided. Note that "{jarname}" describes the name of the jar file including its path relative to the project.
+<ul>
+  <li>a variable named "source.{jarname}" describing where the source of the jar 
+can be found. The expected value is a path relative to the project (for example "src/").</li>
+
+  <li>a variable named "output.{jarname}" describing where the bin of the jar can 
+be found. The expected value is a path relative to the project (for 
+example "bin/").</li>
+
+  <li>a variable named "extra.{jarname}" describing the list of jars required to 
+compile this jar. The expected values are paths relative to the place where the 
+project is.</li>
+</ul>
+A short way to explain the content of those variables is to see them as variables used for the compilation:
+<ul>
+  <li>the source indicates where to find the source of the jar.</li>
+  <li>the extra gives extra values to be put at the end of the classpath when we 
+are compiling the source.</li>
+  <li>the output indicates where the content of a compiled version of the library 
+exists (this is typically used in the classpath of plugins requiring this jar).</li>
+
+
+</font></p>
+    </td>
+  </tr>	
+
+
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">Setting permissions on a per basis plugin</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">During a build it is now possible to set permissions and create links on a per plugin basis. Those information are listed in a file called permissions.properties provided at the root of the plugin (as a sibling of build.properties). The format of the file is as follow: 
+<ul><ol>permissions.executable=list of files </ol>
+<ol>permissions.link=list of files</ol>
+<ol>permissions.XXX=list of files</ol>
+</ul>
+</font></p>
+    </td>
+  </tr>	
+
+
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">Enhancement of the map file</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">The map file entries have been enhanced to allow plugins and features to be located anywhere in a cvs repository.<p>
+feature|fragment|plugin@elementID=versionName,CVSRepository,passwordInfo,pathInTheRepository (no starting slash)
+<p>
+example:
+feature@com.foo=v101,:pserver:anon@foo.com:/home/cvs,,a/b/foo-feature</font></p>
+    </td>
+  </tr>	
+
+
+
+
+
+
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">New properties introduced to control the compilation of plugins</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">
+
+javacSource: Give the format of the source code. Legal values are 1.3 and 1.4.<br>
+javacTarget: Generate class files for specific VM version.<br>
+javacFailOnError: Indicates whether the build will continue even if there are compilation errors.<br>
+javacDebugInfo: Indicates whether source should be compiled with debug information.<br>
+javacVerbose: Asks the compiler for verbose output.<br>
+bootclasspath: Set the classpath of the jdk you compile against.<br>
+
+All those properties are surfaced in the pde ui.</font></p>
+    </td>
+  </tr>	
+
+
+
+
+
+
+
+
+
+
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">Reusable automated build process</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">The new pde build process ease the creation of automated build process by providing a set of template scripts and a general script. Those scripts and templates are used to build the 3.0 build of eclipse (see the project org.eclipse.releng.eclipsebuilder). A small example of their usage is also provided in the feature folder of the plugin.
+</font></p>
+    </td>
+  </tr>	
+
+
+  <tr>
+    <td colspan="2">
+      <hr>
+    </td>
+  </tr>
+  <tr>
+    <td width="30%" valign="top" align="left">
+      <p align="right"><b><font face="Verdana" size="2">Filling version numbers of features</font></b></p>
+    <td width="70%" valign="top" align="left">
+      <p><font face="Verdana" size="2">In the features, version numbers for nested features and plugins can now be specified to 0.0.0 and will be filled in by the appropriate values by the pde build engine.
+</font></p>
+    </td>
+  </tr>	
+
+
+
+
+
+
+</table>
+
+</body>
+
+</html>
