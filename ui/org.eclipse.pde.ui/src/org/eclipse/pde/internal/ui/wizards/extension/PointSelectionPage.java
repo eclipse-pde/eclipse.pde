@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.search.*;
@@ -67,7 +66,7 @@ public class PointSelectionPage
 	class TemplateContentProvider extends DefaultContentProvider implements IStructuredContentProvider{
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint){
-				PluginExtensionPoint point = (PluginExtensionPoint)inputElement;
+				IPluginExtensionPoint point = (IPluginExtensionPoint)inputElement;
 				ArrayList result = new ArrayList();
 				if (templateCollection.getWizards() != null) {
 					Object[] wizards = templateCollection.getWizards().getChildren();
@@ -95,9 +94,16 @@ public class PointSelectionPage
 			IPluginModelBase[] plugins = manager.getPlugins();
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
+				if (plugins[i].getPluginBase().getId().equals(fPluginBase.getId()))
+					continue;
 				for (int j = 0; j < points.length; j++)
 					extPoints.add(points[j]);
 			}
+			
+			IPluginExtensionPoint[] points = fPluginBase.getExtensionPoints();
+			for (int i = 0; i<points.length; i++)
+				extPoints.add(points[i]);
+			
 			return extPoints.toArray();
 		}
 	}
