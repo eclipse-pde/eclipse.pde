@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -42,6 +43,16 @@ public class DependenciesLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object obj) {
+		if (obj instanceof IPluginImport) {
+			return ((IPluginImport) obj).getId();
+		} else if (obj instanceof String) {
+			return (String) obj;
+		} else if (obj instanceof IPluginModelBase) {
+			return ((IPluginModelBase) obj).getPluginBase(false).getId();
+		} else if (obj instanceof IPluginBase) {
+			return ((IPluginBase) obj).getId();
+		}
+
 		return fSharedProvider.getText(obj);
 	}
 
@@ -53,10 +64,10 @@ public class DependenciesLabelProvider extends LabelProvider {
 			id = iobj.getId();
 			if (fShowReexport && iobj.isReexported())
 				flags = SharedLabelProvider.F_EXPORT;
-		} else if(obj instanceof String){
+		} else if (obj instanceof String) {
 			id = (String) obj;
 		}
-		if(id !=null){
+		if (id != null) {
 			IPlugin plugin = PDECore.getDefault().findPlugin(id);
 			if (plugin != null) {
 				IPluginModelBase model = plugin.getPluginModel();
@@ -68,6 +79,17 @@ public class DependenciesLabelProvider extends LabelProvider {
 
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
+		if (obj instanceof IPluginModelBase) {
+			if (((IPluginModelBase) obj).getUnderlyingResource() == null)
+				flags |= SharedLabelProvider.F_EXTERNAL;
+			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+		}
+		if (obj instanceof IPluginBase) {
+			if (((IPluginBase) obj).getPluginModel().getUnderlyingResource() == null)
+				flags |= SharedLabelProvider.F_EXTERNAL;
+			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+		}
 		return fSharedProvider.getImage(obj);
 	}
+
 }
