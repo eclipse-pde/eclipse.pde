@@ -10,8 +10,8 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
@@ -60,12 +60,10 @@ public class MigrationAction implements IObjectActionDelegate {
 					new IPluginModelBase[models.size()]);
 
 			MigratePluginWizard wizard = new MigratePluginWizard(modelArray);
+			final Display display = getDisplay();
 			final WizardDialog dialog =
-				new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			BusyIndicator
-				.showWhile(
-					PDEPlugin.getActiveWorkbenchShell().getDisplay(),
-					new Runnable() {
+				new WizardDialog(display.getActiveShell(), wizard);
+			BusyIndicator.showWhile(display, new Runnable() {
 				public void run() {
 					dialog.open();
 				}
@@ -85,5 +83,13 @@ public class MigrationAction implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-
+	
+	private Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
+	
 }
