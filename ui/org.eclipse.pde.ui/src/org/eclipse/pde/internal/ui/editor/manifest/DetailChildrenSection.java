@@ -336,7 +336,9 @@ public class DetailChildrenSection
 			treeViewer.refresh();
 			if (event.getChangeType() == event.INSERT) {
 				if (!(element.getParent() instanceof IPluginExtension)) {
-					treeViewer.setSelection(new StructuredSelection(element), true);
+					treeViewer.setSelection(
+						new StructuredSelection(element),
+						true);
 				}
 			} else if (event.getChangeType() == event.CHANGE) {
 				treeViewer.update(changeObject, null);
@@ -344,15 +346,26 @@ public class DetailChildrenSection
 					ISelection sel = getFormPage().getSelection();
 					if (sel != null && sel instanceof IStructuredSelection) {
 						IStructuredSelection ssel = (IStructuredSelection) sel;
-						if (!ssel.isEmpty() && ssel.getFirstElement().equals(changeObject)) {
+						if (!ssel.isEmpty()
+							&& ssel.getFirstElement().equals(changeObject)) {
 							// update property sheet
-							getFormPage().setSelection(sel);
+							asyncResendSelection(sel);
 						}
 					}
 				}
 			}
 		}
 	}
+
+	private void asyncResendSelection(final ISelection sel) {
+		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				getFormPage().setSelection(sel);
+			}
+		});
+	}
+	
+
 	private Image resolveObjectImage(Object obj) {
 		if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
