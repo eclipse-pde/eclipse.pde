@@ -10,11 +10,7 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.PrintWriter;
-import java.util.*;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.ant.*;
 
 /**
  * 

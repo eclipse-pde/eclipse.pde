@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.pde.internal.build.AbstractBuildScriptGenerator.JAR;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
 /**

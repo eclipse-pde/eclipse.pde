@@ -14,11 +14,10 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
-import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
 
