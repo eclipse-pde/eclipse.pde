@@ -15,7 +15,7 @@ public class FileExtensionFilter extends ViewerFilter {
 
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof IFile) {
-			return fTargetExtension.equals(((IFile)element).getFileExtension());
+			return ((IFile)element).getName().toLowerCase().endsWith("." + fTargetExtension); //$NON-NLS-1$
 		}
 
 		if (element instanceof IContainer){ // i.e. IProject, IFolder

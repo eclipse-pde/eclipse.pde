@@ -341,6 +341,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	public void refresh() {
 		fPluginTable.refresh();
 		fIncludeFragments.setSelection(getProduct().includeFragments());
+		super.refresh();
 	}
 
 	/* (non-Javadoc)

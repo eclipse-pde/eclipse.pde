@@ -120,8 +120,8 @@ public class WindowImagesSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle("Image Selection"); //$NON-NLS-1$
-		dialog.setMessage("Select a GIF image:"); //$NON-NLS-1$
+		dialog.setTitle(PDEPlugin.getResourceString("WindowImagesSection.dialogTitle"));  //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("WindowImagesSection.dialogMessage")); //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -144,8 +144,7 @@ public class WindowImagesSection extends PDESection {
 			else
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.warning")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (PartInitException e) {
-		}		
-		
+		}			
 	}
 	
 	private IPath getFullPath(IPath path) {

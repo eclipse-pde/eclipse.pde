@@ -111,6 +111,7 @@ public class FeatureSection extends TableSection implements IPluginModelListener
 	 */
 	public void refresh() {
 		fFeatureTable.refresh();
+		super.refresh();
 	}
 
 	/* (non-Javadoc)

@@ -105,6 +105,7 @@ public class ConfigurationSection extends PDESection {
 			fCustomEntry.setValue(info.getPath(), true);
 			fCustomEntry.setEditable(custom);
 		}
+		super.refresh();
 	}
 	
 	private IConfigurationFileInfo getConfigurationFileInfo() {

@@ -10,7 +10,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private static final long serialVersionUID = 1L;
 	private boolean fUseIcoFile;
-	private String fIcoFilePath;
 	private Map fIcons = new HashMap();
 	private String fLauncherName;
 
@@ -53,17 +52,6 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 			firePropertyChanged(P_USE_ICO, Boolean.toString(old), Boolean.toString(fUseIcoFile));
 	}
 
-	public void setIcoFilePath(String path) {
-		String old = fIcoFilePath;
-		fIcoFilePath = path;
-		if (isEditable())
-			firePropertyChanged(P_ICO_PATH, old, fIcoFilePath);
-	}
-
-	public String getIcoFilePath() {
-		return fIcoFilePath;
-	}
-
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			fLauncherName = ((Element)node).getAttribute("name"); //$NON-NLS-1$
@@ -94,14 +82,14 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 				Element child = (Element)children.item(i);
 				String name = child.getNodeName();
 				if (name.equals("ico")) { //$NON-NLS-1$
-					fIcoFilePath = child.getAttribute("path"); //$NON-NLS-1$
+					fIcons.put(P_ICO_PATH, child.getAttribute("path")); //$NON-NLS-1$
 				} else if (name.equals("bmp")) { //$NON-NLS-1$
-					fIcons.put(WIN32_16_HIGH, element.getAttribute(WIN32_16_HIGH));
-					fIcons.put(WIN32_16_LOW, element.getAttribute(WIN32_16_LOW));
-					fIcons.put(WIN32_32_HIGH, element.getAttribute(WIN32_32_HIGH));
-					fIcons.put(WIN32_32_LOW, element.getAttribute(WIN32_32_LOW));
-					fIcons.put(WIN32_48_HIGH, element.getAttribute(WIN32_48_HIGH));
-					fIcons.put(WIN32_48_LOW, element.getAttribute(WIN32_48_LOW));
+					fIcons.put(WIN32_16_HIGH, child.getAttribute(WIN32_16_HIGH));
+					fIcons.put(WIN32_16_LOW, child.getAttribute(WIN32_16_LOW));
+					fIcons.put(WIN32_32_HIGH, child.getAttribute(WIN32_32_HIGH));
+					fIcons.put(WIN32_32_LOW, child.getAttribute(WIN32_32_LOW));
+					fIcons.put(WIN32_48_HIGH, child.getAttribute(WIN32_48_HIGH));
+					fIcons.put(WIN32_48_LOW, child.getAttribute(WIN32_48_LOW));
 				}
 			}
 		}
@@ -115,11 +103,11 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	}
 
 	private void parseMac(Element element) {
-		fIcons.put(MACOSX_ICON, element.getAttribute(MACOSX_ICON));
+		fIcons.put(MACOSX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
 	}
 
 	private void parseLinux(Element element) {
-		fIcons.put(LINUX_ICON, element.getAttribute(LINUX_ICON));
+		fIcons.put(LINUX_ICON, element.getAttribute("icon")); //$NON-NLS-1$
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -137,8 +125,9 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void writerWin(String indent, PrintWriter writer) {
 		writer.println(indent + "<win " + P_USE_ICO + "=\"" + Boolean.toString(fUseIcoFile) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fIcoFilePath != null && fIcoFilePath.length() > 0)
-			writer.println(indent + "   <ico path=\"" + fIcoFilePath + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		String path = (String)fIcons.get(P_ICO_PATH);
+		if (path != null && path.length() > 0)
+			writer.println(indent + "   <ico path=\"" + getWritableString(path) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent + "   <bmp"); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_LOW, writer); //$NON-NLS-1$
@@ -171,13 +160,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<macosx " + MACOSX_ICON + "=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<linux " + LINUX_ICON + "=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }
