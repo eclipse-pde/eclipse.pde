@@ -34,6 +34,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -50,6 +51,7 @@ public class DetailExtensionSection
 		"ManifestEditor.DetailExtensionSection.showAllChildren";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
+	private static final String SETTING_SHOW_ALL = "DetailExtensionSection.showAllChildren";
 	private Image genericElementImage;
 	private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
@@ -152,8 +154,12 @@ public class DetailExtensionSection
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		showAllChildrenButton.setLayoutData(gd);
+		final IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
+		boolean showAll = pstore.getBoolean(SETTING_SHOW_ALL);
+		showAllChildrenButton.setSelection(showAll);
 		showAllChildrenButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				pstore.setValue(SETTING_SHOW_ALL, showAllChildrenButton.getSelection());
 				BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
 					public void run() {
 						extensionTree.refresh();

@@ -310,7 +310,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return get(PDEPluginImages.DESC_DOC_SECTION_OBJ, flags);
 	}
 	
-	private boolean isFullNameModeEnabled() {
+	public boolean isFullNameModeEnabled() {
 		return MainPreferencePage.isFullNameModeEnabled();
 	}
 }

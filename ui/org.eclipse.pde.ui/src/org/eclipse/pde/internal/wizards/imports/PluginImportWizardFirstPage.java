@@ -243,7 +243,9 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		if (doOther)
 			dropLocation.select(0);
 		doImportCheck.setSelection(doImport);
+		doImportCheck.setEnabled(!doExtract);
 		doExtractCheck.setSelection(doExtract);
+
 		validateDropLocation();
 		updateStatus(dropLocationStatus);
 		PDEPlugin.getDefault().addCurrentLaunchListener(this);

@@ -120,12 +120,21 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 
 	private void initializeFields(IPath dropLocation) {
 		IDialogSettings settings = getDialogSettings();
+		boolean oldLoadFromRegistry = loadFromRegistry;
 
 		loadFromRegistry = !firstPage.isOtherLocation();
-		if (!dropLocation.equals(this.dropLocation)) {
+		
+		if (loadFromRegistry) {
+			if (!oldLoadFromRegistry) models = null;
+			this.dropLocation = null;
 			updateStatus(createStatus(IStatus.OK, ""));
-			this.dropLocation = dropLocation;
-			models = null;
+		}
+		else {
+			if (!dropLocation.equals(this.dropLocation)) {
+				updateStatus(createStatus(IStatus.OK, ""));
+				this.dropLocation = dropLocation;
+				models = null;
+			}
 		}
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.updateCounter(0);

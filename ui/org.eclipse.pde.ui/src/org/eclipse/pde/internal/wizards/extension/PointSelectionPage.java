@@ -39,12 +39,6 @@ public class PointSelectionPage
 	private final static String KEY_MISSING_IMPORT = "NewExtensionWizard.PointSelectionPage.missingImport";
 	private IPluginExtension newExtension;
 
-	public class NameSorter extends ViewerSorter {
-		public boolean isSorterProperty(Object element, Object propertyId) {
-			return true;
-		}
-	}
-
 	class ContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -72,6 +66,26 @@ public class PointSelectionPage
 					PointSelectionPage.this.addPoints(pluginInfo, points);
 				}
 			}
+		}
+	}
+	
+	class PointLabelProvider extends LabelProvider implements ITableLabelProvider {
+		public String getText(Object obj) {
+			return getColumnText(obj, 0);
+		}
+		public String getColumnText(Object obj, int index) {
+			if (obj instanceof IPluginExtensionPoint) {
+				PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+				if (provider.isFullNameModeEnabled()) return provider.getText(obj);
+				return ((IPluginExtensionPoint)obj).getFullId();
+			}
+			return obj.toString();
+		}
+		public Image getImage(Object obj) {
+			return getColumnImage(obj, 0);
+		}
+		public Image getColumnImage(Object obj, int index) {
+			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 		}
 	}
 
@@ -111,22 +125,17 @@ public void createControl(Composite parent) {
 	outerContainer.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	Table table = new Table(outerContainer, SWT.BORDER);
-	new TableColumn(table, SWT.NONE);
-	TableLayout tlayout = new TableLayout();
-	tlayout.addColumnData(new ColumnWeightData(100));
-	table.setLayout(tlayout);
-		
 	// plugin pane
-	pointListViewer = new TableViewer(table);
+	pointListViewer = new TableViewer(outerContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 	pointListViewer.setContentProvider(new ContentProvider());
-	pointListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+	pointListViewer.setLabelProvider(new PointLabelProvider());
 	pointListViewer.addSelectionChangedListener(this);
+	pointListViewer.setSorter(ListUtil.NAME_SORTER);
 
 	GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 	gd.heightHint = 300;
 	gd.horizontalSpan = 2;
-	table.setLayoutData(gd);
+	pointListViewer.getTable().setLayoutData(gd);
 
 	Label label = new Label(outerContainer, SWT.NONE);
 	label.setText(PDEPlugin.getResourceString(KEY_POINT_ID));
@@ -240,7 +249,6 @@ public IPluginExtension getNewExtension() {
 	return newExtension;
 }
 protected void initialize() {
-	pointListViewer.setSorter(new NameSorter());
 	pointListViewer.setInput(PDEPlugin.getDefault().getExternalModelManager());
 	pointListViewer.getTable().setFocus();
 }
