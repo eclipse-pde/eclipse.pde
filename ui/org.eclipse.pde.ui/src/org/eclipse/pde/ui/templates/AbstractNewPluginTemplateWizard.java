@@ -156,7 +156,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();
-		final FieldData data = firstPage.createFieldData();
+		final IFieldData data = firstPage.createFieldData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor)
 				throws InterruptedException {
@@ -191,7 +191,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		return totalWork;
 	}
 
-	private void doFinish(FieldData data, IProgressMonitor monitor)
+	private void doFinish(IFieldData data, IProgressMonitor monitor)
 		throws CoreException, InterruptedException {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_GENERATING),

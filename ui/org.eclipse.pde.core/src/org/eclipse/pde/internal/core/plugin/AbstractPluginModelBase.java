@@ -77,12 +77,17 @@ public abstract class AbstractPluginModelBase
 	public abstract URL getNLLookupLocation();
 
 	protected URL[] getNLLookupLocations() {
+		URL thisLocation = getNLLookupLocation();
 		if (isFragmentModel()) {
-			return new URL[] { getNLLookupLocation()};
+			if (thisLocation!=null)
+				return new URL[] { thisLocation };
+			else
+				return new URL[0];
 		} else {
 			URL[] fragmentLocations = getFragmentLocations();
-			URL[] locations = new URL[1 + fragmentLocations.length];
-			locations[0] = getNLLookupLocation();
+			URL[] locations = new URL[(thisLocation!=null?1:0) + fragmentLocations.length];
+			if (thisLocation!=null)
+				locations[0] = thisLocation;
 			for (int i = 1; i < locations.length; i++) {
 				locations[i] = fragmentLocations[i - 1];
 			}
@@ -127,9 +132,8 @@ public abstract class AbstractPluginModelBase
 			String refversion = fragment.getPluginVersion();
 			int refmatch = fragment.getRule();
 			if (PDECore.compare(refid, refversion, id, version, refmatch)) {
-				URL location =
-					((AbstractPluginModelBase) model).getNLLookupLocation();
-				result.add(location);
+				URL location = model.getNLLookupLocation();
+				if (location==null) continue;
 				IPluginLibrary libraries[] = fragment.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
 					IPluginLibrary library = libraries[j];

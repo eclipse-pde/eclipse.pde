@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -145,6 +146,10 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 	public String getInstallLocation() {
 		if (bundleModel!=null)
 			return bundleModel.getInstallLocation();
+		return null;
+	}
+	
+	public URL getNLLookupLocation() {
 		return null;
 	}
 

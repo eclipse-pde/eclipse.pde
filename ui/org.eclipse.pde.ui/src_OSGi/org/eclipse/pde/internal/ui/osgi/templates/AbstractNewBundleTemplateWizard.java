@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.osgi.templates;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
@@ -21,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IExternalModelManager;
+import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.osgi.bundle.BundlePluginModelBase;
@@ -30,6 +32,7 @@ import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.osgi.wizards.project.BundleProjectStructurePage;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -158,7 +161,7 @@ public abstract class AbstractNewBundleTemplateWizard
 	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();
-		final FieldData data = firstPage.createFieldData();
+		final IFieldData data = firstPage.createFieldData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor)
 				throws InterruptedException {
@@ -193,7 +196,7 @@ public abstract class AbstractNewBundleTemplateWizard
 		return totalWork;
 	}
 
-	private void doFinish(FieldData data, IProgressMonitor monitor)
+	private void doFinish(IFieldData data, IProgressMonitor monitor)
 		throws CoreException, InterruptedException {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_GENERATING),
@@ -228,24 +231,46 @@ public abstract class AbstractNewBundleTemplateWizard
 		if (structureData.getRuntimeLibraryName() != null) {
 			setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
 		}
-		executeTemplates(project, model, monitor); // nsteps
+		ArrayList generatedPackages = new ArrayList();
+		executeTemplates(project, model, generatedPackages, monitor); // nsteps
+		setPackages(model, generatedPackages);
 		JavaCodeGenerator.ensureFoldersExist(project, "META-INF", "/");
 		model.save();
 		saveTemplateFile(project, monitor); // one step
 		monitor.worked(1);
-/*
-		IFile file = (IFile) model.getUnderlyingResource();
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.MANIFEST_EDITOR_ID);
-		openPluginFile(file);
-*/
+		IFile manifestFile = (IFile)model.getBundleModel().getUnderlyingResource();
+		IFile extensionsFile = (IFile)model.getExtensionsModel().getUnderlyingResource();
+		IEditorRegistry ereg = workbench.getEditorRegistry();
+		IEditorDescriptor meditorId = ereg.getDefaultEditor(manifestFile);
+		if (meditorId==null) meditorId = ereg.getDefaultEditor();
+		IEditorDescriptor exeditorId = ereg.getDefaultEditor(extensionsFile);
+		if (exeditorId==null) exeditorId = ereg.getDefaultEditor();
+		if (extensionsFile.exists())
+			openFile(extensionsFile, exeditorId.getId(), false);
+		openFile(manifestFile, meditorId.getId(), true);
 	}
 
 	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		boolean useContainers = PDEPlugin.getUseClasspathContainers();
 		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
+	}
+	
+	private void setPackages(BundlePluginModelBase model, ArrayList generatedPackages) {
+		if (generatedPackages.size()==0) return;
+		StringBuffer provides = new StringBuffer();
+		for (int i=0; i<generatedPackages.size(); i++) {
+			String packageName = (String)generatedPackages.get(i);
+			if (i>0) provides.append(", ");
+			provides.append(packageName);
+		}
+		IBundle bundle = model.getBundleModel().getBundle();
+		try {
+			bundle.setHeader(IBundle.KEY_PROVIDE_PACKAGE, provides.toString());
+		}
+		catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	private ArrayList getDependencies() {
@@ -331,11 +356,22 @@ public abstract class AbstractNewBundleTemplateWizard
 	private void executeTemplates(
 		IProject project,
 		IPluginModelBase model,
+		ArrayList generatedPackages,
 		IProgressMonitor monitor)
 		throws CoreException {
+		HashSet packageSet = new HashSet();
 		for (int i = 0; i < activeSections.length; i++) {
 			ITemplateSection section = activeSections[i];
 			section.execute(project, model, monitor);
+			if (section instanceof AbstractTemplateSection) {
+				AbstractTemplateSection asection = (AbstractTemplateSection)section;
+				Object packageValue = asection.getValue(AbstractTemplateSection.KEY_PACKAGE_NAME);
+				if (packageValue!=null) {
+					String packageName = packageValue.toString();
+					if (packageName.length()>0 && !generatedPackages.contains(packageName))
+						generatedPackages.add(packageName);
+				}
+			}
 		}
 	}
 
@@ -404,7 +440,7 @@ public abstract class AbstractNewBundleTemplateWizard
 		return new TemplateEditorInput(file, ManifestEditor.TEMPLATE_PAGE);
 	}
 
-	private void openPluginFile(final IFile file) {
+	private void openFile(final IFile file, final String editorId, final boolean selectReveal) {
 		BasicNewProjectResourceWizard.updatePerspective(config);		
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 
@@ -416,15 +452,12 @@ public abstract class AbstractNewBundleTemplateWizard
 		d.asyncExec(new Runnable() {
 			public void run() {
 				try {
-					String editorId =
-						fragment
-							? PDEPlugin.FRAGMENT_EDITOR_ID
-							: PDEPlugin.MANIFEST_EDITOR_ID;
-
 					if (focusPart instanceof ISetSelectionTarget) {
+						if (selectReveal) {
 						ISelection selection = new StructuredSelection(file);
 						((ISetSelectionTarget) focusPart).selectReveal(
 							selection);
+						}
 					}
 					IEditorInput input = createEditorInput(file);
 					ww.getActivePage().openEditor(input, editorId);

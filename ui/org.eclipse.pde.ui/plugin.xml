@@ -371,23 +371,33 @@
          </description>
       </wizard>
       <wizard
-            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
-            category="bundle"
             name="%projectGenerators.defaultBundle.name"
-            id="org.eclipse.pde.ui.projectGenerators.defaultBundle"
-            icon="icons/full/ctool16/defcon_wiz.gif">
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            category="bundle"
+            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
+            id="org.eclipse.pde.ui.projectGenerators.defaultBundle">
          <description>
             %projectGenerators.defaultBundle.description
          </description>
       </wizard>
       <wizard
-            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
-            category="bundleFragment"
             name="%projectGenerators.defaultBundleFragment.name"
-            id="org.eclipse.pde.ui.projectGenerators.defaultBundleFragment"
-            icon="icons/full/ctool16/defcon_wiz.gif">
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            category="bundleFragment"
+            class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
+            id="org.eclipse.pde.ui.projectGenerators.defaultBundleFragment">
          <description>
             %projectGenerators.defaultBundleFragment.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.bundleChoice.name"
+            icon="icons/full/ctool16/script_wiz.gif"
+            category="bundle"
+            class="org.eclipse.pde.internal.ui.osgi.templates.NewBundleTemplateChoiceWizard"
+            id="org.eclipse.pde.ui.projectGenerators.bundleChoice">
+         <description>
+            %projectGenerators.bundleChoice.description
          </description>
       </wizard>
    </extension>

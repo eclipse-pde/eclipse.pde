@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.project.*;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.IFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 
-public class FirstBundleTemplateWizardPage extends WizardPage {
+public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstWizardPage {
 	private static final String KEY_TITLE = "DefaultBundleCodeGenerationPage.title";
 	private static final String KEY_FTITLE = "DefaultBundleCodeGenerationPage.ftitle";
 	private static final String KEY_ID_NOT_SET =
@@ -112,7 +113,7 @@ public class FirstBundleTemplateWizardPage extends WizardPage {
 		IProjectProvider projectProvider,
 		IPluginStructureData structureData,
 		boolean fragment) {
-		super("DefaultCodeGenerationPage");
+		super(FirstTemplateWizardPage.PAGE_ID);
 		this.fragment = fragment;
 		if (fragment) {
 			setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
@@ -467,7 +468,7 @@ public class FirstBundleTemplateWizardPage extends WizardPage {
 		return buf.toString();
 	}
 
-	public FieldData createFieldData() {
+	public IFieldData createFieldData() {
 		FieldData data = new FieldData();
 		data.setName(nameField.getText());
 		PluginVersionIdentifier pvi =
@@ -495,7 +496,7 @@ public class FirstBundleTemplateWizardPage extends WizardPage {
 		return data;
 	}	
 	
-	public BundlePluginModelBase createPluginManifest(IProject project, FieldData data, ArrayList dependencies, IProgressMonitor monitor) throws CoreException {
+	public BundlePluginModelBase createPluginManifest(IProject project, IFieldData data, ArrayList dependencies, IProgressMonitor monitor) throws CoreException {
 		BundlePluginModelBase model;
 		IFile file = project.getFile("META-INF/MANIFEST.MF");
 		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
@@ -552,7 +553,7 @@ public class FirstBundleTemplateWizardPage extends WizardPage {
 
 	public void generatePluginClass(
 		IProject project,
-		FieldData data,
+		IFieldData data,
 		IProgressMonitor monitor)
 		throws CoreException {
 		String fullyQualifiedClassName = data.getClassName();

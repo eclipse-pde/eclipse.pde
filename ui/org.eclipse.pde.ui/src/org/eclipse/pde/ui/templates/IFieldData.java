@@ -71,4 +71,13 @@ public interface IFieldData {
 	 * @return true if a fragment, false for a plug-in
 	 */
 	public boolean isFragment();
+	
+	public String getPluginId();
+	public String getPluginVersion();
+	public int getMatch();
+	public boolean isDoMain();
+	public boolean isThisCheck();
+	public boolean isBundleCheck();
+	public boolean isWorkspaceCheck();
+	
 }

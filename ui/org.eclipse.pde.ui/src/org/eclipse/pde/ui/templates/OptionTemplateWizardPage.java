@@ -99,9 +99,9 @@ public class OptionTemplateWizardPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		if (visible && section.isDependentOnFirstPage()) {
 			IWizardPage page1 = getWizard().getStartingPage();
-			if (page1 instanceof FirstTemplateWizardPage) {
-				FirstTemplateWizardPage firstPage = (FirstTemplateWizardPage) page1;
-				FieldData data = firstPage.createFieldData();
+			if (page1 instanceof IFirstWizardPage) {
+				IFirstWizardPage firstPage = (IFirstWizardPage)page1;
+				IFieldData data = firstPage.createFieldData();
 				section.initializeFields(firstPage.getStructureData(), data);
 			}
 		}

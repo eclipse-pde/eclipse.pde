@@ -137,6 +137,7 @@ public class NewProjectWizard
 							element.getConfigurationElement().getAttribute(
 								ATT_CATEGORY);
 						boolean fragmentWizard = categoryAtt!=null && categoryAtt.equalsIgnoreCase("fragmentWizard");
+						if (!fragmentWizard && categoryAtt!=null) continue;
 						if (fragmentWizard == isFragmentWizard()) {
 							wizards.add(element);
 						}

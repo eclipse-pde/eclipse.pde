@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.templates;
+package org.eclipse.pde.internal.ui.osgi.templates;
 
 import java.util.ArrayList;
 
@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public class TemplateSelectionPage extends WizardPage {
+public class BundleTemplateSelectionPage extends WizardPage {
 	private ArrayList candidates;
 	private ArrayList visiblePages;
 	private WizardCheckboxTablePart tablePart;
 	private FormBrowser descriptionBrowser;
 	private static final String NL_TITLE = "TemplateSelectionPage.title";
-	private static final String NL_DESC = "TemplateSelectionPage.desc";
+	private static final String NL_DESC = "BundleTemplateSelectionPage.desc";
 	private static final String NL_TABLE = "TemplateSelectionPage.table";
 	private static final String NL_CNAME = "TemplateSelectionPage.column.name";
 	private static final String NL_CPOINT = "TemplateSelectionPage.column.point";
@@ -88,7 +88,7 @@ public class TemplateSelectionPage extends WizardPage {
 	 * Constructor for TemplateSelectionPage.
 	 * @param pageName
 	 */
-	public TemplateSelectionPage() {
+	public BundleTemplateSelectionPage() {
 		super("templateSelection");
 		setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		setDescription(PDEPlugin.getResourceString(NL_DESC));
@@ -219,7 +219,7 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	public IWizardPage getNextVisiblePage(IWizardPage page) {
-		if (page instanceof FirstTemplateWizardPage)
+		if (page instanceof FirstBundleTemplateWizardPage)
 			return this;
 		if (page == this)
 			return page.getNextPage();
@@ -232,7 +232,7 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	public IWizardPage getPreviousVisiblePage(IWizardPage page) {
-		if (page instanceof FirstTemplateWizardPage)
+		if (page instanceof FirstBundleTemplateWizardPage)
 			return null;
 		if (page == this)
 			return super.getPreviousPage();

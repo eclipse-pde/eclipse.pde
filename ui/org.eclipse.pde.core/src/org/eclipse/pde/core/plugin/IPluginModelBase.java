@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
+import java.net.URL;
+
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
 /**
@@ -125,4 +127,5 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	public void setEnabled(boolean enabled);
 	
 	IPluginModelFactory getPluginFactory();
+	URL getNLLookupLocation();
 }
