@@ -49,16 +49,17 @@
                menubarPath="window/macro/group1"
                id="org.eclipse.pde.ui.tests.RecordAction"/>
          <action
-               toolbarPath="sampleGroup"
-               label="&amp;Pause for Indexing"
                class="org.eclipse.pde.internal.ui.tests.macro.IndexAction"
-               tooltip="Pause for Indexing"
+               definitionId="org.eclipse.pde.ui.tests.index"
                icon="icons/suspend_co.gif"
+               id="org.eclipse.pde.ui.tests.IndexAction"
+               label="&amp;Pause for Indexing"
                menubarPath="window/macro/group1"
-               id="org.eclipse.pde.ui.tests.IndexAction"/>
+               toolbarPath="sampleGroup"
+               tooltip="Pause for Indexing"/>
          <action
                class="org.eclipse.pde.internal.ui.tests.macro.StopAction"
-               definitionId="org.eclipse.ui.macro.stopRecording"
+               definitionId="org.eclipse.pde.ui.tests.stopRecording"
                icon="icons/terminate_co.gif"
                id="org.eclipse.pde.ui.tests.StopAction"
                label="S&amp;top Recording"
@@ -93,12 +94,21 @@
             description="Stops the recording of the macro"
             categoryId="org.eclipse.ui.category.window"
             name="Stop Macro Recording"
-            id="org.eclipse.ui.macro.stopRecording"/>
+            id="org.eclipse.pde.ui.tests.stopRecording"/>
+     <command
+            description="Places a named index in the macro"
+            categoryId="org.eclipse.ui.category.window"
+            name="Index Macro"
+            id="org.eclipse.pde.ui.tests.index"/>
       <keyBinding
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            commandId="org.eclipse.ui.macro.stopRecording"
+            commandId="org.eclipse.pde.ui.tests.stopRecording"
             keySequence="Ctrl+Shift+F11"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <keyBinding
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            commandId="org.eclipse.pde.ui.tests.index"
+            keySequence="Ctrl+Shift+F10"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
    </extension>
-
 </plugin>
