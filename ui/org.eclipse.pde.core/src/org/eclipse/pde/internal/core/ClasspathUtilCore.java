@@ -496,6 +496,8 @@ public class ClasspathUtilCore {
 					list.add(new Path(exports[i].getName().replaceAll("\\.", "/") + "/*")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
+			if (list.size() == 0)
+				return new IPath[] {new Path("**/*")};
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
