@@ -42,7 +42,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	public void execute() throws BuildException {
 		try {
 			if (this.elements == null) {
-				String message = Messages.error_missingElement;
+				String message = TaskMessages.error_missingElement;
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 			}
 			readDirectory();
@@ -139,7 +139,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	protected void collectEntries(List entries, String entry) throws CoreException {
 		String cvsInfo = directory.getProperty(entry);
 		if (cvsInfo == null) {
-			String message = NLS.bind(Messages.error_missingDirectoryEntry, entry);
+			String message = NLS.bind(TaskMessages.error_missingDirectoryEntry, entry);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 		}
 
@@ -191,7 +191,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 			FeatureExecutableFactory factory = new FeatureExecutableFactory();
 			return (Feature) factory.createFeature(root.toFile().toURL(), null, null);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.error_creatingFeature, element);
+			String message = NLS.bind(TaskMessages.error_creatingFeature, element);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e));
 		}
 	}
@@ -217,7 +217,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 				is.close();
 			}
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.error_readingDirectory, directoryLocation);
+			String message = NLS.bind(TaskMessages.error_readingDirectory, directoryLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, e));
 		}
 	}
