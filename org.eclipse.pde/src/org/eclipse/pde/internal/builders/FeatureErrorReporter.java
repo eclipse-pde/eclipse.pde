@@ -221,7 +221,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					if (!value.equals("web") && !value.equals("update")) { //$NON-NLS-1$ //$NON-NLS-2$
 						reportIllegalAttributeValue(discovery, (Attr)attributes.item(i));
 					}
-				} if (!name.equals("label")) { //$NON-NLS-1$
+				} else if (!name.equals("label")) { //$NON-NLS-1$
 					reportUnknownAttribute(discovery, name, CompilerFlags.ERROR);
 				}
 			}
