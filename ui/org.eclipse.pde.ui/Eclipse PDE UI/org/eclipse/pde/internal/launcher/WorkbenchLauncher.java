@@ -412,4 +412,12 @@ private void showNoLauncherDialog() {
 		PDEPlugin.getResourceString(NO_LAUNCHER_TITLE),
 		PDEPlugin.getResourceString(NO_LAUNCHER_MESSAGE));
 }
+public String getLaunchMemento(Object arg0) {
+		return null;
+}
+
+public Object getLaunchObject(String arg0) {
+	return null;
+}
+
 }

@@ -17,6 +17,6 @@ public IContentOutlinePage createContentOutlinePage() {
 	return new JarsOutlinePage(this);
 }
 protected Form createForm() {
-	return new JarsForm(this);;
+	return new JarsForm(this);
 }
 }
