@@ -33,8 +33,8 @@ public class PDEPerspective implements IPerspectiveFactory {
 	
 	private void addPerspectiveShortcuts() {
 		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective");
-		factory.addPerspectiveShortcut("org.eclipse.jdt.ui.JavaPerspective");
-		factory.addPerspectiveShortcut("org.eclipse.debug.ui.DebugPerspective");		
+		factory.addPerspectiveShortcut(JavaUI.ID_PERSPECTIVE);
+		factory.addPerspectiveShortcut(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);		
 	}
 	
 	private void addViews() {

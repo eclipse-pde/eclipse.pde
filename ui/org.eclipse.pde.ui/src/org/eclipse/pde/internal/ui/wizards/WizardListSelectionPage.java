@@ -95,7 +95,7 @@ private Table createTable(Composite parent, int style) {
 	Table table = new Table(parent, style);
 	new TableColumn(table, SWT.NONE);
 	TableLayout layout = new TableLayout();
-	layout.addColumnData(new ColumnWeightData(100));
+	layout.addColumnData(new ColumnPixelData(200));
 	table.setLayout(layout);
 	return table;
 }

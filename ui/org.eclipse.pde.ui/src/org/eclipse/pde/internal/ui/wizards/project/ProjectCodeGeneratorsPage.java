@@ -117,7 +117,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 
 		super.createControl(outerContainer);
 		wizardList = super.wizardSelectionViewer.getControl();
-		getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 450;
+		getControl().setLayoutData(gd);
 		setControl(outerContainer);
 		Dialog.applyDialogFont(outerContainer);
 		if (fragment)
