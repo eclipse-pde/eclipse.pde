@@ -663,8 +663,6 @@ public class ExtensionsSection extends TreeSection
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
 			if (!fullNames) {
-				//defect 17026
-				//if (extension.getName()!=null) return extension.getName();
 				return extension.getPoint();
 			}
 			if (extension.getName() != null)
@@ -675,12 +673,7 @@ public class ExtensionsSection extends TreeSection
 				// exists
 				return schema.getName();
 			}
-			// try extension point declaration
-			IPluginExtensionPoint pointInfo = pluginInfoRegistry
-					.findExtensionPoint(extension.getPoint());
-			if (pointInfo != null) {
-				return pointInfo.getResourceString(pointInfo.getName());
-			}
+			return extension.getPoint();		
 		} else if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
 			String baseName = element.getName();			

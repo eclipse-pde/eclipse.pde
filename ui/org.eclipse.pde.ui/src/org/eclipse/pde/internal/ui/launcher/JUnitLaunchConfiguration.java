@@ -264,7 +264,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	
 	private IPluginModelBase findPlugin(String id) throws CoreException {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findPlugin(id, null, 0);
+		IPluginModelBase model = manager.findModel(id);
 		if (model != null)
 			return model;
 

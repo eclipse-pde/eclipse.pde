@@ -264,8 +264,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			IFeaturePlugin[] plugins = feature.getPlugins();
 			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < plugins.length; i++) {
-				ModelEntry entry =
-					manager.findEntry(plugins[i].getId(), plugins[i].getVersion());
+				ModelEntry entry = manager.findEntry(plugins[i].getId());
 				if (entry != null) {
 					deleteBuildFiles(entry.getActiveModel());
 				}

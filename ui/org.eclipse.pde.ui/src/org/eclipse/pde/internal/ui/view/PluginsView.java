@@ -697,10 +697,7 @@ public class PluginsView extends ViewPart {
 		for (int i = 0; i < iimports.length; i++) {
 			IPluginImport iimport = iimports[i];
 			ModelEntry ientry =
-				manager.findEntry(
-					iimport.getId(),
-					iimport.getVersion(),
-					iimport.getMatch());
+				manager.findEntry(iimport.getId());
 			if (ientry != null) {
 				set.add(ientry);
 				addDependentEntries(ientry, set);
@@ -835,7 +832,7 @@ public class PluginsView extends ViewPart {
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		treeViewer.getTree().setFocus();
+		//treeViewer.getTree().setFocus();
 	}
 	void updateTitle(Object newInput) {
 		IConfigurationElement config = getConfigurationElement();
