@@ -42,8 +42,8 @@ public class WorkspaceModelManager
 		}		
 	}
 	
-	private ArrayList fModels;
-	private ArrayList fFragmentModels;	
+	private HashMap fModels;
+	private HashMap fFragmentModels;	
 	private ArrayList fFeatureModels;	
 	private ArrayList fChangedModels;	
 	private ArrayList fListeners = new ArrayList();
@@ -133,15 +133,15 @@ public class WorkspaceModelManager
 			return getWorkspaceModel(project, fFeatureModels);
 		
 		if (hasBundleManifest(project)) {
-			IModel model = getWorkspaceModel(project, fModels);
-			return (model != null) ? model : getWorkspaceModel(project, fFragmentModels);
+			IModel model = (IModel)fModels.get(project);
+			return (model != null) ? model : (IModel)fFragmentModels.get(project);
 		}
 		
 		if (hasPluginManifest(project))
-			return getWorkspaceModel(project, fModels);
+			return (IModel)fModels.get(project);
 			
 		if (hasFragmentManifest(project))
-				return getWorkspaceModel(project, fFragmentModels);
+				return (IModel)fFragmentModels.get(project);
 		
 		return null;
 	}
@@ -177,7 +177,7 @@ public class WorkspaceModelManager
 	private void handleFileAdded(IFile file) {
 		IModel model = getWorkspaceModel(file);
 		if (model != null)
-			removeWorkspaceModel(model);
+			removeWorkspaceModel(file.getProject());
 		addWorkspaceModel(file.getProject(), true);
 	}
 	
@@ -190,12 +190,12 @@ public class WorkspaceModelManager
 				if (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")) {
 					bModel.setExtensionsModel(null);
 				} else {
-					removeWorkspaceModel(bModel);
+					removeWorkspaceModel(file.getProject());
 					if (bModel.getExtensionsModel() != null)
 						switchToPluginMode(bModel);
 				}					
 			} else {
-				removeWorkspaceModel(model);
+				removeWorkspaceModel(file.getProject());
 			}
 		}
 	}
@@ -211,9 +211,9 @@ public class WorkspaceModelManager
 			
 		if (model != null && model.getPluginBase().getId() != null) {
 			if (model instanceof IPluginModel) {
-				fModels.add(model);
+				fModels.put(project, model);
 			} else {
-				fFragmentModels.add(model);
+				fFragmentModels.put(project, model);
 			}
 			if (fChangedModels == null)
 				fChangedModels = new ArrayList();
@@ -239,9 +239,11 @@ public class WorkspaceModelManager
 			}
 			if (model instanceof IPluginModelBase) {
 				String id = ((IPluginModelBase)model).getPluginBase().getId();
-				if (id == null || id.length() > 0)
-					removeWorkspaceModel(model);
+				if (id == null || id.length() == 0)
 					return;
+				// overwrite old model if one exists.
+				// add a new model if none already existed.
+				addWorkspaceModel(file.getProject(), true);
 			}
 			fireModelsChanged(new IModel[] { model });
 		}		
@@ -279,15 +281,16 @@ public class WorkspaceModelManager
 	}
 	
 	private IModel getWorkspaceModel(IFile file) {
+		IProject project = file.getProject();
 		if (isBundleManifestFile(file)) {
-			IModel model = getWorkspaceModel(file.getProject(), fModels);
-			return (model != null) ? model : getWorkspaceModel(file.getProject(), fFragmentModels);
+			IModel model = (IModel)fModels.get(project);
+			return (model != null) ? model : (IModel)fFragmentModels.get(project);
 		}		
 		IPath path = file.getProjectRelativePath();
 		if (path.equals(new Path("plugin.xml")))
-			return getWorkspaceModel(file.getProject(), fModels);
+			return (IModel)fModels.get(project);
 		if (path.equals(new Path("fragment.xml")))
-			return getWorkspaceModel(file.getProject(), fFragmentModels);
+			return (IModel)fFragmentModels.get(project);
 		if (path.equals(new Path("feature.xml")))
 			return getWorkspaceModel(file.getProject(), fFeatureModels);
 		return null;		
@@ -312,11 +315,14 @@ public class WorkspaceModelManager
 			initializeWorkspaceModels();
 		
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < fModels.size(); i++) {
-			result.add(fModels.get(i));
+		Iterator iter = fModels.values().iterator();
+		while (iter.hasNext()) {
+			result.add(iter.next());
 		}
-		for (int i = 0; i < fFragmentModels.size(); i++) {
-			result.add(fFragmentModels.get(i));
+		
+		iter = fFragmentModels.values().iterator();
+		while (iter.hasNext()) {
+			result.add(iter.next());
 		}
 		return (IPluginModelBase[]) result.toArray(
 			new IPluginModelBase[result.size()]);
@@ -367,29 +373,26 @@ public class WorkspaceModelManager
 	 * @param project
 	 */
 	private void removeWorkspaceModel(IProject project) {
-		IModel model = getWorkspaceModel(project);
+		IModel model = null;
+		if (fModels.containsKey(project)) {
+			model = (IModel)fModels.remove(project);
+		} else if (fFragmentModels.containsKey(project)) {
+			model = (IModel)fFragmentModels.remove(project);
+		} else {
+			model = getWorkspaceModel(project, fFeatureModels);
+			if (model != null)
+				fFeatureModels.remove(model);
+		}
 		if (model != null) {
-			removeWorkspaceModel(model);
+			if (model instanceof IPluginModelBase) {
+				PDECore.getDefault().getTracingOptionsManager().reset();
+			}
+			if (fChangedModels == null)
+				fChangedModels = new ArrayList();
+			fChangedModels.add(new ModelChange(model, false));
 		}
 	}
-	/**
-	 * @param model
-	 */
-	private void removeWorkspaceModel(IModel model) {
-		if (model instanceof IFeatureModel) {
-			fFeatureModels.remove(model);
-		} else if (model instanceof IPluginModelBase){
-			if (model instanceof IFragmentModel)
-				fFragmentModels.remove(model);
-			else
-				fModels.remove(model);
-			PDECore.getDefault().getTracingOptionsManager().reset();
-		}
-		if (fChangedModels == null)
-			fChangedModels = new ArrayList();
-		fChangedModels.add(new ModelChange(model, false));
-	}
-	
+
 	/**
 	 * @param delta
 	 */
@@ -411,6 +414,9 @@ public class WorkspaceModelManager
 				if (delta.getKind() == IResourceDelta.ADDED || (project.isOpen() && (delta.getFlags()&IResourceDelta.OPEN) != 0)) {
 					addWorkspaceModel(project, true);
 					return false;
+				} else if (delta.getKind() == IResourceDelta.REMOVED) {
+					removeWorkspaceModel(project);
+					return false;
 				}
 				return true;
 			} else if (resource instanceof IFile) {
@@ -426,8 +432,8 @@ public class WorkspaceModelManager
 		if (fInitialized || fModelsLocked)
 			return;
 		fModelsLocked = true;
-		fModels = new ArrayList();
-		fFragmentModels = new ArrayList();
+		fModels = new HashMap();
+		fFragmentModels = new HashMap();
 		fFeatureModels = new ArrayList();
 		
 		IWorkspace workspace = PDECore.getWorkspace();
@@ -567,9 +573,9 @@ public class WorkspaceModelManager
 			model = createPluginModel(project);
 			if (model != null) {			
 				if (model instanceof IFragmentModel)
-					fFragmentModels.add(model);
+					fFragmentModels.put(project, model);
 				else
-					fModels.add(model);
+					fModels.put(project, model);
 				if (notify) {
 					if (fChangedModels == null)
 						fChangedModels = new ArrayList();
@@ -591,7 +597,7 @@ public class WorkspaceModelManager
 	public IPluginModel[] getPluginModels() {
 		if (!fInitialized)
 			initializeWorkspaceModels();
-		return (IPluginModel[])fModels.toArray(new IPluginModel[fModels.size()]);
+		return (IPluginModel[])fModels.values().toArray(new IPluginModel[fModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFragmentModels()
@@ -599,7 +605,7 @@ public class WorkspaceModelManager
 	public IFragmentModel[] getFragmentModels() {
 		if (!fInitialized)
 			initializeWorkspaceModels();
-		return (IFragmentModel[]) fFragmentModels.toArray(new IFragmentModel[fFragmentModels.size()]);
+		return (IFragmentModel[]) fFragmentModels.values().toArray(new IFragmentModel[fFragmentModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFeatureModels()
@@ -616,8 +622,10 @@ public class WorkspaceModelManager
 		if (!fInitialized)
 			initializeWorkspaceModels();
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < fFragmentModels.size(); i++) {
-			IFragment fragment = ((IFragmentModel)fFragmentModels.get(i)).getFragment();
+		
+		Iterator iter = fFragmentModels.values().iterator();
+		while (iter.hasNext()) {
+			IFragment fragment = ((IFragmentModel)iter.next()).getFragment();
 			if (PDECore
 				.compare(
 					fragment.getPluginId(),
