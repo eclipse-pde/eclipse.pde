@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
@@ -83,11 +82,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 	private void deleteBuildFiles(IFeatureModel model) {
 		
 		deleteBuildFile(model);
-		
-		IFeatureChild[] children = model.getFeature().getIncludedFeatures();
-		for (int i = 0; i < children.length; i++) {
-			deleteBuildFiles(children[i].getModel());
-		}
 
 		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
 		PluginModelManager manager = PDECore.getDefault().getModelManager();

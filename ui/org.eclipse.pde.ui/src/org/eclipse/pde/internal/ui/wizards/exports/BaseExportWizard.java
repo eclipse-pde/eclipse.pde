@@ -140,6 +140,19 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		final String zipFileName = page1.getFileName();
 		final Object[] items = page1.getSelectedItems();
 		
+		if (zipFileName != null) {
+			File zipFile = new File(destination, zipFileName);
+			if (zipFile.exists()) {
+				if (!MessageDialog
+					.openQuestion(
+						getShell(),
+						getWindowTitle(),
+						PDEPlugin.getResourceString("ExportWizard.zipFileExists")))
+					return false;
+				zipFile.delete();
+			}
+		}
+		
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException{
 				try {
@@ -155,7 +168,13 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(getShell(), getWindowTitle(), e.getTargetException().getMessage());
+			String message = e.getTargetException().getMessage();
+			if (message != null && message.length() > 0) {
+				MessageDialog.openError(
+					getShell(),
+					getWindowTitle(),
+					e.getTargetException().getMessage());
+			}
 			return false;
 		} finally {
 			if (writer != null)
