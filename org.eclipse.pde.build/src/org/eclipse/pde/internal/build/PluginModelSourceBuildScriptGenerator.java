@@ -136,6 +136,9 @@ protected String makeRelative(String location, IPath base) {
 
 
 protected void generate(PluginModel model) throws CoreException {
+	String custom = (String) getBuildProperties(model).get(PROPERTY_CUSTOM);
+	if (custom != null && custom.equalsIgnoreCase("true"))
+		return;
 	String location = getScriptLocation(model);
 	try {
 		FileOutputStream output = new FileOutputStream(location);
@@ -272,8 +275,9 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printTargetDeclaration(tab++, name, null, null, null, null);
 	String destdir = getTempJARFolder(name);
 	script.printProperty(tab, "destdir", destdir);
-	script.printDeleteTask(tab, destdir, null, null);
-	script.printMkdirTask(tab, destdir);
+	String destdirprop = getPropertyFormat("destdir");
+	script.printDeleteTask(tab, destdirprop, null, null);
+	script.printMkdirTask(tab, destdirprop);
 	script.printComment(tab, "compile the source code");
 	JavacTask javac = new JavacTask();
 	javac.setClasspath(getClasspath(model, jar));
@@ -287,7 +291,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "", null, "**/*.java", null, null);
 	}
-	script.printCopyTask(tab, null, destdir, fileSets);
+	script.printCopyTask(tab, null, destdirprop, fileSets);
 
 // FIXME
 //    <copy todir="${basedir}">
@@ -295,7 +299,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 //    </copy>
 
 	script.printJarTask(tab, name, destdir);
-	script.printDeleteTask(tab, destdir, null, null);
+	script.printDeleteTask(tab, destdirprop, null, null);
 	script.printEndTag(--tab, "target");
 }
 
@@ -363,6 +367,8 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 
 protected void addLibraries(PluginModel model, Set classpath, String baseLocation) throws CoreException {
 	LibraryModel[] libraries = model.getRuntime();
+	if (libraries == null)
+		return;
 	String root = getLocation(model);
 	IPath base = new Path(makeRelative(root, new Path(baseLocation)));
 	for (int i = 0; i < libraries.length; i++) {
