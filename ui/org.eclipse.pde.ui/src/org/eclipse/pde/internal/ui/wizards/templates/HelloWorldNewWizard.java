@@ -2,6 +2,7 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.update.ui.forms.internal.*;

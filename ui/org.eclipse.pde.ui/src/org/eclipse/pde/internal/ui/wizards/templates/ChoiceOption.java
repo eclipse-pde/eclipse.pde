@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -19,7 +20,7 @@ public class ChoiceOption extends TemplateOption {
 	 * @param label
 	 */
 	public ChoiceOption(
-		GenericTemplateSection section,
+		OptionTemplateSection section,
 		String name,
 		String label,
 		String[][] choices) {

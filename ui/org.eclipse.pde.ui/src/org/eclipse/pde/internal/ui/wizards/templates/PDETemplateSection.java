@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.CoreException;
@@ -16,7 +17,7 @@ import java.util.*;
 import org.eclipse.jface.wizard.*;
 import java.io.File;
 
-public abstract class PDETemplateSection extends GenericTemplateSection {
+public abstract class PDETemplateSection extends OptionTemplateSection {
 	public static final String TEMPLATE_DIRECTORY = "templates";
 	protected WizardPage [] pages;
 	protected ArrayList [] lists;

@@ -3,13 +3,14 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.SWT;
 
 public abstract class TemplateField {
-	private GenericTemplateSection section;
+	private OptionTemplateSection section;
 	private String label;
 	
-	public TemplateField(GenericTemplateSection section, String label) {
+	public TemplateField(OptionTemplateSection section, String label) {
 		this.section = section;
 		this.label = label;
 	}
@@ -22,7 +23,7 @@ public abstract class TemplateField {
 		this.label = label;
 	}
 	
-	public GenericTemplateSection getSection() {
+	public OptionTemplateSection getSection() {
 		return section;
 	}
 	

@@ -2,6 +2,8 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.*;
 
+import org.eclipse.pde.ui.templates.*;
+
 public class ControlStack {
 	private Stack stack;
 	private PreprocessorParser parser;

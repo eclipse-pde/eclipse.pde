@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.CoreException;
@@ -84,12 +85,12 @@ public class ViewTemplate extends PDETemplateSection {
 	public void addPages(Wizard wizard) {
 		pages = new WizardPage[2];
 		createOptions();
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Main View Settings");
 		pages[0].setDescription("Choose the way the new view will be added to the plug-in.");
 		wizard.addPage(pages[0]);
 		
-		pages[1] = new GenericTemplateWizardPage(this, lists[1]);
+		pages[1] = new OptionTemplateWizardPage(this, lists[1]);
 		pages[1].setTitle("View Features");
 		pages[1].setDescription("Choose the features that the new view should have.");
 		wizard.addPage(pages[1]);

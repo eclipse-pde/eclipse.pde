@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 
@@ -13,7 +14,7 @@ public class LabelField extends TemplateField {
 	 * @param section
 	 * @param label
 	 */
-	public LabelField(GenericTemplateSection section, String label) {
+	public LabelField(OptionTemplateSection section, String label) {
 		super(section, label);
 	}
 

@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.CoreException;
@@ -66,7 +67,7 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 	public void addPages(Wizard wizard) {
 		pages = new WizardPage[1];
 		createOptions();
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Sample Multi-Page Editor");
 		pages[0].setDescription("Choose the options that will be used to generate the multi-page editor.");
 		wizard.addPage(pages[0]);

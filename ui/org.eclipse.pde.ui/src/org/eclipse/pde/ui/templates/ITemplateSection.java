@@ -1,22 +1,29 @@
-package org.eclipse.pde.internal.ui.wizards.templates;
+package org.eclipse.pde.ui.templates;
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.*;
-import java.net.URL;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
 
 /**
- * This interface represents a section of the template
+ * <p>This interface represents a section of the template
  * wizard that generates a new extension or plug-in.
  * Typically, it maps to one wizard page, but more
  * complex sections may span several pages. Also note
- * that in very simple cases it may not contribute any
- * wizard pages. 
+ * that in the very simple cases it may not contribute any
+ * wizard pages.
+ * </p>
  * <p>If a section generates extensions, it should be written 
  * in such a way to be used both in the 'New Extension' wizard
- * and as a part of a new plug-in project template.
+ * and as a part of a new plug-in project wizard. When used
+ * as part of the new plug-in project wizard, it may appear
+ * alongside other templates and therefore should not 
+ * do anything that prevents it.
  * </p>
  */
 
@@ -28,7 +35,7 @@ public interface ITemplateSection {
 	 * is 'file', and the URL ends with a trailing file
 	 * separator, an attempt will be made to treat the
 	 * URL as a root directory and iterate using standard
-	 * Java IO. If template files are stored in a ZIP 
+	 * Java I/O classes. If template files are stored in a ZIP 
 	 * or JAR archive, the name of the archive must
 	 * be part of the URL.
 	 * @return a template location URL
@@ -37,26 +44,29 @@ public interface ITemplateSection {
 	/**
 	 * Returns a presentable label the section.
 	 * @return a template label
-	 */	
+	 */
 	public String getLabel();
-	
+
 	/**
 	 * Returns a description of the section. The description
-	 * should explain what extension will be plugged into,
+	 * should explain what extension will be used,
 	 * what classes will be generated and how to
 	 * test that the generated code works properly.
 	 * @return a template description
 	 */
 	public String getDescription();
-	
+
 	/**
-	 * Returns a replacement string for the provided key. 
+	 * Returns a replacement string for the provided key.
 	 * When a token is found in the template file with a form
 	 * '$key$', the actual key is passed to this method
 	 * to obtain the replacement. If replacement is
 	 * provided, it is substituted for the token (including
 	 * the '$' characters). Otherwise, it is transfered
 	 * as-is.
+	 * @param fileName the name of the file in which the key
+	 * was found. You can use it to return different values
+	 * for different files.
 	 * @param key the replacement key found in the template file
 	 * @return replacement string for the provided key, or
 	 * the key itself if not found. 
@@ -69,9 +79,16 @@ public interface ITemplateSection {
 	 * @param wizard the host wizard to add pages into
 	 */
 	public void addPages(Wizard wizard);
-	
-	public WizardPage [] getPages();
-	
+
+	/**
+	 * Returns an array of wizard pages that have been 
+	 * contributed into the wizard.
+	 * @return an array of wizard pages (the size may be 0 if
+	 * no pages have been added).
+	 */
+
+	public WizardPage[] getPages();
+
 	/**
 	 * Returns the number of work units that this template will
 	 * consume during the execution. This number is used to
@@ -89,7 +106,7 @@ public interface ITemplateSection {
 	 * these classes and interfaces are correctly resolved.
 	 */
 	public IPluginReference[] getDependencies();
-	
+
 	/**
 	 * Returns identifier of the extension point used in
 	 * this section.
@@ -111,5 +128,6 @@ public interface ITemplateSection {
 	public void execute(
 		IProject project,
 		IPluginModelBase model,
-		IProgressMonitor monitor) throws CoreException;
+		IProgressMonitor monitor)
+		throws CoreException;
 }

@@ -4,13 +4,14 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 
 public class BooleanOption extends TemplateOption {
 	private Button button;
 	
-	public BooleanOption(GenericTemplateSection section, String name, String label) {
+	public BooleanOption(OptionTemplateSection section, String name, String label) {
 		super(section, name, label);
 	}
 	

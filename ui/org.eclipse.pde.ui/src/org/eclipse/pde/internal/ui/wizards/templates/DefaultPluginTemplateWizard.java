@@ -1,6 +1,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.pde.ui.templates.*;
+
 
 
 public class DefaultPluginTemplateWizard extends NewPluginTemplateWizard {

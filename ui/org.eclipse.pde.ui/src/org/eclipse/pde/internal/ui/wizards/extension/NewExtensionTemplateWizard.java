@@ -1,35 +1,16 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.ui.BuildPathUtil;
-import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.pde.ui.IPluginStructureData;
-import org.eclipse.pde.ui.IProjectProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.CoreUtility;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.core.resources.*;
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.wizards.templates.*;
-import java.util.*;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.ui.IExtensionWizard;
-import org.eclipse.pde.internal.ui.wizards.templates.GenericTemplateSection;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.ui.IExtensionWizard;
+import org.eclipse.pde.ui.templates.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * This wizard should be used as a base class for 
  * wizards that provide new plug-in templates. 
@@ -80,8 +61,8 @@ public class NewExtensionTemplateWizard
 
 	public void addPages() {
 		section.addPages(this);
-		if (section instanceof GenericTemplateSection) {
-			((GenericTemplateSection)section).initializeFields(model);
+		if (section instanceof OptionTemplateSection) {
+			((OptionTemplateSection)section).initializeFields(model);
 		}
 	}
 

@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
 import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;

@@ -1,14 +1,18 @@
-package org.eclipse.pde.internal.ui.wizards.templates;
-
+package org.eclipse.pde.ui.templates;
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
-public abstract class GenericTemplateSection extends AbstractTemplateSection {
-	protected Hashtable options = new Hashtable();
+public abstract class OptionTemplateSection extends AbstractTemplateSection {
+	private Hashtable options = new Hashtable();
 
 	protected TemplateOption addOption(
 		String name,

@@ -496,7 +496,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		return dependencies;
 	}
 	
-	IPluginStructureData getStructureData() {
+	public IPluginStructureData getStructureData() {
 		return structureData;
 	}
 

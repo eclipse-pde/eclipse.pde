@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.CoreException;
@@ -47,7 +48,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		addOption(KEY_MESSAGE, "&Message Box Text:", "Hello, Eclipse world", lists[0]);
 		
 		pages = new WizardPage[1];
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Sample Action Set");
 		pages[0].setDescription("This template will generate a sample action set extension with a menu, a menu item and a tool bar button. When selected, they will show a simple message dialog.");
 		wizard.addPage(pages[0]);

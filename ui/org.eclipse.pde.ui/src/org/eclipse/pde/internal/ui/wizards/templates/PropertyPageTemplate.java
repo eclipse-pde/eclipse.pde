@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.ui.IPluginStructureData;
+import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageTemplate extends PDETemplateSection {
 
@@ -38,7 +39,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		createOptions();
 
 		pages = new WizardPage[1];
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Sample Property Page");
 		pages[0].setDescription("This template adds a property page to a resource and will appear in the Properties Dialog for that resource.");
 		wizard.addPage(pages[0]);

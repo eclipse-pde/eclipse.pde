@@ -5,6 +5,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.*;
 import java.util.ArrayList;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;

@@ -7,7 +7,8 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.wizards.templates.ITemplateSection;
+import org.eclipse.pde.ui.templates.ITemplateSection;
+
 import java.util.*;
 
 

@@ -17,6 +17,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.ui.templates.*;
 
 public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	
@@ -53,14 +54,14 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	}
 
 	private void createPage1(Wizard wizard) {
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Target Perspective and Shortcuts");
 		pages[0].setDescription("Add an action set and shortcuts to the target perspective");
 		
 	}
 	
 	private void createPage2(Wizard wizard) {
-		pages[1] = new GenericTemplateWizardPage(this,lists[1]);
+		pages[1] = new OptionTemplateWizardPage(this,lists[1]);
 		pages[1].setTitle("View");
 		pages[1].setDescription("Add a view to the Show submenu of the target perspective");
 	}

@@ -9,9 +9,9 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.templates.ITemplateSection;
 
 public class NewExtensionMainPage extends WizardTreeSelectionPage {
 	public static final String KEY_TITLE = "NewExtensionWizard.title";

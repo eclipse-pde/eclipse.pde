@@ -1,6 +1,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -10,7 +11,7 @@ public abstract class TemplateOption extends TemplateField {
 	private boolean enabled=true;
 	private boolean required;
 	
-	public TemplateOption(GenericTemplateSection section, String name, String label) {
+	public TemplateOption(OptionTemplateSection section, String name, String label) {
 		super(section, label);
 		this.name = name;
 	}

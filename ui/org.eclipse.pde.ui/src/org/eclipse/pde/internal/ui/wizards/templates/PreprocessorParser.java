@@ -2,6 +2,8 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.*;
 
+import org.eclipse.pde.ui.templates.*;
+
 public class PreprocessorParser {
 	private static final int T_VAR = 1;
 	private static final int T_LBR = 2;

@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.pde.ui.IPluginStructureData;
 import org.eclipse.pde.ui.IProjectProvider;
+import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageNewWizard extends NewPluginTemplateWizard {
 

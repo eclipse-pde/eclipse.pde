@@ -1,15 +1,17 @@
 
-package org.eclipse.pde.internal.ui.wizards.templates;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.SWT;
+package org.eclipse.pde.ui.templates;
 import java.util.ArrayList;
 
-public class GenericTemplateWizardPage extends WizardPage {
-	private GenericTemplateSection section;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+
+public class OptionTemplateWizardPage extends WizardPage {
+	private OptionTemplateSection section;
 	private ArrayList options;
-	public GenericTemplateWizardPage(GenericTemplateSection section, ArrayList options) {
+	public OptionTemplateWizardPage(OptionTemplateSection section, ArrayList options) {
 		super("something");
 		this.section = section;
 		this.options = options;

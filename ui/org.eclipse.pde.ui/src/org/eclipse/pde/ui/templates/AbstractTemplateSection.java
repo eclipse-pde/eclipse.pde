@@ -1,28 +1,61 @@
-package org.eclipse.pde.internal.ui.wizards.templates;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.ui.IBasePluginWizard;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.jdt.core.*;
-import org.eclipse.core.runtime.*;
+package org.eclipse.pde.ui.templates;
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
 import java.io.*;
-import java.net.*;
-import org.eclipse.jface.wizard.Wizard;
+import java.net.URL;
+import java.util.*;
+
 import org.eclipse.core.internal.boot.InternalBootLoader;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
+
+/**
+ * Common function for template sections. It is recommended
+ * to subclass this class rather than implementing ITemplateSection
+ * directly when providing extension templates.
+ */
 
 public abstract class AbstractTemplateSection
 	implements ITemplateSection, IVariableProvider {
+	/**
+	 * The project handle.
+	 */
 	protected IProject project;
+	/**
+	 * The plug-in model.
+	 */
 	protected IPluginModelBase model;
+	/**
+	 * The key for the main plug-in class of the plug-in that
+	 * the template is used for (value="pluginClass");
+	 */
 	public static final String KEY_PLUGIN_CLASS = "pluginClass";
+	/**
+	 * The key for the plug-in id of the plug-in that
+	 * the template is used for (value="pluginId").
+	 */
 	public static final String KEY_PLUGIN_ID = "pluginId";
+	/**
+	 * The key for the plug-in name of the plug-in that
+	 * the template is used for (value="pluginName").
+	 */
 	public static final String KEY_PLUGIN_NAME = "pluginName";
+	/**
+	 * The key for the package name that will be created by
+	 * this teamplate (value="packageName").
+	 */
 	public static final String KEY_PACKAGE_NAME = "packageName";
 
-	/*
+	/**
+	 * The default implementation of this method provides
+	 * values of the following keys: <samp>pluginClass</samp>,
+	 * <samp>pluginId</samp> and <samp>pluginName</samp>.
 	 * @see ITemplateSection#getReplacementString(String)
 	 */
 	public String getReplacementString(String fileName, String key) {
@@ -43,18 +76,32 @@ public abstract class AbstractTemplateSection
 		return key;
 	}
 
+	/**
+	 *@see IVariableProvider#getValue(String)
+	 */
+
 	public Object getValue(String key) {
 		return null;
 	}
-
+	/**
+	 * @see ITemplateSection#getTemplateLocation()
+	 */
 	public URL getTemplateLocation() {
 		return null;
 	}
-
+	/**
+	 * @see ITemplateSection#getDescription()
+	 */
 	public String getDescription() {
 		return "";
 	}
-
+	/**
+	 * Returns the translated version of the resource string
+	 * represented by the provided key.
+	 * @param key the key of the required resource string
+	 * @return the translated version of the required resource string
+	 * @see #getPluginResourceBundle()
+	 */
 	public String getPluginResourceString(String key) {
 		ResourceBundle bundle = getPluginResourceBundle();
 		if (bundle == null)
@@ -65,7 +112,14 @@ public abstract class AbstractTemplateSection
 			return key;
 		}
 	}
-
+	/**
+	 * An abstract method that returns the resource bundle 
+	 * that corresponds to the best match of <samp>plugin.properties</samp>
+	 * file for the current locale (in case of fragments, the file
+	 * is <samp>fragment.properties</samp>).
+	 * @return resource bundle for plug-in properties file or <samp>null</samp>
+	 * if not found.
+	 */
 	protected abstract ResourceBundle getPluginResourceBundle();
 
 	/*
@@ -75,6 +129,8 @@ public abstract class AbstractTemplateSection
 	}
 
 	/*
+	 * The default implementation of the interface method. The
+	 * returned value is 1.
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
 	public int getNumberOfWorkUnits() {
@@ -87,6 +143,16 @@ public abstract class AbstractTemplateSection
 	public IPluginReference[] getDependencies() {
 		return new IPluginReference[0];
 	}
+
+	/**
+	 * Returns the folder with Java files in the target project. 
+	 * The default implementation looks for source folders in
+	 * the classpath of the target folders and picks the first one
+	 * encountered. Subclasses may override this behaviour.
+	 * @param monitor progress monitor to use
+	 * @return source folder that will be used to generate Java files
+	 * or <samp>null</samp> if none found.
+	 */
 
 	protected IFolder getSourceFolder(IProgressMonitor monitor)
 		throws CoreException {
@@ -108,7 +174,115 @@ public abstract class AbstractTemplateSection
 		return sourceFolder;
 	}
 
-	File getTemplateDirectory() {
+	/**
+	 * Generates files as part of the template execution. The default
+	 * implementation uses template location as a root of the file
+	 * templates. The files found in the location are processed in
+	 * the following way:
+	 * <ul>
+	 * <li>Files and folders found in the directory <samp>bin</samp> are copied
+	 * into the target project without modification.</li>
+	 * <li>Files found in the directory <samp>java</samp> are copied
+	 * into the Java source folder by creating the folder structure
+	 * that corresponds to the package name (variable <samp>packageName</samp>). 
+	 * Java files are subject to conditional generation and variable replacement.</li>
+	 * <li>All other files and folders are copied directly into the
+	 * target folder with the conditional generation and variable replacement
+	 * for files. Variable replacement also includes file names.
+	 * @param monitor progress monitor to use to indicate generation progress
+	 */
+	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
+		monitor.setTaskName("Generating: ");
+
+		File templateDirectory = getTemplateDirectory();
+		if (!templateDirectory.exists())
+			return;
+		generateFiles(templateDirectory, project, true, false, monitor);
+		monitor.subTask("");
+		monitor.worked(1);
+	}
+	/**
+	 * Tests if the folder found in the template location should
+	 * be created in the target project. Subclasses may use this
+	 * method to conditionally block creation of the entire
+	 * directories (subject to user choices).
+	 * @param sourceFolder the folder found in the template location
+	 * that needs to be created.
+	 * @return <samp>true</samp> if the specified folder should be created
+	 * in the project, or <samp>false</samp> to skip it, including all
+	 * subfolders and files it may contain. The default implementation
+	 * is <samp>true</samp>.
+	 */
+	protected boolean isOkToCreateFolder(File sourceFolder) {
+		return true;
+	}
+
+	/**
+	 * Tests if the file found in the template location should
+	 * be created in the target project. Subclasses may use this
+	 * method to conditionally block createion of the file
+	 * (subject to user choices).
+	 * @param sourceFile the file found in the template location
+	 * that needs to be created.
+	 * @return <samp>true</samp> if the specified file should be
+	 * created in the project or <samp>false</samp> to skip it. The
+	 * default implementation is <samp>true</samp>.
+	 */
+	protected boolean isOkToCreateFile(File sourceFile) {
+		return true;
+	}
+
+	/**
+	 * Subclass must implement this method to add the required entries
+	 * in the plug-in model.
+	 * @param monitor the progress monitor to be used
+	 */
+	protected abstract void updateModel(IProgressMonitor monitor)
+		throws CoreException;
+
+	/**
+	 * The default implementation of the interface method. It will 
+	 * generate required files found in the template location and
+	 * then call <samp>updateModel</samp> to add the required
+	 * manifest entires.
+	 * @see ITemplateSection#execute(IProject, IPluginModelBase, IProgressMonitor)
+	 */
+	public void execute(
+		IProject project,
+		IPluginModelBase model,
+		IProgressMonitor monitor)
+		throws CoreException {
+		this.project = project;
+		this.model = model;
+		generateFiles(monitor);
+		updateModel(monitor);
+	}
+	/**
+	 * A utility method to create an extension object for the plug-in model
+	 * from the provided extension point id.
+	 * @param pointId the identifier of the target extension point
+	 * @param reuse if true, new extension object will be created only
+	 * if an extension with the same Id does not exist.
+	 * @return an existing extension (if exists and <samp>reuse</samp> is <samp>true</samp>),
+	 * or a new extension object otherwise.
+	 */
+	protected IPluginExtension createExtension(String pointId, boolean reuse)
+		throws CoreException {
+		if (reuse) {
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IPluginExtension extension = extensions[i];
+				if (extension.getPoint().equalsIgnoreCase(pointId)) {
+					return extension;
+				}
+			}
+		}
+		IPluginExtension extension = model.getFactory().createExtension();
+		extension.setPoint(pointId);
+		return extension;
+	}
+
+	private File getTemplateDirectory() {
 		try {
 			URL location = getTemplateLocation();
 			if (location == null)
@@ -121,18 +295,7 @@ public abstract class AbstractTemplateSection
 		}
 	}
 
-	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
-		monitor.setTaskName("Generating: ");
-
-		File templateDirectory = getTemplateDirectory();
-		if (!templateDirectory.exists())
-			return;
-		generateFiles(templateDirectory, project, true, false, monitor);
-		monitor.subTask("");
-		monitor.worked(1);
-	}
-
-	protected void generateFiles(
+	private void generateFiles(
 		File src,
 		IContainer dst,
 		boolean firstLevel,
@@ -156,8 +319,9 @@ public abstract class AbstractTemplateSection
 					}
 				}
 				if (dstContainer == null) {
-					if (isOkToCreateFolder(member)==false) return;
-					String folderName = getProcessedString(member.getName(), member.getName()); 
+					if (isOkToCreateFolder(member) == false)
+						return;
+					String folderName = getProcessedString(member.getName(), member.getName());
 					dstContainer = dst.getFolder(new Path(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
@@ -169,24 +333,16 @@ public abstract class AbstractTemplateSection
 			}
 		}
 	}
-	
-	protected boolean isOkToCreateFolder(File sourceFolder) {
-		return true;
-	}
-	protected boolean isOkToCreateFile(File sourceFile) {
-		return true;
-	}
 
-	protected IFolder generateJavaSourceFolder(IProgressMonitor monitor)
+	private IFolder generateJavaSourceFolder(IProgressMonitor monitor)
 		throws CoreException {
 		IFolder sourceFolder = getSourceFolder(monitor);
 		IPath path = sourceFolder.getProjectRelativePath();
 		Object packageValue = getValue(KEY_PACKAGE_NAME);
-		String packageName = packageValue!=null?packageValue.toString():null;
-		if (packageName==null)
+		String packageName = packageValue != null ? packageValue.toString() : null;
+		if (packageName == null)
 			packageName = model.getPluginBase().getId();
-		path =
-			path.append(packageName.replace('.', File.separatorChar));
+		path = path.append(packageName.replace('.', File.separatorChar));
 		for (int i = 1; i <= path.segmentCount(); i++) {
 			IPath subpath = path.uptoSegment(i);
 			IFolder subfolder = sourceFolder.getProject().getFolder(subpath);
@@ -196,7 +352,7 @@ public abstract class AbstractTemplateSection
 		return project.getFolder(path);
 	}
 
-	protected void copyFile(
+	private void copyFile(
 		File file,
 		IContainer dst,
 		boolean binary,
@@ -245,7 +401,7 @@ public abstract class AbstractTemplateSection
 		return buffer.toString();
 	}
 
-	protected InputStream getProcessedStream(File file, boolean binary)
+	private InputStream getProcessedStream(File file, boolean binary)
 		throws IOException {
 		FileInputStream stream = new FileInputStream(file);
 		if (binary)
@@ -269,11 +425,11 @@ public abstract class AbstractTemplateSection
 			read = reader.read(cbuffer);
 			for (int i = 0; i < read; i++) {
 				char c = cbuffer[i];
-				
+
 				if (escape) {
-					StringBuffer buf = preprocessorMode?preBuffer:outBuffer;
+					StringBuffer buf = preprocessorMode ? preBuffer : outBuffer;
 					buf.append(c);
-					escape=false;
+					escape = false;
 					continue;
 				}
 
@@ -332,35 +488,4 @@ public abstract class AbstractTemplateSection
 		return new ByteArrayInputStream(outBuffer.toString().getBytes());
 	}
 
-	protected abstract void updateModel(IProgressMonitor monitor)
-		throws CoreException;
-
-	/*
-	 * @see ITemplateSection#execute(IProject, IPluginModelBase, IProgressMonitor)
-	 */
-	public void execute(
-		IProject project,
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-		this.project = project;
-		this.model = model;
-		generateFiles(monitor);
-		updateModel(monitor);
-	}
-	
-	protected IPluginExtension createExtension(String pointId, boolean reuse) throws CoreException {
-		if (reuse) {
-			IPluginExtension [] extensions = model.getPluginBase().getExtensions();
-			for (int i=0; i<extensions.length; i++) {
-				IPluginExtension extension = extensions[i];
-				if (extension.getPoint().equalsIgnoreCase(pointId)) {
-					return extension;
-				}
-			}
-		}
-		IPluginExtension extension = model.getFactory().createExtension();
-		extension.setPoint(pointId);
-		return extension;
-	}
 }

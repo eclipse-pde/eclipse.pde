@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.ui.IPluginStructureData;
+import org.eclipse.pde.ui.templates.*;
 
 public class PopupMenuTemplate extends PDETemplateSection {
 
@@ -40,7 +41,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		createOptions();
 
 		pages = new WizardPage[1];
-		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Sample Popup Menu");
 		pages[0].setDescription("This template creates a submenu and adds a new action to a selected object's popup menu");
 		wizard.addPage(pages[0]);

@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.ui.templates.*;
 
 public class NewPluginTemplateChoiceWizard
 	extends AbstractNewPluginTemplateWizard {
