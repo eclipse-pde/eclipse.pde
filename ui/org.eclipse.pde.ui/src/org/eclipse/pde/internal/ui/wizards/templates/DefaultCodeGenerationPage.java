@@ -403,7 +403,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		if (!project.hasNature(PDECore.PLUGIN_NATURE))
+		if (!PDECore.hasPluginNature(project))
 			CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
 		PDEPlugin.registerPlatformLaunchers(project);
 	}

@@ -86,7 +86,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 
 private boolean isInterestingProject(IProject project) {
 	try {
-		if (!project.hasNature(PDECore.PLUGIN_NATURE)) 
+		if (!PDECore.hasPluginNature(project)) 
 			return false;
 		if (project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)!=null)
 			return false;

@@ -124,7 +124,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		if (project.isOpen()) {
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)
-					&& !project.hasNature(PDECore.PLUGIN_NATURE))
+					&& !PDECore.hasPluginNature(project))
 					return true;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);

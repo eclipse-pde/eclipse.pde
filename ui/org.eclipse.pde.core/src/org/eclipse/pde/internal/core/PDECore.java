@@ -32,7 +32,7 @@ public class PDECore extends Plugin {
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
 
-	private static boolean inVAJ;	
+	private static boolean inVAJ;
 	static {
 		try {
 			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
@@ -64,6 +64,24 @@ public class PDECore extends Plugin {
 				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
+		}
+	}
+
+	public static boolean hasPluginNature(IProject project) {
+		// Be flexible with 1.0 IDs - check all combinations
+		try {
+			String suffix = ".PluginNature";
+			String id = PLUGIN_NATURE;
+			if (project.hasNature(id))
+				return true;
+			id = "org.eclipse.pde" + suffix;
+			if (project.hasNature(id))
+				return true;
+			id = "org.eclipse.pde.ui" + suffix;
+			return project.hasNature(id);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return false;
 		}
 	}
 
@@ -170,7 +188,7 @@ public class PDECore extends Plugin {
 	public static PDECore getDefault() {
 		return inst;
 	}
-	
+
 	public CoreSettings getSettings() {
 		return settings;
 	}
@@ -282,15 +300,15 @@ public class PDECore extends Plugin {
 		loadSettings();
 		workspaceModelManager = new WorkspaceModelManager();
 		externalModelManager = new ExternalModelManager();
-		
+
 		if (inVAJ == false)
 			initializePlatformPath();
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				//This causes PDE to bomb - problem in Debug UI
-				//JavaRuntime.initializeJREVariables(monitor);
-				getExternalModelManager().getEclipseHome(monitor);
+					//This causes PDE to bomb - problem in Debug UI
+		//JavaRuntime.initializeJREVariables(monitor);
+	getExternalModelManager().getEclipseHome(monitor);
 			}
 		};
 		try {
@@ -299,11 +317,11 @@ public class PDECore extends Plugin {
 			log(e);
 		}
 		getWorkspaceModelManager().reset();
-		
+
 		modelManager = new PluginModelManager();
 		modelManager.connect(workspaceModelManager, externalModelManager);
 	}
-	
+
 	public void shutdown() throws CoreException {
 		storeSettings();
 		if (schemaRegistry != null)
@@ -318,7 +336,7 @@ public class PDECore extends Plugin {
 		settings = new CoreSettings();
 		settings.load(getStateLocation());
 	}
-	
+
 	private void storeSettings() {
 		settings.store();
 	}

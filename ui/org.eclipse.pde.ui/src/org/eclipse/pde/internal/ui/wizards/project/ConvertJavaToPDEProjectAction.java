@@ -4,23 +4,26 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 	public static final String KEY_CONVERTING = "ConvertProjectAction.converting";
 	public static final String KEY_UPDATING = "ConvertProjectAction.updating";
 	private IWorkbenchPart targetPart;
-	private Vector selected=new Vector();
+	private Vector selected = new Vector();
 
 	public void run(IAction action) {
 		ConvertedProjectWizard wizard = new ConvertedProjectWizard(selected);
@@ -41,16 +44,11 @@ public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 					object = ((IJavaProject) object).getProject();
 				if (object instanceof IProject) {
 					IProject project = (IProject) object;
-					try {
-						if (!project.isOpen() || project.hasNature(PDECore.PLUGIN_NATURE)) {
-							enable = false;
-							break;
-						}
-						else {
-							selected.add(project);
-						}
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
+					if (!project.isOpen() || !PDECore.hasPluginNature(project)) {
+						enable = false;
+						break;
+					} else {
+						selected.add(project);
 					}
 				} else {
 					enable = false;

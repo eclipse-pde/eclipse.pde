@@ -32,12 +32,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (resource instanceof IProject) {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
-				try {
-					return (project.hasNature(PDECore.PLUGIN_NATURE));
-				} catch (CoreException e) {
-					PDECore.logException(e);
-					return false;
-				}
+				return (PDECore.hasPluginNature(project));
 			}
 			if (resource instanceof IFile) {
 				// see if this is it
@@ -92,9 +87,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDECore.getFormattedMessage(
-				BUILDERS_VERIFYING,
-				file.getFullPath().toString());
+			PDECore.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
 		ManifestParser parser = new ManifestParser(reporter);
@@ -150,7 +143,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			String pluginId = fragment.getPluginId();
 			String pluginVersion = fragment.getPluginVersion();
 			int match = fragment.getRule();
-			IPlugin plugin = PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
+			IPlugin plugin =
+				PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
 			if (plugin == null) {
 				// broken fragment link
 				String[] args = { pluginId, pluginVersion };
@@ -175,8 +169,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
 			pvi.toString();
 		} catch (Throwable e) {
-			String message =
-				PDECore.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
+			String message = PDECore.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
 			int line = 1;
 			if (pluginBase instanceof ISourceObject)
 				line = ((ISourceObject) pluginBase).getStartLine();
