@@ -7,7 +7,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -605,7 +604,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			return null;
 		}
 		return startupJar.getAbsolutePath();
-		}
+	}
 
 		
 		
@@ -624,7 +623,7 @@ public class WorkbenchLaunchConfigurationDelegate
 					}
 					resource = project.findMember("boot.jar");
 					if (resource != null)
-						return "file:" + resource.getFullPath().toOSString();
+						return "file:" + resource.getLocation().toOSString();
 				}
 			} else {
 				File binDir = new File(bootModel.getInstallLocation(), "bin/");
@@ -661,35 +660,19 @@ public class WorkbenchLaunchConfigurationDelegate
 	 */
 	private ISourceLocator constructSourceLocator(IPluginModelBase[] plugins)
 		throws CoreException {
-		if (plugins == null)
-			plugins =
-				PDECore
-					.getDefault()
-					.getWorkspaceModelManager()
-					.getWorkspacePluginModels();
-		ArrayList javaProjects = new ArrayList(plugins.length);
-		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		ArrayList result = new ArrayList();
 		for (int i = 0; i < plugins.length; i++) {
-			try {
-				File pluginDir =
-					new File(
-						new URL("file:" + plugins[i].getInstallLocation())
-							.getFile());
-				IContainer container =
-					root.getContainerForLocation(new Path(pluginDir.getPath()));
-				if (container instanceof IProject) {
-					IProject project = (IProject) container;
-					if (WorkspaceModelManager.isJavaPluginProject(project))
-						javaProjects.add(JavaCore.create(project));
+			IResource resource = plugins[i].getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					result.add(JavaCore.create(project));
 				}
-			} catch (MalformedURLException e) {
-				PDEPlugin.log(e);
 			}
 		}
-		IJavaProject[] projs =
-			(IJavaProject[]) javaProjects.toArray(
-				new IJavaProject[javaProjects.size()]);
-		return new JavaUISourceLocator(projs, false);
+		return new JavaUISourceLocator(
+			(IJavaProject[]) result.toArray(new IJavaProject[result.size()]),
+			false);
 	}
 
 	private void ensureProductFilesExist(IPath productArea) {
