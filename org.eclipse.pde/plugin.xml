@@ -198,6 +198,12 @@
     		base-type="org.eclipse.jdt.core.javaProperties"
     		priority="high"				
     		file-names="plugin.properties"/>
-   </extension>
+      <content-type 
+		    id="buildProperties" 
+		    name="%buildPropertiesName" 
+		    base-type="org.eclipse.jdt.core.javaProperties"
+		    priority="high"
+		    file-names="build.properties"/>   
+    </extension>
    
 </plugin>
