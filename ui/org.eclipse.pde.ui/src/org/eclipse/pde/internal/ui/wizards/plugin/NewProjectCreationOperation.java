@@ -106,7 +106,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		if (fData.hasBundleStructure()) {
 			String filename = (fData instanceof IFragmentFieldData) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-			PDEPluginConverter.convertToOSGIFormat(project, filename,
+			PDEPluginConverter.convertToOSGIFormat(project, filename, fData.getTargetVersion(),
 					new SubProgressMonitor(monitor, 1));
 			trimModel(fModel.getPluginBase());
 			fModel.save();

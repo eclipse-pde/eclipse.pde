@@ -1,19 +1,14 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
 
 
 public class ProductInfoSection extends PDESection {
@@ -34,6 +29,7 @@ public class ProductInfoSection extends PDESection {
 		section.setText("Product Definition");
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
+		td.rowspan = 2;
 		section.setLayoutData(td);
 		section.setDescription("Define the product and the default application that will run when running the product:");
 		
@@ -46,6 +42,7 @@ public class ProductInfoSection extends PDESection {
 		section.setClient(client);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
+		
 		createNameEntry(client, toolkit, actionBars);
 		createIdEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);

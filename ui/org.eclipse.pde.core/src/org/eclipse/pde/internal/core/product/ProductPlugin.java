@@ -37,7 +37,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE)
-			fId = ((Element)node).getAttribute("id");
+			fId = ((Element)node).getAttribute("id"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -46,7 +46,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	public void write(String indent, PrintWriter writer) {
 		String id = getId();
 		if (id.length() > 0)
-			writer.println(indent + "<plugin id=\"" + id + "\"/>");
+			writer.println(indent + "<plugin id=\"" + id + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/* (non-Javadoc)

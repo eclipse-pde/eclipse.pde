@@ -39,8 +39,8 @@ public class ConfigurationFileInfo extends ProductObject implements
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			fPath = element.getAttribute("path");
-			fUse = element.getAttribute("use");
+			fPath = element.getAttribute("path"); //$NON-NLS-1$
+			fUse = element.getAttribute("use"); //$NON-NLS-1$
 		}
 	}
 
@@ -48,12 +48,12 @@ public class ConfigurationFileInfo extends ProductObject implements
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<configIni");
+		writer.print(indent + "<configIni"); //$NON-NLS-1$
 		if (fUse != null)
-			writer.print(" use=\"" + fUse + "\"");
+			writer.print(" use=\"" + fUse + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fPath != null)
-			writer.print(" path=\"" + fPath.trim() + "\"");
-		writer.println("/>");
+			writer.print(" path=\"" + fPath.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 
 

@@ -21,8 +21,7 @@ import org.osgi.util.tracker.*;
 
 public class PDEPluginConverter {
 	
-	public static void convertToOSGIFormat(IProject project, String filename, IProgressMonitor monitor) throws CoreException {
-		String target = "3.0"; // TODO this need to be a param to this method.
+	public static void convertToOSGIFormat(IProject project, String filename, String target, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -44,6 +45,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ImportObject) {
 			return getObjectText((ImportObject) obj);
+		}
+		if (obj instanceof IProductPlugin) {
+			return getObjectText((IProductPlugin)obj);
 		}
 		if (obj instanceof IPluginImport) {
 			return getObjectText((IPluginImport)obj);
@@ -132,6 +136,18 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (isFullNameModeEnabled())
 			return obj.toString();
 		return preventNull(obj.getId());
+	}
+	
+	public String getObjectText(IProductPlugin obj) {
+		if (isFullNameModeEnabled()) {
+			String id = obj.getId();
+			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
+			if (plugin != null) {
+				return plugin.getTranslatedName();
+			}
+			return id != null ? id : "?"; //$NON-NLS-1$
+		}
+		return preventNull(obj.getId());		
 	}
 	
 	public String getObjectText(IPluginImport obj) {
@@ -253,6 +269,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IPluginImport) {
 			return getObjectImage((IPluginImport) obj);
 		}
+		if (obj instanceof IProductPlugin) {
+			return getObjectImage((IProductPlugin)obj);
+		}
+		
 		if (obj instanceof IPluginLibrary) {
 			return getObjectImage((IPluginLibrary) obj);
 		}
@@ -450,6 +470,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj.isReexported())
 			flags = F_EXPORT;
 		return get(getRequiredPluginImageDescriptor(obj), flags);
+	}
+	
+	private Image getObjectImage(IProductPlugin obj) {
+		String id = obj.getId();
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+		if (model != null)
+			return getImage(model);
+	
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ, F_ERROR);
 	}
 
 	private Image getObjectImage(IPluginLibrary library) {

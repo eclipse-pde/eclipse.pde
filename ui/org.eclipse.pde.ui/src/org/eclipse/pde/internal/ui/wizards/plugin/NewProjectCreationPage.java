@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -31,8 +32,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Label fOutputlabel;
 	private Text fOutputText;
 	private AbstractFieldData fData;
-	private Button fLegacyButton;
-	private Label fBundleNote;
+	private Combo fTargetCombo;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment){
 		super(pageName);
@@ -48,17 +48,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		control.setLayout(layout);
 
 		createProjectTypeGroup(control);
-		createBundleStructureGroup(control);
+		createFormatGroup(control);
 		
-		fLegacyButton = new Button(control, SWT.CHECK);
-		fLegacyButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.legacy")); //$NON-NLS-1$
-		fLegacyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fBundleCheck.setEnabled(!fLegacyButton.getSelection());
-				fBundleNote.setEnabled(!fLegacyButton.getSelection());
-			}
-		});
-				
 		Dialog.applyDialogFont(control);
 		WorkbenchHelp.setHelp(control,
 				fIsFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
@@ -97,29 +88,44 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOutputText = createText(group);		
 		fOutputText.setText(store.getString(PreferenceConstants.SRCBIN_BINNAME));
 	}
-	private void createBundleStructureGroup(Composite container) {
+	private void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("ProjectStructurePage.alternateFormat")); //$NON-NLS-1$
-		group.setLayout(new GridLayout());
+		if (fIsFragment)
+			group.setText(PDEPlugin.getResourceString("ProjectStructurePage.fformat")); //$NON-NLS-1$
+		else
+			group.setText(PDEPlugin.getResourceString("ProjectStructurePage.pformat")); //$NON-NLS-1$			
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fBundleCheck = new Button(group, SWT.CHECK);
-		if (fIsFragment)
-			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.fbundle")); //$NON-NLS-1$
-		else
-			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.pbundle")); //$NON-NLS-1$
-		fBundleCheck.addSelectionListener(new SelectionAdapter() {
+		Label label = new Label(group, SWT.NONE);
+		if (fIsFragment) {
+			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.fTarget"));
+		} else {
+			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.pTarget"));
+		}
+		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET21, ICoreConstants.TARGET30, ICoreConstants.TARGET31});
+		GridData gd = new GridData();
+		gd.widthHint = 50;
+		fTargetCombo.setLayoutData(gd);
+		fTargetCombo.setText(PDECore.getDefault().getTargetVersion());
+		fTargetCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fLegacyButton.setEnabled(!fBundleCheck.getSelection());
+				updateBundleCheck();
 			}
-		});
-				
-		fBundleNote = new Label(group, SWT.WRAP);
-		fBundleNote.setText(PDEPlugin.getResourceString("ProjectStructurePage.note")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 250;
-		gd.horizontalIndent = 22;
-		fBundleNote.setLayoutData(gd);		
+		});		
+		fBundleCheck = new Button(group, SWT.CHECK);
+		fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.bundle")); //$NON-NLS-1$
+		updateBundleCheck();
+	}
+	
+	private void updateBundleCheck() {
+		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
+		fBundleCheck.setEnabled(!legacy);
+		if (legacy)
+			fBundleCheck.setSelection(false);		
 	}
 	
 	private Button createButton(Composite container) {
@@ -163,7 +169,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
 		fData.setHasBundleStructure(fBundleCheck.isEnabled() && fBundleCheck.getSelection());
-		fData.setLegacy(fLegacyButton.isEnabled() && fLegacyButton.getSelection());
+		fData.setLegacy(fTargetCombo.getText().equals("2.1"));
+		fData.setTargetVersion(fTargetCombo.getText());
 	}
 	
 }

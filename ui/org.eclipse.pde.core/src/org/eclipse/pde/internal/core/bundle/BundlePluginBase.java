@@ -128,7 +128,7 @@ public class BundlePluginBase
 				IPluginLibrary library = (IPluginLibrary)libraries.get(i);
 				buffer.append(library.getName());
 				if (i < libraries.size() - 1)
-					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$
+					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		return buffer.toString();
@@ -155,12 +155,12 @@ public class BundlePluginBase
 				buffer.append(iimport.getId());
 				if (iimport.isOptional())
 					if (bundleManifestVersion > 1)
-						buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$
+						buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$ //$NON-NLS-2$
 					else
 						buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (iimport.isReexported())
 					if (bundleManifestVersion > 1)
-						buffer.append(";" + Constants.VISIBILITY_DIRECTIVE + ":=" + Constants.VISIBILITY_REEXPORT); //$NON-NLS-1$
+						buffer.append(";" + Constants.VISIBILITY_DIRECTIVE + ":=" + Constants.VISIBILITY_REEXPORT); //$NON-NLS-1$ //$NON-NLS-2$
 					else
 						buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				String version = iimport.getVersion();

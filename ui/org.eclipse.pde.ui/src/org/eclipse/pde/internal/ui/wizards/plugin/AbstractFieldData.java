@@ -12,10 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.pde.ui.IFieldData;
 
-/**
- * @author melhem
- *
- */
 public abstract class AbstractFieldData implements IFieldData {
 	
 	private String fId;
@@ -28,6 +24,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private String fOutputFolderName;
 	private boolean fHasBundleStructure;
 	private boolean fSimple;
+	private String fTargetVersion = "3.1";
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -131,5 +128,16 @@ public abstract class AbstractFieldData implements IFieldData {
 	
 	public void setSimple(boolean simple) {
 		fSimple = simple;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IFieldData#getTargetVersion()
+	 */
+	public String getTargetVersion() {
+		return fTargetVersion;
+	}
+	
+	public void setTargetVersion(String version) {
+		fTargetVersion = version;
 	}
 }

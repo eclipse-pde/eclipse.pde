@@ -84,37 +84,37 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent + "<product");
+		writer.print(indent + "<product"); //$NON-NLS-1$
 		if (fName != null && fName.length() > 0)
-			writer.print(" name=\"" + fName + "\"");
+			writer.print(" name=\"" + fName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fId != null && fId.length() > 0)
-			writer.print(" id=\"" + fId + "\"");
+			writer.print(" id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fApplication != null && fApplication.length() > 0)
-			writer.print(" application=\"" + fApplication + "\"");
-		writer.println(">");
+			writer.print(" application=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(">"); //$NON-NLS-1$
 		
 		if (fAboutInfo != null) {
 			writer.println();
-			fAboutInfo.write(indent + "   ", writer);
+			fAboutInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		if (fConfigIniInfo != null) {
 			writer.println();
-			fConfigIniInfo.write(indent + "   ", writer);
+			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		if (fPlugins.size() > 0) {
 			writer.println();
-			writer.println(indent + "   <plugins>");
+			writer.println(indent + "   <plugins>"); //$NON-NLS-1$
 			for (int i = 0; i < fPlugins.size(); i++) {
 				IProductPlugin plugin = (IProductPlugin)fPlugins.get(i);
-				plugin.write(indent + "      ", writer);
+				plugin.write(indent + "      ", writer); //$NON-NLS-1$
 			}
-			writer.println(indent + "   </plugins>");
+			writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 		}
 		
 		writer.println();
-		writer.println("</product>");
+		writer.println("</product>"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -140,21 +140,21 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE 
-				&& node.getNodeName().equals("product")) {
+				&& node.getNodeName().equals("product")) { //$NON-NLS-1$
 			Element element = (Element)node;
-			fApplication = element.getAttribute("application");
-			fId = element.getAttribute("id");
-			fName = element.getAttribute("name");
+			fApplication = element.getAttribute("application"); //$NON-NLS-1$
+			fId = element.getAttribute("id"); //$NON-NLS-1$
+			fName = element.getAttribute("name"); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
-					if (child.getNodeName().equals("aboutInfo")) {
+					if (child.getNodeName().equals("aboutInfo")) { //$NON-NLS-1$
 						fAboutInfo = getModel().getFactory().createAboutInfo();
 						fAboutInfo.parse(child);
-					} else if (child.getNodeName().equals("plugins")) {
+					} else if (child.getNodeName().equals("plugins")) { //$NON-NLS-1$
 						parsePlugins(child.getChildNodes());
-					} else if (child.getNodeName().equals("configIni")) {
+					} else if (child.getNodeName().equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = getModel().getFactory().createConfigFileInfo();
 						fConfigIniInfo.parse(child);
 					}
@@ -167,7 +167,7 @@ public class Product extends ProductObject implements IProduct {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("plugin")) {
+				if (child.getNodeName().equals("plugin")) { //$NON-NLS-1$
 					IProductPlugin plugin = getModel().getFactory().createPlugin();
 					plugin.parse(child);
 					fPlugins.add(plugin);

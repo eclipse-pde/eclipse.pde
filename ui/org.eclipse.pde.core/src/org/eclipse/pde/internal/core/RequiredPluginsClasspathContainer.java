@@ -36,7 +36,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 	public IClasspathEntry[] getClasspathEntries() {
 		if (model==null) {
 			if (DEBUG) {
-				System.out.println("********Returned an empty container");
+				System.out.println("********Returned an empty container"); //$NON-NLS-1$
 				System.out.println();
 			}
 			return new IClasspathEntry[0];
@@ -46,7 +46,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 			entries = verifyWithAttachmentManager(entries);
 		}
 		if (DEBUG) {
-			System.out.println("Dependencies for plugin '" + model.getPluginBase().getId() + "':");
+			System.out.println("Dependencies for plugin '" + model.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < entries.length; i++) {
 				System.out.println(entries[i].toString());
 			}

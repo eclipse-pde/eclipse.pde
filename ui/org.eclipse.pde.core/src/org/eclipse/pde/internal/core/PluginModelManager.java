@@ -45,29 +45,6 @@ public class PluginModelManager implements IAdaptable {
 	 * the workspace or in the target platform.
 	 */
 	public boolean isOSGiRuntime() {
-		try {
-			ModelEntry entry = findEntry("org.eclipse.platform"); //$NON-NLS-1$
-			if (entry != null) {
-				IPluginModelBase model = entry.getActiveModel();
-				IResource resource = model.getUnderlyingResource();
-				int version = new PluginVersionIdentifier(model.getPluginBase().getVersion()).getMajorComponent();
-				if (resource != null &&  version < 3) {
-					IProject project = resource.getProject();
-					if (project.hasNature(JavaCore.NATURE_ID)) {
-						IJavaProject jProject = JavaCore.create(project);
-						IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-						for (int i = 0; i < roots.length; i++) {
-							if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
-								return false;
-							}
-						}
-					}
-					if (project.getFile("startup.jar").exists()) //$NON-NLS-1$
-						return false;
-				}
-			}
-		} catch (Exception e) {
-		}
 		return findEntry(OSGI_RUNTIME) != null;
 	}
 

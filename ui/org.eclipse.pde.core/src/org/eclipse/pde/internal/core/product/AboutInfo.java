@@ -49,15 +49,15 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		if (isAboutImageDefined() || isAboutTextDefined()) {
-			writer.println(indent + "<aboutInfo>");
+			writer.println(indent + "<aboutInfo>"); //$NON-NLS-1$
 			if (isAboutImageDefined())
-				writer.println(indent + "   <image path=\"" + fImagePath.trim() + "\"/>");
+				writer.println(indent + "   <image path=\"" + fImagePath.trim() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (isAboutTextDefined()) {
-				writer.println(indent + "   <text>");
-				writer.println(indent + "      " + fAboutText.trim());
-				writer.println(indent + "   </text>");
+				writer.println(indent + "   <text>"); //$NON-NLS-1$
+				writer.println(indent + "      " + fAboutText.trim()); //$NON-NLS-1$
+				writer.println(indent + "   </text>"); //$NON-NLS-1$
 			}
-			writer.println(indent + "</aboutInfo>");
+			writer.println(indent + "</aboutInfo>"); //$NON-NLS-1$
 		}
 	}
 	
@@ -77,9 +77,9 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("image")) {
-					fImagePath = ((Element)child).getAttribute("path");
-				} else if (child.getNodeName().equals("text")) {
+				if (child.getNodeName().equals("image")) { //$NON-NLS-1$
+					fImagePath = ((Element)child).getAttribute("path"); //$NON-NLS-1$
+				} else if (child.getNodeName().equals("text")) { //$NON-NLS-1$
 					child.normalize();
 					if (child.getChildNodes().getLength() > 0) {
 						Node text = child.getFirstChild();

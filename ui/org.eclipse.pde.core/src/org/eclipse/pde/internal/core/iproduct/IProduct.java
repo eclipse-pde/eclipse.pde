@@ -3,9 +3,9 @@ package org.eclipse.pde.internal.core.iproduct;
 
 public interface IProduct extends IProductObject {
 	
-	String P_ID = "id";
-	String P_NAME = "name";
-	String P_APPLICATION = "application";
+	String P_ID = "id"; //$NON-NLS-1$
+	String P_NAME = "name"; //$NON-NLS-1$
+	String P_APPLICATION = "application"; //$NON-NLS-1$
 	
 	String getId();
 	

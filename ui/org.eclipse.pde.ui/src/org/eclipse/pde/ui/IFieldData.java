@@ -69,6 +69,13 @@ public interface IFieldData {
 	 *         if the plug-ins is compatible with Eclipse 3.0.
 	 */
 	boolean isLegacy();
+	
+	/**
+	 * Target Platform version selection
+	 * 
+	 * @return the Eclipse version this plug-in is targeted for.
+	 */
+	String getTargetVersion();
 	/**
 	 * OSGi bundle selection
 	 * 

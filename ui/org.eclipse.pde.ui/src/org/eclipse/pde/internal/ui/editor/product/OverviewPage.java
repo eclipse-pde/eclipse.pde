@@ -47,26 +47,25 @@ public class OverviewPage extends PDEFormPage {
 		layout.leftMargin = 10;
 		layout.rightMargin = 10;
 		layout.numColumns = 2;
-		layout.verticalSpacing = 20;
+		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
 		layout.makeColumnsEqualWidth = true;
 		body.setLayout(layout);
 
 		// sections
 		managedForm.addPart(new ProductInfoSection(this, body));	
-		createContentSection(body, toolkit);
 		createTestingSection(body, toolkit);
-		managedForm.addPart(new PackagingSection(this, body));
+		managedForm.addPart(new ExportSection(this, body));
 	}
 	
-	private void createContentSection(Composite parent, FormToolkit toolkit) {
+	/*private void createContentSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.setText("Product Configuration");
 		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.content"), toolkit);
 		text.setImage("page", getImage(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT));
 		section.setClient(text);
-	}
+	}*/
 	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
