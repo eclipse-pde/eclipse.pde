@@ -978,7 +978,7 @@
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/etool16/eclipse_launcher.gif"
+            icon="icons/obj16/swt_launcher.gif"
             configTypeID="org.eclipse.pde.ui.swtLaunchConfig"
             id="org.eclipse.pde.ui.swtLaunchImage">
       </launchConfigurationTypeImage>
@@ -1126,7 +1126,7 @@
       </shortcut>
       <shortcut
             label="%launcher.swt.name"
-            icon="icons/etool16/eclipse_launcher.gif"
+            icon="icons/obj16/swt_launcher.gif"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.SWTApplicationLaunchShortcut"
             id="org.eclipse.pde.ui.swtLaunchShortcut">
