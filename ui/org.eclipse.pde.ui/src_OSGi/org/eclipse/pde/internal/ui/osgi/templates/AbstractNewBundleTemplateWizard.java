@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.osgi.templates;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
@@ -359,7 +358,6 @@ public abstract class AbstractNewBundleTemplateWizard
 		ArrayList generatedPackages,
 		IProgressMonitor monitor)
 		throws CoreException {
-		HashSet packageSet = new HashSet();
 		for (int i = 0; i < activeSections.length; i++) {
 			ITemplateSection section = activeSections[i];
 			section.execute(project, model, monitor);

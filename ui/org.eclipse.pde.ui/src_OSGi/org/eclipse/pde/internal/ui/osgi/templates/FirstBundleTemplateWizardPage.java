@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -500,7 +499,6 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 		BundlePluginModelBase model;
 		IFile file = project.getFile("META-INF/MANIFEST.MF");
 		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
-		IBundle bundle = bmodel.getBundle();
 		file = project.getFile("extensions.xml");
 		WorkspaceExtensionsModel emodel = new WorkspaceExtensionsModel(file);
 		emodel.load();

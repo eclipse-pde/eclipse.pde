@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.feature;
 import java.io.*;
 import java.lang.reflect.*;
 
-import org.apache.xalan.processor.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -103,16 +102,8 @@ public class NewSiteProjectWizard
 		return file;
 	}
 	
-	private void createSiteProject(
-		IProject project,
-		IPath location,
-		SiteData data,
-		IProgressMonitor monitor) throws CoreException{
-			createSiteProject(project,location, data, false, monitor);	
-	}
-	
 	private void createHTMLFile(IProject project){
-		try {TransformerFactoryImpl stuff = new TransformerFactoryImpl();
+		try {
 		IFile file = project.getFile("index.html");
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
@@ -170,7 +161,7 @@ public class NewSiteProjectWizard
 	}
 	
 	private void createCSSFile(IProject project){
-		try {TransformerFactoryImpl stuff = new TransformerFactoryImpl();
+		try {
 		IFile file = project.getFile("site.css");
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);
@@ -200,7 +191,7 @@ public class NewSiteProjectWizard
 	}
 		
 	private void createXSLFile(IProject project){
-		try {TransformerFactoryImpl stuff = new TransformerFactoryImpl();
+		try {
 		IFile file = project.getFile("site.xsl");
 		StringWriter swrite = new StringWriter();
 		PrintWriter writer = new PrintWriter(swrite);

@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.*;
@@ -53,13 +52,13 @@ public class InProgressPreferencePage extends PreferencePage implements IWorkben
 		return composite;
 	}
 	
-	private void warnRestart() {
+	/*private void warnRestart() {
 		boolean newValue = enableRuntimeSupport.getSelection();
 		boolean oldValue = store.getBoolean(ENABLE_ALT_RUNTIME);
 		if (newValue!=oldValue)
 			MessageDialog.openInformation(getShell(), "PDE Work in Progress", 
 				"The platform must be restarted for this change to take effect.");
-	}
+	}*/
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()

@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.feature;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
@@ -23,19 +22,16 @@ import org.eclipse.ui.dialogs.*;
 
 
 public class SiteHTMLPage extends WizardPage {
-	private IConfigurationElement config;
 	private boolean createSite = false;
 	public static final String HTML_PAGE_TITLE = "NewSiteWizard.HTMLPage.title";
 	public static final String HTML_PAGE_DESC = "NewSiteWizard.HTMLPage.desc";
 	public static final String HTML_CHECK_TITLE = "NewSiteWizard.HTMLPage.checkTitle";
 	public static final String HTML_CHECK_DESC = "NewSiteWizard.HTMLPage.checkDesc";
-	private WizardNewProjectCreationPage mainPage;
 	
 	public SiteHTMLPage(WizardNewProjectCreationPage mainPage) {
 		super("htmlPage");
 		setTitle(PDEPlugin.getResourceString(HTML_PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(HTML_PAGE_DESC));
-		this.mainPage = mainPage;
 	}
 	
 	public void createControl(Composite parent) {
@@ -67,12 +63,5 @@ public class SiteHTMLPage extends WizardPage {
 
 	public boolean isCreateUpdateSiteHTML(){
 		return createSite;
-	}
-	public void setInitializationData(
-		IConfigurationElement config,
-		String property,
-		Object data)
-		throws CoreException {
-		this.config = config;
 	}
 }
