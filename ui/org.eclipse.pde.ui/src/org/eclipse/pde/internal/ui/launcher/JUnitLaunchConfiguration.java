@@ -182,9 +182,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				LauncherUtils.getAutoStartPlugins(configuration));
 		programArgs.add("-configuration");
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toOSString());
+			programArgs.add("file:" + new Path(fConfigDir.getPath()).addTrailingSeparator().toString());
 		else
-			programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toOSString());
+			programArgs.add("file:" + new Path(fConfigDir.getPath()).append("platform.cfg").toString());
 
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {
