@@ -203,8 +203,14 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			monitor.done();
 		}
 	}
+	
+	protected boolean needBranding() {
+		return false;
+	}
 
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
+		AbstractScriptGenerator.setBrandExecutable(needBranding());
+		
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
@@ -247,6 +253,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setDevEntries(getDevProperties());
 		generator.setElements(new String[] {"feature@" + featureID + (versionId == null ? "" : ":" + versionId)}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(getPaths());
+		generator.setReportResolutionErrors(false);
+		generator.setIgnoreMissingPropertiesFile(true);
 		String format;
 		if (fExportType == EXPORT_AS_ZIP)
 			format = Platform.getOS().equals("macosx") ? "tarGz" : "antZip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

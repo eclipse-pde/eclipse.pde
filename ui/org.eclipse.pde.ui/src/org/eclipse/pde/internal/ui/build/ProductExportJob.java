@@ -28,8 +28,6 @@ public class ProductExportJob extends FeatureExportJob {
 
 	private String fFeatureLocation;
 
-	private ArrayList fTransientFeatureProps = new ArrayList();
-
 	public ProductExportJob(String name, IProductModel model) {
 		super(name);
 		fProduct = model.getProduct();
@@ -139,24 +137,10 @@ public class ProductExportJob extends FeatureExportJob {
 			} else if (fItems[i] instanceof IFeatureModel) {
 				IFeature feature = ((IFeatureModel)fItems[i]).getFeature();
 				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>");
-				createTransientBuildPropertiesFile((IFeatureModel)fItems[i]);
 			}
 		}
 		writer.println("</feature>"); //$NON-NLS-1$
 		writer.close();
-	}
-
-	private void createTransientBuildPropertiesFile(IFeatureModel model) {
-		// must add fake build.properties file.
-		// Otherwise, the feature will not appear in the feature-based build
-		File file = new File(model.getInstallLocation(), "build.properties");
-		if (!file.exists()) {
-			Properties properties = new Properties();
-			properties.put(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES, "*");
-			properties.put(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES, "build.properties");
-			save(file, properties, "Build Properties");
-			fTransientFeatureProps.add(model.getInstallLocation());
-		}
 	}
 
 	/*
@@ -192,7 +176,7 @@ public class ProductExportJob extends FeatureExportJob {
 				// TODO for now copy everything except .eclipseproduct
 				// Once the branded executable is generated, we should not copy
 				// eclipse.exe nor icon.xpm
-				if (files[i].isFile() && !".eclipseproduct".equals(files[i].getName())) {
+				if (files[i].isFile() && !".eclipseproduct".equals(files[i].getName()) && !files[i].getName().startsWith("eclipse")) {
 					buffer.append("absolute:file:");
 					buffer.append(files[i].getAbsolutePath());
 					buffer.append(",");
@@ -289,13 +273,13 @@ public class ProductExportJob extends FeatureExportJob {
 		return buffer.toString();
 	}
 	
+	protected boolean needBranding() {
+		return true;
+	}
+	
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
 		HashMap properties = super.createAntBuildProperties(os, ws, arch);
-		ILauncherInfo info = fProduct.getLauncherInfo();
-		
-		//TODO branding is off.  If turned on, we get troubles while running the scripts.
-		AbstractScriptGenerator.setBrandExecutable(false);
-		
+		ILauncherInfo info = fProduct.getLauncherInfo();	
 		//Just to make sure, Here the values that are put in properties must be passed to the script.
 		if (info != null) {
 			String name = info.getLauncherName();
@@ -371,16 +355,4 @@ public class ProductExportJob extends FeatureExportJob {
 		}
 	}
 	
-	public void deleteBuildFiles(IModel model) throws CoreException {
-		super.deleteBuildFiles(model);
-		if (model instanceof IFeatureModel) {
-			String location = ((IFeatureModel)model).getInstallLocation();
-			if (fTransientFeatureProps.contains(location)) {
-				File file = new File(location, "build.properties");
-				if (file.exists())
-					file.delete();
-				fTransientFeatureProps.remove(location);
-			}
-		}
-	}
 }
