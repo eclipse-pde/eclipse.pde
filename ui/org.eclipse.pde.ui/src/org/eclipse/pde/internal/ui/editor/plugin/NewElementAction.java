@@ -127,17 +127,21 @@ public String createDefaultPackageName(String id, String className) {
             if (Character.isJavaIdentifierStart(ch))
                 buffer.append(Character.toLowerCase(ch));
         } else {
-            if (Character.isJavaIdentifierPart(ch) || ch == '.')
+            if (Character.isJavaIdentifierPart(ch))
                 buffer.append(ch);
+            else if (ch == '.'){
+                status = JavaConventions.validatePackageName(buffer.toString());
+                if (status.getSeverity() == IStatus.ERROR)
+                    buffer.append(className.toLowerCase());
+                buffer.append(ch);
+            }
         }
     }
-    StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
-    while (tok.hasMoreTokens()) {
-        String token = tok.nextToken();
-        status = JavaConventions.validatePackageName(buffer.toString());
-        if (status.getSeverity() == IStatus.ERROR)
-            buffer.append(className.toLowerCase());
-    }
+
+    status = JavaConventions.validatePackageName(buffer.toString());
+    if (status.getSeverity() == IStatus.ERROR)
+        buffer.append(className.toLowerCase());
+    
     return buffer.toString();
 }
 }
