@@ -27,8 +27,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -269,8 +267,6 @@ private void runOperation(int mode, IProgressMonitor monitor)
 	for (int i = 0; i < plugins.length; i++) {
 		synchronizeVersion(mode, feature.getVersion(), plugins[i], monitor);
 	}
-	model.fireModelChanged(
-		new ModelChangedEvent(model, IModelChangedEvent.WORLD_CHANGED, null, null));
 }
 private int saveSettings() {
 	IDialogSettings settings = getDialogSettings();
