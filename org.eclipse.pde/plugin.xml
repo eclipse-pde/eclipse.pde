@@ -100,5 +100,11 @@
             class="org.eclipse.pde.ant.ConvertSchemaToHTML">
       </antTask>
    </extension>
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="ant_tasks/pde-ant.jar">
+      </extraClasspathEntry>
+   </extension>
 
 </plugin>
