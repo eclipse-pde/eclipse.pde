@@ -16,24 +16,26 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 
-public class NewFeaturePluginWizard extends Wizard {
+public class ReferenceWizard extends Wizard {
 	private IFeatureModel model;
-	private NewFeaturePluginWizardPage mainPage;
+	private ReferenceWizardPage page;
 
-public NewFeaturePluginWizard(IFeatureModel model) {
-	this.model = model;
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
-	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-	setNeedsProgressMonitor(true);
-}
+	public ReferenceWizard(
+		IFeatureModel model,
+		ReferenceWizardPage page) {
+		this.model = model;
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
+		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
+		setNeedsProgressMonitor(true);
+		this.page = page;
+	}
 
-public void addPages() {
-	mainPage = new NewFeaturePluginWizardPage(model);
-	addPage(mainPage);
-}
+	public void addPages() {
+		addPage(page);
+	}
 
-public boolean performFinish() {
-	return mainPage.finish();
-}
+	public boolean performFinish() {
+		return page.finish();
+	}
 
 }

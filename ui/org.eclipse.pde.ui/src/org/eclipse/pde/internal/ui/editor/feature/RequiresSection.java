@@ -4,17 +4,21 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -22,15 +26,21 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class RequiresSection
 	extends TableSection
 	implements IModelProviderListener {
-	private static final String KEY_TITLE = "FeatureEditor.RequiresSection.title";
+	private static final String KEY_TITLE =
+		"FeatureEditor.RequiresSection.title";
 	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc";
+	private static final String KEY_NEW_BUTTON =
+		"FeatureEditor.RequiresSection.newButton";
 	private static final String KEY_SYNC_BUTTON =
 		"FeatureEditor.RequiresSection.syncButton";
 	private static final String KEY_COMPUTE =
 		"FeatureEditor.RequiresSection.compute";
+	private static final String KEY_DELETE = 
+		"Actions.delete.label";
 	private boolean updateNeeded;
 	private Button syncButton;
 	private TableViewer pluginViewer;
+	private Action deleteAction;
 
 	class ImportContentProvider
 		extends DefaultContentProvider
@@ -43,7 +53,11 @@ public class RequiresSection
 	}
 
 	public RequiresSection(FeatureReferencePage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_COMPUTE)});
+		super(
+			page,
+			new String[] {
+				PDEPlugin.getResourceString(KEY_NEW_BUTTON),
+				PDEPlugin.getResourceString(KEY_COMPUTE)});
 		setHeaderText(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		getTablePart().setEditable(false);
@@ -52,7 +66,9 @@ public class RequiresSection
 	public void commitChanges(boolean onSave) {
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
 		Composite container = createClientContainer(parent, 2, factory);
 
 		syncButton =
@@ -60,7 +76,7 @@ public class RequiresSection
 				container,
 				PDEPlugin.getResourceString(KEY_SYNC_BUTTON),
 				SWT.CHECK);
-		syncButton.setSelection(true);
+		//syncButton.setSelection(true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		syncButton.setLayoutData(gd);
@@ -70,20 +86,67 @@ public class RequiresSection
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new ImportContentProvider());
-		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginViewer.setLabelProvider(
+			PDEPlugin.getDefault().getLabelProvider());
+			
+		deleteAction = new Action() {
+			public void run() {
+				handleDelete();
+			}
+		};
+		deleteAction.setText(PDEPlugin.getResourceString(KEY_DELETE));
 		factory.paintBordersFor(container);
 		return container;
 	}
 
 	protected void buttonSelected(int index) {
 		if (index == 0)
+			handleNew();
+		else if (index == 1)
 			recomputeImports();
+	}
+
+	private void handleNew() {
+		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		BusyIndicator
+			.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				NewFeatureRequireWizardPage page =
+					new NewFeatureRequireWizardPage(model);
+				ReferenceWizard wizard = new ReferenceWizard(model, page);
+				WizardDialog dialog =
+					new WizardDialog(
+						PDEPlugin.getActiveWorkbenchShell(),
+						wizard);
+				dialog.create();
+				dialog.open();
+			}
+		});
+	}
+
+	private void handleDelete() {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+		IStructuredSelection selection =
+			(IStructuredSelection) pluginViewer.getSelection();
+		if (selection.isEmpty())
+			return;
+
+		try {
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				IFeatureImport iimport = (IFeatureImport) iter.next();
+				feature.removeImport(iimport);
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng =
+			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
@@ -99,7 +162,13 @@ public class RequiresSection
 		manager.add(propertiesAction);
 		manager.add(new Separator());
 		*/
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		IStructuredSelection selection = (StructuredSelection)pluginViewer.getSelection();
+		if (!selection.isEmpty()) {
+			manager.add(deleteAction);
+			manager.add(new Separator());
+		}
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -116,7 +185,8 @@ public class RequiresSection
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng =
+			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
 

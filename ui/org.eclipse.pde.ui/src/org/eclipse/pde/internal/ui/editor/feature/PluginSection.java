@@ -129,7 +129,8 @@ public class PluginSection
 		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
-				NewFeaturePluginWizard wizard = new NewFeaturePluginWizard(model);
+				NewFeaturePluginWizardPage page = new NewFeaturePluginWizardPage(model);
+				ReferenceWizard wizard = new ReferenceWizard(model, page);
 				WizardDialog dialog =
 					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();

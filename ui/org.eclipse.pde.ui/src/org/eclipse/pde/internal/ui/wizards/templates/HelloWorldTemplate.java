@@ -86,9 +86,23 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	public void validateOptions(TemplateOption source) {
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
-		} else
-			resetPageState();
+		} else {
+			validateContainerPage(source);
+		}
 	}
+
+	private void validateContainerPage(TemplateOption source) {
+		TemplateOption[] allPageOptions = getOptions(0);
+		for (int i = 0; i < allPageOptions.length; i++) {
+			TemplateOption nextOption = allPageOptions[i];
+			if (nextOption.isRequired() && nextOption.isEmpty()) {
+				flagMissingRequiredOption(nextOption);
+				return;
+			}
+		}
+		resetPageState();
+	}
+
 
 	public boolean isDependentOnFirstPage() {
 		return true;

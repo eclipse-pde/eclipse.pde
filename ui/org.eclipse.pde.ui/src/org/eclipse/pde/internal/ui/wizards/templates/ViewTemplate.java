@@ -122,8 +122,21 @@ public class ViewTemplate extends PDETemplateSection {
 		setOptionEnabled("drillDown", viewType.equals("treeViewer"));
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
+		} else {
+			validateContainerPage(source);
+		}	
+	}
+
+	private void validateContainerPage(TemplateOption source) {
+		TemplateOption[] allPageOptions = getOptions(0);
+		for (int i = 0; i < allPageOptions.length; i++) {
+			TemplateOption nextOption = allPageOptions[i];
+			if (nextOption.isRequired() && nextOption.isEmpty()) {
+				flagMissingRequiredOption(nextOption);
+				return;
+			}
 		}
-		else resetPageState();
+		resetPageState();
 	}
 	
 	public String getUsedExtensionPoint() {

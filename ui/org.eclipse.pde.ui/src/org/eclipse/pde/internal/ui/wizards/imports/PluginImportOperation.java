@@ -24,6 +24,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private static final String KEY_TITLE = "ImportWizard.messages.title";
 	private static final String KEY_CREATING =
 		"ImportWizard.operation.creating";
+	private static final String KEY_MULTI_PROBLEM = "ImportWizard.operation.multiProblem";
 	private static final String KEY_PROBLEM = "ImportWizard.operation.problem";
 	private static final String KEY_CREATING2 =
 		"ImportWizard.operation.creating2";
@@ -121,7 +122,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString(KEY_PROBLEM),
+					PDEPlugin.getResourceString(KEY_MULTI_PROBLEM),
 					null);
 			for (int i = 0; i < models.length; i++) {
 				try {
@@ -130,21 +131,22 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					IStatus status = e.getStatus();
-
+					/*
 					String newMessage =
 						PDEPlugin.getFormattedMessage(
 							KEY_PROBLEM,
 							new String[] {
 								models[i].getPluginBase().getId(),
 								status.getMessage()});
-					Status newStatus =
+					MultiStatus newStatus =
 						new Status(
 							status.getSeverity(),
 							PDEPlugin.getPluginId(),
 							status.getCode(),
 							newMessage,
 							status.getException());
-					multiStatus.add(newStatus);
+					*/
+					multiStatus.merge(status);
 				}
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
