@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.net.*;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
@@ -19,6 +20,10 @@ public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
 
 	public AbstractSchemaDescriptor() {
 		super();
+	}
+
+	public IPath getPluginLocation(String pluginId) {
+		return null;
 	}
 
 	protected Schema createSchema() {
@@ -49,6 +54,9 @@ public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
 		if (schema != null) {
 			schema.reload();
 		}
+	}
+	public boolean isStandalone() {
+		return false;
 	}
 
 	public abstract boolean isEnabled();

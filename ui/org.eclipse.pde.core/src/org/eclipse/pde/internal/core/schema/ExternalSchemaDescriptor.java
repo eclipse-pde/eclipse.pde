@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 
-public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
+public class ExternalSchemaDescriptor extends DevelopmentSchemaDescriptor {
 	private IPluginExtensionPoint info;
 	private File file;
 	private String fullId;
@@ -43,7 +43,7 @@ public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
 		String installLocation = model.getInstallLocation() + File.separator;
 		return new File(installLocation + info.getSchema());
 	}
-
+	
 	private File getSourceLocationFile() {
 		SourceLocationManager sourceManager =
 			PDECore.getDefault().getSourceLocationManager();

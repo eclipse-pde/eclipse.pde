@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core.ischema;
 
 import java.net.*;
+
+
 /**
  * Classes that implement this interface are responsible for
  * holding the schema object, loading it and disposing.
@@ -18,7 +20,7 @@ import java.net.*;
  * Compositors are responsible to provide input streams for
  * loading and output streams for saving (if schema is editable).
  */
-public interface ISchemaDescriptor {
+public interface ISchemaDescriptor extends IPluginLocationProvider {
 /**
  * Returns identifier of the extension point defined in this schema.
  * @return id of the schema extension point
@@ -36,4 +38,11 @@ ISchema getSchema();
  * @return the URL of the schema XML file
  */
 public URL getSchemaURL();
+
+/**
+ * Tests if the descriptor is created outside the registry.
+ * @return <code>true</code> if the descriptor is outside the
+ * registry, <code>false</code> otherwise.
+ */
+public boolean isStandalone();
 }

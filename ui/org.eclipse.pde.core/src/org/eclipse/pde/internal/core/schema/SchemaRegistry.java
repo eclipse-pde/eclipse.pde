@@ -107,6 +107,7 @@ public class SchemaRegistry
 		try {
 			URL url =
 				IncludedSchemaDescriptor.computeURL(
+					parent,
 					parent.getSchemaURL(),
 					schemaLocation);
 			String key = url.toString();

@@ -14,7 +14,7 @@ import java.net.*;
 
 import org.eclipse.core.resources.*;
 
-public class FileSchemaDescriptor extends AbstractSchemaDescriptor {
+public class FileSchemaDescriptor extends DevelopmentSchemaDescriptor {
 	private IFile file;
 
 public FileSchemaDescriptor(IFile file) {

@@ -34,7 +34,7 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 		this.schemaLocation = schemaLocation;
 
 		try {
-			url = computeURL(parent.getSchemaURL(), schemaLocation);
+			url = computeURL(parent, parent.getSchemaURL(), schemaLocation);
 		}
 		catch (MalformedURLException e) {
 		}
@@ -52,10 +52,32 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 		return null;
 	}
 	
-	public static URL computeURL(URL parentURL, String schemaLocation) throws MalformedURLException {
-		IPath path = new Path(parentURL.getPath());
-		path = path.removeLastSegments(1).append(schemaLocation);
-		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());
+	public static URL computeURL(IPluginLocationProvider locationProvider, URL parentURL, String schemaLocation) throws MalformedURLException {
+		if (schemaLocation.startsWith("schema://")) {
+			// plugin-relative location
+			String rem = schemaLocation.substring(9);
+			// extract plug-in ID
+			IPath path = new Path(rem);
+			String pluginId = path.segment(0);
+			path = path.removeFirstSegments(1);
+			// the resulting path is relative to the plug-in.
+			// Use location provider to find the referenced plug-in
+			// location.
+			if (locationProvider!=null) {
+				IPath pluginLocation = locationProvider.getPluginLocation(pluginId);
+				if (pluginLocation==null) return null;
+				IPath includedLocation = pluginLocation.append(path);
+				return new URL(parentURL.getProtocol(), parentURL.getHost(), includedLocation.toString());
+			}
+			else
+				return null;
+		}
+		else {
+			// parent-relative location
+			IPath path = new Path(parentURL.getPath());
+			path = path.removeLastSegments(1).append(schemaLocation);
+			return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());
+		}
 	}
 
 	/**

@@ -71,7 +71,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		if (includedSchema == null) {
 			// load it relative to the parent schema
 			ISchemaDescriptor descriptor = getSchema().getSchemaDescriptor();
-			if (descriptor != null) {
+			if (descriptor != null && !descriptor.isStandalone()) {
 				includedSchema =
 					PDECore.getDefault().getSchemaRegistry().getIncludedSchema(
 						descriptor,
@@ -80,7 +80,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 			} else {
 				URL url = getSchema().getURL();
 				if (url != null) {
-					includedSchema = createInternalSchema(url, location);
+					includedSchema = createInternalSchema(descriptor, url, location);
 					if (includedSchema != null)
 						internal = true;
 
@@ -89,10 +89,10 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		}
 		return includedSchema;
 	}
-	private ISchema createInternalSchema(URL parentURL, String location) {
+	private ISchema createInternalSchema(IPluginLocationProvider locationProvider, URL parentURL, String location) {
 		try {
 			URL schemaURL =
-				IncludedSchemaDescriptor.computeURL(parentURL, location);
+				IncludedSchemaDescriptor.computeURL(locationProvider, parentURL, location);
 			Schema ischema = new Schema(null, schemaURL);
 			ischema.load();
 			return ischema;
