@@ -205,11 +205,8 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	public boolean hasErrors() {
 		State state = fState.getState();
 		if (fInvalidModels.size() > 0 || state.getBundles().length > state.getResolvedBundles().length)
-			return true;
-		
-		
-		return isApplicationMissing() || isProductMissing();
-		
+			return true;	
+		return isApplicationMissing() || isProductMissing();	
 	}
 	
 	private boolean isProductMissing() {

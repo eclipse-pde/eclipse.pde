@@ -44,7 +44,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	private Text fTemplateLocationText;
 	private Button fTemplateLocationBrowse;
 	
-	private String fLastEnteredConfigArea = "";
+	private String fLastEnteredConfigArea = ""; //$NON-NLS-1$
 	private String fConfigName;
 	private boolean fBlockChanges;
 	
@@ -58,8 +58,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
+		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createConfigAreaGroup(container);
@@ -73,7 +72,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void createConfigAreaGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Configuration Area");
+		group.setText(PDEPlugin.getResourceString("ConfigurationTab.configAreaGroup")); //$NON-NLS-1$
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -81,7 +80,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseDefaultLocationButton.setLayoutData(gd);
-		fUseDefaultLocationButton.setText("Use default location");
+		fUseDefaultLocationButton.setText(PDEPlugin.getResourceString("ConfigurationTab.useDefaultLoc")); //$NON-NLS-1$
 		fUseDefaultLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fUseDefaultLocationButton.getSelection();
@@ -97,7 +96,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fConfigAreaLabel = new Label(group, SWT.NONE);
-		fConfigAreaLabel.setText("Location:");
+		fConfigAreaLabel.setText(PDEPlugin.getResourceString("ConfigurationTab.configLog")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fConfigAreaLabel.setLayoutData(gd);
@@ -114,7 +113,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fConfigAreaBrowse = new Button(group, SWT.PUSH);
-		fConfigAreaBrowse.setText("Browse...");
+		fConfigAreaBrowse.setText(PDEPlugin.getResourceString("ConfigurationTab.configBrowse")); //$NON-NLS-1$
 		fConfigAreaBrowse.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fConfigAreaBrowse);
 		fConfigAreaBrowse.addSelectionListener(new SelectionAdapter() {
@@ -138,8 +137,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	protected void handleBrowseDirectory() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(fConfigAreaText.getText().trim());
-		dialog.setText("Configuration Location:");
-		dialog.setMessage("Select a configuration location:");
+		dialog.setText(PDEPlugin.getResourceString("ConfigurationTab.configLocTitle")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("ConfigurationTab.configLocMessage")); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null)
 			fConfigAreaText.setText(res);
@@ -147,33 +146,33 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 
 	protected void updateStatus() {
 		if (!fUseDefaultLocationButton.getSelection() && fConfigAreaText.getText().trim().length() == 0) {
-			updateStatus(createStatus(IStatus.ERROR, "Configuration area location is not set"));
+			updateStatus(createStatus(IStatus.ERROR, PDEPlugin.getResourceString("ConfigurationTab.noConfigLoc"))); //$NON-NLS-1$
 			return;
 		}
 		
 		if (fUseTemplateButton.getSelection()) {
 			String location = fTemplateLocationText.getText().trim();
 			if (location.length() == 0) {
-				updateStatus(createStatus(IStatus.ERROR, "Template file location is not set"));
+				updateStatus(createStatus(IStatus.ERROR, PDEPlugin.getResourceString("ConfigurationTab.noTemplateLoc"))); //$NON-NLS-1$
 				return;
 			}
 			File file = new File(location);
 			if (!file.exists() || !file.isFile()) {
-				updateStatus(createStatus(IStatus.ERROR, "Specified template file does not exist"));
+				updateStatus(createStatus(IStatus.ERROR, PDEPlugin.getResourceString("ConfigurationTab.templateNotExists"))); //$NON-NLS-1$
 				return;
 			}
 		}
-		updateStatus(createStatus(IStatus.OK, ""));
+		updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
 	}
 
 	private void createConfigFileGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Configuration File");
+		group.setText(PDEPlugin.getResourceString("ConfigurationTab.configFileGroup")); //$NON-NLS-1$
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fGenerateFileButton = new Button(group, SWT.RADIO);
-		fGenerateFileButton.setText("Generate a config.ini file with default content");
+		fGenerateFileButton.setText(PDEPlugin.getResourceString("ConfigurationTab.defaultConfigIni")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fGenerateFileButton.setLayoutData(gd);
@@ -188,13 +187,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fUseTemplateButton = new Button(group, SWT.RADIO);
-		fUseTemplateButton.setText("Use an existing config.ini file as a template");
+		fUseTemplateButton.setText(PDEPlugin.getResourceString("ConfigurationTab.existingConfigIni")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseTemplateButton.setLayoutData(gd);
 		
 		fTemplateLocationLabel = new Label(group, SWT.NONE);
-		fTemplateLocationLabel.setText("Location:");
+		fTemplateLocationLabel.setText(PDEPlugin.getResourceString("ConfigurationTab.templateLoc")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fTemplateLocationLabel.setLayoutData(gd);
@@ -211,7 +210,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fTemplateLocationBrowse = new Button(group, SWT.PUSH);
-		fTemplateLocationBrowse.setText("Browse...");
+		fTemplateLocationBrowse.setText(PDEPlugin.getResourceString("ConfigurationTab.templateBrowse")); //$NON-NLS-1$
 		fTemplateLocationBrowse.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fTemplateLocationBrowse);		
 		fTemplateLocationBrowse.addSelectionListener(new SelectionAdapter() {
@@ -233,13 +232,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		dialog.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IFile)
-					return ((IFile)element).getName().equals("config.ini");
+					return ((IFile)element).getName().equals("config.ini"); //$NON-NLS-1$
 				return true;
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle("File Selection");
-		dialog.setMessage("Select a config.ini file:");
+		dialog.setTitle(PDEPlugin.getResourceString("ConfigurationTab.fileSelection")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("ConfigurationTab.fileDialogMessage")); //$NON-NLS-1$
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0
@@ -262,10 +261,10 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(CONFIG_USE_DEFAULT_AREA, true);
-		configuration.setAttribute(CONFIG_LOCATION, "");
+		configuration.setAttribute(CONFIG_LOCATION, ""); //$NON-NLS-1$
 		configuration.setAttribute(CONFIG_CLEAR_AREA, false);
 		configuration.setAttribute(CONFIG_GENERATE_DEFAULT, true);
-		configuration.setAttribute(CONFIG_TEMPLATE_LOCATION, "");
+		configuration.setAttribute(CONFIG_TEMPLATE_LOCATION, ""); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -280,7 +279,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			fConfigAreaBrowse.setEnabled(!useDefaultArea);
 			fClearConfig.setSelection(configuration.getAttribute(CONFIG_CLEAR_AREA, false));
 			fConfigName = configuration.getName();
-			fLastEnteredConfigArea = configuration.getAttribute(CONFIG_LOCATION, "");
+			fLastEnteredConfigArea = configuration.getAttribute(CONFIG_LOCATION, ""); //$NON-NLS-1$
 			if (useDefaultArea)
 				fConfigAreaText.setText(PDECore.getDefault().getStateLocation().append(configuration.getName()).toOSString());
 			else
@@ -292,7 +291,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			fTemplateLocationLabel.setEnabled(!generateDefault);
 			fTemplateLocationText.setEnabled(!generateDefault);
 			fTemplateLocationBrowse.setEnabled(!generateDefault);
-			fTemplateLocationText.setText(configuration.getAttribute(CONFIG_TEMPLATE_LOCATION, ""));
+			fTemplateLocationText.setText(configuration.getAttribute(CONFIG_TEMPLATE_LOCATION, "")); //$NON-NLS-1$
 		} catch (CoreException e) {
 		} finally {
 			fBlockChanges = false;
