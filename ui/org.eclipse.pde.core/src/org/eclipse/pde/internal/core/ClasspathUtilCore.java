@@ -108,20 +108,8 @@ public class ClasspathUtilCore {
 
 	private static void addExtraClasspathEntries(IPluginModelBase model, Vector result)
 		throws CoreException {
-		IBuildModel buildModel = model.getBuildModel();
-		if (buildModel == null) {
-			IFile buildFile =
-				model.getUnderlyingResource().getProject().getFile("build.properties");
-			if (buildFile.exists()) {
-				buildModel = new WorkspaceBuildModel(buildFile);
-				buildModel.load();
-			}
-		}
-
-		if (buildModel == null)
-			return;
-
-		IBuildEntry entry = buildModel.getBuild().getEntry("jars.extra.classpath");
+		IBuild build = getBuild(model);
+		IBuildEntry entry = (build == null) ? null : build.getEntry("jars.extra.classpath");
 		if (entry == null)
 			return;
 
@@ -317,7 +305,6 @@ public class ClasspathUtilCore {
 		throws CoreException {
 
 		IProject project = model.getUnderlyingResource().getProject();
-		IBuildEntry[] buildEntries = getBuildEntries(model, project);
 
 		if (!WorkspaceModelManager.isBinaryPluginProject(project)) {
 			// keep existing source folders
@@ -334,40 +321,30 @@ public class ClasspathUtilCore {
 			}
 		}
 
-		// add libraries
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		IBuild build = getBuild(model);
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
 			if (IPluginLibrary.RESOURCE.equals(library.getType()))
 				continue;
-			boolean found = false;
-			for (int j = 0; j < buildEntries.length; j++) {
-				IBuildEntry buildEntry = buildEntries[j];
-				// add corresponding source folder instead of library, if one
-				// exists
-				if (buildEntry.getName().equals("source." + library.getName())) {
-					String[] folders = buildEntry.getTokens();
-					for (int k = 0; k < folders.length; k++) {
-						IPath path = project.getFullPath().append(folders[k]);
-						if (path.toFile().exists()) {
-							IClasspathEntry entry = JavaCore.newSourceEntry(path);
-							if (!result.contains(entry))
-								result.add(entry);
-						} else {
-							addSourceFolder(folders[k], project, result);
-						}
+			IBuildEntry buildEntry =
+				build == null ? null : build.getEntry("source." + library.getName());
+			if (buildEntry != null) {
+				String[] folders = buildEntry.getTokens();
+				for (int k = 0; k < folders.length; k++) {
+					IPath path = project.getFullPath().append(folders[k]);
+					if (path.toFile().exists()) {
+						IClasspathEntry entry = JavaCore.newSourceEntry(path);
+						if (!result.contains(entry))
+							result.add(entry);
+					} else {
+						addSourceFolder(folders[k], project, result);
 					}
-					found = true;
-					break;
 				}
-			}
-			// add library, since no source folder was found.
-			if (!found) {
-				IClasspathEntry entry =
-					createLibraryEntry(library, library.isExported());
+			} else {
+				IClasspathEntry entry = createLibraryEntry(library, library.isExported());
 				if (entry != null && !result.contains(entry))
 					result.add(entry);
-
 			}
 		}
 	}
@@ -375,24 +352,12 @@ public class ClasspathUtilCore {
 	protected static void addSourceFolder(String name, IProject project, Vector result)
 		throws CoreException {
 		IPath path = project.getFullPath().append(name);
-		ensureFolderExists(project, path);
+		CoreUtility.createFolder(project.getFolder(path), true, true, null);
 		IClasspathEntry entry = JavaCore.newSourceEntry(path);
 		if (!result.contains(entry))
 			result.add(entry);
 	}
 
-	private static void ensureFolderExists(IProject project, IPath folderPath)
-		throws CoreException {
-		IWorkspace workspace = project.getWorkspace();
-
-		for (int i = 1; i <= folderPath.segmentCount(); i++) {
-			IPath partialPath = folderPath.uptoSegment(i);
-			if (!workspace.getRoot().exists(partialPath)) {
-				IFolder folder = workspace.getRoot().getFolder(partialPath);
-				folder.create(true, true, null);
-			}
-		}
-	}
 
 	/**
 	 * Creates a new instance of the classpath container entry for the given
@@ -409,14 +374,14 @@ public class ClasspathUtilCore {
 		IPluginLibrary library,
 		boolean unconditionallyExport) {
 		try {
-			String expandedName = expandLibraryName(library.getName());
+			String name = library.getName();
+			String expandedName = expandLibraryName(name);
 			boolean isExported = unconditionallyExport ? true : library.isFullyExported();
 
 			IPluginModelBase model = library.getPluginModel();
 			IPath path = getPath(model, expandedName);
 			if (path == null) {
-				if (model.isFragmentModel()
-					|| !model.getPluginBase().getId().startsWith("org.eclipse.swt"))
+				if (model.isFragmentModel() || !containsVariables(name))
 					return null;
 				model = resolveLibraryInFragments(library, expandedName);
 				if (model == null)
@@ -432,6 +397,13 @@ public class ClasspathUtilCore {
 			return null;
 		}
 	}
+	
+	private static boolean containsVariables(String name) {
+		return name.indexOf("$os") != -1
+			|| name.indexOf("$ws") != -1
+			|| name.indexOf("$nl") != -1
+			|| name.indexOf("$arch") != -1;
+	}
 
 	public static String expandLibraryName(String source) {
 		if (source == null || source.length() == 0)
@@ -446,25 +418,30 @@ public class ClasspathUtilCore {
 				source.replaceAll(
 					"\\$os\\$",
 					"os" + IPath.SEPARATOR + TargetPlatform.getOS());
+		if (source.indexOf("$nl$") != -1)
+			source =
+				source.replaceAll(
+						"\\$nl\\$",
+						"nl" + IPath.SEPARATOR + TargetPlatform.getNL());
+		if (source.indexOf("$arch$") != -1)
+			source =
+				source.replaceAll(
+						"\\$arch\\$",
+						"arch" + IPath.SEPARATOR + TargetPlatform.getOSArch());
 		return source;
 	}
 
-	private static IBuildEntry[] getBuildEntries(
-		IPluginModelBase model,
-		IProject project)
-		throws CoreException {
+	private static IBuild getBuild(IPluginModelBase model) throws CoreException {
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null) {
+			IProject project = model.getUnderlyingResource().getProject();
 			IFile buildFile = project.getFile("build.properties");
 			if (buildFile.exists()) {
 				buildModel = new WorkspaceBuildModel(buildFile);
 				buildModel.load();
 			}
 		}
-		if (buildModel != null)
-			return buildModel.getBuild().getBuildEntries();
-
-		return new IBuildEntry[0];
+		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 
 	private static IPath getSourceAnnotation(IPluginModelBase model, String libraryName)

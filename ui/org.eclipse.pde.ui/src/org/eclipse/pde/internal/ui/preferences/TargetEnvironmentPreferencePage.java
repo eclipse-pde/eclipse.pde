@@ -156,7 +156,6 @@ public class TargetEnvironmentPreferencePage
 			Locale locale = locales[i];
 			result[i] = locale.toString() + " - " + locale.getDisplayName();
 		}
-		CoreArraySorter.INSTANCE.sortInPlace(result);
 		return result;
 	}
 	

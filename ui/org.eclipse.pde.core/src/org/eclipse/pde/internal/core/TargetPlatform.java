@@ -542,7 +542,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 					locale.toString(),
 					locale.toString() + " - " + locale.getDisplayName()); //$NON-NLS-1$
 		}
-		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
 	}
 
