@@ -108,13 +108,14 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		initializeFonts();
 		
-		GridLayout layout = new GridLayout();
-		section.setLayout(layout);
+		section.setLayout(new TableWrapLayout());
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
 		Composite mainContainer = toolkit.createComposite(section);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.makeColumnsEqualWidth = false;
-		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = true;
+		layout.numColumns = 4;
 		layout.verticalSpacing = 10;
 		mainContainer.setLayout(layout);
 		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -126,10 +127,10 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth= false;
+		layout.makeColumnsEqualWidth= true;
 		createManifestContainer.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 4;
 		createManifestContainer.setLayoutData(gd);
 		Label manifestLabel = toolkit.createLabel(createManifestContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
 		gd = new GridData();
@@ -141,14 +142,8 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 				 * TODO: hook code to create manifest.mf here
 				 */
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
-			 */
 			public void linkExited(HyperlinkEvent e) {
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
-			 */
 			public void linkEntered(HyperlinkEvent e) {
 			}
 		});
@@ -161,14 +156,13 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		 */
 		Composite bottomContainer = toolkit.createComposite(mainContainer);
 		layout = new GridLayout();
-		layout.makeColumnsEqualWidth = false;
+		layout.makeColumnsEqualWidth = true;
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.numColumns = 3;
-		layout.horizontalSpacing = 25;
+		layout.numColumns = 4;
 		bottomContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 4;
 		bottomContainer.setLayoutData(gd);
 		/*
 		 * Activation rule part
@@ -176,12 +170,16 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Composite ruleContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 1;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 		ruleContainer.setLayout(layout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd.grabExcessHorizontalSpace = true;
 		ruleContainer.setLayoutData(gd);
+		
 		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
 		activateLabel.setLayoutData(gd);
 		activateLabel.setFont(boldFont);
 
@@ -190,11 +188,15 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						ruleContainer,
 						"Always activate this plug-in",
 						SWT.RADIO);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
 		autoActivateButton
-				.setLayoutData(new GridData(GridData.FILL_BOTH));
+				.setLayoutData(gd);
 		autoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-
+				/*
+				 * TODO: set auto-start header properties
+				 */
 			}
 		});
 		/*
@@ -206,16 +208,17 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						ruleContainer,
 						"Do not activate this plug-in",
 						SWT.RADIO);
-		nonAutoActivateButton.setLayoutData(new GridData(
-				GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		nonAutoActivateButton.setLayoutData(gd);
 		nonAutoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-
+				/*
+				 * TODO: set auto-start header properties
+				 */
 			}
 		});
-				Label label = toolkit.createLabel(ruleContainer,"");
-				label.setLayoutData(new GridData());
-		
+
 		/*
 		 * Exceptions part
 		 */
@@ -226,17 +229,17 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.makeColumnsEqualWidth = false;
 		exceptionsContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan=2;
 		exceptionsContainer.setLayoutData(gd);
 		
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData();//GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		exceptionLabel.setLayoutData(gd);
 		exceptionLabel.setFont(boldFont);
-		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 2;
 		exceptionPkgLabel.setLayoutData(gd);
 		
@@ -247,9 +250,10 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.makeColumnsEqualWidth = false;
 		exceptionsPkgContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
+//		gd.grabExcessHorizontalSpace = false;
 		gd.horizontalSpan = 2;
 		exceptionsPkgContainer.setLayoutData(gd);
+		
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getPage().getModel();
 		tablePart.setEditable(model.isEditable());
