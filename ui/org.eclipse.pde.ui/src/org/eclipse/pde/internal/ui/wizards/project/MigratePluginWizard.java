@@ -16,18 +16,23 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.imports.*;
 
 public class MigratePluginWizard extends Wizard {
 	private MigratePluginWizardPage page1;
 	private IPluginModelBase [] selected;
-
+	private static final String STORE_SECTION = "MigrationWizard";
+	
 	public MigratePluginWizard(IPluginModelBase[] selected) {
+		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
+		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		setWindowTitle("Migrate Plug-ins and Fragments");
 		setNeedsProgressMonitor(true);
@@ -36,20 +41,33 @@ public class MigratePluginWizard extends Wizard {
 	
 	public boolean performFinish() {
 		final IPluginModelBase[] models = page1.getSelected();
-
+		page1.storeSettings();
+		final boolean doUpdateClasspath = page1.isUpdateClasspathRequested();
+		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
-				monitor.beginTask("Migrating...", models.length);
-				for (int i = 0; i < models.length; i++) {
-					try {
+				int numUnits = doUpdateClasspath ? models.length * 2 : models.length;
+				monitor.beginTask("Migrating...", numUnits);
+				try {
+					for (int i = 0; i < models.length; i++) {
 						monitor.subTask(models[i].getPluginBase().getId());
 						transform(models[i]);
-						models[i].getUnderlyingResource().refreshLocal(IResource.DEPTH_ZERO, null);
+						models[i].getUnderlyingResource().refreshLocal(
+							IResource.DEPTH_ZERO,
+							null);
 						monitor.worked(1);
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
+					if (doUpdateClasspath) {
+						UpdateClasspathAction.doUpdateClasspath(
+							new SubProgressMonitor(monitor, models.length),
+							models,
+							null);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					monitor.done();
 				}
 			}
 		};
@@ -60,6 +78,14 @@ public class MigratePluginWizard extends Wizard {
 		} catch (InterruptedException e) {
 		}
 		return true;
+	}
+	
+	private IDialogSettings getSettingsSection(IDialogSettings master) {
+		IDialogSettings setting = master.getSection(STORE_SECTION);
+		if (setting == null) {
+			setting = master.addNewSection(STORE_SECTION);
+		}
+		return setting;
 	}
 	
 	public void addPages() {

@@ -439,7 +439,7 @@ public abstract class PDEMultiPageEditor
 	public void init(IEditorSite site, IEditorInput input)
 		throws PartInitException {
 
-		if (isValidContentType(input) == false) {
+		if (!isValidContentType(input)) {
 			String message =
 				PDEPlugin.getFormattedMessage(WRONG_EDITOR, input.getName());
 			IStatus s =

@@ -10,29 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.project;
 
-import java.util.Vector;
+import java.util.*;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class MigratePluginWizardPage extends StatusWizardPage {
-	private IPluginModelBase[] selected;
-	private CheckboxTableViewer pluginListViewer;
-	private static final String KEY_PLUGIN_LIST =
-		"UpdateBuildpathWizard.availablePlugins";
-	
-	private TablePart tablePart;
+	private IPluginModelBase[] fSelected;
+	private CheckboxTableViewer fPluginListViewer;	
+	private TablePart fTablePart;
+	private Button fUpdateClasspathButton;
+	private String S_UPDATE_CLASSATH = "updateClasspath";
 
 	public class ContentProvider
 		extends DefaultContentProvider
@@ -65,10 +64,10 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 	public MigratePluginWizardPage(IPluginModelBase[] selected) {
 		super("MigrateWizardPage", true);
 		setTitle("Migrate Plug-ins and Fragments");
-		setDescription("Select the plug-ins and fragments to migrate to Eclipse 3.0 compliance");
+		setDescription("Migrate the plug-ins and fragments that are not compliant with Eclipse 3.0 guidelines");
 
-		this.selected = selected;
-		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
+		this.fSelected = selected;
+		fTablePart = new TablePart("&Plug-ins and fragments that are not 3.0-compliant:");
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
@@ -83,41 +82,49 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
+		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 
-		tablePart.createControl(container);
+		fTablePart.createControl(container);
 
-		pluginListViewer = tablePart.getTableViewer();
-		pluginListViewer.setContentProvider(new ContentProvider());
-		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPluginListViewer = fTablePart.getTableViewer();
+		fPluginListViewer.setContentProvider(new ContentProvider());
+		fPluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		GridData gd = (GridData)tablePart.getControl().getLayoutData();
+		GridData gd = (GridData)fTablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		
-		pluginListViewer.setInput(PDEPlugin.getDefault());
-		tablePart.setSelection(selected);
-	
+		fPluginListViewer.setInput(PDEPlugin.getDefault());
+		fTablePart.setSelection(fSelected);
+		
+		fUpdateClasspathButton = new Button(container, SWT.CHECK);
+		fUpdateClasspathButton.setText("Update the Java build path");
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		fUpdateClasspathButton.setLayoutData(gd);
+		fUpdateClasspathButton.setSelection(getDialogSettings().getBoolean(S_UPDATE_CLASSATH));
+		
 		setControl(container);
 		Dialog.applyDialogFont(container);
 	}
 
 	public IPluginModelBase[] getSelected() {
-		Object[] objects = tablePart.getSelection();
+		Object[] objects = fTablePart.getSelection();
 		IPluginModelBase [] models = new IPluginModelBase[objects.length];
 		System.arraycopy(objects, 0, models, 0, objects.length);
 		return models;
 	}
 
 	private void dialogChanged() {
-		setPageComplete(tablePart.getSelectionCount() > 0);
+		setPageComplete(fTablePart.getSelectionCount() > 0);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		return tablePart.getSelectionCount() > 0;
+		return fTablePart.getSelectionCount() > 0;
 	}
 
 	private Object[] getModels() {
@@ -132,6 +139,15 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 			}
 		}
 		return result.toArray();
+	}
+	
+	public void storeSettings() {
+		IDialogSettings settings = getDialogSettings();
+		settings.put(S_UPDATE_CLASSATH, fUpdateClasspathButton.getSelection());
+	}
+	
+	public boolean isUpdateClasspathRequested() {
+		return fUpdateClasspathButton.getSelection();
 	}
 
 }

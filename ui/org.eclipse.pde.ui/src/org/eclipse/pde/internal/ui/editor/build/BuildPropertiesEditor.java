@@ -170,16 +170,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	}
 	protected boolean isValidContentType(IEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (input instanceof IStorageEditorInput
-			&& !(input instanceof IFileEditorInput)) {
-			if (name.startsWith("build.properties"))
-				return true;
-			else
-				return false;
-		}
-		if (name.equals("build.properties"))
-			return true;
-		return false;
+		return name.equals("build.properties") || name.equals("delta.properties");
 	}
 	protected boolean updateModel() {
 		IBuildModel model = (IBuildModel) getModel();

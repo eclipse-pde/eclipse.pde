@@ -572,7 +572,7 @@
             name="%editors.buildProperties.name"
             default="true"
             icon="icons/obj16/build_exec.gif"
-            filenames="build.properties"
+            filenames="build.properties, delta.properties"
             contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.build.BuildPropertiesEditor"
             id="org.eclipse.pde.ui.buildEditor">

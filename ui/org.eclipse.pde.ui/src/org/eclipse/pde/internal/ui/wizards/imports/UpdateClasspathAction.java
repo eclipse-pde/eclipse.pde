@@ -169,8 +169,10 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				monitor.subTask(models[i].getPluginBase().getId());
 				// no reason to compile classpath for a non-Java model
 				IProject project = model.getUnderlyingResource().getProject();
-				if (!project.hasNature(JavaCore.NATURE_ID))
+				if (!project.hasNature(JavaCore.NATURE_ID)) {
+					monitor.worked(1);
 					continue;
+				}
 				ClasspathUtil.setClasspath(
 					model,
 					useContainers,
