@@ -107,7 +107,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			prefixes.copyInto(packages);
 		}
 		exported = all || exports.size() > 0;
-		addComments(node);
 		bindSourceLocation(node, lineTable);
 	}
 	public void setContentFilters(String[] filters) throws CoreException {
@@ -182,7 +181,6 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent);
 		writer.print("<library name=\"" + getName() + "\"");
 		if (type != null)

@@ -61,7 +61,6 @@ public class PluginExtensionPoint
 		this.id = getNodeAttribute(node, "id");
 		this.name = getNodeAttribute(node, "name");
 		this.schema = getNodeAttribute(node, "schema");
-		addComments(node);
 		bindSourceLocation(node, lineTable);
 	}
 
@@ -99,7 +98,6 @@ public class PluginExtensionPoint
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent);
 		writer.print("<extension-point");
 		if (getId() != null)

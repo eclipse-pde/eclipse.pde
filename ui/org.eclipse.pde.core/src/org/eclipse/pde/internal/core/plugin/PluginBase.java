@@ -29,8 +29,6 @@ public abstract class PluginBase
 	implements IPluginBase {
 	private Vector libraries = new Vector();
 	private Vector imports = new Vector();
-	protected Vector requiresComments;
-	protected Vector endComments;
 	private String providerName;
 	private String id;
 	private String version;
@@ -159,9 +157,6 @@ public abstract class PluginBase
 		providerName= base.providerName;
 		version= base.version;
 		schemaVersion = base.schemaVersion;
-		leadComments = base.leadComments;
-		requiresComments = base.requiresComments;
-		endComments = base.endComments;
 		super.load(srcPluginBase);
 		addArrayToVector(imports, srcPluginBase.getImports());
 		addArrayToVector(libraries, srcPluginBase.getLibraries());
@@ -188,29 +183,9 @@ public abstract class PluginBase
 				processChild(child, lineTable);
 			}
 		}
-		addEndComments(node);
 		valid = hasRequiredAttributes();
 	}
 
-	/**
-	 * 
-	 */
-	private void addEndComments(Node node) {
-		for (Node prev = node.getLastChild();
-				prev != null;
-				prev = prev.getPreviousSibling()) {
-			if (prev.getNodeType() == Node.TEXT_NODE)
-				continue;
-			if (prev instanceof Comment) {
-				String comment = prev.getNodeValue();
-				if (endComments == null)
-					endComments = new Vector();
-				endComments.add(0,comment);
-			} else
-				break;
-		}
-	}
-	
 	void loadRuntime(BundleDescription description, PDEState state) {
 		Dictionary dictionary = state.getManifest(description.getBundleId());
 		if (dictionary != null) {
@@ -282,10 +257,8 @@ public abstract class PluginBase
 		String name = child.getNodeName().toLowerCase();
 		if (name.equals("runtime")) {
 			loadRuntime(child, lineTable);
-			addComments(child);
 		} else if (name.equals("requires")) {
 			loadImports(child, lineTable);
-			requiresComments = addComments(child, requiresComments);
 		}
 		else super.processChild(child, lineTable);
 	}
@@ -305,7 +278,6 @@ public abstract class PluginBase
 	public void reset() {
 		libraries = new Vector();
 		imports = new Vector();
-		requiresComments = null;
 		providerName = null;
 		schemaVersion = null;
 		version = "";
@@ -370,16 +342,6 @@ public abstract class PluginBase
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
 	}
 
-	protected void writeChildren(
-		String indent,
-		String tag,
-		Object[] children,
-		PrintWriter writer) {
-		if (tag.equals("runtime"))
-			writeComments(writer);
-		super.writeChildren(indent, tag, children, writer);
-	}
-	
 	public boolean isValid() {
 		return valid;
 	}

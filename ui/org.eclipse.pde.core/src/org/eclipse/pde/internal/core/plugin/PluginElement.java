@@ -150,7 +150,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 					this.text = text;
 			}
 		}
-		addComments(node);
 	}
 	public void removeAttribute(String name) throws CoreException {
 		ensureModelEditable();
@@ -217,7 +216,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	}
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent);
 		writer.print("<" + getName());
 		String newIndent = indent + ATTRIBUTE_SHIFT;

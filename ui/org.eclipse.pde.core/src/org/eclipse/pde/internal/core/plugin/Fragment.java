@@ -166,7 +166,6 @@ public class Fragment extends PluginBase implements IFragment {
 		// add requires
 		children = getImports();
 		if (children.length > 0) {
-			writeComments(writer, requiresComments);
 			writeChildren(firstIndent, "requires", children, writer);
 			writer.println();
 		}
@@ -184,7 +183,6 @@ public class Fragment extends PluginBase implements IFragment {
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
-		writeComments(writer, endComments);
 		writer.println("</fragment>");
 	}
 }

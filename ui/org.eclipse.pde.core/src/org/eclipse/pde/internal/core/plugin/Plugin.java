@@ -113,33 +113,33 @@ public class Plugin extends PluginBase implements IPlugin {
 
 		// add runtime
 		Object[] children = getLibraries();
-		if (children.length > 0)
+		if (children.length > 0) {
 			writeChildren(firstIndent, "runtime", children, writer);
+			writer.println();
+		}
 
 		// add requires
 		children = getImports();
 		if (children.length > 0) {
-			writeComments(writer, requiresComments);
 			writeChildren(firstIndent, "requires", children, writer);
 			writer.println();
 		}
 
 		children = getExtensionPoints();
-		if (children.length > 0)
-			writer.println();
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
 		}
+		if (children.length > 0)
+			writer.println();
 
 		// add extensions
 		children = getExtensions();
-		if (children.length > 0)
-			writer.println();
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
-		writer.println();
-		writeComments(writer, endComments);
+		if (children.length > 0)
+			writer.println();
+		
 		writer.println("</plugin>");
 	}
 }

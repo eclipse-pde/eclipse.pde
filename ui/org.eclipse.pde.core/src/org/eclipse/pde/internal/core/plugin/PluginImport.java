@@ -127,7 +127,6 @@ public class PluginImport
 		this.id = id;
 		this.reexported = reexport;
 		this.optional = optional;
-		addComments(node);
 		bindSourceLocation(node, lineTable);
 	}
 	public void setMatch(int match) throws CoreException {
@@ -177,7 +176,6 @@ public class PluginImport
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent);
 		writer.print("<import plugin=\"" + getId() + "\"");
 		if (isReexported())

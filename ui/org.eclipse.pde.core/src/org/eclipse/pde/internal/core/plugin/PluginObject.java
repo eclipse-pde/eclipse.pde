@@ -27,7 +27,6 @@ public abstract class PluginObject
 	private String translatedName;
 	private transient IPluginObject parent;
 	private transient ISharedPluginModel model;
-	protected Vector leadComments;
 	protected int[] range;
 	private boolean inTheModel;
 
@@ -172,10 +171,6 @@ public abstract class PluginObject
 		return super.toString();
 	}
 
-	public void addComments(Node node) {
-		leadComments = addComments(node, leadComments);
-	}
-
 	public Vector addComments(Node node, Vector result) {
 		for (Node prev = node.getPreviousSibling();
 			prev != null;
@@ -191,10 +186,6 @@ public abstract class PluginObject
 				break;
 		}
 		return result;
-	}
-
-	void writeComments(PrintWriter writer) {
-		writeComments(writer, leadComments);
 	}
 
 	void writeComments(PrintWriter writer, Vector source) {

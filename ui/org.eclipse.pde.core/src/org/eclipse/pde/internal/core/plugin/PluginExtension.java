@@ -72,7 +72,6 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				childElement.load(child, lineTable);
 			}
 		}
-		addComments(node);
 		bindSourceLocation(node, lineTable);
 	}
 
@@ -121,7 +120,6 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return getPoint();
 	}
 	public void write(String indent, PrintWriter writer) {
-		writeComments(writer);
 		writer.print(indent);
 		writer.print("<extension");
 		String attIndent = indent + PluginElement.ATTRIBUTE_SHIFT;
