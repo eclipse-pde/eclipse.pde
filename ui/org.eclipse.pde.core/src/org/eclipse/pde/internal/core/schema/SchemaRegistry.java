@@ -68,7 +68,7 @@ public class SchemaRegistry {
 		if (schema == null || schema.trim().length() == 0)
 			return null;
 		URL url = point.getModel().getResourceURL(schema);
-		if (url == null && point.getModel().getUnderlyingResource() == null) {
+		if (url == null) {
 			try {
 				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
 				File file = mgr.findSourceFile(point.getPluginBase(), new Path(schema));
