@@ -81,6 +81,7 @@ public class PluginPathUpdater {
 	private static void addToClasspathEntries(
 		PluginEntry element,
 		boolean relative,
+		boolean firstLevel,
 		Vector result) {
 		IPlugin plugin = element.getPlugin();
 		IPluginModelBase model = plugin.getModel();
@@ -115,16 +116,17 @@ public class PluginPathUpdater {
 			if (!isEntryAdded(libraryPath,
 				entryKind,
 				result)) {
+				boolean exported = (firstLevel && element.isExported() && library.isExported());
 				IClasspathEntry libraryEntry =
 					relative? 
 					JavaCore.newVariableEntry(
 						libraryPath,
 						sourceAnnot[0],
-						sourceAnnot[1]) :
+						sourceAnnot[1],exported) :
 					JavaCore.newLibraryEntry(
 						libraryPath,
 						sourceAnnot[0],
-						sourceAnnot[1]);
+						sourceAnnot[1],exported);
 				IClasspathEntry resolved =
 					relative ? 
 					JavaCore.getResolvedClasspathEntry(libraryEntry) : libraryEntry;
@@ -159,7 +161,7 @@ public class PluginPathUpdater {
 			IPlugin reference = PDECore.getDefault().findPlugin(id);
 			if (reference != null) {
 				PluginEntry ref = new PluginEntry(reference);
-				addToClasspathEntries(ref, relative, result);
+				addToClasspathEntries(ref, relative, false, result);
 			}
 		}
 	}
@@ -246,7 +248,7 @@ public class PluginPathUpdater {
 	public void addClasspathEntries(Vector result) {
 		for (Iterator iter = checkedPlugins; iter.hasNext();) {
 			PluginEntry element = (PluginEntry) iter.next();
-			addToClasspathEntries(element, relative, result);
+			addToClasspathEntries(element, relative, true, result);
 		}
 	}
 
@@ -356,11 +358,12 @@ public class PluginPathUpdater {
 				addToClasspathEntries(
 					new PluginEntry(runtimePlugin),
 					relative,
+					true,
 					result);
 			}
 		}
 		if (bootPlugin != null) {
-			addToClasspathEntries(new PluginEntry(bootPlugin), relative, result);
+			addToClasspathEntries(new PluginEntry(bootPlugin), relative, true, result);
 		}
 	}
 
