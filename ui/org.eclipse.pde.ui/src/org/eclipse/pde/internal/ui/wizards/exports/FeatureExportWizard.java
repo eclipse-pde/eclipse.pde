@@ -2,9 +2,9 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
@@ -42,13 +42,31 @@ public class FeatureExportWizard extends BaseExportWizard {
 		return new FeatureExportWizardPage(getSelection());
 	}
 
-	protected HashMap createProperties(String destination) {
+	protected HashMap createProperties(String destination, boolean exportZip) {		
 		HashMap map = new HashMap(5);
-		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
-		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("feature.temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("plugin.destination", destination);
-		map.put("feature.destination", destination);
+		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result");
+		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
+		map.put("feature.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
+		if (exportZip) {
+			map.put("plugin.destination", destination);
+			map.put("feature.destination", destination);
+		} else {
+			String dest = destination;
+			File file = new File(destination,"plugins");
+			file.mkdirs();
+			if (file.exists()) {
+				dest =  file.getAbsolutePath();
+			}
+			map.put("plugin.destination", dest);
+			
+			dest = destination;
+			file = new File(destination, "features");
+			file.mkdirs();
+			if (file.exists()) {
+				dest = file.getAbsolutePath();
+			}
+			map.put("feature.destination", dest);
+		}
 		return map;
 	}
 	
@@ -69,9 +87,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 			makeScript(feature);
 			monitor.worked(1);
 			runScript(
-				feature,
-				exportZip,
+				feature.getInstallLocation(),
 				destination,
+				exportZip,
+				exportSource,
 				new SubProgressMonitor(monitor, 9));
 		} finally {
 			deleteBuildFiles(feature);
@@ -141,29 +160,21 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 		generator.setFeature(model.getFeature().getId());
 		generator.generate();
-
 	}
-
-	private void runScript(
-		IFeatureModel model,
-		boolean exportZip,
-		String destination,
-		IProgressMonitor monitor)
-		throws InvocationTargetException, CoreException {
-		AntRunner runner = new AntRunner();
-		if (exportZip) {
-			runner.setExecutionTargets(new String[] { "build.jars", "zip.distribution" });
+	
+	protected String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
+		ArrayList targets = new ArrayList();
+		if (!exportZip) {
+			targets.add("build.update.jar");	
 		} else {
-			runner.setExecutionTargets(new String[] { "build.update.jar" });
+			targets.add("build.jars");
+			targets.add("zip.distribution");
+			if (exportSource) {
+				targets.add("build.sources");
+				targets.add("zip.sources");
+			}
 		}
-		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
-		runner.addUserProperties(createProperties(destination));
-		runner.setAntHome(model.getInstallLocation());
-		runner.setBuildFileLocation(
-			model.getInstallLocation()
-				+ Path.SEPARATOR
-				+ MainPreferencePage.getBuildScriptName());
-		runner.run(monitor);
+		return (String[]) targets.toArray(new String[targets.size()]);
 	}
 	
 }

@@ -2,10 +2,8 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
@@ -39,11 +37,11 @@ public class PluginExportWizard extends BaseExportWizard {
 		return new PluginExportWizardPage(getSelection());
 	}
 
-	protected HashMap createProperties(String destination) {
+	protected HashMap createProperties(String destination, boolean exportZip) {
 		HashMap map = new HashMap(4);
-		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
-		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("destination.temp.folder", destination + Path.SEPARATOR + "temp");
+		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result");
+		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
+		map.put("destination.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("plugin.destination", destination);
 		return map;
 	}
@@ -67,7 +65,7 @@ public class PluginExportWizard extends BaseExportWizard {
 			makeScript(modelBase);
 			monitor.worked(1);
 			runScript(
-				modelBase,
+				modelBase.getInstallLocation(),
 				destination,
 				exportZip,
 				exportSource,
@@ -120,37 +118,5 @@ public class PluginExportWizard extends BaseExportWizard {
 		generator.generate();
 	}
 
-	private void runScript(
-		IPluginModelBase model,
-		String destination,
-		boolean exportZip,
-		boolean exportSource,
-		IProgressMonitor monitor)
-		throws InvocationTargetException, CoreException {
-		AntRunner runner = new AntRunner();
-		runner.addUserProperties(createProperties(destination));
-		runner.setAntHome(model.getInstallLocation());
-		runner.setBuildFileLocation(
-			model.getInstallLocation()
-				+ Path.SEPARATOR
-				+ MainPreferencePage.getBuildScriptName());
-		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
-		runner.setExecutionTargets(getExecutionTargets(exportZip, exportSource));
-		runner.run(monitor);
-	}
 	
-	private String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
-		ArrayList targets = new ArrayList();
-		if (!exportZip) {
-			targets.add("build.update.jar");	
-		} else {
-			targets.add("build.jars");
-			targets.add("gather.bin.parts");
-			if (exportSource) {
-				targets.add("build.sources");
-				targets.add("gather.sources");
-			}
-		}
-		return (String[]) targets.toArray(new String[targets.size()]);
-	}
 }

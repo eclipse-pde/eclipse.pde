@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
 
@@ -29,6 +30,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 	private BaseExportWizardPage page1;
 	protected static PrintWriter writer;
 	protected static File logFile;
+	protected String buildTempLocation;
 
 	/**
 	 * The constructor.
@@ -38,6 +40,8 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setNeedsProgressMonitor(true);
 		setDialogSettings(getSettingsSection(masterSettings));
+		buildTempLocation =
+			PDEPlugin.getDefault().getStateLocation().append("temp").toOSString();
 	}
 
 	private static void createLogWriter() {
@@ -71,8 +75,8 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 
 	protected abstract BaseExportWizardPage createPage1();
 
-	protected abstract HashMap createProperties(String destination);
-
+	protected abstract HashMap createProperties(String destination, boolean exportZip);
+	
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -113,7 +117,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 				model,
 				new SubProgressMonitor(monitor, 1));
 		}
-		cleanup(zipFileName, createProperties(destination), new SubProgressMonitor(monitor,1));
+		cleanup(zipFileName, destination, createProperties(destination, exportZip), new SubProgressMonitor(monitor,1));
 	}
 
 	public IStructuredSelection getSelection() {
@@ -197,6 +201,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 	
 	protected void cleanup(
 		String filename,
+		String destination,
 		HashMap properties,
 		IProgressMonitor monitor) {
 		try {
@@ -215,15 +220,20 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
 			writer.println("<target name=\"clean\">");
-			writer.println("<delete dir=\"${build.result.folder}\"/>");
-			writer.println("<delete dir=\"${temp.folder}\"/>");
+			writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
 			writer.println("</target>");
 			if (filename != null) {
 				writer.println("<target name=\"zip.folder\">");
+				writer.println("<delete dir=\"${build.result.folder}\"/>");
 				writer.println(
-					"<zip zipfile=\"${plugin.destination}/"
+					"<zip zipfile=\""
+						+ destination
+						+ "/"
 						+ filename
-						+ "\" basedir=\"${temp.folder}\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+						+ "\" basedir=\""
+						+ buildTempLocation
+						+ "\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+				writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
 				writer.println("</target>");
 			}
 			writer.println("</project>");
@@ -233,7 +243,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 			runner.addUserProperties(properties);
 			runner.setBuildFileLocation(zip.getAbsolutePath());
 			if (filename != null) {
-				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
+				runner.setExecutionTargets(new String[] { "zip.folder" });
 			}
 			runner.run(monitor);
 			zip.delete();
@@ -242,5 +252,39 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		}
 
 	}
+	
+	protected void runScript(
+		String location,
+		String destination,
+		boolean exportZip,
+		boolean exportSource,
+		IProgressMonitor monitor)
+		throws InvocationTargetException, CoreException {
+		AntRunner runner = new AntRunner();
+		runner.addUserProperties(createProperties(destination, exportZip));
+		runner.setAntHome(location);
+		runner.setBuildFileLocation(
+			location
+				+ Path.SEPARATOR
+				+ MainPreferencePage.getBuildScriptName());
+		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
+		runner.setExecutionTargets(getExecutionTargets(exportZip, exportSource));
+		runner.run(monitor);
+	}
 
+	protected String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
+		ArrayList targets = new ArrayList();
+		if (!exportZip) {
+			targets.add("build.update.jar");	
+		} else {
+			targets.add("build.jars");
+			targets.add("gather.bin.parts");
+			if (exportSource) {
+				targets.add("build.sources");
+				targets.add("gather.sources");
+			}
+		}
+		return (String[]) targets.toArray(new String[targets.size()]);
+	}
+	
 }

@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -30,17 +31,19 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private String S_ZIP_FILENAME = "zipFileName";
 		
 	private IStructuredSelection selection;
-	protected Combo destination;
-	protected Combo zipFile;
+	private Combo destination;
+	private Combo zipFile;
 
 	protected ExportPart exportPart;
 	protected boolean featureExport;
-	protected Button zipRadio;
-	protected Button updateRadio;
-	protected Button browseDirectory;
-	protected Button includeSource;
+	private Button zipRadio;
+	private Button updateRadio;
+	private Button browseDirectory;
+	private Button includeSource;
 
-	protected Label directoryLabel;
+	private Label directoryLabel;
+	private Button browseFile;
+	private Label label;
 	
 	class ExportListProvider
 		extends DefaultContentProvider
@@ -107,23 +110,89 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		hookHelpContext(container);
 	}
 	
-	protected abstract void hookHelpContext(Control control);
+	protected void createUpdateJarsSection(Composite container) {
+		updateRadio =
+			createRadioButton(
+				container,
+				PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"));
+
+		directoryLabel = new Label(container, SWT.NULL);
+		directoryLabel.setText(PDEPlugin.getResourceString("ExportWizard.destination"));
+		GridData gd = new GridData();
+		gd.horizontalIndent = 25;
+		directoryLabel.setLayoutData(gd);
+
+		destination = new Combo(container, SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		destination.setLayoutData(gd);
+		browseDirectory = new Button(container, SWT.PUSH);
+		browseDirectory.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
+		browseDirectory.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseDirectory);
+	}
 	
-	protected abstract void createUpdateJarsSection(Composite container);
-	
-	protected abstract void createZipSection(Composite container);
+	protected void createZipSection(Composite container) {
+		zipRadio =
+			createRadioButton(
+				container,
+				PDEPlugin.getResourceString("ExportWizard.Plugin.zip"));
+						
+						
+		label = new Label(container, SWT.NULL);
+		label.setText(PDEPlugin.getResourceString("ExportWizard.zipFile"));
+		GridData gd = new GridData();
+		gd.horizontalIndent = 25;
+		label.setLayoutData(gd);
+		
+		zipFile = new Combo(container, SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		zipFile.setLayoutData(gd);
+		
+		browseFile = new Button(container, SWT.PUSH);
+		browseFile.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
+		browseFile.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseFile);
+		
+		includeSource = new Button(container, SWT.CHECK);
+		includeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource"));
+		includeSource.setSelection(true);
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		gd.horizontalIndent = 25;
+		includeSource.setLayoutData(gd);		
+	}
 
 	protected void hookListeners() {
+		browseFile.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doBrowseFile();
+			}
+		});
+		
+		zipFile.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageChanged();
+			}
+		});
+		
+		zipFile.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				pageChanged();
+			}
+		});
+		
 		destination.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
 			}
 		});
+		
 		destination.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				pageChanged();
 			}
 		});
+		
 		browseDirectory.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doBrowseDirectory();
@@ -140,11 +209,36 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		});
 
 	}
-	
-	protected void enableUpdateJarsSection(boolean enabled) {
+	private void doBrowseFile() {
+		IPath path = chooseFile();
+		if (path != null) {
+			zipFile.setText(path.toOSString());
+		}
 	}
 
+	private IPath chooseFile() {
+		FileDialog dialog = new FileDialog(getShell());
+		dialog.setFileName(zipFile.getText());
+		dialog.setFilterExtensions(new String[] {"*.zip"});
+		dialog.setText(PDEPlugin.getResourceString("ExportWizard.filedialog.title"));
+		String res = dialog.open();
+		if (res != null) {
+			return new Path(res);
+		}
+		return null;
+	}
+	
 	protected void enableZipSection(boolean enabled) {
+		label.setEnabled(enabled);
+		zipFile.setEnabled(enabled);
+		browseFile.setEnabled(enabled);
+		includeSource.setEnabled(enabled);		
+	}
+	
+	protected void enableUpdateJarsSection(boolean enabled) {
+		directoryLabel.setEnabled(enabled);
+		destination.setEnabled(enabled);
+		browseDirectory.setEnabled(enabled);		
 	}
 	
 
@@ -228,7 +322,26 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		return manager.getWorkspaceModel(project);
 	}
 
-	protected abstract void pageChanged();
+	protected void pageChanged() {
+		boolean hasDestination = false;
+		String message = null;
+		if (zipRadio != null && !zipRadio.isDisposed() && zipRadio.getSelection()) {
+			hasDestination = zipFile.getText().length() > 0;
+			if (!hasDestination)
+				message = PDEPlugin.getResourceString("ExportWizard.status.nofile");
+		} else {
+			hasDestination = getDestination().length() > 0;
+			if (!hasDestination)
+				message = PDEPlugin.getResourceString("ExportWizard.status.nodirectory");
+		}
+		
+		boolean hasSel = exportPart.getSelectionCount() > 0;
+		if (!hasSel) {
+			message = PDEPlugin.getResourceString("ExportWizard.status.noselection");
+		}
+		setMessage(message);
+		setPageComplete(hasSel && hasDestination);
+	}
 
 	protected void loadSettings() {
 		IDialogSettings settings = getDialogSettings();
@@ -236,7 +349,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		zipRadio.setSelection(!exportUpdate);
 		updateRadio.setSelection(exportUpdate);
 		enableZipSection(!updateRadio.getSelection());
-		
+
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(S_DESTINATION + String.valueOf(i));
@@ -246,26 +359,23 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		}
 		destination.setItems((String[]) items.toArray(new String[items.size()]));
 
-		if (!featureExport) {
-			includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
-			enableUpdateJarsSection(!zipRadio.getSelection());
-			items.clear();
-			for (int i = 0; i < 6; i++) {
-				String curr = settings.get(S_ZIP_FILENAME + String.valueOf(i));
-				if (curr != null && !items.contains(curr)) {
-					items.add(curr);
-				}
+		includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		enableUpdateJarsSection(!zipRadio.getSelection());
+		items.clear();
+		for (int i = 0; i < 6; i++) {
+			String curr = settings.get(S_ZIP_FILENAME + String.valueOf(i));
+			if (curr != null && !items.contains(curr)) {
+				items.add(curr);
 			}
-			zipFile.setItems((String[]) items.toArray(new String[items.size()]));
 		}
+		zipFile.setItems((String[]) items.toArray(new String[items.size()]));
 	}
 
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(S_EXPORT_UPDATE, updateRadio.getSelection());
 		
-		if (includeSource != null)
-			settings.put(S_EXPORT_SOURCE, includeSource.getSelection());
+		settings.put(S_EXPORT_SOURCE, includeSource.getSelection());
 			
 		if (destination.getText().length() > 0) {
 			settings.put(S_DESTINATION + String.valueOf(0), destination.getText());
@@ -275,7 +385,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 				settings.put(S_DESTINATION + String.valueOf(i + 1), items[i]);
 			}
 		}
-		if (!featureExport && zipFile.getText().length() > 0) {
+		if (zipFile.getText().length() > 0) {
 			settings.put(S_ZIP_FILENAME + String.valueOf(0), zipFile.getText());
 			String[] items = zipFile.getItems();
 			int nEntries = Math.min(items.length, 5);
@@ -299,13 +409,35 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		return includeSource.getSelection();
 	}
 
+	
+	public String getFileName() {
+		if (zipRadio.getSelection()) {
+			String path = zipFile.getText();
+			if (path != null && path.length() > 0) {
+				String fileName = new Path(path).lastSegment();
+				if (!fileName.endsWith(".zip")) {
+					fileName += ".zip";
+				}
+				return fileName;
+			}
+		}
+		return null;
+	}
+	
 	public String getDestination() {
+		if (zipRadio != null && zipRadio.getSelection()) {
+			String path = zipFile.getText();
+			if (path != null && path.length() > 0) {
+				return new Path(path).removeLastSegments(1).toOSString();
+			}
+			return "";
+		}
+		
 		if (destination == null || destination.isDisposed())
 			return "";
+			
 		return destination.getText();
 	}
 	
-	public String getFileName() {
-		return null;
-	}	
+	protected abstract void hookHelpContext(Control control);
 }
