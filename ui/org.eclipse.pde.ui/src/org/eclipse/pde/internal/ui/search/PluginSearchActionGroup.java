@@ -1,4 +1,6 @@
-package org.eclipse.pde.internal.core.search;
+package org.eclipse.pde.internal.ui.search;
+
+import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * @author W Melhem
@@ -8,6 +10,6 @@ package org.eclipse.pde.internal.core.search;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class IWorkingSet {
+public class PluginSearchActionGroup extends ActionGroup {
 
 }

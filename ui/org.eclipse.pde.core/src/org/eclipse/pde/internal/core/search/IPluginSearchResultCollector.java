@@ -19,5 +19,7 @@ public interface IPluginSearchResultCollector {
 	void accept(IPluginObject match);
 	
 	void searchStarted();
+	
+	void done();
 
 }

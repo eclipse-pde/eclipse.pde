@@ -1,58 +1,140 @@
 package org.eclipse.pde.internal.core.search;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.util.StringMatcher;
 
-/**
- * @author W Melhem
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
+
 public class PluginSearchOperation {
 	private PluginSearchInput input;
 	private IPluginSearchResultCollector collector;
+	private StringMatcher stringMatcher;
+	private String taskName;
+	private String singularLabel = "match";
+	private String pluralLabel = "matches";
+	private int numMatches = 0;
 	
-	public PluginSearchOperation(PluginSearchInput input, IPluginSearchResultCollector collector) {
+	public PluginSearchOperation(
+		PluginSearchInput input,
+		IPluginSearchResultCollector collector) {
 		this.input = input;
 		this.collector = collector;
 		collector.setOperation(this);
+		this.stringMatcher =new StringMatcher(input.getSearchString(),!input.isCaseSensitive(),false);
 	}
 	
-	public void execute(IProgressMonitor monitor) {
-		ModelEntry[] entries = input.getSearchScope().getMatchingEntries();
+	public void execute(IProgressMonitor monitor, String taskName) {
+		IPluginModelBase[] entries = input.getSearchScope().getMatchingModels();
 		collector.searchStarted();
-		monitor.beginTask("Searching...", entries.length);
+		monitor.beginTask(taskName, entries.length);
 		
 		for (int i = 0; i < entries.length; i++) {
-			IPluginModelBase candidate = entries[i].getActiveModel();
+			IPluginModelBase candidate = entries[i];
 			visit(candidate);
 			monitor.worked(1);
 		}
 		monitor.done();
+		collector.done();
 	}
 	
 	private void visit(IPluginModelBase model) {
-		IPluginObject match = findMatch(model);
-		if (match != null) {
-			collector.accept(match);
+		ArrayList matches = findMatch(model);
+		for (int i = 0; i < matches.size(); i++) {
+			collector.accept((IPluginObject)matches.get(i));
+		}
+		numMatches += matches.size();
+	}
+	
+	private ArrayList findMatch(IPluginModelBase model) {
+		ArrayList result = new ArrayList();
+		int searchLimit = input.getSearchLimit();
+		switch(input.getSearchElement()) {
+			case PluginSearchInput.ELEMENT_PLUGIN:
+				if (searchLimit != PluginSearchInput.LIMIT_REFERENCES)
+					findPluginBaseDeclaration(model,result);
+				if (searchLimit != PluginSearchInput.LIMIT_DECLARATIONS)
+					findPluginReferences(model,result);
+				break;
+			case PluginSearchInput.ELEMENT_FRAGMENT:
+				findPluginBaseDeclaration(model,result);
+				break;
+			case PluginSearchInput.ELEMENT_EXTENSION_POINT:
+				if (searchLimit != PluginSearchInput.LIMIT_REFERENCES)
+					findExtensionPointDeclarations(model,result);
+				if (searchLimit != PluginSearchInput.LIMIT_DECLARATIONS)
+					findExtensionPointReferences(model,result);
+				break;
+			default:
+			;
+		}
+		return result;
+	}
+	
+	private void findPluginBaseDeclaration(IPluginModelBase model, ArrayList result) {
+		if (stringMatcher.match(model.getPluginBase().getId()))
+			result.add(model.getPluginBase());
+	}
+	
+	private void findPluginReferences(
+		IPluginModelBase model,
+		ArrayList result) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof IFragment) {
+			if (stringMatcher.match(((IFragment) pluginBase).getPluginId()))
+				result.add(pluginBase);
+		}
+		IPluginImport[] imports = pluginBase.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			if (stringMatcher.match(imports[i].getId()))
+				result.add(imports[i]);
+		}
+	}
+
+	private void findExtensionPointDeclarations(
+		IPluginModelBase model,
+		ArrayList result) {
+		IPluginExtensionPoint[] extensionPoints =
+			model.getPluginBase().getExtensionPoints();
+		for (int i = 0; i < extensionPoints.length; i++) {
+			if (stringMatcher
+				.match(
+					model.getPluginBase().getId()
+						+ "."
+						+ extensionPoints[i].getId()))
+				result.add(extensionPoints[i]);
 		}
 	}
 	
-	private IPluginObject findMatch(IPluginModelBase model) {
-		return null;
+	private void findExtensionPointReferences(IPluginModelBase model, ArrayList result) {
+		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			if (stringMatcher.match(extensions[i].getPoint()))
+				result.add(extensions[i]);
+		}
 	}
 	
 	public String getPluralLabel() {
-		return "";
+		return input.getSearchString() + " - {0} " + pluralLabel;
 	}
 	
 	public String getSingularLabel() {
-		return "";
+		return input.getSearchString() + " - {0} " + singularLabel;
+	}
+	
+	public void setPluralLabel(String pluralLabel) {
+		this.pluralLabel = pluralLabel;
+	}
+	
+	public void setSingularLabel(String singularLabel) {
+		this.singularLabel = singularLabel;
 	}
 	
 }
