@@ -53,7 +53,6 @@ public class BuildControlSection extends PDEFormSection {
 	private Button scrubOutputButton;
 	private Button buildButton;
 	private Button rebuildAllButton;
-	private StateListener resourceListener;
 
 	private boolean updateNeeded;
 
@@ -334,7 +333,6 @@ public class BuildControlSection extends PDEFormSection {
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		PDEPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 		super.dispose();
 	}
 

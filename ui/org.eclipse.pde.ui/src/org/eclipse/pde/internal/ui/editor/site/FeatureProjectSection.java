@@ -65,6 +65,10 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 			((WorkspaceSiteBuildModel) buildModel).save();
 		}
 	}
+	
+	protected boolean canDelete(IStructuredSelection ssel) {
+		return true;
+	}
 
 	protected void buttonSelected(int index) {
 		switch (index) {
@@ -143,6 +147,7 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 				new ISiteBuildFeature[removed.size()]);
 		ISiteBuild siteBuild = (ISiteBuild) input;
 		siteBuild.removeFeatures(array);
+		forceDirty();
 	}
 
 	public boolean isOpenable() {

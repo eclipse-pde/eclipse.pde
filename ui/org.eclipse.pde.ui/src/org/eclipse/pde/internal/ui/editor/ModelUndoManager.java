@@ -41,7 +41,7 @@ public abstract class ModelUndoManager
 	 */
 	public void connect(IModelChangeProvider provider) {
 		provider.addModelChangedListener(this);
-		initialize();
+		if (operations==null) initialize();
 	}
 
 	/*

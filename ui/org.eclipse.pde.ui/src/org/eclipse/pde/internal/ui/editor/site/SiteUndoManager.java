@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.editor.*;
  */
 public class SiteUndoManager extends ModelUndoManager {
 	ISiteModel model;
+	ISiteBuildModel buildModel;
 
 	public SiteUndoManager(PDEMultiPageEditor editor) {
 		super(editor);
@@ -31,7 +32,16 @@ public class SiteUndoManager extends ModelUndoManager {
 
 	public void connect(IModelChangeProvider provider) {
 		model = (ISiteModel) provider;
+		buildModel = model.getBuildModel();
 		super.connect(provider);
+		super.connect(buildModel);
+	}
+	
+	public void disconnect(IModelChangeProvider provider) {
+		model = (ISiteModel)provider;
+		buildModel = model.getBuildModel();
+		super.disconnect(provider);
+		super.disconnect(buildModel);
 	}
 
 	protected String getPageId(Object obj) {

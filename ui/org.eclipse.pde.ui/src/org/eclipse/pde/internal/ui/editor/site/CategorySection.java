@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -60,13 +61,19 @@ public class CategorySection extends CheckboxObjectListSection {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		CategoryDefinitionSection.showCategoryDialog(tableViewer, model, null);
 	}
+	
+	protected boolean canDelete(IStructuredSelection ssel) {
+		return false;
+	}
 
 	protected void remove(Object input, List objects) throws CoreException {
+		/*
 		ISiteCategory[] array =
 			(ISiteCategory[]) objects.toArray(
 				new ISiteCategory[objects.size()]);
 		ISiteFeature feature = (ISiteFeature) input;
 		feature.removeCategories(array);
+		*/
 	}
 
 	protected void handleOpen() {

@@ -98,7 +98,8 @@ public abstract class CheckboxObjectListSection
 		manager.add(newAction);
 		manager.add(new Separator());
 		if (isOpenable()) manager.add(openAction);
-		manager.add(deleteAction);
+		if (canDelete((IStructuredSelection)tableViewer.getSelection()))
+			manager.add(deleteAction);
 		fillClientActions(manager);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
@@ -109,6 +110,8 @@ public abstract class CheckboxObjectListSection
 	protected abstract void handleOpen();
 	protected abstract void handleNew();
 	protected abstract String getOpenPopupLabel();
+	
+	protected abstract boolean canDelete(IStructuredSelection selection);
 
 	protected void handleDelete() {
 		IStructuredSelection ssel =
@@ -117,7 +120,8 @@ public abstract class CheckboxObjectListSection
 		if (ssel.isEmpty())
 			return;
 		try {
-			remove(tableViewer.getInput(), ssel.toList());
+			if (canDelete(ssel))
+				remove(tableViewer.getInput(), ssel.toList());
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
