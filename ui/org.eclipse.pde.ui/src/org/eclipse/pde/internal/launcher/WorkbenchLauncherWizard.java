@@ -18,14 +18,15 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jdt.launching.*;
 
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.PDEPluginImages;
 
 public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
-	
-	private static final String STORE_SECTION= "WorkbenchLauncherWizard";
-	
+
+	private static final String STORE_SECTION = "WorkbenchLauncherWizard";
+
 	private String mode;
 	private ILauncher launcher;
-	
+
 	private WorkbenchLauncherWizardBasicPage page1;
 	private WorkbenchLauncherWizardAdvancedPage page2;
 
@@ -36,67 +37,64 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 	/*
 	 * @see org.eclipse.jface.wizard.IWizard#addPages
 	 */
-	 public void addPages() { 
-	 	setNeedsProgressMonitor(true);
+	public void addPages() {
+		setNeedsProgressMonitor(true);
 		String title;
 		if ("debug".equals(mode)) {
-			title= "Run-time Workbench Launcher (Debug Mode)";
+			title = "Run-time Workbench Launcher (Debug Mode)";
 		} else {
-			title= "Run-time Workbench Launcher (Run Mode)";
-		} 
-		page1= new WorkbenchLauncherWizardBasicPage(title);
+			title = "Run-time Workbench Launcher (Run Mode)";
+		}
+		page1 = new WorkbenchLauncherWizardBasicPage(title);
 		addPage(page1);
-		/*
-		page2= new WorkbenchLauncherWizardAdvancedPage();
-		addPage(page2);		
-		*/
+		page2 = new WorkbenchLauncherWizardAdvancedPage(title);
+		addPage(page2);
 	}
 
 	private IDialogSettings getSettingsSection() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings setting= master.getSection(STORE_SECTION);
+		IDialogSettings setting = master.getSection(STORE_SECTION);
 		if (setting == null) {
-			setting= master.addNewSection(STORE_SECTION);
+			setting = master.addNewSection(STORE_SECTION);
 		}
 		return setting;
 	}
-	
+
 	/**
 	 * Sets the chosen launcher and elements.
 	 */
 	public boolean performFinish() {
 		try {
 			page1.storeSettings(true);
-			//page2.storeSettings();
+			page2.storeSettings();
 			getContainer().run(true, true, new IRunnableWithProgress() {
-			 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
-			 		try {
-			 			delegateLaunch(monitor);
-			 		} catch (CoreException e) {
-			 			throw new InvocationTargetException(e);
-			 		}
-			 	}
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+						delegateLaunch(monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
 			});
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			String title= "Launch Eclipse Workbench";
-			String message= "Launch failed. See log for details.";
+			String title = "Launch Eclipse Workbench";
+			String message = "Launch failed. See log for details.";
 			PDEPlugin.logException(e, title, message);
 			return true; // exception handled
 		}
 		return true;
 	}
-	
+
 	/*
 	 * @see Wizard#performCancel()
 	 */
 	public boolean performCancel() {
 		page1.storeSettings(false);
 		return super.performCancel();
-	}	
-	
-	
+	}
+
 	private void delegateLaunch(IProgressMonitor monitor) throws CoreException {
 		/*
 		IPath targetWorkbenchLocation= page1.getWorkspaceLocation();
@@ -110,16 +108,18 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 		delegate.doLaunch(fLauncher, fMode, runner, targetWorkbenchLocation, clearWorkspace, args, plugins, appname, monitor);
 		*/
 	}
-	
+
 	/*
 	 * @see ILaunchWizard#init
 	 */
-	public void init(ILauncher launcher, String mode, IStructuredSelection selection) {
-		this.mode= mode;
-		this.launcher= launcher;
-		//initializeDefaultPageImageDescriptor();	
+	public void init(
+		ILauncher launcher,
+		String mode,
+		IStructuredSelection selection) {
+		this.mode = mode;
+		this.launcher = launcher;
+		initializeDefaultPageImageDescriptor();
 	}
-
 
 	/**
 	 * Initializes the default page image descriptor to an appropriate banner.
@@ -127,8 +127,12 @@ public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {
 	 * Subclasses may reimplement.
 	 * </p>
 	 */
-	//protected void initializeDefaultPageImageDescriptor() {
-	//	setDefaultPageImageDescriptor(CPluginImages.DESC_WIZABAN_C_APP);
-	//}
+	protected void initializeDefaultPageImageDescriptor() {
+		if ("debug".equals(mode)) {
+			setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEBUG_WIZ);
+		} else {
+			setDefaultPageImageDescriptor(PDEPluginImages.DESC_RUN_WIZ);
+		}
+	}
 
 }
