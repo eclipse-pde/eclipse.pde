@@ -454,7 +454,7 @@
             name="%editors.pluginManifest.name"
             default="true"
             icon="icons/obj16/plugin_mf_obj.gif"
-            filenames="plugin.xml,fragment.xml,MANIFEST.MF"
+            filenames="plugin.xml,fragment.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.manifestEditor">
