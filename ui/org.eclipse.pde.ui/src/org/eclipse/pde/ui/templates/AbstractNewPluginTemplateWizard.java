@@ -162,9 +162,9 @@ public abstract class AbstractNewPluginTemplateWizard
 		activeSections = getTemplateSections();
 		final IFieldData data = firstPage.createFieldData(activeSections, showTemplatePages);
 		for (int i =0 ; i<activeSections.length; i++){
-			if (activeSections[i].getLabel().equals("Preference Page")){
+			if (activeSections[i].getUsedExtensionPoint().equals("org.eclipse.ui.preferencePages")){
 				((PreferencePageTemplate)activeSections[i]).addDefaultOption(data.isThisCheck());
-				continue;
+				break;
 			}
 		}	
 		

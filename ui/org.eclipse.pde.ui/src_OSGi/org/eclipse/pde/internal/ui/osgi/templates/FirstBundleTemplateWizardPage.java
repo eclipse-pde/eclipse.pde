@@ -477,9 +477,9 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 			return data;
 		
 		for (int i =0 ; i<activeSections.length; i++){
-			if (activeSections[i].getLabel().equals("Preference Page")){
+			if (activeSections[i].getUsedExtensionPoint().equals("org.eclipse.ui.preferencePages")){
 				data.setHasPreference(true);
-				continue;
+				break;
 			}
 		}	
 		return data;

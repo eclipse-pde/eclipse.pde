@@ -481,9 +481,9 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			return data;
 		
 		for (int i =0 ; i<activeSections.length; i++){
-			if (activeSections[i].getLabel().equals("Preference Page")){
+			if (activeSections[i].getUsedExtensionPoint().equals("org.eclipse.ui.preferencePages")){
 				data.setHasPreference(true);
-				continue;
+				break;
 			}
 		}	
 		return data;
