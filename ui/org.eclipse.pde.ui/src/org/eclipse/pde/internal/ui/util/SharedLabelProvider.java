@@ -62,7 +62,7 @@ public class SharedLabelProvider
 		Object key = desc;
 
 		if (flags != 0) {
-			key = ("" + desc.hashCode()) + ":" + flags;
+			key = getKey(desc.hashCode(), flags);
 		}
 		Image image = (Image) images.get(key);
 		if (image == null) {
@@ -70,6 +70,21 @@ public class SharedLabelProvider
 			images.put(key, image);
 		}
 		return image;
+	}
+	
+	public Image get(Image image, int flags) {
+		if (flags==0) return image;
+		String key = getKey(image.hashCode(), flags);
+		Image resultImage = (Image)images.get(key);
+		if (resultImage == null) {
+			resultImage = createImage(image, flags);
+			images.put(key, resultImage);
+		}
+		return resultImage;
+	}
+
+	private String getKey(long hashCode, int flags) {
+		return (""+hashCode) + ":"+flags;
 	}
 
 	private Image createImage(ImageDescriptor baseDesc, int flags) {
@@ -85,7 +100,21 @@ public class SharedLabelProvider
 				baseDesc,
 				new ImageDescriptor[][] { upperRight, lowerRight, lowerLeft, upperLeft });
 		return compDesc.createImage();
-
+	}
+	
+	private Image createImage(Image baseImage, int flags) {
+		if (flags == 0) {
+			return baseImage;
+		}
+		ImageDescriptor[] lowerLeft = getLowerLeftOverlays(flags);
+		ImageDescriptor[] upperRight = getUpperRightOverlays(flags);
+		ImageDescriptor[] lowerRight = getLowerRightOverlays(flags);
+		ImageDescriptor[] upperLeft = getUpperLeftOverlays(flags);
+		ImageOverlayIcon compDesc =
+			new ImageOverlayIcon(
+				baseImage,
+				new ImageDescriptor[][] { upperRight, lowerRight, lowerLeft, upperLeft });
+		return compDesc.createImage();
 	}
 
 	private ImageDescriptor[] getLowerLeftOverlays(int flags) {

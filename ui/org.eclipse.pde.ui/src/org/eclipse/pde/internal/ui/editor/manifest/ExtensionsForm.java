@@ -13,7 +13,8 @@ public class ExtensionsForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "ManifestEditor.ExtensionForm.title";
 	private ManifestExtensionsPage page;
 	private DetailExtensionSection extensionSection;
-	private DetailChildrenSection childrenSection;
+	//private DetailChildrenSection childrenSection;
+	private BodyTextSection bodyTextSection;
 
 public ExtensionsForm(ManifestExtensionsPage page) {
 	this.page = page;
@@ -23,30 +24,30 @@ public ExtensionsForm(ManifestExtensionsPage page) {
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
 	parent.setLayout(layout);
-	layout.numColumns = 2;
-	layout.makeColumnsEqualWidth=true;
+	layout.numColumns = 1;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
 	extensionSection = new DetailExtensionSection(page);
 	Control control = extensionSection.createControl(parent, getFactory());
 	GridData gd = new GridData(GridData.FILL_BOTH);
-	//gd.widthHint = 300;
-	//gd.heightHint = 300;
 	control.setLayoutData(gd);
-
-	childrenSection = new DetailChildrenSection(page);
-	control = childrenSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
+	
+	bodyTextSection = new BodyTextSection(page);
+	bodyTextSection.setCollapsable(true);
+	bodyTextSection.setCollapsed(true);
+	control = bodyTextSection.createControl(parent, getFactory());
+	gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	// Link
 	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(extensionSection, childrenSection);
+	manager.linkSections(extensionSection, bodyTextSection);
 
 	// Register
 	registerSection(extensionSection);
-	registerSection(childrenSection);
+	registerSection(bodyTextSection);
 }
+
 public void expandTo(Object object) {
    extensionSection.expandTo(object);
 }

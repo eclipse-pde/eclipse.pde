@@ -46,6 +46,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		IPluginAttribute[] result = new IPluginAttribute[values.size()];
 		return (IPluginAttribute[]) values.toArray(result);
 	}
+	public int getAttributeCount() {
+		return attributes.size();
+	}
 	public ISchemaElement getElementInfo() {
 		if (elementInfo != null) {
 			ISchema schema = elementInfo.getSchema();

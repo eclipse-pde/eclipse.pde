@@ -89,6 +89,17 @@ public interface IPluginElement extends IPluginParent {
 	 */
 	IPluginAttribute[] getAttributes();
 	/**
+	 * Returns the number of attributes in this element.
+	 * @return number of attributes defined in this element
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	int getAttributeCount();
+	/**
 	 * Returns the body text of this element.
 	 *
 	 * @return body text of this element or <samp>null</samp> if not set.
