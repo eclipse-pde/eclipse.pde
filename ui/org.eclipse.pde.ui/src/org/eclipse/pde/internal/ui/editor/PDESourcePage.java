@@ -91,7 +91,27 @@ public abstract class PDESourcePage
 			getDocumentProvider().getDocument(getEditorInput());
 		document.addDocumentListener(documentListener);
 		errorMode = !getEditor().isModelCorrect(getEditor().getModel());
+		unregisterGlobalActions();
 	}
+	
+	private void unregisterGlobalActions() {
+		// A workaround for bug 27539
+		// Unregistering important actions from
+		// the key binding service allows
+		// global actions to handle accelerators 
+		// properly
+		IKeyBindingService service = getEditor().getSite().getKeyBindingService();
+		service.unregisterAction(getAction(ITextEditorActionConstants.DELETE));
+		service.unregisterAction(getAction(ITextEditorActionConstants.UNDO));
+		service.unregisterAction(getAction(ITextEditorActionConstants.REDO));
+		service.unregisterAction(getAction(ITextEditorActionConstants.CUT));
+		service.unregisterAction(getAction(ITextEditorActionConstants.COPY));
+		service.unregisterAction(getAction(ITextEditorActionConstants.PASTE));
+		service.unregisterAction(getAction(ITextEditorActionConstants.SELECT_ALL));
+		service.unregisterAction(getAction(ITextEditorActionConstants.FIND));
+		service.unregisterAction(getAction(ITextEditorActionConstants.BOOKMARK));
+	}
+
 	public void dispose() {
 		IDocument document =
 			getDocumentProvider().getDocument(getEditorInput());
