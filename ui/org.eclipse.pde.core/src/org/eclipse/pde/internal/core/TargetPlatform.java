@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
  */
 public class TargetPlatform implements IEnvironmentVariables {
 
-	private static final String BOOT_ID = "org.eclipse.core.boot";
+	private static final String BOOT_ID = "org.eclipse.core.boot"; //$NON-NLS-1$
 
 	static class LocalSite {
 		private ArrayList plugins;
@@ -41,7 +41,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 
 		public URL getURL() throws MalformedURLException {
-			return new URL("file:" + path.addTrailingSeparator().toString());
+			return new URL("file:" + path.addTrailingSeparator().toString()); //$NON-NLS-1$
 		}
 
 		public void add(IPluginModelBase model) {
@@ -56,8 +56,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 				location =
 					location.append(
 						model.isFragmentModel()
-							? "fragment.xml"
-							: "plugin.xml");
+							? "fragment.xml" //$NON-NLS-1$
+							: "plugin.xml"); //$NON-NLS-1$
 				IPath relative =
 					location.removeFirstSegments(location.segmentCount() - 3);
 				//31489 - entry must be relative
@@ -116,7 +116,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			String dataSuffix = createDataSuffix(data);
 			IPath statePath = PDECore.getDefault().getStateLocation();
-			String fileName = "plugin_path.properties";
+			String fileName = "plugin_path.properties"; //$NON-NLS-1$
 			File dir = new File(statePath.toOSString());
 
 			if (dataSuffix.length() > 0) {
@@ -164,7 +164,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			String dataSuffix = createDataSuffix(data);
 			IPath statePath = PDECore.getDefault().getStateLocation();
-			String fileName = "platform.cfg";
+			String fileName = "platform.cfg"; //$NON-NLS-1$
 			File dir = new File(statePath.toOSString());
 
 			if (dataSuffix.length() > 0) {
@@ -181,12 +181,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 			throw e;
 		} catch (Exception e) {
 			// Wrap everything else in a core exception.
+			String message = e.getMessage();
+			if (message==null)
+				message = PDECore.getResourceString("TargetPlatform.exceptionThrown"); //$NON-NLS-1$
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
 					PDECore.getPluginId(),
 					IStatus.ERROR,
-					e.getMessage(),
+					message,
 					e));
 		}
 	}
@@ -228,7 +231,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			}
 		}
 
-		URL configURL = new URL("file:" + configFile.getPath());
+		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
 		IPlatformConfiguration platformConfiguration =
 			BootLoader.getPlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
@@ -274,7 +277,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 		// Set boot location
 		IPath bootPath = getPluginLocation(bootModel);
-		URL bootURL = new URL("file:" + bootPath.toOSString());
+		URL bootURL = new URL("file:" + bootPath.toOSString()); //$NON-NLS-1$
 
 		config.setBootstrapPluginLocation(BOOT_ID, bootURL);
 		config.isTransient(true);
@@ -316,7 +319,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		if (primaryPlugin == null)
 			return;
 		IPath pluginPath = getPluginLocation(primaryPlugin.getModel());
-		URL pluginURL = new URL("file:" + pluginPath.toString());
+		URL pluginURL = new URL("file:" + pluginPath.toString()); //$NON-NLS-1$
 		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =
 			config.createFeatureEntry(
@@ -348,7 +351,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static IFeatureModel loadPrimaryFeatureModel(
 		IPath targetPath,
 		String featureId) {
-		File mainFeatureDir = targetPath.append("features").toFile();
+		File mainFeatureDir = targetPath.append("features").toFile(); //$NON-NLS-1$
 		if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
 			return null;
 		File[] featureDirs = mainFeatureDir.listFiles();
@@ -360,7 +363,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			File featureDir = featureDirs[i];
 			String name = featureDir.getName();
 			if (featureDir.isDirectory() && name.startsWith(featureId)) {
-				int loc = name.lastIndexOf("_");
+				int loc = name.lastIndexOf("_"); //$NON-NLS-1$
 				if (loc == -1)
 					continue;
 				String version = name.substring(loc + 1);
@@ -375,7 +378,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		if (bestVid == null)
 			return null;
 		// We have a feature and know the version
-		File manifest = new File(bestDir, "feature.xml");
+		File manifest = new File(bestDir, "feature.xml"); //$NON-NLS-1$
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(bestDir.getAbsolutePath());
 
@@ -410,7 +413,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static String createDataSuffix(IPath data) {
 		if (data == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		String suffix = data.toOSString();
 		// replace file and device separators with underscores
 		suffix = suffix.replace(File.separatorChar, '_');
@@ -421,14 +424,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 		String linkedURL = createLinkedURL(model);
 		if (linkedURL != null)
 			return linkedURL;
-		String prefix = "file:" + model.getInstallLocation() + File.separator;
+		String prefix = "file:" + model.getInstallLocation() + File.separator; //$NON-NLS-1$
 
 		if (model instanceof IPluginModel) {
-			return prefix + "plugin.xml";
+			return prefix + "plugin.xml"; //$NON-NLS-1$
 		} else if (model instanceof IFragmentModel) {
-			return prefix + "fragment.xml";
+			return prefix + "fragment.xml"; //$NON-NLS-1$
 		} else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 
 	private static String createLinkedURL(IPluginModelBase model) {
@@ -436,7 +439,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		if (resource == null || !resource.isLinked())
 			return null;
 		// linked resource - redirect
-		return "file:" + resource.getLocation().toOSString();
+		return "file:" + resource.getLocation().toOSString(); //$NON-NLS-1$
 	}
 
 	public static String getOS() {
@@ -495,7 +498,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			choices[i] =
 				new Choice(
 					locale.toString(),
-					locale.toString() + " - " + locale.getDisplayName());
+					locale.toString() + " - " + locale.getDisplayName()); //$NON-NLS-1$
 		}
 		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
