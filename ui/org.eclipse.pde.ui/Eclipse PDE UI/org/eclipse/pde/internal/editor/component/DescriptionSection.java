@@ -77,6 +77,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 public void dispose() {
 	IComponentModel model = (IComponentModel) getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 public void initialize(Object input) {
 	IComponentModel model = (IComponentModel)input;

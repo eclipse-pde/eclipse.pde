@@ -170,7 +170,7 @@ private InputStream createSchemaStream(String plugin, String id, String name) {
 	}
 	
 	try {
-		return new ByteArrayInputStream(swriter.toString().getBytes("UTF-8"));
+		return new ByteArrayInputStream(swriter.toString().getBytes("UTF8"));
 	}
 	catch (UnsupportedEncodingException e) {
 		return new ByteArrayInputStream(new byte [0]);

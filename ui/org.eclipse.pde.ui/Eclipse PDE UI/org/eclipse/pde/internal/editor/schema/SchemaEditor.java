@@ -59,7 +59,7 @@ protected boolean updateModel() {
 	IDocument document = getDocumentProvider().getDocument(getEditorInput());
 	String text = document.get();
 	try {
-		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8"));
 		schema.reload(stream);
 		try {
 			stream.close();

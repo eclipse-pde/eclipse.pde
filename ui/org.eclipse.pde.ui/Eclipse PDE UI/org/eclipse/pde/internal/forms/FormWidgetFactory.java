@@ -3,7 +3,7 @@ package org.eclipse.pde.internal.forms;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
 import java.util.*;
@@ -14,7 +14,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
-
+
 public class FormWidgetFactory {
 	public static final String DEFAULT_HEADER_COLOR = "__default__header__";
 	public static final String COLOR_BACKGROUND = "__bg";
@@ -28,12 +28,11 @@ public class FormWidgetFactory {
 	private KeyListener deleteListener;
 	private Color foregroundColor;
 	private Display display;
-	private Font titleFont;
 	public static final int BORDER_STYLE = SWT.NONE;//SWT.BORDER;
 	private BorderPainter borderPainter;
 	private Color borderColor;
 	private HyperlinkHandler hyperlinkHandler;
-
+
 	class BorderPainter implements PaintListener {
 		public void paintControl(PaintEvent event) {
 			Composite composite = (Composite) event.widget;
@@ -63,7 +62,7 @@ public class FormWidgetFactory {
 			}
 		}
 	}
-
+
 public FormWidgetFactory() {
 	this(Display.getCurrent());
 }
@@ -177,7 +176,6 @@ public void dispose() {
 		c.dispose();
 	}
 	hyperlinkHandler.dispose();
-	titleFont.dispose();
 	colorRegistry=null;
 }
 public Color getBackgroundColor() {
@@ -210,9 +208,6 @@ public Color getHyperlinkHoverColor() {
 public int getHyperlinkUnderlineMode() {
 	return hyperlinkHandler.getHyperlinkUnderlineMode();
 }
-public Font getTitleFont() {
-	return titleFont;
-}
 public void hookDeleteListener(Control control) {
 	if (deleteListener == null) {
 		deleteListener = new KeyAdapter() {
@@ -238,11 +233,8 @@ private void initialize() {
 	hyperlinkHandler = new HyperlinkHandler();
 	hyperlinkHandler.setForeground(registerColor(COLOR_HYPERLINK, 0, 0, 153));
 	hyperlinkHandler.setBackground(backgroundColor);
-
-	Font bf = JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT);
-	FontData [] fd = bf.getFontData();
-	titleFont = new Font(display, fd[0].getName(), 12, SWT.BOLD);
 }
+
 public void paintBordersFor(Composite parent) {
 	if (BORDER_STYLE == SWT.BORDER) return;
 	if (borderPainter==null) borderPainter = new BorderPainter();

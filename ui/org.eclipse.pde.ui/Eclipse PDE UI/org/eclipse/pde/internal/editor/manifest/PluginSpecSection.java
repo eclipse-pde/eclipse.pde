@@ -249,6 +249,7 @@ private void forceDirty() {
 public void dispose() {
 	IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 private void handleOpen() {
 	if (isFragment()) {

@@ -195,6 +195,7 @@ public void dispose() {
 	handler.dispose();
 	alertImage.dispose();
 	taskAlertImage.dispose();
+	super.dispose();
 }
 public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase) input;

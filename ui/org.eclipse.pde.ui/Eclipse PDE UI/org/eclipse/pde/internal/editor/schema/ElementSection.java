@@ -169,6 +169,7 @@ private Tree createTree(Composite container, FormWidgetFactory factory) {
 public void dispose() {
 	schema.removeModelChangedListener(this);
 	globalElementImage.dispose();
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

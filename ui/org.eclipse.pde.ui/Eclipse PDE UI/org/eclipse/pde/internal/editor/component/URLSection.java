@@ -171,6 +171,7 @@ public void dispose() {
 	model.removeModelChangedListener(this);
 	urlImage.dispose();
 	urlFolderImage.dispose();
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

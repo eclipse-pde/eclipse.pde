@@ -89,6 +89,7 @@ public void dispose() {
 	pluginImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 public void initialize(Object input) {
 	initializeImages();

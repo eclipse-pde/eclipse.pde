@@ -125,10 +125,11 @@ private void appendAttribute(PrintWriter writer, String indent, String attName, 
 	appendAttribute(writer, indent, attName, text, false);
 }
 private void appendAttribute(PrintWriter writer, String indent, String attName, String text, boolean last) {
-	if (text.length()==0) return;
-	writer.print(indent + attName + "=\""+text+"\"");
+	if (text.length()>0) {
+	   writer.print(indent + attName + "=\""+text+"\"");
+	}
 	if (last) writer.print(">");
-	writer.println();
+	if (last || text.length()>0) writer.println();
 }
 	public void becomesVisible(int event){
 		nameField.setFocus();
@@ -299,7 +300,7 @@ private IFile createFile(IContainer parent, String contents, IProgressMonitor mo
 	IFile file = workspace.getRoot().getFile(filePath);
 
 	try{
-		InputStream initialContents = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+		InputStream initialContents = new ByteArrayInputStream(contents.getBytes("UTF8"));
 		file.create(initialContents, false, monitor);
 	}catch(UnsupportedEncodingException uee){
 		PDEPlugin.logException(uee);

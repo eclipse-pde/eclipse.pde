@@ -170,6 +170,7 @@ public void dispose() {
 	sequenceImage.dispose();
 	choiceImage.dispose();
 	allImage.dispose();
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

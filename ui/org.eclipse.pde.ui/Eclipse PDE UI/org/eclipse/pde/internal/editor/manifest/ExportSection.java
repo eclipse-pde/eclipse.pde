@@ -269,6 +269,7 @@ private void createNameTable(Composite parent, FormWidgetFactory factory) {
 public void dispose() {
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 private void fillContextMenu(IMenuManager manager) {
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);

@@ -112,7 +112,7 @@ private void compileFile(IFile file, IProgressMonitor monitor) {
 			}
 			IFile outputFile = workspace.getRoot().getFile(outputPath);
 			ByteArrayInputStream target =
-				new ByteArrayInputStream(outputBuffer.toString().getBytes("UTF-8"));
+				new ByteArrayInputStream(outputBuffer.toString().getBytes("UTF8"));
 			if (!workspace.getRoot().exists(outputPath)) {
 				// the file does not exist - create it
 				outputFile.create(target, true, monitor);

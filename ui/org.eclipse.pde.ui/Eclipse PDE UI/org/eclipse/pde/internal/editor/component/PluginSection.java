@@ -175,6 +175,7 @@ public void dispose() {
 	if (fragmentImage!=null) fragmentImage.dispose();
 	if (warningPluginImage!=null) warningPluginImage.dispose();
 	if (warningFragmentImage!=null) warningFragmentImage.dispose();
+	super.dispose();
 }
 public void expandTo(Object object) {
 	pluginViewer.setSelection(new StructuredSelection(object), true);

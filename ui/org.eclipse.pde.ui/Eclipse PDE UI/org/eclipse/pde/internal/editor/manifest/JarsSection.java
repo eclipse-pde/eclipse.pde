@@ -196,6 +196,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 public void dispose() {
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

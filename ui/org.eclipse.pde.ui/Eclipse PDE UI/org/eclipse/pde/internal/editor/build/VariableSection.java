@@ -188,6 +188,7 @@ public void dispose() {
 	variableImage.dispose();
 	IBuildModel model = (IBuildModel)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

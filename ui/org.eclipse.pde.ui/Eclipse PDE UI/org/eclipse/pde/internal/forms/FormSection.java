@@ -3,16 +3,18 @@ package org.eclipse.pde.internal.forms;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.resource.*;
+
 
-
-public abstract class FormSection {
+public abstract class FormSection implements IPropertyChangeListener {
 	public static final int SELECTION = 1;
 	private String headerColorKey = FormWidgetFactory.DEFAULT_HEADER_COLOR;
 	private String headerText;
@@ -30,6 +32,7 @@ public abstract class FormSection {
 	private boolean headerPainted=true;
 	private int widthHint = SWT.DEFAULT;
 	private int heightHint=SWT.DEFAULT;
+	private Composite control;
 	
 	
 /*
@@ -42,7 +45,7 @@ public abstract class FormSection {
 class SectionLayout extends Layout {
 	int vspacing = 3;
 	int sepHeight = 2;
-
+
 	protected Point computeSize(Composite parent, int wHint, int hHint, boolean flush) {
 		int width = 0;
 		int height = 0;
@@ -52,7 +55,7 @@ class SectionLayout extends Layout {
 		   width = wHint;
 		if (hHint != SWT.DEFAULT)
 			height = hHint;
-
+
 		cwidth = width;
 				
 		if (client != null) {
@@ -113,6 +116,7 @@ public FormSection() {
 	if (SWT.getPlatform().equals("motif")) {
 		descriptionPainted = false;
 	}
+	JFaceResources.getFontRegistry().addListener(this);
 }
 public void commitChanges(boolean onSave) {
 }
@@ -124,7 +128,7 @@ public final Control createControl(
 	SectionLayout slayout = new SectionLayout();
 	section.setLayout(slayout);
 	section.setData(this);
-
+
 	GridData gd;
 	if (headerPainted) {
 		Color headerColor = factory.getColor(getHeaderColorKey());
@@ -137,7 +141,7 @@ public final Control createControl(
 			});
 		}
 	}
-
+
 	if (addSeparator) {
         //separator = factory.createSeparator(section, SWT.HORIZONTAL);
 		separator = factory.createCompositeSeparator(section);
@@ -148,6 +152,7 @@ public final Control createControl(
 	}
 	client = createClient(section, factory);
 	section.setData(this);
+	control = section;
 	return section;
 }
 protected Text createText(Composite parent, String label, FormWidgetFactory factory) {
@@ -170,7 +175,9 @@ protected Text createText(Composite parent, FormWidgetFactory factory, int span)
 	text.setLayoutData(gd);
 	return text;
 }
-public void dispose() {}
+public void dispose() {
+	JFaceResources.getFontRegistry().removeListener(this);
+}
 public void doGlobalAction(String actionId) {}
 public void expandTo(Object object) {}
 public final void fireChangeNotification(int changeType, Object changeObject) {
@@ -219,7 +226,7 @@ public void sectionChanged(FormSection source, int changeType, Object changeObje
 public void setAddSeparator(boolean newAddSeparator) {
 	addSeparator = newAddSeparator;
 }
-
+
 private String trimNewLines(String text) {
 	StringBuffer buff = new StringBuffer();
 	for (int i=0; i<text.length(); i++) {
@@ -276,4 +283,11 @@ public void setWidthHint(int newWidthHint) {
 public void titleActivated() {
 }
 public void update() {}
+public void propertyChange(PropertyChangeEvent arg0) {
+	if (control!=null && header!=null) {
+		header.setFont(JFaceResources.getBannerFont());
+		control.layout(true);
+	}
+}
+
 }

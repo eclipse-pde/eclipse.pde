@@ -255,6 +255,7 @@ public void dispose() {
 	model.removeModelChangedListener(this);
 	PDEPlugin.getDefault().getExternalModelManager().removeModelProviderListener(this);
 	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
+	super.dispose();
 }
 public Iterator getSelectedPlugins() {
 	Vector v = new Vector();

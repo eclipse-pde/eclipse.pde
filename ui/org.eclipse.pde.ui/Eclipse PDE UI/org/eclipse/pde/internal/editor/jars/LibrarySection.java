@@ -197,6 +197,7 @@ public void dispose() {
 	libraryImage.dispose();
 	IJarsModel model = (IJarsModel)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 public void doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {

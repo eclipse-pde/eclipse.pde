@@ -419,6 +419,7 @@ public void dispose() {
 	homeImage.dispose();
 	homeHoverImage.dispose();
 	homeDisabledImage.dispose();
+	super.dispose();
 }
 private String getPluginName() {
 	return model.getPlugin().getName();

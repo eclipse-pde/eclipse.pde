@@ -12,9 +12,11 @@ import org.eclipse.swt.events.*;
 import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 
-public class Form implements PaintListener {
+public class Form implements PaintListener, IPropertyChangeListener {
 	private String title;
 	private Vector sections;
 	private Composite control;
@@ -57,13 +59,9 @@ public class Form implements PaintListener {
 	private boolean headingVisible=true;
 
 public Form() {
-	//factory = new DialogWidgetFactory();
 	factory = new FormWidgetFactory();
-	if (SWT.getPlatform().equals("motif")) {
-	   titleFont = JFaceResources.getBannerFont();
-	}
-	else
-	   titleFont = factory.getTitleFont();
+   	titleFont = JFaceResources.getHeaderFont();
+   	JFaceResources.getFontRegistry().addListener(this);
 }
 private boolean canPerformDirectly(String id, Control control) {
 	if (control instanceof Text) {
@@ -127,6 +125,7 @@ public void dispose() {
 			section.dispose();
 		}
 	}
+	JFaceResources.getFontRegistry().removeListener(this);
 }
 public void doGlobalAction(String actionId) {
 	Display display = control.getDisplay();
@@ -285,4 +284,12 @@ public void update() {
 		}
 	}
 }
+public void propertyChange(PropertyChangeEvent arg0) {
+	titleFont = JFaceResources.getHeaderFont();
+	if (control!=null) { 
+		control.layout(true);
+		control.redraw();
+	}
+}
+
 }

@@ -107,7 +107,7 @@ public void save() {
 		return;
 	try {
 		String contents = getContents();
-		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("UTF8"));
 		if (file.exists()) {
 			file.setContents(stream, false, false, null);
 		} else {

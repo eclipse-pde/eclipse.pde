@@ -33,6 +33,7 @@ public void addFormSelectionListener(IFormSelectionListener listener) {
 public void addPage(IFormPage page) {
 	CTabItem item = new CTabItem(tabFolder, SWT.NULL);
 	item.setText(page.getLabel());
+	item.setToolTipText(page.getTitle());
 	item.setData(page);
 	pages.put(page, item);
 	if (page.isSource()) sourcePage = page;

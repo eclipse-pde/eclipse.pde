@@ -100,7 +100,7 @@ protected boolean updateModel() {
 	String text = document.get();
 	boolean cleanModel = true;
 	try {
-	   	InputStream stream = new ByteArrayInputStream(text.getBytes("UTF-8"));
+	   	InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8"));
 		try {
 			model.reload(stream);
 		} catch (CoreException e) {

@@ -208,6 +208,7 @@ private void warnBadVersionFormat(String text) {
 public void dispose() {
 	IComponentModel model = (IComponentModel) getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	super.dispose();
 }
 private void handleCreateJar() {
 	final ComponentEditorContributor contributor =
