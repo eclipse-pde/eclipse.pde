@@ -13,7 +13,7 @@ public class FeatureJarWizard extends Wizard {
 	private FeatureJarWizardPage mainPage;
 
 public FeatureJarWizard(IFile componentFile) {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPCOMP_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 	this.componentFile = componentFile;

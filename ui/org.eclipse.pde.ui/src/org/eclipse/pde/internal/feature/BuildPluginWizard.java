@@ -14,7 +14,7 @@ public class BuildPluginWizard extends Wizard {
 	private boolean fragment;
 
 public BuildPluginWizard(IFile pluginBaseFile, boolean fragment) {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPCOMP_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 	this.pluginBaseFile = pluginBaseFile;

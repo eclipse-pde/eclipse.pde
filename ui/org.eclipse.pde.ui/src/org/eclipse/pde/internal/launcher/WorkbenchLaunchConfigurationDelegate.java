@@ -140,7 +140,6 @@ public void initializeDefaults(
 	config.setAttribute(LOCATION + "0", defaultWorkspace);
 
 	config.setAttribute(USECUSTOM, false);
-	config.setAttribute(SHOWNAMES, false);
 }
 
 private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)

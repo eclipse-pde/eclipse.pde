@@ -30,7 +30,7 @@ import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 
-public class WorkbenchLauncherAdvancedTab implements /* ILaunchConfigurationTab, */ ILauncherSettings {
+public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, ILauncherSettings {
 	public static final String KEY_WORKSPACE_PLUGINS =
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
@@ -317,7 +317,6 @@ public class WorkbenchLauncherAdvancedTab implements /* ILaunchConfigurationTab,
 
 		if (initialSettings != null) {
 			useDefault = !initialSettings.getBoolean(USECUSTOM);
-			showNames = !initialSettings.getBoolean(SHOWNAMES);
 		}
 		// Need to set these before we refresh the viewer
 		useDefaultCheck.setSelection(useDefault);
@@ -498,7 +497,6 @@ public class WorkbenchLauncherAdvancedTab implements /* ILaunchConfigurationTab,
 	public void storeSettings() {
 		boolean useDefault = useDefaultCheck.getSelection();
 		config.setAttribute(USECUSTOM, !useDefault);
-		config.setAttribute(SHOWNAMES, !showNamesCheck.getSelection());
 
 		if (useDefault)
 			return;

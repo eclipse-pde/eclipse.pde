@@ -300,7 +300,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 
 		if (initialSettings != null) {
 			useDefault = !initialSettings.getBoolean(USECUSTOM);
-			showNames = !initialSettings.getBoolean(SHOWNAMES);
 		}
 		// Need to set these before we refresh the viewer
 		useDefaultCheck.setSelection(useDefault);
@@ -482,7 +481,6 @@ public class WorkbenchLauncherWizardAdvancedPage
 		IDialogSettings initialSettings = getDialogSettings();
 		boolean useDefault = useDefaultCheck.getSelection();
 		initialSettings.put(USECUSTOM, !useDefault);
-		initialSettings.put(SHOWNAMES, !showNamesCheck.getSelection());
 
 		if (useDefault)
 			return;

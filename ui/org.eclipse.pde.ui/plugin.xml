@@ -130,7 +130,7 @@
    </wizard>
    <wizard
          name="%new.feature.name"
-         icon="icons/full/ctool16/newpcomp_wiz.gif"
+         icon="icons/full/ctool16/newftrprj_wiz.gif"
          category="org.eclipse.pde.PDE"
          class="org.eclipse.pde.internal.feature.NewFeatureProjectWizard"
          project="true"
@@ -217,7 +217,7 @@
    <editor
          name="%editors.featureManifest.name"
          default="true"
-         icon="icons/full/obj16/comp_mf_obj.gif"
+         icon="icons/full/obj16/ftr_mf_obj.gif"
          filenames="feature.xml"
          contributorClass="org.eclipse.pde.internal.editor.feature.FeatureEditorContributor"
          class="org.eclipse.pde.internal.editor.feature.FeatureEditor"
@@ -433,7 +433,6 @@
          id="org.eclipse.pde.WorkbenchLauncher">
    </launcher>
 </extension>
-<!--
 <extension
       point="org.eclipse.debug.core.launchConfigurationTypes">
    <launchConfigurationType
@@ -451,22 +450,21 @@
          id="org.eclipse.pde.runtimeWorkbenchLaunchImage">
    </launchConfigurationTypeImage>
 </extension>
-
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
-	<launchConfigurationTab
-		id="org.eclipse.pde.launchConfigurationTab.FirstTab"
-		type ="org.eclipse.pde.RuntimeWorkbench"
-		class="org.eclipse.pde.internal.launcher.WorkbenchLauncherBasicTab"
-		name="%launchConfigurationTab.firstTab.name">
-	</launchConfigurationTab>
-	<launchConfigurationTab
-		id="org.eclipse.pde.launchConfigurationTab.AdvancedTab"
-		type ="org.eclipse.pde.RuntimeWorkbench"
-		class="org.eclipse.pde.internal.launcher.WorkbenchLauncherAdvancedTab"
-		name="%launchConfigurationTab.advancedTab.name">
-	</launchConfigurationTab>
+<extension
+      point="org.eclipse.debug.ui.launchConfigurationTabs">
+   <launchConfigurationTab
+         name="%launchConfigurationTab.firstTab.name"
+         type="org.eclipse.pde.RuntimeWorkbench"
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherBasicTab"
+         id="org.eclipse.pde.launchConfigurationTab.FirstTab">
+   </launchConfigurationTab>
+   <launchConfigurationTab
+         name="%launchConfigurationTab.advancedTab.name"
+         type="org.eclipse.pde.RuntimeWorkbench"
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherAdvancedTab"
+         id="org.eclipse.pde.launchConfigurationTab.AdvancedTab">
+   </launchConfigurationTab>
 </extension>
--->
 <extension
       point="org.eclipse.pde.schemaMap">
    <map

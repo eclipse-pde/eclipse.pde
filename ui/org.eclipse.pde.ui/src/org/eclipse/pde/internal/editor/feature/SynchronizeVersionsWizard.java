@@ -13,7 +13,7 @@ public class SynchronizeVersionsWizard extends Wizard {
 	private SynchronizeVersionsWizardPage mainPage;
 
 public SynchronizeVersionsWizard(FeatureEditor componentEditor) {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPCOMP_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 	this.componentEditor = componentEditor;

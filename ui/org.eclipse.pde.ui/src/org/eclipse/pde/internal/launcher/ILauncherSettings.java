@@ -13,7 +13,6 @@ public interface ILauncherSettings {
 	String DOCLEAR = "clearws";
 	String TRACING = "tracing";
 	String USECUSTOM = "default";
-	String SHOWNAMES = "showNames";
 	String WSPROJECT = "wsproject";
 	String EXTPLUGINS = "extplugins";
 }

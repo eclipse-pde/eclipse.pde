@@ -65,8 +65,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ATT_REQ_OBJ   = create(PATH_OBJ, "att_req_obj.gif");
 	public static final ImageDescriptor DESC_ATT_URI_OBJ   = create(PATH_OBJ, "att_URI_obj.gif");
 	public static final ImageDescriptor DESC_CHOICE_SC_OBJ = create(PATH_OBJ, "choice_sc_obj.gif");
-	public static final ImageDescriptor DESC_COMP_JAR_OBJ  = create(PATH_OBJ, "comp_jar_obj.gif");
-	public static final ImageDescriptor DESC_COMP_MF_OBJ   = create(PATH_OBJ, "comp_mf_obj.gif");
+	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ  = create(PATH_OBJ, "ftr_jar_obj.gif");
+	public static final ImageDescriptor DESC_FEATURE_MF_OBJ   = create(PATH_OBJ, "ftr_mf_obj.gif");
 	public static final ImageDescriptor DESC_ELREF_SC_OBJ  = create(PATH_OBJ, "elref_sc_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif");
@@ -77,7 +77,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(PATH_OBJ, "generic_xml_obj.gif");
 	public static final ImageDescriptor DESC_GROUP_SC_OBJ   = create(PATH_OBJ, "group_sc_obj.gif");
 	public static final ImageDescriptor DESC_JAVA_LIB_OBJ   = create(PATH_OBJ, "java_lib_obj.gif");
-	public static final ImageDescriptor DESC_NATIVE_LIB_OBJ = create(PATH_OBJ, "native_lib_obj.gif");
 	public static final ImageDescriptor DESC_OVERVIEW_OBJ  = create(PATH_OBJ, "overview_obj.gif");
 	public static final ImageDescriptor DESC_PAGE_OBJ   = create(PATH_OBJ, "page_obj.gif");
 	public static final ImageDescriptor DESC_PLUGIN_MF_OBJ = create(PATH_OBJ, "plugin_mf_obj.gif");
@@ -123,20 +122,11 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWEXPRJ_TOOL = create(PATH_TOOL, "newexprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXP_TOOL = create(PATH_TOOL, "newexp_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEX_TOOL = create(PATH_TOOL, "newex_wiz.gif");
-	public static final ImageDescriptor DESC_NEWPCOMP_TOOL = create(PATH_TOOL, "newpcomp_wiz.gif");
+	public static final ImageDescriptor DESC_NEWFTRPRJ_TOOL = create(PATH_TOOL, "newftrprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWPPRJ_TOOL = create(PATH_TOOL, "newpprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_TOOL = create(PATH_TOOL, "newfragprj_wiz.gif");
-	public static final ImageDescriptor DESC_GRAPH_BACK_TOOL = create(PATH_TOOL, "backward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_FORWARD_TOOL = create(PATH_TOOL, "forward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_HOME_TOOL = create(PATH_TOOL, "home_nav.gif");
 
-	public static final ImageDescriptor DESC_GRAPH_BACK_TOOL_HOVER = create(PATH_TOOL_HOVER, "backward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_FORWARD_TOOL_HOVER = create(PATH_TOOL_HOVER, "forward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_HOME_TOOL_HOVER = create(PATH_TOOL_HOVER, "home_nav.gif");
 
-	public static final ImageDescriptor DESC_GRAPH_BACK_TOOL_DISABLED = create(PATH_TOOL_DISABLED, "backward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_FORWARD_TOOL_DISABLED = create(PATH_TOOL_DISABLED, "forward_nav.gif");
-	public static final ImageDescriptor DESC_GRAPH_HOME_TOOL_DISABLED = create(PATH_TOOL_DISABLED, "home_nav.gif");
 
 	/**
 	 * LCL
@@ -144,7 +134,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ADD_ATT = create(PATH_LCL, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT = create(PATH_LCL, "clone_att.gif");
 	public static final ImageDescriptor DESC_CLONE_EL = create(PATH_LCL, "clone_el.gif");
-	public static final ImageDescriptor DESC_FINDOBJ = create(PATH_LCL, "find_obj.gif");
 	public static final ImageDescriptor DESC_GENERATE_CLASS = create(PATH_LCL, "generate_class.gif");
 	public static final ImageDescriptor DESC_GOTOOBJ = create(PATH_LCL, "goto_obj.gif");
 	public static final ImageDescriptor DESC_PROPERTIES = create(PATH_LCL, "properties.gif");
@@ -154,7 +143,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ADD_ATT_HOVER = create(PATH_LCL_HOVER, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_HOVER = create(PATH_LCL_HOVER, "clone_att.gif");
 	public static final ImageDescriptor DESC_CLONE_EL_HOVER = create(PATH_LCL_HOVER, "clone_el.gif");
-	public static final ImageDescriptor DESC_FINDOBJ_HOVER = create(PATH_LCL_HOVER, "find_obj.gif");
 	public static final ImageDescriptor DESC_GENERATE_CLASS_HOVER = create(PATH_LCL_HOVER, "generate_class.gif");
 	public static final ImageDescriptor DESC_GOTOOBJ_HOVER = create(PATH_LCL_HOVER, "goto_obj.gif");
 	public static final ImageDescriptor DESC_PROPERTIES_HOVER = create(PATH_LCL_HOVER, "properties.gif");
@@ -164,7 +152,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif");
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif");
 	public static final ImageDescriptor DESC_CLONE_EL_DISABLED = create(PATH_LCL_DISABLED, "clone_el.gif");
-	public static final ImageDescriptor DESC_FINDOBJ_DISABLED = create(PATH_LCL_DISABLED, "find_obj.gif");
 	public static final ImageDescriptor DESC_GENERATE_CLASS_DISABLED = create(PATH_LCL_DISABLED, "generate_class.gif");
 	public static final ImageDescriptor DESC_GOTOOBJ_DISABLED = create(PATH_LCL_DISABLED, "goto_obj.gif");
 	public static final ImageDescriptor DESC_PROPERTIES_DISABLED = create(PATH_LCL_DISABLED, "properties.gif");
@@ -180,7 +167,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWEX_WIZ   = create(PATH_WIZBAN, "newex_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(PATH_WIZBAN, "newexp_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(PATH_WIZBAN, "newexprj_wiz.gif");
-	public static final ImageDescriptor DESC_NEWPCOMP_WIZ   = create(PATH_WIZBAN, "newpcomp_wiz.gif");
+	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ   = create(PATH_WIZBAN, "newftrprj_wiz.gif");
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(PATH_WIZBAN, "form_wiz.gif");
 	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif");

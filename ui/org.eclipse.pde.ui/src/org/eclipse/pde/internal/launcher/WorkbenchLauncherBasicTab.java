@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 
-public class WorkbenchLauncherBasicTab implements /* ILaunchConfigurationTab, */ ILauncherSettings {
+public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILauncherSettings {
 	private static final String KEY_DESC = "";
 
 	private static final String KEY_WORKSPACE =
