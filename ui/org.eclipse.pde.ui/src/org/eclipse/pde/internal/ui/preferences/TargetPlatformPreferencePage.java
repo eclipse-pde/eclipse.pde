@@ -226,7 +226,7 @@ public class TargetPlatformPreferencePage
 		preferences.setValue(ICoreConstants.PLATFORM_PATH, homeText.getText());
 		pluginsBlock.save();
 		PDECore.getDefault().savePluginPreferences();
-		PDECore.getDefault().getSourceLocationManager().initializeClasspathVariables(null);
+		PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
 		return super.performOk();
 	}
 }

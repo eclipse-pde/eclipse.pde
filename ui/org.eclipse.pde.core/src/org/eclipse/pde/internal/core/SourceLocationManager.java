@@ -313,4 +313,26 @@ public class SourceLocationManager implements ICoreConstants {
 		return extensions;
 	}
 	
+	public void reinitializeClasspathVariables(IProgressMonitor monitor) {
+		for (int i = 0; i < extensionLocations.size(); i++) {
+			SourceLocation location =
+				(SourceLocation) extensionLocations.get(i);
+			IPath path = JavaCore.getClasspathVariable(location.getName());
+			if (path != null && path.equals(location.getPath())) {
+				JavaCore.removeClasspathVariable(location.getName(), monitor);
+			}
+		}
+		initializeExtensionLocations();
+		try {
+			for (int i = 0; i < extensionLocations.size(); i++) {
+				SourceLocation location =
+					(SourceLocation) extensionLocations.get(i);
+				JavaCore.setClasspathVariable(
+					location.getName(),
+					location.getPath(),
+					monitor);
+			}
+		} catch (JavaModelException e) {
+		}
+	}
 }
