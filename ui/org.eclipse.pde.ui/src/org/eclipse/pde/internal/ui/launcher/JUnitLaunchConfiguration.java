@@ -57,6 +57,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 
 			if (configuration.getAttribute(CONFIG_CLEAR, true))
 				LauncherUtils.clearConfigArea(getConfigDir(configuration));
+			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
 			int port = SocketUtil.findFreePort();
 			VMRunnerConfiguration runnerConfig =

@@ -47,6 +47,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			
 			if (configuration.getAttribute(CONFIG_CLEAR, true))
 				LauncherUtils.clearConfigArea(getConfigDir(configuration));
+			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration);
 			if (runnerConfig == null) {
