@@ -111,7 +111,7 @@ public class PluginUndoManager extends ModelUndoManager {
 			PDEPlugin.logException(e);
 		}
 	}
-
+	
 	private void executeRemove(Object[] elements) {
 		IPluginBase pluginBase = model.getPluginBase();
 

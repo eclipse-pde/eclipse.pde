@@ -4,22 +4,36 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.action.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.events.*;
-import org.w3c.dom.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.core.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.IFormPage;
+import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
+import org.eclipse.update.ui.forms.internal.SelectableFormLabel;
 
 public class ExtensionSection
 	extends PDEFormSection
@@ -55,7 +69,13 @@ public class ExtensionSection
 		String name = point;
 		String tooltip = point;
 
-		if (pointInfo != null) {
+		if (extension.getName() != null) {
+			String extensionName = extension.getTranslatedName();
+			if (MainPreferencePage.isFullNameModeEnabled())
+				name = extensionName;
+			else
+				tooltip = extensionName;
+		} else if (pointInfo != null) {
 			String translatedName = pointInfo.getTranslatedName();
 			if (MainPreferencePage.isFullNameModeEnabled())
 				name = translatedName;
@@ -152,19 +172,18 @@ public class ExtensionSection
 		int type = event.getChangeType();
 		if (type == IModelChangedEvent.WORLD_CHANGED)
 			needsUpdate = true;
-			if (getFormPage().isVisible())
-				update();
+		if (getFormPage().isVisible())
+			update();
 		else if (
 			type == IModelChangedEvent.INSERT || type == IModelChangedEvent.REMOVE) {
 			Object[] objects = event.getChangedObjects();
 			if (objects[0] instanceof IPluginExtension) {
 				needsUpdate = true;
 			}
-		}
-		else if (type == IModelChangedEvent.CHANGE) {
+		} else if (type == IModelChangedEvent.CHANGE) {
 			String property = event.getChangedProperty();
-			if (property.equals(IPluginBase.P_EXTENSION_ORDER) ||
-			property.equals(IPluginParent.P_SIBLING_ORDER)) {
+			if (property.equals(IPluginBase.P_EXTENSION_ORDER)
+				|| property.equals(IPluginParent.P_SIBLING_ORDER)) {
 				needsUpdate = true;
 			}
 		}

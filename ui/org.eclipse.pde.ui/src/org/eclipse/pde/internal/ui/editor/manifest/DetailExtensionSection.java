@@ -615,8 +615,11 @@ public class DetailExtensionSection
 		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
-			if (!fullNames)
+			if (!fullNames) {
+				if (extension.getName()!=null) return extension.getName();
 				return extension.getPoint();
+			}
+			if (extension.getName()!=null) return extension.getTranslatedName();
 
 			ISchema schema = schemaRegistry.getSchema(extension.getPoint());
 

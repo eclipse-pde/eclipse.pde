@@ -7,8 +7,10 @@ package org.eclipse.pde.internal.core.plugin;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.IPluginParent;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	protected Vector children = new Vector();
@@ -27,7 +29,7 @@ public void add(IPluginObject child) throws CoreException {
 	postAdd(child);
 }
 
-private void postAdd(IPluginObject child) {
+protected void postAdd(IPluginObject child) {
 	((PluginObject)child).setInTheModel(true);
 	((PluginObject)child).setParent(this);
 	fireStructureChanged(child, IModelChangedEvent.INSERT);

@@ -287,7 +287,11 @@ public class ImportListSection
 
 	public void modelsChanged(IModelProviderEvent e) {
 		imports = null;
-		importTable.refresh();
+		importTable.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				importTable.refresh();
+			}
+		});
 	}
 
 	private ImportObject findImportObject(IPluginImport iimport) {
