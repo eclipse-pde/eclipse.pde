@@ -1,10 +1,10 @@
-package org.eclipse.pde.internal.core.osgi.bundle;
+package org.eclipse.pde.internal.core.bundle;
 
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.osgi.framework.*;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {

@@ -32,5 +32,5 @@ package org.eclipse.pde.core.plugin;
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
  */
-public interface IExtensionsModel extends ISharedExtensionsModel, IBundlePluginModelProvider {
+public interface IExtensionsModel extends ISharedExtensionsModel {
 }

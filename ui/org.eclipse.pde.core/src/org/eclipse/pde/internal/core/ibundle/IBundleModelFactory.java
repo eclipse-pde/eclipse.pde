@@ -8,17 +8,29 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.osgi.bundle;
-
-import org.eclipse.pde.core.plugin.IPluginModel;
+package org.eclipse.pde.internal.core.ibundle;
 
 /**
- * An extension of the bundle plug-in model base that
- * is used specifically for plug-in models with OSGi manifests.
- * 
- * @since 3.0
+ * This factory should be used to create
+ * instances of a manifest.mf header.
  */
-public interface IBundlePluginModel
-	extends IBundlePluginModelBase, IPluginModel {
+public interface IBundleModelFactory {
+	
+	/**
+	 * Creates a new manifest header
+	 * @return a new manifest header instance
+	 */
+	IManifestHeader createHeader();
+	
+	/**
+	 * Creates a new manifest header
+	 *
+	 * @param key the manifest header key
+	 * @param value the manifest header value
+	 * 
+	 * @return a new manifest header instance
+	 */
+	IManifestHeader createHeader(String key, String value);
 
+	
 }

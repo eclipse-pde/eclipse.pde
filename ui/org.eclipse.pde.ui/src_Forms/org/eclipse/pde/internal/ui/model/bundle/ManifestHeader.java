@@ -1,7 +1,7 @@
 package org.eclipse.pde.internal.ui.model.bundle;
 
 import java.io.*;
-import org.eclipse.pde.internal.core.osgi.bundle.*;
+import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 /**

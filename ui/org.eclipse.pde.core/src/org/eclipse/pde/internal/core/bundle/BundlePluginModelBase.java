@@ -4,7 +4,7 @@
  * To change the template for this generated file go to Window - Preferences -
  * Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.core.osgi.bundle;
+package org.eclipse.pde.internal.core.bundle;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -14,9 +14,9 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 /**
  * @author dejan
@@ -39,7 +39,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#getBundleModel()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getBundleModel()
 	 */
 	public IBundleModel getBundleModel() {
 		return bundleModel;
@@ -50,7 +50,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#getExtensionsModel()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#getExtensionsModel()
 	 */
 	public ISharedExtensionsModel getExtensionsModel() {
 		return extensionsModel;
@@ -84,7 +84,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.core.osgi.bundle.IBundleModel)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setBundleModel(org.eclipse.pde.internal.core.ibundle.IBundleModel)
 	 */
 	public void setBundleModel(IBundleModel bundleModel) {
 		if (this.bundleModel != null && bundlePluginBase != null) {
@@ -97,7 +97,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase#setExtensionsModel(org.eclipse.pde.core.plugin.IExtensionsModel)
 	 */
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
 		this.extensionsModel = extensionsModel;

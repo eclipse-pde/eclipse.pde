@@ -4,10 +4,10 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.core.osgi.bundle;
+package org.eclipse.pde.internal.core.bundle;
 
-import org.eclipse.pde.core.osgi.bundle.IBundlePluginModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 
 /**
  * @author dejan
@@ -15,27 +15,27 @@ import org.eclipse.pde.core.plugin.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class BundlePluginModel
+public class BundleFragmentModel
 	extends BundlePluginModelBase
-	implements IBundlePluginModel {
+	implements IBundleFragmentModel {
 	
 	public IPluginBase createPluginBase() {
-		BundlePlugin bplugin = new BundlePlugin();
-		bplugin.setModel(this);
-		return bplugin;
+		BundleFragment bfragment = new BundleFragment();
+		bfragment.setModel(this);
+		return bfragment;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModel#getPlugin()
+	 * @see org.eclipse.pde.core.plugin.IFragmentModel#getFragment()
 	 */
-	public IPlugin getPlugin() {
-		return (IPlugin)getPluginBase();
+	public IFragment getFragment() {
+		return (IFragment)getPluginBase();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
 	 */
 	public boolean isFragmentModel() {
-		return false;
+		return true;
 	}
 }

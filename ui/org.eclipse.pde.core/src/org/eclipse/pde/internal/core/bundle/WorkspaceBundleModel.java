@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.osgi.bundle;
+package org.eclipse.pde.internal.core.bundle;
 
 import java.io.*;
 
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.*;
 
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
 	private IFile file;
@@ -123,5 +124,11 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	public void setFile(IFile newFile) {
 		file = newFile;
 		//setEditable(file.isReadOnly()==false);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getFactory()
+	 */
+	public IBundleModelFactory getFactory() {
+		return null;
 	}
 }

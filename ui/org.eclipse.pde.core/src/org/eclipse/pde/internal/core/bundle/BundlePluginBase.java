@@ -4,7 +4,7 @@
  * To change the template for this generated file go to Window - Preferences -
  * Java - Code Generation - Code and Comments
  */
-package org.eclipse.pde.internal.core.osgi.bundle;
+package org.eclipse.pde.internal.core.bundle;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.osgi.framework.*;
 import org.osgi.framework.Constants;
@@ -61,7 +61,7 @@ public class BundlePluginBase
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#getBundle()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getBundle()
 	 */
 	public Dictionary getManifest() {
 		if (model != null) {
@@ -82,7 +82,7 @@ public class BundlePluginBase
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginBase#getExtensionsRoot()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getExtensionsRoot()
 	 */
 	public IExtensions getExtensionsRoot() {
 		if (model != null) {

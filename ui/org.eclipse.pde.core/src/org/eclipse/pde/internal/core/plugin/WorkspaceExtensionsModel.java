@@ -16,12 +16,12 @@ import java.net.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 
 public class WorkspaceExtensionsModel
 	extends AbstractExtensionsModel
-	implements IEditableModel {
+	implements IEditableModel, IBundlePluginModelProvider {
 	private IFile file;
 	private boolean dirty;
 	private boolean editable = true;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.osgi.bundle;
+package org.eclipse.pde.internal.core.ibundle;
 import java.util.Dictionary;
 import org.eclipse.pde.core.*;
 /**
@@ -42,4 +42,10 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean isFragmentModel();
+	
+	/**
+	 * Returns a factory object that should be used
+	 * to create new instances of the model objects.
+	 */
+	public IBundleModelFactory getFactory();
 }

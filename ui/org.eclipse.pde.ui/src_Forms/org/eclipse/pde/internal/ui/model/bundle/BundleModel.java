@@ -5,8 +5,8 @@ import java.util.*;
 import java.util.jar.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.osgi.framework.*;
 
@@ -32,13 +32,13 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundleModel#getManifest()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getManifest()
 	 */
 	public Dictionary getManifest() {
 		return fManifest;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.osgi.bundle.IBundleModel#isFragmentModel()
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#isFragmentModel()
 	 */
 	public boolean isFragmentModel() {
 		return fManifest.get(Constants.FRAGMENT_HOST) != null;
@@ -101,6 +101,12 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 			}
 		} catch (BadLocationException e) {
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getFactory()
+	 */
+	public IBundleModelFactory getFactory() {
+		return null;
 	}
 	
 }

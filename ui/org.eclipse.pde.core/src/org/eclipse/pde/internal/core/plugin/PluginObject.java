@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.w3c.dom.*;
 
 public abstract class PluginObject

@@ -17,11 +17,11 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.osgi.bundle.*;
 
 /**
  * @version 	1.0

@@ -8,19 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.osgi.bundle;
+package org.eclipse.pde.internal.core.ibundle;
 
-import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 
 /**
- * An extension of bundle plug-in base that is used 
- * specifically for root model objects of fragments with
- * OSGi manifest. The goal is to continue to preserve
- * pre-3.0 compatibility for all the clients that
- * depend on IFragment interface.
+ * An extension of the bundle plug-in model base that
+ * is used specifically for fragment models with OSGi manifests.
  * 
  * @since 3.0
  */
-public interface IBundleFragment extends IBundlePluginBase, IFragment {
+public interface IBundleFragmentModel
+	extends IBundlePluginModelBase, IFragmentModel {
 
 }

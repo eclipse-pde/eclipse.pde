@@ -7,9 +7,9 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.osgi.bundle.*;
+import org.eclipse.pde.internal.core.bundle.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 
