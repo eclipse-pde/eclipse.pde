@@ -481,8 +481,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
 			runner.run(runnerConfig, launch, monitor);
 			monitor.worked(1);
-			ISourceLocator sourceLocator = constructSourceLocator(plugins);
-			launch.setSourceLocator(sourceLocator);
+			//ISourceLocator sourceLocator = constructSourceLocator(plugins);
+			//launch.setSourceLocator(sourceLocator);
 		} finally {
 			monitor.done();
 		}
