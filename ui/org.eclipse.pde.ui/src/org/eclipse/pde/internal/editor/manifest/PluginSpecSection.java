@@ -87,6 +87,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	Composite container = factory.createComposite(parent);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.marginWidth = 2;
 	layout.verticalSpacing = 7;
 	layout.horizontalSpacing = 6;
 	container.setLayout(layout);

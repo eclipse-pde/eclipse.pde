@@ -91,9 +91,13 @@ public class InfoSection extends PDEFormSection {
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
+		
+		Label label = factory.createLabel(container, null);
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		label.setLayoutData(gd);
 
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_INFO));
-
 		int comboStyle = SWT.READ_ONLY;
 		if (SWT.getPlatform().equals("motif") == false)
 			comboStyle |= SWT.FLAT;
@@ -118,7 +122,7 @@ public class InfoSection extends PDEFormSection {
 		urlText.setLayoutData(gd);
 		factory.createLabel(container, null);
 
-		Label label =
+		label =
 			factory.createLabel(container, PDEPlugin.getResourceString(KEY_TEXT));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);

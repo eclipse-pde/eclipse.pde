@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
  * @author
  */
 public abstract class TreeSection extends StructuredViewerSection {
+	protected boolean handleDefaultButton=true;
 	class PartAdapter extends TreePart {
 		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
@@ -29,7 +30,8 @@ public abstract class TreeSection extends StructuredViewerSection {
 		}
 		public void buttonSelected(Button button, int index) {
 			TreeSection.this.buttonSelected(index);
-			button.getShell().setDefaultButton(null);
+			if (handleDefaultButton)
+				button.getShell().setDefaultButton(null);
 		}
 	}
 	/**

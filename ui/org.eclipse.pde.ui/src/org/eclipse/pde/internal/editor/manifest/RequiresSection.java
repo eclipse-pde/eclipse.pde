@@ -37,27 +37,34 @@ public class RequiresSection
 	public static final String SECTION_TITLE =
 		"ManifestEditor.RequiresSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.RequiresSection.desc";
+	public static final String SECTION_FDESC =
+		"ManifestEditor.RequiresSection.fdesc";
 	public static final String SECTION_MORE = "ManifestEditor.RequiresSection.more";
 
 	public RequiresSection(ManifestFormPage page) {
 		super(page);
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		boolean fragment = ((ManifestEditor) page.getEditor()).isFragmentEditor();
+		if (fragment)
+			setDescription(PDEPlugin.getResourceString(SECTION_FDESC));
+		else
+			setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
 	private void addImportLink(IPluginImport importObject) {
 		Label imageLabel = factory.createLabel(requiresParent, "");
 		String pluginId = importObject.getId();
 		IPlugin refPlugin = PDEPlugin.getDefault().findPlugin(pluginId);
 		String name = pluginId;
-		
+
 		if (refPlugin != null && MainPreferencePage.isFullNameModeEnabled())
 			name = refPlugin.getTranslatedName();
 
 		int flags = 0;
-		if (refPlugin==null) flags = SharedLabelProvider.F_ERROR;
+		if (refPlugin == null)
+			flags = SharedLabelProvider.F_ERROR;
 		else if (importObject.isReexported())
 			flags = SharedLabelProvider.F_EXPORT;
-		
+
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		Image image = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
 		imageLabel.setImage(image);
@@ -121,7 +128,7 @@ public class RequiresSection
 		super.dispose();
 	}
 	public void initialize(Object input) {
-		IPluginModel model = (IPluginModel) input;
+		IPluginModelBase model = (IPluginModelBase) input;
 		model.addModelChangedListener(this);
 		needsUpdate = true;
 		update(true);
@@ -176,9 +183,9 @@ public class RequiresSection
 				children[i].dispose();
 			}
 		}
-		IPluginModel model = (IPluginModel) getFormPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 
-		IPluginImport[] imports = model.getPlugin().getImports();
+		IPluginImport[] imports = model.getPluginBase().getImports();
 		//ArraySorter.INSTANCE.sortInPlace(imports);
 		for (int i = 0; i < imports.length; i++) {
 			addImportLink(imports[i]);

@@ -23,72 +23,74 @@ public class DependenciesForm extends ScrollableSectionForm {
 	private MatchSection matchSection;
 	private ImportStatusSection importStatusSection;
 
-public DependenciesForm(ManifestDependenciesPage page) {
-	this.page = page;
-	//setVerticalFit(true);
-	setScrollable(false);
-}
-public void commitChanges(boolean onSave) {
-	if (importListSection==null) return;
-	if (onSave || importListSection.isDirty()) importListSection.commitChanges(onSave);
-}
-protected void createFormClient(Composite parent) {
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.makeColumnsEqualWidth = true;
-	layout.marginWidth = 10;
-	layout.horizontalSpacing=15;
-	parent.setLayout(layout);
+	public DependenciesForm(ManifestDependenciesPage page) {
+		this.page = page;
+		//setVerticalFit(true);
+		setScrollable(false);
+	}
+	public void commitChanges(boolean onSave) {
+		if (importListSection == null)
+			return;
+		if (onSave || importListSection.isDirty())
+			importListSection.commitChanges(onSave);
+	}
+	protected void createFormClient(Composite parent) {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		layout.marginWidth = 10;
+		layout.horizontalSpacing = 15;
+		parent.setLayout(layout);
 
-	FormSection section;
-	GridData gd;
-	Control control;
+		FormSection section;
+		GridData gd;
+		Control control;
 
-	importListSection = new ImportListSection(page);
-	control = importListSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
-	
-	Composite column = factory.createComposite(parent);
-	gd = new GridData(GridData.FILL_BOTH);
-	column.setLayoutData(gd);
-	layout = new GridLayout();
-	layout.marginWidth = layout.marginHeight = 0;
-	column.setLayout(layout);
-		
-	matchSection = new MatchSection(page);
-	control = matchSection.createControl(column, getFactory());
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-	control.setLayoutData(gd);
+		importListSection = new ImportListSection(page);
+		control = importListSection.createControl(parent, getFactory());
+		gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
 
-	importStatusSection = new ImportStatusSection(page);
-	control = importStatusSection.createControl(column, getFactory());
-	gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
+		Composite column = factory.createComposite(parent);
+		gd = new GridData(GridData.FILL_BOTH);
+		column.setLayoutData(gd);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		column.setLayout(layout);
 
-	// Link forms
-	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(importListSection, matchSection);
+		matchSection = new MatchSection(page);
+		control = matchSection.createControl(column, getFactory());
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+		control.setLayoutData(gd);
 
-	registerSection(importListSection);
-	registerSection(matchSection);
-	registerSection(importStatusSection);
-}
+		if (!((ManifestEditor) page.getEditor()).isFragmentEditor()) {
+			importStatusSection = new ImportStatusSection(page);
+			control = importStatusSection.createControl(column, getFactory());
+			gd = new GridData(GridData.FILL_BOTH);
+			control.setLayoutData(gd);
+		} // Link forms
+		SectionChangeManager manager = new SectionChangeManager();
+		manager.linkSections(importListSection, matchSection);
+		registerSection(importListSection);
+		registerSection(matchSection);
+		if (!((ManifestEditor) page.getEditor()).isFragmentEditor())
+			registerSection(importStatusSection);
+	}
 
-public void initialize(Object input) {
-	IPluginModel model = (IPluginModel)input;
-	setHeadingText(PDEPlugin.getResourceString(TITLE));
-	super.initialize(model);
-	((Composite)getControl()).layout(true);
-}
+	public void initialize(Object input) {
+		IPluginModelBase model = (IPluginModelBase) input;
+		setHeadingText(PDEPlugin.getResourceString(TITLE));
+		super.initialize(model);
+		((Composite) getControl()).layout(true);
+	}
 
-public void expandTo(Object object) {
-   importListSection.expandTo(object);
-}
+	public void expandTo(Object object) {
+		importListSection.expandTo(object);
+	}
 
-public boolean fillContextMenu(IMenuManager manager) {
-	manager.add(importListSection.getBuildpathAction());
-	manager.add(new Separator());
-	return true;
-}
+	public boolean fillContextMenu(IMenuManager manager) {
+		manager.add(importListSection.getBuildpathAction());
+		manager.add(new Separator());
+		return true;
+	}
 }

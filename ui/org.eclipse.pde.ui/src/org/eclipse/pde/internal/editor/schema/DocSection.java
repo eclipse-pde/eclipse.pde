@@ -30,10 +30,10 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 
 public class DocSection extends PDEFormSection {
-	public static final String SECTION_TITLE = "SchemaEditor.InfoSection.title";
+	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title";
 	public static final String KEY_APPLY = "Actions.apply.label";
 	public static final String KEY_RESET = "Actions.reset.label";
-	public static final String SECTION_DESC = "SchemaEditor.InfoSection.desc";
+	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc";
 	public static final String KEY_TOPIC_OVERVIEW = "SchemaEditor.topic.overview";
 	public static final String KEY_TOPIC_EXAMPLES = "SchemaEditor.topic.examples";
 	public static final String KEY_TOPIC_IMPLEMENTATION =
@@ -90,6 +90,11 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.verticalSpacing = 6;
 	container.setLayout(layout);
 	GridData gd;
+	
+	Label label = factory.createLabel(container, null);
+	gd = new GridData();
+	gd.horizontalSpan = 2;
+	label.setLayoutData(gd);
 
 	int comboStyle = SWT.READ_ONLY;
 	if (SWT.getPlatform().equals("motif")==false)

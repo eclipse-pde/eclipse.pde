@@ -123,6 +123,7 @@ public class DetailExtensionSection
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
+		handleDefaultButton=false;
 	}
 	private static void addItemsForExtensionWithSchema(
 		MenuManager menu,

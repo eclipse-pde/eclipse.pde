@@ -61,7 +61,7 @@ public class PointUsageSection extends TableSection {
 	private void addReferencingPlugins(
 		String pluginId,
 		String fullPointId,
-		IPluginModel[] models,
+		IPluginModelBase[] models,
 		Vector result) {
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
@@ -147,7 +147,7 @@ public class PointUsageSection extends TableSection {
 	}
 
 	public void initialize(Object input) {
-		IPluginModel model = (IPluginModel) input;
+		IPluginModelBase model = (IPluginModelBase) input;
 		model.addModelChangedListener(this);
 	}
 

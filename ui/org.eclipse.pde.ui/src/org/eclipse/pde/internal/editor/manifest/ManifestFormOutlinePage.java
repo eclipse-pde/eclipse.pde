@@ -34,9 +34,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 				return getPlugin().getExtensionPoints();
 			}
 			if (parent instanceof ManifestDependenciesPage) {
-				IPluginBase base = getPlugin();
-				if (base instanceof IPlugin)
-					return ((IPlugin) base).getImports();
+				return getPlugin().getImports();
 			}
 			if (parent instanceof ManifestRuntimePage) {
 				return getPlugin().getLibraries();

@@ -17,17 +17,17 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.model.plugin.*;
 
 public class NewDependencyWizard extends Wizard {
-	private IPluginModel model;
+	private IPluginModelBase modelBase;
 	private NewDependencyWizardPage mainPage;
 
-public NewDependencyWizard(IPluginModel model) {
-	this.model = model;
+public NewDependencyWizard(IPluginModelBase model) {
+	this.modelBase = modelBase;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 }
 
 public void addPages() {
-	mainPage = new NewDependencyWizardPage(model);
+	mainPage = new NewDependencyWizardPage(modelBase);
 	addPage(mainPage);
 }
 

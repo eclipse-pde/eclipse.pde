@@ -86,13 +86,13 @@ public class ManifestForm extends ScrollableSectionForm {
 
 		boolean fragment = ((ManifestEditor) page.getEditor()).isFragmentEditor();
 
-		if (!fragment) {
+		//if (!fragment) {
 			requiresSection = new RequiresSection(page);
 			requiresSection.setCollapsable(true);
 			control = requiresSection.createControl(rightColumn, factory);
 			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 			control.setLayoutData(gd);
-		}
+		//}
 
 		extensionPointSection = new ExtensionPointSection(page);
 		extensionPointSection.setCollapsable(true);
@@ -104,7 +104,7 @@ public class ManifestForm extends ScrollableSectionForm {
 		registerSection(alertSection);
 		registerSection(pluginSection);
 		registerSection(runtimeSection);
-		if (!fragment)
+		//if (!fragment)
 			registerSection(requiresSection);
 		registerSection(extensionSection);
 		registerSection(extensionPointSection);

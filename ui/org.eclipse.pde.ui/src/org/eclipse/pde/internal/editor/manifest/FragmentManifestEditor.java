@@ -17,6 +17,8 @@ public class FragmentManifestEditor extends ManifestEditor {
 public FragmentManifestEditor() {
 	super();
 }
+
+/*
 protected void createPages() {
 	firstPageId = OVERVIEW_PAGE;
 	formWorkbook.setFirstPageSelected(false);
@@ -38,6 +40,7 @@ protected void createPages() {
 			PDEPlugin.getResourceString(KEY_EXTENSION_POINTS)));
 	addPage(SOURCE_PAGE, new ManifestSourcePage(this));
 }
+*/
 public boolean isFragmentEditor() {
 	return true;
 }

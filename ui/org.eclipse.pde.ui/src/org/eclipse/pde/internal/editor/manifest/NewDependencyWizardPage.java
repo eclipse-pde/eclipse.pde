@@ -29,7 +29,7 @@ public class NewDependencyWizardPage extends WizardPage {
 	public static final String KEY_WORKSPACE_PLUGINS = "Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS = "Preferences.AdvancedTracingPage.externalPlugins";
 	public static final String KEY_LOOP_WARNING = "ManifestEditor.ImportListSection.loopWarning";
-	private IPluginModel model;
+	private IPluginModelBase modelBase;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Image pluginImage;
 	private Image errorPluginImage;
@@ -91,9 +91,9 @@ public class NewDependencyWizardPage extends WizardPage {
 		}
 	}
 
-public NewDependencyWizardPage(IPluginModel model) {
+public NewDependencyWizardPage(IPluginModelBase modelBase) {
 	super("newDependencyPage");
-	this.model = model;
+	this.modelBase = modelBase;
 	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 	provider.connect(this);
 	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
@@ -173,7 +173,7 @@ public void dispose() {
 
 private boolean isOnTheList(IPluginModel candidate) {
 	IPlugin plugin = candidate.getPlugin();
-	IPluginImport [] imports = model.getPlugin().getImports();
+	IPluginImport [] imports = modelBase.getPluginBase().getImports();
 	
 	for (int i=0; i<imports.length; i++) {
 		IPluginImport iimport = imports[i];
@@ -212,25 +212,27 @@ private void handleCheckStateChanged(IPluginModel candidate, boolean checked) {
 		for (int i=0; i<candidates.size(); i++) {
 			plugins[i] = ((IPluginModel)candidates.get(i)).getPlugin();
 		}
-		DependencyLoop [] loops = DependencyLoopFinder.findLoops(model.getPlugin(), plugins, true);
-		if (loops.length>0) {
-			setMessage(PDEPlugin.getResourceString(KEY_LOOP_WARNING));
+		if (modelBase instanceof IPluginModel) {
+			DependencyLoop [] loops = DependencyLoopFinder.findLoops((IPlugin)modelBase.getPluginBase(),  plugins, true);
+			if (loops.length>0) {
+				setMessage(PDEPlugin.getResourceString(KEY_LOOP_WARNING));
+			}
+			else
+				setMessage(null);
 		}
-		else
-			setMessage(null);
 	}
 	else
 		setMessage(null);
 }
 
 public boolean finish() {
-	IPlugin plugin = model.getPlugin();
+	IPluginBase pluginBase = modelBase.getPluginBase();
 	try {
 		for (int i=0; i<candidates.size(); i++) {
 			IPluginModel candidate = (IPluginModel)candidates.get(i);
-			IPluginImport importNode = model.getFactory().createImport();
+			IPluginImport importNode = modelBase.getFactory().createImport();
 			importNode.setId(candidate.getPlugin().getId());
-			plugin.add(importNode);
+			pluginBase.add(importNode);
 		}
 	}
 	catch (CoreException e) {
