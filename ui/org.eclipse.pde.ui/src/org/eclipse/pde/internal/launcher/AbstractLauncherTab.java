@@ -16,13 +16,8 @@ import org.eclipse.swt.SWT;
  * @version 	1.0
  * @author
  */
-public abstract class AbstractLauncherTab implements ILaunchConfigurationTab {
-	private ILaunchConfigurationDialog dialog;
-	private Control control;
-	private String message;
-	private String errorMessage;
+public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
 	private IStatus currentStatus;
-	private boolean noErrorOnStartup;
 	private boolean valid=true;
 
 	public AbstractLauncherTab() {
@@ -33,62 +28,9 @@ public abstract class AbstractLauncherTab implements ILaunchConfigurationTab {
 		return isValid();
 	}
 
-	/*
-	 * @see ILaunchConfigurationTab#getControl()
-	 */
-	public Control getControl() {
-		return control;
-	}
-	
-	public void setControl(Control control) {
-		this.control = control;
-	}
-
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-	}
-
-	public void initializeFrom(ILaunchConfiguration configuration) {
-	}
-
-	public void dispose() {
-	}
-
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-	}
-
-	/*
-	 * @see ILaunchConfigurationTab#getErrorMessage()
-	 */
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-	
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
-	/*
-	 * @see ILaunchConfigurationTab#getMessage()
-	 */
-	public String getMessage() {
-		return message;
-	}
-	
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
-		this.dialog = dialog;
-	}
-	
-	public ILaunchConfigurationDialog getLaunchDialog() {
-		return dialog;
-	}
-	
 	protected void refreshStatus() {
-		getLaunchDialog().updateButtons();
-		getLaunchDialog().updateMessage();
+		getLaunchConfigurationDialog().updateButtons();
+		getLaunchConfigurationDialog().updateMessage();
 	}
 	
 	protected void createStartingSpace(Composite parent, int span) {
