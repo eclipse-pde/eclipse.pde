@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
@@ -23,7 +24,10 @@ import org.eclipse.ui.help.*;
  * @author cgwong
  */
 public class PluginContentPage extends ContentPage {
-
+    private Label fBrandingLabel;
+    private Button fBrandingYes;
+    private Button fBrandingNo;
+    
 	private ModifyListener classListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			if (isInitialized)
@@ -32,7 +36,7 @@ public class PluginContentPage extends ContentPage {
 		}
 	};
 	public PluginContentPage(String pageName, IProjectProvider provider,
-			NewProjectCreationPage page, AbstractFieldData data) {
+			NewProjectCreationPage page,AbstractFieldData data) {
 		super(pageName, provider, page, data, false);
 	}
 	
@@ -79,6 +83,7 @@ public class PluginContentPage extends ContentPage {
 				.setText(PDEPlugin.getResourceString("ProjectStructurePage.library")); //$NON-NLS-1$
 		fLibraryText = createText(propertiesGroup, propertiesListener);
 		addPluginSpecificControls(container);
+		addBrandingControls(container);
 	}
 
 	/**
@@ -136,6 +141,82 @@ public class PluginContentPage extends ContentPage {
 		((PluginFieldData) fData).setClassname(fClassText.getText().trim());
 		((PluginFieldData) fData).setIsUIPlugin(fUIPlugin.getSelection());
 		((PluginFieldData) fData).setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
+		((PluginFieldData) fData).setIsBrandingPlugin(isBrandingPlugin());
 	}
 	
+	public boolean isBrandingPlugin(){
+	    if (fBrandingYes == null)
+	        return false;
+	    return fBrandingYes.isEnabled() && fBrandingYes.getSelection();
+	}
+	protected void addBrandingControls(Composite container){
+	    Group group = new Group(container, SWT.NONE);
+	    group.setLayout(new GridLayout(3, false));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+	    group.setLayoutData(gd);
+	    group.setText(PDEPlugin.getResourceString("PluginContentPage.brandingTitle")); //$NON-NLS-1$
+	    
+	    fBrandingLabel = new Label(group, SWT.NONE);
+	    fBrandingLabel.setText(PDEPlugin.getResourceString("PluginContentPage.brandingQuestion")); //$NON-NLS-1$
+	    fBrandingLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    
+	    fBrandingYes = new Button(group, SWT.RADIO);
+	    fBrandingYes.setText(PDEPlugin.getResourceString("PluginContentPage.brandYes")); //$NON-NLS-1$
+	    fBrandingYes.setSelection(false);
+	    gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+	    gd.widthHint = 50;
+	    fBrandingYes.setLayoutData(gd);
+	    fBrandingYes.addSelectionListener(new SelectionAdapter(){
+	       /* (non-Javadoc)
+         * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+         */
+        public void widgetSelected(SelectionEvent e) {
+            if (fBrandingYes.getSelection())
+                fLegacyButton.setEnabled(false);
+            else if (!creationPage.hasBundleStructure())
+                fLegacyButton.setEnabled(true);
+        }
+	    });
+//	    SWTUtil.setButtonDimensionHint(fBrandingYes);
+	    
+	    fBrandingNo = new Button(group, SWT.RADIO);
+	    fBrandingNo.setText(PDEPlugin.getResourceString("PluginContentPage.brandNo")); //$NON-NLS-1$
+	    fBrandingNo.setSelection(true);
+	    gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+	    gd.widthHint = 50;
+	    fBrandingNo.setLayoutData(gd);
+//	    SWTUtil.setButtonDimensionHint(fBrandingNo);
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+     */
+    public IWizardPage getNextPage() {
+        IWizardPage page = super.getNextPage();
+        if (isBrandingPlugin())
+            return page;
+        return page.getNextPage();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        updateBranding(!creationPage.hasBundleStructure() && fLegacyButton.isEnabled() && fLegacyButton.getSelection());
+    }
+
+    protected void updateBranding(boolean isLegacy) {
+        if (isLegacy){
+            fBrandingYes.setEnabled(false);
+            fBrandingNo.setEnabled(false);
+            fBrandingLabel.setEnabled(false);
+        } else {
+            fBrandingLabel.setEnabled(true);
+            fBrandingNo.setEnabled(true);
+            fBrandingYes.setEnabled(true);
+        }
+    }
+
 }

@@ -12,15 +12,14 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 

@@ -38,6 +38,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private IProjectProvider fProjectProvider;
 	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
+	private BrandingContentPage fBrandingPage;
 	private TemplateListSelectionPage fWizardListPage;
 
 	public NewPluginProjectWizard() {
@@ -74,12 +75,15 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		};
 		
 		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
+        fBrandingPage = new BrandingContentPage("branding", fProjectProvider); //$NON-NLS-1$
+        
 		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates")); //$NON-NLS-1$
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
 		if (tid!=null)
 			fWizardListPage.setInitialTemplateId(tid);
 
 		addPage(fContentPage);
+		addPage(fBrandingPage);
 		addPage(fWizardListPage);
 	}
 	
@@ -100,10 +104,15 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		try {
 			fMainPage.updateData();
 			fContentPage.updateData();
+			BrandingData brandingData = null;
+			if (fContentPage.isBrandingPlugin()){
+			    fBrandingPage.updateData();
+			    brandingData = fBrandingPage.getBrandingData();
+			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true,
-					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
+					new NewProjectCreationOperation(fPluginData, fProjectProvider, brandingData, contentWizard));
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

@@ -22,7 +22,7 @@ public class PDEPluginImages {
 
 	private static final String NAME_PREFIX= PDEPlugin.getPluginId()+"."; //$NON-NLS-1$
 
-	private final static URL BASE_URL = PDEPlugin.getDefault().getBundle().getEntry("/");
+	private final static URL BASE_URL = PDEPlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 
 	private static ImageRegistry PLUGIN_REGISTRY;
 	

@@ -1,0 +1,90 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.wizards.plugin;
+
+import java.io.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.ui.*;
+
+/**
+ * @author cgwong
+ */
+public class ApplicationClassCodeGenerator {
+    private IPluginFieldData fPluginData;
+    private IProject fProject;
+    private String fAppClassName;
+
+    public ApplicationClassCodeGenerator(IProject project,
+            String qualifiedClassName, IPluginFieldData data) {
+        this.fProject = project;
+        this.fAppClassName = qualifiedClassName;
+        fPluginData = data;
+    }
+
+    public IFile generate(IProgressMonitor monitor) throws CoreException {
+        int nameloc = fAppClassName.lastIndexOf('.');
+        String packageName = (nameloc == -1) ? "" : fAppClassName.substring(0, nameloc); //$NON-NLS-1$
+        String className = fAppClassName.substring(nameloc + 1);
+        IPath path = new Path(packageName.replace('.', '/'));
+        if (fPluginData.getSourceFolderName().trim().length() > 0)
+            path = new Path(fPluginData.getSourceFolderName()).append(path);
+        CoreUtility.createFolder(fProject.getFolder(path), true, true, null);
+        IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
+        StringWriter swriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(swriter);
+        generateApplicationClass(packageName, className, writer);
+        
+        writer.flush();
+        try {
+            swriter.close();
+            ByteArrayInputStream stream = new ByteArrayInputStream(swriter
+                    .toString().getBytes(fProject.getDefaultCharset()));
+            if (file.exists())
+                file.setContents(stream, false, true, monitor);
+            else
+                file.create(stream, false, monitor);
+            stream.close();
+        } catch (IOException e) {
+        }
+        return file;
+    }
+
+    private void generateApplicationClass(String packageName, String className,
+            PrintWriter writer) {
+        if (!packageName.equals("")) { //$NON-NLS-1$
+            writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+            writer.println();
+        }
+
+        writer.println("import org.eclipse.core.runtime.IPlatformRunnable;"); //$NON-NLS-1$
+        writer.println();
+        writer.println("/**"); //$NON-NLS-1$
+        writer.println(" * The default application for your branded product."); //$NON-NLS-1$
+        writer.println(" */"); //$NON-NLS-1$
+        writer.println("public class " + className + " implements IPlatformRunnable {"); //$NON-NLS-1$ //$NON-NLS-2$
+        writer.println("\t/**"); //$NON-NLS-1$
+        writer.println("\t * The constructor."); //$NON-NLS-1$
+        writer.println("\t */"); //$NON-NLS-1$
+        writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
+        writer.println("\t\tsuper();"); //$NON-NLS-1$
+        writer.println("\t}"); //$NON-NLS-1$
+        writer.println();
+        writer.println("\t/**"); //$NON-NLS-1$
+        writer.println("\t * This method is runs your runnable with the given arguments and returns a result."); //$NON-NLS-1$
+        writer.println("\t */"); //$NON-NLS-1$
+        writer.println("\tpublic Object run(Object args) throws Exception {"); //$NON-NLS-1$
+        writer.println("\t\treturn null;"); //$NON-NLS-1$
+        writer.println("\t}"); //$NON-NLS-1$
+        writer.println("}"); //$NON-NLS-1$
+    }
+}

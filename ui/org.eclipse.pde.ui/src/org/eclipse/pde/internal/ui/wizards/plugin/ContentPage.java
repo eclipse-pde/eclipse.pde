@@ -47,7 +47,7 @@ public abstract class ContentPage extends WizardPage {
 	protected IProjectProvider fProjectProvider;
 	protected Label fLibraryLabel;
 	protected Text fLibraryText;
-
+	
 	protected final static int PROPERTIES_GROUP = 1;
 	protected final static int P_CLASS_GROUP = 2;
 	protected int fChangedGroups = 0;
@@ -111,6 +111,14 @@ public abstract class ContentPage extends WizardPage {
 		fLegacyButton.setText(PDEPlugin.getResourceString("ContentPage.legacy")); //$NON-NLS-1$
 		fLegacyButton.setSelection(!PDECore.getDefault().getModelManager()
 				.isOSGiRuntime());
+		fLegacyButton.addSelectionListener(new SelectionAdapter(){
+		    /* (non-Javadoc)
+             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                updateBranding(fLegacyButton.getSelection());
+            }
+		});
 		Dialog.applyDialogFont(container);
 		setControl(container);
 	}
@@ -188,6 +196,9 @@ public abstract class ContentPage extends WizardPage {
 		return null;
 	}
 
+	protected abstract void updateBranding(boolean isLegacy);
+	public abstract boolean isBrandingPlugin();
+	
 	private boolean isVersionValid(String version) {
 		try {
 			new PluginVersionIdentifier(version);
@@ -205,7 +216,7 @@ public abstract class ContentPage extends WizardPage {
 	public void setVisible(boolean visible) {
 
 		if (visible) {
-			if (creationPage.hasBundleStructure()) {
+			if (creationPage.hasBundleStructure() || isBrandingPlugin()) {
 				fLegacyButton.setEnabled(false);
 			} else {
 				fLegacyButton.setEnabled(true);

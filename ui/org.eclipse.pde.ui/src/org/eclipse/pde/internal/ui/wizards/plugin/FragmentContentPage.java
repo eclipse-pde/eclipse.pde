@@ -150,4 +150,16 @@ public class FragmentContentPage extends ContentPage {
 		((FragmentFieldData) fData).setPluginVersion(fPluginVersion.getText().trim());
 		((FragmentFieldData) fData).setMatch(fMatchCombo.getSelectionIndex());
 	}
+	/* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#isBrandingPlugin()
+     */
+    public boolean isBrandingPlugin() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateBranding(boolean)
+     */
+    protected void updateBranding(boolean isLegacy) {
+    }
 }
