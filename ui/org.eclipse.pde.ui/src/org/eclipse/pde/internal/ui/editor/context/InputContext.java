@@ -155,19 +155,21 @@ public abstract class InputContext {
 		
 	}
 	
-	public void validateEdit() {
+	public synchronized boolean validateEdit() {
 		if (!validated) {
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) input).getFile();
 				Shell shell = editor.getEditorSite().getShell();
 				IStatus validateStatus = PDEPlugin.getWorkspace().validateEdit(
 						new IFile[]{file}, shell);
+				validated=true;
 				if (validateStatus.getCode() != IStatus.OK)
 					ErrorDialog.openError(shell, editor.getTitle(), null,
 							validateStatus);
+				return validateStatus.getCode() == IStatus.OK;
 			}
-			validated = true;
 		}
+		return true;
 	}
 	public void doSave(IProgressMonitor monitor) {
 		/*

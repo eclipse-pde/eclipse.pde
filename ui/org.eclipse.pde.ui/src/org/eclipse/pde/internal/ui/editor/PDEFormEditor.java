@@ -249,11 +249,9 @@ public abstract class PDEFormEditor extends FormEditor
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
 				PDESourcePage page = (PDESourcePage) pages[i];
-				page.doRevertToSaved();
-				/*
-				 * InputContext context = inputContextManager.findContext(page
-				 * .getId()); context.doRevert();
-				 */
+			    //InputContext context = inputContextManager.findContext(page.getId());
+			    //if (page.isDirty() || context.mustSave())
+			    page.doRevertToSaved();
 			}
 		}
 		editorDirtyStateChanged();
@@ -373,7 +371,8 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	private void validateEdit(IEditorInput input) {
 		InputContext context = inputContextManager.getContext(input);
-		context.validateEdit();
+		if (!context.validateEdit())
+			doRevert();
 	}
 	private IDialogSettings getSettingsSection() {
 		// store the setting in dialog settings
