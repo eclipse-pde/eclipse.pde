@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
@@ -12,13 +13,15 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
-public class ExportSection extends PDESection {
+public class ExportSection extends PDESection implements IHyperlinkListener{
 
 	private FormEntry fArchiveEntry;
 	private Button fIncludeSource;
+	private Action fExportAction;
 
 	public ExportSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -43,6 +46,7 @@ public class ExportSection extends PDESection {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		text.setLayoutData(gd);
+		text.addHyperlinkListener(this);
 				
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fArchiveEntry = new FormEntry(comp, toolkit, PDEPlugin.getResourceString("Product.ExportSection.archive"), PDEPlugin.getResourceString("Product.ExportSection.browse"), false, 25); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,6 +88,7 @@ public class ExportSection extends PDESection {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		text.setLayoutData(gd);
+		text.addHyperlinkListener(this);
 		
 		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
@@ -128,5 +133,35 @@ public class ExportSection extends PDESection {
 			return true;
 		return false;
 	}
+
+	public void linkEntered(HyperlinkEvent e) {
+		getStatusLineManager().setMessage(e.getLabel());
+	}
+
+	public void linkExited(HyperlinkEvent e) {
+		getStatusLineManager().setMessage(null);
+	}
+
+	public void linkActivated(HyperlinkEvent e) {
+		String href = (String) e.getHref();
+		if (href.equals("action.export"))  {
+			getExportAction().run();
+		} else if (href.equals("action.synchronize")) {
+			
+		}
+	}
+	
+	private IStatusLineManager getStatusLineManager() {
+		IEditorSite site = getPage().getEditor().getEditorSite();
+		return site.getActionBars().getStatusLineManager();
+	}
+	
+	private Action getExportAction() {
+		if (fExportAction == null)
+			fExportAction = new ProductExportAction(getPage().getPDEEditor());
+		return fExportAction;
+	}
+	
+
 
 }

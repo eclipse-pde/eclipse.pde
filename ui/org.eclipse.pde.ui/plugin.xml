@@ -167,6 +167,16 @@
             %new.site.description
          </description>
       </wizard>
+      <wizard
+            icon="icons/etool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.product.NewProductFileWizard"
+            category="org.eclipse.pde.PDE"
+            name="%new.product.config"
+            id="org.eclipse.pde.ui.productWizard">
+         <description>
+            %new.product.desc
+         </description>
+      </wizard>
    </extension>
    <extension
          id="selfhosting.import"
@@ -474,6 +484,15 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
+      </editor>
+      <editor
+            default="true"
+            name="%product.editor"
+            icon="icons/obj16/bundle_mf_obj.gif"
+            filenames="*.prod"
+            class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
+            id="org.eclipse.pde.ui.productEditor">
       </editor>
       <editor
             name="%editors.sample.name"

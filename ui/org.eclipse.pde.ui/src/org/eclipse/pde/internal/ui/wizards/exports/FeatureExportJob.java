@@ -52,7 +52,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected String fBuildTempLocation;
 	private String fDevProperties;
 	
-	protected HashMap fBuildProperties;
+	protected HashMap fAntBuildProperties;
 	
 	class SchedulingRule implements ISchedulingRule {
 
@@ -69,7 +69,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule instanceof SchedulingRule;
 		}
-		
+	}
+	
+	public FeatureExportJob(String name) {
+		super(name);
+		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
+		setRule(new SchedulingRule());
 	}
 	
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
@@ -82,7 +87,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(new SchedulingRule());
 	}
-	
+		
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -187,7 +192,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		monitor.beginTask("", 5); //$NON-NLS-1$
 		monitor.setTaskName(PDEPlugin.getResourceString("FeatureExportJob.taskName")); //$NON-NLS-1$
 		try {
-			HashMap properties = createBuildProperties(os, ws, arch);
+			HashMap properties = createAntBuildProperties(os, ws, arch);
 			makeScript(featureID, version, os, ws, arch, featureLocation);
 			monitor.worked(1);
 			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(),
@@ -199,39 +204,39 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 
-	protected HashMap createBuildProperties(String os, String ws, String arch) {
-		if (fBuildProperties == null) {
-			fBuildProperties = new HashMap(15);
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
-			fBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, os);
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, ws);
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
-			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
-			fBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BaseBuildAction.getBootClasspath());
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
+	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
+		if (fAntBuildProperties == null) {
+			fAntBuildProperties = new HashMap(15);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder"); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
+			fAntBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, os);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, ws);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BaseBuildAction.getBootClasspath());
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 
 			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
 			
 			// for the assembler...
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, "."); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, "."); //$NON-NLS-1$
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
 			String prefix = Platform.getOS().equals("macosx") ? "." : "";	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, prefix);	
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, prefix);	
 			if (fExportType == EXPORT_AS_ZIP)
-				fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
 			else 
-				fBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fDestinationDirectory);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fDestinationDirectory);
 		}
-		return fBuildProperties;
+		return fAntBuildProperties;
 	}
 	
 	private void makeScript(String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {

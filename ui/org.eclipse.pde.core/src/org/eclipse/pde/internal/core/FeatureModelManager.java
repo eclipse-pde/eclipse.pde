@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureModelManager {
@@ -64,6 +65,17 @@ public class FeatureModelManager {
 		}
 		return (IFeatureModel[]) allModels.toArray(new IFeatureModel[allModels
 				.size()]);
+	}
+	
+	//TODO this is done in O(n) time.  We must do better.
+	public IFeatureModel findFeatureModel(String id, String version) {
+		IFeatureModel[] models = getAllFeatures();
+		for (int i = 0; i < models.length; i++) {
+			IFeature feature = models[i].getFeature();
+			if (id.equals(feature.getId()) && version.equals(feature.getVersion()))
+				return models[i];
+		}
+		return null;
 	}
 
 	private boolean isFeatureIncluded(ArrayList models,
