@@ -99,7 +99,7 @@ public class DependenciesView extends ViewPart {
 				handleDoubleClick();
 			}
 		};
-		openAction.setText("Open");
+		openAction.setText(PDEPlugin.getResourceString("DependenciesView.open")); //$NON-NLS-1$
 	}
 	
 	private Object getSelectedObject() {
@@ -124,20 +124,20 @@ public class DependenciesView extends ViewPart {
 		manager.add(new Separator());
 
 		drillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator("Additions"));
+		manager.add(new Separator("Additions")); //$NON-NLS-1$
 	}
 
 	private IDialogSettings getSettings() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("dependenciesView");
+		IDialogSettings section = master.getSection("dependenciesView"); //$NON-NLS-1$
 		if (section == null) {
-			section = master.addNewSection("dependenciesView");
+			section = master.addNewSection("dependenciesView"); //$NON-NLS-1$
 		}
 		return section;
 	}
 
 	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -186,7 +186,7 @@ public class DependenciesView extends ViewPart {
 		IConfigurationElement config = getConfigurationElement();
 		if (config == null)
 			return;
-		String viewName = config.getAttribute("name");
+		String viewName = config.getAttribute("name"); //$NON-NLS-1$
 		if (newInput == null
 			|| newInput.equals(PDECore.getDefault().getModelManager())) {
 			// restore old
@@ -196,7 +196,7 @@ public class DependenciesView extends ViewPart {
 			String name =
 				((LabelProvider) treeViewer.getLabelProvider()).getText(
 					newInput);
-			setTitle(viewName + ": " + name);
+			setTitle(viewName + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getTitle());
 			//setTitleToolTip(getInputPath(newInput));
 		}
