@@ -38,7 +38,7 @@ public class BuildSiteJob extends FeatureExportJob {
 	
 	private void refresh(IProgressMonitor monitor) {
 		try {
-			fSiteProject.refreshLocal(2, monitor);
+			fSiteProject.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (CoreException e) {
 		}
 	}
