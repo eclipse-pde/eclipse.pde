@@ -53,8 +53,7 @@ public class PluginExportWizard extends BaseExportWizard {
 				page1.doExportSource(),
 				page1.getDestination(),
 				page1.getFileName(),
-				page1.getSelectedItems(), 
-				page1.getSigningInfo());
+				page1.getSelectedItems());
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);

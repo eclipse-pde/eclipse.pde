@@ -9,9 +9,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 
-public class $closeable$ extends ViewPart {
+public class View extends ViewPart {
 
-	public static final String ID = "$pluginId$.$closeable$";
+	public static final String ID = "$pluginId$.view";
 	
 	private Font boldFont;
 
@@ -47,7 +47,7 @@ public class $closeable$ extends ViewPart {
 		l.setText("From:");
 		l.setFont(boldFont);
 		final Label link = new Label(banner, SWT.WRAP);
-		link.setText("nicoleper@hotmail.com");
+		link.setText("elise@mail.org");
 		link.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 		
 		l = new Label(banner, SWT.WRAP);

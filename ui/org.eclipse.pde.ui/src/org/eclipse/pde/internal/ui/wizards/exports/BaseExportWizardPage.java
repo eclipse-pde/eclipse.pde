@@ -42,9 +42,7 @@ import org.eclipse.ui.dialogs.*;
 public abstract class BaseExportWizardPage extends WizardPage {
 	private String S_EXPORT_UPDATE = "exportUpdate"; //$NON-NLS-1$
 	private String S_EXPORT_DIRECTORY = "exportDirectory";	 //$NON-NLS-1$
-	private String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
-	private String S_SIGN_JARS = "signJars"; //$NON-NLS-1$
-	private String S_GENERATE_JNLP = "generateJnlp"; //$NON-NLS-1$
+	private String S_EXPORT_SOURCE="exportSource"; //$NON-NLS-1$
 	private String S_DESTINATION = "destination"; //$NON-NLS-1$
 	private String S_ZIP_FILENAME = "zipFileName"; //$NON-NLS-1$
 	private String S_SAVE_AS_ANT = "saveAsAnt"; //$NON-NLS-1$
@@ -70,8 +68,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private Button fBrowseAnt;
 	private Button fSaveAsAntButton;
 	private String fZipExtension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	private Button fSign;
-	private Button fGenerateJnlp;
 
 	
 	class ExportListProvider
@@ -231,15 +227,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fIncludeSource = new Button(bottom, SWT.CHECK);
 		fIncludeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource")); //$NON-NLS-1$
 		fIncludeSource.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		fSign = new Button(bottom, SWT.CHECK);
-		fSign.setText(PDEPlugin.getResourceString("Sign Jars")); //$NON-NLS-1$
-		fSign.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 						
-		fGenerateJnlp = new Button(bottom, SWT.CHECK);
-		fGenerateJnlp.setText(PDEPlugin.getResourceString("Generate JNLP Manifests")); //$NON-NLS-1$
-		fGenerateJnlp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 		Button button = new Button(bottom, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ExportWizard.targetEnv.button")); //$NON-NLS-1$
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -310,7 +298,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 				enableZipOption(doExportAsZip());
 				enableDirectoryOption(!doExportAsZip());
 				fIncludeSource.setEnabled(!doExportAsUpdateJars());
-				fSign.setEnabled(doExportAsUpdateJars());
 				pageChanged();
 			}}
 		);
@@ -498,10 +485,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		// initialize the options section
 		fIncludeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		fIncludeSource.setEnabled(!doExportAsUpdateJars());	
-		fSign.setSelection(settings.getBoolean(S_SIGN_JARS));
-		fSign.setEnabled(doExportAsUpdateJars());	
-		fGenerateJnlp.setSelection(settings.getBoolean(S_GENERATE_JNLP));
-		fGenerateJnlp.setEnabled(true);	
 	}
 	
 	private void initializeDestinationSection(IDialogSettings settings) {
@@ -537,8 +520,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		settings.put(S_EXPORT_UPDATE, doExportAsUpdateJars());
 		settings.put(S_EXPORT_DIRECTORY, doExportAsDirectory());		
 		settings.put(S_EXPORT_SOURCE, fIncludeSource.getSelection());
-		settings.put(S_SIGN_JARS, fSign.getSelection());
-		settings.put(S_GENERATE_JNLP, fGenerateJnlp.getSelection());
 		settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
 		
 		saveCombo(settings, S_DESTINATION, fDestination);
@@ -611,21 +592,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	
 	public int getExportType() {
 		return fExportFormats.getSelectionIndex();
-	}
-	
-	public String[] getSigningInfo() {
-		if (fSign.getEnabled())
-			// TODO figure out how to get the real data from the user
-			// TODO figure out how/if to store the password
-			return new String[] { "jdc", "d:/tmp/myKeys", "jdcjdc" };
-		return null;	
-	}
-	
-	public String[] getJnlpInfo() {
-		if (fGenerateJnlp.getEnabled())
-			// TODO figure out how to get the real data from the user
-			return new String[] { "http://eclipsercp.org", "1.2+" };
-		return null;
 	}
 	
 	protected abstract void hookHelpContext(Control control);

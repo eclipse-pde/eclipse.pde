@@ -22,8 +22,6 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
 	private ArrayList templates = new ArrayList();
-	private String fApplicationID;
-	private String fApplicationClass;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()
@@ -75,25 +73,4 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	    return fRCPAppPlugin;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginFieldData#getApplicationID()
-	 */
-	public String getApplicationID() {
-		return fApplicationID;
-	}
-	
-	public void setApplicationID(String appID) {
-		fApplicationID = appID;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginFieldData#getApplicationClassname()
-	 */
-	public String getApplicationClassname() {
-		return fApplicationClass;
-	}
-	
-	public void setApplicationClassname(String className) {
-		fApplicationClass = className;
-	}
 }

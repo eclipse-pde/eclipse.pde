@@ -86,7 +86,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 */
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return (page.isPageComplete() && page!=fMainPage);
+		return super.canFinish() && page != fMainPage;
 	}
 	/*
 	 * (non-Javadoc)

@@ -76,7 +76,7 @@ public class ActionBuilder {
 		exitAction = ActionFactory.QUIT.create(window);
 		aboutAction = ActionFactory.ABOUT.create(window);
 		newWindow = ActionFactory.OPEN_NEW_WINDOW.create(window);
-		openViewAction = new OpenViewAction(window, "Open Another Message View", $closeable$.ID);
+		openViewAction = new OpenViewAction(window, "Open Another Message View", View.ID);
 		messagePopup = new Action("Open Message") {
 			public void run() {
 				MessageDialog.openInformation(window.getShell(), "Open", "Open Message Dialog!");

@@ -12,11 +12,10 @@ public class MailTemplate extends PDETemplateSection {
 	
 	public static final String KEY_PRODUCT_NAME = "productName"; //$NON-NLS-1$
 	public static final String KEY_PRODUCT_ID = "productID"; //$NON-NLS-1$
-	public static final String KEY_CLOSEABLE = "closeable"; //$NON-NLS-1$
-	public static final String KEY_NON_CLOSEABLE = "noncloseable"; //$NON-NLS-1$
 	public static final String KEY_PERSPECTIVE_NAME = "perspectiveName"; //$NON-NLS-1$
 	public static final String KEY_WORKBENCH_ADVISOR = "advisor"; //$NON-NLS-1$
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
+	public static final String KEY_APPLICATION_ID = "applicationID"; //$NON-NLS-1$
 	
 	public MailTemplate() {
 		setPageCount(1);
@@ -37,15 +36,13 @@ public class MailTemplate extends PDETemplateSection {
 		
 		addOption(KEY_PRODUCT_ID, PDEPlugin.getResourceString("MailTemplate.productID"), "product", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
+		addOption(KEY_APPLICATION_ID, PDEPlugin.getResourceString("MailTemplate.appId"), "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		addOption(KEY_PERSPECTIVE_NAME, PDEPlugin.getResourceString("MailTemplate.perspectiveName"), "Sample Perspective", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString("MailTemplate.packageName"), (String) null, 0); //$NON-NLS-1$
-		
-		addOption(KEY_CLOSEABLE, PDEPlugin.getResourceString("MailTemplate.closeable") , "SampleView", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		addOption(KEY_NON_CLOSEABLE, PDEPlugin.getResourceString("MailTemplate.non-closeable"), "NoncloseableView", 0); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		addOption(KEY_WORKBENCH_ADVISOR, PDEPlugin.getResourceString("MailTemplate.advisor"), "SampleWorkbenchAdvisor", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString("MailTemplate.packageName"), (String) null, 0); //$NON-NLS-1$		
+
+		addOption(KEY_APPLICATION_CLASS, PDEPlugin.getResourceString("MailTemplate.appClass"), "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected void initializeFields(IFieldData data) {
@@ -62,21 +59,6 @@ public class MailTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".rcp");  //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#getReplacementString(java.lang.String, java.lang.String)
-	 */
-	public String getReplacementString(String fileName, String key) {
-		if (key.equals(KEY_APPLICATION_CLASS)) {
-			IPluginElement element = getAppRunElement();
-			String name = element.getAttribute("class").getValue(); //$NON-NLS-1$
-			int dot = name.lastIndexOf('.');
-			if (dot != -1)
-				return name.substring(dot + 1);
-		}
-		return super.getReplacementString(fileName, key);
-	}
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,42 +95,33 @@ public class MailTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-		updateApplicationClass();
+		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
 		createCommandExtension();
 		createProductExtension();
 	}
 	
-	private void updateApplicationClass() throws CoreException {
-		IPluginElement element = getAppRunElement();
-		String name = element.getAttribute("class").getValue(); //$NON-NLS-1$
-		int dot = name.lastIndexOf('.');
-		if (dot != -1)
-			name = getStringOption(KEY_PACKAGE_NAME) + name.substring(dot);
-		else
-			name = getStringOption(KEY_PACKAGE_NAME) + "." + name; //$NON-NLS-1$
-		element.setAttribute("class", name); //$NON-NLS-1$
-	}
-	
-	private IPluginElement getAppRunElement() {
-		IPluginExtension ext = getAppExtension();
-		IPluginElement app = (IPluginElement)ext.getChildren()[0];
-		return (IPluginElement)app.getChildren()[0];
-	}
-	
-	private IPluginExtension getAppExtension() {
-		IPluginBase plugin = model.getPluginBase();	
-		IPluginExtension[] extensions = plugin.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginExtension ext = extensions[i];
-			if ("org.eclipse.core.runtime.applications".equals(ext.getPoint())) { //$NON-NLS-1$
-				return ext;
-			}
-		}
-		return null;
+	private void createApplicationExtension() throws CoreException {
+		IPluginBase plugin = model.getPluginBase();
+		
+		IPluginExtension extension = createExtension("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
+		extension.setId(getStringOption(KEY_APPLICATION_ID));
+		
+		IPluginElement element = model.getPluginFactory().createElement(extension);
+		element.setName("application"); //$NON-NLS-1$
+		extension.add(element);
+		
+		IPluginElement run = model.getPluginFactory().createElement(element);
+		run.setName("run"); //$NON-NLS-1$
+		run.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_APPLICATION_CLASS)); //$NON-NLS-1$ //$NON-NLS-2$
+		element.add(run);
+		
+		if (!extension.isInTheModel())
+			plugin.add(extension);
 	}
 
+	
 	private void createPerspectiveExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		
@@ -173,18 +146,18 @@ public class MailTemplate extends PDETemplateSection {
 		view.setName("view"); //$NON-NLS-1$
 		view.setAttribute("allowMultiple", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("icon", "icons/sample2.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLOSEABLE)); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".View" ); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "Message"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("id", id + "." + getStringOption(KEY_CLOSEABLE)); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 		
 		view = model.getPluginFactory().createElement(extension);
 		view.setName("view"); //$NON-NLS-1$
 		view.setAttribute("allowMultiple", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("icon", "icons/sample3.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_NON_CLOSEABLE)); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".NonCloseableView" ); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "Mailboxes"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("id", id + "." + getStringOption(KEY_NON_CLOSEABLE)); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("id", id + ".noncloseableView"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 		
 		if (!extension.isInTheModel())
@@ -250,7 +223,7 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
 		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$
-		element.setAttribute("application", plugin.getId() + "." + getAppExtension().getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("application", plugin.getId() + "." + getStringOption(KEY_APPLICATION_ID)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement property = model.getFactory().createElement(element);
 		property.setName("property"); //$NON-NLS-1$

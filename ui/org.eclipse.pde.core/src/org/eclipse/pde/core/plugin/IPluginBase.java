@@ -151,4 +151,13 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param schemaVersion version of the manifest grammar
 	 */
 	void setSchemaVersion(String schemaVersion) throws CoreException;
+	
+	/**
+	 * Returns the Eclipse version which this plug-in is targeting
+	 * @return the Eclipse version which this plug-in is targeting
+	 * 
+	 * @since 3.1
+	 */	
+	String getTargetVersion();
+	
 }

@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.ide.*;
@@ -140,7 +139,7 @@ public class LauncherSection extends PDESection {
 		fBmpButton.setLayoutData(gd);
 		fBmpButton.setEnabled(isEditable());
 		
-		final Label label = toolkit.createLabel(comp, PDEPlugin.getResourceString("LauncherSection.bmpImagesText"), SWT.WRAP);
+		final Label label = toolkit.createLabel(comp, PDEPlugin.getResourceString("LauncherSection.bmpImagesText"), SWT.WRAP); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);

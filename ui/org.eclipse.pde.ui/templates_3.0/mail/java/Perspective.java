@@ -10,11 +10,11 @@ public class Perspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		
-		layout.addStandaloneView($noncloseable$.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
+		layout.addStandaloneView(NonCloseableView.ID,  false, IPageLayout.LEFT, 0.25f, editorArea);
 		IFolderLayout folder = layout.createFolder("messages", IPageLayout.TOP, 0.5f, editorArea);
-		folder.addPlaceholder($closeable$.ID + ":*");
-		folder.addView($closeable$.ID);
+		folder.addPlaceholder(View.ID + ":*");
+		folder.addView(View.ID);
 		
-		layout.getViewLayout($noncloseable$.ID).setCloseable(false);
+		layout.getViewLayout(NonCloseableView.ID).setCloseable(false);
 	}
 }

@@ -10,8 +10,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-public class $noncloseable$ extends ViewPart {
-	public static final String ID = "$pluginId$.$noncloseable$";
+public class NonCloseableView extends ViewPart {
+	public static final String ID = "$pluginId$.noncloseableView";
 	private TreeViewer viewer;
 	 
 	class TreeObject implements IAdaptable {

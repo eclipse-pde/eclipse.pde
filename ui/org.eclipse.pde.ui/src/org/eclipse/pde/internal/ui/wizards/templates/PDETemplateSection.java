@@ -16,6 +16,7 @@ import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.*;
 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -28,6 +29,32 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	
 	protected URL getInstallURL() {
 		return PDEPlugin.getDefault().getInstallURL();
+	}
+	
+	public URL getTemplateLocation() {		
+		try {
+			URL url = getInstallURL();
+			url = Platform.asLocalURL(url);
+			File dir = new File(url.getFile());
+			String[] candidates = getDirectoryCandidates();
+			for (int i = 0; i < candidates.length; i++) {
+				if (new File(dir, candidates[i]).exists())
+					return new URL(url, candidates[i]);
+			}
+		} catch (MalformedURLException e) {
+		} catch (IOException e) {
+		}
+		return null;
+	}
+	
+	private String[] getDirectoryCandidates() {
+		String version = model.getPluginBase().getTargetVersion();
+		if ("3.0".equals(version)) //$NON-NLS-1$
+			return new String[] {"templates_3.0" + File.separator + getSectionId()}; //$NON-NLS-1$
+		if ("3.1".equals(version)) //$NON-NLS-1$
+			return new String[] {"templates_3.1" + File.separator + getSectionId(), //$NON-NLS-1$
+								 "templates_3.0" + File.separator + getSectionId()};	 //$NON-NLS-1$
+		return new String[] {"templates" + File.separator + getSectionId()};  //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

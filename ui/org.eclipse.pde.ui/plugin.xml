@@ -261,6 +261,16 @@
          </description>
       </wizard>
       <wizard
+            name="%pluginContent.helloRCP.name"
+            icon="icons/etool16/newexprj_wiz.gif"
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelloRCPNewWizard"
+            id="org.eclipse.pde.ui.pluginContent.helloRCP"
+            rcp="true">
+         <description>
+            %pluginContent.helloRCP.description
+         </description>
+      </wizard>
+      <wizard
             name="%pluginContent.view.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewNewWizard"

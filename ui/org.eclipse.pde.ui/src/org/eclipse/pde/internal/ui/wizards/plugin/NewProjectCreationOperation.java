@@ -37,7 +37,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     private WorkspacePluginModelBase fModel;
     private PluginClassCodeGenerator fGenerator;
     private IPluginContentWizard fContentWizard;
-    private boolean result;
+    private boolean fResult;
     
     public NewProjectCreationOperation(IFieldData data,
             IProjectProvider provider,
@@ -79,10 +79,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (data.doGenerateClass()) {
 				generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 			}
-			// generate an application class if the RCP option is selected
-			if (data.isRCPApplicationPlugin() && (fContentWizard == null || !fContentWizard.hasPages()) ) {
-				generateApplicationClass(new SubProgressMonitor(monitor, 1));				
-			}
 		}
 		// generate the manifest file
 		monitor.subTask(PDEPlugin
@@ -118,68 +114,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		monitor.worked(1);
 		
 			
-		result = contentWizardResult;
+		fResult = contentWizardResult;
 	}
-    
-    private void createApplicationExtension(String id, String classname) {
-        IPluginBase plugin = fModel.getPluginBase();
-        IPluginModelFactory factory = fModel.getPluginFactory();
-        try {
-            IPluginExtension extension = fModel.getFactory().createExtension();
-            extension.setPoint("org.eclipse.core.runtime.applications"); //$NON-NLS-1$
-            extension.setId(id);
-            
-            IPluginElement appElement = factory.createElement(extension);
-            appElement.setName("application"); //$NON-NLS-1$
-            
-            IPluginElement runElement = factory.createElement(appElement);
-            runElement.setName("run"); //$NON-NLS-1$
-            runElement.setAttribute("class", classname); //$NON-NLS-1$
-            
-            appElement.add(runElement);
-            extension.add(appElement);
-            if (!extension.isInTheModel())
-                plugin.add(extension);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }
-    }
- 
-    private void createPerspectiveExtension() {
-        IPluginBase plugin = fModel.getPluginBase();
-        IPluginModelFactory factory = fModel.getPluginFactory();
-        try {
-            IPluginExtension extension = fModel.getFactory().createExtension();
-            extension.setPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
-            
-            IPluginElement appElement = factory.createElement(extension);
-            appElement.setName("perspective"); //$NON-NLS-1$          
-            appElement.setAttribute("name", "Sample Perspective"); //$NON-NLS-1$ //$NON-NLS-2$
-            
-        	String qualifiedName = ((IPluginFieldData)fData).getApplicationClassname();
-            int nameloc = qualifiedName.lastIndexOf('.');
-            String packageName = (nameloc == -1) ? "" : qualifiedName.substring(0, nameloc); //$NON-NLS-1$
-            appElement.setAttribute("class", packageName + ".SamplePerspective"); //$NON-NLS-1$ //$NON-NLS-2$
-            
-            appElement.setAttribute("id", fData.getId() + ".samplePerspective"); //$NON-NLS-1$ //$NON-NLS-2$
-            
-            extension.add(appElement);
-            if (!extension.isInTheModel())
-                plugin.add(extension);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }
-    }
-
-     private void generateApplicationClass(IProgressMonitor monitor) {
-        try {
-            ApplicationClassCodeGenerator generator = new ApplicationClassCodeGenerator(fProjectProvider.getProject(),(IPluginFieldData) fData);
-            generator.generate(monitor);
-            monitor.done();
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }     
-    }
+     
     private void trimModel(IPluginBase base) throws CoreException {
         base.setId(null);
         base.setVersion(null);
@@ -203,7 +140,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     }
     
     public boolean getResult() {
-        return result;
+        return fResult;
     }
     
     private void generateTopLevelPluginClass(IProject project,
@@ -257,13 +194,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         } else {
             fModel = new WorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
         }
-        IPluginBase pluginBase = fModel.getPluginBase();
+        PluginBase pluginBase = (PluginBase)fModel.getPluginBase();
         if (!fData.isLegacy())
-            pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$
+            pluginBase.setSchemaVersion(fData.getTargetVersion()); //$NON-NLS-1$
         pluginBase.setId(fData.getId());
         pluginBase.setVersion(fData.getVersion());
         pluginBase.setName(fData.getName());
         pluginBase.setProviderName(fData.getProvider());
+        pluginBase.setTargetVersion(fData.getTargetVersion());
         if (pluginBase instanceof IFragment) {
             IFragment fragment = (IFragment) pluginBase;
             FragmentFieldData data = (FragmentFieldData) fData;
@@ -290,22 +228,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             iimport.setMatch(ref.getMatch());
             pluginBase.add(iimport);
         }
-		if (fData instanceof IPluginFieldData) {
-			IPluginFieldData data = (IPluginFieldData) fData;
-			
-			// generate an applications section and Java class if the RCP option is selected
-			if (data.isRCPApplicationPlugin()) {
-				createApplicationExtension(data.getApplicationID(), data.getApplicationClassname());
-				if (fContentWizard == null || !fContentWizard.hasPages())
-					createPerspectiveExtension();
-			}
-		}
-
-
     }
     
-    private void createBuildPropertiesFile(IProject project)
-    throws CoreException {
+    private void createBuildPropertiesFile(IProject project) throws CoreException {
         IFile file = project.getFile("build.properties"); //$NON-NLS-1$
         if (!file.exists()) {
             WorkspaceBuildModel model = new WorkspaceBuildModel(file);

@@ -56,7 +56,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	}
 
 	public boolean hasExtensibleAPI() {
-		return "true".equals(parseSingleValuedHeader("Eclipse-ExtensibleAPI"));
+		return "true".equals(parseSingleValuedHeader("Eclipse-ExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

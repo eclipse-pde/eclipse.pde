@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.*;
@@ -545,12 +544,6 @@ public class WorkspaceModelManager
 	private IPluginModelBase createWorkspaceBundleModel(IFile file) {
 		if (!file.exists())
 			return null;
-		PDEState state = PDECore.getDefault().getExternalModelManager().getState();
-		BundleDescription desc = state.addBundle(new File(file.getLocation().removeLastSegments(2).toString()));
-		if (desc == null)
-			return null;
-		if (desc.getSymbolicName() == null || desc.getSymbolicName().length() == 0)
-			return null;
 		
 		WorkspaceBundleModel model = new WorkspaceBundleModel(file);
 		loadModel(model, false);
@@ -563,7 +556,6 @@ public class WorkspaceModelManager
 			bmodel = new BundlePluginModel();
 		bmodel.setEnabled(true);
 		bmodel.setBundleModel(model);
-		bmodel.setBundleDescription(desc);
 		
 		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (efile.exists()) {

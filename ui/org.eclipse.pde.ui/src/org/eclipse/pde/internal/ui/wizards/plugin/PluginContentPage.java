@@ -43,10 +43,7 @@ public class PluginContentPage extends ContentPage {
 			validatePage();
 		}
 	};
-	private Label fAppIdLabel;
-	private Text fAppIdText;
-	private Label fAppClassLabel;
-	private Text fAppClassText;
+	
 	private Group fRCPGroup;
 
 	public PluginContentPage(String pageName, IProjectProvider provider,
@@ -118,6 +115,7 @@ public class PluginContentPage extends ContentPage {
 				fClassText.setEnabled(fGenerateClass.getSelection());
 				fUIPlugin.setEnabled(fGenerateClass.getSelection());
 				fRCPGroup.setVisible(!fGenerateClass.getSelection() || fUIPlugin.getSelection());
+				updateData();
 				validatePage();
 			}
 		});
@@ -139,6 +137,7 @@ public class PluginContentPage extends ContentPage {
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fRCPGroup.setVisible(fUIPlugin.getSelection());
+				updateData();
 				validatePage();
 			}
 		});
@@ -154,8 +153,6 @@ public class PluginContentPage extends ContentPage {
 						&& !fData.isLegacy()
 						&& fYesButton.getSelection()
 						&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection()));
-		data.setApplicationID(fAppIdText.getText().trim());
-		data.setApplicationClassname(fAppClassText.getText().trim());
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -164,30 +161,7 @@ public class PluginContentPage extends ContentPage {
 	    fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fRCPGroup.setText(PDEPlugin.getResourceString("PluginContentPage.rcpGroup")); //$NON-NLS-1$
 	    
-	    createRCPQuestion(fRCPGroup, 2);
-	    
-	    fAppIdLabel = new Label(fRCPGroup, SWT.NONE);
-	    fAppIdLabel.setText(PDEPlugin.getResourceString("PluginContentPage.appID")); //$NON-NLS-1$
-	    GridData gd = new GridData();
-	    gd.horizontalIndent = 20;
-	    fAppIdLabel.setLayoutData(gd);
-	    fAppIdLabel.setEnabled(false);
-	    
-	    fAppIdText = createText(fRCPGroup, propertiesListener);
-	    fAppIdText.setText("application"); //$NON-NLS-1$
-	    fAppIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fAppIdText.setEnabled(false);
-	    
-	    fAppClassLabel = new Label(fRCPGroup, SWT.NONE);
-	    fAppClassLabel.setText(PDEPlugin.getResourceString("PluginContentPage.appClass")); //$NON-NLS-1$
-	    gd = new GridData();
-	    gd.horizontalIndent = 20;
-	    fAppClassLabel.setLayoutData(gd);
-	    fAppClassLabel.setEnabled(false);
-	    
-	    fAppClassText = createText(fRCPGroup, classListener);
-	    fAppClassText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fAppClassText.setEnabled(false);
+	    createRCPQuestion(fRCPGroup, 2);    
 	}
 	
 	private void createRCPQuestion(Composite parent, int horizontalSpan) {
@@ -209,15 +183,11 @@ public class PluginContentPage extends ContentPage {
 	    gd = new GridData();
 	    gd.widthHint = 50;
 	    fYesButton.setLayoutData(gd);
-	    fYesButton.addSelectionListener(new SelectionAdapter(){
-	        public void widgetSelected(SelectionEvent e) {
-	        	boolean enable = fYesButton.getSelection();
-	        	fAppIdLabel.setEnabled(enable);
-	        	fAppIdText.setEnabled(enable);
-	        	fAppClassLabel.setEnabled(enable);
-	        	fAppClassText.setEnabled(enable);
-	        	validatePage();
-	        }
+	    fYesButton.addSelectionListener(new SelectionAdapter() {
+	    	public void widgetSelected(SelectionEvent e) {
+	    		updateData();
+	    		getContainer().updateButtons();
+	    	}
 	    });
 	    
 	    fNoButton = new Button(comp, SWT.RADIO);
@@ -243,7 +213,6 @@ public class PluginContentPage extends ContentPage {
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
 				int oldfChanged = fChangedGroups;
 				presetClassField(fClassText, computeId(), "Plugin"); //$NON-NLS-1$
-				presetClassField(fAppClassText, computeId(), "Application"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
 			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple()
@@ -303,33 +272,8 @@ public class PluginContentPage extends ContentPage {
 				setMessage(status.getMessage(), DialogPage.WARNING);
 			}
 		}
-		if (errorMessage == null 
-				&& !fData.isSimple() && !fData.isLegacy() && fYesButton.getSelection()
-				&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection())) {
-			IStatus status = JavaConventions.validateJavaTypeName(fAppClassText.getText().trim());
-			if (status.getSeverity() == IStatus.ERROR) {
-				errorMessage = status.getMessage();
-			} else if (status.getSeverity() == IStatus.WARNING) {
-				setMessage(status.getMessage(), DialogPage.WARNING);
-			}
-			if (errorMessage == null)
-				errorMessage = validateApplicationID();
-		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
-	}
-	
-	private String validateApplicationID() {
-		String id = fAppIdText.getText().trim();
-		if (id.length() == 0)
-			return PDEPlugin.getResourceString("PluginContentPage.noApp"); //$NON-NLS-1$
-
-		for (int i = 0; i<id.length(); i++){
-			if (!id.substring(i,i+1).matches("[a-zA-Z0-9_]")) //$NON-NLS-1$
-				return PDEPlugin.getResourceString("PluginContentPage.invalidAppID"); //$NON-NLS-1$
-		}
-		return null;
-		
 	}
 	
 	/* (non-Javadoc)

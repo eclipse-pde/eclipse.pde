@@ -264,6 +264,9 @@ public class PluginModelManager implements IAdaptable {
 				}
 			}
 		}
+		
+		if (changedPlugins.size() > 0)
+			fExternalManager.getState().resolveState(true);
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
 		if (javaSearchAffected)
 			fSearchablePluginsManager.updateClasspathContainer();
@@ -370,7 +373,6 @@ public class PluginModelManager implements IAdaptable {
 			} else {
 				removeWorkspaceBundleFromState(model, state);
 			}
-			state.resolveState(true);
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
 		delta.addEntry(entry, kind);
@@ -518,7 +520,6 @@ public class PluginModelManager implements IAdaptable {
 		
 		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
 		model.setBundleDescription(newDesc);
-		state.resolveState(true);
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {

@@ -254,7 +254,7 @@ public class PDEState {
 				if (info.name != null)
 					element.setAttribute("name", info.name); //$NON-NLS-1$
 				if (info.hasExtensibleAPI)
-					element.setAttribute("hasExtensibleAPI", "true");
+					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (info.libraries != null) {
 					for (int i = 0; i < info.libraries.length; i++) {
 						Element lib = doc.createElement("library"); //$NON-NLS-1$
@@ -475,7 +475,7 @@ public class PDEState {
 		String className = (String)manifest.get("Plugin-Class"); //$NON-NLS-1$
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
-		info.hasExtensibleAPI = "true".equals((String)manifest.get("Eclipse-ExtensibleAPI"));
+		info.hasExtensibleAPI = "true".equals((String)manifest.get("Eclipse-ExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
@@ -485,7 +485,7 @@ public class PDEState {
 		info.name = element.getAttribute("name"); //$NON-NLS-1$
 		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
 		info.className	= element.getAttribute("class"); //$NON-NLS-1$
-		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI"));
+		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		NodeList libs = element.getElementsByTagName("library"); //$NON-NLS-1$
 		info.libraries = new String[libs.getLength()];

@@ -15,7 +15,7 @@ public class $applicationClass$ implements IPlatformRunnable {
 	public Object run(Object args) throws Exception {
 		Display display = PlatformUI.createDisplay();
 		try {
-			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+			int returnCode = PlatformUI.createAndRunWorkbench(display, new $workbenchAdvisorClass$());
 			if (returnCode == PlatformUI.RETURN_RESTART) {
 				return IPlatformRunnable.EXIT_RESTART;
 			}

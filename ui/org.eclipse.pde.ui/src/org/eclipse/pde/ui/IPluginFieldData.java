@@ -48,19 +48,4 @@ public interface IPluginFieldData extends IFieldData {
 	 */
 	boolean isRCPApplicationPlugin();
 	
-	/**
-	 * The RCP application id name field.
-	 * 
-	 * @since 3.1
-	 * @return the name of the RCP application ID
-	 */
-	String getApplicationID();
-
-	/**
-	 * The RCP application class name field.
-	 * 
-	 * @since 3.1
-	 * @return the name of the RCP application class
-	 */
-	String getApplicationClassname();
 }

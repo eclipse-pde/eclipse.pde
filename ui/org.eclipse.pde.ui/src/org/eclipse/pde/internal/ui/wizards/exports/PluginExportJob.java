@@ -24,23 +24,13 @@ public class PluginExportJob extends FeatureExportJob {
 	private String fFeatureLocation;
 
 	public PluginExportJob(
-			int exportType,
-			boolean exportSource,
-			String destination,
-			String zipFileName,
-			Object[] items) {
-			super(exportType, exportSource, destination, zipFileName, items);
-		}
-
-	public PluginExportJob(
-			int exportType,
-			boolean exportSource,
-			String destination,
-			String zipFileName,
-			Object[] items,
-			String[] signingInfo) {
-			super(exportType, exportSource, destination, zipFileName, items, signingInfo, null);
-		}
+		int exportType,
+		boolean exportSource,
+		String destination,
+		String zipFileName,
+		Object[] items) {
+		super(exportType, exportSource, destination, zipFileName, items);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#doExports(org.eclipse.core.runtime.IProgressMonitor)

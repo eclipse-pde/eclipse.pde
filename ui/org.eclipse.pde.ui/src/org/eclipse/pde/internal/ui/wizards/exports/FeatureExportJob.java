@@ -53,8 +53,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private String fDevProperties;
 	
 	protected HashMap fAntBuildProperties;
-	private String[] fSigningInfo = null;
-	private String[] fJnlpInfo = null;
 	
 	class SchedulingRule implements ISchedulingRule {
 
@@ -79,19 +77,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		setRule(new SchedulingRule());
 	}
 	
-	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items, String[] signingInfo, String[] jnlpInfo) {
-		super(PDEPlugin.getResourceString("FeatureExportJob.name"));  //$NON-NLS-1$
-		fSigningInfo = signingInfo;
-		fJnlpInfo = jnlpInfo;
-		fExportType = exportType;
-		fExportSource = exportSource;
-		fDestinationDirectory = destination;
-		fZipFilename = zipFileName;
-		fItems = items;
-		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
-		setRule(new SchedulingRule());
-	}
-
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
 		super(PDEPlugin.getResourceString("FeatureExportJob.name"));  //$NON-NLS-1$
 		fExportType = exportType;
@@ -218,7 +203,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			monitor.done();
 		}
 	}
-
+	
 	protected boolean needBranding() {
 		return false;
 	}
@@ -228,16 +213,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
-			if (fSigningInfo != null) {
-				fAntBuildProperties.put("sign.alias", fSigningInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.keystore", fSigningInfo[1]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.storepass", fSigningInfo[2]); //$NON-NLS-1$
-			}
-			if (fJnlpInfo != null) {
-				fAntBuildProperties.put("jnlp.codebase", fJnlpInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("jnlp.j2se", fJnlpInfo[1]); //$NON-NLS-1$
-			}
-
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
@@ -280,8 +255,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setPluginPath(getPaths());
 		generator.setReportResolutionErrors(false);
 		generator.setIgnoreMissingPropertiesFile(true);
-		generator.setSignJars(fSigningInfo != null);
-		generator.setGenerateJnlp(fJnlpInfo != null);
 		String format;
 		if (fExportType == EXPORT_AS_ZIP)
 			format = Platform.getOS().equals("macosx") ? "tarGz" : "antZip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

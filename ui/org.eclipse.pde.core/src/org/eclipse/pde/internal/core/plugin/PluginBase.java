@@ -36,6 +36,8 @@ public abstract class PluginBase
 	private String schemaVersion;
 	private boolean valid;
 
+	private String fTargetVersion;
+
 	public String getSchemaVersion() {
 		return schemaVersion;
 	}
@@ -87,6 +89,7 @@ public abstract class PluginBase
 		this.version = bundleDesc.getVersion().toString();
 		this.name = state.getPluginName(bundleDesc.getBundleId());
 		this.providerName = state.getProviderName(bundleDesc.getBundleId());
+		fTargetVersion = PDECore.getDefault().getTargetVersion();
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {
@@ -148,20 +151,6 @@ public abstract class PluginBase
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
-	public void load(IPluginBase srcPluginBase) {
-		PluginBase base = (PluginBase)srcPluginBase;
-		range= base.range;
-		id= base.id;
-		name= base.name;
-		providerName= base.providerName;
-		version= base.version;
-		schemaVersion = base.schemaVersion;
-		super.load(srcPluginBase);
-		addArrayToVector(imports, srcPluginBase.getImports());
-		addArrayToVector(libraries, srcPluginBase.getLibraries());
-		valid = hasRequiredAttributes();
-	}
-	
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.schemaVersion = schemaVersion;
@@ -385,5 +374,13 @@ public abstract class PluginBase
 			return IMatchRules.PERFECT; // this is as close as we got
 
 		return IMatchRules.NONE;  // no real match rule for this
+	}
+	
+	public String getTargetVersion() {
+		return fTargetVersion;
+	}
+	
+	public void setTargetVersion(String version) {
+		fTargetVersion = version;
 	}
 }

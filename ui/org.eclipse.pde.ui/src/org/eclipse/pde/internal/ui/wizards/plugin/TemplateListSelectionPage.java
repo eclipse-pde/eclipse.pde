@@ -136,7 +136,11 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	}
 	
 	public boolean isPageComplete() {
-		return !fUseTemplate.getSelection() || (fUseTemplate.getSelection() && getSelectedNode() != null);
+		IPluginFieldData data = (IPluginFieldData)fContentPage.getData();
+		boolean rcp = data.isRCPApplicationPlugin();
+		boolean templateSelected = fUseTemplate.getSelection() && getSelectedNode() != null;
+		
+		return (!fUseTemplate.getSelection() && !rcp) || templateSelected;
 	}
 	
 	

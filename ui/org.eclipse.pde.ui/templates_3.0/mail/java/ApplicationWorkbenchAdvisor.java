@@ -8,13 +8,15 @@ import org.eclipse.ui.application.*;
  * This advisor simply creates action builders for each new window and ensures
  * that the action builder is disposed when the window is closed.
  */
-public class $advisor$ extends WorkbenchAdvisor {
+public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
+	
+	private static final String PERSPECTIVE_ID = "$pluginId$.perspective";
 
 	// Key for caching the action builder with the window configurer
 	private static final String ACTION_BUILDER = "actionBuilder";
 	
 	public String getInitialWindowPerspectiveId() {
-		return "$pluginId$.perspective";
+		return PERSPECTIVE_ID;
 	} 
 	
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
