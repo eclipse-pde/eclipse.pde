@@ -13,11 +13,12 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -129,6 +130,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					PluginImportOperation op =
 						new PluginImportOperation(models, modelIds, importType, query);
 					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 1));
+					Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
@@ -139,20 +141,25 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 							getUpdateClasspathOperation(modelIds),
 							new SubProgressMonitor(monitor, 1));
 						if (isAutoBuilding) {
-							IWorkspace workspace = PDEPlugin.getWorkspace();
-							IWorkspaceDescription description =
-								workspace.getDescription();
-							description.setAutoBuilding(true);
-							workspace.setDescription(description);
-							PDEPlugin.getWorkspace().build(
-								IncrementalProjectBuilder.INCREMENTAL_BUILD,
+							PDEPlugin.getWorkspace().run(
+								getActivateAutoBuildOperation(),
 								new SubProgressMonitor(monitor, 1));
 						}
-
 					} catch (CoreException e) {
 					}
 					monitor.done();
 				}
+			}
+		};
+	}
+	
+	private static IWorkspaceRunnable getActivateAutoBuildOperation() {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspace workspace = PDEPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				description.setAutoBuilding(true);
+				workspace.setDescription(description);
 			}
 		};
 	}
