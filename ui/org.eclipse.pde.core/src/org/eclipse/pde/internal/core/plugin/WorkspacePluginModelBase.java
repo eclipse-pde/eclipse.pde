@@ -88,9 +88,10 @@ public abstract class WorkspacePluginModelBase
 	public boolean isInSync() {
 		if (file == null)
 			return true;
-			
-		File localFile = file.getLocation().toFile();
-		return super.isInSync(localFile);
+		IPath path = file.getLocation();
+		if (path == null)
+			return false;
+		return super.isInSync(path.toFile());
 	}
 
 	public boolean isDirty() {
