@@ -236,7 +236,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		int scope = container.getSelectedScope();
 		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
 			return null;
-		if (scope == ISearchPageContainer.SELECTION_SCOPE) {
+		if (scope == ISearchPageContainer.SELECTION_SCOPE || scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (container.getSelection() instanceof IStructuredSelection) {
 				IStructuredSelection selection =
 					(IStructuredSelection) container.getSelection();
