@@ -273,8 +273,6 @@ public class CategorySection extends TreeSection {
 								fModel, feature);
 						dialog.create();
 						if (dialog.open() == FeaturePropertiesDialog.OK) {
-							//markDirty();
-							//fCategoryViewer.refresh();
 						}
 					}
 				});
@@ -320,8 +318,6 @@ public class CategorySection extends TreeSection {
 			}
 			fModel.getSite().removeCategoryDefinitions(
 					new ISiteCategoryDefinition[]{catDef});
-			//fCategoryViewer.refresh();
-			//markDirty();
 			return true;
 		} catch (CoreException e) {
 		}
@@ -338,8 +334,6 @@ public class CategorySection extends TreeSection {
 					fModel.getSite()
 							.removeFeatures(new ISiteFeature[]{feature});
 			}
-			//fCategoryViewer.refresh();
-			//markDirty();
 			return true;
 		} catch (CoreException e) {
 		}
@@ -378,8 +372,6 @@ public class CategorySection extends TreeSection {
 								fModel, def);
 						dialog.create();
 						if (dialog.open() == NewCategoryDefinitionDialog.OK) {
-							//markDirty();
-							//fCategoryViewer.refresh();
 						}
 					}
 				});
@@ -426,7 +418,11 @@ public class CategorySection extends TreeSection {
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
-		markStale();
+		if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+			return;
+		}
+		refresh();
 	}
 
 	public void initialize() {

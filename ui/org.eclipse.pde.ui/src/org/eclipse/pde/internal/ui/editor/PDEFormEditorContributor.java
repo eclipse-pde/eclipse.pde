@@ -258,6 +258,7 @@ public class PDEFormEditorContributor
 	private void setSourceActionBarsActive(boolean active) {
 		IActionBars rootBars = getActionBars();
 		rootBars.clearGlobalActionHandlers();
+		//PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmissions(new ArrayList());
 		rootBars.updateActionBars();
 		if (active) {
 			sourceActionBars.activate();

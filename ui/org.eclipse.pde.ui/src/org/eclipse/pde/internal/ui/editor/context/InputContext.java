@@ -187,6 +187,8 @@ public abstract class InputContext {
 				}
 				edit.apply(doc);
 				fEditOperations.clear();
+				if (model instanceof IEditable)
+					((IEditable)model).setDirty(false);
 			} catch (MalformedTreeException e) {
 				e.printStackTrace();
 			} catch (BadLocationException e) {
@@ -246,8 +248,9 @@ public abstract class InputContext {
 	public boolean mustSave() {
 		if (!fIsSourceMode) {
 			if (model instanceof IEditable) {
-				if (((IEditable)model).isDirty())
+				if (((IEditable)model).isDirty()) {
 					return true;
+				}
 			}
 		}
 		return documentProvider.canSaveDocument(input);

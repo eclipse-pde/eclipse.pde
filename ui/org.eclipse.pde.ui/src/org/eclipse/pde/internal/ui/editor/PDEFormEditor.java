@@ -187,6 +187,7 @@ public abstract class PDEFormEditor extends FormEditor
 		// Return the first one
 		return invalidContexts[0].getId();
 	}
+
 	public String getTitle() {
 		if (inputContextManager == null)
 			return super.getTitle();
@@ -195,6 +196,7 @@ public abstract class PDEFormEditor extends FormEditor
 			return super.getTitle();
 		return context.getInput().getName();
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -309,6 +311,7 @@ public abstract class PDEFormEditor extends FormEditor
 			return true;
 		return super.isDirty();
 	}
+	
 	public void fireSaveNeeded(String contextId, boolean notify) {
 		if (contextId == null)
 			return;

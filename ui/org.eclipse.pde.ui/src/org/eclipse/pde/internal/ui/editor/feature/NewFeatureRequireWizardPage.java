@@ -34,6 +34,7 @@ public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 	
 	protected boolean isOnTheList(IPluginModelBase candidate) {
 		IPluginBase plugin = candidate.getPluginBase();
+		if (candidate.isFragmentModel()) return true;
 		IFeatureImport[] imports = model.getFeature().getImports();
 
 		for (int i = 0; i < imports.length; i++) {
