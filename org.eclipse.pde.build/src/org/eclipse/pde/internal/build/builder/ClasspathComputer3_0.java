@@ -157,9 +157,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
 		// If model is a fragment, we need to add in the classpath the plugin to which it is related
-		HostSpecification[] host = model.getHosts();
-		if (host.length > 0) {
-			addPluginAndPrerequisites(host[0].getSupplier(), classpath, location, pluginChain, addedPlugins);
+		HostSpecification host = model.getHost();
+		if (host != null) {
+			addPluginAndPrerequisites(host.getSupplier(), classpath, location, pluginChain, addedPlugins);
 		}
 
 		// Add the libraries
