@@ -179,7 +179,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				importSource(
 					project,
 					model.getPluginBase(),
-					new Path(pluginDir.getPath()), doImport,
+					new Path(pluginDir.getPath()),
+					doImport,
 					new SubProgressMonitor(monitor, 1));
 			} else {
 				linkContent(
@@ -187,7 +188,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					project,
 					new SubProgressMonitor(monitor, 2));
 			}
-
 
 			boolean isJavaProject =
 				model.getPluginBase().getLibraries().length > 0;
@@ -339,15 +339,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				else
 					file.create(fstream, true, null);
 				fstream.close();
-			}
-			else {
+			} else {
 				IFile file = project.getFile(srcPath);
 				if (!(file.getParent() instanceof IProject)) {
 					// cannot link the file directly - must make
 					// a flat path
 					file = project.getFile(getFlatPath(srcPath));
 				}
-				file.createLink(new Path(srcFile.getPath()), IResource.NONE, null);
+				file.createLink(
+					new Path(srcFile.getPath()),
+					IResource.NONE,
+					null);
 			}
 
 		} catch (IOException e) {
@@ -361,11 +363,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			throw new CoreException(status);
 		}
 	}
-	
+
 	private String getFlatPath(IPath path) {
 		StringBuffer buf = new StringBuffer();
-		for (int i=0; i<path.segmentCount(); i++) {
-			if (i>0) buf.append("_");
+		for (int i = 0; i < path.segmentCount(); i++) {
+			if (i > 0)
+				buf.append("_");
 			buf.append(path.segment(i));
 		}
 		return buf.toString();
@@ -416,11 +419,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					IResource.NONE,
 					new SubProgressMonitor(monitor, 1));
 			} else {
-				IFile file = project.getFile(sourceFile.getName());
-				file.createLink(
-					new Path(sourceFile.getPath()),
-					IResource.NONE,
-					new SubProgressMonitor(monitor, 1));
+				String fileName = sourceFile.getName();
+				// Ignore .classpath and .project in
+				// the plug-in - these files will
+				// be created, so ignore the imported ones.
+				if (!fileName.equals(".classpath")
+					&& !fileName.equals(".project")) {
+					IFile file = project.getFile(fileName);
+					file.createLink(
+						new Path(sourceFile.getPath()),
+						IResource.NONE,
+						new SubProgressMonitor(monitor, 1));
+				}
 			}
 			monitor.worked(1);
 		}
