@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -38,6 +39,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -149,18 +151,66 @@ public class IncludedFeaturesSection extends TableSection implements
 	}
 
 	private void handleNew() {
-		final IFeatureModel model = (IFeatureModel) getPage().getModel();
-
 		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
-						IncludeFeaturesWizard wizard = new IncludeFeaturesWizard(
-								model);
-						WizardDialog dialog = new WizardDialog(fIncludesViewer
-								.getTable().getShell(), wizard);
-						dialog.open();
+						IFeatureModel[] allModels = PDECore.getDefault()
+								.getFeatureModelManager().getAllFeatures();
+						ArrayList newModels = new ArrayList();
+						for (int i = 0; i < allModels.length; i++) {
+							if (canAdd(allModels[i]))
+								newModels.add(allModels[i]);
+						}
+						IFeatureModel[] candidateModels = (IFeatureModel[]) newModels
+								.toArray(new IFeatureModel[newModels.size()]);
+						FeatureSelectionDialog dialog = new FeatureSelectionDialog(
+								fIncludesViewer.getTable().getShell(),
+								candidateModels, true);
+						if (dialog.open() == Window.OK) {
+							Object[] models = dialog.getResult();
+							try {
+								doAdd(models);
+							} catch (CoreException e) {
+								PDECore.log(e);
+							}
+						}
 					}
 				});
+	}
+
+	private void doAdd(Object[] candidates) throws CoreException {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		IFeatureChild[] added = new IFeatureChild[candidates.length];
+		for (int i = 0; i < candidates.length; i++) {
+			IFeatureModel candidate = (IFeatureModel) candidates[i];
+			FeatureChild child = (FeatureChild) model.getFactory()
+					.createChild();
+			child.loadFrom(candidate.getFeature());
+			added[i] = child;
+		}
+		feature.addIncludedFeatures(added);
+	}
+
+	private boolean canAdd(IFeatureModel candidate) {
+		IFeature cfeature = candidate.getFeature();
+
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+
+		if (cfeature.getId().equals(feature.getId())
+				&& cfeature.getVersion().equals(feature.getVersion())) {
+			return false;
+		}
+
+		IFeatureChild[] features = feature.getIncludedFeatures();
+
+		for (int i = 0; i < features.length; i++) {
+			if (features[i].getId().equals(cfeature.getId())
+					&& features[i].getVersion().equals(cfeature.getVersion()))
+				return false;
+		}
+		return true;
 	}
 
 	private void handleSelectAll() {
@@ -253,6 +303,10 @@ public class IncludedFeaturesSection extends TableSection implements
 				fIncludesViewer.update(obj, null);
 			} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 				fIncludesViewer.add(e.getChangedObjects());
+				if (e.getChangedObjects().length > 0) {
+					fIncludesViewer.setSelection(new StructuredSelection(e
+							.getChangedObjects()[0]));
+				}
 			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 				fIncludesViewer.remove(e.getChangedObjects());
 			}

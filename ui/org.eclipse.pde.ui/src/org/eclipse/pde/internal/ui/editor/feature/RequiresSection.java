@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -43,6 +45,7 @@ import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -165,18 +168,65 @@ public class RequiresSection extends TableSection implements
 	}
 
 	private void handleNewFeature() {
-		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
-						RequiredFeaturesWizard wizard = new RequiredFeaturesWizard(
-								model);
-						WizardDialog dialog = new WizardDialog(PDEPlugin
-								.getActiveWorkbenchShell(), wizard);
-						dialog.create();
-						dialog.open();
+						IFeatureModel[] allModels = PDECore.getDefault()
+								.getFeatureModelManager().getAllFeatures();
+						ArrayList newModels = new ArrayList();
+						for (int i = 0; i < allModels.length; i++) {
+							if (canAdd(allModels[i]))
+								newModels.add(allModels[i]);
+						}
+						IFeatureModel[] candidateModels = (IFeatureModel[]) newModels
+								.toArray(new IFeatureModel[newModels.size()]);
+						FeatureSelectionDialog dialog = new FeatureSelectionDialog(
+								fPluginViewer.getTable().getShell(),
+								candidateModels, true);
+						if (dialog.open() == Window.OK) {
+							Object[] models = dialog.getResult();
+							try {
+								doAdd(models);
+							} catch (CoreException e) {
+								PDECore.log(e);
+							}
+						}
 					}
 				});
+	}
+
+	private void doAdd(Object[] candidates) throws CoreException {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		IFeatureImport[] added = new IFeatureImport[candidates.length];
+		for (int i = 0; i < candidates.length; i++) {
+			IFeatureModel candidate = (IFeatureModel) candidates[i];
+			FeatureImport iimport = (FeatureImport) model.getFactory().createImport();
+			iimport.loadFrom(candidate.getFeature());
+			added[i] = iimport;
+		}
+		feature.addImports(added);
+	}
+
+	private boolean canAdd(IFeatureModel candidate) {
+		IFeature cfeature = candidate.getFeature();
+
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+
+		if (cfeature.getId().equals(feature.getId())
+				&& cfeature.getVersion().equals(feature.getVersion())) {
+			return false;
+		}
+
+		IFeatureImport[] features = feature.getImports();
+
+		for (int i = 0; i < features.length; i++) {
+			if (features[i].getId().equals(cfeature.getId())
+					&& features[i].getVersion().equals(cfeature.getVersion()))
+				return false;
+		}
+		return true;
 	}
 
 	private void handleDelete() {
@@ -303,9 +353,13 @@ public class RequiresSection extends TableSection implements
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureImport) {
-				if (e.getChangeType() == IModelChangedEvent.INSERT)
+				if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					fPluginViewer.add(e.getChangedObjects());
-				else
+					if (e.getChangedObjects().length > 0) {
+						fPluginViewer.setSelection(new StructuredSelection(e
+								.getChangedObjects()[0]));
+					}
+				} else
 					fPluginViewer.remove(e.getChangedObjects());
 			} else if (obj instanceof IFeaturePlugin) {
 				if (fSyncButton.getSelection()) {

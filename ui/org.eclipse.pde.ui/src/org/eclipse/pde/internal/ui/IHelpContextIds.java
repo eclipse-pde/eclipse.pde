@@ -89,7 +89,6 @@ public interface IHelpContextIds {
 	public static final String UPDATE_CLASSPATH = PREFIX + "update_classpath"; //$NON-NLS-1$
 	public static final String FEATURE_ADD_REQUIRED_WIZARD = PREFIX + "feature_add_required_wizard"; //$NON-NLS-1$
 	public static final String FEATURE_ADD_PACKAGED_WIZARD = PREFIX + "feature_add_packaged_wizard"; //$NON-NLS-1$
-	public static final String FEATURE_INCLUDED_FEATURES_WIZARD = PREFIX + "feature_included_features_wizard"; //$NON-NLS-1$
 	public static final String FEATURE_PORTABILITY_WIZARD = PREFIX + "feature_portability_wizard"; //$NON-NLS-1$
 
 	public static final String PLUGINS_CONTAINER_PAGE = PREFIX + "plugins_container_page"; //$NON-NLS-1$

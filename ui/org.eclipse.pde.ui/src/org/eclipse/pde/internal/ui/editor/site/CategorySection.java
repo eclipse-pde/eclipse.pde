@@ -15,7 +15,6 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -27,7 +26,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -44,6 +42,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
@@ -725,15 +724,41 @@ public class CategorySection extends TreeSection {
 		final Control control = fCategoryViewer.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
-				BuiltFeaturesWizard wizard = new BuiltFeaturesWizard(
-						CategorySection.this);
-				WizardDialog dialog = new WizardDialog(control.getShell(),
-						wizard);
+				IFeatureModel[] allModels = PDECore.getDefault()
+						.getWorkspaceModelManager().getFeatureModels();
+				ArrayList newModels = new ArrayList();
+				for (int i = 0; i < allModels.length; i++) {
+					if (canAdd(allModels[i]))
+						newModels.add(allModels[i]);
+				}
+				IFeatureModel[] candidateModels = (IFeatureModel[]) newModels
+						.toArray(new IFeatureModel[newModels.size()]);
+				FeatureSelectionDialog dialog = new FeatureSelectionDialog(
+						fCategoryViewer.getTree().getShell(), candidateModels,
+						true);
 				if (dialog.open() == Window.OK) {
-					markDirty();
+					Object[] models = dialog.getResult();
+					try {
+						doAdd(models);
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
 				}
 			}
 		});
+	}
+
+	private boolean canAdd(IFeatureModel candidate) {
+		ISiteFeature[] features = fModel.getSite().getFeatures();
+		IFeature cfeature = candidate.getFeature();
+
+		for (int i = 0; i < features.length; i++) {
+			ISiteFeature bfeature = features[i];
+			if (bfeature.getId().equals(cfeature.getId())
+					&& bfeature.getVersion().equals(cfeature.getVersion()))
+				return false;
+		}
+		return true;
 	}
 
 	public static ISiteFeature createSiteFeature(ISiteModel model,
@@ -775,11 +800,8 @@ public class CategorySection extends TreeSection {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void doAdd(Object[] candidates, IProgressMonitor monitor)
+	public void doAdd(Object[] candidates)
 			throws CoreException {
-		monitor.beginTask(
-				PDEPlugin.getResourceString("CategorySection.adding"), //$NON-NLS-1$
-				candidates.length + 1);
 		// Category to add features to
 		String categoryName = null;
 		ISelection selection = fCategoryViewer.getSelection();
@@ -796,20 +818,14 @@ public class CategorySection extends TreeSection {
 		ISiteFeature[] added = new ISiteFeature[candidates.length];
 		for (int i = 0; i < candidates.length; i++) {
 			IFeatureModel candidate = (IFeatureModel) candidates[i];
-			String name = candidate.getFeature().getLabel();
-			monitor.subTask(candidate.getResourceString(name));
 			ISiteFeature child = createSiteFeature(fModel, candidate);
 			if (categoryName != null) {
 				addCategory(child, categoryName);
 			}
 			added[i] = child;
-			monitor.worked(1);
 		}
 
 		// Update model
-		monitor.subTask(""); //$NON-NLS-1$
-		monitor.setTaskName(PDEPlugin
-				.getResourceString("CategorySection.updating")); //$NON-NLS-1$
 		fModel.getSite().addFeatures(added);
 		// Select last added feature
 		if (added.length > 0) {
@@ -820,7 +836,6 @@ public class CategorySection extends TreeSection {
 					new SiteFeatureAdapter(categoryName, added[added.length-1])),
 					true);
 		}
-		monitor.worked(1);
 	}
 
 	void fireSelection() {
