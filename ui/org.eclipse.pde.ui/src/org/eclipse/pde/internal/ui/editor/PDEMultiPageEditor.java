@@ -55,6 +55,22 @@ public abstract class PDEMultiPageEditor
 	protected IModelUndoManager undoManager;
 	protected Clipboard clipboard;
 	private boolean validated;
+	private ElementListener elementListener;
+	
+	class ElementListener implements IElementStateListener {
+		public void elementContentAboutToBeReplaced(Object element) {
+		}
+		public void elementContentReplaced(Object element) {
+			updateModel();
+			fireSaveNeeded();
+		}
+		public void elementDeleted(Object element) {
+		}
+		public void elementDirtyStateChanged(Object element, boolean isDirty) {
+		}
+		public void elementMoved(Object originalElement, Object movedElement) {
+		}
+	}
 
 	public PDEMultiPageEditor() {
 		formWorkbook = new CustomWorkbook();
@@ -473,6 +489,8 @@ public abstract class PDEMultiPageEditor
 				documentProvider.getAnnotationModel(editorInput);
 			if (amodel != null)
 				amodel.connect(documentProvider.getDocument(editorInput));
+			elementListener = new ElementListener();
+			documentProvider.addElementStateListener(elementListener);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
