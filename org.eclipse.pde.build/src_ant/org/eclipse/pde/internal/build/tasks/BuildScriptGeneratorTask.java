@@ -153,6 +153,6 @@ public class BuildScriptGeneratorTask extends Task {
 	 * @param brand <code>true</code> if branding the executable is necessary.
 	 */
 	public void setBrandExecutable(boolean brand) {
-		generator.setBrandExecutable(brand);
+		AbstractScriptGenerator.setBrandExecutable(brand);
 	}
 }
