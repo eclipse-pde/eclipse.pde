@@ -3,7 +3,7 @@ package org.eclipse.pde.internal.core.site;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.Node;
 
 /**
@@ -55,4 +55,14 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		else super.restoreProperty(name, oldValue, newValue);
 	}
 
+	public ISiteCategoryDefinition getDefinition() {
+		ISite site = getSite();
+		ISiteCategoryDefinition [] definitions = site.getCategoryDefinitions();
+		for (int i=0; i<definitions.length; i++) {
+			ISiteCategoryDefinition def = definitions[i];
+			if (def.getName().equals(getName()))
+				return def;
+		}
+		return null;
+	}
 }

@@ -78,6 +78,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISiteCategoryDefinition) {
 			return getObjectText((ISiteCategoryDefinition) obj);
 		}
+		if (obj instanceof ISiteCategory) {
+			return getObjectText((ISiteCategory) obj);
+		}
 		if (obj instanceof ISiteBuildFeature) {
 			return getObjectText((ISiteBuildFeature) obj);
 		}
@@ -188,6 +191,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ISiteCategoryDefinition obj) {
 		return obj.getLabel();
 	}
+	public String getObjectText(ISiteCategory obj) {
+		ISiteCategoryDefinition def = obj.getDefinition();
+		if (def!=null)
+			return def.getLabel();
+		return obj.getName();
+	}
 	public String getObjectText(ISiteBuildFeature obj) {
 		return obj.getId() + " (" + obj.getVersion() + ")";
 	}
@@ -271,6 +280,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteCategoryDefinition) {
 			return getObjectImage((ISiteCategoryDefinition) obj);
+		}
+		if (obj instanceof ISiteCategory) {
+			return getObjectImage((ISiteCategory)obj);
 		}
 		if (obj instanceof ISiteBuildFeature) {
 			return getObjectImage((ISiteBuildFeature) obj);
@@ -480,6 +492,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	public Image getObjectImage(ISiteCategoryDefinition obj) {
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ);
+	}
+	
+	public Image getObjectImage(ISiteCategory obj) {
+		int flags = obj.getDefinition()==null?F_ERROR:0;
+		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
 	}
 
 	public Image getObjectImage(ISiteBuildFeature obj) {

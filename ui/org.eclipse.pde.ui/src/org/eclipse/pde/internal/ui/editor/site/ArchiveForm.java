@@ -4,17 +4,19 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class ArchiveForm extends ScrollableSectionForm {
 	private static final String KEY_TITLE = "ArchiveForm.title";
+	private static final String KEY_PROPERTY_TITLE = "ArchiveForm.property.title";
+	private static final String KEY_PROPERTY_DESC = "ArchiveForm.property.desc";
 	private ArchivePage page;
-//	private URLSection urlSection;
-//	private FeatureSpecSection specSection;
-//	private PortabilitySection portabilitySection;
+	private SiteArchiveSection archiveSection;
+	private PropertySection propertySection;
 
 	public ArchiveForm(ArchivePage page) {
 		this.page = page;
@@ -26,41 +28,39 @@ public class ArchiveForm extends ScrollableSectionForm {
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
 		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth=true;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 15;
 		layout.verticalSpacing = 15;
 		GridData gd;
-	/*
 
-		specSection = new FeatureSpecSection(page);
-		Control control = specSection.createControl(parent, factory);
+		archiveSection = new SiteArchiveSection(page);
+		Control control = archiveSection.createControl(parent, factory);
 		gd =
 			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+				GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 
-		urlSection = new URLSection(page);
-		control = urlSection.createControl(parent, factory);
+		String title = PDEPlugin.getResourceString(KEY_PROPERTY_TITLE);
+		String desc = PDEPlugin.getResourceString(KEY_PROPERTY_DESC);
+		propertySection = new PropertySection(page, title, desc, ISiteArchive.class);
+		control = propertySection.createControl(parent, factory);
 		gd =
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		control.setLayoutData(gd);
-
-		portabilitySection = new PortabilitySection(page);
-		control = portabilitySection.createControl(parent, factory);
-		gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
-
-		registerSection(specSection);
-		registerSection(urlSection);
-		registerSection(portabilitySection);
 		
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
-	*/
+		SectionChangeManager manager = new SectionChangeManager();
+		manager.linkSections(archiveSection, propertySection);
+
+		registerSection(archiveSection);
+		registerSection(propertySection);
+		
+		//WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 	}
 	
 	public void expandTo(Object object) {
-		//urlSection.expandTo(object);
+		archiveSection.expandTo(object);
 	}
 	
 	public void initialize(Object modelObject) {
@@ -70,6 +70,7 @@ public class ArchiveForm extends ScrollableSectionForm {
 	}
 	
 	public void setFocus() {
+		archiveSection.setFocus();
 	}
 
 }

@@ -15,4 +15,6 @@ public interface ISiteCategory extends ISiteObject {
 	
 	String getName();
 	void setName(String name) throws CoreException;
+	
+	ISiteCategoryDefinition getDefinition();
 }
