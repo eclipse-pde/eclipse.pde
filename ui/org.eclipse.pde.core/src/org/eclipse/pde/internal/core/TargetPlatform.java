@@ -62,10 +62,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 						model.isFragmentModel()
 							? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
-				IPath relative =
-					location.removeFirstSegments(location.segmentCount() - 3);
+				if (location.segmentCount() >= 3)
+					location = location.removeFirstSegments(location.segmentCount() - 3);
 				//31489 - entry must be relative
-				list[i] = relative.setDevice(null).makeRelative().toString();
+				list[i] = location.setDevice(null).makeRelative().toString();
 			}
 			return list;
 		}
@@ -186,7 +186,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		} catch (Exception e) {
 			// Wrap everything else in a core exception.
 			String message = e.getMessage();
-			if (message==null)
+			if (message==null || message.length() == 0)
 				message = PDECore.getResourceString("TargetPlatform.exceptionThrown"); //$NON-NLS-1$
 			throw new CoreException(
 				new Status(
