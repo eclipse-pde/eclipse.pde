@@ -17,17 +17,19 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class UpdateBuildpathWizard extends Wizard {
 	private UpdateBuildpathWizardPage page1;
-	private IPluginModelBase [] selected;
+	private IPluginModelBase[] fSelected;
+	private IPluginModelBase[] fUnupdated;
 	private static final String STORE_SECTION = "UpdateBuildpathWizard"; //$NON-NLS-1$
 	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle"; //$NON-NLS-1$
 
-	public UpdateBuildpathWizard(IPluginModelBase[] selected) {
+	public UpdateBuildpathWizard(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
-		this.selected = selected;
+		this.fSelected = selected;
+		this.fUnupdated = models;
 	}
 	
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -48,7 +50,7 @@ public class UpdateBuildpathWizard extends Wizard {
 	}
 	
 	public void addPages() {
-		page1 = new UpdateBuildpathWizardPage(selected);
+		page1 = new UpdateBuildpathWizardPage(fUnupdated, fSelected);
 		addPage(page1);
 	}
 }

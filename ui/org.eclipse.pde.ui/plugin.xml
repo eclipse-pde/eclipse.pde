@@ -747,9 +747,17 @@
          </menu>
        	 <visibility>
         	<not>
+        	<or>
             <objectState 
 	            name="projectNature" 
 	            value="org.eclipse.pde.PluginNature"/>
+            <objectState 
+	            name="projectNature" 
+	            value="org.eclipse.pde.FeatureNature"/>
+            <objectState 
+	            name="projectNature" 
+	            value="org.eclipse.pde.UpdateSiteNature"/>
+            </or>
             </not>
        	 </visibility>
          <action

@@ -50,14 +50,16 @@ public class ConvertedProjectsPage extends WizardPage  {
 		"ConvertedProjectWizard.projectList"; //$NON-NLS-1$
 	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate"; //$NON-NLS-1$
 	private TablePart tablePart;
-	private IProject[] selected;
+	private IProject[] fSelected;
+	private IProject[] fUnconverted;
 	
 	public class ProjectContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
-		public Object[] getElements(Object parent) {			
-			IWorkspace workspace = (IWorkspace)parent;
-			return workspace.getRoot().getProjects();
+		public Object[] getElements(Object parent) {	
+			if (fUnconverted!= null)
+				return fUnconverted;
+			return new Object[0];
 		}		
 	}
 
@@ -100,12 +102,13 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 	}
 
-	public ConvertedProjectsPage(Vector initialSelection) {
+	public ConvertedProjectsPage(IProject[] projects, Vector initialSelection) {
 		super("convertedProjects"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PROJECT_LIST));
-		selected = (IProject[])initialSelection.toArray(new IProject[initialSelection.size()]);
+		this.fSelected = (IProject[])initialSelection.toArray(new IProject[initialSelection.size()]);
+		this.fUnconverted = projects;
 	}
 	
 	public void createControl(Composite parent) {
@@ -121,12 +124,6 @@ public class ConvertedProjectsPage extends WizardPage  {
 		projectViewer = tablePart.getTableViewer();
 		projectViewer.setContentProvider(new ProjectContentProvider());
 		projectViewer.setLabelProvider(new ProjectLabelProvider());
-		projectViewer.addFilter(new ViewerFilter () {
-			public boolean select(Viewer viewer, Object parent, Object object) {
-				IProject project = (IProject)object;
-				return (project.isOpen() && !PDE.hasPluginNature(project));
-			}
-		});
 		projectViewer.setInput(PDEPlugin.getWorkspace());
 	
 		updateBuildPathButton = new Button(container, SWT.CHECK);
@@ -136,8 +133,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 			getDialogSettings().getBoolean(UPDATE_SECTION));
 		updateBuildPathButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		updateBuildPathButton.setEnabled(false);
-		tablePart.setSelection(selected);
-		tablePart.updateCounter(selected.length);
+		tablePart.setSelection(fSelected);
+		tablePart.updateCounter(fSelected.length);
 
 		setControl(container);
 		Dialog.applyDialogFont(container);

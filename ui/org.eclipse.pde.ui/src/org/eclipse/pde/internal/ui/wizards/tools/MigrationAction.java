@@ -42,7 +42,8 @@ public class MigrationAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (!hasModelsToMigrate()){
+		IPluginModelBase[] modelsToMigrate = getModelsToMigrate();
+		if (modelsToMigrate.length == 0){
 			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("MigrationAction.find"), //$NON-NLS-1$
 					null, PDEPlugin.getResourceString("MigrationAction.none"), //$NON-NLS-1$
 					MessageDialog.INFORMATION, new String[]{IDialogConstants.OK_LABEL}, 0);
@@ -79,7 +80,7 @@ public class MigrationAction implements IObjectActionDelegate {
 			(IPluginModelBase[]) models.toArray(
 					new IPluginModelBase[models.size()]);
 
-			MigratePluginWizard wizard = new MigratePluginWizard(modelArray);
+			MigratePluginWizard wizard = new MigratePluginWizard(modelsToMigrate, modelArray);
 			final Display display = getDisplay();
 			final WizardDialog dialog =
 				new WizardDialog(display.getActiveShell(), wizard);
@@ -106,18 +107,17 @@ public class MigrationAction implements IObjectActionDelegate {
 		return display;
 	}
 	
-	private boolean hasModelsToMigrate() {
+	private IPluginModelBase[] getModelsToMigrate() {
 		Vector result = new Vector();
 		IPluginModelBase[] models =
 			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].getUnderlyingResource().isLinked()
 				&& models[i].isLoaded()
-				&& models[i].getPluginBase().getSchemaVersion() == null) {
-				return true;
-			}
+				&& models[i].getPluginBase().getSchemaVersion() == null) 
+				result.add(models[i]);
 		}
-		return false;
+		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 	}
 	
 }

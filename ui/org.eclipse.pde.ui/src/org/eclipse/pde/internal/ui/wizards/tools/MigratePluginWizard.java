@@ -26,18 +26,20 @@ import org.eclipse.pde.internal.ui.*;
 public class MigratePluginWizard extends Wizard {
 	private MigratePluginWizardPage page1;
 
-	private IPluginModelBase[] selected;
+	private IPluginModelBase[] fSelected;
+	private IPluginModelBase[] fUnmigrated;
 
 	private static final String STORE_SECTION = "MigrationWizard"; //$NON-NLS-1$
 
-	public MigratePluginWizard(IPluginModelBase[] selected) {
+	public MigratePluginWizard(IPluginModelBase[] models,IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault()
 				.getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_MIGRATE_30_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
 		setNeedsProgressMonitor(true);
-		this.selected = selected;
+		this.fSelected = selected;
+		this.fUnmigrated = models;
 	}
 
 	public boolean performFinish() {
@@ -119,7 +121,7 @@ public class MigratePluginWizard extends Wizard {
 	}
 
 	public void addPages() {
-		page1 = new MigratePluginWizardPage(selected);
+		page1 = new MigratePluginWizardPage(fUnmigrated, fSelected);
 		addPage(page1);
 	}
 

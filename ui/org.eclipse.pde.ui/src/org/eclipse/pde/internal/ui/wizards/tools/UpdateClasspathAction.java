@@ -40,7 +40,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		if (!hasModelsToUpdate()) {
+		IPluginModelBase[] fUnupdated = getModelsToUpdate();
+		if (fUnupdated.length == 0) {
 			MessageDialog dialog = new MessageDialog(
 					PDEPlugin.getActiveWorkbenchShell(),
 					PDEPlugin.getResourceString("UpdateClasspathAction.find"), //$NON-NLS-1$
@@ -78,7 +79,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models
 					.toArray(new IPluginModelBase[models.size()]);
 
-			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(modelArray);
+			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(fUnupdated, modelArray);
 			final WizardDialog dialog = new WizardDialog(PDEPlugin
 					.getActiveWorkbenchShell(), wizard);
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
@@ -157,18 +158,19 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		fSelection = selection;
 	}
 	
-	private boolean hasModelsToUpdate(){
+	private IPluginModelBase[] getModelsToUpdate(){
 		IPluginModelBase[] models =
 			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		ArrayList modelArray = new ArrayList();
 		try{
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					return true;
+					modelArray.add(models[i]);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return false;
+		return (IPluginModelBase[])modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
 	
 }

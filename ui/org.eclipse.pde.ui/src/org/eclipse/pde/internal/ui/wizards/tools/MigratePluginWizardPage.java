@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.util.*;
-
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -30,6 +27,7 @@ import org.eclipse.ui.help.*;
 
 public class MigratePluginWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
+	private IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer fPluginListViewer;	
 	private TablePart fTablePart;
 	private Button fUpdateClasspathButton;
@@ -41,7 +39,9 @@ public class MigratePluginWizardPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getModels();
+			if (fUnmigrated != null)
+				return fUnmigrated;
+			return new Object[0];
 		}
 	}
 
@@ -65,11 +65,11 @@ public class MigratePluginWizardPage extends WizardPage {
 		}
 	}
 
-	public MigratePluginWizardPage(IPluginModelBase[] selected) {
+	public MigratePluginWizardPage(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		super("MigrateWizardPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString("MigrationWizard.title")); //$NON-NLS-1$
 		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc")); //$NON-NLS-1$
-
+		this.fUnmigrated = models;
 		this.fSelected = selected;
 		fTablePart = new TablePart(PDEPlugin.getResourceString("MigrationWizardPage.label")); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -143,20 +143,6 @@ public class MigratePluginWizardPage extends WizardPage {
 		return fTablePart.getSelectionCount() > 0;
 	}
 
-	private Object[] getModels() {
-		Vector result = new Vector();
-		IPluginModelBase[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		for (int i = 0; i < models.length; i++) {
-			if (!models[i].getUnderlyingResource().isLinked()
-				&& models[i].isLoaded()
-				&& models[i].getPluginBase().getSchemaVersion() == null) {
-				result.add(models[i]);
-			}
-		}
-		return result.toArray();
-	}
-	
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(S_UPDATE_CLASSATH, fUpdateClasspathButton.getSelection());

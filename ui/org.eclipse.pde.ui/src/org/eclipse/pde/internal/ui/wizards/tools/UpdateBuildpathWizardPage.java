@@ -10,27 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.util.Vector;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 public class UpdateBuildpathWizardPage extends WizardPage {
-	private IPluginModelBase[] selected;
+	private IPluginModelBase[] fSelected;
+	private IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer pluginListViewer;
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title"; //$NON-NLS-1$
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc"; //$NON-NLS-1$
@@ -43,7 +39,9 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getModels();
+			if (fUnmigrated != null)
+				return fUnmigrated;
+			return new Object[0];
 		}
 	}
 
@@ -67,12 +65,12 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		}
 	}
 
-	public UpdateBuildpathWizardPage(IPluginModelBase[] selected) {
+	public UpdateBuildpathWizardPage(IPluginModelBase[] models, IPluginModelBase[] selected) {
 		super("UpdateBuildpathWizardPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-
-		this.selected = selected;
+		this.fUnmigrated = models;
+		this.fSelected = selected;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
@@ -101,7 +99,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		gd.widthHint = 300;
 		
 		pluginListViewer.setInput(PDEPlugin.getDefault());
-		tablePart.setSelection(selected);
+		tablePart.setSelection(fSelected);
 
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -125,29 +123,4 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	public boolean isPageComplete() {
 		return tablePart.getSelectionCount() > 0;
 	}
-
-	private Object[] getModels() {
-		Vector result = new Vector();
-		try {
-			IPluginModelBase[] models =
-				PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-			for (int i = 0; i < models.length; i++) {
-				// We should only care about Java nature, not
-				// libraries. A plug-in may not have library but
-				// it may re-export plug-ins that do.
-				/* 
-				if (models[i].getPluginBase().getLibraries().length == 0)
-					continue;
-				*/
-				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
-					result.add(models[i]);
-			}
-			
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		
-		return result.toArray();
-	}
-
 }
