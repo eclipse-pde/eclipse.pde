@@ -132,8 +132,6 @@ public class Bundle extends BundleObject implements IBundle {
 	private void loadExports(IProject project) {
 		if (!OSGiWorkspaceModelManager.isJavaPluginProject(project))
 			return;
-		boolean binary =
-			OSGiWorkspaceModelManager.isBinaryPluginProject(project);
 		IJavaProject javaProject = JavaCore.create(project);
 		StringBuffer provides = new StringBuffer();
 		int added = 0;

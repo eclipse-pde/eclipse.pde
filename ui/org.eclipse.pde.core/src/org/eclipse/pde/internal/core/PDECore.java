@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -434,7 +435,31 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			runtimeSupport.shutdown();
 		if (tempFileManager != null)
 			tempFileManager.shutdown();
+		clearMetaData();
 		super.shutdown();
+	}
+	
+	private void clearMetaData() {
+		File file = getStateLocation().toFile();
+		File[] files = file.listFiles();
+		if (files != null) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory())
+					deleteFile(files[i]);
+			}
+		}
+	}
+	
+	private void deleteFile(File file) {
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			if (files != null) {
+				for (int i = 0; i < files.length; i++) {
+					deleteFile(files[i]);
+				}
+			}
+		}
+		file.delete();
 	}
 
 	private void loadRuntimeSupport() {
