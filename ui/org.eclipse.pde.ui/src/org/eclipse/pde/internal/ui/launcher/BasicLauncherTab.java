@@ -317,8 +317,6 @@ public class BasicLauncherTab
 		workspaceCombo.setItems((String[]) items.toArray(new String[items.size()]));
 		if (workspaceCombo.getItemCount() > 0)
 			workspaceCombo.select(0);
-		else
-			workspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
 
 		clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
 		askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
@@ -405,12 +403,14 @@ public class BasicLauncherTab
 	protected void saveWorkspaceDataSection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
 		config.setAttribute(LOCATION + String.valueOf(0), workspaceCombo.getText());
-		String[] items = workspaceCombo.getItems();
-		int nEntries = Math.min(items.length, 5);
-		for (int i = 0; i < nEntries; i++) {
-			config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
+		if (workspaceCombo.getItemCount() > 1) {
+			String[] items = workspaceCombo.getItems();
+			int nEntries = Math.min(items.length, 5);
+			for (int i = 0; i < nEntries; i++) {
+				config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
+			}
 		}
-		
+
 		config.setAttribute(DOCLEAR, clearWorkspaceCheck.getSelection());
 		config.setAttribute(ASKCLEAR, askClearCheck.getSelection());
 	}
