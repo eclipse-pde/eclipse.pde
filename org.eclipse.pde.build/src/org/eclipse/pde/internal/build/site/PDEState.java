@@ -293,7 +293,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
-		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version)) {
+		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
 			return getResolvedBundle(bundleId);
 		}
 		BundleDescription description = getState().getBundle(bundleId, new Version(version));

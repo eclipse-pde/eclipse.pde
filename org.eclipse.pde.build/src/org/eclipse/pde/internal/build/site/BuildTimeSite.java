@@ -114,7 +114,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 					return features[i].getFeature(null);
 		}
 		int qualifierIdx = -1;
-		if ((qualifierIdx = versionId.indexOf(".qualifier"))!= -1) {
+		if (versionId != null && (qualifierIdx = versionId.indexOf(".qualifier"))!= -1) {
 			Version versionToMatch = new Version(versionId.substring(0, qualifierIdx));
 			for (int i = 0; i < features.length; i++) {
 				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) && new Version(features[i].getVersionedIdentifier().getVersion().toString()).matchMinor(versionToMatch))
