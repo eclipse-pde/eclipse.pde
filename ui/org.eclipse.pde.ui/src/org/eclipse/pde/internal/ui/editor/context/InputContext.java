@@ -115,11 +115,6 @@ public abstract class InputContext {
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
 		return new IDocumentSetupParticipant() {
 			public void setup(IDocument document) {
-				IDocumentPartitioner partitioner = createDocumentPartitioner();
-				if (partitioner != null) {
-					document.setDocumentPartitioner(partitioner);
-					partitioner.connect(document);
-				}
 			}			
 		};
 	}

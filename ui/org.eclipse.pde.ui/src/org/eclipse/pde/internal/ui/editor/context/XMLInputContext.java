@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
 import java.util.*;
+
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.*;
@@ -39,6 +41,10 @@ public abstract class XMLInputContext extends UTF8InputContext {
 						XMLPartitionScanner.XML_TAG,
 						XMLPartitionScanner.XML_COMMENT});
 		return partitioner;
+	}
+	
+	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
+		return new XMLDocumentSetupParticpant();
 	}
 	
 	/* (non-Javadoc)
