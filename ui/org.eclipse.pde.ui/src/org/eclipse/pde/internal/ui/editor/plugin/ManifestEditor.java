@@ -122,7 +122,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		IPluginBase pluginBase = model.getPluginBase(true);
 		try {
-			pluginBase.setSchemaVersion("3.0");
+			pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$
 		}
 		catch (CoreException e) {
 		}
