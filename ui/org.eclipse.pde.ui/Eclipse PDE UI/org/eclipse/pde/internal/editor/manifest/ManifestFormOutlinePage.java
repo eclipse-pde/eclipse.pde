@@ -154,6 +154,10 @@ String getObjectLabel(Object obj) {
 			return pointInfo.getResourceString(pointInfo.getName());
 		}
 	}
+	if (obj instanceof IPluginExtensionPoint) {
+		IPluginExtensionPoint point = (IPluginExtensionPoint)obj;
+		return point.getResourceString(point.getName());
+	}
 	return null;
 }
 private Image getPageImage(PDEFormPage page) {

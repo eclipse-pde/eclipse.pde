@@ -35,8 +35,8 @@ public void createInitialLayout(IPageLayout factory) {
 			(float) 0.72,
 			factory.getEditorArea());
 
-	bottomRight.addView("org.eclipse.pde.runtime.LogView");
 	bottomRight.addView(IPageLayout.ID_TASK_LIST);
+	bottomRight.addView("org.eclipse.pde.runtime.LogView");
 
 	factory.addView(
 		IPageLayout.ID_PROP_SHEET, 
