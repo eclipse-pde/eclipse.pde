@@ -70,7 +70,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		if (filename != null)
 			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.print("useJARFormat=\"" + Boolean.toString(fPage1.useJARFormat()) + "\" ");
+		writer.print("useJARFormat=\"" + Boolean.toString(fPage1.useJARFormat()) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("exportSource=\"" + Boolean.toString(fPage1.doExportSource()) + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		writer.println("\t</target>"); //$NON-NLS-1$
 		writer.println("</project>"); //$NON-NLS-1$

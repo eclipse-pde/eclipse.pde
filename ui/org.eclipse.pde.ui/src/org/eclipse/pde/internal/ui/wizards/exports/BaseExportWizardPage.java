@@ -200,7 +200,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fIncludeSource.setLayoutData(gd);
 		
 		fJarButton = new Button(comp, SWT.CHECK);
-		fJarButton.setText("Package each plug-in in a JAR archive");
+		fJarButton.setText(PDEPlugin.getResourceString("BaseExportWizardPage.packageJARs")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fJarButton.setLayoutData(gd);

@@ -157,7 +157,7 @@ public abstract class BaseExportWizard
 	protected abstract void scheduleExportJob();
 	
 	protected String getExportOperation() {
-		return fPage1.doExportToDirectory() ? "directory" : "zip"; 
+		return fPage1.doExportToDirectory() ? "directory" : "zip";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

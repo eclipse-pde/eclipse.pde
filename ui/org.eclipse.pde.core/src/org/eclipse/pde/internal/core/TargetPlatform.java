@@ -127,14 +127,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static void checkPluginPropertiesConsistency(Map map, File configDir) {
-		File runtimeDir = new File(configDir, "org.eclipse.core.runtime");
+		File runtimeDir = new File(configDir, "org.eclipse.core.runtime"); //$NON-NLS-1$
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
 			Iterator iter = map.values().iterator();
 			while (iter.hasNext()) {
 				IPluginModelBase model = (IPluginModelBase)iter.next();
 				if (model.getUnderlyingResource() != null) {
-					File properties = new File(model.getInstallLocation(), "plugin.properties");
+					File properties = new File(model.getInstallLocation(), "plugin.properties"); //$NON-NLS-1$
 					if (properties.lastModified() > timestamp) {
 						CoreUtility.deleteContent(runtimeDir);
 						break;
