@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
@@ -154,12 +158,8 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 	public void initialize(Object modelObject) {
 		IBuildModel model = (IBuildModel) modelObject;
-
 		super.initialize(model);
-		String pluginID = model.getUnderlyingResource().getProject().getName();
-		String title = 
-			PDECore.getDefault().findPlugin(pluginID).getTranslatedName();
-		setHeadingText(title);
+		setHeadingText(getText());
 		((Composite) getControl()).layout(true);
 	}
 	
@@ -180,6 +180,24 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 
 	public void setFocus() {
+	}
+	
+	private String getText() {
+		IBuildModel buildModel = (IBuildModel)page.getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		String label = null;
+		if (model instanceof IFeatureModel) {
+			label = ((IFeatureModel)model).getFeature().getLabel();
+			if (label == null || label.trim().length() == 0)
+				label = ((IFeatureModel)model).getFeature().getId();
+		} else {
+			label = ((IPluginModelBase)model).getPluginBase().getName();
+			if (label == null || label.trim().length() == 0)
+				label = ((IPluginModelBase)model).getPluginBase().getId();
+		}
+		
+		return label;
 	}
 
 }
