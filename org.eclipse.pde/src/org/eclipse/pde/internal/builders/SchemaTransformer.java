@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
@@ -38,7 +39,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
+import org.eclipse.pde.internal.core.schema.DocumentSection;
 import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -64,38 +67,39 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private static final String COLOR_COPYRIGHT = "#336699";
 	private File tempCSSFile;
 	private String err;
-	public static final String[] forbiddenEndTagKeys = {
-		"area",
-		"base",
-		"basefont",
-		"br",
-		"col",
-		"frame",
-		"hr",
-		"img",
-		"input",
-		"isindex",
-		"link",
-		"meta",
-		"param"
-	};
-	private static final String[] optionalEndTagKeys={
-		"body",
-		"colgroup",
-		"dd",
-		"dt",
-		"head",
-		"html",
-		"li",
-		"option",
-		"p",
-		"tbody",
-		"td",
-		"tfoot",
-		"th",
-		"thead",
-		"tr"
-	};
+	private int linenum;
+	public static final String[] forbiddenEndTagKeys =
+		{
+			"area",
+			"base",
+			"basefont",
+			"br",
+			"col",
+			"frame",
+			"hr",
+			"img",
+			"input",
+			"isindex",
+			"link",
+			"meta",
+			"param" };
+	private static final String[] optionalEndTagKeys =
+		{
+			"body",
+			"colgroup",
+			"dd",
+			"dt",
+			"head",
+			"html",
+			"li",
+			"option",
+			"p",
+			"tbody",
+			"td",
+			"tfoot",
+			"th",
+			"thead",
+			"tr" };
 
 	private void appendAttlist(
 		PrintWriter out,
@@ -192,15 +196,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 			return true;
 		return false;
 	}
-	
+
 	public void transform(
 		URL schemaURL,
 		InputStream is,
 		PrintWriter out,
 		PluginErrorReporter reporter) {
-			transform(schemaURL,is,out,reporter,null);
+		transform(schemaURL, is, out, reporter, null);
 	}
-		
+
 	public void transform(
 		URL schemaURL,
 		InputStream is,
@@ -208,6 +212,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		PluginErrorReporter reporter,
 		URL cssURL) {
 		SourceDOMParser parser = createDOMTree(is, reporter);
+
 		if (parser == null)
 			return;
 		Node root = parser.getDocument().getDocumentElement();
@@ -218,7 +223,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			&& verifySections(schema, reporter)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_OPEN_TAGS))
-			transform(out, schema,cssURL);
+			transform(out, schema, cssURL);
 	}
 
 	private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
@@ -321,27 +326,41 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 		return errors;
 	}
-	
-	public void addPlatformCSS(PrintWriter out, URL cssURL){
+
+	public void addPlatformCSS(PrintWriter out, URL cssURL) {
 		File cssFile;
-		
-			if (cssURL ==null){
-				PluginDescriptor descriptor = (PluginDescriptor)  Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user");
-				if (descriptor==null)
-					return;
-				cssFile = new File(descriptor.getInstallURLInternal().getFile() + "book.css");
-			} else {
-				cssFile = new File (cssURL.getFile());
-			}
+
+		if (cssURL == null) {
+			PluginDescriptor descriptor =
+				(PluginDescriptor) Platform
+					.getPluginRegistry()
+					.getPluginDescriptor(
+					"org.eclipse.platform.doc.user");
+			if (descriptor == null)
+				return;
+			cssFile =
+				new File(
+					descriptor.getInstallURLInternal().getFile() + "book.css");
+		} else {
+			cssFile = new File(cssURL.getFile());
+		}
 		try {
-			tempCSSFile = PDECore.getDefault().getTempFileManager().createTempFile(this,"book", ".css");
+			tempCSSFile =
+				PDECore.getDefault().getTempFileManager().createTempFile(
+					this,
+					"book",
+					".css");
 			FileReader freader = new FileReader(cssFile);
 			BufferedReader breader = new BufferedReader(freader);
-			PrintWriter pwriter = new PrintWriter(new FileOutputStream(tempCSSFile));
-			while (breader.ready()){
+			PrintWriter pwriter =
+				new PrintWriter(new FileOutputStream(tempCSSFile));
+			while (breader.ready()) {
 				pwriter.println(breader.readLine());
 			}
-			out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+tempCSSFile.getName()+"\"/>");
+			out.println(
+				"<link rel=\"stylesheet\" type=\"text/css\" href=\""
+					+ tempCSSFile.getName()
+					+ "\"/>");
 			pwriter.close();
 			breader.close();
 			freader.close();
@@ -350,7 +369,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			// may want to log this error in the future.
 		}
 	}
-	
+
 	public void transform(PrintWriter out, ISchema schema) {
 		transform(out, schema, null);
 	}
@@ -363,7 +382,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
 		addStyle(out);
 		addPlatformCSS(out, cssURL);
-			
+
 		out.println("</HEAD>");
 		out.println("<HTML>");
 		out.println("<BODY>");
@@ -376,8 +395,16 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.println("<p><div class=header>Configuration Markup:</div></p>");
 		transformMarkup(out, schema);
 		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
-		transformSection(out, schema, "API Information:", IDocumentSection.API_INFO);
-		transformSection(out, schema, "Supplied Implementation:", IDocumentSection.IMPLEMENTATION);
+		transformSection(
+			out,
+			schema,
+			"API Information:",
+			IDocumentSection.API_INFO);
+		transformSection(
+			out,
+			schema,
+			"Supplied Implementation:",
+			IDocumentSection.IMPLEMENTATION);
 		out.println("<div class=copyright-text>");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
 		out.println("</div>");
@@ -387,11 +414,24 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 	private void addStyle(PrintWriter out) {
 		out.println("<STYLE type=\"text/css\">");
-		out.println(".header {font-family: sans-serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
-		out.println(".copyright-text {font-family: sans-serif; font-size: 10px; color: "+COLOR_COPYRIGHT+"; display:inline }");
-		out.println("samp.dtd {font-family: sans-serif; color: "+COLOR_DTD +"; display: inline}");
-		out.println(".tag {font-family: sans-serif; color: "+COLOR_TAG +"; display:inline}");
-		out.println(".cstring {font-family: sans-serif; color: "+COLOR_CSTRING +"; display:inline}");
+		out.println(
+			".header {font-family: sans-serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
+		out.println(
+			".copyright-text {font-family: sans-serif; font-size: 10px; color: "
+				+ COLOR_COPYRIGHT
+				+ "; display:inline }");
+		out.println(
+			"samp.dtd {font-family: sans-serif; color: "
+				+ COLOR_DTD
+				+ "; display: inline}");
+		out.println(
+			".tag {font-family: sans-serif; color: "
+				+ COLOR_TAG
+				+ "; display:inline}");
+		out.println(
+			".cstring {font-family: sans-serif; color: "
+				+ COLOR_CSTRING
+				+ "; display:inline}");
 		out.println("</STYLE>");
 	}
 
@@ -488,180 +528,280 @@ public class SchemaTransformer implements ISchemaTransformer {
 		transformSection(out, schema, null, sectionId);
 	}
 
-	private IDocumentSection findSection(
+	private DocumentSection findSection(
 		IDocumentSection[] sections,
 		String sectionId) {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].getSectionId().equals(sectionId)) {
-				return sections[i];
+				return (DocumentSection) sections[i];
 			}
 		}
 		return null;
 	}
-	
-	private boolean optionalEndTag(String tag){
-		for (int i = 0; i<optionalEndTagKeys.length; i++){
+
+	private boolean optionalEndTag(String tag) {
+		for (int i = 0; i < optionalEndTagKeys.length; i++) {
 			if (tag.equalsIgnoreCase(optionalEndTagKeys[i]))
 				return true;
 		}
 		return false;
 	}
 
-	private boolean forbiddenEndTag(String tag){
-		for (int i = 0; i<forbiddenEndTagKeys.length; i++){
+	private boolean forbiddenEndTag(String tag) {
+		for (int i = 0; i < forbiddenEndTagKeys.length; i++) {
 			if (tag.equalsIgnoreCase(forbiddenEndTagKeys[i]))
 				return true;
 		}
 		return false;
 	}
-	private String verifyDescription(String desc){
+	private String verifyDescription(String desc) {
 		boolean openTag = false;
 		boolean isPre = false;
 		Stack tagStack = new Stack();
-		if (desc !=null && desc.trim().length()!=0){
-			StringTokenizer text = new StringTokenizer(desc, "<>", true);
-			openTag = false;
-	
-			while (text.countTokens() >0){
+		Stack lineStack = new Stack();
+		linenum = 1;
 
-				if (text.nextToken().equals("<")){
-					openTag = true;
+		if (desc == null || desc.trim().length() == 0) 
+			return null;
 			
-					if (text.hasMoreTokens()){
-						String tag = text.nextToken().trim();
-						
-						// ignore eol char
-						if (tag.indexOf('\n')!=-1)
-							tag = tag.replace('\n', ' ');
-						
-						int loc = tag.indexOf(" ");
-						int locEnd = tag.lastIndexOf("/");
-						
-						tag = (loc == -1 ? tag : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
-						// ignore opened tag if it is empty, ends itself or is a comment 
-						if (tag.equalsIgnoreCase(">")  
-							|| (locEnd==tag.length()-1 && text.hasMoreTokens() && text.nextToken().equals(">"))
-							|| (tag.indexOf("!")==0 && text.hasMoreTokens() && text.nextToken().equals(">"))
-							|| (forbiddenEndTag(tag) && text.hasMoreTokens() && text.nextToken().equals(">"))){
-							openTag = false;
-							continue;
-						}
+		StringTokenizer text = new StringTokenizer(desc, "<>", true);
 
-						if (locEnd!=0){ // assert it is not an end tag
-							if (tag.equalsIgnoreCase("pre")){
-								isPre = true;		
-							} else if (!isPre){
-								if (!forbiddenEndTag(tag) &&
-								(!optionalEndTag(tag) 
-									|| CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)!=CompilerFlags.IGNORE)){
-									tagStack.add(tag);
-								}
-							}							
-						} else {
-							tag = tag.substring(1);  // take off "/" prefix and all existing attributes
-							if (isPre){
-								if (tag.equalsIgnoreCase("pre"))
-									isPre = false;
-								else
-									continue;
-							} else if (!tagStack.isEmpty() && tagStack.peek().toString().equalsIgnoreCase(tag)){
-								tagStack.pop();
-							} else if (forbiddenEndTag(tag)){
-								if (CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)!=CompilerFlags.IGNORE){
-									err = "FORBIDDEN";
-									return tag;
-								}
-							} else if (tagStack.isEmpty()){
-								err = "GENERAL";
-								return tag;
-							} else if (optionalEndTag(tagStack.peek().toString())){
-								err = "OPTIONAL";
-								return tagStack.peek().toString();
-							} else {
-								err = "GENERAL";
-								return tag;
+		openTag = false;
+
+		while (text.countTokens() > 0) {
+			String next = text.nextToken();
+			if (next.equals("<")) {
+				openTag = true;
+
+				if (text.hasMoreTokens()) {
+					String tag = text.nextToken();
+					
+					
+					if (StringUtils.lineSplit(tag).size() > 1)
+						linenum += StringUtils.lineSplit(tag).size()-1;
+
+					tag = tag.trim();
+
+					// ignore eol char
+					if (tag.indexOf('\n') != -1)
+						tag = tag.replace('\n', ' ');
+
+					int loc = tag.indexOf(" ");
+					int locEnd = tag.lastIndexOf("/");
+
+					tag = (loc == -1 ? tag : tag.substring(0, loc));
+					// trim all attributes if existing (i.e. color=blue)
+					// ignore opened tag if it is empty, ends itself or is a comment 
+					if (tag.equalsIgnoreCase(">")
+						|| (locEnd == tag.length() - 1 && text.hasMoreTokens() && text.nextToken().equals(">"))
+						|| (tag.indexOf("!") == 0 && text.hasMoreTokens() && text.nextToken().equals(">"))
+						|| (forbiddenEndTag(tag) && text.hasMoreTokens() && text.nextToken().equals(">"))) {
+						openTag = false;
+						continue;
+					}
+
+					if (locEnd != 0) { // assert it is not an end tag
+						if (tag.equalsIgnoreCase("pre")) {
+							isPre = true;
+						} else if (!isPre) {
+							if (!forbiddenEndTag(tag)
+								&& (!optionalEndTag(tag)
+									|| CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)!= CompilerFlags.IGNORE)) {
+								tagStack.push(tag);
+								lineStack.push(new Integer(linenum));
 							}
 						}
-				
-						if (text.hasMoreTokens() && text.nextToken().equals(">")){
-							openTag = false;
-						} else {
+					} else {
+						tag = tag.substring(1); // take off "/" prefix and all existing attributes
+						if (isPre) {
+							if (tag.equalsIgnoreCase("pre"))
+								isPre = false;
+							else
+								continue;
+						} else if (!tagStack.isEmpty()
+								&& tagStack.peek().toString().equalsIgnoreCase(tag)) {
+							tagStack.pop();
+							lineStack.pop();
+						} else if (forbiddenEndTag(tag)) {
+							if (CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)!= CompilerFlags.IGNORE) {
+								err = "FORBIDDEN";
+								return tag;
+							}
+						} else if (tagStack.isEmpty()) {
 							err = "GENERAL";
 							return tag;
+						} else if (optionalEndTag(tagStack.peek().toString())) {
+							err = "OPTIONAL";
+							linenum = ((Integer) lineStack.peek()).intValue();
+							return tagStack.peek().toString();
+						} else {
+							err = "GENERAL";
+							linenum = ((Integer) lineStack.peek()).intValue();
+							return tagStack.peek().toString();
 						}
 					}
+
+					if (text.hasMoreTokens()
+						&& text.nextToken().equals(">")) {
+						openTag = false;
+					} else {
+						err = "GENERAL";
+						return tag;
+					}
 				}
-		
+				} else if (StringUtils.lineSplit(next).size() > 1){
+					linenum += StringUtils.lineSplit(next).size()-1;
+				}
+
+		}
+
+		if (isPre || openTag || !tagStack.isEmpty()) {
+			if (!tagStack.isEmpty()
+				&& optionalEndTag(tagStack.peek().toString())) {
+				err = "OPTIONAL";
+				linenum = ((Integer) lineStack.peek()).intValue();
+				return tagStack.peek().toString();
 			}
-			if ( isPre || openTag || !tagStack.isEmpty()){
-				if (!tagStack.isEmpty() && optionalEndTag(tagStack.peek().toString())){
-					err = "OPTIONAL";
-					return tagStack.peek().toString();
-				}
-				err = "GENERAL";
-				return (!tagStack.isEmpty() ? tagStack.peek().toString() : "");
+			err = "GENERAL";
+			if (!tagStack.isEmpty()) {
+				linenum = ((Integer) lineStack.peek()).intValue();
+				return tagStack.peek().toString();
+			} else {
+				return "";
 			}
 		}
+
 		return null;
 	}
 
-	private boolean verifySections(ISchema schema, PluginErrorReporter reporter){
-		if (CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)==CompilerFlags.IGNORE 
-			&& CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)== CompilerFlags.IGNORE
-			&& CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)==CompilerFlags.IGNORE)
+	private boolean verifySections(
+		ISchema schema,
+		PluginErrorReporter reporter) {
+		if (CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+			== CompilerFlags.IGNORE
+			&& CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)
+				== CompilerFlags.IGNORE
+			&& CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)
+				== CompilerFlags.IGNORE)
 			return true;
 		boolean hasError = false;
-		IDocumentSection section = null;
+		DocumentSection section = null;
 		String sectionIds[] =
-			{	IDocumentSection.API_INFO,
-				IDocumentSection.EXAMPLES,
-				IDocumentSection.IMPLEMENTATION,
-				IDocumentSection.P_DESCRIPTION,
-				IDocumentSection.COPYRIGHT,
-				IDocumentSection.SINCE };
+			{
+				DocumentSection.API_INFO,
+				DocumentSection.EXAMPLES,
+				DocumentSection.IMPLEMENTATION,
+				DocumentSection.P_DESCRIPTION,
+				DocumentSection.COPYRIGHT,
+				DocumentSection.SINCE };
 		String errTag;
 		for (int i = 0; i < sectionIds.length; i++) {
 			section = findSection(schema.getDocumentSections(), sectionIds[i]);
-			if (section !=null){
+			if (section != null) {
 				String desc = section.getDescription();
 				errTag = verifyDescription(desc);
-				if (errTag!=null){
-					if (errTag.equals("")){
-						reporter.report(sectionIds[i] + ": Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-						hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
-					}else{
-						if (err.equals("FORBIDDEN")){
-							reporter.report(sectionIds[i] + ": Illegal end tag found. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) );
-							hasError = CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) == CompilerFlags.ERROR;
-						}else if (err.equals("OPTIONAL")){
-							reporter.report(sectionIds[i] + ": Missing optional end tag. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) );
-							hasError = CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) == CompilerFlags.ERROR;
-						}else{
-							reporter.report(sectionIds[i] + ": Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-							hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+				if (errTag != null) {
+					if (errTag.equals("")) {
+						reporter.report(
+							"Unmatched tags in documentation.",
+							((SchemaObject) section).getStartLine() + linenum,
+							CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+						hasError =
+							CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+								== CompilerFlags.ERROR;
+					} else {
+						if (err.equals("FORBIDDEN")) {
+							reporter.report(
+								"Found illegal end tag <"
+									+ errTag
+									+ ">.",
+								((SchemaObject) section).getStartLine()
+									+ linenum,
+								CompilerFlags.getFlag(
+									CompilerFlags.S_FORBIDDEN_END_TAGS));
+							hasError =
+								CompilerFlags.getFlag(
+									CompilerFlags.S_FORBIDDEN_END_TAGS)
+									== CompilerFlags.ERROR;
+						} else if (err.equals("OPTIONAL")) {
+							reporter.report(
+								"<"
+									+ errTag
+									+ "> missing optional end tag.",
+								((SchemaObject) section).getStartLine()
+									+ linenum,
+								CompilerFlags.getFlag(
+									CompilerFlags.S_OPTIONAL_END_TAGS));
+							hasError =
+								CompilerFlags.getFlag(
+									CompilerFlags.S_OPTIONAL_END_TAGS)
+									== CompilerFlags.ERROR;
+						} else {
+							reporter.report(
+								"<"
+									+ errTag
+									+ "> unmatched in documentation.",
+								((SchemaObject) section).getStartLine()
+									+ linenum,
+								CompilerFlags.getFlag(
+									CompilerFlags.S_OPEN_TAGS));
+							hasError =
+								CompilerFlags.getFlag(
+									CompilerFlags.S_OPEN_TAGS)
+									== CompilerFlags.ERROR;
 						}
 					}
 				}
 			}
 		}
 		errTag = verifyDescription(schema.getDescription());
-		if (errTag!=null){
-			if (errTag.equals("")){
-				reporter.report("description: Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-				hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
-			}else{
-				if (err.equals("FORBIDDEN")){
-					reporter.report("description: Illegal end tag found. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) );
-					hasError = CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) == CompilerFlags.ERROR;
-				}else if (err.equals("OPTIONAL")){
-					reporter.report("description: Missing optional end tag. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) );
-					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) == CompilerFlags.ERROR;
-				}else{
-					reporter.report("description: Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+		if (errTag != null) {
+			if (errTag.equals("")) {
+				reporter.report(
+					"Unmatched tags in documentation.",
+					((Schema) schema).getOverviewStartLine() + linenum,
+					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+				hasError =
+					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+						== CompilerFlags.ERROR;
+			} else {
+				if (err.equals("FORBIDDEN")) {
+					reporter.report(
+						"Found illegal end tag <"
+							+ errTag
+							+ ">. ",
+						((Schema) schema).getOverviewStartLine() + linenum,
+						CompilerFlags.getFlag(
+							CompilerFlags.S_FORBIDDEN_END_TAGS));
+					hasError =
+						CompilerFlags.getFlag(
+							CompilerFlags.S_FORBIDDEN_END_TAGS)
+							== CompilerFlags.ERROR;
+				} else if (err.equals("OPTIONAL")) {
+					reporter.report(
+						"<"
+							+ errTag
+							+ "> missing optional end tag.",
+						((Schema) schema).getOverviewStartLine() + linenum,
+						CompilerFlags.getFlag(
+							CompilerFlags.S_OPTIONAL_END_TAGS));
+					hasError =
+						CompilerFlags.getFlag(
+							CompilerFlags.S_OPTIONAL_END_TAGS)
+							== CompilerFlags.ERROR;
+				} else {
+					reporter.report(
+						"<"
+							+ errTag
+							+ "> unmatched in documentation.",
+						((Schema) schema).getOverviewStartLine() + linenum,
+						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+					hasError =
+						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+							== CompilerFlags.ERROR;
 				}
 			}
-		}	
+		}
 		return !hasError;
 	}
 
