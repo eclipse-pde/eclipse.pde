@@ -10,10 +10,10 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -34,6 +34,19 @@ public class BundlePluginBase
 	public void reset() {
 		libraries = null;
 		imports = null;
+	}
+
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {
+			reset();
+		} else if (event.getChangeType() == ModelChangedEvent.CHANGE) {
+			String header = event.getChangedProperty();
+			if (header.equals(IBundle.KEY_IMPORT_PACKAGE)
+				|| header.equals(IBundle.KEY_REQUIRE_BUNDLE))
+				imports = null;
+			else if (header.equals(IBundle.KEY_CLASSPATH))
+				libraries = null;
+		}
 	}
 
 	/*
@@ -170,7 +183,7 @@ public class BundlePluginBase
 		if (imports == null) {
 			imports = new ArrayList();
 			addImportsFromRequiredBundles(imports);
-			if (imports.size()==0)
+			if (imports.size() == 0)
 				addImportsFromImportedPackages(imports);
 		}
 		return (IPluginImport[]) imports.toArray(
@@ -248,11 +261,12 @@ public class BundlePluginBase
 				(IJavaElement[]) projects.toArray(
 					new IJavaProject[projects.size()]),
 				false);
-		final IProject [] result = new IProject[1];
+		final IProject[] result = new IProject[1];
 		result[0] = null;
-		IJavaSearchResultCollector collector = new IJavaSearchResultCollector() {
+		IJavaSearchResultCollector collector =
+			new IJavaSearchResultCollector() {
 			public void aboutToStart() {
-				System.out.println("Looking for package: "+packageName);
+				System.out.println("Looking for package: " + packageName);
 			}
 
 			public void accept(
@@ -262,7 +276,7 @@ public class BundlePluginBase
 				IJavaElement enclosingElement,
 				int accuracy)
 				throws CoreException {
-				if (resource!=null && result[0]==null)
+				if (resource != null && result[0] == null)
 					result[0] = resource.getProject();
 			}
 
@@ -275,14 +289,17 @@ public class BundlePluginBase
 		};
 		SearchEngine searchEngine = new SearchEngine();
 		try {
-			searchEngine.search(PDECore.getWorkspace(), pattern, scope, collector);
-			if (result[0]!=null) {
+			searchEngine.search(
+				PDECore.getWorkspace(),
+				pattern,
+				scope,
+				collector);
+			if (result[0] != null) {
 				ModelEntry entry = mmng.findEntry(result[0]);
-				if (entry!=null)
+				if (entry != null)
 					return entry.getId();
 			}
-		}
-		catch (JavaModelException e) {
+		} catch (JavaModelException e) {
 			PDECore.logException(e);
 		}
 		return null;

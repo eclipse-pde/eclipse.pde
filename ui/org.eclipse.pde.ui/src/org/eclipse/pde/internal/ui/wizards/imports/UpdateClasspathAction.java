@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
@@ -25,21 +24,22 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.ClasspathUtil;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
-
+public class UpdateClasspathAction implements IViewActionDelegate {
 	private ISelection fSelection;
 	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
 	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
 	private static final String KEY_SETTING = "Actions.classpath.setting"; //$NON-NLS-1$
 
-	public static class MissingPluginConfirmation implements IMissingPluginConfirmation {
+	public static class MissingPluginConfirmation
+		implements IMissingPluginConfirmation {
 		private boolean useProjectReference = false;
 		private boolean alreadyAsked = false;
 		public boolean getUseProjectReference() {
@@ -55,11 +55,8 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			final boolean[] result = new boolean[1];
 			display.syncExec(new Runnable() {
 				public void run() {
-					result[0] =
-						MessageDialog.openQuestion(
-							shell,
-							PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.title"), //$NON-NLS-1$
-							PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.message")); //$NON-NLS-1$
+						result[0] = MessageDialog.openQuestion(shell, PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.title"), //$NON-NLS-1$
+	PDEPlugin.getResourceString("UpdateClasspathAction.missingPlugin.message")); //$NON-NLS-1$
 				}
 			});
 			return result[0];
@@ -99,15 +96,22 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 				(IPluginModelBase[]) models.toArray(
 					new IPluginModelBase[models.size()]);
 			/*
-			ProgressMonitorDialog pd =
-				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-			run(true, pd, modelArray);
-			*/
+			 * ProgressMonitorDialog pd = new
+			 * ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+			 * run(true, pd, modelArray);
+			 */
 			UpdateBuildpathWizard wizard =
 				new UpdateBuildpathWizard(modelArray);
-			WizardDialog dialog =
+			final WizardDialog dialog =
 				new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			dialog.open();
+			BusyIndicator
+				.showWhile(
+					PDEPlugin.getActiveWorkbenchShell().getDisplay(),
+					new Runnable() {
+				public void run() {
+					dialog.open();
+				}
+			});
 		}
 	}
 
@@ -158,8 +162,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_UPDATE),
 			models.length);
-		boolean useContainers =
-			PDEPlugin.getUseClasspathContainers();
+		boolean useContainers = PDEPlugin.getUseClasspathContainers();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
@@ -169,7 +172,11 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 					continue;
 				IProgressMonitor subMonitor =
 					new SubProgressMonitor(monitor, 1);
-				setProjectBuildpath(model, useContainers, confirmation, subMonitor);
+				setProjectBuildpath(
+					model,
+					useContainers,
+					confirmation,
+					subMonitor);
 				if (monitor.isCanceled())
 					break;
 			}
@@ -189,7 +196,11 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 			PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
 		monitor.beginTask(message, 1);
 		try {
-			ClasspathUtil.setClasspath(model, useContainers, confirmation, monitor);
+			ClasspathUtil.setClasspath(
+				model,
+				useContainers,
+				confirmation,
+				monitor);
 			monitor.worked(1);
 		} finally {
 			monitor.done();
@@ -205,7 +216,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 	/*
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window) {
+	public void init(IViewPart view) {
 	}
 
 	/*

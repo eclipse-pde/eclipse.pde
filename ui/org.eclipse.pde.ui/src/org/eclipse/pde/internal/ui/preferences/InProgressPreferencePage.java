@@ -44,7 +44,7 @@ public class InProgressPreferencePage extends PreferencePage implements IWorkben
 		enableRuntimeSupport.setText("&Enable OSGi runtime support"); //$NON-NLS-1$
 		enableRuntimeSupport.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				warnRestart();
+				//warnRestart();
 			}
 		});
 		enableRuntimeSupport.setSelection(store.getBoolean(ENABLE_ALT_RUNTIME));
@@ -67,6 +67,7 @@ public class InProgressPreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		store.setValue(ENABLE_ALT_RUNTIME, enableRuntimeSupport.getSelection());
 		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().resetAlternativeRuntimeSupport();
 		return super.performOk();
 	}
 }

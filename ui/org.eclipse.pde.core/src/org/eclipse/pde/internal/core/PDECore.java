@@ -393,6 +393,17 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		Preferences pref = getDefault().getPluginPreferences();
 		return pref.getBoolean(ICoreConstants.ENABLE_ALT_RUNTIME);
 	}
+	
+	public void resetAlternativeRuntimeSupport() {
+		if (modelManager != null) {
+			modelManager.shutdown();
+			modelManager = null;
+		}
+		if (runtimeSupport != null) {
+			runtimeSupport.shutdown();
+			runtimeSupport = null;
+		}
+	}
 
 	private void initializeLaunchedInstanceFlag() {
 		String[] args = BootLoader.getCommandLineArgs();
@@ -427,14 +438,15 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	public void shutdown() throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
-		if (schemaRegistry != null)
+		if (schemaRegistry != null) {
 			schemaRegistry.shutdown();
-		if (modelManager != null)
-			modelManager.shutdown();
-		if (runtimeSupport != null)
-			runtimeSupport.shutdown();
-		if (tempFileManager != null)
+			schemaRegistry = null;
+		}
+		resetAlternativeRuntimeSupport();
+		if (tempFileManager != null) {
 			tempFileManager.shutdown();
+			tempFileManager = null;
+		}
 		clearMetaData();
 		super.shutdown();
 	}

@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.jar.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;

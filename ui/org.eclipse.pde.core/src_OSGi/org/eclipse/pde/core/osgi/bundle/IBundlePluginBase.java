@@ -6,7 +6,8 @@
  */
 package org.eclipse.pde.core.osgi.bundle;
 
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.plugin.IPluginBase;
 
 /**
  * @author dejan
@@ -14,5 +15,5 @@ import org.eclipse.pde.core.plugin.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public interface IBundlePluginBase extends IPluginBase {
+public interface IBundlePluginBase extends IPluginBase, IModelChangedListener {
 }
