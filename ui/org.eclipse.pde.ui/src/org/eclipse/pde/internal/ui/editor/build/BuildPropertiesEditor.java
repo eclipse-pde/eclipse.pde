@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IEditorInput;
 
 public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public static final String BUILD_PAGE_TITLE = "BuildEditor.BuildPage.title";
@@ -136,6 +135,10 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 				new ByteArrayInputStream(text.getBytes("UTF8"));
 			try {
 				model.reload(stream, false);
+				if (model instanceof IEditable) {
+					((IEditable)model).setDirty(false);
+					fireSaveNeeded();
+				}
 			} catch (CoreException e) {
 				cleanModel = false;
 			}

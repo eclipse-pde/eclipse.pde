@@ -592,6 +592,13 @@ public abstract class PDEMultiPageEditor
 			PDEPlugin.logException(e);
 		}
 	}
+	
+	public void doRevert() {
+		PDESourcePage sourcePage = (PDESourcePage)getPage(getSourcePageId());
+		sourcePage.doRevertToSaved();
+		updateModel();
+		fireSaveNeeded();
+	}
 
 	protected abstract boolean updateModel();
 

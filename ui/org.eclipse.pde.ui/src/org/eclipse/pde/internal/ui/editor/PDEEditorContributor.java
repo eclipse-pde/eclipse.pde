@@ -19,6 +19,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	public static final String ACTIONS_CUT = "EditorActions.cut";
 	public static final String ACTIONS_COPY = "EditorActions.copy";
 	public static final String ACTIONS_PASTE = "EditorActions.paste";
+	public static final String ACTIONS_REVERT = "EditorActions.revert";
 	private SubMenuManager subMenuManager;
 	private SubStatusLineManager subStatusManager;
 	private SubToolBarManager subToolbarManager;
@@ -26,6 +27,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private PDEMultiPageEditor editor;
 	private IPDEEditorPage page;
 	private SaveAction saveAction;
+	private RevertAction revertAction;
 	private ClipboardAction cutAction;
 	private ClipboardAction copyAction;
 	private ClipboardAction pasteAction;
@@ -108,6 +110,22 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 				setEnabled(false);
 		}
 	}
+	
+	class RevertAction extends Action implements IUpdate {
+		public RevertAction() {
+		}
+		public void run() {
+			if (editor != null)
+			editor.doRevert();
+		}
+		public void update() {
+			if (editor != null) {
+				setEnabled(editor.isDirty());
+			}
+			else 
+				setEnabled(false);
+		}
+	}
 
 	public PDEEditorContributor(String menuName) {
 		this.menuName = menuName;
@@ -125,6 +143,9 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		mng.add(cutAction);
 		mng.add(copyAction);
 		mng.add(pasteAction);
+		mng.add(new Separator());
+		mng.add(revertAction);
+
 	}
 	
 	public void contextMenuAboutToShow(IMenuManager mng) {
@@ -183,6 +204,9 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 
 		saveAction = new SaveAction();
 		saveAction.setText(PDEPlugin.getResourceString(ACTIONS_SAVE));
+		
+		revertAction = new RevertAction();
+		revertAction.setText(PDEPlugin.getResourceString(ACTIONS_REVERT));
 
 	}
 	public void setActiveEditor(IEditorPart targetEditor) {
@@ -259,6 +283,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	}
 	public void updateActions() {
 		saveAction.update();
+		revertAction.update();
 	}
 
 	public void updateSelectableActions(ISelection selection) {
