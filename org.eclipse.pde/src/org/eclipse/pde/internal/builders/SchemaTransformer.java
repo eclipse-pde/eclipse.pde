@@ -30,17 +30,17 @@ public static final String KEY_DEPRECATED_TYPE =
 		"Builders.Schema.deprecatedType";
 
 	private void appendAttlist(
-		StringBuffer out,
+		PrintWriter out,
 		ISchemaAttribute att,
 		int maxWidth) {
 		// add three spaces
-		out.append("<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+		out.print("<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		// add name
-		out.append(att.getName());
+		out.print(att.getName());
 		// fill spaces to allign data type
 		int delta = maxWidth - att.getName().length();
 		for (int i = 0; i < delta + 1; i++) {
-			out.append("&nbsp;");
+			out.print("&nbsp;");
 		}
 		// add data type
 		ISchemaSimpleType type = att.getType();
@@ -49,35 +49,35 @@ public static final String KEY_DEPRECATED_TYPE =
 			restriction = type.getRestriction();
 		String typeName = type != null ? type.getName().toLowerCase() : "string";
 		if (typeName.equals("boolean")) {
-			out.append("(true | false) \"false\"");
+			out.print("(true | false) \"false\"");
 		} else if (restriction != null) {
 			appendRestriction(restriction, out);
 		} else {
-			out.append("CDATA ");
+			out.print("CDATA ");
 		}
 
 		// add use
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
-			out.append("#REQUIRED");
+			out.print("#REQUIRED");
 		else if (att.getUse() == ISchemaAttribute.DEFAULT) {
-			out.append("\"" + att.getValue() + "\"");
+			out.print("\"" + att.getValue() + "\"");
 		} else
-			out.append("#IMPLIED");
-		out.append("</samp>\n");
+			out.print("#IMPLIED");
+		out.println("</samp>");
 	}
 	private void appendRestriction(
 		ISchemaRestriction restriction,
-		StringBuffer out) {
+		PrintWriter out) {
 		if (restriction instanceof ChoiceRestriction) {
 			ChoiceRestriction cr = (ChoiceRestriction) restriction;
 			String[] choices = cr.getChoicesAsStrings();
-			out.append("(");
+			out.print("(");
 			for (int i = 0; i < choices.length; i++) {
 				if (i > 0)
-					out.append("|");
-				out.append(choices[i]);
+					out.print("|");
+				out.print(choices[i]);
 			}
-			out.append(") ");
+			out.print(") ");
 		}
 	}
 	private int calculateMaxAttributeWidth(ISchemaAttribute[] attributes) {
@@ -121,7 +121,7 @@ public static final String KEY_DEPRECATED_TYPE =
 	}
 	public void transform(
 		InputStream is,
-		StringBuffer out,
+		PrintWriter out,
 		PluginErrorReporter reporter) {
 		SourceDOMParser parser = createDOMTree(is, reporter);
 		if (parser == null)
@@ -229,58 +229,58 @@ public static final String KEY_DEPRECATED_TYPE =
 		return errors;
 	}
 
-	public void transform(StringBuffer out, ISchema schema) {
-		out.append(
-			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n");
-		out.append("<HEAD>\n");
-		out.append(
-			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n");
-		out.append("</HEAD>\n");
-		out.append("<HTML>\n");
-		out.append("<BODY>\n");
-		out.append("<H1><CENTER>" + schema.getName() + "</CENTER></H1>\n");
-		out.append("<H2>Identifier</H2>\n");
-		out.append(schema.getQualifiedPointId());
-		out.append("<H2>Description</H2>\n");
+	public void transform(PrintWriter out, ISchema schema) {
+		out.println(
+			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
+		out.print("<HEAD>");
+		out.println(
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+		out.println("</HEAD>");
+		out.println("<HTML>");
+		out.println("<BODY>");
+		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
+		out.println("<H2>Identifier</H2>");
+		out.print(schema.getQualifiedPointId());
+		out.println("<H2>Description</H2>");
 		transformText(out, schema.getDescription());
-		out.append("<H2>Markup</H2>\n");
+		out.println("<H2>Markup</H2>");
 		transformMarkup(out, schema);
-		out.append("<H2>Example</H2>\n");
+		out.println("<H2>Example</H2>");
 		transformSection(out, schema, IDocumentSection.EXAMPLES);
-		out.append("<H2>API Information</H2>\n");
+		out.println("<H2>API Information</H2>");
 		transformSection(out, schema, IDocumentSection.API_INFO);
-		out.append("<H2>Supplied Implementation</H2>\n");
+		out.println("<H2>Supplied Implementation</H2>");
 		transformSection(out, schema, IDocumentSection.IMPLEMENTATION);
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
-		out.append("</BODY>\n");
-		out.append("</HTML>\n");
+		out.println("</BODY>");
+		out.println("</HTML>");
 	}
-	private void transformElement(StringBuffer out, ISchemaElement element) {
+	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation();
-		out.append("<p><samp>&nbsp;&nbsp; &lt;!ELEMENT " + name + " " + dtd);
-		out.append("&gt;</samp>\n");
+		out.print("<p><samp>&nbsp;&nbsp; &lt;!ELEMENT " + name + " " + dtd);
+		out.println("&gt;</samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 		if (attributes.length == 0)
 			return;
 
-		out.append("<br><samp>&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>\n");
+		out.println("<br><samp>&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
 		int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 		for (int i = 0; i < attributes.length; i++) {
 			appendAttlist(out, attributes[i], maxWidth);
 		}
-		out.append("<br><samp>&nbsp;&nbsp; &gt;</samp>\n");
+		out.println("<br><samp>&nbsp;&nbsp; &gt;</samp>");
 
-		out.append("<ul>\n");
+		out.println("<ul>");
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
-			out.append(
+			out.print(
 				"<li><b>" + att.getName() + "</b> - " + att.getDescription() + "</li>");
 		}
-		out.append("</ul>\n");
+		out.println("</ul>");
 	}
-	private void transformMarkup(StringBuffer out, ISchema schema) {
+	private void transformMarkup(PrintWriter out, ISchema schema) {
 		ISchemaElement[] elements = schema.getElements();
 
 		for (int i = 0; i < elements.length; i++) {
@@ -289,7 +289,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		}
 	}
 	private void transformSection(
-		StringBuffer out,
+		PrintWriter out,
 		ISchema schema,
 		String sectionId) {
 		IDocumentSection[] sections = schema.getDocumentSections();
@@ -304,19 +304,19 @@ public static final String KEY_DEPRECATED_TYPE =
 			return;
 		transformText(out, section.getDescription());
 	}
-	private void transformText(StringBuffer out, String text) {
+	private void transformText(PrintWriter out, String text) {
 		boolean preformatted = false;
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 			if (c == '<') {
 				if (isPreStart(text, i)) {
-					out.append("<pre>");
+					out.print("<pre>");
 					i += 4;
 					preformatted = true;
 					continue;
 				}
 				if (isPreEnd(text, i)) {
-					out.append("</pre>");
+					out.print("</pre>");
 					i += 5;
 					preformatted = false;
 					continue;
@@ -325,19 +325,19 @@ public static final String KEY_DEPRECATED_TYPE =
 			if (preformatted) {
 				switch (c) {
 					case '<' :
-						out.append("&lt;");
+						out.print("&lt;");
 						break;
 					case '>' :
-						out.append("&gt;");
+						out.print("&gt;");
 						break;
 					case '&' :
-						out.append("&amp;");
+						out.print("&amp;");
 						break;
 					default :
-						out.append(c);
+						out.print(c);
 				}
 			} else
-				out.append(c);
+				out.print(c);
 		}
 	}
 }

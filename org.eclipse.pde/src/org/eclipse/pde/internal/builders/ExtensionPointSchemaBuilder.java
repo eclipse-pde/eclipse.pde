@@ -113,9 +113,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		Path outputPath = new Path(outputFileName);
 
 		try {
-			StringBuffer outputBuffer = new StringBuffer();
 			InputStream source = file.getContents(false);
-			transform(source, outputBuffer, reporter);
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter pwriter = new PrintWriter(stringWriter);
+			transform(source, pwriter, reporter);
+			stringWriter.close();
 			if (reporter.getErrorCount() == 0) {
 				IPath outputFolderPath =
 					file.getProject().getFullPath().append(getDocLocation());
@@ -125,7 +127,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				}
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				ByteArrayInputStream target =
-					new ByteArrayInputStream(outputBuffer.toString().getBytes("UTF8"));
+					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
 				if (!workspace.getRoot().exists(outputPath)) {
 					// the file does not exist - create it
 					outputFile.create(target, true, monitor);
@@ -136,6 +138,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		} catch (UnsupportedEncodingException e) {
 			PDE.logException(e);
 		} catch (CoreException e) {
+			PDE.logException(e);
+		}
+		catch (IOException e) {
 			PDE.logException(e);
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
@@ -202,7 +207,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 	private void transform(
 		InputStream input,
-		StringBuffer output,
+		PrintWriter output,
 		PluginErrorReporter reporter) {
 		transformer.transform(input, output, reporter);
 	}
