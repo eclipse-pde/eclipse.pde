@@ -447,7 +447,11 @@ public class DetailExtensionSection
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			extensionTree.refresh();
+			extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					extensionTree.refresh();
+				}
+			});
 			return;
 		}
 		Object changeObject = event.getChangedObjects()[0];
