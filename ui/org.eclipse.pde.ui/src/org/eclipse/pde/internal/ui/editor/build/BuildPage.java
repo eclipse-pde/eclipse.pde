@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.*;
@@ -105,7 +106,7 @@ public class BuildPage extends PDEFormPage {
 		handleCustomCheckState(getCustomSelection());
 		WorkbenchHelp.setHelp(form, IHelpContextIds.BUILD_PAGE);
 	}
-	
+
 	private IBuildModel getBuildModel() {
 		InputContext context = getPDEEditor().getContextManager()
 				.findContext(BuildInputContext.CONTEXT_ID);
@@ -165,9 +166,6 @@ public class BuildPage extends PDEFormPage {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}	
-	}
-	
-	public void setFocus() {
 	}
 	
 	private String getCustomText() {

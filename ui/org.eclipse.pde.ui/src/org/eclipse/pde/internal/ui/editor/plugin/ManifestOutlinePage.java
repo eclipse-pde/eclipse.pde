@@ -5,8 +5,13 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.plugin;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.build.*;
+import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
 /**
  * @author dejan
  * 
@@ -24,6 +29,7 @@ public class ManifestOutlinePage extends FormOutlinePage {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
 			IPluginModelBase model = (IPluginModelBase) page.getModel();
+			IBuildModel buildModel = getBuildModel();
 			if (model.isValid()) {
 				IPluginBase pluginBase = model.getPluginBase();
 				if (page.getId().equals(DependenciesPage.PAGE_ID))
@@ -34,6 +40,10 @@ public class ManifestOutlinePage extends FormOutlinePage {
 					return pluginBase.getExtensions();
 				if (page.getId().equals(ExtensionPointsPage.PAGE_ID))
 					return pluginBase.getExtensionPoints();
+			}
+			if (buildModel!=null && buildModel.isValid()) {
+				if (page.getId().equals(BuildPage.PAGE_ID))
+					return buildModel.getBuild().getBuildEntries();
 			}
 		}
 		return new Object[0];
@@ -48,8 +58,16 @@ public class ManifestOutlinePage extends FormOutlinePage {
 			pageId = ExtensionsPage.PAGE_ID;
 		else if (item instanceof IPluginExtensionPoint)
 			pageId = ExtensionPointsPage.PAGE_ID;
+		else if (item instanceof IBuildEntry)
+			pageId = BuildPage.PAGE_ID;
 		if (pageId != null)
 			return pageId;
 		return super.getParentPageId(item);
+	}
+	private IBuildModel getBuildModel() {
+		InputContext context = editor.getContextManager().findContext(BuildInputContext.CONTEXT_ID);
+		if (context!=null)
+			return (IBuildModel)context.getModel();
+		return null;
 	}
 }

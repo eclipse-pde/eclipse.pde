@@ -109,7 +109,7 @@ public class BuildEditor extends MultiSourceEditor {
 	}
 	
 	protected IContentOutlinePage createContentOutline() {
-		return null; //return new BuildOutlinePage(this);
+		return new BuildOutlinePage(this);
 	}
 	
 	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {

@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
 public abstract class BuildContentsSection extends TableSection
 		implements
 			IModelChangedListener,
@@ -136,7 +137,7 @@ public abstract class BuildContentsSection extends TableSection
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 150;
+		gd.heightHint = 100;
 		gd.widthHint = 100;
 		fTreeViewer.getTree().setLayoutData(gd);
 		initialize();

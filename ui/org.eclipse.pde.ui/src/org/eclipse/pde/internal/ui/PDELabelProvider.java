@@ -94,6 +94,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISiteBuildFeature) {
 			return getObjectText((ISiteBuildFeature) obj);
 		}
+		if (obj instanceof IBuildEntry) {
+			return getObjectText((IBuildEntry)obj);
+		}
 		return super.getText(obj);
 	}
 
@@ -142,6 +145,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (isFullNameModeEnabled())
 			return obj.toString();
 		return preventNull(obj.getId());
+	}
+	public String getObjectText(IBuildEntry obj) {
+		return obj.getName();
 	}
 
 	public String getObjectText(IPluginLibrary obj) {
