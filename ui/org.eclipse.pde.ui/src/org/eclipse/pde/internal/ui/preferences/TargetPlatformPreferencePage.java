@@ -229,7 +229,6 @@ public class TargetPlatformPreferencePage
 			pluginsBlock.handleReload();
 		} 
 		pluginsBlock.save();
-		PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
 		return super.performOk();
 	}
 	 

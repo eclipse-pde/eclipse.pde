@@ -77,8 +77,10 @@ public class ExternalPluginsBlock {
 	class SaveOperation implements Runnable {
 		public void run() {
 			savePreferences();
-			if (reloaded)
+			if (reloaded) {
 				EclipseHomeInitializer.resetEclipseHomeVariables();
+				PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
+			}
 			updateModels();
 			computeDelta();
 		}
@@ -311,8 +313,9 @@ public class ExternalPluginsBlock {
 			model.setEnabled(tablePart.getTableViewer().getChecked(model));
 		}
 
-		if (reloaded)
+		if (reloaded) {
 			PDECore.getDefault().getExternalModelManager().resetModels(models, fmodels);
+		}
 	}
 
 
