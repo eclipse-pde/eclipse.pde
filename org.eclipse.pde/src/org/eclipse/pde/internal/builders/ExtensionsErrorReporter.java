@@ -120,14 +120,15 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					reportDeprecatedAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$				
 			}
-		} else {		
-			validateRequiredExtensionAttributes(element, schemaElement);
-			validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
-			
-			if (schemaElement.isDeprecated())
-				reportDeprecatedElement(element);
-			if (schemaElement.hasTranslatableContent())
-				validateTranslatableElementContent(element);
+		} else {
+			if (schemaElement != null) {
+				validateRequiredExtensionAttributes(element, schemaElement);
+				validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
+				if (schemaElement.isDeprecated())
+					reportDeprecatedElement(element);
+				if (schemaElement.hasTranslatableContent())
+					validateTranslatableElementContent(element);
+			}
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				validateElement((Element)children.item(i), schema);
