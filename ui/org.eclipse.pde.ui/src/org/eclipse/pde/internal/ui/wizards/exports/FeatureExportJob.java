@@ -31,6 +31,9 @@ import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.swt.widgets.*;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
+	
+	//public static final String EXPORT_FAMILY = "pdeExportFamily";
+	
 	// The three supported export types
 	public static final int EXPORT_AS_ZIP = 0;
 	public static final int EXPORT_AS_DIRECTORY = 1;
@@ -52,7 +55,25 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private String fDevProperties;
 	
 	protected HashMap fBuildProperties;
+	
+	class SchedulingRule implements ISchedulingRule {
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule instanceof SchedulingRule;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule instanceof SchedulingRule;
+		}
+		
+	}
+	
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
 		super(PDEPlugin.getResourceString("FeatureExportJob.name"));  //$NON-NLS-1$
 		fExportType = exportType;
@@ -61,7 +82,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		fZipFilename = zipFileName;
 		fItems = items;
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
-		setRule(null);
+		setRule(new SchedulingRule());
 	}
 	
 	/*
