@@ -241,18 +241,14 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
 		out.println("<H2>Identifier</H2>");
 		out.print(schema.getQualifiedPointId());
-		out.println("<H2>Since:</H2>");
-		transformSection(out, schema, IDocumentSection.SINCE);
+		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
 		out.println("<H2>Description</H2>");
 		transformText(out, schema.getDescription());
 		out.println("<H2>Markup</H2>");
 		transformMarkup(out, schema);
-		out.println("<H2>Example</H2>");
-		transformSection(out, schema, IDocumentSection.EXAMPLES);
-		out.println("<H2>API Information</H2>");
-		transformSection(out, schema, IDocumentSection.API_INFO);
-		out.println("<H2>Supplied Implementation</H2>");
-		transformSection(out, schema, IDocumentSection.IMPLEMENTATION);
+		transformSection(out, schema, "Example", IDocumentSection.EXAMPLES);
+		transformSection(out, schema, "API Information", IDocumentSection.API_INFO);
+		transformSection(out, schema, "Supplied Implementation", IDocumentSection.IMPLEMENTATION);
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
 		out.println("</BODY>");
 		out.println("</HTML>");
@@ -290,9 +286,14 @@ public static final String KEY_DEPRECATED_TYPE =
 			transformElement(out, element);
 		}
 	}
+	
+	private void transformSection(PrintWriter out, ISchema schema, String sectionId) {
+		transformSection(out, schema, null, sectionId);
+	}
 	private void transformSection(
 		PrintWriter out,
 		ISchema schema,
+		String title,
 		String sectionId) {
 		IDocumentSection[] sections = schema.getDocumentSections();
 		IDocumentSection section = null;
@@ -304,7 +305,11 @@ public static final String KEY_DEPRECATED_TYPE =
 		}
 		if (section == null)
 			return;
-		transformText(out, section.getDescription());
+		String description = section.getDescription();
+		if (description==null || description.trim().length()==0)
+			return;
+		if (title!=null) out.println("<H2>"+title+"</H2>");
+		transformText(out, description);
 	}
 	private void transformText(PrintWriter out, String text) {
 		boolean preformatted = false;
