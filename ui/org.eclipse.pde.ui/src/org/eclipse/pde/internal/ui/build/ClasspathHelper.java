@@ -97,14 +97,10 @@ public class ClasspathHelper {
 				IClasspathEntry[] entries = jProject.getRawClasspath();
 				for (int i = 0; i < entries.length; i++) {
 					path = null;
-					if (entries[i].getContentKind() == IClasspathEntry.CPE_SOURCE) {
+					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						path = entries[i].getOutputLocation();
 					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 						path = entries[i].getPath();
-						// no need to add class folders/libraries that are not linked
-						if (path.getDevice() == null && path.matchingFirstSegments(project.getFullPath()) == 1) {
-							path = null;
-						}
 					}
 					if (path != null && !excluded.contains(path)) {
 						addPath(result, project, path);
@@ -118,17 +114,25 @@ public class ClasspathHelper {
 	}
 
 	private static void addPath(ArrayList result, IProject project, IPath path) {
-		if (path.getDevice() == null) {
-			if (path.segmentCount() >= 1) {
-				if (path.segment(0).equals(project.getName())) {
-					path = path.removeFirstSegments(1);
-					if (path.segmentCount() == 0)
-						path = new Path("."); //$NON-NLS-1$
+		if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
+			path = path.removeFirstSegments(1);
+			if (path.segmentCount() == 0)
+				path = new Path("."); //$NON-NLS-1$
+			else {
+				IResource resource = project.findMember(path);
+				if (resource != null) {
+					if (resource.isLinked()) {
+						path = resource.getLocation();
+					} else if (resource instanceof IFile) {
+						path = null;	
+					}
+				} else {
+					path = null;
 				}
 			}
 		}
 		
-		if (!result.contains(path))
+		if (path != null && !result.contains(path))
 			result.add(path);
 	}
 	
