@@ -200,14 +200,16 @@ protected void generateZipLogsTarget() {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
 	script.printProperty(tab, PROPERTY_BASE, base.toString());
+	String baseProperty = getPropertyFormat(PROPERTY_BASE);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE));
+	params.put(PROPERTY_DESTINATION, new Path(baseProperty).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
+	params.put(PROPERTY_DESTINATION, baseProperty);
 	script.printAntCallTask(tab, TARGET_GATHER_LOGS, "false", params);
 	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append("${feature}.log.zip");
-	script.printZipTask(tab, destination.toString(), getPropertyFormat(PROPERTY_BASE));
-	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	script.printZipTask(tab, destination.toString(), baseProperty);
+	script.printDeleteTask(tab, baseProperty, null, null);
 	script.printString(--tab, "</target>");
 }
 protected void generateGatherLogTarget() {
@@ -263,6 +265,7 @@ protected void generateZipSourcesTarget() {
 	params.put(PROPERTY_DESTINATION, featurebase);
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
+	params.put(PROPERTY_DESTINATION, new Path(featurebase).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printZipTask(tab, destination.append("${feature}_src_${version}.zip").toString(), "${feature.base}");
 	script.printDeleteTask(tab, featurebase, null, null);
@@ -275,7 +278,7 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
-	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_FEATURE_BASE));
+	params.put(PROPERTY_DESTINATION, new Path(getPropertyFormat(PROPERTY_FEATURE_BASE)).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);

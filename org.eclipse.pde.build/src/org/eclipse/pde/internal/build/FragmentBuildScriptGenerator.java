@@ -19,7 +19,4 @@ protected String getModelTypeName() {
 	return "fragment";
 }
 
-protected String getDirectoryName() {
-	return "plugins/${fragment}_${version}";
-}
 }

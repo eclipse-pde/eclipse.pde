@@ -63,6 +63,7 @@ protected void generateBuildScript() throws CoreException {
 	generateGatherLogTarget();
 	generateCleanTarget();
 	generateRefreshTarget(script, getPropertyFormat(getModelTypeName()));
+	generateZipPluginTarget(script, model);
 	generateEpilogue();
 }
 
@@ -103,7 +104,7 @@ protected void generateGatherLogTarget() throws CoreException {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getDirectoryName());
+	baseDestination = baseDestination.append(getModelFileBase());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -141,7 +142,7 @@ protected void generateGatherSourcesTarget() throws CoreException {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	baseDestination = baseDestination.append(getDirectoryName());
+	baseDestination = baseDestination.append(getModelFileBase());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
@@ -179,7 +180,7 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	destination = destination.append(getDirectoryName());
+	destination = destination.append(getModelFileBase());
 	String root = destination.toString();
 	script.printMkdirTask(tab, root);
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
@@ -189,6 +190,28 @@ protected void generateGatherBinPartsTarget() throws CoreException {
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}
 	script.printEndTag(--tab, "target");
+}
+
+protected void generateZipPluginTarget(BuildAntScript script, PluginModel model) throws CoreException {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, null);
+	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath destination = basedir.append("bin.zip.pdetemp");
+	script.printProperty(tab, PROPERTY_BASE, destination.toString());
+	script.printDeleteTask(tab, destination.toString(), null, null);
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
+	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
+	script.printAntCallTask(tab, TARGET_BUILD_SOURCES, null, null);
+	Map params = new HashMap(1);
+	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE) + "/");
+	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
+	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
+	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
+	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
+	script.printZipTask(tab, basedir.append(getModelFileBase() + ".zip").toString(), destination.toString());
+	script.printDeleteTask(tab, destination.toString(), null, null);
+	script.printString(--tab, "</target>");
 }
 
 
@@ -216,13 +239,12 @@ protected void generateBuildUpdateJarTarget() {
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getDirectoryName());
+	script.printZipTask(tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getModelFileBase());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
 }
 
-protected abstract String getDirectoryName();
 
 /**
  * FIXME: there has to be a better name for this method. What does it mean?

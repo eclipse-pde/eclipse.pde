@@ -51,6 +51,7 @@ public interface IXMLConstants {
 	public static final String TARGET_TARGET = "target";
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution";
 	public static final String TARGET_ZIP_LOGS = "zip.logs";
+	public static final String TARGET_ZIP_PLUGIN = "zip.plugin";
 	public static final String TARGET_ZIP_SOURCES = "zip.sources";
 	
 	// properties
