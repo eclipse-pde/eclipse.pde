@@ -248,12 +248,10 @@ public static IPath makeRelative(IPath location, IPath base) {
 		return location;
 	int baseCount = base.segmentCount();
 	int count = base.matchingFirstSegments(result);
-	if (count > 0) {
-		String temp = ""; //$NON-NLS-1$
-		for (int j = 0; j < baseCount - count; j++)
-			temp += "../"; //$NON-NLS-1$
-		result = new Path(temp).append(result.removeFirstSegments(count));
-	}
+	String temp = ""; //$NON-NLS-1$
+	for (int j = 0; j < baseCount - count; j++)
+		temp += "../"; //$NON-NLS-1$
+	result = new Path(temp).append(result.removeFirstSegments(count));
 	return result;
 }
 
