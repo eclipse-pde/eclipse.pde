@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.net.*;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
@@ -64,9 +64,8 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 			// Use location provider to find the referenced plug-in
 			// location.
 			if (locationProvider!=null) {
-				IPath pluginLocation = locationProvider.getPluginLocation(pluginId);
-				if (pluginLocation==null) return null;
-				IPath includedLocation = pluginLocation.append(path);
+				IPath includedLocation = locationProvider.getPluginRelativePath(pluginId, path);
+				if (includedLocation==null) return null;
 				return new URL(parentURL.getProtocol(), parentURL.getHost(), includedLocation.toString());
 			}
 			else

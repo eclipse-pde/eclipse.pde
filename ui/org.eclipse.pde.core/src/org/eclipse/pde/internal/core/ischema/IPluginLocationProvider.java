@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IPluginLocationProvider {
 /**
- * Returns the absolute path of the plug-in with the provided id.
+ * Returns the path relative to the plug-in with the provided id.
  * @param pluginId the identifier of the plug-in for which a location
  * is needed
- * @return the location of the plug-in or <code>null</code> if
+ * @param relativePath the path relative to the plug-in with the
+ * provided id
+ * @return the resolved path or <code>null</code> if
  * plug-in with the required id cannot be found.
  */
-	IPath getPluginLocation(String pluginId);
+	IPath getPluginRelativePath(String pluginId, IPath relativePath);
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -23,13 +25,25 @@ public abstract class DevelopmentSchemaDescriptor extends AbstractSchemaDescript
  * can be either workspace or external - this is handled by the 
  * model manager.
  */
-	public IPath getPluginLocation(String pluginId) {
+	public IPath getPluginRelativePath(String pluginId, IPath path) {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ModelEntry entry = manager.findEntry(pluginId);
 		if (entry==null) return null;
 		IPluginModelBase model = entry.getActiveModel();
 		if (model==null) return null;
+		if (model.getUnderlyingResource()==null) {
+			//external - check the source location
+			File sourceFile = getSourceLocationFile(model, path);
+			if (sourceFile.exists())
+				return new Path(sourceFile.getAbsolutePath());
+		}
 		String location = model.getInstallLocation();
-		return new Path(location);
+		return new Path(location).append(path);
+	}
+	private File getSourceLocationFile(IPluginModelBase model, IPath path) {
+		SourceLocationManager sourceManager =
+			PDECore.getDefault().getSourceLocationManager();
+		return sourceManager.findSourceFile(
+			model.getPluginBase(), path);
 	}
 }

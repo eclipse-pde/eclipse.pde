@@ -22,7 +22,7 @@ public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
 		super();
 	}
 
-	public IPath getPluginLocation(String pluginId) {
+	public IPath getPluginRelativePath(String pluginId, IPath path) {
 		return null;
 	}
 
