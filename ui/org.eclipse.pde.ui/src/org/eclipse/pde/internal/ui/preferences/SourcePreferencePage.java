@@ -1,22 +1,19 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.parts.CheckboxTablePart;
 import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.util.OverlayIcon;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -31,7 +28,8 @@ public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_LABEL = "SourcePreferencePage.label";
-	public static final String KEY_SELECT_ALL = "WizardCheckboxTablePart.selectAll";
+	public static final String KEY_SELECT_ALL =
+		"WizardCheckboxTablePart.selectAll";
 	public static final String KEY_DESELECT_ALL =
 		"WizardCheckboxTablePart.deselectAll";
 	private static final String KEY_ADD = "SourcePreferencePage.add";
@@ -55,15 +53,23 @@ public class SourcePreferencePage
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			return obj.toString();
+			SourceLocation location = (SourceLocation) obj;
+			if (index == 0)
+				return location.getName();
+			if (index == 1)
+				return location.getPath().toOSString();
+			return "";
 		}
 
 		public Image getColumnImage(Object obj, int index) {
-			SourceLocation location = (SourceLocation) obj;
-			if (location.isUserDefined())
-				return userImage;
-			else
-				return extensionImage;
+			if (index == 0) {
+				SourceLocation location = (SourceLocation) obj;
+				if (location.isUserDefined())
+					return userImage;
+				else
+					return extensionImage;
+			}
+			return null;
 		}
 	}
 
@@ -73,18 +79,18 @@ public class SourcePreferencePage
 		}
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
-				case 0:
+				case 0 :
 					selectAll(true);
 					break;
-				case 1:
+				case 1 :
 					selectAll(false);
 					break;
-				case 2: // nothing
+				case 2 : // nothing
 					break;
-				case 3:
+				case 3 :
 					handleAdd();
 					break;
-				case 4:
+				case 4 :
 					handleDelete();
 					break;
 			}
@@ -205,17 +211,20 @@ public class SourcePreferencePage
 			userArray.length);
 		return merged;
 	}
-	
+
 	private void selectAll(boolean selected) {
 		tableViewer.setAllChecked(selected);
 	}
 
 	private void handleAdd() {
-		DirectoryDialog dd =
-			new DirectoryDialog(tableViewer.getControl().getShell());
-		String path = dd.open();
-		if (path != null) {
-			SourceLocation location = new SourceLocation(new Path(path), true);
+		SourceLocationDialog dialog =
+			new SourceLocationDialog(getShell(), null);
+		dialog.create();
+		dialog.getShell().setText("New Source Location");
+		dialog.getShell().setSize(400, 200);
+		if (dialog.open() == SourceLocationDialog.OK) {
+			SourceLocation location =
+				new SourceLocation(dialog.getName(), dialog.getPath(), true);
 			userLocations.add(location);
 			tableViewer.add(location);
 			tableViewer.setChecked(location, location.isEnabled());
@@ -246,6 +255,7 @@ public class SourcePreferencePage
 		tablePart.setMinimumSize(150, 200);
 		tablePart.createControl(container, SWT.BORDER, 2, null);
 		tableViewer = tablePart.getTableViewer();
+		configureColumns(tableViewer.getTable());
 		tableViewer.setContentProvider(new SourceProvider());
 		tableViewer.setLabelProvider(new SourceLabelProvider());
 		load();
@@ -255,18 +265,32 @@ public class SourcePreferencePage
 		return container;
 	}
 	
+	private void configureColumns(Table table) {
+		table.setHeaderVisible(true);
+		TableColumn column = new TableColumn(table, SWT.NULL);
+		column.setText("Name");
+		
+		column = new TableColumn(table, SWT.NULL);
+		column.setText("Path");
+		
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(50, 100, true));
+		layout.addColumnData(new ColumnWeightData(50, 100, true));
+		table.setLayout(layout);
+	}
+
 	private void initializeStates() {
 		SourceLocationManager mng =
 			PDEPlugin.getDefault().getSourceLocationManager();
 		Object[] extensionLocations = mng.getExtensionLocations();
 		ArrayList selected = new ArrayList();
-		for (int i=0; i<extensionLocations.length; i++) {
-			SourceLocation loc = (SourceLocation)extensionLocations[i];
+		for (int i = 0; i < extensionLocations.length; i++) {
+			SourceLocation loc = (SourceLocation) extensionLocations[i];
 			if (loc.isEnabled())
 				selected.add(loc);
 		}
-		for (int i=0; i<userLocations.size(); i++) {
-			SourceLocation loc = (SourceLocation)userLocations.get(i);
+		for (int i = 0; i < userLocations.size(); i++) {
+			SourceLocation loc = (SourceLocation) userLocations.get(i);
 			if (loc.isEnabled())
 				selected.add(loc);
 		}
@@ -276,12 +300,12 @@ public class SourcePreferencePage
 		SourceLocationManager mng =
 			PDEPlugin.getDefault().getSourceLocationManager();
 		Object[] extensionLocations = mng.getExtensionLocations();
-		for (int i=0; i<extensionLocations.length; i++) {
-			SourceLocation loc = (SourceLocation)extensionLocations[i];
+		for (int i = 0; i < extensionLocations.length; i++) {
+			SourceLocation loc = (SourceLocation) extensionLocations[i];
 			loc.setEnabled(tableViewer.getChecked(loc));
 		}
-		for (int i=0; i<userLocations.size(); i++) {
-			SourceLocation loc = (SourceLocation)userLocations.get(i);
+		for (int i = 0; i < userLocations.size(); i++) {
+			SourceLocation loc = (SourceLocation) userLocations.get(i);
 			loc.setEnabled(tableViewer.getChecked(loc));
 		}
 	}

@@ -21,4 +21,6 @@ public interface ICoreConstants {
 	String VALUE_SAVED_NONE = "[savedNone]";
 	String VALUE_SAVED_ALL = "[savedAll]";
 	String VALUE_SAVED_SOME = "savedSome";
+	String P_SOURCE_LOCATIONS = "source_locations";
+	String P_EXT_LOCATIONS = "ext_locations";
 }

@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;

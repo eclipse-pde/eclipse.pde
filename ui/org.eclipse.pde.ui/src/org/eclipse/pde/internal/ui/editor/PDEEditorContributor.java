@@ -10,6 +10,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -136,16 +137,14 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	}
 	
 	protected boolean hasKnownTypes(Clipboard clipboard) {
-		String[] typeNames = clipboard.getAvailableTypeNames();
-		boolean knownType = false;
-		for (int i = 0; i < typeNames.length; i++) {
-			String typeName = typeNames[i];
-			if (typeName.startsWith(ModelDataTransfer.TYPE_PREFIX)) {
-				knownType = true;
-				break;
-			}
+		// defect 18146
+		try {
+			Object data =
+				clipboard.getContents(ModelDataTransfer.getInstance());
+			return (data != null);
+		} catch (SWTError e) {
+			return false;
 		}
-		return knownType;
 	}
 	
 	public void contextMenuAboutToShow(IMenuManager mng) {

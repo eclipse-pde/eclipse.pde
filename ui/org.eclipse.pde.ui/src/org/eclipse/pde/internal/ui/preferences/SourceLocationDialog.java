@@ -1,0 +1,162 @@
+package org.eclipse.pde.internal.ui.preferences;
+
+import java.io.File;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.pde.internal.core.SourceLocation;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+
+/**
+ * @author dejan
+ *
+ * To change this generated comment edit the template variable "typecomment":
+ * Window>Preferences>Java>Templates.
+ * To enable and disable the creation of type comments go to
+ * Window>Preferences>Java>Code Generation.
+ */
+public class SourceLocationDialog extends Dialog {
+	private Text nameText;
+	private Text pathText;
+	private Button browseButton;
+	private String name;
+	private IPath path;
+	private Label statusLabel;
+	private SourceLocation location;
+	/**
+	 * Constructor for SourceLocationDialog.
+	 * @param parentShell
+	 */
+	public SourceLocationDialog(Shell parentShell, SourceLocation location) {
+		super(parentShell);
+		this.location = location;
+	}
+
+	protected Control createDialogArea(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Label label = new Label(container, SWT.NULL);
+		label.setText("&Location Name:");
+
+		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		nameText.setLayoutData(gd);
+
+		new Label(container, SWT.NULL);
+
+		label = new Label(container, SWT.NULL);
+		label.setText("Location &Path:");
+
+		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		pathText.setLayoutData(gd);
+
+		browseButton = new Button(container, SWT.PUSH);
+		browseButton.setText("&Browse...");
+		browseButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseButton);
+		browseButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleBrowse();
+			}
+		});
+		statusLabel = new Label(container, SWT.NULL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
+		statusLabel.setLayoutData(gd);
+		
+		if (location!=null) {
+			nameText.setText(location.getName());
+			pathText.setText(location.getPath().toOSString());
+		}
+		ModifyListener listener= new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		};
+		nameText.addModifyListener(listener);
+		pathText.addModifyListener(listener);
+		return container;
+	}
+
+	private void handleBrowse() {
+		DirectoryDialog dd = new DirectoryDialog(getShell());
+		String path = dd.open();
+		if (path != null) {
+			pathText.setText(path);
+		}
+	}
+	
+	private void dialogChanged() {
+		String error = null;
+		String name = nameText.getText();
+		String path = pathText.getText();
+		if (name.length()==0) {
+			error = "Location name must be defined.";
+		}
+		else if (isInvalidVariable(name)) {
+			error = "Classpath variable with the same name already exists.";
+		}
+		else if (path.length()==0) {
+			error = "Location path must be defined.";
+		}
+		else {
+			File file = new File(path);
+			if (!file.exists() || !file.isDirectory()) {
+				error = "Location does not exist or is not a directory";
+			}
+		}
+		setError(error);
+	}
+	
+	private void setError(String error) {
+		if (error!=null) {
+			statusLabel.setText(error);
+			statusLabel.setForeground(JFaceColors.getErrorText(getShell().getDisplay()));
+		}
+		else {
+			statusLabel.setText("");
+			statusLabel.setForeground(null);
+		}
+		getButton(IDialogConstants.OK_ID).setEnabled(error==null);
+	}
+	
+	private boolean isInvalidVariable(String name) {
+		return JavaCore.getClasspathVariable(name)!=null;
+	}
+
+	protected void okPressed() {
+		name = nameText.getText();
+		path = new Path(pathText.getText());
+		if (location!=null) {
+			location.setName(name);
+			location.setPath(path);
+		}
+		super.okPressed();
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public IPath getPath() {
+		return path;
+	}
+	
+	public void create() {
+		super.create();
+		dialogChanged();
+	}
+}

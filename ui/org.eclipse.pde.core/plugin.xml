@@ -20,7 +20,8 @@
    </requires>
 
 
-   <extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.xsd"/>
+   <extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.exsd"/>
+   <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
