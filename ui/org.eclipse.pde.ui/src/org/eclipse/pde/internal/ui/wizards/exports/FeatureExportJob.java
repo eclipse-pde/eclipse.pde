@@ -16,6 +16,7 @@ import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.core.*;
@@ -188,8 +189,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, store.getString(PROP_JAVAC_SOURCE));
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, store.getString(PROP_JAVAC_TARGET));
+
+			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
 			
 			// for the assembler...
 			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$

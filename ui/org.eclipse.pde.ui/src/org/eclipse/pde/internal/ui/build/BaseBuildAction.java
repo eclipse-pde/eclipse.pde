@@ -7,6 +7,7 @@ import org.eclipse.ant.internal.ui.launchConfigurations.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
@@ -175,9 +176,11 @@ public abstract class BaseBuildAction
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, store.getString(PROP_JAVAC_FAIL_ON_ERROR));
 			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE)); 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, store.getString(PROP_JAVAC_SOURCE)); 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, store.getString(PROP_JAVAC_TARGET)); 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
+			
+			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
+			properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
 
 			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, getBootClasspath()); 
 			

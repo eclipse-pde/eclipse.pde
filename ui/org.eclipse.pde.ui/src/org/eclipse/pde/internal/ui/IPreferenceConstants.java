@@ -25,8 +25,5 @@ public interface IPreferenceConstants {
 	public static final String PROP_JAVAC_FAIL_ON_ERROR = "javacFailOnError"; //$NON-NLS-1$
 	public static final String PROP_JAVAC_DEBUG_INFO = "javacDebugInfo"; //$NON-NLS-1$
 	public static final String PROP_JAVAC_VERBOSE = "javacVerbose"; //$NON-NLS-1$
-	public static final String PROP_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$
-	public static final String PROP_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
-	
 
 }
