@@ -131,6 +131,8 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 			InputStream stream =
 				new ByteArrayInputStream(text.getBytes("UTF8"));
 			schema.reload(stream);
+			if (schema instanceof IEditable)
+			   ((IEditable)schema).setDirty(false);
 			try {
 				stream.close();
 			} catch (IOException e) {

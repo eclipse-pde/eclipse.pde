@@ -54,14 +54,16 @@ public class Schema extends PlatformObject implements ISchema {
 	public void addElement(ISchemaElement element) {
 		addElement(element, null);
 	}
-	
-	public void addElement(ISchemaElement element, ISchemaElement afterElement) {
+
+	public void addElement(
+		ISchemaElement element,
+		ISchemaElement afterElement) {
 		int index = -1;
-		if (afterElement!=null) {
+		if (afterElement != null) {
 			index = elements.indexOf(afterElement);
 		}
 		if (index != -1)
-			elements.add(index+1, element);
+			elements.add(index + 1, element);
 		else
 			elements.add(element);
 		fireModelChanged(
@@ -70,7 +72,7 @@ public class Schema extends PlatformObject implements ISchema {
 				new Object[] { element },
 				null));
 	}
-	
+
 	public void addModelChangedListener(IModelChangedListener listener) {
 		listeners.addElement(listener);
 	}
@@ -636,17 +638,16 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	public void reload() {
-		reset();
-		load();
-		fireModelChanged(
-			new ModelChangedEvent(
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[0],
-				null));
+		reload(null);
 	}
 	public void reload(InputStream is) {
+		setNotificationEnabled(false);
 		reset();
-		load(is);
+		if (is != null)
+			load(is);
+		else
+			load();
+		setNotificationEnabled(true);
 		fireModelChanged(
 			new ModelChangedEvent(
 				IModelChangedEvent.WORLD_CHANGED,
@@ -763,15 +764,16 @@ public class Schema extends PlatformObject implements ISchema {
 		this.lineTable = null;
 		loaded = true;
 	}
-	
+
 	public void updateReferencesFor(ISchemaElement element) {
 		updateReferencesFor(element, ISchema.REFRESH_RENAME);
 	}
-	
+
 	public void updateReferencesFor(ISchemaElement element, int kind) {
 		for (int i = 0; i < elements.size(); i++) {
 			ISchemaElement el = (ISchemaElement) elements.elementAt(i);
-			if (el.equals(element)) continue;
+			if (el.equals(element))
+				continue;
 			ISchemaType type = el.getType();
 			if (type instanceof ISchemaComplexType) {
 				SchemaCompositor compositor =
@@ -782,7 +784,7 @@ public class Schema extends PlatformObject implements ISchema {
 			}
 		}
 	}
-	
+
 	public void write(String indent, PrintWriter writer) {
 		String pointId = this.getQualifiedPointId();
 		int loc = pointId.lastIndexOf('.');
