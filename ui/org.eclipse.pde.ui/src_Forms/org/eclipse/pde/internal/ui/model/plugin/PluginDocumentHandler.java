@@ -59,6 +59,9 @@ public class PluginDocumentHandler extends DefaultHandler {
 		try {
 			int nodeOffset = getStartOffset(qName);
 			node.setOffset(nodeOffset);
+			IDocument doc = fModel.getDocument();
+			int line = doc.getLineOfOffset(nodeOffset);
+			node.setLineIndent(node.getOffset() - doc.getLineOffset(line));
 			// create attributes
 			for (int i = 0; i < attributes.getLength(); i++) {
 				String attName = attributes.getQName(i);
@@ -98,12 +101,12 @@ public class PluginDocumentHandler extends DefaultHandler {
 	private int getElementLength(IDocumentNode node, int line, int column) throws BadLocationException {
 		int endIndex = node.getOffset();
 		IDocument doc = fModel.getDocument();
+		int start = Math.max(doc.getLineOffset(line), node.getOffset());
 		if (column <= 0) {
 			column = doc.getLineLength(line);
-			int start = Math.max(doc.getLineOffset(line), node.getOffset());
 			String lineText= doc.get(start, column - start + doc.getLineOffset(line));
 			
-			int index= lineText.indexOf("<" + node.getXMLTagName() + "/>");
+			int index = lineText.indexOf("</" + node.getXMLTagName() + ">");
 			if (index == -1) {
 				index= lineText.indexOf("/>"); //$NON-NLS-1$
 				if (index == -1 ) {
@@ -111,12 +114,11 @@ public class PluginDocumentHandler extends DefaultHandler {
 				} else {
 					endIndex = index + 2;
 				}
-				endIndex += start - doc.getLineOffset(line);
-			} else {
-				endIndex = index + node.getXMLTagName().length() + 2;
+			} else{
+				endIndex = index + node.getXMLTagName().length() + 3;
 			}
 		}
-		return doc.getLineOffset(line) + endIndex - node.getOffset();
+		return start + endIndex - node.getOffset();
 	}
 	
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{

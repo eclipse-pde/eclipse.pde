@@ -147,4 +147,9 @@ public class SchemaInputContext extends XMLInputContext {
 		}
 		return true;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
+	 */
+	protected void reorderInsertEdits(ArrayList ops) {
+	}
 }

@@ -24,5 +24,6 @@ public interface IDocumentAttribute {
 	String getAttributeName();
 	String getAttributeValue();
 	
+	String write();
 	
 }

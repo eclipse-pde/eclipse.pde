@@ -32,7 +32,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public static final String P_REEXPORTED = "reexported";
+	public static final String P_REEXPORTED = "export";
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "optional" field.

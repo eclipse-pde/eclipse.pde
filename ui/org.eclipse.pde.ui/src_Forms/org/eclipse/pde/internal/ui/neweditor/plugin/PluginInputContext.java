@@ -22,7 +22,6 @@ import org.eclipse.ui.*;
 public class PluginInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "plugin-context";
 	private boolean fIsFragment;
-	private HashMap fOperationTable = new HashMap();
 	/**
 	 * @param editor
 	 * @param input
@@ -64,94 +63,56 @@ public class PluginInputContext extends XMLInputContext {
 	public boolean isFragment() {
 		return fIsFragment;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
-		Object[] objects = event.getChangedObjects();
-		if (objects != null && objects.length > 0) {
-			Object object = objects[0];
-			if (object instanceof IDocumentAttribute) {
-				addEditAttributeOperation(ops, (IDocumentAttribute) object, event);
+	
+	protected void reorderInsertEdits(ArrayList ops) {
+		HashMap map = getOperationTable();
+		Iterator iter = map.keySet().iterator();
+		TextEdit runtimeInsert = null;
+		TextEdit requiresInsert = null;
+		ArrayList extensionPointInserts = new ArrayList();
+		ArrayList extensionInserts = new ArrayList();
+		
+		while (iter.hasNext()) {
+			Object object = iter.next();
+			if (object instanceof IDocumentNode) {
+				IDocumentNode node = (IDocumentNode)object;
+				if (node.getParentNode() instanceof PluginBaseNode) {
+					TextEdit edit = (TextEdit)map.get(node);
+					if (edit instanceof InsertEdit) {
+						if (node.getXMLTagName().equals("runtime")) {
+							runtimeInsert = edit;
+						} else if (node.getXMLTagName().equals("requires")) {
+							requiresInsert = edit;
+						} else if (node.getXMLTagName().equals("extension")) {
+							extensionInserts.add(edit);
+						} else if (node.getXMLTagName().equals("extension-point")) {
+							extensionPointInserts.add(edit);
+						}
+					}
+				}
 			}
+		}
+		
+		if (runtimeInsert != null) {
+			ops.remove(runtimeInsert);
+			ops.add(runtimeInsert);
+		}
+		
+		if (requiresInsert != null) {
+			ops.remove(requiresInsert);
+			ops.add(requiresInsert);
+		}
+		
+		for (int i = 0; i < extensionPointInserts.size(); i++) {
+			InsertEdit edit = (InsertEdit)extensionPointInserts.get(i);
+			ops.remove(edit);
+			ops.add(edit);
+		}
+		for (int i = 0; i < extensionInserts.size(); i++) {
+			InsertEdit edit = (InsertEdit)extensionInserts.get(i);
+			ops.remove(edit);
+			ops.add(edit);
 		}
 	}
 	
-	protected void addEditAttributeOperation(ArrayList ops, IDocumentAttribute attr, IModelChangedEvent event) {
-		int offset = attr.getValueOffset();
-		int length = attr.getValueLength();
-		Object newValue = event.getNewValue();
-		TextEdit op = null;
-		if (offset > -1) {
-			if (newValue == null || newValue.toString().length() == 0) {
-				length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
-				op = getDeleteEditOperation(attr.getNameOffset(), length);
-			} else {
-				op = new ReplaceEdit(offset, length, getWritableString(event.getNewValue().toString()));
-			}
-		} else {
-			IDocumentNode node = attr.getEnclosingElement();
-			offset = node.getRecommendedOffset(attr);
-			op = new InsertEdit(offset, " " + attr.getAttributeName() + "=\"" + getWritableString(attr.getAttributeValue()) + "\"");			
-		}
-		if (op != null) {
-			TextEdit oldOp = (TextEdit)fOperationTable.get(attr);
-			if (oldOp != null)
-				ops.remove(oldOp);
-			ops.add(op);
-			fOperationTable.put(attr, op);
-		}
-	}
-	
-	private DeleteEdit getDeleteEditOperation(int offset, int length) {
-		try {
-			IDocument doc = getDocumentProvider().getDocument(getInput());
-			for (;;) {
-				char ch = doc.get(offset + length, 1).toCharArray()[0];
-				if (!Character.isWhitespace(ch))
-					break;
-				length += 1;
-			}
-		} catch (BadLocationException e) {
-		}
-		return new DeleteEdit(offset, length);		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
-	 */
-	protected void flushModel(IDocument doc) {
-		super.flushModel(doc);
-		fOperationTable.clear();
-	}
-	
-	public String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
-	}
-
-
 }

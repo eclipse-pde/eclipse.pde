@@ -159,4 +159,10 @@ public class SiteInputContext extends XMLInputContext {
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
+	 */
+	protected void reorderInsertEdits(ArrayList ops) {
+	}
 }

@@ -34,7 +34,7 @@ public abstract class InputContext {
 	private IElementStateListener elementListener;
 	private boolean validated;
 	private boolean primary;
-	private ArrayList fEditOperations = new ArrayList();
+	protected ArrayList fEditOperations = new ArrayList();
 	private boolean fIsSourceMode;
 
 	class ElementListener implements IElementStateListener {
@@ -163,11 +163,7 @@ public abstract class InputContext {
 			}
 		}
 	}
-
-	protected boolean synchronizeModel(IDocument doc) {
-		return true;
-	}
-
+	
 	public boolean mustSave() {
 		if (!fIsSourceMode) {
 			if (model instanceof IEditable) {
@@ -177,7 +173,7 @@ public abstract class InputContext {
 		}
 		return documentProvider.canSaveDocument(input);
 	}
-
+	
 	public void dispose() {
 		IAnnotationModel amodel = documentProvider.getAnnotationModel(input);
 		if (amodel != null)
@@ -204,7 +200,7 @@ public abstract class InputContext {
 	public void setPrimary(boolean primary) {
 		this.primary = primary;
 	}
-
+	
 	public void setSourceEditingMode(boolean sourceMode) {
 		fIsSourceMode = sourceMode;
 		if (sourceMode) {
@@ -229,5 +225,9 @@ public abstract class InputContext {
 	
 	public boolean isInSourceMode() {
 		return fIsSourceMode;
+	}
+	
+	protected boolean synchronizeModel(IDocument doc) {
+		return true;
 	}
 }

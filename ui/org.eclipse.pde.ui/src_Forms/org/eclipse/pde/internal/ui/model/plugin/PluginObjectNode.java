@@ -113,7 +113,8 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 			attr.setValue(value);
 		} catch (CoreException e) {
 		}
-		firePropertyChanged(attr, oldValue, value);
+		if (fInTheModel)
+			firePropertyChanged(attr, oldValue, value);
 	}
 	
 
@@ -127,5 +128,61 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 		}
 	}
 
+	protected void fireStructureChanged(IPluginObject child, int changeType) {
+		IModel model = getModel();
+		if (model.isEditable() && model instanceof IModelChangeProvider) {
+			IModelChangedEvent e =
+				new ModelChangedEvent(fModel, changeType, new Object[] { child }, null);
+			fireModelChanged(e);
+		}
+	}
 	
+	protected void fireModelChanged(IModelChangedEvent e) {
+		IModel model = getModel();
+		if (model.isEditable() && model instanceof IModelChangeProvider) {
+			IModelChangeProvider provider = (IModelChangeProvider) model;
+			provider.fireModelChanged(e);
+		}
+	}
+
+	public String getWritableString(String source) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < source.length(); i++) {
+			char c = source.charAt(i);
+			switch (c) {
+				case '&' :
+					buf.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buf.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buf.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buf.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buf.append("&quot;"); //$NON-NLS-1$
+					break;
+				default :
+					buf.append(c);
+					break;
+			}
+		}
+		return buf.toString();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#writeShallow()
+	 */
+	public String writeShallow(boolean terminate) {
+		return "";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#write()
+	 */
+	public String write(boolean indent) {
+		return "";
+	}
 }

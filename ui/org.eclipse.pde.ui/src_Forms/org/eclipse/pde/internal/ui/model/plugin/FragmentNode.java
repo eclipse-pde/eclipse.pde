@@ -67,4 +67,18 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		}
 		setXMLAttribute(P_RULE, match);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
+	 */
+	protected String getSpecificAttributes() {
+		StringBuffer buffer = new StringBuffer();
+		String newLine = System.getProperty("line.separator");
+		
+		String pluginID = getPluginId();
+		if (pluginID != null && pluginID.length() > 0)
+			buffer.append("\t" + P_PLUGIN_ID + "=\"" + pluginID + "\"" + newLine);
+		
+		//TODO fill in plugin version/match
+		return buffer.toString();
+	}
 }

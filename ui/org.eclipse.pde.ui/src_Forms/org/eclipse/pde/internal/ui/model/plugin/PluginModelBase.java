@@ -33,10 +33,13 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
 	 */
 	public IPluginBase createPluginBase(boolean isFragment) {
-		if (isFragment)
+		if (isFragment) {
 			fPluginBase = new FragmentNode();
-		else 
+			fPluginBase.setXMLTagName("fragment");
+		} else {
 			fPluginBase = new PluginNode();
+			fPluginBase.setXMLTagName("plugin");
+		}
 		fPluginBase.setInTheModel(true);
 		fPluginBase.setModel(this);
 		return fPluginBase;

@@ -17,6 +17,8 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private int fOffset = -1;
 	protected HashMap fAttributes = new HashMap();
 	private String fTag;
+	private int fIndent = 0;
+	private IDocumentNode fPreviousSibling;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getChildNodes()
@@ -40,7 +42,18 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#addChildNode(org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode)
 	 */
 	public void addChildNode(IDocumentNode child) {
-		fChildren.add(child);
+		addChildNode(child, fChildren.size());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#addChildNode(org.eclipse.pde.internal.ui.model.IDocumentNode, int)
+	 */
+	public void addChildNode(IDocumentNode child, int position) {
+		fChildren.add(position, child);
+		if (position > 0 && fChildren.size() > 1)
+			child.setPreviousSibling((IDocumentNode)fChildren.get(position - 1));
+		if (fChildren.size() > 1 && position < fChildren.size() - 1)
+			((IDocumentNode)fChildren.get(position + 1)).setPreviousSibling(child);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#isErrorNode()
@@ -107,16 +120,56 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getRecommendedOffset(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
-	 */
-	public int getRecommendedOffset(IDocumentAttribute attribute) {
-		return getOffset() + getXMLTagName().length() + 1;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getDocumentAttribute(java.lang.String)
 	 */
 	public IDocumentAttribute getDocumentAttribute(String name) {
 		return (IDocumentAttribute)fAttributes.get(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLineIndent()
+	 */
+	public int getLineIndent() {
+		return fIndent;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setLineIndent(int)
+	 */
+	public void setLineIndent(int indent) {
+		fIndent = indent;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getAttributes()
+	 */
+	public IDocumentAttribute[] getNodeAttributes() {
+		ArrayList list = new ArrayList();
+		Iterator iter = fAttributes.values().iterator();
+		while (iter.hasNext())
+			list.add(iter.next());
+		return (IDocumentAttribute[])list.toArray(new IDocumentAttribute[list.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getPreviousSibling()
+	 */
+	public IDocumentNode getPreviousSibling() {
+		return fPreviousSibling;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setPreviousSibling(org.eclipse.pde.internal.ui.model.IDocumentNode)
+	 */
+	public void setPreviousSibling(IDocumentNode sibling) {
+		fPreviousSibling = sibling;
+	}
+	
+	protected String getIndent() {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < fIndent; i++) {
+			buffer.append(" ");
+		}
+		return buffer.toString();
 	}
 }
