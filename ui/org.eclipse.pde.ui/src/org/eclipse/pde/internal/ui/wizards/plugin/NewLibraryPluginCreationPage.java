@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -263,10 +264,9 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			return PDEPlugin
 					.getResourceString("NewLibraryPluginCreationPage.noid"); //$NON-NLS-1$
 
-		for (int i = 0; i < id.length(); i++) {
-			if (!id.substring(i, i + 1).matches("[a-zA-Z0-9\\._]")) //$NON-NLS-1$
-				return PDEPlugin
-						.getResourceString("NewLibraryPluginCreationPage.invalidId"); //$NON-NLS-1$
+		if (!IdUtil.isValidPluginId(id)) { //$NON-NLS-1$
+			return PDEPlugin
+					.getResourceString("NewLibraryPluginCreationPage.invalidId"); //$NON-NLS-1$
 		}
 		return null;
 	}
