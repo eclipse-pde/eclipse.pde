@@ -21,8 +21,8 @@ public class PluginLocationTask extends Task implements IPDECoreConstants, IXMLC
 	
 	protected String pluginId;
 	protected String propertyName;
-	protected PluginRegistryModel registry;
 	protected String[] pluginPath;
+	protected static final String REGISTRY_REFERENCE_ID = "pluginLocation.registry";
 
 /**
  * Sets the pluginId.
@@ -57,6 +57,7 @@ public void execute() throws BuildException {
  * Returns the plugin registry for the current set of plugins.
  */
 protected PluginRegistryModel getRegistry() throws CoreException, MalformedURLException {
+	PluginRegistryModel registry = (PluginRegistryModel) getProject().getReferences().get(REGISTRY_REFERENCE_ID);
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
 		MultiStatus problems = new MultiStatus(PI_PDECORE, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
@@ -65,6 +66,7 @@ protected PluginRegistryModel getRegistry() throws CoreException, MalformedURLEx
 		IStatus status = factory.getStatus();
 		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);
+		getProject().addReference(REGISTRY_REFERENCE_ID, registry);
 	}
 	return registry;
 }
