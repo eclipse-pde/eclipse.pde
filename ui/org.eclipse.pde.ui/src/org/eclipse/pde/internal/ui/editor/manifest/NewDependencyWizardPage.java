@@ -133,7 +133,10 @@ public class NewDependencyWizardPage extends WizardPage {
 		filterText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		filterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				stringMatcher.setPattern(filterText.getText());
+				String text = filterText.getText();
+				if (text.indexOf('?') == -1 && text.indexOf('*') == -1)
+					text += "*";
+				stringMatcher.setPattern(text);
 				pluginTreeViewer.refresh();
 			}
 		});
