@@ -314,14 +314,10 @@ public class LauncherUtils {
 	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
 		TreeMap map = new TreeMap();
 		addPluginAndPrereqs(id, map);
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndPrereqs("org.eclipse.osgi", map);
-			addPluginAndPrereqs("org.eclipse.osgi.services", map);
-			addPluginAndPrereqs("org.eclipse.update.configurator", map);
-		} else {
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			addPluginAndPrereqs("org.eclipse.core.boot", map);
+			addPluginAndPrereqs("org.eclipse.core.runtime", map);
 		}
-		addPluginAndPrereqs("org.eclipse.core.runtime", map);
 		
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
