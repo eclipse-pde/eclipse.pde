@@ -22,6 +22,11 @@ public class ExternalModelManager {
 	private Vector fListeners = new Vector();
 	private PDEState fState = null;
 	private boolean fInitialized = false;
+	
+	public ExternalModelManager() {
+		fModels = Collections.synchronizedList(new ArrayList());
+		fFragmentModels = Collections.synchronizedList(new ArrayList());
+	}
 
 	public static String computeDefaultPlatformPath() {
 		URL installURL = Platform.getInstallLocation().getURL();
@@ -122,8 +127,6 @@ public class ExternalModelManager {
 		if (fInitialized)
 			return;
 		fState = new PDEState();
-		fModels = Collections.synchronizedList(new ArrayList());
-		fFragmentModels = Collections.synchronizedList(new ArrayList());
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
