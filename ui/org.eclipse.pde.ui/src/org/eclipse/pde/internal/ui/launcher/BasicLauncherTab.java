@@ -38,7 +38,6 @@ public class BasicLauncherTab
 	private static final String KEY_JRE = "BasicLauncherTab.jre";
 	private static final String KEY_VMARGS = "BasicLauncherTab.vmArgs";
 	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
-	private static final String KEY_APPNAME = "BasicLauncherTab.appName";
 	private static final String KEY_SHOW_SPLASH = "BasicLauncherTab.showSplash";
 	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
 	private static final String KEY_WTITLE = "BasicLauncherTab.workspace.title";

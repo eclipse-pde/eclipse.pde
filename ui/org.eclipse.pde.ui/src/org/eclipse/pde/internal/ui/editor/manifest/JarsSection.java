@@ -55,10 +55,6 @@ public class JarsSection
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String SECTION_NEW = "ManifestEditor.JarsSection.new";
 	public static final String SECTION_DESC = "ManifestEditor.JarsSection.desc";
-	public static final String SOURCE_DIALOG_TITLE =
-		"ManifestEditor.JarsSection.missingSource.title";
-	public static final String SOURCE_DIALOG_MESSAGE =
-		"ManifestEditor.JarsSection.missingSource.message";
 	public static final String DUPLICATE_FOLDER_MESSAGE =
 		"ManifestEditor.JarsSection.missingSource.duplicateFolder";
 		
@@ -228,7 +224,8 @@ public class JarsSection
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEPlugin.getResourceString(SECTION_DIALOG_TITLE));
+		dialog.setTitle(PDEPlugin.getResourceString("ManifestEditor.JarsSection.dialogTitle"));
+		dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.JarsSection.dialogMessage"));
 
 		if (dialog.open() == FolderSelectionDialog.OK) {
 			Object result = dialog.getResult()[0];
@@ -260,6 +257,7 @@ public class JarsSection
 				entry.addToken(folderPath);
 				entryTable.add(folderPath);
 				((WorkspaceBuildModel) buildModel).save();
+				addIfNotOnBuildPath(project,folder);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -299,29 +297,7 @@ public class JarsSection
 		entryTable.setInput(currentLibrary);
 		getTablePart().setButtonEnabled(0, !isReadOnly() && library != null);
 	}
-	private boolean verifyFolderExists(IProject project, String folderName) {
-		IPath path = project.getFullPath().append(folderName);
-		IFolder folder = project.getWorkspace().getRoot().getFolder(path);
-		if (folder.exists() == false) {
-			boolean result =
-				MessageDialog.openQuestion(
-					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString(SOURCE_DIALOG_TITLE),
-					PDEPlugin.getFormattedMessage(
-						SOURCE_DIALOG_MESSAGE,
-						folder.getFullPath().toString()));
-			if (result) {
-				try {
-					folder.create(false, true, null);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-					return false;
-				}
-			} else
-				return false;
-		}
-		return addIfNotOnBuildPath(project, folder);
-	}
+
 	private boolean addIfNotOnBuildPath(IProject project, IFolder folder) {
 		final IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] entries = null;
