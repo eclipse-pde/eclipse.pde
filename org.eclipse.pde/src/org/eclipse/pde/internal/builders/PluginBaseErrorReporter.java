@@ -19,6 +19,8 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	 */
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
+		if (element == null)
+			return;
 		String elementName = element.getNodeName();
 		if (!getRootElementName().equals(elementName)) {
 			reportIllegalElement(element, CompilerFlags.ERROR);

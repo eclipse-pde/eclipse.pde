@@ -28,6 +28,8 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
+		if (element == null)
+			return;
 		String elementName = element.getNodeName();
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);

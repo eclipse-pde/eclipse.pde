@@ -302,7 +302,8 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 	
 	public Element getDocumentRoot() {
-		fRootElement.normalize();
+		if (fRootElement != null)
+			fRootElement.normalize();
 		return fRootElement;
 	}
 
