@@ -38,7 +38,7 @@ protected abstract void run() throws CoreException;
  * @see IPlatformRunnable#run(Object)
  */
 public Object run(Object args) throws Exception {
-	processCommandLine(getArrayList((String[]) args));
+	processCommandLine(Utils.getArrayList((String[]) args));
 	if (usage) {
 		printUsage(new PrintWriter(System.out));
 		return null;
@@ -51,18 +51,7 @@ public Object run(Object args) throws Exception {
 	return null;
 }
 
-/**
- * Helper method to ensure an array is converted into an ArrayList.
- */
-private ArrayList getArrayList(String[] args) {
-	// We could be using Arrays.asList() here, but it does not specify
-	// what kind of list it will return. We do need a list that
-	// implements the method List.remove(int) and ArrayList does.
-	ArrayList result = new ArrayList(args.length);
-	for (int i = 0; i < args.length; i++)
-		result.add(args[i]);
-	return result;
-}
+
 
 /**
  * Looks for interesting command line arguments.

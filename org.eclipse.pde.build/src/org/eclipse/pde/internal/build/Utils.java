@@ -221,4 +221,16 @@ protected static HashMap computeCounts(String[][] mappings) {
 	}
 	return counts;
 }
+/**
+ * Helper method to ensure an array is converted into an ArrayList.
+ */
+public static ArrayList getArrayList(Object[] args) {
+	// We could be using Arrays.asList() here, but it does not specify
+	// what kind of list it will return. We do need a list that
+	// implements the method List.remove(int) and ArrayList does.
+	ArrayList result = new ArrayList(args.length);
+	for (int i = 0; i < args.length; i++)
+		result.add(args[i]);
+	return result;
+}
 }

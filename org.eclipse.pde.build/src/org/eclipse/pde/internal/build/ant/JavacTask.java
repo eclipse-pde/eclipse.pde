@@ -32,6 +32,7 @@ public void print(AntScript script, int tab) {
 	script.printAttribute("verbose", verbose, false);
 	script.printAttribute("classpath", classpath, false);
 	script.println(">");
+	tab++;
 	for (int i = 0; i < srcdir.length; i++) {
 		script.printTab(tab);
 		script.print("<src path=");
