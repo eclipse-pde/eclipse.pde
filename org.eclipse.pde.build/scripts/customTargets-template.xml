@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="Build specific targets and properties" default="noDefault" >
 
 <property name="basews" value="win32" />
@@ -38,8 +39,7 @@
 	<cvs 
 		package="<repo location of map files>"
 		dest="${buildDirectory}/maps"
-		tag="${mapVersionTag}"
-	/>
+		tag="${mapVersionTag}"	/>
 </target>
 
 <!-- ===================================================================== -->
