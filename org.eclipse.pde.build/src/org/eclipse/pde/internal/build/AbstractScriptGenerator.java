@@ -118,7 +118,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				input.close();
 			}
 		} catch (FileNotFoundException e) {
-			if (errorLevel != IStatus.INFO) {
+			if (errorLevel != IStatus.INFO && errorLevel != IStatus.OK) {
 				String message = Policy.bind("exception.missingFile", file.toString()); //$NON-NLS-1$
 				BundleHelper.getDefault().getLog().log(new Status(errorLevel, PI_PDEBUILD, EXCEPTION_READING_FILE, message, null));
 			}

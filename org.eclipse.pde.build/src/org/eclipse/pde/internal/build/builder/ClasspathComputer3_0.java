@@ -134,7 +134,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private Properties getBuildPropertiesFor(BundleDescription bundle) {
 		try {
-			return AbstractScriptGenerator.readProperties(generator.getLocation(bundle), "build.properties", 0);	//TODO
+			return AbstractScriptGenerator.readProperties(generator.getLocation(bundle), "build.properties", IStatus.OK);
 		} catch (CoreException e) {
 			//ignore
 		}
