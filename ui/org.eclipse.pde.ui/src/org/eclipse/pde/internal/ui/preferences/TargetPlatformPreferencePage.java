@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
