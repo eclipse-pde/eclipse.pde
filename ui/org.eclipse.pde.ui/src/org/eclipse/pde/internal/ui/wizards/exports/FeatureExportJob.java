@@ -25,6 +25,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BaseBuildAction;
@@ -258,7 +259,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			IFeature feature = ((IFeatureModel)model).getFeature();
 			IFeatureChild[] children = feature.getIncludedFeatures();
 			for (int i = 0; i < children.length; i++) {
-				deleteBuildFiles(children[i].getModel());
+				deleteBuildFiles(((FeatureChild)children[i]).getReferencedFeature().getModel());
 			}
 			
 			IFeaturePlugin[] plugins = feature.getPlugins();
