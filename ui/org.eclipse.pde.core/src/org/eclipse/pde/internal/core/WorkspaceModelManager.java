@@ -240,7 +240,7 @@ public class WorkspaceModelManager
 		Vector result = new Vector();
 		if (workspaceFragmentModels == null)
 			initializeWorkspacePluginModels();
-		validate();
+		validate(workspaceFragmentModels);
 		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
 			IFragmentModel model = (IFragmentModel) workspaceFragmentModels.elementAt(i);
 			IFragment fragment = model.getFragment();
@@ -274,7 +274,7 @@ public class WorkspaceModelManager
 		if (workspaceFragmentModels == null) {
 			initializeWorkspacePluginModels();
 		}
-		validate();
+		validate(workspaceFragmentModels);
 		IFragmentModel[] result =
 			new IFragmentModel[workspaceFragmentModels.size()];
 		workspaceFragmentModels.copyInto(result);
@@ -284,7 +284,7 @@ public class WorkspaceModelManager
 		if (workspaceFeatureModels == null) {
 			initializeWorkspacePluginModels();
 		}
-		validate();
+		validate(workspaceFeatureModels);
 		IFeatureModel[] result =
 			new IFeatureModel[workspaceFeatureModels.size()];
 		workspaceFeatureModels.copyInto(result);
@@ -342,7 +342,7 @@ public class WorkspaceModelManager
 		if (workspaceModels == null) {
 			initializeWorkspacePluginModels();
 		}
-		validate();
+		validate(workspaceModels);
 		IPluginModel[] result = new IPluginModel[workspaceModels.size()];
 		workspaceModels.copyInto(result);
 		return result;
@@ -837,17 +837,13 @@ public class WorkspaceModelManager
 	private void validate() {
 		// let's be paranoid - see if the underlying resources
 		// are still valid
-		if (workspaceModels != null) {
-			validate(workspaceModels);
-		}
-		if (workspaceFragmentModels != null) {
-			validate(workspaceFragmentModels);
-		}
-		if (workspaceFeatureModels != null) {
-			validate(workspaceFeatureModels);
-		}
+		validate(workspaceModels);
+		validate(workspaceFragmentModels);
+		validate(workspaceFeatureModels);
 	}
+	
 	private void validate(Vector models) {
+		if (models==null) return;
 		Object[] entries = models.toArray();
 		for (int i = 0; i < entries.length; i++) {
 			IModel model = (IModel) entries[i];
