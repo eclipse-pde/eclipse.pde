@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.*;
 
 public class BuildFeatureAction extends Action {
 	public static final String LABEL = "FeatureEditor.BuildAction.label";
-	BuildComponentJarAction buildDelegate;
+	BuildFeatureJarAction buildDelegate;
 	FeatureEditor activeEditor;
 
 public BuildFeatureAction() {
 	setText(PDEPlugin.getResourceString(LABEL));
-	buildDelegate = new BuildComponentJarAction();
+	buildDelegate = new BuildFeatureJarAction();
 
 }
 private void ensureContentSaved() {

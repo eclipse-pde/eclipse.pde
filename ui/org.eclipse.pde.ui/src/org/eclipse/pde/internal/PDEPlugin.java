@@ -69,12 +69,14 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private static PDEPlugin inst;
 	// Resource bundle
 	private ResourceBundle resourceBundle;
-	// Plugin Info
+	// External model manager
 	private ExternalModelManager externalModelManager;
-	// Plugin Info
+	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
-	// Plugin Info
+	// Schema registry
 	private SchemaRegistry schemaRegistry;
+	// Shared label labelProvider
+	private PDELabelProvider labelProvider;
 	// A flag that indicates if we are running inside VAJ or not.
 	private static boolean inVAJ;
 	static {
@@ -420,6 +422,11 @@ public class PDEPlugin extends AbstractUIPlugin {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	
+	public PDELabelProvider getLabelProvider() {
+		if (labelProvider==null) labelProvider = new PDELabelProvider();
+		return labelProvider;
 	}
 
 	public void registerLaunch(ILaunch launch) {

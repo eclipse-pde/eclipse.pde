@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
 
 public class RequiresSection
 	extends PDEFormSection
@@ -32,9 +33,6 @@ public class RequiresSection
 	private Composite requiresParent;
 	private boolean needsUpdate;
 	private TableViewer requiresList;
-	private Image pluginImage;
-	private Image errorImage;
-	private Image exportPluginImage;
 	public static final String SECTION_TITLE =
 		"ManifestEditor.RequiresSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.RequiresSection.desc";
@@ -48,24 +46,28 @@ public class RequiresSection
 	private void addImportLink(IPluginImport importObject) {
 		Label imageLabel = factory.createLabel(requiresParent, "");
 		String pluginId = importObject.getId();
-		IPlugin pluginInfo = PDEPlugin.getDefault().findPlugin(pluginId);
+		IPlugin refPlugin = PDEPlugin.getDefault().findPlugin(pluginId);
 		String name = pluginId;
+		
+		if (refPlugin != null && MainPreferencePage.isFullNameModeEnabled())
+			name = refPlugin.getTranslatedName();
 
-		if (pluginInfo != null)
-			name = pluginInfo.getResourceString(pluginInfo.getName());
-		if (pluginInfo != null) {
-			boolean reexport = importObject.isReexported();
-
+		int flags = 0;
+		if (refPlugin==null) flags = SharedLabelProvider.F_ERROR;
+		else if (importObject.isReexported())
+			flags = SharedLabelProvider.F_EXPORT;
+		
+		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+		Image image = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
+		imageLabel.setImage(image);
+		if (refPlugin != null) {
 			SelectableFormLabel hyperlink =
 				factory.createSelectableLabel(requiresParent, name);
 			factory.turnIntoHyperlink(hyperlink, this);
 			hyperlink.setToolTipText(pluginId);
-			hyperlink.setData(pluginInfo);
-
-			imageLabel.setImage(reexport ? exportPluginImage : pluginImage);
+			hyperlink.setData(refPlugin);
 		} else {
-			Label label = factory.createLabel(requiresParent, name);
-			imageLabel.setImage(errorImage);
+			factory.createLabel(requiresParent, name);
 		}
 	}
 
@@ -113,37 +115,15 @@ public class RequiresSection
 		return container;
 	}
 	public void dispose() {
-		pluginImage.dispose();
-		errorImage.dispose();
-		exportPluginImage.dispose();
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
 	public void initialize(Object input) {
-		initializeImages();
 		IPluginModel model = (IPluginModel) input;
 		model.addModelChangedListener(this);
 		needsUpdate = true;
 		update(true);
-	}
-	private void initializeImages() {
-		pluginImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-		ImageDescriptor errorDesc =
-			new OverlayIcon(
-				PDEPluginImages.DESC_REQ_PLUGIN_OBJ,
-				new ImageDescriptor[][] { {
-			}, {
-			}, {
-				PDEPluginImages.DESC_ERROR_CO }
-		});
-		errorImage = errorDesc.createImage();
-		ImageDescriptor exportDesc =
-			new OverlayIcon(
-				PDEPluginImages.DESC_REQ_PLUGIN_OBJ,
-				new ImageDescriptor[][] { { PDEPluginImages.DESC_EXPORT_CO }
-		});
-		exportPluginImage = exportDesc.createImage();
 	}
 	public void linkActivated(Control linkLabel) {
 		IPlugin pluginInfo = (IPlugin) linkLabel.getData();
@@ -181,6 +161,8 @@ public class RequiresSection
 				needsUpdate = true;
 			}
 		}
+		if (getFormPage().isVisible())
+			update();
 	}
 	public void update() {
 		if (needsUpdate)

@@ -328,7 +328,7 @@
       </filter>
       <action
             label="%popupMenus.createJar.label"
-            class="org.eclipse.pde.internal.editor.feature.BuildFeatureAction"
+            class="org.eclipse.pde.internal.feature.BuildFeatureJarAction"
             menubarPath="additions"
             enablesFor="1"
             id="org.eclipse.pde.BuildFeatureJar">
@@ -360,7 +360,7 @@
       </filter>
       <action
             label="%popupMenus.buildFragment.label"
-            class="org.eclipse.pde.internal.component.BuildPluginAction"
+            class="org.eclipse.pde.internal.feature.BuildPluginAction"
             menubarPath="additions"
             enablesFor="1"
             id="org.eclipse.pde.BuildFragmentAction">

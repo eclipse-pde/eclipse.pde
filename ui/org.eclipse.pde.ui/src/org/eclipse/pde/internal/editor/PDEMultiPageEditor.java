@@ -61,6 +61,7 @@ public abstract class PDEMultiPageEditor
 		formWorkbook = new CustomWorkbook();
 		formWorkbook.setFirstPageSelected(false);
 		pages = new Vector();
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		createPages();
 		undoManager = createModelUndoManager();
 	}
@@ -160,6 +161,7 @@ public abstract class PDEMultiPageEditor
 			((IModelChangeProvider) model).removeModelChangedListener(modelListener);
 			undoManager.disconnect((IModelChangeProvider) model);
 		}
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		disposed = true;
 	}
 	public void doSave(IProgressMonitor monitor) {

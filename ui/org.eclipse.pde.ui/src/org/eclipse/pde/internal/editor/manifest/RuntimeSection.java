@@ -90,7 +90,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	return container;
 }
 public void dispose() {
-	libraryImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
 	super.dispose();
@@ -102,7 +101,8 @@ public void initialize(Object input) {
 	model.addModelChangedListener(this);
 }
 private void initializeImages() {
-	libraryImage = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+	libraryImage = provider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 }
 public void linkActivated(Control linkLabel) {
 	IPluginLibrary library = (IPluginLibrary)linkLabel.getData();
@@ -131,6 +131,8 @@ public void modelChanged(IModelChangedEvent event) {
 				needsUpdate = true;
 			}
 		}
+	if (getFormPage().isVisible())
+		update();
 }
 public void update() {
 	if (needsUpdate)

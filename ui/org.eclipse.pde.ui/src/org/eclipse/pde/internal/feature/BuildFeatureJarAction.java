@@ -11,17 +11,17 @@ import org.eclipse.ui.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
 
-public class BuildComponentJarAction implements IObjectActionDelegate {
+public class BuildFeatureJarAction implements IObjectActionDelegate {
 	private IWorkbenchPart targetPart;
-	private IFile componentFile;
+	private IFile featureFile;
 
-public org.eclipse.core.resources.IFile getComponentFile() {
-	return componentFile;
+public IFile getFeatureFile() {
+	return featureFile;
 }
 public void run(IAction action) {
-	if (componentFile==null) return;
-	if (componentFile.exists()==false) return;
-	FeatureJarWizard wizard = new FeatureJarWizard(componentFile);
+	if (featureFile==null) return;
+	if (featureFile.exists()==false) return;
+	FeatureJarWizard wizard = new FeatureJarWizard(featureFile);
 	WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 	dialog.setMinimumPageSize(400, 300);
 	dialog.create();
@@ -34,16 +34,16 @@ public void selectionChanged(IAction action, ISelection selection) {
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		if (obj != null && obj instanceof IFile) {
 			file = (IFile) obj;
-			if (file.getName().toLowerCase().equals("install.xml") == false)
+			if (file.getName().toLowerCase().equals("feature.xml") == false)
 				file = null;
 		}
 	}
-	this.componentFile = file;
+	this.featureFile = file;
 }
 public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	this.targetPart = targetPart;
 }
-public void setComponentFile(org.eclipse.core.resources.IFile newComponentFile) {
-	componentFile = newComponentFile;
+public void setComponentFile(IFile featureFile) {
+	this.featureFile = featureFile;
 }
 }
