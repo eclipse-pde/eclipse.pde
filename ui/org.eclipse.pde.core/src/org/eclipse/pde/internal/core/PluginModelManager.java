@@ -28,11 +28,13 @@ public class PluginModelManager implements IAdaptable {
 	private WorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
-	private Map fEntries;
+
+	private TreeMap entries;
 
 	public PluginModelManager() {
 		providerListener = new IModelProviderListener() {
 			public void modelsChanged(IModelProviderEvent e) {
+				if (entries!=null)
 					handleModelsChanged(e);
 			}
 		};
@@ -45,6 +47,9 @@ public class PluginModelManager implements IAdaptable {
 	 */
 
 	public boolean isOSGiRuntime() {
+		if (entries == null)
+			initializeTable();
+		
 		try {
 			ModelEntry entry = findEntry("org.eclipse.platform");
 			if (entry != null) {
@@ -86,16 +91,26 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public boolean isEmpty() {
-		return getEntryTable().isEmpty();
+		if (entries == null)
+			initializeTable();
+		if (entries==null) return true;
+		return entries.isEmpty();
 	}
 
 	public ModelEntry[] getEntries() {
-		Collection values = getEntryTable().values();
+		if (entries == null)
+			initializeTable();
+		if (entries==null) return new ModelEntry[0];
+		Collection values = entries.values();
 		return (ModelEntry[]) values.toArray(new ModelEntry[values.size()]);
 	}
 
 	public IPluginModelBase[] getPlugins() {
-		Collection values = getEntryTable().values();
+		if (entries == null)
+			initializeTable();
+		if (entries == null)
+			return new IPluginModelBase[0];
+		Collection values = entries.values();
 		ArrayList result = new ArrayList();
 		for (Iterator iter = values.iterator(); iter.hasNext();) {
 			ModelEntry entry = (ModelEntry) iter.next();
@@ -107,7 +122,11 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public IPluginModelBase [] getPluginsOnly() {
-		Collection values = getEntryTable().values();
+		if (entries == null)
+			initializeTable();
+		if (entries == null)
+			return new IPluginModelBase[0];
+		Collection values = entries.values();
 		ArrayList result = new ArrayList();
 		for (Iterator iter = values.iterator(); iter.hasNext();) {
 			ModelEntry entry = (ModelEntry) iter.next();
@@ -119,6 +138,8 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(IProject project) {
+		if (entries==null) initializeTable();
+		if (entries==null) return null;
 		IModel model = workspaceManager.getWorkspaceModel(project);
 		if (model==null) return null;
 		if (!(model instanceof IPluginModelBase))
@@ -127,7 +148,7 @@ public class PluginModelManager implements IAdaptable {
 		String id = modelBase.getPluginBase().getId();
 		if (id == null || id.length() == 0)
 			return null;
-		return (ModelEntry)getEntryTable().get(id);
+		return (ModelEntry)entries.get(id);
 	}
 	
 	public ModelEntry findEntry(String id) {	
@@ -139,16 +160,22 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(String id, String version, int match) {
-		return (ModelEntry) getEntryTable().get(id);
+		if (entries == null)
+			initializeTable();
+		if (entries == null)
+			return null;
+		return (ModelEntry) entries.get(id);
 	}
 	
 	public IPluginModelBase findPlugin(String id, String version, int match) {
+		if (entries == null)
+			initializeTable();
 		ModelEntry entry = findEntry(id, version, match);
 		if (entry == null)
 			return null;
 		return entry.getActiveModel();
 	}
-	
+
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 		ArrayList changedPlugins = new ArrayList();
@@ -181,7 +208,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
-					ModelEntry entry = (ModelEntry)getEntryTable().get(plugin.getId());
+					ModelEntry entry = (ModelEntry)entries.get(plugin.getId());
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
 					changedPlugins.add(plugin);
 					updateBundleDescription(model, entry);
@@ -200,7 +227,6 @@ public class PluginModelManager implements IAdaptable {
 		boolean workspace = model.getUnderlyingResource()!=null;
 		if (id == null)
 			return;
-		Map entries = getEntryTable();
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		int kind = 0;
 		if (added && entry == null) {
@@ -273,15 +299,9 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 	
-	/*
-	 * This method must be synchronized so that only one thread
-	 * initializes the table, and the rest would block until
-	 * the table is initialized.
-	 * 
-	 */
 	private synchronized void initializeTable() {
-		if (fEntries != null) return;
-		fEntries = Collections.synchronizedMap(new TreeMap());
+		if (workspaceManager == null || entries != null) return;
+		entries = new TreeMap();
 		IPluginModelBase[] models = externalManager.getAllModels();
 		addToTable(models, false);
 		models = workspaceManager.getAllModels();
@@ -289,19 +309,7 @@ public class PluginModelManager implements IAdaptable {
 		addWorkspaceBundlesToState();
 		searchablePluginsManager.initialize();
 	}
-
-	/*
-	 * Allow access to the table only through this getter.
-	 * It always calls initialize to make sure the table is initialized.
-	 * If more than one thread tries to read the table at the same time,
-	 *  and the table is not initialized yet, thread2 would wait. 
-	 *  This way there are no partial reads.
-	 */
-	private Map getEntryTable() {
-		initializeTable();
-		return fEntries;
-	}
-
+	
 	public void addWorkspaceBundlesToState() {
 		IPluginModelBase[] models = workspaceManager.getAllModels();
 		PDEState state = externalManager.getState();
@@ -378,7 +386,6 @@ public class PluginModelManager implements IAdaptable {
 		String id = model.getPluginBase().getId();
 		if (id == null)
 			return;
-		Map entries = getEntryTable();
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		if (entry == null) {
 			entry = new ModelEntry(this, id);
