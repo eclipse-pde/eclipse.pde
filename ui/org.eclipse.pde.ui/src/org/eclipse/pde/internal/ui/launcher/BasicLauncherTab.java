@@ -42,7 +42,6 @@ public class BasicLauncherTab
 	private Combo fJreCombo;
 	private Text fVmArgsText;
 	private Text fProgArgsText;
-	private Button fDefaultsButton;
 	private Image fImage;
 
 	private IStatus fJreSelectionStatus;
@@ -63,7 +62,7 @@ public class BasicLauncherTab
 	public BasicLauncherTab() {
 		fJreSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
 		fWorkspaceSelectionStatus = createStatus(IStatus.OK, ""); //$NON-NLS-1$
-		fImage = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
+		fImage = PDEPluginImages.DESC_MAIN_TAB.createImage();
 	}
 
 	public void dispose() {
@@ -79,7 +78,6 @@ public class BasicLauncherTab
 		createWorkspaceDataSection(composite);
 		createProgramSection(composite);
 		createCommandLineSettingsSection(composite);
-		createDefaultsButton(composite);
 		
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -98,19 +96,6 @@ public class BasicLauncherTab
 		createProductSection(group);		
 	}
 
-	protected void createDefaultsButton(Composite parent) {
-		fDefaultsButton = new Button(parent, SWT.PUSH);
-		fDefaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore")); //$NON-NLS-1$
-		fDefaultsButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(fDefaultsButton);
-		fDefaultsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doRestoreDefaults();
-				updateLaunchConfigurationDialog();
-			}
-		});		
-	}
-	
 	protected void createWorkspaceDataSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
 		group.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace")); //$NON-NLS-1$

@@ -56,6 +56,7 @@ public class PDEPluginImages {
 	/**
 	 * OBJ16
 	 */
+	public static final ImageDescriptor DESC_MAIN_TAB  = create(PATH_OBJ, "main_tab.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALL_SC_OBJ    = create(PATH_OBJ, "all_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_CLASS_OBJ = create(PATH_OBJ, "att_class_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_FILE_OBJ  = create(PATH_OBJ, "att_file_obj.gif"); //$NON-NLS-1$
