@@ -90,6 +90,9 @@ public class ExtensionsSection extends TreeSection
 			return getChildren(parent).length > 0;
 		}
 		public Object getParent(Object child) {
+			if (child instanceof IPluginExtension) {
+				return ((IPluginModelBase)getPage().getModel()).getPluginBase();
+			}
 			if (child instanceof IPluginObject)
 				return ((IPluginObject) child).getParent();
 			return null;
@@ -156,7 +159,6 @@ public class ExtensionsSection extends TreeSection
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		extensionTree = treePart.getTreeViewer();
-		//extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		extensionTree.setContentProvider(new ExtensionContentProvider());
 		extensionTree.setLabelProvider(new ExtensionLabelProvider());
 		drillDownAdapter = new DrillDownAdapter(extensionTree);
@@ -537,14 +539,16 @@ public class ExtensionsSection extends TreeSection
 					.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel
 					.getFirstElement();
-			extensionTree.refresh();
+			//extensionTree.refresh();
 			extensionTree.setSelection(new StructuredSelection(extension));
 			return;
 		}
 		if (changeObject instanceof IPluginExtension
 				|| changeObject instanceof IPluginElement) {
 			IPluginObject pobj = (IPluginObject) changeObject;
-			IPluginObject parent = pobj.getParent();
+			IPluginObject parent = changeObject instanceof IPluginExtension
+					? ((IPluginModelBase) getPage().getModel()).getPluginBase()
+					: pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				extensionTree.add(parent, pobj);
 				extensionTree.setSelection(
