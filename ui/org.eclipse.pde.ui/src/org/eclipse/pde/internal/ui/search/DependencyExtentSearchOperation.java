@@ -287,7 +287,7 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 	}
 	
 	public String getSingularLabel() {
-		return object.getId() + " 1 " + PDEPlugin.getResourceString(KEY_DEPENDENCIES);
+		return object.getId() + " - 1 " + PDEPlugin.getResourceString(KEY_DEPENDENCY);
 	}
 	
 	public IProject getProject() {
