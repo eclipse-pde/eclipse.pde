@@ -345,7 +345,7 @@ public class ExternalModelManager {
 		String[] pluginPaths,
 		IProgressMonitor monitor) {
 		MultiStatus errors =
-			processPluginDirectories(result, fresult, pluginPaths, true, monitor);
+			processPluginDirectories(result, fresult, pluginPaths, true, true, monitor);
 		if (errors != null && errors.getChildren().length > 0) {
 			ResourcesPlugin.getPlugin().getLog().log(errors);
 		}
@@ -356,6 +356,7 @@ public class ExternalModelManager {
 		Vector fresult,
 		String[] pluginPaths,
 		boolean resolve,
+		boolean useCache,
 		IProgressMonitor monitor) {
 		try {
 			URL[] urls = new URL[pluginPaths.length];
@@ -363,7 +364,7 @@ public class ExternalModelManager {
 				urls[i] = new URL("file:" + pluginPaths[i].replace('\\', '/') + "/");
 			}
 			TargetPlatformRegistryLoader loader = new TargetPlatformRegistryLoader();
-			MultiStatus errors = loader.load(urls, resolve);
+			MultiStatus errors = loader.load(urls, resolve, useCache);
 			PluginRegistryModel registryModel = loader.getRegistry();
 
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();

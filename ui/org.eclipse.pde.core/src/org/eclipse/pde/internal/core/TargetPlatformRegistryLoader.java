@@ -4,8 +4,6 @@ import java.io.*;
 import java.io.File;
 import java.net.URL;
 
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.internal.plugins.RegistryCacheReader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.model.*;
@@ -19,12 +17,10 @@ public class TargetPlatformRegistryLoader {
 	private static final String KEY_SCANNING_PROBLEMS =
 		"ExternalModelManager.scanningProblems";
 	private PluginRegistryModel registryModel;
-	public static boolean DEBUG = false;
+	private static boolean DEBUG = Platform.getDebugOption("org.eclipse.pde.core/cache").equals("true");;
+	private long code;
 	
-	public TargetPlatformRegistryLoader() {
-	}
-	
-	public MultiStatus load(URL [] urls, boolean resolve) {
+	public MultiStatus load(URL[] urls, boolean resolve, boolean useCache) {
 		MultiStatus errors =
 			new MultiStatus(
 				PDECore.getPluginId(),
@@ -32,33 +28,30 @@ public class TargetPlatformRegistryLoader {
 				PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
 				null);
 		Factory factory = new Factory(errors);
-/*
-		if (resolve) {
-			// Try to load from a cache. If successful,
-			// registryModel will not be null and we can
-			// return. Otherwise, we will proceed to 
-			// parse the registry anew.
-			loadFromCache(urls, factory, errors);
-			if (registryModel!=null)
-				return errors;
-		}
-*/
-
+		
 		long start = System.currentTimeMillis();
-		registryModel =
-			Platform.parsePlugins(urls, factory);
-		long pstop = System.currentTimeMillis();
-		IStatus resolveStatus = null;
-		if (resolve)
-			resolveStatus = registryModel.resolve(true, false);
-		long rstop = System.currentTimeMillis();
-		if (DEBUG) {
-			System.out.println("Time to parse: "+(pstop-start)+"ms");
-			System.out.println("Time to resolve: "+(rstop-pstop)+"ms");
+
+		if (resolve && useCache) {
+			code = computePluginsTimestamp(urls);
+			loadFromCache(urls, factory, errors);
+			if (registryModel != null) {
+				return errors;
+			}
 		}
-		if (resolveStatus!=null)
-			errors.merge(resolveStatus);
-		//saveCache(errors);
+
+		registryModel = Platform.parsePlugins(urls, factory);
+		IStatus resolveStatus = null;
+		if (resolve) {
+			resolveStatus = registryModel.resolve(true, false);
+			if (resolveStatus != null)
+				errors.merge(resolveStatus);
+			if (useCache) {
+				saveCache(errors);
+			}
+		}
+		if (DEBUG) {
+			System.out.println("Total time elapsed: " + (System.currentTimeMillis() - start) + "ms");
+		}
 		return errors;
 	}
 	
@@ -73,7 +66,7 @@ public class TargetPlatformRegistryLoader {
 			DataInputStream input = new DataInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
 			try {
 				long start = System.currentTimeMillis();
-				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
+				PDERegistryCacheReader cacheReader = new PDERegistryCacheReader(factory, code);
 				registryModel = cacheReader.readPluginRegistry(input, urls, DEBUG);
 				if (DEBUG)
 					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
@@ -110,7 +103,7 @@ public class TargetPlatformRegistryLoader {
 			}
 			try {
 				long start = System.currentTimeMillis();
-				RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
+				PDERegistryCacheWriter cacheWriter = new PDERegistryCacheWriter(code);
 				cacheWriter.writePluginRegistry(registryModel, output);
 				if (DEBUG)
 					System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,4 +125,23 @@ public class TargetPlatformRegistryLoader {
 		IPath filePath = location.append(CACHE_FILE);
 		return new File(filePath.toOSString());
 	}
+
+	private long computePluginsTimestamp(URL[] urls) {
+		long result = 0;
+		for (int i = 0; i < urls.length; i++) {
+			File directory = new File(urls[i].getFile().toString().replace('/',File.separatorChar));
+			if (directory.exists() && directory.isDirectory()) {
+				File[] files = directory.listFiles();
+				for (int j = 0; j < files.length; j++) {
+					File manifest = new File(files[j].getAbsolutePath() + File.separatorChar + "plugin.xml");
+					if (!manifest.exists())
+						manifest = new File(files[j].getAbsolutePath() + File.separatorChar + "fragment.xml");
+					if (manifest.exists())
+						result ^= manifest.getAbsolutePath().hashCode() ^ manifest.lastModified() ^ manifest.length();
+				}
+			}
+		}
+		return result;
+	}
+	
 }

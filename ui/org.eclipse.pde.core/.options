@@ -1,0 +1,3 @@
+# prints the time taken to read/write registry cache.
+org.eclipse.pde.core/debug=true
+org.eclipse.pde.core/cache=false
