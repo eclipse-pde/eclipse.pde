@@ -95,7 +95,6 @@ public class AdvancedLauncherTab
 	private Button pluginPathButton;
 	private int numExternalChecked = 0;
 	private int numWorkspaceChecked = 0;
-	private boolean firstReveal = true;
 	private Image image;
 
 	class PluginContentProvider
@@ -202,10 +201,6 @@ public class AdvancedLauncherTab
 	private void hookListeners() {
 		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (firstReveal) {
-					pluginTreeViewer.reveal(workspacePlugins);
-					firstReveal = false;
-				}
 				useDefaultChanged();
 			}
 		};
@@ -368,19 +363,17 @@ public class AdvancedLauncherTab
 	private void initExternalPluginsState(ILaunchConfiguration config)
 		throws CoreException {
 
-		numExternalChecked = externalModels.length;
-		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
+		numExternalChecked = 0;
 
 		TreeSet selected = parseSelectedExtIds(config);
 		for (int i = 0; i < externalModels.length; i++) {
-			if (!selected.contains(externalModels[i].getPluginBase().getId())) {
-				if (pluginTreeViewer.setChecked(externalModels[i], false))
-					numExternalChecked -= 1;
+			if (selected.contains(externalModels[i].getPluginBase().getId())) {
+				if (pluginTreeViewer.setChecked(externalModels[i], true))
+					numExternalChecked += 1;
 			}
 		}
 
-		if (numExternalChecked == 0)
-			pluginTreeViewer.setChecked(externalPlugins, false);
+		pluginTreeViewer.setChecked(externalPlugins, numExternalChecked > 0);
 		pluginTreeViewer.setGrayed(
 			externalPlugins,
 			numExternalChecked > 0 && numExternalChecked < externalModels.length);
@@ -393,9 +386,11 @@ public class AdvancedLauncherTab
 			useFeaturesRadio.setSelection(config.getAttribute(USEFEATURES, false));
 			useListRadio.setSelection(
 				!useDefaultRadio.getSelection() && !useFeaturesRadio.getSelection());
-			if (pluginTreeViewer.getInput() == null)
-				//pluginTreeViewer.setUseHashlookup(true);
+			if (pluginTreeViewer.getInput() == null) {
+				pluginTreeViewer.setUseHashlookup(true);
 				pluginTreeViewer.setInput(PDEPlugin.getDefault());
+				pluginTreeViewer.reveal(workspacePlugins);
+			}
 
 			if (useDefaultRadio.getSelection()) {
 				computeInitialCheckState();
@@ -431,19 +426,17 @@ public class AdvancedLauncherTab
 			pluginTreeViewer.setSubtreeChecked(workspacePlugins, true);
 		}
 
-		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
-		numExternalChecked = externalModels.length;
+		numExternalChecked = 0;
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginModelBase model = externalModels[i];
 			boolean masked = wtable.contains(model.getPluginBase().getId());
-			if (masked || !model.isEnabled()) {
-				pluginTreeViewer.setChecked(model, false);
-				numExternalChecked -= 1;
+			if (!masked && model.isEnabled()) {
+				pluginTreeViewer.setChecked(model, true);
+				numExternalChecked += 1;
 			}
 		}
 
-		if (numExternalChecked == 0)
-			pluginTreeViewer.setChecked(externalPlugins, false);
+		pluginTreeViewer.setChecked(externalPlugins, numExternalChecked > 0);
 		pluginTreeViewer.setGrayed(
 			externalPlugins,
 			numExternalChecked > 0
