@@ -171,7 +171,7 @@ public class PluginModelManager implements IAdaptable {
 		if (kind==0) kind = PluginModelDelta.CHANGED;
 		delta.addEntry(entry, kind);
 	}
-	
+
 	private void updateAffectedEntries(IPluginBase [] changedPlugins) {
 		// Reset classpath containers for affected entries
 		ModelEntry [] entries = getEntries();
