@@ -24,7 +24,7 @@ public class NewElementAction extends Action {
 public NewElementAction(ISchemaElement elementInfo, IPluginParent parent) {
 	this.counters= PDEPlugin.getDefault().getDefaultNameCounters();
 	this.elementInfo = elementInfo;
-	this.project = project;
+	//this.project = project;
 	this.parent = parent;
 	setText(getElementName());
 	setImageDescriptor(PDEPluginImages.DESC_GENERIC_XML_OBJ);
