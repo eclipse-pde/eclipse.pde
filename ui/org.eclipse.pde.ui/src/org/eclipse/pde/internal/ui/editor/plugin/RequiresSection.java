@@ -49,6 +49,7 @@ public class RequiresSection
 	private Action fOpenAction;
 	private Action fAddAction;
 	private Action fRemoveAction;
+    private Action fPropertiesAction;
 
 	class ImportContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -237,6 +238,10 @@ public class RequiresSection
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) {
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
 		}
+        if (fPropertiesAction != null) {
+            manager.add(new Separator());
+            manager.add(fPropertiesAction);
+        }
 	}
 
 	private void handleOpen(ISelection sel) {
@@ -374,7 +379,14 @@ public class RequiresSection
 			public void run() {
 				handleRemove();
 			}
-		};		
+		};
+        if (isBundle()) {
+            fPropertiesAction = new Action("Properties") { 
+                public void run() {
+                    handleOpenProperties();
+                }
+            };
+        }
 	}
 	
 	public void refresh() {
