@@ -232,7 +232,7 @@ public class ProductExportJob extends FeatureExportJob {
 				properties.put("osgi.splashPath", location);
 			properties.put("eclipse.product", fProduct.getId());
 			if (fProduct.useFeatures()) {
-				properties.put("osgi.bundles", "org.eclipse.core.runtime@2,org.eclipse.update.configurator@3");
+				properties.put("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start");
 			} else {
 				properties.put("osgi.bundles", getPluginList());
 			}
