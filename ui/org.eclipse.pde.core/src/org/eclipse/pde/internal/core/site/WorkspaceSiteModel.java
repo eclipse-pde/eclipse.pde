@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.*;
 public class WorkspaceSiteModel
 	extends AbstractSiteModel
 	implements IEditableModel {
-	private boolean dirty;
+	private boolean fDirty;
 	private IFile file;
 	private boolean editable = true;
 
@@ -33,7 +33,7 @@ public class WorkspaceSiteModel
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
 		if (event.getChangeType()!=IModelChangedEvent.WORLD_CHANGED)
-			dirty = true;
+			setDirty(true);
 		super.fireModelChanged(event);
 	}
 
@@ -75,7 +75,7 @@ public class WorkspaceSiteModel
 		return file;
 	}
 	public boolean isDirty() {
-		return dirty;
+		return fDirty;
 	}
 	public boolean isEditable() {
 		return editable;
@@ -141,10 +141,10 @@ public class WorkspaceSiteModel
 			//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
 			site.write("", writer);
 		}
-		dirty = false;
+		setDirty(false);
 	}
 	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
+		fDirty = dirty;
 	}
 	public void setEditable(boolean newEditable) {
 		editable = newEditable;

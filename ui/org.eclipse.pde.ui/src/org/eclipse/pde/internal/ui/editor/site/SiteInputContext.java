@@ -110,8 +110,8 @@ public class SiteInputContext extends XMLInputContext {
 		if (!(getModel() instanceof IEditable))
 			return;
 		IEditable editableModel = (IEditable) getModel();
-		if (editableModel.isDirty() == false)
-			return;
+		if (editableModel.isEditable()==false) return;
+		if (editableModel.isDirty() == false) return;
 		try {
 			StringWriter swriter = new StringWriter();
 			PrintWriter writer = new PrintWriter(swriter);

@@ -85,12 +85,16 @@ public class FeatureEditor extends MultiSourceEditor {
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		 if (name.equalsIgnoreCase("feature.xml")) {
+		 	/*
 			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new FeatureInputContext(this, in, false));						
+			inputContextManager.putContext(in, new FeatureInputContext(this, in, false));
+			*/						
 		}
 		else if (name.equalsIgnoreCase("build.properties")) {
-			IEditorInput in = new FileEditorInput(file);
-			inputContextManager.putContext(in, new BuildInputContext(this, in, false));			
+			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
+				IEditorInput in = new FileEditorInput(file);
+				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
+			}
 		}
 	}
 
