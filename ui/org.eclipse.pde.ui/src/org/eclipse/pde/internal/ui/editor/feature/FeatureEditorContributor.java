@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -43,4 +44,8 @@ public void setActiveEditor(IEditorPart targetEditor) {
 	synchronizeAction.setActiveEditor((FeatureEditor) targetEditor);
 	previewAction.setActiveEditor((FeatureEditor)targetEditor);
 }
+
+	protected boolean hasKnownTypes(Clipboard clipboard) {
+		return true;
+	}
 }

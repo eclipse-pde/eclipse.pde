@@ -11,15 +11,17 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -122,6 +124,11 @@ public class InfoSection extends PDEFormSection {
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
+		sourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSelection(event.getSelection());
+			}
+		});
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		if (SWT.getPlatform().equals("motif") == false)
@@ -170,6 +177,9 @@ public class InfoSection extends PDEFormSection {
 			}
 		});
 		return container;
+	}
+	private void updateSelection(ISelection selection) {
+		getFormPage().getEditor().setSelection(selection);
 	}
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
@@ -355,5 +365,9 @@ public class InfoSection extends PDEFormSection {
 		resetButton.setEnabled(false);
 		element = input;
 		ignoreChange = false;
+	}
+
+	public boolean canPaste(Clipboard clipboard) {
+		return sourceViewer.canDoOperation(sourceViewer.PASTE);
 	}
 }

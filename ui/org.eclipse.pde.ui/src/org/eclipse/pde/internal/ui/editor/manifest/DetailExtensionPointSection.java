@@ -206,12 +206,20 @@ public class DetailExtensionPointSection
 						IStructuredSelection ssel = (IStructuredSelection) sel;
 						if (!ssel.isEmpty() && ssel.getFirstElement().equals(changeObject)) {
 							// update property sheet
-							getFormPage().setSelection(sel);
+							asyncResendSelection(sel);
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	private void asyncResendSelection(final ISelection sel) {
+		pointTable.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				getFormPage().setSelection(sel);
+			}
+		});
 	}
 	public void setFocus() {
 		pointTable.getTable().setFocus();

@@ -551,7 +551,7 @@ public class DetailExtensionSection
 							IStructuredSelection ssel = (IStructuredSelection) sel;
 							if (!ssel.isEmpty() && ssel.getFirstElement().equals(changeObject)) {
 								// update property sheet
-								getFormPage().setSelection(sel);
+								asyncResendSelection(sel);
 							}
 						}
 					}
@@ -559,6 +559,15 @@ public class DetailExtensionSection
 			}
 		}
 	}
+	
+	private void asyncResendSelection(final ISelection sel) {
+		extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				getFormPage().setSelection(sel);
+			}
+		});
+	}
+	
 	private Image resolveObjectImage(Object obj) {
 		if (obj instanceof IPluginExtension) {
 			return extensionImage;
