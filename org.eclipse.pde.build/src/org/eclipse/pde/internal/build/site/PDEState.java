@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
@@ -224,7 +225,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			try {
 				converter = acquirePluginConverter();
 				return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1"); //$NON-NLS-1$
-			} catch (Exception e1) {
+			} catch (PluginConversionException convertException) {
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.errorConverting", bundleLocation.getAbsolutePath()), convertException); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(status);
+				return null;
+			} catch (Exception serviceException) {
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.cannotAcquireService", "Plugin converter"), serviceException); //$NON-NLS-1$ //$NON-NLS-2$
+				BundleHelper.getDefault().getLog().log(status);
 				return null;
 			}
 		}
