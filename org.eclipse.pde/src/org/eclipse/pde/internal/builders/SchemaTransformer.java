@@ -390,7 +390,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.print("<HEAD>"); //$NON-NLS-1$
 		out.println(
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
-
+		out.println("<title>" + schema.getName() + "</title>");
 		addCSS(out, cssURL, cssPurpose);
 		addSchemaStyle(out, cssPurpose);
 
