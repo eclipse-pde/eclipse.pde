@@ -83,16 +83,16 @@ public void write(String indent, PrintWriter writer) {
 	}
 	writer.println(">");
 	writer.println();
-	writer.println("<!-- Runtime -->");
-	writer.println();
+	//writer.println("<!-- Runtime -->");
+	//writer.println();
 	// add runtime
 	Object [] children = getLibraries();
 	writeChildren("runtime", children, writer);
 	// add extension points
 	writer.println();
 
-	writer.println("<!-- Extension points -->");
-	writer.println();
+	//writer.println("<!-- Extension points -->");
+	//writer.println();
 	children = getExtensionPoints();
 	for (int i=0; i<children.length; i++) {
 		((IPluginExtensionPoint) children[i]).write("", writer);
@@ -101,7 +101,7 @@ public void write(String indent, PrintWriter writer) {
 
 	// add extensions
 	children = getExtensions();
-	writer.println("<!-- Extensions -->");
+	//writer.println("<!-- Extensions -->");
 	for (int i=0; i<children.length; i++) {
 		((IPluginExtension) children[i]).write("", writer);
 	}

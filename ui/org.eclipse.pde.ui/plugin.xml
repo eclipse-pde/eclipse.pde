@@ -4,7 +4,7 @@
    id="org.eclipse.pde"
    name="%name"
    version="0.9.0"
-   provider-name="%provider-name"
+   provider-name="International Business Machines Corp."
    class="org.eclipse.pde.internal.PDEPlugin">
 <!-- Required plugins -->
 <requires>

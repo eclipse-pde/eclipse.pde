@@ -135,10 +135,10 @@ private void loadWorkspaceDescriptors(IPluginModelBase model) {
 public void modelsChanged(IModelProviderEvent e) {
 	IPluginModelBase model = (IPluginModelBase)e.getAffectedModel();
 	switch (e.getEventType()) {
-		case IModelProviderEvent.POST_MODEL_ADDED :
+		case IModelProviderEvent.MODEL_ADDED :
 			loadWorkspaceDescriptors(model);
 			break;
-		case IModelProviderEvent.PRE_MODEL_REMOVED :
+		case IModelProviderEvent.MODEL_REMOVED :
 			removeWorkspaceDescriptors(model);
 			break;
 		case IModelProviderEvent.MODEL_CHANGED :

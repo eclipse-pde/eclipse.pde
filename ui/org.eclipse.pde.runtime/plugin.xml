@@ -4,11 +4,9 @@
    id="org.eclipse.pde.runtime"
    name="%name"
    version="0.9.0"
-   provider-name="%provider-name"
+   provider-name="International Business Machines Corp."
    class="org.eclipse.pde.internal.runtime.PDERuntimePlugin">
-
 <!-- Required plugins -->
-
 <requires>
    <import plugin="org.eclipse.ui"/>
    <import plugin="org.apache.xerces"/>
@@ -17,17 +15,14 @@
 </requires>
 
 <!-- Runtime -->
-
 <runtime>
    <library name="pdert.jar">
       <export name="*"/>
    </library>
 </runtime>
 
-<!-- Extension points -->
-
-
 <!-- Extensions -->
+<!-- Extension points -->
 <extension
       point="org.eclipse.ui.views">
    <category

@@ -198,7 +198,8 @@ public void expandTo(Object object) {
 	variableTable.setSelection(new StructuredSelection(object), true);
 }
 private void fillContextMenu(IMenuManager manager) {
-	if (!(getFormPage().getModel() instanceof IEditable))
+	IModel model = (IModel)getFormPage().getModel();
+	if (!model.isEditable())
 		return;
 	ISelection selection = variableTable.getSelection();
 

@@ -70,6 +70,10 @@ public PDEMultiPageEditor getEditor() {
 public IAction getGlobalAction(String id) {
 	return (IAction)globalActions.get(id);
 }
+
+public IAction getSaveAction() {
+	return saveAction;
+}
 public IStatusLineManager getStatusLineManager() {
 	return getActionBars().getStatusLineManager();
 }

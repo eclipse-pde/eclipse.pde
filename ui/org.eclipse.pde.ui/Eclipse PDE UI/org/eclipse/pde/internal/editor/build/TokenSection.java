@@ -147,7 +147,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	entryTable.setLabelProvider(new TableLabelProvider());
 	factory.paintBordersFor(container);
 
-	if (getFormPage().getModel() instanceof IEditable) {
+	IModel model = (IModel)getFormPage().getModel();
+	if (model.isEditable()) {
 		CellEditor[] editors = new CellEditor[] { new ModifiedTextCellEditor(table)};
 		String[] properties = { "name" };
 		entryTable.setCellEditors(editors);
@@ -195,7 +196,9 @@ public void doGlobalAction(String actionId) {
 	}
 }
 private void fillContextMenu(IMenuManager manager) {
-	if (!(getFormPage().getModel() instanceof IEditable)) return;
+	IModel model = (IModel)getFormPage().getModel();
+	if (!model.isEditable())
+		return;
 	ISelection selection = entryTable.getSelection();
 
 	manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_TOKEN)) {

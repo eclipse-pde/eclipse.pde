@@ -123,6 +123,7 @@ private void findRequiredMethods() {
 	String expectedTypeName = attInfo.getBasedOn();
 	try {
 		expectedType = findTypeForName(expectedTypeName);
+		if (expectedType==null) return;
 		requiredMethods = new Vector();
 		addRequiredMethodsFor(expectedType);
 	} catch (JavaModelException e) {
@@ -152,6 +153,10 @@ public void generateContents(
 	try {
 		findRequiredMethods();
 		String methodsBuffer = null;
+		if (expectedType==null) {
+			generateUnknownContents(packageName, className, writer);
+			return;
+		}
 		if (requiredMethods != null) {
 			methodsBuffer = generateMethods();
 		}
@@ -187,6 +192,28 @@ public void generateContents(
 		PDEPlugin.logException(e);
 	}
 }
+
+public void generateUnknownContents(
+	String packageName,
+	String className,
+	PrintWriter writer) {
+	writer.println("package " + packageName + ";");
+	writer.println();
+	writer.println("/**");
+	writer.println(" * Insert the type's description here.");
+	writer.println(" */");
+	writer.println(
+		"public class "
+			+ className
+			+ " {");
+	writer.println("  /**");
+	writer.println("   * The constructor.");
+	writer.println("   */");
+	writer.println("   public " + className + "() {");
+	writer.println("   }");
+	writer.println("}");
+}
+
 private String generateMethods() throws JavaModelException {
 	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
 	PrintWriter writer = new PrintWriter(bstream, true);

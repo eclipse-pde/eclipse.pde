@@ -143,4 +143,14 @@ private void warnErrorsInSource() {
 		PDEPlugin.getResourceString(ERROR_TITLE),
 		PDEPlugin.getResourceString(ERROR_MESSAGE));
 }
+
+protected void createActions () {
+	PDEEditorContributor contributor = getEditor().getContributor();
+	super.createActions();
+	setAction(ITextEditorActionConstants.SAVE, contributor.getSaveAction());
+}
+
+public void close(boolean save) {
+	editor.close(save);
+}
 }

@@ -98,6 +98,7 @@ public void createControl(Composite parent) {
 	searchButton.setSelection(true);
 	searchButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
+			searchPage.layout(true);
 			pageBook.showPage(searchPage);
 			verifyComplete();
 		}
@@ -109,16 +110,11 @@ public void createControl(Composite parent) {
 	generateButton.setLayoutData(gd);
 	generateButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
+			generatePage.layout(true);
 			pageBook.showPage(generatePage);
 			verifyComplete();
 		}
 	});
-/*
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	Label label =
-		new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.SHADOW_OUT);
-	label.setLayoutData(gd);
-*/
 
 	pageBook = new PageBook(container, SWT.NULL);
 	gd = new GridData(GridData.FILL_BOTH);
@@ -171,7 +167,9 @@ private void createGeneratePage() {
 	classText.setLayoutData(gd);
 	classText.addModifyListener(modifyListener);
 
-	new Label(page, SWT.NONE);
+	label = new Label(page, SWT.NONE);
+	gd = new GridData();
+	label.setLayoutData(gd);
 
 	int loc = className.lastIndexOf('.');
 	if (loc!= -1) {

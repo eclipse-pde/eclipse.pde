@@ -119,7 +119,7 @@ public void setFirstPageSelected(boolean newFirstPageSelected) {
 	firstPageSelected = newFirstPageSelected;
 }
 private void switchPages(IFormPage oldPage, IFormPage newPage) {
-	if (oldPage != null) {
+	if (oldPage != null && oldPage!=newPage) {
 		boolean okToSwitch = oldPage.becomesInvisible(newPage);
 		if (!okToSwitch) {
 			// We must try to go back to the source page
@@ -130,7 +130,7 @@ private void switchPages(IFormPage oldPage, IFormPage newPage) {
 	if (newPage.getControl() == null)
 		newPage.createControl(tabFolder);
 	tabFolder.setSelection((CTabItem) pages.get(newPage));
-	if (oldPage != null) {
+	if (oldPage != null && oldPage != newPage) {
 		Control oldControl = oldPage.getControl();
 		if (oldControl!=null) oldControl.setVisible(false);
 	}

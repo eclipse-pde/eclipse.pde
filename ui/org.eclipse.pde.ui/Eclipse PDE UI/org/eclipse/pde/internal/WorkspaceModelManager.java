@@ -47,7 +47,7 @@ private void addWorkspaceModel(IModel model) {
 		workspaceFragmentModels.add(model);
 	else
 		workspaceModels.add(model);
-	fireModelProviderEvent(IModelProviderEvent.POST_MODEL_ADDED, model);
+	fireModelProviderEvent(IModelProviderEvent.MODEL_ADDED, model);
 	PDEPlugin.getDefault().getTracingOptionsManager().reset();
 }
 private void checkTracing(IFile file) {
@@ -270,9 +270,23 @@ private void handleProjectClosing(IProject project) {
 	// not reason to keep it around if it is closed
 	handleProjectToBeDeleted(project);
 }
+
 private void handleProjectDelta(IResourceDelta delta) {
 	IProject project = (IProject)delta.getResource();
+	if (delta.getKind() == IResourceDelta.CHANGED &&
+	    (delta.getFlags() | IResourceDelta.DESCRIPTION)!=0) {
+	   // Project description changed. Test if this
+	   // is now a PDE project and act
+	   try {
+	      if (project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+	         ensureModelExists(project);   	
+	      }
+	   }   
+	   catch (CoreException e) {
+	   }
+	}
 }
+
 private void handleProjectToBeDeleted(IProject project) {
 	try {
 		if (project.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
@@ -346,6 +360,18 @@ public static boolean isPluginProject(IProject project) {
 	}
 	return false;
 }
+
+private void ensureModelExists(IProject pluginProject) {
+	if (!initialized) return;
+	IPluginModelBase model = getWorkspaceModel(pluginProject);
+	if (model==null) {
+		model =	createWorkspacePluginModel(pluginProject);
+		if (model!=null) {
+			addWorkspaceModel(model);
+		}
+	}
+}
+
 private boolean isSupportedFile(IFile file) {
 	String name = file.getName().toLowerCase();
 	if (!name.equals("plugin.xml") && !name.equals("fragment.xml")) return false;
@@ -374,52 +400,30 @@ private void reloadWorkspaceModel(IPluginModelBase model) {
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
 	}
+	fireModelProviderEvent(IModelProviderEvent.MODEL_CHANGED, model);
 	PDEPlugin.getDefault().getTracingOptionsManager().reset();
 }
 public void removeModelProviderListener(IModelProviderListener listener) {
 	listeners.remove(listener);
 }
 private void removeWorkspaceModel(IPluginModelBase model) {
-	fireModelProviderEvent(IModelProviderEvent.PRE_MODEL_REMOVED, model);
 	// remove
-	if (model instanceof IFragmentModel && workspaceFragmentModels != null)
-		workspaceFragmentModels.remove(model);
-	else
+	if (model instanceof IFragmentModel) {
+		if (workspaceFragmentModels != null)
+			workspaceFragmentModels.remove(model);
+	}
+	else {
 		if (workspaceModels != null)
 			workspaceModels.remove(model);
+	}
+	fireModelProviderEvent(IModelProviderEvent.MODEL_REMOVED, model);
 	// disconnect
 	IResource element = model.getUnderlyingResource();
-	//closeOpenedEditors(model);
 	disconnect(element, null);
 	PDEPlugin.getDefault().getTracingOptionsManager().reset();
 }
 public void reset() {
 	initializeWorkspacePluginModels();
-}
-
-private void closeOpenedEditors(IPluginModelBase model) {
-	IResource element = model.getUnderlyingResource();
-	ModelInfo info = (ModelInfo) models.get(element);
-	if (info.consumer!=null && 
-		info.consumer instanceof PDEMultiPageEditor) {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow [] windows = workbench.getWorkbenchWindows();
-		for (int i=0; i<windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
-			IWorkbenchPage [] pages = window.getPages();
-			for (int j=0; j<pages.length; j++) {
-				IWorkbenchPage page = pages[j];
-				IEditorPart [] editors = page.getEditors();
-				for (int k=0; k<editors.length; k++) {
-					IEditorPart editor = editors[k];
-					if (editor.equals(info.consumer)) {
-						page.closeEditor(editor, true);
-						return;
-					}
-				}
-			}
-		}
-	}
 }
 
 public void resourceChanged(IResourceChangeEvent event) {
@@ -472,16 +476,12 @@ public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource resource = delta.getResource();
 
 		if (resource instanceof IProject) {
-			// no point in going into non-PDE projects
-			if (isPluginProject((IProject) resource)) {
-				handleProjectDelta(delta);
-				return true;
-			}
-			return false;
-		} else
-			if (resource instanceof IFile) {
-				handleFileDelta(delta);
-			}
+			handleProjectDelta(delta);
+			return isPluginProject((IProject)resource);
+		} 
+		else if (resource instanceof IFile) {
+			handleFileDelta(delta);
+		}
 	}
 	return true;
 }

@@ -36,11 +36,14 @@ implements IResourceChangeListener {
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-		   event.getDelta().accept(new IResourceDeltaVisitor() {
-		      public boolean visit(IResourceDelta delta) {
-				   return WorkspaceResourceHelper.this.visit(delta);
-			  }
-		   });
+		   IResourceDelta delta = event.getDelta();
+		   if (delta!=null) {
+		      event.getDelta().accept(new IResourceDeltaVisitor() {
+		         public boolean visit(IResourceDelta delta) {
+				    return WorkspaceResourceHelper.this.visit(delta);
+			     }
+		      });
+		   }
 		}
 		catch (CoreException e) {
 		}

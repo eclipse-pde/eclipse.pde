@@ -419,4 +419,14 @@ void updatePropertySheet(IPDEEditorPage page) {
 	}
 }
 
+public void close(final boolean save) {
+	Display display= getSite().getShell().getDisplay();
+		
+	display.asyncExec(new Runnable() {
+		public void run() {
+			getSite().getPage().closeEditor(PDEMultiPageEditor.this, save);
+		}
+	});
+}
+
 }

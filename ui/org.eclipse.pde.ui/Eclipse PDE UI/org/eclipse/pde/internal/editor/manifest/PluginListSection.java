@@ -186,6 +186,7 @@ public boolean addWorkspacePlugins(IPluginModel model, boolean hasExternal) {
 		}
 		//if (refmodel.isEnabled()==false) continue;
 		IPlugin plugin = refmodel.getPlugin();
+
 		Button button =
 			factory.createButton(
 				pluginListParent,
@@ -294,10 +295,25 @@ public void modelChanged(IModelChangedEvent e) {
 		needsUpdate = true;
 }
 public void modelsChanged(IModelProviderEvent e) {
-	needsUpdate = true;
-	if (getFormPage().isVisible())
-		update();
+	IModel model = e.getAffectedModel();
+	if (model instanceof IPluginModel) {
+		IPluginModel affModel = (IPluginModel)model;
+		IPluginModel thisModel = (IPluginModel)getFormPage().getModel();
+		// Skip ourselves
+		if (affModel.getUnderlyingResource().equals(thisModel.getUnderlyingResource()))
+		   return;
+	    needsUpdate = true;
+		if (getFormPage().isVisible()) {
+			Display d = pluginListParent.getDisplay();
+			d.asyncExec(new Runnable() {
+				public void run() {
+					update();
+				}
+			});
+		}
+	}
 }
+
 private void openExternalPluginsDialog() {
 	ExternalPluginsWizard wizard = new ExternalPluginsWizard();
 	WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);

@@ -13,11 +13,11 @@ public interface IModelProviderEvent {
 /**
  * Event is sent after the model has been added.
  */
-	int POST_MODEL_ADDED = 1;
+	int MODEL_ADDED = 1;
 /**
  * Event is sent before the model will be removed.
  */
-	int PRE_MODEL_REMOVED = 2;
+	int MODEL_REMOVED = 2;
 /**
  * Event is sent after the model has been changed.
  */
@@ -30,7 +30,7 @@ public interface IModelProviderEvent {
 IModel getAffectedModel();
 /**
  * Returns the type of the model change 
- * (one of MODEL_CHANGED, POST_MODEL_ADDED, PRE_MODEL_REMOVED)
+ * (one of MODEL_CHANGED, MODEL_ADDED, MODEL_REMOVED)
  *
  * @return the model change type
  */

@@ -17,10 +17,10 @@ public PluginReference(IComponentReference reference, IPluginModelBase model) {
 	this.reference = reference;
 	this.model = model;
 }
-public org.eclipse.pde.internal.base.model.plugin.IPluginModelBase getModel() {
+public IPluginModelBase getModel() {
 	return model;
 }
-public org.eclipse.pde.internal.base.model.component.IComponentReference getReference() {
+public IComponentReference getReference() {
 	return reference;
 }
 public boolean isFragment() {
@@ -42,7 +42,7 @@ public boolean isUnresolved() {
 public void setFragment(boolean newFragment) {
 	fragment = newFragment;
 }
-public void setModel(org.eclipse.pde.internal.base.model.plugin.IPluginModelBase newModel) {
+public void setModel(IPluginModelBase newModel) {
 	model = newModel;
 }
 public void setReference(org.eclipse.pde.internal.base.model.component.IComponentReference newReference) {

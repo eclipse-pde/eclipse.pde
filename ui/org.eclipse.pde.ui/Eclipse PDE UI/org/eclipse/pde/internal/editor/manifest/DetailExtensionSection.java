@@ -175,6 +175,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	gd = new GridData(GridData.FILL_VERTICAL);
 	buttonContainer.setLayoutData(gd);
 	layout = new GridLayout();
+	layout.marginHeight = 0;
 	buttonContainer.setLayout(layout);
 
 	newButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW), SWT.PUSH);

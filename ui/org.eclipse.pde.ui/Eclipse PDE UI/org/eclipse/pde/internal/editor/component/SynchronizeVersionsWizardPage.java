@@ -180,6 +180,8 @@ private void loadSettings() {
 				break;
 		}
 	}
+	else 
+	   useComponentButton.setSelection(true);
 }
 private void runOperation(int mode, IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
@@ -243,6 +245,8 @@ private void synchronizeVersion(
 		if (targetVersion.equals(baseVersion) == false) {
 			forceVersion(targetVersion, modelBase);
 		}
+		if (mode == USE_COMPONENT)
+			ref.setVersion(targetVersion);
 	}
 	monitor.worked(1);
 }
