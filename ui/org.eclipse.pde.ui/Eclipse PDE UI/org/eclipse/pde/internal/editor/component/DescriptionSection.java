@@ -29,7 +29,6 @@ public class DescriptionSection extends PDEFormSection {
 public DescriptionSection(ComponentFormPage page) {
 	super(page);
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-	//setDescription("Enter a short description about this component");
 }
 public void commitChanges(boolean onSave) {
 	descriptionText.commit();
@@ -40,7 +39,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.verticalSpacing = 9;
 	layout.horizontalSpacing = 6;
 	layout.marginWidth = 2;
-	//layout.marginHeight = 2;
+	layout.marginHeight = 5;
 	container.setLayout(layout);
 
 	final IComponentModel model = (IComponentModel) getFormPage().getModel();

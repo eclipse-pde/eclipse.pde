@@ -62,12 +62,11 @@ public final Control createControl(
 	}
 
 	if (addSeparator) {
-		/*
-		Label separator = factory.createSeparator(section, SWT.HORIZONTAL);
-		*/
+        //separator = factory.createSeparator(section, SWT.HORIZONTAL);
 		separator = factory.createCompositeSeparator(section);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 2;
+		//gd.heightHint = 1;
 		separator.setLayoutData(gd);
 	}
 

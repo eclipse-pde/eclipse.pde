@@ -104,8 +104,13 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-			getFormPage().getForm().setTitle(
-				pluginBase.getResourceString(pluginBase.getName()));
+			String name = pluginBase.getName();
+	        name = pluginBase.getResourceString(name);
+
+			if (pluginBase.getModel().isEditable()==false) {
+		       name = PDEPlugin.getFormattedMessage(ManifestEditor.KEY_READ_ONLY, name);
+			}
+			getFormPage().getForm().setTitle(name);
 			((ManifestEditor) getFormPage().getEditor()).updateTitle();
 		}
 	});

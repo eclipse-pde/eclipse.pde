@@ -235,21 +235,22 @@ public void resourceChanged(IResourceChangeEvent event) {
 
 		DeltaVisitor visitor = new DeltaVisitor(ourProject);
 		IResourceDelta delta = event.getDelta();
-		try {
-			delta.accept(visitor);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		if (visitor.getMarkersChanged()) {
-			// need to update
-			updateNeeded = true;
-			if (getFormPage().isVisible()) {
-				// need to update now!
-				update();
-			}
+		if (delta != null) {
+		   try {
+			  delta.accept(visitor);
+		   } catch (CoreException e) {
+			  PDEPlugin.logException(e);
+		   }
+		   if (visitor.getMarkersChanged()) {
+			  // need to update
+			  updateNeeded = true;
+			  if (getFormPage().isVisible()) {
+				  // need to update now!
+				  update();
+			  }
+		   }
 		}
 	}
-
 }
 public void update() {
 	if (updateNeeded) {

@@ -228,7 +228,8 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 		model.getComponent().getId() + "_" + model.getComponent().getVersion();
 
 	args.add("-component");
-	args.add(name);
+	//args.add(name);
+	args.add(model.getComponent().getId());
 	try {
 		monitor.subTask(PDEPlugin.getResourceString(WIZARD_GENERATING));
 		generator.run(args.toArray(new String[args.size()]));
@@ -237,6 +238,7 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 		PDEPlugin.logException(e);
 	}
 }
+
 private void refreshLocal(IComponentReference[] references, IProgressMonitor monitor)
 	throws CoreException {
 	for (int i = 0; i < references.length; i++) {
@@ -261,13 +263,16 @@ private void runOperation(
 	boolean makeJars,
 	IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
-	if (makeScripts)
+	if (makeScripts) {
 		makeScripts(monitor);
+		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
+		refreshLocal(monitor);
+	}
 	if (makeJars) {
 		makeJars(monitor);
+		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
+		refreshLocal(monitor);
 	}
-	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
-	refreshLocal(monitor);
 	if (logMessages.size()>0) {
 		logActivity();
 	}

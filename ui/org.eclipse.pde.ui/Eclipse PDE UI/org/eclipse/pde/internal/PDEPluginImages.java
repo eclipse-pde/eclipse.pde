@@ -49,6 +49,7 @@ public class PDEPluginImages {
 	 * Frequently used images
 	 */
 	public static final String IMG_FORM_WIZ = NAME_PREFIX+"FORM_WIZ";
+	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
 	public static final String IMG_ATT_CLASS_OBJ = NAME_PREFIX+"ATT_CLASS_OBJ";
 	public static final String IMG_ATT_IMPL_OBJ = NAME_PREFIX+"ATT_IMPL_OBJ";
 	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX+"ATT_FILE_OBJ";
@@ -171,6 +172,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(BASIC_WIZBAN, "newexprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWPCOMP_WIZ   = create(BASIC_WIZBAN, "newpcomp_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(BASIC_WIZBAN, "form_wiz.gif");
+	public static final ImageDescriptor DESC_FORM_BANNER  = create(BASIC_WIZBAN, "form_banner.gif");
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
 	}
@@ -220,6 +222,8 @@ private static final void initialize() {
 	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
 	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
+	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
+
 }
 
 private static URL makeImageURL(String prefix, String name) {

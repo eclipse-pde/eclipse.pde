@@ -204,6 +204,7 @@ private void paint(Control form, GC gc) {
 		int x = bounds.width - imageBounds.width;
 		int y = 0;
 		x = Math.max(x, 0);
+		//x = 0;
 		if (headingBackground != null) {
 			gc.setBackground(headingBackground);
 			gc.fillRectangle(0, 0, bounds.width, height);

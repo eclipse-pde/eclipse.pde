@@ -38,6 +38,7 @@ public class ManifestEditor extends PDEMultiPageXMLEditor {
 	public static final String KEY_DEPENDENCIES =
 		"ManifestEditor.DependenciesPage.title";
 	public static final String KEY_RUNTIME = "ManifestEditor.RuntimePage.title";
+	public static final String KEY_READ_ONLY = "ManifestEditor.readOnly";
 	public static final String KEY_EXTENSIONS =
 		"ManifestEditor.ExtensionsPage.title";
 	public static final String KEY_EXTENSION_POINTS =
@@ -174,6 +175,7 @@ public String getTitle() {
 	if (name==null) return super.getTitle();
 	return model.getResourceString(name);
 }
+
 public void init(IEditorSite site, IEditorInput input)
 	throws PartInitException {
 	checkPlatformHome();

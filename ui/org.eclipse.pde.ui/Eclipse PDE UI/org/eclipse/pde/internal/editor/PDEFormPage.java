@@ -35,6 +35,7 @@ public PDEFormPage(PDEMultiPageEditor editor, String title) {
 	this.editor = editor;
 	form = createForm();
 	form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_WIZ));
+	//form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_BANNER));
 	setTitle(title);
 }
 public boolean becomesInvisible(IFormPage newPage) {

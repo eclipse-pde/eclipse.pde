@@ -109,7 +109,11 @@ protected void createFormClient(Composite parent) {
 public void initialize(Object modelObject) {
 	IPluginModelBase model = (IPluginModelBase)modelObject;
 	IPluginBase plugin = model.getPluginBase();
-	setTitle(plugin.getName());
+	String name = plugin.getName();
+	if (model.isEditable()==false) {
+		name = PDEPlugin.getFormattedMessage(ManifestEditor.KEY_READ_ONLY, name);
+	}
+	setTitle(name);
 
 	super.initialize(model);
 	getControl().layout(true);
