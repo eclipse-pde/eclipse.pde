@@ -22,9 +22,9 @@ public abstract class AbstractModel
 	extends PlatformObject
 	implements IModel, IModelChangeProvider, Serializable {
 	private static final String KEY_ERROR = "Errors.modelError";
-	private Vector listeners = new Vector();
+	private transient Vector listeners = new Vector();
 	protected boolean loaded;
-	protected NLResourceHelper nlHelper;
+	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
 	private long timeStamp;
 

@@ -45,7 +45,7 @@ public class ExternalModelManager {
 		fmodels = null;
 	}
 
-	private static IPath createEclipseRelativeHome(
+	private static String createEclipseRelativeHome(
 		String installLocation,
 		IProgressMonitor monitor) {
 		IPath fullPath = new Path(installLocation);
@@ -63,7 +63,7 @@ public class ExternalModelManager {
 				}
 			}
 		}
-		return new Path(correctVariable).append(fullPath.removeFirstSegments(maxMatching));
+		return new Path(correctVariable).append(fullPath.removeFirstSegments(maxMatching)).toOSString();
 	}
 
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {

@@ -8,6 +8,7 @@ import java.io.File;
 import java.net.*;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
@@ -15,8 +16,8 @@ import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private String installLocation;
-	private IPath eclipseHomeRelativePath;
-	private IBuildModel buildModel;
+	private String eclipseHomeRelativePath;
+	private transient IBuildModel buildModel;
 
 	public ExternalPluginModelBase() {
 		super();
@@ -46,7 +47,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return buildModel;
 	}
 	public IPath getEclipseHomeRelativePath() {
-		return eclipseHomeRelativePath;
+		return new Path(eclipseHomeRelativePath);
 	}
 	public String getInstallLocation() {
 		return installLocation;
@@ -85,7 +86,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		updateTimeStamp(getLocalFile());
 	}
 
-	public void setEclipseHomeRelativePath(IPath newEclipseHomeRelativePath) {
+	public void setEclipseHomeRelativePath(String newEclipseHomeRelativePath) {
 		eclipseHomeRelativePath = newEclipseHomeRelativePath;
 	}
 	public void setInstallLocation(String newInstallLocation) {

@@ -20,8 +20,8 @@ public abstract class AbstractPluginModelBase
 	implements IPluginModelBase, IPluginModelFactory {
 	protected PluginBase pluginBase;
 	private boolean enabled;
-	private static SourceDOMParser parser;
-	private static XMLErrorHandler errorHandler;
+	private transient static SourceDOMParser parser;
+	private transient static XMLErrorHandler errorHandler;
 	
 	static {
 		initializeParser();
