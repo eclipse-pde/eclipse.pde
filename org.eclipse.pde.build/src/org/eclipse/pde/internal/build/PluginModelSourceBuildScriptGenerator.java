@@ -15,10 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.internal.plugins.InternalFactory;
-import org.eclipse.core.internal.plugins.PluginRegistry;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.AbstractBuildScriptGeneratorTemp.JAR;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
@@ -28,7 +26,7 @@ import org.eclipse.pde.internal.build.ant.FileSet;
  */
 public class PluginModelSourceBuildScriptGenerator extends AbstractBuildScriptGeneratorTemp {
 
-	protected PluginRegistry registry;
+	protected PluginRegistryModel registry;
 	protected String sourceLocation;
 
 public PluginModelSourceBuildScriptGenerator() {
@@ -205,13 +203,12 @@ protected String getScriptLocation(PluginModel model) throws CoreException {
 	return file.getAbsolutePath();
 }
 
-protected PluginRegistry getRegistry() throws CoreException {
+protected PluginRegistryModel getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
 		MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
-		InternalFactory factory = new InternalFactory(problems);
-		registry = (PluginRegistry) Platform.parsePlugins(pluginPath, factory);
-		registry.resolve(false, false);
+		Factory factory = new Factory(problems);
+		registry = Platform.parsePlugins(pluginPath, factory);
 		IStatus status = factory.getStatus();
 		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);
