@@ -124,6 +124,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		
 		setControl(container);
 		Dialog.applyDialogFont(container);
+		setPageComplete(classText.getText().length() > 0);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
 	}
 	
