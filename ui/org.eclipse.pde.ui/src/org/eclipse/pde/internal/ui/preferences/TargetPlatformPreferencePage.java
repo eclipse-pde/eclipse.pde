@@ -65,13 +65,14 @@ public class TargetPlatformPreferencePage
 		layout.verticalSpacing = 9;
 		layout.marginWidth = layout.marginHeight = 0;
 		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label;
 
 		Group group = new Group(container, SWT.NULL);
 		group.setText(PDEPlugin.getResourceString(KEY_TARGET_MODE));
 		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		thisRadio = new Button(group, SWT.RADIO);
 		thisRadio.setText(PDEPlugin.getResourceString(KEY_USE_THIS));
@@ -87,7 +88,7 @@ public class TargetPlatformPreferencePage
 		thisRadio.addSelectionListener(listener);
 		otherRadio.addSelectionListener(listener);
 
-		Composite home = new Composite(container, SWT.NULL);
+		Composite home = new Composite(group, SWT.NULL);
 		home.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layout = new GridLayout();
 		layout.numColumns = 3;
@@ -101,7 +102,6 @@ public class TargetPlatformPreferencePage
 
 		browseButton = new Button(home, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
-		browseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(browseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
