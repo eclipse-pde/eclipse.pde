@@ -106,7 +106,7 @@ public class UpdateClasspathOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException {
 			try {
-				UpdateClasspathAction.doUpdateClasspath(monitor,models);
+				UpdateClasspathAction.doUpdateClasspath(monitor,models, null);
 			} catch (CoreException e) {
 			}
 	}

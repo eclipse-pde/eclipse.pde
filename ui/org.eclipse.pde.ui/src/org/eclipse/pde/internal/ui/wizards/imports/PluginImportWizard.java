@@ -10,34 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IImportWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
@@ -169,9 +157,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				UpdateClasspathAction.doUpdateClasspath(
 					monitor,
-					getWorkspaceCounterparts(modelIds));
+					getWorkspaceCounterparts(modelIds),
+					new UpdateClasspathAction.MissingPluginConfirmation());
 			}
-
 		};
 	}
 
@@ -234,13 +222,15 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 	
-	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {		
-		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
 		ArrayList desiredModels = new ArrayList();
-		for (int i = 0; i < allModels.length; i++) {
-			if (modelIds.contains(allModels[i].getPluginBase().getId()))
-				desiredModels.add(allModels[i]);				
-		}		
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		for (int i = 0; i < modelIds.size(); i++) {
+			ModelEntry entry = manager.findEntry(modelIds.get(i).toString(), null);
+			if (entry != null && entry.getActiveModel() instanceof WorkspacePluginModelBase) {
+				desiredModels.add(entry.getActiveModel());
+			}
+		}
 		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
 	}
 	

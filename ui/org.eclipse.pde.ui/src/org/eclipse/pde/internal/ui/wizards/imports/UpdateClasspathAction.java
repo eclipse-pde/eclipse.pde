@@ -38,7 +38,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
 	private static final String KEY_SETTING = "Actions.classpath.setting"; //$NON-NLS-1$
 
-	private static class MissingPluginConfirmation implements IMissingPluginConfirmation {
+	public static class MissingPluginConfirmation implements IMissingPluginConfirmation {
 		private boolean useProjectReference = false;
 		private boolean alreadyAsked = false;
 		public boolean getUseProjectReference() {
@@ -123,7 +123,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 							new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor)
 								throws CoreException {
-								doUpdateClasspath(monitor, models);
+								doUpdateClasspath(monitor, models, null);
 							}
 						};
 						PDEPlugin.getWorkspace().run(runnable, monitor);
@@ -151,14 +151,14 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 
 	public static void doUpdateClasspath(
 		IProgressMonitor monitor,
-		IPluginModelBase[] models)
+		IPluginModelBase[] models,
+		MissingPluginConfirmation confirmation)
 		throws CoreException {
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_UPDATE),
 			models.length);
 		boolean useContainers =
 			PDEPlugin.getUseClasspathContainers();
-		MissingPluginConfirmation confirmation = new MissingPluginConfirmation();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
