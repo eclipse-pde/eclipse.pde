@@ -10,31 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 
 public class UpdateClasspathAction implements IViewActionDelegate {
 	private ISelection fSelection;
-
-	private static final String KEY_TITLE = "Actions.classpath.title"; //$NON-NLS-1$
-
-	private static final String KEY_MESSAGE = "Actions.classpath.message"; //$NON-NLS-1$
-
-	private static final String KEY_UPDATE = "Actions.classpath.update"; //$NON-NLS-1$
 
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -85,60 +83,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					dialog.open();
 				}
 			});
-		}
-	}
-
-	public static void run(boolean fork, IRunnableContext context,
-			final IPluginModelBase[] models) {
-		try {
-			context.run(fork, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					try {
-						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-							public void run(IProgressMonitor monitor)
-									throws CoreException {
-								doUpdateClasspath(monitor, models);
-							}
-						};
-						PDEPlugin.getWorkspace().run(runnable, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} catch (OperationCanceledException e) {
-						throw new InterruptedException(e.getMessage());
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			return;
-		} catch (InvocationTargetException e) {
-			String title = PDEPlugin.getResourceString(KEY_TITLE);
-			String message = PDEPlugin.getResourceString(KEY_MESSAGE);
-			PDEPlugin.logException(e, title, message);
-		}
-	}
-
-	public static void doUpdateClasspath(IProgressMonitor monitor,
-			IPluginModelBase[] models) throws CoreException {
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE),
-				models.length);
-		try {
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
-				monitor.subTask(models[i].getPluginBase().getId());
-				// no reason to compile classpath for a non-Java model
-				IProject project = model.getUnderlyingResource().getProject();
-				if (!project.hasNature(JavaCore.NATURE_ID)) {
-					monitor.worked(1);
-					continue;
-				}
-				ClasspathUtilCore.setClasspath(model, new SubProgressMonitor(
-						monitor, 1));
-				if (monitor.isCanceled())
-					break;
-			}
-		} finally {
-			monitor.done();
 		}
 	}
 

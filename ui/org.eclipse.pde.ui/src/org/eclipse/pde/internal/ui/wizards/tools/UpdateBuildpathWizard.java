@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
@@ -45,7 +46,9 @@ public class UpdateBuildpathWizard extends Wizard {
 		page1.storeSettings();
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
 		System.arraycopy(finalSelected, 0, modelArray, 0, finalSelected.length);
-		UpdateClasspathAction.run(true, getContainer(), modelArray);
+		Job j = new UpdateClasspathJob(modelArray);
+		j.setUser(true);
+		j.schedule();
 		return true;
 	}
 	

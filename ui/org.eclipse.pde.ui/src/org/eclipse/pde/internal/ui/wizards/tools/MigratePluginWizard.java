@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.text.*;
@@ -79,11 +80,12 @@ public class MigratePluginWizard extends Wizard {
 							desc.setReferencedProjects(new IProject[0]);
 							project.setDescription(desc, null);
 						}
-						if (doUpdateClasspath) {
-							UpdateClasspathAction.doUpdateClasspath(
-									new SubProgressMonitor(monitor, 1),
-									new IPluginModelBase[] { models[i] });
-						}
+						monitor.worked(1);
+					}
+					if (doUpdateClasspath) {
+						Job j = new UpdateClasspathJob(models);
+						j.setUser(true);
+						j.schedule();
 					}
 				} catch (Exception e) {
 					PDEPlugin.logException(e);
