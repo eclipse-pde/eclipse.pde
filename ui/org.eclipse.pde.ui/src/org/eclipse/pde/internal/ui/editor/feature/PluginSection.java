@@ -37,6 +37,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -257,7 +258,11 @@ public class PluginSection
 
 	public void modelsChanged(IModelProviderEvent event) {
 		updateNeeded = true;
-		update();
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				update();
+			}
+		});
 	}
 
 	public void setFocus() {
