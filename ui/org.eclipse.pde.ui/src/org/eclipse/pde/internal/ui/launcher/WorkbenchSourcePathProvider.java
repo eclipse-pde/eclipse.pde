@@ -98,7 +98,8 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
-			if (deselected.contains(models[i].getPluginBase().getId()))
+			String id = models[i].getPluginBase().getId();
+			if (id == null || deselected.contains(id))
 				continue;
 			IProject project = models[i].getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {

@@ -409,7 +409,8 @@ public class AdvancedLauncherTab
 
 		TreeSet deselected = LauncherUtils.parseDeselectedWSIds(config);
 		for (int i = 0; i < fWorkspaceModels.length; i++) {
-			if (deselected.contains(fWorkspaceModels[i].getPluginBase().getId())) {
+			String id = fWorkspaceModels[i].getPluginBase().getId();
+			if (id != null && deselected.contains(id)) {
 				if (fPluginTreeViewer.setChecked(fWorkspaceModels[i], false))
 					fNumWorkspaceChecked -= 1;
 			}

@@ -139,6 +139,8 @@ public class BasicLauncherTab
 					if (fWorkspaceCombo.indexOf(destination) == -1)
 						fWorkspaceCombo.add(destination, 0);
 					fWorkspaceCombo.setText(destination);
+					if (fClearWorkspaceCheck.getSelection())
+						fClearWorkspaceCheck.setSelection(false);
 					updateStatus();
 				}
 			}
@@ -266,7 +268,6 @@ public class BasicLauncherTab
 	protected String getApplicationAttribute() {
 		return APPLICATION;
 	}
-	
 		
 	protected void createJRESection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
