@@ -25,7 +25,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	/**
 	 * Location of the plug-ins and fragments.
 	 */
-	private URL pluginPath;
+	private URL[] pluginPath;
 
 	/**
 	 * Additional dev entries for the compile classpath.
@@ -189,17 +189,30 @@ protected PluginRegistryModel getRegistry() throws CoreException {
 		MultiStatus problems = new MultiStatus(PI_PDECORE, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null);
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
-		if (!factory.getStatus().isOK())
-			throw new CoreException(factory.getStatus());
+		IStatus status = factory.getStatus();
+		if (contains(status, IStatus.ERROR))
+			throw new CoreException(status);
 	}
 	return registry;
 }
+
+protected boolean contains(IStatus status, int severity) {
+	if (status.matches(severity))
+		return true;
+	if (status.isMultiStatus()) {
+		IStatus[] children = status.getChildren();
+		for (int i = 0; i < children.length; i++)
+			if (contains(children[i], severity))
+				return true;
+	}
+	return false;
+}
 protected URL[] getPluginPath() {
-	// get the plugin path.  If one was spec'd on the command line, use that.
+	// Get the plugin path if one was spec'd.
+	if (pluginPath != null)
+		return pluginPath;
 	// Otherwise, if the install location was spec'd, compute the default path.
-	// Finally, if nothing was said, allow the system to figure out the plugin
-	// path based on the current running state.
-	if (pluginPath == null && installLocation != null) {
+	if (installLocation != null) {
 		try {
 			StringBuffer sb = new StringBuffer();
 			sb.append("file:");
@@ -210,8 +223,6 @@ protected URL[] getPluginPath() {
 			return new URL[] { new URL(sb.toString()) };
 		} catch (MalformedURLException e) {
 		}
-	} else {
-		return BootLoader.getPluginPath(pluginPath);
 	}
 	return null;
 }
@@ -270,9 +281,12 @@ protected String getModelLocation(PluginModel descriptor) {
  * The result will be ${install}/my/path
  */
 protected String makeRelative(String property, String fullPath, String pathToTrim) {
-	IPath trim = new Path(pathToTrim);
+	IPath prefix = new Path(pathToTrim);
+	IPath full = new Path(fullPath);
+	if (!prefix.isPrefixOf(full))
+		return fullPath;
 	IPath result = new Path(property);
-	result = result.append(new Path(fullPath).removeFirstSegments(trim.segmentCount()));
+	result = result.append(full.removeFirstSegments(prefix.segmentCount()));
 	return result.toString();
 }
 
@@ -342,6 +356,13 @@ public void setBuildVariableOS(String buildVariableOS) {
  */
 public void setBuildVariableWS(String buildVariableWS) {
 	this.buildVariableWS = buildVariableWS;
+}
+
+/**
+ * Sets the pluginPath.
+ */
+public void setPluginPath(URL[] pluginPath) {
+	this.pluginPath = pluginPath;
 }
 
 }

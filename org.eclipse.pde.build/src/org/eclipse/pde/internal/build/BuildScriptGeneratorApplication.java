@@ -47,6 +47,7 @@ protected void processCommandLine(List commands) {
 	// looks for param/arg-like commands
 	task.internalSetElements(getArguments(commands, ARG_ELEMENTS));
 	task.internalSetDevEntries(getArguments(commands, ARG_DEV_ENTRIES));
+	task.internalSetPlugins(getArguments(commands, ARG_PLUGIN_PATH));
 	String[] arguments = getArguments(commands, ARG_INSTALL_LOCATION);
 	task.setInstall(arguments[0]); // only consider one location
 	arguments = getArguments(commands, ARG_OS);

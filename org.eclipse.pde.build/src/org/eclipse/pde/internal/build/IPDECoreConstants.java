@@ -31,6 +31,7 @@ public interface IPDECoreConstants {
 	public static final String ARG_NL = "-buildNL";
 	public static final String ARG_NO_CHILDREN = "-nochildren";
 	public static final String ARG_OS = "-buildOS";
+	public static final String ARG_PLUGIN_PATH = "-pluginpath";
 	public static final String ARG_SCRIPT_NAME = "-scriptname";
 	public static final String ARG_USAGE = "-?";
 	public static final String ARG_WS = "-buildWS";

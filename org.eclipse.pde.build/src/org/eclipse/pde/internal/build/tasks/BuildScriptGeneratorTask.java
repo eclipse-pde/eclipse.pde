@@ -3,16 +3,18 @@ package org.eclipse.pde.internal.core.tasks;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
 /**
  * 
  */
-public class BuildScriptGeneratorTask extends Task implements IXMLConstants {
+public class BuildScriptGeneratorTask extends Task implements IXMLConstants, IPDECoreConstants {
 
 	/**
 	 * Indicates whether scripts for a feature's children should be generated.
@@ -34,6 +36,11 @@ public class BuildScriptGeneratorTask extends Task implements IXMLConstants {
 	 */
 	protected String installLocation;
 	
+	/**
+	 * Plugin path. URLs that point where to find the plugins.
+	 */
+	protected String[] pluginPath;
+
 	/**
 	 * Build variables.
 	 */
@@ -58,10 +65,24 @@ public void setDevEntries(String devEntries) {
 }
 
 /**
+ * Sets the pluginPath.
+ */
+public void setPluginPath(String pluginPath) {
+	this.pluginPath = Utils.getArrayFromString(pluginPath);
+}
+
+/**
  * Sets the devEntries.
  */
 public void internalSetDevEntries(String[] devEntries) {
 	this.devEntries = devEntries;
+}
+
+/**
+ * Sets the pluginPath.
+ */
+public void internalSetPlugins(String[] pluginPath) {
+	this.pluginPath = pluginPath;
 }
 
 
@@ -120,6 +141,7 @@ protected void generateFeatures(List features) throws CoreException {
 	FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
+	generator.setPluginPath(asURL(pluginPath));
 	generator.setGenerateChildrenScript(children);
 	for (int i = 0; i < features.size(); i++) {
 		// setFeature has to be called before configurePersistentProperties
@@ -135,11 +157,25 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		return;
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
+	generator.setPluginPath(asURL(pluginPath));
 	setBuildVariables(generator);
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		String model = (String) iterator.next();
 		generator.setModelId(model);
 		generator.generate();
+	}
+}
+
+protected URL[] asURL(String[] target) throws CoreException {
+	if (target == null)
+		return null;
+	try {
+		URL[] result = new URL[target.length];
+		for (int i = 0; i < target.length; i++)
+			result[i] = new URL(target[i]);
+		return result;
+	} catch (MalformedURLException e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
 	}
 }
 

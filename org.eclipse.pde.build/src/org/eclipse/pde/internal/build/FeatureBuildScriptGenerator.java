@@ -366,7 +366,6 @@ protected void generateUpdateJarTarget(PrintWriter output) {
 protected void generateZipDistributionWholeTarget(PrintWriter output) {
 	int tab = 1;
 	output.println();
-	// FIXME: should not have releng on the name
 	printTargetDeclaration(output, tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
 	tab++;
 	IPath destination = getRelativeInstallLocation();
@@ -618,6 +617,7 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		return;
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
+	generator.setPluginPath(getPluginPath());
 	generator.setBuildVariableARCH(buildVariableARCH);
 	generator.setBuildVariableNL(buildVariableNL);
 	generator.setBuildVariableOS(buildVariableOS);
