@@ -457,7 +457,7 @@
             filenames="plugin.xml,fragment.xml,MANIFEST.MF"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
-            id="org.eclipse.pde.ui.newManifestEditor">
+            id="org.eclipse.pde.ui.manifestEditor">
       </editor>
       <editor
             name="%editors.schema.name"
@@ -466,7 +466,7 @@
             extensions="exsd,mxsd"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
-            id="org.eclipse.pde.ui.newSchemaEditor">
+            id="org.eclipse.pde.ui.schemaEditor">
       </editor>
       <editor
             name="%editors.buildProperties.name"
@@ -475,7 +475,7 @@
             filenames="build.properties"
             class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
-            id="org.eclipse.pde.ui.newBuildEditor">
+            id="org.eclipse.pde.ui.buildEditor">
       </editor>
       <editor
             name="%editors.featureManifest.name"

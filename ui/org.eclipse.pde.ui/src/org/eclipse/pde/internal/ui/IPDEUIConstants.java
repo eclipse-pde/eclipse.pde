@@ -24,12 +24,8 @@ public interface IPDEUIConstants {
 	String PLUGIN_ID = "org.eclipse.pde.ui";
 
 	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor";
-	String FRAGMENT_EDITOR_ID = PLUGIN_ID + ".fragmentEditor";
-	String NEW_MANIFEST_EDITOR_ID = PLUGIN_ID + ".newManifestEditor";
-	String NEW_FRAGMENT_EDITOR_ID = PLUGIN_ID + ".newFragmentEditor";
 	String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor";
 	String SITE_EDITOR_ID = PLUGIN_ID + ".siteEditor";
-	String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
 	String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
 	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView";

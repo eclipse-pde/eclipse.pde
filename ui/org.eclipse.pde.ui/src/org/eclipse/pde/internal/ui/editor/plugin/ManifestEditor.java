@@ -297,7 +297,7 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 
 	private static IEditorPart openWorkspacePlugin(IFile pluginFile, boolean fragment) {
-		String editorId = fragment ? PDEPlugin.NEW_FRAGMENT_EDITOR_ID:PDEPlugin.NEW_MANIFEST_EDITOR_ID;
+		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);
 			return PDEPlugin.getActivePage().openEditor(

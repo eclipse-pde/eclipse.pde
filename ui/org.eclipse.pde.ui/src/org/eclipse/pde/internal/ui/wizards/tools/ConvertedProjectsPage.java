@@ -220,12 +220,10 @@ public class ConvertedProjectsPage extends WizardPage  {
 		} else {
 			manifestPath = project.getFullPath().append("fragment.xml");
 			IFile fragmentFile = project.getWorkspace().getRoot().getFile(manifestPath);
-			if (fragmentFile.exists()) {
-				IDE.setDefaultEditor(file, PDEPlugin.FRAGMENT_EDITOR_ID);
-			} else {
+			if (!fragmentFile.exists()) {
 				createManifestFile(file, monitor);				
-				IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 			}
+			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		}
 		
 		IPath buildPath = project.getFullPath().append("build.properties");
