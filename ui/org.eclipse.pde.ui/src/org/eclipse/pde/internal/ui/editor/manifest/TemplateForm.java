@@ -12,7 +12,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
+import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.debug.ui.actions.RunAction;
 import org.eclipse.debug.ui.actions.DebugAction;
 import org.eclipse.core.resources.*;
@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import java.io.*;
+
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -29,23 +31,27 @@ import org.eclipse.core.runtime.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class TemplateForm extends WebForm {
-	private static final String KEY_HEADING = "ManifestEditor.templatePage.heading";
+	private static final String KEY_HEADING =
+		"ManifestEditor.templatePage.heading";
 	private static final String KEY_INTRO = "ManifestEditor.TemplatePage.intro";
-	private static final String KEY_COMMON = "ManifestEditor.TemplatePage.common";
+	private static final String KEY_COMMON =
+		"ManifestEditor.TemplatePage.common";
 	private static final String KEY_DONT_SHOW =
 		"ManifestEditor.TemplatePage.dontShow";
 	private ManifestTemplatePage page;
 	private Button dontShowCheck;
 	private boolean dontShow;
 	private FormEngine text;
+	private RuntimeWorkbenchShortcut launchShortcut;
 	/**
 	 * Constructor for TemplateForm.
 	 */
 	public TemplateForm(ManifestTemplatePage page) {
 		this.page = page;
+		launchShortcut = new RuntimeWorkbenchShortcut();
 	}
 
-	protected void createContents(Composite parent) {
+	protected void createContents(final Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
 		layout.leftMargin = 10;
@@ -56,7 +62,8 @@ public class TemplateForm extends WebForm {
 
 		FormWidgetFactory factory = getFactory();
 
-		SharedLabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+		SharedLabelProvider provider =
+			PDEPlugin.getDefault().getLabelProvider();
 		Image pageImage = provider.get(PDEPluginImages.DESC_PAGE_OBJ);
 		Image runImage = provider.get(PDEPluginImages.DESC_RUN_EXC);
 		Image debugImage = provider.get(PDEPluginImages.DESC_DEBUG_EXC);
@@ -71,14 +78,16 @@ public class TemplateForm extends WebForm {
 		};
 		HyperlinkAction debugAction = new HyperlinkAction() {
 			public void linkActivated(IHyperlinkSegment link) {
-				String id = link.getObjectId();
-				if (id.equals("action.run")) {
-					RunAction action = new RunAction();
-					action.runWithEvent(null, null);
-				} else if (id.equals("action.debug")) {
-					DebugAction action = new DebugAction();
-					action.runWithEvent(null, null);
-				}
+				final String id = link.getObjectId();
+				BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+					public void run() {
+						if (id.equals("action.run")) {
+							launchShortcut.run();
+						} else if (id.equals("action.debug")) {
+							launchShortcut.debug();
+						}
+					}
+				});
 			}
 		};
 		HyperlinkAction expandSource = new HyperlinkAction() {
@@ -153,7 +162,8 @@ public class TemplateForm extends WebForm {
 				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {
 				pmd.run(false, false, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					public void run(IProgressMonitor monitor)
+						throws InvocationTargetException {
 						try {
 							file.delete(true, monitor);
 						} catch (CoreException e) {
@@ -171,7 +181,8 @@ public class TemplateForm extends WebForm {
 	}
 
 	private void expandSourceFolders() {
-		IPluginModelBase model = (IPluginModelBase) ((PDEFormPage) page).getModel();
+		IPluginModelBase model =
+			(IPluginModelBase) ((PDEFormPage) page).getModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
@@ -198,14 +209,16 @@ public class TemplateForm extends WebForm {
 		}
 	}
 	public void setFocus() {
-		if (text!=null)
+		if (text != null)
 			text.setFocus();
 	}
 
 	private void openNewExtensionWizard() {
-		ManifestEditor editor = (ManifestEditor) ((PDEFormPage) page).getEditor();
+		ManifestEditor editor =
+			(ManifestEditor) ((PDEFormPage) page).getEditor();
 		ManifestExtensionsPage exPage =
-			(ManifestExtensionsPage) editor.getPage(ManifestEditor.EXTENSIONS_PAGE);
+			(ManifestExtensionsPage) editor.getPage(
+				ManifestEditor.EXTENSIONS_PAGE);
 		editor.showPage(exPage);
 		exPage.openNewExtensionWizard();
 	}
@@ -215,7 +228,9 @@ public class TemplateForm extends WebForm {
 		IPluginModelBase modelBase = (IPluginModelBase) model;
 		IPluginBase plugin = modelBase.getPluginBase();
 		setHeadingText(
-			PDEPlugin.getFormattedMessage(KEY_HEADING, plugin.getTranslatedName()));
+			PDEPlugin.getFormattedMessage(
+				KEY_HEADING,
+				plugin.getTranslatedName()));
 		((Composite) getControl()).layout(true);
 		updateSize();
 	}

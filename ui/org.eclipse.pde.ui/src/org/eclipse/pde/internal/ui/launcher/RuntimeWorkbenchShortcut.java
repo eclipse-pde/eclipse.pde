@@ -20,6 +20,14 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * A launch short cut for the run-time workspace.
  */
 public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
+	
+	public void run() {
+		launch(ILaunchManager.RUN_MODE);
+	}
+	
+	public void debug() {
+		launch(ILaunchManager.DEBUG_MODE);
+	}
 
 	/*
 	 * @see ILaunchShortcut#launch(IEditorPart, String)
