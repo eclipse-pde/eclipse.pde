@@ -32,8 +32,6 @@ import org.eclipse.swt.widgets.*;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
-	//public static final String EXPORT_FAMILY = "pdeExportFamily";
-	
 	// The three supported export types
 	public static final int EXPORT_AS_ZIP = 0;
 	public static final int EXPORT_AS_DIRECTORY = 1;
