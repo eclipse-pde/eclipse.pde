@@ -69,20 +69,15 @@ public class ApplicationClassCodeGenerator {
         writer.println("import org.eclipse.core.runtime.IPlatformRunnable;"); //$NON-NLS-1$
         writer.println();
         writer.println("/**"); //$NON-NLS-1$
-        writer.println(" * The default application for your branded product."); //$NON-NLS-1$
+        writer.println(" * This class controls all aspects of the application's execution"); //$NON-NLS-1$
         writer.println(" */"); //$NON-NLS-1$
         writer.println("public class " + className + " implements IPlatformRunnable {"); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.println("\t/**"); //$NON-NLS-1$
-        writer.println("\t * The constructor."); //$NON-NLS-1$
-        writer.println("\t */"); //$NON-NLS-1$
-        writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
-        writer.println("\t\tsuper();"); //$NON-NLS-1$
-        writer.println("\t}"); //$NON-NLS-1$
         writer.println();
-        writer.println("\t/**"); //$NON-NLS-1$
-        writer.println("\t * This method is runs your runnable with the given arguments and returns a result."); //$NON-NLS-1$
+        writer.println("\t/* (non-Javadoc)"); //$NON-NLS-1$
+        writer.println("\t * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)"); //$NON-NLS-1$
         writer.println("\t */"); //$NON-NLS-1$
         writer.println("\tpublic Object run(Object args) throws Exception {"); //$NON-NLS-1$
+        writer.println("\t\t// TODO Auto-generated method stub");
         writer.println("\t\treturn null;"); //$NON-NLS-1$
         writer.println("\t}"); //$NON-NLS-1$
         writer.println("}"); //$NON-NLS-1$
