@@ -18,7 +18,6 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 
 /**
  */
@@ -184,20 +183,6 @@ public class ExternalModelManager {
 				IFragmentModel fmodel = (IFragmentModel) fmodels.get(i);
 				fmodel.setEnabled(!list.contains(fmodel.getFragment().getId()));
 			}
-		}
-		for (int i = 0; i < models.size(); i++) {
-			ExternalPluginModelBase model = (ExternalPluginModelBase) models.get(i);
-			model.setEclipseHomeRelativePath(
-				PluginPathFinder.createEclipseRelativeHome(
-					model.getInstallLocation(),
-					eclipseHomeVariables));
-		}
-		for (int i = 0; i < fmodels.size(); i++) {
-			ExternalPluginModelBase fmodel = (ExternalPluginModelBase) fmodels.get(i);
-			fmodel.setEclipseHomeRelativePath(
-				PluginPathFinder.createEclipseRelativeHome(
-					fmodel.getInstallLocation(),
-					eclipseHomeVariables));
 		}
 
 	}

@@ -110,8 +110,12 @@ public class PluginPathUpdater {
 		}
 		IPath modelPath;
 		
-		if (relative) modelPath = ((ExternalPluginModelBase)model).getEclipseHomeRelativePath();
-		else modelPath = new Path(model.getInstallLocation());
+		if (relative)
+			modelPath =
+				EclipseHomeInitializer.createEclipseRelativeHome(
+					((ExternalPluginModelBase) model).getInstallLocation());
+		else
+			modelPath = new Path(model.getInstallLocation());
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
 
@@ -209,8 +213,12 @@ public class PluginPathUpdater {
 		for (int i = 0; i < fragments.length; i++) {
 			IFragmentModel fmodel = fragments[i];
 			IPath modelPath;
-			if (relative) modelPath = ((ExternalPluginModelBase)fmodel).getEclipseHomeRelativePath();
-			else modelPath = new Path(fmodel.getInstallLocation());
+			if (relative)
+				modelPath =
+					EclipseHomeInitializer.createEclipseRelativeHome(
+						((ExternalPluginModelBase) fmodel).getInstallLocation());
+			else
+				modelPath = new Path(fmodel.getInstallLocation());
 			IPath libraryPath = modelPath.append(name);
 			IPath[] sourceAnnot =
 				getSourceAnnotation(fmodel.getFragment(), modelPath, name, relative);

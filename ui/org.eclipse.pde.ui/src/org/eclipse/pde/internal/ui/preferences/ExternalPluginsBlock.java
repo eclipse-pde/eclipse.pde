@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.preferences;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -302,24 +301,14 @@ public class ExternalPluginsBlock {
 	}
 	
 	private void updateModels() {
-		if (reloaded) {
-			IPluginModelBase[] allModels = getAllModels();
-			for (int i = 0; i < allModels.length; i++) {
-				ExternalPluginModelBase model = (ExternalPluginModelBase) allModels[i];
-				model.setEnabled(tablePart.getTableViewer().getChecked(model));
-				model.setEclipseHomeRelativePath(
-					PluginPathFinder.createEclipseRelativeHome(
-						model.getInstallLocation(),
-						eclipseHomeVariables));
-			}
-			PDECore.getDefault().getExternalModelManager().resetModels(models, fmodels);
-		} else {
-			Iterator iter = changed.iterator();
-			while (iter.hasNext()) {
-				IPluginModelBase model = (IPluginModelBase)iter.next();
-				model.setEnabled(tablePart.getTableViewer().getChecked(model));
-			}			
+		Iterator iter = changed.iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iter.next();
+			model.setEnabled(tablePart.getTableViewer().getChecked(model));
 		}
+
+		if (reloaded)
+			PDECore.getDefault().getExternalModelManager().resetModels(models, fmodels);
 	}
 
 

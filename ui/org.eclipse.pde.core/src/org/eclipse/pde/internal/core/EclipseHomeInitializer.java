@@ -8,6 +8,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
 import org.eclipse.jdt.core.JavaCore;
@@ -47,5 +48,28 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 		}
 	}
 
+	public static IPath createEclipseRelativeHome(String installLocation) {
+		IPath fullPath = new Path(installLocation);
+
+		String[] variables = JavaCore.getClasspathVariableNames();
+
+		String correctVariable = null;
+		;
+		int maxMatching = 0;
+
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].startsWith(PDECore.ECLIPSE_HOME_VARIABLE)) {
+				IPath currentPath = JavaCore.getClasspathVariable(variables[i]);
+				int currentMatch = fullPath.matchingFirstSegments(currentPath);
+				if (currentMatch > maxMatching) {
+					maxMatching = currentMatch;
+					correctVariable = variables[i];
+				}
+			}
+		}
+		return (correctVariable == null)
+			? fullPath
+			: new Path(correctVariable).append(fullPath.removeFirstSegments(maxMatching));
+	}
 	
 }

@@ -333,9 +333,9 @@ public class BuildPathUtilCore {
 
 		if (project != null)
 			return project.getFullPath();
-		else
-			return ((ExternalPluginModelBase) model)
-				.getEclipseHomeRelativePath();
+			
+		return EclipseHomeInitializer.createEclipseRelativeHome(
+			((ExternalPluginModelBase) model).getInstallLocation());
 	}
 
 	private static boolean exists(
