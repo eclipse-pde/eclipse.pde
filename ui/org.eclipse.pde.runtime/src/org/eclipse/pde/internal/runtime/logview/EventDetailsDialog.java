@@ -397,6 +397,7 @@ public class EventDetailsDialog extends Dialog {
 		sashForm.setLayout(layout);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
+	
 	private void createToolbarButtonBar(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -491,7 +492,10 @@ public class EventDetailsDialog extends Dialog {
 
 	private void createStackSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 6;
+		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		container.setLayoutData(gd);
@@ -511,11 +515,19 @@ public class EventDetailsDialog extends Dialog {
 
 	private void createSessionSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 6;
+		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 100;
 		container.setLayoutData(gd);
 
+		Label line = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.widthHint = 1;
+		line.setLayoutData(gd);
+		
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.session")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
