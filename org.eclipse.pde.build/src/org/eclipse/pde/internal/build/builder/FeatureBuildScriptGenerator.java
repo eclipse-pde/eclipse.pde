@@ -137,6 +137,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureGenerator.setCompiledElements(getCompiledElements());
 		featureGenerator.setSourceToGather(sourceToGather);
 		featureGenerator.setSourcePluginOnly(true);
+		featureGenerator.setBuildingOSGi(getBuildingOSGi());
 		featureGenerator.generate();
 	}
 
@@ -252,6 +253,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
 			generator.setSourceToGather(new SourceFeatureInformation());
+			generator.setBuildingOSGi(getBuildingOSGi());
 			generator.generate();
 		}
 	}
@@ -671,7 +673,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		List plugins = computeElements(false);
 		List fragments = computeElements(true);
 
-		String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]));
+		String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]), getBuildingOSGi());
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 		Set writtenCalls = new HashSet(plugins.size() + fragments.size());
@@ -793,6 +795,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setModel(model);
 			generator.setFeatureGenerator(this);
 			generator.setPluginPath(getPluginPath());
+			generator.setBuildingOSGi(getBuildingOSGi());
 			generator.setCompiledElements(getCompiledElements());
 			generator.generate();
 		}
@@ -996,6 +999,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceScriptGenerator.setDevEntries(devEntries);
 		sourceScriptGenerator.setCompiledElements(getCompiledElements());
 		sourceScriptGenerator.setSourcePluginOnly(sourcePluginOnly);
+		sourceScriptGenerator.setBuildingOSGi(getBuildingOSGi());
 		sourceScriptGenerator.generate();
 	}
 

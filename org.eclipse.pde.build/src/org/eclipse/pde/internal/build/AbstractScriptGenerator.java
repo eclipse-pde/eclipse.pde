@@ -151,4 +151,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void closeScript() {
 		script.close();
 	}
+	protected boolean buildingOSGi = false;
+	public void setBuildingOSGi(boolean b) {
+		buildingOSGi = b;
+	}
+	public boolean getBuildingOSGi() {
+		return buildingOSGi;
+	}
 }

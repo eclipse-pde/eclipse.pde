@@ -42,8 +42,9 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		List pluginChain = new ArrayList(10);
 		String location = generator.getLocation(model);
 
-		//PARENT  
-		addPlugin(getPlugin(PI_BOOT, null), classpath, location);
+		//PARENT
+		if (! generator.getBuildingOSGi())
+			addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
 		addSelf(model, jar, classpath, location, pluginChain);
@@ -302,8 +303,14 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 	private void addPrerequisites(PluginModel target, List classpath, String baseLocation, List pluginChain) throws CoreException {
 
 		if (pluginChain.contains(target)) {
-			if (target == getPlugin(PI_RUNTIME, null))
-				return;
+			if (generator.getBuildingOSGi()) {
+				if (target == getPlugin(PI_RUNTIME, null) || target == getPlugin("org.eclipse.osgi", null) || target == getPlugin("org.eclipse.core.runtime.osgi", null))
+					return;
+			} else {
+				if (target == getPlugin(PI_RUNTIME, null))
+					return; 
+			}
+				
 			String message = Policy.bind("error.pluginCycle"); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}

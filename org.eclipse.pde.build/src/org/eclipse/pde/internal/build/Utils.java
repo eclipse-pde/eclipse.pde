@@ -24,7 +24,6 @@ import org.eclipse.update.core.IPluginEntry;
  * General utility class.
  */
 public final class Utils implements IPDEBuildConstants {
-
 	/**
 	 * Convert a list of tokens into an array. The list separator has to be specified.
 	 */
@@ -154,9 +153,9 @@ public final class Utils implements IPDEBuildConstants {
 		return result.toString();
 	}
 
-	public static String[] computePrerequisiteOrder(PluginModel[] plugins, PluginModel[] fragments) {
+	public static String[] computePrerequisiteOrder(PluginModel[] plugins, PluginModel[] fragments, boolean buildingOSGi) {
 		List prereqs = new ArrayList(9);
-		Set pluginList = new HashSet(plugins.length);
+		List pluginList = new ArrayList(plugins.length + (fragments == null ? 0 : fragments.length));
 		//Build a list of now plugins and fragments
 		for (int i = 0; i < plugins.length; i++)
 			pluginList.add(plugins[i].getId());
@@ -178,10 +177,21 @@ public final class Utils implements IPDEBuildConstants {
 					String prereq = prereqList[j].getPlugin();
 					boot = boot || prereq.equals(BootLoader.PI_BOOT);
 					runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
-					if (pluginList.contains(prereq)) {
+					int prereqIndex;
+					if ((prereqIndex = pluginList.indexOf(prereq)) != -1) {
 						found = true;
 						prereqs.add(new String[] { plugins[i].getId(), prereq });
 					}
+					System.out.println(prereqIndex);
+					// If the prereq is a plugin, then add a dependency between the given plugin and the fragments of the prereq 
+//					if (prereqIndex != -1 && prereqIndex < plugins.length) {
+//						PluginFragmentModel[] prereqsFragments = ((PluginDescriptorModel) plugins[prereqIndex]).getFragments();
+//						if (prereqsFragments==null)
+//						  continue;
+//						for (int k = 0; k < prereqsFragments.length; k++) {
+//							prereqs.add(new String[] { plugins[i].getId(), prereqsFragments[k].getId()});	
+//						}
+//					}
 				}
 			}
 
@@ -195,6 +205,10 @@ public final class Utils implements IPDEBuildConstants {
 			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
 			// Note that we should skip the xerces plugin as this would cause a circularity.
 			if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
+				continue;
+			if (buildingOSGi && plugins[i].getId().equals("org.eclipse.osgi")) //$NON-NLS-1$
+				continue;
+			if (buildingOSGi && plugins[i].getId().equals("org.eclipse.core.runtime.osgi")) //$NON-NLS-1$
 				continue;
 			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
 				prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
