@@ -71,7 +71,7 @@ public abstract class StructuredViewerSection extends PDESection {
 	}
 
 	protected void doPaste() {
-		ISelection selection = viewerPart.getViewer().getSelection();
+		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return;
 		
@@ -85,7 +85,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		}
 	}
 	public boolean canPaste(Clipboard clipboard) {
-		ISelection selection = viewerPart.getViewer().getSelection();
+		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return false;
 			
@@ -96,6 +96,9 @@ public abstract class StructuredViewerSection extends PDESection {
 			return canPaste(target, objects);
 		}
 		else return false;
+	}
+	protected ISelection getViewerSelection() {
+		return viewerPart.getViewer().getSelection();
 	}
 	protected void doPaste(Object target, Object[] objects) {
 	}

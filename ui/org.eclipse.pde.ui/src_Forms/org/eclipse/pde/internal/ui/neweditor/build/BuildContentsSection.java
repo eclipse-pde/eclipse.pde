@@ -416,6 +416,9 @@ public abstract class BuildContentsSection extends TableSection
 	public CheckboxTreeViewer getTreeViewer() {
 		return fTreeViewer;
 	}
+	protected ISelection getViewerSelection() {
+		return getTreeViewer().getSelection();
+	}
 	public void refresh() {
 		initializeCheckState();
 	}
