@@ -10,31 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.Section;
 
 public class DescriptionSection extends PDESection implements IPartSelectionListener {
 	private Button applyButton;
@@ -46,12 +41,8 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	private SourceViewer sourceViewer;
 	public static final String SECTION_TITLE =
 		"SchemaEditor.DescriptionSection.title"; //$NON-NLS-1$
-	public static final String KEY_PENDING_TITLE =
-		"SchemaEditor.DescriptionSection.pending.title"; //$NON-NLS-1$
 	public static final String KEY_APPLY = "Actions.apply.flabel"; //$NON-NLS-1$
 	public static final String KEY_RESET = "Actions.reset.flabel"; //$NON-NLS-1$
-	public static final String KEY_PENDING_MESSAGE =
-		"SchemaEditor.DescriptionSection.pending.message"; //$NON-NLS-1$
 	public static final String SECTION_DESC =
 		"SchemaEditor.DescriptionSection.desc"; //$NON-NLS-1$
 	private IDocumentPartitioner partitioner;
@@ -75,15 +66,8 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	private void checkForPendingChanges() {
-		if (applyButton.isEnabled()) {
-			if (MessageDialog
-				.openQuestion(
-					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString(KEY_PENDING_TITLE),
-					PDEPlugin.getResourceString(KEY_PENDING_MESSAGE))
-				== true)
-				handleApply();
-		}
+		if (applyButton.isEnabled())
+			handleApply();
 	}
 	public void commit(boolean onSave) {
 		handleApply();

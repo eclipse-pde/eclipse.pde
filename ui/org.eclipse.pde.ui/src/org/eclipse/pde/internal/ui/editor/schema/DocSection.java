@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class DocSection extends PDESection {
@@ -261,6 +260,7 @@ public class DocSection extends PDESection {
 		}
 		return "?"; //$NON-NLS-1$
 	}
+
 	private void handleApply() {
 		if (element != null) {
 			if (element instanceof ISchema)
@@ -305,6 +305,11 @@ public class DocSection extends PDESection {
 			IDocumentSection section = sections[i];
 			addTab(section);
 		}
+	}
+	
+	public void checkForPendingChanges() {
+		if (applyButton.isEnabled()) 
+			handleApply();
 	}
 	
 	private void addTab(ISchemaObject section) {

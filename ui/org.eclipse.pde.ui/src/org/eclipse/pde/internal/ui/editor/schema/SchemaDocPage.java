@@ -11,23 +11,26 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 public class SchemaDocPage extends PDEFormPage {
+	
 	public static final String PAGE_ID = "doc"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "SchemaEditor.DocPage.title"; //$NON-NLS-1$
 	private IColorManager colorManager = new ColorManager();
 	private DocSection docSection;
 	public static final String FORM_TITLE = "SchemaEditor.DocForm.title"; //$NON-NLS-1$
-
+	public static final String KEY_PENDING_TITLE =
+		"SchemaEditor.pending.title"; //$NON-NLS-1$
+	public static final String KEY_PENDING_MESSAGE =
+		"SchemaEditor.pending.docMessage"; //$NON-NLS-1$
+	
 	public SchemaDocPage(PDEFormEditor editor) {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString(PAGE_TITLE));
 	}
@@ -69,4 +72,10 @@ public class SchemaDocPage extends PDEFormPage {
 	public void updateEditorInput(Object obj) {
 		docSection.updateEditorInput(obj);
 	}	
+
+	public boolean selectReveal(Object object) {
+		docSection.checkForPendingChanges();
+		return super.selectReveal(object);
+	}
+	
 }
