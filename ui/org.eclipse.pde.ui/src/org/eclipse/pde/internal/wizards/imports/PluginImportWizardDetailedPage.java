@@ -193,7 +193,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					monitor.beginTask(
 						PDEPlugin.getResourceString(KEY_LOADING_RUNTIME),
 						IProgressMonitor.UNKNOWN);
-					models = (IPluginModelBase[]) registry.getModels();
+					int size = registry.getPluginCount()+registry.getFragmentCount();
+					models = new IPluginModelBase[size];
+					for (int i=0; i<registry.getPluginCount(); i++) {
+						models[i] = registry.getPlugin(i).getModel();
+					}
+					for (int i=registry.getPluginCount(); i<size; i++) {
+						models[i] = registry.getFragment(i).getModel();
+					}
 					monitor.done();
 				}
 			};
@@ -204,6 +211,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			}
 		} else {
 			final Vector result = new Vector();
+			final Vector fresult = new Vector();
 			if (dropLocation != null) {
 				IRunnableWithProgress op = new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
@@ -213,7 +221,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						String[] paths = createPaths(dropLocation);
 
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectories(result, paths, false, monitor);
+							ExternalModelManager.processPluginDirectories(result, fresult, paths, false, monitor);
 						if (errors != null && errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
@@ -226,8 +234,15 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					PDEPlugin.logException(e);
 				}
 			}
-			models =
-				(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+			int size = result.size()+fresult.size();
+			models = new IPluginModelBase[size];
+			for (int i=0; i<result.size(); i++) {
+				models[i] = (IPluginModelBase)result.get(i);
+			}
+			int offset = result.size();
+			for (int i=0; i<fresult.size(); i++) {
+				models[offset+i] = (IPluginModelBase)fresult.get(i);
+			}
 		}
 		return models;
 	}

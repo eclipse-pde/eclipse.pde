@@ -70,7 +70,10 @@ public boolean isInSync() {
 
 private File getLocalFile() {
 	String manifest = isFragmentModel()?"fragment.xml":"plugin.xml";
-	return new File(getInstallLocation()+File.separator+manifest);
+	String prefix = getInstallLocation();
+	if (prefix.startsWith("file:"))
+	   prefix = prefix.substring(5);
+	return new File(prefix+File.separator+manifest);
 }
 
 protected void updateTimeStamp() {

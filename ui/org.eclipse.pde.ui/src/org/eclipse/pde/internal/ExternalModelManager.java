@@ -40,6 +40,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ExternalModelManager {
 	private Vector models;
+	private Vector fmodels;
 	private static final String KEY_ERROR_TITLE = "Errors.SetupError";
 	private static final String KEY_SCANNING_PROBLEMS =
 		"ExternalModelManager.scanningProblems";
@@ -58,6 +59,7 @@ public class ExternalModelManager {
 
 	public void clear() {
 		models = null;
+		fmodels = null;
 	}
 
 	private static IPath createEclipseRelativeHome(
@@ -139,6 +141,17 @@ public class ExternalModelManager {
 		}
 		return new IPluginModel[0];
 	}
+	
+	public IFragmentModel[] getFragmentModels(IProgressMonitor monitor) {
+		if (fmodels == null)
+			loadModels(monitor);
+		if (fmodels != null) {
+			IFragmentModel[] result = new IFragmentModel[fmodels.size()];
+			fmodels.copyInto(result);
+			return result;
+		}
+		return new IFragmentModel[0];
+	}
 
 	public IPlugin getPlugin(int i) {
 		if (models == null)
@@ -149,11 +162,27 @@ public class ExternalModelManager {
 		}
 		return null;
 	}
+	
+	public IFragment getFragment(int i) {
+		if (fmodels == null)
+			loadModels(new NullProgressMonitor());
+		if (fmodels != null) {
+			IFragmentModel fmodel = (IFragmentModel) fmodels.elementAt(i);
+			return fmodel.getFragment();
+		}
+		return null;
+	}
 
 	public int getPluginCount() {
 		if (models == null)
 			loadModels(new NullProgressMonitor());
 		return (models != null) ? models.size() : 0;
+	}
+	
+	public int getFragmentCount() {
+		if (fmodels == null)
+			loadModels(new NullProgressMonitor());
+		return (fmodels != null) ? fmodels.size() : 0;
 	}
 
 	private String[] getPluginPaths() {
@@ -238,13 +267,39 @@ public class ExternalModelManager {
 			model.setEnabled(true);
 		}
 	}
+	
+	protected static void processFragmentModel(
+		Vector result,
+		PluginFragmentModel fragmentModel,
+		IProgressMonitor monitor) {
+		ExternalFragmentModel model = new ExternalFragmentModel();
+		String location = fragmentModel.getLocation();
+		try {
+			URL url = new URL(location);
+			String localLocation = url.getFile();
+			IPath path = new Path(localLocation).removeTrailingSeparator();
+			model.setInstallLocation(path.toOSString());
+			model.setEclipseHomeRelativePath(
+				createEclipseRelativeHome(model.getInstallLocation(), monitor));
+		} catch (MalformedURLException e) {
+			model.setInstallLocation(location);
+		}
+		model.load(fragmentModel);
+		if (model.isLoaded()) {
+			result.add(model);
+			// force creation of the fragment object
+			Fragment fragment = (Fragment) model.getFragment();
+			model.setEnabled(true);
+		}
+	}
 
 	private void internalProcessPluginDirectories(
 		Vector result,
+		Vector fresult,
 		String[] pluginPaths,
 		IProgressMonitor monitor) {
 		MultiStatus errors =
-			processPluginDirectories(result, pluginPaths, true, monitor);
+			processPluginDirectories(result, fresult, pluginPaths, true, monitor);
 		if (errors != null && errors.getChildren().length > 0) {
 			ResourcesPlugin.getPlugin().getLog().log(errors);
 		}
@@ -252,6 +307,7 @@ public class ExternalModelManager {
 
 	public static MultiStatus processPluginDirectories(
 		Vector result,
+		Vector fresult,
 		String[] pluginPaths,
 		boolean resolve,
 		IProgressMonitor monitor) {
@@ -276,11 +332,16 @@ public class ExternalModelManager {
 			if (resolve)
 				resolveStatus = registryModel.resolve(true, false);
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
+			PluginFragmentModel[] fragmentModels = registryModel.getFragments();
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
 				PluginDescriptorModel pluginDescriptorModel = pluginDescriptorModels[i];
 				monitor.subTask(pluginDescriptorModel.getId());
 				if (pluginDescriptorModel.getEnabled())
-					processPluginDescriptorModel(result, pluginDescriptorModels[i], monitor);
+					processPluginDescriptorModel(result, pluginDescriptorModel, monitor);
+			}
+			for (int i=0; i<fragmentModels.length; i++) {
+				PluginFragmentModel fragmentModel = fragmentModels[i];
+				processFragmentModel(fresult, fragmentModel, monitor);
 			}
 			if (resolve)
 				errors.merge(resolveStatus);
@@ -292,6 +353,7 @@ public class ExternalModelManager {
 
 	public boolean reload(String platformPath, IProgressMonitor monitor) {
 		models = new Vector();
+		fmodels = new Vector();
 
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
@@ -301,7 +363,7 @@ public class ExternalModelManager {
 		if (paths.length == 0)
 			return false;
 
-		internalProcessPluginDirectories(models, paths, monitor);
+		internalProcessPluginDirectories(models, fmodels, paths, monitor);
 
 		return true;
 	}

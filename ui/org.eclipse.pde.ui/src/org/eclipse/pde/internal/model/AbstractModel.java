@@ -68,8 +68,14 @@ public IResource getUnderlyingResource() {
 }
 
 protected boolean isInSync(File localFile) {
-	if (!localFile.exists()) return false;
-	return  (localFile.lastModified()==getTimeStamp());
+	if (!localFile.exists()) {
+		return false;
+	}
+	if (localFile.lastModified()!=getTimeStamp()) {
+		return false;
+	}
+	return true;
+//	return  (localFile.lastModified()==getTimeStamp());
 }
 
 public final long getTimeStamp() {
