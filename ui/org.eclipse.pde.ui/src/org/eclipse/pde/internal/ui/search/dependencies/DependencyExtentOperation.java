@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.search.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.search.ui.text.*;
 
@@ -61,7 +62,7 @@ public class DependencyExtentOperation {
 	
 	public void execute(IProgressMonitor monitor) {
 		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask("Searching for dependencies on " + fImportID + "...", 10); //$NON-NLS-2$
+		monitor.beginTask(PDEPlugin.getResourceString("DependencyExtentOperation.searching") + " " + fImportID + "...", 10);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
@@ -103,7 +104,7 @@ public class DependencyExtentOperation {
 				if (monitor.isCanceled())
 					break;
 				IPackageFragment pkgFragment = packageFragments[i];
-				monitor.subTask("Inspecting package: " + pkgFragment.getElementName());
+				monitor.subTask(PDEPlugin.getResourceString("DependencyExtentOperation.inspecting") + " " + pkgFragment.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (pkgFragment.hasChildren()) {
 					IJavaElement[] children = pkgFragment.getChildren();
 					for (int j = 0; j < children.length; j++) {

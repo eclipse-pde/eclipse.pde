@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.search.ui.text.*;
 
@@ -32,7 +33,7 @@ public class DependencyExtentQuery implements ISearchQuery {
 	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
 	 */
 	public String getLabel() {
-		return "Dependency on " + fImportID;
+		return PDEPlugin.getResourceString("DependencyExtentQuery.label") + " " + fImportID; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
