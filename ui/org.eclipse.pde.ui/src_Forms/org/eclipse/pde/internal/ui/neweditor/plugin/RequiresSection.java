@@ -10,51 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.pde.internal.ui.neweditor.TableSection;
-import org.eclipse.pde.internal.ui.newparts.TablePart;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.forms.widgets.*;
 
 public class RequiresSection
 	extends TableSection
@@ -98,7 +76,7 @@ public class RequiresSection
 	}
 
 	public RequiresSection(DependenciesPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
+		super(page, parent, Section.DESCRIPTION, new String[] {"Add...", null, "Up", "Down"});
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
 		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)
@@ -110,13 +88,12 @@ public class RequiresSection
 
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		importTable = tablePart.getTableViewer();
 
 		importTable.setContentProvider(new ImportContentProvider());
 		importTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		importTable.setSorter(ListUtil.PLUGIN_SORTER);
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
