@@ -16,6 +16,7 @@
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.team.core"/>
    </requires>
 
 

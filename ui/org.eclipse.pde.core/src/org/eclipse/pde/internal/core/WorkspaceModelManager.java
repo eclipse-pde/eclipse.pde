@@ -4,18 +4,38 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.team.core.RepositoryProvider;
 
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
@@ -130,6 +150,7 @@ public class WorkspaceModelManager
 		}
 		return null;
 	}
+
 	private IPluginModelBase createWorkspacePluginModel(IFile pluginFile) {
 		if (pluginFile.exists() == false)
 			return null;
@@ -380,6 +401,27 @@ public class WorkspaceModelManager
 			// is now a PDE project and act
 			if (isPluginProject(project)) {
 				ensureModelExists(project);
+				validateBinaryStatus(project);
+			}
+		}
+	}
+
+	private void validateBinaryStatus(IProject project) {
+		boolean shared = RepositoryProvider.getProvider(project) != null;
+		if (shared) {
+			try {
+				String binary =
+					project.getPersistentProperty(
+						PDECore.EXTERNAL_PROJECT_PROPERTY);
+				if (binary != null) {
+					// The project contents has been replaced by
+					// core - this is not a binary project any more
+					project.setPersistentProperty(
+						PDECore.EXTERNAL_PROJECT_PROPERTY,
+						null);
+				}
+			} catch (CoreException e) {
+				PDECore.logException(e);
 			}
 		}
 	}
@@ -473,6 +515,22 @@ public class WorkspaceModelManager
 			return false;
 		}
 		return true;
+	}
+
+	public static boolean isBinaryPluginProject(IProject project) {
+		if (!isPluginProject(project))
+			return false;
+		try {
+			String binary =
+				project.getPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY);
+			if (binary != null) {
+				return RepositoryProvider.getProvider(project) == null;
+			}
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		}
+		return false;
 	}
 
 	private void ensureModelExists(IProject pluginProject) {
