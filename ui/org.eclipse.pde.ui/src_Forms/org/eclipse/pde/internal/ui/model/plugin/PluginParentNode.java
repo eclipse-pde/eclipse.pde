@@ -24,6 +24,8 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 */
 	public void add(IPluginObject child) throws CoreException {
 		add(getChildCount(), child);
+		child.setInTheModel(true);
+		((PluginObjectNode)child).setModel(getModel());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#getChildCount()
