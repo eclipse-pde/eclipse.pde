@@ -163,6 +163,9 @@ public class ModelEntry extends PlatformObject {
 			|| changedId.equalsIgnoreCase("org.eclipse.core.runtime"))
 			return true;
 		IPluginImport[] imports = plugin.getImports();
+		if (changedPlugin instanceof IFragment) {
+			changedId = ((IFragment)changedPlugin).getPluginId();
+		}
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			if (iimport.getId().equals(changedId))
