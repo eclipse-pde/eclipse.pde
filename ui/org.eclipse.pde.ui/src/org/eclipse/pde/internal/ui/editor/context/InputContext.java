@@ -5,26 +5,40 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.context;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.StorageDocumentProvider;
+import org.eclipse.pde.internal.ui.editor.SystemFileDocumentProvider;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.model.IEditingModel;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.text.edits.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MoveSourceEdit;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IElementStateListener;
 /**
  * This class maintains objects associated with a single editor input.
  */
@@ -156,6 +170,7 @@ public abstract class InputContext {
 		}
 	}
 	public void doSave(IProgressMonitor monitor) {
+		/*
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		public void execute(final IProgressMonitor monitor)
 				throws CoreException {
@@ -175,6 +190,19 @@ public abstract class InputContext {
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			PDEPlugin.logException(x);
+		}
+		*/
+		//Removed unnecessary usage of workspace modify operation
+		// as per defect #62225
+		try {
+			IDocument doc = documentProvider.getDocument(input);
+			documentProvider.aboutToChange(input);
+			flushModel(doc);			
+			documentProvider.saveDocument(monitor, input, doc, true);
+			documentProvider.changed(input);
+		}
+		catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 	
