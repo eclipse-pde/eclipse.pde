@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -187,6 +188,10 @@ public class ManifestEditor extends MultiSourceEditor {
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		super.contextMenuAboutToShow(manager);
 	}
+	
+	public boolean canCopy(ISelection selection) {
+		return true;
+	}	
 
 	protected void addPages() {
 		try {

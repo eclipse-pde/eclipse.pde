@@ -16,6 +16,12 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
  */
 public interface IFormEntryListener extends IHyperlinkListener {
 /**
+ * The user clicked on the text control and focus was
+ * transfered to it.
+ * @param entry
+ */
+	void focusGained(FormEntry entry);
+/**
  * The user changed the text in the text control of the entry.
  * @param entry
  */

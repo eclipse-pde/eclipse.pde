@@ -149,6 +149,10 @@ public class FormEntry {
 			}
 		});
 		text.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				if (listener != null)
+					listener.focusGained(FormEntry.this);
+			}
 			public void focusLost(FocusEvent e) {
 				if (dirty)
 					commit();
