@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.update.core.IFeature;
@@ -93,7 +95,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generateGatherSourceCalls();
 		generatePostProcessingSteps();
 		if (!outputFormat.equalsIgnoreCase("folder")) { //$NON-NLS-1$
-			if (configInfo.getOs().equalsIgnoreCase("macosx")) { //$NON-NLS-1$
+			if (configInfo.getOs().equalsIgnoreCase(Constants.OS_MACOSX) && !Platform.getOS().equals(Constants.OS_WIN32)) {
 				generateTarTarget();
 				generateGZipTarget();
 			} else {
@@ -371,15 +373,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		//Need to do the copy using cp because of the link
 		List parameters = new ArrayList(2);
 		parameters.add("-r " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + ' ' + getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$ //$NON-NLS-2$  
-		script.printExecTask("cp", getPropertyFormat(PROPERTY_BASEDIR), parameters, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printExecTask("cp", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 
 		parameters.clear();
 		parameters.add("-rf " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING)); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printExecTask("rm", getPropertyFormat(PROPERTY_BASEDIR), parameters, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printExecTask("rm", getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 
 		parameters.clear();
-		parameters.add("-cvf " + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printExecTask("tar", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add("-cvf " + getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
+		script.printExecTask("tar", getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 	}
 
 	private void generateAntZipTarget() {
