@@ -24,7 +24,7 @@ public class AssemblyInformation {
 	public AssemblyInformation() {
 		// Initialize the content of the assembly information with the configurations 
 		for (Iterator iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
-			assembleInformation.put((Config) iter.next(), new AssemblyLevelConfigInfo());
+			assembleInformation.put(iter.next(), new AssemblyLevelConfigInfo());
 		}
 	}
 

@@ -35,6 +35,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private String PROPERTY_TMP_DIR = "tmp_dir"; //$NON-NLS-1$	
 	
 	public AssembleConfigScriptGenerator() {
+		super();
 	}
 
 	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection pluginList, Collection fragmentList, Collection featureList, boolean rootFileCopy) throws CoreException {

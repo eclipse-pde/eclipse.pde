@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build.tasks;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.packager.FetchFileGenerator;
 
 public class FetchFileGeneratorTask extends Task {
@@ -23,7 +24,7 @@ public class FetchFileGeneratorTask extends Task {
 	}
 
 	public void setConfigInfo(String config) throws CoreException {
-		FetchFileGenerator.setConfigInfo(config);
+		AbstractScriptGenerator.setConfigInfo(config);
 	}
 
 	public void setContentFilter(String filter) {

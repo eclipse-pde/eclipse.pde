@@ -195,7 +195,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 
 					boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
 					if (isSource) {
-						addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
+						addDevEntries(model, location, classpath, Utils.getArrayFromString(modelProperties.getProperty(PROPERTY_OUTPUT_PREFIX + libraryName)));
 					}
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
@@ -209,7 +209,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 			for (int i = 0; i < order.length; i++) {
 				if (order[i].equals(jar.getName(false)))
 					break;
-				addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
+				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
 				addPathAndCheck(model.getId(), order[i], classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
@@ -237,7 +237,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		}
 
 		//	add extra classpath if it is specified for the given jar
-		String[] jarSpecificExtraClasspath = (String[]) jar.getExtraClasspath();
+		String[] jarSpecificExtraClasspath = jar.getExtraClasspath();
 		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 

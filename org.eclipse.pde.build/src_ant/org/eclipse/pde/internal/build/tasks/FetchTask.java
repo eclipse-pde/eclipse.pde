@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.build.tasks;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.FetchScriptGenerator;
-import org.eclipse.pde.internal.build.builder.AbstractBuildScriptGenerator;
 
 /**
  * Wrapper class for the "eclipse.fetch" Ant task.
@@ -101,7 +101,7 @@ public class FetchTask extends Task {
 	}
 
 	public void setConfigInfo(String configInfo) throws CoreException {
-		AbstractBuildScriptGenerator.setConfigInfo(configInfo);
+		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
 }

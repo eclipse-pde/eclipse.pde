@@ -85,7 +85,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 					featureRef.setSiteModel(site);
 					featureRef.setURLString(featureURL.toExternalForm());
 					featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
-					((Site) site).addFeatureReferenceModel(featureRef);
+					site.addFeatureReferenceModel(featureRef);
 				} catch (MalformedURLException e) {
 					Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
 				}

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.model.PluginModel;
  */
 public class PluginBuildScriptGenerator extends ModelBuildScriptGenerator {
 	public PluginBuildScriptGenerator() {
-
+		super();
 	}
 	/**
 	 * @see ModelBuildScriptGenerator#getModel(String)

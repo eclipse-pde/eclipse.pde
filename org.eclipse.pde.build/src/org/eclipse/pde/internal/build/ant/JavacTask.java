@@ -30,6 +30,7 @@ public class JavacTask implements ITask {
 	 * Default constructor for the class.
 	 */
 	public JavacTask() {
+		super();
 	}
 
 	/**

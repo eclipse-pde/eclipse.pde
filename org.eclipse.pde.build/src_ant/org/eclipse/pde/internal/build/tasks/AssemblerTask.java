@@ -15,8 +15,8 @@ import java.net.URL;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
-import org.eclipse.pde.internal.build.builder.AbstractBuildScriptGenerator;
 import org.eclipse.pde.internal.build.packager.PackagerBuildScriptGenerator;
 
 public class AssemblerTask extends Task {
@@ -55,7 +55,7 @@ public class AssemblerTask extends Task {
 	 * @throws CoreException
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
-		AbstractBuildScriptGenerator.setConfigInfo(configInfo);
+		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
 	/**

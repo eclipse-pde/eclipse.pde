@@ -14,9 +14,7 @@ import java.net.MalformedURLException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.BuildScriptGenerator;
-import org.eclipse.pde.internal.build.Utils;
-import org.eclipse.pde.internal.build.builder.AbstractBuildScriptGenerator;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 /**
@@ -109,7 +107,7 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	public void setConfigInfo(String configInfo) throws CoreException {
-		AbstractBuildScriptGenerator.setConfigInfo(configInfo);
+		AbstractScriptGenerator.setConfigInfo(configInfo);
 	}
 
 	public void setBaseLocation(String baseLocation) {

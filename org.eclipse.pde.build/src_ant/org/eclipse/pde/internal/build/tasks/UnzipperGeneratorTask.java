@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.ant.core.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.packager.UnzipperGenerator;
 
 public class UnzipperGeneratorTask extends Task {
@@ -38,7 +39,7 @@ public class UnzipperGeneratorTask extends Task {
 
 	public void setConfigInfo(String configInfo) throws BuildException {
 		try {
-			UnzipperGenerator.setConfigInfo(configInfo);
+			AbstractScriptGenerator.setConfigInfo(configInfo);
 		} catch (CoreException e) {
 			throw new BuildException(e);
 		}

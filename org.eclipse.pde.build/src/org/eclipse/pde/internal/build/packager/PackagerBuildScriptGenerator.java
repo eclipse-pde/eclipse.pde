@@ -22,6 +22,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	private String[] featureList;
 
 	public PackagerBuildScriptGenerator() {
+		super();
 	}
 
 	public PackagerBuildScriptGenerator(String featureId, AssemblyInformation assemblageInformation) throws CoreException {

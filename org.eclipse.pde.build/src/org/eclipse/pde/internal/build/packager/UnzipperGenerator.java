@@ -25,7 +25,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	// The location of the packaging.properties file
 	private String packagingPropertiesLocation;
 	
-	private String[] unzipOrder = new String[0];;
+	private String[] unzipOrder = new String[0];
 	
 	public void generate() throws CoreException {
 		prepareGeneration();

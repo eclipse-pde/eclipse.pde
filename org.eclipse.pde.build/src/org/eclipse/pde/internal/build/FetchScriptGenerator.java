@@ -57,6 +57,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private String scriptName;
 
 	public FetchScriptGenerator() {
+		super();
 	}
 
 	public FetchScriptGenerator(String element) throws CoreException {
@@ -225,9 +226,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		Map params = new HashMap(5);
 
 		//We directly export the CVS content into the correct directory 
-		params.put("destination", (String) mapFileEntry.get("element")); //$NON-NLS-1$ //$NON-NLS-2$
-		params.put("tag", (String) mapFileEntry.get("tag")); //$NON-NLS-1$ //$NON-NLS-2$
-		params.put("cvsRoot", (String) mapFileEntry.get("cvsRoot")); //$NON-NLS-1$ //$NON-NLS-2$
+		params.put("destination", mapFileEntry.get("element")); //$NON-NLS-1$ //$NON-NLS-2$
+		params.put("tag", mapFileEntry.get("tag")); //$NON-NLS-1$ //$NON-NLS-2$
+		params.put("cvsRoot", mapFileEntry.get("cvsRoot")); //$NON-NLS-1$ //$NON-NLS-2$
 		params.put("quiet", "${quiet}"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String cvsPackage = ((String) mapFileEntry.get("path") == null ? (String) mapFileEntry.get("element") : (String) mapFileEntry.get("path")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

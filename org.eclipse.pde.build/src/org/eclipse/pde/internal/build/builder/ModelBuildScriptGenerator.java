@@ -654,8 +654,8 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 				continue;
 			key = key.substring(prefixLength);
 			String[] source = Utils.getArrayFromString((String) entry.getValue());
-			String[] output = Utils.getArrayFromString((String) properties.getProperty(PROPERTY_OUTPUT_PREFIX + key));
-			String[] extraClasspath = Utils.getArrayFromString((String) properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + key));
+			String[] output = Utils.getArrayFromString(properties.getProperty(PROPERTY_OUTPUT_PREFIX + key));
+			String[] extraClasspath = Utils.getArrayFromString(properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + key));
 			JAR jar = new JAR(key, source, output, extraClasspath);
 			result.add(jar);
 		}

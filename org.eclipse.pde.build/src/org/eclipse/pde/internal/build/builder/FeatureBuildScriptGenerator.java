@@ -57,6 +57,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String[] extraPlugins = new String[0];
 
 	public FeatureBuildScriptGenerator() {
+		super();
 	}
 
 	/**
