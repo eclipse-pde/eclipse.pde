@@ -25,9 +25,11 @@ public class Bundle implements IBundle {
 		fModel = model;
 	}
 	
-	public void load(Manifest manifest) {
+	public void clearHeaders() {
 		fDocumentHeaders.clear();
-		//fHeaders.clear();
+	}
+	
+	public void load(Manifest manifest) {
 		Map attributes = manifest.getMainAttributes();
 		Iterator iter = attributes.keySet().iterator();
 		while (iter.hasNext()) {

@@ -49,6 +49,7 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
 			fLoaded = true;
+			((Bundle)getBundle()).clearHeaders();
 			((Bundle)getBundle()).load(new Manifest(source));
 		} catch (IOException e) {
 			fLoaded = false;
