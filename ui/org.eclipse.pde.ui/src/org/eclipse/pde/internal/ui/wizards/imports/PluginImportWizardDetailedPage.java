@@ -304,10 +304,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void handleFilter() {
-		if (filterText == null ||filterText.getText().trim().length() == 0){
-			availableListViewer.setSelection(null);
+		if (filterText == null ||filterText.getText().trim().length() == 0)
 			return;
-		}
 
 		String text = filterText.getText().trim();
 		if (text.indexOf('*') == -1 && text.indexOf('?') == -1)
