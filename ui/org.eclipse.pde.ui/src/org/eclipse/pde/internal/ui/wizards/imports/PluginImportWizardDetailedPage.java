@@ -61,6 +61,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private IPluginModelBase[] models;
 	private boolean loadFromRegistry;
 	private boolean block;
+	private HashSet preSelectedModels;
 
 	public class PluginContentProvider
 		extends DefaultContentProvider
@@ -95,15 +96,17 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}
+		
 
 	}
 
-	public PluginImportWizardDetailedPage(PluginImportWizardFirstPage firstPage) {
+	public PluginImportWizardDetailedPage(PluginImportWizardFirstPage firstPage, HashSet preSelectedModels) {
 		super("PluginImportWizardDetailedPage", false);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
 		this.firstPage = firstPage;
+		this.preSelectedModels = preSelectedModels;
 		dropLocation = null;
 		updateStatus(createStatus(IStatus.ERROR, ""));
 
@@ -169,7 +172,15 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			}
-			tablePart.updateCounter(0);
+			if (models != null) {
+				for (int i = 0; i < models.length; i++) {
+					String id = models[i].getPluginBase().getId();
+					if (id != null && preSelectedModels.contains(id)) {
+						tablePart.getTableViewer().setChecked(models[i],true);
+					}
+				}
+				tablePart.updateCounter(tablePart.getTableViewer().getCheckedElements().length);
+			}
 		}
 	}
 

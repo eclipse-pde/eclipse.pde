@@ -6,7 +6,9 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -16,14 +18,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
@@ -46,6 +52,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
+	private HashSet preSelectedModels = new HashSet();
 
 	public PluginImportWizard() {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
@@ -58,6 +65,28 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		Object[] items = selection.toArray();
+		WorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
+		for (int i = 0; i < items.length; i++) {
+			IProject project = null;
+			if (items[i] instanceof IProject) {
+				project = (IProject) items[i];
+			} else if (items[i] instanceof IJavaProject) {
+				project = ((IJavaProject)items[i]).getProject();
+			} else if (items[i] instanceof IFile) {
+				IFile file = (IFile) items[i];
+				if (file.getName().equals("plugin.xml") || file.getName().equals("fragment.xml")) {
+					project = file.getProject();
+				}
+			}
+			if (project != null) {
+				IModel model = wManager.getWorkspaceModel(project);
+				if (model != null && model instanceof WorkspacePluginModelBase) {
+					preSelectedModels.add(
+						((WorkspacePluginModelBase) model).getPluginBase().getId());
+				}
+			}
+		}
 	}
 
 	/*
@@ -68,7 +97,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 		page1 = new PluginImportWizardFirstPage();
 		addPage(page1);
-		page2 = new PluginImportWizardDetailedPage(page1);
+		page2 = new PluginImportWizardDetailedPage(page1, preSelectedModels);
 		addPage(page2);
 	}
 
