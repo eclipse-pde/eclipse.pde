@@ -424,21 +424,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private void addStyle(PrintWriter out) {
 		out.println("<STYLE type=\"text/css\">");
 		out.println(
-			".header {font-family: sans-serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
+			".header {font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
 		out.println(
-			".copyright-text {font-family: sans-serif; font-size: 10px; color: "
+			".copyright-text {font-size: 10px; color: "
 				+ COLOR_COPYRIGHT
 				+ "; display:inline }");
 		out.println(
-			"samp.dtd {font-family: sans-serif; color: "
+			"samp.dtd {color: "
 				+ COLOR_DTD
 				+ "; display: inline}");
 		out.println(
-			".tag {font-family: sans-serif; color: "
+			".tag {color: "
 				+ COLOR_TAG
 				+ "; display:inline}");
 		out.println(
-			".cstring {font-family: sans-serif; color: "
+			".cstring {color: "
 				+ COLOR_CSTRING
 				+ "; display:inline}");
 		out.println("</STYLE>");
