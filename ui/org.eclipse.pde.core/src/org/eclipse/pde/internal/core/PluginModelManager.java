@@ -74,15 +74,6 @@ public class PluginModelManager implements IAdaptable {
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 
-		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
-			IModel[] added = e.getAddedModels();
-			for (int i = 0; i < added.length; i++) {
-				if (!(added[i] instanceof IPluginModelBase)) continue;
-				IPluginModelBase model = (IPluginModelBase) added[i];
-				IPluginBase plugin = model.getPluginBase();
-				updateTable(plugin.getId(), model, true, delta);
-			}
-		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
@@ -90,6 +81,15 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
 				updateTable(plugin.getId(), model, false, delta);
+			}
+		}
+		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
+			IModel[] added = e.getAddedModels();
+			for (int i = 0; i < added.length; i++) {
+				if (!(added[i] instanceof IPluginModelBase)) continue;
+				IPluginModelBase model = (IPluginModelBase) added[i];
+				IPluginBase plugin = model.getPluginBase();
+				updateTable(plugin.getId(), model, true, delta);
 			}
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {

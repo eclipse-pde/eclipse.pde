@@ -109,16 +109,16 @@ public class PluginsContentProvider
 					viewer.refresh();
 					return;
 				}
+				if ((kind & PluginModelDelta.REMOVED) != 0) {
+					ModelEntry[] removed = delta.getRemovedEntries();
+					viewer.remove(removed);
+				}
 				if ((kind & PluginModelDelta.ADDED) != 0) {
 					ModelEntry[] added = delta.getAddedEntries();
 					for (int i = 0; i < added.length; i++) {
 						if (isVisible(added[i]))
 							viewer.add(manager, added[i]);
 					}
-				}
-				if ((kind & PluginModelDelta.REMOVED) != 0) {
-					ModelEntry[] removed = delta.getRemovedEntries();
-					viewer.remove(removed);
 				}
 			}
 		});
