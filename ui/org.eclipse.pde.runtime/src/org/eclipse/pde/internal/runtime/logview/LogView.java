@@ -108,8 +108,8 @@ public class LogView extends ViewPart implements ILogListener {
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
-		toolBarManager.add(importAction);
 		toolBarManager.add(exportAction);
+		toolBarManager.add(importAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(deleteLogAction);
 		toolBarManager.add(clearAction);
@@ -437,8 +437,8 @@ public class LogView extends ViewPart implements ILogListener {
 		manager.add(deleteLogAction);
 		manager.add(readLogAction);
 		manager.add(new Separator());
-		manager.add(importAction);
 		manager.add(exportAction);
+		manager.add(importAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
