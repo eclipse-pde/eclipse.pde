@@ -646,9 +646,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 							&& text.hasMoreTokens()
 							&& text.nextToken().equals(">"))) {
 						openTag = false;
-						if (StringUtils.lineSplit(tempTag).size() > 1)
-							linenum += StringUtils.lineSplit(tempTag).size()
-								- 1;
+						linenum += getLineBreakCount(tempTag);
 						continue;
 					}
 
@@ -675,10 +673,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 								lineStack.pop();
 							} else {
 								openTag = false;
-								if (StringUtils.lineSplit(tempTag).size() > 1)
-									linenum
-										+= StringUtils.lineSplit(tempTag).size()
-										- 1;
+								linenum	+= getLineBreakCount(tempTag);
 								continue;
 							}
 						} else if (
@@ -790,12 +785,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 							openTag = false;
 						}
 					}
-
-					if (StringUtils.lineSplit(tempTag).size() > 1)
-						linenum += StringUtils.lineSplit(tempTag).size() - 1;
+					linenum += getLineBreakCount(tempTag);
 				}
-			} else if (StringUtils.lineSplit(next).size() > 1) {
-				linenum += StringUtils.lineSplit(next).size() - 1;
+			} else {
+				linenum +=getLineBreakCount(next);
 			}
 
 		}
@@ -1057,6 +1050,16 @@ public class SchemaTransformer implements ISchemaTransformer {
 			} else
 				out.print(c);
 		}
+	}
+	
+	public int getLineBreakCount(String tag){
+		StringTokenizer tokenizer = new StringTokenizer(tag, "\n", true);
+		int token = 0;
+		while (tokenizer.hasMoreTokens()){
+			if (tokenizer.nextToken().equals("\n"))
+				token++;
+		}
+		return token;
 	}
 
 }
