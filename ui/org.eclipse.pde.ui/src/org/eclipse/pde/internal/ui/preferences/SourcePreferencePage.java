@@ -2,7 +2,6 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -163,13 +162,13 @@ public class SourcePreferencePage
 
 	private void load() {
 		SourceLocationManager mng =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		userLocations = (ArrayList) mng.getUserLocationArray().clone();
 	}
 
 	private void store() {
 		SourceLocationManager mng =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		transferSelections();
 		mng.setUserLocations(userLocations);
 	}
@@ -192,7 +191,7 @@ public class SourcePreferencePage
 
 	private Object[] getLocations() {
 		SourceLocationManager mng =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		Object[] extensionLocations = mng.getExtensionLocations();
 		Object[] userArray = userLocations.toArray();
 		Object[] merged =
@@ -281,7 +280,7 @@ public class SourcePreferencePage
 
 	private void initializeStates() {
 		SourceLocationManager mng =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		Object[] extensionLocations = mng.getExtensionLocations();
 		ArrayList selected = new ArrayList();
 		for (int i = 0; i < extensionLocations.length; i++) {
@@ -298,7 +297,7 @@ public class SourcePreferencePage
 	}
 	private void transferSelections() {
 		SourceLocationManager mng =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		Object[] extensionLocations = mng.getExtensionLocations();
 		for (int i = 0; i < extensionLocations.length; i++) {
 			SourceLocation loc = (SourceLocation) extensionLocations[i];

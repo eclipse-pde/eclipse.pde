@@ -53,7 +53,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	// A flag that indicates if we are running inside VAJ or not.
 	private static boolean inVAJ;
 	private java.util.Hashtable counters;
-	private SourceLocationManager sourceLocationManager;
+
 
 	static {
 		try {
@@ -218,10 +218,5 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (labelProvider == null)
 			labelProvider = new PDELabelProvider();
 		return labelProvider;
-	}
-	public SourceLocationManager getSourceLocationManager() {
-		if (sourceLocationManager==null)
-			sourceLocationManager = new SourceLocationManager();
-		return sourceLocationManager;
 	}
 }

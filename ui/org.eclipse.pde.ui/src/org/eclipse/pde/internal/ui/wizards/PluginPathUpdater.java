@@ -232,10 +232,8 @@ public class PluginPathUpdater {
 	}
 	
 	private static IPath findSourceZip(IPluginBase pluginBase, String zipName) {
-		SourceLocationManager manager = PDEPlugin.getDefault().getSourceLocationManager();
-		File file = manager.findSourceFile(pluginBase, new Path(zipName));
-		if (file!=null) return new Path(file.getPath());
-		else return null;
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		return manager.findVariableRelativePath(pluginBase, new Path(zipName));
 	}
 
 	private static boolean exists(IPluginBase plugin, IPath rootPath, String zipName) {

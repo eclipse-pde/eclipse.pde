@@ -4,23 +4,52 @@
  */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.*;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
 	private static final String KEY_TITLE = "ImportWizard.messages.title";
@@ -321,7 +350,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IProgressMonitor monitor)
 		throws CoreException {
 		SourceLocationManager manager =
-			PDEPlugin.getDefault().getSourceLocationManager();
+			PDECore.getDefault().getSourceLocationManager();
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_COPYING_SOURCE),

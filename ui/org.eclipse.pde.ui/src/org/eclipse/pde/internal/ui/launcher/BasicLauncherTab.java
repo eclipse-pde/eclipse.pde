@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -55,6 +56,7 @@ public class BasicLauncherTab
 	private Text progArgsText;
 	private Text applicationNameText;
 	private Button defaultsButton;
+	private Image image;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -66,6 +68,12 @@ public class BasicLauncherTab
 		workspaceSelectionStatus = createStatus(IStatus.OK, "");
 
 		vmInstallations = getAllVMInstances();
+		image = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
+	}
+	
+	public void dispose() {
+		super.dispose();
+		image.dispose();
 	}
 
 	public void createControl(Composite parent) {
@@ -407,4 +415,8 @@ public class BasicLauncherTab
 	public String getName() {
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
+	public Image getImage() {
+		return image;
+	}
+		
 }

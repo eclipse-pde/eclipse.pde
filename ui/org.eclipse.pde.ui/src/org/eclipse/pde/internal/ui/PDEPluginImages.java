@@ -181,6 +181,13 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif");
 	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
+	
+	
+	/**
+	 * View
+	 */
+	public static final ImageDescriptor DESC_ARGUMENT_TAB  = create(PATH_VIEW, "variable_tab.gif");
+	
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
 	}

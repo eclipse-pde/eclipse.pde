@@ -448,4 +448,7 @@ public class TracingLauncherTab
 	public String getName() {
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
+	public Image getImage() {
+		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ);
+	}
 }

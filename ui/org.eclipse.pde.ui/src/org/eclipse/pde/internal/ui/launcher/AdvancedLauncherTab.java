@@ -637,4 +637,7 @@ public class AdvancedLauncherTab
 	public String getName() {
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
+	public Image getImage() {
+		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+	}
 }

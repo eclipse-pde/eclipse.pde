@@ -583,9 +583,12 @@
       </launchConfigurationTabGroup>
    </extension>
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationShortcuts">
+         point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
+            label="%launcher.shortcut.label"
+            icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
@@ -595,6 +598,9 @@
          </perspective>
          <perspective
                id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
          <perspective
                id="org.eclipse.pde.PDEPerspective">
