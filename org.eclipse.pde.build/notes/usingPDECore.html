@@ -242,10 +242,6 @@ users should define their own compiler</li>
 users should define their own runtime libraries (rt.jar)</li>
 
 <li>
-look at problem related to PDE UI and not having plugins in the structure
-pde core requires - (can we remove this structure requirement?)</li>
-
-<li>
 use temp vars to reduce garbage (specially in cases like getPropertyFormat())</li>
 
 <li>
@@ -281,8 +277,11 @@ it should not remove boot.jar. Having *.jar on a clean target can be dangerous.
 We should try to clean every entry by name and not use masks.</li>
 
 <li>
-pluginPath on pluginLocation task could be taken from a script property
-instead from an attribute</li>
+maybe we should expose the way we store the attributes for an ant script
+(the ones shown in the Ant Wizard). Users could be able to add or replace
+them. It would be really good for plugin build scripts. For example, PDE
+UI would be able to set variables like os, ws, arch, etc... After the script
+generation, freeing users from that.</li>
 </ul>
 
 </body>
