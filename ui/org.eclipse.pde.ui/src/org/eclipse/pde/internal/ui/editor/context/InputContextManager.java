@@ -42,6 +42,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 *
 	 */
 	public void dispose() {
+		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		// dispose input contexts
 		for (Enumeration enum = inputContexts.elements(); enum
 				.hasMoreElements();) {
@@ -50,7 +51,6 @@ public abstract class InputContextManager implements IResourceChangeListener {
 			context.dispose();
 		}
 		inputContexts.clear();
-		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		undoManager = null;
 	}
 	/**
