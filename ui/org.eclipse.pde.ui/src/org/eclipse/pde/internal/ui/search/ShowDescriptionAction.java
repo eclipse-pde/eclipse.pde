@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.browser.IBrowser;
@@ -18,6 +23,7 @@ import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -31,6 +37,7 @@ public class ShowDescriptionAction extends Action {
 	private String pointId;
 	private ISchema schema;
 	private File previewFile;
+	private URL cssURL;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		setExtensionPoint(point);
@@ -49,6 +56,22 @@ public class ShowDescriptionAction extends Action {
 		this.pointId = point.getFullId();
 		setText(PDEPlugin.getResourceString("ShowDescriptionAction.label"));
 		schema = null;
+	}
+	
+	public URL getCSSURL(){
+		return cssURL;
+	}
+	
+	public void setCSSURL(String url){
+		try {
+			cssURL = new URL(url);
+		} catch (MalformedURLException e) {
+			PDE.logException(e);
+		}
+	}
+	
+	public void setCSSURL(URL url){
+		cssURL = url;
 	}
 	
 	public void run() {
@@ -81,13 +104,11 @@ public class ShowDescriptionAction extends Action {
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(previewFile);
 			PrintWriter printWriter = new PrintWriter(os, true);
-			transformer.transform(printWriter, schema);
+			transformer.transform(printWriter, schema, cssURL);
 			os.flush();
 			os.close();
 			showURL(previewFile.getPath());
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}
 	}
