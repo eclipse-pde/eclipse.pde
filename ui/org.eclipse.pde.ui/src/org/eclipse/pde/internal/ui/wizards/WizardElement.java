@@ -18,6 +18,7 @@ public class WizardElement extends NamedElement {
 	public static final String ATT_ID = "id";
 	public static final String ATT_CLASS = "class";
 	public static final String ATT_TEMPLATE = "template";
+	public static final String ATT_POINT = "point";
 	private String description;
 	private IConfigurationElement configurationElement;
 	private IConfigurationElement template;

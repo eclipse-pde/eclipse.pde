@@ -6,13 +6,15 @@
  */
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.pde.core.IModelChangedListener;
+
 /**
  * @author dejan
  *
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public interface IContextPart {
+public interface IContextPart extends IModelChangedListener {
 	boolean isEditable();
 	PDEFormPage getPage();
 	String getContextId();

@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.extension.*;
+import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
@@ -49,10 +50,12 @@ public class ExtensionsSection extends TreeSection
 	private Image extensionImage;
 	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionSection.title";
 	public static final String SECTION_NEW = "ManifestEditor.DetailExtensionSection.new";
+	public static final String SECTION_EDIT = "ManifestEditor.DetailExtensionSection.edit";
 	public static final String SECTION_DOWN = "ManifestEditor.DetailExtensionSection.down";
 	public static final String SECTION_UP = "ManifestEditor.DetailExtensionSection.up";
 	public static final String SECTION_SHOW_CHILDREN = "ManifestEditor.DetailExtensionSection.showAllChildren";
 	public static final String POPUP_NEW = "Menus.new.label";
+	public static final String POPUP_EDIT = "Menus.edit.label";
 	public static final String POPUP_NEW_EXTENSION = "ManifestEditor.DetailExtensionSection.newExtension";
 	public static final String POPUP_COLLAPSE_ALL = "ManifestEditor.DetailExtensionSection.collapseAll";
 	public static final String POPUP_GO_TO = "Menus.goTo.label";
@@ -64,6 +67,7 @@ public class ExtensionsSection extends TreeSection
 	private DrillDownAdapter drillDownAdapter;
 	private Action newExtensionAction;
 	private Action collapseAllAction;
+	private Hashtable editorWizards;
 	private static final String[] COMMON_LABEL_PROPERTIES = {"label", "name",
 			"id"};
 	class ExtensionContentProvider extends DefaultContentProvider
@@ -104,7 +108,9 @@ public class ExtensionsSection extends TreeSection
 	}
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, 0, new String[]{
-				PDEPlugin.getResourceString(SECTION_NEW), null,
+				PDEPlugin.getResourceString(SECTION_NEW), 
+				PDEPlugin.getResourceString(SECTION_EDIT),
+				null,
 				PDEPlugin.getResourceString(SECTION_UP),
 				PDEPlugin.getResourceString(SECTION_DOWN)});
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
@@ -161,6 +167,7 @@ public class ExtensionsSection extends TreeSection
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateUpDownButtons(selection.getFirstElement());
+		getTreePart().setButtonEnabled(1, isSelectionEditable(selection));
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		/*
@@ -174,16 +181,21 @@ public class ExtensionsSection extends TreeSection
 				handleNew();
 				break;
 			case 1 :
-			// noop
-			case 2 :
-				handleMove(true);
+				handleEdit();
+				break;
+			case 2:
+				// blank
 				break;
 			case 3 :
+				handleMove(true);
+				break;
+			case 4 :
 				handleMove(false);
 				break;
 		}
 	}
 	public void dispose() {
+		editorWizards = null;
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getAggregateModel();
 		model.removeModelChangedListener(this);
@@ -364,6 +376,96 @@ public class ExtensionsSection extends TreeSection
 					}
 				});
 	}
+	private void handleEdit(IConfigurationElement element, IStructuredSelection selection) {
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		try {
+			final IExtensionEditorWizard wizard = (IExtensionEditorWizard)element.createExecutableExtension("class");
+			wizard.init(project, model, selection);
+			BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
+					new Runnable() {
+						public void run() {
+							WizardDialog dialog = new WizardDialog(PDEPlugin
+									.getActiveWorkbenchShell(), wizard);
+							dialog.create();
+							SWTUtil.setDialogSize(dialog, 500, 500);
+							dialog.open();
+						}
+					});
+		}
+		catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	private void handleEdit() {
+		final IStructuredSelection selection = (IStructuredSelection)extensionTree.getSelection();
+		ArrayList editorWizards = getEditorWizards(selection);
+		if (editorWizards==null) return;
+		if (editorWizards.size()==1) {
+			// open the wizard directly			
+			handleEdit((IConfigurationElement)editorWizards.get(0), selection);
+		}
+		else {
+			IProject project = getPage().getPDEEditor().getCommonProject();
+			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+			final ExtensionEditorWizard wizard = new ExtensionEditorWizard(project, model, selection);
+			BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
+				new Runnable() {
+					public void run() {
+						WizardDialog dialog = new WizardDialog(PDEPlugin
+								.getActiveWorkbenchShell(), wizard);
+						dialog.create();
+						SWTUtil.setDialogSize(dialog, 500, 500);
+						dialog.open();
+					}
+			});
+		}
+	}
+	private ArrayList getEditorWizards(IStructuredSelection selection) {
+		if (selection.size()!=1) return null;
+		Object obj = selection.getFirstElement();
+		String pointId = null;
+		if (obj instanceof IPluginExtension) {
+			pointId = ((IPluginExtension)obj).getPoint();
+		}
+		else if (obj instanceof IPluginElement) {
+			IPluginObject parent = ((IPluginElement)obj).getParent();
+			while (parent!=null) {
+				if (parent instanceof IPluginExtension) {
+					pointId = ((IPluginExtension)parent).getPoint();
+					break;
+				}
+				parent = parent.getParent();
+			}
+		}
+		if (pointId==null) return null;
+		if (editorWizards==null)
+			loadExtensionWizards();
+		return (ArrayList)editorWizards.get(pointId);
+	}
+
+	private void loadExtensionWizards() {
+		editorWizards = new Hashtable();
+		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension");
+		for (int i=0; i<elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equals("editorWizard")) {
+				String pointId = element.getAttribute("point");
+				if (pointId==null) continue;
+				ArrayList list = (ArrayList)editorWizards.get(pointId);
+				if (list==null) {
+					list = new ArrayList();
+					editorWizards.put(pointId, list);
+				}
+				list.add(element);
+			}
+		}
+	}
+	private boolean isSelectionEditable(IStructuredSelection selection) {
+		if (!getPage().getModel().isEditable())
+			return false;
+		return getEditorWizards(selection)!=null;
+	}
 	void handleCollapseAll() {
 		getTreePart().getTreeViewer().collapseAll();
 	}
@@ -373,8 +475,9 @@ public class ExtensionsSection extends TreeSection
 		boolean editable = model.isEditable();
 		TreePart treePart = getTreePart();
 		treePart.setButtonEnabled(0, editable);
-		treePart.setButtonEnabled(2, false);
+		treePart.setButtonEnabled(1, false);
 		treePart.setButtonEnabled(3, false);
+		treePart.setButtonEnabled(4, false);
 		model.addModelChangedListener(this);
 		newExtensionAction = new Action() {
 			public void run() {
@@ -489,7 +592,8 @@ public class ExtensionsSection extends TreeSection
 			Image customImage = getCustomImage(element);
 			if (customImage != null)
 				elementImage = customImage;
-			boolean hasBodyText = element.getText() != null;
+			String bodyText = element.getText();
+			boolean hasBodyText = bodyText!=null&&bodyText.length()>0;
 			if (hasBodyText) {
 				elementImage = PDEPlugin.getDefault().getLabelProvider().get(
 						elementImage, PDELabelProvider.F_EDIT);
@@ -709,7 +813,7 @@ public class ExtensionsSection extends TreeSection
 					downEnabled = true;
 			}
 		}
-		getTreePart().setButtonEnabled(2, upEnabled);
-		getTreePart().setButtonEnabled(3, downEnabled);
+		getTreePart().setButtonEnabled(3, upEnabled);
+		getTreePart().setButtonEnabled(4, downEnabled);
 	}
 }

@@ -27,7 +27,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private WizardNewProjectCreationPage fMainPage;
 	private ProjectStructurePage fStructurePage;
 	private ContentPage fContentPage;
-	private WizardListSelectionPage fWizardListPage;
+	private TemplateListSelectionPage fWizardListPage;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
@@ -64,7 +64,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		
 		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false);
 		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false);
-		fWizardListPage = new WizardListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
+		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
 		if (tid!=null)
 			fWizardListPage.setInitialTemplateId(tid);

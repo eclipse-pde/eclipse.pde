@@ -9,6 +9,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -149,6 +150,8 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.addModelChangedListener(this);
 	}
 	
 	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {
@@ -190,6 +193,20 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 	 */
 	public void setFocus() {
 		id.getText().setFocus();
+	}
+	
+	public void dispose() {
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.removeModelChangedListener(this);
+		super.dispose();
+	}
+
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+			Object obj = e.getChangedObjects()[0];
+			if (obj.equals(input))
+				refresh();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()

@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -168,6 +169,15 @@ public class ExtensionElementDetails extends AbstractFormPart
 			input = null;
 		update();
 	}
+
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+			Object obj = e.getChangedObjects()[0];
+			if (obj.equals(input))
+				refresh();
+		}
+	}
+	
 	private void update() {
 		updateDescription();
 		if (schemaElement==null)
@@ -256,6 +266,9 @@ public class ExtensionElementDetails extends AbstractFormPart
 			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
 			row.dispose();
 		}
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.removeModelChangedListener(this);
+		super.dispose();
 	}
 	/*
 	 * (non-Javadoc)

@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui;
+
+import org.eclipse.jface.wizard.IWizard;
+
 /**
  * This is a tagging interface that should be implemented by all wizards that
  * are plugged into one of PDE extension points.
  */
-public interface IBasePluginWizard {
+public interface IBasePluginWizard extends IWizard {
 }

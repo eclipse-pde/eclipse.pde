@@ -8,32 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.plugin;
+package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 
-public class WizardListSelectionPage extends BaseWizardSelectionPage
+public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		implements ISelectionChangedListener, IExecutableExtension {
 	protected TableViewer wizardSelectionViewer;
-	private ElementList wizardElements;
+	protected ElementList wizardElements;
 	private WizardSelectedAction doubleClickAction = new WizardSelectedAction();
-	private ContentPage fContentPage;
-	private Button fUseTemplate;
-	private String fInitialTemplateId;
 	
 	private class WizardSelectedAction extends Action {
 		public WizardSelectedAction() {
@@ -45,12 +41,9 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 			advanceToNextPage();
 		}
 	}
-	public WizardListSelectionPage(ElementList wizardElements, ContentPage page, String message) {
+	public WizardListSelectionPage(ElementList wizardElements, String message) {
 		super("ListSelection", message);
 		this.wizardElements = wizardElements;
-		fContentPage = page;
-		setTitle(PDEPlugin.getResourceString("WizardListSelectionPage.title"));
-		setDescription(PDEPlugin.getResourceString("WizardListSelectionPage.desc"));
 	}
 	public void advanceToNextPage() {
 		getContainer().showPage(getNextPage());
@@ -62,33 +55,20 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fUseTemplate = new Button(container, SWT.CHECK);
-		fUseTemplate.setText(PDEPlugin.getResourceString("WizardListSelectionPage.label"));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fUseTemplate.setLayoutData(gd);
-		fUseTemplate.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				wizardSelectionViewer.getControl().setEnabled(fUseTemplate.getSelection());
-				getContainer().updateButtons();
-			}
-		});
-		if (getInitialTemplateId()!=null)
-			fUseTemplate.setSelection(true);
-		
+		createAbove(container, 1);
 		Label label = new Label(container, SWT.NONE);
 		label.setText(getLabel());
-		gd = new GridData();
-		gd.horizontalSpan = 2;
+		GridData gd = new GridData();
 		label.setLayoutData(gd);
 		
-		wizardSelectionViewer = new TableViewer(createTable(container, SWT.BORDER));
+		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		wizardSelectionViewer = new TableViewer(createTable(sashForm, SWT.BORDER));
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setSorter(ListUtil.NAME_SORTER);
@@ -97,31 +77,21 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 				doubleClickAction.run();
 			}
 		});
-		wizardSelectionViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		if (getInitialTemplateId()==null)
-			wizardSelectionViewer.getControl().setEnabled(false);
-		
-		createDescriptionIn(container);
+		createDescriptionIn(sashForm);
+		createBelow(container, 1);
+		initializeViewer();		
 		wizardSelectionViewer.setInput(wizardElements);
-		selectInitialTemplate();
 		wizardSelectionViewer.addSelectionChangedListener(this);		
 		Dialog.applyDialogFont(container);
 		setControl(container);
 	}
 	
-	private void selectInitialTemplate() {
-		if (getInitialTemplateId()!=null) {
-			Object [] children = wizardElements.getChildren();
-			for (int i=0; i<children.length; i++) {
-				WizardElement welement = (WizardElement)children[i];
-				if (welement.getID().equals(getInitialTemplateId())) {
-					wizardSelectionViewer.setSelection(new StructuredSelection(welement), true);
-					setSelectedNode(createWizardNode(welement));
-					setDescriptionText(welement.getDescription());	
-					break;
-				}
-			}
-		}
+	protected void createAbove(Composite container, int span) {
+	}
+	protected void createBelow(Composite container, int span) {
+	}
+	
+	protected void initializeViewer() {
 	}
 	
 	private Table createTable(Composite parent, int style) {
@@ -178,16 +148,6 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 		}
 	}
 
-	protected IWizardNode createWizardNode(WizardElement element) {
-		return new WizardNode(this, element) {
-			public IBasePluginWizard createWizard() throws CoreException {
-				IPluginContentWizard wizard =
-					(IPluginContentWizard) wizardElement.createExecutableExtension();
-				wizard.init(fContentPage.getData());
-				return wizard;
-			}
-		};
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
@@ -195,36 +155,17 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	}
 	
 	public IPluginContentWizard getSelectedWizard() {
-		if (fUseTemplate.getSelection()) {
-			IWizardNode node = getSelectedNode();
-			if (node != null)
-				return (IPluginContentWizard)node.getWizard();
-		}
+		IWizardNode node = getSelectedNode();
+		if (node != null)
+			return (IPluginContentWizard)node.getWizard();
 		return null;
 	}
-	
-	public boolean isPageComplete() {
-		return !fUseTemplate.getSelection() || (fUseTemplate.getSelection() && getSelectedNode() != null);
-	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
 	 */
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection)wizardSelectionViewer.getSelection();
-		return fUseTemplate.getSelection() && ssel != null && !ssel.isEmpty();
-	}
-	/**
-	 * @return Returns the fInitialTemplateId.
-	 */
-	public String getInitialTemplateId() {
-		return fInitialTemplateId;
-	}
-	/**
-	 * @param initialTemplateId The fInitialTemplateId to set.
-	 */
-	public void setInitialTemplateId(String initialTemplateId) {
-		fInitialTemplateId = initialTemplateId;
+		return ssel != null && !ssel.isEmpty();
 	}
 }

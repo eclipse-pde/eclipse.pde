@@ -52,7 +52,10 @@ public class BodyTextSection
 			title = PDEPlugin.getResourceString(SECTION_TITLE_FULL);
 		else
 			title = PDEPlugin.getResourceString(SECTION_TITLE);
-		getSection().setText(title);
+		if (!getSection().getText().equals(title)) {
+			getSection().setText(title);
+			getSection().layout();
+		}
 	}
 
 	public void createClient(
@@ -229,11 +232,11 @@ public class BodyTextSection
 		String bodyText = element != null ? element.getText() : null;
 
 		blockNotification=true;
-		text.setText(bodyText != null ? bodyText : "");
+		text.setText(bodyText != null && bodyText.length()>0? bodyText : "");
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 
-		updateTitle(bodyText != null);
+		updateTitle(bodyText != null && bodyText.length()>0);
 		blockNotification=false;
 	}
 }

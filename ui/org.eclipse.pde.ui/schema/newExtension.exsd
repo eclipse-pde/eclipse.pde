@@ -7,10 +7,10 @@
       </appInfo>
       <documentation>
          This extension point should be used to contribute wizards
-that will be used to create new extensions in 
+that will be used to create and edit new extensions in 
 PDE plug-in manifest editor. Wizards can create on
 or more extensions at the same time, as well
-as the code needed to implement those extensions.
+as the code needed to implement those extensions. If a contributed wizard is specifically created for a particular extension point, it is advisable to also register a matching editor wizard. This wizard will be used to edit the extension point in the manifest editor after it has been created in the manifest file.
       </documentation>
    </annotation>
 
@@ -19,6 +19,7 @@ as the code needed to implement those extensions.
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="wizard"/>
             <element ref="category"/>
+            <element ref="editorWizard"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,6 +50,9 @@ as the code needed to implement those extensions.
          <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
+         <documentation>
+            a wizard that can be used to create a new extension from within the plug-in manifest editor
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -111,6 +115,64 @@ using &apos;/&apos; as a delimiter.
             <annotation>
                <documentation>
                   an identifier of a template declared elsewhere using the extension point &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt;. If defined, the template with the specified id will be located and the extension wizard will be created using the template. This attribute is mutually exclusive with the &lt;code&gt;class&lt;/code&gt; attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="editorWizard">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+         <documentation>
+            a wizard that can be used to edit an existing extension from within the plug-in manifest editor
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used to identify this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used in UI representation
+of this wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually 
+represent the wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.pde.ui.IExtensionEditorWizard&lt;/samp&gt; 
+interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.IExtensionEditorWizard"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the extension point that this wizard is capable of editing
                </documentation>
             </annotation>
          </attribute>

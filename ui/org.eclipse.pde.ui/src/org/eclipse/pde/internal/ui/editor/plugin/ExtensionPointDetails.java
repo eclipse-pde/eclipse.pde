@@ -11,6 +11,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -253,12 +254,26 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		fSchemaEntry.setEditable(isEditable());
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.addModelChangedListener(this);
 	}
 	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {
 		Label spacer = toolkit.createLabel(parent, "");
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		spacer.setLayoutData(gd);
+	}
+	public void dispose() {
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.removeModelChangedListener(this);
+		super.dispose();
+	}
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+			Object obj = e.getChangedObjects()[0];
+			if (obj.equals(fInput))
+				refresh();
+		}
 	}
 	private void update() {
 		fIdEntry.setValue(
