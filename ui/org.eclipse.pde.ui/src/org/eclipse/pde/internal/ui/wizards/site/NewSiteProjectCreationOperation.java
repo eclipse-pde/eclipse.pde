@@ -18,14 +18,14 @@ import org.eclipse.ui.part.*;
 
 public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	
-	private IProject project;
-	private IPath path;
-	private String webLocation;
+	private IProject fProject;
+	private IPath fPath;
+	private String fWebLocation;
 	
 	public NewSiteProjectCreationOperation(IProject project, IPath path, String webLocation) {
-		this.project = project;
-		this.path = path;
-		this.webLocation = webLocation;
+		fProject = project;
+		fPath = path;
+		fWebLocation = webLocation;
 	}
 
 	/* (non-Javadoc)
@@ -33,17 +33,17 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
-		int numUnits = webLocation == null ? 3 : 4;
+		int numUnits = fWebLocation == null ? 3 : 4;
 		
 		monitor.beginTask(PDEPlugin.getResourceString("NewSiteWizard.creatingProject"), numUnits); //$NON-NLS-1$
 
-		CoreUtility.createProject(project, path, monitor);		
-		project.open(monitor);
-		CoreUtility.addNatureToProject(project, PDE.SITE_NATURE, monitor);
+		CoreUtility.createProject(fProject, fPath, monitor);		
+		fProject.open(monitor);
+		CoreUtility.addNatureToProject(fProject, PDE.SITE_NATURE, monitor);
 		monitor.worked(1);
 		
-		if (webLocation != null){
-			CoreUtility.createFolder(project.getFolder(webLocation), true, true, monitor);
+		if (fWebLocation != null){
+			CoreUtility.createFolder(fProject.getFolder(fWebLocation), true, true, monitor);
 			createXSLFile();
 			createCSSFile();
 			createHTMLFile();
@@ -60,7 +60,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private IFile createSiteManifest() throws CoreException {
-		IFile file = project.getFile("site.xml"); //$NON-NLS-1$
+		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists()) return file;
 		
 		WorkspaceSiteModel model = new WorkspaceSiteModel();
@@ -100,8 +100,8 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		
 		writer.println("<html>"); //$NON-NLS-1$
 		writer.println("<head>"); //$NON-NLS-1$
-		writer.println("<title>"+project.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("<style>@import url(\""+webLocation+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<title>"+fProject.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<style>@import url(\""+fWebLocation+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("<script type=\"text/javascript\">"); //$NON-NLS-1$
 		writer.println("	var returnval = 0;"); //$NON-NLS-1$
 		writer.println("	var stylesheet, xmlFile, cache, doc;"); //$NON-NLS-1$
@@ -113,7 +113,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("			stylesheet = document.implementation.createDocument(\"\", \"\", null);"); //$NON-NLS-1$
 		writer.println("			if (xmlFile.load){"); //$NON-NLS-1$
 		writer.println("				xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
-		writer.println("				stylesheet.load(\""+webLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("				stylesheet.load(\""+fWebLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			} else {"); //$NON-NLS-1$
 		writer.println("				alert(\"" + PDEPlugin.getResourceString("SiteHTML.loadError") + "\");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println("			}"); //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("			xmlFile.load(\"site.xml\");"); //$NON-NLS-1$
 		writer.println("			stylesheet = new ActiveXObject(\"msxml2.FreeThreadedDOMDocument.3.0\");"); //$NON-NLS-1$
 		writer.println("			stylesheet.async = false;"); //$NON-NLS-1$
-		writer.println("			stylesheet.load(\""+webLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("			stylesheet.load(\""+fWebLocation+"/site.xsl\");"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("			cache = new ActiveXObject(\"msxml2.XSLTemplate.3.0\");"); //$NON-NLS-1$
 		writer.println("			cache.stylesheet = stylesheet;"); //$NON-NLS-1$
 		writer.println("			transformData();"); //$NON-NLS-1$
@@ -159,7 +159,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("</html>"); //$NON-NLS-1$
 
 		writer.flush();
-		writeFile(project.getFile("index.html"), swriter); //$NON-NLS-1$
+		writeFile(fProject.getFile("index.html"), swriter); //$NON-NLS-1$
 	}
 		
 	private void createCSSFile(){
@@ -179,7 +179,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("</STYLE>"); //$NON-NLS-1$
 
 		writer.flush();
-		writeFile(project.getFile(webLocation + "/site.css"), swriter); //$NON-NLS-1$
+		writeFile(fProject.getFile(fWebLocation + "/site.css"), swriter); //$NON-NLS-1$
 	}
 
 	private void createXSLFile(){
@@ -192,11 +192,11 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("<xsl:for-each select=\"site\">"); //$NON-NLS-1$
 		writer.println("	<html>"); //$NON-NLS-1$
 		writer.println("	<head>"); //$NON-NLS-1$
-		writer.println("	<title>"+project.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("	<style>@import url(\"" + webLocation + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<title>"+fProject.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<style>@import url(\"" + fWebLocation + "/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	</head>"); //$NON-NLS-1$
 		writer.println("	<body>"); //$NON-NLS-1$
-		writer.println("	<h1 class=\"title\">" + project.getName() +"</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("	<h1 class=\"title\">" + fProject.getName() +"</h1>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("	<p class=\"bodyText\"><xsl:value-of select=\"description\"/></p>"); //$NON-NLS-1$
 		writer.println("	<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">"); //$NON-NLS-1$
 		writer.println("	<xsl:for-each select=\"category-def\">"); //$NON-NLS-1$
@@ -401,7 +401,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("</xsl:stylesheet>"); //$NON-NLS-1$
 
 		writer.flush();
-		writeFile(project.getFile(webLocation + "/site.xsl"), swriter); //$NON-NLS-1$
+		writeFile(fProject.getFile(fWebLocation + "/site.xsl"), swriter); //$NON-NLS-1$
 	}
 	
 	private void writeFile(IFile file, StringWriter swriter) {
