@@ -94,6 +94,8 @@ Image getBaseObjectImage(Object obj) {
 		ISchemaAttribute att = (ISchemaAttribute) obj;
 		if (att.getKind() == ISchemaAttribute.JAVA)
 			return PDEPluginImages.get(PDEPluginImages.IMG_ATT_CLASS_OBJ);
+		if (att.getKind() == ISchemaAttribute.RESOURCE)
+			return PDEPluginImages.get(PDEPluginImages.IMG_ATT_FILE_OBJ);
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
 			return PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ);
 		return PDEPluginImages.get(PDEPluginImages.IMG_ATT_IMPL_OBJ);
@@ -111,6 +113,8 @@ ImageDescriptor getBaseObjectImageDescriptor(Object obj) {
 		ISchemaAttribute att = (ISchemaAttribute) obj;
 		if (att.getKind() == ISchemaAttribute.JAVA)
 			return PDEPluginImages.DESC_ATT_CLASS_OBJ;
+		if (att.getKind() == ISchemaAttribute.RESOURCE)
+			return PDEPluginImages.DESC_ATT_FILE_OBJ;
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
 			return PDEPluginImages.DESC_ATT_REQ_OBJ;
 		return PDEPluginImages.DESC_ATT_IMPL_OBJ;

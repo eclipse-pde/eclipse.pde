@@ -47,9 +47,6 @@ public class ElementSection
 		public String getText(Object object) {
 			return getColumnText(object, 1);
 		}
-		public String getColumnText(Viewer v, Object object, int column) {
-			return getColumnText(object, column);
-		}
 		public String getColumnText(Object object, int column) {
 			if (column != 1)
 				return "";
@@ -60,9 +57,6 @@ public class ElementSection
 		public Image getImage(Object object) {
 			return getColumnImage(object, 1);
 		}
-		public Image getColumnImage(Viewer v, Object object, int column) {
-			return getColumnImage(object, column);
-		}
 		public Image getColumnImage(Object object, int column) {
 			if (column != 1)
 				return null;
@@ -72,6 +66,8 @@ public class ElementSection
 				ISchemaAttribute att = (ISchemaAttribute) object;
 				if (att.getKind() == ISchemaAttribute.JAVA)
 					return PDEPluginImages.get(PDEPluginImages.IMG_ATT_CLASS_OBJ);
+				if (att.getKind() == ISchemaAttribute.RESOURCE)
+				    return PDEPluginImages.get(PDEPluginImages.IMG_ATT_FILE_OBJ);
 				if (att.getUse() == ISchemaAttribute.REQUIRED)
 					return PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ);
 				return PDEPluginImages.get(PDEPluginImages.IMG_ATT_IMPL_OBJ);

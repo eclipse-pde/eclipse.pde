@@ -270,19 +270,39 @@ public void modelChanged(IModelChangedEvent e) {
 	Object obj = e.getChangedObjects()[0];
 	if (obj instanceof ISchemaCompositor
 		|| obj instanceof ISchemaObjectReference) {
-		ISchemaObject sobj = (ISchemaObject) obj;
+		final ISchemaObject sobj = (ISchemaObject) obj;
 		ISchemaObject parent = sobj.getParent();
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			treeViewer.update(sobj, null);
 		} else
 			if (e.getChangeType() == IModelChangedEvent.INSERT) {
 				treeViewer.add(parent, sobj);
-				treeViewer.setSelection(new StructuredSelection(obj), true);
+				treeViewer.getTree().getDisplay().asyncExec(new
+					Runnable() {
+						public void run() {
+							treeViewer.setSelection(new StructuredSelection(sobj), true);
+						}
+					});
+				
 			} else
 				if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					treeViewer.setSelection(new StructuredSelection(parent), true);
 					treeViewer.remove(sobj);
 				}
+	}
+	else if (obj instanceof ISchemaComplexType) {
+		// first compositor added/removed
+		treeViewer.refresh();
+		if (e.getChangeType() == IModelChangedEvent.INSERT) {
+			ISchemaComplexType type = (ISchemaComplexType)obj;
+			final ISchemaCompositor compositor = type.getCompositor();
+			treeViewer.getTree().getDisplay().asyncExec(new
+				Runnable() {
+					public void run() {
+						treeViewer.setSelection(new StructuredSelection(compositor), true);
+						}
+					});
+		}
 	}
 	updateDTDLabel((ISchemaObject) treeViewer.getInput());
 }
