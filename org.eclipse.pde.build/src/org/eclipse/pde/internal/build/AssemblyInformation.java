@@ -15,7 +15,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.update.core.IFeature;
 
-public class AssemblyInformation {
+public class AssemblyInformation implements IPDEBuildConstants {
 	// List all the features and plugins to assemble sorted on a per config basis 
 	//	key: string[] representing the tuple of a config 
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
@@ -53,7 +53,7 @@ public class AssemblyInformation {
 		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
-			if (bundleProperties == null || bundleProperties.get("isCompiled").equals(Boolean.FALSE))
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED).equals(Boolean.FALSE))
 				result.add(bundle);
 		}
 		return result;
@@ -65,7 +65,7 @@ public class AssemblyInformation {
 		for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
-			if (bundleProperties != null && bundleProperties.get("isCompiled").equals(Boolean.TRUE))
+			if (bundleProperties != null && bundleProperties.get(IS_COMPILED).equals(Boolean.TRUE))
 				result.add(bundle);
 		}
 		return result;

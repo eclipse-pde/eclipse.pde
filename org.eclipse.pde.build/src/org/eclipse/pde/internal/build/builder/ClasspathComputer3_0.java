@@ -23,6 +23,8 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.update.core.IPluginEntry;
+import org.osgi.framework.Filter;
 
 public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
 	private ModelBuildScriptGenerator generator;
@@ -102,6 +104,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		for (int i = 0; i < fragments.length; i++) {
 			if (fragments[i] == generator.getModel())
+				continue;
+			if (matchFilter(fragments[i]) == false)
 				continue;
 			addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
 			addRuntimeLibraries(fragments[i], classpath, baseLocation);
@@ -346,10 +350,38 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @throws CoreException
 	 */
 	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
+		if (matchFilter(target) == false)
+			return;
+		
 		addPlugin(target, classpath, baseLocation);
 		addPrerequisites(target, classpath, baseLocation, pluginChain, addedPlugins);
 	}
 
+	private boolean matchFilter(BundleDescription target) {
+		String filter = target.getPlatformFilter();
+		if (filter == null)
+			return true;
+		Filter f = BundleHelper.getDefault().createFilter(filter);
+		if (f == null)
+			return true;
+		
+		Dictionary properties = new Hashtable(3);
+		IPluginEntry associatedEntry = generator.getAssociatedEntry(); 
+		if (associatedEntry == null)
+			System.err.println("NULL ENTRY " + generator.fullName);
+		String os = associatedEntry.getOS();
+		if (os != null)
+			properties.put("osgi.os", os);
+		String ws = associatedEntry.getWS();
+		if (ws != null)
+			properties.put("osgi.ws",ws);
+		
+		String arch = associatedEntry.getOSArch();
+		if (arch != null)
+			properties.put("osgi.arch", arch);
+		
+		return f.match(properties);
+	}
 	/**
 	 * 
 	 * @param model

@@ -77,9 +77,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	/**
-	 * PluginModel to generate script from.
+	 * Bundle for which we are generating the script.
 	 */
 	protected BundleDescription model;
+	/**
+	 * PluginEntry corresponding to the bundle
+	 */
+	private IPluginEntry associatedEntry;
 
 	protected String fullName;
 	protected String pluginZipDestination;
@@ -100,6 +104,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean binaryPlugin = false;
 	private boolean signJars = false;
 
+	
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -254,12 +259,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildJarsTargetForSourceGathering() {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 		compiledJarNames = new ArrayList(0);
-		IPluginEntry entry = Utils.getPluginEntry(featureGenerator.feature, model.getSymbolicName(), false)[0];
+		
 		Config configInfo;
-		if (entry.getOS() == null && entry.getWS() == null && entry.getOSArch() == null)
+		if (associatedEntry.getOS() == null && associatedEntry.getWS() == null && associatedEntry.getOSArch() == null)
 			configInfo = Config.genericConfig();
 		else
-			configInfo = new Config(entry.getOS(), entry.getWS(), entry.getOSArch());
+			configInfo = new Config(associatedEntry.getOS(), associatedEntry.getWS(), associatedEntry.getOSArch());
 
 		Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(configInfo);
 		if (pluginsToGatherSourceFrom != null) {
@@ -612,7 +617,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			bundleProperties = new Properties();
 			model.setUserObject(bundleProperties);
 		}
-		bundleProperties.put("isCompiled", binaryPlugin ? Boolean.FALSE : Boolean.TRUE);
+		bundleProperties.put(IS_COMPILED, binaryPlugin ? Boolean.FALSE : Boolean.TRUE);
 	}
 
 	/**
@@ -987,5 +992,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	protected BundleDescription getModel(String modelId) throws CoreException {
 		return getSite(false).getRegistry().getResolvedBundle(modelId);
+	}
+
+	public IPluginEntry getAssociatedEntry() {
+		return associatedEntry;
+	}
+
+	public void setAssociatedEntry(IPluginEntry associatedEntry) {
+		this.associatedEntry = associatedEntry;
 	}
 }

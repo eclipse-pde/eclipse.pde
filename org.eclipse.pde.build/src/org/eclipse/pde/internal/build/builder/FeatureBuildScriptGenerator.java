@@ -108,11 +108,28 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				String message = NLS.bind(Messages.exception_missingPlugin, entry.getVersionedIdentifier());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
+			
+			associateModelAndEntry(model, entry);
+			
 			result.add(model);
 			collectElementToAssemble(pluginList[i]);
 			collectSourcePlugins(pluginList[i], model);
 		}
 		return result;
+	}
+
+	private void associateModelAndEntry(BundleDescription model, IPluginEntry entry) {
+		Properties bundleProperties = ((Properties) model.getUserObject());
+		if (bundleProperties == null) { 
+			bundleProperties = new Properties();
+			model.setUserObject(bundleProperties);
+		}
+		ArrayList entries = (ArrayList) bundleProperties.get(PLUGIN_ENTRY);
+		if (entries == null) {
+			entries = new ArrayList();
+			bundleProperties.put(PLUGIN_ENTRY, entries);
+		}
+		entries.add(entry);
 	}
 
 	private void generateEmbeddedSource(String pluginId) throws CoreException {
@@ -655,13 +672,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription current = (BundleDescription) iter.next();
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
-			if (bundleProperties == null || bundleProperties.get("isCompiled") == Boolean.FALSE)	//TODO Need to check what is going on when packaging
+			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)	//TODO Need to check what is going on when packaging
 				continue;
 			// Get the os / ws / arch to pass as a parameter to the plugin
 			if (writtenCalls.contains(current))
 				continue;
 			writtenCalls.add(current);
-			IPluginEntry[] entries = Utils.getPluginEntry(feature, current.getSymbolicName(), false);
+			IPluginEntry[] entries = Utils.getPluginEntry(feature, current.getSymbolicName(), false);	//TODO This can be improved to use the value from the user object in the bundleDescription
 			for (int j = 0; j < entries.length; j++) {
 				List list = selectConfigs(entries[j]);
 				if (list.size() == 0)
@@ -748,21 +765,37 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return;
 		if (binaryFeature == false || models.isEmpty())
 			return;
+		
+		Set generatedScripts = new HashSet(models.size());
 		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 			BundleDescription model = (BundleDescription) iterator.next();
-			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
-			generator.setBuildSiteFactory(siteFactory);
-			generator.setCompiledElements(getCompiledElements());
-			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
-			generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
-			generator.setFeatureGenerator(this);
-			generator.setPluginPath(getPluginPath());
-			generator.setBuildingOSGi(isBuildingOSGi());
-			generator.setDevEntries(devEntries);
-			generator.includePlatformIndependent(isPlatformIndependentIncluded());
-			generator.setSignJars(signJars);
-			generator.generate();
+			if (generatedScripts.contains(model))
+				continue;
+			generatedScripts.add(model);
+			
+			ArrayList matchingEntries = (ArrayList) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
+			for (Iterator entryIter = matchingEntries.iterator(); entryIter.hasNext();) {
+				IPluginEntry correspondingEntry = (IPluginEntry) entryIter.next();
+				List list = selectConfigs(correspondingEntry);
+				if (list.size() == 0)
+					continue;
+				
+				ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
+				generator.setBuildSiteFactory(siteFactory);
+				generator.setCompiledElements(getCompiledElements());
+				generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+				generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
+				generator.setFeatureGenerator(this);
+				generator.setPluginPath(getPluginPath());
+				generator.setBuildingOSGi(isBuildingOSGi());
+				generator.setDevEntries(devEntries);
+				generator.includePlatformIndependent(isPlatformIndependentIncluded());
+				generator.setSignJars(signJars);
+				generator.setAssociatedEntry(correspondingEntry);
+				generator.generate();
+			}
 		}
+	
 	}
 
 	/**

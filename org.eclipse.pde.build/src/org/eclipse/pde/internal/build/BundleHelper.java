@@ -87,4 +87,12 @@ public class BundleHelper {
 	public boolean isDebugging() {
 		return debug;
 	}
+	
+	public Filter createFilter(String filter) {
+		try {
+			return context.createFilter(filter);
+		} catch (InvalidSyntaxException e) {
+			return null;
+		}
+	}
 }
