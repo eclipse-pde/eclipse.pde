@@ -1026,7 +1026,7 @@
    <extension
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
-            viewId="org.eclipse.jdt.ui.PackageExplorer"
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
             name="%binaryFilter.name"
             enabled="false"
             description="%binaryFilter.desc"
@@ -1034,7 +1034,7 @@
             id="org.eclipse.pde.ui.BinaryProjectFilter1">
       </filter>
       <filter
-            viewId="org.eclipse.jdt.ui.ProjectsView"
+            targetId="org.eclipse.jdt.ui.ProjectsView"
             name="%binaryFilter.name"
             enabled="false"
             description="%binaryFilter.desc"
