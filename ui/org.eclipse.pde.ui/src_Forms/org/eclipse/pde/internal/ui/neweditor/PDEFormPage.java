@@ -11,6 +11,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -79,6 +80,12 @@ public abstract class PDEFormPage extends FormPage {
 		return focusControl;
 	}
 	public boolean performGlobalAction(String actionId) {
+		Control focusControl = getFocusControl();
+		if (focusControl == null)
+			return false;
+
+		if (canPerformDirectly(actionId, focusControl))
+			return true;
 		PDESection targetSection = getFocusSection();
 		if (targetSection!=null)
 			return targetSection.doGlobalAction(actionId);
@@ -112,4 +119,35 @@ public abstract class PDEFormPage extends FormPage {
 	public IPropertySheetPage getPropertySheetPage() {
 		return null;
 	}
+	protected boolean canPerformDirectly(String id, Control control) {
+		if (control instanceof Text) {
+			Text text = (Text) control;
+			if (id.equals(ActionFactory.CUT.getId())) {
+				text.cut();
+				return true;
+			}
+			if (id.equals(ActionFactory.COPY.getId())) {
+				text.copy();
+				return true;
+			}
+			if (id.equals(ActionFactory.PASTE.getId())) {
+				text.paste();
+				return true;
+			}
+			if (id.equals(ActionFactory.SELECT_ALL.getId())) {
+				text.selectAll();
+				return true;
+			}
+			if (id.equals(ActionFactory.DELETE.getId())) {
+				int count = text.getSelectionCount();
+				if (count == 0) {
+					int caretPos = text.getCaretPosition();
+					text.setSelection(caretPos, caretPos + 1);
+				}
+				text.insert("");
+				return true;
+			}
+		}
+		return false;
+	}	
 }

@@ -79,7 +79,7 @@ public class ManifestEditor extends MultiSourceEditor {
 	
 	protected InputContextManager createInputContextManager() {
 		PluginInputContextManager manager =  new PluginInputContextManager();
-		//manager.setUndoManager(new PluginUndoManager(this));
+		manager.setUndoManager(new PluginUndoManager(this));
 		return manager;
 	}
 	
