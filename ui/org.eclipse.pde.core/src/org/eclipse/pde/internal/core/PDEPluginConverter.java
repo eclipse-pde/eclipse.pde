@@ -18,7 +18,7 @@ public class PDEPluginConverter {
 					.getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
-			converter.convertManifest(inputFile, outputFile, false, null);
+			converter.convertManifest(inputFile, outputFile, false, null, true);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {

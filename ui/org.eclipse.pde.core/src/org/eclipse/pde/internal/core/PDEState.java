@@ -85,7 +85,7 @@ public class PDEState {
 		if (manifestStream == null) {
 			try {
 				PluginConverter converter = acquirePluginConverter();
-				return converter.convertManifest(bundleLocation, false, getTargetMode());
+				return converter.convertManifest(bundleLocation, false, getTargetMode(), false);
 			} catch (Exception e1) {
 				return null;
 			}
