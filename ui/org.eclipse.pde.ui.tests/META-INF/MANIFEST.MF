@@ -7,14 +7,6 @@ Bundle-ClassPath: tests.jar
 Bundle-Activator: org.eclipse.pde.internal.ui.tests.macro.MacroPlugin
 Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
-Export-Package: org.eclipse.pde.internal.ui.tests.macro,
- org.eclipse.pde.ui.tests,
- org.eclipse.pde.ui.tests.imports,
- org.eclipse.pde.ui.tests.performance,
- org.eclipse.pde.ui.tests.performance.parts,
- org.eclipse.pde.ui.tests.wizards,
- org.eclipse.pde.ui.tests.wizards.feature,
- org.eclipse.pde.ui.tests.wizards.plugin
 Require-Bundle: org.junit,
  org.eclipse.pde.ui,
  org.eclipse.ui,
