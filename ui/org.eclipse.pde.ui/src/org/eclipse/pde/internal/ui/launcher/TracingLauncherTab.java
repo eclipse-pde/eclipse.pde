@@ -181,16 +181,14 @@ public class TracingLauncherTab
 		fPropertySources.clear();
 		try {
 			fTracingCheck.setSelection(config.getAttribute(TRACING, false));
-			Map options =
-				(config
-					.getAttribute(
-						TRACING_OPTIONS,
-						PDECore
-							.getDefault()
-							.getTracingOptionsManager()
-							.getTracingTemplateCopy()));
+			Map options = config.getAttribute(TRACING_OPTIONS, (Map)null);
+			if (options == null)
+				options = PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
+			else
+				options = PDECore.getDefault().getTracingOptionsManager().getTracingOptions(options);
 			fMasterOptions.putAll(options);
 			masterCheckChanged(false);
+			
 			IPluginModelBase model = getLastSelectedPlugin(config);
 			if (model != null) {
 				fPluginViewer.setSelection(new StructuredSelection(model));

@@ -169,7 +169,9 @@ public class LauncherUtils {
 		}
 		File startupJar =
 			ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
-
+		//TODO remove after memory profiling
+		//return startupJar.exists() ? new String[] { startupJar.getAbsolutePath(), "C:\\ymp-1.0.2-build115\\lib\\ympagent.jar"} : null;
+		
 		return startupJar.exists() ? new String[] { startupJar.getAbsolutePath()} : null;
 	}
 	
@@ -534,9 +536,7 @@ public class LauncherUtils {
 		try {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 			Map options =
-				config.getAttribute(
-					ILauncherSettings.TRACING_OPTIONS,
-					mng.getTracingTemplateCopy());
+				config.getAttribute(ILauncherSettings.TRACING_OPTIONS, (Map) null);
 			mng.save(optionsFileName, options);
 		} catch (CoreException e) {
 			return "";

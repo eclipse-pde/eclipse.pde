@@ -19,16 +19,19 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class TracingOptionsManager {
 	private Properties template;
-	private Properties options;
 
 	public TracingOptionsManager() {
 		super();
 	}
-	private void addToTemplate(IPluginModelBase[] models) {
+
+	private void createTemplate() {
+		template = new Properties();
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
 		for (int i = 0; i < models.length; i++) {
 			addToTemplate(models[i]);
-		}
+		}		
 	}
+	
 	private void addToTemplate(IPluginModelBase model) {
 		Properties modelOptions = getOptions(model);
 		if (modelOptions == null)
@@ -40,21 +43,7 @@ public class TracingOptionsManager {
 				template.setProperty(key, value);
 		}
 	}
-	private void createTemplate() {
-		template = new Properties();
-		addToTemplate(
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels());
-		addToTemplate(PDECore.getDefault().getExternalModelManager().getPluginModels());
-	}
-	public void ensureTracingFileExists() {
-		String fileName = getTracingFileName();
-		File file = new File(fileName);
-		if (file.exists() == false) {
-			// Force creation
-			getTracingOptions();
-			save();
-		}
-	}
+	
 	private Properties getOptions(IPluginModelBase model) {
 		InputStream stream = openInputStream(model);
 		if (stream != null) {
@@ -68,6 +57,7 @@ public class TracingOptionsManager {
 		}
 		return null;
 	}
+	
 	public Hashtable getTemplateTable(String pluginId) {
 		if (template == null)
 			createTemplate();
@@ -87,18 +77,20 @@ public class TracingOptionsManager {
 		return pluginId.equalsIgnoreCase(firstSegment);
 	}
 
-	public String getTracingFileName() {
-		IPath stateLocation = PDECore.getDefault().getStateLocation();
-		return stateLocation.append(".options").toOSString();
-	}
-
-	public Properties getTracingOptions() {
+	public Properties getTracingOptions(Map storedOptions) {
 		// Start with the fresh template from plugins
 		Properties defaults = getTracingTemplateCopy();
-		options = defaults;
-		// Load stored values, but only for existing keys
-		loadStoredOptions();
-		return options;
+		if (storedOptions != null) {
+			// Load stored values, but only for existing keys
+			Iterator iter = storedOptions.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next().toString();
+				if (defaults.containsKey(key)) {
+					defaults.setProperty(key, (String) storedOptions.get(key));
+				}			
+			}
+		}
+		return defaults;
 	}
 
 	public Properties getTracingTemplateCopy() {
@@ -120,27 +112,7 @@ public class TracingOptionsManager {
 			return file.exists();
 		}
 	}
-	private void loadStoredOptions() {
-		String fileName = getTracingFileName();
-		File file = new File(fileName);
-		if (file.exists() == false)
-			return;
-		try {
-			FileInputStream stream = new FileInputStream(file);
-			Properties storedOptions = new Properties();
-			storedOptions.load(stream);
-			stream.close();
-			// Transfer only options that still exist (plugins can come and go)
-			for (Enumeration enum = storedOptions.keys(); enum.hasMoreElements();) {
-				String key = enum.nextElement().toString();
-				if (options.containsKey(key)) {
-					options.setProperty(key, storedOptions.getProperty(key));
-				}
-			}
-		} catch (Exception e) {
-			PDECore.logException(e);
-		}
-	}
+	
 	private InputStream openInputStream(IPluginModelBase model) {
 		if (model.getUnderlyingResource() != null) {
 			IProject project = model.getUnderlyingResource().getProject();
@@ -162,12 +134,11 @@ public class TracingOptionsManager {
 		}
 		return null;
 	}
+	
 	public void reset() {
 		template = null;
 	}
-	public void save() {
-		save(getTracingFileName(), options);
-	}
+
 	private void save(String fileName, Properties properties) {
 		try {
 			FileOutputStream stream = new FileOutputStream(fileName);
@@ -178,17 +149,8 @@ public class TracingOptionsManager {
 			PDECore.logException(e);
 		}
 	}
-	public void setTracingOptions(Properties options) {
-		this.options = options;
-	}
 
-	public void save(Map map) {
-		save(getTracingFileName(), map);
-	}
-	
 	public void save(String filename, Map map) {
-		Properties properties = new Properties();
-		properties.putAll(map);
-		save(filename, properties);		
+		save(filename, getTracingOptions(map));		
 	}
 }
