@@ -72,7 +72,6 @@ public class EvenDetailsDialogAction extends SelectionProviderAction{
 		propertyDialog = new EventDetailsDialog(shell, element, provider);
 		propertyDialog.create();
 		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title"));
-		propertyDialog.getShell().setSize(500,550);
 		propertyDialog.open();
 	}
 }

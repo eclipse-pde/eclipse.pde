@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class EventDetailsDialog extends Dialog {
@@ -56,7 +57,11 @@ public class EventDetailsDialog extends Dialog {
 	private static int DESCENDING = -1;
 	private Comparator comparator = null;
 	private Collator collator;
-
+	
+	// location configuration
+	private IDialogSettings dialogSettings;
+	private Point dialogLocation;
+	private Point dialogSize;
 
 	/**
 	 * @param parentShell
@@ -72,6 +77,7 @@ public class EventDetailsDialog extends Dialog {
 		initialize();
 		createImages();
 		collator = Collator.getInstance();
+		readConfiguration();
 	}
 
 	private void initialize() {
@@ -114,6 +120,7 @@ public class EventDetailsDialog extends Dialog {
 	}
 	
 	public boolean close() {
+		storeSettings();
 		isOpen = false;
 		imgCopyEnabled.dispose();
 		imgNextDisabled.dispose();
@@ -125,6 +132,18 @@ public class EventDetailsDialog extends Dialog {
 
 	public void create() {
 		super.create();
+		
+		// dialog location 
+		if (dialogLocation != null)
+			getShell().setLocation(dialogLocation);
+		
+		// dialog size
+		if (dialogSize != null)
+			getShell().setSize(dialogSize);
+		else
+			getShell().setSize(500,550);
+		
+		
 		applyDialogFont(buttonBar);
 		getButton(IDialogConstants.OK_ID).setFocus();
 	}
@@ -460,11 +479,62 @@ public class EventDetailsDialog extends Dialog {
 		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 3;
-		gd.widthHint = 300;
-		gd.heightHint = 65;
 		sessionDataText.setLayoutData(gd);
 		sessionDataText.setEditable(false);
 	}
+	
+	//--------------- configuration handling --------------
+	
+	/**
+	 * Stores the current state in the dialog settings.
+	 * @since 2.0
+	 */
+	private void storeSettings() {
+		writeConfiguration();
+	}
+	/**
+	 * Returns the dialog settings object used to share state
+	 * between several event detail dialogs.
+	 * 
+	 * @return the dialog settings to be used
+	 */
+	private IDialogSettings getDialogSettings() {
+		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		IDialogSettings settings= plugin.getDialogSettings();
+		dialogSettings= settings.getSection(getClass().getName());
+		if (dialogSettings == null)
+			dialogSettings= settings.addNewSection(getClass().getName());
+		return dialogSettings;
+	}
 
+	/**
+	 * Initializes itself from the dialog settings with the same state
+	 * as at the previous invocation.
+	 */
+	private void readConfiguration() {
+		IDialogSettings s= getDialogSettings();
+		try {
+			int x= s.getInt("x"); //$NON-NLS-1$
+			int y= s.getInt("y"); //$NON-NLS-1$
+			dialogLocation= new Point(x, y);
+			
+			x = s.getInt("width");
+			y = s.getInt("height");
+			dialogSize = new Point(x,y);
+		} catch (NumberFormatException e) {
+			dialogLocation= null;
+			dialogSize = null;
+		}
+	}
+	
+	private void writeConfiguration(){
+		IDialogSettings s = getDialogSettings();
+		Point location = getShell().getLocation();
+		s.put("x", location.x);
+		s.put("y", location.y);
+		
+		Point size = getShell().getSize();
+		s.put("width", size.x);
+		s.put("height", size.y);
+	}
 }
