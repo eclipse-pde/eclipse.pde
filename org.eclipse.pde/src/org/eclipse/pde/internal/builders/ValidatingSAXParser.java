@@ -10,50 +10,71 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
+import java.io.*;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.pde.internal.PDE;
+import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * @author Wassim Melhem
  */
 public class ValidatingSAXParser {
-	private SAXParser parser;
-	public ValidatingSAXParser() {
-		parser = new SAXParser();
-
+	
+	private static SAXParserFactory fFactory;
+	private static SAXParser fParser;
+	
+	public static void parse(IFile file, PluginErrorReporter reporter, boolean useSystemId) {
 		try {
-			parser.setFeature("http://xml.org/sax/features/validation", true);
-			parser.setFeature(
-				"http://apache.org/xml/features/validation/dynamic",
-				true);
+			if (!useSystemId) {
+				parse(file, reporter);
+				return;
+			}
+			InputSource source = new InputSource(file.getContents());
+			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
+			source.setSystemId(dtdLocation.toString());
+			getParser().parse(source, reporter);
 		} catch (SAXException e) {
-			PDE.log(e);
+		} catch (ParserConfigurationException e) {
+		} catch (IOException e) {
+		} catch (CoreException e) {
 		}
 	}
 	
-	public SAXParser getParser() {
-		return parser;
+	public static void parse(IFile file, PluginErrorReporter reporter) {
+		try {
+			parse(file.getContents(), reporter);
+		} catch (CoreException e) {
+		}
 	}
 	
-	public void setErrorHandler(ErrorHandler handler) {
-		parser.setErrorHandler(handler);
+	public static void parse(InputStream is, PluginErrorReporter reporter) {
+		try {
+			getParser().parse(is, reporter);
+		} catch (Exception e) {
+		} 
 	}
-
-	public void parse(InputSource inputSource) throws SAXException, IOException {
-		URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
-		inputSource.setSystemId(dtdLocation.toString());
-		parser.parse(inputSource);
+	
+	private static SAXParserFactory getParserFactory() {
+		if (fFactory == null) {
+			fFactory = SAXParserFactory.newInstance();
+		}
+		return fFactory;
+	}
+	
+	private static SAXParser getParser()
+		throws ParserConfigurationException, SAXException {
+		if (fParser == null) {
+			fParser = getParserFactory().newSAXParser();
+		}
+		return fParser;
 	}
 }

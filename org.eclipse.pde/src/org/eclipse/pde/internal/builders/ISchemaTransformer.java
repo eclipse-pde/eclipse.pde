@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.URL;
 
 public interface ISchemaTransformer {
-	public void transform(URL schemaURL, InputStream schema, PrintWriter output, PluginErrorReporter reporter);
+	public void transform(URL schemaURL, InputStream schema, PrintWriter output, SchemaHandler reporter);
 	
-	public void transform(URL schemaURL, InputStream schema, PrintWriter output, PluginErrorReporter reporter, URL cssURL);
+	public void transform(URL schemaURL, InputStream schema, PrintWriter output, SchemaHandler reporter, URL cssURL);
 }

@@ -11,26 +11,25 @@
 package org.eclipse.pde.ant;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.builders.SchemaTransformer;
-import org.eclipse.pde.internal.core.SourceDOMParser;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import javax.xml.parsers.*;
+
+import org.apache.tools.ant.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.schema.Schema;
-import org.xml.sax.InputSource;
+import org.eclipse.pde.internal.core.schema.*;
+import org.xml.sax.*;
 
 public class ConvertSchemaToHTML extends Task {
 
-	private SourceDOMParser parser = new SourceDOMParser();
-	private SchemaTransformer transformer = new SchemaTransformer();
+	private SAXParser fParser;
+	private SchemaTransformer fTransformer = new SchemaTransformer();
 	private String manifest;
 	private String destination;
 	private URL cssURL;
@@ -50,18 +49,20 @@ public class ConvertSchemaToHTML extends Task {
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
 			String schemaLocation = extPoints[i].getSchema();
-			FileInputStream is = null;
 			PrintWriter out = null;
 
 			if (schemaLocation == null || schemaLocation.equals(""))
 				continue;
 
 			try {
-				File schemaFile =
-					new File(
-						model.getInstallLocation() + Path.SEPARATOR + schemaLocation);
-				is = new FileInputStream(schemaFile);
-				parser.parse(new InputSource(is));
+				if (fParser == null) {
+					SAXParserFactory factory = SAXParserFactory.newInstance();
+					fParser = factory.newSAXParser();
+				}
+				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
+				XMLDefaultHandler handler = new XMLDefaultHandler(schemaFile);
+				fParser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+				fParser.parse(new InputSource(new StringReader(handler.getText())), handler);
 
 				URL url = null;
 				try {
@@ -70,8 +71,8 @@ public class ConvertSchemaToHTML extends Task {
 				}
 				Schema schema = new Schema((ISchemaDescriptor) null, url);
 				schema.traverseDocumentTree(
-					parser.getDocument().getDocumentElement(),
-					parser.getLineTable());
+					handler.getDocumentElement(),
+					handler.getLineTable());
 					
 				File directory =
 					new Path(destination).isAbsolute()
@@ -87,18 +88,13 @@ public class ConvertSchemaToHTML extends Task {
 						extPoints[i].getFullId().replace('.', '_') + ".html");
 				
 				out = new PrintWriter(new FileWriter(file), true);
-				transformer.transform(out, schema, cssURL, SchemaTransformer.BUILD);
+				fTransformer.transform(out, schema, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
 					System.out.println(e.getMessage());
 			} finally {
-				try {
-					if (out != null)
-						out.close();
-					if (is != null)
-						is.close();
-				} catch (IOException e) {
-				}
+				if (out != null)
+					out.close();
 			}
 		}
 	}

@@ -107,7 +107,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				BUILDERS_SCHEMA_COMPILING,
 				file.getFullPath().toString());
 		monitor.subTask(message);
-		PluginErrorReporter reporter = new PluginErrorReporter(file);
+		SchemaHandler reporter = new SchemaHandler(file);
 
 		String outputFileName = getOutputFileName(file);
 		IWorkspace workspace = file.getWorkspace();
@@ -350,7 +350,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		URL schemaURL,
 		InputStream input,
 		PrintWriter output,
-		PluginErrorReporter reporter,
+		SchemaHandler reporter,
 		URL cssURL) {
 		transformer.transform(schemaURL, input, output, reporter, cssURL);
 	}

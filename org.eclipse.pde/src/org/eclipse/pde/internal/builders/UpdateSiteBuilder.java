@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
@@ -19,7 +18,6 @@ import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
-import org.xml.sax.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
@@ -80,39 +78,20 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
+	
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDE.getFormattedMessage(
-				BUILDERS_VERIFYING,
-				file.getFullPath().toString());
+			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
-		ValidatingSAXParser parser = new ValidatingSAXParser();
-		parser.setErrorHandler(reporter);
-		InputStream source = null;
-		try {
-			source = file.getContents();
-			InputSource inputSource = new InputSource(source);
-			parser.parse(inputSource);
-			if (reporter.getErrorCount() == 0) {
-				validateFile(file, reporter);
-			}
-		} catch (CoreException e) {
-			PDE.logException(e);
-		} catch (SAXException e) {
-		} catch (IOException e) {
-			PDE.logException(e);
-		} finally {
-			if (source != null) {
-				try {
-					source.close();
-				} catch (IOException e) {
-				}
-			}
+		ValidatingSAXParser.parse(file, reporter, true);
+		if (reporter.getErrorCount() == 0) {
+			validateFile(file, reporter);
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
+	
 	private boolean isSiteFile(IFile file) {
 		return file.getParent().equals(file.getProject())
 			&& file.getName().toLowerCase().equals("site.xml");

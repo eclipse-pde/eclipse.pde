@@ -23,12 +23,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceDOMParser;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.w3c.dom.*;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID =
@@ -155,21 +152,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 		return width;
 	}
-	private SourceDOMParser createDOMTree(
-		InputStream schema,
-		PluginErrorReporter reporter) {
-		SourceDOMParser parser = new SourceDOMParser();
-		parser.setErrorHandler(reporter);
-		try {
-			InputSource source = new InputSource(schema);
-			parser.parse(source);
-			return parser;
-		} catch (SAXException e) {
-		} catch (IOException e) {
-			PDE.logException(e);
-		}
-		return null;
-	}
+	
 	private boolean isPreEnd(String text, int loc) {
 		if (loc + 5 >= text.length())
 			return false;
@@ -191,7 +174,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		URL schemaURL,
 		InputStream is,
 		PrintWriter out,
-		PluginErrorReporter reporter) {
+		SchemaHandler reporter) {
 		transform(schemaURL, is, out, reporter, null);
 	}
 
@@ -199,15 +182,16 @@ public class SchemaTransformer implements ISchemaTransformer {
 		URL schemaURL,
 		InputStream is,
 		PrintWriter out,
-		PluginErrorReporter reporter,
+		SchemaHandler reporter,
 		URL cssURL) {
-		SourceDOMParser parser = createDOMTree(is, reporter);
-
-		if (parser == null)
+		
+		ValidatingSAXParser.parse(is, reporter);
+		
+		Node root = reporter.getDocumentElement();
+		if (reporter.getErrorCount() > 0)
 			return;
-		Node root = parser.getDocument().getDocumentElement();
 		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
-		schema.traverseDocumentTree(root, parser.getLineTable());
+		schema.traverseDocumentTree(root, reporter.getLineTable());
 
 		if (verifySchema(schema, reporter)
 			&& verifySections(schema, reporter)

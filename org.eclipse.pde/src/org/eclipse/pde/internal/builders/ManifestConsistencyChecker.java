@@ -212,8 +212,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				file.getFullPath().toString());
 		monitor.subTask(message);
 
-		ManifestParser parser = new ManifestParser(reporter);
-		parser.parse(file);
+		ValidatingSAXParser.parse(file, reporter);
 
 		if (reporter.getErrorCount() == 0) {
 			if (isFragment(file)) {
@@ -225,7 +224,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 		fileCompiled = true;
-	}
+	}	
 
 	private boolean isFragment(IFile file) {
 		String name = file.getName().toLowerCase();

@@ -14,8 +14,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
 import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class PluginErrorReporter implements ErrorHandler {
+public class PluginErrorReporter extends DefaultHandler {
 	private IFile file;
 	private int errorCount;
 	private IMarkerFactory markerFactory;
@@ -25,6 +26,9 @@ public class PluginErrorReporter implements ErrorHandler {
 		public IMarker createMarker(IFile file) throws CoreException {
 			return file.createMarker(IMarker.PROBLEM);
 		}
+	}
+	
+	public PluginErrorReporter() {
 	}
 
 	public PluginErrorReporter(IFile file) {
