@@ -9,6 +9,7 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.plugin.*;
@@ -101,8 +102,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginModelBase curr = plugins[i];
-				String id = curr.getPluginBase().getId();
-				properties.setProperty(id, createURL(curr));
+				String key = getKey(curr);
+				properties.setProperty(key, createURL(curr));
 			}
 
 			FileOutputStream fos = null;
@@ -124,6 +125,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 					e.getMessage(),
 					e));
 		}
+	}
+	
+	private static String getKey(IPluginModelBase model) {
+		if (model.isLoaded()) {
+			return model.getPluginBase().getId();
+		}
+		IResource resource = model.getUnderlyingResource();
+		if (resource!=null) return resource.getProject().getName();
+		return model.getInstallLocation();
 	}
 
 	private static String createDataSuffix(IPath data) {

@@ -66,6 +66,8 @@ public class AdvancedLauncherTab
 		"AdvancedLauncherTab.error.no_plugins";
 	private static final String KEY_ERROR_NO_BOOT =
 		"AdvancedLauncherTab.error.no_boot";
+	private static final String KEY_ERROR_BROKEN_PLUGINS =
+		"AdvancedLauncherTab.error.brokenPlugins";
 
 	//private Button useDefaultRadio;
 	//private Button useListRadio;
@@ -605,6 +607,14 @@ public class AdvancedLauncherTab
 			return createStatus(
 				IStatus.ERROR,
 				PDEPlugin.getResourceString(KEY_ERROR_NO_BOOT));
+		}
+		for (int i=0; i<plugins.length; i++) {
+			IPluginModelBase model = plugins[i];
+			if (model.isLoaded()==false) {
+				return createStatus(
+				IStatus.WARNING,
+				PDEPlugin.getResourceString(KEY_ERROR_BROKEN_PLUGINS));
+			}
 		}
 		return createStatus(IStatus.OK, "");
 	}

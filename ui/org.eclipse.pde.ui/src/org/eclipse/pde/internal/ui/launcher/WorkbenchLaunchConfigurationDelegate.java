@@ -28,6 +28,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
 	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
+	private static final String KEY_BROKEN_PLUGINS = "WorkbenchLauncherConfigurationDelegate.brokenPlugins";
 	private static final String KEY_PROBLEMS_DELETING = "WorkbenchLauncherConfigurationDelegate.problemsDeleting";
 	private static final String KEY_TITLE = "WorkbenchLauncherConfigurationDelegate.title";
 	private static final String KEY_SLIMLAUNCHER = "WorkbenchLauncherConfigurationDelegate.slimlauncher";
@@ -71,6 +72,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			monitor.setCanceled(true);
 			throw new CoreException(createErrorStatus(message));
 		}
+		validatePlugins(plugins, monitor);
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
@@ -136,6 +138,34 @@ public class WorkbenchLaunchConfigurationDelegate
 		IPluginModelBase[] plugins =
 			(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
 		return plugins;
+	}
+	
+	private void validatePlugins(IPluginModelBase[] plugins, IProgressMonitor monitor) throws CoreException {
+		ArrayList entries = new ArrayList();
+		for (int i=0; i<plugins.length; i++) {
+			IPluginModelBase model = plugins[i];
+			if (model.isLoaded()==false) {
+				String message = model.getInstallLocation();
+				if (model.getUnderlyingResource()!=null)
+					message = model.getUnderlyingResource().getProject().getName();
+				Status status = new Status(IStatus.WARNING, PDEPlugin.getPluginId(), IStatus.OK, message, null);
+				entries.add(status);
+			}
+		}
+		if (entries.size()>0) {
+			IStatus [] children = (IStatus[])entries.toArray(new IStatus[entries.size()]);
+			String message = PDEPlugin.getResourceString(KEY_BROKEN_PLUGINS);
+			final MultiStatus status = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, children, message, null); 
+			//monitor.setCanceled(true);
+			//throw new CoreException(status);
+			Display display = getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					String title = PDEPlugin.getResourceString(KEY_TITLE);
+					ErrorDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, null, status);
+				}
+			});
+		}
 	}
 
 	private boolean doLaunch(

@@ -125,6 +125,7 @@ public abstract class AbstractPluginModelBase
 			pluginBase.setModel(this);
 		}
 		pluginBase.reset();
+		loaded=false;
 		try {
 			InputSource source = new InputSource(stream);
 			parser.parse(source);
