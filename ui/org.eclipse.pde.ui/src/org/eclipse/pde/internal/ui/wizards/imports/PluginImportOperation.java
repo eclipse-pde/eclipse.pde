@@ -168,6 +168,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				project.open(null);
 			}
 			File pluginDir = new File(model.getInstallLocation());
+			IFile buildFile = project.getFile("build.properties");
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 
 			if (doImport) {
 				importContent(
@@ -176,6 +178,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					FileSystemStructureProvider.INSTANCE,
 					null,
 					new SubProgressMonitor(monitor, 1));
+				if (extractSource)
+					configureBinIncludes(pluginDir, buildModel);
+
 				importSource(
 					project,
 					model.getPluginBase(),
@@ -205,7 +210,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			boolean sourceFound = false;
 			if (isJavaProject & extractSource)
-				sourceFound = doExtractSource(project, model, monitor);
+				sourceFound =
+					doExtractSource(project, model, buildModel, monitor);
 
 			//Mark this project so that we can show image overlay
 			// using the label decorator
@@ -224,6 +230,28 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 		} finally {
 			monitor.done();
+		}
+	}
+
+	private void configureBinIncludes(
+		File pluginDir,
+		WorkspaceBuildModel buildModel) {
+		IBuild build = buildModel.getBuild(true);
+		IBuildEntry entry = buildModel.getFactory().createEntry("bin.includes");
+		File[] files = pluginDir.listFiles();
+
+		try {
+			for (int i = 0; i < files.length; i++) {
+				File file = files[i];
+				String token = file.getName();
+				if (file.isDirectory())
+					token = token + "/";
+				entry.addToken(token);
+			}
+			build.add(entry);
+			buildModel.save();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 
@@ -443,6 +471,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private boolean doExtractSource(
 		IProject project,
 		IPluginModelBase model,
+		WorkspaceBuildModel buildModel,
 		IProgressMonitor monitor)
 		throws CoreException {
 
@@ -463,8 +492,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			PDEPlugin.getResourceString(KEY_EXTRACTING),
 			entries.length * 2);
 		try {
-			IFile buildFile = project.getFile("build.properties");
-			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 			IBuild build = buildModel.getBuild(true);
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
