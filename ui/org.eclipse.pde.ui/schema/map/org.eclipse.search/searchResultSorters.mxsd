@@ -15,7 +15,7 @@ context menu.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="sorter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,7 +41,7 @@ context menu.
       </complexType>
    </element>
 
-   <element name="page">
+   <element name="sorter">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="label" icon="icon"/>
