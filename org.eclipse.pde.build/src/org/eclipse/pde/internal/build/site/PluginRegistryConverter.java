@@ -1,4 +1,13 @@
-
+/**********************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
@@ -17,7 +26,6 @@ import org.osgi.framework.Constants;
 public class PluginRegistryConverter extends PDEState {
 	private PluginRegistryModel registry;
 
-	
 	private PluginRegistryModel getPluginRegistry(URL[] files) throws CoreException {
 		if (registry == null) {
 			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
@@ -31,41 +39,41 @@ public class PluginRegistryConverter extends PDEState {
 		}
 		return registry;
 	}
-	
+
 	public void addRegistryToState() {
 		PluginModel[] plugins = registry.getPlugins();
 		PluginFragmentModel[] fragments = registry.getFragments();
-		
-		for (int i = 0; i < plugins.length; i++) {		
-			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), plugins[i].getPluginId(), new Version(plugins[i].getVersion()), plugins[i].getLocation(), createBundleSpecification(plugins[i].getRequires()) , (HostSpecification[]) null, null, null, true);
+
+		for (int i = 0; i < plugins.length; i++) {
+			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), plugins[i].getPluginId(), new Version(plugins[i].getVersion()), plugins[i].getLocation(), createBundleSpecification(plugins[i].getRequires()), (HostSpecification[]) null, null, null, true);
 			String libs = createClasspath(plugins[i].getRuntime());
 			Properties manifest = new Properties();
-			if(libs != null)
+			if (libs != null)
 				manifest.put(Constants.BUNDLE_CLASSPATH, libs);
 			loadPropertyFileIn(manifest, new File(fragments[i].getLocation()));
 			bd.setUserObject(manifest);
 			addBundleDescription(bd);
 		}
-	
+
 		for (int i = 0; i < fragments.length; i++) {
 			HostSpecification host = state.getFactory().createHostSpecification(fragments[i].getPluginId(), new Version(fragments[i].getPluginVersion()), fragments[i].getMatch(), false);
-			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), fragments[i].getId(), new Version(fragments[i].getVersion()), fragments[i].getLocation(), createBundleSpecification(fragments[i].getRequires()) , new HostSpecification[] {host}, null, null, true);
+			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), fragments[i].getId(), new Version(fragments[i].getVersion()), fragments[i].getLocation(), createBundleSpecification(fragments[i].getRequires()), new HostSpecification[] {host}, null, null, true);
 			String libs = createClasspath(fragments[i].getRuntime());
 			Properties manifest = new Properties();
-			if(libs != null)
+			if (libs != null)
 				manifest.put(Constants.BUNDLE_CLASSPATH, libs);
 			loadPropertyFileIn(manifest, new File(fragments[i].getLocation()));
 			bd.setUserObject(manifest);
 			addBundleDescription(bd);
 		}
 	}
-	
+
 	protected BundleSpecification[] createBundleSpecification(PluginPrerequisiteModel[] prereqs) {
 		if (prereqs == null)
 			return new BundleSpecification[0];
 		BundleSpecification[] specs = new BundleSpecification[prereqs.length];
 		for (int i = 0; i < prereqs.length; i++) {
-			specs[i] = state.getFactory().createBundleSpecification(prereqs[i].getPlugin(), new Version(prereqs[i].getVersion()), prereqs[i].getMatchByte(), prereqs[i].getExport(), prereqs[i].getOptional() );
+			specs[i] = state.getFactory().createBundleSpecification(prereqs[i].getPlugin(), new Version(prereqs[i].getVersion()), prereqs[i].getMatchByte(), prereqs[i].getExport(), prereqs[i].getOptional());
 		}
 		return specs;
 	}
@@ -73,14 +81,14 @@ public class PluginRegistryConverter extends PDEState {
 	private String createClasspath(LibraryModel[] libs) {
 		if (libs == null || libs.length == 0)
 			return null;
-		
+
 		String result = "";
 		for (int i = 0; i < libs.length; i++) {
-			result += libs[i].getName() + (i == libs.length-1 ? "" : ","); 
+			result += libs[i].getName() + (i == libs.length - 1 ? "" : ",");
 		}
 		return result;
 	}
-	
+
 	public void addBundles(Collection bundles) {
 		try {
 			getPluginRegistry(Utils.asURL(bundles));

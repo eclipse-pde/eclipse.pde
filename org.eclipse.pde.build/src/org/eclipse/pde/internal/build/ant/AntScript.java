@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ public class AntScript {
 		printAttribute("zipfile", zipfile, true); //$NON-NLS-1$
 		printAttribute("basedir", basedir, false); //$NON-NLS-1$
 		printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		printAttribute("whenempty", "skip", true);  //$NON-NLS-1$//$NON-NLS-2$
+		printAttribute("whenempty", "skip", true); //$NON-NLS-1$//$NON-NLS-2$
 		printAttribute("update", update ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fileSets == null)
 			output.println("/>"); //$NON-NLS-1$
@@ -176,7 +176,7 @@ public class AntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (int i = 0; i < fileSets.length; i++)
-				if (fileSets[i]!= null)
+				if (fileSets[i] != null)
 					fileSets[i].print(this);
 			indent--;
 			printTab();

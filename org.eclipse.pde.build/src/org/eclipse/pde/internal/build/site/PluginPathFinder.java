@@ -23,8 +23,9 @@ public class PluginPathFinder {
 			linkFiles = file.listFiles();
 		}
 		return linkFiles;
-		
+
 	}
+
 	public static String getPath(String platformHome, File file) {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
@@ -36,7 +37,7 @@ public class PluginPathFinder {
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
 					path = prefix + Path.SEPARATOR + path;
-				path += Path.SEPARATOR + "eclipse"; 
+				path += Path.SEPARATOR + "eclipse";
 				if (new File(path).exists()) {
 					return path;
 				}
@@ -45,9 +46,10 @@ public class PluginPathFinder {
 		}
 		return null;
 	}
+
 	public static String[] getPluginPaths(String platformHome) {
 		ArrayList result = new ArrayList();
-		File[] linkFiles = getLinkFiles(platformHome);		
+		File[] linkFiles = getLinkFiles(platformHome);
 		if (linkFiles != null) {
 			for (int i = 0; i < linkFiles.length; i++) {
 				String path = getPath(platformHome, linkFiles[i]);

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,9 +73,9 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setBuildingOSGi(isBuildingOSGi());
 			try {
 				generator.generate();
-			} catch(CoreException exception) {
+			} catch (CoreException exception) {
 				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
-				if (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && ! referencedFeatures[i].isOptional())
+				if (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !referencedFeatures[i].isOptional())
 					throw exception;
 			}
 		}

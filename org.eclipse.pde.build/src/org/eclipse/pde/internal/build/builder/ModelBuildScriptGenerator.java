@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,14 @@ import org.eclipse.update.core.IPluginEntry;
  * Generic class for generating scripts for plug-ins and fragments.
  */
 public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
-	private static final String EXPANDED_DOT = "@dot";	//$NON-NLS-1$
-	private static final String DOT = "."; 	//$NON-NLS-1$
+	private static final String EXPANDED_DOT = "@dot"; //$NON-NLS-1$
+	private static final String DOT = "."; //$NON-NLS-1$
+
 	/**
 	 * Represents a entry that must be compiled and which is listed in the build.properties file.
 	 */
 	protected class CompiledEntry {
-		static final byte JAR = 0; 
+		static final byte JAR = 0;
 		static final byte FOLDER = 1;
 		private String name;
 		private String resolvedName;
@@ -38,7 +39,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		private String[] output;
 		private String[] extraClasspath;
 		private byte type;
-		
+
 		protected CompiledEntry(String entryName, String[] entrySource, String[] entryOutput, String[] entryExtraClasspath, byte entryType) {
 			this.name = entryName;
 			this.source = entrySource;
@@ -46,6 +47,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			this.extraClasspath = entryExtraClasspath;
 			this.type = entryType;
 		}
+
 		protected String getName(boolean resolved) {
 			if (!resolved)
 				return name;
@@ -55,15 +57,19 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			return resolvedName;
 		}
+
 		protected String[] getSource() {
 			return source;
 		}
+
 		public String[] getOutput() {
 			return output;
 		}
+
 		public String[] getExtraClasspath() {
 			return extraClasspath;
 		}
+
 		public byte getType() {
 			return type;
 		}
@@ -88,7 +94,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String propertiesFileName = PROPERTIES_FILE;
 	private String buildScriptFileName = DEFAULT_BUILD_SCRIPT_FILENAME;
 	//This list is initialized by the generateBuildJarsTarget
-	private ArrayList compiledJarNames; 
+	private ArrayList compiledJarNames;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -105,9 +111,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (featureGenerator != null && featureGenerator.isSourceFeatureGeneration() == false && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getUniqueId()))
 			return;
 
-		if (! AbstractScriptGenerator.isBuildingOSGi())
+		if (!AbstractScriptGenerator.isBuildingOSGi())
 			checkBootAndRuntime();
-		
+
 		initializeVariables();
 		if (BundleHelper.getDefault().isDebugging())
 			System.out.println("Generating plugin " + model.getUniqueId());
@@ -130,13 +136,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Check that boot and runtime are available, otherwise throws an exception because the build will fail.
 	 */
 	private void checkBootAndRuntime() throws CoreException {
-		if (getSite(false).getRegistry().getResolvedBundle(PI_BOOT)==null) {
+		if (getSite(false).getRegistry().getResolvedBundle(PI_BOOT) == null) {
 			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_BOOT), null);//$NON-NLS-1$
-			throw new CoreException(status); 
+			throw new CoreException(status);
 		}
-		if (getSite(false).getRegistry().getResolvedBundle(PI_RUNTIME)==null) {
+		if (getSite(false).getRegistry().getResolvedBundle(PI_RUNTIME) == null) {
 			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null);//$NON-NLS-1$
-			throw new CoreException(status); 
+			throw new CoreException(status);
 		}
 	}
 
@@ -149,9 +155,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void specialDotProcessing(String[] classpathInfo) throws CoreException {
-		if (classpathInfo.length>0 && DOT.equals(classpathInfo[0])) {
-			getSite(false).getRegistry().getExtraData().put(new Long(model.getBundleId()), new String[]{EXPANDED_DOT});
-			
+		if (classpathInfo.length > 0 && DOT.equals(classpathInfo[0])) {
+			getSite(false).getRegistry().getExtraData().put(new Long(model.getBundleId()), new String[] {EXPANDED_DOT});
+
 			getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT));
 			getBuildProperties().remove(PROPERTY_SOURCE_PREFIX + DOT);
 			String outputValue = getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
@@ -160,12 +166,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				getBuildProperties().remove(PROPERTY_OUTPUT_PREFIX + DOT);
 			}
 			String buildOrder = getBuildProperties().getProperty(PROPERTY_JAR_ORDER);
-			if (buildOrder!=null) {
+			if (buildOrder != null) {
 				String[] order = Utils.getArrayFromString(buildOrder);
 				for (int i = 0; i < order.length; i++)
 					if (order[i].equals(DOT))
 						order[i] = EXPANDED_DOT;
-				getBuildProperties().setProperty(PROPERTY_JAR_ORDER,Utils.getStringFromArray(order, ","));			
+				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ","));
 			}
 		}
 	}
@@ -223,7 +229,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				BundleDescription plugin = (BundleDescription) iter.next();
 				if (plugin.getUniqueId().equals(model.getUniqueId())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
 					continue;
-	
+
 				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
 				script.printAntTask(location.append(buildScriptFileName).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
@@ -248,7 +254,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getUniqueId())); //$NON-NLS-1$
 		for (int i = 0; i < availableJars.length; i++) {
 			String jarName = availableJars[i].getName(true);
-			if(availableJars[i].type==CompiledEntry.JAR) {
+			if (availableJars[i].type == CompiledEntry.JAR) {
 				script.printDeleteTask(null, getJARLocation(jarName), null);
 			} else {
 				script.printDeleteTask(getJARLocation(jarName), null, null);
@@ -329,7 +335,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
 		if (include != null || exclude != null) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
-			script.printCopyTask(null, baseDestination.toString(), new FileSet[] { fileSet }, false);
+			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false);
 		}
 		script.printTargetEnd();
 	}
@@ -351,16 +357,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		destinations.add(destination);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
-		
+
 		//TODO This needs to be improved for . on the classpath and folders (if they don't have a / at the end)
 		if (compiledJarNames != null && compiledJarNames.size() != 0) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromCollection(compiledJarNames, ","), null, replaceVariables(exclude, true), null, null);	//$NON-NLS-1$
-			script.printCopyTask(null, root, new FileSet[] { fileSet }, true);
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromCollection(compiledJarNames, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
+			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
 		if (include != null || exclude != null) {
-			if (include!=null) {
+			if (include != null) {
 				String[] splitIncludes = Utils.getArrayFromString(include);
-				boolean found = false; 
+				boolean found = false;
 				for (int i = 0; i < splitIncludes.length; i++) {
 					if (splitIncludes[i].equals(DOT)) {
 						splitIncludes[i] = "";
@@ -371,11 +377,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				if (found) {
 					include = Utils.getStringFromArray(splitIncludes, ",");
 					FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR) + '/' + EXPANDED_DOT, null, "**", null, null, null, null);
-					script.printCopyTask(null, root,new FileSet[] { fileSet }, true);
+					script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 				}
 			}
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
-			script.printCopyTask(null, root, new FileSet[] { fileSet }, true);
+			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
@@ -450,7 +456,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
 		script.printAntCallTask(TARGET_GATHER_SOURCES, null, params);
 		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
-		script.printDeleteTask(null, null, new FileSet[] { fileSet });
+		script.printDeleteTask(null, null, new FileSet[] {fileSet});
 		script.printZipTask(pluginZipDestination, getPropertyFormat(PROPERTY_TEMP_FOLDER), true, false, null);
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printTargetEnd();
@@ -482,8 +488,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateRefreshTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null,  Policy.bind("build.plugin.refresh")); //$NON-NLS-1$
-		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\','/'), PROPERTY_RESOURCE_PATH, false);
+		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Policy.bind("build.plugin.refresh")); //$NON-NLS-1$
+		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
@@ -518,20 +524,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
-		
+
 		script.println();
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
-		
-		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP +"\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
+
+		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
 		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 
 		script.println("</condition>"); //$NON-NLS-1
-		script.println("<property name=\"" + PROPERTY_PLUGIN_TEMP +"\" value=\"" + getPropertyFormat(PROPERTY_BASEDIR) +"\"/>"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
-		
+		script.println("<property name=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BASEDIR) + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
+
 		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
 		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1 //$NON-NLS-2
 		script.println("</condition>"); //$NON-NLS-1
 		script.println("<property name=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + getPropertyFormat(PROPERTY_BASEDIR) + "\"/>"); //$NON-NLS-1 //$NON-NLS-2 //$NON-NLS-3
-		
+
 		script.printProperty(PROPERTY_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
 		script.printProperty(PROPERTY_PLUGIN_DESTINATION, getPropertyFormat(PROPERTY_BASEDIR));
 		script.printTargetEnd();
@@ -617,15 +623,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Map jars = new HashMap(availableJars.length);
 		for (int i = 0; i < availableJars.length; i++)
 			jars.put(availableJars[i].getName(false), availableJars[i]);
-		
+
 		// Put the jars in a correct compile order
 		String jarOrder = (String) getBuildProperties().get(PROPERTY_JAR_ORDER);
 		IClasspathComputer classpath;
 		if (AbstractScriptGenerator.isBuildingOSGi())
 			classpath = new ClasspathComputer3_0(this);
-		else 
+		else
 			classpath = new ClasspathComputer2_1(this);
-		
+
 		if (jarOrder != null) {
 			String[] order = Utils.getArrayFromString(jarOrder);
 			for (int i = 0; i < order.length; i++) {
@@ -693,7 +699,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
 		javac.setSource(getPropertyFormat(PROPERTY_JAVAC_SOURCE));
 		javac.setTarget(getPropertyFormat(PROPERTY_JAVAC_TARGET));
-		javac.setCompileArgs(getPropertyFormat(PROPERTY_JAVAC_COMPILERARG ));
+		javac.setCompileArgs(getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		String[] sources = entry.getSource();
 		javac.setSrcdir(sources);
 		script.print(javac);
@@ -702,12 +708,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (int i = 0; i < sources.length; i++)
 			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null); //$NON-NLS-1$
 		script.printCopyTask(null, destdir, fileSets, true);
-		
+
 		String jarLocation = getJARLocation(entry.getName(true));
 		script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
-		
-		if (entry.getType()==CompiledEntry.FOLDER) {
-			FileSet[] binFolder = new FileSet[] { new FileSet(destdir, null, null, null, null, null, null) };
+
+		if (entry.getType() == CompiledEntry.FOLDER) {
+			FileSet[] binFolder = new FileSet[] {new FileSet(destdir, null, null, null, null, null, null)};
 			script.printCopyTask(null, jarLocation, binFolder, true);
 		} else {
 			script.printJarTask(jarLocation, destdir);
@@ -762,7 +768,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String srcLocation = getSRCLocation(name);
 		script.printMkdirTask(new Path(srcLocation).removeLastSegments(1).toString());
 
-		if (count!=0)			
+		if (count != 0)
 			script.printZipTask(srcLocation, null, false, false, fileSets);
 
 		script.printTargetEnd();
@@ -823,11 +829,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected String[] getClasspathEntries(BundleDescription lookedUpModel) throws CoreException {
 		return (String[]) getSite(false).getRegistry().getExtraData().get(new Long(lookedUpModel.getBundleId()));
 	}
-	
+
 	protected Properties getBuildProperties() throws CoreException {
 		if (buildProperties == null)
 			return buildProperties = readProperties(model.getLocation(), propertiesFileName, IStatus.WARNING);
-		
+
 		return buildProperties;
 	}
 
@@ -839,9 +845,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	protected String getSRCName(String jarName) {
 		if (jarName.endsWith(".jar")) {
-			return jarName.substring(0, jarName.length()-4) + "src.zip";
+			return jarName.substring(0, jarName.length() - 4) + "src.zip";
 		}
-		return jarName.replace('/','.') + "src.zip"; //$NON-NLS-1$
+		return jarName.replace('/', '.') + "src.zip"; //$NON-NLS-1$
 	}
 
 	/**
@@ -883,11 +889,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			result = result.substring(0, i) + "nl/" + getPropertyFormat(compiledElement ? PROPERTY_NL : PROPERTY_BASE_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length()); //$NON-NLS-1$
 		return result;
 	}
-	
+
 	public BundleDescription getModel() {
 		return model;
 	}
-	
+
 	public String getPropertiesFileName() {
 		return propertiesFileName;
 	}

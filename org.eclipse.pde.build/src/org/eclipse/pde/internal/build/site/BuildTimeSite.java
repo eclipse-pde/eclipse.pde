@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,16 +27,17 @@ import org.eclipse.update.core.*;
  */
 public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
 	private PDEState state;
+
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
 			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
-			
-			if(AbstractScriptGenerator.isBuildingOSGi())
+
+			if (AbstractScriptGenerator.isBuildingOSGi())
 				state = new PDEState();
 			else
 				state = new PluginRegistryConverter();
-			
+
 			state.addBundles(contentProvider.getPluginPaths());
 
 			state.resolveState();
@@ -44,22 +45,22 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			BundleDescription[] resolvedBundles = state.getState().getResolvedBundles();
 			if (allBundles.length == resolvedBundles.length)
 				return state;
-			
+
 			//display a report of the unresolved constraints
 			for (int i = 0; i < allBundles.length; i++) {
 				BundleHelper.getDefault().getLog();
-				if (! allBundles[i].isResolved()) {
+				if (!allBundles[i].isResolved()) {
 					String message = "Bundle: " + allBundles[i].getUniqueId() + '\n'; //$NON-NLS-1$
 					VersionConstraint[] unsatisfiedConstraint = allBundles[i].getUnsatisfiedConstraints();
 					for (int j = 0; j < unsatisfiedConstraint.length; j++) {
 						message += '\t' + unsatisfiedConstraint[j].toString() + '\n';
 					}
-					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD,  EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution", message), null);//$NON-NLS-1$
-					BundleHelper.getDefault().getLog().log(status);	
+					IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution", message), null);//$NON-NLS-1$
+					BundleHelper.getDefault().getLog().log(status);
 				}
 			}
 		}
-		if (! state.getState().isResolved())
+		if (!state.getState().isResolved())
 			state.state.resolve(true);
 		return state;
 	}
@@ -72,7 +73,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		}
 		return null;
 	}
-	
+
 	public void addFeatureReferenceModel(File featureXML) {
 		URL featureURL;
 		SiteFeatureReferenceModel featureRef;
@@ -88,7 +89,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				addFeatureReferenceModel(featureRef);
 			} catch (MalformedURLException e) {
 				Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
-			}		
+			}
 		}
 	}
 }

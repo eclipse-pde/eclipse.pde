@@ -14,7 +14,7 @@ public class ZipFileSet extends FileSet {
 
 	String prefix;
 	boolean file;
-	
+
 	/**
 	 * @param dir
 	 * @param defaultexcludes
@@ -29,7 +29,7 @@ public class ZipFileSet extends FileSet {
 		this.prefix = prefix;
 		this.file = file;
 	}
-	
+
 	protected void print(AntScript script) {
 		script.printTab();
 		script.print("<zipfileset"); //$NON-NLS-1$

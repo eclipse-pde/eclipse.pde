@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,6 +122,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateArchive(boolean generateArchive) {
 		this.generateArchive = generateArchive;
 	}
+
 	/**
 	 * 
 	 * @param children
@@ -166,11 +167,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setOutputFormat(String output) {
 		outputFormat = output;
 	}
-	
+
 	public void setForceUpdateJar(boolean forcing) {
 		forceUpdateJarFormat = forcing;
 	}
-	
+
 	public void setEmbeddedSource(boolean embed) {
 		embeddedSource = embed;
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/**
 	 * @deprecated use #setWorkingDirectory
-	 */ 
+	 */
 	public void setBuildDirectory(String installLocation) throws MalformedURLException {
 		setWorkingDirectory(installLocation);
 	}
@@ -97,7 +97,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * Set the install location to be the given value.
 	 * 
 	 * @param installLocation the install location
-	 */ 
+	 */
 	public void setWorkingDirectory(String installLocation) throws MalformedURLException {
 		generator.setWorkingDirectory(installLocation);
 	}
@@ -113,6 +113,7 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setBaseLocation(String baseLocation) {
 		BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
 	}
+
 	public void setBuildingOSGi(boolean osgi) {
 		generator.setBuildingOSGi(osgi);
 	}

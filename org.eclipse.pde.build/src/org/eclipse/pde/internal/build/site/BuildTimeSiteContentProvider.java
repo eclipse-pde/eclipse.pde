@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class BuildTimeSiteContentProvider extends SiteContentProvider implements
 		Collection pluginsToCompile = findPluginXML(urls);
 		if (installedBaseURL != null) {
 			pluginsToCompile.addAll(findPluginXML(PluginPathFinder.getPluginPaths(installedBaseURL)));
-			pluginsToCompile.addAll(findPluginXML(new String[] { installedBaseURL }));	
+			pluginsToCompile.addAll(findPluginXML(new String[] {installedBaseURL}));
 		}
 		return pluginsToCompile;
 	}
@@ -49,17 +49,17 @@ public class BuildTimeSiteContentProvider extends SiteContentProvider implements
 	}
 
 	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
-	private Collection findPluginXML(String[] location) {		
+	private Collection findPluginXML(String[] location) {
 		Collection collectedElements = new ArrayList(10);
-		for (int i = 0; i < location.length; i++) {		
+		for (int i = 0; i < location.length; i++) {
 			File f = new File(location[i], DEFAULT_PLUGIN_LOCATION);
-			if ( f.exists() ) {
+			if (f.exists()) {
 				collectedElements.addAll(Arrays.asList(f.listFiles()));
 			} else {
 				collectedElements.add(new File(location[i]));
 			}
-		}  
+		}
 		return collectedElements;
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private static final String PASSWORD = "password";
 	private static final String CVSROOT = "cvsRoot";
 	private static final String TAG = "tag";
-	
+
 	// flag saying if we want to recursively generate the scripts	
 	protected boolean recursiveGeneration = true;
 
@@ -56,7 +56,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected List mkdirLocations = new ArrayList(5);
 	// A property table containing the association between the plugins and the version from the map  
 	protected Properties repositoryVersions = new Properties();
-	
+
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
 	public static final String FEATURES_RECURSIVELY = "featuresRecursively"; //$NON-NLS-1$
@@ -82,7 +82,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		mapInfos = processMapFileEntry(element);
 		if (mapInfos == null) {
-			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element),null);
+			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null);
 			BundleHelper.getDefault().getLog().log(warning);
 			return;
 		}
@@ -97,7 +97,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		if (recursiveGeneration && mapInfos.get(TYPE).equals("feature")) //$NON-NLS-1$
 			generateFetchFilesForIncludedFeatures();
-		
+
 		saveRepositoryVersions();
 	}
 
@@ -112,11 +112,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		} catch (IOException e) {
 			//ignore the exception, the same may not exist
 		}
-		
+
 		try {
 			OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR));
 			try {
-				repositoryVersions.store(os,null);
+				repositoryVersions.store(os, null);
 			} finally {
 				os.close();
 			}
@@ -124,7 +124,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			String message = Policy.bind("exception.writingFile", directoryLocation + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
-		
+
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			generateFetchEntry(element, false);
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null); 
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null);
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		script.printTargetEnd();
@@ -245,7 +245,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				}
 				continue;
 			}
-			
+
 			script.printAntTask(getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
@@ -295,7 +295,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// This call create a new property for every feature, plugins or fragments that we must check the existence of 
 		script.printAvailableTask(fullLocation, fullLocation);
 		script.printAntTask("../" + scriptName, getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals("feature") ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
+
 	}
 
 	protected void generateGetFromCVSTarget() {
@@ -338,7 +338,6 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				}
 				continue;
 			}
-
 
 			if (allChildren[i].isFragment())
 				generateFetchEntry("fragment@" + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$

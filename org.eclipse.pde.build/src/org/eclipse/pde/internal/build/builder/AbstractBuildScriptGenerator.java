@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,13 +38,14 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	private Set compiledElements; //The elements we are compiling
 
-	private HashMap repoVersion; 
-	
+	private HashMap repoVersion;
+
 	abstract protected Properties getBuildProperties() throws CoreException;
 
 	public void setDevEntries(String entries) {
 		devEntries = new DevClassPathHelper(entries);
 	}
+
 	public void setDevEntries(DevClassPathHelper entries) {
 		devEntries = entries;
 	}
@@ -75,7 +76,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
 		if (siteFactory != null && refresh == false)
 			return (BuildTimeSite) siteFactory.createSite();
-		
+
 		if (siteFactory == null || refresh == true)
 			siteFactory = new BuildTimeSiteFactory();
 
@@ -96,12 +97,13 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (pluginPath != null)
 			return pluginPath;
 
-		return new String[] { workingDirectory };
+		return new String[] {workingDirectory};
 	}
 
 	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
 		this.siteFactory = siteFactory;
 	}
+
 	/**
 	 * 
 	 * @param buf
@@ -110,7 +112,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @return int
 	 */
 	protected int scan(StringBuffer buf, int start, String target) {
-		return scan(buf, start, new String[] { target });
+		return scan(buf, start, new String[] {target});
 	}
 
 	/**
@@ -143,7 +145,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected StringBuffer readFile(File target) throws IOException {
 		return readFile(new FileInputStream(target));
 	}
-	
+
 	protected StringBuffer readFile(InputStream stream) throws IOException {
 		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(stream));
 		StringBuffer result = new StringBuffer();
@@ -178,7 +180,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @throws IOException
 	 *
 	 */
-	
+
 	//TODO Need to check what should happen when QUALIFIER is used
 	protected void updateVersion(File buildFile, String propertyName, String version) throws CoreException, IOException {
 		StringBuffer buffer = readFile(buildFile);

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,6 +174,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			endTag("import"); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Method getStringForMatchingRule.
 	 * @param i
@@ -213,7 +214,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			}
 			if (effectivePlugin == null) {
 				String message = Policy.bind("exception.missingPlugin", plugins[i].getVersionedIdentifier().toString()); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));				
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			parameters.put("version", effectivePlugin.getVersion()); //$NON-NLS-1$
 			parameters.put("fragment", new Boolean(plugins[i].isFragment())); //$NON-NLS-1$

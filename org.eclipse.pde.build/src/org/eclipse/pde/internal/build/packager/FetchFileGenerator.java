@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,34 +19,34 @@ import org.eclipse.pde.internal.build.*;
 
 public class FetchFileGenerator extends AbstractScriptGenerator {
 	private static final String ENTRY_SEPARATOR = "|"; //$NON-NLS-1$
-	private static final String FILTER_SEPARATOR = "&";  //$NON-NLS-1$
+	private static final String FILTER_SEPARATOR = "&"; //$NON-NLS-1$
 	// Unknown component name
 	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
-	
+
 	private Config config;
 	private String[] filters;
 	private String mapLocation;
 	private String collectedFiles;
 	private String[] componentFilter;
-	
+
 	private Properties mapContent;
 	private Properties selectedFiles;
 
 	private void displayDebugInfo() {
 		if (!BundleHelper.getDefault().isDebugging())
 			return;
-		
-		System.out.println("Configuration: " + config.toString());	//$NON-NLS-1$
-		System.out.println("Filters: " + (filters!=null ? Utils.getStringFromArray(filters, ", ") : "NONE"));	//$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
-		System.out.println("Component filter: " + (componentFilter!=null ? Utils.getStringFromArray(componentFilter, ", ") : "NONE"));	//$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
-		System.out.println("Map location: " + mapLocation);	//$NON-NLS-1$
+
+		System.out.println("Configuration: " + config.toString()); //$NON-NLS-1$
+		System.out.println("Filters: " + (filters != null ? Utils.getStringFromArray(filters, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
+		System.out.println("Component filter: " + (componentFilter != null ? Utils.getStringFromArray(componentFilter, ", ") : "NONE")); //$NON-NLS-1$ 	//$NON-NLS-2$ 	//$NON-NLS-3$
+		System.out.println("Map location: " + mapLocation); //$NON-NLS-1$
 	}
-	
+
 	public void generate() throws CoreException {
 		config = (Config) getConfigInfos().get(0);
 		collectedFiles = ""; //$NON-NLS-1$
 		displayDebugInfo();
-		
+
 		openScript(workingDirectory, DEFAULT_FETCH_SCRIPT_FILENAME);
 		generatePrologue();
 		try {
@@ -118,7 +118,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		final int DIRECTORY = 2;
 		final int FILTERS = 3;
 		final int COMPONENT = 4;
-		
+
 		mapContent = readProperties(mapLocation, "", IStatus.ERROR); //$NON-NLS-1$
 
 		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
@@ -136,11 +136,11 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			try {
 				userInfos = new URL(fileDescription[URL]).getUserInfo();
 			} catch (MalformedURLException e) {
-				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url",fileDescription[URL]), e); //$NON-NLS-1$
-				throw new CoreException(status); 
+				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url", fileDescription[URL]), e); //$NON-NLS-1$
+				throw new CoreException(status);
 			}
-			
-			if (filterByConfig(fileDescription[CONFIGS]) &&	filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
+
+			if (filterByConfig(fileDescription[CONFIGS]) && filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
@@ -148,20 +148,20 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", fileDescription[DIRECTORY]), null); //$NON-NLS-1$
 					BundleHelper.getDefault().getLog().log(status);
 				}
-			} 
+			}
 		}
 	}
 
 	//Return true if the filters specified to be packaged match the entry.
 	//When no filter is specified on the entry or there is no filtering, then the file is fetched 
 	private boolean filterByFilter(String filterString) {
-		if (filters.length==0)
+		if (filters.length == 0)
 			return true;
-		
+
 		String[] entryFilters = Utils.getArrayFromStringWithBlank(filterString, ","); //$NON-NLS-1$
 		if (entryFilters.length == 0)
 			return true;
-			
+
 		for (int i = 0; i < entryFilters.length; i++) {
 			for (int j = 0; j < filters.length; j++) {
 				if (filters[j].equals(entryFilters[i]))
@@ -176,7 +176,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, FILTER_SEPARATOR);
 		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
 			return true;
-			
+
 		for (int i = 0; i < entryConfigs.length; i++) {
 			Config aConfig = new Config(entryConfigs[i]);
 			if (aConfig.equals(config) || aConfig.equals(Config.genericConfig())) {
@@ -185,19 +185,19 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		}
 		return false;
 	}
-	
+
 	//Return true if the componentName is listed in the component filter, or if no filter is specified
 	private boolean filterByComponentName(String componentName) {
 		if (componentName.equals(UNKNOWN) || componentFilter == null)
 			return true;
-		
+
 		for (int i = 0; i < componentFilter.length; i++) {
 			if (componentFilter[i].equalsIgnoreCase(componentName) || componentFilter[i].equalsIgnoreCase(UNKNOWN))
 				return true;
 		}
 		return false;
 	}
-	
+
 	public void setComponentFilter(String componentFiler) {
 		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, ",");
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,12 +57,12 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 				String message = Policy.bind("error.incorrectDirectoryEntry", installedBaseLocation); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
 			}
-			
+
 			installedBaseURL = installedBaseLocation; //$NON-NLS-1$
 			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
-			
+
 			//Search the features in the links
 			String[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
 			for (int i = 0; i < linkPaths.length; i++) {

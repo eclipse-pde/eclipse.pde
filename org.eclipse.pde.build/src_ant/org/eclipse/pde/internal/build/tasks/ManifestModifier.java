@@ -1,3 +1,13 @@
+/**********************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
@@ -8,11 +18,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class ManifestModifier extends Task {
-	private String manifestLocation; 
+	private String manifestLocation;
 	private Map newValues = new HashMap();
 	private static String DELIM = "#|";
 	private Manifest manifest = null;
-	
+
 	/**
 	 * Indicate new values to add to the manifest. The format of the parameter is key|value#key|value#...
 	 * If a value is specified to null, the key will be removed from the manifest. 
@@ -28,26 +38,26 @@ public class ManifestModifier extends Task {
 			newValues.put(key, value);
 		}
 	}
-	
+
 	public void execute() {
 		loadManifest();
-		
+
 		applyChanges();
-		
+
 		writeManifest();
 	}
-	
+
 	private void writeManifest() {
 		OutputStream os = null;
 		try {
 			os = new BufferedOutputStream(new FileOutputStream(manifestLocation));
 			try {
-				manifest.write(os);	
+				manifest.write(os);
 			} finally {
 				os.close();
-			}			
+			}
 		} catch (IOException e1) {
-			new BuildException("Problem writing the content of the manifest : " + manifestLocation);	//$NON-NLS-1$
+			new BuildException("Problem writing the content of the manifest : " + manifestLocation); //$NON-NLS-1$
 		}
 	}
 
@@ -78,12 +88,12 @@ public class ManifestModifier extends Task {
 	}
 
 	private void changeValue(String key, String value) {
-//		log("key : " + key + " becomes " + value, Project.MSG_VERBOSE);
+		//		log("key : " + key + " becomes " + value, Project.MSG_VERBOSE);
 		manifest.getMainAttributes().put(new Attributes.Name(key), value);
 	}
 
 	private void removeAttribute(String key) {
-//		log("key : " + key + " removed", Project.MSG_VERBOSE);
+		//		log("key : " + key + " removed", Project.MSG_VERBOSE);
 		manifest.getMainAttributes().remove(new Attributes.Name(key));
 	}
 

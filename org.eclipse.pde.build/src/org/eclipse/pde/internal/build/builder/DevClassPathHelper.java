@@ -25,7 +25,7 @@ public class DevClassPathHelper {
 	protected boolean inDevelopmentMode = false;
 	protected String[] devDefaultClasspath;
 	protected Properties devProperties = null;
-	
+
 	public DevClassPathHelper(String devInfo) {
 		// Check the osgi.dev property to see if dev classpath entries have been defined.
 		String osgiDev = devInfo;
@@ -34,13 +34,13 @@ public class DevClassPathHelper {
 				inDevelopmentMode = true;
 				URL location = new URL(osgiDev);
 				devProperties = load(location);
-				devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*"));				
+				devDefaultClasspath = Utils.getArrayFromString(devProperties.getProperty("*"));
 			} catch (MalformedURLException e) {
 				devDefaultClasspath = Utils.getArrayFromString(osgiDev);
 			}
 		}
 	}
-	
+
 	public String[] getDevClassPath(String id) {
 		String[] result = null;
 		if (id != null && devProperties != null) {
@@ -48,11 +48,11 @@ public class DevClassPathHelper {
 			if (entry != null)
 				result = Utils.getArrayFromString(entry);
 		}
-		if (result == null) 
+		if (result == null)
 			result = devDefaultClasspath;
 		return result;
 	}
-	
+
 	public boolean inDevelopmentMode() {
 		return inDevelopmentMode;
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class IdReplaceTask extends Task {
 	private static final String EMPTY = ""; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String INCLUDES = "includes"; //$NON-NLS-1$
-	
+
 	//Path of the file where we are replacing the values
 	private String featureFilePath;
 	//Map of the plugin ids (key) and their version number (value)  
@@ -109,27 +109,27 @@ public class IdReplaceTask extends Task {
 		while (true) {
 			int startPlugin = scan(buffer, startElement + 1, PLUGIN);
 			int startInclude = scan(buffer, startElement + 1, INCLUDES);
-			
+
 			if (startPlugin == -1 && startInclude == -1)
 				break;
 
-			int foundElement=-1;
-			boolean isPlugin=false;
-			
+			int foundElement = -1;
+			boolean isPlugin = false;
+
 			//Find which a plugin or a feature is referenced first 
 			if (startPlugin == -1 || startInclude == -1) {
-				foundElement = startPlugin != -1  ? startPlugin : startInclude;
-				isPlugin = (startPlugin != -1  ? true : false);
+				foundElement = startPlugin != -1 ? startPlugin : startInclude;
+				isPlugin = (startPlugin != -1 ? true : false);
 			} else {
 				if (startPlugin < startInclude) {
 					foundElement = startPlugin;
-					isPlugin = true;	
+					isPlugin = true;
 				} else {
 					foundElement = startInclude;
 					isPlugin = false;
 				}
 			}
-			
+
 			startId = scan(buffer, foundElement, ID);
 			if (startId == -1)
 				break;
@@ -139,7 +139,7 @@ public class IdReplaceTask extends Task {
 			char[] elementId = new char[endElementId - startElementId - 1];
 			buffer.getChars(startElementId + 1, endElementId, elementId, 0);
 
-			int startVersionWord = scan(buffer, endElementId + 1, VERSION); 
+			int startVersionWord = scan(buffer, endElementId + 1, VERSION);
 			int startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
 			int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 			char[] versionId = new char[endVersionId - startVersionId - 1];
@@ -174,7 +174,7 @@ public class IdReplaceTask extends Task {
 	}
 
 	private int scan(StringBuffer buf, int start, String targetName) {
-		return scan(buf, start, new String[] { targetName });
+		return scan(buf, start, new String[] {targetName});
 	}
 
 	private int scan(StringBuffer buf, int start, String[] targets) {

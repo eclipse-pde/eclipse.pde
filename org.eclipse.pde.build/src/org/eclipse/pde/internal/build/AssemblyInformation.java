@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class AssemblyInformation {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addFeature(feature);
 	}
-	
+
 	public void addPlugin(Config config, BundleDescription plugin) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addPlugin(plugin);
@@ -42,7 +42,7 @@ public class AssemblyInformation {
 	public Collection getPlugins(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getPlugins();
 	}
-	
+
 	public Collection getFeatures(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).getFeatures();
 	}
@@ -50,11 +50,11 @@ public class AssemblyInformation {
 	public boolean copyRootFile(Config config) {
 		return ((AssemblyLevelConfigInfo) assembleInformation.get(config)).hasRootFile();
 	}
-	
+
 	public void setCopyRootFile(Config config) {
 		((AssemblyLevelConfigInfo) assembleInformation.get(config)).setHasRootFile(true);
 	}
-	
+
 	// All the information that will go into the assemble file for a specific info
 	private class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
@@ -63,13 +63,15 @@ public class AssemblyInformation {
 		private Collection features = new HashSet(7);
 		// indicate whether root files needs to be copied
 		private boolean hasRootFile = false;
-		
+
 		public void setHasRootFile(boolean rootFile) {
 			hasRootFile = rootFile;
 		}
+
 		public boolean hasRootFile() {
 			return hasRootFile;
 		}
+
 		public Collection getFeatures() {
 			return features;
 		}
@@ -81,7 +83,7 @@ public class AssemblyInformation {
 		public void addFeature(IFeature feature) {
 			for (Iterator iter = features.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
-				if ( ((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) &&  ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()) )
+				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()))
 					return;
 			}
 			features.add(feature);

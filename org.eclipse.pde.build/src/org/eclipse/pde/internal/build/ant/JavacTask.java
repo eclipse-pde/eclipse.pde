@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class JavacTask implements ITask {
 	protected String source;
 	protected String target;
 	protected String compileArgs;
-	
+
 	/**
 	 * Default constructor for the class.
 	 */
@@ -54,15 +54,14 @@ public class JavacTask implements ITask {
 		script.printAttribute("source", source, false); //$NON-NLS-1$
 		script.printAttribute("target", target, false); //$NON-NLS-1$
 		script.println(">"); //$NON-NLS-1$
-		
+
 		script.indent++;
-		
+
 		if (compileArgs != null) {
-			script.println("<compilerarg line=\"" + compileArgs + "\"/>");	
+			script.println("<compilerarg line=\"" + compileArgs + "\"/>");
 		}
-		
-		
-		script.printStartTag("classpath");		
+
+		script.printStartTag("classpath");
 		script.indent++;
 		for (Iterator iter = classpath.iterator(); iter.hasNext();) {
 			String path = (String) iter.next();
@@ -74,7 +73,7 @@ public class JavacTask implements ITask {
 		}
 		script.indent--;
 		script.printEndTag("classpath");
-		
+
 		for (int i = 0; i < srcdir.length; i++) {
 			script.printTab();
 			script.print("<src path="); //$NON-NLS-1$
@@ -188,7 +187,7 @@ public class JavacTask implements ITask {
 	public void setTarget(String target) {
 		this.target = target;
 	}
-	
+
 	public void setCompileArgs(String args) {
 		this.compileArgs = args;
 	}

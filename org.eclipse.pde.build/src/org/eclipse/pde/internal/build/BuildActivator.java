@@ -17,6 +17,7 @@ public class BuildActivator extends Plugin {
 	public void start(BundleContext ctx) throws Exception {
 		new BundleHelper(ctx);
 	}
+
 	public void stop(BundleContext ctx) throws Exception {
 		BundleHelper.close();
 	}

@@ -16,7 +16,7 @@ public interface IBuildPropertiesConstants {
 	public final static String EXECUTABLE = "executable"; //$NON-NLS-1$
 	public final static String ROOT_PREFIX = "root."; //$NON-NLS-1$
 	public final static String ROOT = "root"; //$NON-NLS-1$
-	
+
 	public final static String TRUE = "true"; //$NON-NLS-1$
 	public final static String FALSE = "false"; //$NON-NLS-1$
 
@@ -26,26 +26,25 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$	
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	public static final String PROPERTY_NONE = "none"; //$NON-NLS-1$
 	public static final String PROPERTY_CONTEXT = "context"; //$NON-NLS-1$
-	
+
 	public final static String GENERATION_SOURCE_PREFIX = "generate."; //$NON-NLS-1$
 	public final static String GENERATION_SOURCE_FEATURE_PREFIX = GENERATION_SOURCE_PREFIX + "feature@"; //$NON-NLS-1$
 	public final static String GENERATION_SOURCE_PLUGIN_PREFIX = GENERATION_SOURCE_PREFIX + "plugin@"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_CUSTOM = "custom"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_SUFFIX = ".zip"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes"; //$NON-NLS-1$
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
-	
+
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes"; //$NON-NLS-1$
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
-	
+
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 }
-
 

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,11 @@ import org.apache.tools.ant.Task;
 public class PluginVersionReplaceTask extends Task {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
-	
+
 	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
-	
-	
+
 	//Path of the file where we are replacing the values
 	private String pluginFilePath;
 	private boolean plugin = true;
@@ -42,7 +41,7 @@ public class PluginVersionReplaceTask extends Task {
 	public void setVersionNumber(String qualifier) {
 		newVersion = qualifier;
 	}
-	
+
 	public void execute() {
 		StringBuffer buffer = null;
 		try {
@@ -55,11 +54,11 @@ public class PluginVersionReplaceTask extends Task {
 		int startPlugin;
 		if (plugin)
 			startPlugin = scan(buffer, 0, PLUGIN);
-		else 
+		else
 			startPlugin = scan(buffer, 0, FRAGMENT);
-		
+
 		int endPlugin = scan(buffer, startPlugin + 1, ">"); //$NON-NLS-1$
-		
+
 		//Find the version tag in the plugin header
 		int versionAttr = scan(buffer, startPlugin, VERSION);
 		if (versionAttr > endPlugin)
@@ -68,10 +67,10 @@ public class PluginVersionReplaceTask extends Task {
 		//Extract the version id and replace it
 		int startVersionId = scan(buffer, versionAttr + 1, BACKSLASH);
 		int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
-		
+
 		startVersionId++;
 		buffer.replace(startVersionId, endVersionId, newVersion);
-		
+
 		try {
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(pluginFilePath));
 		} catch (FileNotFoundException e) {
@@ -81,7 +80,7 @@ public class PluginVersionReplaceTask extends Task {
 	}
 
 	private int scan(StringBuffer buf, int start, String targetName) {
-		return scan(buf, start, new String[] { targetName });
+		return scan(buf, start, new String[] {targetName});
 	}
 
 	private int scan(StringBuffer buf, int start, String[] targets) {

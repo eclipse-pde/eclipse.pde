@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.*;
 import java.util.*;
+
 /**
  * A simple XML writer.
  */
@@ -26,10 +27,12 @@ public class XMLWriter extends PrintWriter {
 		tab = 0;
 		println(XML_VERSION);
 	}
+
 	public void endTag(String name) {
 		tab--;
 		printTag('/' + name, null);
 	}
+
 	public void printSimpleTag(String name, Object value) {
 		if (value == null)
 			return;
@@ -37,13 +40,16 @@ public class XMLWriter extends PrintWriter {
 		print(getEscaped(String.valueOf(value)));
 		printTag('/' + name, null, false, true);
 	}
+
 	public void printTabulation() {
 		for (int i = 0; i < tab; i++)
 			super.print('\t');
 	}
+
 	public void printTag(String name, Map parameters) {
 		printTag(name, parameters, true, true);
 	}
+
 	public void printTag(String name, Map parameters, boolean shouldTab, boolean newLine) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<"); //$NON-NLS-1$
@@ -67,22 +73,27 @@ public class XMLWriter extends PrintWriter {
 		else
 			print(sb.toString());
 	}
+
 	public void startTag(String name, Map parameters) {
 		startTag(name, parameters, true);
 	}
+
 	public void startTag(String name, Map parameters, boolean newLine) {
 		printTag(name, parameters, true, newLine);
 		tab++;
 	}
+
 	private static void appendEscapedChar(StringBuffer buffer, char c) {
 		buffer.append(getReplacement(c));
 	}
+
 	public static String getEscaped(String s) {
 		StringBuffer result = new StringBuffer(s.length() + 10);
 		for (int i = 0; i < s.length(); ++i)
 			appendEscapedChar(result, s.charAt(i));
 		return result.toString();
 	}
+
 	private static String getReplacement(char c) {
 		// Encode special XML characters into the equivalent character references.
 		// These five are defined by default for all XML documents.

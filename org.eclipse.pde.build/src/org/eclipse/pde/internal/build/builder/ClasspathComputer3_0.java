@@ -41,10 +41,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 */
 	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
 		List classpath = new ArrayList(20);
-		List pluginChain = new ArrayList(10);	//The list of plugins added to detect cycle
+		List pluginChain = new ArrayList(10); //The list of plugins added to detect cycle
 		String location = generator.getLocation(model);
-		Set addedPlugins = new HashSet(10);	//The set of all the plugins already added to the classpath (this allows for optimization)
-		
+		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
+
 		//PREREQUISITE
 		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
 
@@ -138,7 +138,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addPathAndCheck(String pluginId, String path, List classpath) {
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
-			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)+ '/' + path;
+			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
@@ -273,16 +273,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	//Add the prerequisite of a given plugin (target)
 	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 		if (pluginChain.contains(target)) {
-			String cycleString = "";	//$NON-NLS-1$
+			String cycleString = ""; //$NON-NLS-1$
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
-				cycleString +=  iter.next().toString() + ", "; //$NON-NLS-1$
-			cycleString += target.toString(); 
+				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
+			cycleString += target.toString();
 			String message = Policy.bind("error.pluginCycle", cycleString); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
-		if (addedPlugins.contains(target))	//the plugins we are considering has already been added	
+		if (addedPlugins.contains(target)) //the plugins we are considering has already been added	
 			return;
-		
+
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
 		// as all required plugins may be required for compilation.
 		BundleDescription[] requires = PDEState.getDependentBundles(target);
@@ -335,7 +335,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			addPathAndCheck(model.getUniqueId(), path, classpath);
 		}
 	}
-	
+
 	//Return the jar name from the classpath 
 	private String[] getClasspathEntries(BundleDescription bundle) throws CoreException {
 		return generator.getClasspathEntries(bundle);

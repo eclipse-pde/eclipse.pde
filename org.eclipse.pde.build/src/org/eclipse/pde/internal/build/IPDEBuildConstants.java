@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public interface IPDEBuildConstants {
 	public final static String SOURCE_PLUGIN_ATTRIBUTE = "sourcePlugin"; //$NON-NLS-1$
 	public final static String MANIFEST_FOLDER = "META-INF"; //$NON-NLS-1$
 	public final static String MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
-	
+
 	// command line arguments
 	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile"; //$NON-NLS-1$
 	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$
@@ -66,7 +66,7 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR = "pluginVersions.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "features.PostProcessingSteps.properties"; //$NON-NLS-1$
-	
+
 	// Tag replaced in files
 	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$
@@ -93,5 +93,5 @@ public interface IPDEBuildConstants {
 	public final static int WARNING_MISSING_SOURCE = 20;
 	public final static int WARNING_ELEMENT_NOT_FETCHED = 21;
 	public final static int EXCEPTION_CONFIG_FORMAT = 22;
-	
+
 }

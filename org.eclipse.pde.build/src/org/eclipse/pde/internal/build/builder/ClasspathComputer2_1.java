@@ -154,7 +154,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	private void addPathAndCheck(String pluginId, String path, List classpath) {
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
-			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)+ '/' + path;
+			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
@@ -242,7 +242,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	private String computeExtraPath(String url, String location) throws CoreException {
 		String relativePath = null;
 
-		String[] urlfragments = Utils.getArrayFromString(url,"/"); //$NON-NLS-1$
+		String[] urlfragments = Utils.getArrayFromString(url, "/"); //$NON-NLS-1$
 
 		// A valid platform url for a plugin has a leat 3 segments.
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
@@ -278,8 +278,8 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
 			}
 		} catch (MalformedURLException e) {
-			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url); //$NON-NLS-1$  //$NON-NLS-2$
-			throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
+			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message, e));
 		}
 		return relativePath;
 	}
@@ -290,10 +290,10 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 		if (pluginChain.contains(target)) {
 			if (target == getPlugin(PI_RUNTIME, null))
 				return;
-			String cycleString = "";	//$NON-NLS-1$
+			String cycleString = ""; //$NON-NLS-1$
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
-				cycleString +=  iter.next().toString() + ", "; //$NON-NLS-1$
-			cycleString += target.toString(); 
+				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
+			cycleString += target.toString();
 			String message = Policy.bind("error.pluginCycle", cycleString); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
@@ -357,7 +357,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			addPathAndCheck(model.getUniqueId(), path, classpath);
 		}
 	}
-	
+
 	//Return the jar name from the classpath 
 	private String[] getClasspathEntries(BundleDescription bundle) throws CoreException {
 		return generator.getClasspathEntries(bundle);

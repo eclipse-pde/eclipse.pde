@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,19 +27,21 @@ public class Policy {
 	public static String bind(String id) {
 		return bind(id, (String[]) null);
 	}
+
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given string.
 	 */
 	public static String bind(String id, String binding) {
-		return bind(id, new String[] { binding });
+		return bind(id, new String[] {binding});
 	}
+
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given strings.
 	 */
 	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] { binding1, binding2 });
+		return bind(id, new String[] {binding1, binding2});
 	}
 
 	/**
@@ -106,14 +108,14 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks, style);
 	}
-	
+
 	/**
 	 * Print a debug message to the console. If the given boolean is
 	 * <code>true</code> then pre-pend the message with the current date.
 	 */
 	public static void debug(boolean includeDate, String message) {
-		if (includeDate) 
-			message = new Date(System.currentTimeMillis()).toString() + " - "+ message; //$NON-NLS-1$
+		if (includeDate)
+			message = new Date(System.currentTimeMillis()).toString() + " - " + message; //$NON-NLS-1$
 		System.out.println(message);
 	}
 }

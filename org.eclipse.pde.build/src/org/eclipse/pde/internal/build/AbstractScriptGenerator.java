@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,15 +22,14 @@ import org.eclipse.update.core.SiteManager;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
-	protected static String outputFormat = "zip"; 
+	protected static String outputFormat = "zip";
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = false;
 	protected AntScript script;
- 
-	
+
 	static {
 		// By default, a generic configuration is set
 		configInfos = new ArrayList(1);
@@ -40,6 +39,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public static List getConfigInfos() {
 		return configInfos;
 	}
+
 	/**
 	 * Starting point for script generation. See subclass implementations for
 	 * individual comments.
@@ -104,7 +104,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * @throws CoreException if a valid file-system location could not be constructed
 	 */
 	public String getLocation(BundleDescription model) throws CoreException {
-		return model.getLocation();		
+		return model.getLocation();
 	}
 
 	public static Properties readProperties(String location, String fileName, int errorLevel) throws CoreException {
@@ -159,31 +159,33 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void setBuildingOSGi(boolean b) {
 		buildingOSGi = b;
 	}
+
 	public static boolean isBuildingOSGi() {
 		return buildingOSGi;
 	}
+
 	public static String getWorkingDirectory() {
 		return workingDirectory;
 	}
 
 	public static String getDefaultOutputFormat() {
-		return "zip"; 
+		return "zip";
 	}
-	
+
 	public static boolean getDefaultEmbeddedSource() {
 		return false;
 	}
-	
+
 	public static boolean getForceUpdateJarFormat() {
 		return false;
 	}
-	
+
 	public static String getDefaultConfigInfos() {
 		return "*, *, *";
 	}
-	
+
 	public static boolean getDefaultBuildingOSGi() {
 		return buildingOSGi;
 	}
-	
+
 }
