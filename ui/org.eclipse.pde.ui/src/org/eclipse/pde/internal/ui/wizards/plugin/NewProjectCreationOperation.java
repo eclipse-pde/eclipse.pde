@@ -108,9 +108,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				if (fRCPData.useDefaultImages())
 					copyBrandingImages();
 				if (fRCPData.getGenerateTemplateFiles()) {
-					createAboutPropertiesFile(project);
 					createPluginCustomizationFile(project);
-					createAboutIniFile(project);
 					createPluginProperties(project);
 				}
 				monitor.worked(1);
@@ -166,36 +164,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
     }
     
-    /**
-     * @param project
-     */
-    private void createAboutPropertiesFile(IProject project) {
-        IFile newFile = project.getFile("about.properties"); //$NON-NLS-1$
-        StringWriter sWriter = new StringWriter();
-        PrintWriter pWriter = new PrintWriter(sWriter);
-        if (newFile.exists())
-            return;
-        pWriter.println("# about.properties"); //$NON-NLS-1$
-        pWriter.println("# contains externalized strings for about.ini"); //$NON-NLS-1$
-        pWriter.println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
-        pWriter.println("# fill-ins are supplied by about.mappings"); //$NON-NLS-1$
-        pWriter.println("# This file should be translated."); //$NON-NLS-1$
-        pWriter.println("#"); //$NON-NLS-1$
-        pWriter.println("# Do not translate any values surrounded by {}"); //$NON-NLS-1$
-        pWriter.println(""); //$NON-NLS-1$
-        pWriter.println("blurb=" + fRCPData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
-        pWriter.println("\\n\\"); //$NON-NLS-1$
-        pWriter.println("Version: {featureVersion}\\n\\"); //$NON-NLS-1$
-        try {
-            ByteArrayInputStream target = new ByteArrayInputStream(sWriter.toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
-            newFile.create(target, true, null);
-        } catch (UnsupportedEncodingException e) {
-            PDEPlugin.logException(e);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        } 
-    }
-    
     private void createPluginProperties(IProject project) {
         IFile newFile = project.getFile("plugin.properties"); //$NON-NLS-1$
         StringWriter sWriter = new StringWriter();
@@ -205,43 +173,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         pWriter.println("productBlurb= " + fRCPData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
         pWriter.println("\\n\\"); //$NON-NLS-1$
         pWriter.println("Version: " + fData.getVersion() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
-        try {
-            ByteArrayInputStream target = new ByteArrayInputStream(sWriter
-                    .toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
-            newFile.create(target, true, null);
-        } catch (UnsupportedEncodingException e) {
-            PDEPlugin.logException(e);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }
-    }
-    
-    private void createAboutIniFile(IProject project) {
-        IFile newFile = project.getFile("about.ini"); //$NON-NLS-1$
-        StringWriter sWriter = new StringWriter();
-        PrintWriter pWriter = new PrintWriter(sWriter);
-        if (newFile.exists())
-            return;
-        pWriter.println("# about.ini"); //$NON-NLS-1$
-        pWriter.println("# contains information about a feature"); //$NON-NLS-1$
-        pWriter.println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
-        pWriter.println("# \"%key\" are externalized strings defined in about.properties"); //$NON-NLS-1$
-        pWriter.println(" # This file does not need to be translated."); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# Property \"aboutText\" contains blurb for feature details in the \"About\""); //$NON-NLS-1$
-        pWriter.println("# dialog (translated).  Maximum 15 lines and 75 characters per line."); //$NON-NLS-1$
-        pWriter.println("aboutText=%blurb"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# Property \"featureImage\" contains path to feature image (32x32)"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# Property \"windowImage\" contains path to window icon (16x16)"); //$NON-NLS-1$
-        pWriter.println("# needed for primary features only"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# Property \"aboutImage\" contains path to product image (500x330 or 115x164)"); //$NON-NLS-1$
-        pWriter.println("# needed for primary features only"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# Property \"appName\" contains name of the application (translated)"); //$NON-NLS-1$
-        pWriter.println("# needed for primary features only"); //$NON-NLS-1$
         try {
             ByteArrayInputStream target = new ByteArrayInputStream(sWriter
                     .toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
@@ -293,13 +224,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 }
                 return;
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             PDEPlugin.logException(e);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        } catch (IOException e) {
-            PDEPlugin.logException(e);
-        }
+        } 
     }
     
     /**
