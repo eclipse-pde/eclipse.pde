@@ -29,7 +29,7 @@ import org.eclipse.ui.forms.widgets.*;
 
 
 public class ChoiceAttributeRow extends ExtensionAttributeRow {
-	private ComboPart combo;
+	protected ComboPart combo;
 	/**
 	 * @param att
 	 */
