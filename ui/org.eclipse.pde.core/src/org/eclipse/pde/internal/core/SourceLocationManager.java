@@ -179,7 +179,7 @@ public class SourceLocationManager implements ICoreConstants {
 			String point = extension.getPoint();
 			if (point == null)
 				continue;
-			if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
+			if (point.equals(PDECore.getPluginId() + ".source")) {
 				int origLength = fExtensionLocations.size();
 				processExtension(extension);
 				if (fExtensionLocations.size() == origLength && model.getUnderlyingResource() != null) {
