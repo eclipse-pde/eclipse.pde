@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.core.*;
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
 	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
-	private static final String KEY_NO_JRE2 = "WorkbenchLauncherConfigurationDelegate.noJRE2";
 	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
 	private static final String KEY_BROKEN_PLUGINS = "WorkbenchLauncherConfigurationDelegate.brokenPlugins";
@@ -65,31 +64,29 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 
-		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
+		String vmInstallName = configuration.getAttribute(VMINSTALL, BasicLauncherTab.getDefaultVMInstallName());
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
 		IVMInstall launcher = null;
 		
-		if (monitor==null)
+		if (monitor == null)
 			monitor = new NullProgressMonitor();
 
-		if (vmInstallName != null) {
-			for (int i = 0; i < vmInstallations.length; i++) {
-				if (vmInstallName.equals(vmInstallations[i].getName())) {
-					launcher = vmInstallations[i];
-					break;
-				}
+		for (int i = 0; i < vmInstallations.length; i++) {
+			if (vmInstallName.equals(vmInstallations[i].getName())) {
+				launcher = vmInstallations[i];
+				break;
 			}
-		} else if (vmInstallations.length>0)
-			launcher = vmInstallations[0];
-		if (launcher == null) {
-			String message;
-			if (vmInstallName!=null)
-				message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
-			else
-				message = PDEPlugin.getResourceString(KEY_NO_JRE2);
-			monitor.setCanceled(true);
-			throw new CoreException(createErrorStatus(message));
 		}
+		
+		if (launcher == null) {
+			monitor.setCanceled(true);
+			throw new CoreException(createErrorStatus(PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName)));
+		}
+		if (!launcher.getInstallLocation().exists()) {
+			monitor.setCanceled(true);
+			throw new CoreException(createErrorStatus("The installation path to the specified JRE could not be found.  Launch aborted."));
+		}
+		
 		validatePlugins(plugins, monitor);
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);

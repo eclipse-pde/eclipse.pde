@@ -60,7 +60,6 @@ public class BasicLauncherTab
 	private Button defaultsButton;
 	private Image image;
 	private boolean workspaceChanged;
-	private boolean blockChanges;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -154,20 +153,22 @@ public class BasicLauncherTab
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
-		blockChanges=true;
-		int jreSelectionIndex = 0;
-		String vmArgs = "";
-		String progArgs = getDefaultProgramArguments();
-		String appName = "org.eclipse.ui.workbench";
-		String[] workspaceSelectionItems = new String[0];
-		boolean doClear = false;
-
-		String defaultWorkspace = getDefaultWorkspace();
-
 		try {
-			vmArgs = config.getAttribute(VMARGS, vmArgs);
-			progArgs = config.getAttribute(PROGARGS, progArgs);
-			appName = config.getAttribute(APPLICATION, appName);
+			vmArgsText.setText(config.getAttribute(VMARGS, ""));
+			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
+			applicationNameText.setText(config.getAttribute(APPLICATION, "org.eclipse.ui.workbench"));
+			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
+			
+			jreCombo.setItems(getVMInstallNames(vmInstallations));
+			String vmInstallName =
+				config.getAttribute(VMINSTALL, getDefaultVMInstallName());
+			for (int i = 0; i < vmInstallations.length; i++) {
+				if (vmInstallName.equals(vmInstallations[i].getName())) {
+					jreCombo.select(i);
+					break;
+				}
+			}
+
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
 				String curr =
@@ -178,40 +179,20 @@ public class BasicLauncherTab
 					items.add(curr);
 				}
 			}
-			workspaceSelectionItems =
-				(String[]) items.toArray(new String[items.size()]);
 
-			String vmInstallName =
-				config.getAttribute(VMINSTALL, (String) null);
-			if (vmInstallName != null) {
-				for (int i = 0; i < vmInstallations.length; i++) {
-					if (vmInstallName.equals(vmInstallations[i].getName())) {
-						jreSelectionIndex = i;
-						break;
-					}
-				}
-			}
-			doClear = config.getAttribute(DOCLEAR, doClear);
+			workspaceCombo.setItems((String[])items.toArray(new String[items.size()]));
+			if (workspaceCombo.getItemCount() > 0) 
+				workspaceCombo.select(0);
+			else
+				workspaceCombo.setText(getDefaultWorkspace());
+				
+			//validate
+			workspaceSelectionStatus = validateWorkspaceSelection();
+			jreSelectionStatus = validateJRESelection();
+			updateStatus();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		jreCombo.setItems(getVMInstallNames(vmInstallations));
-		if (jreCombo.getItemCount() > 0)
-			jreCombo.select(jreSelectionIndex);
-		vmArgsText.setText(vmArgs);
-		progArgsText.setText(progArgs);
-		applicationNameText.setText(appName);
-		workspaceCombo.setItems(workspaceSelectionItems);
-		if (workspaceSelectionItems.length > 0)
-			workspaceCombo.select(0);
-		else
-			workspaceCombo.setText(defaultWorkspace);
-		clearWorkspaceCheck.setSelection(doClear);
-		//validate
-		workspaceSelectionStatus = validateWorkspaceSelection();
-		jreSelectionStatus = validateJRESelection();
-		updateStatus();
-		blockChanges=false;
 		workspaceChanged = false;
 	}
 
@@ -226,28 +207,14 @@ public class BasicLauncherTab
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		String vmArgs = "";
-		String progArgs = getDefaultProgramArguments();
-		String appName = "org.eclipse.ui.workbench";
-		boolean tracing = false;
-
-		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		String defaultWorkspace = getDefaultWorkspace();
-		config.setAttribute(VMARGS, vmArgs);
-		config.setAttribute(PROGARGS, progArgs);
-		config.setAttribute(APPLICATION, appName);
-		config.setAttribute(TRACING, tracing);
-		config.setAttribute(VMINSTALL, getDefaultVMInstallName());
-		config.setAttribute(LOCATION + "0", defaultWorkspace);
-		config.setAttribute(DOCLEAR, false);
+		config.setAttribute(LOCATION + "0", getDefaultWorkspace());
 	}
 
 	private void doRestoreDefaults() {
-		String defaultWorkspace = getDefaultWorkspace();
 		progArgsText.setText(getDefaultProgramArguments());
 		vmArgsText.setText("");
 		applicationNameText.setText("org.eclipse.ui.workbench");
-		workspaceCombo.setText(defaultWorkspace);
+		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
 		workspaceChanged=true;
 	}
@@ -272,7 +239,7 @@ public class BasicLauncherTab
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
-					if (!blockChanges) workspaceChanged = true;
+					workspaceChanged = true;
 					updateStatus();
 				}
 			}
@@ -280,14 +247,13 @@ public class BasicLauncherTab
 		workspaceCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
-				if (!blockChanges) workspaceChanged = true;
+				workspaceChanged = true;
 				updateStatus();
 			}
 		});
 		workspaceCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				workspaceSelectionStatus = validateWorkspaceSelection();
-				if (!blockChanges)
+				workspaceSelectionStatus = validateWorkspaceSelection();				
 				workspaceChanged = true;
 				updateStatus();
 			}
@@ -311,12 +277,25 @@ public class BasicLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		IVMInstall install = getVMInstall();
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
-		config.setAttribute(
-			VMINSTALL,
-			install != null ? install.getName() : null);
+		try {
+			IVMInstall vmInstall = getVMInstall();
+			if (vmInstall != null) {
+				if (config.getAttribute(VMINSTALL, (String) null) != null) {
+					config.setAttribute(VMINSTALL, vmInstall.getName());
+				} else {
+					config.setAttribute(
+						VMINSTALL,
+						vmInstall.getName().equals(
+							getDefaultVMInstallName())
+							? null
+							: vmInstall.getName());
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 
