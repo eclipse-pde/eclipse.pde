@@ -108,7 +108,6 @@ public class ClasspathUtilCore {
 			addImplicitDependencies(
 				model.getPluginBase().getId(),
 				relative,
-				model.isBundleModel(),
 				result,
 				alreadyAdded);
 			if (monitor != null)
@@ -250,22 +249,20 @@ public class ClasspathUtilCore {
 	protected static void addImplicitDependencies(
 		String id,
 		boolean relative,
-		boolean bundle,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-		if (id.equals("org.eclipse.core.boot")
+		if (isOSGiRuntime() 
+		|| id.equals("org.eclipse.core.boot")
 		|| id.equals("org.apache.xerces")
 		|| id.startsWith("org.eclipse.swt"))
 			return;
 		
-		if (!isOSGiRuntime()) {
-			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
-			if (plugin != null)
-				addDependency(plugin, false, relative, result, alreadyAdded);
-		}
-		if (!id.equals("org.eclipse.core.runtime") && !bundle) {
-			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
+		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
+		if (plugin != null)
+			addDependency(plugin, false, relative, result, alreadyAdded);
+		if (!id.equals("org.eclipse.core.runtime")) {
+			plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
 			if (plugin != null)
 				addDependency(plugin, false, relative, result, alreadyAdded);
 		}

@@ -71,7 +71,6 @@ public class ClasspathUtil extends ClasspathUtilCore {
 		IProject project,
 		IPluginStructureData data,
 		IClasspathEntry[] libraries,
-		boolean bundle,
 		IProgressMonitor monitor)
 		throws JavaModelException, CoreException {
 
@@ -89,7 +88,7 @@ public class ClasspathUtil extends ClasspathUtilCore {
 			result.add(libraries[i]);
 		}
 		// add implicit libraries
-		addImplicitDependencies(data.getPluginId(),true, bundle, result, new HashSet());
+		addImplicitDependencies(data.getPluginId(),true, result, new HashSet());
 		// JRE the last
 		addJRE(result);
 		

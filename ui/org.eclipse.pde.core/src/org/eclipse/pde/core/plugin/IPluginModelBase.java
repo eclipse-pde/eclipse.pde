@@ -128,5 +128,4 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	
 	IPluginModelFactory getPluginFactory();
 	URL getNLLookupLocation();
-	boolean isBundleModel();
 }
