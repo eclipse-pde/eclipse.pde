@@ -35,7 +35,6 @@ public abstract class BaseExportWizard
 	private IStructuredSelection fSelection;
 	protected BaseExportWizardPage fPage1;
 	protected AdvancedPluginExportPage fPage2;
-	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -69,12 +68,15 @@ public abstract class BaseExportWizard
 	}
 
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
-		IDialogSettings settings = master.getSection(STORE_SECTION);
+		String name = getSettingsSectionName();
+		IDialogSettings settings = master.getSection(name);
 		if (settings == null) {
-			settings = master.addNewSection(STORE_SECTION);
+			settings = master.addNewSection(name);
 		}
 		return settings;
 	}
+	
+	protected abstract String getSettingsSectionName();
 
 	/**
 	 * @see Wizard#init

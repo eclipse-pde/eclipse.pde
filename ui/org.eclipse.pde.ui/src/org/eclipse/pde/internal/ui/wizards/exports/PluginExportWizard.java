@@ -18,6 +18,7 @@ import org.eclipse.ui.progress.*;
 
 public class PluginExportWizard extends BaseExportWizard {
 	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle"; //$NON-NLS-1$
+	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -29,6 +30,10 @@ public class PluginExportWizard extends BaseExportWizard {
 
 	protected BaseExportWizardPage createPage1() {
 		return new PluginExportWizardPage(getSelection());
+	}
+	
+	protected String getSettingsSectionName() {
+		return STORE_SECTION;
 	}
 	
 	protected void scheduleExportJob() {
