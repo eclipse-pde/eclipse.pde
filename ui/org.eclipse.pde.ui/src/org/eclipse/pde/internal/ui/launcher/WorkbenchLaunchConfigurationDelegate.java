@@ -142,18 +142,29 @@ public class WorkbenchLaunchConfigurationDelegate
 				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault));
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
-		if (configuration.getAttribute(SHOW_SPLASH, true)) {
-			programArgs.add("-showsplash");
-			programArgs.add(computeShowsplashArgument());
-		}
 		if (configuration.getAttribute(TRACING, false)) {
 			programArgs.add("-debug");
 			programArgs.add(getTracingFileArgument(configuration));
 		}
+
 		StringTokenizer tokenizer =
 			new StringTokenizer(configuration.getAttribute(PROGARGS, ""));
 		while (tokenizer.hasMoreTokens()) {
 			programArgs.add(tokenizer.nextToken());
+		}
+		
+		if (configuration.getAttribute(SHOW_SPLASH, true)) {
+			boolean showSplash = true;
+			int index = programArgs.indexOf("-application");
+			if (index != -1 && index <= programArgs.size() - 2) {
+				if (!programArgs.get(index + 1).equals("org.eclipse.ui.workbench")) {
+					showSplash = false;
+				}
+			}
+			if (showSplash) {
+				programArgs.add("-showsplash");
+				programArgs.add(computeShowsplashArgument());
+			}
 		}
 		
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
