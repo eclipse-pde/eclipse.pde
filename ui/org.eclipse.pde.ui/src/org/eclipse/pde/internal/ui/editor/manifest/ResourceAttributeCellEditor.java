@@ -27,6 +27,13 @@ public class ResourceAttributeCellEditor extends DialogCellEditor {
 				if (children[i] instanceof IFolder) {
 					return true;
 				}
+				if (children[i] instanceof IFile) {
+					String extension = ((IFile) children[i]).getFileExtension();
+					if (extension == null)
+						continue;
+					if (extension.equals("bmp") || extension.equals("gif") || extension.equals("ico") || extension.equals("jpeg") || extension.equals("png"))
+						return true;
+				}
 			}
 			return false;
 		}
