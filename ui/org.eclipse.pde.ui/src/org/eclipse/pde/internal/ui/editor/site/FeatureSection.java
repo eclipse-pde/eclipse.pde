@@ -243,9 +243,19 @@ public class FeatureSection extends TableSection {
 		sfeature.setWS(refFeature.getWS());
 		sfeature.setArch(refFeature.getArch());
 		sfeature.setNL(refFeature.getNL());
+		sfeature.setIsPatch(isFeaturePatch(refFeature));
 		return sfeature;
 	}
 	
+
+	private static boolean isFeaturePatch(IFeature feature) {
+		IFeatureImport[] imports = feature.getImports();
+		for (int i = 0; i<imports.length; i++){
+			if (imports[i].isPatch())
+				return true;
+		}
+		return false;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
