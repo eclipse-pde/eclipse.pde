@@ -49,7 +49,9 @@ public class PDEMultiSelectionProvider
 	}
 
 	public ISelection getSelection() {
-		if (sourcePage != null && sourcePage.isVisible())
+		if (sourcePage != null
+			&& sourcePage.isVisible()
+			&& sourcePage.getSelectionProvider() != null)
 			return sourcePage.getSelectionProvider().getSelection();
 		else
 			return selection;
