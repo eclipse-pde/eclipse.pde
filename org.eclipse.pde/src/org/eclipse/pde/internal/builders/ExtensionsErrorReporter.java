@@ -15,8 +15,11 @@ import org.xml.sax.*;
 
 public class ExtensionsErrorReporter extends XMLErrorReporter {
 	
+	IPluginModelBase fModel;
+	
 	public ExtensionsErrorReporter(IFile file) {
 		super(file);
+		fModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModel(file.getProject());
 	}
 	
 	/* (non-Javadoc)
@@ -110,22 +113,23 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			}
 			
 		}	
-		boolean executable = false;
 		if (schemaElement == null && parentSchema != null) {
 			ISchemaAttribute attr = parentSchema.getAttribute(elementName);
-			executable = (attr != null && attr.getKind() == ISchemaAttribute.JAVA);
-		}
-		
-		if (executable) {
-			validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
-			return;
-		} 		
-		validateRequiredExtensionAttributes(element, schemaElement);
-		validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
-		
-		NodeList children = element.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			validateElement((Element)children.item(i), schema);
+			if (attr != null && attr.getKind() == ISchemaAttribute.JAVA) {
+				if (attr.isDeprecated())
+					reportDeprecatedAttribute(element, element.getAttributeNode("class"));
+				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$				
+			}
+		} else {		
+			validateRequiredExtensionAttributes(element, schemaElement);
+			validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
+			
+			if (schemaElement.isDeprecated())
+				reportDeprecatedElement(element);
+			NodeList children = element.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				validateElement((Element)children.item(i), schema);
+			}
 		}
 	}
 	
@@ -211,11 +215,6 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateExtensionAttribute(Element element, Attr attr, ISchemaAttribute attInfo) {
-		if (attInfo.isTranslatable()) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", attr.getName()), //$NON-NLS-1$
-					getLine(element, attr.getName()), CompilerFlags.WARNING);
-		}
-		
 		ISchemaSimpleType type = attInfo.getType();
 		ISchemaRestriction restriction = type.getRestriction();
 		if (restriction != null) {
@@ -233,6 +232,10 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		
 		if (attInfo.isTranslatable()) {
 			validateTranslatableString(element, attr);
+		}
+		
+		if (attInfo.isDeprecated()) {
+			reportDeprecatedAttribute(element, attr);
 		}
 	}
 
@@ -276,7 +279,12 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		String value = attr.getValue();
 		if (!value.startsWith("%")) { //$NON-NLS-1$
 			report(PDE.getFormattedMessage("Builders.Manifest.non-ext-attribute", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
-		}	
+		} else if (fModel != null && fModel instanceof AbstractModel) {
+			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+			if (helper == null || !helper.resourceExists(value)) {
+				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity);
+			}
+		}
 	}
 
 	protected void validateResourceAttribute(Element element, Attr attr) {
@@ -428,13 +436,29 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 				attName);
 		report(message, getLine(element, attName), severity);
 	}
-
+	
 	protected void reportUnusedElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 			report(PDE.getFormattedMessage(
 					"Builders.Manifest.unused-element", new String[] { //$NON-NLS-1$
 					element.getNodeName(), parent.getNodeName() }),
 					getLine(element), severity);
+	}
+	
+	protected void reportDeprecatedAttribute(Element element, Attr attr) {
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
+		if (severity != CompilerFlags.IGNORE) {
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute",
+					attr.getName()), getLine(element, attr.getName()), severity);
+		}	
+	}
+
+	protected void reportDeprecatedElement(Element element) {
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
+		if (severity != CompilerFlags.IGNORE) {
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-element",
+					element.getNodeName()), getLine(element), severity);
+		}	
 	}
 
 }

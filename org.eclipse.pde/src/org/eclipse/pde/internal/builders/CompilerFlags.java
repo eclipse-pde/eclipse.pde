@@ -57,6 +57,8 @@ public class CompilerFlags {
 		"compilers.p.no-required-att"; //$NON-NLS-1$
 	public static final String P_NOT_EXTERNALIZED = 
 		"compilers.p.not-externalized-att"; //$NON-NLS-1$
+	public static final String P_DEPRECATED = 
+		"compilers.p.deprecated";
 	public static final String P_NOT_USED = 
 		"compilers.p.unused-element-or-attribute"; //$NON-NLS-1$
 
@@ -80,7 +82,9 @@ public class CompilerFlags {
 				P_UNKNOWN_ATTRIBUTE,
 				P_ILLEGAL_ATT_VALUE,
 				P_UNKNOWN_CLASS,
-				P_UNKNOWN_RESOURCE,			
+				P_UNKNOWN_RESOURCE,
+				P_NOT_EXTERNALIZED,
+				P_DEPRECATED,
 				P_NOT_USED},
 			{
 			S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS, S_FORBIDDEN_END_TAGS, S_OPTIONAL_END_TAGS}, {
@@ -256,6 +260,7 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NOT_EXTERNALIZED, IGNORE);
+		pref.setDefault(P_DEPRECATED, WARNING);
 		pref.setDefault(P_NOT_USED, WARNING);
 
 		pref.setDefault(S_CREATE_DOCS, false);
