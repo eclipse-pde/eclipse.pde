@@ -24,10 +24,10 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 	 */
 	public void generateContents(String packageName, String className,
 			PrintWriter writer) {
-		if (fPluginData.hasBundleStructure()) {
-			generatePluginClass(packageName, className, writer);
-		} else {
+		if (fPluginData.isLegacy()) {
 			generateLegacyPluginClass(packageName, className, writer);
+		} else {
+			generatePluginClass(packageName, className, writer);
 		}
 	}
 	
@@ -191,10 +191,8 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 		ArrayList result = new ArrayList();
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0));
-		if (fPluginData.hasBundleStructure())
+		if (!fPluginData.isLegacy())
 			result.add(new PluginReference("org.eclipse.core.runtime", null, 0));
-		else if (!fPluginData.isLegacy())
-			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 	
