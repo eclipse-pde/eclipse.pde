@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
@@ -106,7 +107,27 @@ public abstract class BuildContentsSection extends TableSection
 			return false;
 		}
 	}
-
+	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
+		MenuManager popupMenuManager = new MenuManager();
+		IMenuListener listener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mng) {
+				fillContextMenu(mng);
+			}
+		};
+		popupMenuManager.addMenuListener(listener);
+		popupMenuManager.setRemoveAllWhenShown(true);
+		Control control = fTreeViewer.getControl();
+		Menu menu = popupMenuManager.createContextMenu(control);
+		control.setMenu(menu);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void fillContextMenu(IMenuManager manager) {
+		manager.add(getPage().getPDEEditor().getContributor().getRevertAction());
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
+				manager, false);
+	}
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 				.findContext(BuildInputContext.CONTEXT_ID);
@@ -156,6 +177,7 @@ public abstract class BuildContentsSection extends TableSection
 		initialize();
 		initializeCheckState();
 		toolkit.paintBordersFor(container);
+		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
 		section.setClient(container);
 	}
 
