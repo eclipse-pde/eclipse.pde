@@ -365,6 +365,17 @@ public class GeneralInfoSection extends PDESection {
 		}
 		super.commit(onSave);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+			return;
+		}
+		refresh();
+	}
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getContextManager().getAggregateModel();
