@@ -102,8 +102,8 @@ public class SWTLaunchConfiguration extends
 		String location = getNativeLibrariesLocation(fragment);
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		for (int i = vmArgs.length - 1; i >= 0; i--) {
-			if (vmArgs[i].startsWith("-Djava.library.path")) {
-				vmArgs[i] += ";\"" + location + "\"";
+			if (vmArgs[i].startsWith("-Djava.library.path")) { //$NON-NLS-1$
+				vmArgs[i] += ";\"" + location + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 				return vmArgs;
 			}
 		}
