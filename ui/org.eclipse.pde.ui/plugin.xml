@@ -1220,5 +1220,12 @@
             library="pdeuiant.jar">
       </extraClasspathEntry>
    </extension>
+   <extension
+         point="org.eclipse.jdt.launching.classpathProviders">
+       <classpathProvider
+       		id="org.eclipse.pde.ui.workbenchClasspathProvider"
+       		class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider">
+       </classpathProvider>
+   </extension>
 
 </plugin>

@@ -89,7 +89,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 		if (duplicates.size() > 0) {
 			if (!continueRunning()) {
-				launch.terminate();
+				monitor.setCanceled(true);
 				return;
 			}
 		}
@@ -128,7 +128,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			final MultiStatus status = validatePlugins(plugins, monitor);
 			if (status != null) {
 				if (!ignoreValidationErrors(status)) {
-					launch.terminate();
+					monitor.setCanceled(true);
 					return;
 				}
 			}
@@ -195,7 +195,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 	}
 
-	private ArrayList getWorkspacePluginsToRun(
+	protected static ArrayList getWorkspacePluginsToRun(
 		ILaunchConfiguration config,
 		boolean useDefault)
 		throws CoreException {
