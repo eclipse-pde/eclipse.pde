@@ -34,6 +34,7 @@
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
+   <extension-point id="source" name="%expoint.source.name"/>
 
 <!-- Extensions -->
    <extension
@@ -69,6 +70,12 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
             id="org.eclipse.pde.ui.BuildpathPreferencePage">
+      </page>
+      <page
+            name="%preferences.source.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.SourcePreferencePage"
+            id="org.eclipse.pde.ui.SourcePreferencePage">
       </page>
    </extension>
    <extension
@@ -818,6 +825,11 @@
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
             id="org.eclipse.pde.ui.templates.help">
       </template>
+   </extension>
+   
+   <extension point="org.eclipse.pde.ui.source">
+      <location path="xxx/src"/>
+      <location path="yyy/src"/>
    </extension>
 
 </plugin>
