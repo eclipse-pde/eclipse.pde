@@ -86,15 +86,15 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	}
 	
 	private InsertEdit insertAfterSibling(IDocumentNode node) {
+		IDocumentNode sibling = node.getPreviousSibling();
 		for (;;) {
-			IDocumentNode sibling = node.getPreviousSibling();
 			if (sibling == null)
 				break;
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				return new InsertEdit(sibling.getOffset() + sibling.getLength(), System.getProperty("line.separator") + node.write(true));
 			}
-			node = sibling;
+			sibling = sibling.getPreviousSibling();
 		}
 		return null;
 	}
