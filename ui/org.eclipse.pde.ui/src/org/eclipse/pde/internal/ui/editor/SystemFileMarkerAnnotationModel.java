@@ -102,7 +102,7 @@ public class SystemFileMarkerAnnotationModel
 					IPDEUIConstants.MARKER_SYSTEM_FILE_PATH);
 			if (path == null)
 				return false;
-			return path.equals(file.getPath());
+			return new Path(path).equals(new Path(file.getPath()));
 		} catch (CoreException e) {
 			return false;
 		}
@@ -173,7 +173,7 @@ public class SystemFileMarkerAnnotationModel
 		for (int i=0; i<markers.length; i++) {
 			IMarker marker = markers[i];
 			String path = (String)marker.getAttribute(IPDEUIConstants.MARKER_SYSTEM_FILE_PATH);
-			if (path!=null && path.equals(file.getPath()))
+			if (path!=null && new Path(path).equals(new Path(file.getPath())))
 				result.add(marker);
 		}
 		return (IMarker[])result.toArray(new IMarker[result.size()]);
