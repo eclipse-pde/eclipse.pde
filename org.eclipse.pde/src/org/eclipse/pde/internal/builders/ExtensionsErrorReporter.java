@@ -278,9 +278,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
 				}
 			}
-		} else if (value.startsWith("%") && !value.startsWith("%%")) { //$NON-NLS-1$ //$NON-NLS-2$
-			report(PDE.getFormattedMessage("Builders.Manifest.dont-translate-att", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
-		}
+		} 
 	}
 	
 	protected void validateTranslatableElementContent(Element element) {
