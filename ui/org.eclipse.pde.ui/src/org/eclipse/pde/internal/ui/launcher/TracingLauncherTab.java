@@ -111,7 +111,7 @@ public class TracingLauncherTab
 		tracingCheck.setLayoutData(gd);
 		tracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tracingCheckChanged();
+				masterCheckChanged(true);
 			}
 		});
 
@@ -323,11 +323,11 @@ public class TracingLauncherTab
 		pluginTreeViewer.reveal(workspacePlugins);
 	}
 
-	private void tracingCheckChanged() {
+	private void masterCheckChanged(boolean userChange) {
 		boolean enabled = tracingCheck.getSelection();
 		pluginTreeViewer.getTree().setEnabled(enabled);
 		propertySheet.getControl().setEnabled(enabled);
-		setChanged(true);
+		setChanged(userChange);
 	}
 
 	private void selectPlugin(String pluginId) {
@@ -366,7 +366,7 @@ public class TracingLauncherTab
 			boolean tracing = false;
 			tracing = config.getAttribute(TRACING, tracing);
 			tracingCheck.setSelection(tracing);
-			tracingCheckChanged();
+			masterCheckChanged(false);
 
 			Map options = config.getAttribute(TRACING_OPTIONS, (Map) null);
 			if (options != null)

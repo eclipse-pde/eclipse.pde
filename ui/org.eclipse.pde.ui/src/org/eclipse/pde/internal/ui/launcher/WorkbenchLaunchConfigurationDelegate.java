@@ -205,7 +205,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		ILaunchConfiguration config,
 		String mode,
 		IVMRunner runner,
-		IPath targetWorkbenchLocation,
+		IPath targetWorkspace,
 		boolean clearWorkspace,
 		ExecutionArguments args,
 		IPluginModelBase[] plugins,
@@ -220,7 +220,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 2);
 		try {
 			File propertiesFile =
-				TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
+				TargetPlatform.createPropertiesFile(plugins, targetWorkspace);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -231,7 +231,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			fullProgArgs[2] = "-dev";
 			fullProgArgs[3] = "bin";
 			fullProgArgs[4] = "-data";
-			fullProgArgs[5] = targetWorkbenchLocation.toOSString();
+			fullProgArgs[5] = targetWorkspace.toOSString();
 			if (tracing) {
 				fullProgArgs[6] = "-debug";
 				fullProgArgs[7] = getTracingFileArgument(config);
@@ -249,11 +249,12 @@ public class WorkbenchLaunchConfigurationDelegate
 				new VMRunnerConfiguration("EclipseRuntimeLauncher", classpath);
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
-
-			if (clearWorkspace && targetWorkbenchLocation.toFile().exists()) {
-				if (confirmDeleteWorkspace()) {
+			
+			File workspaceFile = targetWorkspace.toFile();
+			if (clearWorkspace && workspaceFile.exists()) {
+				if (confirmDeleteWorkspace(workspaceFile)) {
 				try {
-					deleteContent(targetWorkbenchLocation.toFile());
+					deleteContent(workspaceFile);
 				} catch (IOException e) {
 					String message = PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING);
 					showWarningDialog(message);
@@ -325,13 +326,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			null);
 	}
 	
-	private boolean  confirmDeleteWorkspace() {
+	private boolean  confirmDeleteWorkspace(final File workspaceFile) {
 		Display display = getDisplay();
 		final boolean [] result = new boolean[1];
 		display.syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				String message = PDEPlugin.getResourceString(KEY_DELETE_WORKSPACE);
+				String message = PDEPlugin.getFormattedMessage(KEY_DELETE_WORKSPACE, workspaceFile.getPath());
 				result[0] = MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), title,message);
 			}
 		});

@@ -59,6 +59,8 @@ public class BasicLauncherTab
 	private Text applicationNameText;
 	private Button defaultsButton;
 	private Image image;
+	private boolean workspaceChanged;
+	private boolean blockChanges;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -152,6 +154,7 @@ public class BasicLauncherTab
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
+		blockChanges=true;
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
 		String progArgs = getDefaultProgramArguments();
@@ -208,6 +211,8 @@ public class BasicLauncherTab
 		workspaceSelectionStatus = validateWorkspaceSelection();
 		jreSelectionStatus = validateJRESelection();
 		updateStatus();
+		blockChanges=false;
+		workspaceChanged = false;
 	}
 
 	static String getDefaultWorkspace() {
@@ -244,6 +249,7 @@ public class BasicLauncherTab
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
+		workspaceChanged=true;
 	}
 
 	static String getDefaultVMInstallName() {
@@ -266,6 +272,7 @@ public class BasicLauncherTab
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
+					if (!blockChanges) workspaceChanged = true;
 					updateStatus();
 				}
 			}
@@ -273,12 +280,15 @@ public class BasicLauncherTab
 		workspaceCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
+				if (!blockChanges) workspaceChanged = true;
 				updateStatus();
 			}
 		});
 		workspaceCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
+				if (!blockChanges)
+				workspaceChanged = true;
 				updateStatus();
 			}
 		});
@@ -310,14 +320,17 @@ public class BasicLauncherTab
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 
-		config.setAttribute(
-			LOCATION + String.valueOf(0),
-			workspaceCombo.getText());
-		String[] items = workspaceCombo.getItems();
-		int nEntries = Math.min(items.length, 5);
-		for (int i = 0; i < nEntries; i++) {
-			config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
+		if (workspaceChanged) {
+			config.setAttribute(
+				LOCATION + String.valueOf(0),
+				workspaceCombo.getText());
+			String[] items = workspaceCombo.getItems();
+			int nEntries = Math.min(items.length, 5);
+			for (int i = 0; i < nEntries; i++) {
+				config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
+			}
 		}
+		workspaceChanged = false;
 	}
 
 	/**
