@@ -9,20 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.manifest;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.ide.*;
-import org.eclipse.ui.wizards.newresource.*;
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.manifest.JavaAttributeValue;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class JavaAttributeWizard extends Wizard {
 	private String className, classArgs;
 	private IProject project;
@@ -69,25 +78,33 @@ public class JavaAttributeWizard extends Wizard {
 		else
 			className = mainPage.getTypeName();
 		classArgs = mainPage.getClassArgs();
-		try {
-			mainPage.createType(null);
-			IResource resource = mainPage.getModifiedResource();
-			if (resource != null) {
-				selectAndReveal(resource);
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					IJavaProject jProject = JavaCore.create(project);
-					IJavaElement jElement = jProject.findElement(resource
-							.getProjectRelativePath().removeFirstSegments(1));
-					if (jElement != null)
-						JavaUI.openInEditor(jElement);
-				} else if (resource instanceof IFile) {
-					IWorkbenchPage page = PDEPlugin.getActivePage();
-					IDE.openEditor(page, (IFile) resource, true);
+		IRunnableWithProgress op = new WorkspaceModifyOperation(){
+			protected void execute(IProgressMonitor monitor)
+			throws CoreException, InvocationTargetException,
+			InterruptedException {
+				mainPage.createType(monitor);
+				IResource resource = mainPage.getModifiedResource();
+				if (resource != null) {
+					selectAndReveal(resource);
+					if (project.hasNature(JavaCore.NATURE_ID)) {
+						IJavaProject jProject = JavaCore.create(project);
+						IJavaElement jElement = jProject.findElement(resource
+								.getProjectRelativePath().removeFirstSegments(1));
+						if (jElement != null)
+							JavaUI.openInEditor(jElement);
+					} else if (resource instanceof IFile) {
+						IWorkbenchPage page = PDEPlugin.getActivePage();
+						IDE.openEditor(page, (IFile) resource, true);
+					}
 				}
 			}
-		} catch (CoreException e) {
+			
+		};
+		try{
+		getContainer().run(false, true, op);
+		} catch (InvocationTargetException e){
 			PDEPlugin.logException(e);
-		} catch (InterruptedException e) {
+		} catch (InterruptedException e){
 			PDEPlugin.logException(e);
 		}
 		return true;
