@@ -41,15 +41,15 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 		section.setDescription(PDEPlugin.getResourceString("Product.ExportSection.desc")); //$NON-NLS-1$
 		
 		Composite comp = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.marginLeft = layout.marginRight = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = 3;
 		comp.setLayout(layout);
 		
 		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 3;
 		text.setLayoutData(gd);
 		text.addHyperlinkListener(this);
 				
@@ -74,12 +74,12 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 			}
 		});
 		fArchiveEntry.setEditable(isEditable());
-		fArchiveEntry.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fArchiveEntry.getText().setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		fIncludeSource = toolkit.createButton(comp, PDEPlugin.getResourceString("Product.ExportSection.includeSource"), SWT.CHECK); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalIndent = 25;
-		gd.horizontalSpan = 3;
+		gd = new TableWrapData();
+		gd.indent = 25;
+		gd.colspan = 3;
 		fIncludeSource.setLayoutData(gd);
 		fIncludeSource.setEnabled(isEditable());
 		fIncludeSource.addSelectionListener(new SelectionAdapter() {
@@ -90,8 +90,8 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 		
 		text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		gd = new TableWrapData(TableWrapData.FILL);
+		gd.colspan = 3;
 		text.setLayoutData(gd);
 		text.addHyperlinkListener(this);
 		
