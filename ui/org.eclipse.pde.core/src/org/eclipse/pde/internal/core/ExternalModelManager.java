@@ -489,6 +489,12 @@ public class ExternalModelManager {
 				String id = model.getPlugin().getId();
 				model.setEnabled(isChecked(id, savedList));
 			}
+			IFragmentModel [] fmodels = getFragmentModels(null);
+			for (int i=0; i<fmodels.length; i++) {
+				IFragmentModel model = fmodels[i];
+				String id = model.getFragment().getId();
+				model.setEnabled(isChecked(id, savedList));
+			}
 		}
 	}
 	private void initializeDefault(boolean enabled) {
@@ -496,6 +502,11 @@ public class ExternalModelManager {
 		for (int i = 0; i < models.length; i++) {
 			IPluginModel model = models[i];
 			model.setEnabled(enabled);
+		}
+		IFragmentModel[] fmodels = getFragmentModels(null);
+		for (int i = 0; i < fmodels.length; i++) {
+			IFragmentModel fmodel = fmodels[i];
+			fmodel.setEnabled(enabled);
 		}
 	}
 	private boolean isChecked(String name, Vector list) {
