@@ -38,6 +38,8 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 		}
 		if (fPluginData.isUIPlugin())
 			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
+		else
+			writer.println("import org.eclipse.core.runtime.Plugin;");
 		writer.println("import org.osgi.framework.BundleContext;"); //$NON-NLS-1$
 		writer.println("import java.util.*;"); //$NON-NLS-1$
 		writer.println();
