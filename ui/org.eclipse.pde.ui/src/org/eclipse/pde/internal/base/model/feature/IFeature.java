@@ -59,6 +59,14 @@ public static final String [] INFO_TAGS = { "description", "copyright", "license
  * @param reference a plug-in reference to add
  */
 public void addPlugins(IFeaturePlugin [] plugins) throws CoreException;
+/**
+ * Adds a data reference to this feature.
+ * This method may throw a CoreException if
+ * the model is not editable.
+ *
+ * @param entries a data entries to add
+ */
+public void addData(IFeatureData [] entries) throws CoreException;
 
 /**
  * Adds a required plug-in reference to this feature.
@@ -74,6 +82,12 @@ public void addImport(IFeatureImport iimport) throws CoreException;
  * @return an array of plug-in references in this feature
  */
 public IFeaturePlugin [] getPlugins();
+/**
+ * Returns references to data in this feature
+ *
+ * @return an array of data references in this feature
+ */
+public IFeatureData [] getData();
 
 /**
  * Returns references to required plug-ins in this feature
@@ -113,6 +127,14 @@ public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
  * @param plugin a plug-in reference to remove 
  */
 public void removePlugins(IFeaturePlugin [] plugins) throws CoreException;
+/**
+ * Removes a data reference from this feature. This
+ * method may throw a CoreException if the model
+ * is not editable.
+ *
+ * @param entries data entries to remove 
+ */
+public void removeData(IFeatureData [] entries) throws CoreException;
 /**
  * Removes a required plug-in reference from this feature.
  * This method may throw a CoreException if

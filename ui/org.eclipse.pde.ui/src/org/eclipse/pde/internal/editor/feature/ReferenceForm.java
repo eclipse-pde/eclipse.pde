@@ -17,13 +17,13 @@ public class ReferenceForm extends ScrollableSectionForm {
 	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
 	private FeatureReferencePage page;
 	private PluginSection pluginSection;
+	private DataSection dataSection;
 	private RequiresSection requiresSection;
 	private MatchSection matchSection;
 
 public ReferenceForm(FeatureReferencePage page) {
 	this.page = page;
-	setScrollable(false);
-	//setVerticalFit(true);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
@@ -35,20 +35,38 @@ protected void createFormClient(Composite parent) {
 	layout.horizontalSpacing=15;
 	layout.verticalSpacing=15;
 	GridData gd;
+	
+	Composite left = factory.createComposite(parent);
+	layout = new GridLayout();
+	layout.marginWidth = layout.marginHeight = 0;
+	left.setLayout(layout);
+	gd = new GridData(GridData.FILL_BOTH);
+	left.setLayoutData(gd);
+	
+	Composite right = factory.createComposite(parent);
+	layout = new GridLayout();
+	layout.marginWidth = layout.marginHeight = 0;
+	right.setLayout(layout);
+	gd = new GridData(GridData.FILL_BOTH);
+	right.setLayoutData(gd);
 
 	pluginSection = new PluginSection(page);
-	Control control = pluginSection.createControl(parent, factory);
-	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-	gd.verticalSpan = 2;
+	Control control = pluginSection.createControl(left, factory);
+	gd = new GridData(GridData.FILL_BOTH);
+	control.setLayoutData(gd);
+	
+	dataSection = new DataSection(page);
+	control = dataSection.createControl(left, factory);
+	gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 	
 	requiresSection = new RequiresSection(page);
-	control = requiresSection.createControl(parent, factory);
+	control = requiresSection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);	
 
 	matchSection = new MatchSection(page, false);
-	control = matchSection.createControl(parent, factory);
+	control = matchSection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
 
@@ -56,6 +74,7 @@ protected void createFormClient(Composite parent) {
 	manager.linkSections(requiresSection, matchSection);
 
 	registerSection(pluginSection);
+	registerSection(dataSection);
 	registerSection(requiresSection);
 	registerSection(matchSection);
 }
@@ -65,6 +84,8 @@ public void expandTo(Object object) {
 		pluginSection.expandTo(object);
 	if (object instanceof IFeatureImport)
 		requiresSection.expandTo(object);
+	if (object instanceof IFeatureData)
+		dataSection.expandTo(object);
 }
 
 public void initialize(Object modelObject) {

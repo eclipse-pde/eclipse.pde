@@ -11,6 +11,7 @@ import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.pde.internal.base.model.feature.IFeatureData;
 
 public class OpenReferenceAction extends SelectionProviderAction {
 	public static final String LABEL = "Actions.open.label";
@@ -21,10 +22,19 @@ public OpenReferenceAction(ISelectionProvider provider) {
 public void run() {
 	IStructuredSelection sel = (IStructuredSelection) getSelection();
 	Object obj = sel.getFirstElement();
+	IFile file = null;
 	if (obj instanceof PluginReference) {
 		PluginReference reference = (PluginReference) obj;
 		IPluginModelBase modelBase = reference.getModel();
-		IFile file = (IFile) modelBase.getUnderlyingResource();
+		file = (IFile) modelBase.getUnderlyingResource();
+	}
+	else if (obj instanceof IFeatureData) {
+		IFeatureData data = (IFeatureData)obj;
+		String id = data.getId();
+		IFolder folder = (IFolder)data.getModel().getUnderlyingResource().getParent();
+		file = folder.getFile(id);
+	}
+	if (file!=null && file.exists()) {
 		IWorkbenchPage page = PDEPlugin.getDefault().getActivePage();
 		try {
 			page.openEditor(file);

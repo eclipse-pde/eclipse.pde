@@ -21,6 +21,7 @@ import org.eclipse.pde.model.build.IBuildEntry;
 import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @version 	1.0
@@ -184,6 +185,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof IFeaturePlugin) {
 			return getObjectImage((IFeaturePlugin) obj);
 		}
+		if (obj instanceof IFeatureData) {
+			return getObjectImage((IFeatureData) obj);
+		}
 		if (obj instanceof IFeatureImport) {
 			return getObjectImage((IFeatureImport) obj);
 		}
@@ -321,6 +325,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 		else
 			return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+	}
+
+	private Image getObjectImage(IFeatureData data) {
+		int flags = 0;
+		if (!data.exists())
+			flags = F_ERROR;
+		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(data.getId());
+		return get(desc, flags);
 	}
 
 	private Image getObjectImage(IFeatureImport obj) {

@@ -118,9 +118,10 @@ public class PluginSection
 		manager.add(newAction);
 		manager.add(deleteAction);
 		// add delete
+
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
 	private void handleNew() {

@@ -22,8 +22,7 @@ public class InfoForm extends ScrollableSectionForm {
 
 public InfoForm(InfoFormPage page) {
 	this.page = page;
-	setScrollable(false);
-	//setVerticalFit(true);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();

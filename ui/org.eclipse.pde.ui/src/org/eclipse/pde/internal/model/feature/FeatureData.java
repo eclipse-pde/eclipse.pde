@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.core.resources.IResource;
 
 public class FeatureData
 	extends IdentifiableObject
@@ -32,6 +33,14 @@ public class FeatureData
 		arch = null;
 		downloadSize = 0;
 		installSize = 0;
+	}
+	
+	public boolean exists() {
+		String location = getModel().getInstallLocation();
+		if (location.startsWith("file:"))
+		   location = location.substring(5);
+		File file = new File(location + File.separator+getId());
+		return file.exists();
 	}
 
 	protected void parse(Node node) {
