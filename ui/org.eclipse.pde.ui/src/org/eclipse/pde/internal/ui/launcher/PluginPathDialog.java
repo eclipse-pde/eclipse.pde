@@ -62,7 +62,7 @@ public class PluginPathDialog extends Dialog {
 		
 		final Label label = new Label(container, SWT.WRAP);
 		label.setText(
-		"Based on selections in the launcher, the following plug-ins and/or fragments will be passed to the run-time workbench instance:");
+		PDEPlugin.getResourceString("PluginPathDialog.desc")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		Point lsize = label.computeSize(container.getSize().x, SWT.DEFAULT, true);
 		gd.heightHint = lsize.y;

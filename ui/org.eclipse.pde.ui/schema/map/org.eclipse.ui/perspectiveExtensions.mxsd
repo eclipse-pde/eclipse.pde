@@ -159,6 +159,8 @@ is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
                   </enumeration>
                   <enumeration value="bottom">
                   </enumeration>
+                  <enumeration value="fast">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
