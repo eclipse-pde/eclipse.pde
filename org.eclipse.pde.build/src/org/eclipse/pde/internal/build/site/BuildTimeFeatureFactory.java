@@ -57,7 +57,9 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			throw e;
 		} catch (Exception e) {
 			String message = Policy.bind("exception.readingFile", url.toString()); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+			Status status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
+			BundleHelper.getDefault().getLog().log(status);	//Logging here because the caller consumes CoreExceptions.
+			throw new CoreException(status);
 		} finally {
 			try {
 				if (featureStream != null)
