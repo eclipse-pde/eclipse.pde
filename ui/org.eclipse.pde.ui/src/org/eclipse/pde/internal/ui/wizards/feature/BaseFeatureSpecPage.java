@@ -428,9 +428,9 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	}
 	
 	protected String getInstallHandlerLibrary() {
-		String library = libraryText.getText();
-		if (library == null || library.length() == 0)
+		if (!customChoice.getSelection())
 			return null;
+		String library = libraryText.getText();
 		if (!library.endsWith(".jar")) //$NON-NLS-1$
 			library += ".jar"; //$NON-NLS-1$
 		return library;

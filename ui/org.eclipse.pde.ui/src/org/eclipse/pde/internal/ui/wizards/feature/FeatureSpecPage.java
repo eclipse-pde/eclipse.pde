@@ -52,6 +52,7 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 		data.provider = featureProviderText.getText();
 		data.name = featureNameText.getText();
 		data.library = getInstallHandlerLibrary();
+		data.hasCustomHandler = customChoice.getSelection();
 		return data;
 	}
 

@@ -18,13 +18,15 @@ public class FeatureData {
 	String version;
 	String provider;
 	String library;
+	boolean hasCustomHandler;
 
 	public FeatureData() {
 		library = null;
+		hasCustomHandler = false;
 	}
 
 	public boolean hasCustomHandler() {
-		return library != null && library.length() > 0;
+		return hasCustomHandler;
 	}
 
 	public String getSourceFolderName() {

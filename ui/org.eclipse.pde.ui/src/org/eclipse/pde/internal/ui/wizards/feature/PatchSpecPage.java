@@ -104,6 +104,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		data.provider = getPatchProvider();
 		data.name = getPatchName();
 		data.library = getInstallHandlerLibrary();
+		data.hasCustomHandler = customChoice.getSelection();
 		return data;
 	}
 
