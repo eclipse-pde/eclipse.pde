@@ -9,7 +9,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 /**
  * The top-level model object of the Eclipse feature model.
  */
-public interface IFeature extends IFeatureObject, IVersonable {
+public interface IFeature extends IFeatureObject, IVersionable {
 /**
  * The name of the property that will be used to notify
  * about changes in "description" field

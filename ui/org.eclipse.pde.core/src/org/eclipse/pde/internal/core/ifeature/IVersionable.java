@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.CoreException;
  * @version 	1.0
  * @author
  */
-public interface IVersonable extends IIdentifiable {
+public interface IVersionable extends IIdentifiable {
 /**
  * A property that will be carried by the change event
  * if 'version' field of this object is changed.

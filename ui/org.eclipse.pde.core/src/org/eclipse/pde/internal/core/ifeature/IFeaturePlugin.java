@@ -8,7 +8,7 @@ package org.eclipse.pde.internal.core.ifeature;
 /**
  * A base class for plug-in and data entires
  */
-public interface IFeaturePlugin extends IFeatureObject, IVersonable, IFeatureEntry {
+public interface IFeaturePlugin extends IFeatureObject, IVersionable, IFeatureEntry {
 	/**
 	 * Returns whether this is a reference to a fragment.
 	 * @return <samp>true</samp> if this is a fragment, <samp>false</samp> otherwise.

@@ -103,8 +103,8 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			writer.println();
 			writer.print(indent2 + "fragment=\"true\"");
 		}
-		writer.println(">");
-		writer.println(indent + "</plugin>");
+		writer.println("/>");
+		//writer.println(indent + "</plugin>");
 	}
 
 	public String getLabel() {

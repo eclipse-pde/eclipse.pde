@@ -16,6 +16,7 @@ public interface IPDEUIConstants {
 	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor";
 	String FRAGMENT_EDITOR_ID = PLUGIN_ID + ".fragmentEditor";
 	String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor";
+	String SITE_EDITOR_ID = PLUGIN_ID + ".siteEditor";
 	String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
 	String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";

@@ -1,0 +1,38 @@
+<?xml encoding="ISO-8859-1"?> 
+
+<!ELEMENT site (description?, feature*, archive*, category-def*)> 
+<!ATTLIST site 
+    type          CDATA #IMPLIED 
+    url           CDATA #IMPLIED 
+> 
+
+<!ELEMENT description (#PCDATA)> 
+<!ATTLIST description 
+    url           CDATA #IMPLIED 
+> 
+
+<!ELEMENT feature (category*)> 
+<!ATTLIST feature 
+    type          CDATA #IMPLIED 
+    id            CDATA #IMPLIED 
+    version       CDATA #IMPLIED 
+    url           CDATA #REQUIRED 
+> 
+
+<!ELEMENT archive EMPTY> 
+<!ATTLIST archive 
+    path          CDATA #REQUIRED 
+    url           CDATA #REQUIRED 
+> 
+
+<!ELEMENT category EMPTY> 
+<!ATTLIST category 
+    name          CDATA #REQUIRED 
+> 
+
+<!ELEMENT category-def (description?)> 
+<!ATTLIST category-def 
+    name          CDATA #REQUIRED 
+    label         CDATA #REQUIRED 
+> 
+

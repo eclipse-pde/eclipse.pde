@@ -139,7 +139,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			writer.println();
 			writer.print(indent2 + "optional=\"true\"");
 		}
-		writer.println(">");
-		writer.println(indent + "</includes>");
+		writer.println("/>");
+		//writer.println(indent + "</includes>");
 	}
 }

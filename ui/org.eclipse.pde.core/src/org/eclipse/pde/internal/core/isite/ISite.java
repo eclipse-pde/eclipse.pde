@@ -1,0 +1,40 @@
+package org.eclipse.pde.internal.core.isite;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
+/**
+ * The top-level model object of the Eclipse update site model.
+ */
+public interface ISite extends ISiteObject {
+	String P_URL = "URL";
+	String P_TYPE = "type";
+	String P_DESCRIPTION = "description";
+	
+	void setType(String type) throws CoreException;
+	String getType();
+	
+	void setURL(URL url) throws CoreException;
+	URL getURL();
+
+	ISiteDescription getDescription();
+	void setDescription(ISiteDescription description) throws CoreException;
+
+	void addFeatures(ISiteFeature[] features) throws CoreException;
+	void addArchives(ISiteArchive[] archives) throws CoreException;
+	void addCategoryDefinitions(ISiteCategoryDefinition[] defs)
+		throws CoreException;
+
+	void removeFeatures(ISiteFeature[] features) throws CoreException;
+	void removeArchives(ISiteArchive[] archives) throws CoreException;
+	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs)
+		throws CoreException;
+
+	ISiteFeature[] getFeatures();
+	ISiteArchive[] getArchives();
+	ISiteCategoryDefinition[] getCategoryDefinitions();
+}

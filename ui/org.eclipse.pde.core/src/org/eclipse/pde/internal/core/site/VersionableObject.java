@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.core.feature;
+package org.eclipse.pde.internal.core.site;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

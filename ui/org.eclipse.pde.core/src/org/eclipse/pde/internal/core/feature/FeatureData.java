@@ -81,8 +81,8 @@ public class FeatureData
 		writer.print(indent + "<data");
 		String indent2 = indent + Feature.INDENT + Feature.INDENT;
 		writeAttributes(indent2, writer);
-		writer.println(">");
-		writer.println(indent + "</data>");
+		writer.println("/>");
+		//writer.println(indent + "</data>");
 	}
 
 	/**

@@ -107,7 +107,7 @@ public class FeatureInstallHandler
 		if (handlerName != null) {
 			writer.print(" handler=\"" + handlerName + "\"");
 		}
-		writer.println(">");
-		writer.println(indent + "</install-handler>");
+		writer.println("/>");
+		//writer.println(indent + "</install-handler>");
 	}
 }

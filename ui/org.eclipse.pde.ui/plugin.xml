@@ -151,6 +151,17 @@
             %new.feature.description
          </description>
       </wizard>
+      <wizard
+            name="%new.site.name"
+            icon="icons/full/ctool16/newftrprj_wiz.gif"
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.site.NewSiteProjectWizard"
+            project="true"
+            id="org.eclipse.pde.ui.NewSiteProjectWizard">
+         <description>
+            %new.site.description
+         </description>
+      </wizard>
    </extension>
    <extension
          id="selfhosting.import"
@@ -447,6 +458,15 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             id="org.eclipse.pde.ui.featureEditor">
+      </editor>
+      <editor
+            name="%editors.siteManifest.name"
+            default="true"
+            icon="icons/full/obj16/ftr_mf_obj.gif"
+            filenames="site.xml"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
+            id="org.eclipse.pde.ui.siteEditor">
       </editor>
    </extension>
    <extension
@@ -934,12 +954,12 @@
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
+            lightweight="true"
             quadrant="TOP_LEFT"
             adaptable="true"
             label="%decorator.label"
             icon="icons/full/ovr16/binary_co.gif"
             state="false"
-            lightweight="true"
             id="org.eclipse.pde.ui.binaryProjectDecorator">
          <description>
             %decorator.desc
