@@ -32,7 +32,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 	private static final String COLOR_TAG = "#000080";
 	private static final String COLOR_CSTRING = "#008000";
-	private static final String COLOR_DTD="#800000";
+	private static final String COLOR_DTD = "#800000";
 	private static final String COLOR_COPYRIGHT = "#336699";
 
 	private void appendAttlist(
@@ -61,14 +61,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 			choices = true;
 		} else if (restriction != null) {
 			appendRestriction(restriction, out);
-			choices=true;
+			choices = true;
 		} else {
 			out.print("CDATA ");
 		}
 
 		// add use
 		if (att.getUse() == ISchemaAttribute.REQUIRED) {
-			if (!choices) out.print("#REQUIRED");
+			if (!choices)
+				out.print("#REQUIRED");
 		} else if (att.getUse() == ISchemaAttribute.DEFAULT) {
 			out.print("\"" + att.getValue() + "\"");
 		} else if (!choices)
@@ -252,6 +253,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.print("<HEAD>");
 		out.println(
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+		addStyle(out);
 		out.println("</HEAD>");
 		out.println("<HTML>");
 		out.println("<BODY>");
@@ -274,11 +276,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 			schema,
 			"Supplied Implementation:",
 			IDocumentSection.IMPLEMENTATION);
-		out.println("<font size=\"-1\" color=\""+COLOR_COPYRIGHT+"\">");
+		out.println("<font size=\"-1\" color=\"" + COLOR_COPYRIGHT + "\">");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
 		out.println("</font>");
 		out.println("</BODY>");
 		out.println("</HTML>");
+	}
+
+	private void addStyle(PrintWriter out) {
+		out.println("<STYLE type=\"text/css\">");
+		out.println("div.dtd-fragment {");
+		out.println("	width: 100%;");
+		out.println("	border: none;");
+		out.println("	background-color: #eee;");
+		out.println("}");
+		out.println("</STYLE>");
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
@@ -298,8 +310,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation(true);
-		String nameLink = "<a name=\"e."+name+"\">"+name+"</a>";
-		out.print("<p><samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ELEMENT " + nameLink + " " + dtd);
+		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>";
+		//out.print("<div class=\"dtd-fragment\">");
+		out.print(
+			"<p><samp><font color=\""
+				+ COLOR_DTD
+				+ "\">&nbsp;&nbsp; &lt;!ELEMENT "
+				+ nameLink
+				+ " "
+				+ dtd);
 		out.println("&gt;</font></samp>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
@@ -316,15 +335,22 @@ public class SchemaTransformer implements ISchemaTransformer {
 			out.print("<br><br>");
 		}
 
+		if (attributes.length > 0) {
+			out.println(
+				"<samp><font color=\""
+					+ COLOR_DTD
+					+ "\">&nbsp;&nbsp; &lt;!ATTLIST "
+					+ name
+					+ "</samp>");
+			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
+			for (int i = 0; i < attributes.length; i++) {
+				appendAttlist(out, attributes[i], maxWidth);
+			}
+			out.println("<br><samp>&nbsp;&nbsp; &gt;</font></samp>");
+		}
+		//out.println("</div>");
 		if (attributes.length == 0)
 			return;
-
-		out.println("<samp><font color=\""+COLOR_DTD+"\">&nbsp;&nbsp; &lt;!ATTLIST " + name + "</samp>");
-		int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
-		for (int i = 0; i < attributes.length; i++) {
-			appendAttlist(out, attributes[i], maxWidth);
-		}
-		out.println("<br><samp>&nbsp;&nbsp; &gt;</font></samp>");
 
 		out.println("<ul>");
 		for (int i = 0; i < attributes.length; i++) {
