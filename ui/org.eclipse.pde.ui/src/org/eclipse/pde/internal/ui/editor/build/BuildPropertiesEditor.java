@@ -203,7 +203,8 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	}
 	
 	public void doSave(IProgressMonitor monitor) {
-		validateSourceFolders(monitor);
+		if (isJavaProject())
+			validateSourceFolders(monitor);
 		super.doSave(monitor);
 	}
 	
@@ -263,6 +264,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 				newEntries[i] =
 					(IClasspathEntry) newSrcEntries.elementAt(i);
 			System.arraycopy(oldEntries, 0, newEntries, newSrcEntries.size(), oldEntries.length);
+			monitor.setTaskName("");
 			javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor, 1));
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
@@ -306,5 +308,16 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 			}
 		}
 		return null;
+	}
+	
+	private boolean isJavaProject() {
+		try {
+			IBuildModel buildModel = (IBuildModel)getModel();
+			IProject project = buildModel.getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID))
+				return true;
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 }

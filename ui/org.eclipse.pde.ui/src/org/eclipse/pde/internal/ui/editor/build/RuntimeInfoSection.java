@@ -120,6 +120,7 @@ public class RuntimeInfoSection
 	protected StructuredViewerPart jarsPart;
 	private IBuildEntry currentLibrary;
 	private Button jarIncludeButton;
+	private PDEFormPage page;
 
 
 	class PartAdapter extends EditableTablePart {
@@ -255,6 +256,7 @@ public class RuntimeInfoSection
 
 	public RuntimeInfoSection(PDEFormPage page) {
 		super(page);
+		this.page = page;
 		libraryPart =
 			createViewerPart(
 				new String[] {
@@ -694,6 +696,8 @@ public class RuntimeInfoSection
 	}
 	
 	private void refreshOutputKeys() {
+		if (!isJavaProject())
+			return;
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 
 		String[] jarFolders = currentLibrary.getTokens();
@@ -722,6 +726,17 @@ public class RuntimeInfoSection
 			PDEPlugin.logException(e);
 		}
 
+	}
+	
+	private boolean isJavaProject() {
+		try {
+			IBuildModel buildModel = (IBuildModel)page.getModel();
+			IProject project = buildModel.getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID))
+				return true;
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 
 	public void sectionChanged(Object changeObject) {

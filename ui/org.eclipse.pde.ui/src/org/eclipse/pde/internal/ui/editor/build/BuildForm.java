@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+//import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -182,21 +182,22 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 	
 	private String getText() {
-		IBuildModel buildModel = (IBuildModel)page.getModel();
+		return "Build Configuration";
+		/*IBuildModel buildModel = (IBuildModel)page.getModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
 		String label = "";
 		if (model instanceof IFeatureModel) {
 			label = ((IFeatureModel)model).getFeature().getLabel();
 			if (label == null || label.trim().length() == 0)
-				label = ((IFeatureModel)model).getFeature().getId();
+			label = ((IFeatureModel)model).getFeature().getId();
 		} else {
 			label = ((IPluginModelBase)model).getPluginBase().getName();
 			if (label == null || label.trim().length() == 0)
-				label = ((IPluginModelBase)model).getPluginBase().getId();
+			label = ((IPluginModelBase)model).getPluginBase().getId();
 		}
 		
-		return label;
+		return label;*/
 	}
 	
 	private String getCustomText() {

@@ -122,7 +122,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		projectViewer.addFilter(new ViewerFilter () {
 			public boolean select(Viewer viewer, Object parent, Object object) {
 				IProject project = (IProject)object;
-				return (project.isOpen() && !PDE.hasPluginNature(project));
+				return (project.isOpen() && WorkspaceModelManager.isPluginProject(project) && !PDE.hasPluginNature(project));
 			}
 		});
 		projectViewer.setInput(PDEPlugin.getWorkspace());
