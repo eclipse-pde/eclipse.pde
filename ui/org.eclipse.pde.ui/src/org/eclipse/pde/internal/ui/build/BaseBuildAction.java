@@ -134,7 +134,7 @@ public abstract class BaseBuildAction
 	protected void refreshLocal(IProgressMonitor monitor) throws CoreException {
 		IProject project = fManifestFile.getProject();
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);
-		IFile file = project.getFile("dev.properties");
+		IFile file = project.getFile("dev.properties"); //$NON-NLS-1$
 		if (file.exists())
 			file.delete(true, false, monitor);
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);

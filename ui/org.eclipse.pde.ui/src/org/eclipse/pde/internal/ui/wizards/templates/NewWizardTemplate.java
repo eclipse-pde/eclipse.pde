@@ -58,8 +58,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0); //$NON-NLS-1$
-		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0); 
-		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL),"new_file.mpe", 0); 
+		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL),"new_file.mpe", 0);  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void initializeFields(IFieldData data) {

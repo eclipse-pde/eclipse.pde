@@ -362,7 +362,7 @@ public class ExportSection extends TableSection
 			
 			buf.append(name);
 			if (i < names.length - 1)
-				buf.append("," + System.getProperty("line.separator") + " ");
+				buf.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		IBundleModel model = getBundleModel();
 		IBundle bundle = model.getBundle();
