@@ -480,7 +480,7 @@ public class PDEState {
 	}
 	
 	public BundleDescription addBundle(IPluginModelBase model) {
-		return addBundle(new File(model.getInstallLocation()), false, false, ClasspathHelper.getDevDictionary(model));
+		return addBundle(new File(model.getInstallLocation()), false, false, null);
 	}
 	
 	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, boolean logException, Dictionary dictionary) {
@@ -491,7 +491,7 @@ public class PDEState {
 						!new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
 					return null;
 				PluginConverter converter = acquirePluginConverter();
-				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), true, dictionary);
+				manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), false, dictionary);
 				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 					throw new Exception();
 			} catch (Exception e1) {
