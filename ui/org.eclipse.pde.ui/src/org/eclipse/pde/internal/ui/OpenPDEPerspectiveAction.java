@@ -14,15 +14,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.*;
-import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 
-public class OpenPDEPerspectiveAction extends Action implements ICheatSheetAction {
+public class OpenPDEPerspectiveAction extends Action {
 	public OpenPDEPerspectiveAction() {
-	}
-	
-	public void run(String [] params, ICheatSheetManager manager) {
-		run();
 	}
 
 	public void run() {
@@ -38,11 +32,11 @@ public class OpenPDEPerspectiveAction extends Action implements ICheatSheetActio
 				"org.eclipse.pde.ui.PDEPerspective",
 				window,
 				input);
-			//TODO need to notify success here
+			notifyResult(true);
 			
 		} catch (WorkbenchException e) {
 			PDEPlugin.logException(e);
-			//TODO need to notify failure here
+			notifyResult(false);
 		}
 	}
 }

@@ -32,15 +32,13 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 		SWTUtil.setDialogSize(dialog, 500, 500);
 		dialog.getShell().setText(wizard.getWindowTitle());
 		int result = dialog.open();
-		// TODO need to notify result here
+		notifyResult(result==WizardDialog.OK);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
 	 */
 	public void run(String[] params, ICheatSheetManager manager) {
-		// TODO need to initialize the wizard with default
-		// values so that it comes preset
 		run();
 	}
 }
