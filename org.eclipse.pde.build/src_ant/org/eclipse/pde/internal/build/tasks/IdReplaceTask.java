@@ -40,6 +40,7 @@ public class IdReplaceTask extends Task {
 	private String selfVersion;
 	
 	private final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
+	private final static String DOT_QUALIFIER = ".qualifier"; //$NON-NLS-1$
 
 	/**
 	 * The location of a feature.xml file 
@@ -163,7 +164,7 @@ public class IdReplaceTask extends Task {
 			int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 			char[] versionId = new char[endVersionId - startVersionId - 1];
 			buffer.getChars(startVersionId + 1, endVersionId, versionId, 0);
-			if (!new String(versionId).equals(GENERIC_VERSION_NUMBER)) {
+			if (!new String(versionId).equals(GENERIC_VERSION_NUMBER) && !new String(versionId).endsWith(DOT_QUALIFIER)) {
 				startElement = startVersionId;
 				continue;
 			}
@@ -178,7 +179,7 @@ public class IdReplaceTask extends Task {
 			if (replacementVersion == null) {
 				System.err.println("Could not find" + new String(elementId)); //$NON-NLS-1$
 			} else {
-				buffer.replace(startVersionId, startVersionId + GENERIC_VERSION_NUMBER.length(), replacementVersion);
+				buffer.replace(startVersionId, endVersionId, replacementVersion);
 			}
 
 			startElement = startVersionId;
