@@ -46,7 +46,13 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants {
 		PluginFragmentModel[] fragments = pluginRegistry.getFragments();
 		for (int i = 0; i < fragments.length; i++) {
 			String pluginId = fragments[i].getPluginId();
-			PluginDescriptorModel plugin = pluginRegistry.getPlugin(pluginId); //TODO Needs to check for the case where the plugin is not in the repository
+			PluginDescriptorModel plugin = pluginRegistry.getPlugin(pluginId);
+			if (plugin == null) {
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", pluginId), null); //$NON-NLS-1$
+				Platform.getPlugin(PI_PDEBUILD).getLog().log(status);
+				continue;
+			}
+			
 			PluginFragmentModel[] existingFragments = plugin.getFragments();
 			if (existingFragments == null)
 				plugin.setFragments(new PluginFragmentModel[] { fragments[i] });
