@@ -15,6 +15,7 @@ import java.util.Vector;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.osgi.*;
@@ -27,7 +28,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public class PluginToBundleWizardPage extends StatusWizardPage {
+public class PluginToBundleWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelectedPlugins;
 	private CheckboxTableViewer fPluginListViewer;
 	private static final String KEY_TITLE = "PluginToBundleWizard.title";
@@ -66,7 +67,7 @@ public class PluginToBundleWizardPage extends StatusWizardPage {
 	}
 
 	public PluginToBundleWizardPage(IPluginModelBase[] selected) {
-		super("PluginToBundleWizardPage", true);
+		super("PluginToBundleWizardPage");
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 

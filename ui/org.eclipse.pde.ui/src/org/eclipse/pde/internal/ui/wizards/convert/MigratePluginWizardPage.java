@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -26,7 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class MigratePluginWizardPage extends StatusWizardPage {
+public class MigratePluginWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
 	private CheckboxTableViewer fPluginListViewer;	
 	private TablePart fTablePart;
@@ -62,7 +63,7 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 	}
 
 	public MigratePluginWizardPage(IPluginModelBase[] selected) {
-		super("MigrateWizardPage", true);
+		super("MigrateWizardPage");
 		setTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
 		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc"));
 

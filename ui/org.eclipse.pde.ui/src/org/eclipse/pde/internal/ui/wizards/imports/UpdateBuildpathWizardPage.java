@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public class UpdateBuildpathWizardPage extends StatusWizardPage {
+public class UpdateBuildpathWizardPage extends WizardPage {
 	private IPluginModelBase[] selected;
 	private CheckboxTableViewer pluginListViewer;
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
@@ -67,7 +68,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	}
 
 	public UpdateBuildpathWizardPage(IPluginModelBase[] selected) {
-		super("UpdateBuildpathWizardPage", true);
+		super("UpdateBuildpathWizardPage");
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
