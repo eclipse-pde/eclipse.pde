@@ -246,13 +246,13 @@ public class DependenciesView extends ViewPart {
 		if (newInput == null
 			|| newInput.equals(PDECore.getDefault().getModelManager())) {
 			// restore old
-			setTitle(viewName);
+			setContentDescription(viewName);
 			setTitleToolTip(getTitle());
 		} else {
 			String name =
 				((LabelProvider) treeViewer.getLabelProvider()).getText(
 					newInput);
-			setTitle(viewName + ": " + name); //$NON-NLS-1$
+			setContentDescription(viewName + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getTitle());
 			//setTitleToolTip(getInputPath(newInput));
 		}

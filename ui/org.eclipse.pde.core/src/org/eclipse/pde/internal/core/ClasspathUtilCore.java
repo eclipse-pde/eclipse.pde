@@ -276,12 +276,25 @@ public class ClasspathUtilCore {
 		IPluginModelBase model,
 		boolean unconditionallyExport,
 		Vector result) {
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
+		String location = model.getInstallLocation();
+		if (new File(location).isFile()) { 
 			IClasspathEntry entry =
-				createLibraryEntry(libraries[i], unconditionallyExport);
-			if (entry != null && !result.contains(entry))
+				JavaCore.newLibraryEntry(
+						new Path(location),
+						new Path(location),
+						null,
+						unconditionallyExport);
+			if (entry != null && !result.contains(entry)) {
 				result.add(entry);
+			}			
+		} else {
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				IClasspathEntry entry =
+					createLibraryEntry(libraries[i], unconditionallyExport);
+				if (entry != null && !result.contains(entry))
+					result.add(entry);
+			}
 		}
 	}
 

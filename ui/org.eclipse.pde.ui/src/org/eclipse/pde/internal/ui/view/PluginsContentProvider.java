@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
+import java.io.*;
+
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
@@ -92,7 +95,9 @@ public class PluginsContentProvider
 		}
 		if (element instanceof ModelEntry) {
 			ModelEntry entry = (ModelEntry) element;
-			return entry.getWorkspaceModel() == null;
+			IPluginModelBase model = entry.getActiveModel();
+			File file = new File(model.getInstallLocation());
+			return !file.isFile() && model.getUnderlyingResource() == null;
 		}
 		if (element instanceof FileAdapter) {
 			FileAdapter fileAdapter = (FileAdapter) element;
