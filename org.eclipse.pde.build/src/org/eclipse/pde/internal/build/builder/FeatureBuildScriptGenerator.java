@@ -896,8 +896,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateRefreshTarget() {
 		script.println();
-		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-		script.printConvertPathTask(new Path(featureRootLocation).removeLastSegments(0).toOSString(), PROPERTY_RESOURCE_PATH, false);
+		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Policy.bind("build.feature.refresh", featureIdentifier)); //$NON-NLS-1$
+		script.printConvertPathTask(new Path(featureRootLocation).removeLastSegments(0).toOSString().replace('\\','/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(getPropertyFormat(featureFullName), "infinite"); //$NON-NLS-1$
 
 		Map params = new HashMap(2);

@@ -398,8 +398,8 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 */
 	private void generateRefreshTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
-		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString(), PROPERTY_RESOURCE_PATH, false);
+		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null,  Policy.bind("build.plugin.refresh", model.getId())); //$NON-NLS-1$
+		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\','/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(model.getId(), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
