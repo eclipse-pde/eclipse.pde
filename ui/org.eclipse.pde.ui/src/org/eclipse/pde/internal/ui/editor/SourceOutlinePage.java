@@ -83,6 +83,9 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 			return;
 		control.getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				if(control.isDisposed()){
+					return;
+				}
 				control.setRedraw(false);
 				getTreeViewer().refresh();
 				getTreeViewer().expandAll();
