@@ -19,7 +19,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.contentoutline.*;
 import java.util.*;
-import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.ui.*;
@@ -162,4 +161,7 @@ public void close(boolean save) {
 public boolean canPaste(Clipboard clipboard) {
 	return true;
 }
+public void setFocus() {
+}
+
 }
