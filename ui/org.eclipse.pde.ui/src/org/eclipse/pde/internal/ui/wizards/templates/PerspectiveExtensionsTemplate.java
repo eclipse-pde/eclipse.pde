@@ -43,6 +43,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	private static final String NL_RELATIVE_LOCATION =
 		"PerspectiveExtensionsTemplate.relativePosition";
 	private static final String NL_STACK = "PerspectiveExtensionsTemplate.stack";
+	private static final String NL_FAST = "PerspectiveExtensionsTemplate.fast";
 	private static final String NL_LEFT = "PerspectiveExtensionsTemplate.left";
 	private static final String NL_RIGHT = "PerspectiveExtensionsTemplate.right";
 	private static final String NL_TOP = "PerspectiveExtensionsTemplate.top";
@@ -111,16 +112,15 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		addOption(
 			KEY_VIEW_RELATIONSHIP,
 			PDEPlugin.getResourceString(NL_RELATIVE_LOCATION),
-			new String[][] { { "stack", PDEPlugin.getResourceString(NL_STACK)}, {
-				"left", PDEPlugin.getResourceString(NL_LEFT)
-				}, {
-				"right", PDEPlugin.getResourceString(NL_RIGHT)
-				}, {
-				"top", PDEPlugin.getResourceString(NL_TOP)
-				}, {
-				"bottom", PDEPlugin.getResourceString(NL_BOTTOM)
-				}
-		}, "stack", 1);
+			new String[][] {
+				{"stack", PDEPlugin.getResourceString(NL_STACK)},
+				{"fast", PDEPlugin.getResourceString(NL_FAST)},
+				{"left", PDEPlugin.getResourceString(NL_LEFT)},
+				{"right", PDEPlugin.getResourceString(NL_RIGHT)}, 
+				{"top", PDEPlugin.getResourceString(NL_TOP)}, 
+				{"bottom", PDEPlugin.getResourceString(NL_BOTTOM)}}, 
+			"stack", 
+			1);
 	}
 
 	private TemplateOption[] getAllPageOptions(TemplateOption source) {
@@ -204,7 +204,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		viewElement.setAttribute("relative", getStringOption(KEY_VIEW_RELATIVE));
 		String relationship = getValue(KEY_VIEW_RELATIONSHIP).toString();
 		viewElement.setAttribute("relationship", relationship);
-		if (!relationship.equals("stack")) {
+		if (!relationship.equals("stack") && !relationship.equals("fast")) {
 			viewElement.setAttribute("ratio", "0.5");
 		}
 		perspectiveElement.add(viewElement);
