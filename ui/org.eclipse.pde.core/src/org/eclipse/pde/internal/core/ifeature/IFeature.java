@@ -50,6 +50,9 @@ public static final String P_ARCH = "arch";
 
 public static final String P_PRIMARY = "primary";
 
+public static final String P_COLLOCATION_AFFINITY = "collocation-affinity";
+public static final String P_APPLICATION = "application";
+
 public static final int INFO_DESCRIPTION = 0;
 public static final int INFO_COPYRIGHT = 1;
 public static final int INFO_LICENSE = 2;
@@ -215,4 +218,9 @@ public void setArch(String arch) throws CoreException;
 
 boolean isPrimary();
 public void setPrimary(boolean value) throws CoreException;
+
+String getCollocationAffinity();
+void setCollocationAffinity(String value) throws CoreException;
+String getApplication();
+void setApplication(String value) throws CoreException;
 }

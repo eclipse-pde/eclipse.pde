@@ -30,6 +30,8 @@ public class Feature extends VersionableObject implements IFeature {
 	private String imageName;
 	private IFeatureInstallHandler handler;
 	private boolean primary;
+	private String collocationAffinity;
+	private String application;
 
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
@@ -129,6 +131,9 @@ public class Feature extends VersionableObject implements IFeature {
 		ws = getNodeAttribute(node, "ws");
 		nl = getNodeAttribute(node, "nl");
 		imageName = getNodeAttribute(node, "image");
+		collocationAffinity = getNodeAttribute(node, "collocation-affinity");
+		application = getNodeAttribute(node, "application");
+		primary = getBooleanAttribute(node, "primary");
 		NodeList children = node.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -338,6 +343,14 @@ public class Feature extends VersionableObject implements IFeature {
 	public String getArch() {
 		return arch;
 	}
+	
+	public String getCollocationAffinity() {
+		return collocationAffinity;
+	}
+	
+	public String getApplication() {
+		return application;
+	}
 
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
@@ -374,6 +387,20 @@ public class Feature extends VersionableObject implements IFeature {
 			P_PRIMARY,
 			oldValue,
 			newValue ? Boolean.TRUE : Boolean.FALSE);
+	}
+	
+	public void setCollocationAffinity(String newValue) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.collocationAffinity;
+		this.collocationAffinity = newValue;
+		firePropertyChanged(P_COLLOCATION_AFFINITY, oldValue, newValue);
+	}
+	
+	public void setApplication(String newValue) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.application;
+		this.application = newValue;
+		firePropertyChanged(P_APPLICATION, oldValue, newValue);
 	}
 
 	public void setProviderName(String providerName) throws CoreException {
@@ -447,6 +474,10 @@ public class Feature extends VersionableObject implements IFeature {
 			setNL((String) newValue);
 		} else if (name.equals(P_ARCH)) {
 			setArch((String) newValue);
+		} else if (name.equals(P_COLLOCATION_AFFINITY)) {
+			setCollocationAffinity((String)newValue);
+		} else if (name.equals(P_APPLICATION)) {
+			setApplication((String)newValue);
 		} else if (name.equals(P_PRIMARY)) {
 			setPrimary(newValue != null ? ((Boolean) newValue).booleanValue() : false);
 		} else if (name.equals(P_PROVIDER)) {
@@ -481,6 +512,9 @@ public class Feature extends VersionableObject implements IFeature {
 		infos[0] = null;
 		infos[1] = null;
 		infos[2] = null;
+		primary = false;
+		collocationAffinity = null;
+		application = null;
 	}
 
 	public void write(String indent, PrintWriter writer) {
@@ -504,6 +538,8 @@ public class Feature extends VersionableObject implements IFeature {
 			writer.println();
 			writer.print(indenta + "primary=\"true\"");
 		}
+		writeIfDefined(indenta, writer, "collocation-affinity", collocationAffinity);
+		writeIfDefined(indenta, writer, "application", application);
 
 		writer.println(">");
 		if (handler != null) {
