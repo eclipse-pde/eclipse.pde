@@ -10,9 +10,12 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
+import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IIncludedFeatureReference;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
 
@@ -123,5 +126,17 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 
 	public void setIgnoredFeatures(String[] features) {
 		ignoredFeatures = features;
+	}
+	
+	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
+		if (assemblyData == null)
+			return;
+		List correctConfigs = selectConfigs(featureToCollect);
+		// Here, we could sort if the feature is a common one or not by
+		// comparing the size of correctConfigs
+		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
+			Config config = (Config) iter.next();
+			assemblyData.addFeature(config, feature);
+		}
 	}
 }
