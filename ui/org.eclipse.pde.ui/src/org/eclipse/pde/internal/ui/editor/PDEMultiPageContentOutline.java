@@ -126,6 +126,8 @@ public class PDEMultiPageContentOutline
 	 */
 	public void setSelection(ISelection selection) {
 		this.selection =selection;
+		if (listeners == null)
+			return;
 		SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
 		for (int i=0; i<listeners.size(); i++) {
 			((ISelectionChangedListener)listeners.get(i)).selectionChanged(e);
