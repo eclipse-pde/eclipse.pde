@@ -378,7 +378,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			IPluginModelBase curr = (IPluginModelBase) models[i];
 			String id = curr.getPluginBase().getId();
 			IProject proj = (IProject) root.findMember(id);
-			if (proj != null) {
+			if (proj != null && proj.isOpen()) {
 				selected.add(curr);
 			}
 		}
@@ -394,7 +394,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			String id = curr.getPluginBase().getId();
 			IProject proj = (IProject) root.findMember(id);
 			try {
-				if (proj != null) {
+				if (proj != null && proj.isOpen()) {
 					String property =
 						proj.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);
