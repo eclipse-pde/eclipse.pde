@@ -136,7 +136,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		tablePart.createControl(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
-		gd.widthHint = 200;
+		gd.widthHint = 225;
 		tablePart.getControl().setLayoutData(gd);
 		
 		CheckboxTableViewer viewer = tablePart.getTableViewer();

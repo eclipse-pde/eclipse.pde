@@ -110,7 +110,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 180;
+		gd.widthHint = 225;
 		gd.heightHint = 250;
 		table.setLayoutData(gd);
 

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.lang.reflect.*;
-import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -73,7 +72,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		page1.storeSettings();
 		((BaseImportWizardSecondPage)page1.getNextPage()).storeSettings();
 		
-		final ArrayList modelIds = new ArrayList();
 		try {
 			final IPluginModelBase[] models = getModelsToImport();
 			IRunnableWithProgress op =
