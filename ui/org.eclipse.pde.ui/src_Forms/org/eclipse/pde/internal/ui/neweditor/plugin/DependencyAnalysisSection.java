@@ -76,7 +76,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	}
 
 	protected void doFindLoops() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IPluginModel) {
 			IPlugin plugin = ((IPluginModel)model).getPlugin();
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
@@ -95,7 +95,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	}
 	
 	protected void doFindUnusedDependencies() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IPluginModelBase) {
 			new UnusedDependenciesAction((IPluginModelBase)model).run();
 		}

@@ -487,6 +487,17 @@
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             id="org.eclipse.pde.ui.schemaEditor">
       </editor>
+<!--
+      <editor
+            name="%editors.schema.name"
+            default="false"
+            icon="icons/obj16/schema_obj.gif"
+            extensions="exsd,mxsd"
+            contributorClass="org.eclipse.pde.internal.ui.neweditor.schema.SchemaEditorContributor"
+            class="org.eclipse.pde.internal.ui.neweditor.schema.SchemaEditor"
+            id="org.eclipse.pde.ui.newSchemaEditor">
+      </editor>
+-->
       <editor
             name="%editors.buildProperties.name"
             default="true"
@@ -514,6 +525,16 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
+<!--
+      <editor
+            name="%editors.siteManifest.name"
+            icon="icons/obj16/site_xml_obj.gif"
+            filenames="site.xml"
+            contributorClass="org.eclipse.pde.internal.ui.neweditor.site.SiteEditorContributor"
+            class="org.eclipse.pde.internal.ui.neweditor.site.SiteEditor"
+            id="org.eclipse.pde.ui.newSiteEditor">
+      </editor>
+-->
       <editor
             name="%editors.sample.name"
             default="true"

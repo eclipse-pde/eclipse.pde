@@ -260,7 +260,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		super.dispose();
 	}
 	private void initialize() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}

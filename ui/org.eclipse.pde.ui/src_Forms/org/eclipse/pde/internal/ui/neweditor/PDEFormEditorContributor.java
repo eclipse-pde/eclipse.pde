@@ -64,7 +64,7 @@ public class PDEFormEditorContributor
 		public boolean isEditable() {
 			if (editor == null)
 				return false;
-			IModel model = editor.getAggregateModel();
+			IBaseModel model = editor.getAggregateModel();
 			if (model instanceof IEditable)
 				return ((IEditable) model).isEditable();
 			return false;

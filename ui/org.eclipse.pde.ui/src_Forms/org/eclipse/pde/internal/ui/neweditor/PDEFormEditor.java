@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import java.io.*;
-import java.io.File;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -19,15 +18,11 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -57,7 +52,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	public IProject getCommonProject() {
 		return inputContextManager.getCommonProject();
 	}
-	public IModel getAggregateModel() {
+	public IBaseModel getAggregateModel() {
 		return inputContextManager.getAggregateModel();
 	}
 	
@@ -338,6 +333,10 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 		*/
 		return super.getAdapter(key);
+	}
+	
+	public Menu getContextMenu() {
+		return contextMenu;
 	}
 	
 	public PDEMultiPageContentOutline getContentOutline() {

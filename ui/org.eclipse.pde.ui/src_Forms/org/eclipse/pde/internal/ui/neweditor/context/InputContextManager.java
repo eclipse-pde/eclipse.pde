@@ -6,18 +6,13 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.context;
 import java.util.*;
-import java.util.Enumeration;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.IModelUndoManager;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IEditorInput;
 
 public abstract class InputContextManager implements IResourceChangeListener {
 	private Hashtable inputContexts;
@@ -90,7 +85,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		}
 		return null;
 	}
-	public IModel getAggregateModel() {
+	public IBaseModel getAggregateModel() {
 		return null;
 	}
 	public InputContext getContext(IEditorInput input) {
@@ -213,14 +208,14 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	
 	private void hookUndo(InputContext context) {
 		if (undoManager==null) return;
-		IModel model = context.getModel();
+		IBaseModel model = context.getModel();
 		if (model instanceof IModelChangeProvider)
 		undoManager.connect((IModelChangeProvider)model);
 	}
 	
 	private void unhookUndo(InputContext context) {
 		if (undoManager==null) return;
-		IModel model = context.getModel();
+		IBaseModel model = context.getModel();
 		if (model instanceof IModelChangeProvider)
 		undoManager.disconnect((IModelChangeProvider)model);
 	}

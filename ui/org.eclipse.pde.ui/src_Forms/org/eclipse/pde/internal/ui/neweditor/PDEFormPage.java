@@ -6,7 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
@@ -61,7 +61,7 @@ public abstract class PDEFormPage extends FormPage {
 	protected String getHelpResource() {
 		return null;
 	}
-	public IModel getModel() {
+	public IBaseModel getModel() {
 		return getPDEEditor().getAggregateModel();
 	}
 	public void contextMenuAboutToShow(IMenuManager menu) {

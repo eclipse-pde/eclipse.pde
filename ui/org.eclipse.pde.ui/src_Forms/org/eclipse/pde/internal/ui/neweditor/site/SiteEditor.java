@@ -70,10 +70,6 @@ public class SiteEditor extends MultiSourceEditor {
 		return false;
 	}
 	
-	protected IModelUndoManager createModelUndoManager() {
-		return new SiteUndoManager(this);
-	}
-	
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("site.xml")) {

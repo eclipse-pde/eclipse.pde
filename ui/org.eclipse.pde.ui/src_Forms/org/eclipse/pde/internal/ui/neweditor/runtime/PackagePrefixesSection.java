@@ -186,7 +186,7 @@ public class PackagePrefixesSection extends TableSection implements IPartSelecti
 	}
 	
 	private boolean isReadOnly() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IEditable)
 			return !((IEditable)model).isEditable();
 		return true;

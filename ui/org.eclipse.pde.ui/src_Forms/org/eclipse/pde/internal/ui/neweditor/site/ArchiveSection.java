@@ -169,7 +169,7 @@ public class ArchiveSection extends PDESection {
 		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = layout.marginWidth = 0;
+		layout.marginHeight = layout.marginWidth = 2;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTable(container, toolkit);

@@ -6,10 +6,9 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
@@ -29,7 +28,7 @@ public class BundleInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
-	protected IModel createModel(IEditorInput input) {
+	protected IBaseModel createModel(IEditorInput input) {
 		if (input instanceof IFileEditorInput)
 			return createResourceModel((IFileEditorInput)input);
 		if (input instanceof SystemFileEditorInput)
@@ -38,16 +37,16 @@ public class BundleInputContext extends UTF8InputContext {
 			return createStorageModel((IStorageEditorInput)input);
 		return null;
 	}
-	private IModel createResourceModel(IFileEditorInput input) {
+	private IBaseModel createResourceModel(IFileEditorInput input) {
 		WorkspaceBundleModel model = new WorkspaceBundleModel(input.getFile());
 		model.load();
 		return model;
 	}
-	private IModel createExternalModel(SystemFileEditorInput input) {
+	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		return null;
 	}
 	
-	private IModel createStorageModel(IStorageEditorInput input) {
+	private IBaseModel createStorageModel(IStorageEditorInput input) {
 		return null;
 	}
 

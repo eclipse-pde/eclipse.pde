@@ -86,7 +86,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 		IContentOutlinePage outline = getContentOutline();
 		if (outline != null && outline instanceof IModelChangedListener) {
 			IModelChangedListener listener = (IModelChangedListener)outline;
-			IModel model = getInputContext().getModel();
+			IBaseModel model = getInputContext().getModel();
 			if (model instanceof IModelChangeProvider) {
 				if (active)
 					((IModelChangeProvider)model).addModelChangedListener(listener);

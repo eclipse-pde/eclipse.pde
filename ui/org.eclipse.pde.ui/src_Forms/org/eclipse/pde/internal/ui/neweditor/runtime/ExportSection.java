@@ -294,7 +294,7 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		fullExportButton.setSelection(button == fullExportButton);
 	}
 	private boolean isReadOnly() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IEditable)
 			return !((IEditable)model).isEditable();
 		return true;

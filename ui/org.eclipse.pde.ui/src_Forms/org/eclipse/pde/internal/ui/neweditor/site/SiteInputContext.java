@@ -40,7 +40,7 @@ public class SiteInputContext extends XMLInputContext {
 		create();
 	}
 
-	protected IModel createModel(IEditorInput input) {
+	protected IBaseModel createModel(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			return createWorkspaceModel((IFileEditorInput) input);
 		}
@@ -52,7 +52,7 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		return null;
 	}
-	private IModel createWorkspaceModel(IFileEditorInput input) {
+	private IBaseModel createWorkspaceModel(IFileEditorInput input) {
 		InputStream stream = null;
 		IFile file = input.getFile();
 		try {
@@ -95,10 +95,10 @@ public class SiteInputContext extends XMLInputContext {
 		}
 		super.dispose();
 	}
-	private IModel createExternalModel(SystemFileEditorInput input) {
+	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		return null;
 	}
-	private IModel createStorageModel(IStorageEditorInput input) {
+	private IBaseModel createStorageModel(IStorageEditorInput input) {
 		return null;
 	}
 	protected void flushModel(IDocument doc) {

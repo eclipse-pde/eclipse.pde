@@ -70,7 +70,7 @@ public class FormOutlinePage extends ContentOutlinePage
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(editor);
-		IModel model = editor.getAggregateModel();
+		IBaseModel model = editor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
@@ -79,7 +79,7 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 	public void dispose() {
 		super.dispose();
-		IModel model = editor.getAggregateModel();
+		IBaseModel model = editor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).removeModelChangedListener(this);
 	}

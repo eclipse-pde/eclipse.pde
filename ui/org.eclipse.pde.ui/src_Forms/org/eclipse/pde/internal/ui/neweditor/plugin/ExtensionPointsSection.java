@@ -56,7 +56,7 @@ public class ExtensionPointsSection extends TableSection {
 		section.setClient(container);
 		pointTable.setInput(getPage());
 		selectFirstExtensionPoint();
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
@@ -72,7 +72,7 @@ public class ExtensionPointsSection extends TableSection {
 		pointTable.setSelection(pointTable.getSelection());
 	}
 	public void dispose() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).removeModelChangedListener(this);
 		super.dispose();

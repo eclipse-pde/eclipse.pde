@@ -6,11 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.IBundleModel;
 import org.eclipse.pde.core.plugin.IExtensionsModel;
 import org.eclipse.pde.internal.core.osgi.bundle.*;
-import org.eclipse.pde.internal.ui.neweditor.build.*;
+import org.eclipse.pde.internal.ui.neweditor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 
 /**
@@ -27,7 +27,7 @@ public class PluginInputContextManager extends InputContextManager {
 	public PluginInputContextManager() {
 	}
 
-	public IModel getAggregateModel() {
+	public IBaseModel getAggregateModel() {
 		if (bmodel!=null)
 			return bmodel;
 		return findPluginModel();
@@ -82,7 +82,7 @@ public class PluginInputContextManager extends InputContextManager {
 	private IModel findPluginModel() {
 		InputContext pcontext = findContext(PluginInputContext.CONTEXT_ID);
 		if (pcontext!=null)
-			return pcontext.getModel();
+			return (IModel)pcontext.getModel();
 		else
 			return null;
 	}

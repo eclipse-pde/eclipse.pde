@@ -9,19 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import java.lang.reflect.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.pde.core.IModel;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
+import org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard;
+import org.eclipse.ui.PlatformUI;
 
 public class PluginExportAction extends Action {
 	private PDEFormEditor fEditor;
@@ -51,7 +53,7 @@ public class PluginExportAction extends Action {
 		ensureContentSaved();
 		PluginExportWizard wizard = new PluginExportWizard();
 		IStructuredSelection selection;
-		IResource resource = fEditor.getAggregateModel().getUnderlyingResource();
+		IResource resource = ((IModel)fEditor.getAggregateModel()).getUnderlyingResource();
 		if (resource != null)
 			selection = new StructuredSelection(resource);
 		else

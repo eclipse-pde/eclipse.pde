@@ -6,7 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.site;
 
-import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 
 /**
@@ -22,11 +22,11 @@ public class SiteInputContextManager extends InputContextManager {
 	public SiteInputContextManager() {
 	}
 
-	public IModel getAggregateModel() {
+	public IBaseModel getAggregateModel() {
 		return findSiteModel();
 	}
 
-	private IModel findSiteModel() {
+	private IBaseModel findSiteModel() {
 		InputContext scontext = findContext(SiteInputContext.CONTEXT_ID);
 		if (scontext!=null)
 			return scontext.getModel();

@@ -33,20 +33,7 @@ import org.eclipse.core.runtime.*;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IModel extends IAdaptable {
-	/**
-	 * Releases all the data in this model and
-	 * clears the state. A disposed model
-	 * can be returned to the normal state
-	 * by reloading.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	void dispose();
+public interface IModel extends IBaseModel {
 	/**
 	 * Returns a string found in the resource
 	 * bundle associated with this model
@@ -90,33 +77,6 @@ public interface IModel extends IAdaptable {
 	 */
 	public IResource getUnderlyingResource();
 	/**
-	 * Tests if this model has been disposed.
-	 * Disposed model cannot be used until
-	 * it is loaded/reloaded.
-	 * @return true if the model has been disposed
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	boolean isDisposed();
-	/**
-	 * Tests if this model can be modified. Modification
-	 * of a model that is not editable will result
-	 * in CoreException being thrown.
-	 * @return true if this model can be modified
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	boolean isEditable();
-
-	/**
 	 * Tests if this model is loaded and can be used.
 	 * @return true if the model has been loaded
 	 * <p>
@@ -145,25 +105,6 @@ public interface IModel extends IAdaptable {
 	 * </p>
 	 */
 	boolean isInSync();
-	
-	/**
-	 * Tests if this model valid. When models
-	 * are loaded from the file, they may pass the
-	 * syntax error checking and load all the model objects.
-	 * However, some of the objects may contain invalid
-	 * values that make the model unusable.
-	 * This method should return <samp>true</samp> only
-	 * if the model can be safely used in all
-	 * computations.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	boolean isValid();	
-
 	/**
 	 * Returns the last modification time stamp.
 	 * The model itself does not have the time stamp.

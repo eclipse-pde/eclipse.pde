@@ -5,18 +5,15 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.osgi.bundle.IBundlePluginBase;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -27,7 +24,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -91,7 +88,7 @@ public class GeneralInfoSection extends PDESection {
 			createClassEntry(client, toolkit, actionBars);
 		}
 		toolkit.paintBordersFor(client);
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
@@ -102,7 +99,7 @@ public class GeneralInfoSection extends PDESection {
 	}
 	
 	private IPluginBase getPluginBase() {
-		IModel model = getPage().getPDEEditor().getAggregateModel();
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
 	}
 	
@@ -287,7 +284,7 @@ public class GeneralInfoSection extends PDESection {
 		super.refresh();
 	}
 	public void dispose() {
-		IModel model = getPage().getModel();
+		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).removeModelChangedListener(this);
 		super.dispose();

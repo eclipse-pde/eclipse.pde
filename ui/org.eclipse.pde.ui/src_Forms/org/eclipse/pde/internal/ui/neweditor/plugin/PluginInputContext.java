@@ -35,7 +35,7 @@ public class PluginInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
-	protected IModel createModel(IEditorInput input) throws CoreException {
+	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		//boolean hasBundle = getEditor().getContextManager().hasContext(BundleInputContext.CONTEXT_ID);
 		PluginModelBase model = null;
 		if (input instanceof IStorageEditorInput) {

@@ -69,7 +69,7 @@ public class BuildInputContext extends InputContext {
 		return null;
 	}
 
-	protected IModel createModel(IEditorInput input) {
+	protected IBaseModel createModel(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			return createWorkspaceModel((IFileEditorInput)input);
 		}
@@ -87,14 +87,14 @@ public class BuildInputContext extends InputContext {
 		model.load();
 		return model;
 	}
-	private IModel createExternalModel(SystemFileEditorInput input) {
+	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		File file = (File)input.getAdapter(File.class);
 		String location = file.getParentFile().getPath();
 		ExternalBuildModel model = new ExternalBuildModel(location);
 		model.load();
 		return model;
 	}
-	private IModel createStorageModel(IStorageEditorInput input) {
+	private IBaseModel createStorageModel(IStorageEditorInput input) {
 		return null;
 	}
 	/* (non-Javadoc)

@@ -32,18 +32,12 @@ import org.eclipse.pde.core.*;
  * Other classes can register as change listener in order
  * to receive notification about these changes.
  */
-public interface ISchema extends ISchemaObject, IModelChangeProvider {
+public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider {
 	String P_POINT = "pointId";
 	String P_PLUGIN = "pluginId";
 	int REFRESH_ADD = 1;
 	int REFRESH_DELETE = 2;
 	int REFRESH_RENAME = 3;
-/**
- * Releases all data in this schema. From this point on,
- * the first subsequent reference of this schema will
- * trigger a reload.
- */
-void dispose();
 /**
  * Returns a reference to a schema element defined in
  * this schema or <samp>null</samp> if not found.
@@ -117,24 +111,6 @@ public ISchemaDescriptor getSchemaDescriptor();
  * @return a URL that points to this schema's location.
  */
 public URL getURL();
-/**
- * Returns whether this schema object has been exposed and can be reloaded.
- * @return true if this schema has been disposed
- */
-boolean isDisposed();
-/**
- * Returns whether this schema can be modified.
- * @return true if this schema can be modified 
- */
-boolean isEditable();
-/**
- * Returns whether the schema file used to load this
- * model contained extension point schema or a generic
- * XSD schema file. 
- * @return true if the schema is valid and can be used
- */
-boolean isValid();
-
 /**
  * Returns a list of elements that correspond to the
  * <samp>include</samp> statements in the schema file.

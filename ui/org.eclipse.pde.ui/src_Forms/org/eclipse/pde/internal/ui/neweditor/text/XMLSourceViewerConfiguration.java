@@ -94,7 +94,7 @@ public class XMLSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fReconciler == null) {
-			IModel model = fSourcePage.getInputContext().getModel();
+			IBaseModel model = fSourcePage.getInputContext().getModel();
 			if (model instanceof IReconcilingParticipant) {
 				ReconcilingStrategy strategy = new ReconcilingStrategy();
 				strategy.addParticipant((IReconcilingParticipant)model);

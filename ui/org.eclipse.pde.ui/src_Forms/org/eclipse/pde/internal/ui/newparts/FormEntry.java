@@ -13,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * The helper class for creating entry fields with label and text. Optionally,
@@ -67,6 +68,7 @@ public class FormEntry {
 			label = link;
 		} else {
 			label = toolkit.createLabel(parent, labelText);
+			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		}
 		text = toolkit.createText(parent, "", style);
 		addListeners();

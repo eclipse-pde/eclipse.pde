@@ -28,7 +28,7 @@ import org.eclipse.ui.texteditor.*;
 public abstract class InputContext {
 	private PDEFormEditor editor;
 	private IEditorInput input;
-	private IModel model;
+	private IBaseModel model;
 	private IModelChangedListener modelListener;
 	private IDocumentProvider documentProvider;
 	private IElementStateListener elementListener;
@@ -65,7 +65,7 @@ public abstract class InputContext {
 	public PDEFormEditor getEditor() {
 		return editor;
 	}
-	public IModel getModel() {
+	public IBaseModel getModel() {
 		return model;
 	}
 	public IDocumentProvider getDocumentProvider() {
@@ -73,7 +73,8 @@ public abstract class InputContext {
 	}
 	protected abstract IDocumentProvider createDocumentProvider(
 			IEditorInput input);
-	protected abstract IModel createModel(IEditorInput input) throws CoreException;
+	
+	protected abstract IBaseModel createModel(IEditorInput input) throws CoreException;
 	
 	protected void create() {
 		documentProvider = createDocumentProvider(input);
