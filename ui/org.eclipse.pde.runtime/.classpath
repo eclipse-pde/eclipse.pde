@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="Eclipse PDE Runtime"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar"/>
     <classpathentry kind="var"
@@ -9,5 +8,6 @@
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.ui/workbench.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ui/workbenchsrc.zip"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="src" path="src"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
