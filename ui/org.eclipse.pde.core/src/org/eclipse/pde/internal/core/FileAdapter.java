@@ -32,11 +32,11 @@ public class FileAdapter extends PlatformObject {
 
 	public boolean isManifest() {
 		String fileName = file.getName();
-		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml"));
+		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	public boolean isSchema() {
 		String fileName = file.getName().toLowerCase();
-		return fileName.endsWith(".mxsd") || fileName.endsWith(".exsd");
+		return fileName.endsWith(".mxsd") || fileName.endsWith(".exsd"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 			
 	public FileAdapter getParent() {

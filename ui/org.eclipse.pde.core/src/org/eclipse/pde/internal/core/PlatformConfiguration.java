@@ -1417,7 +1417,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 		URL siteURL = null;
 		try {
-			siteURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
+			siteURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
 		} catch (MalformedURLException e) {
 			siteURL = getInstallURL(); // ensure we come up ... use absolute file URL
 		}

@@ -23,31 +23,31 @@ import org.osgi.framework.*;
 import org.osgi.util.tracker.*;
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
-	public static final String PLUGIN_ID = "org.eclipse.pde.core";
-	public static final String ARG_PDELAUNCH = "-pdelaunch";
-	public static final String BINARY_PROJECT_VALUE = "binary";
+	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
+	public static final String ARG_PDELAUNCH = "-pdelaunch"; //$NON-NLS-1$
+	public static final String BINARY_PROJECT_VALUE = "binary"; //$NON-NLS-1$
 	public static final String BINARY_REPOSITORY_PROVIDER =
-		PLUGIN_ID + "." + "BinaryRepositoryProvider";
+		PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public static final String CLASSPATH_CONTAINER_ID =
-		PLUGIN_ID + ".requiredPlugins";
+		PLUGIN_ID + ".requiredPlugins"; //$NON-NLS-1$
 	public static final String JAVA_SEARCH_CONTAINER_ID =
-		PLUGIN_ID + ".externalJavaSearch";
+		PLUGIN_ID + ".externalJavaSearch"; //$NON-NLS-1$
 
-	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
+	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME"; //$NON-NLS-1$
 	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =
-		new QualifiedName(PLUGIN_ID, "imported");
-	public static final String EXTERNAL_PROJECT_VALUE = "external";
+		new QualifiedName(PLUGIN_ID, "imported"); //$NON-NLS-1$
+	public static final String EXTERNAL_PROJECT_VALUE = "external"; //$NON-NLS-1$
 
 	// Shared instance
 	private static PDECore inst;
-	public static final String SITEBUILD_DIR = ".sitebuild";
-	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml";
+	public static final String SITEBUILD_DIR = ".sitebuild"; //$NON-NLS-1$
+	public static final String SITEBUILD_PROPERTIES = "sitebuild.xml"; //$NON-NLS-1$
 	public static final String SITEBUILD_FILE =
-		SITEBUILD_DIR + "/" + SITEBUILD_PROPERTIES;
-	public static final String SITEBUILD_LOG = "build.log";
-	public static final String SITEBUILD_SCRIPTS = "scripts";
-	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder";
+		SITEBUILD_DIR + "/" + SITEBUILD_PROPERTIES; //$NON-NLS-1$
+	public static final String SITEBUILD_LOG = "build.log"; //$NON-NLS-1$
+	public static final String SITEBUILD_SCRIPTS = "scripts"; //$NON-NLS-1$
+	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$
 
 	public static boolean compare(
 		String id1,
@@ -215,7 +215,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		try {
 			resourceBundle =
 				ResourceBundle.getBundle(
-					"org.eclipse.pde.internal.core.pderesources");
+					"org.eclipse.pde.internal.core.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

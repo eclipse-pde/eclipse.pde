@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.*;
 
 
 public class NLResourceHelper {
-	public static final String KEY_PREFIX = "%";
-	public static final String KEY_DOUBLE_PREFIX = "%%";
+	public static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	public static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private PropertyResourceBundle bundle = null;
 
 	public NLResourceHelper(String name, URL[] locations) {
@@ -40,15 +40,15 @@ public class NLResourceHelper {
 	private InputStream getResourceStream(String name, URL[] locations) {
 		URLClassLoader resourceLoader = new URLClassLoader(locations);
 		
-		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_");
+		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_"); //$NON-NLS-1$
 		String language = tokenizer.nextToken();
-		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
-		String variant = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
+		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : ""); //$NON-NLS-1$
+		String variant = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : ""); //$NON-NLS-1$
 		
-		String suffix1 = "_" + language + "_" + country + "_" + variant;
-		String suffix2 = "_" + language + "_" + country;
-		String suffix3 = "_" + language;
-		String suffix4 = "";
+		String suffix1 = "_" + language + "_" + country + "_" + variant; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String suffix2 = "_" + language + "_" + country; //$NON-NLS-1$ //$NON-NLS-2$
+		String suffix3 = "_" + language; //$NON-NLS-1$
+		String suffix4 = ""; //$NON-NLS-1$
 
 		String[] suffices = new String[] { suffix1, suffix2, suffix3, suffix4 };
 
@@ -56,7 +56,7 @@ public class NLResourceHelper {
 		for (int i = 0; i < suffices.length; i++) {
 			stream =
 				resourceLoader.getResourceAsStream(
-					name + suffices[i] + ".properties");
+					name + suffices[i] + ".properties"); //$NON-NLS-1$
 			if (stream != null)
 				break;
 		}
@@ -72,7 +72,7 @@ public class NLResourceHelper {
 		if (s.startsWith(KEY_DOUBLE_PREFIX))
 			return s.substring(1);
 
-		int ix = s.indexOf(" ");
+		int ix = s.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 

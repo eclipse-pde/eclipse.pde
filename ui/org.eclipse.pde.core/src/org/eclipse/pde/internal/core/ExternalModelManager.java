@@ -38,7 +38,7 @@ public class ExternalModelManager {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
-			if (Platform.getOS().equals("win32")) {
+			if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
 				if (i == 0 && c == '/')
 					continue;
 			}
@@ -48,7 +48,7 @@ public class ExternalModelManager {
 				char c2 = path.charAt(i + 2);
 				if (c1 == '2' && c2 == '0') {
 					i += 2;
-					buf.append(" ");
+					buf.append(" "); //$NON-NLS-1$
 					continue;
 				}
 			}
@@ -167,7 +167,7 @@ public class ExternalModelManager {
 			IPluginModel model = (IPluginModel)fModels.get(i);
 			if (!model.isEnabled()) {
 				disabled += 1;
-				if (saved.length() > 0) saved.append(" ");
+				if (saved.length() > 0) saved.append(" "); //$NON-NLS-1$
 				saved.append(model.getPlugin().getId());
 			}
 		}
@@ -175,7 +175,7 @@ public class ExternalModelManager {
 			IFragmentModel fmodel = (IFragmentModel)fFragmentModels.get(i);
 			if (!fmodel.isEnabled()) {
 				disabled += 1;
-				if (saved.length() > 0) saved.append(" ");
+				if (saved.length() > 0) saved.append(" "); //$NON-NLS-1$
 				saved.append(fmodel.getFragment().getId());
 			}
 		}

@@ -164,11 +164,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
-				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) { 
+				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
 					savePlatformConfiguration(BootLoader.getPlatformConfiguration(null),configDir, pluginMap, primaryFeatureId);
 				}
 			} else {
-				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
+				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId); //$NON-NLS-1$
 			} 			
 		} catch (CoreException e) {
 			// Rethrow
@@ -189,34 +189,34 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static void createConfigIniFile(File configDir, TreeMap pluginMap, String primaryFeatureId, HashMap autoStartPlugins) {
-		File file = new File(configDir, "config.ini");
+		File file = new File(configDir, "config.ini"); //$NON-NLS-1$
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "8859_1");
+			OutputStreamWriter writer = new OutputStreamWriter(stream, "8859_1"); //$NON-NLS-1$
 			BufferedWriter bWriter = new BufferedWriter(writer);
 			
-			bWriter.write("#Eclipse Runtime Configuration File");
+			bWriter.write("#Eclipse Runtime Configuration File"); //$NON-NLS-1$
 			bWriter.newLine();
-			bWriter.write("osgi.install.area=file:" + ExternalModelManager.getEclipseHome().toString());
+			bWriter.write("osgi.install.area=file:" + ExternalModelManager.getEclipseHome().toString()); //$NON-NLS-1$
 			bWriter.newLine();
 			
 			if (primaryFeatureId != null) {
 				String splashPath = getBundleURL(primaryFeatureId, pluginMap);
 				if (splashPath != null) {
-					bWriter.write("osgi.splashPath=" + splashPath);
+					bWriter.write("osgi.splashPath=" + splashPath); //$NON-NLS-1$
 					bWriter.newLine();
 				}
-				bWriter.write("eclipse.product=" + primaryFeatureId);
+				bWriter.write("eclipse.product=" + primaryFeatureId); //$NON-NLS-1$
 				bWriter.newLine();
 			}
 			
-			bWriter.write("osgi.configuration.cascaded=false");
+			bWriter.write("osgi.configuration.cascaded=false"); //$NON-NLS-1$
 			bWriter.newLine();
 			
-			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap));
+			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap)); //$NON-NLS-1$ //$NON-NLS-2$
 			bWriter.newLine();
 			
-			autoStartPlugins.remove("org.eclipse.osgi");
+			autoStartPlugins.remove("org.eclipse.osgi"); //$NON-NLS-1$
 			Iterator iter = autoStartPlugins.keySet().iterator();
 			StringBuffer buffer = new StringBuffer();
 			
@@ -225,20 +225,20 @@ public class TargetPlatform implements IEnvironmentVariables {
 				String url = getBundleURL(id, pluginMap);
 				if (url == null)
 					continue;
-				buffer.append("reference:" + url);
+				buffer.append("reference:" + url); //$NON-NLS-1$
 				Integer integer = (Integer)autoStartPlugins.get(id);
 				if (integer.intValue() > 0)
-					buffer.append("@" + integer.intValue() + ":start");
+					buffer.append("@" + integer.intValue() + ":start"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (iter.hasNext())
-					buffer.append(",");
+					buffer.append(","); //$NON-NLS-1$
 			}
 			
 			if (buffer.length() > 0) {
-				bWriter.write("osgi.bundles=" + buffer.toString());
+				bWriter.write("osgi.bundles=" + buffer.toString()); //$NON-NLS-1$
 				bWriter.newLine();
 			}			
 			
-			bWriter.write("eof=eof");
+			bWriter.write("eof=eof"); //$NON-NLS-1$
 			bWriter.flush();
 			bWriter.close();
 		} catch (IOException e) {
@@ -260,7 +260,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				location = resource.getLocation().removeLastSegments(1).toString();
 			}
 		}
-		return "file:" + new Path(location).addTrailingSeparator().toString();
+		return "file:" + new Path(location).addTrailingSeparator().toString(); //$NON-NLS-1$
 	}
 	
 	private static void savePlatformConfiguration(
@@ -290,7 +290,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			String version = bootModel.getPluginBase().getVersion();
 			if (version!=null) {
 				PluginVersionIdentifier bootVid = new PluginVersionIdentifier(version);
-				PluginVersionIdentifier breakVid = new PluginVersionIdentifier("2.0.3");
+				PluginVersionIdentifier breakVid = new PluginVersionIdentifier("2.0.3"); //$NON-NLS-1$
 				if (breakVid.isGreaterThan(bootVid))
 				// Platform configuration version changed in 2.1
 				// but the same fix is in 2.0.3.
@@ -324,7 +324,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			Properties p = new Properties();
 			FileInputStream fis = new FileInputStream(file);
 			p.load(fis);
-			p.setProperty("version", "1.0");
+			p.setProperty("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 			fis.close();
 			FileOutputStream fos = new FileOutputStream(file);
 			p.store(fos, (new Date()).toString());

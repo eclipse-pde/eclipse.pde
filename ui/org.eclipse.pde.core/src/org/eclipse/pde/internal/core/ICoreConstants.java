@@ -11,16 +11,16 @@
 package org.eclipse.pde.internal.core;
 
 public interface ICoreConstants {
-	String PLATFORM_PATH = "platform_path";
-	String SAVED_PLATFORM = "saved_platform";
-	String TARGET_MODE = "target_mode";
-	String VALUE_USE_THIS = "useThis";
-	String VALUE_USE_OTHER = "useOther";
-	String CHECKED_PLUGINS = "checkedPlugins";
-	String VALUE_SAVED_NONE = "[savedNone]";
-	String VALUE_SAVED_ALL = "[savedAll]";
-	String VALUE_SAVED_SOME = "savedSome";
-	String P_SOURCE_LOCATIONS = "source_locations";
-	String P_EXT_LOCATIONS = "ext_locations";
-	String ENABLE_ALT_RUNTIME = "enable_alt_runtime";
+	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
+	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
+	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
+	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
+	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
+	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
+	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
+	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
+	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
+	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
+	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
+	String ENABLE_ALT_RUNTIME = "enable_alt_runtime"; //$NON-NLS-1$
 }

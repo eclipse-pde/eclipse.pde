@@ -202,24 +202,24 @@ public class ModelEntry extends PlatformObject {
 		}
 		String id = plugin.getId();
 		if (!manager.isOSGiRuntime()
-			&& !id.startsWith("org.eclipse.swt")
-			&& !id.equals("org.eclipse.core.boot")
-			&& !id.equals("org.apache.xerces"))
-			set.add("org.eclipse.core.boot");
-			set.add("org.eclipse.core.runtime");
+			&& !id.startsWith("org.eclipse.swt") //$NON-NLS-1$
+			&& !id.equals("org.eclipse.core.boot") //$NON-NLS-1$
+			&& !id.equals("org.apache.xerces")) //$NON-NLS-1$
+			set.add("org.eclipse.core.boot"); //$NON-NLS-1$
+			set.add("org.eclipse.core.runtime"); //$NON-NLS-1$
 		try {
 			IBuild build = ClasspathUtilCore.getBuild(plugin.getPluginModel());
-			IBuildEntry entry = (build == null) ? null : build.getEntry("jars.extra.classpath");
+			IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
 					IPath path = new Path(tokens[i]);
 					String device = path.getDevice();
 					if (device == null) {
-						if (path.segmentCount() > 1 && path.segment(0).equals(".."))
+						if (path.segmentCount() > 1 && path.segment(0).equals("..")) //$NON-NLS-1$
 							set.add(path.segment(1));
-					} else if (device.equals("platform:")) {
-						if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) {
+					} else if (device.equals("platform:")) { //$NON-NLS-1$
+						if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) { //$NON-NLS-1$
 							set.add(path.segment(1));
 						}
 					}					

@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.*;
  */
 public class SourceAttachmentManager {
 	private Hashtable entries;
-	private static final String KEY_PLATFORM_PATH = "platform-path";
+	private static final String KEY_PLATFORM_PATH = "platform-path"; //$NON-NLS-1$
 
 	public static class SourceAttachmentEntry {
 		private IPath entryPath;
@@ -71,7 +71,7 @@ public class SourceAttachmentManager {
 	
 	private String getFileName() {
 		IPath stateLocation = PDECore.getDefault().getStateLocation();
-		IPath stateFile = stateLocation.append("sourceAttachements.properties");
+		IPath stateFile = stateLocation.append("sourceAttachements.properties"); //$NON-NLS-1$
 		return stateFile.toOSString();
 	}
 
@@ -98,7 +98,7 @@ public class SourceAttachmentManager {
 		if (oldPlatformPath.equals(currentPlatformPath)==false) return;
 		for (Enumeration enum = properties.keys(); enum.hasMoreElements();) {
 			String key = (String)enum.nextElement();
-			if (key.startsWith("entry."))
+			if (key.startsWith("entry.")) //$NON-NLS-1$
 				parseEntryProperty(properties.getProperty(key));
 		}
 	}
@@ -109,7 +109,7 @@ public class SourceAttachmentManager {
 		String library = value.substring(0, semi);
 		String paths = value.substring(semi+1);
 		
-		semi = paths.indexOf(";");
+		semi = paths.indexOf(";"); //$NON-NLS-1$
 		
 		String att, attRoot=null;
 		if (semi!= -1) {
@@ -134,15 +134,15 @@ public class SourceAttachmentManager {
 			String library = entry.getEntryPath().toOSString();
 			String value;
 			if (entry.getAttachmentRootPath()!=null)
-				value = library+";"+entry.getAttachmentPath().toOSString()+";"+entry.getAttachmentRootPath().toOSString();
+				value = library+";"+entry.getAttachmentPath().toOSString()+";"+entry.getAttachmentRootPath().toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
 			else
-				value = library+";"+entry.getAttachmentPath().toOSString();
+				value = library+";"+entry.getAttachmentPath().toOSString(); //$NON-NLS-1$
 			i++;
-			properties.setProperty("entry."+i, value);
+			properties.setProperty("entry."+i, value); //$NON-NLS-1$
 		}
 		try {
 			FileOutputStream fos = new FileOutputStream(fileName);
-			properties.store(fos, "User-defined source attachments");
+			properties.store(fos, "User-defined source attachments"); //$NON-NLS-1$
 			fos.flush();
 			fos.close();
 		}

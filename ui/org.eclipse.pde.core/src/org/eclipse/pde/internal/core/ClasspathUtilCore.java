@@ -27,7 +27,7 @@ public class ClasspathUtilCore {
 		throws CoreException {
 
 		Vector result = new Vector();
-		monitor.beginTask("", 3);
+		monitor.beginTask("", 3); //$NON-NLS-1$
 
 		// add own libraries/source
 		addSourceAndLibraries(model, result);
@@ -109,7 +109,7 @@ public class ClasspathUtilCore {
 	private static void addExtraClasspathEntries(IPluginModelBase model, Vector result)
 		throws CoreException {
 		IBuild build = getBuild(model);
-		IBuildEntry entry = (build == null) ? null : build.getEntry("jars.extra.classpath");
+		IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
 		if (entry == null)
 			return;
 
@@ -120,9 +120,9 @@ public class ClasspathUtilCore {
 			if (device == null) {
 				path = new Path(model.getUnderlyingResource().getProject().getName());
 				path = path.append(tokens[i]);
-			} else if (device.equals("platform:")) {
+			} else if (device.equals("platform:")) { //$NON-NLS-1$
 				path = new Path(tokens[i]);
-				if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) {
+				if (path.segmentCount() > 1 && path.segment(0).equals("plugin")) { //$NON-NLS-1$
 					path = path.setDevice(null);
 					path = path.removeFirstSegments(1);
 				}
@@ -226,25 +226,25 @@ public class ClasspathUtilCore {
 		throws CoreException {
 		
 		if ((isOSGiRuntime() && schemaVersion != null)
-			|| id.equals("org.eclipse.core.boot")
-			|| id.equals("org.apache.xerces")
-			|| id.startsWith("org.eclipse.swt"))
+			|| id.equals("org.eclipse.core.boot") //$NON-NLS-1$
+			|| id.equals("org.apache.xerces") //$NON-NLS-1$
+			|| id.startsWith("org.eclipse.swt")) //$NON-NLS-1$
 			return;
 		
 		if (schemaVersion == null && isOSGiRuntime()) {
-			if (!id.equals("org.eclipse.core.runtime")) {
+			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
 				IPlugin plugin =
 					PDECore.getDefault().findPlugin(
-						"org.eclipse.core.runtime.compatibility");
+						"org.eclipse.core.runtime.compatibility"); //$NON-NLS-1$
 				if (plugin != null)
 					addDependency(plugin, false, result, alreadyAdded);
 			}
 		} else {
-			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
+			IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot"); //$NON-NLS-1$
 			if (plugin != null)
 				addDependency(plugin, false, result, alreadyAdded);
-			if (!id.equals("org.eclipse.core.runtime")) {
-				plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime");
+			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
+				plugin = PDECore.getDefault().findPlugin("org.eclipse.core.runtime"); //$NON-NLS-1$
 				if (plugin != null)
 					addDependency(plugin, false, result, alreadyAdded);
 			}
@@ -253,7 +253,7 @@ public class ClasspathUtilCore {
 	
 	public static IClasspathEntry createJREEntry() {
 		return JavaCore.newContainerEntry(new Path(
-		"org.eclipse.jdt.launching.JRE_CONTAINER"));
+		"org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 	}
 
 	public static void addLibraries(
@@ -319,7 +319,7 @@ public class ClasspathUtilCore {
 			if (IPluginLibrary.RESOURCE.equals(library.getType()))
 				continue;
 			IBuildEntry buildEntry =
-				build == null ? null : build.getEntry("source." + library.getName());
+				build == null ? null : build.getEntry("source." + library.getName()); //$NON-NLS-1$
 			if (buildEntry != null) {
 				String[] folders = buildEntry.getTokens();
 				for (int k = 0; k < folders.length; k++) {
@@ -388,35 +388,35 @@ public class ClasspathUtilCore {
 	}
 	
 	public static boolean containsVariables(String name) {
-		return name.indexOf("$os$") != -1
-			|| name.indexOf("$ws$") != -1
-			|| name.indexOf("$nl$") != -1
-			|| name.indexOf("$arch$") != -1;
+		return name.indexOf("$os$") != -1 //$NON-NLS-1$
+			|| name.indexOf("$ws$") != -1 //$NON-NLS-1$
+			|| name.indexOf("$nl$") != -1 //$NON-NLS-1$
+			|| name.indexOf("$arch$") != -1; //$NON-NLS-1$
 	}
 
 	public static String expandLibraryName(String source) {
 		if (source == null || source.length() == 0)
-			return "";
-		if (source.indexOf("$ws$") != -1)
+			return ""; //$NON-NLS-1$
+		if (source.indexOf("$ws$") != -1) //$NON-NLS-1$
 			source =
 				source.replaceAll(
-					"\\$ws\\$",
-					"ws" + IPath.SEPARATOR + TargetPlatform.getWS());
-		if (source.indexOf("$os$") != -1)
+					"\\$ws\\$", //$NON-NLS-1$
+					"ws" + IPath.SEPARATOR + TargetPlatform.getWS()); //$NON-NLS-1$
+		if (source.indexOf("$os$") != -1) //$NON-NLS-1$
 			source =
 				source.replaceAll(
-					"\\$os\\$",
-					"os" + IPath.SEPARATOR + TargetPlatform.getOS());
-		if (source.indexOf("$nl$") != -1)
+					"\\$os\\$", //$NON-NLS-1$
+					"os" + IPath.SEPARATOR + TargetPlatform.getOS()); //$NON-NLS-1$
+		if (source.indexOf("$nl$") != -1) //$NON-NLS-1$
 			source =
 				source.replaceAll(
-						"\\$nl\\$",
-						"nl" + IPath.SEPARATOR + TargetPlatform.getNL());
-		if (source.indexOf("$arch$") != -1)
+						"\\$nl\\$", //$NON-NLS-1$
+						"nl" + IPath.SEPARATOR + TargetPlatform.getNL()); //$NON-NLS-1$
+		if (source.indexOf("$arch$") != -1) //$NON-NLS-1$
 			source =
 				source.replaceAll(
-						"\\$arch\\$",
-						"arch" + IPath.SEPARATOR + TargetPlatform.getOSArch());
+						"\\$arch\\$", //$NON-NLS-1$
+						"arch" + IPath.SEPARATOR + TargetPlatform.getOSArch()); //$NON-NLS-1$
 		return source;
 	}
 
@@ -424,7 +424,7 @@ public class ClasspathUtilCore {
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null) {
 			IProject project = model.getUnderlyingResource().getProject();
-			IFile buildFile = project.getFile("build.properties");
+			IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
 			if (buildFile.exists()) {
 				buildModel = new WorkspaceBuildModel(buildFile);
 				buildModel.load();
@@ -438,7 +438,7 @@ public class ClasspathUtilCore {
 		IPath path = null;
 		int dot = libraryName.lastIndexOf('.');
 		if (dot != -1) {
-			String zipName = libraryName.substring(0, dot) + "src.zip";
+			String zipName = libraryName.substring(0, dot) + "src.zip"; //$NON-NLS-1$
 			path = getPath(model, zipName);
 			if (path == null) {
 				SourceLocationManager manager =

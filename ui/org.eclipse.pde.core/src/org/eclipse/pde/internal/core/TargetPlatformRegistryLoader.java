@@ -25,9 +25,9 @@ import org.eclipse.pde.internal.core.plugin.*;
 public class TargetPlatformRegistryLoader {
 	
 	private static final String KEY_SCANNING_PROBLEMS =
-		"ExternalModelManager.scanningProblems";
+		"ExternalModelManager.scanningProblems"; //$NON-NLS-1$
 	private static String getFilesAndMode(URL[] urls, ArrayList fileList) {
-		String targetMode = "2.1";
+		String targetMode = "2.1"; //$NON-NLS-1$
 		for (int i = 0; i < urls.length; i++) {
 			File directory = new File(urls[i].getFile());
 			if (directory.exists() && directory.isDirectory()) {
@@ -36,7 +36,7 @@ public class TargetPlatformRegistryLoader {
 					for (int j = 0; j < files.length; j++) {
 						if (files[j].isDirectory()) {
 							fileList.add(files[j]);
-							if (files[j].getName().indexOf("org.eclipse.osgi") != -1)
+							if (files[j].getName().indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
 								targetMode = null;
 						}
 					}
@@ -58,7 +58,7 @@ public class TargetPlatformRegistryLoader {
 	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, PDEState state, IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
-		monitor.beginTask("Parsing Plugins...", 3);
+		monitor.beginTask(PDECore.getResourceString("TargetPlatformRegistryLoader.parsing"), 3); //$NON-NLS-1$
 		
 		load(urls, state, monitor);
 		monitor.worked(1);
@@ -96,10 +96,10 @@ public class TargetPlatformRegistryLoader {
 				if (unsatisfiedConstraints.length == 0) {
 					BundleDescription activeBundle = findActiveBundle(state, all[i].getSymbolicName());
 					if (activeBundle == null) {
-						String message = PDECore.getFormattedMessage("ECLIPSE_IGNORE", all[i].getLocation());
+						String message = PDECore.getFormattedMessage("ECLIPSE_IGNORE", all[i].getLocation()); //$NON-NLS-1$
 						errors.add(new Status(IStatus.ERROR, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					} else {
-						String message = PDECore.getFormattedMessage("ECLIPSE_OTHER_VERSION", new String[] {all[i].getLocation(), activeBundle.getLocation()});
+						String message = PDECore.getFormattedMessage("ECLIPSE_OTHER_VERSION", new String[] {all[i].getLocation(), activeBundle.getLocation()}); //$NON-NLS-1$
 						errors.add(new Status(IStatus.INFO, all[i].getSymbolicName(), IStatus.INFO, message, null));
 					}
 				} else {
@@ -128,13 +128,13 @@ public class TargetPlatformRegistryLoader {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof PackageSpecification)
-			return PDECore.getFormattedMessage("ECLIPSE_MISSING_IMPORTED_PACKAGE", toString(unsatisfied));
+			return PDECore.getFormattedMessage("ECLIPSE_MISSING_IMPORTED_PACKAGE", toString(unsatisfied)); //$NON-NLS-1$
 		if (unsatisfied instanceof BundleSpecification) {
 			if (((BundleSpecification) unsatisfied).isOptional())
-				return PDECore.getFormattedMessage("ECLIPSE_MISSING_OPTIONAL_REQUIRED_BUNDLE", toString(unsatisfied));
-			return PDECore.getFormattedMessage("ECLIPSE_MISSING_REQUIRED_BUNDLE", toString(unsatisfied));
+				return PDECore.getFormattedMessage("ECLIPSE_MISSING_OPTIONAL_REQUIRED_BUNDLE", toString(unsatisfied)); //$NON-NLS-1$
+			return PDECore.getFormattedMessage("ECLIPSE_MISSING_REQUIRED_BUNDLE", toString(unsatisfied)); //$NON-NLS-1$
 		}
-		return PDECore.getFormattedMessage("ECLIPSE_MISSING_HOST", toString(unsatisfied));
+		return PDECore.getFormattedMessage("ECLIPSE_MISSING_HOST", toString(unsatisfied)); //$NON-NLS-1$
 	}
 	
 	private static String toString(VersionConstraint constraint) {
@@ -154,7 +154,7 @@ public class TargetPlatformRegistryLoader {
 		URL[] urls = new URL[paths.length];
 		try {
 			for (int i = 0; i < paths.length; i++) {
-				urls[i] = new URL("file:" + paths[i].replace('\\', '/') + "/");
+				urls[i] = new URL("file:" + paths[i].replace('\\', '/') + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (MalformedURLException e) {
 		}

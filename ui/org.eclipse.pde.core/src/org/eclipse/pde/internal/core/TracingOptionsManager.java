@@ -102,12 +102,12 @@ public class TracingOptionsManager {
 	public static boolean isTraceable(IPluginModelBase model) {
 		if (model.getUnderlyingResource() != null) {
 			IProject project = model.getUnderlyingResource().getProject();
-			IPath path = project.getFullPath().append(".options");
+			IPath path = project.getFullPath().append(".options"); //$NON-NLS-1$
 			IFile file = project.getWorkspace().getRoot().getFile(path);
 			return file.exists();
 		} else {
 			String location = model.getInstallLocation();
-			String fileName = location + File.separator + ".options";
+			String fileName = location + File.separator + ".options"; //$NON-NLS-1$
 			File file = new File(fileName);
 			return file.exists();
 		}
@@ -116,7 +116,7 @@ public class TracingOptionsManager {
 	private InputStream openInputStream(IPluginModelBase model) {
 		if (model.getUnderlyingResource() != null) {
 			IProject project = model.getUnderlyingResource().getProject();
-			IPath path = project.getFullPath().append(".options");
+			IPath path = project.getFullPath().append(".options"); //$NON-NLS-1$
 			IFile file = project.getWorkspace().getRoot().getFile(path);
 			if (file.exists()) {
 				try {
@@ -125,7 +125,7 @@ public class TracingOptionsManager {
 				}
 			}
 		} else {
-			String fileName = model.getInstallLocation() + File.separator + ".options";
+			String fileName = model.getInstallLocation() + File.separator + ".options"; //$NON-NLS-1$
 			File file = new File(fileName);
 			try {
 				return new FileInputStream(file);
@@ -142,7 +142,7 @@ public class TracingOptionsManager {
 	private void save(String fileName, Properties properties) {
 		try {
 			FileOutputStream stream = new FileOutputStream(fileName);
-			properties.store(stream, "Master Tracing Options");
+			properties.store(stream, "Master Tracing Options"); //$NON-NLS-1$
 			stream.flush();
 			stream.close();
 		} catch (IOException e) {

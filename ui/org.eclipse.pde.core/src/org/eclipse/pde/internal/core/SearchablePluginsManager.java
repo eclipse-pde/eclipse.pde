@@ -28,9 +28,9 @@ import org.eclipse.pde.core.plugin.*;
 public class SearchablePluginsManager implements IFileAdapterFactory {
 	private IJavaProject proxyProject;
 	private PluginModelManager manager;
-	private static final String PROXY_FILE_NAME = ".searchable";
-	private static final String PROXY_PROJECT_NAME = "External Plug-in Libraries";
-	private static final String KEY = "searchablePlugins";
+	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
+	private static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
+	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
 
 	private Listener elementListener;
 	private ExternalJavaSearchClasspathContainer classpathContainer;
@@ -86,7 +86,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			if (value == null)
 				return;
 			ArrayList ids = new ArrayList();
-			StringTokenizer stok = new StringTokenizer(value, ",");
+			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			for (; stok.hasMoreTokens();) {
 				ids.add(stok.nextToken());
 			}
@@ -108,7 +108,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		ModelEntry[] entries = manager.getEntries();
 		StringBuffer buffer = new StringBuffer();
 
-		monitor.beginTask("Saving...", 3);
+		monitor.beginTask(PDECore.getResourceString("SearchablePluginsManager.saving"), 3); //$NON-NLS-1$
 
 		int counter = 0;
 
@@ -116,7 +116,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 			ModelEntry entry = entries[i];
 			if (entry.isInJavaSearch()) {
 				if (counter++ > 0)
-					buffer.append(",");
+					buffer.append(","); //$NON-NLS-1$
 				buffer.append(entry.getId());
 			}
 		}
@@ -240,7 +240,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		properties.setProperty(KEY, value);
 		try {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.store(outStream, "");
+			properties.store(outStream, ""); //$NON-NLS-1$
 			outStream.flush();
 			outStream.close();
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
@@ -266,7 +266,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 				getProxyProjectName());
 		if (project.exists())
 			return;
-		monitor.beginTask("", 5);
+		monitor.beginTask("", 5); //$NON-NLS-1$
 
 		try {
 			project.create(new SubProgressMonitor(monitor, 1));
@@ -309,7 +309,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (file.isDirectory() == false) {
 			String name = file.getName().toLowerCase();
-			if (name.endsWith(".jar")) {
+			if (name.endsWith(".jar")) { //$NON-NLS-1$
 				IPackageFragmentRoot root = findPackageFragmentRoot(file
 						.getAbsolutePath());
 				if (root != null)

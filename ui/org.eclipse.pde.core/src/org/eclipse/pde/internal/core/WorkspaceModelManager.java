@@ -58,24 +58,24 @@ public class WorkspaceModelManager
 	}
 	
 	public static boolean hasBundleManifest(IProject project) {
-		return project.exists(new Path("META-INF/MANIFEST.MF"));
+		return project.exists(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 	}
 	
 	public static boolean hasPluginManifest(IProject project) {
-		return project.exists(new Path("plugin.xml"));
+		return project.exists(new Path("plugin.xml")); //$NON-NLS-1$
 	}
 	
 	public static boolean hasFragmentManifest(IProject project) {
-		return project.exists(new Path("fragment.xml"));
+		return project.exists(new Path("fragment.xml")); //$NON-NLS-1$
 	}
 	
 	public static boolean hasFeatureManifest(IProject project) {
-		return project.exists(new Path("feature.xml"));
+		return project.exists(new Path("feature.xml")); //$NON-NLS-1$
 	}
 	
 	public static boolean isFeatureProject(IProject project) {
 		if (project.isOpen())
-			return project.exists(new Path("feature.xml"));
+			return project.exists(new Path("feature.xml")); //$NON-NLS-1$
 		return false;
 	}
 	
@@ -157,11 +157,11 @@ public class WorkspaceModelManager
 	
 	private void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile)delta.getResource();
-		if (file.getName().equals(".options")) {
+		if (file.getName().equals(".options")) { //$NON-NLS-1$
 			PDECore.getDefault().getTracingOptionsManager().reset();
 			return;
 		}
-		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) {
+		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) { //$NON-NLS-1$
 			fireModelsChanged(new IModel[] {getWorkspaceModel(file.getProject())});
 			return;
 		}
@@ -196,7 +196,7 @@ public class WorkspaceModelManager
 		if (model != null) {
 			if (model instanceof IBundlePluginModelBase) {
 				IBundlePluginModelBase bModel = (IBundlePluginModelBase)model;
-				if (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")) {
+				if (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 					bModel.setExtensionsModel(null);
 				} else {
 					removeWorkspaceModel(file.getProject());
@@ -213,9 +213,9 @@ public class WorkspaceModelManager
 		IPluginModelBase model = null;
 		IProject project = bModel.getUnderlyingResource().getProject();
 		if (bModel instanceof IBundlePluginModel) {
-			model = createWorkspacePluginModel(project.getFile("plugin.xml"));
+			model = createWorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
 		} else {
-			model = createWorkspaceFragmentModel(project.getFile("fragment.xml"));
+			model = createWorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
 		}
 			
 		if (model != null && model.getPluginBase().getId() != null) {
@@ -273,8 +273,8 @@ public class WorkspaceModelManager
 		if (isBundleManifestFile(file))
 			return true;
 		String name = file.getName().toLowerCase();
-		if (!name.equals("plugin.xml") && !name.equals("fragment.xml")
-				&& !name.equals("feature.xml"))
+		if (!name.equals("plugin.xml") && !name.equals("fragment.xml") //$NON-NLS-1$ //$NON-NLS-2$
+				&& !name.equals("feature.xml")) //$NON-NLS-1$
 			return false;
 		IPath expectedPath = file.getProject().getFullPath().append(name);
 		return expectedPath.equals(file.getFullPath());
@@ -285,8 +285,8 @@ public class WorkspaceModelManager
 		IPath path = file.getProjectRelativePath();
 		return (
 			path.segmentCount() == 2
-				&& path.segment(0).equals("META-INF")
-				&& path.segment(1).equals("MANIFEST.MF"));
+				&& path.segment(0).equals("META-INF") //$NON-NLS-1$
+				&& path.segment(1).equals("MANIFEST.MF")); //$NON-NLS-1$
 	}
 	
 	private IModel getWorkspaceModel(IFile file) {
@@ -296,11 +296,11 @@ public class WorkspaceModelManager
 			return (model != null) ? model : (IModel)fFragmentModels.get(project);
 		}		
 		IPath path = file.getProjectRelativePath();
-		if (path.equals(new Path("plugin.xml")))
+		if (path.equals(new Path("plugin.xml"))) //$NON-NLS-1$
 			return (IModel)fModels.get(project);
-		if (path.equals(new Path("fragment.xml")))
+		if (path.equals(new Path("fragment.xml"))) //$NON-NLS-1$
 			return (IModel)fFragmentModels.get(project);
-		if (path.equals(new Path("feature.xml")))
+		if (path.equals(new Path("feature.xml"))) //$NON-NLS-1$
 			return getWorkspaceModel(file.getProject(), fFeatureModels);
 		return null;		
 	}
@@ -424,7 +424,7 @@ public class WorkspaceModelManager
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
 			} else if (resource instanceof IFolder) {
-				return resource.getName().equals("META-INF");
+				return resource.getName().equals("META-INF"); //$NON-NLS-1$
 			}
 		}
 		return true;
@@ -467,12 +467,12 @@ public class WorkspaceModelManager
 
 	private IPluginModelBase createPluginModel(IProject project) {
 		if (hasBundleManifest(project))
-			return createWorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF"));
+			return createWorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		
 		if (hasPluginManifest(project))
-			return createWorkspacePluginModel(project.getFile("plugin.xml"));
+			return createWorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
 		
-		return createWorkspaceFragmentModel(project.getFile("fragment.xml"));
+		return createWorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
 	}
 
 	/**
@@ -528,7 +528,7 @@ public class WorkspaceModelManager
 		bmodel.setBundleModel(model);
 		bmodel.setBundleDescription(desc);
 		
-		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml");
+		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (efile.exists()) {
 			WorkspaceExtensionsModel extModel = new WorkspaceExtensionsModel(efile);
 			loadModel(extModel, false);
@@ -582,11 +582,11 @@ public class WorkspaceModelManager
 						fChangedModels = new ArrayList();
 					fChangedModels.add(new ModelChange(model, true));					
 				}
-				if (project.getFile(".options").exists())
+				if (project.getFile(".options").exists()) //$NON-NLS-1$
 					PDECore.getDefault().getTracingOptionsManager().reset();
 			}
 		} else if (isFeatureProject(project)) {
-			model = createFeatureModel(project.getFile("feature.xml"));
+			model = createFeatureModel(project.getFile("feature.xml")); //$NON-NLS-1$
 			if (model != null)
 				fFeatureModels.add(model);
 		}
@@ -646,28 +646,28 @@ public class WorkspaceModelManager
 	public IModel getModel(IFile file) {
 		String name = file.getName().toLowerCase();
 		IProject project = file.getProject();
-		if (isPluginProject(project) && hasBundleManifest(project) && file.getProjectRelativePath().equals(new Path("META-INF/MANIFEST.MF"))) {
+		if (isPluginProject(project) && hasBundleManifest(project) && file.getProjectRelativePath().equals(new Path("META-INF/MANIFEST.MF"))) { //$NON-NLS-1$
 			return new WorkspaceBundleModel(file);
 		}
-		if (name.equals("plugin.xml")) {
+		if (name.equals("plugin.xml")) { //$NON-NLS-1$
 			//TODO support this
 			//if (hasBundleManifest(project))
 				//return new WorkspaceExtensionsModel(file);
 			return new WorkspacePluginModel(file);
 		}
-		if (name.equals("fragment.xml")) {
+		if (name.equals("fragment.xml")) { //$NON-NLS-1$
 			//TODO support this
 			//if (hasBundleManifest(project))
 				//return new WorkspaceExtensionsModel(file);
 			return new WorkspaceFragmentModel(file);
 		}
-		if (name.equals("build.properties")) {
+		if (name.equals("build.properties")) { //$NON-NLS-1$
 			return new WorkspaceBuildModel(file);
 		}
-		if (name.equals("feature.xml")) {
+		if (name.equals("feature.xml")) { //$NON-NLS-1$
 			return new WorkspaceFeatureModel(file);
 		}
-		if (name.equals("site.xml")) {
+		if (name.equals("site.xml")) { //$NON-NLS-1$
 			return new WorkspaceSiteModel(file);
 		}
 		if (name.equals(PDECore.SITEBUILD_PROPERTIES)) {

@@ -19,7 +19,7 @@ public class PluginPathFinder {
 	
 
 	public static File[] getLinkFiles(String platformHome) {
-		File file = new File(platformHome + Path.SEPARATOR + "links");
+		File file = new File(platformHome + Path.SEPARATOR + "links"); //$NON-NLS-1$
 		File[] linkFiles = null;
 		if (file.exists() && file.isDirectory()) {
 			linkFiles = file.listFiles();
@@ -35,11 +35,11 @@ public class PluginPathFinder {
 			FileInputStream fis = new FileInputStream(file);
 			properties.load(fis);
 			fis.close();
-			String path = properties.getProperty("path");
+			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
 				if (!new Path(path).isAbsolute())
 					path = prefix + Path.SEPARATOR + path;
-				path += Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins";
+				path += Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins"; //$NON-NLS-1$ //$NON-NLS-2$
 				if (new File(path).exists()) {
 					return path;
 				}
@@ -51,7 +51,7 @@ public class PluginPathFinder {
 	
 	public static String[] getPluginPaths(String platformHome) {
 		ArrayList result = new ArrayList();
-		result.add(new Path(platformHome).append("plugins").toOSString());
+		result.add(new Path(platformHome).append("plugins").toOSString()); //$NON-NLS-1$
 		File[] linkFiles = getLinkFiles(platformHome);		
 		if (linkFiles != null) {
 			for (int i = 0; i < linkFiles.length; i++) {

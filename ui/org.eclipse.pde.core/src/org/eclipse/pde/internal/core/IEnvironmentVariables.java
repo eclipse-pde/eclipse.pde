@@ -14,8 +14,8 @@ package org.eclipse.pde.internal.core;
  * @author
  */
 public interface IEnvironmentVariables {
-	String OS = "org.eclipse.pde.ui.os";
-	String WS = "org.eclipse.pde.ui.ws";
-	String NL = "org.eclipse.pde.ui.nl";
-	String ARCH = "org.eclipse.pde.ui.arch";
+	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
+	String WS = "org.eclipse.pde.ui.ws"; //$NON-NLS-1$
+	String NL = "org.eclipse.pde.ui.nl"; //$NON-NLS-1$
+	String ARCH = "org.eclipse.pde.ui.arch"; //$NON-NLS-1$
 }

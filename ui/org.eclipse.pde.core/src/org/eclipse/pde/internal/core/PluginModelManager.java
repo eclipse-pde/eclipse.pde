@@ -22,7 +22,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 
 public class PluginModelManager implements IAdaptable {
-	private static final String OSGI_RUNTIME ="org.eclipse.osgi";
+	private static final String OSGI_RUNTIME ="org.eclipse.osgi"; //$NON-NLS-1$
 	private IModelProviderListener providerListener;
 	private ExternalModelManager externalManager;
 	private WorkspaceModelManager workspaceManager;
@@ -46,7 +46,7 @@ public class PluginModelManager implements IAdaptable {
 	 */
 	public boolean isOSGiRuntime() {
 		try {
-			ModelEntry entry = findEntry("org.eclipse.platform");
+			ModelEntry entry = findEntry("org.eclipse.platform"); //$NON-NLS-1$
 			if (entry != null) {
 				IPluginModelBase model = entry.getActiveModel();
 				IResource resource = model.getUnderlyingResource();
@@ -62,7 +62,7 @@ public class PluginModelManager implements IAdaptable {
 							}
 						}
 					}
-					if (project.getFile("startup.jar").exists())
+					if (project.getFile("startup.jar").exists()) //$NON-NLS-1$
 						return false;
 				}
 			}

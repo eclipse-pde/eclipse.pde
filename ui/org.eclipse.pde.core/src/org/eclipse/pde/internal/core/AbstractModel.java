@@ -23,7 +23,7 @@ import org.xml.sax.*;
 public abstract class AbstractModel
 	extends PlatformObject
 	implements IModel, IModelChangeProviderExtension, Serializable {
-	private static final String KEY_ERROR = "Errors.modelError";
+	private static final String KEY_ERROR = "Errors.modelError"; //$NON-NLS-1$
 	private transient List listeners;
 	protected boolean loaded;
 	protected transient NLResourceHelper nlHelper;
@@ -83,7 +83,7 @@ public abstract class AbstractModel
 		if (nlHelper == null)
 			return key;
 		if (key == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return nlHelper.getResourceString(key);
 	}
 	public IResource getUnderlyingResource() {

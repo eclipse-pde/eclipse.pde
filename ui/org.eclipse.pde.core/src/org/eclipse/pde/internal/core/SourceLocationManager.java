@@ -70,7 +70,7 @@ public class SourceLocationManager implements ICoreConstants {
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourcePath) {
 		PluginVersionIdentifier vid =
 			new PluginVersionIdentifier(pluginBase.getVersion());
-		String pluginDir = pluginBase.getId() + "_" + vid.toString();
+		String pluginDir = pluginBase.getId() + "_" + vid.toString(); //$NON-NLS-1$
 		IPath locationRelativePath = new Path(pluginDir);
 		return locationRelativePath.append(sourcePath);
 	}
@@ -157,7 +157,7 @@ public class SourceLocationManager implements ICoreConstants {
 
 	private void parseSavedSourceLocations(String text, ArrayList entries) {
 		text = text.replace(File.pathSeparatorChar, ';');
-		StringTokenizer stok = new StringTokenizer(text, ";");
+		StringTokenizer stok = new StringTokenizer(text, ";"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			SourceLocation location = parseSourceLocation(token);
@@ -185,7 +185,7 @@ public class SourceLocationManager implements ICoreConstants {
 			String point = extension.getPoint();
 			if (point == null)
 				continue;
-			if (point.equals(PDECore.getPluginId() + ".source")) {
+			if (point.equals(PDECore.getPluginId() + ".source")) { //$NON-NLS-1$
 				int origLength = fExtensionLocations.size();
 				processExtension(extension);
 				if (fExtensionLocations.size() == origLength && model.getUnderlyingResource() != null) {
@@ -198,9 +198,9 @@ public class SourceLocationManager implements ICoreConstants {
 	private void processExtension(IPluginExtension extension) {
 		IPluginObject[] children = extension.getChildren();
 		for (int j = 0; j < children.length; j++) {
-			if (children[j].getName().equals("location")) {
+			if (children[j].getName().equals("location")) { //$NON-NLS-1$
 				IPluginElement element = (IPluginElement) children[j];
-				String pathValue = element.getAttribute("path").getValue();
+				String pathValue = element.getAttribute("path").getValue(); //$NON-NLS-1$
 				IResource resource = extension.getModel().getUnderlyingResource();
 				IPath path;
 				if (resource != null && resource.isLinked()) {
