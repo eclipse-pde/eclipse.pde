@@ -190,11 +190,17 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 			}
+			
 			if (models != null) {
+				boolean doReveal = true;
 				for (int i = 0; i < models.length; i++) {
 					String id = models[i].getPluginBase().getId();
 					if (id != null && preSelectedModels.contains(id)) {
 						tablePart.getTableViewer().setChecked(models[i],true);
+						if (doReveal) {
+							tablePart.getTableViewer().reveal(models[i]);
+							doReveal = false;
+						}
 					}
 				}
 				tablePart.updateCounter(tablePart.getTableViewer().getCheckedElements().length);
