@@ -100,26 +100,25 @@ public class PluginInputContext extends XMLInputContext {
 			}
 		}
 		
-		if (runtimeInsert != null) {
-			ops.remove(runtimeInsert);
-			ops.add(runtimeInsert);
+		for (int i = 0; i < ops.size(); i++) {
+			TextEdit edit = (TextEdit)ops.get(i);
+			if (edit instanceof InsertEdit) {
+				if (extensionPointInserts.contains(edit)) {
+					ops.remove(edit);
+					ops.add(0, edit);
+				}
+			}
 		}
 		
 		if (requiresInsert != null) {
 			ops.remove(requiresInsert);
-			ops.add(requiresInsert);
+			ops.add(0, requiresInsert);
 		}
 		
-		for (int i = 0; i < extensionPointInserts.size(); i++) {
-			InsertEdit edit = (InsertEdit)extensionPointInserts.get(i);
-			ops.remove(edit);
-			ops.add(edit);
-		}
-		for (int i = 0; i < extensionInserts.size(); i++) {
-			InsertEdit edit = (InsertEdit)extensionInserts.get(i);
-			ops.remove(edit);
-			ops.add(edit);
-		}
+		if (runtimeInsert != null) {
+			ops.remove(runtimeInsert);
+			ops.add(0, runtimeInsert);
+		}		
 	}
 	public void doRevert() {
 		fEditOperations.clear();
