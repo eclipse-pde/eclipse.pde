@@ -17,7 +17,7 @@
 <!-- ===================================================================== -->
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
-
+<property name="buildingOSGi" value="false"/>
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
 <!-- ===================================================================== -->
@@ -58,6 +58,7 @@
 		buildDirectory="${buildDirectory}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
+		buildingOSGi="${buildingOSGi}"
 	/>
 </target>
 
