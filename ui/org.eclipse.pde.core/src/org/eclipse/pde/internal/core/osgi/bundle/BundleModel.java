@@ -46,7 +46,7 @@ public abstract class BundleModel
 	public boolean isFragmentModel() {
 		IBundle bundle = getBundle();
 		if (bundle != null
-			&& bundle.getHeader(IBundle.KEY_HOST_BUNDLE) != null)
+			&& bundle.getHeader(IBundle.KEY_FRAGMENT_HOST) != null)
 			return true;
 		return false;
 	}

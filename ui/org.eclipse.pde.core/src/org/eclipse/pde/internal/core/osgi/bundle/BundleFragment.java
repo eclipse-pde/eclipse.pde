@@ -29,7 +29,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	
 	private FragmentUtil getFragmentUtil() {
 		if (futil==null) {
-			futil = new FragmentUtil(getBundle().getHeader(IBundle.KEY_HOST_BUNDLE));
+			futil = new FragmentUtil(getBundle().getHeader(IBundle.KEY_FRAGMENT_HOST));
 		}
 		return futil;
 	}
@@ -72,7 +72,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		if (bundle!=null) {
 			FragmentUtil futil = getFragmentUtil();
 			futil.setPluginId(id);
-			bundle.setHeader(IBundle.KEY_HOST_BUNDLE, futil.getHeader());
+			bundle.setHeader(IBundle.KEY_FRAGMENT_HOST, futil.getHeader());
 		}
 	}
 
@@ -84,7 +84,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		if (bundle!=null) {
 			FragmentUtil futil = getFragmentUtil();
 			futil.setPluginVersion(version);
-			bundle.setHeader(IBundle.KEY_HOST_BUNDLE, futil.getHeader());
+			bundle.setHeader(IBundle.KEY_FRAGMENT_HOST, futil.getHeader());
 		}
 	}
 
@@ -96,7 +96,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		if (bundle!=null) {
 			FragmentUtil futil = getFragmentUtil();
 			futil.setMatch(rule);
-			bundle.setHeader(IBundle.KEY_HOST_BUNDLE, futil.getHeader());
+			bundle.setHeader(IBundle.KEY_FRAGMENT_HOST, futil.getHeader());
 		}
 	}
 }

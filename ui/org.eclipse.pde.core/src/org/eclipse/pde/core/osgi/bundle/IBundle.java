@@ -48,10 +48,10 @@ public interface IBundle extends IWritable {
 	String COMPATIBLE_MATCH = "compatible";
 	String GREATERTHANOREQUAL_MATCH = "greaterthan-or-equal";
 
-	String KEY_GLOBAL_NAME = "Bundle-GlobalName";
+	String KEY_SYMBOLIC_NAME = "Bundle-SymbolicName";
 	String KEY_PROVIDE_PACKAGE = "Provide-Package";
 	String KEY_REQUIRE_BUNDLE = "Require-Bundle";
-	String KEY_HOST_BUNDLE = "Host-Bundle";
+	String KEY_FRAGMENT_HOST = "Fragment-Host";
 
 	String KEY_LEGACY = "Legacy"; //$NON-NLS-1$
 	
@@ -77,8 +77,8 @@ public interface IBundle extends IWritable {
 			KEY_IMPORT_PACKAGE,
 			KEY_PROVIDE_PACKAGE,
 			KEY_REQUIRE_BUNDLE,
-			KEY_HOST_BUNDLE,
-			KEY_GLOBAL_NAME,
+			KEY_FRAGMENT_HOST,
+			KEY_SYMBOLIC_NAME,
 			KEY_LEGACY
 			};
 

@@ -70,7 +70,7 @@ public class Bundle extends BundleObject implements IBundle {
 		// migrate from a plug-in
 		d.put(KEY_LEGACY, "true");
 		d.put(KEY_NAME, plugin.getId());
-		d.put(KEY_GLOBAL_NAME, plugin.getId());
+		d.put(KEY_SYMBOLIC_NAME, plugin.getId());
 		d.put(KEY_DESC, plugin.getName());
 		d.put(KEY_VENDOR, plugin.getProviderName());
 		d.put(KEY_VERSION, plugin.getVersion());
@@ -98,7 +98,7 @@ public class Bundle extends BundleObject implements IBundle {
 
 	private static void loadFragment(Dictionary d, IFragment fragment) {
 		FragmentUtil futil = new FragmentUtil(fragment);
-		d.put(KEY_HOST_BUNDLE, futil.getHeader());
+		d.put(KEY_FRAGMENT_HOST, futil.getHeader());
 	}
 
 	private static void loadLibraries(
