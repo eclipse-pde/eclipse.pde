@@ -13,8 +13,10 @@ package org.eclipse.pde.internal.builders;
 import java.io.*;
 import java.net.*;
 
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+
 public interface ISchemaTransformer {
-	public void transform(URL schemaURL, InputStream schema, PrintWriter output, SchemaHandler reporter);
+	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter);
 	
-	public void transform(URL schemaURL, InputStream schema, PrintWriter output, SchemaHandler reporter, URL cssURL);
+	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter, URL cssURL);
 }

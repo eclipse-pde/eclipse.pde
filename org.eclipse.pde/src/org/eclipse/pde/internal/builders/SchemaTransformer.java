@@ -169,15 +169,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	public void transform(
-		URL schemaURL,
+		ISchemaDescriptor desc,
 		InputStream is,
 		PrintWriter out,
 		SchemaHandler reporter) {
-		transform(schemaURL, is, out, reporter, null);
+		transform(desc, is, out, reporter, null);
 	}
 
 	public void transform(
-		URL schemaURL,
+		ISchemaDescriptor desc,
 		InputStream is,
 		PrintWriter out,
 		SchemaHandler reporter,
@@ -188,7 +188,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		Node root = reporter.getDocumentElement();
 		if (root == null || reporter.getErrorCount() > 0)
 			return;
-		Schema schema = new Schema((ISchemaDescriptor) null, schemaURL);
+		Schema schema = new Schema(desc, desc.getSchemaURL());
 		schema.traverseDocumentTree(root, reporter.getLineTable());
 
 		if (verifySchema(schema, reporter)

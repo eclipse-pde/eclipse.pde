@@ -32,6 +32,49 @@ public class ConvertSchemaToHTML extends Task {
 	private String manifest;
 	private String destination;
 	private URL cssURL;
+	
+	/*
+     * The standalone descriptor is responsible for creating the schema
+     * and computing the location of the included schemas that span
+     * the plug-ins by computing the referenced plug-in location.
+     * The assumption is that all the plug-ins in the build
+     * are extracted into one folder, hence they are all colocated.
+	 */
+	private static class StandaloneSchemaDescriptor implements ISchemaDescriptor {
+		private IPluginExtensionPoint point;
+		private URL url;
+		private ISchema schema;
+		
+		public StandaloneSchemaDescriptor(IPluginExtensionPoint point, URL url) {
+			this.point = point;
+			this.url = url;
+			schema = new Schema(this, url);
+		}
+		public IPath getPluginLocation(String id) {
+			IPluginModelBase model = (IPluginModelBase)point.getModel();
+			String location = model.getInstallLocation();
+			IPath path = new Path(location);
+			// Go one level up from the model location,
+			// and append the plug-in ID
+			// During the build, all the plug-ins are 
+			// colocated.
+			return path.removeLastSegments(1).append(id);			
+		}
+		public URL getSchemaURL() {
+			return url;
+			
+		}
+		public String getPointId() {
+			return point.getFullId();
+			
+		}
+		public ISchema getSchema() {
+			return schema;
+		}
+		public boolean isStandalone() {
+			return true;
+		}
+	}
 
 	public ConvertSchemaToHTML(){
 		cssURL = null;
@@ -52,7 +95,7 @@ public class ConvertSchemaToHTML extends Task {
 
 			if (schemaLocation == null || schemaLocation.equals(""))
 				continue;
-
+			Schema schema=null;
 			try {
 				if (fParser == null) {
 					SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -68,7 +111,8 @@ public class ConvertSchemaToHTML extends Task {
 					url = new URL("file:" + schemaFile.getAbsolutePath());
 				} catch (MalformedURLException e) {
 				}
-				Schema schema = new Schema((ISchemaDescriptor) null, url);
+				StandaloneSchemaDescriptor desc = new StandaloneSchemaDescriptor(extPoints[i], url);
+				schema = (Schema)desc.getSchema();
 				schema.traverseDocumentTree(
 					handler.getDocumentElement(),
 					handler.getLineTable());
@@ -78,8 +122,10 @@ public class ConvertSchemaToHTML extends Task {
 						? new File(destination)
 						: new File(getProject().getBaseDir(), destination);
 				if (!directory.exists() || !directory.isDirectory())
-					if (!directory.mkdirs())
+					if (!directory.mkdirs()) {
+						schema.dispose();
 						return;
+					}
 
 				File file =
 					new File(
@@ -94,6 +140,8 @@ public class ConvertSchemaToHTML extends Task {
 			} finally {
 				if (out != null)
 					out.close();
+				if (schema!=null)
+					schema.dispose();
 			}
 		}
 	}

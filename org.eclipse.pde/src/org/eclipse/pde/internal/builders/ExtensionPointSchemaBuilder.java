@@ -21,6 +21,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -117,15 +119,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			InputStream source = file.getContents(false);
 			StringWriter stringWriter = new StringWriter();
 			PrintWriter pwriter = new PrintWriter(stringWriter);
-			URL url = null;
-			
-			try {
-				url = new URL("file:"+file.getLocation().toOSString());
-			}
-			catch (MalformedURLException e) {
-			}
 
-			transform(url, source, pwriter, reporter, cssURL);
+			FileSchemaDescriptor desc = new FileSchemaDescriptor(file);
+			transform(desc, source, pwriter, reporter, cssURL);
 			stringWriter.close();
 			if (reporter.getErrorCount() == 0
 				&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
@@ -346,11 +342,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private void transform(
-		URL schemaURL,
+		ISchemaDescriptor desc,
 		InputStream input,
 		PrintWriter output,
 		SchemaHandler reporter,
 		URL cssURL) {
-		transformer.transform(schemaURL, input, output, reporter, cssURL);
+		transformer.transform(desc, input, output, reporter, cssURL);
 	}
 }
