@@ -96,11 +96,18 @@ public class ClasspathHelper {
 				
 				IClasspathEntry[] entries = jProject.getRawClasspath();
 				for (int i = 0; i < entries.length; i++) {
-					if (entries[i].getContentKind() == IPackageFragmentRoot.K_SOURCE
-							&& entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					path = null;
+					if (entries[i].getContentKind() == IClasspathEntry.CPE_SOURCE) {
 						path = entries[i].getOutputLocation();
-						if (path != null && !excluded.contains(path))
-							addPath(result, project, path);
+					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+						path = entries[i].getPath();
+						// no need to add class folders/libraries that are not linked
+						if (path.getDevice() == null && path.matchingFirstSegments(project.getFullPath()) == 1) {
+							path = null;
+						}
+					}
+					if (path != null && !excluded.contains(path)) {
+						addPath(result, project, path);
 					}
 				}
 			}
