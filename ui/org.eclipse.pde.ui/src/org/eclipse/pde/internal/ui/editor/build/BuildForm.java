@@ -107,14 +107,16 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection = new BinSection(page);
 		control = binSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 150;
+		gd.widthHint = 100;
+		gd.heightHint = 100;
 		control.setLayoutData(gd);
 		binSection.setSectionControl(control);
 
 		srcSection = new SrcSection(page);
 		control = srcSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 150;
+		gd.widthHint = 100;
+		gd.heightHint = 100;
 		control.setLayoutData(gd);
 		srcSection.setSectionControl(control);
 
