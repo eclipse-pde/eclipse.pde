@@ -206,6 +206,7 @@ public class ExternalPluginsBlock {
 
 		gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
+		gd.widthHint = 100;
 		return container;
 	}
 
