@@ -433,47 +433,13 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		
 		if (selected.length > 0) {
-			boolean noImplicitPlugins = true;
 			for (int i = 0; i < selected.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) selected[i];
-				if (noImplicitPlugins)
-					noImplicitPlugins =
-						model.getPluginBase().getLibraries().length == 0
-							&& model.getPluginBase().getImports().length == 0;
 				addPluginAndDependent(model, checked);
 			}
-
-			if (!noImplicitPlugins)
-				addImplicitDependencies(checked);
-
 		}
 
 		return new ArrayList(checked);
-		/*
-				if (findPlugin("org.eclipse.sdk") == null
-					findPlugin("org.eclipse.ui") != null) {
-					PluginModel sdkPlugin = PluginUtil.findPlugin("org.eclipse.sdk", plugins);
-					if (sdkPlugin != null) {
-						String title = "Plugin Selection";
-						String message =
-							"'org.eclipse.ui' implicitly requires 'org.eclipse.sdk'.\nOK to add 'org.eclipse.sdk' (recommended)?";
-						if (MessageDialog.openQuestion(getShell(), title, message)) {
-							result.add(sdkPlugin);
-						}
-					}
-				}
-		*/
-	}
-
-	private void addImplicitDependencies(HashSet checked) {
-		IPluginModelBase implicit = findModel("org.eclipse.core.boot");
-		if (implicit != null) {
-			checked.add(implicit);
-		}
-		implicit = findModel("org.eclipse.core.runtime");
-		if (implicit != null) {
-			addPluginAndDependent(implicit,checked);
-		}
 	}
 
 	private IPluginModelBase findModel(String id) {
