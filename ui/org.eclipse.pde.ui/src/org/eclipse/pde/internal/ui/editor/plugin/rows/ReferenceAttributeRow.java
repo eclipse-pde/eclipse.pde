@@ -38,7 +38,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (isReferenceModel())
+				if (!isReferenceModel())
 					openReference();
 			}
 		});
