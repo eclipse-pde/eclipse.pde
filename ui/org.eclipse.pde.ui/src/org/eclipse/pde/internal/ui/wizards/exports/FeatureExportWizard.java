@@ -47,7 +47,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 				fPage1.doExportSource(),
 				fPage1.getDestination(),
 				fPage1.getFileName(),
-				fPage1.getSelectedItems(),
+				((ExportWizardPageWithTable)fPage1).getSelectedItems(),
 				signingInfo,
 				jnlpInfo);
 		job.setUser(true);
@@ -76,7 +76,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	
 	private String getFeatureIDs() {
 		StringBuffer buffer = new StringBuffer();
-		Object[] objects = fPage1.getSelectedItems();
+		Object[] objects = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IFeatureModel) {

@@ -149,6 +149,10 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 		}
 	}
 	
+	protected abstract boolean isValidModel(IModel model);
+	
+	protected abstract IModel findModelFor(IAdaptable object);
+	
 	public Object[] getSelectedItems() {
 		return fExportPart.getSelection();
 	}

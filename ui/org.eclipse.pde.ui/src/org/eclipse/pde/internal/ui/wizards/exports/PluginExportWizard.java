@@ -45,7 +45,7 @@ public class PluginExportWizard extends BaseExportWizard {
 				fPage1.doExportSource(),
 				fPage1.getDestination(),
 				fPage1.getFileName(),
-				fPage1.getSelectedItems(),
+				((ExportWizardPageWithTable)fPage1).getSelectedItems(),
 				signingInfo);
 		job.setUser(true);
 		job.schedule();
@@ -73,7 +73,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	
 	private String getPluginIDs() {
 		StringBuffer buffer = new StringBuffer();
-		Object[] objects = fPage1.getSelectedItems();
+		Object[] objects = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IPluginModelBase) {

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
@@ -257,8 +256,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		}
 	}
 
-	protected abstract IModel findModelFor(IAdaptable object);
-
 	protected abstract void pageChanged();
 	
 	protected String validateBottomSections() {
@@ -335,8 +332,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		}	
 	}
 
-	public abstract Object[] getSelectedItems();
-
 	public boolean doExportSource() {
 		return fIncludeSource.getSelection();
 	}
@@ -381,9 +376,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	protected abstract void hookHelpContext(Control control);
-	
-	protected abstract boolean isValidModel(IModel model);
-	
+		
 	public boolean doGenerateAntFile() {
 		return fSaveAsAntButton.getSelection();
 	}
