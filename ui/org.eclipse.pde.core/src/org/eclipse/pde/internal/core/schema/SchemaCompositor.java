@@ -100,16 +100,16 @@ public class SchemaCompositor
 		String tag = null;
 
 		switch (kind) {
-			case this.ALL :
+			case ALL :
 				tag = "all";
 				break;
-			case this.CHOICE :
+			case CHOICE :
 				tag = "choice";
 				break;
-			case this.GROUP :
+			case GROUP :
 				tag = "group";
 				break;
-			case this.SEQUENCE :
+			case SEQUENCE :
 				tag = "sequence";
 				break;
 		}
