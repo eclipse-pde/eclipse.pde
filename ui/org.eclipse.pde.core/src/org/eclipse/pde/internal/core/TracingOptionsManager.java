@@ -36,8 +36,8 @@ public class TracingOptionsManager {
 		Properties modelOptions = getOptions(model);
 		if (modelOptions == null)
 			return;
-		for (Enumeration enum = modelOptions.keys(); enum.hasMoreElements();) {
-			String key = enum.nextElement().toString();
+		for (Enumeration keys = modelOptions.keys(); keys.hasMoreElements();) {
+			String key = keys.nextElement().toString();
 			String value = modelOptions.getProperty(key);
 			if (key != null && value != null)
 				template.setProperty(key, value);
@@ -62,8 +62,8 @@ public class TracingOptionsManager {
 		if (template == null)
 			createTemplate();
 		Hashtable defaults = new Hashtable();
-		for (Enumeration enum = template.keys(); enum.hasMoreElements();) {
-			String key = enum.nextElement().toString();
+		for (Enumeration keys = template.keys(); keys.hasMoreElements();) {
+			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {
 				defaults.put(key, template.get(key));
 			}
@@ -105,12 +105,8 @@ public class TracingOptionsManager {
 			IPath path = project.getFullPath().append(".options"); //$NON-NLS-1$
 			IFile file = project.getWorkspace().getRoot().getFile(path);
 			return file.exists();
-		} else {
-			String location = model.getInstallLocation();
-			String fileName = location + File.separator + ".options"; //$NON-NLS-1$
-			File file = new File(fileName);
-			return file.exists();
-		}
+		} 
+		return new File(model.getInstallLocation(), ".options").exists();	 //$NON-NLS-1$
 	}
 	
 	private InputStream openInputStream(IPluginModelBase model) {
@@ -152,8 +148,8 @@ public class TracingOptionsManager {
 
 	public void save(String filename, Map map, HashSet selected) {
 		Properties properties = getTracingOptions(map);
-		for (Enumeration enum = properties.keys(); enum.hasMoreElements();) {
-			String key = enum.nextElement().toString();
+		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
+			String key = keys.nextElement().toString();
 			Path path = new Path(key);
 			if (path.segmentCount() < 1 || !selected.contains(path.segment(0).toString())) {
 				properties.remove(key);
