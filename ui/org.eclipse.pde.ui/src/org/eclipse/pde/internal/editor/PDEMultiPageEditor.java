@@ -109,7 +109,7 @@ public abstract class PDEMultiPageEditor
 		}
 		return documentProvider;
 	}
-	protected abstract Object createModel(Object input);
+	protected abstract Object createModel(Object input) throws CoreException;
 	protected abstract void createPages();
 	protected IModelUndoManager createModelUndoManager() {
 		return new NullUndoManager();
@@ -286,7 +286,13 @@ public abstract class PDEMultiPageEditor
 			inputObject = input.getAdapter(IFile.class);
 		}
 		site.setSelectionProvider(this);
-		initializeModels(inputObject);
+		try {
+			initializeModels(inputObject);
+		}
+		catch (CoreException e) {
+			throw new PartInitException(e.getStatus());
+		}
+
 		for (Iterator iter = pages.iterator(); iter.hasNext();) {
 			IEditorPart part = (IEditorPart) iter.next();
 			part.init(site, input);
@@ -298,12 +304,13 @@ public abstract class PDEMultiPageEditor
 		else
 			setTitle(input.toString());
 	}
-	protected void initializeModels(Object input) {
+	protected void initializeModels(Object input) throws CoreException {
 		documentProvider = createDocumentProvider(input);
 		if (documentProvider == null)
 			return;
 		// create document provider
 		model = createModel(input);
+
 		if (model instanceof IModelChangeProvider) {
 			modelListener = new IModelChangedListener() {
 				public void modelChanged(IModelChangedEvent e) {

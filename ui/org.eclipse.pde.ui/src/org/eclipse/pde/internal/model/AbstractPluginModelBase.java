@@ -46,7 +46,7 @@ public boolean isEnabled() {
 public boolean isFragmentModel() {
 	return false;
 }
-public void load(InputStream stream) throws CoreException {
+public void load(InputStream stream, boolean outOfSync) throws CoreException {
 	XMLErrorHandler errorHandler = new XMLErrorHandler();
 	SourceDOMParser parser = new SourceDOMParser();
 	parser.setErrorHandler(errorHandler);
@@ -64,6 +64,7 @@ public void load(InputStream stream) throws CoreException {
 		}
 		processDocument(parser.getDocument(), parser.getLineTable());
 		loaded=true;
+		if (!outOfSync) updateTimeStamp();
 	} catch (SAXException e) {
 		throwParseErrorsException();
 	} catch (IOException e) {
@@ -74,12 +75,8 @@ private void processDocument(Document doc, Hashtable lineTable) {
 	Node pluginNode = doc.getDocumentElement();
 	pluginBase.load(pluginNode, lineTable);
 }
-public void reload(InputStream stream) throws CoreException {
-/*
-	if (pluginBase != null)
-		pluginBase.reset();
-*/
-	load(stream);
+public void reload(InputStream stream, boolean outOfSync) throws CoreException {
+	load(stream, outOfSync);
 	fireModelChanged(
 		new ModelChangedEvent(
 			IModelChangedEvent.WORLD_CHANGED,
@@ -104,4 +101,6 @@ public String toString() {
 	if (pluginBase!=null) return pluginBase.getTranslatedName();
 	return super.toString();
 }
+
+protected abstract void updateTimeStamp();
 }

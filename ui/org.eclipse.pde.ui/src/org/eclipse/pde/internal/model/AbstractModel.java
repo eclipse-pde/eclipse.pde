@@ -23,6 +23,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	protected boolean loaded;
 	protected NLResourceHelper nlHelper;
 	protected boolean disposed;
+	private long timeStamp;
 
 public AbstractModel() {
 	super();
@@ -63,6 +64,23 @@ public String getResourceString(String key) {
 public IResource getUnderlyingResource() {
 	return null;
 }
+
+protected boolean isInSync(File localFile) {
+	if (!localFile.exists()) return false;
+	return  (localFile.lastModified()==getTimeStamp());
+}
+
+public final long getTimeStamp() {
+	return timeStamp;
+}
+
+protected abstract void updateTimeStamp();
+
+protected void updateTimeStamp(File localFile) {
+	if (localFile.exists())
+		this.timeStamp = localFile.lastModified();
+}
+
 public boolean isDisposed() {
 	return disposed;
 }
@@ -73,4 +91,5 @@ public void release() {}
 public void removeModelChangedListener(IModelChangedListener listener) {
 	listeners.remove(listener);
 }
+
 }

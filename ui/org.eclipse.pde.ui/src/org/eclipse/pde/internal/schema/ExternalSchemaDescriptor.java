@@ -37,7 +37,7 @@ public URL getSchemaURL() {
 	URL url = getInstallURL();
 	if (url==null) return null;
 	try {
-		return new URL(url.toString() + info.getSchema());
+		return new URL(url, info.getSchema());
 	} catch (MalformedURLException e) {
 	}
 	return null;

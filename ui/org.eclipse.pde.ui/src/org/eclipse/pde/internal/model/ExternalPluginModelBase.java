@@ -10,12 +10,14 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.model.build.*;
+import java.io.File;
 
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private String installLocation;
 	private IPath eclipseHomeRelativePath;
 	private IBuildModel buildModel;
+	private long timeStamp;
 
 public ExternalPluginModelBase() {
 	super();
@@ -58,12 +60,27 @@ public void load(PluginModel descriptorModel) {
 		pluginBase.reset();
 	}
 	pluginBase.load(descriptorModel);
+	updateTimeStamp();
 	loaded=true;
 }
-public void setEclipseHomeRelativePath(org.eclipse.core.runtime.IPath newEclipseHomeRelativePath) {
+
+public boolean isInSync() {
+	return isInSync(getLocalFile());
+}
+
+private File getLocalFile() {
+	String manifest = isFragmentModel()?"fragment.xml":"plugin.xml";
+	return new File(getInstallLocation()+File.separator+manifest);
+}
+
+protected void updateTimeStamp() {
+	updateTimeStamp(getLocalFile());
+}
+
+public void setEclipseHomeRelativePath(IPath newEclipseHomeRelativePath) {
 	eclipseHomeRelativePath = newEclipseHomeRelativePath;
 }
-public void setInstallLocation(java.lang.String newInstallLocation) {
+public void setInstallLocation(String newInstallLocation) {
 	installLocation = newInstallLocation;
 }
 }

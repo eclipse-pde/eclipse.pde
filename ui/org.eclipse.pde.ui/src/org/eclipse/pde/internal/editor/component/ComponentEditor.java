@@ -75,7 +75,7 @@ private void checkStaleReferences(IComponentModel model) {
 			PDEPlugin.getResourceString(UNRESOLVED_MESSAGE));
 	}
 }
-protected Object createModel(Object input) {
+protected Object createModel(Object input) throws CoreException {
 	if (input instanceof IFile) return createResourceModel((IFile)input);
 	return null;
 }
@@ -92,19 +92,16 @@ protected void createPages() {
 	addPage(REFERENCE_PAGE, referencePage);
 	addPage(SOURCE_PAGE, new ComponentSourcePage(this));
 }
-private IComponentModel createResourceModel(IFile file) {
+private IComponentModel createResourceModel(IFile file) throws CoreException {
 	InputStream stream = null;
-	try {
-		stream = file.getContents(false);
-	} catch (CoreException e) {
-		return null;
-	}
+	stream = file.getContents(false);
+
 	IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
 	provider.connect(file, this);
 	IComponentModel model = (IComponentModel) provider.getModel(file, this);
 	boolean cleanModel = true;
 	try {
-		model.load(stream);
+		model.load(stream, false);
 		checkStaleReferences(model);
 	} catch (CoreException e) {
 		cleanModel = false;
@@ -171,7 +168,7 @@ protected boolean updateModel() {
 	try {
 		InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8"));
 		try {
-			model.reload(stream);
+			model.reload(stream, false);
 		} catch (CoreException e) {
 			cleanModel = false;
 		}

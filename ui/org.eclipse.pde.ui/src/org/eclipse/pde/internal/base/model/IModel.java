@@ -79,6 +79,24 @@ boolean isEditable();
  * @return true if the model has been loaded
  */
 boolean isLoaded();
+
+/**
+ * Tests if this model is in sync with the storage
+ * object it was loaded from. Models loaded
+ * from resources are in sync if underlying
+ * resources are in sync. Models loaded
+ * from files on the file systems are in sync
+ * if the time stamp matches the model time stamp.
+ */
+boolean isInSync();
+
+/**
+ * Returns the last modification time stamp.
+ * The model itself does not have the time stamp.
+ * It is 'borrowed' from the underlying physical
+ * object.
+ */
+long getTimeStamp();
 /**
  * Loads the model directly from an underlying
  * resource. This method does nothing if
@@ -99,8 +117,10 @@ public void load() throws CoreException;
  *
  * @param source an input stream instance that should
  * be parsed to load the model
+ * @param outOfSync if true, time stamp will not be
+ * updated to maintain out-of-sync state of the model.
  */
-public void load(InputStream source) throws CoreException;
+public void load(InputStream source, boolean outOfSync) throws CoreException;
 /**
  * Reload is a version of 'load' operation that has
  * the following steps:
@@ -118,6 +138,8 @@ public void load(InputStream source) throws CoreException;
  * subsequently fired should be used by listeners to
  * discard all caches and/or fully refresh views
  * that shows any portion of the model.
+ * @param outOfSync if true, time stamp will not be updated
+ * to maintain out-of-sync state of the model.
  */
-public void reload(InputStream source) throws CoreException;
+public void reload(InputStream source, boolean outOfSync) throws CoreException;
 }

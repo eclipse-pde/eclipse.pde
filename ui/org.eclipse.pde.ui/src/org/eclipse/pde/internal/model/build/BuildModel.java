@@ -33,10 +33,11 @@ public boolean isFragment() {
 	return fragment;
 }
 public abstract void load();
-public void load(InputStream source) {
+public void load(InputStream source, boolean outOfSync) {
 	Properties properties = new Properties();
 	try {
 		properties.load(source);
+		if (!outOfSync) updateTimeStamp();
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
 		return;
@@ -51,13 +52,13 @@ public void load(InputStream source) {
 	}
 	loaded = true;
 }
-public void reload(InputStream source) {
+public void reload(InputStream source, boolean outOfSync) {
 	if (build!=null) build.reset();
 	else {
 		build = new Build();
 		build.setModel(this);
 	}
-	load(source);
+	load(source, outOfSync);
 	fireModelChanged(
 		new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
 }

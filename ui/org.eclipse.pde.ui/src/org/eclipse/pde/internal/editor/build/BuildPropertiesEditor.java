@@ -32,7 +32,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 public BuildPropertiesEditor() {
 	super();
 }
-protected Object createModel(Object input) {
+protected Object createModel(Object input) throws CoreException {
 	if (input instanceof IFile) return createResourceModel((IFile)input);
 	return null;
 }
@@ -45,18 +45,16 @@ protected void createPages() {
 	addPage(BUILD_PAGE, buildPage);
 	addPage(SOURCE_PAGE, new BuildSourcePage(this));
 }
-private IBuildModel createResourceModel(IFile file) {
+private IBuildModel createResourceModel(IFile file) throws CoreException {
 	InputStream stream = null;
-	try {
-		stream = file.getContents(false);
-	} catch (CoreException e) {
-		return null;
-	}
+
+	stream = file.getContents(false);
+
 	IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
 	provider.connect(file, this);
 	IBuildModel model = (IBuildModel) provider.getModel(file, this);
 	try {
-		model.load(stream);
+		model.load(stream, false);
 	} catch (CoreException e) {
 	}
 	try {
@@ -102,7 +100,7 @@ protected boolean updateModel() {
 	try {
 	   	InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8"));
 		try {
-			model.reload(stream);
+			model.reload(stream, false);
 		} catch (CoreException e) {
 			cleanModel = false;
 		}

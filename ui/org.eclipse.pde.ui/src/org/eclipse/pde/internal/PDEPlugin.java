@@ -85,14 +85,16 @@ public class PDEPlugin extends AbstractUIPlugin {
 			inVAJ = false;
 		}
 	}
-	
+
 	class DebugListener implements IDebugEventListener {
 		public void handleDebugEvent(DebugEvent e) {
-			if (currentLaunch==null) return;
+			if (currentLaunch == null)
+				return;
 			Object obj = e.getSource();
 			if (obj instanceof IProcess) {
 				if ((e.getKind() & DebugEvent.TERMINATE) != 0) {
-					if (currentLaunch.isTerminated()) {
+					ILaunch launch = ((IProcess) obj).getLaunch();
+					if (launch.equals(currentLaunch) && currentLaunch.isTerminated()) {
 						currentLaunch = null;
 						fireCurrentLaunchChanged();
 					}
@@ -101,9 +103,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 		}
 
 		private void fireCurrentLaunchChanged() {
-			for (Enumeration enum=currentLaunchListeners.elements();
-					enum.hasMoreElements();) {
-				((ICurrentLaunchListener)enum.nextElement()).currentLaunchChanged();
+			for (Enumeration enum = currentLaunchListeners.elements();
+				enum.hasMoreElements();
+				) {
+				((ICurrentLaunchListener) enum.nextElement()).currentLaunchChanged();
 			}
 		}
 	}
@@ -123,9 +126,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
-	
+
 	public void addCurrentLaunchListener(ICurrentLaunchListener listener) {
-		if (currentLaunchListeners.contains(listener)==false)
+		if (currentLaunchListeners.contains(listener) == false)
 			currentLaunchListeners.add(listener);
 	}
 	public void removeCurrentLaunchListener(ICurrentLaunchListener listener) {
@@ -398,12 +401,12 @@ public class PDEPlugin extends AbstractUIPlugin {
 		getWorkspaceModelManager().reset();
 		attachToLaunchManager();
 	}
-	
+
 	private void attachToLaunchManager() {
 		debugListener = new DebugListener();
 		DebugPlugin.getDefault().addDebugEventListener(debugListener);
 	}
-	
+
 	private void detachFromLaunchManager() {
 		DebugPlugin.getDefault().removeDebugEventListener(debugListener);
 	}
@@ -422,9 +425,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public void registerLaunch(ILaunch launch) {
 		this.currentLaunch = launch;
 	}
-	
+
 	public IStatus getCurrentLaunchStatus() {
-		if (currentLaunch==null) return null;
+		if (currentLaunch == null)
+			return null;
 
 		if (currentLaunch.isTerminated()) {
 			currentLaunch = null;

@@ -73,6 +73,12 @@ public String getInstallLocation() {
 public IResource getUnderlyingResource() {
 	return file;
 }
+
+public boolean isInSync() {
+	File localFile = file.getLocation().toFile();
+	return super.isInSync(localFile);
+}
+
 public boolean isDirty() {
 	return dirty;
 }
@@ -88,10 +94,28 @@ public void load() {
 	if (file == null)
 		return;
 	if (file.exists()) {
+		InputStream stream = null;
+		
+		boolean outOfSync=false;
+		
 		try {
-			InputStream stream = file.getContents(false);
-			load(stream);
+			stream = file.getContents(false);
+		}
+		catch (CoreException e) {
+			outOfSync=true;
+		}
+		if (outOfSync) {
+			try {
+				stream = file.getContents(true);
+			}
+			catch (CoreException e) {
+				return;
+			}
+		}
+		try {
+			load(stream, outOfSync);
 			stream.close();
+
 		} catch (CoreException e) {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
@@ -102,6 +126,11 @@ public void load() {
 		loaded = true;
 	}
 }
+
+protected void updateTimeStamp() {
+	updateTimeStamp(file.getLocation().toFile());
+}
+
 public void save() {
 	if (file == null)
 		return;

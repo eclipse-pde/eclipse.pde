@@ -52,13 +52,34 @@ public boolean isDirty() {
 public boolean isEditable() {
 	return editable;
 }
+
+public boolean isInSync() {
+	return isInSync(file.getLocation().toFile());
+}
+
+protected void updateTimeStamp() {
+	updateTimeStamp(file.getLocation().toFile());
+}
 public void load() {
 	if (file == null)
 		return;
 	if (file.exists()) {
+		boolean outOfSync = false;
+		InputStream stream = null;
 		try {
-			InputStream stream = file.getContents(false);
-			load(stream);
+			stream = file.getContents(false);
+		}
+		catch (CoreException e) {
+			outOfSync = true;
+			try {
+				stream = file.getContents(true);
+			}
+			catch (CoreException ex) {
+				return;
+			}
+		}
+		try {
+			load(stream, outOfSync);
 			stream.close();
 		} catch (CoreException e) {
 		} catch (IOException e) {

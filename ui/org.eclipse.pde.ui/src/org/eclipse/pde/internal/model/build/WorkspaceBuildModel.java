@@ -46,15 +46,30 @@ public boolean isDirty() {
 public boolean isEditable() {
 	return editable;
 }
+
 public void load() {
 	if (file == null)
 		return;
 	if (file.exists()) {
+		InputStream stream = null;
+		boolean outOfSync=false;
 		try {
-			InputStream stream = file.getContents(false);
-			load(stream);
+			stream = file.getContents(false);
+		}
+		catch (CoreException e) {
+			outOfSync = true;
+		}
+		if (outOfSync) {
+			try {
+				stream = file.getContents(true);
+			}
+			catch (CoreException e) {
+				return;
+			}
+		}
+		try {			
+			load(stream, outOfSync);
 			stream.close();
-		} catch (CoreException e) {
 		}
 		catch (IOException e) {
 			PDEPlugin.logException(e);
@@ -65,6 +80,14 @@ public void load() {
 		build.setModel(this);
 		loaded=true;
 	}
+}
+
+public boolean isInSync() {
+	return isInSync(file.getLocation().toFile());
+}
+
+protected void updateTimeStamp() {
+	updateTimeStamp(file.getLocation().toFile());
 }
 public void save() {
 	if (file == null)

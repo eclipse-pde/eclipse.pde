@@ -44,18 +44,20 @@ public boolean isEditable() {
 public boolean isEnabled() {
 	return enabled;
 }
-public void load(InputStream stream) throws CoreException {
+public void load(InputStream stream, boolean outOfSync) throws CoreException {
 	DOMParser parser = new DOMParser();
 	try {
 		InputSource source = new InputSource(stream);
 		parser.parse(source);
 		processDocument(parser.getDocument());
 		loaded=true;
+		if (!outOfSync) updateTimeStamp();
 	} catch (SAXException e) {
 	} catch (IOException e) {
 		PDEPlugin.logException(e);
 	}
 }
+
 private void processDocument(Document doc) {
 	Node rootNode = doc.getDocumentElement();
 	if (component == null) {
@@ -66,10 +68,10 @@ private void processDocument(Document doc) {
 	}
 	component.parse(rootNode);
 }
-public void reload(InputStream stream) throws CoreException {
+public void reload(InputStream stream, boolean outOfSync) throws CoreException {
 	if (component != null)
 		component.reset();
-	load(stream);
+	load(stream, outOfSync);
 	fireModelChanged(
 		new ModelChangedEvent(
 			IModelChangedEvent.WORLD_CHANGED,

@@ -46,6 +46,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
 	private static final String KEY_SELECTED = "ImportWizard.DetailedPage.selected";
+	private static final String KEY_OUT_OF_SYNC = "WorkspaceModelManager.outOfSync";
 
 	public class BuildpathContentProvider
 		extends DefaultContentProvider
@@ -69,7 +70,11 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 					name = plugin.getId();
 
 				String version = plugin.getVersion();
-				return name + " (" + version + ")";
+				String result = name + " (" + version + ")";
+				if (!model.isInSync()) 
+					result += " "+PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
+				return result;
+					
 			}
 			return "";
 		}
@@ -80,7 +85,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 			if (index == 0) {
 				if (obj instanceof IPluginModelBase) {
 					IPluginModelBase model = (IPluginModelBase)obj;
-					boolean error = !model.isLoaded();
+					boolean error = !(model.isLoaded() && model.isInSync());
 					if (model instanceof IFragmentModel) {
 						return error?errorFragmentImage:fragmentImage;
 					}

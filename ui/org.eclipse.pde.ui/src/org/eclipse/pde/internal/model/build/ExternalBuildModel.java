@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.PDEPlugin;
 
 public class ExternalBuildModel extends BuildModel {
 	private String installLocation;
+	private long timeStamp;
 
 public ExternalBuildModel(String installLocation) {
 	this.installLocation = installLocation;
@@ -22,18 +23,32 @@ public boolean isEditable() {
 	return false;
 }
 public void load() {
-	String fileName = "build.properties";
-	String location = getInstallLocation() + File.separator + fileName;
+	String location = getFullPath();
 	try {
 		URL url = new URL(location);
 		InputStream stream = url.openStream();
-		load(stream);
+		load(stream, false);
 		stream.close();
 	} catch (IOException e) {
 		build = new Build();
 		build.setModel(this);
 		loaded = true;
 	}
+}
+
+protected void updateTimeStamp() {
+	File file = new File(getFullPath());
+	updateTimeStamp(file);
+}
+
+private String getFullPath() {
+	String fileName = "build.properties";
+	return getInstallLocation() + File.separator + fileName;
+}
+
+public boolean isInSync() {
+	File file = new File(getFullPath());
+	return isInSync(file);
 }
 
 public void setInstallLocation(String newInstallLocation) {

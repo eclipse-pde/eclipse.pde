@@ -437,25 +437,35 @@ public class WorkspaceModelManager
 	private void loadWorkspaceModel(IPluginModelBase model) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		InputStream stream = null;
+		boolean outOfSync = false;
 		try {
 			stream = file.getContents(false);
 		}
 		catch (CoreException e) {
-			// cannot get file contents - something is 
-			// seriously wrong
-			IPluginBase base = model.getPluginBase(true);
+			outOfSync = true;
+		}
+		if (outOfSync) {
 			try {
-				base.setId(file.getProject().getName());
-				base.setName(base.getId());
-				base.setVersion("0.0.0");
-				PDEPlugin.log(e);
+				stream = file.getContents(true);
 			}
-			catch (CoreException ex) {
+			catch (CoreException e) {
+				// cannot get file contents - something is 
+				// seriously wrong
+				IPluginBase base = model.getPluginBase(true);
+				try {
+					base.setId(file.getProject().getName());
+					base.setName(base.getId());
+					base.setVersion("0.0.0");
+					PDEPlugin.log(e);
+				}
+				catch (CoreException ex) {
+					PDEPlugin.logException(ex);
+				}
+				return;
 			}
-			return;
 		}
 		try {
-			model.load(stream);
+			model.load(stream, outOfSync);
 			stream.close();
 		} catch (CoreException e) {
 			// errors in loading, but we will still

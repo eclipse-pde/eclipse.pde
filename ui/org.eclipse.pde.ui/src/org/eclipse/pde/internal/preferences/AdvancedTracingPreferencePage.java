@@ -19,7 +19,8 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
-
+import org.eclipse.pde.internal.editor.manifest.NullMenuManager;
+import org.eclipse.pde.internal.editor.manifest.NullToolBarManager;
 
 public class AdvancedTracingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String KEY_DESC = "Preferences.AdvancedTracingPage.desc";
@@ -39,7 +40,7 @@ public class AdvancedTracingPreferencePage extends PreferencePage implements IWo
 	private Vector workspaceList;
 	private boolean wasHidden=false;
 	private PropertySheetPage propertySheet;
-
+	
 	class PluginLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof IPluginModel) {
@@ -155,6 +156,7 @@ protected Control createPropertySheet(Composite parent) {
 	propertySheet.createControl(composite);
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	propertySheet.getControl().setLayoutData(gd);
+	propertySheet.makeContributions(new NullMenuManager(), new NullToolBarManager(), null);
 	return composite;
 }
 public void dispose() {

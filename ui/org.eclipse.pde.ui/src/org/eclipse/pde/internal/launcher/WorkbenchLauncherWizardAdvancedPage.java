@@ -36,6 +36,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
 		"Preferences.AdvancedTracingPage.externalPlugins";
+	private static final String KEY_OUT_OF_SYNC = "WorkspaceModelManager.outOfSync";
 
 	private Button useDefaultCheck;
 	private Button showNamesCheck;
@@ -67,13 +68,17 @@ public class WorkbenchLauncherWizardAdvancedPage
 					result = name;
 				if (version != null)
 					result += " (" + version + ")";
+				if (!model.isInSync()) {
+					result += " "+PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
+				}
 				return result;
 			}
 			return obj.toString();
 		}
 		public Image getImage(Object obj) {
 			if (obj instanceof IPluginModelBase) {
-				boolean error = !((IPluginModelBase) obj).isLoaded();
+				IPluginModelBase model = (IPluginModelBase)obj;
+				boolean error = !(model.isLoaded() && model.isInSync());
 				if (obj instanceof IPluginModel)
 					return error ? errorPluginImage : pluginImage;
 				if (obj instanceof IFragmentModel)
