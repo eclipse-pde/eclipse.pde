@@ -54,6 +54,9 @@ public class PluginExportWizard extends BaseExportWizard {
 		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("destination.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("plugin.destination", destination);
+		map.put("os", TargetPlatform.getOS());
+		map.put("ws", TargetPlatform.getWS());
+		map.put("arch", TargetPlatform.getOSArch());
 		return map;
 	}
 	
