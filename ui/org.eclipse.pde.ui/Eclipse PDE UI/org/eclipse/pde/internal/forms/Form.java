@@ -209,7 +209,13 @@ private void paint(Control form, GC gc) {
 			gc.setBackground(headingBackground);
 			gc.fillRectangle(0, 0, bounds.width, height);
 		}
-		gc.drawImage(headingImage, x, y);
+	    gc.drawImage(headingImage, x, y);
+	    if (SWT.getPlatform().equals("motif")) {
+	       gc.setForeground(form.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+	       gc.drawLine(x, imageBounds.height-2, bounds.width, imageBounds.height-2);
+	       gc.setForeground(form.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+           gc.drawLine(x, imageBounds.height-1, bounds.width, imageBounds.height-1);
+	    }
 		if (headingForeground != null)
 			gc.setForeground(headingForeground);
 		else

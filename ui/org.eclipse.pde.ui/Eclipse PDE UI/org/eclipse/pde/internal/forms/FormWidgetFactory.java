@@ -110,8 +110,10 @@ public Label createHeadingLabel(Composite parent, String text, Color bg, int sty
 	label.setBackground(backgroundColor);
 	label.setForeground(foregroundColor);
 	//label.setData(backgroundColor);
-	//label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-	label.setFont(sectionFont);
+	if (SWT.getPlatform().equals("motif"))
+	   label.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+	else
+	   label.setFont(sectionFont);
 	return label;
 }
 public Label createHyperlinkLabel(Composite parent, String text, IHyperlinkListener listener) {
