@@ -11,7 +11,6 @@ import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.wizards.project.PluginClassCodeGenerator;
 import org.eclipse.pde.internal.wizards.project.PluginSelectionDialog;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.PluginReference;
 
 import java.util.*;
 import org.eclipse.ui.part.*;

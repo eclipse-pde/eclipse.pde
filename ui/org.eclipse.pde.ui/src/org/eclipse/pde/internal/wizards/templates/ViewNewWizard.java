@@ -7,12 +7,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 
-public class HelloWorldNewWizard extends NewPluginTemplateWizard {
+public class ViewNewWizard extends NewPluginTemplateWizard {
 
 	/**
 	 * Constructor for HelloWorldNewWizard.
 	 */
-	public HelloWorldNewWizard() {
+	public ViewNewWizard() {
 		super();
 	}
 	public void init(
@@ -20,7 +20,7 @@ public class HelloWorldNewWizard extends NewPluginTemplateWizard {
 		IPluginStructureData structureData,
 		boolean fragment) {
 		super.init(provider, structureData, fragment);
-		setWindowTitle("New Hello World plug-in project");
+		setWindowTitle("New plug-in project with a sample view");
 	}
 
 	/*
@@ -28,7 +28,7 @@ public class HelloWorldNewWizard extends NewPluginTemplateWizard {
 	 */
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection [] {
-				new HelloWorldTemplate() };
+				new ViewTemplate() };
 	}
 	
 	public IEditorInput createEditorInput(IFile file) {

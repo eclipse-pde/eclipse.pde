@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.wizards;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.wizards.templates.ITemplateSection;
 
 
 public class WizardElement extends NamedElement {
@@ -15,6 +16,7 @@ public class WizardElement extends NamedElement {
 	public static final String ATT_ICON = "icon";
 	public static final String ATT_ID = "id";
 	public static final String ATT_CLASS = "class";
+	public static final String ATT_TEMPLATE = "template";
 	private String          description;
 	private IConfigurationElement configurationElement;
 
@@ -42,5 +44,11 @@ public String getID() {
 }
 public void setImage(Image image) {
 	this.image = image;
+}
+
+public boolean isTemplate() {
+	String att = configurationElement.getAttribute(ATT_TEMPLATE);
+	if (att!=null && att.equalsIgnoreCase("true")) return true;
+	return false;
 }
 }

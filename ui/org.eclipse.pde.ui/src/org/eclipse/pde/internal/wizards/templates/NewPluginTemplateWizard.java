@@ -1,9 +1,13 @@
-package org.eclipse.pde;
+package org.eclipse.pde.internal.wizards.templates;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.BuildPathUtil;
+import org.eclipse.pde.IPluginContentWizard;
+import org.eclipse.pde.IPluginStructureData;
+import org.eclipse.pde.IProjectProvider;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.pde.internal.util.CoreUtility;
 import org.eclipse.jdt.core.JavaCore;

@@ -46,11 +46,19 @@ public void advanceToNextPage() {
 public void createControl(Composite parent) {
 	// create composite for page.
 	Composite outerContainer = new Composite(parent, SWT.NONE);
-	outerContainer.setLayout(new GridLayout());
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	layout.makeColumnsEqualWidth = true;
+	outerContainer.setLayout(layout);
 	outerContainer.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL)); 
 
-	new Label(outerContainer, SWT.NONE).setText(getLabel());
+	Label label = new Label(outerContainer, SWT.NONE);
+	label.setText(getLabel());
+	GridData gd = new GridData();
+	gd.horizontalSpan = 2;
+	label.setLayoutData(gd);
+	
 
 	// list view.
 
@@ -67,11 +75,7 @@ public void createControl(Composite parent) {
 
 	// list view pane.  Add a border to the pane.
 	wizardSelectionViewer.getControl().setLayoutData(
-		new GridData(
-			GridData.VERTICAL_ALIGN_FILL
-				| GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL)); 
+		new GridData(GridData.FILL_BOTH)); 
 
 	createDescriptionIn(outerContainer);
 	wizardSelectionViewer.setInput(wizardElements);

@@ -2,19 +2,20 @@ package org.eclipse.pde.internal.wizards.templates;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.IBasePluginWizard;
-import org.eclipse.pde.ITemplateSection;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.model.plugin.IPluginReference;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import java.net.*;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.core.internal.boot.InternalBootLoader;
 
 public abstract class AbstractTemplateSection implements ITemplateSection {
 	protected IProject project;
 	protected IPluginModelBase model;
 	public static final String KEY_PLUGIN_ID = "pluginId";
+	public static final String KEY_PLUGIN_NAME = "pluginName";
 
 	/*
 	 * @see ITemplateSection#getReplacementString(String)
@@ -23,6 +24,10 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 		if (key.equals(KEY_PLUGIN_ID) && model != null) {
 			IPluginBase plugin = model.getPluginBase();
 			return plugin.getId();
+		}
+		if (key.equals(KEY_PLUGIN_NAME) && model != null) {
+			IPluginBase plugin = model.getPluginBase();
+			return plugin.getTranslatedName();
 		}
 		return key;
 	}
@@ -38,7 +43,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 	/*
 	 * @see ITemplateSection#addPages(IBasePluginWizard)
 	 */
-	public void addPages(IBasePluginWizard wizard) {
+	public void addPages(Wizard wizard) {
 	}
 
 	/*

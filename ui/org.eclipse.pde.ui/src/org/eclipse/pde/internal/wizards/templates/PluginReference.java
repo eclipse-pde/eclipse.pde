@@ -1,5 +1,5 @@
 
-package org.eclipse.pde;
+package org.eclipse.pde.internal.wizards.templates;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.model.plugin.IPluginReference;

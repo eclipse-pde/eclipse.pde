@@ -20,6 +20,7 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage im
 	private TableViewer wizardSelectionViewer;
 
 	private final static int        SIZING_LISTS_HEIGHT = 200;
+	private final static int        SIZING_DESC_HEIGHT = 64;
 	private final static int        SIZING_LISTS_WIDTH = 150;
 	private WizardCollectionElement wizardCategories;
 
@@ -86,6 +87,7 @@ public void createControl(Composite parent) {
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.horizontalSpan = 2;
+	data.heightHint = SIZING_DESC_HEIGHT;
 	descriptionComposite.setLayoutData(data);
 	createDescriptionIn(descriptionComposite);
 

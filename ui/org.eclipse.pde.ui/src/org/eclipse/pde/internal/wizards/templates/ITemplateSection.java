@@ -1,10 +1,11 @@
-package org.eclipse.pde;
+package org.eclipse.pde.internal.wizards.templates;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.model.plugin.IPluginModelBase;
 import org.eclipse.pde.model.plugin.IPluginReference;
 import org.eclipse.core.runtime.*;
 import java.net.URL;
+import org.eclipse.jface.wizard.Wizard;
 
 /**
  * This interface represents a section of the template
@@ -54,7 +55,7 @@ public interface ITemplateSection {
 	 * may span several pages. 
 	 * @param wizard the host wizard to add pages into
 	 */
-	public void addPages(IBasePluginWizard wizard);
+	public void addPages(Wizard wizard);
 
 	/**
 	 * Returns the number of work units that this template will

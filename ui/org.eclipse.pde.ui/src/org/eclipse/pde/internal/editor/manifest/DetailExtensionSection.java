@@ -363,10 +363,9 @@ public class DetailExtensionSection
 		if (!newMenu.isEmpty())
 			newMenu.add(new Separator());
 		newMenu.add(newExtensionAction);
-		MenuManager goToMenu =
-			new MenuManager(PDEPlugin.getResourceString(POPUP_GO_TO));
-		manager.add(goToMenu);
-		drillDownAdapter.addNavigationActions(goToMenu);
+		
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().addClipboardActions(manager);
 		manager.add(new Separator());

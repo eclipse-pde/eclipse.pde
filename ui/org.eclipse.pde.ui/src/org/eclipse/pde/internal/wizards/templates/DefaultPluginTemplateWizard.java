@@ -1,8 +1,7 @@
 
 package org.eclipse.pde.internal.wizards.templates;
 
-import org.eclipse.pde.ITemplateSection;
-import org.eclipse.pde.NewPluginTemplateWizard;
+
 
 public class DefaultPluginTemplateWizard extends NewPluginTemplateWizard {
 
@@ -14,7 +13,7 @@ public class DefaultPluginTemplateWizard extends NewPluginTemplateWizard {
 	}
 
 	/*
-	 * @see NewPluginTemplateWizard#createTemplateSections()
+	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection [0];

@@ -196,7 +196,50 @@
             class="org.eclipse.pde.internal.wizards.templates.HelloWorldNewWizard"
             id="org.eclipse.pde.projectGenerators.helloWorld">
          <description>
-            Creates a plug-in with a menu, action and a tool bar button that opens a &apos;Hello, World&apos; message dialog.
+            %projectGenerators.helloWorld.description
+         </description>
+      </wizard>
+      <wizard
+            name="Plug-in with a view"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.ViewNewWizard"
+            id="org.eclipse.pde.projectGenerators.view">
+         <description>
+            %projectGenerators.view.description
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.pde.newExtension">
+      <category
+            name="%newExtension.templates"
+            id="templates">
+      </category>
+      <category
+            name="%newExtension.generic"
+            id="generic">
+      </category>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.generic.name"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="generic"
+            class="org.eclipse.pde.internal.wizards.extension.GenericExtensionWizard"
+            id="com.ibm.etools.plugins.generic">
+         <description>
+            %newExtension.generic.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.hello.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
+            class="org.eclipse.pde.internal.wizards.templates.HelloWorldTemplate"
+            id="com.ibm.etools.plugins.hello">
+         <description>
+            %newExtension.templates.hello.desc
          </description>
       </wizard>
    </extension>
@@ -297,28 +340,6 @@
                class="org.eclipse.pde.internal.builders.FeatureConsistencyChecker">
          </run>
       </builder>
-   </extension>
-   <extension
-         point="org.eclipse.pde.newExtension">
-      <category
-            name="%newExtension.custom"
-            id="custom">
-      </category>
-      <category
-            name="%newExtension.generic"
-            id="generic">
-      </category>
-      <wizard
-            availableAsShortcut="true"
-            name="%newExtension.generic.name"
-            icon="icons/full/ctool16/newex_wiz.gif"
-            category="generic"
-            class="org.eclipse.pde.internal.wizards.extension.GenericExtensionWizard"
-            id="com.ibm.etools.plugins.generic">
-         <description>
-            %newExtension.generic.desc
-         </description>
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
