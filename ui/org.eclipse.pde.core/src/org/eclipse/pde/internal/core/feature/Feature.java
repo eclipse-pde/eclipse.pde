@@ -623,7 +623,8 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "ws", ws);
 		writeIfDefined(indenta, writer, "nl", nl);
 		writeIfDefined(indenta, writer, "arch", arch);
-		writeIfDefined(indenta, writer, "image", imageName);
+		if (imageName!=null)
+			writeIfDefined(indenta, writer, "image", getWritableString(imageName));
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\"");
