@@ -46,7 +46,6 @@ public class TargetEnvironmentPreferencePage
 
 	public TargetEnvironmentPreferencePage() {
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
-		TargetPlatform.initializeDefaults();
 		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 
@@ -88,7 +87,12 @@ public class TargetEnvironmentPreferencePage
 		arch.setItems(BootLoader.knownOSArchValues());
 		
 		Dialog.applyDialogFont(container);
-		performDefaults();
+		
+		os.setText(preferences.getString(OS));
+		ws.setText(preferences.getString(WS));
+		nl.setText(expandLocaleName(preferences.getString(NL)));
+		arch.setText(preferences.getString(ARCH));
+			
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 
 		return container;

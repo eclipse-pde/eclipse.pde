@@ -10,49 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.*;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -127,8 +102,7 @@ public class BuildClasspathSection
 	}
 
 	private void initializeImages() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		ISharedImages sharedImages = workbench.getSharedImages();
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 		entryImage = sharedImages.getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
@@ -148,14 +122,6 @@ public class BuildClasspathSection
 
 		enableSection();
 		factory.paintBordersFor(container);
-
-		entryTable
-			.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-
-			}
-		});
-		
 		entryTable.setInput(buildModel);
 		
 		return container;
@@ -213,6 +179,7 @@ public class BuildClasspathSection
 	
 	public void dispose() {
 		buildModel.removeModelChangedListener(this);
+		entryImage.dispose();
 		super.dispose();
 	}
 	
@@ -284,10 +251,6 @@ public class BuildClasspathSection
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		TypedElementSelectionValidator validator =
 			new TypedElementSelectionValidator(acceptedClasses, true);
-		ViewerFilter filter = new JARFileFilter();
-
-		String title = PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		String message = PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.desc"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		ElementTreeSelectionDialog dialog =
 			new ElementTreeSelectionDialog(
@@ -295,14 +258,12 @@ public class BuildClasspathSection
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
 		dialog.setValidator(validator);
-		dialog.setTitle(title);
-		dialog.setMessage(message);
-		dialog.addFilter(filter);
-		dialog.setInput(
-			buildModel.getUnderlyingResource().getWorkspace().getRoot());
+		dialog.setTitle(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"));
+		dialog.setMessage(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.desc"));
+		dialog.addFilter(new JARFileFilter());
+		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-		dialog.setInitialSelection(
-			buildModel.getUnderlyingResource().getProject());
+		dialog.setInitialSelection(buildModel.getUnderlyingResource().getProject());
 
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
@@ -311,7 +272,6 @@ public class BuildClasspathSection
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				try {
-
 					IPath path = elem.getFullPath();
 					IPath projectPath =
 						buildModel
@@ -339,9 +299,7 @@ public class BuildClasspathSection
 					PDEPlugin.logException(e);
 				}
 			}
-
 		}
-
 	}
 
 	protected void buttonSelected(int index) {

@@ -468,35 +468,23 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	public static String getOS() {
-		initializeDefaults();
 		return getProperty(OS);
 	}
 
 	public static String getWS() {
-		initializeDefaults();
 		return getProperty(WS);
 	}
 
 	public static String getNL() {
-		initializeDefaults();
 		return getProperty(NL);
 	}
 
 	public static String getOSArch() {
-		initializeDefaults();
 		return getProperty(ARCH);
 	}
 
 	private static String getProperty(String key) {
 		return PDECore.getDefault().getPluginPreferences().getString(key);
-	}
-
-	public static void initializeDefaults() {
-		Preferences settings = PDECore.getDefault().getPluginPreferences();
-		settings.setDefault(OS, BootLoader.getOS());
-		settings.setDefault(WS, BootLoader.getWS());
-		settings.setDefault(NL, Locale.getDefault().toString());
-		settings.setDefault(ARCH, BootLoader.getOSArch());
 	}
 
 	private static Choice[] getKnownChoices(String[] values) {
