@@ -206,7 +206,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
 		entry.setSession(thisSession);
-		logs.set(0, entry);
+		logs.add(0, entry);
 		asyncRefresh();
 	}
 
