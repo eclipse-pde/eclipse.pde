@@ -73,7 +73,8 @@ public class ManifestEditor extends MultiSourceEditor {
 					file == buildFile));
 		}
 		manager.monitorFile(manifestFile);
-		manager.monitorFile(pluginFile);
+		manager.monitorFile(project.getFile("plugin.xml"));
+		manager.monitorFile(project.getFile("fragment.xml"));
 		manager.monitorFile(buildFile);
 	}
 	
@@ -139,14 +140,8 @@ public class ManifestEditor extends MultiSourceEditor {
 		try {
 			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
 				addPage(BUILD_INDEX, new BuildPage(this));
-            else if (context.getId().equals(BundleInputContext.CONTEXT_ID)) {
-                removePage(0);
-                removePage(0);
-                removePage(0);
-                addPage(0, new RuntimePage(this));
-                addPage(0, new DependenciesPage(this));
-                addPage(0, new OverviewPage(this));
-                setActivePage(0);
+            else {
+				updateFirstThreePages();
             }
 		}
 		catch (PartInitException e) {
@@ -163,8 +158,24 @@ public class ManifestEditor extends MultiSourceEditor {
 			removePage(context.getId());
 			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
 				removePage(BuildPage.PAGE_ID);
-            
+			else
+				updateFirstThreePages();          
 		}
+	}
+	
+	private void updateFirstThreePages() {
+		try {
+			int index = getActivePage();
+			removePage(0);
+			removePage(0);
+			removePage(0);
+			addPage(0, new RuntimePage(this));
+			addPage(0, new DependenciesPage(this));
+			addPage(0, new OverviewPage(this));
+			setActivePage(index);
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}		
 	}
 
 	protected void createSystemFileContexts(InputContextManager manager,

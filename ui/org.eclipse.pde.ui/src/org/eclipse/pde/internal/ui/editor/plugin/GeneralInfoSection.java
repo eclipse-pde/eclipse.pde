@@ -212,8 +212,11 @@ public abstract class GeneralInfoSection extends PDESection {
 		fNameEntry.setValue(pluginBase.getName(), true);
 		fVersionEntry.setValue(pluginBase.getVersion(), true);
 		fProviderEntry.setValue(pluginBase.getProviderName(), true);
-		if (fPlatformFilterEntry != null)
-			fPlatformFilterEntry.setValue(getBundle().getHeader(PLATFORM_FILTER), true);
+		if (fPlatformFilterEntry != null) {
+			IBundle bundle = getBundle();
+			if (bundle != null)
+				fPlatformFilterEntry.setValue(bundle.getHeader(PLATFORM_FILTER), true);
+		}
 		getPage().getPDEEditor().updateTitle();
 		super.refresh();
 	}
