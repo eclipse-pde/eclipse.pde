@@ -70,7 +70,6 @@ public interface IHelpContextIds {
  	public static final String TEMPLATE_HELP = PREFIX + "template_help"; //$NON-NLS-1$
  	public static final String TEMPLATE_MULTIPAGE_EDITOR = PREFIX + "template_multipage_editor"; //$NON-NLS-1$
  	public static final String TEMPLATE_NEW_WIZARD = PREFIX + "template_new_wizard"; //$NON-NLS-1$
- 	public static final String TEMPLATE_PERSPECTIVE_EXTENSIONS = PREFIX + "template_perspective_extensions"; //$NON-NLS-1$
  	public static final String TEMPLATE_POPUP_MENU = PREFIX + "template_popup_menu"; //$NON-NLS-1$
  	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "template_preference_page"; //$NON-NLS-1$
  	public static final String TEMPLATE_PROPERTY_PAGE = PREFIX + "template_property_page"; //$NON-NLS-1$
