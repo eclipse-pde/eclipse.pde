@@ -10,7 +10,7 @@
             Environment (PDE). To learn more about using cheat 
             sheets or to see a list of available cheat sheets 
             click help (?). To start working on this cheat sheet, 
-            click the &quot;Click to begin&quot; button below.
+            click the &quot;Click to Begin&quot; button below.
 		</description>
 	</intro>
 
@@ -18,19 +18,18 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_configuring.htm"
 		title="Configuring PDE">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 			class="org.eclipse.pde.internal.ui.wizards.imports.ShowTargetPlatformAction"/>
 		<description>
 			Select the &quot;Target Platform&quot; page under 
-			Plug-in Development in the Window&gt;Preferences 
+			Plug-in Development in the Window-&gt;Preferences 
 			dialog and verify the location of your target
 			platform. This step sets the run-time workbench 
 			instance path. You don't need to change this
 			value to continue with the tutorial.
 			The &quot;Target Platform&quot; page 
 			is automatically launched when you click 
-			the &quot;Click to perform button&quot;.	
+			the &quot;Click to Perform&quot; button.	
 		</description>
 	</item>
 
@@ -38,7 +37,6 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
 		title="Setting up the Workbench">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 			class="org.eclipse.pde.internal.ui.OpenPDEPerspectiveAction"/>
 		<description>
@@ -47,28 +45,28 @@
 			perspective to set up the workbench for PDE. 
 			The &quot;Plug-in Development&quot; perspective is 
 			automatically displayed when you click the &quot;Click 
-			to perform button&quot;.
+			to Perform&quot; button.
 		</description>
 	</item>
 
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm" 
-		title="Creating a New Plug-in Project">
+		title="Creating a New Plug-in Project"
+		skip="true">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 		    param1="com.example.xyz"
             param2="org.eclipse.pde.ui.pluginContent.helloWorld"
 			class="org.eclipse.pde.internal.ui.wizards.plugin.OpenProjectWizardAction"/>
 		<description>
-			Select File&gt;New&gt;Project... and choose Plug-in 
+			Select File-&gt;New-&gt;Project... and choose Plug-in 
 			Project in the list of wizards under the &quot;Plug-in 
 			Development&quot; category. Accept the preloaded
 			default values. This step creates the plug-in 
 			project using the 'Hello, World' template. 
 			The preset &quot;New Plug-in Project&quot; wizard 
 			is automatically displayed when you click 
-			the &quot;Click to perform button&quot;.		
+			the &quot;Click to Perform&quot; button.		
 		</description>
 	</item>
 
@@ -81,7 +79,7 @@
 			Required plug-ins affect the classpath and class loading
 			of the plug-in you are developing. 
 			This is a manual task, you will need to perform the work and 
-			click the &quot;Click to complete&quot; button to 
+			click the &quot;Click to Complete&quot; button to 
 			move to the next step.
 		</description>
  	</item>
@@ -96,7 +94,7 @@
 			values. 
 			This is a manual task, you will need to 
 			perform the work and click 
-			the &quot;Click to complete&quot; button to move to 
+			the &quot;Click to Complete&quot; button to move to 
 			the next step.
 		</description>
 	</item>
@@ -109,7 +107,7 @@
 			manifest editor and inspect the declared 
 			runtime libraries and associated information.
 			This is a manual task, you will need to perform the 
-			work and click the "Click to complete" button to move 
+			work and click the "Click to Complete" button to move 
 			to the next step.	
 		</description>
 	</item>
@@ -122,7 +120,7 @@
 			manifest editor. You can define extension points
 			that other plug-ins can extend in this page.
 			This is a manual task, you will need to perform the 
-			work and click the &quot;Click to complete&quot; 
+			work and click the &quot;Click to Complete&quot; 
 			button to move to the next step.
 		</description>
 	</item>
@@ -131,20 +129,20 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
 		title="Running the plug-in">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
 			class="org.eclipse.pde.internal.ui.launcher.RunWorkbenchAction"/>
 		<description>
-			Select Run-&gt;Run... Select 'Runtime Workbench'
+			Select Run-&gt;Run... Select 'Run-time Workbench'
 			and create a new launch configuration for it.
-			Accept the default and click Run. In the menu bar 
+			Accept the default and click Run. From the Welcome
+			page, select "Go to the workbench". In the menu bar 
 			of the new runtime workbench click the new sample 
 			menu item and select the new sample action. 
 			This step will open a 'Hello, World' message box
 			to indicate that the new plug-in is working
 			properly. The &quot;Run&quot; shortcut is 
 			automatically created and executed when you click 
-			the &quot;Click to perform button&quot;.
+			the &quot;Click to Perform&quot; button.
 		</description>
 	</item>
 
@@ -152,17 +150,16 @@
 		href="/org.eclipse.pde.doc.user/guide/pde_deploy.htm"
 		title="Deploying a plug-in">
 		<action
-			confirm="true"
 			pluginId="org.eclipse.pde.ui"
-			class="org.eclipse.pde.internal.ui.neweditor.plugin.PluginExportAction"/>
+			class="org.eclipse.pde.internal.ui.editor.plugin.PluginExportAction"/>
 		<description>
-			Select File&gt;Export...&gt;Deployable plug-ins and fragments 
+			Select File-&gt;Export...-&gt;Deployable plug-ins and fragments 
 			and select the newly created plug-in in the list. 
 			This step packages the workspace plug-in in a format that 
 			will make it easily deployable in any Eclipse product. 
 			The "Deployable plug-ins and fragments" 
 			dialog is automatically displayed when you click 
-			the "Click to perform button".
+			the &quot;Click to Perform&quot; button.
 		</description>
 	</item>
 </cheatsheet>
