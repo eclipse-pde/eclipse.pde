@@ -61,7 +61,9 @@ public class PlaybackAction implements IWorkbenchWindowActionDelegate {
 		try {
 			InputStream is = file.getContents();
 			MacroManager mng = MacroPlugin.getDefault().getMacroManager();
+			mng.setIndexHandler(new DefaultIndexHandler());
 			mng.play(window.getShell().getDisplay(), window, is);
+			mng.setIndexHandler(null);
 		}
 		catch (CoreException e) {
 			MacroPlugin.logException(e);

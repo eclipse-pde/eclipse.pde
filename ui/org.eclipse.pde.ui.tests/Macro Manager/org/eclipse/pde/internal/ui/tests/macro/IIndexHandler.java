@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Classes that implement this interface are registered with
@@ -29,10 +30,11 @@ public interface IIndexHandler {
  * the script manager to stop the script execution and
  * throw a <code>CoreException</code>.
  * 
+ * @param shell the active shell when the index was reached
  * @param indexId the unique identifier of the index
  * inserted in the script
  * @return <code>Status.OK_STATUS</code> if the script can proceed, or 
  * an error status otherwise.
  */
-	IStatus processIndex(String indexId);
+	IStatus processIndex(Shell shell, String indexId);
 }

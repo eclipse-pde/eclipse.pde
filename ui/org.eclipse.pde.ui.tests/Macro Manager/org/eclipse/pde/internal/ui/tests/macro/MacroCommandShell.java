@@ -438,7 +438,7 @@ public class MacroCommandShell implements IWritable, IPlayable {
 			if (c instanceof MacroIndex) {
 				String id = ((MacroIndex) c).getId();
 				if (id != null && indexHandler != null) {
-					IStatus status = indexHandler.processIndex(id);
+					IStatus status = indexHandler.processIndex(shell, id);
 					if (status.getSeverity() == IStatus.OK)
 						continue;
 					throw new CoreException(status);
@@ -547,6 +547,12 @@ public class MacroCommandShell implements IWritable, IPlayable {
 
 	public void setIndexHandler(IIndexHandler indexHandler) {
 		this.indexHandler = indexHandler;
+		for (int i=0; i<commands.size(); i++) {
+			Object c = commands.get(i);
+			if (c instanceof MacroCommandShell) {
+				MacroCommandShell child = (MacroCommandShell)c;
+				child.setIndexHandler(indexHandler);
+			}
+		}
 	}
-
 }
