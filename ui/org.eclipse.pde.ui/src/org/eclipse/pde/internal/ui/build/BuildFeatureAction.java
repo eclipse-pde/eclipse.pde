@@ -56,7 +56,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
 		AbstractScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
-		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	 //$NON-NLS-1$
+		generator.setElements(new String[] { "feature@" + model.getFeature().getId() + (model.getFeature().getVersion() == null ? "" : ":" + model.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(all);
 		generator.setGenerateAssembleScript(false);
 		generator.generate();	
