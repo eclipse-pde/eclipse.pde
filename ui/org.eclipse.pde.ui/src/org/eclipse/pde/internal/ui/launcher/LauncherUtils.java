@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -176,9 +177,7 @@ public class LauncherUtils {
 		ArrayList result = new ArrayList();
 		result.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
-			IPath path = getOutputLocation(wsmodels[i]);
-			if (path != null && !result.contains(path))
-				result.add(path);
+			addOutputLocations(result, wsmodels[i]);
 		}
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < result.size(); i++) {
@@ -189,18 +188,28 @@ public class LauncherUtils {
 		return buffer.toString();
 	}
 	
-	private static IPath getOutputLocation(IPluginModelBase model) {
+	private static void addOutputLocations(ArrayList result, IPluginModelBase model) {
 		IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IPath path = JavaCore.create(project).getOutputLocation();
-				if (path.segmentCount() > 1) {
-					return path.removeFirstSegments(1);
+				IJavaProject jProject = JavaCore.create(project);
+				addPath(result, jProject.getOutputLocation());
+				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
+						addPath(result, roots[i].getRawClasspathEntry().getOutputLocation());
 				}
 			} 
 		} catch (Exception e) {
 		}
-		return null;
+	}
+	
+	private static void addPath(ArrayList result, IPath path) {
+		if (path != null && path.segmentCount() > 1) {
+			path = path.removeFirstSegments(1);
+			if (!result.contains(path))
+				result.add(path);
+		}		
 	}
 	
 	public static IPluginModelBase[] validatePlugins(
