@@ -255,18 +255,6 @@ public class ClasspathUtilCore {
 		HashSet alreadyAdded)
 		throws CoreException {
 		
-		//TODO temporary hack until SDK teams convert
-		if (isOSGiRuntime() && schemaVersion != null && !isExemptPlugin(id)) {
-			IPlugin plugin =
-				PDECore.getDefault().findPlugin(
-				"org.eclipse.core.runtime.compatibility");
-			if (plugin != null)
-				addDependency(plugin, false, relative, result, alreadyAdded);
-			
-			return;
-		}
-		
-		
 		if ((isOSGiRuntime() && schemaVersion != null)
 			|| id.equals("org.eclipse.core.boot")
 			|| id.equals("org.apache.xerces")
@@ -291,17 +279,6 @@ public class ClasspathUtilCore {
 					addDependency(plugin, false, relative, result, alreadyAdded);
 			}
 		}
-	}
-	
-	private static boolean isExemptPlugin(String id) {
-		return id.equals("org.eclipse.osgi")
-			|| id.equals("org.eclipse.osgi.services")
-			|| id.equals("org.eclipse.osgi.util")
-			|| id.equals("org.eclipse.core.runtime")
-			|| id.equals("org.eclipse.core.runtime.compatibility")
-			|| id.equals("org.eclipse.core.boot")
-			|| id.equals("org.eclipse.core.applicationrunner")
-			|| id.equals("org.eclipse.update.configurator");
 	}
 	
 	protected static void addJRE(Vector result) {
