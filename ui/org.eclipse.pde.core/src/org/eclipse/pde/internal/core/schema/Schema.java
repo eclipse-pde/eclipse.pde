@@ -766,6 +766,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fDescription = null;
 		fName = null;
 		fValid = false;
+		fLoaded = false;
 	}
 
 	private void resolveElementReference(ISchemaObjectReference reference) {

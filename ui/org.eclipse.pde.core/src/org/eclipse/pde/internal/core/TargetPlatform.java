@@ -323,19 +323,23 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 
 	public static String getOS() {
-		return getProperty(OS);
+		String value = getProperty(OS);
+		return value.equals("") ? Platform.getOS() : value;
 	}
 
 	public static String getWS() {
-		return getProperty(WS);
+		String value = getProperty(WS);
+		return value.equals("") ? Platform.getWS() : value;
 	}
 
 	public static String getNL() {
-		return getProperty(NL);
+		String value = getProperty(NL);
+		return value.equals("") ? Platform.getNL() : value;
 	}
 
 	public static String getOSArch() {
-		return getProperty(ARCH);
+		String value = getProperty(ARCH);
+		return value.equals("") ? Platform.getOSArch() : value;
 	}
 
 	private static String getProperty(String key) {
