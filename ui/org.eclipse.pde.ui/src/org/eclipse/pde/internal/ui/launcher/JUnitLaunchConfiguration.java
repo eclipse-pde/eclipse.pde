@@ -32,7 +32,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication";
 	
 	private static IPluginModelBase[] registryPlugins;
-	private File configFile = null;
+	private File fConfigFile = null;
 
 	public void launch(
 		ILaunchConfiguration configuration,
@@ -64,9 +64,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			} 
 			monitor.worked(1);
 			
-			launch.setAttribute(
-				ILauncherSettings.CONFIG_LOCATION,
-				(configFile == null) ? null : configFile.getParent());
+			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION,
+				(fConfigFile.isDirectory()) ? fConfigFile.getPath() : fConfigFile.getParent());
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
 			LauncherUtils.clearWorkspace(configuration,workspace);
@@ -173,16 +172,16 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(targetWorkspace);
 		
 		// Create the platform configuration for the runtime workbench
-		programArgs.add("-configuration");
 		String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
 		
-		configFile =
+		fConfigFile =
 			TargetPlatform.createPlatformConfigurationArea(
 				pluginMap,
 				new Path(targetWorkspace),
 				primaryFeatureId,
 				LauncherUtils.getAutoStartPlugins(configuration));
-		programArgs.add("file:" + configFile.getPath());
+		programArgs.add("-configuration");
+		programArgs.add("file:" + fConfigFile.getPath());
 
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			if (primaryFeatureId != null) {
@@ -208,8 +207,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				&& !TRACING_NONE.equals(configuration.getAttribute(
 						TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug");
-			programArgs.add(LauncherUtils.getTracingFileArgument(configuration,
-					configFile.getParent() + Path.SEPARATOR + ".options"));
+			String path = null;
+			if (fConfigFile.isDirectory())
+				path = fConfigFile.getPath() + Path.SEPARATOR + ".options";
+			else 
+				path = fConfigFile.getParent() + Path.SEPARATOR + ".options";
+			programArgs.add(LauncherUtils.getTracingFileArgument(configuration, path));
 		}
 		
 		// Add the program args entered by the user
