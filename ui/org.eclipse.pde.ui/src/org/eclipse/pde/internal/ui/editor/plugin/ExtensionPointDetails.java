@@ -74,7 +74,6 @@ public class ExtensionPointDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
-		//TODO translate strings
 		section.setText(PDEPlugin.getResourceString("ExtensionPointDetails.title")); //$NON-NLS-1$
 		section
 				.setDescription(PDEPlugin.getResourceString("ExtensionPointDetails.desc")); //$NON-NLS-1$

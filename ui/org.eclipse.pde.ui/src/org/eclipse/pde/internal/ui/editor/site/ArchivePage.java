@@ -26,8 +26,7 @@ public class ArchivePage extends PDEFormPage {
 	private ArchiveSection fArchiveSection;
 	
 	public ArchivePage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, "Archives"); //$NON-NLS-1$
-		//TODO translate page title
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("ArchivePage.name"));  //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
@@ -46,7 +45,6 @@ public class ArchivePage extends PDEFormPage {
 		
 		//WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
-		//TODO translate page header
 		form.setText(PDEPlugin.getResourceString("ArchivePage.title")); //$NON-NLS-1$
 	}
 }

@@ -67,7 +67,6 @@ public class ExtensionElementDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
-		//TODO translate strings in this file
 		section.setText(PDEPlugin.getResourceString("ExtensionElementDetails.title")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString("ExtensionElementDetails.desc")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
@@ -218,7 +217,6 @@ public class ExtensionElementDetails extends PDEDetails {
 		return false;
 	}
 	private void updateDescription() {
-		//TODO translate strings
 		if (input != null) {
 			String iname = input.getName();
 			section.setDescription(PDEPlugin.getFormattedMessage("ExtensionElementDetails.setDesc", iname)); //$NON-NLS-1$

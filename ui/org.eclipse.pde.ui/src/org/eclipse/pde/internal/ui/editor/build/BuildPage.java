@@ -36,8 +36,7 @@ public class BuildPage extends PDEFormPage {
 	private Button customButton;
 	
 	public BuildPage(FormEditor editor) {
-		//TODO translate this string
-		super(editor, PAGE_ID, "Build"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("BuildPage.name"));  //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm mform) {

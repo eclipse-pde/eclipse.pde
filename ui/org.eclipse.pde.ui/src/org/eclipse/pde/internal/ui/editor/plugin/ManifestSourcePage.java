@@ -39,7 +39,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 		
 		public String getText(Object obj) {
-			//TODO translate strings
 			if (obj == fLibraries)
 				return PDEPlugin.getResourceString("ManifestSourcePage.libraries"); //$NON-NLS-1$
 			if (obj == fImports)

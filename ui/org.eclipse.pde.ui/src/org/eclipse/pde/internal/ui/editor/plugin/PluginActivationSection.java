@@ -237,7 +237,6 @@ public class PluginActivationSection extends TableSection
 			layout.numColumns = 2;
 			layout.makeColumnsEqualWidth = false;
 			topContainer.setLayout(layout);
-			//TODO translate all strings in this method
 			toolkit
 					.createLabel(
 							topContainer,

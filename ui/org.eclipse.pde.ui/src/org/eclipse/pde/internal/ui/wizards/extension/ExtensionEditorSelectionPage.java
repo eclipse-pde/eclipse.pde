@@ -33,8 +33,7 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	 * @param message
 	 */
 	public ExtensionEditorSelectionPage(ElementList wizards) {
-		super(wizards, "Ex&tension Editors:"); //$NON-NLS-1$
-		//TODO translate strings
+		super(wizards, PDEPlugin.getResourceString("ExtensionEditorSelectionPage.message"));  //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString("ExtensionEditorSelectionPage.title")); //$NON-NLS-1$
 		setDescription(PDEPlugin.getResourceString("ExtensionEditorSelectionPage.desc")); //$NON-NLS-1$
 	}

@@ -132,9 +132,8 @@ public class HandlerSection extends PDESection {
 			handler.setURL(url);
 		}
 		catch (MalformedURLException e) {
-			//TODO translate messages
 			MessageDialog.openError(getPage().getEditor().getEditorSite().getShell(),
-					"Feature Editor", //$NON-NLS-1$
+					PDEPlugin.getResourceString("HandlerSection.featureEditor"),  //$NON-NLS-1$
 					PDEPlugin.getFormattedMessage("HandlerSection.invalid", value)); //$NON-NLS-1$
 			setIfDefined(urlText, handler.getURL());
 		}

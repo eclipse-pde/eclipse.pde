@@ -61,7 +61,6 @@ public class ExtensionDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
-		//TODO translate strings in this file
 		section.setText(PDEPlugin.getResourceString("ExtensionDetails.title")); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString("ExtensionDetails.desc")); //$NON-NLS-1$
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
