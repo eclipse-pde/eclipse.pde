@@ -67,7 +67,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	public void setMatch(int match) throws CoreException {
 		switch(match) {
 			case IMatchRules.GREATER_OR_EQUAL:
-				setXMLAttribute(P_MATCH, "greaterOrEquals"); //$NON-NLS-1$
+				setXMLAttribute(P_MATCH, "greaterOrEqual"); //$NON-NLS-1$
 				break;
 			case IMatchRules.EQUIVALENT:
 				setXMLAttribute(P_MATCH, "equivalent"); //$NON-NLS-1$
