@@ -1,23 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.help.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="debugModelPresentations" name="Debug Model Presentation"/>
+      <meta.schema plugin="org.eclipse.help.ui" id="browser" name="Browser"/>
    </appInfo>
    <documentation>
-      This extension point allows tools to handle the 
-presentation aspects of a debug model. 
-A debug model presentation is responsible for 
-providing labels, images, and editors for elements 
-in a specific debug model.
+      For providing web browsers capable of displaying html documents at a given URL.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="debugModelPresentation" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="browser" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -43,25 +39,30 @@ in a specific debug model.
       </complexType>
    </element>
 
-   <element name="debugModelPresentation">
+   <element name="browser">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier of the debug model this presentation is responsible for
+                  the unique ID of the browser.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="factoryClass" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualifed name of a Java class that implements the 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;
-interface.
+                  the implementation class for the browser factory.  This class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.IDebugModelPresentation"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.IBrowserFactory"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the browser (translatable).
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -72,23 +73,19 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a view filter extension point:
+         The following is a sample usage of the browser extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
-       &lt;debugModelPresentation 
-           class = "com.example.JavaModelPresentation"
-      	   id = "com.example.JavaDebugModel"
-       &lt;/debugModelPresentation&gt; 
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.help.ui.browser"&gt;
+		&lt;browser 
+			id="org.eclipse.myPlugin.myBrowserID"
+			factoryClass="org.eclipse.myPlugin.myPackage.MyFactoryClass"
+			name="My Browser"&gt;
+		&lt;/browser&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-In the example above, the class 
-&lt;samp&gt;com.example.JavaModelPresentation&lt;/samp&gt; will be 
-used to render and present debug elements originating 
-from the debug model identified by 
-&lt;samp&gt;com.example.JavaDebugModel&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -97,9 +94,9 @@ from the debug model identified by
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the action attribute &lt;samp&gt;class&lt;/samp&gt; must be a fully 
-qualified class name of a Java class that implements 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;.
+         The supplied factory class must implement the &lt;samp&gt;org.eclipse.help.ui.IBrowserFactory&lt;/samp&gt; interface.
+Methods in that interface determine whether the factory is available on the given system, i.e. is capable
+of supplying browser instances, and create browser instances that implement IBrowser interface.
       </documentation>
    </annotation>
 
@@ -108,7 +105,9 @@ qualified class name of a Java class that implements
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         The &lt;samp&gt;org.eclipse.help.ui&lt;/samp&gt; plug-in contains implementation of a browser on common platforms.
+Other plug-ins can provide different implementations.  In the preferences, the user can select the default
+browser from among available browsers.
       </documentation>
    </annotation>
 

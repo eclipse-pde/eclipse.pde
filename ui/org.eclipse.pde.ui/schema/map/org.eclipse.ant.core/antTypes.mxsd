@@ -75,6 +75,14 @@ the datatype.  Generally this class must be a subclass of
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="library" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a path relative to the plug-in install location
+for the library containing the type.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -73,11 +73,14 @@ the actual selection.
 
    <element name="objectContribution">
       <complexType>
-         <choice minOccurs="0" maxOccurs="unbounded">
-            <element ref="menu"/>
-            <element ref="action"/>
-            <element ref="filter"/>
-         </choice>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="filter"/>
+               <element ref="menu"/>
+               <element ref="action"/>
+            </choice>
+            <element ref="visibility" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -101,6 +104,14 @@ selection must subclass or implement.
                <documentation>
                   an optional filter that will be applied against each object in the selection. 
 No contribution will take place if there is no match.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="adaptable" type="boolean">
+            <annotation>
+               <documentation>
+                  a flag that indicates if types that adapt to IResource should use this object contribution.
+This flag is used only if objectClass adapts to IResource.  Default value is false.
                </documentation>
             </annotation>
          </attribute>
@@ -181,10 +192,14 @@ Therefore, separators serve as named groups into which actions can be added.
    <element name="action">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" iconName="icon"/>
+            <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -223,9 +238,6 @@ The path is relative to the location of the &lt;samp&gt;plugin.xml&lt;/samp&gt; 
                <documentation>
                   
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IObjectActionDelegate"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">
@@ -290,6 +302,186 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                   the value of an object attribute.  In combination with 
 the name attribute, the name value pair is used to 
 define the target object for an object action contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="visibility">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="and"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="objectClass">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class.  The expression is evaluated as true only if the selection implements this class.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="systemProperty">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pluginState">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an id of a plug-in which may or may not be registered in the plug-in registry.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" use="required">
+            <annotation>
+               <documentation>
+                  the required state of the plugin.  Currently two states are supported: installed and activated.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="installed">
+                  </enumeration>
+                  <enumeration value="activated">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectState">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object attribute.  Acceptable values for this string reflect the object type, and should
+be publicly declared by the plugin where the object type is declared.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the object attribute.  The acceptable values for the object attribute should be publicly declared.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enablement">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="selection">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class or interface that each object in the selectoin must subclass or implement in order to enable the action.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  a wild card filter for the name that can optionally be applied to objects in the selection.
+If this filter is specified and the match fails, the actin will be disabled.
                </documentation>
             </annotation>
          </attribute>

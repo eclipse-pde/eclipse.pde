@@ -49,7 +49,7 @@ source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
             an element that will be used to create export wizard
@@ -81,7 +81,7 @@ source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
 interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IExportWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IExportWizard"/>
                </appInfo>
             </annotation>
          </attribute>

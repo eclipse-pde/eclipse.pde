@@ -61,7 +61,7 @@ property pages only for specific object types.
    <element name="page">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -118,6 +118,14 @@ interface.
                <documentation>
                   an optional attribute that allows registration conditional on
 wild card match applied to the target object name.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="adaptable" type="boolean">
+            <annotation>
+               <documentation>
+                  a flag that indicates if types that adapt to IResource should use this property page.
+This flag is used if objectClass adapts to IResource.  Default value is false.
                </documentation>
             </annotation>
          </attribute>

@@ -1,30 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ant.core">
+<schema targetNamespace="org.eclipse.jdt.launching">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ant.core" id="antObjects" name="Ant Objects"/>
+      <meta.schema plugin="org.eclipse.jdt.launching" id="runtimeClasspathEntryResolvers" name="Java Runtime Classpath Entry Resolvers"/>
    </appInfo>
    <documentation>
-      Allows plug-ins to define arbitrary classes for use by 
-the Ant infrastructure.  For example, in the case of 
-a Javac compiler adapters, the compiler adapter 
-factory can be supplied, via a property setting, 
-with the name of an adapter class to use.  
-Unfortunately, it is unlikely that the Ant Core 
-plug-in would have this class on its classpath 
-(or that of any of its prerequisites).  To address 
-this, clients should define an extension which plugs 
-into this extension-point and maps a name onto a class.  
-The Ant plug-in can then request that the declaring plug-in 
-load the specified class.
+      This extension point allows clients to dynamically resolve entries used on the runtime classpath and source
+lookup path, for corresponding classpath variables and classpath containers.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="antObject" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="runtimeClasspathEntryResolver" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,28 +40,37 @@ load the specified class.
       </complexType>
    </element>
 
-   <element name="antObject">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="name"/>
-         </appInfo>
-      </annotation>
+   <element name="runtimeClasspathEntryResolver">
       <complexType>
-         <attribute name="name" type="string" use="required">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  name of the class to be defined
+                  a unique identifier that can be used to reference this resolver.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class
+                  the class that implements this resolver.  The class must implement &lt;samp&gt;IRuntimeClasspathEntryResolver&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="variable" type="string">
+            <annotation>
+               <documentation>
+                  the name of the classpath variable this resolver is registered for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="container" type="string">
+            <annotation>
+               <documentation>
+                  the identifier of the classpath container this resolver is registered for.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -82,12 +81,17 @@ load the specified class.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an object declaration: 
+         The following is an example of a resolver:
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antObject"&gt;
-      &lt;antObject name="com.example.Foo" class="com.example.Foo"/&gt;
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers"&gt;
+		&lt;runtimeClasspathEntryResolver
+			class="com.example.ResolverImplementation"
+			id="com.example.ResolverId"
+			variable="CLASSPATH_VARIABLE"&gt;
+		&lt;/runtimeClasspathEntryResolver&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -98,10 +102,7 @@ load the specified class.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The objects declared via this extension-point are 
-accessible though the following API:
-&lt;p&gt;
-&lt;samp&gt;org.eclipse.core.ant.AntPlugin.getObjectExtensions&lt;/samp&gt;
+         [Enter API information here.]
       </documentation>
    </annotation>
 
@@ -110,7 +111,7 @@ accessible though the following API:
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform itself does not supply any object extension.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

@@ -3,18 +3,17 @@
 <schema targetNamespace="org.eclipse.help">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="contexts" name="Contexts"/>
+      <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
    </appInfo>
    <documentation>
-      For defining context-sensitive help for an 
-individual plug-in.
+      For registering an online help contribution for an individual plug-in.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="contexts" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -40,16 +39,33 @@ individual plug-in.
       </complexType>
    </element>
 
-   <element name="contexts">
+   <element name="toc">
       <complexType>
          <attribute name="file" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the manifest file which contains the context-sensitive help documentation for this plug-in.
+                  the name of the TOC file which contains the table of contents or section for this plug-in's online help.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="primary" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  specifies whether the TOC file is a primary table of contents and is meant to be the master table of contents,
+or not primary and intended to be integrated into another table of contents.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="extradir" type="string">
+            <annotation>
+               <documentation>
+                  specifies relative directory name of containing additional documents that are associated with the table of contents.
+All help documents in this directory, and all subdirectories, will be indexed, and accessible through
+the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the TOC file do not refer to these documents.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -60,14 +76,15 @@ individual plug-in.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of using the contexts 
-extension point: 
+         The following is an example of using the &lt;samp&gt;toc&lt;/samp&gt; extension point.
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.help.contexts"&gt; 
-      &lt;contexts file="xyzContexts.xml"/&gt; 
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.help.toc"&gt;
+		&lt;toc file="maindocs.html" primary="true"/&gt;
+		&lt;toc file="task.xml"/&gt;
+		&lt;toc file="sample.xml" extradir="samples"/&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -78,9 +95,8 @@ extension point:
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         No code is required to use this extension point. All 
-that is needed is to supply the appropriate manifest 
-file(s) mentioned in the plugin.xml file.
+         No code is required to use this extension point.  All that is needed is to supply the appropriate manifest 
+files mentioned in the plugin.xml file.
       </documentation>
    </annotation>
 
@@ -89,9 +105,7 @@ file(s) mentioned in the plugin.xml file.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The optional default implementation of the help 
-system UI supplied with the Eclipse platform 
-fully supports the &lt;samp&gt;contexts&lt;/samp&gt; extension point.
+         The default implementation of the help system UI supplied with the Eclipse platform fully supports the &lt;samp&gt;toc&lt;/samp&gt; extension point.
       </documentation>
    </annotation>
 

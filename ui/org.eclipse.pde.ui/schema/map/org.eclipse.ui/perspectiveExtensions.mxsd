@@ -56,9 +56,9 @@ are appended to the initial definition.
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="actionSet"/>
-            <element ref="viewAction"/>
-            <element ref="perspectiveAction"/>
-            <element ref="newWizardAction"/>
+            <element ref="viewShortcut"/>
+            <element ref="perspectiveShortcut"/>
+            <element ref="newWizardShortcut"/>
             <element ref="view"/>
          </choice>
          <attribute name="targetID" type="string" use="required">
@@ -85,7 +85,7 @@ be added to the perspective.
       </complexType>
    </element>
 
-   <element name="viewAction">
+   <element name="viewShortcut">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -98,7 +98,7 @@ perspective "Show View" menu.
       </complexType>
    </element>
 
-   <element name="perspectiveAction">
+   <element name="perspectiveShortcut">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -110,7 +110,7 @@ perspective "Show View" menu.
       </complexType>
    </element>
 
-   <element name="newWizardAction">
+   <element name="newWizardShortcut">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -166,6 +166,14 @@ is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="visible" type="boolean">
+            <annotation>
+               <documentation>
+                  whether the view is initially visible when the perspective is opened.  This attribute should have a value of "true" or "false" if used.
+If this attribute is not used, the view will be initially visible by default.
                </documentation>
             </annotation>
          </attribute>

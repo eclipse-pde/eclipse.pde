@@ -1,23 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.jdt.debug.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="debugModelPresentations" name="Debug Model Presentation"/>
+      <meta.schema plugin="org.eclipse.jdt.debug.ui" id="vmInstallTypePage" name="VM Install Type UI Page"/>
    </appInfo>
    <documentation>
-      This extension point allows tools to handle the 
-presentation aspects of a debug model. 
-A debug model presentation is responsible for 
-providing labels, images, and editors for elements 
-in a specific debug model.
+      This extension point provides a mechanism for contributing UI that will appear in the JRE tab of the launch configuration dialog.
+The UI is shown only when a VM of the specified install type is selected in the JRE tab.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="debugModelPresentation" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="vmInstallTypePage" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -43,24 +40,29 @@ in a specific debug model.
       </complexType>
    </element>
 
-   <element name="debugModelPresentation">
+   <element name="vmInstallTypePage">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier of the debug model this presentation is responsible for
+                  specifies a unique identifier for this vm install type UI page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="vmInstallTypeID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies VM install type that this UI page is applicable to. (corresponds to the id of a VM install type).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualifed name of a Java class that implements the 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;
-interface.
+                  specifies a fully qualified name of a Java class that implements &lt;samp&gt;ILaunchConfigurationTab&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.IDebugModelPresentation"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchConfigurationTab"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -72,23 +74,22 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a view filter extension point:
+         The following is an example of a VM install type page extension point:
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
-       &lt;debugModelPresentation 
-           class = "com.example.JavaModelPresentation"
-      	   id = "com.example.JavaDebugModel"
-       &lt;/debugModelPresentation&gt; 
-   &lt;/extension&gt; 
+ &lt;extension point="org.eclipse.jdt.debug.ui.vmInstallTypePage"&gt;
+  &lt;vmInstallTypePage
+   id="com.example.ExampleVMInstallTypePage"
+   vmInstallTypeID="com.example.ExampleVMInstallTypeIdentifier"
+   class="com.example.ExampleVMInstallTypePage"&gt;
+  &lt;/vmInstallTypePage&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-In the example above, the class 
-&lt;samp&gt;com.example.JavaModelPresentation&lt;/samp&gt; will be 
-used to render and present debug elements originating 
-from the debug model identified by 
-&lt;samp&gt;com.example.JavaDebugModel&lt;/samp&gt;.
+
+In the above example, the contributed page will be shown in the JRE tab of the launch configuration dialog
+whenever the currently selected JRE has a VM Install type identifier of &lt;samp&gt;com.example.ExampleVMInstallTypeIdentifier&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -97,9 +98,8 @@ from the debug model identified by
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the action attribute &lt;samp&gt;class&lt;/samp&gt; must be a fully 
-qualified class name of a Java class that implements 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;.
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface
+&lt;b&gt;org.eclipse.debug.ui.ILaunchConfigurationTab&lt;/b&gt;.
       </documentation>
    </annotation>
 
@@ -108,7 +108,7 @@ qualified class name of a Java class that implements
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

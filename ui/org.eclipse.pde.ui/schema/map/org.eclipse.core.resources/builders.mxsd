@@ -63,6 +63,16 @@ name it the id of the builder extension.
          <sequence>
             <element ref="run" minOccurs="0" maxOccurs="1"/>
          </sequence>
+         <attribute name="hasNature" type="boolean">
+            <annotation>
+               <documentation>
+                  "true" or "false" indicating whether the builder is owned by
+a project nature.  If "true" and no corresponding nature is
+found, this builder will not run but will remain in the project's
+build spec.  If the attribute is not specified, it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -86,6 +96,11 @@ name it the id of the builder extension.
    </element>
 
    <element name="parameter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -113,10 +128,11 @@ specified builder class
       </appInfo>
       <documentation>
          Following is an example of a builder configuration: 
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.core.resources.builders"&gt; 
-      &lt;builder id="com.xyz.coolBuilder" name="Cool Builder"&gt; 
+   &lt;extension id="coolbuilder" name="Cool Builder" point="org.eclipse.core.resources.builders"&gt; 
+      &lt;builder hasNature="false"&gt; 
          &lt;run class="com.xyz.builders.Cool"&gt; 
             &lt;parameter name="optimize" value="true"/&gt; 
             &lt;parameter name="comment" value="Produced by the Cool Builder"/&gt; 

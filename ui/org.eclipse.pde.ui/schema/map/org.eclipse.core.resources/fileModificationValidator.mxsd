@@ -1,19 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.core.resources">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
+      <meta.schema plugin="org.eclipse.core.resources" id="fileModificationValidator" name="File Modification Validator"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      For providing an implementation of an IFileModificationValidator to be used in the validate-edit
+and validate-save mechanism.  This extension point tolerates at most one extension.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="config" minOccurs="0" maxOccurs="1"/>
+            <element ref="fileModificationValidator" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,17 +40,15 @@
       </complexType>
    </element>
 
-   <element name="config">
+   <element name="fileModificationValidator">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for displaying online and context-sensitive
-help.  This class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt;
-interface.
+                  a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.core.resources.IFileModificationValidator&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IHelp"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IFileModificationValidator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -61,12 +60,11 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the support extension point:
-
+         The following is an example of using the fileModificationValidator extension point:
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.support"&gt;
-		&lt;config class="com.example.XYZHelpUI"/&gt;
+	&lt;extension point="org.eclipse.core.resources.fileModificationValidator"&gt;
+		&lt;fileModificationValidator class="org.eclipse.vcm.internal.VCMFileModificationValidator"/&gt;
 	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -78,10 +76,8 @@ interface.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt; interface.  Methods in that interface
-determine what happens when a user asks for online help or context-sensitive help.
-The implementation should access the help information contributed via the &lt;samp&gt;org.eclipse.help.contexts&lt;/samp&gt; and 
-&lt;samp&gt;org.eclipse.help.toc&lt;/samp&gt; extension points.
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent an implementation of 
+&lt;samp&gt;org.eclipse.core.resources.IFileModificationValidator&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -90,9 +86,8 @@ The implementation should access the help information contributed via the &lt;sa
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help.workbench&lt;/samp&gt; plug-in contains an implementation of the help system UI.
-Although this plug-in is supplied with the Eclipse platform, it is entirely optional and can be safely
-omitted from the platform configuration.
+         The VCM component will generally provide the implementation of the file modification validator.  
+The extension point should be used by any other clients.
       </documentation>
    </annotation>
 

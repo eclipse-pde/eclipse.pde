@@ -43,7 +43,7 @@ to learn how to add drag support to a viewer.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dropContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -92,24 +92,33 @@ to learn how to add drag support to a viewer.
       </complexType>
    </element>
 
+   <element name="dropContribution">
+      <complexType>
+         <sequence>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
          The following is an example of a drop action extension: 
+
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension 
-        point="org.eclipse.ui.dropActions" 
-        &lt;action&gt; 
-                id="my_drop_action" 
-                class="com.xyz.eclipse.TestDropAction" 
-        &lt;/action&gt; 
-  &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.ui.dropActions"&gt;
+		&lt;dropContribution&gt;
+        	&lt;action id="my_drop_action" class="com.xyz.eclipse.TestDropAction"/&gt;
+        &lt;/dropContribution&gt; 
+  	&lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
-Here is an example of a drag listener that makes use of the drop action defined above.
+Here is an example of a drag listener that makes use of the drop
+action defined above.
+
 &lt;p&gt;
 &lt;pre&gt; 
 class MyDragListener extends DragSourceAdapter { 

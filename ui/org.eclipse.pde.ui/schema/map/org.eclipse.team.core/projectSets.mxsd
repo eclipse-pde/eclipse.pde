@@ -1,19 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.team.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
+      <meta.schema plugin="org.eclipse.team.core" id="projectSets" name="Project Sets"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      This extension point is used to register a handler for creating and reading project sets.
+Project sets are lightweight, portable method of sharing a particular lineup of team-shared projects in a workspace.
+A project set file may be used to provide team memebers with a simple way of creating a workspace with a particular lineup of projects form one or more team providers.
+&lt;p&gt;
+Providers may provide an extension for this extension point.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="config" minOccurs="0" maxOccurs="1"/>
+            <element ref="projectSets" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,17 +43,22 @@
       </complexType>
    </element>
 
-   <element name="config">
+   <element name="projectSets">
       <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the nature id of the provider for which this handler creates and reads project sets.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for displaying online and context-sensitive
-help.  This class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt;
-interface.
+                  the fully qualified name of a class implementing &lt;samp&gt;org.eclipse.team.core.IProjectSerializer&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IHelp"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.team.core.IProjectSetSerializer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -61,12 +70,15 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the support extension point:
+         Following is an example of a projectSets extension:
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.support"&gt;
-		&lt;config class="com.example.XYZHelpUI"/&gt;
+	&lt;extension point="org.eclipse.team.core.projectSets"&gt;
+		&lt;projectSets
+			id="org.eclipse.team.cvs.core.cvsnature"
+			class="org.eclipse.team.cvs.core.CVSProjectSetSerializer"&gt;
+		&lt;/projectSets&gt;
 	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -78,10 +90,7 @@ interface.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt; interface.  Methods in that interface
-determine what happens when a user asks for online help or context-sensitive help.
-The implementation should access the help information contributed via the &lt;samp&gt;org.eclipse.help.contexts&lt;/samp&gt; and 
-&lt;samp&gt;org.eclipse.help.toc&lt;/samp&gt; extension points.
+         [Enter API information here.]
       </documentation>
    </annotation>
 
@@ -90,9 +99,7 @@ The implementation should access the help information contributed via the &lt;sa
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help.workbench&lt;/samp&gt; plug-in contains an implementation of the help system UI.
-Although this plug-in is supplied with the Eclipse platform, it is entirely optional and can be safely
-omitted from the platform configuration.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

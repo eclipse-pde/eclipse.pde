@@ -93,7 +93,7 @@ The active editor is passed to the delegate by invoking
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   the text label of the new menu. The label should include mnemonic information.
@@ -116,12 +116,13 @@ which represents a named group in the last menu in the path.
    <element name="action">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" iconName="icon"/>
+            <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
          <sequence>
             <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -215,6 +216,38 @@ The following attribute formats are supported:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="accelerator" type="string">
+            <annotation>
+               <documentation>
+                  The accelerator for the action.  This is specified as a combination of the keys CTRL, SHIFT and ALT and an accelerator key.
+These values are not internationalized and should not be translated.
+Specification of the accelerator for the entry title should be done in the label = this value will not be used to build a menu entry.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="disabledIcon" type="string">
+            <annotation>
+               <documentation>
+                  a relative pathof an icon that will be used to visually represent the action in its context when the action is disabled.
+If it is omitted, the normal icon will simply appear greyed out.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="hoverIcon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path of an icon that will be used to visually represent the action in its context when the mouse is over the action.
+If its is omitted, the normal icon will be used.  This path is relative to the location of the plugin.xml file of the contributing plug-in.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -257,6 +290,147 @@ must subclass or implement in order to enable the action.
 is specified and the match fails, the action will be disabled.
                </documentation>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enablement">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="and"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="objectClass">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class.  The expression is evaluated as true only if the selection implements this class.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectState">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object attribute.  Acceptable values for this string reflect the object's type, and should be
+publicly declared by the plugin where the object's type is declared.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the object attribute.  The acceptable values for the object attribute should be publicly declared.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="systemProperty">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pluginState">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" use="required">
+            <annotation>
+               <documentation>
+                  the required state of the plugin.  Currently two states are supported: installed and activated.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="installed">
+                  </enumeration>
+                  <enumeration value="activated">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

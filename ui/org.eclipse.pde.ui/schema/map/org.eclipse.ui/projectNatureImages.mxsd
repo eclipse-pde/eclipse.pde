@@ -1,23 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="debugModelPresentations" name="Debug Model Presentation"/>
+      <meta.schema plugin="org.eclipse.ui" id="projectNatureImages" name="Project Nature Images"/>
    </appInfo>
    <documentation>
-      This extension point allows tools to handle the 
-presentation aspects of a debug model. 
-A debug model presentation is responsible for 
-providing labels, images, and editors for elements 
-in a specific debug model.
+      This extension point is used to associate an image with a project nature.
+The supplied image is used to form a composite image consisting of the standard project image combined with the image of its nature.
+The supplied image is drawn over the top right corner of the base image.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="debugModelPresentation" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="image" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -43,28 +41,39 @@ in a specific debug model.
       </complexType>
    </element>
 
-   <element name="debugModelPresentation">
+   <element name="image">
       <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the identifier of the debug model this presentation is responsible for
+                  a unique name that will be used to identify this nature image.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="natureId" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualifed name of a Java class that implements the 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;
-interface.
+                  the unique name of the nature for which the image is being supplied.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a relative name of the image that will be associated with this perspective.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.IDebugModelPresentation"/>
+                  <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="description" type="string">
    </element>
 
    <annotation>
@@ -72,23 +81,19 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a view filter extension point:
+         The following is an example of a nature image extension:
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point = "org.eclipse.debug.ui.debugModelPresentations"&gt; 
-       &lt;debugModelPresentation 
-           class = "com.example.JavaModelPresentation"
-      	   id = "com.example.JavaDebugModel"
-       &lt;/debugModelPresentation&gt; 
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.ui.projectNatureImages"&gt;
+		&lt;image 
+			id="org.eclipse.ui.javaNatureImage"
+			natureId="Resource"
+			icon="icons/javaNature.gif"&gt;
+		&lt;/image&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-In the example above, the class 
-&lt;samp&gt;com.example.JavaModelPresentation&lt;/samp&gt; will be 
-used to render and present debug elements originating 
-from the debug model identified by 
-&lt;samp&gt;com.example.JavaDebugModel&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -97,9 +102,7 @@ from the debug model identified by
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the action attribute &lt;samp&gt;class&lt;/samp&gt; must be a fully 
-qualified class name of a Java class that implements 
-&lt;samp&gt;org.eclipse.debug.ui.IDebugModelPresentation&lt;/samp&gt;.
+         The value of the &lt;samp&gt;natureId&lt;/samp&gt; attribute is the nature id as defined by the plugin creating the project.
       </documentation>
    </annotation>
 
@@ -108,7 +111,7 @@ qualified class name of a Java class that implements
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

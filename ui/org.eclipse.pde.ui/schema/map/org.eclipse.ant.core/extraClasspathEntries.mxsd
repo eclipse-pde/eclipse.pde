@@ -1,19 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclispe.ant.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.help" id="support" name="Support"/>
+      <meta.schema plugin="org.eclispe.ant.core" id="extraClasspathEntries" name="Extra Ant Classpath Entries"/>
    </appInfo>
    <documentation>
-      [Enter description of this extension point]
+      Allows plug-ins to define arbitrary JARs for use by the Ant infrastructure.
+These JARs are put into the Ant classpath at runtime.  Besides
+the JAR, the plug-in classloader of the plug-in providing the
+JAR is also added to the classpath.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="config" minOccurs="0" maxOccurs="1"/>
+            <element ref="extraClasspathEntry" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,18 +42,13 @@
       </complexType>
    </element>
 
-   <element name="config">
+   <element name="extraClasspathEntry">
       <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="library" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for displaying online and context-sensitive
-help.  This class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt;
-interface.
+                  a path relative to the plug-in install location for the library.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IHelp"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -61,13 +59,13 @@ interface.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a sample usage of the support extension point:
+         The following is an example of an object declaration:
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.help.support"&gt;
-		&lt;config class="com.example.XYZHelpUI"/&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.ant.core.extraClasspathEntries"&gt;
+  &lt;extraClasspathEntry library="myExtraLibrary.jar"/&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -78,10 +76,7 @@ interface.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied class must implement the &lt;samp&gt;org.eclipse.help.IHelp&lt;/samp&gt; interface.  Methods in that interface
-determine what happens when a user asks for online help or context-sensitive help.
-The implementation should access the help information contributed via the &lt;samp&gt;org.eclipse.help.contexts&lt;/samp&gt; and 
-&lt;samp&gt;org.eclipse.help.toc&lt;/samp&gt; extension points.
+         [Enter API information here.]
       </documentation>
    </annotation>
 
@@ -90,9 +85,7 @@ The implementation should access the help information contributed via the &lt;sa
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;samp&gt;org.eclipse.help.workbench&lt;/samp&gt; plug-in contains an implementation of the help system UI.
-Although this plug-in is supplied with the Eclipse platform, it is entirely optional and can be safely
-omitted from the platform configuration.
+         The platform itself does not supply any extension.
       </documentation>
    </annotation>
 

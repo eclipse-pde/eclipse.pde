@@ -1,30 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.runtime">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.core.runtime" id="applications" name="Applications"/>
+      <meta.schema plugin="org.eclipse.ui" id="markerHelp" name="Marker Help"/>
    </appInfo>
    <documentation>
-      Platform runtime supports plug-ins which would like to 
-declare main entry points.  That is, programs which 
-would like to run using the platform runtime but yet 
-control all aspects of execution can declare themselves 
-as an application.  Declared applications can be run 
-directly from the main platform launcher by specifying 
-the &lt;i&gt;-application&lt;/i&gt; argument where the parameter 
-is the id of an extension supplied to the 
-applications extension point described here.  
-This application is instantiated and run by the platform.  
-Platform clients can also use the platform to lookup and 
-run multiple applications.
+      This extension point is used to associate a help context id with a specific "kind" of marker (a marker of a certain type or having certain attribute values).
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="application"/>
+            <element ref="markerHelp" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,34 +39,29 @@ run multiple applications.
       </complexType>
    </element>
 
-   <element name="application">
+   <element name="markerHelp">
       <complexType>
          <sequence>
-            <element ref="run" minOccurs="0" maxOccurs="1"/>
+            <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-      </complexType>
-   </element>
-
-   <element name="run">
-      <complexType>
-         <sequence>
-            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="class" type="string" use="required">
+         <attribute name="markerType" type="string">
             <annotation>
                <documentation>
-                  the fully-qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+                  the unique type of the marker for which the help context applies.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.boot.IPlatformRunnable"/>
-               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique id of the help context.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="parameter">
+   <element name="attribute">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
@@ -87,14 +71,14 @@ run multiple applications.
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of this parameter made available to instances of the specified application class
+                  the name of the attribute whose value is being specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of this parameter made available to instances of the specified application class
+                  the specified value of the attribute.
                </documentation>
             </annotation>
          </attribute>
@@ -106,18 +90,22 @@ run multiple applications.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a builder configuration: 
+         The following is an example of a marker help extension (not the sub-element and the way attributes are used):
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension id="coolApplication" point="org.eclipse.core.runtime.applications"&gt; 
-      &lt;application&gt; 
-         &lt;run class="com.xyz.applications.Cool"&gt; 
-            &lt;parameter name="optimize" value="true"/&gt; 
-         &lt;/run&gt; 
-      &lt;/application&gt; 
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.ui.markerHelp"&gt;
+		&lt;markerHelp
+			markerType="org.eclipse.ui.examples.readmetool.readmemarker"
+			helpContextId="org.eclipse.ui.examples.readmetool.marker_example1_context"&gt;
+			&lt;attribute name="org.eclipse.ui.examples.readmetool.id" value="1234"/&gt;
+		&lt;/markerHelp&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
+
+In the example above, a help context id is associated with markers of type org.eclipse.ui.examples.readmetool.readmemarker
+whose org.eclipse.ui.examples.readmetool.id attribute has a value of 1234.
       </documentation>
    </annotation>
 
@@ -126,9 +114,10 @@ run multiple applications.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must represent an 
-implementor of 
-&lt;samp&gt;org.eclipse.core.runtime.IPlatformRunnable&lt;/samp&gt;.
+         It is up to the developer to ensure that only a single help context id is supplied for a given marker.
+If two or more help context ids are supplied for a given kind of marker, the workbench does not define which will be returned.
+However the workbench does define that the "most specific" context id will always be returned for a given marker.
+That is, a context id associated with three matching attribute values will be returned before a context id associated with only two.
       </documentation>
    </annotation>
 
@@ -137,7 +126,7 @@ implementor of
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform itself supplies a number of applications including the platform workbench itself.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

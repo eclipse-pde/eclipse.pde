@@ -146,6 +146,14 @@ added to the "Other" category.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="project" type="boolean">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating the wizard will create an IProject resource.
+Also cause the wizard to appear as a choice within the "New Project Dialog".
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

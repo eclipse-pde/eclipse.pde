@@ -1,28 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ant.core">
+<schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ant.core" id="antTasks" name="Ant Tasks"/>
+      <meta.schema plugin="org.eclipse.debug.ui" id="debugActionGroups" name="Debug Action Groups"/>
    </appInfo>
    <documentation>
-      Allows plug-ins to define arbitrary Ant tasks for use 
-by the Ant infrastructure.  The standard Ant infrastructure 
-allows for the addition of arbitrary tasks.  
-Unfortunately, it is unlikely that the Ant Core plug-in 
-would have the classes required by these tasks on its 
-classpath (or that of any of its prerequisites).  
-To address this, clients should define an extension 
-which plugs into this extension-point and maps a 
-task name onto a class.  The Ant plug-in can then 
-request that the declaring plug-in load the specified class.
+      This extension point provides a mechanism to specify the visibility of action groups.
+Any view that returns an instance of IDebugView when queried with #getAdapter(IDebugView.class) will have its context menu
+and toolbar affected by the visibility of the action groups.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="antTask" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="debugActionGroup" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,37 +41,46 @@ request that the declaring plug-in load the specified class.
       </complexType>
    </element>
 
-   <element name="antTask">
+   <element name="debugActionGroup">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this debug action group.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  name of the task to be defined
+                  a translatable name that will be used for the debug action group label.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="visible" type="boolean">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class implementing 
-the task.  Generally this class must be a subclass of
-&lt;samp&gt;org.apache.tools.ant.Task&lt;/samp&gt;.
+                  an optional attribute indicating the visibility of the group.  If omitted, the group is set to be visible.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.apache.tools.ant.Task"/>
-               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="library" type="string" use="required">
+      </complexType>
+   </element>
+
+   <element name="action">
+      <complexType>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a path relative to the plug-in install location
-for the library containing the task.
+                  the unique identifier of an action that will be added to the debug action group.
                </documentation>
             </annotation>
          </attribute>
@@ -90,12 +92,21 @@ for the library containing the task.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an object declaration: 
+         The following is an example of a debug action group extension point.  In all debug views (views that return
+an instance of IDebugView when queried with #getAdapter(IDebugView.class)), the actions listed will not
+be visible in the toolbar or context menu of the view.
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ant.core.antTask"&gt;
-      &lt;antTask name="coolTask" class="com.example.CoolTask"/&gt;
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.debug.ui.debugActionGroups"&gt;
+		&lt;debugActionGroup
+			id="org.eclipse.jdt.debug.ui.javaDebugActionGroup"
+			visible="false"
+			name="Java Debug"&gt;
+			&lt;action id="org.eclipse.jdt.ui.actions.RunToLineToolbar"/&gt;
+			&lt;action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/&gt;
+		&lt;/debugActionGroup&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
@@ -106,13 +117,7 @@ for the library containing the task.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The objects declared via this extension-point are 
-accessible though the following API:
-&lt;p&gt;
-&lt;pre&gt;
-   org.eclipse.core.ant.AntPlugin.getTaskExtensions 
-&lt;/pre&gt;
-&lt;/p&gt;
+         [Enter API information here.]
       </documentation>
    </annotation>
 
@@ -121,8 +126,7 @@ accessible though the following API:
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform itself supplies a number of tasks including 
-incremental, javac and refreshLocal.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

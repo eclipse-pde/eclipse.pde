@@ -616,16 +616,16 @@
    <extension
          point="org.eclipse.pde.core.schemaMap">
       <map
-            point="org.eclipse.ant.core.antObjects"
-            schema="schema/map/org.eclipse.ant.core/antObjects.mxsd">
-      </map>
-      <map
             point="org.eclipse.ant.core.antTasks"
             schema="schema/map/org.eclipse.ant.core/antTasks.mxsd">
       </map>
       <map
             point="org.eclipse.ant.core.antTypes"
             schema="schema/map/org.eclipse.ant.core/antTypes.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ant.core.extraClasspathEntries"
+            schema="schema/map/org.eclipse.ant.core/extraClasspathEntries.mxsd">
       </map>
       <map
             point="org.eclipse.compare.contentMergeViewers"
@@ -648,6 +648,10 @@
             schema="schema/map/org.eclipse.core.resources/builders.mxsd">
       </map>
       <map
+            point="org.eclipse.core.resources.fileModificationValidator"
+            schema="schema/map/org.eclipse.core.resources/fileModificationValidator.mxsd">
+      </map>
+      <map
             point="org.eclipse.core.resources.markers"
             schema="schema/map/org.eclipse.core.resources/markers.mxsd">
       </map>
@@ -664,32 +668,92 @@
             schema="schema/map/org.eclipse.core.runtime/urlHandlers.mxsd">
       </map>
       <map
-            point="org.eclipse.core.target.targets"
-            schema="schema/map/org.eclipse.core.target/targets.mxsd">
+            point="org.eclipse.debug.core.breakpoints"
+            schema="schema/map/org.eclipse.debug.core/breakpoints.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.core.launchConfigurationComparators"
+            schema="schema/map/org.eclipse.debug.core/launchConfigurationComparators.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.core.launchConfigurationTypes"
+            schema="schema/map/org.eclipse.debug.core/launchConfigurationTypes.mxsd">
       </map>
       <map
             point="org.eclipse.debug.core.launchers"
             schema="schema/map/org.eclipse.debug.core/launchers.mxsd">
       </map>
       <map
+            point="org.eclipse.debug.core.sourceLocators"
+            schema="schema/map/org.eclipse.debug.core/sourceLocators.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.core.statusHandlers"
+            schema="schema/map/org.eclipse.debug.core/statusHandlers.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.ui.debugActionGroups"
+            schema="schema/map/org.eclipse.debug.ui/debugActionGroups.mxsd">
+      </map>
+      <map
             point="org.eclipse.debug.ui.debugModelPresentations"
             schema="schema/map/org.eclipse.debug.ui/debugModelPresentations.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.ui.launchConfigurationTabGroups"
+            schema="schema/map/org.eclipse.debug.ui/launchConfigurationTabGroups.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.ui.launchConfigurationTypeImages"
+            schema="schema/map/org.eclipse.debug.ui/launchConfigurationTypeImages.mxsd">
+      </map>
+      <map
+            point="org.eclipse.debug.ui.launchShortcuts"
+            schema="schema/map/org.eclipse.debug.ui/launchShortcuts.mxsd">
       </map>
       <map
             point="org.eclipse.help.contexts"
             schema="schema/map/org.eclipse.help/contexts.mxsd">
       </map>
       <map
-            point="org.eclipse.help.contributions"
-            schema="schema/map/org.eclipse.help/contributions.mxsd">
+            point="org.eclipse.help.luceneAnalyzer"
+            schema="schema/map/org.eclipse.help/luceneAnalyzer.mxsd">
       </map>
       <map
             point="org.eclipse.help.support"
             schema="schema/map/org.eclipse.help/support.mxsd">
       </map>
       <map
-            point="org.eclipse.jdt.launching.vmRunners"
-            schema="schema/map/org.eclipse.jdt.launching/vmRunners.mxsd">
+            point="org.eclipse.help.toc"
+            schema="schema/map/org.eclipse.help/toc.mxsd">
+      </map>
+      <map
+            point="org.eclipse.help.ui.browser"
+            schema="schema/map/org.eclipse.help.ui/browser.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.debug.ui.vmInstallTypePage"
+            schema="schema/map/org.eclipse.jdt.debug.ui/vmInstallTypePage.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers"
+            schema="schema/map/org.eclipse.jdt.launching/runtimeClasspathEntryResolvers.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.launching.vmConnectors"
+            schema="schema/map/org.eclipse.jdt.launching/vmConnectors.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.launching.vmInstallTypes"
+            schema="schema/map/org.eclipse.jdt.launching/vmInstallTypes.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.ui.classpathContainerPage"
+            schema="schema/map/org.eclipse.jdt.ui/classpathContainerPage.mxsd">
+      </map>
+      <map
+            point="org.eclipse.jdt.ui.javaEditorTextHovers"
+            schema="schema/map/org.eclipse.jdt.ui/javaEditorTextHovers.mxsd">
       </map>
       <map
             point="org.eclipse.jdt.ui.javaElementFilters"
@@ -704,8 +768,36 @@
             schema="schema/map/org.eclipse.search/searchResultSorters.mxsd">
       </map>
       <map
+            point="org.eclipse.team.core.fileTypes"
+            schema="schema/map/org.eclipse.team.core/fileTypes.mxsd">
+      </map>
+      <map
+            point="org.eclipse.team.core.ignore"
+            schema="schema/map/org.eclipse.team.core/ignore.mxsd">
+      </map>
+      <map
+            point="org.eclipse.team.core.projectSets"
+            schema="schema/map/org.eclipse.team.core/projectSets.mxsd">
+      </map>
+      <map
+            point="org.eclipse.team.ui.configurationWizards"
+            schema="schema/map/org.eclipse.team.ui/configurationWizards.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ui.actionSetPartAssociations"
+            schema="schema/map/org.eclipse.ui/actionSetPartAssociations.mxsd">
+      </map>
+      <map
             point="org.eclipse.ui.actionSets"
             schema="schema/map/org.eclipse.ui/actionSets.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ui.capabilities"
+            schema="schema/map/org.eclipse.ui/capabilities.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ui.decorators"
+            schema="schema/map/org.eclipse.ui/decorators.mxsd">
       </map>
       <map
             point="org.eclipse.ui.dropActions"
@@ -732,6 +824,14 @@
             schema="schema/map/org.eclipse.ui/importWizards.mxsd">
       </map>
       <map
+            point="org.eclipse.ui.markerHelp"
+            schema="schema/map/org.eclipse.ui/markerHelp.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ui.markerResolution"
+            schema="schema/map/org.eclipse.ui/markerResolution.mxsd">
+      </map>
+      <map
             point="org.eclipse.ui.newWizards"
             schema="schema/map/org.eclipse.ui/newWizards.mxsd">
       </map>
@@ -752,8 +852,16 @@
             schema="schema/map/org.eclipse.ui/preferencePages.mxsd">
       </map>
       <map
+            point="org.eclipse.ui.projectNatureImages"
+            schema="schema/map/org.eclipse.ui/projectNatureImages.mxsd">
+      </map>
+      <map
             point="org.eclipse.ui.propertyPages"
             schema="schema/map/org.eclipse.ui/propertyPages.mxsd">
+      </map>
+      <map
+            point="org.eclipse.ui.resourceFilters"
+            schema="schema/map/org.eclipse.ui/resourceFilters.mxsd">
       </map>
       <map
             point="org.eclipse.ui.viewActions"

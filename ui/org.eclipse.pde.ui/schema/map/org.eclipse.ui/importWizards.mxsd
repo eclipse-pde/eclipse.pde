@@ -54,7 +54,7 @@ an import wizard can be made available only for objects of type
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
             an element that will be used to create import wizard
@@ -86,7 +86,7 @@ an import wizard can be made available only for objects of type
                &lt;tt&gt;org.eclipse.ui.IImportWizard&lt;/tt&gt; interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IImportWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IImportWizard"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -1,33 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.target">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.core.target" id="targets" name="Targets"/>
+      <meta.schema plugin="org.eclipse.ui" id="markerResolution" name="Marker Resolutions"/>
    </appInfo>
    <documentation>
-      The workspace supports the notion of incrementally 
-synchronizing with resources located outside the 
-workspace (i.e., in targets).  A target might be 
-a web server, embedded device, remote filesystem, ... 
-depending on the application . By default the platform 
-supports WebDAV and filesystem based uni- and 
-bi-directional targets.  The set of targets 
-available to users can be extended using the 
-targets extension point. 
-&lt;p&gt;
-The targets extension-point allows target writers 
-to register their target implementation under a 
-symbolic name that is then used from within the 
-workspace to find and run targets. The symbolic 
-name is the id of the target extension.
+      This extension point is used to associate a marker resolution generator with a specific "kind" of marker.
+(a marker of a certain type or having certain attribute values).
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="target"/>
+            <element ref="markerResolutionGenerator" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -53,49 +40,49 @@ name is the id of the target extension.
       </complexType>
    </element>
 
-   <element name="target">
+   <element name="markerResolutionGenerator">
       <complexType>
          <sequence>
-            <element ref="run" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-      </complexType>
-   </element>
-
-   <element name="run">
-      <complexType>
-         <sequence>
-            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of an implementation of 
-&lt;samp&gt;org.eclipse.core.target.ITarget&lt;/samp&gt;.
+                  the name of the class implementing IMarkerResolutionGenerator
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.target.ITarget"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IMarkerResolutionGenerator"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  the type of marker for which the help context applies.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="parameter">
+   <element name="attribute">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of this parameter made available 
-to instances of the specified target class
+                  the name of the attribute whose value is being specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  an arbitrary value associated with the given name 
-and made available to instances of the specified 
-target class
+                  the specified value of the attribute.
                </documentation>
             </annotation>
          </attribute>
@@ -107,16 +94,22 @@ target class
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a target configuration: 
+         The following is an example of a marker resolution generator extension (note the sub-element and the way attributes are used):
+
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.core.target.targets"&gt; 
-      &lt;target id="com.example.coolTarget" name="Cool Target"&gt; 
-         &lt;run class="com.example.targets.Cool"/&gt; 
-      &lt;/target&gt; 
-   &lt;/extension&gt; 
+	&lt;extension point="org.eclipse.ui.markerResolution"&gt;
+		&lt;markerResolutionGenerator
+			class="org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator"
+			markerType="org.eclipse.ui.examples.readmetool.readmemarker"&gt;
+			&lt;attribute name="org.eclipse.ui.examples.readmetool.id" value="1234"/&gt;
+		&lt;/markerResolutionGenerator&gt;
+	&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
+
+In the example above, a marker resolution generator is associated with markers of type org.eclipse.ui.examples.readmetool.readmemarker
+whose org.eclipse.ui.examples.redmetool.id attribute has a value of 1234.
       </documentation>
    </annotation>
 
@@ -125,9 +118,7 @@ target class
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must represent 
-an implementation of 
-&lt;samp&gt;org.eclipse.core.target.ITarget&lt;/samp&gt;.
+         More than one marker help generator may be supplied for a given marker.
       </documentation>
    </annotation>
 
@@ -136,8 +127,7 @@ an implementation of
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The platform supplies several targets including 
-uni- and bi-directional WebDAV and filesystem based targets.
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

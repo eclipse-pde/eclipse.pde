@@ -45,7 +45,7 @@ locates the most specific registered search page for it.
    <element name="page">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" iconName="icon"/>
+            <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -135,6 +135,23 @@ search all possible resources then "*" can be used.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="showScopeSection" type="boolean">
+            <annotation>
+               <documentation>
+                  If this attribute is missing or set to "false", then the scope section is not shown in the Search dialog.
+To see the scope section, this attribute has to be set to "true".
+Plug-ins which add their own Search page and want to see the scope section have to add this to their plugin.xml.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enabled" type="boolean">
+            <annotation>
+               <documentation>
+                  If this attribute is missing or set to "false", then the page is not initially shown in the Search dialog.
+The page can be activated by the user via the "Customize..." button on the Search dialog.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -145,6 +162,7 @@ search all possible resources then "*" can be used.
       <documentation>
          The following is an example of a search page extension 
 definition: 
+
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point="org.eclipse.search.searchPages"&gt; 
@@ -155,6 +173,7 @@ definition:
          sizeHint="250,160" 
          tabPosition="1" 
          extensions="*:1" 
+         showScopeSection="true"
          class="org.eclipse.search.ui.text.TextSearchPage" 
       &lt;/page&gt; 
    &lt;/extension&gt; 

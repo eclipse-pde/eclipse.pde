@@ -81,7 +81,7 @@ the root level.
 &lt;samp&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.PreferencePage:org.eclipse.ui.IWorkbenchPreferencePage"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPreferencePage"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -91,9 +91,6 @@ the root level.
                   a path indicating the location of the page in the preference tree. The path may either be a parent node ID or a sequence
      of IDs separated by '/', representing the full path from the root node.
                </documentation>
-               <appInfo>
-                  <meta.attribute basedOn=""/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
