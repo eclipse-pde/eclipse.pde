@@ -26,7 +26,7 @@ import org.eclipse.ui.*;
 
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
-	private static final String STORE_SECTION = "PluginImportWizard";
+	private static final String STORE_SECTION = "PluginImportWizard"; //$NON-NLS-1$
 		
 	private IStructuredSelection selection;	
 	private PluginImportWizardFirstPage page1;
@@ -37,7 +37,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("ImportWizard.title"));
+		setWindowTitle(PDEPlugin.getResourceString("ImportWizard.title")); //$NON-NLS-1$
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -46,11 +46,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	public void addPages() {
 		setNeedsProgressMonitor(true);
-		page1 = new PluginImportWizardFirstPage("first");
+		page1 = new PluginImportWizardFirstPage("first"); //$NON-NLS-1$
 		addPage(page1);
-		page2 = new PluginImportWizardExpressPage("express", page1, selection);
+		page2 = new PluginImportWizardExpressPage("express", page1, selection); //$NON-NLS-1$
 		addPage(page2);
-		page3 = new PluginImportWizardDetailedPage("detailed", page1);
+		page3 = new PluginImportWizardDetailedPage("detailed", page1); //$NON-NLS-1$
 		addPage(page3);
 	}
 
@@ -118,7 +118,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
-				PDEPlugin.getResourceString("ImportWizard.messages.title"),
+				PDEPlugin.getResourceString("ImportWizard.messages.title"), //$NON-NLS-1$
 				null,
 				dialogMessage,
 				MessageDialog.QUESTION,
@@ -126,7 +126,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEPlugin.getResourceString("ImportWizard.noToAll"),
+					PDEPlugin.getResourceString("ImportWizard.noToAll"), //$NON-NLS-1$
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -153,7 +153,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			}
 
 			final String message =
-				PDEPlugin.getFormattedMessage("ImportWizard.messages.exists", project.getName());
+				PDEPlugin.getFormattedMessage("ImportWizard.messages.exists", project.getName()); //$NON-NLS-1$
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {

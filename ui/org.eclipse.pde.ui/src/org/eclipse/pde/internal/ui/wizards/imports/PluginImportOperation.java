@@ -65,14 +65,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString("ImportWizard.operation.creating"),
+			PDEPlugin.getResourceString("ImportWizard.operation.creating"), //$NON-NLS-1$
 			fModels.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString("ImportWizard.operation.multiProblem"),
+					PDEPlugin.getResourceString("ImportWizard.operation.multiProblem"), //$NON-NLS-1$
 					null);
 
 			for (int i = 0; i < fModels.length; i++) {
@@ -98,7 +98,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 		String id = model.getPluginBase().getId();
 		String task =
-			PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", id);
+			PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", id); //$NON-NLS-1$
 		monitor.beginTask(task, 6);
 		try {
 			buildModel = null;
@@ -124,8 +124,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						new SubProgressMonitor(monitor, 4));
 					break;
 				case IMPORT_WITH_SOURCE :
-					if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util")
-							|| id.equals("org.eclipse.osgi.services") || id.equals("org.eclipse.swt")) {
+					if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util") //$NON-NLS-1$ //$NON-NLS-2$
+							|| id.equals("org.eclipse.osgi.services") || id.equals("org.eclipse.swt")) { //$NON-NLS-1$ //$NON-NLS-2$
 						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 					} else {
 						importWithSource(project, model, new SubProgressMonitor(monitor, 4));
@@ -190,7 +190,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		throws CoreException {
 		
 		File[] items = new File(model.getInstallLocation()).listFiles();
-		monitor.beginTask("Linking content...", items.length);
+		monitor.beginTask(PDEPlugin.getResourceString("PluginImportOperation.linking"), items.length); //$NON-NLS-1$
 		for (int i = 0; i < items.length; i++) {
 			File sourceFile = items[i];
 			if (sourceFile.isDirectory()) {
@@ -203,7 +203,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				String fileName = sourceFile.getName();
 				// Ignore .classpath and .project in the plug-in.
 				// These files will be created, so ignore the imported ones.
-				if (!fileName.equals(".classpath") && !fileName.equals(".project")) {
+				if (!fileName.equals(".classpath") && !fileName.equals(".project")) { //$NON-NLS-1$ //$NON-NLS-2$
 					IFile file = project.getFile(fileName);
 					file.createLink(
 						new Path(sourceFile.getPath()),
@@ -226,7 +226,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			IProgressMonitor monitor)
 	throws CoreException {
 		
-		monitor.beginTask("", 3);
+		monitor.beginTask("", 3); //$NON-NLS-1$
 		
 		importPluginContent(project, model, new SubProgressMonitor(monitor, 2));
 		
@@ -243,11 +243,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				IResource srcZip = jarFile.getProject().findMember(srcPath);
 				if (srcZip != null) {
 					String jarName = libraryPath.removeFileExtension().lastSegment();
-					IFolder dest = jarFile.getProject().getFolder("src-" + jarName);
+					IFolder dest = jarFile.getProject().getFolder("src-" + jarName); //$NON-NLS-1$
 					IBuildEntry entry =
 					buildModel.getFactory().createEntry(
-							"source." + libraries[i].getName());
-					entry.addToken(dest.getName() + "/");
+							"source." + libraries[i].getName()); //$NON-NLS-1$
+					entry.addToken(dest.getName() + "/"); //$NON-NLS-1$
 					buildModel.getBuild().add(entry);
 					if (!dest.exists()) {
 						dest.create(true, true, null);
@@ -271,16 +271,16 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	
 	private WorkspaceBuildModel configureBinIncludes(IProject project, IPluginModelBase model) {
 		WorkspaceBuildModel buildModel =
-			new WorkspaceBuildModel(project.getFile("build.properties"));
+			new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 		IBuild build = buildModel.getBuild(true);
-		IBuildEntry entry = buildModel.getFactory().createEntry("bin.includes");
+		IBuildEntry entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 
 		File[] files = new File(model.getInstallLocation()).listFiles();
 		try {
 			for (int i = 0; i < files.length; i++) {
 				String token = files[i].getName();
 				if (files[i].isDirectory())
-					token = token + "/";
+					token = token + "/"; //$NON-NLS-1$
 				entry.addToken(token);
 			}
 			build.add(entry);
@@ -292,7 +292,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private void importPluginContent(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {		
-		monitor.beginTask("", 2);
+		monitor.beginTask("", 2); //$NON-NLS-1$
 		
 		importContent(
 			new File(model.getInstallLocation()),
@@ -367,7 +367,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		monitor.beginTask(
-			PDEPlugin.getResourceString("ImportWizard.operation.copyingSource"),
+			PDEPlugin.getResourceString("ImportWizard.operation.copyingSource"), //$NON-NLS-1$
 			libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
 			IPath libPath = new Path(libraries[i].getName());
@@ -485,10 +485,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (!provider.getLabel(curr).equals("META-INF")) {
+					if (!provider.getLabel(curr).equals("META-INF")) { //$NON-NLS-1$
 						collectResources(provider, curr, collected);
 					}					
-				} else if (!provider.getLabel(curr).endsWith(".class")) {
+				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
 					collected.add(curr);
 				}
 			}
@@ -529,7 +529,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
 				if (buildModel != null) {
-					IBuildEntry buildEntry = buildModel.getBuild().getEntry("source." + libraries[i].getName());
+					IBuildEntry buildEntry = buildModel.getBuild().getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
 					if (buildEntry != null) {
 						IPath path = new Path(buildEntry.getTokens()[0]);
 						entries.add(JavaCore.newSourceEntry(project.getFullPath().append(path)));
@@ -607,7 +607,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (libName != null) {
 			int idx = libName.lastIndexOf('.');
 			if (idx != -1) {
-				String srcName = libName.substring(0, idx) + "src.zip";
+				String srcName = libName.substring(0, idx) + "src.zip"; //$NON-NLS-1$
 				IPath path = jarPath.removeLastSegments(1).append(srcName);
 				return path;
 			}

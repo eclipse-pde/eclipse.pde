@@ -87,8 +87,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	public PluginImportWizardExpressPage(String pageName, PluginImportWizardFirstPage page, IStructuredSelection selection) {
 		super(pageName, page);
 		this.initialSelection = selection;
-		setTitle(PDEPlugin.getResourceString("ImportWizard.expressPage.title"));
-		setMessage(PDEPlugin.getResourceString("ImportWizard.expressPage.desc"));
+		setTitle(PDEPlugin.getResourceString("ImportWizard.expressPage.title")); //$NON-NLS-1$
+		setMessage(PDEPlugin.getResourceString("ImportWizard.expressPage.desc")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -128,7 +128,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		
 		tablePart =
 			new TablePart(
-				PDEPlugin.getResourceString("ImportWizard.expressPage.nonBinary"),
+				PDEPlugin.getResourceString("ImportWizard.expressPage.nonBinary"), //$NON-NLS-1$
 				new String[] {
 					PDEPlugin.getResourceString(TablePart.KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(TablePart.KEY_DESELECT_ALL)});
@@ -217,7 +217,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		try {
 			IBuildModel buildModel = model.getBuildModel();
 			if (buildModel == null) {
-				IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties");
+				IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties"); //$NON-NLS-1$
 				if (buildFile.exists()) {
 					buildModel = new WorkspaceBuildModel(buildFile);
 					buildModel.load();
@@ -226,14 +226,14 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (buildModel == null)
 				return;
 				
-			IBuildEntry entry = buildModel.getBuild().getEntry("jars.extra.classpath");
+			IBuildEntry entry = buildModel.getBuild().getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
 			if (entry == null)
 				return;
 				
 			String[] tokens = entry.getTokens();
 			for (int i = 0; i < tokens.length; i++) {
 				Path path = new Path(tokens[i]);
-				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) {
+				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) { //$NON-NLS-1$
 					for (int j = 0; j < models.length; j++) {
 						if (models[j].getPluginBase().getId().equals(path.segment(1))
 							&& !result.contains(models[j])) {
@@ -259,7 +259,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void updateCount() {
 		counterLabel.setText(
 			PDEPlugin.getFormattedMessage(
-				"ImportWizard.expressPage.total",
+				"ImportWizard.expressPage.total", //$NON-NLS-1$
 				new Integer(importListViewer.getTable().getItemCount()).toString()));
 		counterLabel.getParent().layout();
 	}

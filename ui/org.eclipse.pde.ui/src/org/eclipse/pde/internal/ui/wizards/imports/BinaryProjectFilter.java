@@ -24,8 +24,8 @@ import org.eclipse.jface.viewers.*;
  * Window>Preferences>Java>Code Generation.
  */
 public class BinaryProjectFilter extends ViewerFilter {
-	private static final QualifiedName IMPORTED_KEY = new QualifiedName("org.eclipse.pde.core", "imported");
-	private static final QualifiedName TEAM_KEY = new QualifiedName("org.eclipse.team.core", "repository");
+	private static final QualifiedName IMPORTED_KEY = new QualifiedName("org.eclipse.pde.core", "imported"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final QualifiedName TEAM_KEY = new QualifiedName("org.eclipse.team.core", "repository"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Constructor for BinaryProjectFilter.
@@ -56,23 +56,23 @@ public class BinaryProjectFilter extends ViewerFilter {
 	private boolean isPluginProject(IProject project) {
 		if (project.isOpen() == false)
 			return false;
-		return project.exists(new Path("plugin.xml"))
-			|| project.exists(new Path("fragment.xml")) || project.exists(new Path("META-INF/MANIFEST.MF"));
+		return project.exists(new Path("plugin.xml")) //$NON-NLS-1$
+			|| project.exists(new Path("fragment.xml")) || project.exists(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private boolean isFeatureProject(IProject project) {
 		if (project.isOpen() == false)
 			return false;
-		return project.exists(new Path("feature.xml"));
+		return project.exists(new Path("feature.xml")); //$NON-NLS-1$
 	}
 	
 	private boolean isBinary(IProject project) {
 		try {
 			String value = project.getPersistentProperty(IMPORTED_KEY);
 			if (value==null) return false;
-			if (value.equals("external"))
+			if (value.equals("external")) //$NON-NLS-1$
 				return true;
-			if (value.equals("binary")) {
+			if (value.equals("binary")) { //$NON-NLS-1$
 				if (project.getSessionProperty(TEAM_KEY)==null)
 					return true;
 			}

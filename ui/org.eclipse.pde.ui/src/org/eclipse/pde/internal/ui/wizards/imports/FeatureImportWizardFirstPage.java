@@ -28,8 +28,8 @@ import org.eclipse.ui.help.*;
 
 public class FeatureImportWizardFirstPage extends WizardPage {
 
-	private static final String SETTINGS_DROPLOCATION = "droplocation";
-	private static final String SETTINGS_DOOTHER = "doother";
+	private static final String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
+	private static final String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
 
 	private Label fOtherLocationLabel;
 	private Button fRuntimeLocationButton;
@@ -37,9 +37,9 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 	private Combo fDropLocation;
 
 	public FeatureImportWizardFirstPage() {
-		super("FeatureImportWizardPage");
-		setTitle(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.title"));
-		setDescription(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.desc"));
+		super("FeatureImportWizardPage"); //$NON-NLS-1$
+		setTitle(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.desc")); //$NON-NLS-1$
 	}
 
 	/*
@@ -57,17 +57,17 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 		fRuntimeLocationButton = new Button(composite, SWT.CHECK);
 		fillHorizontal(fRuntimeLocationButton, 3, false);
 		fRuntimeLocationButton.setText(
-			PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.runtimeLocation"));
+			PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.runtimeLocation")); //$NON-NLS-1$
 
 		fOtherLocationLabel = new Label(composite, SWT.NULL);
 		fOtherLocationLabel.setText(
-			PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.otherFolder"));
+			PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.otherFolder")); //$NON-NLS-1$
 
 		fDropLocation = new Combo(composite, SWT.DROP_DOWN);
 		fillHorizontal(fDropLocation, 1, true);
 
 		fBrowseButton = new Button(composite, SWT.PUSH);
-		fBrowseButton.setText(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.browse"));
+		fBrowseButton.setText(PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.browse")); //$NON-NLS-1$
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -185,8 +185,8 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(fDropLocation.getText());
-		dialog.setText(PDEPlugin.getResourceString("FeatureImportWizard.messages.folder.title"));
-		dialog.setMessage(PDEPlugin.getResourceString("FeatureImportWizard.messages.folder.message"));
+		dialog.setText(PDEPlugin.getResourceString("FeatureImportWizard.messages.folder.title")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("FeatureImportWizard.messages.folder.message")); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -201,18 +201,18 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 			if (curr.segmentCount() == 0) {
 				errorMessage =
 					PDEPlugin.getResourceString(
-						"FeatureImportWizard.errors.locationMissing");
+						"FeatureImportWizard.errors.locationMissing"); //$NON-NLS-1$
 			} else if (!Path.ROOT.isValidPath(fDropLocation.getText())) {
 				errorMessage =
 					PDEPlugin.getResourceString(
-						"FeatureImportWizard.errors.buildFolderInvalid");
+						"FeatureImportWizard.errors.buildFolderInvalid"); //$NON-NLS-1$
 			} else {
 
 				File file = curr.toFile();
 				if (!file.exists() || !file.isDirectory()) {
 					errorMessage =
 						PDEPlugin.getResourceString(
-							"FeatureImportWizard.errors.buildFolderMissing");
+							"FeatureImportWizard.errors.buildFolderMissing"); //$NON-NLS-1$
 				}
 			}
 		}

@@ -64,7 +64,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString("FeatureImportWizard.operation.creating"),
+			PDEPlugin.getResourceString("FeatureImportWizard.operation.creating"), //$NON-NLS-1$
 			fModels.length);
 		try {
 			MultiStatus multiStatus =
@@ -72,7 +72,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
 					PDEPlugin.getResourceString(
-						"FeatureImportWizard.operation.multiProblem"),
+						"FeatureImportWizard.operation.multiProblem"), //$NON-NLS-1$
 					null);
 			for (int i = 0; i < fModels.length; i++) {
 				try {
@@ -94,10 +94,10 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 	private void createProject(IFeatureModel model, IProgressMonitor monitor)
 		throws CoreException {
-		String name = model.getFeature().getId() + "-feature";
+		String name = model.getFeature().getId() + "-feature"; //$NON-NLS-1$
 		String task =
 			PDEPlugin.getFormattedMessage(
-				"FeatureImportWizard.operation.creating2",
+				"FeatureImportWizard.operation.creating2", //$NON-NLS-1$
 				name);
 		monitor.beginTask(task, 8);
 		try {
@@ -207,7 +207,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			jProject.setRawClasspath(
 				new IClasspathEntry[] {
 					JavaCore.newContainerEntry(
-						new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))},
+						new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))}, //$NON-NLS-1$
 				monitor);
 		} else {
 			desc.setNatureIds(new String[] { PDE.FEATURE_NATURE });

@@ -26,8 +26,8 @@ import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation.IRepla
 
 public class FeatureImportWizard extends Wizard implements IImportWizard {
 
-	private static final String STORE_SECTION = "FeatureImportWizard";
-	private static final String KEY_MESSAGES_TITLE = "FeatureImportWizard.messages.title";
+	private static final String STORE_SECTION = "FeatureImportWizard"; //$NON-NLS-1$
+	private static final String KEY_MESSAGES_TITLE = "FeatureImportWizard.messages.title"; //$NON-NLS-1$
 
 	private FeatureImportWizardFirstPage fPage1;
 	private FeatureImportWizardDetailedPage fPage2;
@@ -36,7 +36,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_IMPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString("FeatureImportWizard.title"));
+		setWindowTitle(PDEPlugin.getResourceString("FeatureImportWizard.title")); //$NON-NLS-1$
 	}
 
 	/*
@@ -88,7 +88,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 	private IPath computeTargetPath() {
 		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
-		return pluginsLocation.removeLastSegments(1).append("features");
+		return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
 	}
 
 	public static IRunnableWithProgress getImportOperation(
@@ -126,7 +126,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEPlugin.getResourceString("FeatureImportWizard.noToAll"),
+					PDEPlugin.getResourceString("FeatureImportWizard.noToAll"), //$NON-NLS-1$
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -154,7 +154,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 			final String message =
 				PDEPlugin.getFormattedMessage(
-					"FeatureImportWizard.messages.exists",
+					"FeatureImportWizard.messages.exists", //$NON-NLS-1$
 					project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {

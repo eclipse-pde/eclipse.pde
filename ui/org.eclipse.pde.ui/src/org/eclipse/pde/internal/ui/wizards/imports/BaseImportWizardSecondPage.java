@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
 	
-	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments";
+	protected static final String SETTINGS_ADD_FRAGMENTS = "addFragments"; //$NON-NLS-1$
 	
 	protected PluginImportWizardFirstPage page1;
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
@@ -63,7 +63,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.importList"));
+		label.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.importList")); //$NON-NLS-1$
 
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -85,7 +85,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		
 				
 		addFragmentsButton = new Button(composite, SWT.CHECK);
-		addFragmentsButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.addFragments"));
+		addFragmentsButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.addFragments")); //$NON-NLS-1$
 		addFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
 			addFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));

@@ -32,10 +32,10 @@ import org.eclipse.swt.widgets.*;
  */
 public class PluginImportWizardFirstPage extends WizardPage {
 	
-	private static String SETTINGS_IMPORTTYPE = "importType";
-	private static String SETTINGS_DOOTHER = "doother";
-	private static String SETTINGS_DROPLOCATION = "droplocation";
-	private static String SETTINGS_SCAN_ALL = "scanAll";
+	private static String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
+	private static String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
+	private static String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
+	private static String SETTINGS_SCAN_ALL = "scanAll"; //$NON-NLS-1$
 	
 	private Button runtimeLocationButton;
 	private Button browseButton;
@@ -51,13 +51,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Button sourceButton;
 	
 	//private String currentLocation;
-	public static String TARGET_PLATFORM = "targetPlatform";
+	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
 	
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
-		setTitle(PDEPlugin.getResourceString("ImportWizard.FirstPage.title"));
-		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc"));
+		setTitle(PDEPlugin.getResourceString("ImportWizard.FirstPage.title")); //$NON-NLS-1$
+		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc")); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -78,32 +78,32 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void createImportChoicesGroup(Composite container) {
 		Group importChoices = new Group(container, SWT.NONE);
-		importChoices.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importGroup"));
+		importChoices.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importGroup")); //$NON-NLS-1$
 		importChoices.setLayout(new GridLayout());
 		importChoices.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
 		scanButton = new Button(importChoices, SWT.RADIO);
-		scanButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.scanAll"));		
+		scanButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.scanAll"));		 //$NON-NLS-1$
 		
 		importButton = new Button(importChoices, SWT.RADIO);
-		importButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importPrereqs"));
+		importButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importPrereqs")); //$NON-NLS-1$
 		
 	}
 	
 	private void createImportOptionsGroup(Composite container) {
 		Group options = new Group(container, SWT.NONE);
-		options.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importAs"));
+		options.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importAs")); //$NON-NLS-1$
 		options.setLayout(new GridLayout());
 		options.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		binaryButton = new Button(options, SWT.RADIO);
-		binaryButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binary"));
+		binaryButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binary")); //$NON-NLS-1$
 		
 		binaryWithLinksButton = new Button(options, SWT.RADIO);
-		binaryWithLinksButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binaryLinks"));
+		binaryWithLinksButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binaryLinks")); //$NON-NLS-1$
 		
 		sourceButton = new Button(options, SWT.RADIO);
-		sourceButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source"));
+		sourceButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source")); //$NON-NLS-1$
 	}
 	
 	
@@ -160,7 +160,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void createDirectoryGroup(Composite parent) {
 		Group composite = new Group(parent, SWT.NONE);
-		composite.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importFrom"));
+		composite.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importFrom")); //$NON-NLS-1$
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -172,7 +172,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		runtimeLocationButton.setLayoutData(gd);
 		
-		runtimeLocationButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.target"));
+		runtimeLocationButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.target")); //$NON-NLS-1$
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = runtimeLocationButton.getSelection();
@@ -188,7 +188,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.goToTarget"));
+		changeButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.goToTarget")); //$NON-NLS-1$
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
@@ -198,7 +198,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(changeButton);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
-		otherLocationLabel.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.otherFolder"));
+		otherLocationLabel.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.otherFolder")); //$NON-NLS-1$
 
 		dropLocation = new Combo(composite, SWT.DROP_DOWN);
 		dropLocation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -209,7 +209,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.browse"));
+		browseButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.browse")); //$NON-NLS-1$
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -221,13 +221,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(browseButton);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source.label"));
+		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source.label")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		
 		Button sourceLocations = new Button(composite, SWT.PUSH);
-		sourceLocations.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.codeLocations"));
+		sourceLocations.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.codeLocations")); //$NON-NLS-1$
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		sourceLocations.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -238,13 +238,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.variables"));
+		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.variables")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
 		Button envButton = new Button(composite, SWT.PUSH);
-		envButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.env"));
+		envButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.env")); //$NON-NLS-1$
 		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END| GridData.FILL_HORIZONTAL));
 		envButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -260,8 +260,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(dropLocation.getText());
-		dialog.setText(PDEPlugin.getResourceString("ImportWizard.messages.folder.title"));
-		dialog.setMessage(PDEPlugin.getResourceString("ImportWizard.messages.folder.message"));
+		dialog.setText(PDEPlugin.getResourceString("ImportWizard.messages.folder.title")); //$NON-NLS-1$
+		dialog.setMessage(PDEPlugin.getResourceString("ImportWizard.messages.folder.message")); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -357,27 +357,27 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
-				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.locationMissing"));
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.locationMissing")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
 			}
 			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
-				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderInvalid"));
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderInvalid")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
 			}
 
 			if (!curr.toFile().isDirectory()) {
-				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderMissing"));
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderMissing")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
 			}
 			if (!curr.equals(new Path(getTargetHome()))) {
-				setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.warning"), DialogPage.WARNING);
+				setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.warning"), DialogPage.WARNING); //$NON-NLS-1$
 				return;
 			}
 		}
-		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc"));
+		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc")); //$NON-NLS-1$
 	}
 	
 	private void resolveTargetPlatform() {
@@ -410,7 +410,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		
 	private String[] createPaths(IPath location) {
 		ArrayList paths = new ArrayList();
-		File pluginsDir = new File(location.toFile(), "plugins");		
+		File pluginsDir = new File(location.toFile(), "plugins");		 //$NON-NLS-1$
 		if (pluginsDir.exists()) 
 			paths.add(pluginsDir.getAbsolutePath());
 		if (location.toFile().exists())

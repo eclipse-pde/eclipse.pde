@@ -69,12 +69,12 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 
 	public FeatureImportWizardDetailedPage(FeatureImportWizardFirstPage firstPage) {
 		super("FeatureImportWizardDetailedPage"); //$NON-NLS-1$
-		setTitle(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.title"));
-		setDescription(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.desc"));
+		setTitle(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.desc")); //$NON-NLS-1$
 
 		fFirstPage = firstPage;
 		fDropLocation = null;
-		fTablePart = new TablePart(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.featureList"));
+		fTablePart = new TablePart(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.featureList")); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -88,7 +88,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(
-						PDEPlugin.getResourceString("FeatureImportWizard.messages.updating"),
+						PDEPlugin.getResourceString("FeatureImportWizard.messages.updating"), //$NON-NLS-1$
 						IProgressMonitor.UNKNOWN);
 					fFeatureViewer
 						.getControl()
@@ -168,7 +168,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 					monitor.beginTask(
-						PDEPlugin.getResourceString("FeatureImportWizard.messages.loadingFile"),
+						PDEPlugin.getResourceString("FeatureImportWizard.messages.loadingFile"), //$NON-NLS-1$
 						IProgressMonitor.UNKNOWN);
 
 					try {
@@ -239,7 +239,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 					IStatus.OK,
 					children,
 					PDEPlugin.getResourceString(
-						"FeatureImportWizard.DetailedPage.problemsLoading"),
+						"FeatureImportWizard.DetailedPage.problemsLoading"), //$NON-NLS-1$
 					null);
 			return multiStatus;
 		}
@@ -287,7 +287,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 	private void dialogChanged() {
 		String message = null;
 		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0) {
-			message = PDEPlugin.getResourceString("FeatureImportWizard.messages.noFeatures");
+			message = PDEPlugin.getResourceString("FeatureImportWizard.messages.noFeatures"); //$NON-NLS-1$
 		}
 		setMessage(message, WizardPage.INFORMATION);
 		setPageComplete(fTablePart.getSelectionCount() > 0);
