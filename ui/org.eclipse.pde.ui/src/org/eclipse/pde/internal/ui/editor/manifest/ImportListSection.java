@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.swt.SWT;
@@ -31,6 +32,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ImportListSection
@@ -161,7 +163,12 @@ public class ImportListSection
 			manager.add(new Separator());
 		}
 		((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
+		manager.add(new Separator());
+		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+		actionGroup.setContext(new ActionContext(selection));
+		actionGroup.fillContextMenu(manager);
 	}
 
 	private void handleDelete() {

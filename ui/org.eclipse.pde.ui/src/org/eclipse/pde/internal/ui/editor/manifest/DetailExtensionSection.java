@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.swt.SWT;
@@ -34,6 +35,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -379,12 +381,22 @@ public class DetailExtensionSection
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().addClipboardActions(manager);
 		manager.add(new Separator());
-		if (ssel.size() == 1) {
-			manager.add(new PropertiesAction(getFormPage().getEditor()));
-		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);
+
+		if (ssel.size() == 1) {
+			manager.add(new Separator());
+			Object object = ssel.getFirstElement();
+			if (object instanceof IPluginExtension) {
+				PluginSearchActionGroup actionGroup =
+					new PluginSearchActionGroup();
+				actionGroup.setContext(new ActionContext(selection));
+				actionGroup.fillContextMenu(manager);
+				manager.add(new Separator());
+			}
+			manager.add(new PropertiesAction(getFormPage().getEditor()));
+		}
 	}
 	static IMenuManager fillContextMenu(
 		PDEFormPage page,

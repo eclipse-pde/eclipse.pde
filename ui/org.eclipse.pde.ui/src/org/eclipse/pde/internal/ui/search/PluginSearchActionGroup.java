@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -56,6 +57,9 @@ public class PluginSearchActionGroup extends ActionGroup {
 			|| object instanceof IPluginImport
 			|| (object instanceof IPlugin))
 			menu.add(new FindReferencesAction(object));
+			
+		if (object instanceof IPluginExtensionPoint)
+			menu.add(new Separator());
 	}
 
 	private void addShowDescriptionAction(Object object, IMenuManager menu) {

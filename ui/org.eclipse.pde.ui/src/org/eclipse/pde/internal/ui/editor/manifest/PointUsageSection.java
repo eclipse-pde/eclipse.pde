@@ -15,9 +15,11 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class PointUsageSection extends TableSection {
@@ -131,8 +133,17 @@ public class PointUsageSection extends TableSection {
 			manager.add(new Separator());
 		}
 		// defect 19558
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager,false);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager,
+			false);
+		if (!sel.isEmpty()) {
+			manager.add(new Separator());
+			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+			actionGroup.setContext(new ActionContext(sel));
+			actionGroup.fillContextMenu(manager);
+		}
 	}
+	
 	private void handleOpen(IStructuredSelection selection) {
 		IPluginBase pluginToOpen = (IPluginBase) selection.getFirstElement();
 		if (pluginToOpen != null) {

@@ -7,8 +7,10 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.*;
 import org.eclipse.pde.core.*;
@@ -105,7 +107,8 @@ public class DetailExtensionPointSection
 		ISelection selection = pointTable.getSelection();
 
 		Action newAction =
-			new Action(PDEPlugin.getResourceString(POPUP_NEW_EXTENSION_POINT)) {
+			new Action(
+				PDEPlugin.getResourceString(POPUP_NEW_EXTENSION_POINT)) {
 			public void run() {
 				handleNew();
 			}
@@ -114,11 +117,13 @@ public class DetailExtensionPointSection
 		manager.add(newAction);
 
 		if (!selection.isEmpty()) {
-			Object object = ((IStructuredSelection) selection).getFirstElement();
+			Object object =
+				((IStructuredSelection) selection).getFirstElement();
 			final IPluginExtensionPoint point = (IPluginExtensionPoint) object;
 
 			manager.add(new Separator());
-			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction =
+				new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					IPluginBase plugin = point.getPluginBase();
 					try {
@@ -130,9 +135,17 @@ public class DetailExtensionPointSection
 			deleteAction.setEnabled(!isReadOnly());
 			manager.add(deleteAction);
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
 		manager.add(new Separator());
-		manager.add(new PropertiesAction(getFormPage().getEditor()));
+		if (!selection.isEmpty()) {
+			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+			actionGroup.setContext(new ActionContext(selection));
+			actionGroup.fillContextMenu(manager);
+			manager.add(new Separator());
+
+			manager.add(new PropertiesAction(getFormPage().getEditor()));
+		}
 	}
 
 	protected void buttonSelected(int index) {
