@@ -17,6 +17,7 @@ public class Product extends ProductObject implements IProduct {
 	private IAboutInfo fAboutInfo;
 	
 	private TreeMap fPlugins = new TreeMap();
+	private TreeMap fFeatures = new TreeMap();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private boolean fUseFeatures;
 	private String fExportDestination;
@@ -142,6 +143,15 @@ public class Product extends ProductObject implements IProduct {
 		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 		
 		writer.println();
+		writer.println(indent + "   <features>"); //$NON-NLS-1$
+		iter = fFeatures.values().iterator();
+		while (iter.hasNext()) {
+			IProductFeature feature = (IProductFeature)iter.next();
+			feature.write(indent + "      ", writer); //$NON-NLS-1$
+		}
+		writer.println(indent + "   </features>"); //$NON-NLS-1$
+		
+		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
 	
@@ -186,6 +196,8 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
 						fIncludeFragments = "true".equals(((Element)child).getAttribute(P_INCLUDE_FRAGMENTS)); //$NON-NLS-1$
 						parsePlugins(child.getChildNodes());
+					} else if (name.equals("features")) { //$NON-NLS-1$
+						parseFeatures(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
@@ -218,6 +230,19 @@ public class Product extends ProductObject implements IProduct {
 			}
 		}
 	}
+	
+	private void parseFeatures(NodeList children) {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals("feature")) { //$NON-NLS-1$
+					IProductFeature feature = getModel().getFactory().createFeature();
+					feature.parse(child);
+					fPlugins.put(feature.getId(), feature);
+				}
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
@@ -227,7 +252,7 @@ public class Product extends ProductObject implements IProduct {
 		if (fPlugins.containsKey(id))
 			return;
 		
-		fPlugins.put(plugin.getId(), plugin);
+		fPlugins.put(id, plugin);
 		plugin.setInTheModel(true);
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
@@ -327,6 +352,28 @@ public class Product extends ProductObject implements IProduct {
 	public void setLauncherInfo(ILauncherInfo info) {
 		info.setInTheModel(true);
 		fLauncherInfo = info;
+	}
+
+	public void addFeature(IProductFeature feature) {
+		String id = feature.getId();
+		if (fFeatures.containsKey(id))
+			return;
+		
+		fPlugins.put(id, feature);
+		feature.setInTheModel(true);
+		if (isEditable())
+			fireStructureChanged(feature, IModelChangedEvent.INSERT);
+	}
+
+	public void removeFeature(IProductFeature feature) {
+		fFeatures.remove(feature.getId());
+		feature.setInTheModel(false);
+		if (isEditable())
+			fireStructureChanged(feature, IModelChangedEvent.REMOVE);
+	}
+
+	public IProductFeature[] getFeatures() {
+		return (IProductFeature[])fFeatures.values().toArray(new IProductFeature[fFeatures.size()]);
 	}
 
 }

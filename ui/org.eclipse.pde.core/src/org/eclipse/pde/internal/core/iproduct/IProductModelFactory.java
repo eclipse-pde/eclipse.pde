@@ -9,6 +9,8 @@ public interface IProductModelFactory {
 	
 	IProductPlugin createPlugin();
 	
+	IProductFeature createFeature();
+	
 	IConfigurationFileInfo createConfigFileInfo();
 	
 	IWindowImages createWindowImages();

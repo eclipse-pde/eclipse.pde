@@ -34,9 +34,15 @@ public interface IProduct extends IProductObject {
 	
 	void addPlugin(IProductPlugin plugin);
 	
+	void addFeature(IProductFeature feature);
+	
 	void removePlugin(IProductPlugin plugin);
 	
+	void removeFeature(IProductFeature feature);
+	
 	IProductPlugin[] getPlugins();
+	
+	IProductFeature[] getFeatures();
 
 	void setId(String id);
 	

@@ -51,4 +51,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new LauncherInfo(fModel);
 	}
 
+	public IProductFeature createFeature() {
+		return new ProductFeature(fModel);
+	}
+
 }

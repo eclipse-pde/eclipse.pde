@@ -11,9 +11,6 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	private static final long serialVersionUID = 1L;
 	private String fId;
 
-	/**
-	 * 
-	 */
 	public ProductPlugin(IProductModel model) {
 		super(model);
 	}
@@ -44,16 +41,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 * @see org.eclipse.pde.internal.core.product.ProductObject#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		String id = getId();
-		if (id.length() > 0)
-			writer.println(indent + "<plugin id=\"" + id + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(indent + "<plugin id=\"" + fId + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.product.ProductObject#isValid()
-	 */
-	public boolean isValid() {
-		return getId().length() > 0;
-	}
-
 }
