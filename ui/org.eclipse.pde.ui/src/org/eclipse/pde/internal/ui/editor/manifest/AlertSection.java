@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.views.tasklist.TaskList;
+import org.eclipse.ui.views.internal.markers.tasks.TaskView;
 import org.eclipse.update.ui.forms.internal.*;
 
 
@@ -111,7 +111,7 @@ private boolean checkMarkers(Composite parent, FormWidgetFactory factory) {
 			public void linkActivated(Control link) {
 				try {
 					IViewPart view = PDEPlugin.getActivePage().showView(IPageLayout.ID_TASK_LIST);
-					final TaskList tasklist = (TaskList) view;
+					final TaskView tasklist = (TaskView) view;
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
 							tasklist.setSelection(new StructuredSelection(markers), true);
