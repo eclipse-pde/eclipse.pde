@@ -393,7 +393,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				retrieve.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writeScript"); //$NON-NLS-1$
+			String message = Policy.bind("exception.writeScript", target.toString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 		}
 

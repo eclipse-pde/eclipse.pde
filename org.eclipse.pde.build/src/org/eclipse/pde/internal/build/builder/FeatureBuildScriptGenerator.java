@@ -181,7 +181,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			try {
 				updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getVersionedIdentifier().getVersion().toString());
 			} catch (IOException e) {
-				message = Policy.bind("exception.writeScript"); //$NON-NLS-1$
+				message = Policy.bind("exception.writeScript", buildFile.toString()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 			}
 			return;

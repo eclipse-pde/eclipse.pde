@@ -863,7 +863,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion().toString());
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writeScript"); //$NON-NLS-1$
+			String message = Policy.bind("exception.writeScript", buildFile.toString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 		}
 		return;
