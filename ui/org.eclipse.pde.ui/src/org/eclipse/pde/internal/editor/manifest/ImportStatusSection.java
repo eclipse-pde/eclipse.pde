@@ -202,7 +202,7 @@ private void fillContextMenu(IMenuManager manager) {
 	}
 	manager.add(refreshAction);
 	manager.add(new Separator());
-	((NewDependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
+	((DependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
 

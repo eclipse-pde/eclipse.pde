@@ -136,6 +136,7 @@
    </wizard>
 </extension>
 <extension
+      id="selfhosting.import"
       point="org.eclipse.ui.importWizards">
    <wizard
          name="%PluginImportWizard.label"
@@ -362,6 +363,10 @@
          objectClass="org.eclipse.core.resources.IFile"
          nameFilter="plugin.xml"
          id="org.eclipse.pde.UpdateClasspathAction1">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
+      </filter>
       <action
             label="%UpdateClasspathAction.label"
             tooltip="%UpdateClasspathAction.tooltip"
@@ -375,12 +380,33 @@
          objectClass="org.eclipse.core.resources.IFile"
          nameFilter="fragment.xml"
          id="org.eclipse.pde.UpdateClasspathAction2">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
+      </filter>
       <action
             label="%UpdateClasspathAction.label"
             tooltip="%UpdateClasspathAction.tooltip"
             class="org.eclipse.pde.internal.wizards.imports.UpdateClasspathAction"
             menubarPath="additions"
             enablesFor="+"
+            id="UpdateClasspathAction">
+      </action>
+   </objectContribution>
+   <objectContribution
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         id="org.eclipse.pde.UpdateClasspathAction3">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
+      </filter>
+      <action
+            label="%UpdateClasspathAction.label"
+            tooltip="%UpdateClasspathAction.tooltip"
+            class="org.eclipse.pde.internal.wizards.imports.UpdateClasspathAction"
+            menubarPath="additions"
+            enablesFor="*"
             id="UpdateClasspathAction">
       </action>
    </objectContribution>
@@ -553,5 +579,19 @@
          point="org.eclipse.ui.views"
          schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
+</extension>
+<extension
+      point="org.eclipse.ui.views">
+   <category
+         name="%views.category.name"
+         id="org.eclipse.pde">
+   </category>
+   <view
+         name="%views.pluginsView.name"
+         icon="icons/full/obj16/plugin_obj.gif"
+         category="org.eclipse.pde"
+         class="org.eclipse.pde.internal.pluginsview.PluginsView"
+         id="org.eclipse.pde.pluginsView">
+   </view>
 </extension>
 </plugin>

@@ -212,7 +212,7 @@ public void dispose() {
 	super.dispose();
 }
 private void fillContextMenu(IMenuManager manager) {
-	((NewDependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
+	((DependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
 

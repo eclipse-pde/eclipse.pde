@@ -21,6 +21,10 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.base.BuildPathUtil;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.pde.internal.wizards.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.jdt.core.*;
 
@@ -37,54 +41,77 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			final ArrayList models = new ArrayList(elems.length);
-			final ArrayList projects = new ArrayList(elems.length);
+			ArrayList models = new ArrayList(elems.length);
 
 			try {
 				for (int i = 0; i < elems.length; i++) {
-					if (elems[i] instanceof IFile) {
-						IFile file = (IFile) elems[i];
-						IProject project = file.getProject();
-						if (project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
-							IPluginModelBase model = findModelFor(project);
-							if (model != null) {
-								models.add(model);
-								projects.add(JavaCore.create(project));
-							}
+					Object elem = elems[i];
+					IProject project = null;
+					
+					if (elem instanceof IFile) {
+						IFile file = (IFile) elem;
+						project = file.getProject();
+					}
+					else if (elem instanceof IProject) {
+						project = (IProject)elem;
+					}
+					else if (elem instanceof IJavaProject) {
+						project = ((IJavaProject)elem).getProject();
+					}
+					if (project!=null && project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+						IPluginModelBase model = findModelFor(project);
+						if (model != null) {
+							models.add(model);
 						}
 					}
 				}
-
-				ProgressMonitorDialog dialog =
-					new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
-				dialog.run(true, false, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-						try {
-							IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-								public void run(IProgressMonitor monitor) throws CoreException {
-									doUpdateClasspath(monitor, models, projects);
-								}
-							};
-							PDEPlugin.getWorkspace().run(runnable, monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						} catch (OperationCanceledException e) {
-							throw new InterruptedException(e.getMessage());
-						}
-					}
-				});
-			} catch (InterruptedException e) {
-				return;
-			} catch (InvocationTargetException e) {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				String message = PDEPlugin.getResourceString(KEY_MESSAGE);
-				PDEPlugin.logException(e, title, message);
 			} catch (CoreException e) {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
 				String message = PDEPlugin.getResourceString(KEY_MESSAGE);
 				PDEPlugin.logException(e, title, message);
 			}
+
+			final IPluginModelBase[] modelArray =
+				(IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
+			/*
+			ProgressMonitorDialog pd =
+				new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+			run(true, pd, modelArray);
+			*/
+			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(modelArray);
+			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.open();
+		}
+	}
+
+	public static void run(
+		boolean fork,
+		IRunnableContext context,
+		final IPluginModelBase[] models) {
+		try {
+			context.run(fork, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+					try {
+						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								doUpdateClasspath(monitor, models);
+							}
+						};
+						PDEPlugin.getWorkspace().run(runnable, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					} catch (OperationCanceledException e) {
+						throw new InterruptedException(e.getMessage());
+					}
+				}
+			});
+		} catch (InterruptedException e) {
+			return;
+		} catch (InvocationTargetException e) {
+			String title = PDEPlugin.getResourceString(KEY_TITLE);
+			String message = PDEPlugin.getResourceString(KEY_MESSAGE);
+			PDEPlugin.logException(e, title, message);
 		}
 	}
 
@@ -94,15 +121,14 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		return manager.getWorkspaceModel(project);
 	}
 
-	private void doUpdateClasspath(
+	private static void doUpdateClasspath(
 		IProgressMonitor monitor,
-		ArrayList models,
-		ArrayList projects)
+		IPluginModelBase[] models)
 		throws CoreException {
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.size());
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
 		try {
-			for (int i = 0; i < models.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase) models.get(i);
+			for (int i = 0; i < models.length; i++) {
+				IPluginModelBase model = models[i];
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 				setProjectBuildpath(model, subMonitor);
 			}
@@ -111,7 +137,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
-	private void setProjectBuildpath(
+	private static void setProjectBuildpath(
 		IPluginModelBase model,
 		IProgressMonitor monitor)
 		throws CoreException {
@@ -121,8 +147,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		try {
 			BuildPathUtil.setBuildPath(model, monitor);
 			monitor.worked(1);
-		}
-		finally {
+		} finally {
 			monitor.done();
 		}
 	}

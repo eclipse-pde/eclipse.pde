@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.editor.component;
  */
 
 import org.eclipse.pde.internal.base.model.component.*;
-import org.eclipse.pde.internal.model.jars.*;
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;

@@ -310,12 +310,8 @@ public void modelChanged(IModelChangedEvent e) {
 }
 
 public void modelsChanged(IModelProviderEvent event) {
-	IModel model = event.getAffectedModel();
-	if (model instanceof IFragmentModel && isFragmentSection() ||
-	         model instanceof IPluginModel && !isFragmentSection()) {
-	   updateNeeded=true;
-	   update();
-	}
+   updateNeeded=true;
+   update();
 }
 
 public void setFocus() {

@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.base.model;
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 /**
  * A generic model. Classes that implement this
  * interface are expected to be able to:
@@ -20,7 +21,7 @@ import org.eclipse.core.resources.IResource;
  * resource file, its underlying resource will
  * be <samp>null</samp>.
  */
-public interface IModel {
+public interface IModel extends IAdaptable {
 /**
  * Releases all the data in this model and
  * clears the state. A disposed model

@@ -66,6 +66,8 @@ public class PDEPluginImages {
 	public static final String IMG_ATT_CLASS_OBJ = NAME_PREFIX+"ATT_CLASS_OBJ";
 	public static final String IMG_ATT_IMPL_OBJ = NAME_PREFIX+"ATT_IMPL_OBJ";
 	public static final String IMG_ATT_FILE_OBJ = NAME_PREFIX+"ATT_FILE_OBJ";
+	public static final String IMG_PLUGIN_OBJ = NAME_PREFIX+"PLUGIN_OBJ";
+	public static final String IMG_FRAGMENT_OBJ = NAME_PREFIX+"FRAGMENT_OBJ";
 
 	/**
 	 * OBJ16
@@ -99,7 +101,11 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_LOOP_NODE_OBJ = create(PATH_OBJ, "loop_node_obj.gif");
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif");
+	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif");
+	public static final ImageDescriptor DESC_PLUGIN_CONFIGS_OBJ   = create(PATH_OBJ, "plugin_configs_obj.gif");
+	public static final ImageDescriptor DESC_PLUGIN_CONFIG_OBJ   = create(PATH_OBJ, "plugin_config_obj.gif");
 	public static final ImageDescriptor DESC_FRAGMENT_OBJ   = create(PATH_OBJ, "frgmt_obj.gif");
+	public static final ImageDescriptor DESC_FRAGMENT_DIS_OBJ   = create(PATH_OBJ, "frgmt_dis_obj.gif");
 	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ   = create(PATH_OBJ, "req_plugins_obj.gif");
 	public static final ImageDescriptor DESC_FRAGMENTS_OBJ   = create(PATH_OBJ, "frgmts_obj.gif");
 	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ   = create(PATH_OBJ, "req_plugin_obj.gif");
@@ -243,6 +249,8 @@ private static final void initialize() {
 	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
+	manage(IMG_PLUGIN_OBJ, DESC_PLUGIN_OBJ);
+	manage(IMG_FRAGMENT_OBJ, DESC_FRAGMENT_OBJ);
 
 }
 

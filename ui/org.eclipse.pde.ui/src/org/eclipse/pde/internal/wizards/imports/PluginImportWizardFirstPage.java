@@ -123,7 +123,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = fillHorizontal(label, 3, false);
-		gd.heightHint = 10;
+		gd.heightHint = 20;
 
 		doImportCheck = new Button(composite, SWT.CHECK);
 		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));

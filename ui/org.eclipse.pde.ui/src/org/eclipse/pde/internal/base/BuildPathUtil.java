@@ -25,149 +25,185 @@ import org.eclipse.pde.internal.base.model.build.*;
  * a plug-in content wizard.
  */
 public class BuildPathUtil {
-/**
- * BuildPathUtil constructor comment.
- */
-public BuildPathUtil() {
-	super();
-}
-
-private static void ensureFolderExists(IProject project, IPath folderPath) throws CoreException {
-	IWorkspace workspace = project.getWorkspace();
-	if (!workspace.getRoot().exists(folderPath)) {
-		IFolder folder = workspace.getRoot().getFolder(folderPath);
-		folder.create(true, true, null);
+	/**
+	 * BuildPathUtil constructor comment.
+	 */
+	public BuildPathUtil() {
+		super();
 	}
-}
-/**
- * Sets the Java build path of the project
- * using plug-in structure data and
- * provided entries. These entries are
- * created in plug-in content wizards
- * based on the plug-ins required by
- * the generated code.
- * @param project the plug-in project handle
- * @param data structure data passed in by the master wizard
- * @param libraries an array of the library entries to be set
- * @param monitor for reporting progress
- */
-public static void setBuildPath(
-	IProject project,
-	IPluginStructureData data,
-	IClasspathEntry[] libraries,
-	IProgressMonitor monitor)
-	throws JavaModelException, CoreException {
 
-	// Set output folder
-	IJavaProject javaProject = JavaCore.create(project);
-	IPath path = project.getFullPath().append(data.getJavaBuildFolderName());
-	javaProject.setOutputLocation(path, monitor);
-
-	// Set classpath
-	Vector result = new Vector();
-	// Source folder first
-	addSourceFolder(data.getSourceFolderName(), project, result);
-	// Then the libraries
-	for (int i=0; i<libraries.length; i++) {
-	    result.add(libraries[i]);
+	private static void ensureFolderExists(IProject project, IPath folderPath)
+		throws CoreException {
+		IWorkspace workspace = project.getWorkspace();
+		if (!workspace.getRoot().exists(folderPath)) {
+			IFolder folder = workspace.getRoot().getFolder(folderPath);
+			folder.create(true, true, null);
+		}
 	}
-	// add implicit libraries
-	PluginPathUpdater.addImplicitLibraries(result);
-	// JRE the last
-	addJRE(result);
-	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
-	result.copyInto(entries);
-	javaProject.setRawClasspath(entries, monitor);
-}
-/**
- * Sets the Java build path of the provided plug-in model.
- * The model is expected to come from the workspace
- * and should have an underlying resource.
- * <p>This method will
- * @param model the plug-in project handle
- */
+	/**
+	 * Sets the Java build path of the project
+	 * using plug-in structure data and
+	 * provided entries. These entries are
+	 * created in plug-in content wizards
+	 * based on the plug-ins required by
+	 * the generated code.
+	 * @param project the plug-in project handle
+	 * @param data structure data passed in by the master wizard
+	 * @param libraries an array of the library entries to be set
+	 * @param monitor for reporting progress
+	 */
+	public static void setBuildPath(
+		IProject project,
+		IPluginStructureData data,
+		IClasspathEntry[] libraries,
+		IProgressMonitor monitor)
+		throws JavaModelException, CoreException {
 
-public static void setBuildPath(IPluginModelBase model, IProgressMonitor monitor)
-	throws JavaModelException, CoreException {
+		// Set output folder
+		IJavaProject javaProject = JavaCore.create(project);
+		IPath path = project.getFullPath().append(data.getJavaBuildFolderName());
+		javaProject.setOutputLocation(path, monitor);
 
-	IProject project = model.getUnderlyingResource().getProject();		
-	IJavaProject javaProject = JavaCore.create(project);
-	// Set classpath
-	Vector result = new Vector();
-	IBuildModel buildModel = model.getBuildModel();
-	if (buildModel!=null)
-		addSourceFolders(buildModel, result);
-	else {
-		// just keep the source folders
-		keepExistingSourceFolders(javaProject, result);
+		// Set classpath
+		Vector result = new Vector();
+		// Source folder first
+		addSourceFolder(data.getSourceFolderName(), project, result);
+		// Then the libraries
+		for (int i = 0; i < libraries.length; i++) {
+			result.add(libraries[i]);
+		}
+		// add implicit libraries
+		PluginPathUpdater.addImplicitLibraries(result);
+		// JRE the last
+		addJRE(result);
+		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
+		result.copyInto(entries);
+		javaProject.setRawClasspath(entries, monitor);
 	}
-	if (model instanceof IPluginModel) {
-		IPluginModel pluginModel = (IPluginModel)model;
-		addDependencies(project, pluginModel.getPlugin().getImports(), result);
-	}
-	// add implicit libraries
-	PluginPathUpdater.addImplicitLibraries(result);
-	addJRE(result);
-	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
-	result.copyInto(entries);
-	javaProject.setRawClasspath(entries, monitor);
-}
+	/**
+	 * Sets the Java build path of the provided plug-in model.
+	 * The model is expected to come from the workspace
+	 * and should have an underlying resource.
+	 * <p>This method will
+	 * @param model the plug-in project handle
+	 */
 
-private static void addSourceFolders(IBuildModel model, Vector result)throws CoreException {
-	IBuild build = model.getBuild();
-	IBuildEntry [] entries = build.getBuildEntries();
-	for (int i=0; i<entries.length; i++) {
-		IBuildEntry entry = entries[i];
-		if (entry.getName().startsWith("source.")) {
-			String [] folders = entry.getTokens();
-			for (int j=0; j<folders.length; j++) {
-				addSourceFolder(folders[j], 
-				       model.getUnderlyingResource().getProject(), 
-				       result);
+	public static void setBuildPath(
+		IPluginModelBase model,
+		IProgressMonitor monitor)
+		throws JavaModelException, CoreException {
+
+		IProject project = model.getUnderlyingResource().getProject();
+		IJavaProject javaProject = JavaCore.create(project);
+		// Set classpath
+		Vector result = new Vector();
+		IBuildModel buildModel = model.getBuildModel();
+		if (buildModel != null)
+			addSourceFolders(buildModel, result);
+		else {
+			// just keep the source folders
+			keepExistingSourceFolders(javaProject, result);
+		}
+
+		// add own libraries, if present
+		addLibraries(project, model, result);
+		if (model instanceof IPluginModel) {
+			IPluginModel pluginModel = (IPluginModel) model;
+			addDependencies(project, pluginModel.getPlugin().getImports(), result);
+		}
+		// add implicit libraries
+		String id = model.getPluginBase().getId();
+		if (id.equals("org.eclipse.core.boot") == false
+			&& id.equals("org.eclipse.core.runtime") == false) {
+			PluginPathUpdater.addImplicitLibraries(result);
+		}
+		addJRE(result);
+		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
+		result.copyInto(entries);
+		javaProject.setRawClasspath(entries, monitor);
+	}
+
+	private static void addSourceFolders(IBuildModel model, Vector result)
+		throws CoreException {
+		IBuild build = model.getBuild();
+		IBuildEntry[] entries = build.getBuildEntries();
+		for (int i = 0; i < entries.length; i++) {
+			IBuildEntry entry = entries[i];
+			if (entry.getName().startsWith("source.")) {
+				String[] folders = entry.getTokens();
+				for (int j = 0; j < folders.length; j++) {
+					addSourceFolder(folders[j], model.getUnderlyingResource().getProject(), result);
+				}
 			}
 		}
 	}
-}
 
-private static void keepExistingSourceFolders(IJavaProject jproject, Vector result) throws CoreException {
-	IClasspathEntry [] entries = jproject.getRawClasspath();
-	for (int i=0; i<entries.length; i++) {
-		IClasspathEntry entry = entries[i];
-		if (entry.getEntryKind()==IClasspathEntry.CPE_SOURCE &&
-		entry.getContentKind()==IPackageFragmentRoot.K_SOURCE) {
-			result.add(entry);
+	private static void keepExistingSourceFolders(
+		IJavaProject jproject,
+		Vector result)
+		throws CoreException {
+		IClasspathEntry[] entries = jproject.getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
+				&& entry.getContentKind() == IPackageFragmentRoot.K_SOURCE) {
+				result.add(entry);
+			}
 		}
 	}
-}
 
-private static void addSourceFolder(String name, IProject project, Vector result) throws CoreException {
-	IPath path = project.getFullPath().append(name);
-	ensureFolderExists(project, path);
-	IClasspathEntry entry = JavaCore.newSourceEntry(path);
-	result.add(entry);
-}
+	private static void addSourceFolder(
+		String name,
+		IProject project,
+		Vector result)
+		throws CoreException {
+		IPath path = project.getFullPath().append(name);
+		ensureFolderExists(project, path);
+		IClasspathEntry entry = JavaCore.newSourceEntry(path);
+		result.add(entry);
+	}
 
-private static void addDependencies(IProject project, IPluginImport[] imports, Vector result) {
-	Vector checkedPlugins = new Vector();
-	for (int i=0; i<imports.length; i++) {
-		IPluginImport iimport = imports[i];
-		String id = iimport.getId();
-		IPlugin ref = PDEPlugin.getDefault().findPlugin(id);
-		if (ref!=null) {
-			checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
+	private static void addLibraries(
+		IProject project,
+		IPluginModelBase model,
+		Vector result) {
+		IPluginBase pluginBase = model.getPluginBase();
+		IPluginLibrary[] libraries = pluginBase.getLibraries();
+		IPath rootPath = project.getFullPath();
+		IWorkspaceRoot root = project.getWorkspace().getRoot();
+		for (int i = 0; i < libraries.length; i++) {
+			IPluginLibrary library = libraries[i];
+			IClasspathEntry entry = PluginPathUpdater.createLibraryEntry(library, rootPath);
+			if (root.findMember(entry.getPath()) != null)
+				result.add(entry);
 		}
 	}
-	PluginPathUpdater ppu = new PluginPathUpdater(project, checkedPlugins.iterator());
-	ppu.addClasspathEntries(result);
-}
 
-private static void addJRE(Vector result) {
-	IPath jrePath = new Path("JRE_LIB");
-	IPath[] annot= new IPath[2];
-	annot[0] = new Path("JRE_SRC");
-	annot[1] = new Path("JRE_SRCROOT");
-	if (jrePath!=null)
-	   result.add(JavaCore.newVariableEntry(jrePath, annot[0], annot[1]));
-}
+	private static void addDependencies(
+		IProject project,
+		IPluginImport[] imports,
+		Vector result) {
+		Vector checkedPlugins = new Vector();
+		for (int i = 0; i < imports.length; i++) {
+			IPluginImport iimport = imports[i];
+			String id = iimport.getId();
+			IPlugin ref = PDEPlugin.getDefault().findPlugin(id);
+			if (ref != null) {
+				checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
+			}
+		}
+		PluginPathUpdater ppu =
+			new PluginPathUpdater(project, checkedPlugins.iterator());
+		ppu.addClasspathEntries(result);
+	}
+
+	private static void addJRE(Vector result) {
+		IPath jrePath = new Path("JRE_LIB");
+		IPath[] annot = new IPath[2];
+		annot[0] = new Path("JRE_SRC");
+		annot[1] = new Path("JRE_SRCROOT");
+		if (jrePath != null)
+			result.add(JavaCore.newVariableEntry(jrePath, annot[0], annot[1]));
+	}
 
 }

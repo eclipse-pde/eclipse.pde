@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.editor.manifest;
 import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.model.jars.*;
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;

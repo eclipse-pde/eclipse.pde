@@ -77,6 +77,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private IPluginModelBase[] models;
 	private boolean loadFromRegistry;
 	private boolean block;
+	private IPluginModelBase launchingModel;
 
 	public class PluginContentProvider
 		extends DefaultContentProvider
@@ -118,7 +119,9 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 	}
 
-	public PluginImportWizardDetailedPage(PluginImportWizardFirstPage firstPage) {
+	public PluginImportWizardDetailedPage(
+		PluginImportWizardFirstPage firstPage,
+		IPluginModelBase launchingModel) {
 		super("PluginImportWizardDetailedPage", false);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -126,6 +129,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		externalPluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
 		externalFragmentImage = PDEPluginImages.DESC_FRAGMENT_OBJ.createImage();
 		this.firstPage = firstPage;
+		this.launchingModel = launchingModel;
 		dropLocation = null;
 		selected = new Vector();
 		updateStatus(createStatus(IStatus.ERROR, ""));
@@ -149,7 +153,24 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			selected.clear();
 		}
 		pluginListViewer.setInput(PDEPlugin.getDefault());
+		if (launchingModel != null) {
+			checkLaunchingImports();
+		}
 		dialogChanged();
+	}
+
+	private void checkLaunchingImports() {
+		IPlugin plugin = ((IPluginModel) launchingModel).getPlugin();
+		IPluginImport[] imports = plugin.getImports();
+
+		for (int i = 0; i < imports.length; i++) {
+			String id = imports[i].getId();
+			IPluginModelBase model = findModel(id);
+			if (model != null)
+				selected.add(model);
+		}
+		counter = selected.size();
+		pluginListViewer.setCheckedElements(selected.toArray());
 	}
 
 	public void storeSettings(boolean finishPressed) {
@@ -335,13 +356,10 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						monitor.beginTask(
 							PDEPlugin.getResourceString(KEY_LOADING_FILE),
 							IProgressMonitor.UNKNOWN);
-						String [] paths = createPaths(dropLocation);
-						
+						String[] paths = createPaths(dropLocation);
+
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectories(
-								result,
-								paths,
-								monitor);
+							ExternalModelManager.processPluginDirectories(result, paths, monitor);
 						if (errors != null && errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
@@ -359,21 +377,21 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return models;
 	}
-	
-	private String [] createPaths(IPath dropLocation) {
-		File dropDir= dropLocation.toFile();
+
+	private String[] createPaths(IPath dropLocation) {
+		File dropDir = dropLocation.toFile();
 		Vector result = new Vector();
 
-		File pluginsDir= new File(dropDir, "plugins");
+		File pluginsDir = new File(dropDir, "plugins");
 		if (pluginsDir.exists()) {
 			result.add(pluginsDir.getAbsolutePath());
 		}
-		File fragmentDir= new File(dropDir, "fragments");
+		File fragmentDir = new File(dropDir, "fragments");
 		if (fragmentDir.exists()) {
 			result.add(fragmentDir.getAbsolutePath());
 		}
 		result.add(dropDir.getAbsolutePath());
-		return (String[])result.toArray(new String[result.size()]);				
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 	public IPluginModelBase[] getSelectedModels() {
@@ -523,29 +541,31 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
-		if (selected.size() > 1
-			|| !((IPluginModelBase) selected.get(0)).getPluginBase().getId().equals(
-				"org.eclipse.core.boot")) {
-			addImplicitDependencies(checked);
-		}
-		for (int i = 0; i < selected.size(); i++) {
-			addPluginAndDependent((IPluginModelBase) selected.get(i), checked);
+		if (selected.size() > 0) {
+			if (selected.size() > 1
+				|| !((IPluginModelBase) selected.get(0)).getPluginBase().getId().equals(
+					"org.eclipse.core.boot")) {
+				addImplicitDependencies(checked);
+			}
+			for (int i = 0; i < selected.size(); i++) {
+				addPluginAndDependent((IPluginModelBase) selected.get(i), checked);
+			}
 		}
 
 		ArrayList result = new ArrayList(checked);
 		/*
-		if (findPlugin("org.eclipse.sdk") == null
-			findPlugin("org.eclipse.ui") != null) {
-			PluginModel sdkPlugin = PluginUtil.findPlugin("org.eclipse.sdk", plugins);
-			if (sdkPlugin != null) {
-				String title = "Plugin Selection";
-				String message =
-					"'org.eclipse.ui' implicitly requires 'org.eclipse.sdk'.\nOK to add 'org.eclipse.sdk' (recommended)?";
-				if (MessageDialog.openQuestion(getShell(), title, message)) {
-					result.add(sdkPlugin);
+				if (findPlugin("org.eclipse.sdk") == null
+					findPlugin("org.eclipse.ui") != null) {
+					PluginModel sdkPlugin = PluginUtil.findPlugin("org.eclipse.sdk", plugins);
+					if (sdkPlugin != null) {
+						String title = "Plugin Selection";
+						String message =
+							"'org.eclipse.ui' implicitly requires 'org.eclipse.sdk'.\nOK to add 'org.eclipse.sdk' (recommended)?";
+						if (MessageDialog.openQuestion(getShell(), title, message)) {
+							result.add(sdkPlugin);
+						}
+					}
 				}
-			}
-		}
 		*/
 		return result;
 	}

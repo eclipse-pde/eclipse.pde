@@ -4,31 +4,38 @@ package org.eclipse.pde.internal.base.model;
  * All Rights Reserved.
  */
 
-/**
- * @see IModelProviderEvent
- */
 public class ModelProviderEvent implements IModelProviderEvent {
-	private int type;
-	private IModel model;
-/**
- * The constructor.
- * @param the event type
- * @param the changed model
- */
-public ModelProviderEvent(int type, IModel model) {
-	this.type = type;
-	this.model = model;
+	private int types;
+	private Object source;
+	private IModel [] added;
+	private IModel [] removed;
+	private IModel [] changed;
+
+public ModelProviderEvent(Object source, int types, IModel [] added, IModel [] removed, IModel [] changed) {
+	this.source = source;
+	this.types = types;
+	this.added = added;
+	this.removed = removed;
+	this.changed = changed;
 }
-/**
- * @see IModelProviderEvent#getAffectedModel
- */
-public IModel getAffectedModel() {
-	return model;
+
+public IModel [] getAddedModels() {
+	return added;
 }
-/**
- * @see IModelProviderEvent#getEventType
- */
-public int getEventType() {
-	return type;
+
+public IModel [] getRemovedModels() {
+	return removed;
+}
+
+public IModel [] getChangedModels() {
+	return changed;
+}
+
+public int getEventTypes() {
+	return types;
+}
+
+public Object getEventSource() {
+	return source;
 }
 }

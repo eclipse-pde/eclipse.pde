@@ -11,8 +11,9 @@ import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import java.util.*;
+import org.eclipse.core.runtime.PlatformObject;
 
-public abstract class AbstractModel implements IModel, IModelChangeProvider {
+public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProvider {
 	private Vector listeners = new Vector();
 	protected boolean loaded;
 	protected NLResourceHelper nlHelper;

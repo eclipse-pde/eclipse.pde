@@ -52,7 +52,6 @@ protected void doLoadDefault() {
 }
 protected void doStore() {
 	pluginsBlock.save(getPreferenceStore());
-	PDEPlugin.getDefault().firePluginEvent(new PDEPluginEvent(PDEPluginEvent.EXTERNAL_PLUGINS_CHANGED));
 }
 
 public int getNumberOfControls() {

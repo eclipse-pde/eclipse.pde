@@ -11,7 +11,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.model.jars.*;
 import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import java.net.*;

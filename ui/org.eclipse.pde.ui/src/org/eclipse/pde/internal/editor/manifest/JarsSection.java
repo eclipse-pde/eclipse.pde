@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.editor.manifest;
 import org.eclipse.jdt.core.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.model.jars.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.ui.*;

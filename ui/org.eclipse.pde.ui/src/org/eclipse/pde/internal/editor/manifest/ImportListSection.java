@@ -32,10 +32,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.base.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.pde.internal.wizards.imports.PluginImportWizard;
 
 public class ImportListSection
 	extends PDEFormSection
-	implements IModelChangedListener {
+	implements IModelChangedListener, IModelProviderListener {
 	private TreeViewer importTree;
 	private FormWidgetFactory factory;
 	private Image importImage;
@@ -44,15 +45,18 @@ public class ImportListSection
 	public static final String SECTION_TITLE = "ManifestEditor.ImportListSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.ImportListSection.desc";
 	public static final String SECTION_NEW = "ManifestEditor.ImportListSection.new";
+	public static final String SECTION_IMPORT = "ManifestEditor.ImportListSection.import";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String KEY_UPDATING_BUILD_PATH = "ManifestEditor.ImportListSection.updatingBuildPath";
 	public static final String KEY_COMPUTE_BUILD_PATH = "ManifestEditor.ImportListSection.updateBuildPath";
 	private Button newButton;
+	private Button importButton;
 	private Button buildpathButton;
 	private Vector imports;
 	private Action openAction;
+	private Action importAction;
 	private Action newAction;
 	private Action deleteAction;
 	private Action buildpathAction;
@@ -164,29 +168,39 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			newButton.getShell().setDefaultButton(null);
 		}
 	});
+	if (isSelfhostingEnabled()) {
+		importButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_IMPORT), SWT.PUSH);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalAlignment= GridData.BEGINNING;
+		importButton.setLayoutData(gd);
+		importButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleImport();
+				importButton.getShell().setDefaultButton(null);
+			}
+		});
+	}
+	
 	makeActions();
-/*
-
-	buildpathButton = factory.createButton(container, buildpathAction.getText(), SWT.PUSH);
-	//gd = new GridData(GridData.FILL_HORIZONTAL);
-	//gd.verticalAlignment = GridData.BEGINNING;
-	//buildpathButton.setLayoutData(gd);
-	buildpathButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			buildpathAction.run();
-			buildpathButton.getShell().setDefaultButton(null);
-		}
-	});	
-*/
-
 	return container;
 }
+
+private static boolean isSelfhostingEnabled() {
+	IPluginRegistry registry=Platform.getPluginRegistry();
+	String pointId = "org.eclipse.ui.importWizards";
+	String extensionId = "org.eclipse.pde.selfhosting.import";
+	IExtension extension = registry.getExtension(pointId, extensionId);
+	return extension != null;
+}
+
 public void dispose() {
 	importImage.dispose();
 	errorImportImage.dispose();
 	exportImportImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 	model.removeModelChangedListener(this);
+	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
+	PDEPlugin.getDefault().getExternalModelManager().removeModelProviderListener(this);
 	super.dispose();
 }
 public void doGlobalAction(String actionId) {
@@ -205,13 +219,14 @@ public void expandTo(Object object) {
 private void fillContextMenu(IMenuManager manager) {
 	ISelection selection = importTree.getSelection();
 	manager.add(newAction);
+	if (isSelfhostingEnabled()) manager.add(importAction);
 	manager.add(new Separator());
 	if (!selection.isEmpty()) {
 		manager.add(openAction);
 		manager.add(deleteAction);
 		manager.add(new Separator());
 	}
-	((NewDependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
+	((DependenciesForm)getFormPage().getForm()).fillContextMenu(manager);
 	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 }
 
@@ -246,6 +261,20 @@ private void handleNew() {
 	});
 }
 
+private void handleImport() {
+	final IPluginModel model = (IPluginModel)getFormPage().getModel();
+	BusyIndicator.showWhile(importTree.getTree().getDisplay(), new Runnable() {
+		public void run() {
+			PluginImportWizard wizard =
+				new PluginImportWizard(model);
+			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.create();
+			dialog.getShell().setSize(500, 500);
+			dialog.open();
+		}
+	});
+}
+
 private void handleOpen(ISelection sel) {
 	if (sel instanceof IStructuredSelection) {
 		IStructuredSelection ssel = (IStructuredSelection)sel;
@@ -269,6 +298,8 @@ public void initialize(Object input) {
 	setReadOnly(!model.isEditable());
 	newButton.setEnabled(model.isEditable());
 	model.addModelChangedListener(this);
+	PDEPlugin.getDefault().getWorkspaceModelManager().addModelProviderListener(this);
+	PDEPlugin.getDefault().getExternalModelManager().addModelProviderListener(this);
 }
 
 public void initializeImages() {
@@ -292,6 +323,13 @@ private void makeActions() {
 		}
 	};
 	newAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+	
+	importAction = new Action() {
+		public void run() {
+			handleImport();
+		}
+	};
+	importAction.setText(PDEPlugin.getResourceString(SECTION_IMPORT));
 	openAction = new Action() {
 		public void run() {
 			handleOpen(importTree.getSelection());
@@ -342,6 +380,11 @@ public void modelChanged(IModelChangedEvent event) {
 			}
 		}
 	}
+}
+
+public void modelsChanged(IModelProviderEvent e) {
+	imports = null;
+	importTree.refresh();
 }
 
 private ImportObject findImportObject(IPluginImport iimport) {

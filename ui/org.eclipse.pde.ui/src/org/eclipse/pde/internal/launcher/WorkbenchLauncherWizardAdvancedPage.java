@@ -200,17 +200,21 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				initializeCheckState();
+				Vector checked = computeInitialCheckState();
+				pluginTreeViewer.setCheckedElements(checked.toArray());
+				IDialogSettings settings = getDialogSettings();
+				settings.put(SETTINGS_WSPROJECT, (String) null);
+				settings.put(SETTINGS_EXTPLUGINS, (String) null);
 			}
 		});
 	}
 
 	private void useDefaultChanged() {
 		boolean useDefault = useDefaultCheck.getSelection();
-		adjustCustomControlEnableState(!useDefault);		
+		adjustCustomControlEnableState(!useDefault);
 		updateStatus();
 	}
-	
+
 	private void adjustCustomControlEnableState(boolean enable) {
 		visibleLabel.setEnabled(enable);
 		showNamesCheck.setEnabled(enable);
@@ -259,24 +263,20 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 	}
 
 	private static IPluginModelBase[] getWorkspacePlugins() {
-		return PDEPlugin
-			.getDefault()
-			.getWorkspaceModelManager()
-			.getWorkspacePluginModels();
+		IPluginModelBase[] plugins =
+			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+		IPluginModelBase[] fragments =
+			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+		IPluginModelBase[] all = new IPluginModelBase[plugins.length + fragments.length];
+		System.arraycopy(plugins, 0, all, 0, plugins.length);
+		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
+		return all;
 	}
 
 	private void initializeFields() {
 		IDialogSettings initialSettings = getDialogSettings();
 		boolean useDefault = true;
 		boolean showNames = true;
-
-		/*
-		
-		ArrayList checkedPlugins = new ArrayList();
-		checkedPlugins.addAll(available);
-		
-		ArrayList externalPlugins = new ArrayList();
-		*/
 
 		if (initialSettings != null) {
 			useDefault = !initialSettings.getBoolean(SETTINGS_USECUSTOM);
@@ -286,53 +286,56 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		useDefaultCheck.setSelection(useDefault);
 		showNamesCheck.setSelection(showNames);
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
-		initializeCheckState();
+		Vector checked = computeInitialCheckState();
 
-		// Now we can do the rest
-		/*
-		
-			String deselectedPluginIDs = initialSettings.get(SETTINGS_WSPROJECT);
-			if (deselectedPluginIDs != null) {
-				ArrayList deselected = new ArrayList();
-				StringTokenizer tok =
-					new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
-				while (tok.hasMoreTokens()) {
-					deselected.add(tok.nextToken());
-				}
-				for (int i = checkedPlugins.size() - 1; i >= 0; i--) {
-					PluginModel desc = (PluginModel) checkedPlugins.get(i);
-					if (deselected.contains(desc.getId())) {
-						checkedPlugins.remove(i);
-					}
-				}
+		// Deselected workspace plug-ins
+		String deselectedPluginIDs = initialSettings.get(SETTINGS_WSPROJECT);
+		if (deselectedPluginIDs != null) {
+			ArrayList deselected = new ArrayList();
+			StringTokenizer tok =
+				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselected.add(tok.nextToken());
 			}
-		
-			String ext = initialSettings.get(SETTINGS_EXTPLUGINS);
-			if (ext != null) {
-				ArrayList urls = new ArrayList();
-				StringTokenizer tok = new StringTokenizer(ext, File.pathSeparator);
-				while (tok.hasMoreTokens()) {
-					try {
-						urls.add(new URL(tok.nextToken()));
-					} catch (MalformedURLException e) {
-						SelfHostingPlugin.log(e);
-					}
-				}
-				URL[] urlsArray = (URL[]) urls.toArray(new URL[urls.size()]);
-				PluginModel[] descs = PluginUtil.getPluginModels(urlsArray);
-				if (descs != null) {
-					externalPlugins.addAll(Arrays.asList(descs));
+			for (int i = checked.size() - 1; i >= 0; i--) {
+				Object curr = checked.get(i);
+				if (!(curr instanceof IPluginModelBase))
+					continue;
+				IPluginModelBase desc = (IPluginModelBase) curr;
+				if (deselected.contains(desc.getPluginBase().getId())) {
+					checked.remove(i);
 				}
 			}
 		}
-		*/
-
-		//fWorkspacePluginsList.setCheckedElements(checkedPlugins);
-		//fExternalPluginsList.setElements(externalPlugins);
-		adjustCustomControlEnableState(!useDefault);		
+		// Deselected external plug-ins
+		deselectedPluginIDs = initialSettings.get(SETTINGS_EXTPLUGINS);
+		if (deselectedPluginIDs != null) {
+			ArrayList deselected = new ArrayList();
+			StringTokenizer tok =
+				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselected.add(tok.nextToken());
+			}
+			boolean mixed = false;
+			for (int i = checked.size() - 1; i >= 0; i--) {
+				Object curr = checked.get(i);
+				if (!(curr instanceof IPluginModelBase))
+					continue;
+				IPluginModelBase desc = (IPluginModelBase) curr;
+				if (deselected.contains(desc.getPluginBase().getId())) {
+					checked.remove(i);
+					mixed = true;
+				}
+			}
+			if (mixed) {
+				pluginTreeViewer.setGrayed(externalPlugins, true);
+			}
+		}
+		pluginTreeViewer.setCheckedElements(checked.toArray());
+		adjustCustomControlEnableState(!useDefault);
 	}
 
-	private void initializeCheckState() {
+	private Vector computeInitialCheckState() {
 		IPluginModelBase[] models = (IPluginModelBase[]) getWorkspacePlugins();
 		Vector checked = new Vector();
 
@@ -360,7 +363,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		}
 		if (pluginTreeViewer.getGrayed(externalPlugins) != externalMixed)
 			pluginTreeViewer.setGrayed(externalPlugins, externalMixed);
-		pluginTreeViewer.setCheckedElements(checked.toArray());
+		return checked;
 	}
 
 	private void handleCheckStateChanged(IPluginModelBase model, boolean checked) {
@@ -422,38 +425,38 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 
 	public void storeSettings() {
 		IDialogSettings initialSettings = getDialogSettings();
-		initialSettings.put(SETTINGS_USECUSTOM, !useDefaultCheck.getSelection());
+		boolean useDefault = useDefaultCheck.getSelection();
+		initialSettings.put(SETTINGS_USECUSTOM, !useDefault);
 		initialSettings.put(SETTINGS_SHOWNAMES, !showNamesCheck.getSelection());
-		/*
-		StringBuffer buf = new StringBuffer();
+
+		if (useDefault)
+			return;
 		// store deselected projects
-		List selectedProjects = fWorkspacePluginsList.getCheckedElements();
-		List projects = fWorkspacePluginsList.getElements();
-		for (int i = 0; i < projects.size(); i++) {
-			PluginModel curr = (PluginModel) projects.get(i);
-			if (!selectedProjects.contains(curr)) {
-				buf.append(curr.getId());
-				buf.append(File.pathSeparatorChar);
-			}
+		StringBuffer wbuf = new StringBuffer();
+		IPluginModelBase[] workspaceModels = (IPluginModelBase[]) getWorkspacePlugins();
+
+		for (int i = 0; i < workspaceModels.length; i++) {
+			IPluginModelBase model = (IPluginModelBase) workspaceModels[i];
+			if (pluginTreeViewer.getChecked(model))
+				continue;
+			wbuf.append(model.getPluginBase().getId());
+			wbuf.append(File.pathSeparatorChar);
 		}
-		initialSettings.put(SETTINGS_WSPROJECT, buf.toString());
-		
-		buf = new StringBuffer();
-		List external = fExternalPluginsList.getElements();
-		for (int i = 0; i < external.size(); i++) {
-			PluginModel curr = (PluginModel) external.get(i);
-			buf.append(curr.getLocation());
-			if (curr instanceof PluginDescriptorModel) {
-				buf.append("/plugin.xml");
-			} else if (curr instanceof PluginFragmentModel) {
-				buf.append("/fragment.xml");
-			}
-			buf.append(File.pathSeparatorChar);
+
+		StringBuffer exbuf = new StringBuffer();
+		IPluginModelBase[] externalModels = (IPluginModelBase[]) getExternalPlugins();
+
+		for (int i = 0; i < externalModels.length; i++) {
+			IPluginModelBase model = (IPluginModelBase) externalModels[i];
+			if (pluginTreeViewer.getChecked(model))
+				continue;
+			exbuf.append(model.getPluginBase().getId());
+			exbuf.append(File.pathSeparatorChar);
 		}
-		initialSettings.put(SETTINGS_EXTPLUGINS, buf.toString());
-		*/
+		initialSettings.put(SETTINGS_WSPROJECT, wbuf.toString());
+		initialSettings.put(SETTINGS_EXTPLUGINS, exbuf.toString());
 	}
-	
+
 	static void setLauncherData(IDialogSettings settings, LauncherData data) {
 		boolean useDefault = true;
 
@@ -461,20 +464,41 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			useDefault = !settings.getBoolean(SETTINGS_USECUSTOM);
 		}
 		ArrayList res = new ArrayList();
-
-		if (useDefault) {
-			IPluginModelBase[] models = getWorkspacePlugins();
-			for (int i = 0; i < models.length; i++) {
-				res.add(models[i]);
+		// Deselected workspace plug-ins
+		ArrayList deselectedWSPlugins = new ArrayList();
+		ArrayList deselectedExPlugins = new ArrayList();
+		String wstring = settings.get(SETTINGS_WSPROJECT);
+		String exstring = settings.get(SETTINGS_EXTPLUGINS);
+		if (wstring != null) {
+			StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselectedWSPlugins.add(tok.nextToken());
 			}
-			models = getExternalPlugins();
-			for (int i = 0; i < models.length; i++) {
+		}
+		if (exstring != null) {
+			StringTokenizer tok = new StringTokenizer(exstring, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselectedExPlugins.add(tok.nextToken());
+			}
+		}
+
+		IPluginModelBase[] models = getWorkspacePlugins();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
+				res.add(model);
+		}
+		models = getExternalPlugins();
+		for (int i = 0; i < models.length; i++) {
+			if (useDefault) {
 				if (models[i].isEnabled())
 					res.add(models[i]);
+			} else if (!deselectedExPlugins.contains(models[i].getPluginBase().getId())) {
+				res.add(models[i]);
 			}
-		} else {
 		}
-		IPluginModelBase[] plugins = (IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
+		IPluginModelBase[] plugins =
+			(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
 		data.setPlugins(plugins);
 	}
 

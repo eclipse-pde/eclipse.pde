@@ -11,28 +11,49 @@ package org.eclipse.pde.internal.base.model;
  */
 public interface IModelProviderEvent {
 /**
- * Event is sent after the model has been added.
+ * Event is sent after the models have been added.
  */
-	int MODEL_ADDED = 1;
+	int MODELS_ADDED = 0x1;
 /**
- * Event is sent before the model will be removed.
+ * Event is sent before the models will be removed.
  */
-	int MODEL_REMOVED = 2;
+	int MODELS_REMOVED = 0x2;
 /**
- * Event is sent after the model has been changed.
+ * Event is sent after the models have been changed.
  */
-	int MODEL_CHANGED = 3;
+	int MODELS_CHANGED = 0x4;
 /**
- * Returns the model that is affected by this change.
+ * Returns the models that are added
  *
- * @return the model that has changed
+ * @return the models that have been added or an empty array
  */
-IModel getAffectedModel();
+IModel [] getAddedModels();
+
 /**
- * Returns the type of the model change 
- * (one of MODEL_CHANGED, MODEL_ADDED, MODEL_REMOVED)
+ * Returns the models that are removed
+ *
+ * @return the models that have been removed or an empty array
+ */
+IModel [] getRemovedModels();
+
+/**
+ * Returns the models that has changed
+ *
+ * @return the models that has changed or an empty array
+ */
+IModel [] getChangedModels();
+
+/**
+ * Returns the combination of flags indicating type of
+ * event. In case of multiple changes, flags are ORed together.
+ * (a combination of MODEL_CHANGED, MODEL_ADDED, MODEL_REMOVED)
  *
  * @return the model change type
  */
-int getEventType();
+int getEventTypes();
+
+/**
+ * Returns the object that fired this event. 
+ */
+Object getEventSource();
 }

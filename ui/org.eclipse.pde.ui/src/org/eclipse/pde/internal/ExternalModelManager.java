@@ -31,6 +31,8 @@ import org.eclipse.pde.internal.model.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  */
@@ -113,15 +115,7 @@ public class ExternalModelManager {
 			String newValue = store.getString(PDEBasePreferencePage.PROP_PLATFORM_PATH);
 			if (newValue == null || newValue.length() == 0)
 				return null;
-			eclipseHome = new Path(newValue);
-			try {
-				JavaCore.setClasspathVariable(
-					PDEPlugin.ECLIPSE_HOME_VARIABLE,
-					eclipseHome,
-					null);
-			} catch (JavaModelException e) {
-				PDEPlugin.logException(e);
-			}
+			setEclipseHome(newValue);
 		}
 		return eclipseHome;
 	}
@@ -304,13 +298,30 @@ public class ExternalModelManager {
 		listeners.remove(listener);
 	}
 
-	public void setEclipseHome(String newValue) {
+	public static void setEclipseHome(final String newValue) {
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					JavaCore.setClasspathVariable(
+						PDEPlugin.ECLIPSE_HOME_VARIABLE,
+						new Path(newValue),
+						monitor);
+
+				} catch (JavaModelException e) {
+					throw new InvocationTargetException(e);
+				}
+				finally {
+					monitor.done();
+				}
+			}
+		};
+		ProgressMonitorDialog pm =
+			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			JavaCore.setClasspathVariable(
-				PDEPlugin.ECLIPSE_HOME_VARIABLE,
-				new Path(newValue),
-				null);
-		} catch (JavaModelException e) {
+			pm.run(true, false, op);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		} catch (InterruptedException e) {
 			PDEPlugin.logException(e);
 		}
 	}

@@ -38,10 +38,10 @@ public IContentOutlinePage createContentOutlinePage() {
 */
 }
 protected SectionForm createForm() {
-	return new NewDependenciesForm(this);
+	return new DependenciesForm(this);
 }
 
 public boolean contextMenuAboutToShow(IMenuManager manager) {
-	return ((NewDependenciesForm)getForm()).fillContextMenu(manager);
+	return ((DependenciesForm)getForm()).fillContextMenu(manager);
 }
 }

@@ -28,6 +28,7 @@ public void createInitialLayout(IPageLayout factory) {
 	topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 	topLeft.addView(JavaUI.ID_PACKAGES);
 	topLeft.addView(JavaUI.ID_TYPE_HIERARCHY);
+	//topLeft.addView(PDEPlugin.PLUGINS_VIEW_ID);
 
 	IFolderLayout bottomRight =
 		factory.createFolder(

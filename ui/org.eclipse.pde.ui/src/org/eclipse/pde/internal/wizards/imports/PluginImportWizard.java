@@ -45,14 +45,20 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
+	private IPluginModelBase launchingModel;
 
 	/**
 	 * Constructor for DropPluginInportWizard.
 	 */
 	public PluginImportWizard() {
+		this(null);
+	}
+	
+	public PluginImportWizard(IPluginModelBase model) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		this.launchingModel = model;
 	}
 
 	/*
@@ -69,7 +75,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 		page1 = new PluginImportWizardFirstPage();
 		addPage(page1);
-		page2 = new PluginImportWizardDetailedPage(page1);
+		page2 = new PluginImportWizardDetailedPage(page1, launchingModel);
 		addPage(page2);
 	}
 
@@ -99,7 +105,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page2.storeSettings(true);
 			final boolean doImportToWorkspace = page1.doImportToWorkspace();
 			final boolean doExtractPluginSource = page1.doExtractPluginSource();
-			getContainer().run(true, true, new IRunnableWithProgress() {
+			getContainer().run(false, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 					try {

@@ -47,6 +47,9 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 	private int selectedCount;
 	private ExternalModelManager registry;
 	private Image externalPluginImage;
+	private IModel [] initialModels;
+	private boolean reloaded;
+	private Vector changed;
 
 	public static final String CHECKED_PLUGINS = "PluginPath.checkedPlugins";
 
@@ -95,6 +98,8 @@ public void checkStateChanged(CheckStateChangedEvent event) {
 	IPluginModel model = (IPluginModel)event.getElement();
 	model.setEnabled(event.getChecked());
 	updateSelectedCount();
+	if (changed==null) changed = new Vector();
+	if (!changed.contains(model)) changed.add(model);
 }
 public Control createContents(Composite parent) {
 	Composite container = new Composite(parent, SWT.NONE);
@@ -183,10 +188,14 @@ public Control getControl() {
 	return control;
 }
 private void globalSelect(IPluginModel[] models, boolean selected) {
+	if (changed==null) changed = new Vector();
 	for (int i = 0; i < models.length; i++) {
-		models[i].setEnabled(selected);
+		IPluginModel model = models[i];
+		model.setEnabled(selected);
+		if (!changed.contains(model)) changed.add(model);
 	}
 }
+
 private void handleReload() {
 	final String platformPath = editor.getPlatformPath();
 	if (platformPath != null && platformPath.length() > 0) {
@@ -201,7 +210,9 @@ private void handleReload() {
 		registry.clear();
 		pluginListViewer.setInput(null);
 	}
+	reloaded=true;
 }
+
 public void initialize(IPreferenceStore store) {
 	String platformPath=null;
 	if (editor!=null) platformPath = editor.getPlatformPath();
@@ -232,6 +243,7 @@ public void initialize(IPreferenceStore store) {
 		}
 	pluginListViewer.addCheckStateListener(this);
 	updateSelectedCount(mode);
+	initialModels = registry.getModels();
 }
 public static void initialize(ExternalModelManager registry, IPreferenceStore store) {
 	String saved = store.getString(CHECKED_PLUGINS);
@@ -267,9 +279,9 @@ public void initializeDefault(boolean enabled) {
 private static boolean isChecked(String name, Vector list) {
 	for (int i = 0; i < list.size(); i++) {
 		if (name.equals(list.elementAt(i)))
-			return true;
+			return false;
 	}
-	return false;
+	return true;
 }
 public void save(IPreferenceStore store) {
 	String saved = "";
@@ -282,7 +294,7 @@ public void save(IPreferenceStore store) {
 		} else {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModel model = models[i];
-				if (model.isEnabled()) {
+				if (!model.isEnabled()) {
 					if (i > 0)
 						saved += " ";
 					saved += model.getPlugin().getId();
@@ -290,9 +302,9 @@ public void save(IPreferenceStore store) {
 			}
 		}
 	store.setValue(CHECKED_PLUGINS, saved);
-	registry.fireModelProviderEvent(
-		new ModelProviderEvent(IModelProviderEvent.MODEL_CHANGED, null));
+	computeDelta();
 }
+
 private void updateSelectedCount() {
 	updateSelectedCount(SELECT_SOME);
 }
@@ -318,4 +330,26 @@ private void updateSelectedCount(int mode) {
 	String selectedLabelText= PDEPlugin.getFormattedMessage(KEY_SELECTED, args);
 	selectedLabel.setText(selectedLabelText);
 }
+
+void computeDelta() {
+	int type = 0;
+	IModel [] addedArray = null;
+	IModel [] removedArray = null;
+	IModel [] changedArray = null;
+	if (reloaded) {
+		type = IModelProviderEvent.MODELS_REMOVED | IModelProviderEvent.MODELS_ADDED;
+		removedArray = initialModels;
+		addedArray = registry.getModels();
+	}
+	if (changed!=null && changed.size()>0) {
+		type |= IModelProviderEvent.MODELS_CHANGED;
+		changedArray = (IModel[])changed.toArray(new IModel[changed.size()]);
+		changed = null;
+	}
+	if (type!=0) {
+		ModelProviderEvent event = new ModelProviderEvent(registry, type, addedArray, removedArray, changedArray);
+		registry.fireModelProviderEvent(event);
+	}
+}
+
 }

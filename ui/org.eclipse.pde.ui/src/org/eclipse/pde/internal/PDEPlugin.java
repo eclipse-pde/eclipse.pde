@@ -34,6 +34,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
 	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
+	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.pluginsView";
 
 	public static final String MANIFEST_BUILDER_ID =
 		PLUGIN_ID + "." + "ManifestBuilder";
@@ -295,23 +296,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 		getWorkspaceModelManager().reset();
 	}
 
-	public void addPluginListener(IPDEPluginListener listener) {
-		if (!pluginListeners.contains(listener))
-			pluginListeners.add(listener);
-	}
-
-	public void removePluginListener(IPDEPluginListener listener) {
-		if (pluginListeners.contains(listener))
-			pluginListeners.remove(listener);
-	}
-
-	public void firePluginEvent(PDEPluginEvent e) {
-		for (Iterator iter = pluginListeners.iterator(); iter.hasNext();) {
-			IPDEPluginListener listener = (IPDEPluginListener) iter.next();
-			listener.pluginChanged(e);
-		}
-	}
-
 	public static File getFileInPlugin(IPath path) {
 		try {
 			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
@@ -321,4 +305,5 @@ public class PDEPlugin extends AbstractUIPlugin {
 			return null;
 		}
 	}
+
 }

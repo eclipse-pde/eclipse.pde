@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 public class WorkbenchLauncher
 	implements ILauncherDelegate, IExecutableExtension {
@@ -380,7 +381,7 @@ public class WorkbenchLauncher
 		IJavaProject javaProject = JavaCore.create(projectToLaunch);
 		String mainType = "org.eclipse.core.launcher.UIMain";
 		try {
-			sourceLocator = new ProjectSourceLocator(javaProject);
+			sourceLocator = new JavaSourceLocator(JavaSourceLocator.getDefaultSourceLocations(javaProject));
 
 			IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 			String targetLocation =
@@ -426,7 +427,7 @@ public class WorkbenchLauncher
 			display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
-				DebugPlugin.getDefault().getLaunchManager().registerLaunch(launch);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
 		});
 	}

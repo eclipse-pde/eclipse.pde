@@ -12,11 +12,13 @@
         path="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antui.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antuisrc.zip"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core/antsupport.jar"/>
     <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.debug.core/dtcore.jar" sourcepath="TARGET/org.eclipse.debug.core/dtcoresrc.zip"/>
+        path="ECLIPSE_HOME/plugins/org.eclipse.debug.core/dtcore.jar"
+        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.debug.core/dtcoresrc.zip"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.debug.ui/dtui.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.jdt.core/jdtcore.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.core/jdtcoresrc.zip"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.jdt.launching/launching.jar"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.jdt.launching/launching.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.launching/launchingsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.ui/jdtsrc.zip"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>

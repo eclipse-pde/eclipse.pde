@@ -142,13 +142,7 @@ public boolean performOk() {
 	String newEclipseHome = editor.getStringValue();
 	if (!oldEclipseHome.equals(newEclipseHome)) {
 		// home changed -update Java variable
-		try {
-			JavaCore.setClasspathVariable(
-				PDEPlugin.ECLIPSE_HOME_VARIABLE,
-				new Path(newEclipseHome), null);
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-		}
+		ExternalModelManager.setEclipseHome(newEclipseHome);
 	}
 	return super.performOk();
 }

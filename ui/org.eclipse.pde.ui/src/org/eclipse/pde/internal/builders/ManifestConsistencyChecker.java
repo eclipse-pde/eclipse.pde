@@ -81,10 +81,15 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			}
 		}
 	} else {
-		delta.accept(new DeltaVisitor(monitor));
+		processDelta(delta, monitor);
 	}
 	return null;
 }
+
+private void processDelta(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
+	delta.accept(new DeltaVisitor(monitor));
+}
+
 private void checkFile(IFile file, IProgressMonitor monitor) {
 	String message =
 		PDEPlugin.getFormattedMessage(

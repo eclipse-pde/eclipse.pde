@@ -173,7 +173,7 @@ public class WorkbenchLauncherDelegate
 		}
 		curr.delete();
 	}
-	
+
 	private Display getDisplay() {
 		Display display = Display.getCurrent();
 		if (display == null) {
@@ -183,10 +183,11 @@ public class WorkbenchLauncherDelegate
 	}
 
 	private void registerLaunch(final ILaunch launch) {
-		Display display = getDisplay();;
+		Display display = getDisplay();
+		;
 		display.syncExec(new Runnable() {
 			public void run() {
-				DebugPlugin.getDefault().getLaunchManager().registerLaunch(launch);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
 		});
 	}
@@ -311,18 +312,14 @@ public class WorkbenchLauncherDelegate
 
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginModelBase curr = plugins[i];
-				String prefix = "file:"+curr.getInstallLocation()+File.separator;
+				String prefix = "file:" + curr.getInstallLocation() + File.separator;
 
 				if (curr instanceof IPluginModel) {
 					IPlugin plugin = ((IPluginModel) curr).getPlugin();
-					properties.setProperty(
-						plugin.getId(),
-						prefix + "plugin.xml");
+					properties.setProperty(plugin.getId(), prefix + "plugin.xml");
 				} else if (curr instanceof IFragmentModel) {
 					IFragment fragment = ((IFragmentModel) curr).getFragment();
-					properties.setProperty(
-						fragment.getId(),
-						prefix + "fragment.xml");
+					properties.setProperty(fragment.getId(), prefix + "fragment.xml");
 				}
 			}
 

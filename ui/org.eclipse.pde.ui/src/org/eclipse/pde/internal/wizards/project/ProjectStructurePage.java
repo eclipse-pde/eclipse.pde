@@ -8,7 +8,6 @@ import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.pde.internal.model.build.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.model.jars.*;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;

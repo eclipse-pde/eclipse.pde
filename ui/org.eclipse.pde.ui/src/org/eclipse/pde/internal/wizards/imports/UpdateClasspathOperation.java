@@ -45,9 +45,12 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 			
 			// add library entries
 			ArrayList entries= new ArrayList();
+			IWorkspaceRoot root = proj.getWorkspace().getRoot();
 			
 			for (int i= 0; i < libraryClasspathEntries.length; i++) {
-				entries.add(libraryClasspathEntries[i]);
+				IClasspathEntry entry = libraryClasspathEntries[i];
+				if (root.findMember(entry.getPath())!=null)
+				   entries.add(libraryClasspathEntries[i]);
 			}
 			
 			// add project prerequisits

@@ -19,57 +19,76 @@ import org.eclipse.jface.action.*;
 public class DependenciesForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";
 	private ManifestDependenciesPage page;
-	private ReqGraphSection reqGraphSection;
-	private PluginListSection pluginListSection;
+	private ImportListSection importListSection;
+	private MatchSection matchSection;
+	private ImportStatusSection importStatusSection;
 
 public DependenciesForm(ManifestDependenciesPage page) {
 	this.page = page;
-	setVerticalFit(true);
+	//setVerticalFit(true);
+	setScrollable(false);
 }
 public void commitChanges(boolean onSave) {
-	if (pluginListSection==null) return;
-	if (onSave || pluginListSection.isDirty()) pluginListSection.commitChanges(onSave);
+	if (importListSection==null) return;
+	if (onSave || importListSection.isDirty()) importListSection.commitChanges(onSave);
 }
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	layout.makeColumnsEqualWidth = true;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
 	parent.setLayout(layout);
-	//layout.makeColumnsEqualWidth=true;
 
 	FormSection section;
 	GridData gd;
 	Control control;
 
-	pluginListSection = new PluginListSection(page);
-	control = pluginListSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING);
-	//gd.widthHint = 250;
+	importListSection = new ImportListSection(page);
+	control = importListSection.createControl(parent, getFactory());
+	gd = new GridData(GridData.FILL_BOTH);
+	control.setLayoutData(gd);
+	
+	Composite column = factory.createComposite(parent);
+	gd = new GridData(GridData.FILL_BOTH);
+	column.setLayoutData(gd);
+	layout = new GridLayout();
+	layout.marginWidth = layout.marginHeight = 0;
+	column.setLayout(layout);
+		
+	matchSection = new MatchSection(page);
+	control = matchSection.createControl(column, getFactory());
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	control.setLayoutData(gd);
 
-	reqGraphSection = new ReqGraphSection(page);
-	control =reqGraphSection.createControl(parent, getFactory());
-	gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
-	//gd.widthHint = 250;
+	importStatusSection = new ImportStatusSection(page);
+	control = importStatusSection.createControl(column, getFactory());
+	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
 	// Link forms
 	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(pluginListSection, reqGraphSection);
+	manager.linkSections(importListSection, matchSection);
 
-	registerSection(pluginListSection);
-	registerSection(reqGraphSection);
+	registerSection(importListSection);
+	registerSection(matchSection);
+	registerSection(importStatusSection);
 }
+
 public void initialize(Object input) {
 	IPluginModel model = (IPluginModel)input;
 	setHeadingText(PDEPlugin.getResourceString(TITLE));
 	super.initialize(model);
-	reqGraphSection.sectionChanged(pluginListSection, pluginListSection.SELECTION, null);
 	((Composite)getControl()).layout(true);
 }
 
+public void expandTo(Object object) {
+   importListSection.expandTo(object);
+}
+
 public boolean fillContextMenu(IMenuManager manager) {
-	return pluginListSection.fillContextMenu(manager);
+	manager.add(importListSection.getBuildpathAction());
+	manager.add(new Separator());
+	return true;
 }
 }

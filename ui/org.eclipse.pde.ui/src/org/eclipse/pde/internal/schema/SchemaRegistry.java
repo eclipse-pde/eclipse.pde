@@ -133,20 +133,30 @@ private void loadWorkspaceDescriptors(IPluginModelBase model) {
 	}
 }
 public void modelsChanged(IModelProviderEvent e) {
-	IPluginModelBase model = (IPluginModelBase)e.getAffectedModel();
-	switch (e.getEventType()) {
-		case IModelProviderEvent.MODEL_ADDED :
-			loadWorkspaceDescriptors(model);
-			break;
-		case IModelProviderEvent.MODEL_REMOVED :
-			removeWorkspaceDescriptors(model);
-			break;
-		case IModelProviderEvent.MODEL_CHANGED :
-			if (dirtyWorkspaceModels==null) dirtyWorkspaceModels = new Vector();
-			dirtyWorkspaceModels.add(model);
-			break;
+	
+	int type = e.getEventTypes();
+	
+	if ((type & IModelProviderEvent.MODELS_ADDED)!=0) {
+		IPluginModelBase [] added = (IPluginModelBase[])e.getAddedModels();
+		for (int i=0; i<added.length; i++) {
+			loadWorkspaceDescriptors(added[i]);
+		}
+	}
+	if ((type & IModelProviderEvent.MODELS_REMOVED)!=0) {
+		IPluginModelBase [] removed = (IPluginModelBase[])e.getRemovedModels();
+		for (int i=0; i<removed.length; i++) {
+			removeWorkspaceDescriptors(removed[i]);
+		}
+	}
+	if ((type & IModelProviderEvent.MODELS_CHANGED)!=0) {
+		IPluginModelBase [] changed = (IPluginModelBase[])e.getChangedModels();
+		if (dirtyWorkspaceModels==null) dirtyWorkspaceModels = new Vector();
+		for (int i=0; i<changed.length; i++) {
+			dirtyWorkspaceModels.add(changed[i]);
+		}
 	}
 }
+
 private void processMapElement(IConfigurationElement element) {
 	String tag = element.getName();
 	if (tag.equals(TAG_MAP)) {
