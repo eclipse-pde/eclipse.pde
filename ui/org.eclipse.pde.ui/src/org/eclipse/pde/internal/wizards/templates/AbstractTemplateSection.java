@@ -13,7 +13,7 @@ import org.eclipse.core.internal.boot.InternalBootLoader;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
-public abstract class AbstractTemplateSection implements ITemplateSection {
+public abstract class AbstractTemplateSection implements ITemplateSection, IVariableProvider {
 	protected IProject project;
 	protected IPluginModelBase model;
 	public static final String KEY_PLUGIN_ID = "pluginId";
@@ -32,6 +32,10 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 			return plugin.getTranslatedName();
 		}
 		return key;
+	}
+	
+	public Object getValue(String key) {
+		return null;
 	}
 
 	public URL getTemplateLocation() {
@@ -197,12 +201,47 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 		int read = 0;
 		StringBuffer keyBuffer = new StringBuffer();
 		StringBuffer outBuffer = new StringBuffer();
+		StringBuffer preBuffer = new StringBuffer();
+		boolean newLine = true;
+		TemplateControlStack preStack = new TemplateControlStack();
+		preStack.setValueProvider(this);
 
 		boolean replacementMode=false;
+		boolean preprocessorMode=false;
 		while (read!= -1) {
 			read = reader.read(cbuffer);
 			for (int i=0; i<read; i++) {
 				char c = cbuffer[i];
+				
+				if (newLine && c=='%') {
+					// preprocessor line
+					preprocessorMode=true;
+					preBuffer.delete(0, preBuffer.length());
+					continue;
+				}
+				if (preprocessorMode) {
+					if (c=='\\') {
+						char c2=cbuffer[++i];
+						preBuffer.append(c2);
+						continue;
+					}
+					if (c=='\n') {
+						// handle line
+						preprocessorMode=false;
+						newLine = true;
+						String line = preBuffer.toString().trim();
+						preStack.processLine(line);
+						continue;
+					}
+					else {
+						preBuffer.append(c);
+					}
+					continue;
+				}
+				
+				if (preStack.getCurrentState()==false) {
+					continue;
+				}
 				
 				if (c=='$') {
 					if (replacementMode) {
@@ -219,8 +258,14 @@ public abstract class AbstractTemplateSection implements ITemplateSection {
 				else {
 					if (replacementMode)
 						keyBuffer.append(c);
-					else
+					else {
 						outBuffer.append(c);
+						if (c=='\n') {
+							newLine = true;
+						}
+						else
+							newLine = false;
+					}
 				}
 			}
 		}

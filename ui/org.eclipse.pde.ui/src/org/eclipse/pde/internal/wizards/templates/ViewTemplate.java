@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.jface.wizard.*;
 
 public class ViewTemplate extends PDETemplateSection {
-	public static final String KEY_CLASS_NAME = "className";
 	public static final String KEY_MESSAGE = "message";
 	public static final String CLASS_NAME = "SampleView";
 	private WizardPage page;
@@ -41,7 +40,7 @@ public class ViewTemplate extends PDETemplateSection {
 		ArrayList list = new ArrayList();
 	
 		addOption("packageName", "&Java Package Name:", "", list);
-		addOption(KEY_CLASS_NAME, "&View Class Name:", CLASS_NAME, list);
+		addOption("className", "&View Class Name:", CLASS_NAME, list);
 		addOption("viewName", "View &Name:", "Sample View", list);
 		addOption("viewCategory", "View &Category Name:", "Sample Category", list);
 		addOption("react", "View &should react to selections in the workbench", true, list);
@@ -89,7 +88,7 @@ public class ViewTemplate extends PDETemplateSection {
 		viewElement.setAttribute("id", cid+".sampleView");
 		viewElement.setAttribute("name", getStringOption("viewName"));
 		viewElement.setAttribute("icon", "icons/sample.gif");
-		viewElement.setAttribute("class", plugin.getId()+"."+getStringOption(KEY_CLASS_NAME));
+		viewElement.setAttribute("class", plugin.getId()+"."+getStringOption("className"));
 		viewElement.setAttribute("category", cid);
 		extension.add(viewElement);
 		

@@ -181,17 +181,6 @@
             %projectGenerators.defaultFragment.description
          </description>
       </wizard>
-<!--
-      <wizard
-            name="%projectGenerators.view.name"
-            icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.wizards.templates.ViewNewWizard"
-            id="org.eclipse.pde.projectGenerators.view">
-         <description>
-            %projectGenerators.view.description
-         </description>
-      </wizard>
--->
       <wizard
             name="%projectGenerators.helloWorld.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
@@ -199,6 +188,15 @@
             id="org.eclipse.pde.projectGenerators.helloWorld">
          <description>
             %projectGenerators.helloWorld.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.view.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.ViewNewWizard"
+            id="org.eclipse.pde.projectGenerators.view">
+         <description>
+            %projectGenerators.view.description
          </description>
       </wizard>
    </extension>

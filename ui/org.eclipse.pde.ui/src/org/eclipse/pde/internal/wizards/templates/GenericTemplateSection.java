@@ -44,5 +44,11 @@ public abstract class GenericTemplateSection extends AbstractTemplateSection {
 		return false;
 	}
 	
+	public Object getValue(String key) {
+		TemplateOption option = (TemplateOption)options.get(key);
+		if (option!=null) return option.getValue();
+		return super.getValue(key);
+	}
+	
 	public abstract void validateOptions(TemplateOption changed);
 }
