@@ -714,7 +714,7 @@ public class CategorySection extends TreeSection implements
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
 					.findFeatureModelRelaxed(sFeatures[i].getId(),
 							sFeatures[i].getVersion());
-			if (model != null)
+			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);
 		}
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
@@ -743,7 +743,7 @@ public class CategorySection extends TreeSection implements
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault()
-						.getFeatureModelManager().getModels();
+						.getWorkspaceModelManager().getFeatureModels();
 				ArrayList newModels = new ArrayList();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
