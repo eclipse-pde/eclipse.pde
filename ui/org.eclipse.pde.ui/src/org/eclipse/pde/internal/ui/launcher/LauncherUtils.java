@@ -86,10 +86,11 @@ public class LauncherUtils {
 			if (entry != null) {
 				IPluginModelBase model = entry.getExternalModel();
 				if (model != null) {
-					File file = new File(model.getInstallLocation(), "jdi.jar"); //$NON-NLS-1$
-					if (file.exists()) {
+                    File file = new File(model.getInstallLocation());
+                    if (!file.isFile())
+                        file = new File(file, "jdi.jar");
+					if (file.exists())
 						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
-					}
 				}
 			}
 		}
