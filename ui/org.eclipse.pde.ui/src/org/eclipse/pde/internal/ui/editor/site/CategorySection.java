@@ -69,8 +69,6 @@ public class CategorySection extends TreeSection {
 
 	private static final int BUTTON_ADD_FEATURE = 1;
 
-	// private static final int BUTTON_SEPARATOR = 2;
-
 	private static final int BUTTON_BUILD_FEATURE = 3;
 
 	private static final int BUTTON_BUILD_ALL = 4;
@@ -420,6 +418,7 @@ public class CategorySection extends TreeSection {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		fCategoryViewer.setSelection(new StructuredSelection(categoryDef), true);
 	}
 
 	private boolean handleRemove() {
