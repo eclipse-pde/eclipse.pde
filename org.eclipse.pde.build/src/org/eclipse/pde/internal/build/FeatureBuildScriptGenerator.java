@@ -206,7 +206,7 @@ protected void generateZipSourcesTarget(AntScript script) {
 	script.printMkdirTask(tab, featurebase);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-	params.put(PROPERTY_DESTINATION, new Path(featurebase).append("plugins").append(SOURCE_FEATURE_FULL_NAME).toString());
+	params.put(PROPERTY_DESTINATION, new Path(featurebase).append("plugins").append(SOURCE_FEATURE_FULL_NAME).append("src").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printZipTask(tab, destination.append(FEATURE_FULL_NAME + ".src.zip").toString(), featurebase, true, null);
 	script.printDeleteTask(tab, featurebase, null, null);

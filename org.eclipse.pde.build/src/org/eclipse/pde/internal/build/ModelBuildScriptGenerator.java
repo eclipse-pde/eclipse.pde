@@ -125,8 +125,6 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 }
 
 
-
-
 /**
  * FIXME: add comments
  */
@@ -160,22 +158,14 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 		}
 		script.printCopyTask(tab, baseSource.append(zip).toString(), destination.toString(), null);
 	}
+	String include = (String) getBuildProperties(model).get(PROPERTY_SRC_INCLUDES);
+	String exclude = (String) getBuildProperties(model).get(PROPERTY_SRC_EXCLUDES);
+	if (include != null || exclude != null) {
+		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		script.printCopyTask(tab, null, baseDestination.toString(), new FileSet[]{ fileSet });
+	}
 	script.printString(--tab, "</target>");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
@@ -218,15 +208,6 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 }
 
 
-
-
-
-
-
-
-
-
-
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -247,7 +228,6 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	tab--;
 	script.printString(tab, "</target>");
 }
-
 
 /**
  * Just ends the script.
@@ -326,8 +306,5 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	script.printTargetDeclaration(tab++, TARGET_BUILD_ZIPS, TARGET_INIT + zips.toString(), null, null, null);
 	script.printString(--tab, "</target>");
 }
-
-
-
 
 }
