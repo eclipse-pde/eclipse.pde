@@ -766,8 +766,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureTempFolder = getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
 	}
 
-	private String computeSourceFeatureName(IFeature featureForName, boolean withNumber) {
-		return featureForName.getVersionedIdentifier().getIdentifier() + ".source" + (withNumber ? "_" + featureForName.getVersionedIdentifier().getVersion().toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private String computeSourceFeatureName(IFeature featureForName, boolean withNumber) throws CoreException {
+		String sourceFeatureName = getBuildProperties().getProperty(PROPERTY_SOURCE_FEATURE_NAME);
+		if (sourceFeatureName == null)
+			sourceFeatureName = featureForName.getVersionedIdentifier().getIdentifier() + ".source"; //$NON-NLS-1$
+		return sourceFeatureName + (withNumber ? "_" + featureForName.getVersionedIdentifier().getVersion().toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
