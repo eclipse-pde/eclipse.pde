@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.resources.IProject;
+import java.lang.reflect.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.*;
 
 public class NewFragmentProjectWizard extends NewWizard implements IExecutableExtension {
 
-	private WizardNewProjectCreationPage fMainPage;
-	private ProjectStructurePage fStructurePage;
+	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
 	private FragmentFieldData fFragmentData;
 	private IProjectProvider fProjectProvider;
@@ -39,7 +39,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fFragmentData, true); //$NON-NLS-1$
 		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.ftitle")); //$NON-NLS-1$
 		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.fdesc")); //$NON-NLS-1$
 		addPage(fMainPage);
@@ -55,13 +55,17 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 				return fMainPage.getLocationPath();
 			}
 		};
-		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fFragmentData, true); //$NON-NLS-1$
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fFragmentData, true); //$NON-NLS-1$
-		addPage(fStructurePage);
+		fContentPage = new FragmentContentPage("page2", fProjectProvider,  fMainPage, fFragmentData); //$NON-NLS-1$
 		addPage(fContentPage);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		IWizardPage page = getContainer().getCurrentPage();
+		return (page.isPageComplete() && page!=fMainPage);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -69,7 +73,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 */
 	public boolean performFinish() {
 		try {
-			fStructurePage.updateData();
+			fMainPage.updateData();
 			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,

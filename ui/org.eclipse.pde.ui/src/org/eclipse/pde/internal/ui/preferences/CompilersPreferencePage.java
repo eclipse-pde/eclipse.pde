@@ -287,7 +287,7 @@ public class CompilersPreferencePage
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					IProject[] projects = PDE.getWorkspace().getRoot().getProjects();
-					monitor.beginTask("", projects.length*2);
+					monitor.beginTask("", projects.length*2); //$NON-NLS-1$
 					for (int i = 0; i < projects.length; i++) {
 						IProject project = projects[i];
 						if (project.hasNature(PDE.PLUGIN_NATURE)) {

@@ -66,7 +66,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 			ISchemaAttribute att = getAttribute();
 			if (att.getUse()==ISchemaAttribute.DEFAULT) {
 				Object dvalue = att.getValue();
-				if (dvalue!=null && dvalue.equals("true"))
+				if (dvalue!=null && dvalue.equals("true")) //$NON-NLS-1$
 					state = true;
 			}
 		}
@@ -81,7 +81,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 		if (value!=null)
 			button.setText(state?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
-			button.setText("");
+			button.setText(""); //$NON-NLS-1$
 	}
 	public void commit() {
 		if (dirty && input != null) {

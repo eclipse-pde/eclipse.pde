@@ -1,16 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
+import java.lang.reflect.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.pde.ui.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.wizards.newresource.*;
 
 /**
  * @author melhem
@@ -25,8 +36,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private IConfigurationElement fConfig;
 	private PluginFieldData fPluginData;
 	private IProjectProvider fProjectProvider;
-	private WizardNewProjectCreationPage fMainPage;
-	private ProjectStructurePage fStructurePage;
+	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
 	private TemplateListSelectionPage fWizardListPage;
 
@@ -43,7 +53,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fPluginData, false); //$NON-NLS-1$
 		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.title")); //$NON-NLS-1$
 		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.desc")); //$NON-NLS-1$
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -63,17 +73,24 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			}
 		};
 		
-		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false); //$NON-NLS-1$
-		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false); //$NON-NLS-1$
+		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
 		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates")); //$NON-NLS-1$
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
 		if (tid!=null)
 			fWizardListPage.setInitialTemplateId(tid);
-		addPage(fStructurePage);
+
 		addPage(fContentPage);
 		addPage(fWizardListPage);
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		IWizardPage page = getContainer().getCurrentPage();
+		return (page.isPageComplete() && page!=fMainPage);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -81,7 +98,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 */
 	public boolean performFinish() {
 		try {
-			fStructurePage.updateData();
+			fMainPage.updateData();
 			fContentPage.updateData();
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();

@@ -39,8 +39,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 				ui = ((PluginFieldData)data).isUIPlugin();
 			WizardElement welement = (WizardElement)element;
 			IConfigurationElement config = welement.getConfigurationElement();
-			boolean uiFlag = getFlag(config, "ui-content");
-			boolean javaFlag = getFlag(config, "java");
+			boolean uiFlag = getFlag(config, "ui-content"); //$NON-NLS-1$
+			boolean javaFlag = getFlag(config, "java"); //$NON-NLS-1$
 			//filter out java wizards for simple projects
 			if (simple && javaFlag) return false;
 			//filter out ui wizards for non-ui plug-ins
@@ -50,7 +50,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 		private boolean getFlag(IConfigurationElement config, String name) {
 			String value = config.getAttribute(name);
 			if (value==null) return true;
-			return value.equalsIgnoreCase("true");
+			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 }
 	
