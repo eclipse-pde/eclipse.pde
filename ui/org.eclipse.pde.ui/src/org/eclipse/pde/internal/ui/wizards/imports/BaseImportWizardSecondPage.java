@@ -50,6 +50,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		super(pageName);
 		this.page1 = page;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		PDECore.getDefault().getExternalModelManager().addModelProviderListener(this);
 	}
 
 	protected Composite createImportList(Composite parent) {
@@ -96,6 +97,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(this);
 	}
 	
 	public void setVisible(boolean visible) {
@@ -111,6 +113,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected boolean isRefreshNeeded() {
 		if (fRefreshNeeded) {
 			fRefreshNeeded = false;
+			location = page1.getDropLocation();
 			return true;	
 		}			
 		String currLocation = page1.getDropLocation();

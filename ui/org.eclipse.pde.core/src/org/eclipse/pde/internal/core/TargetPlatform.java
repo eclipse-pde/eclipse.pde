@@ -214,6 +214,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 					bWriter.newLine();
 				}
 			}
+			
+			bWriter.write("osgi.configuration.cascaded=false");
+			bWriter.newLine();
 				
 			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
