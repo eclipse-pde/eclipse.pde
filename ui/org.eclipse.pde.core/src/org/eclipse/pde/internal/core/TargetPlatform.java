@@ -66,7 +66,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	public static String[] createPluginPath() throws CoreException {
-		return createPluginPath(getVisibleModels());
+		return createPluginPath(PDECore.getDefault().getModelManager().getPlugins());
 	}
 
 	public static String[] createPluginPath(IPluginModelBase[] models)
@@ -76,24 +76,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 			paths[i] = models[i].getInstallLocation();
 		}
 		return paths;
-	}
-
-	private static IPluginModelBase[] getVisibleModels() {
-		Vector result = new Vector();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		addFromList(result, manager.getPlugins());
-		IPluginModelBase[] array =
-			(IPluginModelBase[]) result.toArray(
-				new IPluginModelBase[result.size()]);
-		return array;
-	}
-
-	private static void addFromList(Vector result, IPluginModelBase[] list) {
-		for (int i = 0; i < list.length; i++) {
-			IPluginModelBase model = list[i];
-			if (model.isEnabled())
-				result.add(list[i]);
-		}
 	}
 
 
