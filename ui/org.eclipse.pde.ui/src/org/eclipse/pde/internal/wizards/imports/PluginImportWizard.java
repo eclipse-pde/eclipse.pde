@@ -86,7 +86,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 */
 	public boolean performFinish() {
 		try {
-			IPluginModelBase[] models = page2.getSelectedModels();
+			final IPluginModelBase[] models = page2.getSelectedModels();
 			if (models.length == 0) {
 				MessageDialog.openInformation(
 					getShell(),
@@ -99,14 +99,14 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page2.storeSettings(true);
 			final boolean doImportToWorkspace = page1.doImportToWorkspace();
 			final boolean doExtractPluginSource = page1.doExtractPluginSource();
-			getContainer().run(false, true, new IRunnableWithProgress() {
+			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 					try {
 						IReplaceQuery query = new ReplaceQuery();
 						PluginImportOperation op =
 							new PluginImportOperation(
-								page2.getSelectedModels(),
+								models,
 								doImportToWorkspace,
 								doExtractPluginSource,
 								query);
