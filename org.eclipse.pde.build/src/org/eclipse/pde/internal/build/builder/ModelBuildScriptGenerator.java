@@ -260,10 +260,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-				script.printAntTask(location.append(buildScriptFileName).toString(), location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
+				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
 				HashMap params = new HashMap(1);
 				params.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
-				script.printAntTask(location.append(buildScriptFileName).toString(), location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
+				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
 			}
 		}
 		script.printTargetEnd();
