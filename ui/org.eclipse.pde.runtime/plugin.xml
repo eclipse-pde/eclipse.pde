@@ -6,22 +6,21 @@
    provider-name="%provider-name"
    class="org.eclipse.pde.internal.runtime.PDERuntimePlugin">
 
-<!-- Runtime -->
    <runtime>
       <library name="pdert.jar">
          <export name="*"/>
          <packages prefixes="org.eclipse.pde.internal.runtime"/>
       </library>
    </runtime>
-<!-- Required plugins -->
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.update.ui.forms"/>
    </requires>
 
 
-<!-- Extensions -->
 <!-- Extension points -->
+<!-- Extensions -->
    <extension
          point="org.eclipse.ui.views">
       <category

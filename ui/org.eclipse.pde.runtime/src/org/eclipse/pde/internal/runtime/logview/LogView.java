@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -86,11 +87,29 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	public void createPartControl(Composite parent) {
 		readLogFile();
+		/*SashForm container = new SashForm(parent, SWT.HORIZONTAL);
+		container.setLayout(new GridLayout());
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createTableSection(container);
+		createDetailsSection(container);*/
+		createTableSection(parent);		
+	}
+	
+	private void createTableSection(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 0;
+		container.setLayout(layout);
 		
-		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
-
+		TableTree tableTree = new TableTree(container, SWT.FULL_SELECTION);
+		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createColumns(tableTree.getTable());		
 		createViewer(tableTree);
+		createVerticalLine(container);
+		
 		createPopupMenuManager(tableTree);
 		makeActions(tableTree.getTable());
 		fillToolBar();
@@ -100,6 +119,35 @@ public class LogView extends ViewPart implements ILogListener {
 		clipboard = new Clipboard(tableTree.getDisplay());
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
+		
+	}
+	
+	private void createDetailsSection(Composite parent) {
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 0;
+		container.setLayout(layout);
+		
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createVerticalLine(container);
+		
+		DetailsForm form = new DetailsForm((LogEntry)logs.get(0));
+		form.createControl(container);
+		form.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		form.initialize();
+		form.setScrollable(true);
+		form.update();
+		
+	}
+	
+	private void createVerticalLine(Composite parent) {
+		Label line = new Label(parent, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		gd.widthHint = 1;
+		line.setLayoutData(gd);
 	}
 	
 	private void fillToolBar() {
