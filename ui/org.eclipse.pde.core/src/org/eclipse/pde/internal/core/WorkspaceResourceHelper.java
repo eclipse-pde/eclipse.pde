@@ -18,7 +18,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 public class WorkspaceResourceHelper extends NLResourceHelper
 implements IResourceChangeListener {
 	private IFile file;
-	private IModelChangeProvider changeProvider;
+	//private IModelChangeProvider changeProvider;
 
 	/**
 	 * Constructor for WorkspaceResourceHelper
@@ -76,6 +76,6 @@ implements IResourceChangeListener {
 	}
 	
 	public void setModelChangeProvider(IModelChangeProvider changeProvider) {
-		this.changeProvider = changeProvider;
+		//this.changeProvider = changeProvider;
 	}
 }
