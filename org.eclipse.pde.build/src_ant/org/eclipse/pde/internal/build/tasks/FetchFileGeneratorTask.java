@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.build.packager.FetchFileGenerator;
 /**
  * Internal Task.
  * Generate fetch script to get files from a URL based on a packager map.
+ * @since 3.0
  */
 public class FetchFileGeneratorTask extends Task {
 	protected FetchFileGenerator fileFetcher = new FetchFileGenerator();

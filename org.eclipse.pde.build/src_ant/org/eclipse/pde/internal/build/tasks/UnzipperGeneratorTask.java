@@ -19,7 +19,8 @@ import org.eclipse.pde.internal.build.packager.UnzipperGenerator;
 
 /**
  * Internal Task.
- * This task generates an unzipper script that unzip a files  
+ * This task generates an unzipper script that unzip a files.
+ * @since 3.0
  */
 public class UnzipperGeneratorTask extends Task {
 	private UnzipperGenerator generator = new UnzipperGenerator();

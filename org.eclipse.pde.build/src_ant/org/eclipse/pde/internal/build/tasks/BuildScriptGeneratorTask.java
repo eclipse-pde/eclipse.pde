@@ -33,6 +33,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * 
 	 * @param children <code>true</code> if child scripts should be generated
 	 * and <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public void setChildren(boolean children) {
 		generator.setChildren(children);
@@ -79,8 +80,8 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/** 
 	 * Set the folder in which the build will occur.
-	 * 
 	 * @param buildDirectory the location where the build will occur.
+	 * @since 3.0
 	 */
 	public void setBuildDirectory(String buildDirectory) throws MalformedURLException {
 		generator.setWorkingDirectory(buildDirectory);
@@ -88,7 +89,6 @@ public class BuildScriptGeneratorTask extends Task {
 
 	/** 
 	 * Set the folder in which the build will occur.
-	 * 
 	 * @param installLocation the location where the build will occur.
 	 * @deprecated see {@link #setBuildDirectory(String)}
 	 */
@@ -101,6 +101,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * generated for nested features. The default is set to true.
 	 * @param recursiveGeneration <code>true</code> if the scripts for the nested features should be generated
 	 * and <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		generator.setRecursiveGeneration(recursiveGeneration);
@@ -110,6 +111,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
 	 * @throws CoreException
+	 * @since 3.0
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(configInfo);
@@ -118,6 +120,7 @@ public class BuildScriptGeneratorTask extends Task {
 	/**
 	 * Set a location that contains plugins and features required by plugins and features for which build scripts are being generated.
 	 * @param baseLocation a path to a folder
+	 * @since 3.0
 	 */
 	public void setBaseLocation(String baseLocation) {
 		BuildTimeSiteFactory.setInstalledBaseSite(baseLocation);
@@ -126,7 +129,9 @@ public class BuildScriptGeneratorTask extends Task {
 	/**
 	 * Set the boolean value indicating whether or not the plug-ins and features for which scripts are being generated target eclipse 3.0 or greater. 
 	 * The default is set to true. 
+	 * This property is experimental and is likely to be renamed in the future.
 	 * @param osgi <code>true</code> if the scripts are generated for eclipse 3.0 or greated and <code>false</code> otherwise
+	 * @since 3.0.
 	 */
 	public void setBuildingOSGi(boolean osgi) {
 		generator.setBuildingOSGi(osgi);

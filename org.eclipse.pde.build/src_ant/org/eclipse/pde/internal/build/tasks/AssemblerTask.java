@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.build.packager.PackagerBuildScriptGenerator;
 /** 
  * Internal task.
  * Generate assemble scripts to repackage binary distributions.
+ * @since 3.0
  */
 public class AssemblerTask extends Task {
 

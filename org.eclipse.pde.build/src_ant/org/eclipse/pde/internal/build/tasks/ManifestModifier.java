@@ -19,7 +19,8 @@ import org.apache.tools.ant.Task;
 
 /**
  * Internal task. 
- * Add, change or remove the keys from a manifest.mf. 
+ * Add, change or remove the keys from a manifest.mf.
+ * @since 3.0 
  */
 public class ManifestModifier extends Task {
 	private String manifestLocation;

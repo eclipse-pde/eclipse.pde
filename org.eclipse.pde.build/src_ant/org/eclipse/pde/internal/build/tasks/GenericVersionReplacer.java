@@ -16,6 +16,7 @@ import org.apache.tools.ant.Task;
 /**
  * Internal task.
  * Replace the version numbers of plugin.xml, fragment.xml and manifest.mf.
+ * @since 3.0
  */
 public class GenericVersionReplacer extends Task {
 	private static final String FRAGMENT = "fragment.xml"; //$NON-NLS-1$

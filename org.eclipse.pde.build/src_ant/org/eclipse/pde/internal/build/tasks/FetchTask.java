@@ -38,7 +38,8 @@ public class FetchTask extends Task {
 	 * generated for the children of the elements.  The default is set to <code>true</code>
 	 * 
 	 * @param children <code>true</code> if the children scripts should be generated
-	 *     and <code>false</code> otherwise
+	 * and <code>false</code> otherwise
+	 * @since 3.0
 	 */
 	public void setChildren(boolean children) {
 		generator.setFetchChildren(children);
@@ -46,7 +47,6 @@ public class FetchTask extends Task {
 
 	/**
 	 * Set the location for the CVS password file.
-	 *
 	 * @param cvsPassFileLocation the location of the password file
 	 */
 	public void setCvsPassFile(String cvsPassFileLocation) {
@@ -55,7 +55,6 @@ public class FetchTask extends Task {
 
 	/**
 	 * The path to a directory file.
-	 * 
 	 * @param directoryLocation the location of a directory file
 	 */
 	public void setDirectory(String directoryLocation) {
@@ -63,7 +62,6 @@ public class FetchTask extends Task {
 	}
 
 	/**
-	 * 
 	 * @param element
 	 */
 	public void setElements(String element) {
@@ -76,8 +74,8 @@ public class FetchTask extends Task {
 
 	/**
 	 * Overrides the tags provided in directory file by the given value.
-	 * 
-	 * @param value the tag to be fetched. 
+	 * @param value the tag to be fetched.
+	 * @since 3.0 
 	 */
 	public void setFetchTag(String value) {
 		generator.setFetchTag(value);
@@ -85,8 +83,8 @@ public class FetchTask extends Task {
 
 	/**
 	 * Set the folder in which the scripts will be generated, and in which the plugins and features will be fetched.
-	 * 
 	 * @param buildDirectory the location where the scripts will be generated and the files fetched.
+	 * @since 3.0
 	 */
 	public void setBuildDirectory(String buildDirectory) {
 		generator.setWorkingDirectory(buildDirectory);
@@ -113,7 +111,8 @@ public class FetchTask extends Task {
 	 * Set the boolean value indicating whether or not the fetch scripts should be
 	 * generated for nested features. The default is set to true.
 	 * @param recursiveGeneration <code>true</code> if the scripts for the nested features should be generated
-	 * and <code>false</code> otherwise
+	 * and <code>false</code> otherwise.
+	 * @since 3.0
 	 */
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		generator.setRecursiveGeneration(recursiveGeneration);
@@ -123,6 +122,7 @@ public class FetchTask extends Task {
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
 	 * @throws CoreException
+	 * @since 3.0
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(configInfo);

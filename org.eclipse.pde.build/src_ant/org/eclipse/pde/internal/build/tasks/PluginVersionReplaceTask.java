@@ -17,6 +17,7 @@ import org.apache.tools.ant.Task;
 /** 
  * Internal task.
  * This task aims at replacing the generic ids used into a plugin.xml by another value.
+ * @since 3.0
  */
 public class PluginVersionReplaceTask extends Task {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
