@@ -14,14 +14,12 @@ import java.lang.reflect.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	public static final String SCHEMA_DIR = "schema";
 	public static final String KEY_TITLE = "NewExtensionPointWizard.title";
 	public static final String KEY_DESC = "NewExtensionPointWizard.desc";
 	private IPluginModelBase model;
@@ -49,9 +47,11 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		initializeValues();
-		setMessage(null, IMessageProvider.WARNING);
+		setMessage(null);
 	}
-
+	protected boolean isPluginIdFinal(){
+		return true;
+	}
 	public boolean finish() {
 		final String id = idText.getText();
 		final String name = nameText.getText();
@@ -88,10 +88,6 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public String getPluginId() {
 		return model.getPluginBase().getId();
 	}
-	public String getSchemaLocation() {
-		return SCHEMA_DIR;
-	}
-	
 	public void initializeValues(){
 		if (point == null)
 			return;

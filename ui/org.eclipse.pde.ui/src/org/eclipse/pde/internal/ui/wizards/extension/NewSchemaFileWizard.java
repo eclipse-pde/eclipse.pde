@@ -11,26 +11,38 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.ui.*;
 
 public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private NewSchemaFileMainPage mainPage;
 	private IContainer container;
+	private IPluginExtensionPoint point;
+	private boolean isPluginIdFinal;
 	public static final String KEY_WTITLE = "NewSchemaFileWizard.wtitle";
 
 	public NewSchemaFileWizard() {
+		this(null, null, false);
+	}
+	public NewSchemaFileWizard(IProject project, IPluginExtensionPoint point, boolean isFinalPluginId){
+		initialize();
+		this.container = project;
+		this.point = point;
+		this.isPluginIdFinal = isFinalPluginId;
+	}
+	public void initialize(){
 		setDialogSettings(getSettingsSection());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_EXT_POINT_SCHEMA_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 	}
 	public void addPages() {
-		mainPage = new NewSchemaFileMainPage(container);
+		mainPage = new NewSchemaFileMainPage(container, point, isPluginIdFinal);
 		addPage(mainPage);
 	}
 

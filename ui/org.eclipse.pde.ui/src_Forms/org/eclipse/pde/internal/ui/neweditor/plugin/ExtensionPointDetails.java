@@ -132,6 +132,10 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 
 			public void linkActivated(HyperlinkEvent e) {
 				IProject project = getPage().getPDEEditor().getCommonProject();
+				if (fSchemaEntry.getValue() == null || fSchemaEntry.getValue().length() ==0){
+					generateSchema();
+					return;
+				}
 				IFile file = project.getFile(fSchemaEntry.getValue());
 				if (file.exists())
 					openSchemaFile(file);
@@ -218,17 +222,16 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		BusyIndicator
 			.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
 			public void run() {
-				NewExtensionPointWizard wizard =
-					new NewExtensionPointWizard(
-						project,
-						(IPluginModelBase) getPage().getModel(), fInput);
+				NewSchemaFileWizard wizard =
+					new NewSchemaFileWizard(project, fInput, true);
 				WizardDialog dialog =
 					new WizardDialog(
 						PDEPlugin.getActiveWorkbenchShell(),
 						wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 450);
-				dialog.open();
+				if(dialog.open() == WizardDialog.OK)
+					update();
 			}
 		});
 	}

@@ -23,10 +23,7 @@ public class NewExtensionPointWizard extends NewWizard {
 	private static final String KEY_WTITLE = "NewExtensionPointWizard.wtitle";
 
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model) {
-		initialize();
-		this.model = model;
-		this.project = project;
-		this.point = null;
+		this(project, model, null);
 	}
 	
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
