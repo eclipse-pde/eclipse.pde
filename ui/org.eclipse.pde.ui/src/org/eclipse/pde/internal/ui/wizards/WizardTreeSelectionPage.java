@@ -35,7 +35,7 @@ public abstract class WizardTreeSelectionPage
 		WizardCollectionElement categories,
 		String baseCategory,
 		String message) {
-		super("NewExtension", message);
+		super("NewExtension", message); //$NON-NLS-1$
 		this.wizardCategories = categories;
 		this.baseCategory = baseCategory;
 	}
@@ -149,7 +149,7 @@ public abstract class WizardTreeSelectionPage
 	}
 	private void handleCategorySelection(SelectionChangedEvent selectionEvent) {
 		setErrorMessage(null);
-		setDescriptionText("");
+		setDescriptionText(""); //$NON-NLS-1$
 		setSelectedNode(null);
 
 		WizardCollectionElement selectedCategory =
@@ -172,7 +172,7 @@ public abstract class WizardTreeSelectionPage
 
 		// If no single selection, clear and return
 		if (currentSelection == null) {
-			setDescriptionText("");
+			setDescriptionText(""); //$NON-NLS-1$
 			setSelectedNode(null);
 			return;
 		}

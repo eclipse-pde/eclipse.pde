@@ -80,7 +80,7 @@ public class RequiredPluginsContainerPage
 				IPath path = entry.getPath();
 				String name = path.lastSegment();
 				return name
-					+ " - "
+					+ " - " //$NON-NLS-1$
 					+ path.uptoSegment(path.segmentCount() - 1).toOSString();
 			}
 		}

@@ -12,13 +12,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 public class WizardElement extends NamedElement {
-	public static final String ATT_NAME = "name";
-	public static final String TAG_DESCRIPTION = "description";
-	public static final String ATT_ICON = "icon";
-	public static final String ATT_ID = "id";
-	public static final String ATT_CLASS = "class";
-	public static final String ATT_TEMPLATE = "template";
-	public static final String ATT_POINT = "point";
+	public static final String ATT_NAME = "name"; //$NON-NLS-1$
+	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	public static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	public static final String ATT_TEMPLATE = "template"; //$NON-NLS-1$
+	public static final String ATT_POINT = "point"; //$NON-NLS-1$
 	private String description;
 	private IConfigurationElement configurationElement;
 	private IConfigurationElement template;
@@ -110,10 +110,10 @@ public class WizardElement extends NamedElement {
 	private IConfigurationElement findTemplateElement() {
 		String templateId = getTemplateId();
 		if (templateId==null) return null;
-		IConfigurationElement [] templates = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.templates");
+		IConfigurationElement [] templates = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.templates"); //$NON-NLS-1$
 		for (int i=0; i<templates.length; i++) {
 			IConfigurationElement template = templates[i];
-			String id = template.getAttribute("id");
+			String id = template.getAttribute("id"); //$NON-NLS-1$
 			if (id!=null && id.equals(templateId))
 				return template;
 		}
@@ -122,6 +122,6 @@ public class WizardElement extends NamedElement {
 	public String getContributingId() {
 		IConfigurationElement tel = getTemplateElement();
 		if (tel==null) return null;
-		return tel.getAttribute("contributingId");
+		return tel.getAttribute("contributingId"); //$NON-NLS-1$
 	}
 }

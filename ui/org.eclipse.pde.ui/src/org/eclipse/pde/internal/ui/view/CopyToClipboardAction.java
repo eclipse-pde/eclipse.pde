@@ -71,7 +71,7 @@ public class CopyToClipboardAction extends Action {
 		File file = adapter.getFile();
 		fileNames[i] = file.getAbsolutePath();
 		if (i > 0)
-			buf.append("\n");
+			buf.append("\n"); //$NON-NLS-1$
 		buf.append(file.getName());
 	}
 	

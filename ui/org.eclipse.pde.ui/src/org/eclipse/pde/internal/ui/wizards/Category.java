@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.*;
 public class Category {
 	private IConfigurationElement config;
 	private String [] parentCategoryPath;
-	public static final String ATT_ID="id";
-	public static final String ATT_CATEGORY="parentCategory";
-	public static final String ATT_NAME="name";
+	public static final String ATT_ID="id"; //$NON-NLS-1$
+	public static final String ATT_CATEGORY="parentCategory"; //$NON-NLS-1$
+	public static final String ATT_NAME="name"; //$NON-NLS-1$
 
 public Category(IConfigurationElement aConfig) {
 	config = aConfig;
@@ -33,7 +33,7 @@ public String[] getParentCategoryPath() {
 	if (parentCategoryPath!=null) return parentCategoryPath;
 	String category = config.getAttribute(ATT_CATEGORY);
 	if (category==null) return null;
-	StringTokenizer stok = new StringTokenizer(category, "/");
+	StringTokenizer stok = new StringTokenizer(category, "/"); //$NON-NLS-1$
 	parentCategoryPath = new String [stok.countTokens()];
 	for (int i=0; stok.hasMoreTokens(); i++) {
 		parentCategoryPath[i]=stok.nextToken();

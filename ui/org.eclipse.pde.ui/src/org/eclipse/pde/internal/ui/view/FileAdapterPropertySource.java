@@ -43,11 +43,11 @@ public class FileAdapterPropertySource implements IPropertySource {
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		if (descriptors==null) {
 			descriptors = new IPropertyDescriptor[5];
-			descriptors[0] = new PropertyDescriptor("editable", "editable");
-			descriptors[1] = new PropertyDescriptor("last", "last modified");
-			descriptors[2] = new PropertyDescriptor("name", "name");
-			descriptors[3] = new PropertyDescriptor("path", "path");
-			descriptors[4] = new PropertyDescriptor("size", "size");
+			descriptors[0] = new PropertyDescriptor("editable", "editable"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[1] = new PropertyDescriptor("last", "last modified"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[2] = new PropertyDescriptor("name", "name"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[3] = new PropertyDescriptor("path", "path"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[4] = new PropertyDescriptor("size", "size"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return descriptors;
 	}
@@ -57,18 +57,18 @@ public class FileAdapterPropertySource implements IPropertySource {
 	 */
 	public Object getPropertyValue(Object id) {
 		String key = id.toString();
-		if (key.equals("editable"))
-			return "false";
-		if (key.equals("last")) {
+		if (key.equals("editable")) //$NON-NLS-1$
+			return "false"; //$NON-NLS-1$
+		if (key.equals("last")) { //$NON-NLS-1$
 			Date date = new Date(adapter.getFile().lastModified());
 			return DateFormat.getInstance().format(date);
 		}
-		if (key.equals("name"))
+		if (key.equals("name")) //$NON-NLS-1$
 			return adapter.getFile().getName();
-		if (key.equals("path"))
+		if (key.equals("path")) //$NON-NLS-1$
 			return adapter.getFile().getAbsolutePath();
-		if (key.equals("size"))
-			return ""+adapter.getFile().length();
+		if (key.equals("size")) //$NON-NLS-1$
+			return ""+adapter.getFile().length(); //$NON-NLS-1$
 		return null;
 	}
 

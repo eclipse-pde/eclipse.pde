@@ -43,14 +43,14 @@ public class ModelEntryPropertySource implements IPropertySource {
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		if (descriptors==null) {
 			descriptors = new IPropertyDescriptor[8];
-			descriptors[0] = new PropertyDescriptor("kind", "kind");
-			descriptors[1] = new PropertyDescriptor("name", "name");
-			descriptors[2] = new PropertyDescriptor("fragment", "fragment");
-			descriptors[3] = new PropertyDescriptor("path", "path");
-			descriptors[4] = new PropertyDescriptor("id", "id");
-			descriptors[5] = new PropertyDescriptor("version", "version");
-			descriptors[6] = new PropertyDescriptor("provider", "provider");
-			descriptors[7] = new PropertyDescriptor("enabled", "enabled");
+			descriptors[0] = new PropertyDescriptor("kind", "kind"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[1] = new PropertyDescriptor("name", "name"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[2] = new PropertyDescriptor("fragment", "fragment"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[3] = new PropertyDescriptor("path", "path"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[4] = new PropertyDescriptor("id", "id"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[5] = new PropertyDescriptor("version", "version"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[6] = new PropertyDescriptor("provider", "provider"); //$NON-NLS-1$ //$NON-NLS-2$
+			descriptors[7] = new PropertyDescriptor("enabled", "enabled"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return descriptors;
 	}
@@ -62,25 +62,25 @@ public class ModelEntryPropertySource implements IPropertySource {
 		String key = id.toString();
 		IPluginModelBase model = entry.getActiveModel();
 		IResource resource = model.getUnderlyingResource();
-		if (key.equals("enabled"))
-			return model.isEnabled()?"true":"false";
-		if (key.equals("kind"))
-			return resource!=null?"workspace":"external";
-		if (key.equals("fragment"))
-			return model.isFragmentModel()?"yes":"no";
-		if (key.equals("name"))
+		if (key.equals("enabled")) //$NON-NLS-1$
+			return model.isEnabled()?"true":"false"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (key.equals("kind")) //$NON-NLS-1$
+			return resource!=null?"workspace":"external"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (key.equals("fragment")) //$NON-NLS-1$
+			return model.isFragmentModel()?"yes":"no"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (key.equals("name")) //$NON-NLS-1$
 			return model.getPluginBase().getTranslatedName();
-		if (key.equals("path")) {
+		if (key.equals("path")) { //$NON-NLS-1$
 			if (resource!=null)
 				return resource.getLocation().toOSString();
 			else
 				return model.getInstallLocation();
 		}
-		if (key.equals("id"))
+		if (key.equals("id")) //$NON-NLS-1$
 			return model.getPluginBase().getId();
-		if (key.equals("version"))
+		if (key.equals("version")) //$NON-NLS-1$
 			return model.getPluginBase().getVersion();
-		if (key.equals("provider"))
+		if (key.equals("provider")) //$NON-NLS-1$
 			return model.getPluginBase().getProviderName();
 		return null;
 	}

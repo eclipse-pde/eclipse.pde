@@ -25,7 +25,7 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage
 		super(name);
 		this.label = label;
 		descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
-		descriptionBrowser.setText("");
+		descriptionBrowser.setText(""); //$NON-NLS-1$
 	}
 	public void createDescriptionIn(Composite composite) {
 		descriptionBrowser.createControl(composite);

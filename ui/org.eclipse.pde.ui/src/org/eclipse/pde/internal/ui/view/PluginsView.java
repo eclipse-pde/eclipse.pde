@@ -445,7 +445,7 @@ public class PluginsView extends ViewPart {
 				editorId != null
 					&& editorId.equals(PDEPlugin.MANIFEST_EDITOR_ID));
 		}
-		if (lcFileName.endsWith(".mxsd") || lcFileName.endsWith(".exsd")) {
+		if (lcFileName.endsWith(".mxsd") || lcFileName.endsWith(".exsd")) { //$NON-NLS-1$ //$NON-NLS-2$
 			openSchemaAction.setImageDescriptor(desc);
 			manager.add(openSchemaAction);
 			manager.add(new Separator());
@@ -765,7 +765,7 @@ public class PluginsView extends ViewPart {
 			PDEPlugin.logException(
 				new PartInitException(
 					PDEPlugin.getFormattedMessage(
-						"PluginsView.unableToOpen",
+						"PluginsView.unableToOpen", //$NON-NLS-1$
 						file.getName())));
 		} else {
 			adapter.setEditorId("@system"); //$NON-NLS-1$

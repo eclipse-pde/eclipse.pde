@@ -17,11 +17,11 @@ import org.eclipse.pde.internal.ui.elements.ElementList;
 
 public class WizardCollectionElement extends ElementList {
 	private WizardCollectionElement parent;
-	private ElementList     wizards = new ElementList("wizards");
+	private ElementList     wizards = new ElementList("wizards"); //$NON-NLS-1$
 	private String                  id;
 
 	// properties
-	public static String            P_WIZARDS = "org.eclipse.pde.ui.wizards";
+	public static String            P_WIZARDS = "org.eclipse.pde.ui.wizards"; //$NON-NLS-1$
 
 public WizardCollectionElement(String id, String name, WizardCollectionElement parent) {
 	super(name, null, parent);
@@ -58,7 +58,7 @@ public String getId() {
 }
 public IPath getPath() {
 	if (parent == null)
-		return new Path("");
+		return new Path(""); //$NON-NLS-1$
 		
 	return parent.getPath().append(getLabel());
 }

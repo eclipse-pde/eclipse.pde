@@ -20,8 +20,8 @@ import org.eclipse.jface.dialogs.*;
 public abstract class WizardNode implements IWizardNode {
 	private IWizard wizard;
 	private BaseWizardSelectionPage parentWizardPage;
-	public static final String KEY_CREATION_ERROR_TEXT="Errors.CreationError.NoWizard";
-	public static final String KEY_CREATION_ERROR="Errors.CreationError";
+	public static final String KEY_CREATION_ERROR_TEXT="Errors.CreationError.NoWizard"; //$NON-NLS-1$
+	public static final String KEY_CREATION_ERROR="Errors.CreationError"; //$NON-NLS-1$
 	protected WizardElement wizardElement;
 
 public WizardNode(BaseWizardSelectionPage parentPage, WizardElement element) {
@@ -49,7 +49,7 @@ public IWizard getWizard() {
 	try {
 		pluginWizard = createWizard(); // create instance of target wizard
 	} catch (CoreException e) {
-		parentWizardPage.setDescriptionText("");
+		parentWizardPage.setDescriptionText(""); //$NON-NLS-1$
 		parentWizardPage.setErrorMessage(PDEPlugin.getResourceString(KEY_CREATION_ERROR_TEXT));
 		MessageDialog.openError(
 			parentWizardPage.getWizard().getContainer().getShell(), 

@@ -97,7 +97,7 @@ public class RenameDialog extends SelectionStatusDialog {
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 		updateStatus(status);
 		okButton.setEnabled(false);
@@ -114,7 +114,7 @@ public class RenameDialog extends SelectionStatusDialog {
 						PDEPlugin.getPluginId(),
 						IStatus.ERROR,
 						PDEPlugin.getResourceString(
-							"RenameDialog.validationError"),
+							"RenameDialog.validationError"), //$NON-NLS-1$
 						null);
 				updateStatus(status);
 				okButton.setEnabled(false);
@@ -125,7 +125,7 @@ public class RenameDialog extends SelectionStatusDialog {
 				IStatus.OK,
 				PDEPlugin.getPluginId(),
 				IStatus.OK,
-				"",
+				"", //$NON-NLS-1$
 				null);
 			updateStatus(status);
 		}

@@ -33,7 +33,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 	
 	private class WizardSelectedAction extends Action {
 		public WizardSelectedAction() {
-			super("wizardSelection");
+			super("wizardSelection"); //$NON-NLS-1$
 		}
 		public void run() {
 			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer,
@@ -42,7 +42,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		}
 	}
 	public WizardListSelectionPage(ElementList wizardElements, String message) {
-		super("ListSelection", message);
+		super("ListSelection", message); //$NON-NLS-1$
 		this.wizardElements = wizardElements;
 	}
 	public void advanceToNextPage() {
@@ -111,7 +111,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		if (iter.hasNext())
 			currentWizardSelection = (WizardElement) iter.next();
 		if (currentWizardSelection == null) {
-			setDescriptionText("");
+			setDescriptionText(""); //$NON-NLS-1$
 			setSelectedNode(null);
 			return;
 		}

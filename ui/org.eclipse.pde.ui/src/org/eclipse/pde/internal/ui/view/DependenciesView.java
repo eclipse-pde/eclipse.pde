@@ -45,7 +45,7 @@ public class DependenciesView extends ViewPart {
 		public void update(Object object) {
 			setEnabled(object!=null);
 			String name = ((LabelProvider)treeViewer.getLabelProvider()).getText(object);
-			setText(PDEPlugin.getFormattedMessage("DependenciesView.focusOnSelection", name));
+			setText(PDEPlugin.getFormattedMessage("DependenciesView.focusOnSelection", name)); //$NON-NLS-1$
 		}
 	}
 
@@ -131,7 +131,7 @@ public class DependenciesView extends ViewPart {
 				handleFocusOn();
 			}
 		};
-		focusOnAction.setText(PDEPlugin.getResourceString("DependenciesView.focusOn"));
+		focusOnAction.setText(PDEPlugin.getResourceString("DependenciesView.focusOn")); //$NON-NLS-1$
 	}
 	
 	private Object getSelectedObject() {

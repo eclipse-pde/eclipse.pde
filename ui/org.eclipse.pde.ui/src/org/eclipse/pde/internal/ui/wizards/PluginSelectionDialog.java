@@ -26,8 +26,8 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 	
 	public PluginSelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
 		super(parentShell, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEPlugin.getResourceString("PluginSelectionDialog.title"));
-		setMessage(PDEPlugin.getResourceString("PluginSelectionDialog.message"));
+		setTitle(PDEPlugin.getResourceString("PluginSelectionDialog.title")); //$NON-NLS-1$
+		setMessage(PDEPlugin.getResourceString("PluginSelectionDialog.message")); //$NON-NLS-1$
 		setElements(models);
 		setMultipleSelection(multipleSelection);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -46,8 +46,8 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 	public static HashSet getExistingImports(IPluginBase model) {
 		HashSet existingImports = new HashSet();
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			existingImports.add("org.eclipse.core.boot");
-			existingImports.add("org.eclipse.core.runtime");
+			existingImports.add("org.eclipse.core.boot"); //$NON-NLS-1$
+			existingImports.add("org.eclipse.core.runtime"); //$NON-NLS-1$
 		}
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragment) {
