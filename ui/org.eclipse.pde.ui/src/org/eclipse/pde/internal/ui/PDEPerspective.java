@@ -37,7 +37,7 @@ public void createInitialLayout(IPageLayout factory) {
 			factory.getEditorArea());
 
 	bottomRight.addView(IPageLayout.ID_TASK_LIST);
-	bottomRight.addView("org.eclipse.pde.ui.runtime.LogView");
+	bottomRight.addView("org.eclipse.pde.runtime.LogView");
 	bottomRight.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
 
 	factory.addView(
@@ -60,10 +60,10 @@ public void createInitialLayout(IPageLayout factory) {
 	factory.addActionSet(JavaUI.ID_REFACTORING_ACTION_SET);
 	
 	// new actions 
-	factory.addNewWizardShortcut("org.eclipse.pde.ui.internal.wizards.project.NewProjectWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.ui.internal.wizards.project.NewFragmentWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.ui.internal.wizards.extension.NewSchemaFileWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.ui.internal.feature.NewFeatureProjectWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.project.NewFragmentWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard");
 	
 	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
 	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$

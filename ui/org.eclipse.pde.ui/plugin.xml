@@ -49,37 +49,37 @@
       <page
             name="%preferences.main.name"
             class="org.eclipse.pde.internal.ui.preferences.MainPreferencePage"
-            id="org.eclipse.pde.MainPreferencePage">
+            id="org.eclipse.pde.ui.MainPreferencePage">
       </page>
       <page
             name="%preferences.runtimeTracing.name"
-            category="org.eclipse.pde.MainPreferencePage"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.RuntimeTracingPreferencePage"
-            id="org.eclipse.pde.RuntimeTracingPage">
+            id="org.eclipse.pde.ui.RuntimeTracingPage">
       </page>
       <page
             name="%preferences.advancedTracing.name"
-            category="org.eclipse.pde.MainPreferencePage"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.AdvancedTracingPreferencePage"
-            id="org.eclipse.pde.AdvancedTracingPage">
+            id="org.eclipse.pde.ui.AdvancedTracingPage">
       </page>
       <page
             name="%preferences.buildpath.name"
-            category="org.eclipse.pde.MainPreferencePage"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
-            id="org.eclipse.pde.BuildpathPreferencePage">
+            id="org.eclipse.pde.ui.BuildpathPreferencePage">
       </page>
       <page
             name="%preferences.target.name"
-            category="org.eclipse.pde.MainPreferencePage"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage"
-            id="org.eclipse.pde.TargetPlatformPreferencePage">
+            id="org.eclipse.pde.ui.TargetPlatformPreferencePage">
       </page>
       <page
             name="%preferences.targetEnv.name"
-            category="org.eclipse.pde.MainPreferencePage"
+            category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage"
-            id="org.eclipse.pde.TargetEnvironmentPreferencePage">
+            id="org.eclipse.pde.ui.TargetEnvironmentPreferencePage">
       </page>
    </extension>
    <extension
@@ -96,7 +96,7 @@
             class="org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard"
             project="true"
             finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
-            id="org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard">
+            id="org.eclipse.pde.ui.NewProjectWizard">
          <description>
             %new.pluginProject.description
          </description>
@@ -108,7 +108,7 @@
             class="org.eclipse.pde.internal.ui.wizards.project.NewFragmentProjectWizard"
             project="true"
             finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
-            id="org.eclipse.pde.internal.ui.wizards.project.NewFragmentWizard">
+            id="org.eclipse.pde.ui.NewFragmentWizard">
          <description>
             %new.fragmentProject.description
          </description>
@@ -118,7 +118,7 @@
             icon="icons/full/obj16/schema_obj.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard"
-            id="org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard">
+            id="org.eclipse.pde.ui.NewSchemaFileWizard">
          <description>
             %new.schemaFile.description
          </description>
@@ -129,7 +129,7 @@
             icon="icons/full/ctool16/convjpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.project.ConvertedProjectWizard"
-            id="org.eclipse.pde.internal.ui.wizards.project.ConvertedProjectWizard">
+            id="org.eclipse.pde.ui.ConvertedProjectWizard">
          <description>
             %new.convert.description
          </description>
@@ -141,7 +141,7 @@
             class="org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard"
             project="true"
             finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
-            id="org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard">
+            id="org.eclipse.pde.ui.NewFeatureProjectWizard">
          <description>
             %new.feature.description
          </description>
@@ -154,7 +154,7 @@
             name="%PluginImportWizard.label"
             icon="icons/full/ctool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
-            id="org.eclipse.pde.import.PluginImportWizard">
+            id="org.eclipse.pde.ui.PluginImportWizard">
          <description>
             %PluginImportWizard.description
          </description>
@@ -166,7 +166,7 @@
             name="%projectGenerators.defaultPlugin.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PluginCodeGeneratorWizard"
-            id="org.eclipse.pde.projectGenerators.default">
+            id="org.eclipse.pde.ui.projectGenerators.default">
          <description>
             %projectGenerators.defaultPlugin.description
          </description>
@@ -176,7 +176,7 @@
             name="%projectGenerators.defaultFragment.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PluginCodeGeneratorWizard"
-            id="org.eclipse.pde.projectGenerators.defaultFragment">
+            id="org.eclipse.pde.ui.projectGenerators.defaultFragment">
          <description>
             %projectGenerators.defaultFragment.description
          </description>
@@ -185,7 +185,7 @@
             name="%projectGenerators.helloWorld.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
-            id="org.eclipse.pde.projectGenerators.helloWorld">
+            id="org.eclipse.pde.ui.projectGenerators.helloWorld">
          <description>
             %projectGenerators.helloWorld.description
          </description>
@@ -194,7 +194,7 @@
             name="%projectGenerators.view.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewNewWizard"
-            id="org.eclipse.pde.projectGenerators.view">
+            id="org.eclipse.pde.ui.projectGenerators.view">
          <description>
             %projectGenerators.view.description
          </description>
@@ -203,7 +203,7 @@
             name="%projectGenerators.multiPageEditor.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorNewWizard"
-            id="org.eclipse.pde.projectGenerators.multiPageEditor">
+            id="org.eclipse.pde.ui.projectGenerators.multiPageEditor">
          <description>
             %projectGenerators.multiPageEditor.description
          </description>
@@ -212,7 +212,7 @@
             name="%projectGenerators.choice.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewPluginTemplateChoiceWizard"
-            id="org.eclipse.pde.projectGenerators.choice">
+            id="org.eclipse.pde.ui.projectGenerators.choice">
          <description>
             %projectGenerators.choice.description
          </description>
@@ -234,7 +234,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="generic"
             class="org.eclipse.pde.internal.ui.wizards.extension.GenericExtensionWizard"
-            id="org.eclipse.pde.newExtension.generic">
+            id="org.eclipse.pde.ui.newExtension.generic">
          <description>
             %newExtension.generic.desc
          </description>
@@ -246,7 +246,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
-            id="org.eclipse.pde.newExtension.hello">
+            id="org.eclipse.pde.ui.newExtension.hello">
          <description>
             %newExtension.templates.hello.desc
          </description>
@@ -258,7 +258,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
-            id="org.eclipse.pde.newExtension.view">
+            id="org.eclipse.pde.ui.newExtension.view">
          <description>
             %newExtension.templates.view.desc
          </description>
@@ -270,7 +270,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
-            id="org.eclipse.pde.newExtension.multiPageEditor">
+            id="org.eclipse.pde.ui.newExtension.multiPageEditor">
          <description>
             %newExtension.templates.multiPageEditor.desc
          </description>
@@ -282,7 +282,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
-            id="org.eclipse.pde.newExtension.newWizard">
+            id="org.eclipse.pde.ui.newExtension.newWizard">
          <description>
             %newExtension.templates.newWizard.desc
          </description>
@@ -294,7 +294,7 @@
             icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
-            id="org.eclipse.pde.newExtension.preferences">
+            id="org.eclipse.pde.ui.newExtension.preferences">
          <description>
             %newExtension.templates.preferences.desc
          </description>
@@ -309,7 +309,7 @@
             filenames="plugin.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
-            id="org.eclipse.pde.manifestEditor">
+            id="org.eclipse.pde.ui.manifestEditor">
       </editor>
       <editor
             name="%editors.fragmentManifest.name"
@@ -318,7 +318,7 @@
             filenames="fragment.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.manifest.FragmentManifestEditor"
-            id="org.eclipse.pde.fragmentEditor">
+            id="org.eclipse.pde.ui.fragmentEditor">
       </editor>
       <editor
             name="%editors.schema.name"
@@ -327,7 +327,7 @@
             extensions="xsd,mxsd"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
-            id="org.eclipse.pde.schemaEditor">
+            id="org.eclipse.pde.ui.schemaEditor">
       </editor>
       <editor
             name="%editors.buildProperties.name"
@@ -336,7 +336,7 @@
             filenames="build.properties"
             contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.build.BuildPropertiesEditor"
-            id="org.eclipse.pde.buildEditor">
+            id="org.eclipse.pde.ui.buildEditor">
       </editor>
       <editor
             name="%editors.featureManifest.name"
@@ -345,7 +345,7 @@
             filenames="feature.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
-            id="org.eclipse.pde.featureEditor">
+            id="org.eclipse.pde.ui.featureEditor">
       </editor>
    </extension>
    <extension
@@ -402,14 +402,14 @@
          point="org.eclipse.ui.views">
       <category
             name="%views.category.name"
-            id="org.eclipse.pde">
+            id="org.eclipse.pde.ui">
       </category>
       <view
             name="%views.plugins.name"
             icon="icons/full/view16/plugins.gif"
-            category="org.eclipse.pde"
+            category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.view.PluginsView"
-            id="org.eclipse.pde.internal.ui.view.PluginsView">
+            id="org.eclipse.pde.ui.PluginsView">
       </view>
    </extension>
    <extension
@@ -417,7 +417,7 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            id="org.eclipse.pde.popupMenus">
+            id="org.eclipse.pde.ui.popupMenus">
          <filter
                name="projectNature"
                value="org.eclipse.jdt.core.javanature">
@@ -426,13 +426,13 @@
                label="%popupMenus.convert.label"
                class="org.eclipse.pde.internal.ui.wizards.project.ConvertJavaToPDEProjectAction"
                menubarPath="additions"
-               id="org.eclipse.pde.ConvertJavaToPDEProject">
+               id="org.eclipse.pde.ui.ConvertJavaToPDEProject">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="feature.xml"
-            id="org.eclipse.pde.featureJar">
+            id="org.eclipse.pde.ui.featureJar">
          <filter
                name="projectNature"
                value="org.eclipse.pde.FeatureNature">
@@ -442,13 +442,13 @@
                class="org.eclipse.pde.internal.ui.feature.BuildFeatureAction"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.pde.BuildFeatureJar">
+               id="org.eclipse.pde.ui.BuildFeatureJar">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
-            id="org.eclipse.pde.pluginBuild">
+            id="org.eclipse.pde.ui.pluginBuild">
          <filter
                name="projectNature"
                value="org.eclipse.jdt.core.javanature">
@@ -458,13 +458,13 @@
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.pde.BuildPluginAction">
+               id="org.eclipse.pde.ui.BuildPluginAction">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="fragment.xml"
-            id="org.eclipse.pde.fragmentBuild">
+            id="org.eclipse.pde.ui.fragmentBuild">
          <filter
                name="projectNature"
                value="org.eclipse.jdt.core.javanature">
@@ -474,13 +474,13 @@
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.pde.BuildFragmentAction">
+               id="org.eclipse.pde.ui.BuildFragmentAction">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
-            id="org.eclipse.pde.UpdateClasspathAction1">
+            id="org.eclipse.pde.ui.UpdateClasspathAction1">
          <filter
                name="projectNature"
                value="org.eclipse.jdt.core.javanature">
@@ -491,13 +491,13 @@
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="+"
-               id="UpdateClasspathAction">
+               id="org.eclipse.pde.ui.UpdateClasspathAction1">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="fragment.xml"
-            id="org.eclipse.pde.UpdateClasspathAction2">
+            id="org.eclipse.pde.ui.UpdateClasspathAction2">
          <filter
                name="projectNature"
                value="org.eclipse.jdt.core.javanature">
@@ -508,7 +508,7 @@
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="+"
-               id="UpdateClasspathAction">
+               id="org.eclipse.pde.ui.UpdateClasspathAction2">
          </action>
       </objectContribution>
       <objectContribution
@@ -525,7 +525,7 @@
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
                menubarPath="additions"
                enablesFor="*"
-               id="UpdateClasspathAction">
+               id="org.eclipse.pde.ui.UpdateClasspathAction3">
          </action>
       </objectContribution>
    </extension>
@@ -538,7 +538,7 @@
             wizard="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherWizard"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherDelegate:withWizard"
-            id="org.eclipse.pde.WorkbenchLauncherWithWizard">
+            id="org.eclipse.pde.ui.WorkbenchLauncherWithWizard">
       </launcher>
       <launcher
             label="%newlauncher.regular.label"
@@ -546,7 +546,7 @@
             description="%newlauncher.regular.description"
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherDelegate"
-            id="org.eclipse.pde.WorkbenchLauncher">
+            id="org.eclipse.pde.ui.WorkbenchLauncher">
       </launcher>
    </extension>
    <extension
@@ -555,7 +555,7 @@
             name="%launchConfigurationType.name"
             delegate="org.eclipse.pde.internal.ui.launcher.WorkbenchLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.pde.RuntimeWorkbench">
+            id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
    </extension>
    <extension
@@ -563,7 +563,7 @@
       <launchConfigurationTypeImage
             icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
             configTypeID="org.eclipse.pde.RuntimeWorkbench"
-            id="org.eclipse.pde.runtimeWorkbenchLaunchImage">
+            id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
    <extension
@@ -572,19 +572,19 @@
             name="%launchConfigurationTab.firstTab.name"
             type="org.eclipse.pde.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.BasicLauncherTab"
-            id="org.eclipse.pde.launchConfigurationTab.FirstTab">
+            id="org.eclipse.pde.ui.launchConfigurationTab.FirstTab">
       </launchConfigurationTab>
       <launchConfigurationTab
             name="%launchConfigurationTab.advancedTab.name"
             type="org.eclipse.pde.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.AdvancedLauncherTab"
-            id="org.eclipse.pde.launchConfigurationTab.AdvancedTab">
+            id="org.eclipse.pde.ui.launchConfigurationTab.AdvancedTab">
       </launchConfigurationTab>
       <launchConfigurationTab
             name="%launchConfigurationTab.tracingTab.name"
             type="org.eclipse.pde.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.TracingLauncherTab"
-            id="org.eclipse.pde.launchConfigurationTab.TracingTab">
+            id="org.eclipse.pde.ui.launchConfigurationTab.TracingTab">
       </launchConfigurationTab>
    </extension>
    <extension
@@ -746,14 +746,14 @@
             label="%decorator.label"
             state="true"
             class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectDecorator"
-            id="org.eclipse.pde.binaryProjectDecorator">
+            id="org.eclipse.pde.ui.binaryProjectDecorator">
       </decorator>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.pde.internal.ui.editor.SystemFileEditorInputFactory"
-            id="org.eclipse.pde.systemFileEditorInputFactory">
+            id="org.eclipse.pde.ui.systemFileEditorInputFactory">
       </factory>
    </extension>
 
