@@ -20,8 +20,6 @@ public class PDEPluginConverter {
 			PluginConverter converter = (PluginConverter) tracker.getService();
 			converter.convertManifest(inputFile, outputFile, false, null);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			IFile file = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-			file.setCharset("UTF-8"); //$NON-NLS-1$
 			tracker.close();
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
