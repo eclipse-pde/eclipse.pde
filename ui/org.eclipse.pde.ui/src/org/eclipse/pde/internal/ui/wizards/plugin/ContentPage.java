@@ -296,7 +296,7 @@ public abstract class ContentPage extends WizardPage {
 			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
 				if (Character.isJavaIdentifierStart(ch))
-					buffer.append(ch);
+					buffer.append(Character.toLowerCase(ch));
 			} else {
 				if (Character.isJavaIdentifierPart(ch) || ch == '.')
 					buffer.append(ch);
