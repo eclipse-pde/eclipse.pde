@@ -198,7 +198,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			cssFile =
 				new File(
 					BootLoader.getInstallURL().getFile()
-						+ "plugins/"
+						+ "/plugins/"
 						+ descriptor.toString() + File.separator 
 						+ SchemaTransformer.getPlatformCSSName());
 		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
@@ -208,7 +208,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			cssFile =
 				new File(
 					BootLoader.getInstallURL().getFile()
-						+ "plugins/"
+						+ "/plugins/"
 						+ descriptor.toString() + File.separator 
 						+ SchemaTransformer.getSchemaCSSName());
 		} else{

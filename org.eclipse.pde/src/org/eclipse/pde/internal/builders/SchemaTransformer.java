@@ -335,7 +335,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				cssFile =
 					new File(
 						BootLoader.getInstallURL().getFile()
-							+ "plugins/"
+							+ "/plugins/"
 							+ descriptor.toString() + File.separator 
 							+ getPlatformCSSName());
 			}
@@ -437,20 +437,14 @@ public class SchemaTransformer implements ISchemaTransformer {
 		try {
 			switch (cssPurpose) {
 				case (TEMP) :
-				IPluginDescriptor descriptor =
-					(IPluginDescriptor) Platform
-						.getPluginRegistry()
-						.getPluginDescriptor(
-						PLATFORM_PLUGIN_DOC);
-				if (descriptor == null)
-					return;
-					addCSS(
-						out,
-						new URL(BootLoader.getInstallURL()
-							+ "plugins/"
-							+ descriptor.toString() + File.separator
-							+ getSchemaCSSName()),
-							cssPurpose);
+					IPluginDescriptor descriptor =
+						(IPluginDescriptor) Platform
+							.getPluginRegistry()
+							.getPluginDescriptor(
+							PLATFORM_PLUGIN_DOC);
+					if (descriptor == null)
+						return;
+					addCSS(out,new URL(BootLoader.getInstallURL()+  "/plugins/"+ descriptor.toString() + File.separator+ getSchemaCSSName()),cssPurpose);
 					break;
 				case (GENERATE_DOC) :
 					out.println(
