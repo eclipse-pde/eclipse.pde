@@ -285,6 +285,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	javac.setClasspath(getClasspath(model, jar));
 	javac.setDestdir(destdir);
 	javac.setFailOnError("no");
+	javac.setDebug("on");
 	javac.setIncludeAntRuntime("no");
 	String[] sources = jar.getSource();
 	javac.setSrcdir(sources);
