@@ -106,6 +106,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_FEATURE_ARCHIVE_PREFIX = "featureArchivePrefix"; //$NON-NLS-1$
 	public static final String PROPERTY_COLLECTING_FOLDER = "collectingFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_ARCHIVE_FULLPATH = "archiveFullPath"; //$NON-NLS-1$
+	public static final String PROPERTY_ARCHIVE_PARENT = "archiveParentFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_BUILD_ID_PARAM = "buildId"; //$NON-NLS-1$
 	public static final String PROPERTY_ZIP_ARGS = "zipargs"; //$NON-NLS-1$
 	public static final String PROPERTY_DOWNLOAD_DIRECTORY = "downloadDirectory"; //$NON-NLS-1$

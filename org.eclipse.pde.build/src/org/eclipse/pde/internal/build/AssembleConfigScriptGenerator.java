@@ -201,6 +201,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		if (!"folder".equalsIgnoreCase(outputFormat)) //$NON-NLS-1$
 			script.printDeleteTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
+		script.printDirName(PROPERTY_ARCHIVE_PARENT, getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
+		script.printMkdirTask(getPropertyFormat(PROPERTY_ARCHIVE_PARENT));
 		script.printMkdirTask(getPropertyFormat(PROPERTY_ASSEMBLY_TMP));
 		script.printMkdirTask(getPropertyFormat(PROPERTY_BUILD_LABEL));
 	}

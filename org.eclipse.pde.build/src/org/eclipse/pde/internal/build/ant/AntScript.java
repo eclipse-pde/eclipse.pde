@@ -633,4 +633,17 @@ public class AntScript {
 		printAttribute("property", propertyName, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
+
+	/**
+	 * Print a <code> dirname </code> task to the script.
+	 * @param property
+	 * @param file
+	 */
+	public void printDirName(String property, String file) {
+		printTab();
+		output.print("<dirname"); //$NON-NLS-1$
+		printAttribute("property", property, true); //$NON-NLS-1$
+		printAttribute("file", file, true); //$NON-NLS-1$
+		output.println("/>"); //$NON-NLS-1$
+	}
 }
