@@ -18,6 +18,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.IModelProviderListener;
@@ -320,12 +321,18 @@ public class PluginSection
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
 		IFeaturePlugin[] fPlugins = new IFeaturePlugin[objects.length];
+		IPluginModel[] workspacePluginModels = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		try {
 			for (int i = 0; i < objects.length; i++) {
 				FeaturePlugin fPlugin = (FeaturePlugin)objects[i];
 				fPlugin.setModel(model);
 				fPlugin.setParent(feature);
-				//fPlugin.getPluginBase().setPDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel()
+				for (int j = 0; j < workspacePluginModels.length; j++) {
+					if (fPlugin.getPluginBase().getId().equals(workspacePluginModels[j].getPluginBase().getId())) {
+						((Plugin)fPlugin.getPluginBase()).setModel(workspacePluginModels[j].getPluginBase().getModel());
+						break;
+					}
+				}
 				fPlugins[i] = fPlugin;
 			}
 			feature.addPlugins(fPlugins);
