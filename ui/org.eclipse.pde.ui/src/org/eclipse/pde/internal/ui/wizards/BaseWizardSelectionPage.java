@@ -32,8 +32,10 @@ public BaseWizardSelectionPage(String name, String label) {
 }
 public void createDescriptionIn(Composite composite) {
 	descriptionBrowser.createControl(composite);
-	Control c = descriptionBrowser.getControl();	
-	c.setLayoutData(new GridData(GridData.FILL_BOTH));
+	Control c = descriptionBrowser.getControl();
+	GridData gd = new GridData(GridData.FILL_BOTH);
+	gd.widthHint = 200;
+	c.setLayoutData(gd);
 }
 
 protected abstract IWizardNode createWizardNode(WizardElement element);
