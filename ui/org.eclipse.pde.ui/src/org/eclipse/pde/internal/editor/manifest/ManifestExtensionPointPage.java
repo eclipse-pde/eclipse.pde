@@ -25,7 +25,7 @@ public class ManifestExtensionPointPage extends PDEChildFormPage {
 public ManifestExtensionPointPage(ManifestFormPage parentPage, String title) {
 	super(parentPage, title);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new ExtensionPointForm(this);
 }
 public IPropertySheetPage createPropertySheetPage() {

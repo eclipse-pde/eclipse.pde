@@ -26,7 +26,7 @@ public class ManifestRuntimePage extends PDEChildFormPage {
 public ManifestRuntimePage(ManifestFormPage parentPage, String title) {
 	super(parentPage, title);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new RuntimeForm(this);
 }
 }

@@ -13,7 +13,7 @@ public class ComponentReferencePage extends PDEChildFormPage {
 public ComponentReferencePage(PDEFormPage parent, String title) {
 	super(parent, title);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new ReferenceForm(this);
 }
 }

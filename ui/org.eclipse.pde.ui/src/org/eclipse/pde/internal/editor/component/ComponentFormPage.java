@@ -16,7 +16,7 @@ public ComponentFormPage(PDEMultiPageEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new ComponentOutlinePage(this);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new ComponentForm(this);
 }
 }

@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.editor.manifest;
 
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.update.ui.forms.internal.SectionForm;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class ManifestFormPage extends PDEFormPage {
 
@@ -18,7 +18,7 @@ public ManifestFormPage(ManifestEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new ManifestFormOutlinePage(this);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new ManifestForm(this);
 }
 }

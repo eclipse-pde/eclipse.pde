@@ -33,7 +33,7 @@ public class SchemaDocPage extends PDEChildFormPage {
 public SchemaDocPage(SchemaFormPage mainPage) {
 	super(mainPage, PDEPlugin.getResourceString(PAGE_TITLE));
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new DocForm(this);
 }
 public IContentOutlinePage getContentOutlinePage() {

@@ -16,7 +16,7 @@ public BuildPage(PDEMultiPageEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new BuildOutlinePage(this);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new BuildForm(this);
 }
 }

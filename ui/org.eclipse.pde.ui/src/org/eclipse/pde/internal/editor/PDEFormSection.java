@@ -22,7 +22,7 @@ public void modelChanged(IModelChangedEvent e) {
 
 protected void reflow() {
 	super.reflow();
-	SectionForm form = formPage.getForm();
+	AbstractSectionForm form = formPage.getForm();
 	if (form instanceof ScrollableSectionForm) {
 		((ScrollableSectionForm)form).updateScrollBars();
 	}

@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.*;
 
 
 public abstract class PDEFormPage extends EditorPart implements IPDEEditorPage {
-	private SectionForm form;
+	private AbstractSectionForm form;
 	private Control control;
 	private PDEMultiPageEditor editor;
 	private IContentOutlinePage contentOutlinePage;
@@ -59,7 +59,8 @@ public abstract IContentOutlinePage createContentOutlinePage();
 public void createControl(Composite parent) {
 	createPartControl(parent);
 }
-protected abstract SectionForm createForm();
+protected abstract AbstractSectionForm createForm();
+
 public void createPartControl(Composite parent) {
 	control = form.createControl(parent);
 	control.setMenu(editor.getContextMenu());
@@ -92,7 +93,7 @@ public Control getControl() {
 public PDEMultiPageEditor getEditor() {
 	return editor;
 }
-public SectionForm getForm() {
+public AbstractSectionForm getForm() {
 	return form;
 }
 public String getLabel() {

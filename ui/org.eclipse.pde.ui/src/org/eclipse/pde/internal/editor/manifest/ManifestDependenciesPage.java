@@ -37,7 +37,7 @@ public IContentOutlinePage createContentOutlinePage() {
 		form);
 */
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new DependenciesForm(this);
 }
 

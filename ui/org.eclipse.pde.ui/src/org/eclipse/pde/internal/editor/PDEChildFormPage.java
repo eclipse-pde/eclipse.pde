@@ -19,7 +19,7 @@ public PDEChildFormPage(PDEFormPage parentPage, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return null;
 }
-protected abstract SectionForm createForm();
+protected abstract AbstractSectionForm createForm();
 public void doSave(IProgressMonitor monitor) {
 	getForm().commitChanges(true);
 	parentPage.doSave(monitor);

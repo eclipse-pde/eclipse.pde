@@ -37,7 +37,7 @@ public SchemaFormPage(PDEMultiPageEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new SchemaFormOutlinePage(this);
 }
-protected SectionForm createForm() {
+protected AbstractSectionForm createForm() {
 	return new SchemaForm(this);
 }
 public IPropertySheetPage createPropertySheetPage() {
