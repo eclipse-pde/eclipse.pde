@@ -128,6 +128,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createIDEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+		//TODO translate string
 		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -142,6 +143,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createVersionEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+		//TODO translate string
 		fVersionEntry = new FormEntry(client, toolkit, "Version:", null, false);
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
@@ -157,6 +159,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createNameEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+		//TODO translate string
 		fNameEntry = new FormEntry(client, toolkit, "Name:", null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -171,6 +174,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createProviderEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+//		TODO translate string
 		fProviderEntry = new FormEntry(client, toolkit, "Provider:", null,
 				false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this,
@@ -187,6 +191,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createClassEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
+//		TODO translate string
 		boolean editable = getPage().getModel().isEditable();
 		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...",
 				editable);
@@ -264,11 +269,12 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createPluginIDEntry(Composite parent, FormToolkit toolkit,
 			IActionBars actionBars) {
-
+//		TODO translate string
 		Hyperlink link = toolkit.createHyperlink(parent, "Plug-in Id:",
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+				ManifestEditor.openPluginEditor(fPluginIdText.getText());
 			}
 		});
 		Composite client = toolkit.createComposite(parent);
@@ -325,6 +331,7 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
+		//TODO translate string
 		fPluginVersionEntry = new FormEntry(client, toolkit,
 				"Plug-in Version:", null, false);
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
@@ -475,6 +482,7 @@ public class GeneralInfoSection extends PDESection
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*");
+				//TODO translate string
 				dialog.setTitle("Select Type");
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
