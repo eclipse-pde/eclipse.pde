@@ -51,7 +51,10 @@ public class ExtensionPointsSection extends TableSection {
 				IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-			return model.getPluginBase().getExtensionPoints();
+			IPluginBase pluginBase = model.getPluginBase();
+			if (pluginBase!=null)
+				return pluginBase.getExtensionPoints();
+			return new Object[0];
 		}
 	}
 	

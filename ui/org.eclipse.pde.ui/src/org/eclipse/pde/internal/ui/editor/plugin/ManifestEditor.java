@@ -9,23 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.io.*;
+import java.io.File;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
  * @author dejan
  * 
@@ -357,5 +359,33 @@ public class ManifestEditor extends MultiSourceEditor {
 			}
 		}
 		return null;
+	}
+
+	public String getTitle() {
+		IPluginModelBase model = (IPluginModelBase)getAggregateModel();
+		if (model==null || !model.isValid())
+			return super.getTitle();
+		String text = getTitleText(model.getPluginBase());
+		if (text == null)
+			return super.getTitle();
+		return model.getResourceString(text);
+	}
+	
+	public String getTitleProperty() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
+		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+			return IPluginBase.P_NAME;
+		else
+			return IPluginBase.P_ID;
+	}
+	
+	private String getTitleText(IPluginBase pluginBase) {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
+		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+			return pluginBase.getName();
+		else
+			return pluginBase.getId();
 	}
 }

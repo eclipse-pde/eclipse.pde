@@ -128,7 +128,8 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createIDEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		fIdEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.id"), null, false); //$NON-NLS-1$
+		fIdEntry = new FormEntry(client, toolkit, PDEPlugin
+				.getResourceString("GeneralInfoSection.id"), null, false); //$NON-NLS-1$
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -142,7 +143,8 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createVersionEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		fVersionEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.version"), null, false); //$NON-NLS-1$
+		fVersionEntry = new FormEntry(client, toolkit, PDEPlugin
+				.getResourceString("GeneralInfoSection.version"), null, false); //$NON-NLS-1$
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -157,7 +159,8 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createNameEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		fNameEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.name"), null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, PDEPlugin
+				.getResourceString("GeneralInfoSection.name"), null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -171,7 +174,8 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createProviderEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		fProviderEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.provider"), null, //$NON-NLS-1$
+		fProviderEntry = new FormEntry(client, toolkit, PDEPlugin
+				.getResourceString("GeneralInfoSection.provider"), null, //$NON-NLS-1$
 				false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
@@ -188,7 +192,10 @@ public class GeneralInfoSection extends PDESection
 	private void createClassEntry(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 		boolean editable = getPage().getModel().isEditable();
-		fClassEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("GeneralInfoSection.class"), PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ //$NON-NLS-2$
+		fClassEntry = new FormEntry(
+				client,
+				toolkit,
+				PDEPlugin.getResourceString("GeneralInfoSection.class"), PDEPlugin.getResourceString("GeneralInfoSection.browse"), //$NON-NLS-1$ //$NON-NLS-2$
 				editable);
 		fClassEntry
 				.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -264,7 +271,8 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createPluginIDEntry(Composite parent, FormToolkit toolkit,
 			IActionBars actionBars) {
-		Hyperlink link = toolkit.createHyperlink(parent, PDEPlugin.getResourceString("GeneralInfoSection.pluginId"), //$NON-NLS-1$
+		Hyperlink link = toolkit.createHyperlink(parent, PDEPlugin
+				.getResourceString("GeneralInfoSection.pluginId"), //$NON-NLS-1$
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -298,7 +306,8 @@ public class GeneralInfoSection extends PDESection
 				}
 			}
 		});
-		Button button = toolkit.createButton(client, PDEPlugin.getResourceString("GeneralInfoSection.browse"), SWT.PUSH); //$NON-NLS-1$
+		Button button = toolkit.createButton(client, PDEPlugin
+				.getResourceString("GeneralInfoSection.browse"), SWT.PUSH); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PluginSelectionDialog dialog = new PluginSelectionDialog(
@@ -325,7 +334,9 @@ public class GeneralInfoSection extends PDESection
 	}
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
-		fPluginVersionEntry = new FormEntry(client, toolkit,
+		fPluginVersionEntry = new FormEntry(
+				client,
+				toolkit,
 				PDEPlugin.getResourceString("GeneralInfoSection.pluginVersion"), null, false); //$NON-NLS-1$
 		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
@@ -344,7 +355,8 @@ public class GeneralInfoSection extends PDESection
 			IActionBars actionBars) {
 		fMatchLabel = toolkit.createLabel(client, PDEPlugin
 				.getResourceString(KEY_MATCH));
-		fMatchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		fMatchLabel.setForeground(toolkit.getColors()
+				.getColor(FormColors.TITLE));
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
 
@@ -393,7 +405,18 @@ public class GeneralInfoSection extends PDESection
 			return;
 		}
 		refresh();
+		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+			Object obj = e.getChangedObjects()[0];
+			if (obj instanceof IPluginBase) {
+				String property = e.getChangedProperty();
+				if (property != null
+						&& property.equals(getPage().getPDEEditor()
+								.getTitleProperty()))
+					getPage().getPDEEditor().updateTitle();
+			}
+		}
 	}
+
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 				.getContextManager().getAggregateModel();
@@ -412,6 +435,7 @@ public class GeneralInfoSection extends PDESection
 			IPlugin plugin = (IPlugin) pluginBase;
 			fClassEntry.setValue(plugin.getClassName(), true);
 		}
+		getPage().getPDEEditor().updateTitle();
 		super.refresh();
 	}
 	public void cancelEdit() {
@@ -432,7 +456,7 @@ public class GeneralInfoSection extends PDESection
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		InputContextManager manager = getPage().getPDEEditor()
 				.getContextManager();
-		if (manager!=null)
+		if (manager != null)
 			manager.removeInputContextListener(this);
 		super.dispose();
 	}
@@ -475,7 +499,9 @@ public class GeneralInfoSection extends PDESection
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*"); //$NON-NLS-1$
-				dialog.setTitle(PDEPlugin.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
+				dialog
+						.setTitle(PDEPlugin
+								.getResourceString("GeneralInfoSection.selectionTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					fClassEntry.setValue(type.getFullyQualifiedName());

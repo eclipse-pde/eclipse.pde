@@ -222,6 +222,14 @@ public abstract class PDEFormEditor extends FormEditor
 			return super.getTitle();
 		return context.getInput().getName();
 	}
+	
+	public void updateTitle() {
+		firePropertyChange(IWorkbenchPart.PROP_TITLE);
+	}
+
+	public String getTitleProperty() {
+		return "";
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -13,11 +13,11 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.io.File;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.swt.SWTError;
@@ -215,11 +215,29 @@ public class FeatureEditor extends MultiSourceEditor {
 		if (!isModelCorrect(getAggregateModel()))
 			return super.getTitle();
 		IFeatureModel model = (IFeatureModel) getAggregateModel();
-		String name = model.getFeature().getLabel();
+		String name = getTitleText(model.getFeature());
 		if (name == null)
 			return super.getTitle();
 		return model.getResourceString(name);
 	}
+	
+	public String getTitleProperty() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
+		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+			return IFeature.P_LABEL;
+		else
+			return IFeature.P_ID;
+	}
+	
+	private String getTitleText(IFeature feature) {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
+		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
+			return feature.getLabel();
+		else
+			return feature.getId();
+	}	
 
 	protected boolean isModelCorrect(Object model) {
 		return model != null ? ((IFeatureModel) model).isValid() : false;
@@ -240,9 +258,6 @@ public class FeatureEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	public void updateTitle() {
-		firePropertyChange(IWorkbenchPart.PROP_TITLE);
-	}
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
