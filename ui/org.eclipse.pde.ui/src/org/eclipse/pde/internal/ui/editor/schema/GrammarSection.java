@@ -69,9 +69,11 @@ public class GrammarSection extends PDEFormSection {
 			return PDEPlugin.getDefault().getLabelProvider().getText(o);
 		}
 		public Image getImage(Object o) {
-			if (o instanceof ISchemaElement) {
+			if (o instanceof ISchemaObjectReference) {
+				ISchemaObjectReference ref = (ISchemaObjectReference)o;
+				int flags = ref.getReferencedObject()==null?PDELabelProvider.F_ERROR:0;
 				return PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_ELREF_SC_OBJ);
+					PDEPluginImages.DESC_ELREF_SC_OBJ, flags);
 			}
 			return PDEPlugin.getDefault().getLabelProvider().getImage(o);
 		}

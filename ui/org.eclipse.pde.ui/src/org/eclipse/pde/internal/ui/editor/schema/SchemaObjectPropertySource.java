@@ -57,7 +57,8 @@ public java.lang.Object getSourceObject() {
 }
 public boolean isEditable() {
 	ISchemaObject schemaObject = (ISchemaObject)getSourceObject();
-	return schemaObject.getSchema().isEditable();
+	ISchema schema = schemaObject.getSchema();
+	return schema!=null?schema.isEditable():false;
 }
 public void setSourceObject(java.lang.Object newSourceObject) {
 	sourceObject = newSourceObject;

@@ -82,6 +82,8 @@ public class SchemaElementReference
 	public ISchema getSchema() {
 		if (element != null)
 			return element.getSchema();
+		if (compositor != null)
+			return compositor.getSchema();
 		return null;
 	}
 	public ISchemaType getType() {
