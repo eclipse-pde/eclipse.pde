@@ -315,7 +315,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString()); //$NON-NLS-1$
 		script.printAntCallTask(TARGET_ALL_CHILDREN, "false", params); //$NON-NLS-1$
-		IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append(featureFullName + ".log.zip"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
 
@@ -374,7 +373,6 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateCleanTarget() throws CoreException {
 		script.println();
-		IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.feature.clean", featureIdentifier)); //$NON-NLS-1$
 		script.printDeleteTask(null, getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + "/" + featureFullName + ".jar", null); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printDeleteTask(null,  getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + "/" + featureFullName + ".bin.dist.zip", null); //$NON-NLS-1$ //$NON-NLS-2$

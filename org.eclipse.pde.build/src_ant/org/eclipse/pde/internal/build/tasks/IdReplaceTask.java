@@ -21,9 +21,9 @@ import org.apache.tools.ant.Task;
  * 
  */
 public class IdReplaceTask extends Task {
-	private static final String FEATURE = "feature";
-	private static final String ID = "id";
-	private static final String VERSION = "version";
+	private static final String FEATURE = "feature";//$NON-NLS-1$
+	private static final String ID = "id";//$NON-NLS-1$
+	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String COMMA = ","; //$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 	private static final String EMPTY = ""; //$NON-NLS-1$
@@ -209,18 +209,6 @@ public class IdReplaceTask extends Task {
 			}
 		}
 		return result;
-	}
-
-	private static String[] getArrayFromString(String list, String separator) {
-		if (list == null || list.trim().equals(EMPTY))
-			return new String[0];
-		List result = new ArrayList();
-		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
-			String token = tokens.nextToken().trim();
-			if (!token.equals(EMPTY))
-				result.add(token);
-		}
-		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 	private static void transferStreams(InputStream source, OutputStream destination) throws IOException {

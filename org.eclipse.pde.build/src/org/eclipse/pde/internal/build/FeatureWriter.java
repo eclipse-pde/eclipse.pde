@@ -25,8 +25,6 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	protected FeatureBuildScriptGenerator generator;
 	private Map parameters = new HashMap(10);
 
-	private final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
-
 	public FeatureWriter(OutputStream out, Feature feature, FeatureBuildScriptGenerator generator) throws IOException {
 		super(out);
 		this.feature = feature;
