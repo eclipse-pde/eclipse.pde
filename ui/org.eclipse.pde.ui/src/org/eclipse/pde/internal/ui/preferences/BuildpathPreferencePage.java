@@ -27,8 +27,6 @@ public class BuildpathPreferencePage
 		"Preferences.BuildpathPage.fragmentProjectUpdate";
 	private static final String KEY_MANIFEST_UPDATE =
 		"Preferences.BuildpathPage.manifestUpdate";
-	private static final String KEY_CONVERSION_UPDATE =
-		"Preferences.BuildpathPage.conversionUpdate";
 	private static final String KEY_DESCRIPTION =
 		"Preferences.BuildpathPage.description";
 	private static final String KEY_CLASSPATH_CONTAINERS =
@@ -60,12 +58,6 @@ public class BuildpathPreferencePage
 				PDEPlugin.getResourceString(KEY_MANIFEST_UPDATE),
 				getFieldEditorParent());
 		addField(editor);
-		editor =
-			new BooleanFieldEditor(
-				PROP_CONVERSION_UPDATE,
-				PDEPlugin.getResourceString(KEY_CONVERSION_UPDATE),
-				getFieldEditorParent());
-		addField(editor);
 		new Label(getFieldEditorParent(), SWT.NULL);
 		editor =
 			new BooleanFieldEditor(
@@ -94,11 +86,6 @@ public class BuildpathPreferencePage
 	public static boolean isManifestUpdate() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(PROP_MANIFEST_UPDATE);
-	}
-
-	public static boolean isConversionUpdate() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PROP_CONVERSION_UPDATE);
 	}
 	
 	public static boolean getUseClasspathContainers() {

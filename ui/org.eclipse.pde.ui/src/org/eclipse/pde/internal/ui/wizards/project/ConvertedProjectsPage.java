@@ -31,12 +31,12 @@ import org.eclipse.core.resources.*;
 import java.util.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.PDE;
-
-public class ConvertedProjectsPage extends WizardPage {
+import org.eclipse.jface.dialogs.*;
+	
+public class ConvertedProjectsPage extends WizardPage  {
 	private Button updateBuildPathButton;
 	private CheckboxTableViewer projectViewer;
 	public static final String KEY_TITLE = "ConvertedProjectWizard.title";
@@ -47,25 +47,25 @@ public class ConvertedProjectsPage extends WizardPage {
 	public static final String KEY_DESC = "ConvertedProjectWizard.desc";
 	public static final String KEY_PROJECT_LIST =
 		"ConvertedProjectWizard.projectList";
-	private Vector initialSelection;
+	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate";
 	private TablePart tablePart;
 
+	
 	public class ProjectContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
-		public Object[] getElements(Object parent) {
-			IWorkspace workspace = PDEPlugin.getWorkspace();
+		public Object[] getElements(Object parent) {			
+			IWorkspace workspace = (IWorkspace)parent;
 			return workspace.getRoot().getProjects();
-		}
+		}		
 	}
 
 	public class ProjectLabelProvider
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			if (index == 0) {
+			if (index == 0) 
 				return ((IProject) obj).getName();
-			}
 			return "";
 		}
 		public Image getColumnImage(Object obj, int index) {
@@ -80,6 +80,22 @@ public class ConvertedProjectsPage extends WizardPage {
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			setPageComplete(count > 0);
+			if (updateBuildPathButton == null)
+				return;
+
+			Object[] selected = tablePart.getSelection();
+			updateBuildPathButton.setEnabled(false);
+			for (int i = 0; i < selected.length; i++) {
+				try {
+					if (((IProject) selected[i])
+						.hasNature(JavaCore.NATURE_ID)) {
+						updateBuildPathButton.setEnabled(true);
+						break;
+					}
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
 		}
 	}
 
@@ -87,10 +103,9 @@ public class ConvertedProjectsPage extends WizardPage {
 		super("convertedProjects");
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		this.initialSelection = initialSelection;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PROJECT_LIST));
 	}
-
+	
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -106,51 +121,33 @@ public class ConvertedProjectsPage extends WizardPage {
 		projectViewer.setLabelProvider(new ProjectLabelProvider());
 		projectViewer.addFilter(new ViewerFilter () {
 			public boolean select(Viewer viewer, Object parent, Object object) {
-				return isCandidate((IProject)object);
+				IProject project = (IProject)object;
+				return (project.isOpen() && !PDE.hasPluginNature(project));
 			}
 		});
-		
-		GridData gd = (GridData) tablePart.getControl().getLayoutData();
-		gd.heightHint = 200;
-
+		projectViewer.setInput(PDEPlugin.getWorkspace());
+	
 		updateBuildPathButton = new Button(container, SWT.CHECK);
 		updateBuildPathButton.setText(
 			PDEPlugin.getResourceString(KEY_UPDATE_BUILD_PATH));
-		boolean value = BuildpathPreferencePage.isConversionUpdate();
-		updateBuildPathButton.setSelection(value);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		updateBuildPathButton.setLayoutData(gd);
-
-		projectViewer.setInput(PDEPlugin.getWorkspace());
-		if (initialSelection != null)
-			tablePart.setSelection(initialSelection.toArray());
-		else 
-			//defect 17757
-			tablePart.updateCounter(0);
+		updateBuildPathButton.setSelection(
+			getDialogSettings().getBoolean(UPDATE_SECTION));
+		updateBuildPathButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		updateBuildPathButton.setEnabled(false);
+		
+		tablePart.updateCounter(0);
+			
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);
 	}
 
-	private boolean isCandidate(IProject project) {
-		if (project.isOpen()) {
-			try {
-				if (project.hasNature(JavaCore.NATURE_ID)
-					&& !PDE.hasPluginNature(project))
-					return true;
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-		return false;
-	}
 
 	private static String createInitialName(String id) {
 		int loc = id.lastIndexOf('.');
 		if (loc == -1)
 			return id;
-		String name = id.substring(loc + 1);
-		StringBuffer buf = new StringBuffer(name);
+		StringBuffer buf = new StringBuffer(id.substring(loc + 1));
 		buf.setCharAt(0, Character.toUpperCase(buf.charAt(0)));
 		return buf.toString();
 	}
@@ -158,18 +155,20 @@ public class ConvertedProjectsPage extends WizardPage {
 		throws CoreException {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
-		IProject project = file.getProject();
 		IPlugin plugin = model.getPlugin();
-		String id = project.getName();
-		plugin.setId(id);
-		String name = createInitialName(id);
-		plugin.setName(name);
-		plugin.setVersion("0.0.1");
+		plugin.setId(file.getProject().getName());
+		plugin.setName(createInitialName(plugin.getId()));
+		plugin.setVersion("1.0.0");
 		model.save();
 	}
+	
 	public boolean finish() {
-		final boolean updateBuildPath = updateBuildPathButton.getSelection();
+		final boolean updateBuildPath = updateBuildPathButton.getSelection() && updateBuildPathButton.isEnabled();
 		final Object [] selected = tablePart.getSelection();
+		
+		IDialogSettings settings = getDialogSettings();
+		settings.put(UPDATE_SECTION, updateBuildPath);
+		
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
@@ -204,10 +203,13 @@ public class ConvertedProjectsPage extends WizardPage {
 		if (!model.isLoaded())
 			return;
 			
-		ClasspathUtilCore.setClasspath(model, false, null, monitor);
+		ClasspathUtilCore.setClasspath(model, false, null, monitor); // error occurs here on initial
+	
 	}
 
-	public static void convertProject(IProject project, IProgressMonitor monitor)
+	public static void convertProject(
+		IProject project,
+		IProgressMonitor monitor)
 		throws CoreException {
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		IPath manifestPath = project.getFullPath().append("plugin.xml");
@@ -229,30 +231,33 @@ public class ConvertedProjectsPage extends WizardPage {
 				PDEPlugin.BUILD_EDITOR_ID);
 		}
 	}
-	private void convertProjects(Object[] selected, boolean updateBuildPath, IProgressMonitor monitor)
+	
+	private void convertProjects(
+		Object[] selected,
+		boolean updateBuildPath,
+		IProgressMonitor monitor)
 		throws CoreException {
 		int totalCount =
-			updateBuildPath
-				? selected.length
-				: (2 * selected.length);
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_CONVERTING), totalCount);
+			updateBuildPath ? (2 * selected.length) : selected.length;
+		monitor.beginTask(
+			PDEPlugin.getResourceString(KEY_CONVERTING),
+			totalCount);
 		for (int i = 0; i < selected.length; i++) {
-			IProject project = (IProject)selected[i];
-			convertProject(project, monitor);
+			convertProject((IProject) selected[i], monitor);
 			monitor.worked(1);
 		}
-		//WorkspaceModelManager manager =
-			//PDECore.getDefault().getWorkspaceModelManager();
-		//manager.reset();
 
 		if (updateBuildPath) {
 			monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
 			for (int i = 0; i < selected.length; i++) {
-				IProject project = (IProject)selected[i];
-				updateBuildPath(project, monitor);
-				monitor.worked(1);
+				if (((IProject) selected[i]).hasNature(JavaCore.NATURE_ID)) {
+					updateBuildPath((IProject) selected[i], new SubProgressMonitor(monitor,1));
+				} else {
+					monitor.worked(1);
+				}
 			}
 		}
 		monitor.done();
 	}
+
 }

@@ -20,16 +20,12 @@ public class ConvertedProjectWizard extends NewWizard {
 	private static final String KEY_WTITLE = "ConvertedProjectWizard.title";
 
 public ConvertedProjectWizard() {
-	this(null);
-}
-
-public ConvertedProjectWizard(Vector selected) {
-	this.selected = selected;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 }
+
 public void addPages() {
 	mainPage = new ConvertedProjectsPage(selected);
 	addPage(mainPage);

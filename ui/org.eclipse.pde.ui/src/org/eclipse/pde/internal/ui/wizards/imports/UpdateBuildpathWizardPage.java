@@ -56,6 +56,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
 		}
+
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
@@ -75,6 +76,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		super("UpdateBuildpathWizardPage", true);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+
 		this.selected = selected;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -94,6 +96,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		container.setLayout(layout);
 
 		tablePart.createControl(container);
+
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new BuildpathContentProvider());
 		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
@@ -101,9 +104,19 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		GridData gd = (GridData)tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
-
+		
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(selected);
+	
+		int counter = selected.length;
+		// do not count projects without libraries (these will not be displayed in the table)
+		for (int i = 0 ; i<selected.length; i++){
+			if (((IPluginModelBase)selected[i]).getPluginBase().getLibraries().length == 0){
+				counter --;
+			}
+		}
+		tablePart.updateCounter(counter);
+		
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);

@@ -42,7 +42,6 @@ public class UpdateBuildpathWizard extends Wizard {
 	public boolean performFinish() {
 		Object [] finalSelected = page1.getSelected();
 		page1.storeSettings();
-		
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
 		System.arraycopy(finalSelected, 0, modelArray, 0, finalSelected.length);
 		UpdateClasspathAction.run(true, getContainer(), modelArray);
