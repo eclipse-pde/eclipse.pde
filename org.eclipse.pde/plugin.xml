@@ -140,11 +140,11 @@
    </extension>
 
    <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <cheatSheet
+      <cheatsheet
             name="%cheatsheet.name"
             contentFile="cheatsheets/PDE_1.xml"
             id="org.eclipse.pde.pde_1">
          <description>%cheatsheet.desc</description>
-      </cheatSheet>
+      </cheatsheet>
    </extension>
 </plugin>
