@@ -9,17 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.internal.samples;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
+
 /**
  * @author dejan
  * 
@@ -28,26 +31,37 @@ import org.eclipse.ui.wizards.datatransfer.*;
  */
 public class SampleOperation implements IRunnableWithProgress {
 	private static final String SAMPLE_PROPERTIES = "sample.properties"; //$NON-NLS-1$
+
 	private IConfigurationElement sample;
-	private String [] projectNames;
+
+	private String[] projectNames;
+
 	private IFile sampleManifest;
+
 	private IOverwriteQuery query;
+
 	private boolean noToAll;
-	private IProject [] createdProjects;
+
+	private IProject[] createdProjects;
+
 	/**
 	 *  
 	 */
-	public SampleOperation(IConfigurationElement sample, String [] projectNames, IOverwriteQuery query) {
+	public SampleOperation(IConfigurationElement sample, String[] projectNames,
+			IOverwriteQuery query) {
 		this.sample = sample;
 		this.query = query;
 		this.projectNames = projectNames;
 	}
+
 	public IFile getSampleManifest() {
 		return sampleManifest;
 	}
+
 	public IProject[] getCreatedProjects() {
 		return createdProjects;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,24 +70,54 @@ public class SampleOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		try {
-			IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
-			monitor.beginTask(PDEPlugin.getResourceString("SampleOperation.creating"), 4 * projects.length); //$NON-NLS-1$
-			createdProjects = new IProject[projects.length];			
-			for (int i = 0; i < projects.length; i++) {
-				IFile file = importProject(projectNames[i], projects[i], new SubProgressMonitor(
-						monitor, 4));
-				if (file != null && sampleManifest == null)
-					sampleManifest = file;
-				if (file!=null) {
-					createdProjects[i] = file.getProject();
+			IWorkspaceRunnable op = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IConfigurationElement[] projects = sample
+							.getChildren("project"); //$NON-NLS-1$
+					monitor
+							.beginTask(
+									PDEPlugin
+											.getResourceString("SampleOperation.creating"), 4 * projects.length); //$NON-NLS-1$
+					createdProjects = new IProject[projects.length];
+					try {
+					for (int i = 0; i < projects.length; i++) {
+						IFile file = importProject(projectNames[i],
+								projects[i], new SubProgressMonitor(monitor, 4));
+						if (file != null && sampleManifest == null)
+							sampleManifest = file;
+						if (file != null) {
+							createdProjects[i] = file.getProject();
+						}
+					}
+					}
+					catch (InterruptedException e) {
+						throw new OperationCanceledException();
+					}
+					catch (InvocationTargetException e) {
+						throwCoreException(e);
+					}
 				}
-			}
+			};
+			PDEPlugin.getWorkspace().run(op, monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
+		} catch (OperationCanceledException e) {
+			throw e;
 		} finally {
 			monitor.done();
 		}
 	}
+	
+	private void throwCoreException(InvocationTargetException e) throws CoreException {
+		Throwable t = e.getCause();
+		Status status= new Status(IStatus.ERROR, 
+				PDEPlugin.PLUGIN_ID,
+				IStatus.OK,
+				e.getMessage(),
+				t);
+		throw new CoreException(status);
+	}
+
 	private IFile importProject(String name, IConfigurationElement config,
 			IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
@@ -100,8 +144,7 @@ public class SampleOperation implements IRunnableWithProgress {
 			if (!skip) {
 				project.delete(true, true, new SubProgressMonitor(monitor, 1));
 				project = root.getProject(name);
-			}
-			else
+			} else
 				monitor.worked(1);
 		}
 		if (skip) {
@@ -118,6 +161,7 @@ public class SampleOperation implements IRunnableWithProgress {
 		return createSampleManifest(project, config, new SubProgressMonitor(
 				monitor, 1));
 	}
+
 	private IFile createSampleManifest(IProject project,
 			IConfigurationElement config, IProgressMonitor monitor)
 			throws CoreException {
@@ -126,7 +170,8 @@ public class SampleOperation implements IRunnableWithProgress {
 			try {
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				Properties properties = new Properties();
-				createSampleManifestContent(config.getAttribute("name"), properties); //$NON-NLS-1$
+				createSampleManifestContent(
+						config.getAttribute("name"), properties); //$NON-NLS-1$
 				properties.store(out, ""); //$NON-NLS-1$
 				out.flush();
 				String contents = out.toString();
@@ -141,7 +186,9 @@ public class SampleOperation implements IRunnableWithProgress {
 		}
 		return file;
 	}
-	private void createSampleManifestContent(String projectName, Properties properties) {
+
+	private void createSampleManifestContent(String projectName,
+			Properties properties) {
 		writeProperty(properties, "id", sample.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 		writeProperty(properties, "name", sample.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
 		writeProperty(properties, "projectName", projectName); //$NON-NLS-1$
@@ -153,11 +200,13 @@ public class SampleOperation implements IRunnableWithProgress {
 			writeProperty(properties, "description", desc[0].getValue()); //$NON-NLS-1$
 		}
 	}
+
 	private void writeProperty(Properties properties, String name, String value) {
 		if (value == null)
 			return;
 		properties.setProperty(name, value);
 	}
+
 	private ZipFile getZipFileFromPluginDir(String pluginRelativePath,
 			IPluginDescriptor pluginDescriptor) throws CoreException {
 		try {
@@ -171,6 +220,7 @@ public class SampleOperation implements IRunnableWithProgress {
 			throw new CoreException(status);
 		}
 	}
+
 	private void importFilesFromZip(ZipFile srcZipFile, IPath destPath,
 			IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {

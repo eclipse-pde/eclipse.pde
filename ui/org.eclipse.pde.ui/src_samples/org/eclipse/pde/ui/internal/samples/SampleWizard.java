@@ -127,10 +127,12 @@ public class SampleWizard extends Wizard
 			PDEPlugin.logException(e);
 			return false;
 		} catch (InterruptedException e) {
-			PDEPlugin.logException(e);
+			//PDEPlugin.logException(e);
 			return false;
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+			return false;
+		} catch (OperationCanceledException e) {
 			return false;
 		}
 		return true;
