@@ -109,9 +109,6 @@
       <extraClasspathEntry
             library="ant_tasks/pde-ant.jar">
       </extraClasspathEntry>
-      <extraClasspathEntry
-            library="pde.jar">
-      </extraClasspathEntry>
    </extension>
    <extension
          id="validation-marker"
