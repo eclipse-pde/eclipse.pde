@@ -66,7 +66,7 @@ public class Bundle extends BundleObject implements IBundle {
 		// migrate from a plug-in
 		headers.put(KEY_LEGACY, "true");
 		headers.put(KEY_NAME, plugin.getId());
-		headers.put(KEY_UNIQUEID, plugin.getId());
+		headers.put(KEY_GLOBAL_NAME, plugin.getId());
 		headers.put(KEY_DESC, plugin.getName());
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());

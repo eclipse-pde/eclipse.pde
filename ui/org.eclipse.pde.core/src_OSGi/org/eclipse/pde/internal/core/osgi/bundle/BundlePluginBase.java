@@ -485,7 +485,7 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle == null)
 			return null;
-		String id = bundle.getHeader(IBundle.KEY_UNIQUEID);
+		String id = bundle.getHeader(IBundle.KEY_GLOBAL_NAME);
 		if (id == null)
 			id = bundle.getHeader(IBundle.KEY_NAME);
 		return id;
@@ -500,7 +500,7 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			bundle.setHeader(IBundle.KEY_NAME, id);
-			bundle.setHeader(IBundle.KEY_UNIQUEID, id);
+			bundle.setHeader(IBundle.KEY_GLOBAL_NAME, id);
 		}
 	}
 

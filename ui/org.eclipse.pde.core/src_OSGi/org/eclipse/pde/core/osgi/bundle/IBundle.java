@@ -48,7 +48,7 @@ public interface IBundle extends IWritable {
 	String COMPATIBLE_MATCH = "compatible";
 	String GREATERTHANOREQUAL_MATCH = "greaterthan-or-equal";
 
-	String KEY_UNIQUEID = "Bundle-UniqueId";
+	String KEY_GLOBAL_NAME = "Bundle-GlobalName";
 	String KEY_PROVIDE_PACKAGE = "Provide-Package";
 	String KEY_REQUIRE_BUNDLE = "Require-Bundle";
 	String KEY_HOST_BUNDLE = "Host-Bundle";
@@ -79,7 +79,7 @@ public interface IBundle extends IWritable {
 			KEY_PROVIDE_PACKAGE,
 			KEY_REQUIRE_BUNDLE,
 			KEY_HOST_BUNDLE,
-			KEY_UNIQUEID,
+			KEY_GLOBAL_NAME,
 			KEY_LEGACY,
 			KEY_PLUGIN };
 
