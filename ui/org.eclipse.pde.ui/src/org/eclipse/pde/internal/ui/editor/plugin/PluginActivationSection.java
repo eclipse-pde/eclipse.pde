@@ -251,17 +251,19 @@ public class PluginActivationSection extends TableSection
 					.createLabel(
 							topContainer,
 							PDEPlugin.getResourceString("PluginActivationSection.manifestRequired")); //$NON-NLS-1$
-			Hyperlink manifestLink = toolkit.createHyperlink(topContainer,
-					PDEPlugin.getResourceString("PluginActivationSection.createManifest"), SWT.NULL); //$NON-NLS-1$
-			manifestLink.addHyperlinkListener(new IHyperlinkListener() {
-				public void linkActivated(HyperlinkEvent e) {
-					handleConvert();
-				}
-				public void linkExited(HyperlinkEvent e) {
-				}
-				public void linkEntered(HyperlinkEvent e) {
-				}
-			});
+			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+				Hyperlink manifestLink = toolkit.createHyperlink(topContainer,
+						PDEPlugin.getResourceString("PluginActivationSection.createManifest"), SWT.NULL); //$NON-NLS-1$
+				manifestLink.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkActivated(HyperlinkEvent e) {
+						handleConvert();
+					}
+					public void linkExited(HyperlinkEvent e) {
+					}
+					public void linkEntered(HyperlinkEvent e) {
+					}
+				});
+			}
 			bundleModeChanged(getContextId().equals(BundleInputContext.CONTEXT_ID));
 		}
 

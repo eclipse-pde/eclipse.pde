@@ -42,7 +42,7 @@ public class PDEPluginConverter {
 
 	public static void convertToOSGIFormat(IProject project, String filename, String[] packageNames, IProgressMonitor monitor) throws CoreException {
 		try {
-			String target = "3.0"; // TODO this need to be a param to this method.
+			String target = PDECore.getDefault().getTargetVersion();
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
 			File inputFile = new File(project.getLocation().append(filename).toOSString());
