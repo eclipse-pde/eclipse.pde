@@ -7,7 +7,6 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -129,7 +128,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 			if (project != null) {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
 						PlatformUI.getWorkbench().getProgressService(),
-						getSearchScope(project),
+						SearchEngine.createWorkspaceScope(),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
 						"*"); //$NON-NLS-1$
 				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
@@ -140,25 +139,6 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 			}
 		} catch (CoreException e) {
 		}
-	}
-	private IJavaSearchScope getSearchScope(IProject project) {
-		IJavaProject jProject = JavaCore.create(project);
-		return SearchEngine.createJavaSearchScope(getDirectRoots(jProject));
-	}
-	private IPackageFragmentRoot[] getDirectRoots(IJavaProject project) {
-		ArrayList result = new ArrayList();
-		try {
-			IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
-						|| (roots[i].isArchive() && !roots[i].isExternal())) {
-					result.add(roots[i]);
-				}
-			}
-		} catch (JavaModelException e) {
-		}
-		return (IPackageFragmentRoot[]) result
-				.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 	private IPluginBase getPluginBase() {
 		IBaseModel model = part.getPage().getPDEEditor().getAggregateModel();
