@@ -11,15 +11,13 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -38,8 +36,8 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	}
 
 	public Object[] getListElements() {
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getWorkspaceFeatureModels();
+		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		return manager.getFeatureModels();
 	}
 	
 	protected void hookHelpContext(Control control) {
@@ -58,7 +56,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 				tokens.add(tokenizer.nextToken());
 			}
 			ArrayList selected = new ArrayList();
-			IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+			IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 			for (int i = 0; i < models.length; i++) {
 				if (tokens.contains(models[i].getFeature().getId()))
 					selected.add(models[i]);

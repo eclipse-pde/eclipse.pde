@@ -92,11 +92,11 @@ public void createControl(Composite parent) {
 }
 private WorkspacePluginModelBase findFragment(String id) {
 	IPluginModelBase[] models =
-		PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+		PDECore.getDefault().getWorkspaceModelManager().getFragmentModels();
 	return findWorkspaceModelBase(models, id);
 }
 private WorkspacePluginModelBase findModel(String id) {
-	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getPluginModels();
 	return findWorkspaceModelBase(models, id);
 }
 private IFeaturePlugin findPluginReference(String id) {

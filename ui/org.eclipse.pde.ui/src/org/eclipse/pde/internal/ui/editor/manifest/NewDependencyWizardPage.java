@@ -257,14 +257,14 @@ public class NewDependencyWizardPage extends WizardPage {
 	}
 
 	private Object[] getExternalPlugins() {
-		return PDECore.getDefault().getExternalModelManager().getModels();
+		return PDECore.getDefault().getExternalModelManager().getPluginModels();
 	}
 
 	private Object[] getWorkspacePlugins() {
 		return PDECore
 			.getDefault()
 			.getWorkspaceModelManager()
-			.getWorkspacePluginModels();
+			.getPluginModels();
 	}
 
 	public void init(IWorkbench workbench) {

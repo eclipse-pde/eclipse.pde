@@ -10,28 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.layout.*;
 import java.util.*;
-import org.eclipse.jface.wizard.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.core.*;
 
 public class PointSelectionPage
 	extends WizardPage
@@ -97,15 +97,15 @@ public class PointSelectionPage
 		implements IStructuredContentProvider {
 		private Vector points = null;
 		public Object[] getElements(Object parent) {
-			if (parent instanceof ExternalModelManager) {
+			if (parent instanceof IExternalModelManager) {
 				if (points == null) {
 					points = new Vector();
-					WorkspaceModelManager manager =
+					IWorkspaceModelManager manager =
 						PDECore.getDefault().getWorkspaceModelManager();
-					addPoints(manager.getWorkspacePluginModels());
-					ExternalModelManager registry =
-						(ExternalModelManager) parent;
-					addPoints(registry.getModels());
+					addPoints(manager.getPluginModels());
+					IExternalModelManager registry =
+						(IExternalModelManager) parent;
+					addPoints(registry.getPluginModels());
 				}
 				Object[] result = new Object[points.size()];
 				points.copyInto(result);
@@ -173,7 +173,7 @@ public class PointSelectionPage
 		if (pluginBase instanceof IPlugin
 			&& pluginBase.getModel().getUnderlyingResource() != null) {
 			// merge points from fragments
-			WorkspaceModelManager manager =
+			IWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IFragment[] fragments =
 				manager.getFragmentsFor(

@@ -15,26 +15,20 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.ui.ClasspathUtil;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-
-import org.eclipse.jdt.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.ui.ClasspathUtil;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 
@@ -150,7 +144,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private IPluginModelBase findModelFor(IProject project) {
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}

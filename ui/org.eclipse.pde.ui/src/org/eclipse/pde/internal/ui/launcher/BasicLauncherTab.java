@@ -15,13 +15,11 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -359,7 +357,7 @@ public class BasicLauncherTab
 	private String getClasspathEntries() {
 		if (currentClasspath != null)
 			return currentClasspath;
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsmodels = manager.getAllModels();
 		currentClasspath = LauncherUtils.getBuildOutputFolders(wsmodels);
 		return currentClasspath;

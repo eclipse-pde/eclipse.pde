@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.IExternalModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
@@ -290,7 +291,7 @@ public abstract class AbstractNewPluginTemplateWizard
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					if (askToEnable()) {
-						ExternalModelManager mng =
+						IExternalModelManager mng =
 							PDECore.getDefault().getExternalModelManager();
 						mng.enableAll();
 						result[0] = true;

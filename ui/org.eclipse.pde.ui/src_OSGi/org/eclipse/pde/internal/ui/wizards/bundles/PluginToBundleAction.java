@@ -21,10 +21,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.bundle.IBundle;
+import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -145,7 +146,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private IPluginModelBase findModelFor(IProject project) {
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		return (IPluginModelBase) manager.getWorkspaceModel(project);
 	}

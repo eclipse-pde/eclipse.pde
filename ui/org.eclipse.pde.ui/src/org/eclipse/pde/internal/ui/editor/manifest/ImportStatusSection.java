@@ -309,13 +309,13 @@ private Object[] getReferences() {
 		IPluginBase plugin = model.getPluginBase();
 		String referenceId = plugin.getId();
 
-		ExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
+		IExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
 		WorkspaceModelManager manager =
 			(WorkspaceModelManager) PDECore.getDefault().getWorkspaceModelManager();
 		
-		createReferences(references, manager.getWorkspacePluginModels(), referenceId);
+		createReferences(references, manager.getPluginModels(), referenceId);
 		if (registry.hasEnabledModels())
-			createReferences(references, registry.getModels(), referenceId);
+			createReferences(references, registry.getPluginModels(), referenceId);
 	}
 	return references.toArray();
 }
@@ -346,7 +346,7 @@ private Object[] getFragmentReferences() {
 		IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		String referenceId = plugin.getId();
-		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IFragment [] fragments = wm.getFragmentsFor(referenceId, plugin.getVersion());
 		for (int i=0; i<fragments.length; i++) {
 			freferences.add(fragments[i]);

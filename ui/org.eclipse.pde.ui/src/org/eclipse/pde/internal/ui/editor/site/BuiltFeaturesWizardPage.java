@@ -17,7 +17,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.SiteBuildFeature;
@@ -139,8 +140,8 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
-		return mng.getWorkspaceFeatureModels();
+		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		return mng.getFeatureModels();
 	}
 
 	public boolean finish() {

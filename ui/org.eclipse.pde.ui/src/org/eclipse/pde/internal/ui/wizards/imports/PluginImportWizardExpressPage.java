@@ -1,36 +1,25 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 /**
@@ -48,7 +37,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList result = new ArrayList();
-			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			for (int i = 0; i < projects.length; i++) {
 				if (projects[i].isOpen()
 					&& WorkspaceModelManager.isPluginProject(projects[i])
@@ -173,7 +162,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void initialize() {
 		Object[] items = initialSelection.toArray();
 		ArrayList list = new ArrayList();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];

@@ -239,7 +239,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		generator.setDevEntries(new String[] { "bin" });
 
 		ArrayList paths = new ArrayList();
-		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			try {
 				paths.add(new URL("file:" + models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"));

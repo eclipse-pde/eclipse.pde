@@ -64,7 +64,7 @@ public class DetailExtensionSection
 	private Image genericElementImage;
 	//private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
-	private ExternalModelManager pluginInfoRegistry;
+	private IExternalModelManager pluginInfoRegistry;
 	private DrillDownAdapter drillDownAdapter;
 	private Action newExtensionAction;
 	private Action collapseAllAction;
@@ -592,7 +592,7 @@ public class DetailExtensionSection
 	}
 	public static String resolveObjectName(
 		SchemaRegistry schemaRegistry,
-		ExternalModelManager pluginInfoRegistry,
+		IExternalModelManager pluginInfoRegistry,
 		Object obj) {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {

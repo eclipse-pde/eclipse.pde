@@ -18,7 +18,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
@@ -95,7 +95,7 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		ISiteBuildModel buildModel = model.getBuildModel();
 		if (buildModel != null)
 			buildModel.removeModelChangedListener(this);
-		WorkspaceModelManager mng =
+		IWorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
@@ -174,7 +174,7 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		getTablePart().setButtonEnabled(0, buildModel.isEditable());
 		model.addModelChangedListener(this);
 		buildModel.addModelChangedListener(this);
-		WorkspaceModelManager mng =
+		IWorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}

@@ -14,7 +14,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -106,20 +106,20 @@ public class PointUsageSection extends TableSection {
 			result.add(thisPluginBase);
 		}
 
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),
 			fullPointId,
-			manager.getWorkspacePluginModels(),
+			manager.getPluginModels(),
 			result);
 
-		ExternalModelManager registry =
+		IExternalModelManager registry =
 			PDECore.getDefault().getExternalModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),
 			fullPointId,
-			registry.getModels(),
+			registry.getPluginModels(),
 			result);
 		return result.toArray();
 	}

@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.ui.feature;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -75,10 +75,10 @@ public class PluginListPage extends WizardPage {
 
 	private Object[] getPluginModels() {
 		if (models == null) {
-			WorkspaceModelManager manager =
+			IWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
-			IPluginModel[] workspaceModels = manager.getWorkspacePluginModels();
-			IFragmentModel[] fragmentModels = manager.getWorkspaceFragmentModels();
+			IPluginModel[] workspaceModels = manager.getPluginModels();
+			IFragmentModel[] fragmentModels = manager.getFragmentModels();
 			models =
 				new IPluginModelBase[workspaceModels.length + fragmentModels.length];
 			System.arraycopy(workspaceModels, 0, models, 0, workspaceModels.length);

@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.ui.feature;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.builder.FragmentBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.builder.PluginBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.*;
 
 public class BuildPluginAction extends BaseBuildAction {
@@ -38,7 +37,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 
 		try {
-			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+			IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);
 			generator.setModelId(model.getPluginBase().getId());
 			generator.generate();

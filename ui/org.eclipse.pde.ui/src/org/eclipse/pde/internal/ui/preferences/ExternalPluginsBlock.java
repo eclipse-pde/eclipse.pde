@@ -10,28 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
-import java.util.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ExternalPluginsBlock {
 	private CheckboxTableViewer pluginListViewer;
@@ -189,7 +188,7 @@ public class ExternalPluginsBlock {
 			changed.clear();
 		}
 		if (type != 0) {
-			ExternalModelManager registry =
+			IExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
 			ModelProviderEvent event =
 				new ModelProviderEvent(
@@ -326,7 +325,7 @@ public class ExternalPluginsBlock {
 
 
 	private void selectNotInWorkspace() {
-		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsModels = wm.getAllModels();
 		IPluginModelBase[] exModels = getAllModels();
 		Vector selected = new Vector();

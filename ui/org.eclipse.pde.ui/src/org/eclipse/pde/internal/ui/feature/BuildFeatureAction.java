@@ -39,7 +39,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setDevEntries(new String[] { "bin" }); // FIXME: look at bug #5747		
 
 		ArrayList paths = new ArrayList();
-		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			try {
 				paths.add(new URL("file:" + models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"));

@@ -323,7 +323,7 @@ public class TracingLauncherTab
 		if (externalList == null) {
 			externalList = new Vector();
 			IPluginModel[] models =
-				PDECore.getDefault().getExternalModelManager().getModels();
+				PDECore.getDefault().getExternalModelManager().getPluginModels();
 			fillTraceableModelList(models, externalList);
 		}
 		return externalList.toArray();
@@ -332,7 +332,7 @@ public class TracingLauncherTab
 		if (workspaceList == null) {
 			workspaceList = new Vector();
 			IPluginModel[] models =
-				PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+				PDECore.getDefault().getWorkspaceModelManager().getPluginModels();
 			fillTraceableModelList(models, workspaceList);
 		}
 		return workspaceList.toArray();

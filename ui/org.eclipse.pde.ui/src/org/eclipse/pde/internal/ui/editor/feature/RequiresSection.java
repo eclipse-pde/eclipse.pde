@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
@@ -198,7 +198,7 @@ public class RequiresSection
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		WorkspaceModelManager mng =
+		IWorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
@@ -281,7 +281,7 @@ public class RequiresSection
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng =
+		IWorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
@@ -415,7 +415,7 @@ public class RequiresSection
 					PDECore
 						.getDefault()
 						.getWorkspaceModelManager()
-						.getWorkspaceFragmentModels();
+						.getFragmentModels();
 				for (int i = 0; i < fragments.length; i++) {
 					IFragment fragment = fragments[i].getFragment();
 					if (fragment.getId().equals(plugin.getId())) {

@@ -14,8 +14,9 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -42,14 +43,14 @@ public class PluginSelectionDialog extends ElementTreeSelectionDialog {
 		}
 		public Object[] getChildren(Object parent) {
 			if (parent == externalPlugins) {
-				ExternalModelManager manager =
+				IExternalModelManager manager =
 					PDECore.getDefault().getExternalModelManager();
-				return manager.getModels();
+				return manager.getPluginModels();
 			}
 			if (parent == workspacePlugins) {
-				WorkspaceModelManager manager =
+				IWorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
-				return manager.getWorkspacePluginModels();
+				return manager.getPluginModels();
 			}
 			return new Object[0];
 		}

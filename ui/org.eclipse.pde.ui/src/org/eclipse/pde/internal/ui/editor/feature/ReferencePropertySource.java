@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
@@ -59,13 +60,13 @@ public class ReferencePropertySource extends FeatureEntryPropertySource {
 			if (reference.getModel().getUnderlyingResource() == null)
 				return null;
 			String id = reference.getId();
-			WorkspaceModelManager manager =
+			IWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase[] models = null;
 			if (reference.isFragment()) {
-				models = manager.getWorkspaceFragmentModels();
+				models = manager.getFragmentModels();
 			} else {
-				models = manager.getWorkspacePluginModels();
+				models = manager.getPluginModels();
 			}
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase modelBase = models[i];

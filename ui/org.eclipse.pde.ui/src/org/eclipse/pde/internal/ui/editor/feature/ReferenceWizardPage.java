@@ -17,16 +17,17 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -127,9 +128,9 @@ public abstract class ReferenceWizardPage extends WizardPage {
 
 	private Object[] getChoices() {
 		if (includeExternal) return getAllChoices();
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModel[] plugins = mng.getWorkspacePluginModels();
-		IFragmentModel[] fragments = mng.getWorkspaceFragmentModels();
+		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		IPluginModel[] plugins = mng.getPluginModels();
+		IFragmentModel[] fragments = mng.getFragmentModels();
 
 		Object[] choices = new Object[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, choices, 0, plugins.length);
