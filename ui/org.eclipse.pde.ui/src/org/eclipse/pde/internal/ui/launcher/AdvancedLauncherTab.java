@@ -417,18 +417,18 @@ public class AdvancedLauncherTab
 		numWorkspaceChecked = 0;
 		numExternalChecked = 0;
 
+
 		for (int i = 0; i < workspaceModels.length; i++) {
 			IPluginModelBase model = workspaceModels[i];
-			pluginTreeViewer.setChecked(model, true);
 			numWorkspaceChecked += 1;
 			String id = model.getPluginBase().getId();
 			if (id != null)
 				wtable.add(model.getPluginBase().getId());
 		}
-		if (numWorkspaceChecked > 0)
-			pluginTreeViewer.setChecked(workspacePlugins, true);
-		pluginTreeViewer.setGrayed(workspacePlugins, false);
-
+		
+		if (numWorkspaceChecked > 0) {
+			pluginTreeViewer.setSubtreeChecked(workspacePlugins, true);
+		}
 
 		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
 		numExternalChecked = externalModels.length;
