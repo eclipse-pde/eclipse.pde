@@ -191,32 +191,35 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		} catch (IOException e) {
 			//ignore
 		}
-		if (manifestStream == null) {
-			PluginConverter converter;
-			try {
-				converter = acquirePluginConverter();
-				return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1", false); //$NON-NLS-1$
-			} catch (PluginConversionException convertException) {
-				if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
-					return null;
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.errorConverting", bundleLocation.getAbsolutePath()), convertException); //$NON-NLS-1$
-				BundleHelper.getDefault().getLog().log(status);
-				return null;
-			} catch (Exception serviceException) {
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.cannotAcquireService", "Plugin converter"), serviceException); //$NON-NLS-1$ //$NON-NLS-2$
-				BundleHelper.getDefault().getLog().log(status);
-				return null;
-			}
-		}
+
+		//The manifestStream is not present 
+		if (manifestStream == null)
+			return convertPluginManifest(bundleLocation, true);
+
 		try {
 			Manifest m = new Manifest(manifestStream);
-			Properties properties = manifestToProperties(m.getMainAttributes());
-			//Add dot on the classpath if none has been specified
-			String classpath = (String) properties.get(Constants.BUNDLE_CLASSPATH);
-			if (classpath == null)
-				properties.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
-			return properties;
+			Properties originalManifest = manifestToProperties(m.getMainAttributes());
 
+			//The manifest has a symbolic name
+			if (originalManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null) {
+				//Add dot on the classpath if none has been specified
+				String classpath = (String) originalManifest.get(Constants.BUNDLE_CLASSPATH);
+				if (classpath == null)
+					originalManifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
+				return originalManifest;
+			}
+
+			//The manifest does not have a symbolic name
+			Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
+			if (generatedManifest == null)
+				return originalManifest;
+			//merge manifests
+			Enumeration enum = originalManifest.keys();
+			while (enum.hasMoreElements()) {
+				Object key = enum.nextElement();
+				generatedManifest.put(key, originalManifest.get(key));
+			}
+			return generatedManifest;
 		} catch (IOException e) {
 			return null;
 		} finally {
@@ -225,6 +228,26 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			} catch (IOException e1) {
 				//Ignore
 			}
+		}
+	}
+
+	private Dictionary convertPluginManifest(File bundleLocation, boolean logConversionException) {
+		PluginConverter converter;
+		try {
+			converter = acquirePluginConverter();
+			return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1", false); //$NON-NLS-1$
+		} catch (PluginConversionException convertException) {
+			if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
+				return null;
+			if (logConversionException) {
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.errorConverting", bundleLocation.getAbsolutePath()), convertException); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(status);
+			}
+			return null;
+		} catch (Exception serviceException) {
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.cannotAcquireService", "Plugin converter"), serviceException); //$NON-NLS-1$ //$NON-NLS-2$
+			BundleHelper.getDefault().getLog().log(status);
+			return null;
 		}
 	}
 
