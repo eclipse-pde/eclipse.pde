@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
-public class MultiPageEditorTemplate extends PDETemplateSection {
+public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	private static final String KEY_TITLE = "MultiPageEditorTemplate.title";
 	private static final String KEY_DESC = "MultiPageEditorTemplate.desc";
 	private static final String KEY_PACKAGE_LABEL =
@@ -124,10 +124,6 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 			}
 		}
 		resetPageState();
-	}
-
-	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.editors";
 	}
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {

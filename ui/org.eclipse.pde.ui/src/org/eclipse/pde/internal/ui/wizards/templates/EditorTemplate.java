@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
-public class EditorTemplate extends PDETemplateSection {
+public class EditorTemplate extends BaseEditorTemplate {
 	public static final String EDITOR_CLASS_NAME = "editorClass";
 	public static final String EDITOR_NAME = "editorName";
 	public static final String EXTENSIONS = "extensions";
@@ -123,13 +123,9 @@ public class EditorTemplate extends PDETemplateSection {
 		resetPageState();
 	}
 
-	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.editors";
-	}
-
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true);
+		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement editorElement = factory.createElement(extension);

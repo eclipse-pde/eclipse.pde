@@ -108,7 +108,7 @@ public class NewExtensionTemplateWizard
 	}
 
 	private void updateDependencies() throws CoreException {
-		IPluginReference[] refs = section.getDependencies();
+		IPluginReference[] refs = section.getDependencies(model.getPluginBase().getSchemaVersion());
 		for (int i = 0; i < refs.length; i++) {
 			IPluginReference ref = refs[i];
 			if (modelContains(ref) == false) {

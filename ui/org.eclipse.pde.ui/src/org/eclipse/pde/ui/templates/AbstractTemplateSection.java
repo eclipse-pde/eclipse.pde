@@ -257,7 +257,7 @@ public abstract class AbstractTemplateSection
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public IPluginReference[] getDependencies() {
+	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}
 

@@ -97,6 +97,9 @@ public class BundleProjectStructurePage extends WizardPage {
 		public String getRuntimeLibraryName() {
 			return library;
 		}
+		public boolean isR3Compatible() {
+			return true;
+		}
 	}
 
 	public BundleProjectStructurePage(IProjectProvider provider, boolean fragment) {

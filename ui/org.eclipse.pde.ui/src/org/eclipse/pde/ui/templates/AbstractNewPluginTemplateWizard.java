@@ -205,7 +205,7 @@ public abstract class AbstractNewPluginTemplateWizard
 			PDEPlugin.getResourceString(KEY_GENERATING),
 			computeTotalWork());
 			
-		ArrayList dependencies = getDependencies();
+		ArrayList dependencies = getDependencies(structureData.isR3Compatible()?"3.0":null);
 		if (!verifyPluginPath(dependencies))
 			throw new InterruptedException();
 			
@@ -249,12 +249,12 @@ public abstract class AbstractNewPluginTemplateWizard
 		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 	}
 
-	private ArrayList getDependencies() {
+	private ArrayList getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		IPluginReference[] list = firstPage.getDependencies();
 		addDependencies(list, result);
 		for (int i = 0; i < activeSections.length; i++) {
-			addDependencies(activeSections[i].getDependencies(), result);
+			addDependencies(activeSections[i].getDependencies(schemaVersion), result);
 		}
 		return result;
 	}

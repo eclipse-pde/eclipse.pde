@@ -48,6 +48,7 @@ public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_LIBRARY = "ProjectStructurePage.library";
 	private static final String KEY_CREATING = "ProjectStructurePage.creating";
 	private static final String KEY_SOURCE = "ProjectStructurePage.source";
+	private static final String KEY_R21 = "ProjectStructurePage.r21";
 
 	private static final String KEY_FTITLE = "ProjectStructurePage.ftitle";
 	private static final String KEY_DESC = "ProjectStructurePage.desc";
@@ -66,6 +67,7 @@ public class ProjectStructurePage extends WizardPage {
 	private Text libraryText;
 	private Composite bottomContainer;
 	private Button simpleChoice;
+	private Button r21Check;
 	private StructureData data;
 	private String projectName;
 
@@ -76,6 +78,7 @@ public class ProjectStructurePage extends WizardPage {
 		String source;
 		IPath jrePath;
 		IPath[] jreSourceAnnotation;
+		boolean r3Compatible;
 
 		public String getPluginId() {
 			return pluginId;
@@ -95,6 +98,9 @@ public class ProjectStructurePage extends WizardPage {
 		}
 		public String getRuntimeLibraryName() {
 			return library;
+		}
+		public boolean isR3Compatible() {
+			return r3Compatible;
 		}
 	}
 
@@ -248,6 +254,17 @@ public class ProjectStructurePage extends WizardPage {
 		buildOutputLabel.setText(PDEPlugin.getResourceString(KEY_OUTPUT));
 		buildOutputText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		buildOutputText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label spacer = new Label(bottomContainer, SWT.NULL);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		spacer.setLayoutData(gd);
+		
+		r21Check = new Button(bottomContainer, SWT.CHECK);
+		r21Check.setText(PDEPlugin.getResourceString(KEY_R21));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		r21Check.setLayoutData(gd);
 	}
 
 	public void createControl(Composite parent) {
@@ -317,6 +334,8 @@ public class ProjectStructurePage extends WizardPage {
 			pluginBase.setId(idText.getText());
 			pluginBase.setVersion("1.0.0");
 			pluginBase.setName(idText.getText());
+			if (!r21Check.getSelection())
+				pluginBase.setSchemaVersion("3.0");
 			model.save();
 		}
 	}
@@ -374,6 +393,7 @@ public class ProjectStructurePage extends WizardPage {
 				: JavaCore.getClasspathVariable("JRE_SRC");
 		data.jreSourceAnnotation =
 			(simpleChoice.getSelection()) ? null : getJRESourceAnnotation();
+		data.r3Compatible = !r21Check.getSelection();
 		return data;
 	}
 
@@ -395,7 +415,7 @@ public class ProjectStructurePage extends WizardPage {
 		}
 		if (sourceText.getText().equals(""))
 			sourceText.setText("src");
-
+		r21Check.setSelection(false);
 	}
 
 	private String setInitialId(String projectName) {
@@ -432,6 +452,7 @@ public class ProjectStructurePage extends WizardPage {
 				|| !oldData.buildOutput.equals(newData.buildOutput)
 				|| !oldData.library.equals(newData.library)
 				|| !oldData.source.equals(newData.source)
+				|| oldData.r3Compatible!=newData.r3Compatible
 				|| !projectName.equals(provider.getProjectName());
 		projectName = provider.getProjectName();
 		return (structureChange);

@@ -527,6 +527,8 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		plugin.setName(data.getName());
 		plugin.setProviderName(data.getProvider());
 		plugin.setVersion(data.getVersion());
+		if (structureData.isR3Compatible())
+			plugin.setSchemaVersion("3.0");
 		if (fragment) {
 			IFragment fragment = (IFragment)plugin;
 			fragment.setPluginId(data.getPluginId());

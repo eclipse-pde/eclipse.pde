@@ -81,6 +81,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * </p>
 	 */
 	protected String getTemplateDirectory() {
+		String schemaVersion = model.getPluginBase().getSchemaVersion();
+		if (schemaVersion!=null)
+			return "templates_"+schemaVersion;
 		return "templates";
 	}
 	/**

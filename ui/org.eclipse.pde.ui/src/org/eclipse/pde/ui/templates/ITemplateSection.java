@@ -184,6 +184,10 @@ public interface ITemplateSection {
 	 * By providing this list, a template enables the template
 	 * wizard to create the correct Java build path so that
 	 * these classes and interfaces are correctly resolved.
+	 * @param schemaVersion version of the target manifest, or 
+	 * <samp>null</samp> if older manifest (prior to 3.0) will
+	 * be created. Depending on the manifest version, the list
+	 * of dependencies may vary.
 	 * <p> 
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -191,7 +195,7 @@ public interface ITemplateSection {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public IPluginReference[] getDependencies();
+	public IPluginReference[] getDependencies(String schemaVersion);
 
 	/**
 	 * Returns identifier of the extension point used in
