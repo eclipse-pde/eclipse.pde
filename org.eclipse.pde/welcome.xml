@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <welcomePage 
- title="Eclipse Plug-in Development Environment (PDE)">
+ title="Eclipse Plug-in Development Environment (PDE)"
+ format="wrap">
  <intro>This page will help familiarize you with the Eclipse Plug-in Development Environment.
 To get started, read the sections below and click on the related links. </intro>
 
