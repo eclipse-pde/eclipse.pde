@@ -39,6 +39,8 @@ public class BuildForm extends ScrollableSectionForm {
 	private BuildContentsSection srcSection;
 	private BuildContentsSection binSection;
 	private RuntimeInfoSection runtimeSection;
+	private JavadocPackagesSection javadocSection;
+	
 	private Button customButton;
 	public BuildForm(BuildPage page) {
 		this.page = page;
@@ -123,14 +125,20 @@ public class BuildForm extends ScrollableSectionForm {
 		classpathSection = new BuildClasspathSection(page);
 		control = classpathSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		control.setLayoutData(gd);
 		classpathSection.setSectionControl(control);
 
+		javadocSection = new JavadocPackagesSection(page);
+		control = javadocSection.createControl(parent,factory);
+		gd = new GridData (GridData.FILL_BOTH);
+		control.setLayoutData(gd);
+		javadocSection.setSectionControl(control);
+		
 		registerSection(runtimeSection);
 		registerSection(srcSection);
 		registerSection(binSection);
 		registerSection(classpathSection);
+		registerSection(javadocSection);
 
 		if (isCustom)
 			disableAllSections();
@@ -160,7 +168,7 @@ public class BuildForm extends ScrollableSectionForm {
 	public void initialize(Object modelObject) {
 		IBuildModel model = (IBuildModel) modelObject;
 		super.initialize(model);
-		setHeadingText(PDEPlugin.getResourceString("BuildPropertiesEditor.header"));
+		setHeadingText(getText());
 		((Composite) getControl()).layout(true);
 	}
 	
@@ -170,6 +178,7 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection.disableSection();
 		srcSection.disableSection();
 		classpathSection.disableSection();
+		javadocSection.disableSection();
 	}
 	
 	public void enableAllSections(){
@@ -178,9 +187,29 @@ public class BuildForm extends ScrollableSectionForm {
 		binSection.enableSection();
 		srcSection.enableSection();
 		classpathSection.enableSection();
+		javadocSection.enableSection();
 	}
 
 	public void setFocus() {
+	}
+	
+	private String getText() {
+		return "Build Configuration";
+		/*IBuildModel buildModel = (IBuildModel)page.getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		String label = "";
+		if (model instanceof IFeatureModel) {
+			label = ((IFeatureModel)model).getFeature().getLabel();
+			if (label == null || label.trim().length() == 0)
+			label = ((IFeatureModel)model).getFeature().getId();
+		} else {
+			label = ((IPluginModelBase)model).getPluginBase().getName();
+			if (label == null || label.trim().length() == 0)
+			label = ((IPluginModelBase)model).getPluginBase().getId();
+		}
+		
+		return label;*/
 	}
 	
 	private String getCustomText() {

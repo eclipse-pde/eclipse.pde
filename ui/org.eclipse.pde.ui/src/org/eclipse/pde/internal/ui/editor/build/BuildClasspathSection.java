@@ -116,13 +116,14 @@ public class BuildClasspathSection
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		setCollapsable(true);
-		setCollapsed(true);
 		initialize();
 
 	}
 
 	public void initialize(){
 		buildModel.addModelChangedListener(this);
+		IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		setCollapsed(entry==null || entry.getTokens().length==0);
 	}
 
 	private void initializeImages() {
@@ -154,7 +155,8 @@ public class BuildClasspathSection
 
 			}
 		});
-		entryTable.setInput(getFormPage().getModel());
+		
+		entryTable.setInput(buildModel);
 		
 		return container;
 	}
@@ -252,15 +254,23 @@ public class BuildClasspathSection
 		Object selection =
 			((IStructuredSelection) entryTable.getSelection())
 				.getFirstElement();
+		int index = entryTable.getTable().getSelectionIndex();
 		if (selection != null && selection instanceof String) {
 			IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 			if (entry != null) {
 				try {
 					entry.removeToken(selection.toString());
 					entryTable.remove(selection);
-					if (entry.getTokens().length == 0) {
+					String[] tokens=entry.getTokens();
+					if (tokens.length == 0) {
 						buildModel.getBuild().remove(entry);
+					} else if (tokens.length >index){
+						entryTable.setSelection(new StructuredSelection(tokens[index]));
+					} else {
+						entryTable.setSelection(new StructuredSelection(tokens[index-1]));
 					}
+					updateRemoveStatus();
+
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
