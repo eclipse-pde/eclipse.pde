@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 
 
 public class NLResourceHelper {
@@ -40,7 +40,7 @@ public class NLResourceHelper {
 	private InputStream getResourceStream(String name, URL[] locations) {
 		URLClassLoader resourceLoader = new URLClassLoader(locations);
 		
-		StringTokenizer tokenizer = new StringTokenizer(BootLoader.getNL(), "_");
+		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_");
 		String language = tokenizer.nextToken();
 		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
 		String variant = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
