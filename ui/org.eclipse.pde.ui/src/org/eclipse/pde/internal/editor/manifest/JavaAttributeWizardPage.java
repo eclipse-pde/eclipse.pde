@@ -345,6 +345,7 @@ private void handleFindPackage(Text target) {
 		SelectionDialog dialog =
 			JavaUI.createPackageDialog(PDEPlugin.getActiveWorkbenchShell(), JavaCore.create(project), 0);
 		dialog.setTitle(PDEPlugin.getResourceString(KEY_PACKAGE_SELECTION));
+		dialog.setMessage("");
 		int status = dialog.open();
 		if (status == SelectionDialog.OK) {
 			Object[] result = dialog.getResult();
