@@ -370,23 +370,35 @@ public class WorkbenchLaunchConfigurationDelegate
 			message,
 			null);
 	}
-	
-	
+		
 	private boolean continueRunning() {
 		final boolean[] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				StringBuffer message = new StringBuffer();
-				String lineSeparator = System.getProperty("line.separator");
-				message.append(PDEPlugin.getResourceString(KEY_DUPLICATES) + lineSeparator + lineSeparator);
-				message.append(PDEPlugin.getResourceString(KEY_DUPLICATE_PLUGINS) + ":" + lineSeparator);
-				for (int i = 0; i < duplicates.size(); i++)
-					message.append(duplicates.get(i) + lineSeparator);
-				result[0] = MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(),PDEPlugin.getResourceString(KEY_TITLE),message.toString());
+				StringBuffer message =
+					new StringBuffer(
+						PDEPlugin.getFormattedMessage(KEY_DUPLICATES, new Integer(duplicates.size()).toString()));
+				if (duplicates.size() <= 5) {
+					String lineSeparator = System.getProperty("line.separator");
+					message.append(
+						lineSeparator
+							+ lineSeparator
+							+ PDEPlugin.getResourceString(KEY_DUPLICATE_PLUGINS)
+							+ ":"
+							+ lineSeparator);
+					for (int i = 0; i < duplicates.size(); i++)
+						message.append(duplicates.get(i) + lineSeparator);
+				}
+				result[0] =
+					MessageDialog.openConfirm(
+						PDEPlugin.getActiveWorkbenchShell(),
+						PDEPlugin.getResourceString(KEY_TITLE),
+						message.toString());
 			}
 		});
 		return result[0];
 	}
+	
 	private boolean  confirmDeleteWorkspace(final File workspaceFile) {
 		final boolean [] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {
