@@ -55,11 +55,11 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			validateVersionAttribute(element, element.getAttributeNode("version")); //$NON-NLS-1$
 		}
 		if (assertAttributeDefined(element, "name", CompilerFlags.ERROR)) { //$NON-NLS-1$
-			validateTranslatableString(element, element.getAttributeNode("name")); //$NON-NLS-1$
+			validateTranslatableString(element, element.getAttributeNode("name"), true); //$NON-NLS-1$
 		}
 		Attr attr = element.getAttributeNode("provider-name"); //$NON-NLS-1$
 		if (attr != null)
-			validateTranslatableString(element, attr);	
+			validateTranslatableString(element, attr, true);	
 	}
 		
 	protected abstract String getRootElementName();

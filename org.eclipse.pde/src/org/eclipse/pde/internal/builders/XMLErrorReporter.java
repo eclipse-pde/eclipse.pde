@@ -273,12 +273,41 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 	
 	private int getAttributeOffset(String name, String value, int offset) throws BadLocationException {
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"=\""+value, true, false, false, false); //$NON-NLS-1$
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"=\""+getWritableString(value), true, false, false, false); //$NON-NLS-1$
 		if (nameRegion != null) {
 			return nameRegion.getOffset();
 		}
 		return -1;
 	}
+	
+	private String getWritableString(String source) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < source.length(); i++) {
+			char c = source.charAt(i);
+			switch (c) {
+				case '&' :
+					buf.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buf.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buf.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buf.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buf.append("&quot;"); //$NON-NLS-1$
+					break;
+				default :
+					buf.append(c);
+					break;
+			}
+		}
+		return buf.toString();
+	}
+
 	
 	protected String getTextContent(Element element) {
 		ElementData data = (ElementData)fOffsetTable.get(element);

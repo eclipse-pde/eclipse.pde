@@ -233,9 +233,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			validateBoolean(element, attr);
 		} 
 		
-		if (attInfo.isTranslatable()) {
-			validateTranslatableString(element, attr);
-		}
+		validateTranslatableString(element, attr, attInfo.isTranslatable());
 		
 		if (attInfo.isDeprecated()) {
 			reportDeprecatedAttribute(element, attr);
@@ -252,7 +250,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			Attr attr = (Attr)attrs.item(i);
 			String name = attr.getName();
 			if ("name".equals(name)) { //$NON-NLS-1$
-				validateTranslatableString(element, attr);
+				validateTranslatableString(element, attr, true);
 			} else if (!"id".equals(name) && !"schema".equals(name) && severity != CompilerFlags.IGNORE) { //$NON-NLS-1$ //$NON-NLS-2$
 				reportUnknownAttribute(element, name, severity);
 			}
@@ -266,18 +264,22 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 		
-	protected void validateTranslatableString(Element element, Attr attr) {
+	protected void validateTranslatableString(Element element, Attr attr, boolean shouldTranslate) {
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		String value = attr.getValue();
-		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report(PDE.getFormattedMessage("Builders.Manifest.non-ext-attribute", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
-		} else if (fModel != null && fModel instanceof AbstractModel) {
-			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
-			if (helper == null || !helper.resourceExists(value)) {
-				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+		if (shouldTranslate) {
+			if (!value.startsWith("%")) { //$NON-NLS-1$
+				report(PDE.getFormattedMessage("Builders.Manifest.non-ext-attribute", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+			} else if (fModel != null && fModel instanceof AbstractModel) {
+				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+				if (helper == null || !helper.resourceExists(value)) {
+					report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+				}
 			}
+		} else if (value.startsWith("%") && !value.startsWith("%%")) {
+			report(PDE.getFormattedMessage("Builders.Manifest.dont-translate-att", attr.getName()), getLine(element, attr.getName()), severity);
 		}
 	}
 	
