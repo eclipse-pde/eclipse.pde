@@ -63,6 +63,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// create project
 		IProject project = createProject();
 		monitor.worked(1);
+		// set classpath if project has a Java nature
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			monitor.subTask(PDEPlugin
+							.getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
+			setClasspath(project, fData);
+			monitor.worked(1);
+		}
 		
 		if (fData instanceof IPluginFieldData) {
 			IPluginFieldData data = (IPluginFieldData) fData;
@@ -109,13 +116,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		monitor.worked(1);
 		
-		// set classpath if project has a Java nature
-		if (project.hasNature(JavaCore.NATURE_ID)) {
-			monitor.subTask(PDEPlugin
-							.getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
-			setClasspath(project, fData);
-			monitor.worked(1);
-		}
 			
 		result = contentWizardResult;
 	}
