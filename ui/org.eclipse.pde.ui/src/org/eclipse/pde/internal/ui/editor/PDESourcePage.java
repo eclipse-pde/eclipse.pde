@@ -4,19 +4,18 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.ui.texteditor.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public abstract class PDESourcePage extends AbstractTextEditor implements IPDEEditorPage {
 	public static final String PAGE_TITLE = "SourcePage.title";
@@ -125,8 +124,13 @@ public boolean isSource() {
 public boolean isVisible() {
 	return editor.getCurrentPage()==this;
 }
+
 public void openTo(Object object) {
+	if (object instanceof IMarker) {
+		gotoMarker((IMarker)object);
+	}
 }
+
 public boolean performGlobalAction(String id) { return true; }
 public String toString() {
 	return getTitle();

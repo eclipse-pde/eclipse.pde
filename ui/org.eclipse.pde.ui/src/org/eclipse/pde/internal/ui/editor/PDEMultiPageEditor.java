@@ -499,9 +499,11 @@ public abstract class PDEMultiPageEditor
 		if (page != null)
 			page.openTo(openToObject);
 	}
-	public void openTo(Object obj) {
+	public void openTo(Object obj, IMarker marker) {
 		if (EditorPreferencePage.getUseSourcePage()) {
 			PDESourcePage sourcePage = (PDESourcePage)showPage(getSourcePageId());
+			if (marker!=null)
+				sourcePage.openTo(marker);
 		}
 		else {
 			IPDEEditorPage page = getPageFor(obj);

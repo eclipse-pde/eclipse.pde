@@ -347,10 +347,17 @@ public class ManifestEditor
 	public static ManifestEditor openPluginEditor(IPluginBase plugin) {
 		return openPluginEditor(plugin, null);
 	}
-
+	
 	public static ManifestEditor openPluginEditor(
 		IPluginBase plugin,
 		Object object) {
+		return openPluginEditor(plugin, object, null);
+	}
+
+	public static ManifestEditor openPluginEditor(
+		IPluginBase plugin,
+		Object object,
+		IMarker marker) {
 		ManifestEditor editor = null;
 		IResource underlyingResource =
 			plugin.getModel().getUnderlyingResource();
@@ -360,7 +367,7 @@ public class ManifestEditor
 			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
 		}
 		if (editor != null && object != null) {
-			editor.openTo(object);
+			editor.openTo(object, marker);
 		}
 		return editor;
 	}
