@@ -89,8 +89,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_XML_ELEMENT_OBJ = create(PATH_OBJ, "element.gif"); //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BUNDLE_OBJ   = create(PATH_OBJ, "bundle_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BUNDLE_FRAGMENT_OBJ   = create(PATH_OBJ, "bundlef_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_CONFIGS_OBJ   = create(PATH_OBJ, "plugin_configs_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_CONFIG_OBJ   = create(PATH_OBJ, "plugin_config_obj.gif"); //$NON-NLS-1$
@@ -199,14 +197,11 @@ public class PDEPluginImages {
 	 * WIZ
 	 */
  	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.gif"); //$NON-NLS-1$
- 	public static final ImageDescriptor DESC_NEWBPRJ_WIZ = create(PATH_WIZBAN, "newbprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWBFPRJ_WIZ = create(PATH_WIZBAN, "newbfprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEFCON_WIZ  = create(PATH_WIZBAN, "defcon_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEX_WIZ   = create(PATH_WIZBAN, "newex_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(PATH_WIZBAN, "newexp_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(PATH_WIZBAN, "newexprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWBEXPRJ_WIZ   = create(PATH_WIZBAN, "newbexprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ   = create(PATH_WIZBAN, "newftrprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFTRPTCH_WIZ = create(PATH_WIZBAN, "newefix_wizban.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ   = create(PATH_WIZBAN, "newsiteprj_wiz.gif"); //$NON-NLS-1$
@@ -218,7 +213,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PLUGIN_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployplug_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extfeat_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployfeat_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN2BUNDLE_WIZ  = create(PATH_WIZBAN, "plugin2bundle_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.gif"); //$NON-NLS-1$

@@ -81,7 +81,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	private boolean fFirstCheck;
 
 	public PluginWorkingSet() {
-		super("page1", PDEPlugin.getResourceString("PluginWorkingSet.title"), PDEPluginImages.DESC_PLUGIN2BUNDLE_WIZ); //$NON-NLS-1$ //$NON-NLS-2$
+		super("page1", PDEPlugin.getResourceString("PluginWorkingSet.title"), PDEPluginImages.DESC_DEFCON_WIZ); //$NON-NLS-1$ //$NON-NLS-2$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
