@@ -56,7 +56,7 @@ public abstract class PDEMultiPageEditor
 	protected Clipboard clipboard;
 	private boolean validated;
 	private ElementListener elementListener;
-	
+
 	class ElementListener implements IElementStateListener {
 		public void elementContentAboutToBeReplaced(Object element) {
 		}
@@ -181,8 +181,8 @@ public abstract class PDEMultiPageEditor
 			firstPageId = getSourcePageId();
 		if (firstPageId != null) {
 			IPDEEditorPage firstPage = getPage(firstPageId);
-			if (firstPage==null)
-				firstPage = (IPDEEditorPage)pages.get(0);
+			if (firstPage == null)
+				firstPage = (IPDEEditorPage) pages.get(0);
 			showPage(firstPage);
 		}
 	}
@@ -201,8 +201,8 @@ public abstract class PDEMultiPageEditor
 		if (modelListener != null && model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(
 				modelListener);
-			if (undoManager!=null)
-			   undoManager.disconnect((IModelChangeProvider) model);
+			if (undoManager != null)
+				undoManager.disconnect((IModelChangeProvider) model);
 		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		disposed = true;
@@ -396,7 +396,7 @@ public abstract class PDEMultiPageEditor
 	public Clipboard getClipboard() {
 		return clipboard;
 	}
-	
+
 	public Control getControl() {
 		return formWorkbook.getControl();
 	}
@@ -460,6 +460,8 @@ public abstract class PDEMultiPageEditor
 			setTitle(((IFile) inputObject).getName());
 		else if (inputObject instanceof java.io.File)
 			setTitle("system:" + ((java.io.File) inputObject).getName());
+		else if (inputObject instanceof IStorage)
+			setTitle(((IStorage) inputObject).getName());
 		else
 			setTitle(input.toString());
 	}
@@ -614,9 +616,9 @@ public abstract class PDEMultiPageEditor
 			PDEPlugin.logException(e);
 		}
 	}
-	
+
 	public void doRevert() {
-		PDESourcePage sourcePage = (PDESourcePage)getPage(getSourcePageId());
+		PDESourcePage sourcePage = (PDESourcePage) getPage(getSourcePageId());
 		sourcePage.doRevertToSaved();
 		updateModel();
 		fireSaveNeeded();
@@ -696,12 +698,13 @@ public abstract class PDEMultiPageEditor
 	}
 
 	public boolean canCopy(ISelection selection) {
-		if (selection==null) return false;
+		if (selection == null)
+			return false;
 		if (selection instanceof IStructuredSelection)
 			return !selection.isEmpty();
 		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection)selection;
-			return textSelection.getLength()>0;
+			ITextSelection textSelection = (ITextSelection) selection;
+			return textSelection.getLength() > 0;
 		}
 		return false;
 	}

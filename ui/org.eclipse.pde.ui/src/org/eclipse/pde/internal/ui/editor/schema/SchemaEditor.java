@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.io.*;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IEditable;
@@ -32,15 +32,18 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 		if (input instanceof File)
 			return createExternalModel((File)input);
 			
-		if (!(input instanceof IFile))
+		if (!(input instanceof IFile)) {
+			if (input instanceof IStorage)
+				return createStorageModel((IStorage)input);
 			return null;
+		}
 
 		IFile file = (IFile) input;
 		FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
 		ISchema schema = sd.getSchema();
 		if (schema.isValid() == false)
 			return null;
-		warnIfOldExtension(file);
+		warnIfOldExtension(file.getName());
 		if (schema instanceof EditableSchema) {
 			((EditableSchema) schema).setNotificationEnabled(true);
 		}
@@ -53,21 +56,22 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
 		ISchema schema = sd.getSchema();
 		if (schema.isValid() == false)
 			return null;
-		warnIfOldExtension(file);
+		warnIfOldExtension(file.getName());
 		if (schema instanceof EditableSchema) {
 			((EditableSchema) schema).setNotificationEnabled(true);
 		}
 		return schema;
 	}
+	
+	private Object createStorageModel(IStorage storage) {
+		StorageSchemaDescriptor sd = new StorageSchemaDescriptor(storage);
+		ISchema schema = sd.getSchema();
+		if (schema.isValid()==false)
+		return null;
+		warnIfOldExtension(storage.getName());
+		return schema;
+	}
 
-	private void warnIfOldExtension(IFile file) {
-		warnIfOldExtension(file.getName());
-	}
-	
-	private void warnIfOldExtension(File file) {
-		warnIfOldExtension(file.getName());
-	}
-	
 	private void warnIfOldExtension(String name) {
 		int dotLoc = name.lastIndexOf('.');
 		if (dotLoc != -1) {

@@ -9,7 +9,7 @@ import java.net.URL;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
-	private Schema schema;
+	protected Schema schema;
 
 	public AbstractSchemaDescriptor() {
 		super();
@@ -34,7 +34,7 @@ public abstract class AbstractSchemaDescriptor implements ISchemaDescriptor {
 		}
 		return schema;
 	}
-	private void loadSchema() {
+	protected void loadSchema() {
 		schema = createSchema();
 		if (schema != null)
 			schema.load();
