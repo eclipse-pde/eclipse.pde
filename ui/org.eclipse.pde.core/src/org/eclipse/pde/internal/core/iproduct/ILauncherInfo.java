@@ -21,10 +21,15 @@ public interface ILauncherInfo extends IProductObject {
 	public static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
 	public static final String P_ICO_PATH = "icoFile"; //$NON-NLS-1$
 	public static final String P_LAUNCHER = "launcher"; //$NON-NLS-1$
+	public static final String P_DIRECTORY = "directory";
 	
 	String getLauncherName();
 	
 	void setLauncherName(String name);
+	
+	String getRootDirectory();
+	
+	void setRootDirectory(String directory);
 	
 	void setIconPath(String iconId, String path);
 	

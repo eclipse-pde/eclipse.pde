@@ -32,6 +32,8 @@ public class LauncherSection extends PDESection {
 	private Button fIcoButton;
 
 	private Button fBmpButton;
+
+	private FormEntry fDirEntry;
 	
 	class IconEntry extends FormEntry {
 		String fIconId;
@@ -78,13 +80,23 @@ public class LauncherSection extends PDESection {
 		client.setLayout(layout);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fNameEntry = new FormEntry(client, toolkit, "Launcher Name:", null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, "Launcher Name:", null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setLauncherName(entry.getValue());
 			}
 		});
 		fNameEntry.setEditable(isEditable());
+		
+		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
+		createLabel(client, toolkit, "Specify the product's root directory.  If unspecifed, the default is 'eclipse'.", 2); //$NON-NLS-1$
+		fDirEntry = new FormEntry(client, toolkit, "Root Directory:", null, false); //$NON-NLS-1$
+		fDirEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getLauncherInfo().setRootDirectory(entry.getValue());
+			}
+		});
+		fDirEntry.setEditable(isEditable());
 		
 		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
 		createLabel(client, toolkit, PDEPlugin.getResourceString("LauncherSection.label"), 2); //$NON-NLS-1$
@@ -136,7 +148,7 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private void createLabel(Composite parent, FormToolkit toolkit, String text, int span) {
-		Label label = toolkit.createLabel(parent, text);
+		Label label = toolkit.createLabel(parent, text, SWT.WRAP);
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		label.setLayoutData(gd);
@@ -190,7 +202,7 @@ public class LauncherSection extends PDESection {
 	public void refresh() {
 		ILauncherInfo info = getLauncherInfo();
 		fNameEntry.setValue(info.getLauncherName(), true);
-		
+		fDirEntry.setValue(info.getRootDirectory(), true);
 		boolean useIco = info.usesWinIcoFile();
 		fIcoButton.setSelection(useIco);
 		fBmpButton.setSelection(!useIco);
@@ -239,6 +251,7 @@ public class LauncherSection extends PDESection {
 	
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
+		fDirEntry.commit();
 		for (int i = 0; i < fIcons.size(); i++)
 			((FormEntry)fIcons.get(i)).commit();
 		super.commit(onSave);
@@ -246,6 +259,7 @@ public class LauncherSection extends PDESection {
 	
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
+		fDirEntry.cancelEdit();
 		for (int i = 0; i < fIcons.size(); i++)
 			((FormEntry)fIcons.get(i)).commit();
 		super.cancelEdit();

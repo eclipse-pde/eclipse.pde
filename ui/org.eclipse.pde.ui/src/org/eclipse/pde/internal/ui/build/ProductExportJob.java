@@ -299,8 +299,11 @@ public class ProductExportJob extends FeatureExportJob {
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
 		}
 		
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "eclipse"); //$NON-NLS-1$  This value and the next one can be set to the product name if the user desires it
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, "eclipse");	// or it can be more than one segment ( like bar/eclipse ) 
+		String root = info.getRootDirectory();
+		if (root == null || root.trim().length() == 0)
+			root = "eclipse";
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, root); //$NON-NLS-1$  This value and the next one can be set to the product name if the user desires it
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, root);	// or it can be more than one segment ( like bar/eclipse ) 
 		return properties;
 	}
 	
