@@ -89,6 +89,7 @@ public class PortabilityChoicesDialog extends Dialog {
 		gd.widthHint = 300;
 		gd.heightHint = 350;
 
+		Dialog.applyDialogFont(parent);
 		initialize();
 		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_PORTABILITY_WIZARD);
 		return container;
