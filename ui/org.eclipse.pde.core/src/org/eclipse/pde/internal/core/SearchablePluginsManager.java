@@ -337,4 +337,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		}
 		return null;
 	}
+	
+	public IJavaProject getProxyProject() {
+		return proxyProject;
+	}
 }
