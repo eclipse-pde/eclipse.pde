@@ -107,13 +107,15 @@ class LogReader {
 					current = entry;
 					addEntry(current, entries, memento, false);
 				} else if (state == SUBENTRY_STATE) {
-					LogEntry entry = new LogEntry();
-					entry.setSession(session);
-					int depth = entry.processLogLine(line, false);
-					setNewParent(parents, entry, depth);
-					current = entry;
-					LogEntry parent = (LogEntry) parents.get(depth - 1);
-					parent.addChild(entry);
+					if (parents.size() > 0) {
+						LogEntry entry = new LogEntry();
+						entry.setSession(session);
+						int depth = entry.processLogLine(line, false);
+						setNewParent(parents, entry, depth);
+						current = entry;
+						LogEntry parent = (LogEntry) parents.get(depth - 1);
+						parent.addChild(entry);
+					}
 				} else if (state == MESSAGE_STATE) {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
@@ -218,13 +220,15 @@ class LogReader {
 					current = entry;
 					addEntry(current, entries, memento, false);
 				} else if (state == SUBENTRY_STATE) {
-					LogEntry entry = new LogEntry();
-					entry.setSession(session);
-					int depth = entry.processLogLine(line, false);
-					setNewParent(parents, entry, depth);
-					current = entry;
-					LogEntry parent = (LogEntry) parents.get(depth - 1);
-					parent.addChild(entry);
+					if (parents.size() > 0) {
+						LogEntry entry = new LogEntry();
+						entry.setSession(session);
+						int depth = entry.processLogLine(line, false);
+						setNewParent(parents, entry, depth);
+						current = entry;
+						LogEntry parent = (LogEntry) parents.get(depth - 1);
+						parent.addChild(entry);
+					}
 				} else if (state == MESSAGE_STATE) {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
