@@ -16,8 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
+import org.eclipse.core.runtime.model.*;
 
 /**
  * General utility class.
@@ -108,13 +107,19 @@ public static String getStringFromArray(String[] values, String separator) {
 	return result.toString();
 }
 
-/**
- *  * @param plugins * @return String[][] */
-public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
+public static String[] computePrerequisiteOrder(PluginModel[] plugins, PluginModel[] fragments) {
+		String[] orderedPlugins = computePrerequisiteOrderPlugins(plugins);
+		if (fragments != null && fragments.length != 0)
+			return insertFragments(orderedPlugins, fragments);
+		return orderedPlugins;
+	}
+
+private static String[] computePrerequisiteOrderPlugins(PluginModel[] plugins) {
 	List prereqs = new ArrayList(9);
 	Set pluginList = new HashSet(plugins.length);
-	for (int i = 0; i < plugins.length; i++) 
+	for (int i = 0; i < plugins.length; i++)
 		pluginList.add(plugins[i].getId());
+		
 	// create a collection of directed edges from plugin to prereq
 	for (int i = 0; i < plugins.length; i++) {
 		boolean boot = false;
@@ -133,10 +138,12 @@ public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 				}
 			}
 		}
-		// if we didn't find any prereqs for this plugin, add a null prereq 
-		// to ensure the value is in the output
+
+		// if we didn't find any prereqs for this plugin, add a null prereq
+		// to ensure the value is in the output	
 		if (!found)
 			prereqs.add(new String[] { plugins[i].getId(), null });
+
 		// if we didn't find the boot or runtime plugins as prereqs and they are in the list
 		// of plugins to build, add prereq relations for them.  This is required since the 
 		// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
@@ -144,19 +151,34 @@ public static String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 		if (plugins[i].getId().equals("org.apache.xerces")) //$NON-NLS-1$
 			continue;
 		if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT});
+			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT });
 		if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
-			prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME});
+			prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME });
 	}
-	// do a topological sort and return the prereqs
+
+	// do a topological sort, insert the fragments into the sorted elements
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
 }
 
-/**
- *  * @param specs * @return String[][] */
-protected static String[][] computeNodeOrder(String[][] specs) {
-	HashMap counts = computeCounts(specs);
+private static String[] insertFragments(String[] orderedPlugins, PluginModel[] fragments) {
+	List sortedPluginList = new ArrayList(Arrays.asList(orderedPlugins));
+	for (int i = 0; i < fragments.length; i++) {
+		int index = sortedPluginList.indexOf(fragments[i].getPluginId());
+		// If the required plug-in for the fragment is not in our list, then add
+		// the fragment to the end of the list. Otherwise add it into the list into
+		// the position right after its plug-in.
+		if (index == -1)
+			sortedPluginList.add(((PluginFragmentModel) fragments[i]).getId());
+		else 
+			sortedPluginList.add(index + 1, ((PluginFragmentModel) fragments[i]).getId());
+	}
+	return (String[]) sortedPluginList.toArray(new String[sortedPluginList.size()]);
+}
+
+
+protected static String[] computeNodeOrder(String[][] specs) {
+	Map counts = computeCounts(specs);
 	List nodes = new ArrayList(counts.size());
 	while (!counts.isEmpty()) {
 		List roots = findRootNodes(counts);
@@ -167,15 +189,15 @@ protected static String[][] computeNodeOrder(String[][] specs) {
 		nodes.addAll(roots);
 		removeArcs(specs, roots, counts);
 	}
-	String[][] result = new String[2][];
-	result[0] = (String[]) nodes.toArray(new String[nodes.size()]);
-	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
+	String[] result = new String[nodes.size()];
+	nodes.toArray(result);
+
 	return result;
 }
 
 /**
  *  * @param counts * @return List */
-protected static List findRootNodes(HashMap counts) {
+protected static List findRootNodes(Map counts) {
 	List result = new ArrayList(5);
 	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
 		String node = (String) i.next();
@@ -188,7 +210,7 @@ protected static List findRootNodes(HashMap counts) {
 
 /**
  *  * @param mappings * @param roots * @param counts */
-protected static void removeArcs(String[][] mappings, List roots, HashMap counts) {
+protected static void removeArcs(String[][] mappings, List roots, Map counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
 		String root = (String) j.next();
 		for (int i = 0; i < mappings.length; i++) {

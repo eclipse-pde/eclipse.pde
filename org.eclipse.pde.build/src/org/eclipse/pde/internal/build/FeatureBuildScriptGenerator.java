@@ -54,7 +54,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 /**
  * Returns a list of PluginModel objects representing the elements. The boolean
  * argument indicates whether the list should consist of plug-ins or fragments.
- *  * @param fragments * @return List * @throws CoreException */
+ * 
+ * @param fragments
+ * @return List
+ * @throws CoreException
+ */
 protected List computeElements(boolean fragments) throws CoreException {
 	List result = new ArrayList(5);
 	IPluginEntry[] pluginList = feature.getPluginEntries();
@@ -78,8 +82,10 @@ protected List computeElements(boolean fragments) throws CoreException {
 
 /**
  * Set the boolean for whether or not children scripts should be generated.
- *  * @param generate <code>true</code> if the children scripts should be generated,
- *     <code>false</code> otherwise */
+ * 
+ * @param generate <code>true</code> if the children scripts should be generated,
+ *     <code>false</code> otherwise
+ */
 public void setGenerateChildrenScript(boolean generate) {
 	generateChildrenScript = generate;
 }
@@ -98,7 +104,8 @@ public String getScriptTargetLocation() {
 }
 
 /**
- * @see AbstractScriptGenerator#generate() */
+ * @see AbstractScriptGenerator#generate()
+ */
 public void generate() throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
@@ -134,11 +141,13 @@ public void generate() throws CoreException {
 
 /**
  * Main call for generating the script.
- *  * @param script the script to add the Ant target to * @throws CoreException */
+ * 
+ * @param script the script to add the Ant target to
+ * @throws CoreException
+ */
 protected void generateBuildScript(AntScript script) throws CoreException {
 	generatePrologue(script);
 	generateAllPluginsTarget(script);
-	generateAllFragmentsTarget(script);
 	generateAllChildrenTarget(script);
 	generateChildrenTarget(script);
 	generateBuildJarsTarget(script);
@@ -155,7 +164,10 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 
 /**
  * Add the <code>build.zips</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(feature);
@@ -180,7 +192,12 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 
 /**
  * Add a <code>zip</code> target to the given Ant script.
- *  * @param script the script to add the targets to * @param zipName the name of the zip file to create * @param source the directory name to read the files from * @throws CoreException */
+ * 
+ * @param script the script to add the targets to
+ * @param zipName the name of the zip file to create
+ * @param source the directory name to read the files from
+ * @throws CoreException
+ */
 protected void generateZipIndividualTarget(AntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -191,7 +208,10 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 
 /**
  * Add the <code>clean</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -210,7 +230,9 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 
 /**
  * Add the <code>zip.logs</code> target to the given Ant script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateZipLogsTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -229,7 +251,9 @@ protected void generateZipLogsTarget(AntScript script) {
 
 /**
  * Add the <code>zip.sources</code> target to the given Ant script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateZipSourcesTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -247,7 +271,10 @@ protected void generateZipSourcesTarget(AntScript script) {
 
 /**
  * Add the <code>gather.bin.parts</code> target to the given Ant script
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -269,7 +296,9 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 
 /**
  * Add the <code>build.update.jar</code> target to the given script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -293,7 +322,9 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 /**
  * Add the <code>zip.distribution</code> target to the given Ant script. Zip 
  * up the whole feature.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateZipDistributionWholeTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -311,14 +342,14 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 
 /**
  * Executes a given target in all children's script files.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateAllChildrenTarget(AntScript script) {
 	StringBuffer depends = new StringBuffer();
 	depends.append(TARGET_INIT);
 	depends.append(","); //$NON-NLS-1$
 	depends.append(TARGET_ALL_PLUGINS);
-	depends.append(","); //$NON-NLS-1$
-	depends.append(TARGET_ALL_FRAGMENTS);
 	
 	script.println();
 	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
@@ -327,16 +358,21 @@ protected void generateAllChildrenTarget(AntScript script) {
 
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	List plugins = computeElements(false);
-	String[][] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]));
+	List fragments = computeElements(true);
+
+	String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]));
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 	for (int list = 0; list < 2; list++) {
-		for (int i = 0; i < sortedPlugins[list].length; i++) {
-			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
+		for (int i = 0; i < sortedPlugins.length; i++) {
+			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[i]);
 			IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getFeatureRootLocation()));
 			script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
@@ -345,24 +381,10 @@ protected void generateAllPluginsTarget(AntScript script) throws CoreException {
 }
 
 /**
- * Target responsible for delegating target calls to fragments's build.xml scripts.
- *  * @param script the script to add the target to * @throws CoreException */
-protected void generateAllFragmentsTarget(AntScript script) throws CoreException {
-	int tab = 1;
-	List fragments = computeElements(true);
-	script.println();
-	script.printTargetDeclaration(tab++, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
-	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
-		PluginModel fragment = (PluginModel) iterator.next();
-		IPath location = Utils.makeRelative(new Path(getLocation(fragment)), new Path(getFeatureRootLocation()));
-		script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
-	}
-	script.printTargetEnd(--tab);
-}
-
-/**
  * Just ends the script.
- *  * @param script the script to end */
+ * 
+ * @param script the script to end
+ */
 protected void generateEpilogue(AntScript script) {
 	script.println();
 	script.printProjectEnd();
@@ -370,7 +392,9 @@ protected void generateEpilogue(AntScript script) {
 
 /**
  * Defines, the XML declaration, Ant project and init target.
- *  * @param script the script to annotate */
+ * 
+ * @param script the script to annotate
+ */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
@@ -385,14 +409,20 @@ protected void generatePrologue(AntScript script) {
 }
 
 /**
- *  * @throws CoreException */
+ * 
+ * @throws CoreException
+ */
 protected void generateChildrenScripts() throws CoreException {
 	generateModels(new PluginBuildScriptGenerator(), computeElements(false));
 	generateModels(new PluginBuildScriptGenerator(), computeElements(true));
 }
 
 /**
- *  * @param generator * @param models * @throws CoreException */
+ * 
+ * @param generator
+ * @param models
+ * @throws CoreException
+ */
 protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
 	if (models.isEmpty())
 		return;
@@ -410,7 +440,10 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 
 /**
  * Set this object's feature id to be the given value.
- *  * @param featureID the feature id * @throws CoreException if the given feature id is <code>null</code> */
+ * 
+ * @param featureID the feature id
+ * @throws CoreException if the given feature id is <code>null</code>
+ */
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null)); //$NON-NLS-1$
@@ -419,7 +452,9 @@ public void setFeature(String featureID) throws CoreException {
 
 /**
  * Reads the target feature from the root location.
- *  * @throws CoreException if the feature could not be read */
+ * 
+ * @throws CoreException if the feature could not be read
+ */
 protected void readFeature() throws CoreException {
 	String location = getFeatureRootLocation();
 	if (location == null)
@@ -428,7 +463,7 @@ protected void readFeature() throws CoreException {
 	FeatureExecutableFactory factory = new FeatureExecutableFactory();
 	File file = new File(location);
 	try {
-		feature = (Feature) factory.createFeature(file.toURL(), null);
+		feature = (Feature) factory.createFeature(file.toURL(), null, null);
 		if (feature == null)
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {featureID}), null));	 //$NON-NLS-1$
 	} catch (MalformedURLException e) {
@@ -439,7 +474,9 @@ protected void readFeature() throws CoreException {
 /**
  * Return the root location for the feature. If the feature location 
  * was not specified, use a default one.
- *  * @return the feature root location */
+ * 
+ * @return the feature root location
+ */
 protected String getFeatureRootLocation() {
 	if (featureRootLocation == null) {
 		IPath location = new Path(installLocation);
@@ -452,7 +489,9 @@ protected String getFeatureRootLocation() {
 
 /**
  * Set the root of the feature to be the given location.
- *  * @param location the feature root */
+ * 
+ * @param location the feature root
+ */
 public void setFeatureRootLocation(String location) {
 	this.featureRootLocation = location;
 }
@@ -461,8 +500,12 @@ public void setFeatureRootLocation(String location) {
  * Return a properties object constructed from the build.properties file
  * for the given feature. If no file exists, then an empty properties object
  * is returned.
- *  * @param feature the feature to retrieve the build.properties from * @return Properties the feature's build.properties * @throws CoreException
- * @see Feature */
+ * 
+ * @param feature the feature to retrieve the build.properties from
+ * @return Properties the feature's build.properties
+ * @throws CoreException
+ * @see Feature
+ */
 protected Properties getBuildProperties(Feature feature) throws CoreException {
 	VersionedIdentifier identifier = feature.getVersionedIdentifier();
 	Properties result = (Properties) buildProperties.get(identifier);
@@ -476,7 +519,9 @@ protected Properties getBuildProperties(Feature feature) throws CoreException {
 /**
  * Add the <code>children</code> target to the given Ant script. Delegates 
  * some target call to all-template only if the property includeChildren is set.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateChildrenTarget(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
@@ -486,7 +531,10 @@ protected void generateChildrenTarget(AntScript script) {
 
 /**
  * Add the <code>build.jars</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -505,7 +553,9 @@ protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 
 /**
  * Add the <code>refresh</code> target to the given Ant script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
