@@ -113,7 +113,6 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			}
 
 			// check if the entry can be used for the current config
-			String[] entryConfigs = Utils.getArrayFromStringWithBlank(fileDescription[CONFIGS], "&"); //$NON-NLS-1$
 			String userInfos = ""; //$NON-NLS-1$
 			try {
 				userInfos = new URL(fileDescription[URL]).getUserInfo();
@@ -121,7 +120,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				//TODO Should through an exception? and / or try to check the url with the file name concatenated?
 			}
 			
-			if (filterByConfig(entryConfigs) &&	filterByFilter(fileDescription[FILTERS])) {
+			if (filterByConfig(fileDescription[CONFIGS]) &&	filterByFilter(fileDescription[FILTERS])) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
@@ -150,7 +149,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	//Return true, if the entryConfigs match the config we are packaging
-	private boolean filterByConfig(String[] entryConfigs) {
+	private boolean filterByConfig(String entryConfigString) {
+		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, "&"); //$NON-NLS-1$
 		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
 			return true;
 			
