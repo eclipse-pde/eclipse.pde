@@ -103,11 +103,12 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	private File getLocalFile() {
-		String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml";
-		String prefix = getInstallLocation();
-		if (prefix.startsWith("file:"))
-			prefix = prefix.substring(5);
-		return new File(prefix + File.separator + manifest);
+		File file = new File(getInstallLocation(), "META-INF/MANIFEST.MF");
+		if (!file.exists()) {
+			String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml";
+			file = new File(getInstallLocation(), manifest);
+		}
+		return file;
 	}
 
 	protected void updateTimeStamp() {
