@@ -225,6 +225,7 @@ public class ContentPage extends WizardPage {
 	}
 	
 	private void validatePage() {
+		setMessage(null);
 		String errorMessage = validateId();
 		if (errorMessage == null) {
 			if (fVersionText.getText().trim().length() == 0) {
@@ -270,7 +271,7 @@ public class ContentPage extends WizardPage {
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			for (int i = 0; i < token.length(); i++) {
-				if (!Character.isLetterOrDigit(token.charAt(i)))
+				if (!Character.isLetterOrDigit(token.charAt(i)) && '_' != token.charAt(i))
 					return PDEPlugin.getResourceString("ContentPage.invalidId"); //$NON-NLS-1$
 			}
 		}
@@ -330,8 +331,10 @@ public class ContentPage extends WizardPage {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fullName.length(); i++) {
 			char ch = fullName.charAt(i);
-			if (Character.isLetterOrDigit(ch) || ch == '.')
+			if (Character.isLetterOrDigit(ch) || ch == '.' || ch == '_')
 				buffer.append(ch);
+			else
+				buffer.append('_');
 		}
 		return buffer.toString();
 	}
