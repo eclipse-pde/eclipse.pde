@@ -50,7 +50,7 @@ public class ManifestEditor
 		"ManifestEditor.ExtensionPointsPage.title";
 	public static final String NO_PLATFORM_HOME =
 		"ManifestEditor.noPlatformHome";
-	private boolean storageModel=false;
+	private boolean storageModel = false;
 
 	public ManifestEditor() {
 		super();
@@ -318,7 +318,9 @@ public class ManifestEditor
 			String editorId = PDEPlugin.getPluginId() + ".manifestEditor";
 			try {
 				SystemFileEditorInput input = new SystemFileEditorInput(file);
-				return (ManifestEditor)PDEPlugin.getActivePage().openEditor(input, editorId);
+				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
+					input,
+					editorId);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			}
@@ -326,30 +328,50 @@ public class ManifestEditor
 		return null;
 	}
 
-	public static void openPluginEditor(String pluginId) {
+	public static ManifestEditor openPluginEditor(String pluginId) {
+		return openPluginEditor(pluginId, null);
+	}
+
+	public static ManifestEditor openPluginEditor(
+		String pluginId,
+		Object object) {
 		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
 		if (pluginToOpen != null) {
-			openPluginEditor(pluginToOpen);
+			return openPluginEditor(pluginToOpen, object);
 		} else {
 			Display.getCurrent().beep();
 		}
+		return null;
 	}
 
 	public static ManifestEditor openPluginEditor(IPluginBase plugin) {
+		return openPluginEditor(plugin, null);
+	}
+
+	public static ManifestEditor openPluginEditor(
+		IPluginBase plugin,
+		Object object) {
+		ManifestEditor editor = null;
 		IResource underlyingResource =
 			plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
-			return openExternalPlugin(plugin);
+			editor = openExternalPlugin(plugin);
 		} else {
-			return openWorkspacePlugin((IFile) underlyingResource);
+			editor = openWorkspacePlugin((IFile) underlyingResource);
 		}
+		if (editor != null && object != null) {
+			editor.openTo(object);
+		}
+		return editor;
 	}
 
 	private static ManifestEditor openWorkspacePlugin(IFile pluginFile) {
 		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);
-			return (ManifestEditor)PDEPlugin.getActivePage().openEditor(input, editorId);
+			return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
+				input,
+				editorId);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -410,5 +432,13 @@ public class ManifestEditor
 			? true
 			: super.canCopy(selection);
 	}
-
+	protected IPDEEditorPage getPageFor(Object object) {
+		IPDEEditorPage overviewPage = getPage(OVERVIEW_PAGE);
+		ManifestFormOutlinePage outline =
+			(ManifestFormOutlinePage) overviewPage.getContentOutlinePage();
+		if (outline != null) {
+			return outline.getParentPage(object);
+		}
+		return null;
+	}
 }

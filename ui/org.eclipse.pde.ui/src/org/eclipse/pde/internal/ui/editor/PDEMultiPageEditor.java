@@ -499,6 +499,16 @@ public abstract class PDEMultiPageEditor
 		if (page != null)
 			page.openTo(openToObject);
 	}
+	public void openTo(Object obj) {
+		if (EditorPreferencePage.getUseSourcePage()) {
+			PDESourcePage sourcePage = (PDESourcePage)showPage(getSourcePageId());
+		}
+		else {
+			IPDEEditorPage page = getPageFor(obj);
+			if (page!=null)
+				page.openTo(obj);
+		}
+	}
 	public IPDEEditorPage showPage(final IPDEEditorPage page) {
 		formWorkbook.selectPage(page);
 		return page;
@@ -609,5 +619,8 @@ public abstract class PDEMultiPageEditor
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
 	}
-
+	
+	protected IPDEEditorPage getPageFor(Object object) {
+		return null;
+	}
 }
