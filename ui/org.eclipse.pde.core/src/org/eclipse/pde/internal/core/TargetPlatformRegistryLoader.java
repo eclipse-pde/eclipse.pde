@@ -17,7 +17,13 @@ public class TargetPlatformRegistryLoader {
 	private static final String KEY_SCANNING_PROBLEMS =
 		"ExternalModelManager.scanningProblems";
 	private PluginRegistryModel registryModel;
-	private static boolean DEBUG = Platform.getDebugOption("org.eclipse.pde.core/cache").equals("true");;
+	private static boolean DEBUG=false;
+	
+	static {
+		String value = Platform.getDebugOption("org.eclipse.pde.core/cache");
+		if (value!=null && value.equalsIgnoreCase("true"))
+			DEBUG = true;
+	}
 	private long code;
 	
 	public MultiStatus load(URL[] urls, boolean resolve, boolean useCache) {

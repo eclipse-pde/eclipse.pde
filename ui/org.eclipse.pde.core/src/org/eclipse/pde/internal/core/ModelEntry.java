@@ -112,7 +112,7 @@ public class ModelEntry extends PlatformObject {
 					IStatus.ERROR,
 					PDECore.PLUGIN_ID,
 					IStatus.OK,
-					null,
+					e.getMessage(),
 					e);
 			throw new CoreException(status);
 		}

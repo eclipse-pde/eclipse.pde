@@ -26,18 +26,29 @@ import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
-	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
-	private static final String KEY_JRE_PATH_NOT_FOUND = "WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
-	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
-	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
-	private static final String KEY_BROKEN_PLUGINS = "WorkbenchLauncherConfigurationDelegate.brokenPlugins";
-	private static final String KEY_PROBLEMS_DELETING = "WorkbenchLauncherConfigurationDelegate.problemsDeleting";
-	private static final String KEY_TITLE = "WorkbenchLauncherConfigurationDelegate.title";
-	private static final String KEY_SLIMLAUNCHER = "WorkbenchLauncherConfigurationDelegate.slimlauncher";
-	private static final String KEY_DELETE_WORKSPACE = "WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
-	private static final String KEY_DUPLICATES = "WorkbenchLauncherConfigurationDelegate.duplicates";
-	private static final String KEY_DUPLICATE_PLUGINS = "WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
-	
+	private static final String KEY_NO_JRE =
+		"WorkbenchLauncherConfigurationDelegate.noJRE";
+	private static final String KEY_JRE_PATH_NOT_FOUND =
+		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
+	private static final String KEY_STARTING =
+		"WorkbenchLauncherConfigurationDelegate.starting";
+	private static final String KEY_NO_BOOT =
+		"WorkbenchLauncherConfigurationDelegate.noBoot";
+	private static final String KEY_BROKEN_PLUGINS =
+		"WorkbenchLauncherConfigurationDelegate.brokenPlugins";
+	private static final String KEY_PROBLEMS_DELETING =
+		"WorkbenchLauncherConfigurationDelegate.problemsDeleting";
+	private static final String KEY_TITLE =
+		"WorkbenchLauncherConfigurationDelegate.title";
+	private static final String KEY_SLIMLAUNCHER =
+		"WorkbenchLauncherConfigurationDelegate.slimlauncher";
+	private static final String KEY_DELETE_WORKSPACE =
+		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
+	private static final String KEY_DUPLICATES =
+		"WorkbenchLauncherConfigurationDelegate.duplicates";
+	private static final String KEY_DUPLICATE_PLUGINS =
+		"WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
+
 	private Vector duplicates = new Vector();
 
 	/*
@@ -51,11 +62,17 @@ public class WorkbenchLaunchConfigurationDelegate
 		throws CoreException {
 		final String vmArgs = configuration.getAttribute(VMARGS, "");
 		final String progArgs = configuration.getAttribute(PROGARGS, "");
-		final String appName = configuration.getAttribute(APPLICATION, (String) null);
-		final String data = configuration.getAttribute(LOCATION + "0", (String) null);
+		final String appName =
+			configuration.getAttribute(APPLICATION, (String) null);
+		final String data =
+			configuration.getAttribute(LOCATION + "0", (String) null);
 		final boolean tracing = configuration.getAttribute(TRACING, false);
-		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
-		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
+		final boolean clearWorkspace =
+			configuration.getAttribute(DOCLEAR, false);
+		final boolean showSplash =
+			configuration.getAttribute(SHOW_SPLASH, true);
+		final IPluginModelBase[] plugins =
+			getPluginsFromConfiguration(configuration);
 
 		if (duplicates.size() > 0) {
 			if (!continueRunning()) {
@@ -64,10 +81,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 
-		String vmInstallName = configuration.getAttribute(VMINSTALL, BasicLauncherTab.getDefaultVMInstallName());
+		String vmInstallName =
+			configuration.getAttribute(
+				VMINSTALL,
+				BasicLauncherTab.getDefaultVMInstallName());
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
 		IVMInstall launcher = null;
-		
+
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 
@@ -77,32 +97,37 @@ public class WorkbenchLaunchConfigurationDelegate
 				break;
 			}
 		}
-		
+
 		if (launcher == null) {
 			monitor.setCanceled(true);
-			throw new CoreException(createErrorStatus(PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName)));
+			throw new CoreException(
+				createErrorStatus(
+					PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName)));
 		}
 		if (!launcher.getInstallLocation().exists()) {
 			monitor.setCanceled(true);
-			throw new CoreException(createErrorStatus(PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
+			throw new CoreException(
+				createErrorStatus(
+					PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
 		}
-		
+
 		validatePlugins(plugins, monitor);
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
 		doLaunch(
-				launch,
-				configuration,
-				mode,
-				runner,
-				path,
-				clearWorkspace,
-				args,
-				plugins,
-				appName,
-				tracing,
-				monitor);
+			launch,
+			configuration,
+			mode,
+			runner,
+			path,
+			clearWorkspace,
+			showSplash,
+			args,
+			plugins,
+			appName,
+			tracing,
+			monitor);
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
@@ -115,7 +140,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		String exstring = config.getAttribute(EXTPLUGINS, (String) null);
 
 		if (wstring != null) {
-			StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
+			StringTokenizer tok =
+				new StringTokenizer(wstring, File.pathSeparator);
 			while (tok.hasMoreTokens()) {
 				deselectedWSPlugins.add(tok.nextToken());
 			}
@@ -125,14 +151,14 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (exstring != null) {
 			exstates.parseStates(exstring);
 		}
-		
-		ArrayList wsList = new ArrayList();
 
+		ArrayList wsList = new ArrayList();
 
 		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
 		for (int i = 0; i < wsmodels.length; i++) {
 			IPluginModelBase model = wsmodels[i];
-			if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
+			if (useDefault
+				|| !deselectedWSPlugins.contains(model.getPluginBase().getId()))
 				wsList.add(model);
 		}
 		IPluginModelBase[] exmodels = AdvancedLauncherTab.getExternalPlugins();
@@ -146,7 +172,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				AdvancedLauncherTab.ExternalState es =
 					exstates.getState(model.getPluginBase().getId());
 				if (es != null) {
-					if(es.state)
+					if (es.state)
 						exList.add(model);
 				} else if (model.isEnabled())
 					exList.add(model);
@@ -155,10 +181,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		ArrayList result = new ArrayList();
 		mergeWithoutDuplicates(wsList, exList, result);
 		IPluginModelBase[] plugins =
-			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+			(IPluginModelBase[]) result.toArray(
+				new IPluginModelBase[result.size()]);
 		return plugins;
 	}
-	
+
 	private void mergeWithoutDuplicates(
 		ArrayList wsmodels,
 		ArrayList exmodels,
@@ -192,35 +219,60 @@ public class WorkbenchLaunchConfigurationDelegate
 				result.add(exmodel);
 		}
 	}
-	
-	private boolean isDuplicate(IPluginModelBase wsmodel, IPluginModelBase exmodel) {
-		if (!wsmodel.isLoaded() || !exmodel.isLoaded()) return false;
-		return wsmodel.getPluginBase().getId().equalsIgnoreCase(exmodel.getPluginBase().getId());
+
+	private boolean isDuplicate(
+		IPluginModelBase wsmodel,
+		IPluginModelBase exmodel) {
+		if (!wsmodel.isLoaded() || !exmodel.isLoaded())
+			return false;
+		return wsmodel.getPluginBase().getId().equalsIgnoreCase(
+			exmodel.getPluginBase().getId());
 	}
-	
-	private void validatePlugins(IPluginModelBase[] plugins, IProgressMonitor monitor) throws CoreException {
+
+	private void validatePlugins(
+		IPluginModelBase[] plugins,
+		IProgressMonitor monitor)
+		throws CoreException {
 		ArrayList entries = new ArrayList();
-		for (int i=0; i<plugins.length; i++) {
+		for (int i = 0; i < plugins.length; i++) {
 			IPluginModelBase model = plugins[i];
-			if (model.isLoaded()==false) {
+			if (model.isLoaded() == false) {
 				String message = model.getInstallLocation();
-				if (model.getUnderlyingResource()!=null)
-					message = model.getUnderlyingResource().getProject().getName();
-				Status status = new Status(IStatus.WARNING, PDEPlugin.getPluginId(), IStatus.OK, message, null);
+				if (model.getUnderlyingResource() != null)
+					message =
+						model.getUnderlyingResource().getProject().getName();
+				Status status =
+					new Status(
+						IStatus.WARNING,
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						message,
+						null);
 				entries.add(status);
 			}
 		}
-		if (entries.size()>0) {
-			IStatus [] children = (IStatus[])entries.toArray(new IStatus[entries.size()]);
+		if (entries.size() > 0) {
+			IStatus[] children =
+				(IStatus[]) entries.toArray(new IStatus[entries.size()]);
 			String message = PDEPlugin.getResourceString(KEY_BROKEN_PLUGINS);
-			final MultiStatus status = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, children, message, null); 
+			final MultiStatus status =
+				new MultiStatus(
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					children,
+					message,
+					null);
 			//monitor.setCanceled(true);
 			//throw new CoreException(status);
 			Display display = getDisplay();
 			display.syncExec(new Runnable() {
 				public void run() {
 					String title = PDEPlugin.getResourceString(KEY_TITLE);
-					ErrorDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, null, status);
+					ErrorDialog.openError(
+						PDEPlugin.getActiveWorkbenchShell(),
+						title,
+						null,
+						status);
 				}
 			});
 		}
@@ -233,6 +285,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		IVMRunner runner,
 		IPath targetWorkspace,
 		boolean clearWorkspace,
+		boolean showSplash,
 		ExecutionArguments args,
 		IPluginModelBase[] plugins,
 		String appname,
@@ -250,24 +303,38 @@ public class WorkbenchLaunchConfigurationDelegate
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
-			int exCount = tracing ?12:10;
+			int exCount = 10;
+			if (tracing)
+				exCount += 2;
+			if (showSplash)
+				exCount += 2;
+
 			String[] fullProgArgs = new String[progArgs.length + exCount];
-			int i=0;
+			int i = 0;
 			fullProgArgs[i++] = "-application";
 			fullProgArgs[i++] = appname;
 			fullProgArgs[i++] = "-plugins";
-			fullProgArgs[i++] = "file:"+propertiesFile.getPath();
+			fullProgArgs[i++] = "file:" + propertiesFile.getPath();
 			fullProgArgs[i++] = "-dev";
 			fullProgArgs[i++] = getBuildOutputFolders();
 			fullProgArgs[i++] = "-data";
 			fullProgArgs[i++] = targetWorkspace.toOSString();
-			fullProgArgs[i++] = "-showsplash";
-			fullProgArgs[i++] = computeShowsplashArgument(new SubProgressMonitor(monitor, 1));
+			if (showSplash) {
+				fullProgArgs[i++] = "-showsplash";
+				fullProgArgs[i++] =
+					computeShowsplashArgument(
+						new SubProgressMonitor(monitor, 1));
+			}
 			if (tracing) {
 				fullProgArgs[i++] = "-debug";
 				fullProgArgs[i++] = getTracingFileArgument(config);
 			}
-			System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
+			System.arraycopy(
+				progArgs,
+				0,
+				fullProgArgs,
+				exCount,
+				progArgs.length);
 
 			String[] classpath = constructClasspath(plugins);
 			if (classpath == null) {
@@ -277,19 +344,22 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 
 			VMRunnerConfiguration runnerConfig =
-				new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
+				new VMRunnerConfiguration(
+					"org.eclipse.core.launcher.Main",
+					classpath);
 			runnerConfig.setVMArguments(vmArgs);
 			runnerConfig.setProgramArguments(fullProgArgs);
-			
+
 			File workspaceFile = targetWorkspace.toFile();
 			if (clearWorkspace && workspaceFile.exists()) {
 				if (confirmDeleteWorkspace(workspaceFile)) {
-				try {
-					deleteContent(workspaceFile);
-				} catch (IOException e) {
-					String message = PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING);
-					showWarningDialog(message);
-				}
+					try {
+						deleteContent(workspaceFile);
+					} catch (IOException e) {
+						String message =
+							PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING);
+						showWarningDialog(message);
+					}
 				}
 			}
 			monitor.worked(1);
@@ -334,15 +404,16 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		return result.toString();
 	}
-	
+
 	private String computeShowsplashArgument(IProgressMonitor monitor) {
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(monitor);
 		IPath fullPath = eclipseHome.append("eclipse.exe");
-		return fullPath.toOSString()+" -showsplash 600";
+		return fullPath.toOSString() + " -showsplash 600";
 	}
-	
+
 	private String getTracingFileArgument(ILaunchConfiguration config) {
-		TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
+		TracingOptionsManager mng =
+			PDECore.getDefault().getTracingOptionsManager();
 		Map options;
 		try {
 			options =
@@ -391,14 +462,16 @@ public class WorkbenchLaunchConfigurationDelegate
 			message,
 			null);
 	}
-		
+
 	private boolean continueRunning() {
 		final boolean[] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				StringBuffer message =
 					new StringBuffer(
-						PDEPlugin.getFormattedMessage(KEY_DUPLICATES, new Integer(duplicates.size()).toString()));
+						PDEPlugin.getFormattedMessage(
+							KEY_DUPLICATES,
+							new Integer(duplicates.size()).toString()));
 				if (duplicates.size() <= 5) {
 					String lineSeparator = System.getProperty("line.separator");
 					message.append(
@@ -419,14 +492,21 @@ public class WorkbenchLaunchConfigurationDelegate
 		});
 		return result[0];
 	}
-	
-	private boolean  confirmDeleteWorkspace(final File workspaceFile) {
-		final boolean [] result = new boolean[1];
+
+	private boolean confirmDeleteWorkspace(final File workspaceFile) {
+		final boolean[] result = new boolean[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				String message = PDEPlugin.getFormattedMessage(KEY_DELETE_WORKSPACE, workspaceFile.getPath());
-				result[0] = MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), title,message);
+				String message =
+					PDEPlugin.getFormattedMessage(
+						KEY_DELETE_WORKSPACE,
+						workspaceFile.getPath());
+				result[0] =
+					MessageDialog.openQuestion(
+						PDEPlugin.getActiveWorkbenchShell(),
+						title,
+						message);
 			}
 		});
 		return result[0];
@@ -436,7 +516,10 @@ public class WorkbenchLaunchConfigurationDelegate
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
+				MessageDialog.openWarning(
+					PDEPlugin.getActiveWorkbenchShell(),
+					title,
+					message);
 			}
 		});
 	}
@@ -453,7 +536,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		*/
 		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
 		File slimLauncher = eclipsePath.append("startup.jar").toFile();
-			
 
 		if (slimLauncher == null || !slimLauncher.exists()) {
 			PDEPlugin.logErrorMessage(
@@ -467,11 +549,18 @@ public class WorkbenchLaunchConfigurationDelegate
 				// in workspace - use the java project
 				IProject project = resource.getProject();
 				IJavaProject jproject = JavaCore.create(project);
-				String[] bootClassPath = JavaRuntime.computeDefaultRuntimeClassPath(jproject);
+				String[] bootClassPath =
+					JavaRuntime.computeDefaultRuntimeClassPath(jproject);
 				if (bootClassPath != null) {
-					String[] resClassPath = new String[bootClassPath.length + 1];
+					String[] resClassPath =
+						new String[bootClassPath.length + 1];
 					resClassPath[0] = slimLauncher.getPath();
-					System.arraycopy(bootClassPath, 0, resClassPath, 1, bootClassPath.length);
+					System.arraycopy(
+						bootClassPath,
+						0,
+						resClassPath,
+						1,
+						bootClassPath.length);
 					return resClassPath;
 				}
 			} else {
@@ -481,12 +570,16 @@ public class WorkbenchLaunchConfigurationDelegate
 					installLocation = installLocation.substring(5);
 				File bootJar = new File(installLocation, "boot.jar");
 				if (bootJar.exists()) {
-					return new String[] { slimLauncher.getPath(), bootJar.getPath()};
+					return new String[] {
+						slimLauncher.getPath(),
+						bootJar.getPath()};
 				}
 				// Check PDE case (third instance) - it may be in the bin
 				File binDir = new File(installLocation, "bin/");
 				if (binDir.exists()) {
-					return new String[] { slimLauncher.getPath(), binDir.getPath()};
+					return new String[] {
+						slimLauncher.getPath(),
+						binDir.getPath()};
 				}
 			}
 		}
@@ -513,7 +606,9 @@ public class WorkbenchLaunchConfigurationDelegate
 		for (int i = 0; i < plugins.length; i++) {
 			try {
 				File pluginDir =
-					new File(new URL("file:" + plugins[i].getInstallLocation()).getFile());
+					new File(
+						new URL("file:" + plugins[i].getInstallLocation())
+							.getFile());
 				IContainer container =
 					root.getContainerForLocation(new Path(pluginDir.getPath()));
 				if (container instanceof IProject) {
@@ -526,7 +621,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 		IJavaProject[] projs =
-			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
+			(IJavaProject[]) javaProjects.toArray(
+				new IJavaProject[javaProjects.size()]);
 		return new JavaUISourceLocator(projs, false);
 	}
 }

@@ -18,4 +18,5 @@ public interface ILauncherSettings {
 	String WSPROJECT = "wsproject";
 	String EXTPLUGINS = "extplugins";
 	String TRACING_OPTIONS = "tracingOptions";
+	String SHOW_SPLASH = "showSplash";
 }

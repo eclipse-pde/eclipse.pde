@@ -34,6 +34,7 @@ public class BasicLauncherTab
 	private static final String KEY_VMARGS = "BasicLauncherTab.vmArgs";
 	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
 	private static final String KEY_APPNAME = "BasicLauncherTab.appName";
+	private static final String KEY_SHOW_SPLASH = "BasicLauncherTab.showSplash";
 	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
 	private static final String KEY_RESTORE_TEXT =
 		"BasicLauncherTab.restoreText";
@@ -56,6 +57,7 @@ public class BasicLauncherTab
 	private Text vmArgsText;
 	private Text progArgsText;
 	private Text applicationNameText;
+	private Button showSplashCheck;
 	private Button defaultsButton;
 	private Image image;
 
@@ -127,6 +129,10 @@ public class BasicLauncherTab
 
 		applicationNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(applicationNameText, 2, false);
+		
+		showSplashCheck = new Button(composite, SWT.CHECK);
+		showSplashCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_SPLASH));
+		fillIntoGrid(showSplashCheck, 3, false);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 3, false);
@@ -161,6 +167,7 @@ public class BasicLauncherTab
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
 			applicationNameText.setText(config.getAttribute(APPLICATION, "org.eclipse.ui.workbench"));
 			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
+			showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));
 			
 			jreCombo.setItems(getVMInstallNames(vmInstallations));
 			String vmInstallName =
@@ -219,6 +226,7 @@ public class BasicLauncherTab
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
+		showSplashCheck.setSelection(true);
 		jreCombo.select(
 			jreCombo.indexOf(
 				JavaRuntime.getDefaultVMInstall().getName()
@@ -274,6 +282,12 @@ public class BasicLauncherTab
 		});
 		
 		clearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		showSplashCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -345,6 +359,7 @@ public class BasicLauncherTab
 		}
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
+		config.setAttribute(SHOW_SPLASH, doShowSplash());
 
 		config.setAttribute(
 			LOCATION + String.valueOf(0),
@@ -443,6 +458,10 @@ public class BasicLauncherTab
 	 */
 	public boolean doClearWorkspace() {
 		return clearWorkspaceCheck.getSelection();
+	}
+	
+	public boolean doShowSplash() {
+		return showSplashCheck.getSelection();
 	}
 
 	/**

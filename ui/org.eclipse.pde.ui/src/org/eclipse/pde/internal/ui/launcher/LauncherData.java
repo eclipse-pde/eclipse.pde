@@ -20,6 +20,7 @@ public class LauncherData {
 	private String programArguments;
 	private String applicationName;
 	private boolean tracingEnabled;
+	private boolean showSplash;
 
 	public void setWorkspaceLocation(IPath workspaceLocation) {
 		this.workspaceLocation = workspaceLocation;
@@ -122,6 +123,14 @@ public class LauncherData {
 	 */
 	public void setClearWorkspace(boolean clearWorkspace) {
 		this.clearWorkspace = clearWorkspace;
+	}
+	
+	public void setShowSplash(boolean showSplash) {
+		this.showSplash = showSplash;
+	}
+	
+	public boolean getShowSplash() {
+		return showSplash;
 	}
 
 	/**
