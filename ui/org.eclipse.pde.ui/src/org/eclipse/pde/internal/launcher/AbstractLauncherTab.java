@@ -9,6 +9,8 @@ import org.eclipse.debug.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.SWT;
 
 /**
  * @version 	1.0
@@ -88,22 +90,17 @@ public abstract class AbstractLauncherTab implements ILaunchConfigurationTab {
 		getLaunchDialog().updateButtons();
 		getLaunchDialog().updateMessage();
 	}
+	
+	protected void createStartingSpace(Composite parent, int span) {
+		Label label = new Label(parent, SWT.NULL);
+		GridData data = new GridData();
+		//data.heightHint = 15;
+		data.horizontalSpan = span;
+		label.setLayoutData(data);
+	}
 
 	public void launched(ILaunch launch) {
 	}
-
-/*
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		fPageVisible= visible;
-		// policy: wizards are not allowed to come up with an error message
-		if (visible && fNoErrorOnStartup && fCurrStatus.matches(IStatus.ERROR)) {
-			// keep the error state, but remove the message
-			fCurrStatus= createStatus(IStatus.ERROR, "");
-		} 
-		updateStatus(fCurrStatus);
-	}	
-*/
 
 	public boolean isValid() {
 		return valid;

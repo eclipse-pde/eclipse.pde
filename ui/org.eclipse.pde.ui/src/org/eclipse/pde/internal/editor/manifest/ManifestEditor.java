@@ -289,7 +289,7 @@ public class ManifestEditor
 
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if (property.equals(MainPreferencePage.PROP_USE_FULL_NAMES)) {
+		if (property.equals(MainPreferencePage.PROP_SHOW_OBJECTS)) {
 			final IModelChangeProvider provider = (IModelChangeProvider) getModel();
 			final ModelChangedEvent e =
 				new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null);

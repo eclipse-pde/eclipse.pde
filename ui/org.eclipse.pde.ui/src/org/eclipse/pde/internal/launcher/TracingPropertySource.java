@@ -50,6 +50,7 @@ public TracingPropertySource(IPluginModel model, Properties masterOptions, Hasht
 	values = new Hashtable();
 	dvalues = new Hashtable();
 }
+
 /**
  * @return org.eclipse.ui.views.properties.PropertyDescriptor
  * @param key java.lang.String

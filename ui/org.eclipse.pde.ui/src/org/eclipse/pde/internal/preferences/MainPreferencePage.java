@@ -18,10 +18,14 @@ import org.eclipse.jdt.core.*;
 public class MainPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private static final String KEY_DESCRIPTION = "Preferences.MainPage.Description";
 	private static final String KEY_NO_PDE_NATURE = "Preferences.MainPage.noPDENature";
+	private static final String KEY_SHOW_OBJECTS = "Preferences.MainPage.showObjects";
+	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds";
 	private static final String KEY_USE_FULL_NAMES = "Preferences.MainPage.useFullNames";
 
 	public static final String PROP_NO_PDE_NATURE ="Preferences.MainPage.noPDENature";
-	public static final String PROP_USE_FULL_NAMES ="Preferences.MainPage.useFullNames";
+	public static final String PROP_SHOW_OBJECTS = "Preferences.MainPage.showObjects";
+	public static final String VALUE_USE_IDS ="useIds";
+	public static final String VALUE_USE_NAMES = "useNames";
 
 public MainPreferencePage() {
 	super(GRID);
@@ -33,7 +37,7 @@ public MainPreferencePage() {
 private static void initializeDefaults() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	store.setDefault(PROP_NO_PDE_NATURE, true);
-	store.setDefault(PROP_USE_FULL_NAMES, true);
+	store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
 }
 
 protected void createFieldEditors() {
@@ -43,12 +47,18 @@ protected void createFieldEditors() {
 			PDEPlugin.getResourceString(KEY_NO_PDE_NATURE),
 			getFieldEditorParent());
 	addField(editor);
-	editor =
-		new BooleanFieldEditor(
-			PROP_USE_FULL_NAMES,
-			PDEPlugin.getResourceString(KEY_USE_FULL_NAMES),
-			getFieldEditorParent());
-	addField(editor);
+	RadioGroupFieldEditor reditor =
+		new RadioGroupFieldEditor(
+			PROP_SHOW_OBJECTS,
+			PDEPlugin.getResourceString(KEY_SHOW_OBJECTS),
+			1,
+			new String [][] {
+				{ PDEPlugin.getResourceString(KEY_USE_IDS),
+				VALUE_USE_IDS },
+				{PDEPlugin.getResourceString(KEY_USE_FULL_NAMES),
+				VALUE_USE_NAMES }},
+				getFieldEditorParent());
+	addField(reditor);
 }
 
 public static boolean isNoPDENature() {
@@ -60,7 +70,7 @@ public static boolean isNoPDENature() {
 public static boolean isFullNameModeEnabled() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	initializeDefaults();
-	return store.getBoolean(PROP_USE_FULL_NAMES);
+	return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 }
 
 /**

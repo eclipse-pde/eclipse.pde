@@ -26,11 +26,14 @@ import org.eclipse.pde.internal.editor.manifest.NullMenuManager;
 import org.eclipse.pde.internal.editor.manifest.NullToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.swt.custom.BusyIndicator;
 
 public class TracingLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
 	public static final String KEY_DESC = "Preferences.AdvancedTracingPage.desc";
+	private static final String KEY_TRACING =
+		"WorkbenchLauncherWizardBasicPage.tracing";
 	public static final String KEY_PLUGINS =
 		"Preferences.AdvancedTracingPage.plugins";
 	public static final String KEY_WORKSPACE_PLUGINS =
@@ -43,8 +46,10 @@ public class TracingLauncherTab
 		"Preferences.AdvancedTracingPage.maximize";
 	public static final String KEY_RESTORE = 
 		"Preferences.AdvancedTracingPage.restore";
+
 	private static final String S_SELECTED_PLUGIN = "selectedPlugin";
 	private static final String S_MAXIMIZED = "maximized";
+	private Button tracingCheck;
 	private TreeViewer pluginTreeViewer;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
@@ -97,7 +102,29 @@ public class TracingLauncherTab
 	}
 
 	public void createControl(Composite parent) {
-		sashForm = new SashForm(parent, SWT.VERTICAL);
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		container.setLayout(layout);
+		
+		createStartingSpace(container, 1);
+
+		tracingCheck = new Button(container, SWT.CHECK);
+		tracingCheck.setText(PDEPlugin.getResourceString(KEY_TRACING));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		tracingCheck.setLayoutData(gd);
+		tracingCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tracingCheckChanged();
+			}
+		});
+		
+		Label separator = new Label(container, SWT.SEPARATOR|SWT.HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		separator.setLayoutData(gd);
+		
+		sashForm = new SashForm(container, SWT.VERTICAL);
+		gd = new GridData(GridData.FILL_BOTH);
+		sashForm.setLayoutData(gd);
 
 		Composite treeChild = new Composite(sashForm, SWT.NULL);
 		GridLayout clayout = new GridLayout();
@@ -108,7 +135,7 @@ public class TracingLauncherTab
 		Label label = new Label(treeChild, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_PLUGINS));
 		Control c = createPluginList(treeChild);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		c.setLayoutData(gd);
 
 		tableChild = new Composite(sashForm, SWT.NULL);
@@ -152,7 +179,7 @@ public class TracingLauncherTab
 			}
 		});
 		initialize();
-		setControl(sashForm);
+		setControl(container);
 	}
 
 	private void toggleMaximize() {
@@ -298,6 +325,12 @@ public class TracingLauncherTab
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		pluginTreeViewer.reveal(workspacePlugins);
 	}
+	
+	private void tracingCheckChanged() {
+		boolean enabled = tracingCheck.getSelection();
+		pluginTreeViewer.getTree().setEnabled(enabled);
+		propertySheet.getControl().setEnabled(enabled);
+	}
 
 	private void selectPlugin(String pluginId) {
 		IPluginModel model = findModel(pluginId, workspaceList);
@@ -319,10 +352,30 @@ public class TracingLauncherTab
 		return null;
 	}
 
-	public void initializeFrom(ILaunchConfiguration config) {
+	public void initializeFrom(final ILaunchConfiguration config) {
+		BusyIndicator.showWhile(getControl().getDisplay(),
+			new Runnable() {
+				public void run() {
+					doInitializeFrom(config);
+				}
+			}
+		);
+	}
+	
+	private void doInitializeFrom(ILaunchConfiguration config) {
 		masterOptions =
 			PDEPlugin.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
+		propertySources.clear();
 		try {
+			boolean tracing = false;
+			tracing = config.getAttribute(TRACING, tracing);
+			tracingCheck.setSelection(tracing);
+			tracingCheckChanged();
+			
+			Map options = config.getAttribute(TRACING_OPTIONS, (Map) null);
+			if (options != null)
+				initializeFrom(options);
+			
 			IDialogSettings settings = getDialogSettings();
 			String selectedPlugin = settings.get(S_SELECTED_PLUGIN);
 			if (selectedPlugin != null && selectedPlugin.length() > 0) {
@@ -331,30 +384,14 @@ public class TracingLauncherTab
 			boolean maximized = settings.getBoolean(S_MAXIMIZED);
 			doMaximize(maximized);
 
-			Map options = config.getAttribute(TRACING_OPTIONS, (Map) null);
-			if (options != null)
-				initializeFrom(options);
+
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-
-	private void initializeFrom(Map options) {
-		Set keys = options.keySet();
-		for (Iterator iter = keys.iterator(); iter.hasNext();) {
-			Object key = iter.next();
-			if (masterOptions.containsKey(key)) {
-				masterOptions.put(key, options.get(key));
-			}
-		}
-	}
-
-	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		//Properties template = PDEPlugin.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
-		//config.setAttribute(TRACING_OPTIONS, template);
-	}
-
+	
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(TRACING, isTracingEnabled());
 		boolean changes = false;
 		for (Enumeration enum = propertySources.elements(); enum.hasMoreElements();) {
 			TracingPropertySource source = (TracingPropertySource) enum.nextElement();
@@ -373,9 +410,22 @@ public class TracingLauncherTab
 			IPlugin plugin = model.getPlugin();
 			settings.put(S_SELECTED_PLUGIN, plugin.getId());
 		}
-		if (!changes)
-			return;
-		config.setAttribute(TRACING_OPTIONS, masterOptions);
+		if (changes)
+			config.setAttribute(TRACING_OPTIONS, masterOptions);
+	}
+
+	private void initializeFrom(Map options) {
+		masterOptions.putAll(options);
+	}
+
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		//Properties template = PDEPlugin.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
+		//config.setAttribute(TRACING_OPTIONS, template);
+		config.setAttribute(TRACING, false);
+	}
+	
+	public boolean isTracingEnabled() {
+		return tracingCheck.getSelection();
 	}
 
 	private void updatePropertyLabel(IPluginModel model) {

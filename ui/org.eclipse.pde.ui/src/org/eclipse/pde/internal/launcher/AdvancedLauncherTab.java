@@ -38,7 +38,8 @@ public class AdvancedLauncherTab
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
 		"Preferences.AdvancedTracingPage.externalPlugins";
-	private Button useDefaultCheck;
+	private Button useDefaultRadio;
+	private Button useListRadio;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
 	private Label restoreLabel;
@@ -133,42 +134,29 @@ public class AdvancedLauncherTab
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		GridData gd;
-		layout.numColumns = 2;
 		composite.setLayout(layout);
 
-		useDefaultCheck = new Button(composite, SWT.CHECK);
-		useDefaultCheck.setText("&Use default");
-		fillIntoGrid(useDefaultCheck, 2, false);
-
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(
-			"If this option is checked, the workbench instance you are about to launch will 'see' all the plug-ins and fragments in the workspace, as well as all the external projects enabled in the Preferences.");
-		gd = fillIntoGrid(label, 2, false);
-		gd.widthHint = parent.getSize().x - 2 * layout.marginWidth;
-
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		fillIntoGrid(label, 2, false);
+		createStartingSpace(composite, 1);
+		
+		useDefaultRadio = new Button(composite, SWT.RADIO);
+		useDefaultRadio.setText("&Launch with all workspace and enabled external plug-ins");
+		fillIntoGrid(useDefaultRadio, 1, false);
+		
+		useListRadio = new Button(composite, SWT.RADIO);
+		useListRadio.setText("&Choose plug-ins and fragments to launch from the list");
+		fillIntoGrid(useListRadio, 1, false);
 
 		visibleLabel = new Label(composite, SWT.NULL);
-		visibleLabel.setText("Visible plug-ins and fragments:");
-		fillIntoGrid(visibleLabel, 2, false);
+		visibleLabel.setText("&Visible plug-ins and fragments:");
+		fillIntoGrid(visibleLabel, 1, false);
 
 		Control list = createPluginList(composite);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		list.setLayoutData(gd);
 
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText("Restore &Defaults");
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		/*
-		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint =
-			Math.max(
-				widthHint,
-				defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		*/
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		defaultsButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(defaultsButton);
 
@@ -178,11 +166,13 @@ public class AdvancedLauncherTab
 	}
 
 	private void hookListeners() {
-		useDefaultCheck.addSelectionListener(new SelectionAdapter() {
+		SelectionAdapter adapter = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				useDefaultChanged();
 			}
-		});
+		};
+		useDefaultRadio.addSelectionListener(adapter);
+		useListRadio.addSelectionListener(adapter);
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Vector checked = computeInitialCheckState();
@@ -193,7 +183,7 @@ public class AdvancedLauncherTab
 	}
 
 	private void useDefaultChanged() {
-		boolean useDefault = useDefaultCheck.getSelection();
+		boolean useDefault = useDefaultRadio.getSelection();
 		adjustCustomControlEnableState(!useDefault);
 		updateStatus();
 	}
@@ -280,7 +270,8 @@ public class AdvancedLauncherTab
 			PDEPlugin.logException(e);
 		}
 		// Need to set these before we refresh the viewer
-		useDefaultCheck.setSelection(useDefault);
+		useDefaultRadio.setSelection(useDefault);
+		useListRadio.setSelection(!useDefault);
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		Vector result = null;
 
@@ -464,7 +455,7 @@ public class AdvancedLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		boolean useDefault = useDefaultCheck.getSelection();
+		boolean useDefault = useDefaultRadio.getSelection();
 		config.setAttribute(USECUSTOM, useDefault);
 
 		if (useDefault)
@@ -510,21 +501,15 @@ public class AdvancedLauncherTab
 		if (boot == null) {
 			return createStatus(IStatus.ERROR, "Plugin 'org.eclipse.core.boot' not found.");
 		}
+		/*
 		if (findModel("org.eclipse.ui", plugins) != null) {
 			if (findModel("org.eclipse.sdk", plugins) == null) {
 				return createStatus(
 					IStatus.WARNING,
 					"'org.eclipse.sdk' not found. It is implicitly required by 'org.eclipse.ui'.");
 			}
-			File bootDir = new File(boot.getInstallLocation());
-			File installDir = new File(bootDir.getParentFile().getParentFile(), "install");
-			if (!installDir.exists()) {
-				return createStatus(
-					IStatus.WARNING,
-					installDir.getPath()
-						+ " not found.\nThe install directory is required by 'org.eclipse.ui'.");
-			}
 		};
+		*/
 		return createStatus(IStatus.OK, "");
 	}
 
@@ -543,7 +528,7 @@ public class AdvancedLauncherTab
 
 	public IPluginModelBase[] getPlugins() {
 		ArrayList res = new ArrayList();
-		boolean useDefault = useDefaultCheck.getSelection();
+		boolean useDefault = useDefaultRadio.getSelection();
 		if (useDefault) {
 			IPluginModelBase[] models = getWorkspacePlugins();
 			for (int i = 0; i < models.length; i++) {

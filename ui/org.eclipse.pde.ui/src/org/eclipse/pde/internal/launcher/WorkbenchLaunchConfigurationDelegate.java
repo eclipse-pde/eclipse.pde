@@ -196,7 +196,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			fullProgArgs[5] = targetWorkbenchLocation.toOSString();
 			if (tracing) {
 				fullProgArgs[6] = "-debug";
-				fullProgArgs[7] = getTracingFileArgument();
+				fullProgArgs[7] = getTracingFileArgument(config);
 			}
 			System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
 
@@ -248,9 +248,16 @@ public class WorkbenchLaunchConfigurationDelegate
 		return launch;
 	}
 
-	private String getTracingFileArgument() {
+	private String getTracingFileArgument(ILaunchConfiguration config) {
 		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
-		mng.ensureTracingFileExists();
+		Map options;
+		try {
+			options = config.getAttribute(ILauncherSettings.TRACING_OPTIONS, mng.getTracingTemplateCopy());
+		}
+		catch (CoreException e) {
+			return "";
+		}
+		mng.save(options);
 		String optionsFileName = mng.getTracingFileName();
 		String tracingArg;
 		if (SWT.getPlatform().equals("motif"))

@@ -41,8 +41,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		"WorkbenchLauncherWizardBasicPage.programArgs";
 	private static final String KEY_APPNAME =
 		"WorkbenchLauncherWizardBasicPage.appName";
-	private static final String KEY_TRACING =
-		"WorkbenchLauncherWizardBasicPage.tracing";
 	private static final String KEY_RESTORE =
 		"WorkbenchLauncherWizardBasicPage.restore";
 	private static final String KEY_RESTORE_TEXT =
@@ -69,7 +67,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	private Text progArgsText;
 	private Text applicationNameText;
 	private Button defaultsButton;
-	private Button tracingCheck;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -90,6 +87,8 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 
+		createStartingSpace(composite, 3);
+		
 		Label label = new Label(composite, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WORKSPACE));
 
@@ -130,10 +129,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		applicationNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(applicationNameText, 2, false);
 
-		tracingCheck = new Button(composite, SWT.CHECK);
-		tracingCheck.setText(PDEPlugin.getResourceString(KEY_TRACING));
-		fillIntoGrid(tracingCheck, 2, false);
-
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 3, false);
 
@@ -165,7 +160,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
-		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 
@@ -175,8 +169,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 			vmArgs = config.getAttribute(VMARGS, vmArgs);
 			progArgs = config.getAttribute(PROGARGS, progArgs);
 			appName = config.getAttribute(APPLICATION, appName);
-			tracing = config.getAttribute(TRACING, tracing);
-
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
 				String curr =
@@ -210,7 +202,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		else
 			workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(doClear);
-		tracingCheck.setSelection(tracing);
 		//validate
 		workspaceSelectionStatus = validateWorkspaceSelection();
 		jreSelectionStatus = validateJRESelection();
@@ -249,7 +240,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
-		tracingCheck.setSelection(false);
 	}
 
 	private void hookListeners() {
@@ -309,7 +299,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		config.setAttribute(VMINSTALL, getVMInstall().getName());
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
-		config.setAttribute(TRACING, isTracingEnabled());
 		
 		config.setAttribute(LOCATION + String.valueOf(0),
 									workspaceCombo.getText());
@@ -411,13 +400,6 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	 */
 	public String getApplicationName() {
 		return applicationNameText.getText();
-	}
-
-	/**
-	 * Returns true if tracing is enabled
-	 */
-	public boolean isTracingEnabled() {
-		return tracingCheck.getSelection();
 	}
 
 	static IVMInstall[] getAllVMInstances() {
