@@ -18,21 +18,20 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
 	private CheckboxTableViewer pluginListViewer;
+	private Button useContainersCheck;
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
 	private static final String KEY_PLUGIN_LIST =
@@ -103,6 +102,14 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(selected);
+
+		useContainersCheck = new Button(container, SWT.CHECK);
+		useContainersCheck.setText(PDEPlugin.getResourceString("Preferences.BuildpathPage.classpathContainers"));
+		boolean useContainers = PDEPlugin.getUseClasspathContainers();
+		useContainersCheck.setSelection(useContainers);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		useContainersCheck.setLayoutData(gd);
 			
 		setControl(container);
 		Dialog.applyDialogFont(container);
@@ -114,6 +121,10 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 
 	public Object[] getSelected() {
 		return tablePart.getSelection();
+	}
+	
+	public boolean getUseContainers() {
+		return useContainersCheck.getSelection();
 	}
 
 	private void dialogChanged() {
