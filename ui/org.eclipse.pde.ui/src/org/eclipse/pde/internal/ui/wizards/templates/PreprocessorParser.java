@@ -313,6 +313,10 @@ public class PreprocessorParser {
 				if (variable) {
 					tvalue = line.substring(vloc, loc);
 					variable = false;
+					if (tvalue.equalsIgnoreCase("false")) //$NON-NLS-1$
+						return T_FALSE;
+					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
+						return T_TRUE;
 					return T_VAR;
 				}
 				if (string) {
