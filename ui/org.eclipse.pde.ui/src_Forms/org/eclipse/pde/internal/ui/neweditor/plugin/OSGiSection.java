@@ -161,7 +161,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		ruleContainer.setLayout(layout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		ruleContainer.setLayoutData(gd);
-		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule:");
+		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
 		gd = new GridData(GridData.FILL_BOTH);
 		activateLabel.setLayoutData(gd);
 		activateLabel.setFont(boldFont);
@@ -207,7 +207,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.makeColumnsEqualWidth = false;
 		exceptionsContainer.setLayout(layout);
 		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions:");
+		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		exceptionLabel.setLayoutData(gd);
