@@ -9,7 +9,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -286,7 +285,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 
 		if (registryPlugins == null) {
 			URL[] pluginPaths =
-				PluginPathFinder.getPluginPaths(BootLoader.getInstallURL().getFile());
+				PluginPathFinder.getPluginPaths(Platform.getInstallLocation().getURL().getFile());
 			registryPlugins = TargetPlatformRegistryLoader.loadModels(pluginPaths, false, new NullProgressMonitor());
 		}
 
