@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPreferenceConstants {
 
@@ -226,6 +227,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		store.setDefault(PROP_JAVAC_VERBOSE, true);
 		store.setDefault(PROP_JAVAC_SOURCE, "1.3");
 		store.setDefault(PROP_JAVAC_TARGET, "1.1");
+		ExtendedTextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 	
 	public static boolean isFullNameModeEnabled() {
