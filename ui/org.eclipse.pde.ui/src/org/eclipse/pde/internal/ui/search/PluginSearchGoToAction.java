@@ -37,7 +37,7 @@ public class PluginSearchGoToAction extends Action {
 			IPluginObject object = (IPluginObject)entry.getGroupByKey();
 			if (object instanceof IPluginBase)
 				ManifestEditor.openPluginEditor((IPluginBase)object);
-			ManifestEditor.openPluginEditor(object.getModel().getPluginBase(),object);
+			ManifestEditor.openPluginEditor(object.getModel().getPluginBase(),object, entry.getSelectedMarker());
 		}	
 	}
 
