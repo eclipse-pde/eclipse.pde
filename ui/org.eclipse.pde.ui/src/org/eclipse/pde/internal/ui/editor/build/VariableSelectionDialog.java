@@ -33,10 +33,11 @@ public class VariableSelectionDialog extends SelectionDialog {
 		{
 			"bin.includes",
 			"bin.excludes",
-			"javadoc.packages",
-			"javadoc.excludedpackages",
 			"src.includes",
-			"src.excludes" };
+			"src.excludes",
+			"custom",
+			"jars.extra.classpath",
+			"jars.compile.order" };
 
 	class TableContentProvider
 		extends DefaultContentProvider
