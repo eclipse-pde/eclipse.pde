@@ -122,7 +122,6 @@ public class FeatureSpecSection extends PDESection {
 				}
 			}
 		});
-		idText.getText().setEditable(false);
 
 		titleText =
 			new FormEntry(container,
