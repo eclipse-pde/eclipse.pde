@@ -128,6 +128,7 @@ public class AdvancedLauncherTab
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	public void createControl(Composite parent) {

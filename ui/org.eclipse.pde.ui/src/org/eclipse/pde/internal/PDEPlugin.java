@@ -422,7 +422,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		getWorkspaceModelManager().reset();
 		
 		modelSynchronizer = new ModelSynchronizer();
-		modelSynchronizer.register(externalModelManager);
+		modelSynchronizer.setExternalModelManager(externalModelManager);
 		modelSynchronizer.register(workspaceModelManager);		
 
 		attachToLaunchManager();
@@ -434,7 +434,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 		detachFromLaunchManager();
 		modelSynchronizer.unregister(workspaceModelManager);
-		modelSynchronizer.unregister(externalModelManager);
 		workspaceModelManager.shutdown();
 		super.shutdown();
 	}

@@ -267,10 +267,9 @@ public class TracingLauncherTab
 		return composite;
 	}
 	public void dispose() {
-		propertySheet.dispose();
+		if (propertySheet!=null) propertySheet.dispose();
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-
 	}
 
 	private IDialogSettings getDialogSettings() {

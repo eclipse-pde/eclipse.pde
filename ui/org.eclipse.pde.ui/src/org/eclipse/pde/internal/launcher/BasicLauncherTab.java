@@ -188,6 +188,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 					}
 				}
 			}
+			doClear = config.getAttribute(DOCLEAR, doClear);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -230,6 +231,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		config.setAttribute(TRACING, tracing);
 		config.setAttribute(VMINSTALL, JavaRuntime.getDefaultVMInstall().getName());
 		config.setAttribute(LOCATION + "0", defaultWorkspace);
+		config.setAttribute(DOCLEAR, false);
 	}
 
 	private void doRestoreDefaults() {

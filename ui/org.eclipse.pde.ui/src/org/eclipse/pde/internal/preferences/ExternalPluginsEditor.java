@@ -48,7 +48,7 @@ protected void doLoad() {
 	pluginsBlock.initialize(store);
 }
 protected void doLoadDefault() {
-	pluginsBlock.initializeDefault(false);
+	pluginsBlock.initializeDefault(true);
 }
 protected void doStore() {
 	pluginsBlock.save(getPreferenceStore());

@@ -130,14 +130,17 @@ public class ProjectStructurePage extends WizardPage {
 		String fileName = "build.properties";
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
-		WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-		String libKey = IBuildEntry.JAR_PREFIX + library;
-		IBuildEntry entry = model.getFactory().createEntry(libKey);
-		if (!source.endsWith("/"))
-			source = source + "/";
-		entry.addToken(source);
-		model.getBuild().add(entry);
-		model.save();
+		boolean exists = file.exists();
+		if (!exists) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			String libKey = IBuildEntry.JAR_PREFIX + library;
+			IBuildEntry entry = model.getFactory().createEntry(libKey);
+			if (!source.endsWith("/"))
+				source = source + "/";
+			entry.addToken(source);
+			model.getBuild().add(entry);
+			model.save();
+		}
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getEditorRegistry().setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}

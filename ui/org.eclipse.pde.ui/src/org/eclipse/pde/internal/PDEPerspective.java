@@ -8,7 +8,6 @@ import org.eclipse.ui.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-
 public class PDEPerspective implements IPerspectiveFactory {
 
 public PDEPerspective() {
@@ -39,6 +38,7 @@ public void createInitialLayout(IPageLayout factory) {
 
 	bottomRight.addView(IPageLayout.ID_TASK_LIST);
 	bottomRight.addView("org.eclipse.pde.runtime.LogView");
+	bottomRight.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
 
 	factory.addView(
 		IPageLayout.ID_PROP_SHEET, 
@@ -57,5 +57,20 @@ public void createInitialLayout(IPageLayout factory) {
 	factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
+	factory.addActionSet(JavaUI.ID_REFACTORING_ACTION_SET);
+	
+	// new actions 
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.wizards.project.NewProjectWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.wizards.project.NewFragmentWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard");
+	factory.addNewWizardShortcut("org.eclipse.pde.internal.feature.NewFeatureProjectWizard");
+	
+	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard");	 //$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSnippetFileCreationWizard"); //$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
+	factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
 }
 }

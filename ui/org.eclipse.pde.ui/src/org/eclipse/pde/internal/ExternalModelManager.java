@@ -49,10 +49,10 @@ public class ExternalModelManager {
 	private static final String KEY_PROCESSING_PATH =
 		"ExternalModelManager.processingPath";
 	private Vector listeners = new Vector();
-	
+
 	public ExternalModelManager() {
 	}
-	
+
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
 	}
@@ -130,7 +130,7 @@ public class ExternalModelManager {
 	public IPluginModel[] getModels() {
 		return getModels(new NullProgressMonitor());
 	}
-	
+
 	public boolean isLoaded() {
 		return models != null;
 	}
@@ -145,7 +145,7 @@ public class ExternalModelManager {
 		}
 		return new IPluginModel[0];
 	}
-	
+
 	public IFragmentModel[] getFragmentModels(IProgressMonitor monitor) {
 		if (fmodels == null)
 			loadModels(monitor);
@@ -166,7 +166,7 @@ public class ExternalModelManager {
 		}
 		return null;
 	}
-	
+
 	public IFragment getFragment(int i) {
 		if (fmodels == null)
 			loadModels(new NullProgressMonitor());
@@ -182,7 +182,7 @@ public class ExternalModelManager {
 			loadModels(new NullProgressMonitor());
 		return (models != null) ? models.size() : 0;
 	}
-	
+
 	public int getFragmentCount() {
 		if (fmodels == null)
 			loadModels(new NullProgressMonitor());
@@ -214,7 +214,11 @@ public class ExternalModelManager {
 
 	public boolean hasEnabledModels() {
 		if (models == null) {
-			loadModels(new NullProgressMonitor());
+			if (ExternalPluginsBlock
+				.hasEnabledModels(PDEPlugin.getDefault().getPreferenceStore()))
+				loadModels(new NullProgressMonitor());
+			else
+				return false;
 		}
 		for (int i = 0; i < models.size(); i++) {
 			IPluginModel model = (IPluginModel) models.elementAt(i);
@@ -271,7 +275,7 @@ public class ExternalModelManager {
 			model.setEnabled(true);
 		}
 	}
-	
+
 	protected static void processFragmentModel(
 		Vector result,
 		PluginFragmentModel fragmentModel,
@@ -343,7 +347,7 @@ public class ExternalModelManager {
 				if (pluginDescriptorModel.getEnabled())
 					processPluginDescriptorModel(result, pluginDescriptorModel, monitor);
 			}
-			for (int i=0; i<fragmentModels.length; i++) {
+			for (int i = 0; i < fragmentModels.length; i++) {
 				PluginFragmentModel fragmentModel = fragmentModels[i];
 				processFragmentModel(fresult, fragmentModel, monitor);
 			}

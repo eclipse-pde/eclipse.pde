@@ -102,8 +102,8 @@ public class ExternalPluginsBlock {
 				PDEPlugin.getResourceString(KEY_RELOAD),
 				null,
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
-				PDEPlugin.getResourceString(KEY_WORKSPACE)};
+				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL)/*,
+				PDEPlugin.getResourceString(KEY_WORKSPACE)*/};
 		tablePart = new TablePart(buttonLabels);
 		tablePart.setSelectAllIndex(2);
 		tablePart.setDeselectAllIndex(3);
@@ -207,7 +207,7 @@ public class ExternalPluginsBlock {
 				BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 					public void run() {
 						pluginListViewer.refresh();
-						initializeDefault(false);
+						initializeDefault(true);
 					}
 				});
 			}
@@ -222,7 +222,7 @@ public class ExternalPluginsBlock {
 		if (platformPath != null && platformPath.length() == 0)
 			return;
 
-		store.setDefault(CHECKED_PLUGINS, SAVED_NONE);
+		store.setDefault(CHECKED_PLUGINS, SAVED_ALL);
 
 		pluginListViewer.setInput(registry);
 		String saved = store.getString(CHECKED_PLUGINS);
@@ -308,6 +308,15 @@ public class ExternalPluginsBlock {
 		computeDelta();
 	}
 
+	public static boolean hasEnabledModels(IPreferenceStore store) {
+		String saved = store.getString(CHECKED_PLUGINS);
+		if (saved!=null && saved.equals(SAVED_NONE))
+			// we know for sure that nothing is enabled
+			return false;
+		// must load
+		return true;
+	}
+	
 	void computeDelta() {
 		int type = 0;
 		IModel[] addedArray = null;
