@@ -168,6 +168,10 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
 		else
 			programArgs.add(ClasspathHelper.getDevEntries(true));
+		
+		// necessary for PDE to know how to load plugins when target platform = host platform
+		// see PluginPathFinder.getPluginPaths()
+		programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		// add tracing, if turned on
 		if (configuration.getAttribute(TRACING, false)
