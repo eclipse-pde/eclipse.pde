@@ -45,10 +45,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.neweditor.TableSection;
 import org.eclipse.pde.internal.ui.newparts.TablePart;
+import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -177,23 +180,20 @@ public class RequiresSection
 			manager.add(openAction);
 		}
 		manager.add(new Separator());
-		/*
-		
-		//((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
+		getPage().contextMenuAboutToShow(manager);
 		
 		if (!selection.isEmpty())
 			manager.add(deleteAction);
-		getPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
 		
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
-		if (getFormPage().getModel() instanceof WorkspacePluginModelBase) {
-			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase) getFormPage().getModel()));
+		if (getPage().getModel().getUnderlyingResource()!=null) {
+			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel()));
 		}
-		*/
 	}
 
 	private void handleDelete() {

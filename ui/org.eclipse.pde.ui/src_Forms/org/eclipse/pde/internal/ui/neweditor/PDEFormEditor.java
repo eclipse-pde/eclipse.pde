@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.neweditor;
 import java.io.File;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -133,8 +132,19 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	public Clipboard getClipboard() {
 		return clipboard;
 	}
+
+	protected void contextMenuAboutToShow(IMenuManager manager) {
+		PDEFormEditorContributor contributor = getContributor();
+		IFormPage page = getActivePageInstance();
+		if (page instanceof PDEFormPage)
+			((PDEFormPage)page).contextMenuAboutToShow(manager);
+		if (contributor != null)
+			contributor.contextMenuAboutToShow(manager);
+	}
 	
-	protected abstract void contextMenuAboutToShow(IMenuManager manager);
+	public PDEFormEditorContributor getContributor() {
+		return (PDEFormEditorContributor)getEditorSite().getActionBarContributor();
+	}
 
 	protected String computeInitialPageId() {
 		String firstPageId=null;
@@ -284,10 +294,10 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	
 	public void editorDirtyStateChanged() {
 		super.editorDirtyStateChanged();
-		//PDEEditorContributor contributor = getContributor();
-		//if (contributor != null)
-			//contributor.updateActions();
-	}	
+		PDEFormEditorContributor contributor = getContributor();
+		if (contributor != null)
+			contributor.updateActions();
+	}
 
 	private void validateEdit(IEditorInput input) {
 		InputContext context = inputContextManager.getContext(input);

@@ -37,11 +37,12 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
-		toolkit.createLabel(parent, "");
-		button = toolkit.createButton(parent, att.getName(), SWT.CHECK);
+		createLabel(parent, toolkit);
+		button = toolkit.createButton(parent, "", SWT.CHECK);
 		GridData gd = new GridData();
 		//gd.horizontalIndent = 10;
 		gd.horizontalSpan = span - 1;
+		//gd.horizontalSpan = span;
 		button.setLayoutData(gd);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

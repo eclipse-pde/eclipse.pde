@@ -62,4 +62,6 @@ public abstract class PDEFormPage extends FormPage {
 	public IModel getModel() {
 		return getPDEEditor().getAggregateModel();
 	}
+	public void contextMenuAboutToShow(IMenuManager menu) {
+	}
 }

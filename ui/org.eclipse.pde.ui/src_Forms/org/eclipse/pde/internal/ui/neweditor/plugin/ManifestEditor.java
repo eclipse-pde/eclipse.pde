@@ -175,6 +175,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		}
 	}
 	protected void contextMenuAboutToShow(IMenuManager manager) {
+		super.contextMenuAboutToShow(manager);
 	}
 
 	protected void addPages() {

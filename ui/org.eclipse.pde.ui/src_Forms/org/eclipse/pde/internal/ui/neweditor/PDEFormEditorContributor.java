@@ -10,6 +10,8 @@ import java.util.Hashtable;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -70,11 +72,9 @@ public class PDEFormEditorContributor
 		}
 		public boolean isEditable() {
 			if (editor==null) return false;
-			/*
-			Object model = editor.getModel();
+			IModel model = editor.getAggregateModel();
 			if (model instanceof IEditable)
 				return ((IEditable)model).isEditable();
-				*/
 			return false;
 		}
 	}
