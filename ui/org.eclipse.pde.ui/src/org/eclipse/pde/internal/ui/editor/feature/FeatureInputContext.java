@@ -31,7 +31,7 @@ import org.eclipse.ui.*;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class FeatureInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID="feature";
+	public static final String CONTEXT_ID="feature-context";
 	/**
 	 * @param editor
 	 * @param input

@@ -21,6 +21,8 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		if (context == null)
 			return;
 		PDESourcePage sourcePage;
+		// Don't duplicate
+		if (findPage(contextId)!=null) return;
 		sourcePage = createSourcePage(this, contextId, context.getInput().getName(), context.getId());
 		sourcePage.setInputContext(context);
 		try {

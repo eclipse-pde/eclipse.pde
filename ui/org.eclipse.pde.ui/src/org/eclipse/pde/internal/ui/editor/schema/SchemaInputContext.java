@@ -32,7 +32,7 @@ import org.eclipse.ui.IEditorInput;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class SchemaInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID="schema";
+	public static final String CONTEXT_ID="schema-context";
 	/**
 	 * @param editor
 	 * @param input
