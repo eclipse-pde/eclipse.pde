@@ -176,9 +176,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
 			} else if (!pluginMap.containsKey("org.eclipse.update.configurator")) {
 				savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
-			}
-
-			
+			}			
 			return configDir;
 		} catch (CoreException e) {
 			// Rethrow
