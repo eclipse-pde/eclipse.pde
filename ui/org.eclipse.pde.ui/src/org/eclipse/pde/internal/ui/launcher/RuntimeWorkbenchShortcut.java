@@ -50,6 +50,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		try { 
 			ILaunchConfiguration config = findLaunchConfiguration(mode);
 			if (config != null) {
+				DebugUITools.saveAndBuildBeforeLaunch();
 				config.launch(mode, null);
 			}			
 		} catch (CoreException e) {
