@@ -51,9 +51,16 @@ public void setProperty(String propertyName) {
  */
 public void execute() throws BuildException {
 	try {
-		PluginDescriptorModel descriptor = getRegistry().getPlugin(pluginId);
-		if (descriptor == null)
-			throw new BuildException("Could not find plugin: " + pluginId); // FIXME: externalize string
+		PluginModel descriptor;
+		if (pluginId != null) {
+			descriptor = getRegistry().getPlugin(pluginId);
+			if (descriptor == null)
+				throw new BuildException("Could not find plugin: " + pluginId); // FIXME: externalize string
+		} else {
+			descriptor = getRegistry().getFragment(fragmentId);
+			if (descriptor == null)
+				throw new BuildException("Could not find fragment: " + fragmentId); // FIXME: externalize string
+		}
 		String location = new File(new URL(descriptor.getLocation()).getFile()).getAbsolutePath();
 		getProject().setProperty(propertyName, location);
 	} catch (Exception e) {
