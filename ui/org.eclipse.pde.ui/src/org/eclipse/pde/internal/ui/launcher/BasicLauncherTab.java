@@ -245,13 +245,17 @@ public class BasicLauncherTab
 	private void doRestoreDefaults() {
 		String defaultWorkspace = getDefaultWorkspace();
 		progArgsText.setText(getDefaultProgramArguments());
+		String defaultJRE =
+			getVMInstallNames(
+				new IVMInstall[] { JavaRuntime.getDefaultVMInstall()})[0];
+		jreCombo.select(jreCombo.indexOf(defaultJRE));
 		vmArgsText.setText("");
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
-		workspaceChanged=true;
+		workspaceChanged = true;
 	}
-
+	
 	static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
