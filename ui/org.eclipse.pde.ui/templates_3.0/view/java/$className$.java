@@ -145,7 +145,7 @@ public class $className$ extends ViewPart {
 		public void dispose() {
 		}
 		public Object[] getElements(Object parent) {
-			if (parent.equals(ResourcesPlugin.getWorkspace())) {
+			if (parent.equals(getViewSite())) {
 				if (invisibleRoot==null) initialize();
 				return getChildren(invisibleRoot);
 			}
