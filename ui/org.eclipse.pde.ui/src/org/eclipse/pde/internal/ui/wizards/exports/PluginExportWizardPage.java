@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -26,8 +25,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class PluginExportWizardPage extends BaseExportWizardPage {
-	
-	private static String S_SELECTED_PLUGINS = "selectedPlugins";
 	
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(
@@ -63,39 +60,6 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		return file.exists();
 	}
 	
-	protected void checkSelected() {
-		IDialogSettings settings = getDialogSettings();
-		String selectedPlugins = settings.get(S_SELECTED_PLUGINS);
-		if (selectedPlugins == null) {
-			super.checkSelected();
-		} else {
-			ArrayList selected = new ArrayList();
-			StringTokenizer tokenizer = new StringTokenizer(selectedPlugins, ",");
-			while (tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextToken();
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findPlugin(token,null,0);
-				if (model != null && model instanceof WorkspacePluginModelBase) {
-					selected.add(model);
-				}
-			}
-			exportPart.setSelection(selected.toArray());
-		}		
-	}
-	
-	public void saveSettings() {
-		super.saveSettings();
-		Object[] selected = exportPart.getSelection();
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < selected.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)selected[i];
-			buffer.append(model.getPluginBase().getId());
-			if (i < selected.length - 1)
-				buffer.append(",");
-		}
-		if (buffer.length() > 0)
-			getDialogSettings().put(S_SELECTED_PLUGINS, buffer.toString());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
 	 */

@@ -405,6 +405,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			}
 		}
 		exportPart.setSelection(checked.toArray());
+		if (checked.size() > 0)
+			exportPart.getTableViewer().reveal(checked.get(0));
 	}
 
 	private IModel findModelFor(IProject project) {

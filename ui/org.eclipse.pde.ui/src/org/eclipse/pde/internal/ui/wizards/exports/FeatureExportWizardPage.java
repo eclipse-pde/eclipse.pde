@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import java.util.*;
-
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
@@ -24,8 +21,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class FeatureExportWizardPage extends BaseExportWizardPage {
-	
-	private static String S_SELECTED_FEATURES = "selectedFeatures";
 	
 	public FeatureExportWizardPage(IStructuredSelection selection) {
 		super(
@@ -45,41 +40,6 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		WorkbenchHelp.setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
 	}
 	
-	protected void checkSelected() {
-		IDialogSettings settings = getDialogSettings();
-		String selectedPlugins = settings.get(S_SELECTED_FEATURES);
-		if (selectedPlugins == null) {
-			super.checkSelected();
-		} else {
-			ArrayList tokens = new ArrayList();
-			StringTokenizer tokenizer = new StringTokenizer(selectedPlugins, ",");
-			while (tokenizer.hasMoreTokens()) {
-				tokens.add(tokenizer.nextToken());
-			}
-			ArrayList selected = new ArrayList();
-			IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
-			for (int i = 0; i < models.length; i++) {
-				if (tokens.contains(models[i].getFeature().getId()))
-					selected.add(models[i]);
-			}
-			exportPart.setSelection(selected.toArray());
-		}		
-	}
-	
-	public void saveSettings() {
-		super.saveSettings();
-		Object[] selected = exportPart.getSelection();
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < selected.length; i++) {
-			IFeatureModel model = (IFeatureModel)selected[i];
-			buffer.append(model.getFeature().getId());
-			if (i < selected.length - 1)
-				buffer.append(",");
-		}
-		if (buffer.length() > 0)
-			getDialogSettings().put(S_SELECTED_FEATURES, buffer.toString());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
 	 */
