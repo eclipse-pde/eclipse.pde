@@ -36,11 +36,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  * Window>Preferences>Java>Code Generation.
  */
 public class FeatureBuildOperation implements IRunnableWithProgress {
-	public static final String KEY_ERRORS_MESSAGE =
-		"GenerateFeatureJars.errorsMessage";
-	public static final String KEY_VERIFYING = "GenerateFeatureJars.verifying";
-	public static final String KEY_GENERATING =
-		"GenerateFeatureJars.generating";
 	public static final String KEY_RUNNING = "FeatureBuildOperation.running";
 	private static final String BUILD_LISTENER_CLASS =
 		"org.eclipse.pde.internal.ui.ant.SiteBuildListener";
@@ -149,11 +144,11 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		IFeatureModel featureModel =
 			sbfeature.getReferencedFeature().getModel();
 		monitor.subTask("'" + featureModel.getFeature().getLabel() + "'");
-		monitor.beginTask(PDEPlugin.getResourceString(KEY_VERIFYING), 5);
+		monitor.beginTask("Verifying...", 5);
 		monitor.worked(1);
 		ensureValid(featureModel, monitor);
 		monitor.worked(1);
-		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
+		monitor.setTaskName("Generating...");
 		IFile scriptFile = makeScript(featureModel, monitor);
 		monitor.worked(1);
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_RUNNING));
@@ -198,7 +193,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		// Check if there are errors against feature file
 		if (hasErrors(file)) {
 			// There are errors against this file - abort
-			String message = PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE);
+			String message = "Manifest file contains errors.  Aborted build";
 			Status status =
 				new Status(
 					IStatus.ERROR,

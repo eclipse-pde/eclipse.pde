@@ -164,6 +164,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			properties.put("baseos", TargetPlatform.getOS());
 			properties.put("basearch", TargetPlatform.getOSArch());
 			properties.put("basenl", TargetPlatform.getNL());
+			properties.put("eclipse.running", "true");
 			
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			properties.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR));

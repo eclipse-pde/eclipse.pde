@@ -66,6 +66,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		map.put("basews", TargetPlatform.getWS());
 		map.put("basearch", TargetPlatform.getOSArch());
 		map.put("basenl", TargetPlatform.getNL());
+		map.put("eclipse.running", "true");
 		
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		map.put("javacFailOnError", "false");
