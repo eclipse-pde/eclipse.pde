@@ -155,18 +155,16 @@ public final class Utils implements IPDEBuildConstants {
 	}
 
 	public static String[] computePrerequisiteOrder(PluginModel[] plugins, PluginModel[] fragments) {
-		String[] orderedPlugins = computePrerequisiteOrderPlugins(plugins);
-		if (fragments != null && fragments.length != 0)
-			return insertFragments(orderedPlugins, fragments);
-		return orderedPlugins;
-	}
-
-	private static String[] computePrerequisiteOrderPlugins(PluginModel[] plugins) {
 		List prereqs = new ArrayList(9);
 		Set pluginList = new HashSet(plugins.length);
+		//Build a list of now plugins and fragments
 		for (int i = 0; i < plugins.length; i++)
 			pluginList.add(plugins[i].getId());
-		//pluginList.add(plugins[i]);
+				
+		if (fragments!=null) {		
+			for (int i = 0; i < fragments.length; i++)
+		 		pluginList.add(fragments[i].getId());
+		}				
 
 		// create a collection of directed edges from plugin to prereq
 		for (int i = 0; i < plugins.length; i++) {
