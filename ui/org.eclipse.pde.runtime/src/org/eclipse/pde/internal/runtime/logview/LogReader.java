@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.IMemento;
 
 class LogReader {
@@ -49,15 +48,15 @@ class LogReader {
 				if (line.length() == 0)
 					continue;
 
-				if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.session"))) { //$NON-NLS-1$
+				if (line.startsWith("!SESSION")) { //$NON-NLS-1$
 					state = SESSION_STATE;
-				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.entry"))) { //$NON-NLS-1$
+				} else if (line.startsWith("!ENTRY")) { //$NON-NLS-1$
 					state = ENTRY_STATE;
-				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.subentry"))) { //$NON-NLS-1$
+				} else if (line.startsWith("!SUBENTRY")) { //$NON-NLS-1$
 					state = SUBENTRY_STATE;
-				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.message"))) { //$NON-NLS-1$
+				} else if (line.startsWith("!MESSAGE")) { //$NON-NLS-1$
 					state = MESSAGE_STATE;
-				} else if (line.startsWith(PDERuntimePlugin.getResourceString("LogReader.stack"))) { //$NON-NLS-1$
+				} else if (line.startsWith("!STACK")) { //$NON-NLS-1$
 					state = STACK_STATE;
 				} else
 					state = TEXT_STATE;
