@@ -1051,9 +1051,6 @@
       <extraClasspathEntry
             library="pdeuiant.jar">
       </extraClasspathEntry>
-      <extraClasspathEntry
-            library="pdeui.jar">
-      </extraClasspathEntry>
    </extension>
    <extension
          point="org.eclipse.jdt.launching.classpathProviders">
