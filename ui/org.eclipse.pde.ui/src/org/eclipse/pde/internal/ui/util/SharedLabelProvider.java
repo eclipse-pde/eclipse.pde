@@ -180,19 +180,22 @@ public class SharedLabelProvider
 	public Image getImageFromURL(
 		URL installURL,
 		String subdirectoryAndFilename) {
-		Image image = null;
 		try {
 			URL newURL = new URL(installURL, subdirectoryAndFilename);
 			String key = newURL.toString();
-			image = (Image)images.get(key);
-			if (image == null) {
-				ImageDescriptor desc = ImageDescriptor.createFromURL(newURL);
-				image = desc.createImage();
-				images.put(key, image);
-			}
+			Image oldImage  = (Image)images.get(key);
+			Image newImage = ImageDescriptor.createFromURL(newURL).createImage();
+			if (oldImage == null || !newImage.equals(oldImage)) {
+				images.put(key, newImage);
+				if (oldImage != null)
+					oldImage.dispose();
+				return newImage;
+			} 
+			newImage.dispose();
+			return oldImage;
 		} catch (MalformedURLException e) {
 		} catch (SWTException e) {
 		}
-		return image;
+		return null;
 	}
 }
