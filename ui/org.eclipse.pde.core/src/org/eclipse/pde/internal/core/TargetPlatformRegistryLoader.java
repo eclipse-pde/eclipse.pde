@@ -37,18 +37,19 @@ public class TargetPlatformRegistryLoader {
 	public static void load(URL[] urls, PDEState state, IProgressMonitor monitor) {
 		String targetMode = getMode(urls);
 		state.setTargetMode(targetMode);
+		monitor.beginTask("", urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			state.addBundle(new File(urls[i].getFile()));
+			monitor.worked(1);
 		}
 	}
 	
 	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, PDEState state, IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
-		monitor.beginTask(PDECore.getResourceString("TargetPlatformRegistryLoader.parsing"), 3); //$NON-NLS-1$
+		monitor.beginTask(PDECore.getResourceString("TargetPlatformRegistryLoader.parsing"), 10); //$NON-NLS-1$
 		
-		load(urls, state, monitor);
-		monitor.worked(1);
+		load(urls, state, new SubProgressMonitor(monitor, 8));
 		
 		state.resolveState();	
 		monitor.worked(1);
