@@ -407,8 +407,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void handleExport() {
-		FileDialog dialog = new FileDialog(getViewSite().getShell());
-		dialog.setText(PDERuntimePlugin.getResourceString("LogView.save"));
+		FileDialog dialog = new FileDialog(getViewSite().getShell(), SWT.SAVE);
 		dialog.setFilterExtensions(new String[] { "*.log" });
 		if (directory != null) 
 			dialog.setFilterPath(directory);

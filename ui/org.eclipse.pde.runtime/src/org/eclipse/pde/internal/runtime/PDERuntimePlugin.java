@@ -77,7 +77,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 	public void startup() throws CoreException {
-		IAdapterManager manager = Platform.getAdapterManager();
 	}
 	
 }
