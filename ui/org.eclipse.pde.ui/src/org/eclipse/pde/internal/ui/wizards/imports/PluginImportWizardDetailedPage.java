@@ -438,21 +438,31 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
 		Object[] selected = tablePart.getSelection();
-		if (selected.length > 0) {
-			if (selected.length > 1
-				|| !((IPluginModelBase) selected[0])
-					.getPluginBase()
-					.getId()
-					.equals(
-					"org.eclipse.core.boot")) {
-				addImplicitDependencies(checked);
-			}
-			for (int i = 0; i < selected.length; i++) {
-				addPluginAndDependent((IPluginModelBase) selected[i], checked);
+		if (selected.length == 1) {
+			IPluginModelBase model = (IPluginModelBase)selected[0];
+			if (model.getPluginBase().getId().equals("org.eclipse.core.boot")) {
+				checked.add(model);
+				return new ArrayList(checked);
 			}
 		}
+		
+		if (selected.length > 0) {
+			boolean noImplicitPlugins = true;
+			for (int i = 0; i < selected.length; i++) {
+				IPluginModelBase model = (IPluginModelBase) selected[i];
+				if (noImplicitPlugins)
+					noImplicitPlugins =
+						model.getPluginBase().getLibraries().length == 0
+							&& model.getPluginBase().getImports().length == 0;
+				addPluginAndDependent(model, checked);
+			}
 
-		ArrayList result = new ArrayList(checked);
+			if (!noImplicitPlugins)
+				addImplicitDependencies(checked);
+
+		}
+
+		return new ArrayList(checked);
 		/*
 				if (findPlugin("org.eclipse.sdk") == null
 					findPlugin("org.eclipse.ui") != null) {
@@ -467,7 +477,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					}
 				}
 		*/
-		return result;
 	}
 
 	private void addImplicitDependencies(HashSet checked) {

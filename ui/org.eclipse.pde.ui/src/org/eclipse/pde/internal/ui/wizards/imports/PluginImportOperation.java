@@ -228,26 +228,37 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 
 			if (doImport) {
-				importContentAndSource(project, model, monitor);
+				File pluginDir = new File(model.getInstallLocation());
+				importContent(
+					pluginDir,
+					project.getFullPath(),
+					FileSystemStructureProvider.INSTANCE,
+					null,
+					new SubProgressMonitor(monitor, 1));
+				if (extractSource) {
+					importSource(
+						project,
+						model.getPluginBase(),
+						new Path(pluginDir.getPath()),
+						new SubProgressMonitor(monitor, 1));
+				} else {
+					monitor.worked(1);
+				}
 			} else {
 				monitor.worked(2);
 			}
 
-			boolean needsJavaNature = true;
+			boolean isJavaProject = model.getPluginBase().getLibraries().length > 0;
 
-			setProjectDescription(project, needsJavaNature, monitor);
+			setProjectDescription(project, isJavaProject, monitor);
 
-			if (needsJavaNature)
+			if (isJavaProject)
 				updateClasspath(project, model, monitor);
 
 			//Mark this project so that we can show image overlay
 			// using the label decorator
-			if (!extractSource)
-				project.setPersistentProperty(
-					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					doImport
-						? PDECore.EXTERNAL_PROJECT_VALUE
-						: PDECore.BINARY_PROJECT_VALUE);
+			if (!extractSource && doImport && isJavaProject)
+				project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
 
 		} finally {
 			monitor.done();
@@ -704,25 +715,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				outputLocation);
 		op.run(new SubProgressMonitor(monitor, 2));
 		
-	}
-	
-	private void importContentAndSource(
-		IProject project,
-		IPluginModelBase model,
-		IProgressMonitor monitor) throws CoreException {
-		File pluginDir = new File(model.getInstallLocation());
-		IPath pluginPath = new Path(pluginDir.getPath());
-		importContent(
-			pluginDir,
-			project.getFullPath(),
-			FileSystemStructureProvider.INSTANCE,
-			null,
-			new SubProgressMonitor(monitor, 1));
-		importSource(
-			project,
-			model.getPluginBase(),
-			pluginPath,
-			new SubProgressMonitor(monitor, 1));
 	}
 	
 	private void setProjectDescription(
