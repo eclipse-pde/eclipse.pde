@@ -368,7 +368,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Dictionary properties = new Hashtable(3);
 		IPluginEntry associatedEntry = generator.getAssociatedEntry(); 
 		if (associatedEntry == null)
-			System.err.println("NULL ENTRY " + generator.fullName);
+			return true;
+
 		String os = associatedEntry.getOS();
 		if (os != null)
 			properties.put("osgi.os", os);
