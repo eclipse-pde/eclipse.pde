@@ -28,10 +28,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public NewExtensionPointMainPage(
 			IProject project,
 			IPluginModelBase model) {
-		super(project);
-		initialize();
-		this.model = model;
-		this.point = null;
+		this(project, model, null);
 	}
 	
 	public NewExtensionPointMainPage(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
@@ -47,6 +44,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		initializeValues();
+		setPageComplete(checkFieldsFilled());
 		setMessage(null);
 	}
 	protected boolean isPluginIdFinal(){
