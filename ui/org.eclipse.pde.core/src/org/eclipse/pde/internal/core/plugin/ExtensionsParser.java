@@ -16,10 +16,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-/**
- * @author melhem
- *  
- */
 public class ExtensionsParser extends DefaultHandler {
 
 	private Vector fExtensions;

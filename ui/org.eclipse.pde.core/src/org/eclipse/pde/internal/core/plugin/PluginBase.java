@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.net.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -93,10 +94,13 @@ public abstract class PluginBase
 			String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 			SAXParser parser = getSaxParser();
 			ExtensionsParser handler = new ExtensionsParser(getModel());
-			parser.parse(getModel().getResourceURL(filename).openStream(), handler);
-			loadExtensions(handler.getExtensions());
-			loadExtensionPoints(handler.getExtensionPoints());
-			schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
+			URL url = getModel().getResourceURL(filename);
+			if (url != null) {
+				parser.parse(url.openStream(), handler);
+				loadExtensions(handler.getExtensions());
+				loadExtensionPoints(handler.getExtensionPoints());
+				schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
+			}
 		} catch (Exception e) {
 		}
 	}

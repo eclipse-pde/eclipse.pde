@@ -50,7 +50,7 @@ public class TracingOptionsManager {
 			modelOptions.load(stream);
 			stream.close();
 			return modelOptions;
-		} catch (IOException e1) {
+		} catch (Exception e) {
 		}
 		return null;
 	}
@@ -97,13 +97,7 @@ public class TracingOptionsManager {
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
-		try {
-			InputStream stream = model.getResourceURL(".options").openStream(); //$NON-NLS-1$
-			stream.close();
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
+		return model.getResourceURL(".options") != null; //$NON-NLS-1$
 	}
 	
 	public void reset() {

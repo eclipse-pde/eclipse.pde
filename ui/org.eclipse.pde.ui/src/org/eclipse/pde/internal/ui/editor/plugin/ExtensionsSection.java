@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -628,12 +628,9 @@ public class ExtensionsSection extends TreeSection
 		IPluginModelBase model = element.getPluginModel();
 		if (model == null)
 			return null;
-		try {
-			return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(
-					model.getResourceURL(iconPathName));
-		} catch (IOException e) {
-			return null;
-		}
+
+		URL url = model.getResourceURL(iconPathName);
+		return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(url);
 	}
 	private String resolveObjectName(Object obj) {
 		return resolveObjectName(getSchemaRegistry(), pluginInfoRegistry, obj);

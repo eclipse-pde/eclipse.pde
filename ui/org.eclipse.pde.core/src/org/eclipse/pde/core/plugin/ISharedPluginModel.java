@@ -60,9 +60,10 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	 * a <samp>jar:file:</samp> protocol.
 	 *
 	 * @return the URL of a resource in a plug-in structure, or
-	 * <samp>null</samp> if the plug-in's install location is null.
+	 * <samp>null</samp> if the resource does not exist or
+	 * the plug-in's install location is null.
 	 * 
 	 * @since 3.1
 	 */
-	URL getResourceURL(String relativePath) throws MalformedURLException;
+	URL getResourceURL(String relativePath);
 }

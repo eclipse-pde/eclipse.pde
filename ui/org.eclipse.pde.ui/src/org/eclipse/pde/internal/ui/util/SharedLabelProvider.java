@@ -183,16 +183,16 @@ public class SharedLabelProvider
 	}
 
 	public Image getImageFromURL(URL url) {
+		if (url == null)
+			return getBlankImage();
 		Image image = null;
 		try {
 			InputStream stream = null;
 			try {
 				stream = url.openStream();
 				stream.close();
-			} catch (IOException e1) {			
-				if (fBlankImage == null)
-					fBlankImage = ImageDescriptor.getMissingImageDescriptor().createImage();
-				return fBlankImage;	
+			} catch (IOException e1) {	
+				return getBlankImage();
 			}
 			
 			String key = url.toString();
@@ -205,5 +205,11 @@ public class SharedLabelProvider
 		} catch (SWTException e) {
 		}
 		return image;
+	}
+	
+	public Image getBlankImage() {
+		if (fBlankImage == null)
+			fBlankImage = ImageDescriptor.getMissingImageDescriptor().createImage();
+		return fBlankImage;			
 	}
 }
