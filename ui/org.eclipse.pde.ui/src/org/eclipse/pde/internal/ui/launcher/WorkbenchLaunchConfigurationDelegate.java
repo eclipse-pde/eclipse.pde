@@ -197,7 +197,12 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		StringTokenizer tokenizer =
 			new StringTokenizer(configuration.getAttribute(PROGARGS, "")); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
-			programArgs.add(tokenizer.nextToken());
+			String token = tokenizer.nextToken();
+			// be forgiving if people have tracing turned on and forgot
+			// to remove the -debug from the program args field.
+			if (token.equals("-debug") && programArgs.contains("-debug"))
+				continue;
+			programArgs.add(token);
 		}
 		
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
