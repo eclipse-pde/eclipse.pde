@@ -70,4 +70,6 @@ public interface IProduct extends IProductObject {
 	
 	boolean containsPlugin(String id);
 	
+	boolean containsFeature(String id);
+	
 }

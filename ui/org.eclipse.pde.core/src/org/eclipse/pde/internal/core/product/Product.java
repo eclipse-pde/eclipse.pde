@@ -325,6 +325,10 @@ public class Product extends ProductObject implements IProduct {
 	public boolean containsPlugin(String id) {
 		return fPlugins.containsKey(id);
 	}
+	
+	public boolean containsFeature(String id) {
+		return fFeatures.containsKey(id);
+	}
 
 	public IWindowImages getWindowImages() {
 		return fWindowImages;

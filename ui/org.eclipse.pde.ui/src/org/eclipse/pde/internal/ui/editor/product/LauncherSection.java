@@ -115,6 +115,7 @@ public class LauncherSection extends PDESection {
 				updateWinEntries(selected);
 			}
 		});
+		fIcoButton.setEnabled(isEditable());
 		
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.file"), ILauncherInfo.P_ICO_PATH)); //$NON-NLS-1$
 		
@@ -122,6 +123,7 @@ public class LauncherSection extends PDESection {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fBmpButton.setLayoutData(gd);
+		fBmpButton.setEnabled(isEditable());
 
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.Low16"), ILauncherInfo.WIN32_16_LOW)); //$NON-NLS-1$
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.High16"), ILauncherInfo.WIN32_16_HIGH)); //$NON-NLS-1$
@@ -206,14 +208,14 @@ public class LauncherSection extends PDESection {
 			IconEntry entry = (IconEntry)fIcons.get(i);
 			String id = entry.getIconId();
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
-				entry.setEditable(useIco);
+				entry.setEditable(isEditable()&& useIco);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
 					|| id.equals(ILauncherInfo.WIN32_32_HIGH)
 					|| id.equals(ILauncherInfo.WIN32_32_LOW)
 					|| id.equals(ILauncherInfo.WIN32_48_HIGH)
 					|| id.equals(ILauncherInfo.WIN32_48_LOW)) {
-				entry.setEditable(!useIco);
+				entry.setEditable(isEditable() && !useIco);
 			}
 		}
 	}

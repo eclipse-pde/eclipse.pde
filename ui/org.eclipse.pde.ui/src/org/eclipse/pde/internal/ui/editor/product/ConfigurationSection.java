@@ -1,6 +1,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -13,7 +15,9 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.model.*;
 
 
@@ -59,13 +63,16 @@ public class ConfigurationSection extends PDESection {
 		fCustom.setEnabled(isEditable());
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fCustomEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ConfigurationSection.file"), PDEPlugin.getResourceString("ConfigurationSection.browse"), true, 35); //$NON-NLS-1$ //$NON-NLS-2$
+		fCustomEntry = new FormEntry(client, toolkit, PDEPlugin.getResourceString("ConfigurationSection.file"), PDEPlugin.getResourceString("ConfigurationSection.browse"), isEditable(), 35); //$NON-NLS-1$ //$NON-NLS-2$
 		fCustomEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getConfigurationFileInfo().setPath(entry.getValue());
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				handleOpen();
 			}
 		});
 		fCustomEntry.setEditable(isEditable());
@@ -142,6 +149,18 @@ public class ConfigurationSection extends PDESection {
 		if (c instanceof Text)
 			return true;
 		return false;
+	}
+
+	private void handleOpen() {
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		IResource resource = root.findMember(new Path(fCustomEntry.getValue()));
+		try {
+			if (resource != null && resource instanceof IFile)
+				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+			else
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.warning")); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (PartInitException e) {
+		}			
 	}
 
 

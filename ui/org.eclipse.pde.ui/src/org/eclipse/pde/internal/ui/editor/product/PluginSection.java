@@ -289,7 +289,6 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 
 	private void handleAdd() {	
 		PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices(), true);
-		dialog.create();
 		if (dialog.open() == PluginSelectionDialog.OK) {
 			Object[] models = dialog.getResult();
 			for (int i = 0; i < models.length; i++) {

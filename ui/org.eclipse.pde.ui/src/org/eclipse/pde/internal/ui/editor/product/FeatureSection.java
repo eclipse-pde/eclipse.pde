@@ -1,10 +1,13 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.util.*;
+
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -15,6 +18,7 @@ import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
@@ -55,7 +59,7 @@ public class FeatureSection extends TableSection {
 		fFeatureTable = tablePart.getTableViewer();
 		fFeatureTable.setContentProvider(new ContentProvider());
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fFeatureTable.setInput(PDECore.getDefault().getWorkspaceModelManager());
+		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -132,7 +136,22 @@ public class FeatureSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		return super.doGlobalAction(actionId);
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			handleDelete();
+			return true;
+		}
+		return false;
+	}
+	
+	private void handleDelete() {
+		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
+		if (ssel.size() > 0) {
+			Object[] objects = ssel.toArray();
+			IProduct product = getProduct();
+			for (int i = 0; i < objects.length; i++) {
+				product.removeFeature((IProductFeature)objects[i]);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -146,7 +165,30 @@ public class FeatureSection extends TableSection {
 	}
 
 	private void handleAdd() {
+		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices());
+		dialog.setMultipleSelection(true);
+		if (dialog.open() == FeatureSelectionDialog.OK) {
+			Object[] models = dialog.getResult();
+			for (int i = 0; i < models.length; i++) {
+				IFeature feature = ((IFeatureModel)models[i]).getFeature();
+				addFeature(feature.getId(), feature.getVersion());
+			}
+		}
 	}
+	
+	private IFeatureModel[] getAvailableChoices() {
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
+		IProduct product = getProduct();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getFeature().getId();
+			if (id != null && !product.containsFeature(id)) {
+				list.add(models[i]);
+			}
+		}
+		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);
+	}
+
 	
 	private IProduct getProduct() {
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
