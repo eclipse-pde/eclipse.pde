@@ -287,6 +287,10 @@ public class RequiredPluginsContainerPage
 
 	private void createRealEntries() {
 		IJavaProject javaProject = getJavaProject();
+		if (javaProject == null) {
+			realEntries = new IClasspathEntry[0];
+			return;
+		}
 
 		if (entry == null) {
 /*
