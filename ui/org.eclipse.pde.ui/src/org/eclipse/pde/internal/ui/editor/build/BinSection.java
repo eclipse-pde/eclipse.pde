@@ -99,31 +99,33 @@ public class BinSection extends BuildContentsSection
 			initializeCheckState();
 			return;
 		}
-		if ((fParentResource == null && fOriginalResource == null)
-				&& (event.getChangedProperty() != null && event
-						.getChangedProperty()
-						.equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES))) {
-
-			if (event.getOldValue() == null && event.getNewValue() != null) {
-				// adding token
-				IFile file = fProject.getFile(new Path(event.getNewValue()
-						.toString()));
-				if (!file.exists())
+		if (fParentResource == null && fOriginalResource == null){
+			if (event.getChangedProperty() != null && event
+					.getChangedProperty()
+					.equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)) {
+				
+				if (event.getOldValue() == null && event.getNewValue() != null) {
+					// adding token
+					IFile file = fProject.getFile(new Path(event.getNewValue()
+							.toString()));
+					if (!file.exists())
+						return;
+					fParentResource = fOriginalResource = file;
+					isChecked = true;
+				} else if (event.getOldValue() != null
+						&& event.getNewValue() == null) {
+					// removing token
+					IFile file = fProject.getFile(new Path(event.getOldValue()
+							.toString()));
+					if (!file.exists())
+						return;
+					fParentResource = fOriginalResource = file;
+					isChecked = false;
+				} else {
 					return;
-				fParentResource = fOriginalResource = file;
-				isChecked = true;
-			} else if (event.getOldValue() != null
-					&& event.getNewValue() == null) {
-				// removing token
-				IFile file = fProject.getFile(new Path(event.getOldValue()
-						.toString()));
-				if (!file.exists())
-					return;
-				fParentResource = fOriginalResource = file;
-				isChecked = false;
-			} else {
-				return;
+				}
 			}
+			return;
 		}
 		fTreeViewer.setChecked(fParentResource, isChecked);
 		fTreeViewer.setGrayed(fOriginalResource, false);
