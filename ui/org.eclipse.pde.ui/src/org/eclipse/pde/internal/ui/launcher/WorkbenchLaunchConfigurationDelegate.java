@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
@@ -21,8 +22,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.core.*;
 
-public class WorkbenchLaunchConfigurationDelegate
-	implements ILaunchConfigurationDelegate, ILauncherSettings {
+public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 
+			implements ILauncherSettings {
 	private static final String KEY_BAD_FEATURE_SETUP =
 		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
 	private static final String KEY_NO_STARTUP =
@@ -282,5 +283,22 @@ public class WorkbenchLaunchConfigurationDelegate
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
+			String mode) throws CoreException {
+		return super.getBuildOrder(configuration, mode);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getProjectsForProblemSearch(
+			ILaunchConfiguration configuration, String mode)
+			throws CoreException {
+		return super.getProjectsForProblemSearch(configuration, mode);
 	}
 }
