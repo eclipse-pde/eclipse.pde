@@ -57,7 +57,7 @@ public class BinaryProjectFilter extends ViewerFilter {
 		if (project.isOpen() == false)
 			return false;
 		return project.exists(new Path("plugin.xml"))
-			|| project.exists(new Path("fragment.xml"));
+			|| project.exists(new Path("fragment.xml")) || project.exists(new Path("META-INF/MANIFEST.MF"));
 	}
 	
 	private boolean isFeatureProject(IProject project) {
