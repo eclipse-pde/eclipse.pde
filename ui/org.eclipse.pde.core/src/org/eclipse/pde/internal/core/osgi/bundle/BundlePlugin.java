@@ -24,11 +24,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	public String getClassName() {
-		Dictionary manifest = getManifest();
-		if (manifest != null) {
-			return (String)manifest.get(Constants.BUNDLE_ACTIVATOR);
-		}
-		return null;
+		return parseSingleValuedHeader(Constants.BUNDLE_ACTIVATOR);
 	}
 
 	/* (non-Javadoc)

@@ -1,9 +1,3 @@
-/*
- * Created on Oct 19, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.util.*;
@@ -13,28 +7,22 @@ import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.osgi.framework.*;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginId()
 	 */
-	private FragmentUtil futil;
+	private FragmentUtil fUtil;
 	
 	public void reset() {
 		super.reset();
-		futil = null;
+		fUtil = null;
 	}
 	
 	private FragmentUtil getFragmentUtil() {
-		if (futil == null) {
-			futil = new FragmentUtil((String)getManifest().get(Constants.FRAGMENT_HOST));
+		if (fUtil == null) {
+			fUtil = new FragmentUtil((String)getManifest().get(Constants.FRAGMENT_HOST));
 		}
-		return futil;
+		return fUtil;
 	}
 	
 	public String getPluginId() {

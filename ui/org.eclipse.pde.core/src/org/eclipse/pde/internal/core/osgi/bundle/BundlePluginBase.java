@@ -203,6 +203,25 @@ public class BundlePluginBase
 					imports.add(importElement);
 					importElement.load(imported[i]);
 				}
+			} else {
+				Dictionary manifest = getManifest();
+				if (manifest != null) {
+					try {
+						String value = (String) manifest.get(Constants.REQUIRE_BUNDLE);
+						if (value != null) {
+							ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, value);
+							for (int i = 0; i < elements.length; i++) {
+								PluginImport importElement = new PluginImport();
+								importElement.setModel(getModel());
+								importElement.setInTheModel(true);
+								importElement.setParent(this);
+								imports.add(importElement);
+								importElement.load(elements[i]);							
+							}
+						}
+					} catch (BundleException e) {
+					}				
+				}
 			}
 		}
 		return (IPluginImport[])imports.toArray(new IPluginImport[imports.size()]);
@@ -238,21 +257,28 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
-		return parseHeader(Constants.BUNDLE_VENDOR);
+		return parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
 	}
 	
-	private String parseHeader(String header) {
+	protected String parseSingleValuedHeader(String header) {
+		String[] values = parseMultiValuedHeader(header);
+		return (values.length > 0) ? values[values.length - 1] : null;
+	}
+	
+	protected String[] parseMultiValuedHeader(String header) {
 		Dictionary manifest = getManifest();
 		if (manifest == null)
-			return "";
+			return new String[0];
 		String value = (String)manifest.get(header);
+		if (value == null)
+			return new String[0];
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
 			if (elements.length > 0)
-				return elements[0].getValue();
+				return elements[0].getValueComponents();
 		} catch (BundleException e) {
 		}
-		return "";
+		return new String[0];		
 		
 	}
 
@@ -282,7 +308,7 @@ public class BundlePluginBase
 			if (version != null)
 				return version.toString();
 		} 
-		return parseHeader(Constants.BUNDLE_VERSION);
+		return parseSingleValuedHeader(Constants.BUNDLE_VERSION);
 	}
 	
 
@@ -429,7 +455,7 @@ public class BundlePluginBase
 	 */
 	public String getId() {
 		BundleDescription desc = model.getBundleDescription();
-		return (desc != null) ? desc.getSymbolicName() : parseHeader(Constants.BUNDLE_SYMBOLICNAME);
+		return (desc != null) ? desc.getSymbolicName() : parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
 	}
 	
 	/*
@@ -461,7 +487,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		return parseHeader(Constants.BUNDLE_NAME);
+		return parseSingleValuedHeader(Constants.BUNDLE_NAME);
 	}
 
 	/*

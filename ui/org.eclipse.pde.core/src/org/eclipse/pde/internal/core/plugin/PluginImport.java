@@ -16,7 +16,9 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.plugin.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 public class PluginImport
@@ -74,6 +76,13 @@ public class PluginImport
 	
 	public void load(BundleDescription description) {
 		this.id = description.getSymbolicName();
+	}
+	
+	public void load(ManifestElement element) {
+		this.id = element.getValue();
+		this.optional = "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE));
+		this.reexported = "true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE));
+		this.version = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
 	}
 	
 	public void load(BundleSpecification importModel) {
