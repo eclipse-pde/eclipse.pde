@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public abstract class InputContextManager implements IResourceChangeListener {
@@ -178,7 +179,10 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	private void asyncStructureChanged(final IFile file, final boolean added) {
 		if (editor == null || editor.getEditorSite() == null)
 			return;
-		editor.getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+		Shell shell = editor.getEditorSite().getShell();
+		Display display = shell != null ? shell.getDisplay() : Display.getDefault();
+
+		display.asyncExec(new Runnable() {
 			public void run() {
 				structureChanged(file, added);
 			}
