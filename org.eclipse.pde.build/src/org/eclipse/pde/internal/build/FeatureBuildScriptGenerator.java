@@ -191,21 +191,26 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), null);
 	script.printString(--tab, "</target>");
 }
-protected void generateCleanTarget(AntScript script) {
+protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
-	tab++;
-	Map params = new HashMap(1);
-	params.put("target", TARGET_CLEAN);
-	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	FileSet[] fileSet = new FileSet[3];
-	fileSet [0] = new FileSet(".", null, "*.pdetemp", null, null, null, null);
-	fileSet [1] = new FileSet(".", null, "${feature}*.jar", null, null, null, null);
-	fileSet [2] = new FileSet(".", null, "${feature}*.zip", null, null, null, null);
-	script.printDeleteTask(tab, null, null, fileSet);
-	tab--;
-	script.printString(tab, "</target>");
+	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	Properties properties = getBuildProperties(feature);
+	JAR[] availableJars = extractJars(properties);
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	for (int i = 0; i < availableJars.length; i++) {
+		String jarName = availableJars[i].getName();
+		String name = getJARLocation(jarName);
+		script.printDeleteTask(tab, null, name, null);
+		script.printDeleteTask(tab, null, getLogName(name), null);
+		script.printDeleteTask(tab, null, getSRCName(name), null);
+		script.printDeleteTask(tab, getTempJARFolderLocation(jarName), null, null);
+	}
+	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.jar").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.bin.dist.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.log.zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append("${feature}_${" + PROPERTY_FEATURE_VERSION + "}.src.zip").toString(), null);
+	script.printString(--tab, "</target>");
 }
 protected void generateZipLogsTarget(AntScript script) {
 	IPath base = new Path(getPropertyFormat(PROPERTY_BASEDIR));

@@ -75,33 +75,23 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
-	ArrayList jars = new ArrayList(9);
-	ArrayList zips = new ArrayList(9);
+	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	for (int i = 0; i < availableJars.length; i++) {
-		String name = getJARLocation(availableJars[i].getName());
-		jars.add(name);
-		zips.add(getSRCName(name));
+		String jarName = availableJars[i].getName();
+		String name = getJARLocation(jarName);
+		script.printDeleteTask(tab, null, name, null);
+		script.printDeleteTask(tab, null, getLogName(name), null);
+		script.printDeleteTask(tab, null, getSRCName(name), null);
+		script.printDeleteTask(tab, getTempJARFolderLocation(jarName), null, null);
 	}
-	String compiledJars = Utils.getStringFromCollection(jars, ",");
-	String sourceZips = Utils.getStringFromCollection(zips, ",");
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	List fileSet = new ArrayList(5);
-	if (compiledJars.length() > 0) {
-		fileSet.add(new FileSet(basedir, null, "*.bin", null, null, null, null));
-		fileSet.add(new FileSet(basedir, null, "**/*.log", null, null, null, null));
-		fileSet.add(new FileSet(basedir, null, compiledJars, null, null, null, null));
-		fileSet.add(new FileSet(basedir, null, sourceZips, null, null, null, null));
-	}
-	fileSet.add(new FileSet(basedir, null, "**/*.pdetemp", null, null, null, null));
-	script.printDeleteTask(tab, null, null, (FileSet[]) fileSet.toArray(new FileSet[fileSet.size()]));
-	script.printDeleteTask(tab, null, getModelFileBase() + ".jar", null);
-	script.printDeleteTask(tab, null, getModelFileBase() + DEFAULT_FILENAME_SRC, null);
-	script.printDeleteTask(tab, null, getModelFileBase() + DEFAULT_FILENAME_LOG, null);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + ".jar").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + ".zip").toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + DEFAULT_FILENAME_SRC).toString(), null);
+	script.printDeleteTask(tab, null, basedir.append(getModelFileBase() + DEFAULT_FILENAME_LOG).toString(), null);
+	script.printString(--tab, "</target>");
 }
 
 protected void generateGatherLogTarget(AntScript script) throws CoreException {

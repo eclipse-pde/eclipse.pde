@@ -370,6 +370,10 @@ protected String getSRCName(String jarName) {
 	return jarName.substring(0, jarName.length() - 4) + "src.zip";
 }
 
+protected String getLogName(String jarName) {
+	return jarName + ".bin.log";
+}
+
 protected String getJARLocation(String jarName) {
 	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	IPath destination = new Path(basedir);
