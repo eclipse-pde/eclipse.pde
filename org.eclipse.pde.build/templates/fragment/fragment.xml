@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+   id="FRAGMENT_ID"
+   name="%pluginName"
+   version="FRAGMENT_VERSION"
+   provider-name="Eclipse.org"
+   plugin-id="PLUGIN_ID"
+   plugin-version="PLUGIN_VERSION">
+
+   <runtime>
+   </runtime>
+
+  <extension point = "org.eclipse.pde.core.source">
+     <location path="src" />
+  </extension>
+
+</fragment>
