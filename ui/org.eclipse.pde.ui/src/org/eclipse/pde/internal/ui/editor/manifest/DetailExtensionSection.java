@@ -559,6 +559,10 @@ public class DetailExtensionSection
 		IPluginModelBase model = element.getModel();
 		if (model == null)
 			return null;
+		
+		// 39283 - ignore icon paths that 
+		// point at plugin.properties
+		if (iconPathName.startsWith("%")) return null;
 			
 		URL modelURL = null;
 		String path = model.getInstallLocation();
