@@ -85,9 +85,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					result[i] = classpathEntries[i].getValue();
 				}
 			}
-		} finally {
-			return result;
+		} catch(BundleException e) {
+			//Ignore
 		}
+		return result;
 	}
 
 	private void loadPluginVersionFile() {
