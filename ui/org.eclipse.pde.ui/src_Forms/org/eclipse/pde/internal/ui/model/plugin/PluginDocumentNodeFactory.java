@@ -1,13 +1,14 @@
 package org.eclipse.pde.internal.ui.model.plugin;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 /**
  * @author melhem
  *
  */
-public class PluginDocumentNodeFactory {
+public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	
 	private PluginModelBase fModel;
 
@@ -127,5 +128,47 @@ public class PluginDocumentNodeFactory {
 	private PluginBaseNode createPluginBase(String name) {
 		return (PluginBaseNode)fModel.createPluginBase(name.equals("fragment"));
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createImport()
+	 */
+	public IPluginImport createImport() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createLibrary()
+	 */
+	public IPluginLibrary createLibrary() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createAttribute(org.eclipse.pde.core.plugin.IPluginElement)
+	 */
+	public IPluginAttribute createAttribute(IPluginElement element) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createElement(org.eclipse.pde.core.plugin.IPluginObject)
+	 */
+	public IPluginElement createElement(IPluginObject parent) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtension()
+	 */
+	public IPluginExtension createExtension() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtensionPoint()
+	 */
+	public IPluginExtensionPoint createExtensionPoint() {
+		return null;
 	}
 }

@@ -23,7 +23,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 	
 	public PluginDocumentHandler(PluginModelBase model) {
 		fModel = model;
-		fFactory = new PluginDocumentNodeFactory(model);
+		fFactory = (PluginDocumentNodeFactory)fModel.getPluginFactory();
 		fFindReplaceAdapter = new FindReplaceDocumentAdapter(fModel.getDocument());
 	}
 	/* (non-Javadoc)

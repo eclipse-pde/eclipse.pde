@@ -43,8 +43,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private boolean blockChanges = false;
 	private boolean ignoreModelEvents = false;
 	private boolean addReexport = true;
-	public static final String SECTION_TITLE = "ManifestEditor.MatchSection.title";
-	public static final String SECTION_DESC = "ManifestEditor.MatchSection.desc";
 	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional";
 	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport";
 	public static final String KEY_VERSION = "ManifestEditor.MatchSection.version";
@@ -64,8 +62,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	public MatchSection(PDEFormPage formPage, Composite parent,
 			boolean addReexport) {
 		super(formPage, parent, Section.DESCRIPTION);
-		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText("Dependency Properties");
+		getSection().setDescription("Define the properties of the selected dependency:");
 		this.addReexport = addReexport;
 		createClient(getSection(), formPage.getEditor().getToolkit());
 	}
@@ -267,7 +265,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
-		if (ignoreModelEvents)
+		/*if (ignoreModelEvents)
 			return;
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object obj = e.getChangedObjects()[0];
@@ -279,7 +277,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			if (object.equals(currentImport)) {
 				update(currentImport);
 			}
-		}
+		}*/
 	}
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IPluginReference input = null;

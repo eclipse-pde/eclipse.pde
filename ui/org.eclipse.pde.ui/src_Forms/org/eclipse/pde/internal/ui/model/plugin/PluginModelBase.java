@@ -7,10 +7,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.plugin.PluginAttribute;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.xml.sax.helpers.*;
 
@@ -18,16 +16,18 @@ import org.xml.sax.helpers.*;
  * @author melhem
  *
  */
-public abstract class PluginModelBase extends XMLEditingModel implements IPluginModelBase, IPluginModelFactory {
+public abstract class PluginModelBase extends XMLEditingModel implements IPluginModelBase {
 
 	private PluginBaseNode fPluginBase;
 	private boolean fIsEnabled;
 	private String fInstallLocation;
 	private IResource fUnderlyingResource;
 	private PluginDocumentHandler fHandler;
+	private IPluginModelFactory fFactory;
 	
 	public PluginModelBase(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);	
+		fFactory = new PluginDocumentNodeFactory(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
@@ -101,7 +101,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
 	public IPluginModelFactory getPluginFactory() {
-		return this;
+		return fFactory;
 	}
 
 	/* (non-Javadoc)
@@ -168,43 +168,4 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return fHandler;
 	}
 	
-	////////////////////////////////////////////////////////////////////////////
-	// Create PDE Core objects to distinguish them from ones created by parsing.
-	////////////////////////////////////////////////////////////////////////////
-	public IPluginAttribute createAttribute(IPluginElement element) {
-		PluginAttribute attribute = new PluginAttribute();
-		attribute.setModel(this);
-		attribute.setParent(element);
-		return attribute;
-	}
-	public IPluginElement createElement(IPluginObject parent) {
-		PluginElement element = new PluginElement();
-		element.setModel(this);
-		element.setParent(parent);
-		return element;
-	}
-	public IPluginExtension createExtension() {
-		PluginExtension extension = new PluginExtension();
-		extension.setParent(getPluginBase());
-		extension.setModel(this);
-		return extension;
-	}
-	public IPluginExtensionPoint createExtensionPoint() {
-		PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
-		extensionPoint.setModel(this);
-		extensionPoint.setParent(getPluginBase());
-		return extensionPoint;
-	}
-	public IPluginImport createImport() {
-		PluginImport iimport = new PluginImport();
-		iimport.setModel(this);
-		iimport.setParent(getPluginBase());
-		return iimport;
-	}
-	public IPluginLibrary createLibrary() {
-		PluginLibrary library = new PluginLibrary();
-		library.setModel(this);
-		library.setParent(getPluginBase());
-		return library;
-	}
 }
