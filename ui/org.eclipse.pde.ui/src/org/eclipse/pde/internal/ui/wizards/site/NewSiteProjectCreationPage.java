@@ -56,14 +56,18 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Group webGroup = new Group((Composite)getControl(), SWT.NULL);
+		Composite control = (Composite)getControl();
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 15;
+		control.setLayout(layout);
+		
+		Group webGroup = new Group(control, SWT.NULL);
 		webGroup.setText(PDEPlugin.getResourceString("NewSiteProjectCreationPage.webTitle")); //$NON-NLS-1$
 		webGroup.setFont(parent.getFont());
 		
 		initializeDialogUnits(parent);
-		GridLayout layout = new GridLayout();
+		layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = 15;
 		webGroup.setLayout(layout);
 		webGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
