@@ -16,10 +16,11 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.*;
 
 public class SourceLocationManager implements ICoreConstants {
-	private ArrayList userLocations = null;
-	private ArrayList extensionLocations = null;
+	private ArrayList fUserLocations = new ArrayList();
+	private ArrayList fExtensionLocations = new ArrayList();
 
 	class SearchResult {
 		SearchResult(SourceLocation loc, File file) {
@@ -32,17 +33,17 @@ public class SourceLocationManager implements ICoreConstants {
 
 	public ArrayList getUserLocationArray() {
 		initializeUserLocations();
-		return userLocations;
+		return fUserLocations;
 	}
 
 	public SourceLocation[] getUserLocations() {
 		initializeUserLocations();
-		return getLocations(userLocations);
+		return getLocations(fUserLocations);
 	}
 
 	public SourceLocation[] getExtensionLocations() {
 		initializeExtensionLocations();
-		return getLocations(extensionLocations);
+		return getLocations(fExtensionLocations);
 	}
 
 	private SourceLocation[] getLocations(ArrayList list) {
@@ -52,10 +53,7 @@ public class SourceLocationManager implements ICoreConstants {
 	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
 		SearchResult result = findSourceLocation(pluginBase, relativePath);
-		if (result != null)
-			return result.file;
-		else
-			return null;
+		return (result != null)? result.file : null;
 	}
 
 	public IPath findPath(IPluginBase pluginBase, IPath sourcePath) {
@@ -74,10 +72,8 @@ public class SourceLocationManager implements ICoreConstants {
 
 	public SearchResult findSourceLocation(IPluginBase pluginBase, IPath relativePath) {
 		initialize();
-		SearchResult result = findSourceFile(extensionLocations, relativePath);
-		if (result != null)
-			return result;
-		return findSourceFile(userLocations, relativePath);
+		SearchResult result = findSourceFile(fExtensionLocations, relativePath);
+		return (result != null) ? result : findSourceFile(fUserLocations, relativePath);
 	}
 
 	private SearchResult findSourceFile(ArrayList list, IPath sourcePath) {
@@ -96,10 +92,7 @@ public class SourceLocationManager implements ICoreConstants {
 		IPath locationPath = location.getPath();
 		IPath fullPath = locationPath.append(sourcePath);
 		File file = fullPath.toFile();
-		if (file.exists())
-			return new SearchResult(location, file);
-		else
-			return null;
+		return file.exists() ? new SearchResult(location, file): null;
 	}
 
 	private void initialize() {
@@ -108,11 +101,11 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void initializeUserLocations() {
-		userLocations = new ArrayList();
+		fUserLocations.clear();
 		String pref =
 			PDECore.getDefault().getPluginPreferences().getString(P_SOURCE_LOCATIONS);
 		if (pref.length() > 0)
-			parseSavedSourceLocations(pref, userLocations);
+			parseSavedSourceLocations(pref, fUserLocations);
 	}
 
 	private SourceLocation parseSourceLocation(String text) {
@@ -134,33 +127,17 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void initializeExtensionLocations() {
-		extensionLocations = new ArrayList();
+		fExtensionLocations.clear();
 		String pref =
 			PDECore.getDefault().getPluginPreferences().getString(P_EXT_LOCATIONS);
 		SourceLocation[] storedLocations = getSavedSourceLocations(pref);
-		IPluginExtension[] extensions = getRegisteredSourceExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IPluginObject[] children = extensions[i].getChildren();
-			for (int j = 0; j < children.length; j++) {
-				if (children[j].getName().equals("location")) {
-					IPluginElement element = (IPluginElement) children[j];
-					String pathValue = element.getAttribute("path").getValue();
-					IResource resource = extensions[i].getModel().getUnderlyingResource();
-					IPath path;
-					if (resource != null && resource.isLinked()) {
-						path = resource.getLocation().removeLastSegments(1);
-					} else {
-						path = new Path(extensions[i].getModel().getInstallLocation());
-					}
-					SourceLocation location =
-						new SourceLocation(path.append(pathValue), true);
-					location.setEnabled(
-						getSavedState(location.getPath(), storedLocations));
-					location.setUserDefined(false);
-					if (!extensionLocations.contains(location))
-						extensionLocations.add(location);
-				}
-			}
+		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
+		for (int i = 0; i < entries.length; i++) {
+			processExtensions(entries[i], false);
+		}
+		for (int i = 0; i < fExtensionLocations.size(); i++) {
+			SourceLocation location = (SourceLocation)fExtensionLocations.get(i);
+			location.setEnabled(getSavedState(location.getPath(), storedLocations));
 		}
 	}
 
@@ -192,19 +169,42 @@ public class SourceLocationManager implements ICoreConstants {
 		return (SourceLocation[]) entries.toArray(new SourceLocation[entries.size()]);
 	}
 
-	private IPluginExtension[] getRegisteredSourceExtensions() {
-		Vector result = new Vector();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				IPluginExtension extension = extensions[j];
-				if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
-					result.add(extension);
+	private void processExtensions(ModelEntry entry, boolean useExternal) {
+		IPluginModelBase model = useExternal ? entry.getExternalModel() : entry.getActiveModel();
+		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		for (int j = 0; j < extensions.length; j++) {
+			IPluginExtension extension = extensions[j];
+			if (extension.getPoint().equals(PDECore.getPluginId() + ".source")) {
+				int origLength = fExtensionLocations.size();
+				processExtension(extension);
+				if (fExtensionLocations.size() == origLength && model instanceof WorkspacePluginModelBase) {
+					processExtensions(entry, true);					
+				}
+			}
+		}		
+	}
+	
+	private void processExtension(IPluginExtension extension) {
+		IPluginObject[] children = extension.getChildren();
+		for (int j = 0; j < children.length; j++) {
+			if (children[j].getName().equals("location")) {
+				IPluginElement element = (IPluginElement) children[j];
+				String pathValue = element.getAttribute("path").getValue();
+				IResource resource = extension.getModel().getUnderlyingResource();
+				IPath path;
+				if (resource != null && resource.isLinked()) {
+					path = resource.getLocation().removeLastSegments(1).append(pathValue);
+				} else {
+					path = new Path(extension.getModel().getInstallLocation()).append(pathValue);
+				}
+				if (path.toFile().exists()) {
+					SourceLocation location = new SourceLocation(path, true);
+					location.setUserDefined(false);
+					if (!fExtensionLocations.contains(location))
+						fExtensionLocations.add(location);
 				}
 			}
 		}
-		return (IPluginExtension[]) result.toArray(new IPluginExtension[result.size()]);
 	}
 
 }
