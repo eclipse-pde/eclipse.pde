@@ -80,7 +80,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			setDefaultSourceLocator(launch, configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
 			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
-			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
+			PDEPlugin.getDefault().getLaunchListener().manage(launch);
 			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);
 			monitor.worked(1);
 		} catch (CoreException e) {

@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.*;
@@ -25,6 +26,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.feature.*;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
@@ -40,26 +42,28 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	// Shared instance
 	private static PDEPlugin inst;
 	// Resource bundle
-	private ResourceBundle resourceBundle;
-	// Launches listener
-	private LaunchListener launchListener;
+	private ResourceBundle fResourceBundle;
 	
-	private BundleContext context;
+	// Launches listener
+	private LaunchListener fLaunchListener;
+	
+	private BundleContext fBundleContext;
 
 	private java.util.Hashtable counters;
 	
 	// Shared colors for all forms
-	private FormColors formColors;
-	private PDELabelProvider labelProvider;
+	private FormColors fFormColors;
+	private PDELabelProvider fLabelProvider;
+	private ILaunchConfigurationListener fLaunchConfigurationListener;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		inst = this;
 		try {
-			resourceBundle =
+			fResourceBundle =
 				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
-			resourceBundle = null;
+			fResourceBundle = null;
 		}
 	}
 
@@ -99,7 +103,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
+		return fResourceBundle;
 	}
 	public static String getResourceString(String key) {
 		ResourceBundle bundle = PDEPlugin.getDefault().getResourceBundle();
@@ -173,11 +177,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	}
 	
 	public FormColors getFormColors(Display display) {
-		if (formColors == null) {
-			formColors = new FormColors(display);
-			formColors.markShared();
+		if (fFormColors == null) {
+			fFormColors = new FormColors(display);
+			fFormColors.markShared();
 		}
-		return formColors;
+		return fFormColors;
 	}
 
 	public void startup() throws CoreException {
@@ -191,7 +195,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		PluginsViewAdapterFactory factory = new PluginsViewAdapterFactory();
 		manager.registerAdapters(factory, ModelEntry.class);
 		manager.registerAdapters(factory, FileAdapter.class);
-		// set eclipse home variable if not sets
+
+		fLaunchConfigurationListener = new LaunchConfigurationListener();
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
 	}
 	
 	/* (non-Javadoc)
@@ -199,23 +205,27 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		this.context = context;
+		this.fBundleContext = context;
 	}
 	
 	public BundleContext getBundleContext() {
-		return this.context;
+		return this.fBundleContext;
 	}
 	
 	public void shutdown() throws CoreException {
-		if (launchListener!=null)
-			launchListener.shutdown();
-		if (formColors!=null) {
-			formColors.dispose();
-			formColors=null;
+		if (fLaunchListener!=null)
+			fLaunchListener.shutdown();
+		if (fFormColors!=null) {
+			fFormColors.dispose();
+			fFormColors=null;
 		}
-		if (labelProvider != null) {
-			labelProvider.dispose();
-			labelProvider = null;
+		if (fLabelProvider != null) {
+			fLabelProvider.dispose();
+			fLabelProvider = null;
+		}
+		if (fLaunchConfigurationListener != null) {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
+			fLaunchConfigurationListener = null;
 		}
 		super.shutdown();
 	}
@@ -232,15 +242,15 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	}
 
 	public PDELabelProvider getLabelProvider() {
-		if (labelProvider==null)
-			labelProvider = new PDELabelProvider();
-		return labelProvider;
+		if (fLabelProvider==null)
+			fLabelProvider = new PDELabelProvider();
+		return fLabelProvider;
 	}
 	
-	public LaunchListener getLaunchesListener() {
-		if (launchListener == null)
-			launchListener = new LaunchListener();
-		return launchListener;
+	public LaunchListener getLaunchListener() {
+		if (fLaunchListener == null)
+			fLaunchListener = new LaunchListener();
+		return fLaunchListener;
 	}
 	
 	protected void initializeDefaultPreferences(IPreferenceStore store) {

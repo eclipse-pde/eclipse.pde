@@ -70,7 +70,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			monitor.worked(1);
 						
 			LauncherUtils.setDefaultSourceLocator(configuration, launch);
-			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
+			PDEPlugin.getDefault().getLaunchListener().manage(launch);
 			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);		
 			monitor.worked(1);
 		} catch (CoreException e) {
