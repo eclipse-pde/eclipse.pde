@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.jface.viewers.*;
@@ -114,8 +115,7 @@ public class $wizardPageClassName$ extends WizardPage {
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
-				IContainer container = (IContainer) result[0];
-				containerText.setText(container.getFullPath().toString());
+				containerText.setText(((Path)result[0]).toOSString());
 			}
 		}
 	}
