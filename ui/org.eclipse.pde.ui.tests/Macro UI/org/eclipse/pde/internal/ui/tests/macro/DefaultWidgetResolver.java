@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.tests.macro;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.TabFolder;
@@ -41,6 +42,8 @@ public class DefaultWidgetResolver implements IWidgetResolver {
 				return ((IResource) data).getFullPath().toString();
 			if (data instanceof IClasspathContainer)
 				return ((IClasspathContainer) data).getPath().toString();
+			if (data instanceof IPluginModelBase)
+				return ((IPluginModelBase)data).getPluginBase().getId();
 			if (data instanceof RepositoryRoot)
 				return ((RepositoryRoot) data).getRoot().getLocation(false);
 			if (data instanceof CVSModelElement)
