@@ -258,8 +258,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
-		/*if (ignoreModelEvents)
-			return;
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object obj = e.getChangedObjects()[0];
 			if (obj.equals(currentImport)) {
@@ -270,7 +268,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			if (object.equals(currentImport)) {
 				update(currentImport);
 			}
-		}*/
+		}
 	}
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IPluginReference input = null;

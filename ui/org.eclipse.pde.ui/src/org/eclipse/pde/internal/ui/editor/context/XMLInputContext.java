@@ -56,7 +56,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 							} else {
 								if (event.getOldValue() instanceof IDocumentTextNode) {
 									addElementContentOperation((IDocumentTextNode)event.getOldValue(), ops);
-								} else {
+								} else if (event.getOldValue() instanceof IDocumentNode && event.getNewValue() instanceof IDocumentNode){
 									// swapping of nodes
 									modifyNode(node, ops, event);
 								}
