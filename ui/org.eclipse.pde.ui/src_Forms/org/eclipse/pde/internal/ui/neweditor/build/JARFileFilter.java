@@ -34,7 +34,7 @@ public class JARFileFilter extends ViewerFilter{
 	
 	public boolean select(Viewer viewer, Object parent, Object element){
 		if (element instanceof IFile)
-			return isValid(((IFile)element).getProjectRelativePath());
+			return isFileValid(((IFile)element).getProjectRelativePath());
 
 			if (element instanceof IContainer){ // i.e. IProject, IFolder
 			try {
@@ -50,10 +50,14 @@ public class JARFileFilter extends ViewerFilter{
 		return false;
 	}
 	
-	public boolean isValid(IPath path){
+	public boolean isFileValid(IPath path){
 		String ext = path.getFileExtension();
-		if (!fPaths.contains(path) && ext!=null && ext.length()!=0)
+		if (isPathValid(path) && ext!=null && ext.length()!=0)
 			return ext.equals(jarExt);
 		return false;
+	}
+	
+	public boolean isPathValid(IPath path) {
+		return !fPaths.contains(path);
 	}
 }

@@ -63,9 +63,9 @@ public class LibrarySection
 		 */
 		public boolean select(Viewer viewer, Object parent, Object element) {
 			if (element instanceof IFolder)
-				return true;
+				return isPathValid(((IFolder)element).getProjectRelativePath());
 			if (element instanceof IFile)
-				return isValid(((IFile)element).getProjectRelativePath());
+				return isFileValid(((IFile)element).getProjectRelativePath());
 			return false;
 		}
 	}
