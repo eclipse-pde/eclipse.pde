@@ -127,7 +127,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth= true;
+		layout.makeColumnsEqualWidth= false;
 		createManifestContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
