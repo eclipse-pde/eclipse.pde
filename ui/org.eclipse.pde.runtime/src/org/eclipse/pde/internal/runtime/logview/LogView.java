@@ -700,9 +700,11 @@ public class LogView extends ViewPart implements ILogListener {
             writer.close();
         } catch (IOException e) {
         }
-        // set the clipboard contents
-        clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer
-                .getInstance() });
+        if (textVersion.trim().length() > 0) {
+	        // set the clipboard contents
+	        clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer
+	                .getInstance() });
+        }
     }
 
     public void init(IViewSite site, IMemento memento) throws PartInitException {
