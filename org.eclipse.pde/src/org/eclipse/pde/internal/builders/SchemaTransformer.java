@@ -20,7 +20,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;
@@ -352,11 +351,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 			}
 		}
 		try {
-			File tempCSSFile =
-				PDECore.getDefault().getTempFileManager().createTempFile(
-					this,
-					"book",
-					".css");
+			File tempCSSFile = File.createTempFile("book", ".css");
+			tempCSSFile.deleteOnExit();
 			FileReader freader = new FileReader(cssFile);
 			BufferedReader breader = new BufferedReader(freader);
 			PrintWriter pwriter =
