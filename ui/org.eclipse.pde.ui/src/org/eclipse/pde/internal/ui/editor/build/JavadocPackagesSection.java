@@ -113,14 +113,6 @@ public class JavadocPackagesSection extends TableSection implements IModelChange
 		IBuildEntry entry = buildModel.getBuild().getEntry(JAVADOC_PACKAGES);
 		setCollapsed(entry==null || entry.getTokens().length==0);
 		
-		IProject project = buildModel.getUnderlyingResource().getProject();
-		try {
-			isJavaProject = project.hasNature(JavaCore.NATURE_ID);
-			if (!isJavaProject)
-				disableSection();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
 	}
 	public Composite createClient(
 		Composite parent,
@@ -134,7 +126,17 @@ public class JavadocPackagesSection extends TableSection implements IModelChange
 		nameTableViewer.setLabelProvider(new TableLabelProvider());
 		nameTableViewer.setInput(getFormPage().getModel());
 		factory.paintBordersFor(container);
-
+		
+		IBuildModel buildModel = (IBuildModel)getFormPage().getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		try {
+			isJavaProject = project.hasNature(JavaCore.NATURE_ID);
+			if (!isJavaProject)
+				disableSection();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		
 		return container;
 	}
 

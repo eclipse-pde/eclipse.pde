@@ -818,6 +818,7 @@ public class RuntimeInfoSection
 			libraryViewer.setSelection(null);
 			foldersViewer.setInput(null);
 			jarIncludeButton.setVisible(false);
+			updateDirectionalButtons();
 		}
 	}
 
