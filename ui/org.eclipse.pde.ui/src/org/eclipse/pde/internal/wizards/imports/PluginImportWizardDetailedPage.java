@@ -135,8 +135,10 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				models = null;
 			}
 		}
-		pluginListViewer.setInput(PDEPlugin.getDefault());
-		tablePart.updateCounter(0);
+		if (models==null) {
+			pluginListViewer.setInput(PDEPlugin.getDefault());
+			tablePart.updateCounter(0);
+		}
 	}
 
 	public void storeSettings(boolean finishPressed) {

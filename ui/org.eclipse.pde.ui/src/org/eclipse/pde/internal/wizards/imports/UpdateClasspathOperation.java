@@ -131,7 +131,34 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 	private void addProjectClasspathEntries(IProject project, ArrayList entries) {
 		// avoid duplicate project entries
 		HashSet projectsAdded= new HashSet();
-				
+	
+		// for fragments add the parent plugin as prerequisit
+		if (model instanceof IFragmentModel) {
+			IFragment fragment = ((IFragmentModel)model).getFragment();
+			String parentPluginId= fragment.getPluginId();
+			IProject parentProject= root.getProject(parentPluginId);
+			entries.add(JavaCore.newProjectEntry(parentProject.getFullPath()));
+			projectsAdded.add(parentProject);
+		}
+		else {
+			// add fragment libraries
+			IPlugin plugin = ((IPluginModel)model).getPlugin();
+			addFragmentLibraries(plugin, entries);
+		}
+		// add the prerequisites
+		IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();
+		IPluginImport[] imports= plugin.getImports();
+		// all required projects
+		if (imports.length>0) {
+			for (int i= 0; i < imports.length; i++) {
+				IPluginImport curr= imports[i];
+				IProject req= root.getProject(curr.getId());
+				if (!projectsAdded.contains(req)) {
+					IClasspathEntry entry= JavaCore.newProjectEntry(req.getFullPath(), curr.isReexported());
+					entries.add(entry);
+				}
+			}
+		}
 		// boot project & runtime project are implicitly imported
 		String prjName= project.getName();
 		if (!"org.eclipse.core.boot".equals(prjName)) {
@@ -144,31 +171,27 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				projectsAdded.add(runtimeProj);
 			}
 		}
-		
-		// for fragments add the parent plugin as prerequisit
-		if (model instanceof IFragmentModel) {
-			IFragment fragment = ((IFragmentModel)model).getFragment();
-			String parentPluginId= fragment.getPluginId();
-			IProject parentProject= root.getProject(parentPluginId);
-			entries.add(JavaCore.newProjectEntry(parentProject.getFullPath()));
-			projectsAdded.add(parentProject);
-		}
-		else {
-			IPlugin plugin = ((IPluginModel)model).getPlugin();
-			IPluginImport[] imports= plugin.getImports();
-			// all required projects
-			if (imports.length>0) {
-				for (int i= 0; i < imports.length; i++) {
-					IPluginImport curr= imports[i];
-					IProject req= root.getProject(curr.getId());
-					if (!projectsAdded.contains(req)) {
-						IClasspathEntry entry= JavaCore.newProjectEntry(req.getFullPath(), curr.isReexported());
+	}	
+	
+	private void addFragmentLibraries(IPlugin plugin, ArrayList entries) {
+		for (int i=0; i<fragments.length; i++) {
+			IFragmentModel fmodel = fragments[i];
+			IFragment fragment = fmodel.getFragment();
+			if (PDEPlugin.compare(fragment.getPluginId(),
+								fragment.getPluginVersion(),
+								plugin.getId(),
+								plugin.getVersion(),
+								fragment.getRule())) {
+				IPluginLibrary [] libraries = fragment.getLibraries();
+				for (int j=0; j<libraries.length; j++) {
+					IProject project = root.getProject(fragment.getId());
+					IClasspathEntry entry = getLibraryEntry(project, libraries[i], true);
+					if (root.exists(entry.getPath()))
 						entries.add(entry);
-					}
 				}
 			}
 		}
-	}	
+	}
 	
 	
 	private static IPath getSourceAttachmentPath(IProject project, IPath jarPath) {

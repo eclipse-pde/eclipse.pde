@@ -358,7 +358,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 				ErrorDialog.openError(null, title, null, fstatus);
 			}
 		});
-
 	}
 
 	public static void logException(Throwable e) {
