@@ -9,17 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.*;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -36,11 +37,13 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private FormEntry versionText;
 	private Button reexportButton;
 	private Button optionalButton;
+	private Label matchLabel;
 	private ComboPart matchCombo;
 	protected IPluginReference currentImport;
 	protected IStructuredSelection multiSelection;
 	private boolean blockChanges = false;
 	private boolean addReexport = true;
+	private boolean osgiMode = false;
 	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional";
 	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport";
 	public static final String KEY_VERSION = "ManifestEditor.MatchSection.version";
@@ -61,7 +64,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			boolean addReexport) {
 		super(formPage, parent, Section.DESCRIPTION);
 		getSection().setText("Dependency Properties");
-		getSection().setDescription("Define the properties of the selected dependency:");
+		getSection().setDescription(
+				"Define the properties of the selected dependency:");
 		this.addReexport = addReexport;
 		createClient(getSection(), formPage.getEditor().getToolkit());
 	}
@@ -104,11 +108,15 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				try {
 					String value = text.getValue();
 					if (value != null && value.length() > 0) {
-						PluginVersionIdentifier pvi = new PluginVersionIdentifier(
-								text.getValue());
-						String formatted = pvi.toString();
-						text.setValue(formatted, true);
-						applyVersion(formatted);
+						if (isOsgiMode()) {
+							PluginVersionIdentifier pvi = new PluginVersionIdentifier(
+									text.getValue());
+							String formatted = pvi.toString();
+							text.setValue(formatted, true);
+							applyVersion(formatted);
+						} else {
+							applyVersion(value);
+						}
 					} else {
 						applyVersion(null);
 					}
@@ -127,12 +135,14 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 					return;
 				markDirty();
 				blockChanges = true;
-				resetMatchCombo(currentImport);
+				if (!isOsgiMode())
+					resetMatchCombo(currentImport);
 				blockChanges = false;
 			}
 		});
-		Label label = toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_RULE));
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		matchLabel = toolkit.createLabel(container, PDEPlugin
+				.getResourceString(KEY_RULE));
+		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		matchCombo = new ComboPart();
 		matchCombo.createControl(container, toolkit, SWT.READ_ONLY);
 		matchCombo.add(PDEPlugin.getResourceString(KEY_NONE));
@@ -256,6 +266,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		updateMode();
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
@@ -359,5 +370,24 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		versionText.setValue(currentImport.getVersion());
 		resetMatchCombo(currentImport);
 		blockChanges = false;
+	}
+	/**
+	 * @return Returns the osgiMode.
+	 */
+	public boolean isOsgiMode() {
+		return osgiMode;
+	}
+	/**
+	 * @param osgiMode
+	 *            The osgiMode to set.
+	 */
+	public void setOsgiMode(boolean osgiMode) {
+		this.osgiMode = osgiMode;
+		updateMode();
+	}
+	private void updateMode() {
+		// hide the match combo
+		matchLabel.setVisible(!isOsgiMode());
+		matchCombo.getControl().setVisible(!isOsgiMode());
 	}
 }

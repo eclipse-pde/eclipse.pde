@@ -1,42 +1,46 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.*;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.ide.*;
+import org.eclipse.ui.ide.IDE;
 
-public class GeneralInfoSection extends PDESection {
+public class GeneralInfoSection extends PDESection
+		implements
+			IInputContextListener {
 	public static final String KEY_MATCH = "ManifestEditor.PluginSpecSection.versionMatch";
 	public static final String KEY_MATCH_PERFECT = "ManifestEditor.MatchSection.perfect";
 	public static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent";
@@ -49,6 +53,7 @@ public class GeneralInfoSection extends PDESection {
 	private FormEntry fClassEntry;
 	private Text fPluginIdText;
 	private FormEntry fPluginVersionEntry;
+	private Label fMatchLabel;
 	private ComboPart fMatchCombo;
 	/**
 	 * @param page
@@ -88,7 +93,7 @@ public class GeneralInfoSection extends PDESection {
 		else
 			layout.numColumns = 3;
 		client.setLayout(layout);
-		
+
 		section.setClient(client);
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite()
 				.getActionBars();
@@ -100,6 +105,10 @@ public class GeneralInfoSection extends PDESection {
 			createPluginIDEntry(client, toolkit, actionBars);
 			createPluginVersionEntry(client, toolkit, actionBars);
 			createMatchCombo(client, toolkit, actionBars);
+			if (isBundleMode()) {
+				fMatchLabel.setVisible(false);
+				fMatchCombo.getControl().setVisible(false);
+			}
 		} else {
 			createClassEntry(client, toolkit, actionBars);
 		}
@@ -107,6 +116,9 @@ public class GeneralInfoSection extends PDESection {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
+		InputContextManager manager = getPage().getPDEEditor()
+				.getContextManager();
+		manager.addInputContextListener(this);
 	}
 	public String getContextId() {
 		if (getPluginBase() instanceof IBundlePluginBase)
@@ -277,11 +289,13 @@ public class GeneralInfoSection extends PDESection {
 		fPluginIdText.setLayoutData(gd);
 
 		fPluginIdText.setEditable(isEditable());
-		fPluginIdText.addModifyListener(new ModifyListener(){
+		fPluginIdText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try {
-					if (!((IFragment)getPluginBase()).getPluginId().equals(fPluginIdText.getText()))
-						((IFragment)getPluginBase()).setPluginId(fPluginIdText.getText());
+					if (!((IFragment) getPluginBase()).getPluginId().equals(
+							fPluginIdText.getText()))
+						((IFragment) getPluginBase()).setPluginId(fPluginIdText
+								.getText());
 				} catch (CoreException e1) {
 					PDEPlugin.logException(e1);
 				}
@@ -295,13 +309,16 @@ public class GeneralInfoSection extends PDESection {
 				dialog.create();
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					try {
-					IPluginModel model = (IPluginModel) dialog.getFirstResult();
-					IPlugin plugin = model.getPlugin();
-					fPluginIdText.setText(plugin.getId());
-					((IFragment)getPluginBase()).setPluginId(plugin.getId());
-					fPluginVersionEntry.setValue(plugin.getVersion(), true);
-					((IFragment)getPluginBase()).setPluginVersion(plugin.getVersion());
-					} catch (CoreException e1){
+						IPluginModel model = (IPluginModel) dialog
+								.getFirstResult();
+						IPlugin plugin = model.getPlugin();
+						fPluginIdText.setText(plugin.getId());
+						((IFragment) getPluginBase()).setPluginId(plugin
+								.getId());
+						fPluginVersionEntry.setValue(plugin.getVersion(), true);
+						((IFragment) getPluginBase()).setPluginVersion(plugin
+								.getVersion());
+					} catch (CoreException e1) {
 						PDEPlugin.logException(e1);
 					}
 				}
@@ -317,7 +334,8 @@ public class GeneralInfoSection extends PDESection {
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
-					((IFragment) getPluginBase()).setPluginVersion(entry.getValue());
+					((IFragment) getPluginBase()).setPluginVersion(entry
+							.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -327,11 +345,12 @@ public class GeneralInfoSection extends PDESection {
 	}
 	private void createMatchCombo(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
-		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));		
+		fMatchLabel = toolkit.createLabel(client, PDEPlugin
+				.getResourceString(KEY_MATCH));
+		fMatchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		
+
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = 20;
 		gd.grabExcessHorizontalSpace = true;
@@ -365,8 +384,10 @@ public class GeneralInfoSection extends PDESection {
 		}
 		super.commit(onSave);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
@@ -388,7 +409,8 @@ public class GeneralInfoSection extends PDESection {
 			IFragment fragment = (IFragment) pluginBase;
 			fPluginIdText.setText(fragment.getPluginId());
 			fPluginVersionEntry.setValue(fragment.getPluginVersion(), true);
-			fMatchCombo.select(fragment.getRule());
+			if (!isBundleMode())
+				fMatchCombo.select(fragment.getRule());
 		} else {
 			IPlugin plugin = (IPlugin) pluginBase;
 			fClassEntry.setValue(plugin.getClassName(), true);
@@ -399,6 +421,9 @@ public class GeneralInfoSection extends PDESection {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).removeModelChangedListener(this);
+		InputContextManager manager = getPage().getPDEEditor()
+				.getContextManager();
+		manager.removeInputContextListener(this);
 		super.dispose();
 	}
 	private void doOpenClass() {
@@ -474,4 +499,47 @@ public class GeneralInfoSection extends PDESection {
 		return model.isFragmentModel();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextAdded(InputContext context) {
+		if (context.getId().equals(BundleInputContext.CONTEXT_ID))
+			bundleModeChanged((IBundleModel) context.getModel(), true);
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextRemoved(InputContext context) {
+		if (context.getId().equals(BundleInputContext.CONTEXT_ID))
+			bundleModeChanged((IBundleModel) context.getModel(), false);
+	}
+	private void bundleModeChanged(IBundleModel model, boolean added) {
+		if (fMatchCombo != null) {
+			fMatchLabel.setVisible(!added);
+			fMatchCombo.getControl().setVisible(!added);
+		}
+	}
+	private boolean isBundleMode() {
+		InputContextManager icm = getPage().getPDEEditor().getContextManager();
+		return icm.findContext(BundleInputContext.CONTEXT_ID) != null;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
+	 */
+	public void monitoredFileAdded(IFile monitoredFile) {
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
+	 */
+	public boolean monitoredFileRemoved(IFile monitoredFile) {
+		return false;
+	}
 }

@@ -9,7 +9,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -21,9 +24,10 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class DependenciesPage extends PDEFormPage {
+public class DependenciesPage extends PDEFormPage implements IInputContextListener {
 	public static final String PAGE_ID = "dependencies";
 	private RequiresSection requiresSection;
+	private MatchSection matchSection;
 	/**
 	 * @param editor
 	 * @param id
@@ -51,11 +55,12 @@ public class DependenciesPage extends PDEFormPage {
 		requiresSection.getSection().setLayoutData(gd);
 		managedForm.addPart(requiresSection);
 		//Add match
-		MatchSection matchSection = new MatchSection(this, body, true);
+		matchSection = new MatchSection(this, body, true);
 		gd = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_BEGINNING);
 		matchSection.getSection().setLayoutData(gd);
 		managedForm.addPart(matchSection);
+		matchSection.setOsgiMode(isOsgiMode());
 		if (getModel().isEditable()) {
 			DependencyAnalysisSection analysisSection = new DependencyAnalysisSection(
 					this, body);
@@ -64,6 +69,8 @@ public class DependenciesPage extends PDEFormPage {
 			analysisSection.getSection().setLayoutData(gd);
 			managedForm.addPart(analysisSection);
 		}
+		InputContextManager contextManager = getPDEEditor().getContextManager();
+		contextManager.addInputContextListener(this);
 	}
 	public void contextMenuAboutToShow(IMenuManager manager) {
 		IResource resource = ((IPluginModelBase) getModel())
@@ -74,5 +81,34 @@ public class DependenciesPage extends PDEFormPage {
 			manager.add(requiresSection.getBuildpathAction());
 			manager.add(new Separator());
 		}
+	}
+	private boolean isOsgiMode() {
+		return (getModel() instanceof IBundlePluginModelBase);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextAdded(InputContext context) {
+		if (context.getId().equals(BundleInputContext.CONTEXT_ID))
+			matchSection.setOsgiMode(true);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	 */
+	public void contextRemoved(InputContext context) {
+		if (context.getId().equals(BundleInputContext.CONTEXT_ID))
+			matchSection.setOsgiMode(false);
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
+	 */
+	public void monitoredFileAdded(IFile monitoredFile) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
+	 */
+	public boolean monitoredFileRemoved(IFile monitoredFile) {
+		return false;
 	}
 }
