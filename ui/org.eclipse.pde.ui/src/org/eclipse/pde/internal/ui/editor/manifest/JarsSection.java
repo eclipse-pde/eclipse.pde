@@ -10,16 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.FolderSelectionDialog;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
@@ -180,14 +174,9 @@ public class JarsSection
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel.isEditable() == false)
 			return;
-		IFile file = (IFile) model.getUnderlyingResource();
-		IProject project = file.getProject();
 		Object object =
 			((IStructuredSelection) entryTable.getSelection()).getFirstElement();
 		if (object != null && object instanceof String) {
-			String folderName = object.toString();
-			IFolder folder = project.getFolder(folderName);
-			removeIfOnBuildPath(project, folder);
 			String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
 			IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
 			if (entry != null) {
@@ -268,12 +257,14 @@ public class JarsSection
 					folder.getProjectRelativePath().addTrailingSeparator().toString();
 				IBuildModel buildModel = getBuildModel();
 				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
-				IBuildEntry entry = buildModel.getFactory().createEntry(libKey);
-				buildModel.getBuild().add(entry);
+				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+				if (entry == null) {
+					entry = buildModel.getFactory().createEntry(libKey);
+					buildModel.getBuild().add(entry);
+				}
 				entry.addToken(folderPath);
 				entryTable.add(folderPath);
 				((WorkspaceBuildModel) buildModel).save();
-				addIfNotOnBuildPath(project, folder);
 			} catch (CoreException e) {
 			}
 		}
@@ -318,85 +309,4 @@ public class JarsSection
 		getTablePart().setButtonEnabled(0, !isReadOnly() && library != null);
 	}
 
-	private boolean addIfNotOnBuildPath(IProject project, IFolder folder) {
-		final IJavaProject javaProject = JavaCore.create(project);
-		IClasspathEntry[] entries = null;
-		try {
-			entries = javaProject.getRawClasspath();
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-			return false;
-		}
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				IPath path = entry.getPath();
-				if (path.equals(folder.getFullPath())) {
-					// found
-					return true;
-				}
-			}
-		}
-		// it is not, so add it
-		IClasspathEntry sourceEntry = JavaCore.newSourceEntry(folder.getFullPath().makeAbsolute());
-		final IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
-		System.arraycopy(entries, 0, newEntries, 0, entries.length);
-		newEntries[entries.length] = sourceEntry;
-		return executeNewClasspathOperation(javaProject, newEntries);
-	}
-	private boolean removeIfOnBuildPath(IProject project, IFolder folder) {
-		final IJavaProject javaProject = JavaCore.create(project);
-		IClasspathEntry[] entries = null;
-		try {
-			entries = javaProject.getRawClasspath();
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
-			return false;
-		}
-		ArrayList newList = new ArrayList();
-		boolean found = false;
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				IPath path = entry.getPath();
-				if (path.equals(folder.getFullPath())) {
-					// found
-					found = true;
-					continue;
-				}
-			}
-			newList.add(entry);
-		}
-		if (!found)
-			return false;
-		// it is, so remove it
-		IClasspathEntry[] newEntries =
-			(IClasspathEntry[]) newList.toArray(new IClasspathEntry[newList.size()]);
-		return executeNewClasspathOperation(javaProject, newEntries);
-	}
-
-	private boolean executeNewClasspathOperation(
-		final IJavaProject javaProject,
-		final IClasspathEntry[] newEntries) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					javaProject.setRawClasspath(newEntries, monitor);
-				} catch (JavaModelException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		ProgressMonitorDialog pmd =
-			new ProgressMonitorDialog(entryTable.getTable().getShell());
-		try {
-			pmd.run(true, false, op);
-			return true;
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return false;
-		}
-	}
 }
