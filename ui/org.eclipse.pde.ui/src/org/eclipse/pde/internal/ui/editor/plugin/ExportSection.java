@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -57,8 +58,6 @@ public class ExportSection extends TableSection
 	private Composite fPackageExportContainer;
 	private TableViewer fPackageExportViewer;
 	
-	public static final String PROVIDE_PACKAGE = "Provide-Package";
-
 	class TableContentProvider extends DefaultContentProvider
 			implements
 				IStructuredContentProvider {
@@ -303,11 +302,11 @@ public class ExportSection extends TableSection
 		IBundle bundle = model.getBundle();
 		if (bundle == null)
 			return new String[0];
-		String value = bundle.getHeader(PROVIDE_PACKAGE);
+		String value = bundle.getHeader(ICoreConstants.PROVIDE_PACKAGE);
 		if (value == null)
 			return new String[0];
 		try {
-			ManifestElement [] result = ManifestElement.parseHeader(PROVIDE_PACKAGE, value);
+			ManifestElement [] result = ManifestElement.parseHeader(ICoreConstants.PROVIDE_PACKAGE, value);
 			String [] names = new String[result.length];
 			for (int i=0; i<result.length; i++) {
 				names[i] = result[i].getValue();
@@ -371,7 +370,7 @@ public class ExportSection extends TableSection
 		IBundleModel model = getBundleModel();
 		IBundle bundle = model.getBundle();
 		if (bundle == null) return;
-		bundle.setHeader(PROVIDE_PACKAGE, buf.toString());
+		bundle.setHeader(ICoreConstants.PROVIDE_PACKAGE, buf.toString());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
