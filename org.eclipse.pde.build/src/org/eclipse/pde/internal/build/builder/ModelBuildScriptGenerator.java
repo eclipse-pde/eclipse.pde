@@ -155,7 +155,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		String[] classpathInfo = getClasspathEntries(model);
 		if (!binaryPlugin)
-			specialDotProcessing(classpathInfo);
+			dotOnTheClasspath = specialDotProcessing(getBuildProperties(), classpathInfo);
 	}
 
 	protected static boolean findAndReplaceDot(String[] classpathInfo) {
@@ -168,42 +168,43 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return false;
 	}
 
-	private void specialDotProcessing(String[] classpathInfo) throws CoreException {
-		if (findAndReplaceDot(classpathInfo)) {
-			String sourceFolder = getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT);
+	public static boolean specialDotProcessing(Properties properties, String[] classpathInfo) throws CoreException {
+		if (findAndReplaceDot(classpathInfo) || (classpathInfo.length > 0 && classpathInfo[0].equals(EXPANDED_DOT))) {
+			String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
 			if (sourceFolder != null) {
-				getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
-				getBuildProperties().remove(PROPERTY_SOURCE_PREFIX + DOT);
+				properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
+				properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
 			}
-			String outputValue = getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
+			String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
 			if (outputValue != null) {
-				getBuildProperties().setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
-				getBuildProperties().remove(PROPERTY_OUTPUT_PREFIX + DOT);
+				properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
+				properties.remove(PROPERTY_OUTPUT_PREFIX + DOT);
 			}
-			String buildOrder = getBuildProperties().getProperty(PROPERTY_JAR_ORDER);
+			String buildOrder = properties.getProperty(PROPERTY_JAR_ORDER);
 			if (buildOrder != null) {
 				String[] order = Utils.getArrayFromString(buildOrder);
 				for (int i = 0; i < order.length; i++)
 					if (order[i].equals(DOT))
 						order[i] = EXPANDED_DOT;
-				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ",")); //$NON-NLS-1$
+				properties.setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ",")); //$NON-NLS-1$
 			}
 
-			String extraEntries = getBuildProperties().getProperty(PROPERTY_EXTRAPATH_PREFIX + '.');
+			String extraEntries = properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + '.');
 			if (extraEntries != null) {
-				getBuildProperties().setProperty(PROPERTY_EXTRAPATH_PREFIX + EXPANDED_DOT, extraEntries);
+				properties.setProperty(PROPERTY_EXTRAPATH_PREFIX + EXPANDED_DOT, extraEntries);
 			}
 
-			String includeString = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
+			String includeString = properties.getProperty(PROPERTY_BIN_INCLUDES);
 			if (includeString != null) {
 				String[] includes = Utils.getArrayFromString(includeString);
 				for (int i = 0; i < includes.length; i++)
 					if (includes[i].equals(DOT))
 						includes[i] = null;
-				getBuildProperties().setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ",")); //$NON-NLS-1$
+				properties.setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ",")); //$NON-NLS-1$
 			}
-			dotOnTheClasspath = true;
+			return true;
 		}
+		return false;
 	}
 
 	/**

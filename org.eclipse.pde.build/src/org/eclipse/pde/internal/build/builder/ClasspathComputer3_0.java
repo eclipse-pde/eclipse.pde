@@ -80,6 +80,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(model);
+		ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
 		for (int i = 0; i < libraries.length; i++) {
 			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(generator.getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
 			addPathAndCheck(model.getSymbolicName(), base, libraries[i], modelProps, classpath);
@@ -307,7 +308,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
-		if (addedPlugins.contains(target)) //the plugins we are considering has already been added	
+		if (addedPlugins.contains(target)) //the plugin we are considering has already been added	
 			return;
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
