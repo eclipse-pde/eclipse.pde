@@ -43,6 +43,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected String[] pluginPath;
 
 	protected boolean recursiveGeneration = true;
+	
+	/** 
+	 * flag indicating if the assemble script should be generated
+	 */
+	private boolean generateAssembleScript = true;
 
 	/**
 	 * 
@@ -118,8 +123,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setCompiledElements(generator.getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.generate();
-			AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
-			assembler.generate();
+			
+			if (generateAssembleScript = true) {
+				AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
+				assembler.generate();
+			}
 		}
 	}
 
@@ -162,5 +170,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		this.recursiveGeneration = recursiveGeneration;
+	}
+	
+	/**
+	 * @param generateAssembleScript The generateAssembleScript to set.
+	 */
+	public void setGenerateAssembleScript(boolean generateAssembleScript) {
+		this.generateAssembleScript = generateAssembleScript;
 	}
 }
