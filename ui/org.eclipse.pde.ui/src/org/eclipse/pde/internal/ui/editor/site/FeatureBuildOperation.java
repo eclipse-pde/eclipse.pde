@@ -265,7 +265,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		runner.run(monitor);
 	}
 
-	private URL[] computeCustomClasspath() {
+	/*private URL[] computeCustomClasspath() {
 		// Add this plug-in's space
 		AntCorePreferences preferences =
 			AntCorePlugin.getPlugin().getPreferences();
@@ -281,7 +281,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 			PDEPlugin.logException(e);
 			return null;
 		}
-	}
+	}*/
 
 	private void createLogFile(ISiteBuildModel buildModel) {
 		IProject project = buildModel.getUnderlyingResource().getProject();

@@ -14,7 +14,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.internal.core.*;
+//import org.eclipse.pde.internal.core.*;
 //import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -105,7 +105,7 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 
 	}
 
-	private PropertyDescriptor createChoicePropertyDescriptor(
+	/*private PropertyDescriptor createChoicePropertyDescriptor(
 		String name,
 		String displayName,
 		Choice[] choices) {
@@ -114,7 +114,7 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 			displayName,
 			choices,
 			!isEditable());
-	}
+	}*/
 
 	public IFeatureChild getChild() {
 		return (IFeatureChild) object;

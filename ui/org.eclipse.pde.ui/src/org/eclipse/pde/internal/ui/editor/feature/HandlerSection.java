@@ -186,10 +186,6 @@ public class HandlerSection extends PDEFormSection {
 			formText.setValue(value.toString(), true);
 		}
 	}
-	private void setIfDefined(Text text, Object value) {
-		if (value != null)
-			text.setText(value.toString());
-	}
 	public void update() {
 		if (updateNeeded) {
 			this.update(getFormPage().getModel());

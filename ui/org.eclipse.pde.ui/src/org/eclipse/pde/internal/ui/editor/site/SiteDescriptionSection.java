@@ -185,10 +185,6 @@ public class SiteDescriptionSection extends PDEFormSection {
 			formText.setValue(value, true);
 		}
 	}
-	private void setIfDefined(Text text, String value) {
-		if (value != null)
-			text.setText(value);
-	}
 	public void update() {
 		if (updateNeeded) {
 			this.update(getFormPage().getModel());

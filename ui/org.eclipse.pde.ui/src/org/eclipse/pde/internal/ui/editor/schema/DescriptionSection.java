@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class DescriptionSection extends PDEFormSection {
-	private SourceViewer editor;
 	private Button applyButton;
 	private Button resetButton;
 	private IDocument document;

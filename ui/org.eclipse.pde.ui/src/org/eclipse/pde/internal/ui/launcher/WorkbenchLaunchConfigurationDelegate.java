@@ -35,8 +35,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
 	private static final String KEY_BAD_FEATURE_SETUP =
 		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
-	private static final String KEY_STARTING =
-		"WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT =
 		"WorkbenchLauncherConfigurationDelegate.noBoot";
 	private static final String KEY_NO_STARTUP =

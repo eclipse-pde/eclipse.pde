@@ -309,7 +309,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		return candidate != null ? candidate : "";
 	}
 
-	private void createTask(IFile file) {
+	/*private void createTask(IFile file) {
 		String message = PDEPlugin.getFormattedMessage(KEY_FINISH, file.getName());
 		try {
 			IMarker marker = file.createMarker(IMarker.TASK);
@@ -318,7 +318,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-	}
+	}*/
 	public boolean finish() {
 		if (searchButton.getSelection()) {
 			className = searchText.getText();

@@ -46,7 +46,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 
 public class PluginsView extends ViewPart {
-	private static final int TEMP_FILE_LIMIT = 10;
 	private static final String DEFAULT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 	private TreeViewer treeViewer;
 	private DrillDownAdapter drillDownAdapter;
@@ -73,7 +72,6 @@ public class PluginsView extends ViewPart {
 	private WorkspaceFilter workspaceFilter = new WorkspaceFilter();
 	private JavaFilter javaFilter = new JavaFilter();
 	private CopyToClipboardAction copyAction;
-	private ArrayList tempFiles;
 	private Clipboard clipboard;
 
 	class DisabledFilter extends ViewerFilter {

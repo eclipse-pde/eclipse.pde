@@ -1569,14 +1569,5 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 		return cachedRegistry;
 	}
 }
-private String[] getPathMembers(URL path) {
-	String[] list = null;
-	String protocol = path.getProtocol();
-	if (protocol.equals("file")) { //$NON-NLS-1$
-		list = (new File(path.getFile())).list();
-	} else {
-		// XXX: attempt to read URL and see if we got html dir page
-	}
-	return list == null ? new String[0] : list;
-}
+
 }

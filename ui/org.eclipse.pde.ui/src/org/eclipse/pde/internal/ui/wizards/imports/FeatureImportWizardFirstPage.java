@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -38,16 +36,8 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 	private static final String KEY_DESC = "FeatureImportWizard.FirstPage.desc";
 	private static final String KEY_RUNTIME_LOCATION =
 		"FeatureImportWizard.FirstPage.runtimeLocation";
-	private static final String KEY_OTHER_LOCATION =
-		"FeatureImportWizard.FirstPage.otherLocation";
-	private static final String KEY_RUNTIME_DESC =
-		"FeatureImportWizard.FirstPage.runtimeDesc";
-	private static final String KEY_OTHER_DESC =
-		"ImportWizard.FirstPage.otherDesc";
 	private static final String KEY_OTHER_FOLDER =
 		"FeatureImportWizard.FirstPage.otherFolder";
-	private static final String KEY_SOURCE_REMINDER =
-		"FeatureImportWizard.FirstPage.sourceReminder";
 	private static final String KEY_BROWSE =
 		"FeatureImportWizard.FirstPage.browse";
 	private static final String KEY_FOLDER_TITLE =
@@ -119,20 +109,6 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
 	}
 
-	private Label createMultiLineLabel(
-		Composite composite,
-		int parentWidth,
-		String text,
-		int span) {
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(text);
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		gd.widthHint = parentWidth;
-		label.setLayoutData(gd);
-		return label;
-	}
-
 	private String getTargetHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
@@ -185,7 +161,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 		return gd;
 	}
 
-	private boolean showPreferencePage(final IPreferenceNode targetNode) {
+	/*private boolean showPreferencePage(final IPreferenceNode targetNode) {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
 		final PreferenceDialog dialog =
@@ -200,7 +176,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 			}
 		});
 		return result[0];
-	}
+	}*/
 
 	private void initializeFields(IDialogSettings initialSettings) {
 		String[] dropItems = new String[0];

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
@@ -250,12 +249,6 @@ public class MatchSection extends PDEFormSection {
 		return matchCombo.getSelectionIndex();
 	}
 
-	private void buttonChanged(Button radio) {
-		if (currentImport == null || blockChanges)
-			return;
-		forceDirty();
-	}
-
 	public boolean canPaste(Clipboard clipboard) {
 		return (clipboard.getContents(TextTransfer.getInstance()) != null);
 	}
@@ -264,11 +257,6 @@ public class MatchSection extends PDEFormSection {
 		if (model instanceof IModelChangeProvider)
 			 ((IModelChangeProvider) model).removeModelChangedListener(this);
 		super.dispose();
-	}
-	private void fillContextMenu(IMenuManager manager) {
-		((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
-			manager);
 	}
 
 	public void initialize(Object input) {

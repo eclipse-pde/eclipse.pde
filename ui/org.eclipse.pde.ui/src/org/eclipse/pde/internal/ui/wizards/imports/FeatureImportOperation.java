@@ -28,16 +28,12 @@ import org.eclipse.ui.wizards.datatransfer.*;
 
 
 public class FeatureImportOperation implements IWorkspaceRunnable {
-	private static final String KEY_TITLE =
-		"FeatureImportWizard.messages.title";
 	private static final String KEY_CREATING =
 		"FeatureImportWizard.operation.creating";
 	private static final String KEY_CREATING2 =
 		"FeatureImportWizard.operation.creating2";
 	private static final String KEY_MULTI_PROBLEM =
 		"FeatureImportWizard.operation.multiProblem";
-	private static final String KEY_PROBLEM =
-		"FeatureImportWizard.operation.problem";
 
 	public interface IReplaceQuery {
 
@@ -217,7 +213,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private String getFlatPath(IPath path) {
+	/*private String getFlatPath(IPath path) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.segmentCount(); i++) {
 			if (i > 0)
@@ -225,7 +221,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			buf.append(path.segment(i));
 		}
 		return buf.toString();
-	}
+	}*/
 
 	private boolean queryReplace(IProject project)
 		throws OperationCanceledException {

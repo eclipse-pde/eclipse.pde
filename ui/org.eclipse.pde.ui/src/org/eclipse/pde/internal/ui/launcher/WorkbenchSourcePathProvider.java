@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,8 +37,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 	
-	private Vector duplicates = new Vector();
-
 	/**
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.CoreException;
@@ -164,7 +163,7 @@ public void createPropertyDescriptors() {
 		descriptors.addElement(desc);
 	}
 }
-private void createTask(IFile file) {
+/*private void createTask(IFile file) {
 	String message = PDEPlugin.getFormattedMessage(KEY_FINISH, file.getName());
 	try {
 		IMarker marker = file.createMarker(IMarker.TASK);
@@ -173,7 +172,7 @@ private void createTask(IFile file) {
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
-}
+}*/
 public Object getEditableValue() {
 	return null;
 }

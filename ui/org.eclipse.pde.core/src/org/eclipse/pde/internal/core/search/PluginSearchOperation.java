@@ -28,7 +28,6 @@ public class PluginSearchOperation {
 	protected PluginSearchInput input;
 	private IPluginSearchResultCollector collector;
 	private StringMatcher stringMatcher;
-	private String taskName;
 	
 	public PluginSearchOperation(
 		PluginSearchInput input,

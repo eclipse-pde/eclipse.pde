@@ -30,12 +30,10 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
-	private static final String KEY_TITLE = "ImportWizard.messages.title";
 	private static final String KEY_CREATING =
 		"ImportWizard.operation.creating";
 	private static final String KEY_MULTI_PROBLEM =
 		"ImportWizard.operation.multiProblem";
-	private static final String KEY_PROBLEM = "ImportWizard.operation.problem";
 	private static final String KEY_CREATING2 =
 		"ImportWizard.operation.creating2";
 	private static final String KEY_EXTRACTING =

@@ -96,13 +96,6 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 		return -1;
 	}
 	
-	private void selectItem(String value) {
-		int index = getIndexOf(value);
-		if (index!= -1) combo.select(index);
-		else
-			combo.setText(value);
-	}
-
 	/*
 	 * @see FieldEditor#doStore()
 	 */

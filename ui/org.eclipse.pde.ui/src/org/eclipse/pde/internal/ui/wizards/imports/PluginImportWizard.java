@@ -51,8 +51,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	private static final String KEY_MESSAGES_TITLE = "ImportWizard.messages.title";
 	private static final String KEY_MESSAGES_NO_PLUGINS =
 		"ImportWizard.messages.noPlugins";
-	private static final String KEY_MESSAGES_DO_NOT_ASK =
-		"ImportWizard.messages.doNotAsk";
 	private static final String KEY_MESSAGES_EXISTS =
 		"ImportWizard.messages.exists";
 

@@ -54,8 +54,6 @@ public class BuildControlSection extends PDEFormSection {
 	private FormEntry pluginDest;
 	private FormEntry featureDest;
 
-	private Button consoleButton;
-	private Button autobuildButton;
 	private Button scrubOutputButton;
 	private Button buildButton;
 	private Button rebuildAllButton;
@@ -279,7 +277,7 @@ public class BuildControlSection extends PDEFormSection {
 		}
 	}
 
-	private void setAutobuild(boolean value) {
+	/*private void setAutobuild(boolean value) {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null)
@@ -291,7 +289,7 @@ public class BuildControlSection extends PDEFormSection {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-	}
+	}*/
 
 	private void setScrubOutput(boolean value) {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
@@ -307,7 +305,7 @@ public class BuildControlSection extends PDEFormSection {
 		}
 	}
 
-	private void setShowConsole(boolean value) {
+	/*private void setShowConsole(boolean value) {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null)
@@ -319,7 +317,7 @@ public class BuildControlSection extends PDEFormSection {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-	}
+	}*/
 
 	private void forceDirty() {
 		setDirty(true);
@@ -423,10 +421,6 @@ public class BuildControlSection extends PDEFormSection {
 		if (value != null) {
 			formText.setValue(value, true);
 		}
-	}
-	private void setIfDefined(Text text, String value) {
-		if (value != null)
-			text.setText(value);
 	}
 	public void update() {
 		if (updateNeeded) {

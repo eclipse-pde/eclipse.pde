@@ -166,9 +166,9 @@ public class XMLDocumentModelBuilder extends DOMBuilderImpl {
 		return null;
 	}
 	
-	private String extract(XMLString text) {
+	/*private String extract(XMLString text) {
 		return new String(text.ch, text.offset, text.length);
-	}
+	}*/
 
 	private void recoverFromFatalError(Exception ex) {
 		repairXMLTree();

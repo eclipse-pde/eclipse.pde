@@ -37,7 +37,6 @@ public class PluginSearchScope {
 	public static final int EXTERNAL_SCOPE_ENABLED = 1;
 	public static final int EXTERNAL_SCOPE_ALL = 2;
 	
-	private String description;
 	private int workspaceScope;
 	private int externalScope;
 	private HashSet selectedResources;

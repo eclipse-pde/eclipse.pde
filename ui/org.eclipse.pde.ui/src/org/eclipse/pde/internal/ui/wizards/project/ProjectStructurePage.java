@@ -51,9 +51,6 @@ public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_LIBRARY = "ProjectStructurePage.library";
 	private static final String KEY_CREATING = "ProjectStructurePage.creating";
 	private static final String KEY_SOURCE = "ProjectStructurePage.source";
-	private static final String KEY_SOURCE_NAME = "ProjectStructurePage.sourceName";
-	private static final String KEY_FSOURCE_NAME =
-		"ProjectStructurePage.fsourceName";
 
 	private static final String KEY_FTITLE = "ProjectStructurePage.ftitle";
 	private static final String KEY_DESC = "ProjectStructurePage.desc";
@@ -318,12 +315,6 @@ public class ProjectStructurePage extends WizardPage {
 		}
 	}
 	
-	private String createSourceFolderName(String lastSegment) {
-		return PDEPlugin.getFormattedMessage(
-			fragment ? KEY_FSOURCE_NAME : KEY_SOURCE_NAME,
-			lastSegment.toUpperCase());
-	}
-
 	public boolean finish() {
 		final IProject project = provider.getProject();
 		final IPluginStructureData data = getStructureData();

@@ -19,8 +19,6 @@ import org.eclipse.update.ui.forms.internal.*;
 
 public class ReferenceForm extends ScrollableSectionForm {
 	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
-	private static final String KEY_P_TITLE = "FeatureEditor.ReferencePage.portabilityTitle";
-	private static final String KEY_P_DESC = "FeatureEditor.ReferencePage.portabilityDesc";
 	private FeatureReferencePage page;
 	private PluginSection pluginSection;
 	private RequiresSection requiresSection;

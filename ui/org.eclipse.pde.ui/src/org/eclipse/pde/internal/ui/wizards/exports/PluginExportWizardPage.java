@@ -21,13 +21,10 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class PluginExportWizardPage extends BaseExportWizardPage {
-	private Label label;
-
 
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(

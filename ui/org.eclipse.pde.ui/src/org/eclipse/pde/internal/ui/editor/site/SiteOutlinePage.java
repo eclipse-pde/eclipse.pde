@@ -15,16 +15,9 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.widgets.Composite;
 
 public class SiteOutlinePage extends FormOutlinePage {
-	private static final String KEY_REFERENCED_PLUGINS =
-		"FeatureEditor.Outline.referencedPlugins";
-	private static final String KEY_REQUIRED_PLUGINS =
-		"FeatureEditor.Outline.requiredPlugins";
-	private NamedElement referencedPlugins, requiredPlugins;
-
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof SitePage) {

@@ -36,7 +36,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPreferenceConstants {
-	private static final String KEY_RUNNING = "RunningEclipse.message";
 
 	// Shared instance
 	private static PDEPlugin inst;

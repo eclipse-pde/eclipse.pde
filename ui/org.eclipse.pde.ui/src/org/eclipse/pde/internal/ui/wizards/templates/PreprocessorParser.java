@@ -29,13 +29,13 @@ public class PreprocessorParser {
 	private static final int T_ERROR = 99;
 	private static final int T_EOF = 10;
 
-	private static final int OP_LEAF = -1;
+	//private static final int OP_LEAF = -1;
 	private static final int OP_AND = 1;
 	private static final int OP_OR = 2;
 	private static final int OP_EQ = 3;
 	private static final int OP_NEQ = 4;
 	private static final int OP_NOT = 5;
-	private static final int OP_DEFER = 55;
+	//private static final int OP_DEFER = 55;
 	
 	private IVariableProvider provider;
 	private String line;
@@ -180,17 +180,6 @@ public class PreprocessorParser {
 		return result;
 	}
 
-	private void printExpression() {
-		if (exprStack.isEmpty()) {
-			System.out.println("Empty");
-			return;
-		}
-		RootEntry entry = (RootEntry) exprStack.peek();
-		if (entry.root != null)
-			System.out.println(entry.root.toString());
-		else
-			System.out.println("Null root");
-	}
 
 	private void reset() {
 		loc = 0;

@@ -55,8 +55,6 @@ public class NewDependencyWizardPage extends WizardPage {
 	private Image pluginsImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
-	private Vector externalList;
-	private Vector workspaceList;
 	private Vector candidates = new Vector();
 	private StringMatcher stringMatcher;
 

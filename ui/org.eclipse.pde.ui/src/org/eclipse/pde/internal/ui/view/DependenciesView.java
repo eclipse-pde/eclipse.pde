@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
@@ -35,7 +34,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 
 public class DependenciesView extends ViewPart {
-	private static final int TEMP_FILE_LIMIT = 10;
 	private TreeViewer treeViewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action openAction;
@@ -171,15 +169,6 @@ public class DependenciesView extends ViewPart {
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions")); //$NON-NLS-1$
-	}
-
-	private IDialogSettings getSettings() {
-		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("dependenciesView"); //$NON-NLS-1$
-		if (section == null) {
-			section = master.addNewSection("dependenciesView"); //$NON-NLS-1$
-		}
-		return section;
 	}
 
 	private void hookContextMenu() {

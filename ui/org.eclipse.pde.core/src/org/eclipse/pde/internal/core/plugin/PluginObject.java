@@ -84,12 +84,6 @@ public abstract class PluginObject
 			provider.fireModelChanged(e);
 		}
 	}
-	private String getAttribute(Node node, String name) {
-		Node attribute = node.getAttributes().getNamedItem(name);
-		if (attribute != null)
-			return attribute.getNodeValue();
-		return null;
-	}
 	public IPluginModelBase getModel() {
 		return model;
 	}

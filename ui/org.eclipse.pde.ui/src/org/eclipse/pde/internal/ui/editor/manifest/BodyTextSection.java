@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -38,7 +37,6 @@ public class BodyTextSection
 	private Button resetButton;
 	private IPluginElement currentElement;
 	private Text text;
-	private Color contentColor;
 
 	public BodyTextSection(ManifestExtensionsPage page) {
 		super(page);

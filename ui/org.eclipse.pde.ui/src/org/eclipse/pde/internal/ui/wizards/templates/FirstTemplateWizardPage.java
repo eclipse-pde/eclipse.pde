@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FirstTemplateWizardPage extends WizardPage {
-	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
-	private static final String RESOURCES_ID = "org.eclipse.core.resources";
-	private static final String WORKBENCH_ID = "org.eclipse.ui";
 	private static final String KEY_TITLE = "DefaultCodeGenerationPage.title";
 	private static final String KEY_FTITLE = "DefaultCodeGenerationPage.ftitle";
 	private static final String KEY_ID_NOT_SET =
@@ -77,10 +74,6 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private static final String KEY_INITIAL_FNAME =
 		"DefaultCodeGenerationPage.initialFName";
 	private static final String KEY_CREATING = "DefaultCodeGenerationPage.creating";
-	private static final String KEY_CREATING_PLUGIN =
-		"DefaultCodeGenerationPage.creatingPlugin";
-	private static final String KEY_CREATING_FRAGMENT =
-		"DefaultCodeGenerationPage.creatingFragment";
 	private static final String KEY_OPTIONS = "DefaultCodeGenerationPage.options";
 	private static final String KEY_OPTIONS_THIS =
 		"DefaultCodeGenerationPage.options.this";
@@ -93,20 +86,16 @@ public class FirstTemplateWizardPage extends WizardPage {
 	private IPluginStructureData structureData;
 	private boolean fragment;
 	private Text nameField;
-	private Text requiresField;
 	private Text pluginVersionField;
 	private Text pluginIdField;
 	private Button thisCheck;
 	private Button bundleCheck;
 	private Button workspaceCheck;
-	private Button requiresButton;
 	private Text versionField;
 	private Combo matchCombo;
 	private Text providerField;
 	private Text classField;
 	private Button generateMainClass;
-	private static final String PLUGIN_REQUIRES_EXPORT = "export";
-	private static final String MANIFEST_FILE_NAME = "plugin.xml";
 
 	public FirstTemplateWizardPage(
 		IProjectProvider projectProvider,

@@ -22,7 +22,6 @@ import org.eclipse.swt.graphics.Image;
 public class PDEPluginImages {
 
 	private static final String NAME_PREFIX= PDEPlugin.getPluginId()+".";
-	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	private final static URL BASE_URL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
 
@@ -41,7 +40,7 @@ public class PDEPluginImages {
 	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/";
 	private static final String PATH_TOOL = ICONS_PATH + "etool16/";
 	private static final String PATH_TOOL_HOVER = ICONS_PATH + "ctool16/";
-	private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
+	//private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/";
 

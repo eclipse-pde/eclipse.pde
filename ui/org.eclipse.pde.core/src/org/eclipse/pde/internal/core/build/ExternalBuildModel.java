@@ -17,7 +17,6 @@ import java.net.URL;
 
 public class ExternalBuildModel extends BuildModel {
 	private String installLocation;
-	private long timeStamp;
 
 public ExternalBuildModel(String installLocation) {
 	this.installLocation = installLocation;

@@ -136,13 +136,13 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		}
 	}
 
-	private void handleSelectAll() {
+	/*private void handleSelectAll() {
 		IStructuredContentProvider provider =
 			(IStructuredContentProvider) tableViewer.getContentProvider();
 		Object[] elements = provider.getElements(tableViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
 		tableViewer.setSelection(ssel);
-	}
+	}*/
 
 	protected void handleOpen() {
 	}

@@ -31,17 +31,12 @@ import org.eclipse.team.core.RepositoryProvider;
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
 
-	private static final String KEY_MISSING_NATURE_TITLE =
-		"MissingPDENature.title";
-	private static final String KEY_MISSING_NATURE_MESSAGE =
-		"MissingPDENature.message";
 	private Hashtable models = new Hashtable();
 	private Vector listeners = new Vector();
 	private Vector workspaceModels = null;
 	private Vector workspaceFragmentModels = null;
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
-	private boolean startup = true;
 	private static final boolean DEBUG = false;
 
 	class ModelChange {

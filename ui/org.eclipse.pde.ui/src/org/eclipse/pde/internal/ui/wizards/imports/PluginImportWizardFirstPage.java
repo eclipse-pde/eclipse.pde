@@ -40,11 +40,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	private static final String KEY_DESC = "ImportWizard.FirstPage.desc";
 	private static final String KEY_RUNTIME_LOCATION =
 		"ImportWizard.FirstPage.runtimeLocation";
-	private static final String KEY_OTHER_LOCATION =
-		"ImportWizard.FirstPage.otherLocation";
-	private static final String KEY_RUNTIME_DESC =
-		"ImportWizard.FirstPage.runtimeDesc";
-	private static final String KEY_OTHER_DESC = "ImportWizard.FirstPage.otherDesc";
 	private static final String KEY_OTHER_FOLDER =
 		"ImportWizard.FirstPage.otherFolder";
 	private static final String KEY_CHANGE = "ImportWizard.FirstPage.change";

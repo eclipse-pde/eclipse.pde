@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.*;
 public class NewReferenceAction extends Action {
 	private ISchemaElement source;
 	private Object object;
-	private int kind;
 	private ISchemaElement referencedElement;
 
 public NewReferenceAction(

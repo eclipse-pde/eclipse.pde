@@ -381,14 +381,14 @@ public class SourcePreferencePage
 		return (SourceLocation[]) entries.toArray(
 			new SourceLocation[entries.size()]);
 	}*/
-	private boolean getSavedState(String name, SourceLocation[] list) {
+	/*private boolean getSavedState(String name, SourceLocation[] list) {
 		for (int i = 0; i < list.length; i++) {
 			SourceLocation saved = list[i];
 			if (name.equals(saved.getName()))
 				return saved.isEnabled();
 		}
 		return true;
-	}
+	}*/
 	
 	private HashSet getAllLocationNames() {
 		HashSet set = new HashSet();

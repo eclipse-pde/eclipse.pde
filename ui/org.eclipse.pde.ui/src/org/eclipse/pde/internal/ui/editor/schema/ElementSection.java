@@ -31,7 +31,6 @@ public class ElementSection extends TreeSection {
 	private Schema schema;
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
-	private ElementList elements;
 	private Clipboard clipboard;
 	public static final String SECTION_TITLE =
 		"SchemaEditor.ElementSection.title";

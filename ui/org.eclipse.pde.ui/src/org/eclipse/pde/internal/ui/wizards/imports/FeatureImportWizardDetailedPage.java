@@ -40,13 +40,9 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	private IPath dropLocation;
 	private CheckboxTreeViewer featureTreeViewer;
 	private TreePart treePart;
-	private static final String KEY_SHOW_NAMES =
-		"FeatureImportWizard.DetailedPage.showNames"; //$NON-NLS-1$
 	private static final String KEY_FEATURE_LIST =
 		"FeatureImportWizard.DetailedPage.featureList"; //$NON-NLS-1$
 
-	private static final String KEY_LOADING_RUNTIME =
-		"FeatureImportWizard.messages.loadingRuntime"; //$NON-NLS-1$
 	private static final String KEY_UPDATING =
 		"FeatureImportWizard.messages.updating"; //$NON-NLS-1$
 	private static final String KEY_LOADING_FILE =
@@ -56,7 +52,6 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_NO_SELECTED =
 		"FeatureImportWizard.errors.noFeatureSelected"; //$NON-NLS-1$
 	private IFeatureModel[] models;
-	private boolean block;
 
 	public class FeatureContentProvider
 		extends DefaultContentProvider

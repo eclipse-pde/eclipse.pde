@@ -41,9 +41,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private IPath dropLocation;
 	private CheckboxTableViewer pluginListViewer;
 	private TablePart tablePart;
-	private static final String SETTINGS_SHOW_IDS = "showIds";
-	private static final String KEY_SHOW_NAMES =
-		"ImportWizard.DetailedPage.showNames";
 	private static final String KEY_PLUGIN_LIST =
 		"ImportWizard.DetailedPage.pluginList";
 	private static final String KEY_INVERT_SELECTION =
@@ -52,8 +49,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		"ImportWizard.DetailedPage.existing";
 	private static final String KEY_EXISTING_BINARY =
 		"ImportWizard.DetailedPage.existingBinary";
-	private static final String KEY_EXISTING_EXTERNAL =
-		"ImportWizard.DetailedPage.existingExternal";
 	private static final String KEY_ADD_REQUIRED =
 		"ImportWizard.DetailedPage.addRequired";
 
@@ -67,7 +62,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
 	private IPluginModelBase[] models;
-	private boolean block;
 	private HashSet preSelectedModels;
 
 	public class PluginContentProvider

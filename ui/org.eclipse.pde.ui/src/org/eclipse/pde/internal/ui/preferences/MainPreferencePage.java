@@ -30,8 +30,6 @@ public class MainPreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private static final String KEY_DESCRIPTION =
 		"Preferences.MainPage.Description";
-	private static final String KEY_NO_PDE_NATURE =
-		"Preferences.MainPage.noPDENature";
 	private static final String KEY_SHOW_OBJECTS =
 		"Preferences.MainPage.showObjects";
 	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds";

@@ -33,18 +33,14 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
-	private boolean block;
 	private CheckboxTableViewer pluginListViewer;
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
-	private static final String KEY_SHOW_NAMES =
-		"ImportWizard.DetailedPage.showNames";
 	private static final String KEY_PLUGIN_LIST =
 		"ImportWizard.DetailedPage.pluginList";
 	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
-	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
 	
 	private TablePart tablePart;
 

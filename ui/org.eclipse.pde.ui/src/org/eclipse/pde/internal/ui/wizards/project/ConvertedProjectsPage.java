@@ -192,20 +192,6 @@ public class ConvertedProjectsPage extends WizardPage {
 		}
 		return true;
 	}
-	private static IClasspathEntry[] mergeEntries(
-		IClasspathEntry[] e1,
-		IClasspathEntry[] e2) {
-		int size = e1.length + e2.length;
-		IClasspathEntry[] result = new IClasspathEntry[size];
-		int cnt = 0;
-		for (int i = 0; i < e1.length; i++) {
-			result[cnt++] = e1[i];
-		}
-		for (int i = 0; i < e2.length; i++) {
-			result[cnt++] = e2[i];
-		}
-		return result;
-	}
 	
 	public static void updateBuildPath(IProject project, IProgressMonitor monitor)
 		throws CoreException {

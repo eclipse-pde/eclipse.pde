@@ -42,7 +42,6 @@ public class ViewTemplate extends PDETemplateSection {
 	private static final String NL_TOOLBAR = "ViewTemplate.toolbar";
 	private static final String NL_PULLDOWN = "ViewTemplate.pulldown";
 	private static final String NL_SORTING = "ViewTemplate.sorting";
-	private static final String NL_FILTERING = "ViewTemplate.filtering";
 	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown";
 	private static final String NL_ADD_TO_PERSPECTIVE = "ViewTemplate.addToPerspective";
 	

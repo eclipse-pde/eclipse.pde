@@ -17,7 +17,6 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,7 +30,6 @@ import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.core.*;
 
 public class ManifestFormOutlinePage extends FormOutlinePage {
-	private Vector topics;
 	private Image overviewPageImage;
 	private Image runtimePageImage;
 	private Image dependenciesPageImage;

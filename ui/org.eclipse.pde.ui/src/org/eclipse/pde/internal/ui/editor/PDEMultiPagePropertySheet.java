@@ -41,9 +41,7 @@ public class PDEMultiPagePropertySheet implements IPropertySheetPage {
 	public PDEMultiPagePropertySheet() {
 		defaultPage = new PropertySheetPage();
 	}
-	private void activateBars(PageRec rec, boolean activate) {
-		rec.setBarsActive(activate);
-	}
+
 	public void createControl(Composite parent) {
 		pagebook = new PageBook(parent, SWT.NULL);
 		defaultPage.createControl(pagebook);

@@ -29,10 +29,6 @@ import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 public class PortabilityChoicesDialog extends Dialog {
 	private static final String KEY_CHOICES =
 		"FeatureEditor.PortabilityChoicesDialog.choices";
-	private static final String KEY_SELECT_ALL =
-		"FeatureEditor.PortabilityChoicesDialog.selectAll";
-	private static final String KEY_DESELECT_ALL =
-		"FeatureEditor.PortabilityChoicesDialog.deselectAll";
 	private Button okButton;
 	private String value;
 	private Choice[] choices;

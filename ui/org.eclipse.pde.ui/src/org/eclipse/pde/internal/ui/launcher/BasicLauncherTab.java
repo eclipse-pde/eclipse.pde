@@ -30,8 +30,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class BasicLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
-	private static final String KEY_DESC = "";
-
 	private static final String KEY_NAME = "BasicLauncherTab.name";
 	private static final String KEY_WORKSPACE = "BasicLauncherTab.workspace";
 	private static final String KEY_BROWSE = "BasicLauncherTab.browse";
@@ -43,8 +41,6 @@ public class BasicLauncherTab
 	private static final String KEY_APPNAME = "BasicLauncherTab.appName";
 	private static final String KEY_SHOW_SPLASH = "BasicLauncherTab.showSplash";
 	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
-	private static final String KEY_RESTORE_TEXT =
-		"BasicLauncherTab.restoreText";
 	private static final String KEY_WTITLE = "BasicLauncherTab.workspace.title";
 	private static final String KEY_WMESSAGE =
 		"BasicLauncherTab.workspace.message";

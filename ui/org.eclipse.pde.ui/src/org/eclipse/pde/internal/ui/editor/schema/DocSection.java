@@ -47,7 +47,6 @@ public class DocSection extends PDEFormSection {
 		"SchemaEditor.topic.copyright";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
-	private boolean editable = true;
 	private SourceViewerConfiguration sourceConfiguration;
 	private SourceViewer sourceViewer;
 	private CCombo sectionCombo;
@@ -329,12 +328,13 @@ public class DocSection extends PDEFormSection {
 		sectionCombo.select(0);
 	}
 
-	private String resolveObjectName(Object object) {
+	/*private String resolveObjectName(Object object) {
 		if (object instanceof ISchemaObject) {
 			return ((ISchemaObject) object).getName();
 		}
 		return object.toString();
-	}
+	}*/
+	
 	public void setFocus() {
 		sourceViewer.getTextWidget().setFocus();
 		updateSelection(sourceViewer.getSelection());

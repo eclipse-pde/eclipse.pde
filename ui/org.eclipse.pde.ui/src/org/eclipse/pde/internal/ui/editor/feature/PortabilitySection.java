@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.FormEntry;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
@@ -428,12 +427,7 @@ public class PortabilitySection extends PDEFormSection {
 	private void setIfDefined(FormEntry formText, String value) {
 		formText.setValue(value, true);
 	}
-	private void setIfDefined(Text text, String value) {
-		if (value != null)
-			text.setText(value);
-		else
-			text.setText("");
-	}
+
 	public void update() {
 		if (updateNeeded) {
 			this.update(getFormPage().getModel());

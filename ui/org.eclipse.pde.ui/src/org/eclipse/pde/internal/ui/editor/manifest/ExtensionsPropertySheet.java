@@ -31,7 +31,6 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 	private Composite composite;
 	private Action addAttAction;
 	private Action removeAttAction;
-	private ActionContributionItem removeAttItem;
 	private boolean newAttVisible;
 	private Text newAttText;
 	private SubActionBars customBars;

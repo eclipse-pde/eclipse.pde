@@ -78,12 +78,6 @@ public class UpdateClasspathOperation implements IRunnableWithProgress {
 		return null;
 	}
 	
-	private static IPath getLibraryPath(
-		IProject project,
-		IPluginLibrary curr) {
-		return getLibraryPath(project, curr.getName());
-	}
-
 	private static IPath getLibraryPath(IProject project, String libraryName) {
 		IPath path = new Path(libraryName);
 		path = getExpandedPath(path);

@@ -42,9 +42,6 @@ import java.lang.reflect.InvocationTargetException;
 public class TemplateForm extends WebForm {
 	private static final String KEY_HEADING =
 		"ManifestEditor.templatePage.heading";
-	private static final String KEY_INTRO = "ManifestEditor.TemplatePage.intro";
-	private static final String KEY_COMMON =
-		"ManifestEditor.TemplatePage.common";
 	private static final String KEY_DONT_SHOW =
 		"ManifestEditor.TemplatePage.dontShow";
 	private ManifestTemplatePage page;

@@ -86,7 +86,6 @@ public class AdvancedLauncherTab
 	private Button useListRadio;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
-	private Label restoreLabel;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
 	private IPluginModelBase[] externalModels;

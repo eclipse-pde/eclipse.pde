@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import java.util.Vector;
 
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -31,12 +29,10 @@ import org.eclipse.update.ui.forms.internal.*;
 public class RequiresSection
 	extends PDEFormSection
 	implements IHyperlinkListener, IModelChangedListener {
-	private Vector requires = new Vector();
 	private Button moreButton;
 	private FormWidgetFactory factory;
 	private Composite requiresParent;
 	private boolean needsUpdate;
-	private TableViewer requiresList;
 	public static final String SECTION_TITLE =
 		"ManifestEditor.RequiresSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.RequiresSection.desc";

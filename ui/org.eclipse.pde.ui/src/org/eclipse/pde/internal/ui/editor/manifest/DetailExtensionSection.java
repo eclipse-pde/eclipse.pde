@@ -63,8 +63,6 @@ public class DetailExtensionSection
 		"ManifestEditor.DetailExtensionSection.collapseAll";
 	public static final String POPUP_GO_TO = "Menus.goTo.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	private static final String SETTING_SHOW_ALL =
-		"DetailExtensionSection.showAllChildren";
 	private Image genericElementImage;
 	//private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;

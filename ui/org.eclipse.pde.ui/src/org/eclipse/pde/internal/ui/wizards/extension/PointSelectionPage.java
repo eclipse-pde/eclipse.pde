@@ -37,7 +37,6 @@ public class PointSelectionPage
 	extends WizardPage
 	implements ISelectionChangedListener {
 	private TableViewer pointListViewer;
-	private TableViewer pluginListViewer;
 	private IPluginBase pluginBase;
 	private Text pointIdText;
 	private Text pointNameText;
@@ -45,8 +44,6 @@ public class PointSelectionPage
 	private Button descriptionButton;
 	private Button filterCheck;
 	private IPluginExtensionPoint currentPoint;
-	private final static int SIZING_LISTS_HEIGHT = 200;
-	private final static int SIZING_LISTS_WIDTH = 250;
 	private final static String KEY_TITLE =
 		"NewExtensionWizard.PointSelectionPage.title";
 	private final static String KEY_POINT_ID =

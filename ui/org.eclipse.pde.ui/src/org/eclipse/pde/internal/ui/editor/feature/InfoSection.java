@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.net.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -33,8 +31,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class InfoSection extends PDEFormSection {
-	private static final String SECTION_TITLE =
-		"FeatureEditor.InfoSection.title";
 	private static final String KEY_APPLY = "Actions.apply.flabel";
 	private static final String KEY_RESET = "Actions.reset.flabel";
 	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
@@ -318,8 +314,6 @@ public class InfoSection extends PDEFormSection {
 			manager);
 	}
 
-	private void updateInfoURL(URL url) {
-	}
 
 	private void handleReset() {
 		updateEditorInput(element, false);
@@ -388,12 +382,7 @@ public class InfoSection extends PDEFormSection {
 		sectionCombo.pack();
 		sectionCombo.select(0);
 	}
-	private String resolveObjectName(Object object) {
-		if (object instanceof IFeatureObject) {
-			return ((IFeatureObject) object).getLabel();
-		}
-		return object.toString();
-	}
+
 	public void setFocus() {
 		sourceViewer.getTextWidget().setFocus();
 	}
