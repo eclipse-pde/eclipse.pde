@@ -26,7 +26,7 @@ public class RuntimePage extends PDEFormPage {
 	private PluginActivationSection osgiSection;
 
 	public RuntimePage(FormEditor editor) {
-		super(editor, PAGE_ID, "Runtime"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("RuntimePage.tabName"));  //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);

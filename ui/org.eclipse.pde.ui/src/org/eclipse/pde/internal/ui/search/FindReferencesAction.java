@@ -40,7 +40,7 @@ public class FindReferencesAction extends Action {
 			IPluginModelBase model = ((IPluginExtensionPoint) object).getPluginModel();
 			String id = model.getPluginBase().getId();
 			if (id == null || id.trim().length() == 0)
-				id = "*";
+				id = "*"; //$NON-NLS-1$
 			input
 				.setSearchString(
 						id

@@ -46,7 +46,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	 * @param title
 	 */
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Overview"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("OverviewPage.tabName"));  //$NON-NLS-1$
 	}
 	protected String getHelpResource() {
 		return PDEPlugin.getResourceString("OverviewPage.help.manifest"); //$NON-NLS-1$

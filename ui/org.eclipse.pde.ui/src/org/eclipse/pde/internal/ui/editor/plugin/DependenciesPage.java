@@ -45,7 +45,7 @@ public class DependenciesPage extends PDEFormPage implements IInputContextListen
 	 * @param title
 	 */
 	public DependenciesPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Dependencies"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("DependenciesPage.tabName"));  //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

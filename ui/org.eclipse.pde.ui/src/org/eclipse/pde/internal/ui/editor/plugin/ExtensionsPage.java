@@ -92,7 +92,7 @@ public class ExtensionsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionsPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Extensions"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("ExtensionsPage.tabName"));  //$NON-NLS-1$
 		block = new ExtensionsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {

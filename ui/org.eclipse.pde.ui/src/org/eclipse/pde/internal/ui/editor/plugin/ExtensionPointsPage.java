@@ -62,7 +62,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionPointsPage(FormEditor editor) {
-		super(editor, PAGE_ID, "Extension Points"); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("ExtensionPointsPage.tabName"));  //$NON-NLS-1$
 		block = new ExtensionPointsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
