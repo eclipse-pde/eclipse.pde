@@ -417,6 +417,7 @@ public class PDEState {
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
 				}
+				timestamp ^= file.getAbsolutePath().hashCode();
 			}
 		}
 		return timestamp;
