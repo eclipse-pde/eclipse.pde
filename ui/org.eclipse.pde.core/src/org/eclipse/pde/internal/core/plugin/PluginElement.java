@@ -160,23 +160,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 		firePropertyChanged(P_ATTRIBUTE, oldValue, null);
 	}
-	public void replaceAttributes(Hashtable newAttributes) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = attributes;
-		setAttributesInTheModel(attributes, false);
-		attributes = newAttributes;
-		setAttributesInTheModel(newAttributes, true);
-		firePropertyChanged(P_ATTRIBUTES, oldValue, attributes);
-	}
-
-	private void setAttributesInTheModel(Hashtable table, boolean value) {
-		if (table != null) {
-			for (Enumeration elements = table.elements(); elements.hasMoreElements();) {
-				PluginAttribute att = (PluginAttribute) elements.nextElement();
-				att.setInTheModel(value);
-			}
-		}
-	}
 
 	public void setAttribute(String name, String value) throws CoreException {
 		ensureModelEditable();
@@ -192,11 +175,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			((PluginAttribute) attribute).setInTheModel(true);
 		}
 		attribute.setValue(value);
-	}
-
-	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
-		super.restoreProperty(name, oldValue, newValue);
 	}
 
 	public void setElementInfo(ISchemaElement newElementInfo) {

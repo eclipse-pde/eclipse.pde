@@ -67,7 +67,6 @@ public abstract class AbstractExtensionsModel
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;

@@ -40,16 +40,6 @@ public class Plugin extends PluginBase implements IPlugin {
 		super.load(bundleDescription, state);
 	}
 	
-	public void load(IPluginBase srcPluginBase) {
-		PluginBase base = (PluginBase)srcPluginBase;
-		this.load(base);
-	}
-
-	void load(PluginBase srcPluginBase) {
-		className = ((Plugin) srcPluginBase).className;
-		super.load(srcPluginBase);
-	}
-	
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		this.className = getNodeAttribute(node, "class"); //$NON-NLS-1$
 		super.load(node, schemaVersion, lineTable);

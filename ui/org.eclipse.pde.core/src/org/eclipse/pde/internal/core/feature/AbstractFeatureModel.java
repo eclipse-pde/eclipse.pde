@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -58,11 +57,7 @@ public abstract class AbstractFeatureModel
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
-			InputSource source = new InputSource(stream);
-			URL dtdLocation = PDECore.getDefault().getInstallURL();
-			source.setSystemId(dtdLocation.toString());
 			XMLDefaultHandler handler = new XMLDefaultHandler();
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;

@@ -295,8 +295,6 @@ public class Schema extends PlatformObject implements ISchema {
 		try {
 			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", //$NON-NLS-1$
-					handler);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement(), handler
 					.getLineTable());

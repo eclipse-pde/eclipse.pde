@@ -34,8 +34,6 @@ public abstract class PluginBase
 	private String schemaVersion;
 	private boolean valid;
 
-	public PluginBase() {
-	}
 	public String getSchemaVersion() {
 		return schemaVersion;
 	}
@@ -119,7 +117,6 @@ public abstract class PluginBase
 		}		
 	}
 	
-
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_ID)) {
@@ -159,9 +156,6 @@ public abstract class PluginBase
 		valid = hasRequiredAttributes();
 	}
 	
-	void load(Node node, Hashtable lineTable) {
-	}
-
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.schemaVersion = schemaVersion;
@@ -358,10 +352,10 @@ public abstract class PluginBase
 		}
 		return super.hasRequiredAttributes();
 	}
+	
 	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
 		return SAXParserFactory.newInstance().newSAXParser();
 	}
-
 
 	public static int getMatchRule(VersionRange versionRange) {
 		if (versionRange == null || versionRange.getMinimum() == null)

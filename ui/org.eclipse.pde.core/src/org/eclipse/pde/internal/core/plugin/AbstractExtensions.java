@@ -25,8 +25,6 @@ public abstract class AbstractExtensions
 	protected Vector extensions = new Vector();
 	protected Vector extensionPoints = new Vector();
 
-	public AbstractExtensions() {
-	}
 	public void add(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		extensions.addElement(extension);
@@ -54,13 +52,6 @@ public abstract class AbstractExtensions
 		extensions.copyInto(result);
 		return result;
 	}
-
-	/*void load(PluginModel pd) {
-		// add extensions
-		loadExtensions(pd.getDeclaredExtensions());
-		// add extension points
-		loadExtensionPoints(pd.getDeclaredExtensionPoints());
-	}*/
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {

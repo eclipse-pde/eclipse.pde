@@ -131,7 +131,6 @@ public abstract class PluginObject
 		}
 		return false;
 	}
-	abstract void load(Node node, Hashtable lineTable);
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {

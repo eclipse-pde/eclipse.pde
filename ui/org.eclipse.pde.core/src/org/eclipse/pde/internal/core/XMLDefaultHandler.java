@@ -16,14 +16,13 @@ import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import org.xml.sax.ext.*;
 import org.xml.sax.helpers.*;
 
 /**
  * @author melhem
  *
  */
-public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler {
+public class XMLDefaultHandler extends DefaultHandler {
 	
 	private org.w3c.dom.Document fDocument;
 	private Locator fLocator;
@@ -89,8 +88,7 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 	public void processingInstruction(String target, String data) throws SAXException {
 		fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
 	}
-	
-	
+		
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
@@ -118,57 +116,5 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 	
 	public Hashtable getLineTable() {
 		return fLineTable;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
-	 */
-	public void endCDATA() throws SAXException {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
-	 */
-	public void endDTD() throws SAXException {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
-	 */
-	public void startCDATA() throws SAXException {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
-	 */
-	public void comment(char[] ch, int start, int length) throws SAXException {
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < length; i++) {
-			buffer.append(ch[start + i]);
-		}
-		Comment comment = fDocument.createComment(buffer.toString());
-		if (fRootElement == null || fElementStack.isEmpty())
-			fDocument.appendChild(comment);
-		else 
-			((Element)fElementStack.peek()).appendChild(comment);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
-	 */
-	public void endEntity(String name) throws SAXException {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
-	 */
-	public void startEntity(String name) throws SAXException {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void startDTD(String name, String publicId, String systemId) throws SAXException {
-	}
-	
+	}	
 }

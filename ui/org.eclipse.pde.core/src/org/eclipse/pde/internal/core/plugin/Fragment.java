@@ -21,23 +21,29 @@ import org.w3c.dom.*;
 
 public class Fragment extends PluginBase implements IFragment {
 	private String pluginId = ""; //$NON-NLS-1$
+
 	private String pluginVersion = ""; //$NON-NLS-1$
+
 	private int rule = IMatchRules.NONE;
 
 	public Fragment() {
 	}
+
 	public String getPluginId() {
 		return pluginId;
 	}
+
 	public String getPluginVersion() {
 		return pluginVersion;
 	}
+
 	public int getRule() {
 		return rule;
 	}
-	
+
 	protected boolean hasRequiredAttributes() {
-		if (pluginId==null || pluginVersion==null) return false;
+		if (pluginId == null || pluginVersion == null)
+			return false;
 		return super.hasRequiredAttributes();
 	}
 
@@ -46,18 +52,14 @@ public class Fragment extends PluginBase implements IFragment {
 		this.pluginId = host.getName();
 		VersionRange versionRange = host.getVersionRange();
 		if (versionRange != null) {
-			this.pluginVersion = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			this.pluginVersion = versionRange.getMinimum() != null ? versionRange
+					.getMinimum().toString()
+					: null;
 			this.rule = PluginBase.getMatchRule(versionRange);
 		}
 		super.load(bundleDescription, state);
 	}
-	
-	public void load(IPluginBase srcPluginBase) {
-		pluginId= ((Fragment)srcPluginBase).pluginId;
-		pluginVersion= ((Fragment)srcPluginBase).pluginVersion;
-		rule= ((Fragment)srcPluginBase).rule;
-		super.load(srcPluginBase);
-	}
+
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		this.pluginId = getNodeAttribute(node, "plugin-id"); //$NON-NLS-1$
 		this.pluginVersion = getNodeAttribute(node, "plugin-version"); //$NON-NLS-1$
@@ -73,24 +75,28 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		super.load(node, schemaVersion, lineTable);
 	}
+
 	public void reset() {
 		pluginId = ""; //$NON-NLS-1$
 		pluginVersion = ""; //$NON-NLS-1$
 		rule = IMatchRules.NONE;
 		super.reset();
 	}
+
 	public void setPluginId(String newPluginId) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.pluginId;
 		pluginId = newPluginId;
 		firePropertyChanged(P_PLUGIN_ID, oldValue, pluginId);
 	}
+
 	public void setPluginVersion(String newPluginVersion) throws CoreException {
 		ensureModelEditable();
 		String oldValue = this.pluginVersion;
 		pluginVersion = newPluginVersion;
 		firePropertyChanged(P_PLUGIN_VERSION, oldValue, pluginVersion);
 	}
+
 	public void setRule(int rule) throws CoreException {
 		ensureModelEditable();
 		Integer oldValue = new Integer(this.rule);
@@ -99,7 +105,7 @@ public class Fragment extends PluginBase implements IFragment {
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+			throws CoreException {
 		if (name.equals(P_PLUGIN_ID)) {
 			setPluginId(newValue != null ? newValue.toString() : null);
 			return;
@@ -117,8 +123,9 @@ public class Fragment extends PluginBase implements IFragment {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		if (getSchemaVersion()!=null) {
-			writer.println("<?eclipse version=\"" + getSchemaVersion() +"\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (getSchemaVersion() != null) {
+			writer
+					.println("<?eclipse version=\"" + getSchemaVersion() + "\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.print("<fragment"); //$NON-NLS-1$
 		if (getId() != null) {
@@ -135,7 +142,8 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		if (getProviderName() != null) {
 			writer.println();
-			writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer
+					.print("   provider-name=\"" + getWritableString(getProviderName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getPluginId() != null) {
 			writer.println();
@@ -147,7 +155,8 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		if (getRule() != IMatchRules.NONE) {
 			writer.println();
-			writer.print("   match=\"" + IMatchRules.RULE_NAME_TABLE[getRule()] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer
+					.print("   match=\"" + IMatchRules.RULE_NAME_TABLE[getRule()] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println(">"); //$NON-NLS-1$
 		writer.println();
@@ -171,7 +180,8 @@ public class Fragment extends PluginBase implements IFragment {
 		children = getExtensionPoints();
 		if (children.length > 0) {
 			for (int i = 0; i < children.length; i++) {
-				((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+				((IPluginExtensionPoint) children[i])
+						.write(firstIndent, writer);
 			}
 			writer.println();
 		}
