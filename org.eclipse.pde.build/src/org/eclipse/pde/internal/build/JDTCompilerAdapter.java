@@ -24,7 +24,7 @@ public class JDTCompilerAdapter extends DefaultCompilerAdapter {
  * Performs a compile using the JDT batch compiler 
  */
 public boolean execute() throws BuildException {
-	attributes.log("Using JDT compiler", Project.MSG_VERBOSE);
+	attributes.log(Policy.bind("info.usingJdtCompiler"), Project.MSG_VERBOSE);
 	Commandline cmd = setupJavacCommand();
 
 	try {
@@ -32,8 +32,7 @@ public boolean execute() throws BuildException {
 		Method compile = c.getMethod("main", new Class[] { String[].class });
 		compile.invoke(null, new Object[] { cmd.getArguments()});
 	} catch (ClassNotFoundException cnfe) {
-		String msg = "Cannot find the JDT compiler";
-		throw new BuildException(msg);
+		throw new BuildException(Policy.bind("error.missingJDTCompiler"));
 	} catch (Exception ex) {
 		throw new BuildException(ex);
 	}

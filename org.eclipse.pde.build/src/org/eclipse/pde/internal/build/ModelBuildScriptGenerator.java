@@ -452,7 +452,7 @@ protected Hashtable loadJarDefinitions(PluginModel descriptor) {
 			is.close();
 		}
 	} catch (IOException e) {
-		System.out.println("File not read: " + location);
+		System.out.println(Policy.bind("exception.missingFile",location.toString()));
 		return new Hashtable(1);
 	}
 	
@@ -516,11 +516,12 @@ protected void retrieveCommandLineModels() {
 	
 	Enumeration models = commandLineModelNames.elements();
 	while (models.hasMoreElements()) {
-		PluginModel model = retrieveModelNamed((String)models.nextElement());
+		String modelName = (String)models.nextElement();
+		PluginModel model = retrieveModelNamed(modelName);
 		if (model != null)
 			modelsToGenerate.addElement(model);
 		else
-			System.out.println("Could not find " + model);
+			System.out.println(Policy.bind("exception.missingPlugin",modelName));
 	}
 	
 	PluginModel result[] = new PluginModel[modelsToGenerate.size()];

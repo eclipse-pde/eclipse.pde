@@ -28,7 +28,7 @@ public void execute() throws BuildException {
 		location = new File(location, "template.xml").getAbsolutePath();
 		project.setProperty("template", location);
 	} catch (IOException e) {
-		throw new BuildException ("cannot locate plugin build template");
+		throw new BuildException(Policy.bind("exception.missingTemplate"));
 	}
 }
 

@@ -238,11 +238,11 @@ protected ComponentModel[] readComponentsFromConfigurationModel() {
 		ComponentModel currentReadComponent = configurationComponents[i];
 		ComponentModel resultingComponent = fullComponentRegistry.getComponent(currentReadComponent.getId());
 		if (resultingComponent == null) {
-			System.out.println("could not read component " + currentReadComponent.getId());
+			System.out.println(Policy.bind("exception.missingComponent",currentReadComponent.getId()));
 			continue;
 		}
 		if (!currentReadComponent.getVersion().equals(resultingComponent.getVersion()))
-			System.out.println("note: using incorrect version of component " + currentReadComponent.getId());
+			System.out.println(Policy.bind("info.usingIncorrectComponentVersion",currentReadComponent.getId()));
 		accumulatingResult.addElement(resultingComponent);
 	}
 	
@@ -253,7 +253,7 @@ protected ComponentModel[] readComponentsFromConfigurationModel() {
 }
 protected boolean readConfigurationModel() {
 	if (configurationId == null) {
-		System.out.println("Configuration id must be specified.");
+		System.out.println(Policy.bind("error.missingConfigurationId"));
 		return false;
 	}
 		

@@ -22,6 +22,11 @@ public abstract class PluginTool implements IPlatformRunnable {
 	private List devEntries = null;
 	private Hashtable propertyValues = new Hashtable(9);
 	
+	public final static String PI_PDECORE = "org.eclipse.pde.core";
+	public final static int EXCEPTION_PLUGIN_PARSE = 1;
+	public final static int EXCEPTION_COMPONENT_PARSE = 2;
+	public final static int EXCEPTION_CONFIGURATION_PARSE = 4;
+	
 	public static final String FILENAME_PROPERTIES = "build.properties";
 	private static final String SEPARATOR_VERSION = "_";
 	private static final String USAGE = "-?";
@@ -203,11 +208,11 @@ protected String makeRelative(String location, IPath base) {
  * Print the usage of this launcher on the system console
  */
 protected void printUsage(PrintWriter out) {
-	out.println("The general form of using the VAJ Extractor is:");
-	out.println("      java <launcher class> -application <name> [option list]");
-	out.println("where the option list can be any number of the following:");
-	out.println("      -? : print this message");
-	out.flush();
+//	out.println("The general form of using the VAJ Extractor is:");
+//	out.println("      java <launcher class> -application <name> [option list]");
+//	out.println("where the option list can be any number of the following:");
+//	out.println("      -? : print this message");
+//	out.flush();
 }
 protected String[] processCommandLine(String[] args) {
 	for (int i = 0; i < args.length; i++) {
@@ -269,7 +274,7 @@ public Object run(Object args) throws Exception {
 		return null;
 	}
 	URL[] path = getPluginPath();
-	MultiStatus problems = new MultiStatus("vajextractor", 13, "plugin parsing problems", null);
+	MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,PluginTool.EXCEPTION_PLUGIN_PARSE,Policy.bind("exception.pluginParse"),null);
 	Factory factory = new Factory(problems);
 	registry = Platform.parsePlugins(path, factory);
 	return null;

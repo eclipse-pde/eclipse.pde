@@ -306,7 +306,7 @@ protected String[] processCommandLine(String[] args) {
 }
 protected boolean readComponentModel() {
 	if (componentId == null) {
-		System.out.println("Component id must be specified.");
+		System.out.println(Policy.bind("error.missingComponentId"));
 		return false;
 	}
 	
@@ -328,11 +328,11 @@ protected PluginModel[] readFragmentsFromComponentModel() {
 		PluginModel currentReadFragment = componentFragments[i];
 		PluginModel resultingFragment = getRegistry().getFragment(currentReadFragment.getId());
 		if (resultingFragment == null) {
-			System.out.println("could not read fragment " + currentReadFragment.getId());
+			System.out.println(Policy.bind("exception.missingFragment",currentReadFragment.getId()));
 			continue;
 		}
 		if (!currentReadFragment.getVersion().equals(resultingFragment.getVersion()))
-			System.out.println("note: using incorrect version of fragment " + currentReadFragment.getId());
+			System.out.println(Policy.bind("info.usingIncorrectFragmentVersion",currentReadFragment.getId()));
 		accumulatingResult.addElement(resultingFragment);
 	}
 	
@@ -349,11 +349,11 @@ protected PluginModel[] readPluginsFromComponentModel() {
 		PluginModel currentReadPlugin = componentPlugins[i];
 		PluginModel resultingPlugin = getRegistry().getPlugin(currentReadPlugin.getId());
 		if (resultingPlugin == null) {
-			System.out.println("could not read plugin " + currentReadPlugin.getId());
+			System.out.println(Policy.bind("exception.missingPlugin",currentReadPlugin.getId()));
 			continue;
 		}
 		if (!currentReadPlugin.getVersion().equals(resultingPlugin.getVersion()))
-			System.out.println("note: using incorrect version of plugin " + currentReadPlugin.getId());
+			System.out.println(Policy.bind("info.usingIncorrectPluginVersion",currentReadPlugin.getId()));
 		accumulatingResult.addElement(resultingPlugin);
 	}
 	

@@ -40,7 +40,7 @@ protected void readComponent(File componentFile) {
 	FileInputStream inStream = null;
 	try {
 		inStream = new FileInputStream(componentFile);
-		MultiStatus problems = new MultiStatus("vajextractor", 13, "component parsing problems", null);
+		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,PluginTool.EXCEPTION_COMPONENT_PARSE, Policy.bind("exception.componentParse"), null);
 		PluginParser parser = new PluginParser(new Factory(problems));
 		ComponentModel result = (ComponentModel)parser.parseInstall(new InputSource(inStream));
 		result.setLocation(componentFile.getParent());
@@ -63,7 +63,7 @@ protected void readConfiguration(File configurationFile) {
 	FileInputStream inStream = null;
 	try {
 		inStream = new FileInputStream(configurationFile);
-		MultiStatus problems = new MultiStatus("vajextractor", 13, "configuration parsing problems", null);
+		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,PluginTool.EXCEPTION_CONFIGURATION_PARSE, Policy.bind("exception.configurationParse"), null);
 		PluginParser parser = new PluginParser(new Factory(problems));
 		ConfigurationModel result = (ConfigurationModel)parser.parseInstall(new InputSource(inStream));
 		result.setLocation(configurationFile.getParent());
