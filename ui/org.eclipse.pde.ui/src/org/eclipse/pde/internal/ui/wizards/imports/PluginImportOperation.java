@@ -448,6 +448,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							res,
 							dest,
 							new SubProgressMonitor(monitor, 1));
+							
 						// extract resources from the library JAR
 						res = root.findMember(curr);
 						if (res instanceof IFile) {
@@ -456,16 +457,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 								dest,
 								new SubProgressMonitor(monitor, 1));
 							createJarPackagerFiles(dest, (IFile) res);
+							// defects 16137 and 17521
+							res.delete(true, monitor);
+							// defect 19351
+							if (dest.getFolder("META-INF").exists())
+								dest.getFolder("META-INF").delete(
+									true,
+									monitor);
 						} else {
 							monitor.worked(1);
 						}
-						
-						// defect 19351
-						if (dest.getFolder("META-INF").exists())
-							dest.getFolder("META-INF").delete(true, monitor);
-							
-						// defects 16137 and 17521
-						res.delete(true, monitor);
+													
 						// replace the entry
 						entries[i] =
 							JavaCore.newSourceEntry(dest.getFullPath());
