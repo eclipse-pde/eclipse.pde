@@ -145,6 +145,19 @@ public class ModelEntry extends PlatformObject {
 		return true;
 	}
 	
+	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
+		throws CoreException {
+		if (javaProject == null)
+			return;
+		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
+		JavaCore.setClasspathContainer(
+			path,
+			new IJavaProject[] { javaProject },
+			new IClasspathContainer[] {
+				 new RequiredPluginsClasspathContainer(null)},
+			null);
+	}
+
 	public boolean isAffected(IPluginBase[] changedPlugins, ArrayList oldIds) {
 		if (workspaceModel == null || !workspaceModel.isLoaded())
 			return false;
