@@ -54,6 +54,8 @@ public class CompilerFlags {
 		"compilers.p.no-required-att"; //$NON-NLS-1$
 	public static final String P_NOT_EXTERNALIZED = 
 		"compilers.p.not-externalized-att"; //$NON-NLS-1$
+	public static final String P_NOT_USED = 
+		"compilers.p.unused-element-or-attribute"; //$NON-NLS-1$
 
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
@@ -76,7 +78,7 @@ public class CompilerFlags {
 				P_ILLEGAL_ATT_VALUE,
 				P_UNKNOWN_CLASS,
 				P_UNKNOWN_RESOURCE,			
-				P_NOT_EXTERNALIZED},
+				P_NOT_USED},
 			{
 			S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS, S_FORBIDDEN_END_TAGS, S_OPTIONAL_END_TAGS}, {
 			F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES }, {
@@ -147,6 +149,7 @@ public class CompilerFlags {
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NOT_EXTERNALIZED, IGNORE);
+		pref.setDefault(P_NOT_USED, WARNING);
 
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc"); //$NON-NLS-1$

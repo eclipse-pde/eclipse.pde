@@ -32,11 +32,11 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
-			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+			int severity = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
 			if (severity != CompilerFlags.IGNORE) {
 				NamedNodeMap attrs = element.getAttributes();
 				for (int i = 0; i < attrs.getLength(); i++) {
-					reportUnknownAttribute(element, attrs.item(i).getNodeName(), severity);
+					reportUnusedAttribute(element, attrs.item(i).getNodeName(), severity);
 				}
 			}
 			
@@ -51,9 +51,15 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 				} else if (name.equals("extension-point")) { //$NON-NLS-1$
 					validateExtensionPoint(child);
 				} else {
-					severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
-					if (severity != CompilerFlags.IGNORE)
-						reportIllegalElement(child, severity);
+					if (!name.equals("runtime") && !name.equals("requires")) {
+						severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+						if (severity != CompilerFlags.IGNORE)
+							reportIllegalElement(child, severity);
+					} else {
+						severity = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
+						if (severity != CompilerFlags.IGNORE)
+							reportUnusedElement(child, severity);					
+					}
 				}
 			}
 		}
@@ -413,6 +419,20 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					element.getNodeName(), parent.getNodeName() }),
 					getLine(element), severity);
 		}
+	}
+	
+	protected void reportUnusedAttribute(Element element, String attName, int severity) {
+		String message = PDE.getFormattedMessage("Builders.Manifest.unused-attribute", //$NON-NLS-1$
+				attName);
+		report(message, getLine(element, attName), severity);
+	}
+
+	protected void reportUnusedElement(Element element, int severity) {
+		Node parent = element.getParentNode();
+			report(PDE.getFormattedMessage(
+					"Builders.Manifest.unused-element", new String[] { //$NON-NLS-1$
+					element.getNodeName(), parent.getNodeName() }),
+					getLine(element), severity);
 	}
 
 }
