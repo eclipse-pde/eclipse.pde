@@ -181,6 +181,30 @@
             %new.site.description
          </description>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.PDE"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleProjectWizard"
+            icon="icons/full/obj16/bundle_obj.gif"
+            id="org.eclipse.pde.ui.NewBundleProjectWizard"
+            project="true"
+            name="%new.bundleProject.name">
+         <description>
+            %new.bundleProject.description
+         </description>
+      </wizard>
+      <wizard
+            category="org.eclipse.pde.PDE"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            class="org.eclipse.pde.internal.ui.osgi.wizards.project.NewBundleFragmentProjectWizard"
+            icon="icons/full/obj16/bundle_fragment_obj.gif"
+            id="org.eclipse.pde.ui.NewBundleFragmentWizard"
+            project="true"
+            name="%new.bundleFragmentProject.name">
+         <description>
+            %new.bundleFragmentProject.description
+         </description>
+      </wizard>
    </extension>
    <extension
          id="selfhosting.import"
@@ -765,16 +789,16 @@
          </action>
       </objectContribution>
       <objectContribution
-            nameFilter="fragment.xml"
             objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="fragment.xml"
             id="org.eclipse.pde.ui.FragmentToBundle1">
          <action
-               menubarPath="additions"
-               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
                label="%PluginToBundleWizardAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.pde.ui.PluginToBundleWizard1"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath">
+               id="org.eclipse.pde.ui.PluginToBundleWizard1">
          </action>
       </objectContribution>
    </extension>

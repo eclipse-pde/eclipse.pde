@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.plugin.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public abstract class BundlePluginModelBase extends AbstractModel implements IBundlePluginModelBase {
+public abstract class BundlePluginModelBase extends AbstractModel implements IBundlePluginModelBase, IPluginModelFactory {
 	private IBundleModel bundleModel;
 	private IExtensionsModel extensionsModel;
 	private IBundlePluginBase bundlePluginBase;
@@ -116,6 +116,8 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getFactory()
 	 */
 	public IExtensionsModelFactory getFactory() {
+		if (extensionsModel!=null)
+			return extensionsModel.getFactory();
 		return null;
 	}
 
@@ -207,5 +209,25 @@ public abstract class BundlePluginModelBase extends AbstractModel implements IBu
 		library.setModel(this);
 		library.setParent(getPluginBase());
 		return library;
+	}
+	public IPluginAttribute createAttribute(IPluginElement element) {
+		if (extensionsModel!=null)
+			return extensionsModel.getFactory().createAttribute(element);
+		return null;
+	}
+	public IPluginElement createElement(IPluginObject parent) {
+		if (extensionsModel!=null)
+			return extensionsModel.getFactory().createElement(parent);
+		return null;
+	}
+	public IPluginExtension createExtension() {
+		if (extensionsModel!=null)
+			return extensionsModel.getFactory().createExtension();
+		return null;
+	}
+	public IPluginExtensionPoint createExtensionPoint() {
+		if (extensionsModel!=null)
+			return extensionsModel.getFactory().createExtensionPoint();
+		return null;
 	}
 }
