@@ -46,7 +46,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		final boolean tracing = configuration.getAttribute(TRACING, false);
 		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
-		
+
 		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(new Path(data));
 		if (running != null) {
 			throw new CoreException(running);
@@ -69,18 +69,20 @@ public class WorkbenchLaunchConfigurationDelegate
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
 
-		ILaunch launch =  doLaunch(
-			configuration,
-			mode,
-			runner,
-			path,
-			clearWorkspace,
-			args,
-			plugins,
-			appName,
-			tracing,
-			monitor);
-		PDEPlugin.getDefault().registerLaunch(launch, path);
+		ILaunch launch =
+			doLaunch(
+				configuration,
+				mode,
+				runner,
+				path,
+				clearWorkspace,
+				args,
+				plugins,
+				appName,
+				tracing,
+				monitor);
+		if (launch!=null)
+			PDEPlugin.getDefault().registerLaunch(launch, path);
 		return launch;
 	}
 
@@ -151,7 +153,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		monitor.beginTask("Starting Eclipse Workbench...", 2);
 		try {
-			File propertiesFile = TargetPlatform.createPropertiesFile(plugins);
+			File propertiesFile = TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -298,34 +300,32 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		IPluginModelBase model = findModel("org.eclipse.core.boot", plugins);
 		if (model != null) {
-			try {
-				File pluginDir =
-					new File(new URL("file:" + model.getInstallLocation()).getFile());
-				IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-
-				IContainer bootProject =
-					root.getContainerForLocation(new Path(pluginDir.getPath()));
-				if (bootProject instanceof IProject) {
-					// if we find the boot project in the workspace use its class path. This allows
-					// to develop the boot project itselve
-					String[] bootClassPath =
-						JavaRuntime.computeDefaultRuntimeClassPath(
-							JavaCore.create((IProject) bootProject));
-					if (bootClassPath != null) {
-						String[] resClassPath = new String[bootClassPath.length + 1];
-						resClassPath[0] = slimLauncher.getPath();
-						System.arraycopy(bootClassPath, 0, resClassPath, 1, bootClassPath.length);
-						return resClassPath;
-					}
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				// in workspace - use the java project
+				IProject project = resource.getProject();
+				IJavaProject jproject = JavaCore.create(project);
+				String[] bootClassPath = JavaRuntime.computeDefaultRuntimeClassPath(jproject);
+				if (bootClassPath != null) {
+					String[] resClassPath = new String[bootClassPath.length + 1];
+					resClassPath[0] = slimLauncher.getPath();
+					System.arraycopy(bootClassPath, 0, resClassPath, 1, bootClassPath.length);
+					return resClassPath;
 				}
-				// use boot.jar next to the boot plugins plugin.xml
-				File bootJar = new File(pluginDir, "boot.jar");
+			} else {
+				// outside - locate boot.jar
+				String installLocation = model.getInstallLocation();
+				if (installLocation.startsWith("file:"))
+					installLocation = installLocation.substring(5);
+				File bootJar = new File(installLocation, "boot.jar");
 				if (bootJar.exists()) {
 					return new String[] { slimLauncher.getPath(), bootJar.getPath()};
 				}
-			} catch (IOException e) {
-				throw new CoreException(
-					new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
+				// Check PDE case (third instance) - it may be in the bin
+				File binDir = new File(installLocation, "bin/");
+				if (binDir.exists()) {
+					return new String [] { slimLauncher.getPath(), binDir.getPath()};
+				}
 			}
 		}
 		// failed to construct the class path: boot plugin not existing or boot.jar not found

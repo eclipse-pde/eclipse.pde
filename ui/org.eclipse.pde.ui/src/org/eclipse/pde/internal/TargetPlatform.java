@@ -24,7 +24,7 @@ import java.net.*;
 public class TargetPlatform implements IEnvironmentVariables {
 
 	public static File createPropertiesFile() throws CoreException {
-		return createPropertiesFile(getVisibleModels());
+		return createPropertiesFile(getVisibleModels(), null);
 	}
 
 	public static URL[] createPluginPath() throws CoreException {
@@ -71,11 +71,22 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 
-	public static File createPropertiesFile(IPluginModelBase[] plugins)
+	public static File createPropertiesFile(IPluginModelBase[] plugins, IPath data)
 		throws CoreException {
 		try {
-			File file = File.createTempFile(PDEPlugin.getPluginId(), ".properties");
-			file.deleteOnExit();
+			String dataSuffix = createDataSuffix(data);
+			IPath statePath = PDEPlugin.getDefault().getStateLocation();
+			IPath pluginPath;
+			String fileName = "plugin_path.properties";
+			File dir = new File(statePath.toOSString());
+			
+			if (dataSuffix.length()>0) {
+				dir = new File(dir, dataSuffix);
+				if (!dir.exists()) {
+					dir.mkdir();
+				}
+			}
+			File pluginFile = new File(dir, fileName);
 			Properties properties = new Properties();
 
 			for (int i = 0; i < plugins.length; i++) {
@@ -86,18 +97,26 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 			FileOutputStream fos = null;
 			try {
-				fos = new FileOutputStream(file);
+				fos = new FileOutputStream(pluginFile);
 				properties.store(fos, null);
 			} finally {
 				if (fos != null) {
 					fos.close();
 				}
 			}
-			return file;
+			return pluginFile;
 		} catch (IOException e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
+				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e));
 		}
+	}
+	
+	private static String createDataSuffix(IPath data) {
+		if (data==null) return "";
+		String suffix = data.toOSString();
+		// replace file and device separators with underscores
+		suffix = suffix.replace(File.separatorChar, '_');
+		return suffix.replace(':', '_');
 	}
 
 	private static String createURL(IPluginModelBase model) {

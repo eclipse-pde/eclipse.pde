@@ -90,7 +90,7 @@ public class WorkbenchLauncherDelegate
 		try {
 			IWorkspace workspace = PDEPlugin.getWorkspace();
 
-			File propertiesFile = TargetPlatform.createPropertiesFile(plugins);
+			File propertiesFile = TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
