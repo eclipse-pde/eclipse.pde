@@ -373,7 +373,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private boolean containsStarDotJar(String[] strings) {
 		for (int i = 0; i < strings.length; i++) {
-			if (strings[i].endsWith("*.jar")) //$NON-NLS-1$
+			if (strings[i].trim().equalsIgnoreCase("*.jar")) //$NON-NLS-1$
 				return true;
 		}
 		return false;
