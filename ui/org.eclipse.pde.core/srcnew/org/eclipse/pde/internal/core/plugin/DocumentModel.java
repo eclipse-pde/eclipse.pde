@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.w3c.dom.Node;
 
 /**
@@ -245,5 +246,9 @@ public class DocumentModel  implements IDocumentNode {
 			}
 		}
 		return iImport;
+	}
+	
+	public IPluginModelBase getModel() {
+		return fPluginModelBase;
 	}
 }

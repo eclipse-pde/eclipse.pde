@@ -21,9 +21,12 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.plugin.DocumentModel;
+import org.eclipse.pde.internal.core.plugin.IDocumentNode;
 import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Node;
@@ -38,16 +41,28 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 		String result= null;
 		
 		if (obj instanceof PluginDocumentNode) {
-			IPluginObject pluginObject= ((PluginDocumentNode)obj).getPluginObjectNode();
+			IPluginObject pluginObject = ((PluginDocumentNode) obj).getPluginObjectNode();
 			if (pluginObject != null) {
-				result= getLabel(pluginObject);
+				result = getLabel(pluginObject);
 			}
 			if (result == null) {
-				Node domNode= ((PluginDocumentNode)obj).getDOMNode();
+				Node domNode = ((PluginDocumentNode) obj).getDOMNode();
 				if (domNode != null) {
-					result= domNode.getNodeName();
-					if (result.length() > 0) {
-						result= result.substring(0, 1).toUpperCase() + result.substring(1).toLowerCase();
+					if (domNode.getParentNode() == null) {
+						IDocumentNode node = ((PluginDocumentNode) obj).getParent();
+						if (node instanceof DocumentModel) {
+							result =
+								((DocumentModel) node).getModel().isFragmentModel()
+									? "fragment.xml"
+									: "plugin.xml";
+						}
+					} else {
+						result = domNode.getNodeName();
+						if (result.length() > 0) {
+							result =
+								result.substring(0, 1).toUpperCase()
+									+ result.substring(1).toLowerCase();
+						}
 					}
 				}
 			}
@@ -124,7 +139,7 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 		Image image = provider.getImage(obj);
 		if (image != null)
 			return image;
-		return super.getImage(obj);
+		return provider.get(PDEPluginImages.DESC_PAGE_OBJ);
 	}
 
 }
