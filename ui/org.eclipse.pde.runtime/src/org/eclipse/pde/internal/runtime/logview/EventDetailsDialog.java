@@ -462,11 +462,13 @@ public class EventDetailsDialog extends Dialog {
 	private void createStackSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 100;
+		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.exception")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
 
@@ -480,11 +482,13 @@ public class EventDetailsDialog extends Dialog {
 	private void createSessionSection(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 100;
+		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.session")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
