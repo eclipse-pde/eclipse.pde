@@ -213,7 +213,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (verifySchema(schema, reporter)
 			&& verifySections(schema, reporter)
 			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)){
-			transform(out, schema, cssURL, GENERATE_DOC);
+			transform(out, schema, cssURL,GENERATE_DOC);
 
 		}
 	}
@@ -336,9 +336,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 				return;
 			cssFile =new File(descriptor.getInstallURLInternal().getFile() + getPlatformCSSName());
 			if (cssPurpose == GENERATE_DOC){
+				out.println("<!-- default platform documentation stylesheets -->");
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+getPlatformCSSName()+"\"/>");
 				return;
 			} else if (cssPurpose == BUILD){
+				out.println("<!-- default platform documentation stylesheets -->");
 //				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+getPlatformCSSName()+"\"/>"); //defect 43227
 				return;
@@ -346,10 +348,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 		} else {
 			cssFile = new File(cssURL.getFile());
 			if (cssPurpose == GENERATE_DOC){
+				out.println("<!-- custom platform documentation stylesheets -->");
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssFile.getName()+"\"/>");
 				return;
 			} else if (cssPurpose == BUILD){
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssURL.toExternalForm()+"\"/>"); 
+				out.println("<!-- custom platform documentation stylesheets -->");
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssURL.toString()+"\"/>"); 
 				return;
 			}
 		}
@@ -366,6 +370,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			while (breader.ready()) {
 				pwriter.println(breader.readLine());
 			}
+			out.println("<!-- temporary documentation stylesheets -->");
 			out.println(
 				"<link rel=\"stylesheet\" type=\"text/css\" href=\""+ tempCSSFile.getName()+ "\"/>");
 			pwriter.close();
@@ -432,9 +437,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 				addCSS(out, new URL(descriptor.getInstallURLInternal() + "schema.css"), cssPurpose);
 				break;
 			case(GENERATE_DOC):
+				out.println("<!-- default schema documentation stylesheets -->");
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getSchemaCSSName()+"\"/>");
 				break;
 			case(BUILD):
+				out.println("<!-- default schema documentation stylesheets -->");
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getSchemaCSSName()+"\"/>"); // defect 43227
 				break;
 			default:
