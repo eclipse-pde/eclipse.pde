@@ -61,19 +61,19 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	
 	public void validateContent(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
-		if (element != null && doValidateDocumentation())
+		if (element != null)
 			validateElement(element);
 	}
 	
 	private void validateElement(Element element) {
-		if (element.getNodeName().equals("attribute"))
+		if (element.getNodeName().equals("attribute")) //$NON-NLS-1$
 			validateAttribute(element);
 	
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child instanceof Element) {
-				if (child.getNodeName().equals("annotation")) {
+				if (child.getNodeName().equals("annotation")) { //$NON-NLS-1$
 					validateAnnotation((Element)child);
 				} else {
 					validateElement((Element)child);
@@ -86,7 +86,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child instanceof Element && child.getNodeName().equals("documentation")) {
+			if (child instanceof Element && child.getNodeName().equals("documentation")) { //$NON-NLS-1$
 				validateDocumentation((Element)child);
 			}
 		}
@@ -113,19 +113,19 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 						if (text.countTokens() > 2) {
 							String tagName = text.nextToken();
 							String closing = text.nextToken();
-							if (closing.equals(">")) {
-								if (tagName.startsWith("!--") || tagName.endsWith("--")) {
+							if (closing.equals(">")) { //$NON-NLS-1$
+								if (tagName.startsWith("!--") || tagName.endsWith("--")) { //$NON-NLS-1$ //$NON-NLS-2$
 									lineNumber += getLineBreakCount(tagName);
 									continue;
 								}
 								
-								if (tagName.endsWith("/")) {
+								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										report("Tag \'" + tagName + "\' must not contain a terminating \'/\'.", lineNumber, flag);
+										report(PDE.getFormattedMessage("Builders.Schema.forbiddenEndTag", tagName), lineNumber, flag); //$NON-NLS-1$
 										errorReported = true;
 									}
-								} else if (tagName.startsWith("/")) {
+								} else if (tagName.startsWith("/")) { //$NON-NLS-1$
 									lineNumber += getLineBreakCount(tagName);
 									tagName = tagName.substring(1).trim();
 									boolean found = false;
@@ -142,7 +142,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										report("End tag \'" + tagName + "\' does not have a matching start tag.", lineNumber, flag);
+										report(PDE.getFormattedMessage("Builders.Schema.noMatchingStartTag", tagName), lineNumber, flag); //$NON-NLS-1$
 										errorReported = true;
 									}
 								} else {
@@ -161,7 +161,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					if (!stack.isEmpty()) {
 						StackEntry entry = (StackEntry)stack.pop();
 						if (!optionalEndTag(entry.tag))
-							report("Start tag \'" + entry.tag + "\' does not have a matching end tag.", entry.line, flag);
+							report(PDE.getFormattedMessage(
+									"Builders.Schema.noMatchingEndTag", //$NON-NLS-1$
+									entry.tag), entry.line, flag);
 					}
 					stack.clear();
 				}
@@ -200,41 +202,24 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		return token;
 	}
 
-	private boolean doValidateDocumentation() {
-		return CompilerFlags.getFlag(project, CompilerFlags.S_OPEN_TAGS) != CompilerFlags.IGNORE;
-	}
-	
 	private void validateAttribute(Element element) {
-		Attr attr = element.getAttributeNode("type");
-		if (attr == null) {
-			reportMissingAttribute(element, "type");
-		} else {
-			validateUse(element);
-		}
+		validateUse(element);
 	}
 	
 	private void validateUse(Element element) {
-		String use = element.getAttribute("use");
-		Attr attr = element.getAttributeNode("value");
-		if ("default".equals(use)) {
-			if (attr == null) {
-				report(PDE.getFormattedMessage(
-						"Builders.Schema.valueRequired", element.getNodeName()), 
-						getLine(element),
-						CompilerFlags.ERROR);
-			}
-		} else if (attr != null) {
+		Attr use = element.getAttributeNode("use"); //$NON-NLS-1$
+		Attr value = element.getAttributeNode("value"); //$NON-NLS-1$
+		if (use != null && "default".equals(use.getValue()) && value == null) { //$NON-NLS-1$
 			report(PDE.getFormattedMessage(
-					"Builders.Schema.valueNotRequired", element.getNodeName()), 
+					"Builders.Schema.valueRequired", element.getNodeName()),  //$NON-NLS-1$
+					getLine(element),
+					CompilerFlags.ERROR);
+		} else if (use == null && value != null) {
+			report(PDE.getFormattedMessage(
+					"Builders.Schema.valueNotRequired", element.getNodeName()),  //$NON-NLS-1$
 					getLine(element),
 					CompilerFlags.ERROR);
 		}
-	}
-
-	private void reportMissingAttribute(Element element, String attrName) {
-		report(PDE.getFormattedMessage("Builders.Manifest.missingRequired",
-				new String[] { attrName, element.getNodeName() }),
-				getLine(element), CompilerFlags.ERROR);
 	}
 
 }
