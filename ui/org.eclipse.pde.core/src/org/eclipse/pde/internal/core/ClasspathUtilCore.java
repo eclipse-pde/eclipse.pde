@@ -114,6 +114,8 @@ public class ClasspathUtilCore {
 				if (monitor != null)
 					monitor.worked(1);
 			}
+			
+			addExtraClasspathEntries(model, result);
 
 			// add implicit dependencies
 			addImplicitDependencies(
@@ -128,6 +130,47 @@ public class ClasspathUtilCore {
 
 	}
 
+	private static void addExtraClasspathEntries(IPluginModelBase model, Vector result) throws CoreException {
+		IBuildModel buildModel = model.getBuildModel();
+		if (buildModel == null) {
+			IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties");
+			if (buildFile.exists()) {
+				buildModel = new WorkspaceBuildModel(buildFile);
+				buildModel.load();
+			}
+		}
+		
+		if (buildModel == null)
+			return;
+
+		IBuildEntry entry = buildModel.getBuild().getEntry("jars.extra.classpath");
+		if (entry == null)
+			return;
+
+		String[] tokens = entry.getTokens();
+		for (int i = 0; i < tokens.length; i++) {
+			Path path = new Path(tokens[i]);
+			if (path.segmentCount() >= 2 && path.segment(0).equals("..")) {
+				IPlugin plugin = PDECore.getDefault().findPlugin(path.segment(1));
+				if (plugin == null)
+					continue;
+				IResource resource = plugin.getModel().getUnderlyingResource();
+				if (resource != null) {
+					IProject project = resource.getProject();
+					try {
+						if (project.hasNature(JavaCore.NATURE_ID)) {
+							IClasspathEntry projectEntry =
+								JavaCore.newProjectEntry(project.getFullPath());
+							if (!result.contains(projectEntry))
+								result.add(projectEntry);
+						}
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+	}
+	
 	public static IClasspathEntry[] computePluginEntries(
 		IPluginModelBase model,
 		IMissingPluginConfirmation confirmation) {
@@ -348,8 +391,7 @@ public class ClasspathUtilCore {
 		IProject project = model.getUnderlyingResource().getProject();
 		IBuildEntry[] buildEntries = getBuildEntries(model, project);
 
-		if (!WorkspaceModelManager.isBinaryPluginProject(project) &&  
-					buildEntries.length == 0) {
+		if (!WorkspaceModelManager.isBinaryPluginProject(project)) {
 			// keep existing source folders
 			IPackageFragmentRoot[] roots = 
 				JavaCore.create(project).getPackageFragmentRoots();
