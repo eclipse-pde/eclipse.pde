@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.io.File;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
@@ -34,6 +35,7 @@ public class SourceLocationDialog extends Dialog {
 	private Label statusLabel;
 	private SourceLocation location;
 	private static String previousPath = "";
+	private HashSet existingNames = new HashSet();
 	/**
 	 * Constructor for SourceLocationDialog.
 	 * @param parentShell
@@ -139,7 +141,7 @@ public class SourceLocationDialog extends Dialog {
 	}
 	
 	private boolean isInvalidVariable(String name) {
-		return JavaCore.getClasspathVariable(name)!=null;
+		return existingNames.contains(name);
 	}
 
 	protected void okPressed() {
@@ -164,4 +166,9 @@ public class SourceLocationDialog extends Dialog {
 		super.create();
 		dialogChanged();
 	}
+	
+	public void setInvalidNames(HashSet names) {
+		this.existingNames = names;
+	}
+		
 }

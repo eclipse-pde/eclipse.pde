@@ -263,6 +263,7 @@ public class SourcePreferencePage
 		SourceLocationDialog dialog =
 			new SourceLocationDialog(getShell(), null);
 		dialog.create();
+		dialog.setInvalidNames(getAllLocationNames());
 		dialog.getShell().setText(PDEPlugin.getResourceString("SourcePreferencePage.new.title")); //$NON-NLS-1$
 		SWTUtil.setDialogSize(dialog, 400, 200);
 		if (dialog.open() == SourceLocationDialog.OK) {
@@ -285,6 +286,7 @@ public class SourcePreferencePage
 				tableViewer.remove(location);
 			}
 		}
+		tablePart.setButtonEnabled(4,false);
 	}
 
 	/**
@@ -378,6 +380,15 @@ public class SourcePreferencePage
 		}
 		return true;
 	}
-
-
+	
+	private HashSet getAllLocationNames() {
+		HashSet set = new HashSet();
+		for (int i = 0; i < extensionLocations.length; i++) {
+			set.add(extensionLocations[i].getName());
+		}
+		for (int i = 0; i < userLocations.size(); i++) {
+			set.add(((SourceLocation)userLocations.get(i)).getName());
+		}
+		return set;
+	}
 }
