@@ -350,11 +350,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			config.configureSite(siteEntry);
 		}
 
-		// Set boot location
-		IPath bootPath = getPluginLocation(bootModel);
-		URL bootURL = new URL("file:" + bootPath.toOSString()); //$NON-NLS-1$
-
-		config.setBootstrapPluginLocation(BOOT_ID, bootURL);
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			// Set boot location
+			IPath bootPath = getPluginLocation(bootModel);
+			URL bootURL = new URL("file:" + bootPath.toOSString()); //$NON-NLS-1$
+			config.setBootstrapPluginLocation(BOOT_ID, bootURL);
+		}
 		config.isTransient(true);
 	}
 
