@@ -105,8 +105,8 @@ public class SourceBlock implements IHyperlinkListener {
 
 	public SourceBlock() {
 		initializeImages();
-		fSystemNode = new NamedElement("Source locations declared in the target platform");
-		fUserNode = new NamedElement("Additional source locations");
+		fSystemNode = new NamedElement(PDEPlugin.getResourceString("SourceBlock.target")); //$NON-NLS-1$
+		fUserNode = new NamedElement(PDEPlugin.getResourceString("SourceBlock.additional")); //$NON-NLS-1$
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		fExtensionLocations = manager.getExtensionLocations();
 		fUserLocations.addAll(Arrays.asList(manager.getUserLocations()));
@@ -194,7 +194,7 @@ public class SourceBlock implements IHyperlinkListener {
 
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());	
 		FormText text = toolkit.createFormText(container, true);
-		text.setText(PDEPlugin.getResourceString("SourceBlock.desc"), true, false);
+		text.setText(PDEPlugin.getResourceString("SourceBlock.desc"), true, false); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL);
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
@@ -234,7 +234,7 @@ public class SourceBlock implements IHyperlinkListener {
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		fAddButton = new Button(buttonContainer, SWT.PUSH);
-		fAddButton.setText(PDEPlugin.getResourceString("SourceBlock.add"));
+		fAddButton.setText(PDEPlugin.getResourceString("SourceBlock.add")); //$NON-NLS-1$
 		fAddButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -244,7 +244,7 @@ public class SourceBlock implements IHyperlinkListener {
 		});
 		
 		fRemoveButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveButton.setText(PDEPlugin.getResourceString("SourceBlock.remove"));
+		fRemoveButton.setText(PDEPlugin.getResourceString("SourceBlock.remove")); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {

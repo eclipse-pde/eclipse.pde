@@ -80,7 +80,7 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 		Assert.assertNotNull(extension);
 		
 		IConfigurationElement[] elements = extension.getConfigurationElements();
-		return elements.length > 0 ? elements[0].getAttribute("application") : null;
+		return elements.length > 0 ? elements[0].getAttribute("application") : null; //$NON-NLS-1$
 	}
 	
 	/*

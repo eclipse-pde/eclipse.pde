@@ -152,7 +152,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		Control block = fSourceBlock.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText("S&ource Code Locations"); 
+		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.sourceCode"));  //$NON-NLS-1$
 		tab.setControl(block);
 	}
 
