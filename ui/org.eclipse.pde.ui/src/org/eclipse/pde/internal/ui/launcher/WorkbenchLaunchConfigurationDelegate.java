@@ -4,30 +4,22 @@
  */
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.debug.core.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jdt.launching.*;
 import java.io.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.debug.core.model.*;
-import java.util.*;
-import org.eclipse.jdt.core.*;
 import java.net.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.ui.TargetPlatform;
-import org.eclipse.swt.SWT;
-import org.eclipse.pde.internal.ui.TracingOptionsManager;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
-import org.eclipse.pde.internal.ui.WorkspaceModelManager;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
@@ -35,9 +27,10 @@ public class WorkbenchLaunchConfigurationDelegate
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
-	public ILaunch launch(
+	public void launch(
 		ILaunchConfiguration configuration,
 		String mode,
+		ILaunch launch,
 		IProgressMonitor monitor)
 		throws CoreException {
 		final String vmArgs = configuration.getAttribute(VMARGS, "");
@@ -49,10 +42,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
 
 		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(new Path(data));
-		if (running != null) {
-			showErrorDialog(running.getMessage(), null);
-			return null;
-		}
+		if (running != null)
+			throw new CoreException(running);
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
@@ -67,18 +58,17 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		} else
 			launcher = vmInstallations[0];
-		if (launcher==null) {
-			String message = "Cannot locate JRE definition: \""+vmInstallName+"\". Launch aborted.";
-			showErrorDialog(message, null);
-			return null;
-			
+		if (launcher == null) {
+			String message =
+				"Cannot locate JRE definition: \"" + vmInstallName + "\". Launch aborted.";
+			throw new CoreException(createErrorStatus(message));
 		}
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
-
-		ILaunch launch =
+		boolean success =
 			doLaunch(
+				launch,
 				configuration,
 				mode,
 				runner,
@@ -89,9 +79,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				appName,
 				tracing,
 				monitor);
-		if (launch!=null)
+		if (success)
 			PDEPlugin.getDefault().registerLaunch(launch, path);
-		return launch;
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
@@ -142,7 +131,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		return plugins;
 	}
 
-	private ILaunch doLaunch(
+	private boolean doLaunch(
+		ILaunch launch,
 		ILaunchConfiguration config,
 		String mode,
 		IVMRunner runner,
@@ -155,13 +145,13 @@ public class WorkbenchLaunchConfigurationDelegate
 		IProgressMonitor monitor)
 		throws CoreException {
 
-		ILaunch launch = null;
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("Starting Eclipse Workbench...", 2);
 		try {
-			File propertiesFile = TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
+			File propertiesFile =
+				TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -183,8 +173,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (classpath == null) {
 				String message =
 					"Launching failed.\nPlugin 'org.eclipse.core.boot' is missing or does not contain 'boot.jar'\n(If in workspace, check that boot.jar is on its classpath)";
-				showErrorDialog(message, null);
-				return null;
+				throw new CoreException(createErrorStatus(message));
 			}
 
 			VMRunnerConfiguration runnerConfig =
@@ -203,27 +192,16 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 			monitor.worked(1);
 			if (monitor.isCanceled()) {
-				return null;
+				return false;
 			}
-			VMRunnerResult result = runner.run(runnerConfig);
+			runner.run(runnerConfig, launch, monitor);
 			monitor.worked(1);
-			if (result != null) {
-				ISourceLocator sourceLocator = constructSourceLocator(plugins);
-				launch =
-					new Launch(
-						config,
-						mode,
-						sourceLocator,
-						result.getProcesses(),
-						result.getDebugTarget());
-			} else {
-				String message = "Launch was not successful.";
-				showErrorDialog(message, null);
-			}
+			ISourceLocator sourceLocator = constructSourceLocator(plugins);
+			launch.setSourceLocator(sourceLocator);
 		} finally {
 			monitor.done();
 		}
-		return launch;
+		return true;
 	}
 
 	private String getTracingFileArgument(ILaunchConfiguration config) {
@@ -265,22 +243,13 @@ public class WorkbenchLaunchConfigurationDelegate
 		return display;
 	}
 
-	private void showErrorDialog(final String message, final IStatus status) {
-		Display display = getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				String title = "Eclipse Workbench Launcher";
-				if (status == null) {
-					MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, message);
-				} else {
-					ErrorDialog.openError(
-						PDEPlugin.getActiveWorkbenchShell(),
-						title,
-						message,
-						status);
-				}
-			}
-		});
+	private IStatus createErrorStatus(String message) {
+		return new Status(
+			IStatus.ERROR,
+			PDEPlugin.getPluginId(),
+			IStatus.OK,
+			message,
+			null);
 	}
 
 	private void showWarningDialog(final String message) {
@@ -332,7 +301,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				// Check PDE case (third instance) - it may be in the bin
 				File binDir = new File(installLocation, "bin/");
 				if (binDir.exists()) {
-					return new String [] { slimLauncher.getPath(), binDir.getPath()};
+					return new String[] { slimLauncher.getPath(), binDir.getPath()};
 				}
 			}
 		}
@@ -363,7 +332,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				IContainer container =
 					root.getContainerForLocation(new Path(pluginDir.getPath()));
 				if (container instanceof IProject) {
-					IProject project = (IProject)container;
+					IProject project = (IProject) container;
 					if (WorkspaceModelManager.isJavaPluginProject(project))
 						javaProjects.add(JavaCore.create(project));
 				}

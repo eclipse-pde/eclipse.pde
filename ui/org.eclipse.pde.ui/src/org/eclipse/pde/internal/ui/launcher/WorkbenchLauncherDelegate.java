@@ -4,35 +4,23 @@
  */
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import org.eclipse.pde.internal.ui.TracingOptionsManager;
-import org.eclipse.swt.SWT;
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.WizardDialog;
-
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-
-import org.eclipse.jdt.launching.*;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 public class WorkbenchLauncherDelegate
 	implements ILauncherDelegate, IExecutableExtension {
@@ -78,11 +66,12 @@ public class WorkbenchLauncherDelegate
 		boolean tracing,
 		IProgressMonitor monitor)
 		throws CoreException {
-			
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(targetWorkbenchLocation)	;
-		if (running!=null)
+
+		IStatus running =
+			PDEPlugin.getDefault().getCurrentLaunchStatus(targetWorkbenchLocation);
+		if (running != null)
 			throw new CoreException(running);
-			
+
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -90,7 +79,8 @@ public class WorkbenchLauncherDelegate
 		try {
 			IWorkspace workspace = PDEPlugin.getWorkspace();
 
-			File propertiesFile = TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
+			File propertiesFile =
+				TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -134,23 +124,12 @@ public class WorkbenchLauncherDelegate
 			if (monitor.isCanceled()) {
 				return;
 			}
-			VMRunnerResult result = runner.run(config);
+			ISourceLocator sourceLocator = constructSourceLocator(plugins);
+			Launch newLaunch =
+				new Launch(launcher, mode, workspace.getRoot(), sourceLocator, null, null);
+			runner.run(config, newLaunch, monitor);
 			monitor.worked(1);
-			if (result != null) {
-				ISourceLocator sourceLocator = constructSourceLocator(plugins);
-				ILaunch launch =
-					new Launch(
-						launcher,
-						mode,
-						workspace.getRoot(),
-						sourceLocator,
-						result.getProcesses(),
-						result.getDebugTarget());
-				registerLaunch(launch, targetWorkbenchLocation);
-			} else {
-				String message = "Launch was not successful.";
-				showErrorDialog(message, null);
-			}
+			registerLaunch(newLaunch, targetWorkbenchLocation);
 		} finally {
 			monitor.done();
 		}
@@ -297,7 +276,7 @@ public class WorkbenchLauncherDelegate
 				IContainer container =
 					root.getContainerForLocation(new Path(pluginDir.getPath()));
 				if (container instanceof IProject) {
-					IProject project = (IProject)container;
+					IProject project = (IProject) container;
 					if (WorkspaceModelManager.isJavaPluginProject(project))
 						javaProjects.add(JavaCore.create(project));
 				}
@@ -309,7 +288,7 @@ public class WorkbenchLauncherDelegate
 			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
 		return new JavaSourceLocator(projs, false);
 	}
-	
+
 	/*
 	 * @see ILauncherDelegate#getLaunchMemento
 	 */

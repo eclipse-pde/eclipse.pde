@@ -4,15 +4,14 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.core.runtime.model.*;
-import java.net.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
 import java.io.File;
+import java.net.*;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	private String installLocation;

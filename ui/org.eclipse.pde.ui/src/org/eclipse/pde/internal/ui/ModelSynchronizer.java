@@ -1,14 +1,12 @@
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
 import java.util.*;
+
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.ExternalPluginsBlock;
 
 /**
  * This class keeps workspace and external models in sync

@@ -4,43 +4,31 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.elements.*;
-
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.ui.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.plugin.PluginImport;
+import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
+import org.eclipse.pde.ui.BuildPathUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ImportListSection
 	extends TableSection

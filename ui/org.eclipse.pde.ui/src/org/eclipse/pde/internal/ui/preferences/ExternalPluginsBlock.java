@@ -30,7 +30,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.swt.custom.*;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 
 public class ExternalPluginsBlock {

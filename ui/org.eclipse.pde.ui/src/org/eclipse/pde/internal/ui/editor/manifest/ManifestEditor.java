@@ -4,32 +4,26 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.core.runtime.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.core.*;
 
-import java.util.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.core.plugin.Plugin;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.*;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.wizards.templates.TemplateEditorInput;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class ManifestEditor
 	extends PDEMultiPageXMLEditor
