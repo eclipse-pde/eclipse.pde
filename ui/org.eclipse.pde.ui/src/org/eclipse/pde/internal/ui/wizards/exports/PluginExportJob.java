@@ -49,6 +49,7 @@ public class PluginExportJob extends FeatureExportJob {
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
 		try {
+            monitor.beginTask("", 10);
 			// create a feature to contain all plug-ins
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -56,14 +57,15 @@ public class PluginExportJob extends FeatureExportJob {
 			createBuildPropertiesFile(fFeatureLocation);
 			if (fUseJarFormat)
 				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
-			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
+			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), 
+                    new SubProgressMonitor(monitor, 7));
 		} catch (IOException e) {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
 				if (fItems[i] instanceof IPluginModelBase)
 					deleteBuildFiles((IPluginModelBase)fItems[i]);
 			}
-			cleanup(new SubProgressMonitor(monitor, 1));
+			cleanup(new SubProgressMonitor(monitor, 3));
 			monitor.done();
 		}
 	}

@@ -83,6 +83,7 @@ public class ProductExportJob extends FeatureExportJob {
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
 		try {
+            monitor.beginTask("", 10);
 			// create a feature to wrap all plug-ins and features
 			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -91,14 +92,19 @@ public class ProductExportJob extends FeatureExportJob {
 			createConfigIniFile();
 			createEclipseProductFile();
 			createLauncherIniFile();
-			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(),
-					TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
+			doExport(featureID, 
+                        null, 
+                        fFeatureLocation, 
+                        TargetPlatform.getOS(),
+                        TargetPlatform.getWS(), 
+                        TargetPlatform.getOSArch(), 
+                        new SubProgressMonitor(monitor, 7));
 		} catch (IOException e) {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
 				deleteBuildFiles((IModel)fItems[i]);
 			}
-			cleanup(new SubProgressMonitor(monitor, 1));
+			cleanup(new SubProgressMonitor(monitor, 3));
 			monitor.done();
 		}
 	}

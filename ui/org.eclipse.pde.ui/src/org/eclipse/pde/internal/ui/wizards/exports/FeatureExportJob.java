@@ -481,6 +481,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	protected void cleanup(IProgressMonitor monitor) {
+        monitor.beginTask("", 2);
 		File scriptFile = null;
 		try {
 			scriptFile = createScriptFile();
@@ -500,12 +501,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets((String[]) targets.toArray(new String[targets.size()]));
-			runner.run(monitor);
+			runner.run(new SubProgressMonitor(monitor, 1));
 		} catch (IOException e) {
 		} catch (CoreException e) {
 		} finally {
 			if (scriptFile != null && scriptFile.exists())
 				scriptFile.delete();
+            monitor.done();
 		}
 	}
 
