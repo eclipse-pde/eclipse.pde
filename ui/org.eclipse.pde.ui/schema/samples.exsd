@@ -12,6 +12,8 @@ This extension point should be used to register Eclipse code samples. A sample i
 Each sample has a name, one or more project elements and a final perspective. The sample wizard will create a project for each &lt;code&gt;project&lt;/code&gt; element, import the content from the archive, and open the final perspective if specified. Projects must be complete i.e. have correct nature and classpath (if Java or plug-in projects).
 &lt;p&gt;If target view is specified and contains resource elements, it will be used to select and reveal those resources in the view after the sample has been created.
 &lt;/p&gt;
+&lt;p&gt;&lt;b&gt;This extension point is currently provided for internal Eclipse SDK usage only. It should not be used for anything else except Eclipse SDK examples.&lt;/b&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 

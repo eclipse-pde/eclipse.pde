@@ -87,6 +87,7 @@ public class RequiresSection
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
+		getPage().getPDEEditor().setSelection(sel);
 		if (getPage().getModel().isEditable())
 			updateDirectionalButtons();
 	}
