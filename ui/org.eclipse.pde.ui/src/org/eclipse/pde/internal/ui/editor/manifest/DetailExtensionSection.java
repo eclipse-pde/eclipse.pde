@@ -6,12 +6,11 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import java.io.File;
 import java.net.*;
-import java.util.*;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
@@ -30,10 +29,8 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -81,8 +78,7 @@ public class DetailExtensionSection
 				children = ((IPluginBase) parent).getExtensions();
 			else if (parent instanceof IPluginExtension) {
 				children = ((IPluginExtension) parent).getChildren();
-			} else if (/*showAllChildrenButton.getSelection() && */
-				parent instanceof IPluginElement) {
+			} else if (parent instanceof IPluginElement) {
 				children = ((IPluginElement) parent).getChildren();
 			}
 			if (children == null)
@@ -132,83 +128,6 @@ public class DetailExtensionSection
 		}
 	}
 
-	class LocalToolBar
-		extends NullToolBarManager
-		implements IPropertyChangeListener, SelectionListener {
-		private Composite container;
-		private Hashtable map = new Hashtable();
-
-		public Composite createControl(
-			Composite parent,
-			FormWidgetFactory factory) {
-			container = factory.createComposite(parent);
-			RowLayout rowLayout = new RowLayout();
-			rowLayout.wrap = false;
-			rowLayout.pack = false;
-			rowLayout.justify = false;
-			rowLayout.type = SWT.HORIZONTAL;
-			rowLayout.marginLeft = 0;
-			rowLayout.marginTop = 0;
-			rowLayout.marginRight = 0;
-			rowLayout.marginBottom = 0;
-			rowLayout.spacing = 5;
-			container.setLayout(rowLayout);
-			return container;
-		}
-
-		public void add(IContributionItem item) {
-			if (item instanceof Separator) {
-				getFormPage().getForm().getFactory().createLabel(
-					container,
-					null);
-			}
-		}
-
-		public void add(IAction action) {
-			Button button = factory.createButton(container, null, SWT.PUSH);
-			button.setToolTipText(action.getToolTipText());
-			/*
-			FormButton fbutton =
-				new FormButton(button, getFormPage().getForm().getFactory());
-			*/
-			PDELabelProvider provider =
-				PDEPlugin.getDefault().getLabelProvider();
-			//			fbutton.setImage(provider.get(action.getImageDescriptor()));
-			//			ImageDescriptor desc = action.getHoverImageDescriptor();
-			//			if (desc != null)
-			//				fbutton.setHoverImage(provider.get(desc));
-			//			desc = action.getDisabledImageDescriptor();
-			//			if (desc != null)
-			//				fbutton.setDisabledImage(provider.get(desc));
-			button.setImage(provider.get(action.getImageDescriptor()));
-			button.setData(action);
-			button.setEnabled(action.isEnabled());
-			action.addPropertyChangeListener(this);
-			button.addSelectionListener(this);
-			map.put(action, button);
-		}
-		public void widgetSelected(SelectionEvent e) {
-			IAction action = (IAction) e.widget.getData();
-			action.run();
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-		public void propertyChange(PropertyChangeEvent e) {
-			String propertyName = e.getProperty();
-			IAction action = (IAction) e.getSource();
-			boolean tooltipTextChanged =
-				propertyName == null
-					|| propertyName.equals(IAction.TOOL_TIP_TEXT);
-			boolean enableStateChanged =
-				propertyName == null || propertyName.equals(IAction.ENABLED);
-			Button button = (Button) map.get(action);
-			if (tooltipTextChanged)
-				button.setToolTipText(action.getToolTipText());
-			if (enableStateChanged)
-				button.setEnabled(action.isEnabled());
-		}
-	}
-
 	public DetailExtensionSection(ManifestExtensionsPage page) {
 		super(
 			page,
@@ -246,14 +165,6 @@ public class DetailExtensionSection
 		initializeImages();
 		Composite container = createClientContainer(parent, 2, factory);
 
-		//		LocalToolBar localToolBar = new LocalToolBar();
-		//		Composite toolBar = localToolBar.createControl(container, factory);
-		//		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		//		gd.horizontalSpan = 2;
-		//		toolBar.setLayoutData(gd);
-
-		//createAllChildrenButton(container, 2, factory);
-
 		TreePart treePart = getTreePart();
 
 		createViewerPartControl(container, SWT.MULTI, 2, factory);
@@ -263,34 +174,10 @@ public class DetailExtensionSection
 		extensionTree.setLabelProvider(new ExtensionLabelProvider());
 
 		drillDownAdapter = new DrillDownAdapter(extensionTree);
-		//drillDownAdapter.addNavigationActions(localToolBar);
 
 		factory.paintBordersFor(container);
 		return container;
 	}
-	/*
-		private void createAllChildrenButton(Composite container, int span, FormWidgetFactory factory ) {
-			showAllChildrenButton = factory.createButton(container, null, SWT.CHECK);
-			showAllChildrenButton.setText(
-				PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN));
-			final IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-			boolean showAll = pstore.getBoolean(SETTING_SHOW_ALL);
-			showAllChildrenButton.setSelection(showAll);
-			showAllChildrenButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					pstore.setValue(SETTING_SHOW_ALL, showAllChildrenButton.getSelection());
-					BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
-						public void run() {
-							extensionTree.refresh();
-						}
-					});
-				}
-			});	
-			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-			gd.horizontalSpan = span;
-			showAllChildrenButton.setLayoutData(gd);
-		}
-	*/
 
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
@@ -385,7 +272,6 @@ public class DetailExtensionSection
 		manager.add(collapseAllAction);
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().addClipboardActions(manager);
-		//manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);
@@ -441,10 +327,9 @@ public class DetailExtensionSection
 				}
 			}
 		}
-		//if (menu.isEmpty() == false) {
 		manager.add(menu);
 		manager.add(new Separator());
-		//}
+
 		if (fullMenu) {
 			Action deleteAction =
 				new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
