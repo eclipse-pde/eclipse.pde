@@ -101,8 +101,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (outputFormat.equalsIgnoreCase("folder")) //$NON-NLS-1$
 			return;
 		
-		//Windows archived are archived as zip
-		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32)) {
+		//Windows and archived are archived as zip
+		if (configInfo.getOs().equalsIgnoreCase(Constants.OS_WIN32) || configInfo.equals(Config.genericConfig())) {
 			if (outputFormat.equalsIgnoreCase("zip")) //$NON-NLS-1$
 				generateZipTarget();
 			else
