@@ -27,6 +27,7 @@ import java.lang.reflect.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 
 public class WorkbenchLauncher
 	implements ILauncherDelegate, IExecutableExtension {
@@ -158,6 +159,7 @@ private String createPluginPath(String eclipseDir) {
 	File file = stateLocation.append("pde_plugin_path.properties").toFile();
 
 	String fileName = file.getAbsolutePath();
+	
 	try {
 		OutputStream stream = new FileOutputStream(file);
 		PrintWriter writer = new PrintWriter(stream);
@@ -169,7 +171,9 @@ private String createPluginPath(String eclipseDir) {
 	} catch (IOException e) {
 		return null;
 	}
-	//String option = "-plugins " + fileName;
+	if (SWT.getPlatform().equals("motif")) {
+       return "-plugins " + fileName;
+	}
 	String option = "-plugins \"" + fileName + "\"";
 	return option;
 }
