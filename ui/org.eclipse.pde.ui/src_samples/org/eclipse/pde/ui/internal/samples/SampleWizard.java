@@ -66,6 +66,7 @@ public class SampleWizard extends Wizard
 		samples = Platform.getPluginRegistry().getConfigurationElementsFor(
 				"org.eclipse.pde.ui.samples");
 		lastPage = new ReviewPage(this);
+		setNeedsProgressMonitor(true);
 	}
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
