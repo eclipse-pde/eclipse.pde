@@ -136,7 +136,7 @@ public class PointUsageSection extends TableSection {
 	private void handleOpen(IStructuredSelection selection) {
 		IPluginBase pluginToOpen = (IPluginBase) selection.getFirstElement();
 		if (pluginToOpen != null) {
-			((ManifestEditor) getFormPage().getEditor()).openPluginEditor(pluginToOpen);
+			ManifestEditor.openPluginEditor(pluginToOpen);
 		} else {
 			Display.getCurrent().beep();
 		}

@@ -252,7 +252,7 @@ private void handleOpen(ISelection sel) {
 private void handleOpen(Object obj) {
 	if (obj instanceof IPluginBase) {
 		IPluginBase plugin = ((IPluginBase)obj);
-		((ManifestEditor)getFormPage().getEditor()).openPluginEditor(plugin);
+		ManifestEditor.openPluginEditor(plugin);
 	}
 }
 

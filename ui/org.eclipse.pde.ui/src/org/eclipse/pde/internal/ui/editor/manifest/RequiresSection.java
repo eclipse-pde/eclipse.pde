@@ -140,8 +140,7 @@ public class RequiresSection
 		IPlugin pluginInfo = (IPlugin) linkLabel.getData();
 		if (pluginInfo == null)
 			return;
-		((ManifestEditor) getFormPage().getEditor()).openPluginEditor(
-			pluginInfo.getId());
+		ManifestEditor.openPluginEditor(pluginInfo.getId());
 	}
 	public void linkEntered(Control linkLabel) {
 		IPlugin plugin = (IPlugin) linkLabel.getData();

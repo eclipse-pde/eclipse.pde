@@ -310,7 +310,7 @@ private void handleOpenPlugin() {
 	String id = model.getFragment().getPluginId();
 	if (id == null)
 		return;
-	((ManifestEditor) getFormPage().getEditor()).openPluginEditor(id);
+	ManifestEditor.openPluginEditor(id);
 }
 public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase) input;

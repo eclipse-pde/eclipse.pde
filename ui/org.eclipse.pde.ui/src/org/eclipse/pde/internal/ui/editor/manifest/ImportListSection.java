@@ -209,7 +209,7 @@ public class ImportListSection
 		if (obj instanceof ImportObject) {
 			IPlugin plugin = ((ImportObject) obj).getPlugin();
 			if (plugin != null)
-				 ((ManifestEditor) getFormPage().getEditor()).openPluginEditor(plugin);
+				 ManifestEditor.openPluginEditor(plugin);
 		}
 	}
 
