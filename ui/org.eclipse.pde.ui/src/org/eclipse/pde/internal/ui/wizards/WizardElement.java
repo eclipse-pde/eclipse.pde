@@ -14,9 +14,10 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IPluginContribution;
 import org.osgi.framework.*;
 
-public class WizardElement extends NamedElement {
+public class WizardElement extends NamedElement implements IPluginContribution {
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$
 
 	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -154,5 +155,17 @@ public class WizardElement extends NamedElement {
 	public String getContributingId() {
 		IConfigurationElement tel = getTemplateElement();
 		return (tel == null) ? null : tel.getAttribute("contributingId"); //$NON-NLS-1$
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getID();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return null;
 	}
 }

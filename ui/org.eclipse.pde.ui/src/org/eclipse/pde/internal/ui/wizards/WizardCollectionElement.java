@@ -12,10 +12,11 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.ui.IPluginContribution;
 
 
 
-public class WizardCollectionElement extends ElementList {
+public class WizardCollectionElement extends ElementList implements IPluginContribution {
 	private WizardCollectionElement parent;
 	private ElementList     wizards = new ElementList("wizards"); //$NON-NLS-1$
 	private String                  id;
@@ -71,4 +72,16 @@ public void setId(java.lang.String newId) {
 public void setWizards(ElementList value) {
 	wizards = value;
 }
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return null;
+	}
 }
