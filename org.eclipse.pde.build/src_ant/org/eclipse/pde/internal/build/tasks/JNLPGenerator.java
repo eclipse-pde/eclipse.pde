@@ -230,7 +230,6 @@ public class JNLPGenerator extends DefaultHandler {
 			out.println("\t\t<title>" + label + "</title>");
 		if (provider != null)
 			out.println("\t\t<vendor>" + provider + "</vendor>");
-		//		out.println("\t\t<homepage href=\"http://xxx\" />");
 		if (description != null)
 			out.println("\t\t<description>" + description + "</description>");
 		out.println("\t</information>");

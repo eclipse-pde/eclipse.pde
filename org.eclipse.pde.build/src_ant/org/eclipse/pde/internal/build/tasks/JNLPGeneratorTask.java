@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -65,12 +62,7 @@ public class JNLPGeneratorTask extends Task {
 	}
 
 	public void execute() throws BuildException {
-		try {
-			URL target = new URL("jar:" + new File(feature).toURL().toExternalForm() + "!/feature.xml");
-			JNLPGenerator generator = new JNLPGenerator(target, jnlp, codebase, j2se);
-			generator.process();
-		} catch (MalformedURLException e) {
-			throw new BuildException(e);
-		}
+		JNLPGenerator generator = new JNLPGenerator(feature, jnlp, codebase, j2se);
+		generator.process();
 	}
 }
