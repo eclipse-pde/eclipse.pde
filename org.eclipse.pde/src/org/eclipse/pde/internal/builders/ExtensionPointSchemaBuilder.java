@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
@@ -23,6 +22,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
+import org.osgi.framework.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -187,25 +187,31 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		File cssFile;
 		
 		if (outputPath.toFile().getName().equals(SchemaTransformer.getPlatformCSSName())){
-			IPluginDescriptor descriptor =(IPluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
-			if (descriptor == null)
+			Bundle bundle = Platform.getBundle(SchemaTransformer.PLATFORM_PLUGIN_DOC);
+			if (bundle == null)
 				return false;
-			cssFile =
-				new File(
-					BootLoader.getInstallURL().getFile()
-						+ "/plugins/" //$NON-NLS-1$
-						+ descriptor.toString() + File.separator 
-						+ SchemaTransformer.getPlatformCSSName());
+			URL url = bundle.getEntry(SchemaTransformer.getPlatformCSSName());
+			if (url == null)
+				return false;
+			try {
+				url = Platform.resolve(url);
+			} catch (IOException e1) {
+				return false;
+			}
+			cssFile = new File(url.getFile());
 		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
-			IPluginDescriptor descriptor =(IPluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
-			if (descriptor == null)
+			Bundle bundle = Platform.getBundle(SchemaTransformer.PLATFORM_PLUGIN_DOC);
+			if (bundle == null)
 				return false;
-			cssFile =
-				new File(
-					BootLoader.getInstallURL().getFile()
-						+ "/plugins/" //$NON-NLS-1$
-						+ descriptor.toString() + File.separator 
-						+ SchemaTransformer.getSchemaCSSName());
+			URL url = bundle.getEntry(SchemaTransformer.getSchemaCSSName());
+			if (url == null)
+				return false;
+			try {
+				url = Platform.resolve(url);
+			} catch (IOException e1) {
+				return false;
+			}
+			cssFile = new File(url.getFile());
 		} else{
 			if (getCSSURL() == null)
 				return false;

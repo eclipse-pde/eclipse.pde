@@ -127,7 +127,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
-		ValidatingSAXParser.parse(file, reporter, true);
+		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			validateFeature(file, reporter);
 		}

@@ -14,13 +14,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 public class SchemaTransformer implements ISchemaTransformer {
@@ -321,21 +321,25 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.println("<style>@import url(\"../../" + getPlatformCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} else { // cssPurpose is TEMP
-				IPluginDescriptor descriptor =
-					(IPluginDescriptor) Platform
-						.getPluginRegistry()
-						.getPluginDescriptor(
-						PLATFORM_PLUGIN_DOC);
-				if (descriptor == null)
+				Bundle bundle = Platform.getBundle(PLATFORM_PLUGIN_DOC);
+				if (bundle == null)
 					return;
-				cssFile =
-					new File(
-						BootLoader.getInstallURL().getFile()
-							+ "/plugins/" //$NON-NLS-1$
-							+ descriptor.toString() + File.separator 
-							+ getPlatformCSSName());
+				
+				URL url = bundle.getEntry(getPlatformCSSName());
+				if (url == null)
+					return;
+				try {
+					cssFile = new File(Platform.resolve(url).getFile());
+				} catch (IOException e1) {
+					return;
+				} 
 			}
 		} else {
+			try {
+				cssURL = Platform.resolve(cssURL);
+			} catch (IOException e1) {
+				return;
+			}
 			cssFile = new File(cssURL.getFile());
 			if (cssPurpose == GENERATE_DOC) {
 				out.println("<!-- custom platform documentation stylesheets -->"); //$NON-NLS-1$
@@ -426,44 +430,27 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	private void addSchemaStyle(PrintWriter out, byte cssPurpose) {
-
-		try {
-			switch (cssPurpose) {
-				case (TEMP) :
-					IPluginDescriptor descriptor =
-						(IPluginDescriptor) Platform
-							.getPluginRegistry()
-							.getPluginDescriptor(
-							PLATFORM_PLUGIN_DOC);
-					if (descriptor == null)
-						return;
-					addCSS(out,new URL(BootLoader.getInstallURL()+  "/plugins/"+ descriptor.toString() + File.separator+ getSchemaCSSName()),cssPurpose); //$NON-NLS-1$
-					break;
-				case (GENERATE_DOC) :
-					out.println(
-						"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
-//					out.println(
-//						"<link rel=\"stylesheet\" type=\"text/css\" href=\""
-//							+ getSchemaCSSName()
-//							+ "\"/>");
-					out.println("<style>@import url(\"" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
-					break;
-				case (BUILD) :
-					out.println(
-						"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
-//					out.println(
-//						"<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"
-//							+ getSchemaCSSName()
-//							+ "\"/>");
-					// defect 43227
-				out.println("<style>@import url(\"../../" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
-					break;
-				default :
-					break;
-			}
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		switch (cssPurpose) {
+			case (TEMP) :
+				Bundle bundle = Platform.getBundle(PLATFORM_PLUGIN_DOC);
+				if (bundle == null)
+					return;
+				addCSS(out,bundle.getEntry(getSchemaCSSName()),cssPurpose); //$NON-NLS-1$
+				break;
+			case (GENERATE_DOC) :
+				out.println(
+					"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
+				out.println("<style>@import url(\"" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			case (BUILD) :
+				out.println(
+					"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
+				// defect 43227
+			out.println("<style>@import url(\"../../" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+				break;
+			default :
+				break;
+		}		
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {

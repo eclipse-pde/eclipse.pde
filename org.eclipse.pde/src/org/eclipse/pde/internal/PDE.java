@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal;
 
+import java.io.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.builders.*;
+import org.osgi.framework.*;
 
 
 public class PDE extends Plugin {
@@ -38,20 +41,46 @@ public class PDE extends Plugin {
 	// Resource bundle
 	private ResourceBundle resourceBundle;
 
-	public PDE(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public PDE() {
 		inst = this;
-		try {
-			resourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			log(x);
-			resourceBundle = null;
-		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		CompilerFlags.initializeDefaults();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		inst = null;
+		resourceBundle = null;
 	}
 
+	public ResourceBundle getResourceBundle() {
+		try {
+			if (resourceBundle == null)
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+		return resourceBundle;
+	}
+	
+	public URL getInstallURL() {
+		try {
+			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
 	public static boolean hasPluginNature(IProject project) {
-		// Be flexible with 1.0 IDs - check all combinations
 		try {
 			return project.hasNature(PLUGIN_NATURE);
 		} catch (CoreException e) {
@@ -61,7 +90,6 @@ public class PDE extends Plugin {
 	}
 	
 	public static boolean hasFeatureNature(IProject project) {
-		// Be flexible with 1.0 IDs - check all combinations
 		try {
 			return project.hasNature(FEATURE_NATURE);
 		} catch (CoreException e) {
@@ -71,7 +99,6 @@ public class PDE extends Plugin {
 	}
 
 	public static boolean hasUpdateSiteNature(IProject project) {
-		// Be flexible with 1.0 IDs - check all combinations
 		try {
 			return project.hasNature(SITE_NATURE);
 		} catch (CoreException e) {
@@ -79,6 +106,7 @@ public class PDE extends Plugin {
 			return false;
 		}
 	}
+	
 	public static PDE getDefault() {
 		return inst;
 	}
@@ -87,35 +115,29 @@ public class PDE extends Plugin {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, args);
 	}
+	
 	public static String getFormattedMessage(String key, String arg) {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, new Object[] { arg });
 	}
-	static IPath getInstallLocation() {
-		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
-	}
+	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
+	
 	public static String getResourceString(String key) {
 		ResourceBundle bundle = getDefault().getResourceBundle();
-		if (bundle != null) {
-			try {
-				String bundleString = bundle.getString(key);
-				return bundleString;
-			} catch (MissingResourceException e) {
-				// default actions is to return key, which is OK
-			}
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
 		}
-		return key;
 	}
 
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+	
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -159,9 +181,4 @@ public class PDE extends Plugin {
 				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
-	public void startup() throws CoreException {
-		super.startup();
-		CompilerFlags.initializeDefaults();
-	}
-
 }

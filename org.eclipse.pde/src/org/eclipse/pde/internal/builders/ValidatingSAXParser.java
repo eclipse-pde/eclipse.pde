@@ -11,38 +11,16 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.net.*;
 
 import javax.xml.parsers.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.*;
 import org.xml.sax.*;
 
-/**
- * @author Wassim Melhem
- */
 public class ValidatingSAXParser {
 	
 	private static SAXParserFactory fFactory;
-	
-	public static void parse(IFile file, PluginErrorReporter reporter, boolean useSystemId) {
-		try {
-			if (!useSystemId) {
-				parse(file, reporter);
-				return;
-			}
-			InputSource source = new InputSource(file.getContents());
-			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
-			source.setSystemId(dtdLocation.toString());
-			getParser().parse(source, reporter);
-		} catch (SAXException e) {
-		} catch (ParserConfigurationException e) {
-		} catch (IOException e) {
-		} catch (CoreException e) {
-		}
-	}
 	
 	public static void parse(IFile file, PluginErrorReporter reporter) {
 		try {
