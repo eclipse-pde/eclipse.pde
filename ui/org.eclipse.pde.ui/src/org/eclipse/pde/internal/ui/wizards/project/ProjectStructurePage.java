@@ -22,6 +22,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.CoreUtility;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -300,6 +301,7 @@ public class ProjectStructurePage extends WizardPage {
 		addBottomSection(container);
 
 		initialize();
+		r21Check.setSelection(!PDECore.getDefault().getModelManager().isOSGiRuntime());
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		if (fragment)
@@ -437,7 +439,6 @@ public class ProjectStructurePage extends WizardPage {
 		}
 		if (sourceText.getText().equals(""))
 			sourceText.setText("src");
-		r21Check.setSelection(false);
 	}
 
 	private String setInitialId(String projectName) {
