@@ -13,6 +13,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 /**
  * @version 1.0
  * @author
@@ -38,6 +39,10 @@ public abstract class TableSection extends StructuredViewerSection {
 			if (handleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
+		protected void createButtons(Composite parent, FormToolkit toolkit) {
+			super.createButtons(parent, toolkit);
+			enableButtons();
+		}
 	}
 	/**
 	 * Constructor for TableSection.
@@ -62,5 +67,7 @@ public abstract class TableSection extends StructuredViewerSection {
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
+	}
+	protected void enableButtons() {
 	}
 }

@@ -55,6 +55,9 @@ public abstract class SharedPartWithButtons extends SharedPart {
 			FormToolkit toolkit) {
 		createMainLabel(parent, span, toolkit);
 		createMainControl(parent, style, span - 1, toolkit);
+		createButtons(parent, toolkit);
+	}
+	protected void createButtons(Composite parent, FormToolkit toolkit) {
 		if (buttonLabels != null && buttonLabels.length > 0) {
 			buttonContainer = createComposite(parent, toolkit);
 			GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -73,7 +76,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 					createEmptySpace(buttonContainer, 1, toolkit);
 				}
 			}
-		}
+		}		
 	}
 	protected GridLayout createButtonsLayout() {
 		GridLayout layout = new GridLayout();
