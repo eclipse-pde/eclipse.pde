@@ -25,7 +25,7 @@ import org.xml.sax.*;
  * @author melhem
  *
  */
-public class SchemaHandler extends PluginErrorReporter {
+public class SchemaHandler extends XMLErrorReporter {
 	
 	private org.w3c.dom.Document fDocument;
 	private IDocument fTextDocument;

@@ -197,7 +197,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 	}
 
-	private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
+	private boolean verifySchema(Schema schema, XMLErrorReporter reporter) {
 		if (schema.isLoaded() == false)
 			return false;
 		if (schema.isValid() == false)
@@ -216,14 +216,14 @@ public class SchemaTransformer implements ISchemaTransformer {
 		return (errors == 0);
 	}
 
-	private void checkFileType(IFile file, PluginErrorReporter reporter) {
+	private void checkFileType(IFile file, XMLErrorReporter reporter) {
 		String name = file.getName();
 		int dot = name.lastIndexOf('.');
 		if (dot != -1) {
 			String ext = name.substring(dot + 1);
 			if (ext.equalsIgnoreCase("xsd")) { //$NON-NLS-1$
 				String message = PDE.getResourceString(KEY_DEPRECATED_TYPE);
-				reporter.reportWarning(message);
+				reporter.report(message, 1, IMarker.SEVERITY_WARNING);
 			}
 		}
 	}
@@ -231,7 +231,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private int verifyAttribute(
 		ISchemaElement element,
 		ISchemaAttribute attribute,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		int errors = 0;
 		ISchemaType type = attribute.getType();
 		String message;
@@ -247,7 +247,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					message =
 						PDE.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
 					// this kind cannot have boolean type
-					reporter.reportError(message, line);
+					reporter.report(message, line, IMarker.SEVERITY_ERROR);
 					errors++;
 				}
 				if (type instanceof SchemaSimpleType
@@ -255,7 +255,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					// should not have restriction
 					message =
 						PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
-					reporter.reportError(message, line);
+					reporter.report(message, line, IMarker.SEVERITY_ERROR);
 					errors++;
 				}
 			}
@@ -264,7 +264,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			if (attribute.getBasedOn() != null) {
 				// basedOn makes no sense
 				message = PDE.getFormattedMessage(KEY_BASED_ON_INVALID, args);
-				reporter.reportError(message, line);
+				reporter.report(message, line, IMarker.SEVERITY_ERROR);
 				errors++;
 			}
 		}
@@ -274,7 +274,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				// should not have restriction
 				message =
 					PDE.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
-				reporter.reportError(message, line);
+				reporter.report(message, line, IMarker.SEVERITY_ERROR);
 				errors++;
 			}
 		}
@@ -283,7 +283,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				// value makes no sense without 'default' use
 				message =
 					PDE.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
-				reporter.reportError(message, line);
+				reporter.report(message, line, IMarker.SEVERITY_ERROR);
 				errors++;
 			}
 		} else {
@@ -291,7 +291,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				// there must be a value set for this use
 				message =
 					PDE.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
-				reporter.reportError(message, line);
+				reporter.report(message, line, IMarker.SEVERITY_ERROR);
 				errors++;
 			}
 		}
@@ -583,7 +583,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private boolean verifyDescription(
 		String desc,
 		PlatformObject container,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		boolean openTag = false, isPre = false;
 		boolean flagForbidden =
 			CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)
@@ -821,7 +821,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String errTag,
 		int linenum,
 		PlatformObject container,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		if (container instanceof SchemaObject) {
 			if (errTag.equals("")) { //$NON-NLS-1$
 				reporter.report(
@@ -913,7 +913,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 	private boolean verifySections(
 		ISchema schema,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		if (CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
 			== CompilerFlags.IGNORE
 			&& CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)

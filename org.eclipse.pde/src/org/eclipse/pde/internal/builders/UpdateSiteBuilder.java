@@ -83,7 +83,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		String message =
 			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
-		PluginErrorReporter reporter = new PluginErrorReporter(file);
+		XMLErrorReporter reporter = new XMLErrorReporter(file);
 		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			validateFile(file, reporter);
@@ -97,7 +97,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			&& file.getName().toLowerCase().equals("site.xml"); //$NON-NLS-1$
 	}
 
-	private void validateFile(IFile file, PluginErrorReporter reporter) {
+	private void validateFile(IFile file, XMLErrorReporter reporter) {
 		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 		model.load();
 		if (model.isLoaded()) {
@@ -109,7 +109,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	}
 	private void validateRequiredAttributes(
 		ISite site,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		ISiteFeature[] features = site.getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			ISiteFeature feature = features[i];
@@ -177,13 +177,13 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		String el,
 		int line,
 		String value,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		if (value == null) {
 			String message =
 				PDE.getFormattedMessage(
 					"Builders.manifest.missingRequired", //$NON-NLS-1$
 					new String[] { att, el });
-			reporter.reportError(message, line);
+			reporter.report(message, line, IMarker.SEVERITY_ERROR);
 		}
 	}
 }

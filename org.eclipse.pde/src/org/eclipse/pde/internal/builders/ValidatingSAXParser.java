@@ -22,14 +22,14 @@ public class ValidatingSAXParser {
 	
 	private static SAXParserFactory fFactory;
 	
-	public static void parse(IFile file, PluginErrorReporter reporter) {
+	public static void parse(IFile file, XMLErrorReporter reporter) {
 		try {
 			parse(file.getContents(), reporter);
 		} catch (CoreException e) {
 		}
 	}
 	
-	public static void parse(InputStream is, PluginErrorReporter reporter) {
+	public static void parse(InputStream is, XMLErrorReporter reporter) {
 		try {
 			getParser().parse(is, reporter);
 		} catch (Exception e) {

@@ -126,7 +126,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		String message =
 			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
-		PluginErrorReporter reporter = new PluginErrorReporter(file);
+		XMLErrorReporter reporter = new XMLErrorReporter(file);
 		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			validateFeature(file, reporter);
@@ -166,7 +166,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		return false;
 	}
 
-	private void validateFeature(IFile file, PluginErrorReporter reporter) {
+	private void validateFeature(IFile file, XMLErrorReporter reporter) {
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 		model.load();
 		if (model.isLoaded()) {
@@ -181,7 +181,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void testPluginReferences(
 		IFeature feature,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (flag==CompilerFlags.IGNORE) return;
@@ -203,7 +203,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	
 	private void testFeatureReferences(
 		IFeature feature,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		IFeatureChild[] included = feature.getIncludedFeatures();
 		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (flag==CompilerFlags.IGNORE) return;
@@ -225,7 +225,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void validateRequiredAttributes(
 		IFeature feature,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		assertNotNull(
 			"id", //$NON-NLS-1$
 			"feature", //$NON-NLS-1$
@@ -308,13 +308,13 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		String el,
 		int line,
 		String value,
-		PluginErrorReporter reporter) {
+		XMLErrorReporter reporter) {
 		if (value == null) {
 			String message =
 				PDE.getFormattedMessage(
 					"Builders.manifest.missingRequired", //$NON-NLS-1$
 					new String[] { att, el });
-			reporter.reportError(message, line);
+			reporter.report(message, line, IMarker.SEVERITY_ERROR);
 		}
 	}
 	
