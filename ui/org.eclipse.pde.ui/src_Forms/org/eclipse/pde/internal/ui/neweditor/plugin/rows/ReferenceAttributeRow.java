@@ -44,7 +44,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
-		Button button = toolkit.createButton(parent, "...", SWT.PUSH);
+		Button button = toolkit.createButton(parent, "Browse...", SWT.PUSH);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				browse();
