@@ -176,7 +176,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 
 		IPluginElement wizardShortcutElement =
 			factory.createElement(perspectiveElement);
-		wizardShortcutElement.setName("wizardShorcut");
+		wizardShortcutElement.setName("newWizardShortcut");
 		wizardShortcutElement.setAttribute("id", getStringOption(KEY_WIZARD_SHORTCUT));
 		perspectiveElement.add(wizardShortcutElement);
 
