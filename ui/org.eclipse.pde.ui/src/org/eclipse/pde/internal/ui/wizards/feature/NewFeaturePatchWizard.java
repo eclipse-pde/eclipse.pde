@@ -315,7 +315,6 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		featureImport.setId(featureModel.getFeature().getId());
 		
 		feature.addImports(new IFeatureImport[]{featureImport});
-		feature.computeImports();
 		IFeatureInstallHandler handler = feature.getInstallHandler();
 		if (handler == null){
 			handler = feature.getModel().getFactory().createInstallHandler();

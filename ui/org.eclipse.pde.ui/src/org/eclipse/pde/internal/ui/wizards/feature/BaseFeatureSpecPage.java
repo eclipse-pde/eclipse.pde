@@ -11,12 +11,14 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -206,16 +208,13 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			browseButton.addSelectionListener(new SelectionAdapter() {
 				
 				public void widgetSelected(SelectionEvent e) {
-					WorkspaceModelManager mng = PDECore.getDefault()
-					.getWorkspaceModelManager();
-					IFeatureModel[] models = mng.getFeatureModels();
-					FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), models);
+					FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), getAllFeatureModels());
 					dialog.create();
 					if (dialog.open() == Dialog.OK) {
 						Object[] result = dialog.getResult();
 						IFeatureModel selectedModel = (IFeatureModel) result[0];
 						featureIdText.setText(selectedModel.getFeature().getId());
-						featureNameText.setText(selectedModel.getUnderlyingResource().getProject().getName());
+						featureNameText.setText(selectedModel.getFeature().getLabel());
 						featureVersionText.setText(selectedModel.getFeature().getVersion());
 						fFeatureToPatch = selectedModel;
 					}
@@ -318,5 +317,77 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	
 	public IFeatureModel getFeatureToPatch(){
 		return fFeatureToPatch;
+	}
+	
+	public static IFeatureModel[] getAllFeatureModels(){
+		/* get features from target platform */
+		ArrayList models = new ArrayList();
+		IPath targetPath = ExternalModelManager.getEclipseHome();
+		File targetPlatform = targetPath.toFile();
+		if (targetPlatform.isDirectory()){
+			File mainFeatureDir = targetPath.append("features").toFile(); //$NON-NLS-1$
+			if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
+				return null;
+			File[] featureDirs = mainFeatureDir.listFiles();
+
+			
+			
+
+			for (int i = 0; i < featureDirs.length; i++) {
+				PluginVersionIdentifier bestVid = null;
+				File bestDir = null;
+				File featureDir = featureDirs[i];
+				String name = featureDir.getName();
+				if (featureDir.isDirectory()) {
+					int loc = name.lastIndexOf("_"); //$NON-NLS-1$
+					if (loc == -1)
+						continue;
+					String version = name.substring(loc + 1);
+					PluginVersionIdentifier vid =
+						new PluginVersionIdentifier(version);
+					
+					if (bestVid == null || vid.isGreaterThan(bestVid)) {
+						bestVid = vid;
+						bestDir = featureDir;
+					}
+					// We have a feature and know the version
+					File manifest = new File(bestDir, "feature.xml"); //$NON-NLS-1$
+					ExternalFeatureModel model = new ExternalFeatureModel();
+					model.setInstallLocation(bestDir.getAbsolutePath());
+
+					InputStream stream = null;
+					boolean error = false;
+					try {
+						stream = new FileInputStream(manifest);
+						model.load(stream, false);
+					} catch (Exception e) {
+						error = true;
+					}
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException e) {
+						}
+					}
+					if (error || !model.isLoaded())
+						continue;
+					models.add(model);
+				}
+			}
+		}
+		IFeatureModel[] targetModels = (IFeatureModel[])models.toArray(new IFeatureModel[models.size()]);
+		
+		WorkspaceModelManager mng = PDECore.getDefault()
+		.getWorkspaceModelManager();
+		IFeatureModel[] workspaceModels = mng.getFeatureModels();
+
+		IFeatureModel[] allModels = new IFeatureModel[workspaceModels.length + targetModels.length];
+		for (int i = 0; i<workspaceModels.length; i++){
+			allModels[i] = workspaceModels[i];
+		}
+		for (int i = 0; i<targetModels.length;i++){
+			allModels[i + workspaceModels.length] = targetModels[i];
+		}
+		return allModels;
 	}
 }

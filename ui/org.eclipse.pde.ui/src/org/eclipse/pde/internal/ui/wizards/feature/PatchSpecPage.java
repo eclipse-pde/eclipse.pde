@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.dialogs.*;
@@ -56,19 +55,21 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
 		
 		if (canFlipToNextPage()){
-			WorkspaceModelManager manager = PDECore.getDefault()
-					.getWorkspaceModelManager();
-			IFeatureModel[] featureModels = manager.getFeatureModels();
+
+			IFeatureModel[] featureModels = getAllFeatureModels();
+
 			for (int i = 0; i < featureModels.length; i++) {
 				IFeature feature = featureModels[i].getFeature();
 				if (feature.getId().equals(featureIdText.getText()) 
 						&& feature.getVersion().equals(featureVersionText.getText())){
 					fFeatureToPatch = feature.getModel();
+					return;
 				}
 			}
+			fFeatureToPatch = null;
 		}
 	}
-	
+
 	public String getPatchId(){
 		if (patchIdText == null)
 			return "";
