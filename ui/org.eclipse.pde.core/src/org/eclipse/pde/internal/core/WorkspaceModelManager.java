@@ -444,9 +444,8 @@ public class WorkspaceModelManager
 				continue;
 			addWorkspaceModel(project, false);			
 		}
-		workspace.addResourceChangeListener(this,
-				IResourceChangeEvent.PRE_CLOSE
-				| IResourceChangeEvent.POST_CHANGE);
+		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
+		JavaCore.addPreProcessingResourceChangedListener(this);
 		fInitialized = true;
 		fModelsLocked = false;
 	}
@@ -643,6 +642,7 @@ public class WorkspaceModelManager
 	 */
 	public void shutdown() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
+		JavaCore.removePreProcessingResourceChangedListener(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#isInitialized()
