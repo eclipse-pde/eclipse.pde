@@ -95,7 +95,7 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 		editorElement.setName("editor");
 		editorElement.setAttribute("id", editorClassName);
 		editorElement.setAttribute("name", getStringOption("editorName"));
-		editorElement.setAttribute("icon", "icons/copy.gif");
+		editorElement.setAttribute("icon", "icons/sample.gif");
 		editorElement.setAttribute("extensions", getStringOption("extensions"));
 
 		editorElement.setAttribute("class", editorClassName);
