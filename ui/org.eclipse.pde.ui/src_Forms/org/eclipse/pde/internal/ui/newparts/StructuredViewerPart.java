@@ -38,9 +38,11 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 			FormToolkit toolkit) {
 		viewer = createStructuredViewer(parent, style, toolkit);
 		Control control = viewer.getControl();
+		/*
 		if (toolkit != null) {
 			toolkit.hookDeleteListener(control);
 		}
+		*/
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = span;
 		control.setLayoutData(gd);

@@ -6,13 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -47,6 +45,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!blockNotification) markDirty();
+				updateText();
 			}
 		});
 		button.setEnabled(part.isEditable());
@@ -58,15 +57,16 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	 */
 	protected void update() {
 		blockNotification = true;
-		String value = null;
-		if (input != null) {
-			IPluginAttribute patt = input.getAttribute(att.getName());
-			if (patt != null)
-				value = patt.getValue();
-		}
+		String value = getValue();
 		boolean state = value != null && value.toLowerCase().equals("true");
 		button.setSelection(state);
+		updateText();
 		blockNotification=false;
+	}
+	
+	private void updateText() {
+		boolean state = button.getSelection();
+		button.setText(state?"true":"false");
 	}
 	public void commit() {
 		if (dirty && input != null) {

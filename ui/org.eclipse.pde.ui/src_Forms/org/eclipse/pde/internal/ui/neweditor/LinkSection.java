@@ -36,7 +36,7 @@ public class LinkSection extends PDESection {
 	private String morePageId;
 	private int linkNumberLimit = 20;
 	private LinkHandler linkHandler;
-	class LinkHandler implements HyperlinkListener {
+	class LinkHandler implements IHyperlinkListener {
 		public void linkActivated(HyperlinkEvent e) {
 			doLinkActivated((Hyperlink) e.widget);
 		}

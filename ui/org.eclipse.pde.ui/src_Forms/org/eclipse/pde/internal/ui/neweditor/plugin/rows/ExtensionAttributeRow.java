@@ -7,7 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
@@ -35,6 +35,16 @@ public abstract class ExtensionAttributeRow {
 	
 	public ISchemaAttribute getAttribute() {
 		return att;
+	}
+	
+	protected String getValue() {
+		String value=null;
+		if (input!=null) {
+			IPluginAttribute patt = input.getAttribute(att.getName());
+			if (patt!=null)
+				value = patt.getValue();
+		}
+		return value;
 	}
 	protected String getPropertyLabel() {
 		String label=att.getName();

@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class OverviewPage extends PDEFormPage implements HyperlinkListener {
+public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview";
 	
 	private static final String contentText = 
@@ -116,7 +116,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
-		info.setBackground(section.getTitleGradientBackground());
+		info.setBackground(section.getTitleBarGradientBackground());
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				WorkbenchHelp.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm");
@@ -140,7 +140,7 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 				WorkbenchHelp.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm");
 			}
 		});
-		info.setBackground(section.getTitleGradientBackground());
+		info.setBackground(section.getTitleBarGradientBackground());
 		section.setTextClient(info);
 		createClient(section, deployingText, toolkit);
 	}

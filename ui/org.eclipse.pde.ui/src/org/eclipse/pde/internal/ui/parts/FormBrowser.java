@@ -13,11 +13,13 @@ package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FormBrowser {
 	FormToolkit toolkit;
+	Composite container;
 	ScrolledFormText formText;
 	String text;
 	int style;
@@ -28,7 +30,17 @@ public class FormBrowser {
 
 	public void createControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		formText = new ScrolledFormText(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, false);
+		int borderStyle = toolkit.getBorderStyle()==SWT.BORDER?SWT.NULL:SWT.BORDER;		
+		container = new Composite(parent, borderStyle);
+		FillLayout flayout = new FillLayout();
+		flayout.marginWidth = 1;
+		flayout.marginHeight = 1;
+		container.setLayout(flayout);
+		formText = new ScrolledFormText(container, SWT.V_SCROLL | SWT.H_SCROLL, false);
+		if (borderStyle==SWT.NULL) {
+			formText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+			toolkit.paintBordersFor(container);
+		}
 		FormText ftext = toolkit.createFormText(formText, false);
 		formText.setFormText(ftext);
 		formText.setExpandHorizontal(true);
@@ -51,7 +63,7 @@ public class FormBrowser {
 	}
 
 	public Control getControl() {
-		return formText;
+		return container;
 	}
 	
 	public void setText(String text) {

@@ -6,14 +6,15 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 /**
  * @author dejan
@@ -55,12 +56,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	 */
 	protected void update() {
 		blockNotification = true;
-		String value = null;
-		if (input!=null) {
-			IPluginAttribute patt = input.getAttribute(att.getName());
-			if (patt!=null)
-				value = patt.getValue();
-		}
+		String value = getValue();
 		text.setText(value != null ? value : "");
 		blockNotification = false;
 	}

@@ -6,7 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.newparts;
 
-import org.eclipse.ui.forms.events.HyperlinkListener;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 
 /**
  * @author dejan
@@ -14,7 +14,7 @@ import org.eclipse.ui.forms.events.HyperlinkListener;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public interface IFormEntryListener extends HyperlinkListener {
+public interface IFormEntryListener extends IHyperlinkListener {
 /**
  * The user changed the text in the text control of the entry.
  * @param entry
