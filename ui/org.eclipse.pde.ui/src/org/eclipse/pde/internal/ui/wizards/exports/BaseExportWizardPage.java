@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -32,6 +33,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 
 
 public abstract class BaseExportWizardPage extends WizardPage {
@@ -69,13 +72,29 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 
 	class ExportPart extends WizardCheckboxTablePart {
-		public ExportPart(String label) {
-			super(label);
+		public ExportPart(String label, String[] buttonLabels) {
+			super(label, buttonLabels);
 		}
 
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			pageChanged();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart#buttonSelected(org.eclipse.swt.widgets.Button, int)
+		 */
+		protected void buttonSelected(Button button, int index) {
+			switch (index) {
+				case 0:
+					handleSelectAll(true);
+					break;
+				case 1:
+					handleSelectAll(false);
+					break;
+				case 3:
+					handleWorkingSets();
+			}
 		}
 	}
 
@@ -87,7 +106,14 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		super(name);
 		this.selection = selection;
 		this.featureExport = featureExport;
-		exportPart = new ExportPart(choiceLabel);
+		exportPart =
+			new ExportPart(
+				choiceLabel,
+				new String[] {
+					PDEPlugin.getResourceString(ExportPart.KEY_SELECT_ALL),
+					PDEPlugin.getResourceString(ExportPart.KEY_DESELECT_ALL),
+					null,
+					PDEPlugin.getResourceString("ExportWizard.workingSet") });
 		setDescription(PDEPlugin.getResourceString("ExportWizard.Plugin.description"));
 	}
 
@@ -527,4 +553,30 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	protected abstract void hookHelpContext(Control control);
+	
+	private void handleWorkingSets() {
+		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
+		if (dialog.open() == Window.OK) {
+			ArrayList models = new ArrayList();
+			IWorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
+			IWorkingSet[] workingSets = dialog.getSelection();
+			for (int i = 0; i < workingSets.length; i++) {
+				IAdaptable[] elements = workingSets[i].getElements();
+				for (int j = 0; j < elements.length; j++) {
+					IAdaptable element = elements[j];
+					if (element instanceof IJavaProject)
+						element = ((IJavaProject)element).getProject();
+					if (element instanceof IProject) {
+						IModel model = wManager.getWorkspaceModel((IProject)element);
+						if (isValidModel(model))
+							models.add(model);						
+					}
+				}
+			}
+			exportPart.setSelection(models.toArray());
+		}
+	}
+	
+	protected abstract boolean isValidModel(IModel model);
 }

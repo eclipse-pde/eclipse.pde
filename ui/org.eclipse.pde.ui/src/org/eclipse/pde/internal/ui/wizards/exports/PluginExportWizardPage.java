@@ -95,5 +95,12 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		if (buffer.length() > 0)
 			getDialogSettings().put(S_SELECTED_PLUGINS, buffer.toString());
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
+	 */
+	protected boolean isValidModel(IModel model) {
+		return model instanceof IPluginModelBase;
+	}
 				
 }

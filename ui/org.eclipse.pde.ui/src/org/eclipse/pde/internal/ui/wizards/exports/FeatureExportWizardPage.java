@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -77,6 +78,13 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		}
 		if (buffer.length() > 0)
 			getDialogSettings().put(S_SELECTED_FEATURES, buffer.toString());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
+	 */
+	protected boolean isValidModel(IModel model) {
+		return model instanceof IFeatureModel;
 	}
 
 }
