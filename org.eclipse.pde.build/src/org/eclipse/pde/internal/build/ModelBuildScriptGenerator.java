@@ -130,6 +130,7 @@ protected void generateGatherLogTarget() {
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	baseSource = baseSource.append(getDirectoryName());
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		String jar = (String) i.next();
 		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
@@ -231,6 +232,7 @@ protected void generateGatherSourcesTarget() {
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	baseSource = baseSource.append(getDirectoryName());
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		String jar = (String) i.next();
 		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
