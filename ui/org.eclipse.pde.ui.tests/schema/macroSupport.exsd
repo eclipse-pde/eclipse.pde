@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.macro">
+<schema targetNamespace="org.eclipse.pde.ui.tests">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.macro" id="macroSupport" name="Macro Support"/>
+         <meta.schema plugin="org.eclipse.pde.ui.tests" id="macroSupport" name="Macro Support"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

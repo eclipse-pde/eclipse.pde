@@ -5,7 +5,7 @@
    name="PDE JUnit Tests"
    version="3.1.0"
    provider-name="Eclipse.org"
-   class="org.eclipse.ui.internal.macro.MacroPlugin">
+   class="org.eclipse.pde.internal.ui.tests.macro.MacroPlugin">
    
    <runtime>
       <library name="tests.jar">
@@ -43,29 +43,37 @@
          <action
                toolbarPath="sampleGroup"
                label="&amp;Start Recording"
-               class="org.eclipse.ui.internal.macro.RecordAction"
+               class="org.eclipse.pde.internal.ui.tests.macro.RecordAction"
                tooltip="Start Recording"
                icon="icons/external_tools.gif"
                menubarPath="window/macro/group1"
-               id="org.eclipse.ui.macro.actions.RecordAction"/>
+               id="org.eclipse.pde.ui.tests.RecordAction"/>
          <action
                toolbarPath="sampleGroup"
-               label="S&amp;top Recording"
+               label="&amp;Pause for Indexing"
+               class="org.eclipse.pde.internal.ui.tests.macro.IndexAction"
+               tooltip="Pause for Indexing"
+               icon="icons/suspend_co.gif"
+               menubarPath="window/macro/group1"
+               id="org.eclipse.pde.ui.tests.IndexAction"/>
+         <action
+               class="org.eclipse.pde.internal.ui.tests.macro.StopAction"
                definitionId="org.eclipse.ui.macro.stopRecording"
                icon="icons/terminate_co.gif"
-               tooltip="Stop Recording"
-               class="org.eclipse.ui.internal.macro.StopAction"
+               id="org.eclipse.pde.ui.tests.StopAction"
+               label="S&amp;top Recording"
                menubarPath="window/macro/group1"
-               id="org.eclipse.ui.macro.actions.StopAction"/>
+               toolbarPath="sampleGroup"
+               tooltip="Stop Recording"/>
          <action
                enablesFor="1"
                toolbarPath="sampleGroup"
                label="&amp;Playback"
                icon="icons/run_exc.gif"
                tooltip="&amp;Run Macro"
-               class="org.eclipse.ui.internal.macro.PlaybackAction"
+               class="org.eclipse.pde.internal.ui.tests.macro.PlaybackAction"
                menubarPath="window/macro/group1"
-               id="org.eclipse.ui.macro.actions.PlaybackAction">
+               id="org.eclipse.pde.ui.tests.PlaybackAction">
             <enablement>
             	<and>
    					<objectClass name="org.eclipse.core.resources.IFile"/>
@@ -77,7 +85,7 @@
    </extension>
    <extension
          point="org.eclipse.pde.ui.tests.macroSupport">
-      <widgetResolver class="org.eclipse.ui.macro.DefaultWidgetResolver"/>
+      <widgetResolver class="org.eclipse.pde.internal.ui.tests.macro.DefaultWidgetResolver"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
