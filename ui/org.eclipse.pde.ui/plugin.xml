@@ -162,7 +162,7 @@
       <wizard
             name="%projectGenerators.defaultPlugin.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.ui.wizards.templates.PluginCodeGeneratorWizard"
+            class="org.eclipse.pde.internal.ui.wizards.templates.DefaultPluginTemplateWizard"
             id="org.eclipse.pde.ui.projectGenerators.default">
          <description>
             %projectGenerators.defaultPlugin.description
@@ -172,7 +172,7 @@
             fragmentWizard="true"
             name="%projectGenerators.defaultFragment.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
-            class="org.eclipse.pde.internal.ui.wizards.templates.PluginCodeGeneratorWizard"
+            class="org.eclipse.pde.internal.ui.wizards.templates.DefaultPluginTemplateWizard"
             id="org.eclipse.pde.ui.projectGenerators.defaultFragment">
          <description>
             %projectGenerators.defaultFragment.description
