@@ -58,7 +58,9 @@ public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String KEY_CLASS = "DefaultCodeGenerationPage.class";
 	private static final String KEY_GENERATE = "DefaultCodeGenerationPage.generate";
 	private static final String KEY_INITIAL_NAME = "DefaultCodeGenerationPage.initialName";
+	//private static final String KEY_INITIAL_NAME = "DefaultCodeGenerationPage.initialName.nl";
 	private static final String KEY_INITIAL_FNAME = "DefaultCodeGenerationPage.initialFName";
+	//private static final String KEY_INITIAL_FNAME = "DefaultCodeGenerationPage.initialFName.nl";
 	private static final String KEY_CREATING = "DefaultCodeGenerationPage.creating";
 	private static final String KEY_CREATING_PLUGIN = "DefaultCodeGenerationPage.creatingPlugin";
 	private static final String KEY_CREATING_FRAGMENT = "DefaultCodeGenerationPage.creatingFragment";
@@ -296,8 +298,11 @@ private IFile createFile(IContainer parent, String contents, IProgressMonitor mo
 	IPath filePath = parent.getFullPath().append(fileName);
 	IFile file = workspace.getRoot().getFile(filePath);
 
-	InputStream initialContents = new ByteArrayInputStream(contents.getBytes());
-	file.create(initialContents, false, monitor);
+	try{
+		InputStream initialContents = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+		file.create(initialContents, false, monitor);
+	}catch(UnsupportedEncodingException uee){
+	}
 	IWorkbench workbench = PlatformUI.getWorkbench();
 	workbench.getEditorRegistry().setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 	return file;
@@ -373,8 +378,8 @@ private IFile generatePluginFile(
 	FieldData data,
 	IProgressMonitor monitor)
 	throws CoreException {
-	ByteArrayOutputStream bstream = new ByteArrayOutputStream();
-	PrintWriter writer = new PrintWriter(bstream, true);
+	StringWriter sWriter = new StringWriter();
+	PrintWriter writer = new PrintWriter(sWriter);
 	String indent = "   ";
 
 	String message =
@@ -423,7 +428,7 @@ private IFile generatePluginFile(
 	monitor.done();
 	writer.close();
 
-	IFile file = createFile(project, bstream.toString(), monitor);
+	IFile file = createFile(project, sWriter.toString(), monitor);
 	monitor.done();
 	return file;
 }

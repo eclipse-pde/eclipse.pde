@@ -39,7 +39,9 @@ public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_CREATING = "ProjectStructurePage.creating";
 	private static final String KEY_SOURCE = "ProjectStructurePage.source";
 	private static final String KEY_SOURCE_NAME = "ProjectStructurePage.sourceName";
+	//private static final String KEY_SOURCE_NAME = "ProjectStructurePage.sourceName.nl";
 	private static final String KEY_FSOURCE_NAME = "ProjectStructurePage.fsourceName";
+	//private static final String KEY_FSOURCE_NAME = "ProjectStructurePage.fsourceName.nl";
 
 	private static final String KEY_FTITLE = "ProjectStructurePage.ftitle";
 	private static final String KEY_DESC = "ProjectStructurePage.desc";
