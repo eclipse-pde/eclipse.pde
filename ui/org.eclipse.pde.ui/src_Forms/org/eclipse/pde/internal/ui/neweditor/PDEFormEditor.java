@@ -197,6 +197,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return invalidContexts[0].getId();
 	}
 	
+	public String getTitle() {
+		if (inputContextManager==null) return super.getTitle();
+		InputContext context = inputContextManager.getPrimaryContext();
+		if (context==null) return super.getTitle();
+		return context.getInput().getName();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.io.File;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
