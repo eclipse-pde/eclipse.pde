@@ -17,6 +17,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
@@ -24,9 +25,10 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class FeatureSpecSection extends PDEFormSection {
+public class FeatureSpecSection extends PDESection {
 	public static final String SECTION_TITLE = "FeatureEditor.SpecSection.title";
 	public static final String SECTION_DESC = "FeatureEditor.SpecSection.desc";
 	public static final String SECTION_ID = "FeatureEditor.SpecSection.id";
@@ -58,22 +60,21 @@ public class FeatureSpecSection extends PDEFormSection {
 	private FormEntry providerText;
 	private FormEntry pluginText;
 	private FormEntry imageText;
-	private Button browseImageButton;
 
 	private Button primaryButton;
 	private Button exclusiveButton;
 	private Button createJarButton;
 	private Button synchronizeButton;
 
-	private boolean updateNeeded;
-
-	public FeatureSpecSection(FeatureFormPage page) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public FeatureSpecSection(FeatureFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
-	public void commitChanges(boolean onSave) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+	
+	public void commit(boolean onSave) {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		titleText.commit();
 		providerText.commit();
@@ -87,22 +88,27 @@ public class FeatureSpecSection extends PDEFormSection {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		super.commit(onSave);
 	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
 
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
 		idText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_ID), factory, 2));
-		idText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, 
+					toolkit,
+					PDEPlugin.getResourceString(SECTION_ID),
+					null,
+					false);
+		idText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setId(text.getValue());
@@ -110,49 +116,47 @@ public class FeatureSpecSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
-		idText.getControl().setEditable(false);
+		idText.getText().setEditable(false);
 
 		titleText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory, 2));
-		titleText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container,
+					toolkit,
+					PDEPlugin.getResourceString(SECTION_NAME),
+					null, false);
+		titleText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setLabel(text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
-				getFormPage().getForm().setHeadingText(
+				getPage().getManagedForm().getForm().setText(
 					model.getResourceString(feature.getLabel()));
-				((FeatureEditor) getFormPage().getEditor()).updateTitle();
-			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
+				((FeatureEditor) getPage().getEditor()).updateTitle();
 			}
 		});
 		versionText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory, 2));
-		versionText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, toolkit,
+					PDEPlugin.getResourceString(SECTION_VERSION),
+					null,
+					false);
+		versionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				if (verifySetVersion(feature, text.getValue()) == false) {
 					warnBadVersionFormat(text.getValue());
 					text.setValue(feature.getVersion());
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
 
 		providerText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_PROVIDER), factory, 2));
-		providerText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, 
+					toolkit,
+					PDEPlugin.getResourceString(SECTION_PROVIDER), 
+					null,
+					false);
+		providerText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setProviderName(getNonNullValue(text.getValue()));
@@ -160,15 +164,15 @@ public class FeatureSpecSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
 		
 		pluginText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_PLUGIN), factory, 2));
-		pluginText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, 
+					toolkit,
+					PDEPlugin.getResourceString(SECTION_PLUGIN),
+					null, 
+					false);
+		pluginText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setPlugin(getNonNullValue(text.getValue()));
@@ -176,15 +180,15 @@ public class FeatureSpecSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
 
 		imageText =
-			new FormEntry(
-				createText(container, PDEPlugin.getResourceString(SECTION_IMAGE), factory));
-		imageText.addFormTextListener(new IFormTextListener() {
+			new FormEntry(container, toolkit,
+					PDEPlugin.getResourceString(SECTION_IMAGE),
+					PDEPlugin.getResourceString(SECTION_BROWSE),
+					false);
+					
+		imageText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setImageName(getNonNullValue(text.getValue()));
@@ -192,25 +196,15 @@ public class FeatureSpecSection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
-		});
-		GridData gd = (GridData)imageText.getControl().getLayoutData();
-		gd.grabExcessHorizontalSpace = true;
-		
-		
-		browseImageButton = factory.createButton(container, PDEPlugin.getResourceString(SECTION_BROWSE), SWT.PUSH);
-		browseImageButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void browseButtonSelected(FormEntry entry) {
 				handleBrowseImage();
 			}
 		});
 
-		gd = (GridData) idText.getControl().getLayoutData();
+		GridData gd = (GridData) idText.getText().getLayoutData();
 		gd.widthHint = 150;
 		
-		Composite checkContainer = factory.createComposite(container);
+		Composite checkContainer = toolkit.createComposite(container);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		checkContainer.setLayoutData(gd);
@@ -221,7 +215,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		blayout.marginHeight = 0;
 
 		primaryButton =
-			factory.createButton(
+			toolkit.createButton(
 				checkContainer,
 				PDEPlugin.getResourceString(SECTION_PRIMARY),
 				SWT.CHECK);
@@ -239,7 +233,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		});
 		
 		exclusiveButton =
-			factory.createButton(
+			toolkit.createButton(
 				checkContainer,
 				PDEPlugin.getResourceString(SECTION_EXCLUSIVE),
 				SWT.CHECK);
@@ -256,7 +250,7 @@ public class FeatureSpecSection extends PDEFormSection {
 			}
 		});	
 
-		Composite buttonContainer = factory.createComposite(container);
+		Composite buttonContainer = toolkit.createComposite(container);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 3;
 		buttonContainer.setLayoutData(gd);
@@ -268,7 +262,7 @@ public class FeatureSpecSection extends PDEFormSection {
 
 
 		createJarButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(SECTION_CREATE_JAR),
 				SWT.PUSH);
@@ -281,7 +275,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		createJarButton.setLayoutData(gd);
 
 		synchronizeButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(SECTION_SYNCHRONIZE),
 				SWT.PUSH);
@@ -293,22 +287,13 @@ public class FeatureSpecSection extends PDEFormSection {
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		synchronizeButton.setLayoutData(gd);
 
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
 	}
 	
 	private String getNonNullValue(String value) {
 		return value.length()>0?value:null;
-	}
-
-	private void forceDirty() {
-		setDirty(true);
-		IModel model = (IModel) getFormPage().getModel();
-		if (model instanceof IEditable) {
-			IEditable editable = (IEditable) model;
-			editable.setDirty(true);
-			getFormPage().getEditor().fireSaveNeeded();
-		}
 	}
 
 	private boolean verifySetVersion(IFeature feature, String value) {
@@ -329,13 +314,14 @@ public class FeatureSpecSection extends PDEFormSection {
 	}
 
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
+	
 	private void handleCreateJar() {
 		final FeatureEditorContributor contributor =
-			(FeatureEditorContributor) getFormPage().getEditor().getContributor();
+			(FeatureEditorContributor) getPage().getPDEEditor().getContributor();
 		BusyIndicator.showWhile(createJarButton.getDisplay(), new Runnable() {
 			public void run() {
 				contributor.getBuildAction().run();
@@ -344,7 +330,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	}
 	private void handleSynchronize() {
 		final FeatureEditorContributor contributor =
-			(FeatureEditorContributor) getFormPage().getEditor().getContributor();
+			(FeatureEditorContributor) getPage().getPDEEditor().getContributor();
 		BusyIndicator.showWhile(synchronizeButton.getDisplay(), new Runnable() {
 			public void run() {
 				contributor.getSynchronizeAction().run();
@@ -352,7 +338,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		});
 	}
 	private void handleBrowseImage() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IResource resource = model.getUnderlyingResource();
 		final IProject project = resource.getProject();
 
@@ -373,65 +359,53 @@ public class FeatureSpecSection extends PDEFormSection {
 		IPath path = resource.getProjectRelativePath();
 		imageText.setValue(path.toString());
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		refresh();
 		if (model.isEditable() == false) {
-			idText.getControl().setEditable(false);
-			titleText.getControl().setEditable(false);
-			versionText.getControl().setEditable(false);
-			providerText.getControl().setEditable(false);
-			pluginText.getControl().setEditable(false);
-			imageText.getControl().setEditable(false);
+			idText.getText().setEditable(false);
+			titleText.getText().setEditable(false);
+			versionText.getText().setEditable(false);
+			providerText.getText().setEditable(false);
+			pluginText.getText().setEditable(false);
+			imageText.getText().setEditable(false);
 			primaryButton.setEnabled(false);
 			exclusiveButton.setEnabled(false);
 			createJarButton.setEnabled(false);
 			synchronizeButton.setEnabled(false);
-			browseImageButton.setEnabled(false);
+			imageText.getButton().setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
-	public boolean isDirty() {
-		return titleText.isDirty()
-			|| idText.isDirty()
-			|| providerText.isDirty()
-			|| pluginText.isDirty()
-			|| versionText.isDirty()
-			|| imageText.isDirty();
-	}
+
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
+			markStale();
+			return;
 		}
-		else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object objs[] = e.getChangedObjects();
 			if (objs.length>0 && objs[0] instanceof IFeature) {
-				updateNeeded=true;
-				if (getFormPage().isVisible())
-					update();
+				markStale();
 			}
 		}
 	}
 	public void setFocus() {
 		if (idText != null)
-			idText.getControl().setFocus();
+			idText.getText().setFocus();
 	}
 	private void setIfDefined(FormEntry formText, String value) {
 		if (value != null) {
 			formText.setValue(value, true);
 		}
 	}
-	public void update() {
-		if (updateNeeded) {
-			this.update(getFormPage().getModel());
-		}
-	}
-	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		setIfDefined(idText, feature.getId());
 		setIfDefined(titleText, feature.getLabel());
-		getFormPage().getForm().setHeadingText(
+		getPage().getManagedForm().getForm().setText(
 			model.getResourceString(feature.getLabel()));
 		setIfDefined(versionText, feature.getVersion());
 		setIfDefined(providerText, feature.getProviderName());
@@ -439,7 +413,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		setIfDefined(imageText, feature.getImageName());
 		primaryButton.setSelection(feature.isPrimary());
 		exclusiveButton.setSelection(feature.isExclusive());
-		updateNeeded = false;
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
@@ -456,5 +430,4 @@ public class FeatureSpecSection extends PDEFormSection {
 		}
 		return false;
 	}
-
 }

@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.forms.editor.IFormPage;
 
 /**
  * @version 	1.0
@@ -34,9 +35,9 @@ public abstract class ModelUndoManager
 	private int cursor = -1;
 	private IAction undoAction;
 	private IAction redoAction;
-	private PDEMultiPageEditor editor;
+	private PDEFormEditor editor;
 	
-	public ModelUndoManager(PDEMultiPageEditor editor) {
+	public ModelUndoManager(PDEFormEditor editor) {
 		this.editor = editor;
 		operations = new Vector();
 	}
@@ -113,10 +114,10 @@ public abstract class ModelUndoManager
 		Object obj = op.getChangedObjects()[0];
 		String pageId = getPageId(obj);
 		if (pageId!=null) {
-			IPDEEditorPage cpage = editor.getCurrentPage();
-			IPDEEditorPage newPage = editor.getPage(pageId);
-			if (cpage != newPage) 
-				editor.showPage(newPage);
+			IFormPage cpage = editor.getActivePageInstance();
+			IFormPage newPage = editor.findPage(pageId);
+			if (cpage != newPage)
+				editor.setActivePage(newPage.getId());
 		}
 	}
 

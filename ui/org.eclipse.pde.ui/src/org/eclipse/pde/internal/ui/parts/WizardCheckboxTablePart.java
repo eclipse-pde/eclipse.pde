@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.swt.layout.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -94,8 +94,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		Composite parent,
 		String label,
 		int index,
-		FormWidgetFactory factory) {
-		Button button = super.createButton(parent, label, index, factory);
+		FormToolkit toolkit) {
+		Button button = super.createButton(parent, label, index, toolkit);
 		SWTUtil.setButtonDimensionHint(button);
 		return button;
 	}
@@ -103,8 +103,8 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected StructuredViewer createStructuredViewer(
 		Composite parent,
 		int style,
-		FormWidgetFactory factory) {
-		StructuredViewer viewer = super.createStructuredViewer(parent, style, factory);
+		FormToolkit toolkit) {
+		StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 		viewer.setSorter(ListUtil.NAME_SORTER);
 		return viewer;
 	}
@@ -112,7 +112,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	protected void createMainLabel(
 		Composite parent,
 		int span,
-		FormWidgetFactory factory) {
+		FormToolkit toolkit) {
 		if (tableName == null)
 			return;
 		Label label = new Label(parent, SWT.NULL);

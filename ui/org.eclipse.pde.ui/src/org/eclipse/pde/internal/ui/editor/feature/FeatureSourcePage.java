@@ -10,19 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class FeatureSourcePage extends XMLSourcePage {
 
-	public FeatureSourcePage(PDEMultiPageEditor editor) {
-		super(editor);
+	public FeatureSourcePage(PDEFormEditor editor, String id, String title) {
+		super(editor, id, title);
 	}
-
-	public IContentOutlinePage createContentOutlinePage() {
-		return new FeatureSourceOutlinePage(
-			getEditor().getEditorInput(),
-			getDocumentProvider(),
-			this);
+	protected ILabelProvider createOutlineLabelProvider() {
+		return null;
+	}
+	protected ITreeContentProvider createOutlineContentProvider() {
+		return null;
+	}
+	protected void outlineSelectionChanged(SelectionChangedEvent e) {
+	}
+	protected IContentOutlinePage createOutlinePage() {
+		//TODO remove this method when the above three stubs
+		// are implemented
+		return null;
 	}
 }

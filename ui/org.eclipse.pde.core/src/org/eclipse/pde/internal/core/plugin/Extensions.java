@@ -34,7 +34,7 @@ public class Extensions
 	}
 
 	void load(Node node, Hashtable lineTable) {
-		bindSourceLocationOrig(node, lineTable);
+		bindSourceLocation(node, lineTable);
 
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {

@@ -17,11 +17,13 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -31,7 +33,8 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection
 	extends TableSection
@@ -44,7 +47,6 @@ public class PluginSection
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	private boolean updateNeeded;
 	private OpenReferenceAction openAction;
 	private PropertiesAction propertiesAction;
 	private TableViewer pluginViewer;
@@ -62,30 +64,32 @@ public class PluginSection
 		}
 	}
 
-	public PluginSection(FeatureReferencePage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
-		setHeaderText(PDEPlugin.getResourceString(PLUGIN_TITLE));
-		setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
+	public PluginSection(FeatureReferencePage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
+		getSection().setText(PDEPlugin.getResourceString(PLUGIN_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
 		getTablePart().setEditable(false);
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
+		super.commit(onSave);
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
 		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 9;
 
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginViewer.setSorter(ListUtil.NAME_SORTER);
-		factory.paintBordersFor(container);
+		toolkit.paintBordersFor(container);
 		makeActions();
-		return container;
+		section.setClient(container);
+		initialize();
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -98,16 +102,19 @@ public class PluginSection
 	}
 
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
-	public void expandTo(Object object) {
+
+	public boolean setFormInput(Object object) {
 		if (object instanceof IFeaturePlugin) {
 			pluginViewer.setSelection(new StructuredSelection(object), true);
+			return true;
 		}
+		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
@@ -117,13 +124,13 @@ public class PluginSection
 		manager.add(deleteAction);
 		// add delete
 
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
 
 	private void handleNew() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				NewFeaturePluginWizardPage page = new NewFeaturePluginWizardPage(model);
@@ -147,7 +154,7 @@ public class PluginSection
 
 		if (ssel.isEmpty())
 			return;
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
 		try {
@@ -192,11 +199,11 @@ public class PluginSection
 		return false;
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
+		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
@@ -205,10 +212,8 @@ public class PluginSection
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
-			if (getFormPage().isVisible()) {
-				update();
-			}
+			markStale();
+			return;
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeaturePlugin) {
@@ -223,7 +228,7 @@ public class PluginSection
 		}
 	}
 	private void makeActions() {
-		IModel model = (IModel)getFormPage().getModel();
+		IModel model = (IModel)getPage().getModel();
 		newAction = new Action() {
 			public void run() {
 				handleNew();
@@ -244,19 +249,24 @@ public class PluginSection
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 		deleteAction.setEnabled(model.isEditable());
 		openAction = new OpenReferenceAction(pluginViewer);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		updateNeeded = true;
-		Display display = Display.getCurrent();
-		if (display != null && !display.isDisposed()) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					update();
-				}
-			});
+		IModel [] added = event.getAddedModels();
+		IModel [] removed = event.getRemovedModels();
+		IModel [] changed = event.getChangedModels();
+		if (hasPluginModels(added)||hasPluginModels(removed)||hasPluginModels(changed))		
+			markStale();
+	}
+	private boolean hasPluginModels(IModel [] models) {
+		if (models==null) return false;
+		if (models.length==0) return false;
+		for (int i=0; i<models.length; i++) {
+			if (models[i] instanceof IPluginModelBase)
+				return true;
 		}
+		return false;
 	}
 
 	public void setFocus() {
@@ -264,17 +274,11 @@ public class PluginSection
 			pluginViewer.getTable().setFocus();
 	}
 
-	public void update() {
-		if (updateNeeded) {
-			this.update(getFormPage().getModel());
-		}
-	}
-
-	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
 		IFeature feature = model.getFeature();
 		pluginViewer.setInput(feature);
-		updateNeeded = false;
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
@@ -300,7 +304,7 @@ public class PluginSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && canPaste(null,objects))
 			doPaste(null, objects);
@@ -309,7 +313,7 @@ public class PluginSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		FeaturePlugin[] fPlugins = new FeaturePlugin[objects.length];
 		try {
@@ -325,6 +329,4 @@ public class PluginSection
 			PDEPlugin.logException(e);
 		}
 	}
-
-
 }

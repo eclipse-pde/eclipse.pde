@@ -9,21 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.dnd.Clipboard;
 
-public class BuildEditorContributor extends PDEEditorContributor {
+public class BuildEditorContributor extends PDEFormEditorContributor {
 
 	public BuildEditorContributor() {
-		super("Plug-in Jars");
+		super("&Build");
 	}
-	public BuildEditorContributor(String menuName) {
-		super(menuName);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEEditorContributor#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
-	public void contextMenuAboutToShow(IMenuManager mng) {
+	protected boolean hasKnownTypes(Clipboard clipboard) {
+		return true;
 	}
 }

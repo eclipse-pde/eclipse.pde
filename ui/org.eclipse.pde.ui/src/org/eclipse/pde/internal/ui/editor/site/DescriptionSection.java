@@ -9,84 +9,70 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.*;
 
-public class DescriptionSection extends PDEFormSection {
+/**
+ * 
+ */
+public class DescriptionSection extends PDESection {
 	private FormEntry fURLEntry;
 	private FormEntry fDescEntry;
-	private boolean fUpdateNeeded;
-
-
-	public DescriptionSection(PDEFormPage page) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString("SiteEditor.DescriptionSection.header")); //$NON-NLS-1$
-		setDescription(PDEPlugin.getResourceString("SiteEditor.DescriptionSection.desc")); //$NON-NLS-1$
+	public DescriptionSection(PDEFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection()
+				.setText(
+						PDEPlugin
+								.getResourceString("SiteEditor.DescriptionSection.header")); //$NON-NLS-1$
+		getSection()
+				.setDescription(
+						PDEPlugin
+								.getResourceString("SiteEditor.DescriptionSection.desc")); //$NON-NLS-1$
+		createClient(getSection(), page.getManagedForm().getToolkit());		
 	}
-	
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		fURLEntry.commit();
 		fDescEntry.commit();
+		super.commit(onSave);
 	}
-
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-				
-		fURLEntry =
-			new FormEntry(
-				createText(
-					container,
-					PDEPlugin.getResourceString("SiteEditor.DescriptionSection.urlLabel"), //$NON-NLS-1$
-					factory,
-					1));
-		fURLEntry.addFormTextListener(new IFormTextListener() {
+		fURLEntry = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString("SiteEditor.DescriptionSection.urlLabel"), //$NON-NLS-1$
+				null, false);
+		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				setDescriptionURL(text.getValue());
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
-		fURLEntry.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Text area =
-			createText(
-				container,
-				PDEPlugin.getResourceString("SiteEditor.DescriptionSection.descLabel"), //$NON-NLS-1$
-				factory,
-				1,
-				FormWidgetFactory.BORDER_STYLE | SWT.WRAP | SWT.MULTI);
-		area.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		fDescEntry = new FormEntry(area);
-		fDescEntry.addFormTextListener(new IFormTextListener() {
+		fDescEntry = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString("SiteEditor.DescriptionSection.descLabel"),
+				SWT.WRAP | SWT.MULTI);
+		fDescEntry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				setDescriptionText(text.getValue());
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
 		});
-		
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
 	}
-	
 	private void setDescriptionURL(String text) {
-		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
 		ISiteDescription description = site.getDescription();
 		boolean defined = false;
@@ -103,9 +89,8 @@ public class DescriptionSection extends PDEFormSection {
 			PDEPlugin.logException(e);
 		}
 	}
-
 	private void setDescriptionText(String text) {
-		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
 		ISiteDescription description = site.getDescription();
 		boolean defined = false;
@@ -122,73 +107,44 @@ public class DescriptionSection extends PDEFormSection {
 			PDEPlugin.logException(e);
 		}
 	}
-
-	private void forceDirty() {
-		setDirty(true);
-		ISiteModel model = (ISiteModel) getFormPage().getModel();
-
-		if (model instanceof IEditable) {
-			((IEditable) model).setDirty(true);
-		}
-		getFormPage().getEditor().fireSaveNeeded();
-	}
-
 	public void dispose() {
-		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteModel model = (ISiteModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
-
-	public void initialize(Object input) {
-		ISiteModel model = (ISiteModel) input;
-		update(input);
+	public void initialize() {
+		ISiteModel model = (ISiteModel) getPage().getModel();
+		refresh();
 		model.addModelChangedListener(this);
 	}
-
 	public void modelChanged(IModelChangedEvent e) {
-		fUpdateNeeded = true;
-		update();
+		markStale();
 	}
-	
 	public void setFocus() {
 		if (fURLEntry != null)
-			fURLEntry.getControl().setFocus();
+			fURLEntry.getText().setFocus();
 	}
-	
 	private void setIfDefined(FormEntry formText, String value) {
 		if (value != null) {
 			formText.setValue(value, true);
 		}
 	}
-	
-	public void update() {
-		if (fUpdateNeeded) {
-			update(getFormPage().getModel());			
-		}
-	}
-	
-	public void update(Object input) {
-		ISiteModel model = (ISiteModel) input;
+	public void refresh() {
+		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
-		setIfDefined(
-			fURLEntry,
-			site.getDescription() != null
-				? site.getDescription().getURL()
-				: null);
-		setIfDefined(
-			fDescEntry,
-			site.getDescription() != null
-				? site.getDescription().getText()
-				: null);
-		fUpdateNeeded = false;
+		setIfDefined(fURLEntry, site.getDescription() != null ? site
+				.getDescription().getURL() : null);
+		setIfDefined(fDescEntry, site.getDescription() != null ? site
+				.getDescription().getText() : null);
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
-		Transfer[] transfers =
-			new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+		Transfer[] transfers = new Transfer[]{TextTransfer.getInstance(),
+				RTFTransfer.getInstance()};
 		for (int i = 0; i < types.length; i++) {
 			for (int j = 0; j < transfers.length; j++) {
 				if (transfers[j].isSupportedType(types[i]))
@@ -197,5 +153,4 @@ public class DescriptionSection extends PDEFormSection {
 		}
 		return false;
 	}
-
 }

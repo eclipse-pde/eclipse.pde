@@ -1,99 +1,139 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+/*
+ * Created on Jan 26, 2004
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.model.IEditingModel;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.*;
+import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.update.ui.forms.internal.IFormPage;
 
-public abstract class PDESourcePage
-	extends TextEditor
-	implements IPDEEditorPage, IGotoMarker {
-	public static final String PAGE_TITLE = "SourcePage.title";
-	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
-	public static final String ERROR_TITLE = "SourcePage.errorTitle";
-	private IContentOutlinePage outlinePage;
-	private boolean errorMode;
-	private PDEMultiPageEditor editor;
-	private boolean modelNeedsUpdating = false;
+public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
+	private PDEFormEditor editor;
 	private Control control;
-	private IDocumentListener documentListener;
-
-	class DocumentListener implements IDocumentListener {
-		public void documentAboutToBeChanged(DocumentEvent e) {
+	private int index;
+	private String id;
+	private InputContext inputContext;
+	private IContentOutlinePage outlinePage;
+	
+	/**
+	 * 
+	 */
+	public PDESourcePage(PDEFormEditor editor, String id, String title) {
+		this.id = id;
+		initialize(editor);
+		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
+		setRangeIndicator(new DefaultRangeIndicator());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
+	 */
+	public void initialize(FormEditor editor) {
+		this.editor = (PDEFormEditor)editor;
+	}
+	public void dispose() {
+		if (outlinePage != null) {
+			outlinePage.dispose();
+			outlinePage = null;
 		}
-		public void documentChanged(DocumentEvent e) {
-			if (isVisible()) {
-				setModelNeedsUpdating(true);
-			}
-		}
+		super.dispose();
 	}
 
-	public PDESourcePage(PDEMultiPageEditor editor) {
-		this.editor = editor;
-		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-		initializeDocumentListener();
+	protected void editorSaved() {
+		super.editorSaved();
 	}
 	
-	public boolean becomesInvisible(IFormPage newPage) {
-	if (errorMode || isModelNeedsUpdating()) {
-			boolean cleanModel = getEditor().updateModel();
-			if (cleanModel)
-				setModelNeedsUpdating(false);
-			boolean valid = getEditor().validateModelSemantics();
-			if (cleanModel == false || valid==false) {
-				warnErrorsInSource();
-				errorMode = true;
-				return false;
+	protected abstract ILabelProvider createOutlineLabelProvider();
+	protected abstract ITreeContentProvider createOutlineContentProvider();
+	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
+	protected ViewerSorter createViewerSorter() {
+		return null;
+	}
+	protected IContentOutlinePage createOutlinePage() {
+		SourceOutlinePage outline = new SourceOutlinePage(
+				(IEditingModel) getInputContext().getModel(),
+				createOutlineLabelProvider(), createOutlineContentProvider(),
+				createViewerSorter());
+		outline.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				outlineSelectionChanged(event);
 			}
-			errorMode = false;
+		});
+		getSelectionProvider().addSelectionChangedListener(outline);
+		return outline;
+	}
+
+	public IContentOutlinePage getContentOutline() {
+		if (outlinePage==null)
+			outlinePage = createOutlinePage();
+		return outlinePage;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
+	 */
+	public FormEditor getEditor() {
+		return editor;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#getManagedForm()
+	 */
+	public IManagedForm getManagedForm() {
+		// not a form page
+		return null;
+	}
+	protected void firePropertyChange(int type) {
+		if (type == PROP_DIRTY) {
+			editor.fireSaveNeeded(getEditorInput(), true);
+		} else
+			super.firePropertyChange(type);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
+	 */
+	public void setActive(boolean active) {
+		IContentOutlinePage outline = getContentOutline();
+		if (outline != null && outline instanceof IModelChangedListener) {
+			IModelChangedListener listener = (IModelChangedListener)outline;
+			IBaseModel model = getInputContext().getModel();
+			if (model instanceof IModelChangeProvider) {
+				if (active)
+					((IModelChangeProvider)model).addModelChangedListener(listener);
+				else
+					((IModelChangeProvider)model).removeModelChangedListener(listener);
+			}
 		}
-	unregisterGlobalActions();
-		//getSite().setSelectionProvider(getEditor());
+		if (active) {
+			// page becomes visible; notify the context
+			inputContext.setSourceEditingMode(true);
+		}
+		else {
+			// page becomes invisible; notify the context
+			inputContext.setSourceEditingMode(false);
+		}
+	}
+
+	public boolean canLeaveThePage() {
 		return true;
 	}
-	
-	public void becomesVisible(IFormPage oldPage) {
-		setModelNeedsUpdating(false);
-		if (oldPage instanceof PDEFormPage) {
-			selectObjectRange(((PDEFormPage) oldPage).getSelection());
-		}
-		registerGlobalActions();
-		//getSite().setSelectionProvider(getSelectionProvider());
-	}
 
-	public boolean contextMenuAboutToShow(IMenuManager manager) {
-		return false;
-	}
-
-	public abstract IContentOutlinePage createContentOutlinePage();
-	public void createControl(Composite parent) {
-		createPartControl(parent);
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()
+	 */
+	public boolean isActive() {
+		return this.equals(editor.getActivePageInstance());
 	}
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -101,211 +141,66 @@ public abstract class PDESourcePage
 		control = children[children.length - 1];
 		
 		WorkbenchHelp.setHelp(control, IHelpContextIds.MANIFEST_SOURCE_PAGE);
-
-		IDocument document =
-			getDocumentProvider().getDocument(getEditorInput());
-		document.addDocumentListener(documentListener);
-		errorMode = !getEditor().isModelCorrect(getEditor().getModel());
+		
+		//IDocument document =
+		//	getDocumentProvider().getDocument(getEditorInput());
 		//unregisterGlobalActions();
 		// Important - must reset the provider to the multi-page
 		// editor.
 		// See 32622
-		getSite().setSelectionProvider(getEditor());
+		//getSite().setSelectionProvider(getEditor());
 	}
-	
-	protected void unregisterGlobalActions() {
-		// A workaround for bug 27539
-		// Unregistering important actions from
-		// the key binding service allows
-		// global actions to handle accelerators 
-		// properly
-		IKeyBindingService service = getEditor().getSite().getKeyBindingService();
-		service.unregisterAction(getAction(ActionFactory.DELETE.getId()));
-		service.unregisterAction(getAction(ActionFactory.UNDO.getId()));
-		service.unregisterAction(getAction(ActionFactory.REDO.getId()));
-		service.unregisterAction(getAction(ActionFactory.CUT.getId()));
-		service.unregisterAction(getAction(ActionFactory.COPY.getId()));
-		service.unregisterAction(getAction(ActionFactory.PASTE.getId()));
-		service.unregisterAction(getAction(ActionFactory.SELECT_ALL.getId()));
-		service.unregisterAction(getAction(ActionFactory.FIND.getId()));
-		service.unregisterAction(getAction(IDEActionFactory.BOOKMARK.getId()));
-		service.unregisterAction(getAction(IDEActionFactory.ADD_TASK.getId()));
-	}
-	
-	protected void registerGlobalActions() {
-		IKeyBindingService service = getEditor().getSite().getKeyBindingService();
-		service.registerAction(getAction(ActionFactory.DELETE.getId()));
-		service.registerAction(getAction(ActionFactory.UNDO.getId()));
-		service.registerAction(getAction(ActionFactory.REDO.getId()));
-		service.registerAction(getAction(ActionFactory.CUT.getId()));
-		service.registerAction(getAction(ActionFactory.COPY.getId()));
-		service.registerAction(getAction(ActionFactory.PASTE.getId()));
-		service.registerAction(getAction(ActionFactory.SELECT_ALL.getId()));
-		service.registerAction(getAction(ActionFactory.FIND.getId()));
-		service.registerAction(getAction(IDEActionFactory.BOOKMARK.getId()));
-		service.registerAction(getAction(IDEActionFactory.ADD_TASK.getId()));
-	}
-	
-	public void dispose() {
-		IDocument document =
-			getDocumentProvider().getDocument(getEditorInput());
-		if (document != null)
-			document.removeDocumentListener(documentListener);
-		if (outlinePage != null) {
-			outlinePage.dispose();
-			outlinePage = null;
-		}
-		super.dispose();
-	}
-	protected void firePropertyChange(int type) {
-		if (type == PROP_DIRTY) {
-			getEditor().fireSaveNeeded();
-		} else
-			super.firePropertyChange(type);
-	}
-	public IContentOutlinePage getContentOutlinePage() {
-		if (outlinePage == null) {
-			outlinePage = createContentOutlinePage();
-		}
-		return outlinePage;
-	}
-	public Control getControl() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()
+	 */
+	public Control getPartControl() {
 		return control;
 	}
-	public PDEMultiPageEditor getEditor() {
-		if (editor.getEditorInput() != getEditorInput())
-			editor.setInput(getEditorInput());
-		return editor;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#getId()
+	 */
+	public String getId() {
+		return id;
 	}
-	public String getLabel() {
-		return getTitle();
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#getIndex()
+	 */
+	public int getIndex() {
+		return index;
 	}
-	public IPropertySheetPage getPropertySheetPage() {
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#setIndex(int)
+	 */
+	public void setIndex(int index) {
+		this.index = index;
 	}
-	public String getTitle() {
-		return PDEPlugin.getResourceString(PAGE_TITLE);
-	}
-	public void init(IEditorSite site, IEditorInput input)
-		throws PartInitException {
-		setDocumentProvider(getEditor().getDocumentProvider());
-		super.init(site, input);
-	}
-	public boolean isEditable() {
-		return getEditor().isEditable();
-	}
-	public boolean isSource() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#isSource()
+	 */
+	public boolean isEditor() {
 		return true;
 	}
-	public boolean isVisible() {
-		return editor.getCurrentPage() == this;
+	/**
+	 * @return Returns the inputContext.
+	 */
+	public InputContext getInputContext() {
+		return inputContext;
 	}
-
-	public void openTo(Object object) {
+	/**
+	 * @param inputContext The inputContext to set.
+	 */
+	public void setInputContext(InputContext inputContext) {
+		this.inputContext = inputContext;
+		setDocumentProvider(inputContext.getDocumentProvider());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
+	 */
+	public boolean selectReveal(Object object) {
 		if (object instanceof IMarker) {
-			IDE.gotoMarker(this, (IMarker) object);
+			IDE.gotoMarker(this, (IMarker)object);
+			return true;
 		}
+		return false;
 	}
-
-protected void selectObjectRange(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			int start = 0;
-			int stop = 0;
-			// Compute the entire range
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				ISourceObject sobj = null;
-
-				if (obj instanceof ISourceObject)
-					sobj = (ISourceObject) obj;
-				if (obj instanceof IAdaptable) {
-					IAdaptable adaptable = (IAdaptable) obj;
-					sobj =
-						(ISourceObject) adaptable.getAdapter(
-							ISourceObject.class);
-				}
-				if (sobj != null) {
-					if (start == 0) {
-						start = sobj.getStartLine() - 1;
-					} else {
-						start = Math.min(start, sobj.getStartLine() - 1);
-					}
-					stop = Math.max(stop, sobj.getStopLine() - 1);
-				}
-			}
-			if (start > 0) {
-				IDocument document =
-					getDocumentProvider().getDocument(getEditorInput());
-				if (document == null)
-					return;
-				try {
-					//int offset = editor.getRealStartOffset(document.getLineOffset(start-1));
-					int startOffset = document.getLineOffset(start);
-					int stopOffset =
-						document.getLineOffset(stop)
-							+ document.getLineLength(stop);
-					selectAndReveal(startOffset, stopOffset - startOffset);
-				} catch (BadLocationException e) {
-				}
-			}
-		}
-	}
-
-	public boolean performGlobalAction(String id) {
-		return true;
-	}
-	public String toString() {
-		return getTitle();
-	}
-	public void update() {
-	}
-	protected void warnErrorsInSource() {
-		Display.getCurrent().beep();
-		String title = editor.getSite().getRegisteredName();
-		MessageDialog.openError(
-			PDEPlugin.getActiveWorkbenchShell(),
-			title,
-			PDEPlugin.getResourceString(ERROR_MESSAGE));
-	}
-
-	protected void createActions() {
-		PDEEditorContributor contributor = getEditor().getContributor();
-		super.createActions();
-		setAction(ActionFactory.SAVE.getId(), contributor.getSaveAction());
-	}
-
-	public void close(boolean save) {
-		editor.close(save);
-	}
-
-	public boolean canPaste(Clipboard clipboard) {
-		return true;
-	}
-	public void setFocus() {
-		Control control = getControl();
-		if (control != null)
-			control.setFocus();
-	}
-
-	public boolean containsError() {
-		return errorMode;
-	}
-
-	protected boolean isModelNeedsUpdating() {
-		return modelNeedsUpdating;
-	}
-
-	protected void setModelNeedsUpdating(boolean modelNeedsUpdating) {
-		this.modelNeedsUpdating= modelNeedsUpdating;
-	}
-
-	protected void setDocumentListener(IDocumentListener documentListener) {
-		this.documentListener= documentListener;
-	}
-
-	protected void initializeDocumentListener() {
-		setDocumentListener(new DocumentListener());
-	}
-
 }

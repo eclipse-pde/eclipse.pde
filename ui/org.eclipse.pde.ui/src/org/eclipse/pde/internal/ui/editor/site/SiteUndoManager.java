@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.site.SiteObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 
 /**
@@ -22,10 +24,7 @@ import org.eclipse.pde.internal.ui.editor.*;
  * @author
  */
 public class SiteUndoManager extends ModelUndoManager {
-	ISiteModel model;
-	ISiteBuildModel buildModel;
-
-	public SiteUndoManager(PDEMultiPageEditor editor) {
+	public SiteUndoManager(SiteEditor editor) {
 		super(editor);
 		setUndoLevelLimit(30);
 	}
@@ -35,24 +34,25 @@ public class SiteUndoManager extends ModelUndoManager {
 	 */
 
 	public void connect(IModelChangeProvider provider) {
-		model = (ISiteModel) provider;
-		buildModel = model.getBuildModel();
+		ISiteModel model = (ISiteModel) provider;
+		ISiteBuildModel buildModel = model.getBuildModel();
 		super.connect(provider);
 		super.connect(buildModel);
 	}
 	
 	public void disconnect(IModelChangeProvider provider) {
-		model = (ISiteModel)provider;
-		buildModel = model.getBuildModel();
+		ISiteModel model = (ISiteModel)provider;
+		ISiteBuildModel buildModel = model.getBuildModel();
 		super.disconnect(provider);
 		super.disconnect(buildModel);
 	}
 
 	protected String getPageId(Object obj) {
-		return SiteEditor.FEATURES_PAGE;
+		return FeaturesPage.PAGE_ID;
 	}
 
 	protected void execute(IModelChangedEvent event, boolean undo) {
+		ISiteModel model = (ISiteModel)event.getChangeProvider();
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
@@ -60,15 +60,15 @@ public class SiteUndoManager extends ModelUndoManager {
 		switch (type) {
 			case IModelChangedEvent.INSERT :
 				if (undo)
-					executeRemove(elements);
+					executeRemove(model, elements);
 				else
-					executeAdd(elements);
+					executeAdd(model, elements);
 				break;
 			case IModelChangedEvent.REMOVE :
 				if (undo)
-					executeAdd(elements);
+					executeAdd(model, elements);
 				else
-					executeRemove(elements);
+					executeRemove(model, elements);
 				break;
 			case IModelChangedEvent.CHANGE :
 				if (undo)
@@ -86,7 +86,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeAdd(Object[] elements) {
+	private void executeAdd(ISiteModel model, Object[] elements) {
 		ISite site = model.getSite();
 		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 
@@ -113,7 +113,7 @@ public class SiteUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeRemove(Object[] elements) {
+	private void executeRemove(ISiteModel model, Object[] elements) {
 		ISite site = model.getSite();
 		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 

@@ -10,44 +10,53 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import java.util.*;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.views.contentoutline.*;
 
 public class PDEMultiPageContentOutline
-	implements IContentOutlinePage, ISelectionChangedListener {
+	implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener {
 	private PageBook pagebook;
-	private PDEMultiSelectionProvider selectionProvider;
+	private ISelection selection;
+	private ArrayList listeners;
 	private IContentOutlinePage currentPage;
-	private boolean disposed;
+	private IContentOutlinePage emptyPage;
 
-	public PDEMultiPageContentOutline(PDEMultiPageEditor editor) {
-		selectionProvider = new PDEMultiSelectionProvider();
+	public PDEMultiPageContentOutline() {
+		listeners = new ArrayList();
 	}
-	public void addFocusListener(
-		org.eclipse.swt.events.FocusListener listener) {
+	
+	public void addFocusListener(FocusListener listener) {
 	}
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionProvider.addSelectionChangedListener(listener);
+		listeners.add(listener);
 	}
 	public void createControl(Composite parent) {
 		pagebook = new PageBook(parent, SWT.NONE);
 		if (currentPage != null)
 			setPageActive(currentPage);
 	}
+
 	public void dispose() {
 		if (pagebook != null && !pagebook.isDisposed())
 			pagebook.dispose();
+		if (emptyPage!=null) {
+			emptyPage.dispose();
+			emptyPage=null;
+		}
 		pagebook = null;
-		disposed = true;
+		listeners = null;
 	}
 
 	public boolean isDisposed() {
-		return disposed;
+		return listeners==null;
 	}
 
 	public Control getControl() {
@@ -57,7 +66,7 @@ public class PDEMultiPageContentOutline
 		return pagebook;
 	}
 	public ISelection getSelection() {
-		return selectionProvider.getSelection();
+		return selection;
 	}
 	public void makeContributions(
 		IMenuManager menuManager,
@@ -67,18 +76,27 @@ public class PDEMultiPageContentOutline
 	public void removeFocusListener(FocusListener listener) {
 	}
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionProvider.removeSelectionChangedListener(listener);
+		listeners.remove(listener);
 	}
 	public void selectionChanged(SelectionChangedEvent event) {
-		selectionProvider.setSelection(event.getSelection());
+		setSelection(event.getSelection());
 	}
-	public void setActionBars(org.eclipse.ui.IActionBars actionBars) {
+
+	public void setActionBars(IActionBars actionBars) {
 	}
 	public void setFocus() {
 		if (currentPage != null)
 			currentPage.setFocus();
 	}
+	private IContentOutlinePage getEmptyPage() {
+		if (emptyPage==null)
+			emptyPage = new EmptyOutlinePage();
+		return emptyPage;
+	}
 	public void setPageActive(IContentOutlinePage page) {
+		if (page==null) {
+			page = getEmptyPage();
+		}
 		if (currentPage != null) {
 			currentPage.removeSelectionChangedListener(this);
 		}
@@ -93,7 +111,6 @@ public class PDEMultiPageContentOutline
 			// first time
 			page.createControl(pagebook);
 			control = page.getControl();
-
 		}
 		pagebook.showPage(control);
 		this.currentPage = page;
@@ -102,6 +119,11 @@ public class PDEMultiPageContentOutline
 	 * Set the selection.
 	 */
 	public void setSelection(ISelection selection) {
-		selectionProvider.setSelection(selection);
+		this.selection =selection;
+		SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
+		for (int i=0; i<listeners.size(); i++) {
+			((ISelectionChangedListener)listeners.get(i)).selectionChanged(e);
+		}	
 	}
+
 }

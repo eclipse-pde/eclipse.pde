@@ -10,28 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.io.*;
+import java.io.File;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.build.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
-public class FeatureEditor extends PDEMultiPageXMLEditor {
-	public static final String FEATURE_PAGE = "ComponentPage";
-	public static final String INFO_PAGE = "InfoPage";
-	public static final String REFERENCE_PAGE = "ReferencePage";
-	public static final String ADVANCED_PAGE = "AdvancedPage";
-	public static final String SOURCE_PAGE = "SourcePage";
+public class FeatureEditor extends MultiSourceEditor {
 	public static final String UNRESOLVED_TITLE =
 		"FeatureEditor.Unresolved.title";
 	public static final String VERSION_TITLE = "FeatureEditor.Version.title";
@@ -50,119 +47,179 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	private boolean storageModel=false;
 
 	public FeatureEditor() {
-		super();
+	}
+	protected void createResourceContexts(InputContextManager manager,
+			IFileEditorInput input) {
+		IFile file = input.getFile();
+		IProject project = file.getProject();
+		IFile buildFile = null;
+		IFile featureFile = null;
+
+		String name = file.getName().toLowerCase();
+		if (name.equals("feature.xml")) {
+			featureFile = file;
+			buildFile = project.getFile("build.properties");
+		} else if (name.equals("build.properties")) {
+			buildFile = file;
+			featureFile = createFeatureFile(project);
+		}
+		if (featureFile.exists()) {
+			FileEditorInput in = new FileEditorInput(featureFile);
+			manager.putContext(in, new FeatureInputContext(this, in,
+					file == featureFile));
+		}
+		if (buildFile.exists()) {
+			FileEditorInput in = new FileEditorInput(buildFile);
+			manager.putContext(in, new BuildInputContext(this, in,
+					file == buildFile));
+		}
+		manager.monitorFile(featureFile);
+		manager.monitorFile(buildFile);
+	}
+	
+	protected InputContextManager createInputContextManager() {
+		FeatureInputContextManager manager =  new FeatureInputContextManager();
+		manager.setUndoManager(new FeatureUndoManager(this));
+		return manager;
+	}
+	
+	public void monitoredFileAdded(IFile file) {
+		String name = file.getName();
+		 if (name.equalsIgnoreCase("feature.xml")) {
+			IEditorInput in = new FileEditorInput(file);
+			inputContextManager.putContext(in, new FeatureInputContext(this, in, false));						
+		}
+		else if (name.equalsIgnoreCase("build.properties")) {
+			IEditorInput in = new FileEditorInput(file);
+			inputContextManager.putContext(in, new BuildInputContext(this, in, false));			
+		}
 	}
 
-	protected IModelUndoManager createModelUndoManager() {
-		return new FeatureUndoManager(this);
+	public boolean monitoredFileRemoved(IFile file) {
+		//TODO may need to check with the user if there
+		//are unsaved changes in the model for the
+		//file that just got removed under us.
+		return true;
+	}
+	public void contextAdded(InputContext context) {
+		addSourcePage(context.getId());
+	}
+	public void contextRemoved(InputContext context) {
+		IFormPage page = findPage(context.getId());
+		if (page!=null)
+			removePage(context.getId());
+	}
+
+	protected void createSystemFileContexts(InputContextManager manager,
+			SystemFileEditorInput input) {
+		File file = (File) input.getAdapter(File.class);
+		File buildFile = null;
+		File featureFile = null;
+		String name = file.getName().toLowerCase();
+		if (name.equals("feature.xml")) {
+			featureFile = file;
+			File dir = file.getParentFile();
+			buildFile = new File(dir, "build.properties");
+		} else if (name.equals("build.properties")) {
+			buildFile = file;
+			File dir = file.getParentFile();
+			featureFile = createFeatureFile(dir);
+		}
+		if (featureFile.exists()) {
+			SystemFileEditorInput in = new SystemFileEditorInput(featureFile);
+			manager.putContext(in, new FeatureInputContext(this, in,
+					file == featureFile));
+		}
+		if (buildFile.exists()) {
+			SystemFileEditorInput in = new SystemFileEditorInput(buildFile);
+			manager.putContext(in, new BuildInputContext(this, in,
+					file == buildFile));
+		}
+	}
+	private File createFeatureFile(File dir) {
+		File pluginFile = new File(dir, "plugin.xml");
+		return pluginFile;
+	}
+	private IFile createFeatureFile(IProject project) {
+		IFile featureFile = project.getFile("feature.xml");
+		return featureFile;
+	}
+	protected void createStorageContexts(InputContextManager manager,
+			IStorageEditorInput input) {
+		String name = input.getName().toLowerCase();
+		if (name.equals("build.properties")) {
+			manager.putContext(input, new BuildInputContext(this, input, true));
+		} else if (name.equals("feature.xml")) {
+			manager.putContext(input, new FeatureInputContext(this, input, true));
+		}
 	}
 
 	public boolean canCopy(ISelection selection) {
 		return true;
 	}
-	protected Object createModel(Object input) throws CoreException {
-		if (input instanceof IFile)
-			return createResourceModel((IFile) input);
-		if (input instanceof IStorage)
-			return createStorageModel((IStorage)input);
+	
+	protected void addPages() {
+		try {
+			addPage(new FeatureFormPage(this, PDEPlugin.getResourceString(FEATURE_PAGE_TITLE)));
+			addPage(new InfoFormPage(this, PDEPlugin.getResourceString(INFO_PAGE_TITLE)));
+			addPage(new FeatureReferencePage(this, PDEPlugin.getResourceString(REFERENCE_PAGE_TITLE)));
+			addPage(new FeatureAdvancedPage(this, PDEPlugin.getResourceString(ADVANCED_PAGE_TITLE)));			
+			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+				addPage(new BuildPage(this));			
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
+		addSourcePage(FeatureInputContext.CONTEXT_ID);
+		addSourcePage(BuildInputContext.CONTEXT_ID);
+	}
+
+	protected String computeInitialPageId() {
+		String firstPageId = super.computeInitialPageId();
+		if (firstPageId == null) {
+			InputContext primary = inputContextManager.getPrimaryContext();
+			if (primary.getId().equals(FeatureInputContext.CONTEXT_ID))
+				firstPageId = FeatureFormPage.PAGE_ID;
+			if (firstPageId == null)
+				firstPageId = FeatureFormPage.PAGE_ID;
+		}
+		return firstPageId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
+	 */
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
+			return new FeatureSourcePage(editor, title, name);
+		if (contextId.equals(BuildInputContext.CONTEXT_ID))
+			return new BuildSourcePage(editor, title, name);
+		return super.createSourcePage(editor, title, name, contextId);
+	}
+	
+	protected IContentOutlinePage createContentOutline() {
+		return new FeatureOutlinePage(this);
+	}
+	
+	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
 		return null;
 	}
-	protected void createPages() {
-		firstPageId = FEATURE_PAGE;
-		formWorkbook.setFirstPageSelected(false);
-		FeatureFormPage featurePage =
-			new FeatureFormPage(
-				this,
-				PDEPlugin.getResourceString(FEATURE_PAGE_TITLE));
-		FeatureReferencePage referencePage =
-			new FeatureReferencePage(
-				featurePage,
-				PDEPlugin.getResourceString(REFERENCE_PAGE_TITLE));
-		InfoFormPage infoPage =
-			new InfoFormPage(
-				featurePage,
-				PDEPlugin.getResourceString(INFO_PAGE_TITLE));
-		FeatureAdvancedPage advancedPage =
-			new FeatureAdvancedPage(
-				featurePage,
-				PDEPlugin.getResourceString(ADVANCED_PAGE_TITLE));
-		addPage(FEATURE_PAGE, featurePage);
-		addPage(INFO_PAGE, infoPage);
-		addPage(REFERENCE_PAGE, referencePage);
-		addPage(ADVANCED_PAGE, advancedPage);
-		addPage(SOURCE_PAGE, new FeatureSourcePage(this));
-	}
-	private IFeatureModel createResourceModel(IFile file)
-		throws CoreException {
-		InputStream stream = null;
-		stream = file.getContents(false);
 
-		WorkspaceModelManager provider =
-			PDECore.getDefault().getWorkspaceModelManager();
-		IFeatureModel model = (IFeatureModel) provider.getModel(file);
-		//boolean cleanModel = true;
-		try {
-			model.load(stream, false);
-			//checkStaleReferences(model);
-		} catch (CoreException e) {
-			//cleanModel = false;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
-		}
-		//return cleanModel ? model : null;
-		return model;
-	}
-	private IFeatureModel createStorageModel(IStorage storage) {
-		InputStream stream = null;
-		try {
-			stream = storage.getContents();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return null;
-		}
-		ExternalFeatureModel model = new ExternalFeatureModel();
-		model.setInstallLocation("");
-		try {
-			model.load(stream, false);
-		} catch (CoreException e) {
-			// Errors in the file
-			return null;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-		}
-		storageModel=true;
-		return model;
-	}
-	public void dispose() {
-		super.dispose();
-		IModel model = (IModel) getModel();
-		if (storageModel)
-			model.dispose();
-	}
-
-	public IPDEEditorPage getHomePage() {
-		return getPage(FEATURE_PAGE);
-	}
-	protected String getSourcePageId() {
-		return SOURCE_PAGE;
-	}
 	public String getTitle() {
-		if (!isModelCorrect(getModel()))
+		if (!isModelCorrect(getAggregateModel()))
 			return super.getTitle();
-		IFeatureModel model = (IFeatureModel) getModel();
+		IFeatureModel model = (IFeatureModel) getAggregateModel();
 		String name = model.getFeature().getLabel();
 		if (name == null)
 			return super.getTitle();
 		return model.getResourceString(name);
 	}
+
+	protected boolean isModelCorrect(Object model) {
+		return model != null ? ((IFeatureModel) model).isValid() : false;
+	}
 	protected boolean hasKnownTypes() {
 		try {
-			TransferData[] types = clipboard.getAvailableTypes();
+			TransferData[] types = getClipboard().getAvailableTypes();
 			Transfer[] transfers =
 				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
 			for (int i = 0; i < types.length; i++) {
@@ -175,52 +232,15 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		}
 		return false;
 	}
-	protected boolean isModelDirty(Object model) {
-		return model != null
-			&& model instanceof IEditable
-			&& model instanceof IModel
-			&& ((IModel) model).isEditable()
-			&& ((IEditable) model).isDirty();
-	}
-	protected boolean isModelCorrect(Object model) {
-		return model != null ? ((IFeatureModel) model).isValid() : false;
-	}
-	protected boolean isValidContentType(IEditorInput input) {
-		String name = input.getName().toLowerCase();
-		if (input instanceof IStorageEditorInput
-			&& !(input instanceof IFileEditorInput)) {
-			if (name.startsWith("feature.xml"))
-				return true;
-		} else {
-			if (name.equals("feature.xml"))
-				return true;
-		}
-		return false;
-	}
-	protected boolean updateModel() {
-		IFeatureModel model = (IFeatureModel) getModel();
-		IDocument document =
-			getDocumentProvider().getDocument(getEditorInput());
-		boolean cleanModel = true;
-		String text = document.get();
-		try {
-			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8"));
-			try {
-				model.reload(stream, false);
-			} catch (CoreException e) {
-				cleanModel = false;
-			}
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		} catch (UnsupportedEncodingException e) {
-			PDEPlugin.logException(e);
-		}
-		return cleanModel;
-	}
+
 	public void updateTitle() {
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
+	public Object getAdapter(Class key) {
+		//No property sheet needed - block super
+		if (key.equals(IPropertySheetPage.class)) {
+			return null;
+		}
+		return super.getAdapter(key);
+	}	
 }

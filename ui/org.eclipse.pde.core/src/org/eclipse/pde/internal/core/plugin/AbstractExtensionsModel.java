@@ -61,18 +61,6 @@ public abstract class AbstractExtensionsModel
 
 	public synchronized void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
-		//if (XMLCore.NEW_CODE_PATHS) {
-		//	getDocumentModel().load(stream, outOfSync);
-		//} else {
-			boolean savedValue = XMLCore.NEW_CODE_PATHS;
-			XMLCore.NEW_CODE_PATHS = false;
-			loadOrig(stream, outOfSync);
-			XMLCore.NEW_CODE_PATHS = savedValue;
-		//}
-	}
-	
-	private synchronized void loadOrig(InputStream stream, boolean outOfSync)
-		throws CoreException {
 
 		if (extensions == null) {
 			extensions = (Extensions) createExtensions();
@@ -96,15 +84,8 @@ public abstract class AbstractExtensionsModel
 		Node extensionsNode = doc.getDocumentElement();
 		extensions.load(extensionsNode, lineTable);
 	}
+
 	public void reload(InputStream stream, boolean outOfSync)
-		throws CoreException {
-		//if (XMLCore.NEW_CODE_PATHS) {
-		//	getDocumentModel().reload(stream, outOfSync);
-		//} else {
-			reloadOrig(stream, outOfSync);
-		//}
-	}
-	private void reloadOrig(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(

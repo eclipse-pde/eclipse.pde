@@ -15,9 +15,9 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
+import org.eclipse.pde.internal.ui.codegen.*;
+import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.templates.TemplateEditorInput;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -277,22 +277,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		final IWorkbenchPart focusPart = page.getActivePart();
 		 ww.getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				try {
-					IFile file = (IFile) fModel.getUnderlyingResource();
-					if (focusPart instanceof ISetSelectionTarget) {
-						ISelection selection = new StructuredSelection(file);
-						((ISetSelectionTarget) focusPart)
-								.selectReveal(selection);
-					}
-					String editorId = fData instanceof IFragmentFieldData
-							? PDEPlugin.FRAGMENT_EDITOR_ID
-							: PDEPlugin.MANIFEST_EDITOR_ID;
-					ww.getActivePage().openEditor(
-							new TemplateEditorInput(file,
-									ManifestEditor.TEMPLATE_PAGE), editorId);
-				} catch (PartInitException e) {
-					PDEPlugin.logException(e);
+				IFile file = (IFile) fModel.getUnderlyingResource();
+				if (focusPart instanceof ISetSelectionTarget) {
+					ISelection selection = new StructuredSelection(file);
+					((ISetSelectionTarget) focusPart)
+							.selectReveal(selection);
 				}
+				ManifestEditor.openPluginEditor(fModel.getPluginBase());
 			}
 		});
 	}

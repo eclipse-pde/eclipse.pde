@@ -1,200 +1,153 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+/*
+ * Created on Jan 27, 2004
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 package org.eclipse.pde.internal.ui.editor;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.jface.action.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
-import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
-import org.eclipse.update.ui.forms.internal.IFormPage;
-
-public abstract class PDEFormPage
-	extends EditorPart
-	implements IPDEEditorPage {
-	private AbstractSectionForm form;
-	private Control control;
-	private PDEMultiPageEditor editor;
-	private IContentOutlinePage contentOutlinePage;
-	private IPropertySheetPage propertySheetPage;
-	private org.eclipse.jface.viewers.ISelection selection;
-
-	public PDEFormPage(PDEMultiPageEditor editor, String title) {
-		this(editor, title, null);
+/**
+ * @author dejan
+ * 
+ * To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
+ */
+public abstract class PDEFormPage extends FormPage {
+	/**
+	 * @param editor
+	 * @param id
+	 * @param title
+	 */
+	public PDEFormPage(FormEditor editor, String id, String title) {
+		super(editor, id, title);
 	}
 
-	public PDEFormPage(
-		PDEMultiPageEditor editor,
-		String title,
-		AbstractSectionForm form) {
-		this.editor = editor;
-		if (form == null)
-			form = createForm();
-		this.form = form;
-		if (isWhiteBackground())
-			form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_BANNER));
-		setTitle(title);
-	}
-
-	private boolean isWhiteBackground() {
-		Color bg = form.getFactory().getBackgroundColor();
-		return (bg.getRed() == 255 && bg.getGreen() == 255 && bg.getBlue() == 255);
-	}
-	public boolean becomesInvisible(IFormPage newPage) {
-		if (getModel() instanceof IModel && ((IModel) getModel()).isEditable())
-			form.commitChanges(false);
-		getEditor().setSelection(new StructuredSelection());
-		if (newPage instanceof PDESourcePage) {
-			getEditor().updateDocument();
+	protected void createFormContent(IManagedForm managedForm) {
+		final ScrolledForm form = managedForm.getForm();
+		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
+		//		PDEPluginImages.DESC_FORM_BANNER));
+		final String href = getHelpResource();
+		if (href != null) {
+			IToolBarManager manager = form.getToolBarManager();
+			Action helpAction = new Action("help") {
+				public void run() {
+					BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
+						public void run() {
+							WorkbenchHelp.displayHelpResource(href);
+						}
+					});
+				}
+			};
+			helpAction.setToolTipText("Help");
+			helpAction.setImageDescriptor(PlatformUI.getWorkbench()
+					.getSharedImages().getImageDescriptor(
+							ISharedImages.IMG_OBJS_INFO_TSK));
+			manager.add(helpAction);
+			form.updateToolBar();
 		}
-		return true;
 	}
-	public void becomesVisible(IFormPage oldPage) {
-		update();
-		setFocus();
-		getEditor().getContributor().updateSelectableActions(null);
+	public PDEFormEditor getPDEEditor() {
+		return (PDEFormEditor) getEditor();
 	}
-	public boolean contextMenuAboutToShow(IMenuManager manager) {
-		return true;
-	}
-	public abstract IContentOutlinePage createContentOutlinePage();
-	public void createControl(Composite parent) {
-		createPartControl(parent);
-	}
-	protected abstract AbstractSectionForm createForm();
-
-	public void createPartControl(Composite parent) {
-		control = form.createControl(parent);
-		control.setMenu(editor.getContextMenu());
-		form.initialize(getModel());
-	}
-	public IPropertySheetPage createPropertySheetPage() {
+	protected String getHelpResource() {
 		return null;
 	}
-	public void dispose() {
-		form.dispose();
-		if (contentOutlinePage != null)
-			contentOutlinePage.dispose();
-		if (propertySheetPage != null)
-			propertySheetPage.dispose();
+	public IBaseModel getModel() {
+		return getPDEEditor().getAggregateModel();
 	}
-	public void doSave(IProgressMonitor monitor) {
+	public void contextMenuAboutToShow(IMenuManager menu) {
 	}
-	public void doSaveAs() {
+	
+	protected Control getFocusControl() {
+		Control control = getManagedForm().getForm();
+		if (control == null || control.isDisposed())
+			return null;
+		Display display = control.getDisplay();
+		Control focusControl = display.getFocusControl();
+		if (focusControl == null || focusControl.isDisposed())
+			return null;
+		return focusControl;
 	}
+	public boolean performGlobalAction(String actionId) {
+		Control focusControl = getFocusControl();
+		if (focusControl == null)
+			return false;
 
-	public IAction getAction(String id) {
-		return editor.getAction(id);
-	}
-	public IContentOutlinePage getContentOutlinePage() {
-		if (contentOutlinePage == null
-			|| (contentOutlinePage.getControl() != null
-				&& contentOutlinePage.getControl().isDisposed())) {
-			contentOutlinePage = createContentOutlinePage();
-		}
-		return contentOutlinePage;
-	}
-	public Control getControl() {
-		return control;
-	}
-	public PDEMultiPageEditor getEditor() {
-		return editor;
-	}
-	public AbstractSectionForm getForm() {
-		return form;
-	}
-	public String getLabel() {
-		return getTitle();
-	}
-	public Object getModel() {
-		return getEditor().getModel();
-	}
-	public IPropertySheetPage getPropertySheetPage() {
-		if (propertySheetPage == null
-			|| (propertySheetPage.getControl() != null
-				&& propertySheetPage.getControl().isDisposed())) {
-			propertySheetPage = createPropertySheetPage();
-		}
-		return propertySheetPage;
-	}
-	public org.eclipse.jface.viewers.ISelection getSelection() {
-		return selection;
-	}
-	public String getStatusText() {
-		IEditorInput input = getEditor().getEditorInput();
-		String status = "";
-
-		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) input).getFile();
-			status = file.getFullPath().toString() + IPath.SEPARATOR;
-		}
-		status += getTitle();
-
-		return status;
-	}
-	public void gotoMarker(IMarker marker) {
-	}
-	public void init(IEditorSite site, IEditorInput input)
-		throws PartInitException {
-	}
-	public boolean isDirty() {
+		if (canPerformDirectly(actionId, focusControl))
+			return true;
+		PDESection targetSection = getFocusSection();
+		if (targetSection!=null)
+			return targetSection.doGlobalAction(actionId);
 		return false;
-	}
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-	public boolean isSource() {
-		return false;
-	}
-	public boolean isVisible() {
-		return getEditor().getCurrentPage() == this;
-	}
-	public void openTo(Object object) {
-		getForm().expandTo(object);
-	}
-	public boolean performGlobalAction(String id) {
-		return getForm().doGlobalAction(id);
-	}
-	public void setFocus() {
-		getForm().setFocus();
-	}
-	public void setSelection(ISelection newSelection) {
-		selection = newSelection;
-		getEditor().setSelection(selection);
-	}
-	public String toString() {
-		return getTitle();
-	}
-	public void update() {
-		form.update();
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		return form.canPaste(clipboard);
+		PDESection targetSection = getFocusSection();
+		if (targetSection != null) {
+			return targetSection.canPaste(clipboard);
+		}
+		return false;
 	}
+	
+	private PDESection getFocusSection() {
+		Control focusControl = getFocusControl();
+		if (focusControl == null)
+			return null;
+		Composite parent = focusControl.getParent();
+		PDESection targetSection = null;
+		while (parent != null) {
+			Object data = parent.getData("part");
+			if (data != null && data instanceof PDESection) {
+				targetSection = (PDESection) data;
+				break;
+			}
+			parent = parent.getParent();
+		}
+		return targetSection;
+	}
+	public IPropertySheetPage getPropertySheetPage() {
+		return null;
+	}
+	protected boolean canPerformDirectly(String id, Control control) {
+		if (control instanceof Text) {
+			Text text = (Text) control;
+			if (id.equals(ActionFactory.CUT.getId())) {
+				text.cut();
+				return true;
+			}
+			if (id.equals(ActionFactory.COPY.getId())) {
+				text.copy();
+				return true;
+			}
+			if (id.equals(ActionFactory.PASTE.getId())) {
+				text.paste();
+				return true;
+			}
+			if (id.equals(ActionFactory.SELECT_ALL.getId())) {
+				text.selectAll();
+				return true;
+			}
+			if (id.equals(ActionFactory.DELETE.getId())) {
+				int count = text.getSelectionCount();
+				if (count == 0) {
+					int caretPos = text.getCaretPosition();
+					text.setSelection(caretPos, caretPos + 1);
+				}
+				text.insert("");
+				return true;
+			}
+		}
+		return false;
+	}	
 }

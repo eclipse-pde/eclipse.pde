@@ -29,15 +29,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- */
+
 public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -106,15 +101,15 @@ public class SourcePreferencePage
 			Composite parent,
 			String label,
 			int index,
-			FormWidgetFactory factory) {
-			Button button = super.createButton(parent, label, index, factory);
+			FormToolkit toolkit) {
+			Button button = super.createButton(parent, label, index, toolkit);
 			SWTUtil.setButtonDimensionHint(button);
 			return button;
 		}
 		protected void createMainLabel(
 			Composite parent,
 			int span,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			Label label = new Label(parent, SWT.NULL);
 			label.setText(PDEPlugin.getResourceString(KEY_LABEL));
 			GridData gd = new GridData(GridData.FILL);

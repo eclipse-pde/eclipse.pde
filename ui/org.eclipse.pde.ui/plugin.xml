@@ -35,10 +35,9 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.update.ui.forms"/>
+      <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ant.ui"/>
       <import plugin="org.eclipse.jdt.junit"/>
-      <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.ui.cheatsheets"/>
    </requires>
@@ -452,111 +451,50 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+            name="%editors.pluginManifest.name"
             default="true"
-            name="%editors.pluginManifest.name"
-            icon="icons/obj16/plugin_mf_obj.gif"
-            filenames="plugin.xml"
-            class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
-            id="org.eclipse.pde.ui.manifestEditor">
-      </editor>
-<!--
-      <editor
-            name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
             filenames="plugin.xml,fragment.xml,MANIFEST.MF"
-            contributorClass="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditorContributor"
-            class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
+            class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
       </editor>
--->
       <editor
+            name="%editors.schema.name"
             default="true"
-            name="%editors.fragmentManifest.name"
-            icon="icons/obj16/frgmt_mf_obj.gif"
-            filenames="fragment.xml"
-            class="org.eclipse.pde.internal.ui.editor.manifest.FragmentManifestEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
-            id="org.eclipse.pde.ui.fragmentEditor">
-      </editor>
-      <editor
-            default="false"
-            name="%editors.schema.name"
-            extensions="exsd,mxsd"
             icon="icons/obj16/schema_obj.gif"
-            class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
+            extensions="exsd,mxsd"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
-            id="org.eclipse.pde.ui.schemaEditor">
-      </editor>
-<!--
-      <editor
-            name="%editors.schema.name"
-            default="false"
-            icon="icons/obj16/schema_obj.gif"
-            extensions="exsd,mxsd"
-            contributorClass="org.eclipse.pde.internal.ui.neweditor.schema.SchemaEditorContributor"
-            class="org.eclipse.pde.internal.ui.neweditor.schema.SchemaEditor"
+            class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             id="org.eclipse.pde.ui.newSchemaEditor">
       </editor>
--->
       <editor
+            name="%editors.buildProperties.name"
             default="true"
-            name="%editors.buildProperties.name"
             icon="icons/obj16/build_exec.gif"
-            filenames="build.properties, delta.properties"
-            class="org.eclipse.pde.internal.ui.editor.build.BuildPropertiesEditor"
+            filenames="build.properties"
+            class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
-            id="org.eclipse.pde.ui.buildEditor">
-      </editor>
-<!--
-      <editor
-            default="false"
-            name="%editors.buildProperties.name"
-            icon="icons/obj16/build_exec.gif"
-            filenames="build.properties, delta.properties"
-            class="org.eclipse.pde.internal.ui.neweditor.build.BuildEditor"
-            contributorClass="org.eclipse.pde.internal.ui.neweditor.build.BuildEditorContributor"
             id="org.eclipse.pde.ui.newBuildEditor">
       </editor>
--->
       <editor
-            default="true"
             name="%editors.featureManifest.name"
+            default="true"
             icon="icons/obj16/ftr_xml_obj.gif"
             filenames="feature.xml"
-            class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
+            class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             id="org.eclipse.pde.ui.featureEditor">
       </editor>
-<!--
       <editor
-            name="%editors.featureManifest.name"
-            icon="icons/obj16/ftr_xml_obj.gif"
-            filenames="feature.xml"
-            contributorClass="org.eclipse.pde.internal.ui.neweditor.feature.FeatureEditorContributor"
-            class="org.eclipse.pde.internal.ui.neweditor.feature.FeatureEditor"
-            id="org.eclipse.pde.ui.newFeatureEditor">
-      </editor>
--->
-      <editor
-            default="true"
             name="%editors.siteManifest.name"
+            default="true"
             icon="icons/obj16/site_xml_obj.gif"
             filenames="site.xml"
-            class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
+            class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
-<!--
-      <editor
-            name="%editors.siteManifest.name"
-            icon="icons/obj16/site_xml_obj.gif"
-            filenames="site.xml"
-            contributorClass="org.eclipse.pde.internal.ui.neweditor.site.SiteEditorContributor"
-            class="org.eclipse.pde.internal.ui.neweditor.site.SiteEditor"
-            id="org.eclipse.pde.ui.newSiteEditor">
-      </editor>
--->
       <editor
             default="true"
             name="%editors.sample.name"

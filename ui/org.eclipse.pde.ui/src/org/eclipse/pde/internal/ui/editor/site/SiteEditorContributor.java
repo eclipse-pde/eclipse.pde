@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
 
-public class SiteEditorContributor extends PDEEditorContributor {
+public class SiteEditorContributor extends PDEFormEditorContributor {
 
 	public SiteEditorContributor() {
 		super("Site"); //$NON-NLS-1$

@@ -26,8 +26,8 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdateBuildpathWizardPage extends WizardPage {
 	private IPluginModelBase[] selected;
@@ -59,9 +59,9 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}

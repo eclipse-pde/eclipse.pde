@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -22,26 +21,27 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.model.*;
-import org.eclipse.update.ui.forms.internal.*;
+
 
 public class RuntimeInfoSection
-	extends PDEFormSection
+	extends PDESection
 	implements IModelChangedListener {
 
 	public static final String SECTION_TITLE =
@@ -63,17 +63,15 @@ public class RuntimeInfoSection
 		"ManifestEditor.JarsSection.newFolder";
 	public static final String JAR_INCLUDE =
 		"BuildPropertiesEditor.RuntimeInfoSection.buildInclude";
-	public Image libImage;
-	public Image jarsImage;
-	protected TableViewer libraryViewer;
-	protected TableViewer foldersViewer;
-	protected Control sectionControl;
 
-	protected StructuredViewerPart libraryPart;
-	protected StructuredViewerPart foldersPart;
-	private IBuildEntry currentLibrary;
-	private Button jarIncludeButton;
-	private PDEFormPage page;
+	protected TableViewer fLibraryViewer;
+	protected TableViewer fFolderViewer;
+
+	protected StructuredViewerPart fLibraryPart;
+	protected StructuredViewerPart fFolderPart;
+	private IBuildEntry fCurrentLibrary;
+	private Button fIncludeLibraryButton;
+	private boolean fEnabled = true;
 
 	class RenameAction extends Action {
 		public RenameAction() {
@@ -82,15 +80,11 @@ public class RuntimeInfoSection
 		public void run() {
 			doRename();
 		}
-		
 	}
 
-	class PartAdapter extends EditableTablePart {
+	class PartAdapter extends TablePart {
 		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
-		}
-		public void entryModified(Object entry, String value) {
-
 		}
 		public void selectionChanged(IStructuredSelection selection) {
 			if (selection.size() != 0)
@@ -100,8 +94,7 @@ public class RuntimeInfoSection
 			RuntimeInfoSection.this.handleDoubleClick(selection);
 		}
 		public void buttonSelected(Button button, int index) {
-
-			if (this.getViewer() == libraryPart.getViewer()) {
+			if (getViewer() == fLibraryPart.getViewer()) {
 				switch (index) {
 					case 0 :
 						handleNew();
@@ -113,16 +106,16 @@ public class RuntimeInfoSection
 						handleDown();
 						break;
 				}
-			} else if (this.getViewer() == foldersPart.getViewer()) {
+			} else if (getViewer() == fFolderPart.getViewer()) {
 				if (index == 0)
-					handleJarsNew();
+					handleNewFolder();
 			} else {
 				button.getShell().setDefaultButton(null);
 			}
 		}
 	}
 
-	public class LibTableContentProvider
+	public class LibraryContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 
@@ -154,16 +147,18 @@ public class RuntimeInfoSection
 		}
 	}
 
-	public class LibTableLabelProvider
+	public class LibraryLabelProvider
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			if (obj.toString().startsWith(IBuildEntry.JAR_PREFIX))
-				return obj.toString().substring(7);
-			return obj.toString();
+			String name = ((IBuildEntry)obj).getName();			
+			if (name.startsWith(IBuildEntry.JAR_PREFIX))
+				return name.substring(IBuildEntry.JAR_PREFIX.length());
+			return name;
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return libImage;
+			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+			return provider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 		}
 	}
 
@@ -179,49 +174,43 @@ public class RuntimeInfoSection
 		}
 	}
 
-	public class JarsTableContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
+	public class FolderContentProvider extends DefaultContentProvider
+			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IBuildEntry) {
-
-				IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
-				IBuild build = buildModel.getBuild();
-				IBuildEntry entry =
-					build.getEntry(((IBuildEntry) parent).getName());
-				if (entry != null) {
-					return entry.getTokens();
-				}
-			}
-			return new Object[0];
+			return (parent instanceof IBuildEntry) ? 
+					((IBuildEntry) parent).getTokens() : new Object[0];
 		}
 	}
 
-	public class JarsTableLabelProvider
+	public class FolderLabelProvider
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return jarsImage;
+			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+			return sharedImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 	}
 
-	public RuntimeInfoSection(PDEFormPage page) {
-		super(page);
-		this.page = page;
-
-		setAddSeparator(true);
-		setHeaderPainted(true);
-		setDescriptionPainted(true);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public RuntimeInfoSection(PDEFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getBuildModel().addModelChangedListener(this);
+		createClient(getSection(), page.getManagedForm().getToolkit());
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+	
+	private IBuildModel getBuildModel() {
+		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
+		return (IBuildModel)context.getModel();
 	}
 
 	protected void handleLibInBinBuild(boolean isSelected){
-		String libName = currentLibrary.getName().substring(7);
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
+		String libName = fCurrentLibrary.getName().substring(7);
+		IBuildModel model = getBuildModel();
 		IBuildEntry binIncl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath = project.getFile(libName).getProjectRelativePath();
@@ -270,14 +259,9 @@ public class RuntimeInfoSection
 			PDEPlugin.logException(e);
 		}
 	}
-	public void initialize(Object input) {
-		IBuildModel model = (IBuildModel) input;
-		setReadOnly(false);
-		model.addModelChangedListener(this);
-	}
 
 	private IBuildEntry createOutputKey(String libName){
-		IBuildModel buildModel = (IBuildModel)getFormPage().getModel();
+		IBuildModel buildModel = getBuildModel();
 		IBuild build = buildModel.getBuild();
 		String outputName = IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + libName;
 		IBuildEntry outputEntry = build.getEntry(outputName);
@@ -310,24 +294,9 @@ public class RuntimeInfoSection
 		}
 	}
 
-	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
-		EditableTablePart tablePart = new PartAdapter(buttonLabels);
-		tablePart.setEditable(true);
-		return tablePart;
-	}
-
-	private void intializeImages() {
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		libImage = provider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
-
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		ISharedImages sharedImages = workbench.getSharedImages();
-		jarsImage = sharedImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
-	}
-	
 	private IPackageFragmentRoot[] computeSourceFolders() {
 		ArrayList folders = new ArrayList();
-		IBuildModel buildModel = (IBuildModel)getFormPage().getModel();
+		IBuildModel buildModel = getBuildModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -349,44 +318,37 @@ public class RuntimeInfoSection
 			new IPackageFragmentRoot[folders.size()]);
 	}
 
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-
-		intializeImages();
-		
-		Composite container = factory.createComposite(parent);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.makeColumnsEqualWidth = true;
 		container.setLayout(layout);
 		
-		createLeftSection(container, factory);
-		createRightSection(container, factory);
+		createLeftSection(container, toolkit);
+		createRightSection(container, toolkit);
 
-		jarIncludeButton =
-			factory.createButton(
+		fIncludeLibraryButton =
+			toolkit.createButton(
 				container,
 				PDEPlugin.getResourceString(JAR_INCLUDE),
 				SWT.CHECK);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		jarIncludeButton.setLayoutData(gd);
-		jarIncludeButton.setVisible(false);
-		jarIncludeButton.addSelectionListener(new SelectionAdapter(){
+		fIncludeLibraryButton.setLayoutData(gd);
+		fIncludeLibraryButton.setVisible(false);
+		fIncludeLibraryButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
-				handleLibInBinBuild(jarIncludeButton.getSelection());
+				handleLibInBinBuild(fIncludeLibraryButton.getSelection());
 			}
 		});
-
-		factory.paintBordersFor(container);
-
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
 	}
 	
-	private void createLeftSection(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	private void createLeftSection(Composite parent, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.numColumns = 2;
@@ -395,38 +357,37 @@ public class RuntimeInfoSection
 		gd.widthHint = 100;
 		container.setLayoutData(gd);
 		
-		libraryPart =
-			createViewerPart(
+		fLibraryPart =
+			new PartAdapter(
 				new String[] {
 					PDEPlugin.getResourceString(SECTION_NEW),
 					null,
 					PDEPlugin.getResourceString(SECTION_UP),
 					PDEPlugin.getResourceString(SECTION_DOWN)});
-		libraryPart.createControl(container, SWT.FULL_SELECTION, 2, factory);
-		((EditableTablePart)libraryPart).setEditable(true);
-		libraryViewer = (TableViewer)libraryPart.getViewer();
-		libraryViewer.setContentProvider(new LibTableContentProvider());
-		libraryViewer.setLabelProvider(new LibTableLabelProvider());
-		libraryPart.setButtonEnabled(2, false);
-		libraryPart.setButtonEnabled(3, false);
-		libraryViewer.setInput(getFormPage().getModel());	
-		factory.paintBordersFor(container);
+		fLibraryPart.createControl(container, SWT.FULL_SELECTION, 2, toolkit);
+		fLibraryViewer = (TableViewer)fLibraryPart.getViewer();
+		fLibraryViewer.setContentProvider(new LibraryContentProvider());
+		fLibraryViewer.setLabelProvider(new LibraryLabelProvider());
+		fLibraryPart.setButtonEnabled(2, false);
+		fLibraryPart.setButtonEnabled(3, false);
+		fLibraryViewer.setInput(getBuildModel());	
+		toolkit.paintBordersFor(container);
 		
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				fillLibContextMenu(manager);
+				fillLibraryContextMenu(manager);
 			}
 		});
 
-		libraryViewer.getControl().setMenu(
-			menuMgr.createContextMenu(libraryViewer.getControl()));
+		fLibraryViewer.getControl().setMenu(
+			menuMgr.createContextMenu(fLibraryViewer.getControl()));
 	}
 	
 
-	private void createRightSection(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	private void createRightSection(Composite parent, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = layout.marginWidth = 2;
@@ -435,45 +396,35 @@ public class RuntimeInfoSection
 		gd.widthHint = 100;
 		container.setLayoutData(gd);
 		
-		foldersPart =
-			createViewerPart(new String[] { PDEPlugin.getResourceString(JSECTION_NEW)});
-		foldersPart.createControl(container, SWT.FULL_SELECTION, 2, factory);
-		((EditableTablePart)foldersPart).setEditable(true);
-		foldersViewer = (TableViewer)foldersPart.getViewer();
-		foldersViewer.setContentProvider(new JarsTableContentProvider());
-		foldersViewer.setLabelProvider(new JarsTableLabelProvider());
-		factory.paintBordersFor(container);		
+		fFolderPart =
+			new PartAdapter(new String[] { PDEPlugin.getResourceString(JSECTION_NEW)});
+		fFolderPart.createControl(container, SWT.FULL_SELECTION, 2, toolkit);
+		fFolderViewer = (TableViewer)fFolderPart.getViewer();
+		fFolderViewer.setContentProvider(new FolderContentProvider());
+		fFolderViewer.setLabelProvider(new FolderLabelProvider());
+		toolkit.paintBordersFor(container);		
 
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				fillJarsContextMenu(manager);
+				fillFolderViewerContextMenu(manager);
 			}
 		});
-		foldersViewer.getControl().setMenu(
-			menuMgr.createContextMenu(foldersViewer.getControl()));
+		fFolderViewer.getControl().setMenu(
+			menuMgr.createContextMenu(fFolderViewer.getControl()));
 	}
 
-	protected EditableTablePart getLibTablePart() {
-		return (EditableTablePart) libraryPart;
-	}
-
-	protected EditableTablePart getJarsTablePart() {
-		return (EditableTablePart) foldersPart;
-	}
-
-	protected void fillJarsContextMenu(IMenuManager manager) {
-		ISelection selection = foldersViewer.getSelection();
-
-		if (currentLibrary != null) {
+	protected void fillFolderViewerContextMenu(IMenuManager manager) {
+		ISelection selection = fFolderViewer.getSelection();
+		if (fCurrentLibrary != null) {
 			Action newAction =
 				new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
 				public void run() {
-					handleJarsNew();
+					handleNewFolder();
 				}
 			};
-			newAction.setEnabled(true);
+			newAction.setEnabled(fEnabled);
 			manager.add(newAction);
 		}
 
@@ -481,37 +432,34 @@ public class RuntimeInfoSection
 		Action deleteAction =
 			new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 			public void run() {
-				handleJarsDelete();
+				handleDeleteFolder();
 			}
 		};
-		deleteAction.setEnabled(!selection.isEmpty());
+		deleteAction.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(deleteAction);
 
 		manager.add(new Separator());
 		// defect 19550
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);
 
 	}
 
-	protected void fillLibContextMenu(IMenuManager manager) {
-
-		ISelection selection = libraryViewer.getSelection();
-
+	protected void fillLibraryContextMenu(IMenuManager manager) {
+		ISelection selection = fLibraryViewer.getSelection();
 		Action newAction =
 			new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
 			public void run() {
 				handleNew();
 			}
 		};
-
-		newAction.setEnabled(true);
+		newAction.setEnabled(fEnabled);
 		manager.add(newAction);
 
 		manager.add(new Separator());
 		IAction renameAction = new RenameAction();
-		renameAction.setEnabled(!selection.isEmpty());
+		renameAction.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(renameAction);
 
 		Action deleteAction =
@@ -520,18 +468,17 @@ public class RuntimeInfoSection
 				handleDelete();
 			}
 		};
-
-		deleteAction.setEnabled(!selection.isEmpty());
+		deleteAction.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(deleteAction);
 
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);
 	}
 
 	protected void entryModified(IBuildEntry oldEntry, String newValue) {
 		final IBuildEntry entry = oldEntry;
-		IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
+		IBuildModel buildModel = getBuildModel();
 		IBuild build = buildModel.getBuild();
 		String oldName = entry.getName().substring(7);
 		try {
@@ -565,70 +512,55 @@ public class RuntimeInfoSection
 			if (tempEntry!=null && tempEntry.contains(oldName))
 				tempEntry.renameToken(oldName, newValue.substring(7));
 			
-			libraryViewer.getTable().getDisplay().asyncExec(new Runnable() {
+			fLibraryViewer.getTable().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					libraryViewer.update(entry, null);
+					fLibraryViewer.update(entry, null);
 				}
 			});
-			libraryViewer.refresh();
+			fLibraryViewer.refresh();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	public void expandTo(Object object) {
-		libraryViewer.setSelection(new StructuredSelection(object), true);
+		fLibraryViewer.setSelection(new StructuredSelection(object), true);
 	}
 
 	public void handleDoubleClick(IStructuredSelection selection) {
-		
-	}
-	public void enableSection() {
-		EditableTablePart tablePart = getLibTablePart();
-		tablePart.setEnabled(true);
-		tablePart.setButtonEnabled(0, true);
-		tablePart.setButtonEnabled(2, false);
-		tablePart.setButtonEnabled(3, false);
-
-		tablePart = getJarsTablePart();
-		tablePart.setEnabled(true);
-		tablePart.setButtonEnabled(0, false);
-
-		jarIncludeButton.setEnabled(true);
-	}
-	public void disableSection() {
-		getJarsTablePart().setEnabled(false);
-		getLibTablePart().setEnabled(false);
-		jarIncludeButton.setEnabled(false);
+		doRename();		
 	}
 
-	public void setSectionControl(Control control) {
-		sectionControl = control;
+	public void enableSection(boolean enable) {
+		fEnabled = enable;
+		fLibraryPart.setButtonEnabled(0, enable);
+		fLibraryPart.setButtonEnabled(2, false);
+		fLibraryPart.setButtonEnabled(3, false);
+		fIncludeLibraryButton.setEnabled(enable);
+
+		fFolderPart.setButtonEnabled(0, enable && !fLibraryViewer.getSelection().isEmpty());
 	}
 
-	public Control getSectionControl() {
-		return sectionControl;
-	}
-	
 	public boolean doGlobalAction(String actionId) {
-		IStructuredSelection currentSelection = (IStructuredSelection)getFormPage().getSelection();
-		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			if (currentSelection.getFirstElement().toString().startsWith(IBuildEntry.JAR_PREFIX))
-				handleDelete();
-			else
-				handleJarsDelete();
+			if (fEnabled) {
+				if (fLibraryViewer.getControl().isFocusControl()) {
+					handleDelete();
+				} else {
+					handleDeleteFolder();
+				}
+			}
 			return true;
 		}
 		return false;
 	}
 	
 	private void doRename() {
-		IStructuredSelection selection = (IStructuredSelection)libraryViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection)fLibraryViewer.getSelection();
 		if (selection.size()==1) {
 			IBuildEntry entry = (IBuildEntry)selection.getFirstElement();
 			String oldName = entry.getName().substring(7);
-			RenameDialog dialog = new RenameDialog(libraryViewer.getControl().getShell(), oldName);
+			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl().getShell(), oldName);
 			dialog.create();
 			dialog.getShell().setText(PDEPlugin.getResourceString("EditableTablePart.renameTitle")); //$NON-NLS-1$
 			dialog.getShell().setSize(300, 150);
@@ -637,10 +569,10 @@ public class RuntimeInfoSection
 			}
 		}
 	}
-
+	
 	public void dispose() {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		model.removeModelChangedListener(this);
+		getBuildModel().removeModelChangedListener(this);
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 	
@@ -649,7 +581,7 @@ public class RuntimeInfoSection
 			return;
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 
-		String[] jarFolders = currentLibrary.getTokens();
+		String[] jarFolders = fCurrentLibrary.getTokens();
 		IPackageFragmentRoot sourceFolder;
 		IClasspathEntry entry;
 		IPath outputPath;
@@ -670,7 +602,7 @@ public class RuntimeInfoSection
 				}
 			}
 			if (outputFolders.size()!=0){
-				IBuildEntry outputEntry = createOutputKey(currentLibrary.getName().substring(7));
+				IBuildEntry outputEntry = createOutputKey(fCurrentLibrary.getName().substring(7));
 				setOutputEntryTokens(outputFolders, outputEntry);
 			}
 		} catch (JavaModelException e) {
@@ -681,49 +613,51 @@ public class RuntimeInfoSection
 	
 	private boolean isJavaProject() {
 		try {
-			IBuildModel buildModel = (IBuildModel)page.getModel();
+			IBuildModel buildModel = getBuildModel();
 			IProject project = buildModel.getUnderlyingResource().getProject();
-			if (project.hasNature(JavaCore.NATURE_ID))
-				return true;
+			return project.hasNature(JavaCore.NATURE_ID);
 		} catch (CoreException e) {
 		}
 		return false;
 	}
 
-	public void sectionChanged(Object changeObject) {
-		IBuildEntry variable = (IBuildEntry) changeObject;
-		update(variable);
+	private boolean isReadOnly() {
+		IBuildModel model = getBuildModel();
+		if (model instanceof IEditable)
+			return !((IEditable)model).isEditable();
+		return true;
 	}
 
 	private void update(IBuildEntry variable) {
-		currentLibrary = variable;
-		foldersViewer.setInput(currentLibrary);
-		getJarsTablePart().setButtonEnabled(
+		fCurrentLibrary = variable;
+		fFolderViewer.setInput(fCurrentLibrary);
+		fFolderPart.setButtonEnabled(
 			0,
-			!isReadOnly() && variable != null);
+			!isReadOnly() && fEnabled && variable != null);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
-		if (item.toString().startsWith(IBuildEntry.JAR_PREFIX)) {
-			sectionChanged(item);
+		if (item instanceof IBuildEntry) {
+			update((IBuildEntry) item);
 			updateDirectionalButtons();
-			jarIncludeButton.setVisible(true);
-			jarIncludeButton.setSelection(isJarIncluded(item.toString().substring(7)));
+			fIncludeLibraryButton.setVisible(true);
+			String name = ((IBuildEntry)item).getName();
+			if (name.startsWith(IBuildEntry.JAR_PREFIX))
+				name = name.substring(IBuildEntry.JAR_PREFIX.length());
+			fIncludeLibraryButton.setSelection(isJarIncluded(name));
 		}
-		getFormPage().setSelection(selection);
 	}
 
 	protected void updateDirectionalButtons() {
-		Table table = libraryViewer.getTable();
+		Table table = fLibraryViewer.getTable();
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
 		boolean canMove = table.getItemCount() > 1;
-		TablePart tablePart = getLibTablePart();
-		tablePart.setButtonEnabled(
+		fLibraryPart.setButtonEnabled(
 			2,
 			canMove && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(
+		fLibraryPart.setButtonEnabled(
 			3,
 			canMove
 				&& hasSelection
@@ -731,11 +665,11 @@ public class RuntimeInfoSection
 	}
 
 	private boolean isJarIncluded(String libName) {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
+		IBuildModel model = getBuildModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath = project.getFile(libName).getProjectRelativePath();
 		IBuildEntry binIncl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		if (binIncl == null)
 			return false;
 			
@@ -761,43 +695,41 @@ public class RuntimeInfoSection
 		return false;
 	}
 	
-	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			libraryViewer.refresh();
-			foldersViewer.refresh();
-			libraryViewer.setSelection(null);
-			foldersViewer.setInput(null);
-			getJarsTablePart().setButtonEnabled(0,false);
-			jarIncludeButton.setVisible(false);
-			updateDirectionalButtons();
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		fLibraryViewer.refresh();
+		fFolderViewer.refresh();
+		fLibraryViewer.setSelection(null);
+		fFolderViewer.setInput(null);
+		fFolderPart.setButtonEnabled(0,false);
+		fIncludeLibraryButton.setVisible(false);
+		updateDirectionalButtons();
+		super.refresh();
 	}
 
 	protected String[] getLibraryNames(){
-		String[] libNames = new String[libraryViewer.getTable().getItemCount()];
+		String[] libNames = new String[fLibraryViewer.getTable().getItemCount()];
 		for (int i =0 ; i<libNames.length; i++)
-			libNames[i] = libraryViewer.getTable().getItem(i).getText();
+			libNames[i] = fLibraryViewer.getTable().getItem(i).getText();
 		return libNames;
 	}
 
 	protected void handleNew() {
 		final String[] libNames = getLibraryNames();
-		final IPluginModelBase pluginModelBase;
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		IProject project = model.getUnderlyingResource().getProject();
-		IModel pluginModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		if (pluginModel instanceof IPluginModelBase)
-			pluginModelBase = (IPluginModelBase)pluginModel;
-		else
-			pluginModelBase = null;
+		IBaseModel pmodel = getPage().getModel();
+		final IPluginModelBase pluginModelBase=(pmodel instanceof IPluginModelBase)?
+			(IPluginModelBase)pmodel:null;
+		
 
-		BusyIndicator.showWhile(libraryViewer.getTable().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), new Runnable() {
 			public void run(){
-				IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
+				IBuildModel buildModel = getBuildModel();
 				IBuild build = buildModel.getBuild();
 				AddLibraryDialog dialog =
 					new AddLibraryDialog(
-						getFormPage().getControl().getShell(), libNames, pluginModelBase);
+						getSection().getShell(), libNames, pluginModelBase);
 				dialog.create();
 				dialog.getShell().setText("Add Entry"); //$NON-NLS-1$
 				dialog.getShell().setSize(300, 350);
@@ -814,13 +746,13 @@ public class RuntimeInfoSection
 
 						IBuildEntry library = buildModel.getFactory().createEntry(name);
 						build.add(library);
-						libraryViewer.refresh();
-						libraryViewer.setSelection(new StructuredSelection(library));
-						jarIncludeButton.setSelection(true);
+						fLibraryViewer.refresh();
+						fLibraryViewer.setSelection(new StructuredSelection(library));
+						fIncludeLibraryButton.setSelection(true);
 						handleLibInBinBuild(true);
 
-						if (libraryViewer.getTable().getItemCount()>1)
-							updateJarsCompileOrder(libraryViewer.getTable().getItems());
+						if (fLibraryViewer.getTable().getItemCount()>1)
+							updateJarsCompileOrder(fLibraryViewer.getTable().getItems());
 						
 					}
 				} catch (CoreException e) {
@@ -844,10 +776,10 @@ public class RuntimeInfoSection
 		return null;
 	}
 	protected void handleDelete() {
-		int index = libraryViewer.getTable().getSelectionIndex();
+		int index = fLibraryViewer.getTable().getSelectionIndex();
 		if (index!=-1){
-			String libName = libraryViewer.getTable().getItem(index).getText();
-			IBuild build = ((IBuildModel)getFormPage().getModel()).getBuild();
+			String libName = fLibraryViewer.getTable().getItem(index).getText();
+			IBuild build = getBuildModel().getBuild();
 			
 			try {
 				// jars.compile.order
@@ -872,26 +804,25 @@ public class RuntimeInfoSection
 					entry.removeToken(libName);
  
 				build.remove(build.getEntry(IBuildEntry.JAR_PREFIX + libName));
-				libraryViewer.refresh();
+				fLibraryViewer.refresh();
 				
-				int libCount = libraryViewer.getTable().getItemCount();
+				int libCount = fLibraryViewer.getTable().getItemCount();
 				if (libCount > index) {
-					libName = libraryViewer.getElementAt(index).toString();
+					libName = fLibraryViewer.getElementAt(index).toString();
 				} else if (libCount==index && libCount != 0){
-					libName = libraryViewer.getElementAt(index-1).toString();
+					libName = fLibraryViewer.getElementAt(index-1).toString();
 				} else {
 					libName="";
 				}
 				
 				IBuildEntry selection = build.getEntry(libName);
 				if (selection!=null){
-					libraryViewer.setSelection(new StructuredSelection(selection));
+					fLibraryViewer.setSelection(new StructuredSelection(selection));
 				}else{ 
-					getJarsTablePart().setButtonEnabled(0,false);
-					libraryViewer.setSelection(null);
-					foldersViewer.setInput(null);
-					jarIncludeButton.setVisible(false);
-					currentLibrary = null;
+					fFolderPart.setButtonEnabled(0,false);
+					fLibraryViewer.setSelection(null);
+					fFolderViewer.setInput(null);
+					fIncludeLibraryButton.setVisible(false);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -899,24 +830,20 @@ public class RuntimeInfoSection
 		}
 	}
 
-	private void handleJarsDelete() {
-		IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
-		int index = foldersViewer.getTable().getSelectionIndex();
+	private void handleDeleteFolder() {
+		int index = fFolderViewer.getTable().getSelectionIndex();
 		Object object =
-			((IStructuredSelection) foldersViewer.getSelection()).getFirstElement();
-		if (object != null && object instanceof String) {
-			String libKey = currentLibrary.getName();
-			IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+			((IStructuredSelection) fFolderViewer.getSelection()).getFirstElement();
+		if (object != null) {
+			String libKey = fCurrentLibrary.getName();
+			IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
 			if (entry != null) {
 				try {
-					entry.removeToken(object.toString());
-					foldersViewer.remove(object);
+					entry.removeToken((String)object);
+					fFolderViewer.remove(object);
 					String[] tokens=entry.getTokens();
-					if (tokens.length >index){
-						foldersViewer.setSelection(new StructuredSelection(tokens[index]));
-					} else if (tokens.length!=0){
-						foldersViewer.setSelection(new StructuredSelection(tokens[index-1]));
-					}
+					if (tokens.length > index)
+						fFolderViewer.setSelection(new StructuredSelection(tokens[index]));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -924,9 +851,8 @@ public class RuntimeInfoSection
 		}
 	}
 
-	private void handleJarsNew() {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		IFile file = (IFile) model.getUnderlyingResource();
+	private void handleNewFolder() {
+		IFile file = (IFile) getBuildModel().getUnderlyingResource();
 		final IProject project = file.getProject();
 
 		FolderSelectionDialog dialog =
@@ -968,10 +894,9 @@ public class RuntimeInfoSection
 						"",
 						null);
 
-				IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
-				String libKey = currentLibrary.getName();
+				String libKey = fCurrentLibrary.getName();
 
-				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
+				IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
 
 				String folderPath =
 					((IFolder) selection[0])
@@ -1000,22 +925,19 @@ public class RuntimeInfoSection
 		if (dialog.open() == FolderSelectionDialog.OK) {
 			try {
 				IFolder folder = (IFolder) dialog.getFirstResult();
-				String folderPath =
-					folder
-						.getProjectRelativePath()
-						.addTrailingSeparator()
-						.toString();
-				IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
-				String libKey = currentLibrary.getName();
+				String folderPath = folder.getProjectRelativePath()
+						.addTrailingSeparator().toString();
+				IBuildModel buildModel = getBuildModel();
+				String libKey = fCurrentLibrary.getName();
 				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
 				if (entry == null) {
 					entry = buildModel.getFactory().createEntry(libKey);
 					buildModel.getBuild().add(entry);
 				}
 				entry.addToken(folderPath);
-				foldersViewer.refresh();
-				foldersViewer.setSelection(new StructuredSelection(folderPath));
-				refreshOutputKeys();		
+				fFolderViewer.refresh();
+				fFolderViewer.setSelection(new StructuredSelection(folderPath));
+				refreshOutputKeys();
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -1023,28 +945,28 @@ public class RuntimeInfoSection
 	}
 
 	protected void handleDown() {
-		int index = libraryViewer.getTable().getSelectionIndex();
+		int index = fLibraryViewer.getTable().getSelectionIndex();
 		Vector libElements = swapLibraries(index, index+1);
 		updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
-		libraryViewer.refresh();
-		libraryViewer.setSelection(new StructuredSelection(libElements.get(index+1)));
+		fLibraryViewer.refresh();
+		fLibraryViewer.setSelection(new StructuredSelection(libElements.get(index+1)));
 		updateDirectionalButtons();
 	}
 	
 	protected void handleUp() {
-		int index = libraryViewer.getTable().getSelectionIndex();
+		int index = fLibraryViewer.getTable().getSelectionIndex();
 		Vector libElements = swapLibraries(index, index-1);
 		updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
-		libraryViewer.refresh();
-		libraryViewer.setSelection(new StructuredSelection(libElements.get(index-1)));
+		fLibraryViewer.refresh();
+		fLibraryViewer.setSelection(new StructuredSelection(libElements.get(index-1)));
 		updateDirectionalButtons();
 	}
 	
 	protected Vector swapLibraries(int index_old, int index_new){
 		int i =0;
 		Vector libElements = new Vector();
-		while (libraryViewer.getElementAt(i)!=null){
-			libElements.add(libraryViewer.getElementAt(i));
+		while (fLibraryViewer.getElementAt(i)!=null){
+			libElements.add(fLibraryViewer.getElementAt(i));
 			i++;
 		}
 			
@@ -1055,7 +977,7 @@ public class RuntimeInfoSection
 		return libElements;
 	}
 	public void updateJarsCompileOrder(IBuildEntry[] libraries) {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
+		IBuildModel model = getBuildModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarOrderEntry =
 			build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
@@ -1076,7 +998,7 @@ public class RuntimeInfoSection
 	}
 
 	public void updateJarsCompileOrder(TableItem[] libraries) {
-		IBuildModel model = (IBuildModel) getFormPage().getModel();
+		IBuildModel model = getBuildModel();
 		IBuild build = model.getBuild();
 		IBuildEntry jarOrderEntry =
 			build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);

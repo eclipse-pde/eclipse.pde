@@ -18,6 +18,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Composite;
 
 public class BinSection
 	extends BuildContentsSection
@@ -28,15 +29,15 @@ public class BinSection
 	private static String SECTION_DESC =
 		"BuildPropertiesEditor.BinSection.desc";
 
-	public BinSection(BuildPage page) {
-		super(page);
-		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public BinSection(BuildPage page, Composite parent) {
+		super(page, parent);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
 
 	protected void initializeCheckState() {
 		super.initializeCheckState();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		
@@ -47,7 +48,7 @@ public class BinSection
 	}
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
@@ -61,7 +62,7 @@ public class BinSection
 		boolean checked,
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 

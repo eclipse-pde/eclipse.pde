@@ -17,34 +17,21 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 
-/**
- * @version 	1.0
- * @author
- */
-public class FeatureUndoManager extends ModelUndoManager {
-	IFeatureModel model;
 
-	public FeatureUndoManager(PDEMultiPageEditor editor) {
+public class FeatureUndoManager extends ModelUndoManager {
+
+	public FeatureUndoManager(PDEFormEditor editor) {
 		super(editor);
 		setUndoLevelLimit(30);
 	}
 
-	/*
-	 * @see IModelUndoManager#execute(ModelUndoOperation)
-	 */
-
-	public void connect(IModelChangeProvider provider) {
-		model = (IFeatureModel) provider;
-		super.connect(provider);
-	}
-
 	protected String getPageId(Object obj) {
 		if (obj instanceof IFeature || obj instanceof IFeatureURL)
-			return FeatureEditor.FEATURE_PAGE;
+			return FeatureFormPage.PAGE_ID;
 		if (obj instanceof IFeaturePlugin || obj instanceof IFeatureImport)
-			return FeatureEditor.REFERENCE_PAGE;
+			return FeatureReferencePage.PAGE_ID;
 		if (obj instanceof IFeatureData || obj instanceof IFeatureChild)
-			return FeatureEditor.ADVANCED_PAGE;
+			return FeatureAdvancedPage.PAGE_ID;
 		return null;
 	}
 
@@ -52,19 +39,20 @@ public class FeatureUndoManager extends ModelUndoManager {
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
 		String propertyName = event.getChangedProperty();
+		IFeatureModel model = (IFeatureModel)event.getChangeProvider();
 
 		switch (type) {
 			case IModelChangedEvent.INSERT :
 				if (undo)
-					executeRemove(elements);
+					executeRemove(model, elements);
 				else
-					executeAdd(elements);
+					executeAdd(model, elements);
 				break;
 			case IModelChangedEvent.REMOVE :
 				if (undo)
-					executeAdd(elements);
+					executeAdd(model, elements);
 				else
-					executeRemove(elements);
+					executeRemove(model, elements);
 				break;
 			case IModelChangedEvent.CHANGE :
 				if (undo)
@@ -82,7 +70,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeAdd(Object[] elements) {
+	private void executeAdd(IFeatureModel model, Object[] elements) {
 		IFeature feature = model.getFeature();
 
 		try {
@@ -104,7 +92,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 		}
 	}
 
-	private void executeRemove(Object[] elements) {
+	private void executeRemove(IFeatureModel model, Object[] elements) {
 		IFeature feature = model.getFeature();
 
 		try {
@@ -143,10 +131,13 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			IFeatureObject obj = (IFeatureObject) event.getChangedObjects()[0];
-			//Ignore events from objects that are not yet in the model.
-			if (!(obj instanceof IFeature) && obj.isInTheModel() == false)
-				return;
+			Object obj = event.getChangedObjects()[0];
+			if (obj instanceof IFeatureObject) {
+				IFeatureObject fobj = (IFeatureObject) event.getChangedObjects()[0];
+				//Ignore events from objects that are not yet in the model.
+				if (!(fobj instanceof IFeature) && fobj.isInTheModel() == false)
+					return;
+			}
 		}
 		super.modelChanged(event);
 	}

@@ -1,0 +1,44 @@
+/*
+ * Created on Feb 26, 2004
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+package org.eclipse.pde.internal.ui.editor.context;
+
+import org.eclipse.core.resources.IFile;
+
+/**
+ * @author dejan
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+public interface IInputContextListener {
+/**
+ * Informs the listener that a new context has been added.
+ * This should result in a new source tab.
+ * @param context
+ */
+	void contextAdded(InputContext context);
+/**
+ * Informs the listener that the context has been removed.
+ * This should result in removing the source tab.
+ * @param context
+ */
+	void contextRemoved(InputContext context);
+/**
+ * Informs the listener that a monitored file has
+ * been added.
+ * @param monitoredFile the file we were monitoring
+ */
+	void monitoredFileAdded(IFile monitoredFile);
+/**
+ * Informs the listener that a monitored file has
+ * been removed.
+ * @param monitoredFile
+ * @return <code>true</code> if it is OK to remove
+ * the associated context, <code>false</code> otherwise.
+ */
+	boolean monitoredFileRemoved(IFile monitoredFile);
+}

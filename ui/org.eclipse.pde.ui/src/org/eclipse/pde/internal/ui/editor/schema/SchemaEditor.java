@@ -1,165 +1,156 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+/*
+ * Created on Jan 27, 2004
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 package org.eclipse.pde.internal.ui.editor.schema;
+import java.io.File;
 
-import java.io.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IEditable;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class SchemaEditor extends PDEMultiPageXMLEditor {
-	public static final String DEFINITION_PAGE = "definition";
-	public static final String DOC_PAGE = "documentation";
-	public static final String SOURCE_PAGE = "source";
-	public static final String KEY_OLD_EXTENSION = "SchemaEditor.oldExtension";
+/**
+ * @author dejan
+ * 
+ * To change the template for this generated type comment go to Window -
+ * Preferences - Java - Code Generation - Code and Comments
+ */
+public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction previewAction;
-
-	public SchemaEditor() {
-		super();
-	}
-
-	protected Object createModel(Object input) {
-		if (input instanceof File)
-			return createExternalModel((File)input);
-			
-		if (!(input instanceof IFile)) {
-			if (input instanceof IStorage)
-				return createStorageModel((IStorage)input);
-			return null;
-		}
-
-		IFile file = (IFile) input;
-		FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
-		ISchema schema = sd.getSchema();
-		if (schema.isValid() == false)
-			return null;
-		warnIfOldExtension(file.getName());
-		if (schema instanceof EditableSchema) {
-			((EditableSchema) schema).setNotificationEnabled(true);
-		}
-		return schema;
+	
+	protected void createResourceContexts(InputContextManager manager,
+			IFileEditorInput input) {
+		IFile file = input.getFile();
+		IFileEditorInput in = new FileEditorInput(file);
+		manager.putContext(in, new SchemaInputContext(this, in, true));
 	}
 	
-	private Object createExternalModel(File file) {
-		ExternalSchemaDescriptor sd = new ExternalSchemaDescriptor(file, "", false);
-
-		ISchema schema = sd.getSchema();
-		if (schema.isValid() == false)
-			return null;
-		warnIfOldExtension(file.getName());
-		if (schema instanceof EditableSchema) {
-			((EditableSchema) schema).setNotificationEnabled(true);
-		}
-		return schema;
+	protected InputContextManager createInputContextManager() {
+		SchemaInputContextManager contextManager = new SchemaInputContextManager();
+		//contextManager.setUndoManager(new SchemaUndoManager(this));
+		return contextManager;
 	}
 	
-	private Object createStorageModel(IStorage storage) {
-		StorageSchemaDescriptor sd = new StorageSchemaDescriptor(storage);
-		ISchema schema = sd.getSchema();
-		if (schema.isValid()==false)
-		return null;
-		warnIfOldExtension(storage.getName());
-		return schema;
-	}
-
-	private void warnIfOldExtension(String name) {
-		int dotLoc = name.lastIndexOf('.');
-		if (dotLoc != -1) {
-			String ext = name.substring(dotLoc + 1).toLowerCase();
-			if (ext.equals("xsd")) {
-				String title = getSite().getRegisteredName();
-				String message = PDEPlugin.getResourceString(KEY_OLD_EXTENSION);
-				MessageDialog.openWarning(
-					PDEPlugin.getActiveWorkbenchShell(),
-					title,
-					message);
+	public boolean canCopy(ISelection selection) {
+		return true;
+	}	
+	
+	protected boolean hasKnownTypes() {
+		try {
+			TransferData[] types = getClipboard().getAvailableTypes();
+			Transfer[] transfers =
+				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			for (int i = 0; i < types.length; i++) {
+				for (int j = 0; j < transfers.length; j++) {
+					if (transfers[j].isSupportedType(types[i]))
+						return true;
+				}
 			}
+		} catch (SWTError e) {
 		}
+		return false;
 	}
 
-	public void dispose() {
-		super.dispose();
+	public void monitoredFileAdded(IFile file) {
+		/*
+		String name = file.getName();
+		if (name.equalsIgnoreCase("site.xml")) {
+			IEditorInput in = new FileEditorInput(file);
+			inputContextManager.putContext(in, new SiteInputContext(this, in, false));
+		}
+		*/
 	}
 
+	public boolean monitoredFileRemoved(IFile file) {
+		/*
+		//TODO may need to check with the user if there
+		//are unsaved changes in the model for the
+		//file that just got removed under us.
+		 * */
+		return true;
+	}
+
+	public void contextAdded(InputContext context) {
+		addSourcePage(context.getId());
+	}
+	public void contextRemoved(InputContext context) {
+		IFormPage page = findPage(context.getId());
+		if (page!=null)
+			removePage(context.getId());
+	}
+
+	protected void createSystemFileContexts(InputContextManager manager,
+			SystemFileEditorInput input) {
+		File file = (File) input.getAdapter(File.class);
+		manager.putContext(input, new SchemaInputContext(this, input,
+					true));
+	}
+
+	protected void createStorageContexts(InputContextManager manager,
+			IStorageEditorInput input) {
+		String name = input.getName().toLowerCase();
+		manager.putContext(input,
+							new SchemaInputContext(this, input, true));
+	}
+	
+	protected void contextMenuAboutToShow(IMenuManager manager) {
+		super.contextMenuAboutToShow(manager);
+	}
+	
 	void previewReferenceDocument() {
-		ISchema schema = (ISchema) getModel();
+		ISchema schema = (ISchema) getAggregateModel();
 		if (previewAction==null)
 			previewAction = new ShowDescriptionAction(schema);
 		else
 			previewAction.setSchema(schema);
 		previewAction.run();
+	}	
+
+	protected void addPages() {
+		try {
+			addPage(new SchemaFormPage(this));
+			addPage(new SchemaDocPage(this));
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
+		addSourcePage(SchemaInputContext.CONTEXT_ID);
 	}
 
-	protected void createPages() {
-		firstPageId = DEFINITION_PAGE;
-		SchemaFormPage form = new SchemaFormPage(this);
-		SchemaDocPage doc = new SchemaDocPage(form);
-		addPage(DEFINITION_PAGE, form);
-		addPage(DOC_PAGE, doc);
-		addPage(SOURCE_PAGE, new SchemaSourcePage(this));
-	}
-	public IPDEEditorPage getHomePage() {
-		return getPage(DEFINITION_PAGE);
-	}
-	protected String getSourcePageId() {
-		return SOURCE_PAGE;
-	}
-	protected boolean isModelCorrect(Object model) {
-		if (model == null)
-			return false;
-		ISchema schema = (ISchema) model;
-		return schema.isValid();
-	}
-	protected boolean isModelDirty(Object model) {
-		return model instanceof IEditable && ((IEditable) model).isDirty();
-	}
-	protected boolean updateModel() {
-		Schema schema = (Schema) getModel();
-		if (schema == null)
-			return false;
-		IDocument document =
-			getDocumentProvider().getDocument(getEditorInput());
-		String text = document.get();
-		try {
-			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8"));
-			schema.reload(stream);
-			if (schema instanceof IEditable)
-			   ((IEditable)schema).setDirty(false);
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		} catch (UnsupportedEncodingException e) {
-			PDEPlugin.logException(e);
-			return false;
+
+	protected String computeInitialPageId() {
+		String firstPageId = super.computeInitialPageId();
+		if (firstPageId == null) {
+			InputContext primary = inputContextManager.getPrimaryContext();
+			if (primary.getId().equals(SchemaInputContext.CONTEXT_ID))
+				firstPageId = SchemaFormPage.PAGE_ID;
+			if (firstPageId == null)
+				firstPageId = SchemaFormPage.PAGE_ID;
 		}
-		return true;
+		return firstPageId;
 	}
-	/*
-     * Overriding PDEMultiPageEditor to avoid 
-     * a class cast exception on getModel() (bug 35691)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
-	public boolean validateModelSemantics() {
-		if (getModel() instanceof ISchema) {
-			ISchema schema = (ISchema)getModel();
-			return schema!=null && schema.isValid();
-		}
-		return super.validateModelSemantics();
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		return new SchemaSourcePage(editor, title, name);
+	}
+	
+	protected IContentOutlinePage createContentOutline() {
+		return new SchemaFormOutlinePage(this);
 	}
 }

@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;

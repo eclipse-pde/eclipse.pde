@@ -317,8 +317,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		for (int i = 0; i<tableItems.length; i++){
 			Object data = tableItems[i].getData();
 			if (data instanceof IPluginModelBase){
-				IPluginModelBase pluginBase = (IPluginModelBase)data;
-				if (stringMatcher.match(pluginBase.getBundleDescription().getUniqueId()))
+				IPluginModelBase model = (IPluginModelBase)data;
+				if (stringMatcher.match(model.getPluginBase().getId()))
 					results.add(tableItems[i]);
 			}
 		}

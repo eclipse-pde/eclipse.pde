@@ -30,7 +30,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.forms.widgets.*;
+
 
 public class ExternalPluginsBlock {
 	private CheckboxTableViewer pluginListViewer;
@@ -102,9 +103,9 @@ public class ExternalPluginsBlock {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}

@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -301,9 +300,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IFeatureInfo) {
 			return getObjectImage((IFeatureInfo) obj);
-		}
-		if (obj instanceof IPDEEditorPage) {
-			return get(PDEPluginImages.DESC_PAGE_OBJ);
 		}
 		if (obj instanceof IBuildEntry) {
 			return get(PDEPluginImages.DESC_BUILD_VAR_OBJ);

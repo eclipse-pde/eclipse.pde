@@ -4,7 +4,6 @@
 package org.eclipse.pde.internal.ui.editor.site;
 import java.util.*;
 import java.util.List;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -14,22 +13,22 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+
 /**
  * @author melhem
  */
 public class FeatureSection extends TableSection {
 	private TableViewer fFeaturesViewer;
-	private boolean fUpdateNeeded;
 	private ISiteModel fModel;
 	private ISiteBuildModel fBuildModel;
 	private TablePart fFeaturesTablePart;
@@ -41,18 +40,16 @@ public class FeatureSection extends TableSection {
 			return model.getSiteBuild().getFeatures();
 		}
 	}
-	public FeatureSection(PDEFormPage formPage) {
-		super(formPage, new String[] {PDEPlugin.getResourceString("SiteEditor.add"),
+	public FeatureSection(PDEFormPage formPage, Composite parent) {
+		super(formPage, 
+				parent,
+				Section.DESCRIPTION,
+				new String[] {PDEPlugin.getResourceString("SiteEditor.add"),
 				PDEPlugin.getResourceString("SiteEditor.buildAll")});
-		setHeaderText(PDEPlugin
+		getSection().setText(PDEPlugin
 				.getResourceString("SiteEditor.FeatureSection.header")); //$NON-NLS-1$
-		setDescription(PDEPlugin
+		getSection().setDescription(PDEPlugin
 				.getResourceString("SiteEditor.FeatureSection.desc")); //$NON-NLS-1$
-		fModel = (ISiteModel) getFormPage().getModel();
-		fModel.addModelChangedListener(this);
-		fBuildModel = fModel.getBuildModel();
-		if (fBuildModel != null)
-			fBuildModel.addModelChangedListener(this);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	public void dispose() {
@@ -63,9 +60,14 @@ public class FeatureSection extends TableSection {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 	
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+	public void createClient(Section section, FormToolkit toolkit) {
+		fModel = (ISiteModel) getPage().getModel();
+		fModel.addModelChangedListener(this);
+		fBuildModel = fModel.getBuildModel();
+		if (fBuildModel != null)
+			fBuildModel.addModelChangedListener(this);		
+		Composite container = createClientContainer(section, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fFeaturesTablePart = getTablePart();
 
 		fFeaturesViewer = fFeaturesTablePart.getTableViewer();
@@ -100,9 +102,11 @@ public class FeatureSection extends TableSection {
 				});
 
 		fFeaturesViewer.setInput(fBuildModel);
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		refresh();
 	}
+
 	public void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = fFeaturesViewer.getSelection();
 		if (selection != null && !selection.isEmpty()) {
@@ -133,33 +137,26 @@ public class FeatureSection extends TableSection {
 				}
 			});
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	private void forceDirty() {
-		setDirty(true);
-		((IEditable) fModel).setDirty(true);
-		getFormPage().getEditor().fireSaveNeeded();
+
+	public void refresh() {
+		fFeaturesViewer.refresh();
+		int featureCount = fFeaturesViewer.getTable().getItemCount();
+		fFeaturesTablePart.setButtonEnabled(1, featureCount > 0);
+		super.refresh();
 	}
-	public void update() {
-		if (fUpdateNeeded) {
-			fFeaturesViewer.refresh();
-			int featureCount = fFeaturesViewer.getTable().getItemCount();
-			fFeaturesTablePart.setButtonEnabled(1, featureCount > 0);
-			fUpdateNeeded = false;
-		}
-	}
+	
 	public void modelChanged(IModelChangedEvent event) {
-		fUpdateNeeded = true;
-		update();
+		markStale();
 	}
-	public void initialize(Object input) {
-		update();
-	}
-	public void commitChanges(boolean onSave) {
+
+	public void commit(boolean onSave) {
 		if (onSave && fBuildModel instanceof WorkspaceSiteBuildModel
 				&& ((WorkspaceSiteBuildModel) fBuildModel).isDirty()) {
 			((WorkspaceSiteBuildModel) fBuildModel).save();
 		}
+		super.commit(onSave);
 	}
 	
 	public boolean canPaste(Clipboard clipboard) {
@@ -182,7 +179,7 @@ public class FeatureSection extends TableSection {
 				WizardDialog dialog = new WizardDialog(control.getShell(),
 						wizard);
 				if (dialog.open() == WizardDialog.OK) {
-					forceDirty();
+					markDirty();
 				}
 			}
 		});
@@ -202,7 +199,7 @@ public class FeatureSection extends TableSection {
 					}
 				}
 				fBuildModel.getSiteBuild().removeFeatures(sbFeatures);
-				forceDirty();
+				markDirty();
 				return true;
 			}
 		} catch (CoreException e) {
@@ -240,15 +237,11 @@ public class FeatureSection extends TableSection {
 		return sfeature;
 	}
 	
-
-	
-	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
-		getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
 	
 	/* (non-Javadoc)

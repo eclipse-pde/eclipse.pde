@@ -28,8 +28,8 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
-import org.eclipse.update.ui.forms.internal.*;
 
 public class IncludeFeaturesWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.IncludedFeaturesSection.new.title";
@@ -62,9 +62,9 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			viewer.setSorter(ListUtil.FEATURE_SORTER);
 			return viewer;
 		}

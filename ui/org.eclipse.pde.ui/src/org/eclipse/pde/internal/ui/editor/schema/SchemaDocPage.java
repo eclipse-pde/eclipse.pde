@@ -10,71 +10,65 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
-import org.eclipse.update.ui.forms.internal.IFormPage;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.help.WorkbenchHelp;
 
-public class SchemaDocPage extends PDEChildFormPage {
+public class SchemaDocPage extends PDEFormPage {
+	public static final String PAGE_ID = "doc";
 	public static final String PAGE_TITLE = "SchemaEditor.DocPage.title";
+	private IColorManager colorManager = new ColorManager();
+	private DocSection docSection;
+	public static final String FORM_TITLE = "SchemaEditor.DocForm.title";
 
-	public SchemaDocPage(SchemaFormPage mainPage) {
-		super(mainPage, PDEPlugin.getResourceString(PAGE_TITLE));
+	public SchemaDocPage(PDEFormEditor editor) {
+		super(editor, PAGE_ID, PDEPlugin.getResourceString(PAGE_TITLE));
 	}
 	
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#becomesInvisible(IFormPage)
 	 */
-	public boolean becomesInvisible(IFormPage newPage) {
-		getForm().commitChanges(false);
-		return true;
+	public void setActive(boolean active) {
+		if (!active)
+			getManagedForm().commit(false);
+		super.setActive(active);
 	}
+	protected void createFormContent(IManagedForm managedForm) {
+		super.createFormContent(managedForm);
+		FormToolkit toolkit = managedForm.getToolkit();
+		ScrolledForm form = managedForm.getForm();
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 10;
+		layout.horizontalSpacing=15;
+		//layout.setMarginWidth 
+		form.getBody().setLayout(layout);
 
-	protected AbstractSectionForm createForm() {
-		return new DocForm(this);
+		GridData gd;
+
+		docSection = new DocSection(this, form.getBody(), colorManager);
+		gd = new GridData(GridData.FILL_BOTH);
+		docSection.getSection().setLayoutData(gd);
+
+		managedForm.addPart(docSection);
+		
+		WorkbenchHelp.setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_DOC);
+		form.setText(PDEPlugin.getResourceString(FORM_TITLE));		
 	}
 	
-	public IContentOutlinePage createContentOutlinePage() {
-		return null;
+	public void dispose() {
+		colorManager.dispose();
+		super.dispose();
 	}
 
-	/*private boolean isElementComplete(ISchemaElement element) {
-		if (isObjectComplete(element))
-			return false;
-		ISchemaType type = element.getType();
-		if (!(type instanceof ISchemaComplexType))
-			return true;
-		ISchemaComplexType complexType = (ISchemaComplexType) type;
-
-		ISchemaAttribute[] attributes = complexType.getAttributes();
-		for (int i = 0; i < attributes.length; i++) {
-			ISchemaAttribute att = attributes[i];
-			if (isObjectComplete(att) == false)
-				return false;
-		}
-		return true;
-	}*/
-	/*private boolean isMarkupComplete() {
-		ISchema schema = (ISchema) getModel();
-		ISchemaElement[] elements = schema.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			ISchemaElement element = elements[i];
-			if (isElementComplete(element) == false)
-				return false;
-		}
-		return true;
-	}*/
-	/*private boolean isObjectComplete(ISchemaObject object) {
-		String text = object.getDescription();
-		if (text != null)
-			text.trim();
-		return (text != null && text.length() > 0);
-	}*/
-	public void update() {
-		super.update();
-	}
-	public void updateEditorInput(Object object) {
-		((DocForm) getForm()).updateEditorInput(object);
-	}
+	public void updateEditorInput(Object obj) {
+		docSection.updateEditorInput(obj);
+	}	
 }

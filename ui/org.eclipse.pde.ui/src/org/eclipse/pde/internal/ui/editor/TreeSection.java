@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @version 	1.0
@@ -25,6 +26,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 			super(buttonLabels);
 		}
 		public void selectionChanged(IStructuredSelection selection) {
+			getManagedForm().fireSelectionChanged(TreeSection.this, selection);
 			TreeSection.this.selectionChanged(selection);
 		}
 		public void handleDoubleClick(IStructuredSelection selection) {
@@ -35,13 +37,17 @@ public abstract class TreeSection extends StructuredViewerSection {
 			if (handleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
+		protected void createButtons(Composite parent, FormToolkit toolkit) {
+			super.createButtons(parent, toolkit);
+			enableButtons();
+		}
 	}
 	/**
 	 * Constructor for TableSection.
 	 * @param formPage
 	 */
-	public TreeSection(PDEFormPage formPage, String[] buttonLabels) {
-		super(formPage, buttonLabels);
+	public TreeSection(PDEFormPage formPage, Composite parent, int style, String[] buttonLabels) {
+		super(formPage, parent, style, buttonLabels);
 	}
 
 	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
@@ -55,5 +61,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 	protected void selectionChanged(IStructuredSelection selection) {
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
+	}
+	protected void enableButtons() {
 	}
 }

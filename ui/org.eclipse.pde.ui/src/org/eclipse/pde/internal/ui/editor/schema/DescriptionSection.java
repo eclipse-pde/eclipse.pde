@@ -22,16 +22,21 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class DescriptionSection extends PDEFormSection {
+public class DescriptionSection extends PDESection implements IPartSelectionListener {
 	private Button applyButton;
 	private Button resetButton;
 	private IDocument document;
@@ -53,10 +58,10 @@ public class DescriptionSection extends PDEFormSection {
 	private ISchema schema;
 	private boolean ignoreChange = false;
 
-	public DescriptionSection(PDEFormPage page, IColorManager colorManager) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public DescriptionSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -67,6 +72,7 @@ public class DescriptionSection extends PDEFormSection {
 					XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	private void checkForPendingChanges() {
 		if (applyButton.isEnabled()) {
@@ -79,14 +85,17 @@ public class DescriptionSection extends PDEFormSection {
 				handleApply();
 		}
 	}
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		handleApply();
-		setDirty(false);
+		if (onSave) {
+			resetButton.setEnabled(false);
+		}
+		super.commit(onSave);
 	}
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 2;
@@ -96,8 +105,7 @@ public class DescriptionSection extends PDEFormSection {
 			SWT.MULTI
 				| SWT.WRAP
 				| SWT.V_SCROLL
-				| SWT.H_SCROLL
-				| FormWidgetFactory.BORDER_STYLE;
+				| SWT.H_SCROLL;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -112,20 +120,22 @@ public class DescriptionSection extends PDEFormSection {
 		styledText.setFont(
 			JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		if (SWT.getPlatform().equals("motif") == false)
-			factory.paintBordersFor(container);
+			toolkit.paintBordersFor(container);
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
+		gd.heightHint = 64;
 		control.setLayoutData(gd);
-		styledText.setMenu(getFormPage().getEditor().getContextMenu());
+		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				updateSelection(sourceViewer.getSelection());
 			}
 		});
 
-		Composite buttonContainer = factory.createComposite(container);
+		Composite buttonContainer = toolkit.createComposite(container);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		buttonContainer.setLayout(layout);
@@ -133,7 +143,7 @@ public class DescriptionSection extends PDEFormSection {
 		buttonContainer.setLayoutData(gd);
 
 		applyButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(KEY_APPLY),
 				SWT.PUSH);
@@ -149,7 +159,7 @@ public class DescriptionSection extends PDEFormSection {
 		});
 
 		resetButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(KEY_RESET),
 				SWT.PUSH);
@@ -163,11 +173,12 @@ public class DescriptionSection extends PDEFormSection {
 				handleReset();
 			}
 		});
-		return container;
+		section.setClient(container);
+		initialize();
 	}
 
 	private void updateSelection(ISelection selection) {
-		getFormPage().getEditor().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
 
 	public boolean doGlobalAction(String actionId) {
@@ -202,7 +213,7 @@ public class DescriptionSection extends PDEFormSection {
 		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 	}
 	private void handleApply() {
@@ -220,16 +231,14 @@ public class DescriptionSection extends PDEFormSection {
 	private void handleReset() {
 		updateDocument();
 	}
-	public void initialize(Object input) {
-		schema = (ISchema) input;
+	public void initialize() {
+		schema = (ISchema) getPage().getModel();
 		element = schema;
 		updateDocument();
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
 				if (!ignoreChange && schema instanceof IEditable) {
-					setDirty(true);
-					((IEditable) schema).setDirty(true);
-					getFormPage().getEditor().fireSaveNeeded();
+					markDirty();
 				}
 				applyButton.setEnabled(true);
 				resetButton.setEnabled(true);
@@ -241,15 +250,11 @@ public class DescriptionSection extends PDEFormSection {
 	public boolean isEditable() {
 		return editable;
 	}
-	public void sectionChanged(
-		FormSection source,
-		int changeType,
-		Object changeObject) {
+	public void selectionChanged(IFormPart part, ISelection selection) {
 		checkForPendingChanges();
-		if (!(source instanceof ElementSection))
+		if (!(part instanceof ElementSection))
 			return;
-		if (changeType != FormSection.SELECTION)
-			return;
+		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
 		element = (ISchemaObject) changeObject;
 		if (element == null)
 			element = schema;

@@ -11,13 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEEditorContributor;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 
-public class SchemaEditorContributor extends PDEEditorContributor {
+public class SchemaEditorContributor extends PDEFormEditorContributor {
 	private PreviewAction previewAction;
 
 	class PreviewAction extends Action {

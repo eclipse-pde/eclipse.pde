@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
@@ -28,9 +29,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class URLSection extends PDEFormSection {
+public class URLSection extends PDESection {
 	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
@@ -49,7 +51,6 @@ public class URLSection extends PDEFormSection {
 		"FeatureEditor.URLSection.discoveryURLs";
 	public static final String NEW_URL = "FeatureEditor.URLSection.newURL";
 
-	private boolean updateNeeded;
 	private TreeViewer urlTree;
 	private Image urlImage;
 	private Image urlFolderImage;
@@ -66,7 +67,7 @@ public class URLSection extends PDEFormSection {
 			this.type = type;
 		}
 		IFeatureURL getURL() {
-			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+			IFeatureModel model = (IFeatureModel) getPage().getModel();
 			IFeature feature = model.getFeature();
 			return feature.getURL();
 		}
@@ -139,28 +140,30 @@ public class URLSection extends PDEFormSection {
 
 	}
 
-	public URLSection(FeatureFormPage page) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public URLSection(FeatureFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		urlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
 		urlFolderImage = provider.get(PDEPluginImages.DESC_LINKS_OBJ);
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
+		super.commit(onSave);
 	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
-		Tree tree = factory.createTree(container, SWT.NULL);
+		Tree tree = toolkit.createTree(container, SWT.NULL);
 		urlTree = new TreeViewer(tree);
 		urlTree.setContentProvider(new URLContentProvider());
 		urlTree.setLabelProvider(new URLLabelProvider());
 		urlTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		urlTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				getFormPage().setSelection(e.getSelection());
+				getPage().getPDEEditor().setSelection(e.getSelection());
 			}
 		});
 		urlTree.addDoubleClickListener(new IDoubleClickListener() {
@@ -182,12 +185,13 @@ public class URLSection extends PDEFormSection {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		tree.setLayoutData(gd);
-		factory.paintBordersFor(container);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
-		return container;
+		toolkit.paintBordersFor(container);
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
+		section.setClient(container);
+		initialize();
 	}
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
@@ -208,11 +212,12 @@ public class URLSection extends PDEFormSection {
 		}
 	return false;
 	}
-	public void expandTo(Object object) {
+	public boolean setFormInput(Object object) {
 		urlTree.setSelection(new StructuredSelection(object), true);
+		return true;
 	}
 	private void fillContextMenu(IMenuManager manager) {
-		IModel model = (IModel)getFormPage().getModel();
+		IModel model = (IModel)getPage().getModel();
 		ISelection selection = urlTree.getSelection();
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 
@@ -245,7 +250,7 @@ public class URLSection extends PDEFormSection {
 			manager.add(deleteAction);
 		}
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
@@ -267,7 +272,7 @@ public class URLSection extends PDEFormSection {
 		}
 	}
 	private void handleNewURL(int type) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
 
@@ -298,18 +303,15 @@ public class URLSection extends PDEFormSection {
 			PDEPlugin.logException(e);
 		}
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
-		if (model.isEditable() == false) {
-		}
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		refresh();
 		model.addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
-			if (getFormPage().isVisible())
-				update();
+			markStale();
+			return;
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureURLElement) {
@@ -332,15 +334,11 @@ public class URLSection extends PDEFormSection {
 	}
 	public void setFocus() {
 	}
-	public void update() {
-		if (updateNeeded) {
-			this.update(getFormPage().getModel());
-		}
-	}
-	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		urlTree.setInput(model);
-		updateNeeded = false;
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
@@ -378,7 +376,7 @@ public class URLSection extends PDEFormSection {
 		
 		Object target = ssel.getFirstElement();
 		if (target instanceof URLFolder) {
-			Clipboard clipboard = getFormPage().getEditor().getClipboard();
+			Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 			Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
 			if (objects != null) {
 				doPaste((URLFolder)target, objects);
@@ -389,7 +387,7 @@ public class URLSection extends PDEFormSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(URLFolder target, Object[] objects) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof FeatureURLElement) {
@@ -409,5 +407,4 @@ public class URLSection extends PDEFormSection {
 			}
 		}
 	}
-	
 }

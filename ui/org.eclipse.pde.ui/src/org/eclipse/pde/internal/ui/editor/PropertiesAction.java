@@ -9,31 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-
-import org.eclipse.ui.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.*;
-
+import org.eclipse.ui.*;
 public class PropertiesAction extends Action {
 	public static final String LABEL = "Actions.properties.label";
-	private PDEMultiPageEditor editor;
-
-public PropertiesAction(PDEMultiPageEditor editor) {
-	this.editor = editor;
-	setText(PDEPlugin.getResourceString(LABEL));
-	setImageDescriptor(PDEPluginImages.DESC_PROPERTIES);
-	setDisabledImageDescriptor(PDEPluginImages.DESC_PROPERTIES_DISABLED);
-}
-public void run() {
-	try {
-		String viewId = IPageLayout.ID_PROP_SHEET;
-		IWorkbenchPage perspective = PDEPlugin.getActivePage();
-		IViewPart view = perspective.showView(viewId);
-		editor.updateSynchronizedViews(editor.getCurrentPage());
-		perspective.activate(editor);
-		perspective.bringToTop(view);
-	} catch (PartInitException e) {
-		PDEPlugin.logException(e);
+	private PDEFormEditor editor;
+	public PropertiesAction(PDEFormEditor editor) {
+		this.editor = editor;
+		setText(PDEPlugin.getResourceString(LABEL));
+		setImageDescriptor(PDEPluginImages.DESC_PROPERTIES);
+		setDisabledImageDescriptor(PDEPluginImages.DESC_PROPERTIES_DISABLED);
 	}
-}
+	public void run() {
+		try {
+			String viewId = IPageLayout.ID_PROP_SHEET;
+			IWorkbenchPage perspective = PDEPlugin.getActivePage();
+			IViewPart view = perspective.showView(viewId);
+			editor.updatePropertySheet(editor.getActivePageInstance());
+			perspective.activate(editor);
+			perspective.bringToTop(view);
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
+	}
 }

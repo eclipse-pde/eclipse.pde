@@ -13,7 +13,6 @@ import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-;
 
 /**
  * Action suitable for calling from cheat sheets and

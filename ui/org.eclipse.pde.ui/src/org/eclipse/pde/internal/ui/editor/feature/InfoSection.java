@@ -21,17 +21,21 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
-public class InfoSection extends PDEFormSection {
+public class InfoSection extends PDESection {
 	private static final String KEY_APPLY = "Actions.apply.flabel";
 	private static final String KEY_RESET = "Actions.reset.flabel";
 	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
@@ -47,7 +51,7 @@ public class InfoSection extends PDEFormSection {
 	private IDocumentPartitioner partitioner;
 	private SourceViewerConfiguration sourceConfiguration;
 	private SourceViewer sourceViewer;
-	private CCombo sectionCombo;
+	private CTabFolder tabFolder;
 	private Text urlText;
 	private Button applyButton;
 	private Button resetButton;
@@ -55,12 +59,10 @@ public class InfoSection extends PDEFormSection {
 	private int elementIndex;
 	private boolean ignoreChange;
 
-	public InfoSection(PDEFormPage page, IColorManager colorManager) {
-		super(page);
-		setHeaderPainted(false);
-		setAddSeparator(false);
+	public InfoSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
+		super(page, parent, Section.DESCRIPTION|Section.NO_TITLE, false);
 		String description = PDEPlugin.getResourceString(SECTION_DESC);
-		setDescription(TextUtil.createMultiLine(description, 80));
+		getSection().setDescription(description);
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -71,77 +73,68 @@ public class InfoSection extends PDEFormSection {
 					XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		handleApply();
 
 		if (onSave) {
-			setDirty(false);
 			resetButton.setEnabled(false);
 		}
+		super.commit(onSave);
 	}
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
-		layout.marginWidth = FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
-		layout.marginHeight =
-			FormWidgetFactory.BORDER_STYLE == SWT.NULL ? 2 : 0;
-		layout.verticalSpacing = 9;
+		layout.marginWidth = 2;
+		layout.marginHeight =2;
+		//layout.verticalSpacing = 6;
 		container.setLayout(layout);
 		GridData gd;
+		
+		toolkit.createLabel(container, null);
+		tabFolder = new CTabFolder(container, SWT.FLAT|SWT.TOP);
+		toolkit.adapt(tabFolder, true, true);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		tabFolder.setLayoutData(gd);
+		gd.heightHint = tabFolder.getTabHeight();
+		toolkit.getColors().initializeSectionToolBarColors();
+		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
+		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
+		tabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
 
-		Label label = factory.createLabel(container, null);
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTabSelection();
+			}
+		});
 
-		factory.createLabel(container, PDEPlugin.getResourceString(KEY_INFO));
-		int borderStyle;
-		if (SWT.getPlatform().equals("motif") == false)
-			borderStyle = SWT.FLAT;
-		else
-			borderStyle = SWT.BORDER;
-		int comboStyle = SWT.READ_ONLY | borderStyle;
-		sectionCombo = new CCombo(container, comboStyle);
-		sectionCombo.setBackground(factory.getBackgroundColor());
+		toolkit.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
+
+		urlText = toolkit.createText(container, null, SWT.SINGLE);
+		urlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				infoModified();
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		sectionCombo.setLayoutData(gd);
-		initializeSectionCombo();
-		factory.createLabel(container, null);
+		urlText.setLayoutData(gd);
 
-		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
+		toolkit.createLabel(container, null);
 
-		if (SWT.getPlatform().equals("motif") == false) {
-			urlText =
-				factory.createText(container, null, SWT.SINGLE | borderStyle);
-			urlText.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					infoModified();
-				}
-			});
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			urlText.setLayoutData(gd);
-		} else {
-			Composite textContainer = createText(container, factory);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			textContainer.setLayoutData(gd);
-		}
-
-		factory.createLabel(container, null);
-
-		label =
-			factory.createLabel(
+		Label label =
+			toolkit.createLabel(
 				container,
 				PDEPlugin.getResourceString(KEY_TEXT));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 
-		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL
-		| FormWidgetFactory.BORDER_STYLE;
+		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
@@ -153,10 +146,11 @@ public class InfoSection extends PDEFormSection {
 		});
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
-		styledText.setMenu(getFormPage().getEditor().getContextMenu());
+		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
+		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 
 		if (SWT.getPlatform().equals("motif") == false)
-			factory.paintBordersFor(container);
+			toolkit.paintBordersFor(container);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd =
@@ -166,8 +160,10 @@ public class InfoSection extends PDEFormSection {
 					| GridData.GRAB_VERTICAL);
 		//gd.widthHint = 600;
 		//gd.heightHint = 600;
+		gd.widthHint = 50;
+		gd.heightHint = 50;
 		control.setLayoutData(gd);
-		Composite buttonContainer = factory.createComposite(container);
+		Composite buttonContainer = toolkit.createComposite(container);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -176,7 +172,7 @@ public class InfoSection extends PDEFormSection {
 		buttonContainer.setLayoutData(gd);
 
 		applyButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(KEY_APPLY),
 				SWT.PUSH);
@@ -192,7 +188,7 @@ public class InfoSection extends PDEFormSection {
 		});
 
 		resetButton =
-			factory.createButton(
+			toolkit.createButton(
 				buttonContainer,
 				PDEPlugin.getResourceString(KEY_RESET),
 				SWT.PUSH);
@@ -206,28 +202,17 @@ public class InfoSection extends PDEFormSection {
 				handleReset();
 			}
 		});
-		return container;
+		createTabs();
+		section.setClient(container);
+		initialize();
+		if (tabFolder.getItemCount()>0) {
+			tabFolder.setSelection(0);		
+			updateTabSelection();
+		}
 	}
 
-	private Composite createText(Composite parent, FormWidgetFactory factory) {
-		Composite textContainer = factory.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 1;
-		layout.marginHeight = 2;
-		textContainer.setLayout(layout);
-		factory.paintBordersFor(textContainer);
-		urlText = factory.createText(textContainer, null);
-		urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		urlText.setLayoutData(gd);
-		return textContainer;
-	}
 	private void updateSelection(ISelection selection) {
-		getFormPage().getEditor().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -256,17 +241,20 @@ public class InfoSection extends PDEFormSection {
 		}
 		return false;
 	}
-	public void expandTo(Object input) {
+	public boolean setFormInput(Object input) {
 		if (input instanceof IFeatureInfo) {
 			IFeatureInfo info = (IFeatureInfo) input;
 			int index = info.getIndex();
-			sectionCombo.select(index);
-			updateEditorInput(info, true);
+			if (index!= -1)
+				tabFolder.setSelection(index);
+			updateEditorInput(input, false);
+			return true;
 		}
+		return false;
 	}
 
 	private void handleApply() {
-		handleApply(null, sectionCombo.getSelectionIndex());
+		handleApply(null, tabFolder.getSelectionIndex());
 	}
 
 	private void handleApply(IFeatureInfo info, int index) {
@@ -275,6 +263,7 @@ public class InfoSection extends PDEFormSection {
 		updateInfoText(info, urlName, text, index);
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
+		updateTabImage(tabFolder.getSelection());
 	}
 
 	private void updateInfoText(
@@ -288,7 +277,7 @@ public class InfoSection extends PDEFormSection {
 			url = urlText;
 		}
 		try {
-			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+			IFeatureModel model = (IFeatureModel) getPage().getModel();
 			IFeature feature = model.getFeature();
 			IFeatureInfo info = targetInfo;
 
@@ -307,17 +296,18 @@ public class InfoSection extends PDEFormSection {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 	}
 
 
 	private void handleReset() {
 		updateEditorInput(element, false);
+		updateTabImage(tabFolder.getSelection());
 	}
 
-	public void initialize(Object model) {
-		IFeatureModel featureModel = (IFeatureModel) model;
+	public void initialize() {
+		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
 				infoModified();
@@ -332,17 +322,15 @@ public class InfoSection extends PDEFormSection {
 	}
 
 	public void dispose() {
-		IFeatureModel featureModel = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		featureModel.removeModelChangedListener(this);
 		super.dispose();
 	}
 
 	private void infoModified() {
-		IFeatureModel featureModel = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		if (!ignoreChange && featureModel instanceof IEditable) {
-			setDirty(true);
-			((IEditable) featureModel).setDirty(true);
-			getFormPage().getEditor().fireSaveNeeded();
+			markDirty();
 		}
 		applyButton.setEnabled(true);
 		resetButton.setEnabled(true);
@@ -350,37 +338,56 @@ public class InfoSection extends PDEFormSection {
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-			int index = sectionCombo.getSelectionIndex();
-			IFeatureInfo info = model.getFeature().getFeatureInfo(index);
-			setDirty(false);
-			element = null;
-			elementIndex = -1;
-			updateEditorInput(info, false);
+			markStale();
 		}
 	}
+	
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		int index = tabFolder.getSelectionIndex();
+		IFeatureInfo info = model.getFeature().getFeatureInfo(index);
+		element = null;
+		elementIndex = -1;
+		updateEditorInput(info, false);
+		super.refresh();
+	}
 
-	private void initializeSectionCombo() {
-		sectionCombo.setItems(
-			new String[] {
-				PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION),
-				PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT),
-				PDEPlugin.getResourceString(KEY_INFO_LICENSE)});
+	private void createTabs() {
+		IFeatureModel model = (IFeatureModel)getPage().getModel();
+		IFeature feature = model.getFeature();
+		addTab(PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION), feature.getFeatureInfo(0));
+		addTab(PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT), feature.getFeatureInfo(1));
+		addTab(PDEPlugin.getResourceString(KEY_INFO_LICENSE), feature.getFeatureInfo(2));
+	}
+	private void addTab(String label, IFeatureInfo info) {
+		CTabItem item = new CTabItem(tabFolder, SWT.NULL);
+		item.setText(label);
+		item.setData(info);
+		updateTabImage(item);
+		updateTabHeight();
+	}
+	private void updateTabHeight() {
+		GridData gd = (GridData)tabFolder.getLayoutData();
+		gd.heightHint = tabFolder.getTabHeight();		
+	}
+	private void updateTabImage(CTabItem item) {
+		if (item==null) return;
+		IFeatureInfo info = (IFeatureInfo)item.getData();
+		if (info==null) return;
+		item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(info));
+	}
 
-		sectionCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-				IFeature feature = model.getFeature();
-				int index = sectionCombo.getSelectionIndex();
-				IFeatureInfo info = feature.getFeatureInfo(index);
-				updateEditorInput(info, true);
-			}
-		});
-		sectionCombo.select(0);
+	private void updateTabSelection() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		int index = tabFolder.getSelectionIndex();
+		IFeatureInfo info = feature.getFeatureInfo(index);
+		updateEditorInput(info, true);
 	}
 
 	public void setFocus() {
 		sourceViewer.getTextWidget().setFocus();
+		updateSelection(sourceViewer.getSelection());
 	}
 
 	private void commitPrevious() {
@@ -415,7 +422,7 @@ public class InfoSection extends PDEFormSection {
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 		element = input;
-		elementIndex = sectionCombo.getSelectionIndex();
+		elementIndex = tabFolder.getSelectionIndex();
 		ignoreChange = false;
 	}
 

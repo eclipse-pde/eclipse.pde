@@ -9,147 +9,107 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
- 
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.layout.*;
-
-
-public class SchemaSpecSection extends PDEFormSection {
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.*;
+/**
+ *
+ */
+public class SchemaSpecSection extends PDESection {
 	public static final String SECTION_TITLE = "SchemaEditor.SpecSection.title";
 	public static final String SECTION_DESC = "SchemaEditor.SpecSection.desc";
 	public static final String SECTION_PLUGIN = "SchemaEditor.SpecSection.plugin";
 	public static final String SECTION_POINT = "SchemaEditor.SpecSection.point";
 	public static final String SECTION_NAME = "SchemaEditor.SpecSection.name";
-	
 	private FormEntry pluginText;
 	private FormEntry pointText;
 	private FormEntry nameText;
-	private boolean updateNeeded;
-
-public SchemaSpecSection(SchemaFormPage page) {
-	super(page);
-	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-	setCollapsable(true);
-	setCollapsed(true);
-}
-public void commitChanges(boolean onSave) {
-	pluginText.commit();
-	pointText.commit();
-	nameText.commit();
-}
-
-public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.verticalSpacing = 9;
-	layout.horizontalSpacing = 6;
-	container.setLayout(layout);
-
-	final Schema schema = (Schema)getFormPage().getModel();
-
-	pluginText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_PLUGIN), factory));
-	pluginText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormEntry text) {
-			schema.setPluginId(text.getValue());
-		}
-		public void textDirty(FormEntry text) {
-			forceDirty();
-		}
-	});
-
-	pointText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_POINT), factory));
-	pointText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormEntry text) {
-			schema.setPointId(text.getValue());
-		}
-		public void textDirty(FormEntry text) {
-			forceDirty();
-		}
-	});
-
-	nameText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory));
-	nameText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormEntry text) {
-			schema.setName(text.getValue());
-			getFormPage().getForm().setHeadingText(schema.getName());
-		}
-		public void textDirty(FormEntry text) {
-			forceDirty();
-		}
-	});
-
-	GridData gd = (GridData) pointText.getControl().getLayoutData();
-	gd.widthHint = 150;
-	
-	factory.paintBordersFor(container);
-	return container;
-}
-
-private void forceDirty() {
-	setDirty(true);
-	ISchema schema = (ISchema)getFormPage().getModel();
-	if (schema instanceof IEditable) {
-		IEditable editable = (IEditable)schema;
-		editable.setDirty(true);
-		getFormPage().getEditor().fireSaveNeeded();
+	public SchemaSpecSection(SchemaFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION | Section.TWISTIE);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
-}
+	public void commit(boolean onSave) {
+		pluginText.commit();
+		pointText.commit();
+		nameText.commit();
+		super.commit(onSave);
+	}
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.verticalSpacing = 9;
+		layout.horizontalSpacing = 6;
+		container.setLayout(layout);
+		final Schema schema = (Schema) getPage().getModel();
+		pluginText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_PLUGIN), null, false);
+		pluginText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				schema.setPluginId(text.getValue());
+			}
+		});
+		pointText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_POINT), null, false);
+		pointText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				schema.setPointId(text.getValue());
+			}
+		});
+		nameText = new FormEntry(container, toolkit, PDEPlugin
+				.getResourceString(SECTION_NAME), null, false);
+		nameText.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry text) {
+				schema.setName(text.getValue());
+				getPage().getManagedForm().getForm().setText(schema.getName());
+			}
+		});
+		GridData gd = (GridData) pointText.getText().getLayoutData();
+		gd.widthHint = 150;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
+	}
+	public void dispose() {
+		ISchema schema = (ISchema) getPage().getModel();
+		schema.removeModelChangedListener(this);
+		super.dispose();
+	}
+	public void initialize() {
+		ISchema schema = (ISchema) getPage().getModel();
+		refresh();
+		if (!(schema instanceof IEditable)) {
+			pluginText.getText().setEnabled(false);
+			pointText.getText().setEnabled(false);
+			nameText.getText().setEnabled(false);
+		}
+		schema.addModelChangedListener(this);
+	}
 
-public void dispose() {
-	ISchema schema = (ISchema) getFormPage().getModel();
-	schema.removeModelChangedListener(this);
-	super.dispose();
-}
+	public void setFocus() {
+		if (pointText != null)
+			pointText.getText().setFocus();
+	}
+	private void setIfDefined(FormEntry formText, String value) {
+		if (value != null) {
+			formText.setValue(value, true);
+		}
+	}
 
-public void initialize(Object input) {
-	ISchema schema = (ISchema)input;
-	update(input);
-	if (!(schema instanceof IEditable)) {
-		pluginText.getControl().setEnabled(false);
-		pointText.getControl().setEnabled(false);
-		nameText.getControl().setEnabled(false);
+	public void refresh() {
+		ISchema schema = (ISchema)getPage().getModel();
+		setIfDefined(pluginText, schema.getPluginId());
+		setIfDefined(pointText, schema.getPointId());
+		setIfDefined(nameText, schema.getName());
+		getPage().getManagedForm().getForm().setText(schema.getName());
+		super.refresh();
 	}
-	schema.addModelChangedListener(this);
-}
-public boolean isDirty() {
-	return pluginText.isDirty()
-		|| pointText.isDirty()
-		|| nameText.isDirty();
-}
-
-public void modelChanged(IModelChangedEvent e) {
-	if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED) {
-		updateNeeded=true;
-	}
-}
-public void setFocus() {
-	if (pointText != null)
-		pointText.getControl().setFocus();
-}
-private void setIfDefined(FormEntry formText, String value) {
-	if (value != null) {
-		formText.setValue(value, true);
-	}
-}
-public void update() {
-	if (updateNeeded) {
-		this.update(getFormPage().getModel());
-	}
-}
-public void update(Object input) {
-	ISchema schema = (ISchema)input;
-	setIfDefined(pluginText, schema.getPluginId());
-	setIfDefined(pointText, schema.getPointId());
-	setIfDefined(nameText, schema.getName());
-	getFormPage().getForm().setHeadingText(schema.getName());
-	updateNeeded=false;
-}
 }

@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -31,7 +32,8 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class IncludedFeaturesSection
 	extends TableSection
@@ -41,14 +43,13 @@ public class IncludedFeaturesSection
 	private static final String KEY_NEW = "FeatureEditor.IncludedFeaturesSection.new";
 	private static final String POPUP_NEW = "Menus.new.label";
 	private static final String POPUP_DELETE = "Actions.delete.label";
-	private boolean updateNeeded;
 	private PropertiesAction propertiesAction;
 	private TableViewer includesViewer;
 	private Action newAction;
 	private Action openAction;
 	private Action deleteAction;
 
-	class PluginContentProvider
+	class IncludedFeaturesContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
@@ -59,10 +60,10 @@ public class IncludedFeaturesSection
 		}
 	}
 
-	public IncludedFeaturesSection(FeatureAdvancedPage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public IncludedFeaturesSection(FeatureAdvancedPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
 		//setCollapsable(true);
 		//IFeatureModel model = (IFeatureModel)page.getModel();
@@ -70,23 +71,25 @@ public class IncludedFeaturesSection
 		//setCollapsed(feature.getData().length==0);
 	}
 
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
+		super.commit(onSave);
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
+	public void createClient(Section section, FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
 		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 9;
 
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		includesViewer = tablePart.getTableViewer();
-		includesViewer.setContentProvider(new PluginContentProvider());
+		includesViewer.setContentProvider(new IncludedFeaturesContentProvider());
 		includesViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		includesViewer.setSorter(ListUtil.NAME_SORTER);
-		factory.paintBordersFor(container);
+		toolkit.paintBordersFor(container);
 		makeActions();
-		return container;
+		section.setClient(container);
+		initialize();
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -99,16 +102,19 @@ public class IncludedFeaturesSection
 	}
 
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
-	public void expandTo(Object object) {
+	
+	public boolean setFormInput(Object object) {
 		if (object instanceof IFeatureChild) {
 			includesViewer.setSelection(new StructuredSelection(object), true);
+			return true;
 		}
+		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
@@ -116,13 +122,13 @@ public class IncludedFeaturesSection
 		manager.add(newAction);
 		manager.add(deleteAction);
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
 
 	private void handleNew() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 
 		BusyIndicator.showWhile(includesViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
@@ -144,7 +150,7 @@ public class IncludedFeaturesSection
 
 		if (ssel.isEmpty())
 			return;
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
 		try {
@@ -189,11 +195,12 @@ public class IncludedFeaturesSection
 		return false;
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		getFormPage().setSelection(selection);
+		getPage().getPDEEditor().setSelection(selection);
 	}
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		update(input);
+	
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
@@ -202,10 +209,8 @@ public class IncludedFeaturesSection
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
-			if (getFormPage().isVisible()) {
-				update();
-			}
+			markStale();
+			return;
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureChild) {
@@ -220,7 +225,7 @@ public class IncludedFeaturesSection
 		}
 	}
 	private void makeActions() {
-		IModel model = (IModel)getFormPage().getModel();
+		IModel model = (IModel)getPage().getModel();
 		newAction = new Action() {
 			public void run() {
 				handleNew();
@@ -241,36 +246,44 @@ public class IncludedFeaturesSection
 		deleteAction.setEnabled(model.isEditable());
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 		openAction = new OpenReferenceAction(includesViewer);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		updateNeeded = true;
-		update();
+		IModel [] added = event.getAddedModels();
+		IModel [] removed = event.getRemovedModels();
+		IModel [] changed = event.getChangedModels();
+		if (hasFeatureModels(added)||hasFeatureModels(removed)||hasFeatureModels(changed))		
+			markStale();
 	}
+	private boolean hasFeatureModels(IModel [] models) {
+		IFeatureModel thisModel = (IFeatureModel)getPage().getModel();
+		if (thisModel==null) return false;
+		IFeature thisFeature = thisModel.getFeature();
+		if (thisFeature==null) return false;
+		if (models==null) return false;
+		if (models.length==0) return false;
+		for (int i=0; i<models.length; i++) {
+			if (models[i] instanceof IFeatureModel) {
+				IFeature feature = ((IFeatureModel)models[i]).getFeature();
+				if (feature.getId().equals(thisFeature.getId()))
+					continue;
+			}
+			return true;
+		}
+		return false;
+	}	
 
 	public void setFocus() {
 		if (includesViewer != null)
 			includesViewer.getTable().setFocus();
 	}
 
-	public void update() {
-		if (updateNeeded) {
-			includesViewer.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					update(getFormPage().getModel());
-				}
-			});
-		}
-	}
-
-	public void update(Object input) {
-		if (getFormPage().isVisible()) {
-			IFeatureModel model = (IFeatureModel) input;
-			IFeature feature = model.getFeature();
-			includesViewer.setInput(feature);
-			updateNeeded = false;
-		}
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
+		IFeature feature = model.getFeature();
+		includesViewer.setInput(feature);
+		super.refresh();
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
@@ -296,7 +309,7 @@ public class IncludedFeaturesSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
 		if (objects != null) {
@@ -307,7 +320,7 @@ public class IncludedFeaturesSection
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 
 		FeatureChild[] fChildren = new FeatureChild[objects.length];

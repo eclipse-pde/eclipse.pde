@@ -10,32 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @version 	1.0
  * @author
  */
-public abstract class StructuredViewerSection extends PDEFormSection {
+public abstract class StructuredViewerSection extends PDESection {
 	protected StructuredViewerPart viewerPart;
 	/**
 	 * Constructor for StructuredViewerSection.
 	 * @param formPage
 	 */
-	public StructuredViewerSection(PDEFormPage formPage, String [] buttonLabels) {
-		super(formPage);
+	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, String [] buttonLabels) {
+		super(formPage, parent, style);
 		viewerPart = createViewerPart(buttonLabels);
 		viewerPart.setMinimumSize(50, 50);
+		FormToolkit toolkit = formPage.getManagedForm().getToolkit();
+		//toolkit.createCompositeSeparator(getSection());
+		createClient(getSection(), toolkit);
 	}
 
-	protected void createViewerPartControl(Composite parent, int style, int span, FormWidgetFactory factory) {
-		viewerPart.createControl(parent, style, span, factory);
+	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
+		viewerPart.createControl(parent, style, span, toolkit);
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
@@ -49,8 +52,8 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 		control.setMenu(menu);
 	}
 	
-	protected Composite createClientContainer(Composite parent, int span, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	protected Composite createClientContainer(Composite parent, int span, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
 		layout.numColumns = span;
@@ -67,13 +70,13 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 	}
 
 	protected void doPaste() {
-		ISelection selection = viewerPart.getViewer().getSelection();
+		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return;
 		
 		Object target = ssel.getFirstElement();
 		
-		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
 		if (objects!=null) {
@@ -81,7 +84,7 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 		}
 	}
 	public boolean canPaste(Clipboard clipboard) {
-		ISelection selection = viewerPart.getViewer().getSelection();
+		ISelection selection = getViewerSelection();
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		if (ssel.size()>1) return false;
 			
@@ -92,6 +95,9 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 			return canPaste(target, objects);
 		}
 		else return false;
+	}
+	protected ISelection getViewerSelection() {
+		return viewerPart.getViewer().getSelection();
 	}
 	protected void doPaste(Object target, Object[] objects) {
 	}

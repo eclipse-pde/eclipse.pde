@@ -28,7 +28,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
 
 public abstract class ReferenceWizardPage extends WizardPage {
 	public static final String KEY_PLUGINS =
@@ -57,9 +57,9 @@ public abstract class ReferenceWizardPage extends WizardPage {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}

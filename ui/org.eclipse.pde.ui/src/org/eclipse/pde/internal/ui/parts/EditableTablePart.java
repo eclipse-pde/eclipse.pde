@@ -13,9 +13,9 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.RenameDialog;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 /**
  * @version 	1.0
  * @author
@@ -68,9 +68,9 @@ public class EditableTablePart extends TablePart {
 	protected StructuredViewer createStructuredViewer(
 		Composite parent,
 		int style,
-		FormWidgetFactory factory) {
+		FormToolkit toolkit) {
 		TableViewer tableViewer =
-			(TableViewer) super.createStructuredViewer(parent, style, factory);
+			(TableViewer) super.createStructuredViewer(parent, style, toolkit);
 		return tableViewer;
 	}
 

@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Dictionary;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
@@ -29,7 +28,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private ProjectStructurePage fStructurePage;
 	private ContentPage fContentPage;
 	private WizardListSelectionPage fWizardListPage;
-	private Dictionary defaultValues;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);

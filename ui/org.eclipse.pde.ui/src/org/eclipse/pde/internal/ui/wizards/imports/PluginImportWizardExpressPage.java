@@ -20,7 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.forms.widgets.*;
 
 /**
  * @author Wassim Melhem
@@ -68,9 +68,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			return viewer;
 		}
 		

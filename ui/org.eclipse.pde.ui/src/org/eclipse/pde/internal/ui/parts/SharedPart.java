@@ -9,10 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @version 	1.0
@@ -32,7 +32,7 @@ public abstract class SharedPart {
 		Composite parent,
 		int style,
 		int span,
-		FormWidgetFactory factory);
+		FormToolkit toolkit);
 
 	public boolean isEnabled() {
 		return enabled;
@@ -43,19 +43,19 @@ public abstract class SharedPart {
 
 	protected Composite createComposite(
 		Composite parent,
-		FormWidgetFactory factory) {
-		if (factory == null)
+		FormToolkit toolkit) {
+		if (toolkit == null)
 			return new Composite(parent, SWT.NULL);
 		else
-			return factory.createComposite(parent);
+			return toolkit.createComposite(parent);
 	}
 	protected Label createEmptySpace(
 		Composite parent,
 		int span,
-		FormWidgetFactory factory) {
+		FormToolkit toolkit) {
 		Label label;
-		if (factory != null) {
-			label = factory.createLabel(parent, null);
+		if (toolkit != null) {
+			label = toolkit.createLabel(parent, null);
 		} else {
 			label = new Label(parent, SWT.NULL);
 		}

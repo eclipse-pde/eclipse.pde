@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.widgets.*;
 
 public class MigratePluginWizardPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
@@ -54,9 +54,9 @@ public class MigratePluginWizardPage extends WizardPage {
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
-			FormWidgetFactory factory) {
+			FormToolkit toolkit) {
 			StructuredViewer viewer =
-				super.createStructuredViewer(parent, style, factory);
+				super.createStructuredViewer(parent, style, toolkit);
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}

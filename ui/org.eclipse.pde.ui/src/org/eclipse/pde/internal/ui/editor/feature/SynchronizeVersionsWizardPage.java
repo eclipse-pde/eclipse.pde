@@ -99,7 +99,7 @@ private WorkspacePluginModelBase findModel(String id) {
 	return findWorkspaceModelBase(models, id);
 }
 private IFeaturePlugin findPluginReference(String id) {
-	IFeatureModel model = (IFeatureModel) featureEditor.getModel();
+	IFeatureModel model = (IFeatureModel) featureEditor.getAggregateModel();
 	IFeaturePlugin[] references = model.getFeature().getPlugins();
 	for (int i = 0; i<references.length; i++) {
 		if (references[i].getId().equals(id))
@@ -195,7 +195,7 @@ private void loadSettings() {
 private void runOperation(int mode, IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
 	WorkspaceFeatureModel model =
-		(WorkspaceFeatureModel) featureEditor.getModel();
+		(WorkspaceFeatureModel) featureEditor.getAggregateModel();
 	IFeature feature = model.getFeature();
 	IFeaturePlugin[] plugins = feature.getPlugins();
 	int size = plugins.length;

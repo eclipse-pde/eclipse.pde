@@ -22,7 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
@@ -37,9 +36,6 @@ public class PluginSearchActionGroup extends ActionGroup {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if (sSelection.size() == 1) {
 				Object object = sSelection.getFirstElement();
-				if (object instanceof PluginDocumentNode) {
-					object = ((PluginDocumentNode)object).getPluginObjectNode();
-				}
 				addFindDeclarationsAction(object, menu);
 				addFindReferencesAction(object, menu);
 				addShowDescriptionAction(object, menu);

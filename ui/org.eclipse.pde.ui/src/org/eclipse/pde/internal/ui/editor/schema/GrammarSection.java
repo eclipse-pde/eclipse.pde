@@ -13,20 +13,21 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.widgets.*;
 
-public class GrammarSection extends PDEFormSection {
-	private FormWidgetFactory factory;
+public class GrammarSection extends PDESection implements IPartSelectionListener {
 	private TreeViewer treeViewer;
 	private Text dtdLabel;
 	public static final String SECTION_TITLE =
@@ -93,22 +94,23 @@ public class GrammarSection extends PDEFormSection {
 		}
 	}
 
-	public GrammarSection(PDEFormPage page) {
-		super(page);
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public GrammarSection(PDEFormPage page, Composite parent) {
+		super(page, parent, Section.DESCRIPTION);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		this.factory = factory;
-		Composite container = factory.createComposite(parent);
+	
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
-		layout.verticalSpacing = 1;
+		layout.verticalSpacing = toolkit.getBorderStyle()==SWT.BORDER?0:1;
 		container.setLayout(layout);
 
-		Control tree = createTree(container);
+		Control tree = createTree(container, toolkit);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		/*
 		if (SWT.getPlatform().equals("motif") == false)
@@ -118,25 +120,26 @@ public class GrammarSection extends PDEFormSection {
 		tree.setLayoutData(gd);
 
 		dtdLabel =
-			factory.createText(
+			toolkit.createText(
 				container,
 				"",
 				SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		dtdLabel.setData(
-			FormWidgetFactory.KEY_DRAW_BORDER,
-			FormWidgetFactory.TREE_BORDER);
+			FormToolkit.KEY_DRAW_BORDER,
+			FormToolkit.TREE_BORDER);
 		dtdLabel.setEditable(false);
 		dtdLabel.setForeground(
-			factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
+			toolkit.getColors().getColor(FormColors.TITLE));
 		gd = new GridData(GridData.FILL_BOTH);
 		dtdLabel.setLayoutData(gd);
 		updateDTDLabel(null);
 
-		factory.paintBordersFor(container);
-		return container;
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
 	}
-	private Control createTree(Composite parent) {
-		Tree tree = factory.createTree(parent, SWT.SINGLE);
+	private Control createTree(Composite parent, FormToolkit toolkit) {
+		Tree tree = toolkit.createTree(parent, SWT.SINGLE);
 
 		treeViewer = new TreeViewer(tree);
 		treeViewer.setLabelProvider(new GrammarLabelProvider());
@@ -145,7 +148,7 @@ public class GrammarSection extends PDEFormSection {
 		treeViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				getFormPage().setSelection(e.getSelection());
+				getPage().getPDEEditor().setSelection(e.getSelection());
 			}
 		});
 		MenuManager popupMenuManager = new MenuManager();
@@ -161,10 +164,11 @@ public class GrammarSection extends PDEFormSection {
 		return tree;
 	}
 	public void dispose() {
-		ISchema schema = (ISchema) getFormPage().getModel();
+		ISchema schema = (ISchema) getPage().getModel();
 		schema.removeModelChangedListener(this);
 		super.dispose();
 	}
+	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			ISelection sel = treeViewer.getSelection();
@@ -244,10 +248,10 @@ public class GrammarSection extends PDEFormSection {
 				manager.add(deleteAction);
 			}
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
-		manager.add(new PropertiesAction(getFormPage().getEditor()));
+		manager.add(new PropertiesAction(getPage().getPDEEditor()));
 	}
 	private void handleDelete(Object object) {
 		if (object instanceof SchemaCompositor) {
@@ -273,13 +277,13 @@ public class GrammarSection extends PDEFormSection {
 			compositor.removeChild((SchemaElementReference) object);
 		}
 	}
-	public void initialize(Object input) {
-		ISchema schema = (ISchema) input;
+	public void initialize() {
+		ISchema schema = (ISchema) getPage().getModel();
 		schema.addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			treeViewer.refresh();
+			markStale();
 			return;
 		}
 		Object obj = e.getChangedObjects()[0];
@@ -326,14 +330,14 @@ public class GrammarSection extends PDEFormSection {
 
 		updateDTDLabel((ISchemaObject) treeViewer.getInput());
 	}
-	public void sectionChanged(
-		FormSection source,
-		int changeType,
-		Object changeObject) {
-		if (!(source instanceof ElementSection))
+	public void refresh() {
+		treeViewer.refresh();
+		super.refresh();
+	}
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		if (!(part instanceof ElementSection))
 			return;
-		if (changeType != FormSection.SELECTION)
-			return;
+		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
 		if (changeObject instanceof ISchemaAttribute) {
 			changeObject = ((ISchemaAttribute) changeObject).getParent();
 		}

@@ -28,7 +28,6 @@ public abstract class AbstractPluginModelBase
 	implements IPluginModelBase, IPluginModelFactory {
 	protected PluginBase pluginBase;
 	private boolean enabled;
-	private DocumentModel documentModel;
 	private boolean reconcilingModel=false;
 	private BundleDescription fBundleDescription;
 	
@@ -48,13 +47,6 @@ public abstract class AbstractPluginModelBase
 	
 	public IPluginModelFactory getPluginFactory() {
 		return this;
-	}
-
-	public DocumentModel getDocumentModel() {
-		if (documentModel == null) {
-			documentModel= new  DocumentModel(this);
-		}
-		return documentModel;
 	}
 
 	public IPluginBase getPluginBase() {
@@ -154,16 +146,7 @@ public abstract class AbstractPluginModelBase
 		}
 	}
 	
-	public synchronized void load(InputStream stream, boolean outOfSync)
-		throws CoreException {
-		if (reconcilingModel && XMLCore.NEW_CODE_PATHS) {
-			getDocumentModel().load(stream, outOfSync);
-		} else {
-			loadOrig(stream, outOfSync);
-		}
-	}
-	
-	private synchronized void loadOrig(InputStream stream, boolean outOfSync)
+	public void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
 
 		if (pluginBase == null) {
@@ -224,14 +207,6 @@ public abstract class AbstractPluginModelBase
 	}
 	
 	public void reload(InputStream stream, boolean outOfSync)
-		throws CoreException {
-		if (reconcilingModel && XMLCore.NEW_CODE_PATHS) {
-			getDocumentModel().reload(stream, outOfSync);
-		} else {
-			reloadOrig(stream, outOfSync);
-		}
-	}
-	private void reloadOrig(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(
@@ -310,7 +285,6 @@ public abstract class AbstractPluginModelBase
 	 * @see org.eclipse.pde.core.IModel#dispose()
 	 */
 	public void dispose() {
-		documentModel = null;
 		fBundleDescription = null;
 		super.dispose();
 	}

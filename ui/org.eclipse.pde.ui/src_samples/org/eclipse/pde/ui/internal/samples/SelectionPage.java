@@ -13,7 +13,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.newparts.TablePart;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;

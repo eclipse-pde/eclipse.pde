@@ -10,24 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.*;
+import java.util.Iterator;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.Choice;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.widgets.*;
 
-public class PortabilitySection extends PDEFormSection {
+public class PortabilitySection extends PDESection implements IPartSelectionListener {
 	public static final String KEY_DIALOG_TITLE =
 		"FeatureEditor.PortabilityChoicesDialog.title";
 	public static final String SECTION_TITLE =
@@ -46,44 +47,39 @@ public class PortabilitySection extends PDEFormSection {
 		"FeatureEditor.PortabilitySection.edit";
 
 	private FormEntry osText;
-	private Button osButton;
 	private FormEntry wsText;
-	private Button wsButton;
 	private FormEntry nlText;
-	private Button nlButton;
 	private FormEntry archText;
-	private Button archButton;
-	private boolean updateNeeded;
 	private boolean reactToSelections;
 	private IStructuredSelection currentInput;
 
-	public PortabilitySection(FeatureFormPage page) {
-		this(
-			page,
+	public PortabilitySection(FeatureFormPage page, Composite parent) {
+		this(page, parent,
 			PDEPlugin.getResourceString(SECTION_TITLE),
 			PDEPlugin.getResourceString(SECTION_DESC),
-			false);
+			Section.TWISTIE);
 	}
 
 	public PortabilitySection(
 		PDEFormPage page,
+		Composite parent,
 		String title,
 		String desc,
-		boolean reactToSelections) {
-		super(page);
-		this.reactToSelections = reactToSelections;
-		setHeaderText(title);
-		setDescription(desc);
-		setCollapsable(!reactToSelections);
+		int toggleStyle) {
+		super(page, parent, Section.DESCRIPTION|toggleStyle);
+		this.reactToSelections = toggleStyle==SWT.NULL;
+		getSection().setText(title);
+		getSection().setDescription(desc);
 		if (!reactToSelections) {
 			IFeatureModel model = (IFeatureModel) page.getModel();
 			IFeature feature = model.getFeature();
-			setCollapsed(
-				feature.getOS() == null
-					&& feature.getWS() == null
-					&& feature.getNL() == null
-					&& feature.getArch() == null);
+			getSection().setExpanded(
+				feature.getOS() != null
+					|| feature.getWS() != null
+					|| feature.getNL() != null
+					|| feature.getArch() != null);
 		}
+		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
@@ -98,31 +94,34 @@ public class PortabilitySection extends PDEFormSection {
 		}
 		return false;
 	}
-	public void commitChanges(boolean onSave) {
+	public void commit(boolean onSave) {
 		osText.commit();
 		wsText.commit();
 		if (nlText != null)
 			nlText.commit();
 		archText.commit();
+		super.commit(onSave);
 	}
 
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
 		layout.horizontalSpacing = 6;
 		container.setLayout(layout);
+		
+		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
 
 		osText =
-			new FormEntry(
-				createText(
-					container,
+			new FormEntry(container,
+					toolkit,
 					PDEPlugin.getResourceString(SECTION_OS),
-					factory));
-		osText.addFormTextListener(new IFormTextListener() {
+					editLabel, 
+					false);
+		osText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_OS, text.getValue());
@@ -130,36 +129,27 @@ public class PortabilitySection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator
+				.showWhile(
+					osText.getText().getDisplay(),
+					new Runnable() {
+				public void run() {
+					Choice[] choices =
+						ReferencePropertySource.getOSChoices();
+					openPortabilityChoiceDialog(osText, choices);
+				}
+			});
 			}
 		});
 		limitTextWidth(osText);
 
-		String editLabel = PDEPlugin.getResourceString(SECTION_EDIT);
-		osButton = factory.createButton(container, editLabel, SWT.PUSH);
-		osButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator
-					.showWhile(
-						osText.getControl().getDisplay(),
-						new Runnable() {
-					public void run() {
-						Choice[] choices =
-							ReferencePropertySource.getOSChoices();
-						openPortabilityChoiceDialog(osText, choices);
-					}
-				});
-			}
-		});
-
 		wsText =
-			new FormEntry(
-				createText(
-					container,
+			new FormEntry(container, toolkit,
 					PDEPlugin.getResourceString(SECTION_WS),
-					factory));
-		wsText.addFormTextListener(new IFormTextListener() {
+					editLabel, 
+					false);
+		wsText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_WS, text.getValue());
@@ -167,36 +157,30 @@ public class PortabilitySection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
+			public void browseButtonSelected(FormEntry entry) {
+				BusyIndicator
+				.showWhile(
+					wsText.getText().getDisplay(),
+					new Runnable() {
+						public void run() {
+							Choice[] choices =
+								ReferencePropertySource.getWSChoices();
+							openPortabilityChoiceDialog(wsText, choices);
+						}
+					});
 			}
 		});
 		limitTextWidth(wsText);
-		wsButton = factory.createButton(container, editLabel, SWT.PUSH);
-		wsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator
-					.showWhile(
-						wsText.getControl().getDisplay(),
-						new Runnable() {
-					public void run() {
-						Choice[] choices =
-							ReferencePropertySource.getWSChoices();
-						openPortabilityChoiceDialog(wsText, choices);
-					}
-				});
-			}
-		});
 
 		if (!reactToSelections) {
 			nlText =
-				new FormEntry(
-					createText(
-						container,
+				new FormEntry(container,
+						toolkit,
 						PDEPlugin.getResourceString(SECTION_NL),
-						factory));
+						editLabel,
+						false);
 
-			nlText.addFormTextListener(new IFormTextListener() {
+			nlText.setFormEntryListener(new FormEntryAdapter(this) {
 				public void textValueChanged(FormEntry text) {
 					try {
 						applyValue(IFeature.P_NL, text.getValue());
@@ -204,35 +188,29 @@ public class PortabilitySection extends PDEFormSection {
 						PDEPlugin.logException(e);
 					}
 				}
-				public void textDirty(FormEntry text) {
-					forceDirty();
+				public void browseButtonSelected(FormEntry entry) {
+					BusyIndicator
+					.showWhile(
+						nlText.getText().getDisplay(),
+						new Runnable() {
+							public void run() {
+								Choice[] choices =
+									ReferencePropertySource.getNLChoices();
+								openPortabilityChoiceDialog(nlText, choices);
+							}
+						});
 				}
 			});
 			limitTextWidth(nlText);
-			nlButton = factory.createButton(container, editLabel, SWT.PUSH);
-			nlButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					BusyIndicator
-						.showWhile(
-							nlText.getControl().getDisplay(),
-							new Runnable() {
-						public void run() {
-							Choice[] choices =
-								ReferencePropertySource.getNLChoices();
-							openPortabilityChoiceDialog(nlText, choices);
-						}
-					});
-				}
-			});
 		}
 
 		archText =
-			new FormEntry(
-				createText(
-					container,
+			new FormEntry(container,
+					toolkit,
 					PDEPlugin.getResourceString(SECTION_ARCH),
-					factory));
-		archText.addFormTextListener(new IFormTextListener() {
+					editLabel,
+					false);
+		archText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_ARCH, text.getValue());
@@ -240,33 +218,27 @@ public class PortabilitySection extends PDEFormSection {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormEntry text) {
-				forceDirty();
-			}
-		});
-		limitTextWidth(archText);
-		archButton = factory.createButton(container, editLabel, SWT.PUSH);
-		archButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator
-					.showWhile(
-						archText.getControl().getDisplay(),
-						new Runnable() {
-					public void run() {
-						Choice[] choices =
-							ReferencePropertySource.getArchChoices();
-						openPortabilityChoiceDialog(archText, choices);
-					}
+				.showWhile(
+					archText.getText().getDisplay(),
+					new Runnable() {
+						public void run() {
+							Choice[] choices =
+								ReferencePropertySource.getArchChoices();
+							openPortabilityChoiceDialog(archText, choices);
+						}
 				});
 			}
-		});
 
-		factory.paintBordersFor(container);
-		return container;
+		});
+		limitTextWidth(archText);
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
 	}
 
 	private void limitTextWidth(FormEntry entry) {
-		GridData gd = (GridData) entry.getControl().getLayoutData();
+		GridData gd = (GridData) entry.getText().getLayoutData();
 		if (reactToSelections) gd.widthHint = 30;
 		else gd.widthHint = 150;
 	}
@@ -293,7 +265,7 @@ public class PortabilitySection extends PDEFormSection {
 	}
 
 	private IFeature getFeature() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		return model.getFeature();
 	}
 
@@ -383,65 +355,44 @@ public class PortabilitySection extends PDEFormSection {
 			setIfDefined(archText, obj.getArch());
 	}
 
-	private void forceDirty() {
-		setDirty(true);
-		IModel model = (IModel) getFormPage().getModel();
-		if (model instanceof IEditable) {
-			IEditable editable = (IEditable) model;
-			editable.setDirty(true);
-			getFormPage().getEditor().fireSaveNeeded();
-		}
-	}
-
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
 
-	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+	public void initialize() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		enableForInput(model.isEditable());
-		update(input);
+		refresh();
 		model.addModelChangedListener(this);
 	}
-	public boolean isDirty() {
-		return osText.isDirty()
-			|| wsText.isDirty()
-			|| (nlText != null && nlText.isDirty())
-			|| archText.isDirty();
-	}
+
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			updateNeeded = true;
+			markStale();
 		}
 	}
 	public void setFocus() {
 		if (osText != null)
-			osText.getControl().setFocus();
+			osText.getText().setFocus();
 	}
 
 	private void setIfDefined(FormEntry formText, String value) {
 		formText.setValue(value, true);
 	}
 
-	public void update() {
-		if (updateNeeded) {
-			this.update(getFormPage().getModel());
-		}
-	}
-
 	private void enableForInput(boolean enable) {
-		osText.getControl().setEditable(enable);
-		wsText.getControl().setEditable(enable);
+		osText.getText().setEditable(enable);
+		wsText.getText().setEditable(enable);
 		if (nlText != null)
-			nlText.getControl().setEditable(enable);
-		archText.getControl().setEditable(enable);
-		osButton.setEnabled(enable);
-		wsButton.setEnabled(enable);
-		if (nlButton != null)
-			nlButton.setEnabled(enable);
-		archButton.setEnabled(enable);
+			nlText.getText().setEditable(enable);
+		archText.getText().setEditable(enable);
+		osText.getButton().setEnabled(enable);
+		wsText.getButton().setEnabled(enable);
+		if (nlText != null)
+			nlText.getButton().setEnabled(enable);
+		archText.getButton().setEnabled(enable);
 	}
 
 	private void clearFields() {
@@ -461,10 +412,11 @@ public class PortabilitySection extends PDEFormSection {
 			archText.setValue(null, true);
 	}
 
-	public void update(Object input) {
+	public void refresh() {
 		if (reactToSelections && currentInput == null) {
 			clearFields();
 			enableForInput(false);
+			super.refresh();
 			return;
 		}
 		enableForInput(true);
@@ -473,19 +425,16 @@ public class PortabilitySection extends PDEFormSection {
 		setValue(IEnvironment.P_ARCH);
 		if (nlText != null)
 			setValue(IFeature.P_NL);
-		updateNeeded = false;
+		super.refresh();
 	}
 
-	public void sectionChanged(
-		FormSection source,
-		int changeType,
-		Object changeObject) {
-		if (changeObject instanceof IStructuredSelection) {
-			currentInput = (IStructuredSelection) changeObject;
+	public void selectionChanged(IFormPart part, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			currentInput = (IStructuredSelection) selection;
 			if (currentInput.isEmpty())
 				currentInput = null;
 		} else
 			currentInput = null;
-		update(null);
+		refresh();
 	}
 }

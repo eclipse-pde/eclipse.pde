@@ -13,19 +13,26 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.TreePart;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.actions.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class ElementSection extends TreeSection {
 	private TreeViewer treeViewer;
@@ -69,28 +76,31 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
-	public ElementSection(PDEFormPage page) {
+	public ElementSection(PDEFormPage page, Composite parent) {
 		super(
 			page,
+			parent,
+			Section.DESCRIPTION,
 			new String[] {
 				PDEPlugin.getResourceString(SECTION_NEW_ELEMENT),
 				PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE)});
-		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
-	public Composite createClient(
-		Composite parent,
-		FormWidgetFactory factory) {
-		Composite container = createClientContainer(parent, 2, factory);
-		createTree(container, factory);
-		factory.paintBordersFor(container);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
-		return container;
+	public void createClient(
+		Section section,
+		FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
+		createTree(container, toolkit);
+		toolkit.paintBordersFor(container);
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
+		section.setClient(container);
+		initialize();
 	}
 
-	private void createTree(Composite container, FormWidgetFactory factory) {
+	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		treeViewer = treePart.getTreeViewer();
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		treeViewer.setContentProvider(new ContentProvider());
@@ -158,12 +168,15 @@ public class ElementSection extends TreeSection {
 		}
 		return false;
 	}
-	public void expandTo(Object object) {
+	public boolean setFormInput(Object object) {
 		if (object instanceof ISchemaElement
 			|| object instanceof ISchemaAttribute) {
 			treeViewer.setSelection(new StructuredSelection(object), true);
+			return true;
 		}
+		return false;
 	}
+	
 	protected void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = treeViewer.getSelection();
 		final Object object =
@@ -205,7 +218,7 @@ public class ElementSection extends TreeSection {
 				manager.add(deleteAction);
 			}
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
@@ -255,9 +268,9 @@ public class ElementSection extends TreeSection {
 		newElementAction.setSchema(schema);
 		newElementAction.run();
 	}
-	public void initialize(Object input) {
-		this.schema = (Schema) input;
-		treeViewer.setInput(input);
+	public void initialize() {
+		this.schema = (Schema) getPage().getModel();
+		treeViewer.setInput(schema);
 		schema.addModelChangedListener(this);
 		getTreePart().setButtonEnabled(0, schema.isEditable());
 		getTreePart().setButtonEnabled(1, false);
@@ -265,7 +278,7 @@ public class ElementSection extends TreeSection {
 
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			treeViewer.refresh();
+			markStale();
 			return;
 		}
 		Object obj = e.getChangedObjects()[0];
@@ -291,16 +304,21 @@ public class ElementSection extends TreeSection {
 			}
 		}
 	}
+	
+	public void refresh() {
+		treeViewer.refresh();
+		super.refresh();
+	}
+	
 	protected void selectionChanged(IStructuredSelection selection) {
-		Object object = selection.getFirstElement();
-		fireSelectionNotification(object);
-		getFormPage().setSelection(selection);
+		getPage().getManagedForm().fireSelectionChanged(this, selection);
+		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}
 
 	public void setFocus() {
 		treeViewer.getTree().setFocus();
-		getFormPage().setSelection(treeViewer.getSelection());
+		getPage().getPDEEditor().setSelection(treeViewer.getSelection());
 	}
 	private void updateButtons() {
 		if (schema.isEditable() == false)

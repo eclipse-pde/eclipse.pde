@@ -11,13 +11,12 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Composite;
 
 public class SrcSection
 	extends BuildContentsSection
@@ -28,16 +27,16 @@ public class SrcSection
 	private static String SECTION_DESC =
 		"BuildPropertiesEditor.SrcSection.desc";
 
-	public SrcSection(BuildPage page) {
-		super(page);
-		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+	public SrcSection(BuildPage page, Composite parent) {
+		super(page, parent);
+		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
+		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 
 	}
 
 	protected void initializeCheckState() {
 		super.initializeCheckState();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		
@@ -48,7 +47,7 @@ public class SrcSection
 	}
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
@@ -62,7 +61,7 @@ public class SrcSection
 		boolean checked,
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);		
 		

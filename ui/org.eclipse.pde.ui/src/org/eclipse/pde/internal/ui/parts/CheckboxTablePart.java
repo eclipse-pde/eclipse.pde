@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * @version 	1.0
@@ -30,13 +30,13 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	protected StructuredViewer createStructuredViewer(
 		Composite parent,
 		int style,
-		FormWidgetFactory factory) {
+		FormToolkit toolkit) {
 		style |= SWT.H_SCROLL | SWT.V_SCROLL;
-		if (factory==null) {
+		if (toolkit==null) {
 			style |= SWT.BORDER;
 		}
 		else {
-			style |= FormWidgetFactory.BORDER_STYLE;
+			style |= toolkit.getBorderStyle();
 		}
 		CheckboxTableViewer	tableViewer = CheckboxTableViewer.newCheckList(parent, style);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

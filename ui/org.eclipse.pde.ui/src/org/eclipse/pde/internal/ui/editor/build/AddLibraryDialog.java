@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -78,7 +79,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider{
 		public String getColumnText(Object obj, int index){
-			return obj.toString();
+			return ((IPluginLibrary)obj).getName();
 		}
 		
 		public Image getColumnImage(Object obj, int index){
@@ -139,8 +140,8 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		libraryViewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent e){
 				ISelection sel = e.getSelection();
-				Object obj = ((IStructuredSelection)sel).getFirstElement();
-				text.setText(obj!=null ? obj.toString() : "");
+				IPluginLibrary obj = (IPluginLibrary)((IStructuredSelection)sel).getFirstElement();
+				text.setText(obj!=null ? obj.getName() : "");
 			}
 		});
 		libraryViewer.setInput(model);
