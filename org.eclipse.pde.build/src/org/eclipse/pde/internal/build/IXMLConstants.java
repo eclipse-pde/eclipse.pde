@@ -40,6 +40,7 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_LOGS = "gather.logs";
 	public static final String TARGET_GATHER_SOURCES = "gather.sources";
 	public static final String TARGET_INIT = "init";
+	public static final String TARGET_INSTALL = "install";
 	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_MAIN = "main";
 	public static final String TARGET_PROPERTIES = "properties";

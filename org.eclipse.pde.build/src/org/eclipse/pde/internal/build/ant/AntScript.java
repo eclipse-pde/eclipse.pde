@@ -78,12 +78,22 @@ public void printAntTask(int tab, String antfile, String dir, String target, Str
 	}
 }
 
-public void printZipTask(int tab, String zipfile, String basedir) {
+public void printZipTask(int tab, String zipfile, String basedir, FileSet[] fileSets) {
 	printTab(tab);
 	output.print("<zip");
 	printAttribute("zipfile", zipfile, true);
 	printAttribute("basedir", basedir, false);
-	output.println("/>");
+	if (fileSets == null)
+		output.println("/>");
+	else {
+		output.println(">");
+		tab++;
+		for (int i = 0; i < fileSets.length; i++)
+			fileSets[i].print(this, tab);
+		tab--;
+		printTab(tab);
+		output.println("</zip>");
+	}
 }
 
 protected void printArg(int tab, String line) {

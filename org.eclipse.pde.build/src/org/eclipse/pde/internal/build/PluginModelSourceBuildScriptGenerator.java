@@ -199,11 +199,10 @@ protected void transferStreams(InputStream source, OutputStream destination)	thr
 protected void generate(AntScript script, PluginModel model) throws CoreException {
 	generatePrologue(script, model);
 //	generateBuildUpdateJarTarget();
-//	generateGatherBinPartsTarget();
 	generateBuildJarsTarget(script, model);
+	generateInstallTarget(script, model);
 //	generateBuildZipsTarget();
 //	generateGatherSourcesTarget();
-//	generateBuildSourcesTarget();
 //	generateGatherLogTarget();
 	generateCleanTarget(script, model);
 //	generatePropertiesTarget();
@@ -214,6 +213,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	List jarNames = new ArrayList(availableJars.length);
+	List srcNames = new ArrayList(availableJars.length);
 	Map jars = new HashMap(availableJars.length);
 	for (int i = 0; i < availableJars.length; i++)
 		jars.put(availableJars[i].getName(), availableJars[i]);
@@ -224,9 +224,11 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 			JAR jar = (JAR) jars.get(order[i]);
 			if (jar == null)
 				continue;
-			String name = jar.name;
+			String name = jar.getName();
 			jarNames.add(name);
 			generateJARTarget(script, model, jar);
+			generateSRCTarget(script, model, jar);
+			srcNames.add(getSRCName(name));
 			jars.remove(order[i]);
 		}
 	}
@@ -235,10 +237,19 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 		String name = jar.name;
 		jarNames.add(name);
 		generateJARTarget(script, model, jar);
+		generateSRCTarget(script, model, jar);
+		srcNames.add(getSRCName(name));
 	}
 	script.println();
 	script.printTargetDeclaration(1, TARGET_BUILD_JARS, Utils.getStringFromCollection(jarNames, ","), null, null, null);
 	script.printEndTag(1, "target");
+	script.println();
+	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, Utils.getStringFromCollection(srcNames, ","), null, null, null);
+	script.printEndTag(1, "target");
+}
+
+protected String getSRCName(String jarName) {
+	return jarName.substring(0, jarName.length() - 4) + "src.zip";
 }
 
 protected void generateCleanTarget(AntScript script, PluginModel model) throws CoreException {
@@ -250,6 +261,7 @@ protected void generateCleanTarget(AntScript script, PluginModel model) throws C
 	for (int i = 0; i < availableJars.length; i++) {
 		String name = getJARLocation(availableJars[i].getName());
 		script.printDeleteTask(tab, null, name, null);
+		script.printDeleteTask(tab, null, getSRCName(name), null);
 		script.printDeleteTask(tab, getTempJARFolderLocation(name), null, null);
 	}
 	script.printEndTag(--tab, "target");
@@ -307,10 +319,32 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printEndTag(--tab, "target");
 }
 
+protected void generateSRCTarget(AntScript script, PluginModel model, JAR jar) throws CoreException {
+	int tab = 1;
+	script.println();
+	String name = jar.getName();
+	String zip = getSRCName(name);
+	script.printTargetDeclaration(tab++, zip, null, null, null, null);
+	String[] sources = jar.getSource();
+	FileSet[] fileSets = new FileSet[sources.length];
+	for (int i = 0; i < sources.length; i++) {
+		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, "", null, null);
+	}
+	script.printZipTask(tab, zip, null, fileSets);
+	script.printEndTag(--tab, "target");
+}
+
 protected String getTempJARFolderLocation(String jarName) {
 	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	IPath destination = new Path(basedir);
 	destination = destination.append(jarName + ".bin");
+	return destination.toString();
+}
+
+protected String getInstallFolderLocation(PluginModel model) {
+	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL_LOCATION));
+	destination = destination.append("plugins");
+	destination = destination.append(model.getId());
 	return destination.toString();
 }
 
@@ -510,6 +544,20 @@ protected String getMainScriptLocation() throws CoreException {
 	
 public void setSourceLocation(String location) {
 	this.sourceLocation = location;
+}
+
+protected void generateInstallTarget(AntScript script, PluginModel model) throws CoreException {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_INSTALL, null, null, null, null);
+	String root = getInstallFolderLocation(model);
+	script.printMkdirTask(tab, root);
+	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
+	if (include != null) {
+		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, null, null, null);
+		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
+	}
+	script.printEndTag(--tab, "target");
 }
 
 }

@@ -47,7 +47,7 @@ public void printZipTask(int tab, String zipFile, String basedir) {
 	if (zipExternal)
 		printExternalZipTask(tab, zipFile, basedir);
 	else
-		super.printZipTask(tab, zipFile, basedir);
+		super.printZipTask(tab, zipFile, basedir, null);
 }
 
 public void printPluginLocationDeclaration(int tab, String entry, String property) {
