@@ -20,10 +20,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.model.CVSModelElement;
-import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.ui.IPluginContribution;
 
 public class DefaultWidgetResolver implements IWidgetResolver {
@@ -44,16 +40,6 @@ public class DefaultWidgetResolver implements IWidgetResolver {
 				return ((IClasspathContainer) data).getPath().toString();
 			if (data instanceof IPluginModelBase)
 				return ((IPluginModelBase)data).getPluginBase().getId();
-			if (data instanceof RepositoryRoot)
-				return ((RepositoryRoot) data).getRoot().getLocation(false);
-			if (data instanceof CVSModelElement)
-				return data.toString();
-			if (data instanceof ICVSResource) {
-				try {
-					return ((ICVSResource) data).getRepositoryRelativePath();
-				} catch (CVSException e) {
-				}
-			}
 		}
 		if (widget instanceof Button) {
 			if (data instanceof Integer)
