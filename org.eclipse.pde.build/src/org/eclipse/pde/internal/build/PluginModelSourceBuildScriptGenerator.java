@@ -178,8 +178,6 @@ protected void generate(AntScript script, PluginModel model) throws CoreExceptio
 	generateEpilogue(script);
 }
 
-
-
 protected void generateCleanTarget(AntScript script, PluginModel model) throws CoreException {
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
@@ -195,27 +193,12 @@ protected void generateCleanTarget(AntScript script, PluginModel model) throws C
 	script.printEndTag(--tab, "target");
 }
 
-
-
-
-
 protected String getInstallFolderLocation(PluginModel model) {
 	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL_LOCATION));
 	destination = destination.append("plugins");
-	destination = destination.append(model.getId());
+	destination = destination.append(model.getId() + "_" + model.getVersion());
 	return destination.toString();
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Just ends the script.

@@ -44,7 +44,6 @@ public interface IXMLConstants {
 	public static final String TARGET_INSTALL = "install";
 	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_MAIN = "main";
-	public static final String TARGET_PROPERTIES = "properties";
 	public static final String TARGET_SRC = "src";
 	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole";
 	public static final String TARGET_TARGET = "target";
@@ -79,6 +78,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
 	public static final String PROPERTY_TEMPLATE = "template";
+	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_WS = "ws";
 	public static final String PROPERTY_ZIP_ARGUMENT = "zip.argument";
 	public static final String PROPERTY_ZIP_EXTERNAL = "zip.external";

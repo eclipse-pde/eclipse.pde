@@ -40,11 +40,10 @@ public void generate() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 
 	// if the model defines its own custom script, we just skip from generating it
-	String custom = getBuildProperty(PROPERTY_CUSTOM);
+	String custom = (String) getBuildProperties(model).get(PROPERTY_CUSTOM);
 	if (custom != null && custom.equalsIgnoreCase("true"))
 		return;
 
-	pluginLocations = new HashMap(20);
 	computeJarDefinitions(); // FIXME: this is a hack. It should be transparent. 
 	try {
 		File root = new File(getModelLocation(model));
@@ -73,7 +72,6 @@ protected void generateBuildScript() throws CoreException {
 	generateGatherSourcesTarget();
 	generateGatherLogTarget();
 	generateCleanTarget();
-	generatePropertiesTarget();
 	generateEpilogue();
 }
 
@@ -89,8 +87,8 @@ protected void generateCleanTarget() {
 		jars.add(jar);
 		zips.add(jar.substring(0, jar.length() - 4) + "src.zip");
 	}
-	String compiledJars = getStringFromCollection(jars, "", "", ",");
-	String sourceZips = getStringFromCollection(zips, "", "", ",");
+	String compiledJars = Utils.getStringFromCollection(jars, ",");
+	String sourceZips = Utils.getStringFromCollection(zips, ",");
 	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	List fileSet = new ArrayList(5);
 	if (compiledJars.length() > 0) {
@@ -143,17 +141,6 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	script.printString(--tab, "</target>");
 }
 
-/**
- * FIXME: add comment
- */
-protected String getSourceList (Collection source, String ending) {
-	ArrayList srcList = new ArrayList(source.size());
-	for (Iterator i = source.iterator(); i.hasNext();) {
-		String entry = (String)i.next();
-		srcList.add(entry.endsWith("/") ? entry + ending : entry);
-	}
-	return getStringFromCollection(srcList, "", "", ",");
-}
 
 protected void generateGatherSourcesTarget() {
 	int tab = 1;
@@ -188,148 +175,41 @@ protected void generateGatherSourcesTarget() {
 
 
 
-protected void addEntry(List list, Object entry) {
-	if (list.contains(entry))
-		return;
-	list.add(entry);
-}
 
-/**
- * FIXME: add comment
- */
-protected Collection trimSlashes(Collection original) {
-	ArrayList result = new ArrayList(original.size());
-	for (Iterator i = original.iterator(); i.hasNext();) {
-		String entry = (String)i.next();
-		if (entry.charAt(0) == '/')
-			entry = entry.substring(1);
-		result.add(entry);
-	}
-	return result;
-}
 
-/**
- * FIXME: add comments
- */
-protected Hashtable trimDevJars(Map devJars) throws CoreException {
-	Hashtable result = new Hashtable(9);
-	for (Iterator it = devJars.keySet().iterator(); it.hasNext();) {
-		String key = (String) it.next();
-		Collection list = (Collection) devJars.get(key);			// projects
-		File base = null;
-		try {
-			base = new File(new URL(model.getLocation()).getFile());
-		} catch (MalformedURLException e) {
-			continue;
-		}
-		boolean found = false;
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			String src = (String) i.next();
-			File entry = new File(base, src).getAbsoluteFile();
-			if (!entry.exists())
-				throw new CoreException(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", entry.getPath()), null));
-			else
-				found = true;;
-		}
-		if (found)
-			result.put(key, list);
-	}
-	return result;
-}
 
-protected void generateGatherBinPartsTarget() {
+protected void generateGatherBinPartsTarget() throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	tab++;
-	Map properties = new HashMap(1);
-	properties.put("includes", getPropertyFormat(PROPERTY_BIN_INCLUDES));
-	properties.put("excludes", getPropertyFormat(PROPERTY_BIN_EXCLUDES));
+	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
-	properties.put("dest", destination.toString());
-	properties.put("srcdir", getPropertyFormat(PROPERTY_BASEDIR));
-	script.printAntTask(tab, "${template}", null, "includesExcludesCopy", null, null, properties);
-	tab--;
-	script.printString(tab, "</target>");
+	String root = destination.toString();
+	script.printMkdirTask(tab, root);
+	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
+	String exclude = (String) getBuildProperties(model).get(PROPERTY_BIN_EXCLUDES);
+	if (include != null || exclude != null) {
+		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
+	}
+	script.printEndTag(--tab, "target");
 }
 
-protected void generatePropertiesTarget() {
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab, TARGET_PROPERTIES, null, null, null, null);
-	tab++;
-	generateMandatoryProperties(tab);
-	generateConditionalProperties(tab);
-	tab--;
-	script.printEndTag(tab, "target");
-}
 
-protected void generateConditionalProperties(int tab) {
-	for (Iterator i = getConditionalProperties().entrySet().iterator(); i.hasNext();) {
-		Map.Entry entry = (Map.Entry) i.next();
-		String realKey = (String) entry.getKey();
-		StringBuffer realValue = new StringBuffer();
-		realValue.append(getBuildProperty(realKey));
-		Map variations = (Map) entry.getValue();
-		int n = 0;
-		for (Iterator j = variations.entrySet().iterator(); j.hasNext();) {
-			Map.Entry variation = (Map.Entry) j.next();
-			String key = (String) variation.getKey();
-			String[] conditions = getConditions(key);
-			Condition cond = new Condition(Condition.TYPE_AND);
-			for (int k = 0; k < conditions.length; k++) {
-				String[] condition = Utils.getArrayFromString(conditions[k], "/");
-				String variable = condition[0];
-				String value = condition[1];
-				cond.addEquals(getPropertyFormat(variable), value);
-			}
-			String conditionKey = "condition" + (++n) + "." + realKey;
-			script.printProperty(tab, conditionKey, "");
-			ConditionTask task = new ConditionTask(conditionKey, "," + variation.getValue(), cond);
-			script.print(tab, task);
-			realValue.append(getPropertyFormat(conditionKey));
-		}
-		script.printProperty(tab, realKey, realValue.toString());
-	}
-}
 
-/**
- * 
- */
-protected void generateMandatoryProperties(int tab) {
-	script.printProperty(tab, getModelTypeName(), model.getId());
-	script.printProperty(tab, "version", model.getVersion());
-	for (Iterator iterator = pluginLocations.entrySet().iterator(); iterator.hasNext();) {
-		Map.Entry entry = (Map.Entry) iterator.next();
-		script.printPluginLocationDeclaration(tab, (String) entry.getKey(), (String) entry.getValue());
-	}
-	if (!getConditionalProperties().containsKey(PROPERTY_BIN_INCLUDES)) {
-		String value = getBuildProperty(PROPERTY_BIN_INCLUDES);
-		if (value == null)
-			value = "**";
-		script.printProperty(tab, PROPERTY_BIN_INCLUDES, value);
-	}
-	if (!getConditionalProperties().containsKey(PROPERTY_BIN_EXCLUDES)) {
-		String value = getBuildProperty(PROPERTY_BIN_EXCLUDES);
-		if (value == null)
-			value = computeCompleteSrc();
-		script.printProperty(tab, PROPERTY_BIN_EXCLUDES, value);
-	}
-}
 
 
 /**
  * FIXME: add comment
  */
-protected String computeCompleteSrc() {
+protected String computeCompleteSrc() throws CoreException {
 	Set jars = new HashSet(9);
 	for (Iterator i = getDevJars().values().iterator(); i.hasNext();)
 		jars.addAll((Collection)i.next());
-	return getStringFromCollection(jars, "", "", ",");
+	return Utils.getStringFromCollection(jars, ",");
 }
 
-protected Map getDevJars() {
+protected Map getDevJars() throws CoreException {
 	if (devJars == null)
 		devJars = computeJarDefinitions();
 	return devJars;
@@ -337,22 +217,6 @@ protected Map getDevJars() {
 
 
 
-/**
- * FIXME: add comment
- */
-protected String getStringFromCollection(Collection list, String prefix, String suffix, String separator) {
-	StringBuffer result = new StringBuffer();
-	boolean first = true;
-	for (Iterator i = list.iterator(); i.hasNext();) {
-		if (!first)
-			result.append(separator);
-		first = false;
-		result.append(prefix);
-		result.append((String) i.next());
-		result.append(suffix);
-	}
-	return result.toString();
-}
 
 
 protected void generateBuildUpdateJarTarget() {
@@ -403,11 +267,9 @@ protected void generatePrologue() {
 	script.println();
 	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
 	script.println();
-	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
-	script.printString(tab, "<initTemplate/>");
-	script.printString(--tab, "</target>");
-	script.println();
-	script.printTargetDeclaration(tab++, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
+	script.printProperty(tab, getModelTypeName(), model.getId());
+	script.printProperty(tab, PROPERTY_VERSION, model.getVersion());
 	script.printString(--tab, "</target>");
 }
 
@@ -422,7 +284,6 @@ public void setModel(PluginModel model) throws CoreException {
 	this.model = model;
 	devJars = null;
 	jarOrder = null;
-	readProperties(getModelLocation(model));
 }
 
 /**
@@ -437,12 +298,12 @@ public void setModelId(String modelId) throws CoreException {
 
 protected abstract PluginModel getModel(String modelId) throws CoreException;
 
-protected Map computeJarDefinitions() {
+protected Map computeJarDefinitions() throws CoreException {
 	jarOrder = new ArrayList();
 	Map result = new HashMap(5);
 	String base = getModelLocation(model);
 	int n = PROPERTY_SOURCE_PREFIX.length();
-	for (Iterator iterator = getBuildProperties().entrySet().iterator(); iterator.hasNext();) {
+	for (Iterator iterator = getBuildProperties(model).entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
 		if (!(key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)))
@@ -459,7 +320,7 @@ protected Map computeJarDefinitions() {
  */
 protected void generateBuildZipsTarget() throws CoreException {
 	StringBuffer zips = new StringBuffer();
-	Properties props = getBuildProperties();
+	Properties props = getBuildProperties(model);
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
@@ -489,10 +350,25 @@ protected List getListFromString(String prop) {
 }
 
 
-protected String[] getConditions(String key) {
-	int prefix = key.indexOf(PROPERTY_ASSIGNMENT_PREFIX);
-	int suffix = key.indexOf(PROPERTY_ASSIGNMENT_SUFFIX);
-	return Utils.getArrayFromString(key.substring(prefix + PROPERTY_ASSIGNMENT_PREFIX.length(), suffix));
-}
 
+/**
+ * 
+ */
+protected void setUpAntBuildScript() throws CoreException {
+	String external = (String) getBuildProperties(model).get(PROPERTY_ZIP_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setZipExternal(true);
+
+	external = (String) getBuildProperties(model).get(PROPERTY_JAR_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setJarExternal(true);
+
+	String executable = (String) getBuildProperties(model).get(PROPERTY_ZIP_PROGRAM);
+	if (executable != null)
+		script.setZipExecutable(executable);
+	
+	String arg = (String) getBuildProperties(model).get(PROPERTY_ZIP_ARGUMENT);
+	if (arg != null)
+		script.setZipArgument(arg);
+}
 }

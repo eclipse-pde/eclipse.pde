@@ -233,4 +233,19 @@ public static ArrayList getArrayList(Object[] args) {
 		result.add(args[i]);
 	return result;
 }
+
+public static IPath makeRelative(IPath location, IPath base) {
+	IPath result = location;
+	if (result.getDevice() != null && !result.getDevice().equalsIgnoreCase(base.getDevice()))
+		return location;
+	int baseCount = base.segmentCount();
+	int count = base.matchingFirstSegments(result);
+	if (count > 0) {
+		String temp = "";
+		for (int j = 0; j < baseCount - count; j++)
+			temp += "../";
+		result = new Path(temp).append(result.removeFirstSegments(count));
+	}
+	return result;
+}
 }

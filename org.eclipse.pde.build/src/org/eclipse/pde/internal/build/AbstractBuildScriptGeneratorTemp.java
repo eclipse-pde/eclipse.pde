@@ -27,7 +27,15 @@ import org.eclipse.update.core.VersionedIdentifier;
  */
 public abstract class AbstractBuildScriptGeneratorTemp extends AbstractScriptGenerator {
 
-	private Map buildProperties;
+	/**
+	 * Map of build.properties from the existing plugin models or features.
+	 */
+	protected Map buildProperties;
+
+	/**
+	 * Additional dev entries for the compile classpath.
+	 */
+	protected String[] devEntries;
 
 	protected class JAR {
 		private String name;
@@ -53,10 +61,14 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	Set classpath = new HashSet(20);
 	String location = getLocation(model);
 	// always add boot and runtime
-	addLibraries(getRegistry().getPlugin(PI_BOOT), classpath, location);
-	addFragmentsLibraries(getRegistry().getPlugin(PI_BOOT), classpath, location);
-	addLibraries(getRegistry().getPlugin(PI_RUNTIME), classpath, location);
-	addFragmentsLibraries(getRegistry().getPlugin(PI_RUNTIME), classpath, location);
+	PluginModel boot = getRegistry().getPlugin(PI_BOOT);
+	addLibraries(boot, classpath, location);
+	addFragmentsLibraries(boot, classpath, location);
+	addDevEntries(boot, location, classpath);
+	PluginModel runtime = getRegistry().getPlugin(PI_RUNTIME);
+	addLibraries(runtime, classpath, location);
+	addFragmentsLibraries(runtime, classpath, location);
+	addDevEntries(runtime, location, classpath);
 	// add libraries from pre-requisite plug-ins
 	PluginPrerequisiteModel[] requires = model.getRequires();
 	if (requires != null) {
@@ -64,6 +76,7 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 			PluginModel prerequisite = getRegistry().getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 			addPrerequisiteLibraries(prerequisite, classpath, location);
 			addFragmentsLibraries(prerequisite, classpath, location);
+			addDevEntries(prerequisite, location, classpath);
 		}
 	}
 	// add libraries from this plug-in
@@ -103,6 +116,14 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
 }
 
+protected void addDevEntries(PluginModel model, String baseLocation, Set classpath) throws CoreException {
+	if (devEntries == null)
+		return;
+	IPath root = Utils.makeRelative(new Path(getLocation(model)), new Path(baseLocation));
+	for (int i = 0; i < devEntries.length; i++)
+		classpath.add(root.append(devEntries[i]));
+}
+
 abstract protected PluginRegistryModel getRegistry() throws CoreException;
 
 protected String getLocation(PluginModel model) throws CoreException {
@@ -118,7 +139,7 @@ protected void addLibraries(PluginModel model, Set classpath, String baseLocatio
 	if (libraries == null)
 		return;
 	String root = getLocation(model);
-	IPath base = new Path(makeRelative(root, new Path(baseLocation)));
+	IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 	for (int i = 0; i < libraries.length; i++) {
 		String library = base.append(libraries[i].getName()).toString();
 		classpath.add(library);
@@ -146,37 +167,25 @@ protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath,
 		PluginModel plugin = getRegistry().getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 		addLibraries(plugin, classpath, baseLocation);
 		addFragmentsLibraries(plugin, classpath, baseLocation);
+		addDevEntries(plugin, baseLocation, classpath);
 	}
 }
 
-protected String makeRelative(String location, IPath base) {
-	IPath path = new Path(location);
-	if (path.getDevice() != null && !path.getDevice().equalsIgnoreCase(base.getDevice()))
-		return location.toString();
-	int baseCount = base.segmentCount();
-	int count = base.matchingFirstSegments(path);
-	if (count > 0) {
-		String temp = "";
-		for (int j = 0; j < baseCount - count; j++)
-			temp += "../";
-		path = new Path(temp).append(path.removeFirstSegments(count));
-	}
-	return path.toString();
-}
+
 
 protected Properties getBuildProperties(PluginModel model) throws CoreException {
 	VersionedIdentifier identifier = new VersionedIdentifier(model.getId(), model.getVersion());
 	Properties result = (Properties) buildProperties.get(identifier);
 	if (result == null) {
-		result = readBuildProperties(model);
+		result = readBuildProperties(getLocation(model));
 		buildProperties.put(identifier, result);
 	}
 	return result;
 }
 
-protected Properties readBuildProperties(PluginModel model) throws CoreException {
+protected Properties readBuildProperties(String rootLocation) throws CoreException {
 	Properties result = new Properties();
-	File file = new File(getLocation(model), PROPERTIES_FILE);
+	File file = new File(rootLocation, PROPERTIES_FILE);
 	try {
 		InputStream input = new FileInputStream(file);
 		try {
@@ -223,8 +232,8 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 				continue;
 			String name = jar.getName();
 			jarNames.add(name);
-			generateJARTarget(script, model, jar);
-			generateSRCTarget(script, model, jar);
+			generateJARTarget(script, getClasspath(model, jar), jar);
+			generateSRCTarget(script, jar);
 			srcNames.add(getSRCName(name));
 			jars.remove(order[i]);
 		}
@@ -233,8 +242,8 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 		JAR jar = (JAR) iterator.next();
 		String name = jar.getName();
 		jarNames.add(name);
-		generateJARTarget(script, model, jar);
-		generateSRCTarget(script, model, jar);
+		generateJARTarget(script, getClasspath(model, jar), jar);
+		generateSRCTarget(script, jar);
 		srcNames.add(getSRCName(name));
 	}
 	script.println();
@@ -245,7 +254,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	script.printEndTag(1, "target");
 }
 
-protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) throws CoreException {
+protected void generateJARTarget(AntScript script, String classpath, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
@@ -256,7 +265,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printMkdirTask(tab, destdir);
 	script.printComment(tab, "compile the source code");
 	JavacTask javac = new JavacTask();
-	javac.setClasspath(getClasspath(model, jar));
+	javac.setClasspath(classpath);
 	javac.setDestdir(destdir);
 	javac.setFailOnError("false");
 	javac.setDebug("on");
@@ -268,22 +277,16 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printComment(tab, "copy necessary resources");
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
-		fileSets[i] = new FileSet(sources[i], null, "", null, "**/*.java", null, null);
+		fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null);
 	}
 	script.printCopyTask(tab, null, destdir, fileSets);
-
-// FIXME
-//    <copy todir="${basedir}">
-//      <fileset dir="." includes="*.log" />
-//    </copy>
-
 	script.printJarTask(tab, getJARLocation(name), destdir);
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printEndTag(--tab, "target");
 }
 
 
-protected void generateSRCTarget(AntScript script, PluginModel model, JAR jar) throws CoreException {
+protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
@@ -292,7 +295,7 @@ protected void generateSRCTarget(AntScript script, PluginModel model, JAR jar) t
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
-		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, "", null, null);
+		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null);
 	}
 	script.printZipTask(tab, zip, null, fileSets);
 	script.printEndTag(--tab, "target");
@@ -332,16 +335,8 @@ protected String replaceVariables(String sourceString) {
 	return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
+public void setDevEntries(String[] entries) {
+	this.devEntries = entries;
+}
 
 }

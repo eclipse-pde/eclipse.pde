@@ -19,6 +19,7 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * Generates build.xml script for features.
  */
 public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
+	
 	/**
 	 * Indicates whether scripts for this feature's children should be generated.
 	 */
@@ -68,11 +69,10 @@ public void generate() throws CoreException {
 	if (installLocation == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_INSTALL_LOCATION_MISSING, Policy.bind("error.missingInstallLocation"), null));
 
-	String custom = getBuildProperty(PROPERTY_CUSTOM);
+	readFeature();
+	String custom = (String) getBuildProperties(feature).get(PROPERTY_CUSTOM);
 	if (custom != null && custom.equalsIgnoreCase("true"))
 		return;
-	readFeature();
-	pluginLocations = new HashMap(20);
 
 	if (generateChildrenScript)
 		generateChildrenScripts();
@@ -100,52 +100,53 @@ protected void generateBuildScript() throws CoreException {
 	generateAllFragmentsTarget();
 	generateAllChildrenTarget();
 	generateChildrenTarget();
-	generateBuildJarsTarget();
+	generateBuildJarsTarget(script, feature);
 	generateBuildZipsTarget();
 	generateBuildUpdateJarTarget();
 	generateGatherBinPartsTarget();
 	generateZipDistributionWholeTarget();
-	generateBuildSourcesTarget();
 	generateZipSourcesTarget();
 	generateGatherSourcesTarget();
 	generateGatherLogTarget();
 	generateZipLogsTarget();
 	generateCleanTarget();
-	generatePropertiesTarget();
 	generateEpilogue();
 }
-/**
- * FIXME: add comments
- */
-protected void generateBuildJarsTarget() throws CoreException {
-	StringBuffer jars = new StringBuffer();
-	Properties props = getBuildProperties();
-	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
-		Map.Entry entry = (Map.Entry) iterator.next();
-		String key = (String) entry.getKey();
-		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)) {
-			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
-			jars.append(',');
-			jars.append(jarName);
-			generateJarIndividualTarget(jarName, (String) entry.getValue());
-		}
+
+protected void generateBuildJarsTarget(AntScript script, Feature feature) throws CoreException {
+	Properties properties = getBuildProperties(feature);
+	JAR[] availableJars = extractJars(properties);
+	List jarNames = new ArrayList(availableJars.length);
+	List srcNames = new ArrayList(availableJars.length);
+	for (int i = 0; i < availableJars.length; i++) {
+		JAR jar = availableJars[i];
+		String name = jar.getName();
+		jarNames.add(name);
+		generateJARTarget(script, "", jar);
+		generateSRCTarget(script, jar);
+		srcNames.add(getSRCName(name));
 	}
-	script.println();
 	int tab = 1;
-	script.printTargetDeclaration(tab, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
-	tab++;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, Utils.getStringFromCollection(jarNames, ","), null, null, null);
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printEndTag(--tab, "target");
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, Utils.getStringFromCollection(srcNames, ","), null, null, null);
+	params.clear();
+	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
+	script.printEndTag(--tab, "target");
 }
+
 /**
  * FIXME: add comments
  */
 protected void generateBuildZipsTarget() throws CoreException {
 	StringBuffer zips = new StringBuffer();
-	Properties props = getBuildProperties();
+	Properties props = getBuildProperties(feature);
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
@@ -173,54 +174,6 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
 	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
-	script.printString(--tab, "</target>");
-}
-/**
- * FIXME: add comments
- */
-protected void generateBuildSourcesTarget() throws CoreException {
-	StringBuffer sources = new StringBuffer();
-	Properties props = getBuildProperties();
-	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
-		Map.Entry entry = (Map.Entry) iterator.next();
-		String key = (String) entry.getKey();
-		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)) {
-			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
-			// zip name is jar name without the ".jar" but with "src.zip" appended
-			String sourceName = jarName.substring(0, jarName.length() - 4) + "src.zip";
-			sources.append(',');
-			sources.append(sourceName);
-			generateSourceIndividualTarget(sourceName, (String) entry.getValue());
-		}
-	}
-	script.println();
-	int tab = 1;
-	script.printTargetDeclaration(tab, TARGET_BUILD_SOURCES, TARGET_INIT + sources.toString(), null, null, null);
-	tab++;
-	Map params = new HashMap(2);
-	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
-	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	tab--;
-	script.printString(tab, "</target>");
-}
-/**
- * FIXME: add comments
- */
-protected void generateJarIndividualTarget(String jarName, String jarSource) throws CoreException {
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(basedir);
-	destination = destination.append(jarName);
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab++, jarName, TARGET_INIT, null, null, null);
-	Map properties = new HashMap(1);
-	properties.put("mapping", jarSource);
-	properties.put("includes", jarSource);
-	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-	properties.put("dest", destination.toString());
-	properties.put("srcdir", basedir);
-	properties.put("compilePath", ""); // FIXME: why empty??? should we bother leaving it here??
-	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
 	script.printString(--tab, "</target>");
 }
 protected void generateCleanTarget() {
@@ -267,7 +220,7 @@ protected void generateGatherLogTarget() {
 	script.printCopyTask(tab, null, destination, new FileSet[] {fileSet});
 	script.printString(--tab, "</target>");
 }
-protected void generateGatherSourcesTarget() {
+protected void generateGatherSourcesTarget() throws CoreException {
 	IPath source = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
@@ -275,7 +228,7 @@ protected void generateGatherSourcesTarget() {
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	script.printMkdirTask(tab, destination.toString());
-	Properties props = getBuildProperties();
+	Properties props = getBuildProperties(feature);
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
@@ -292,8 +245,9 @@ protected void generateGatherSourcesTarget() {
  * 
  */
 protected String getDirectoryName() {
-	return "features/${feature}_${featureVersion}";
+	return "features/${feature}_" + getPropertyFormat(PROPERTY_VERSION);
 }
+
 protected void generateZipSourcesTarget() {
 	String featurebase = getPropertyFormat(PROPERTY_FEATURE_BASE);
 	int tab = 1;
@@ -309,12 +263,12 @@ protected void generateZipSourcesTarget() {
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printZipTask(tab, destination.append("${feature}_src_${featureVersion}.zip").toString(), "${feature.base}");
+	script.printZipTask(tab, destination.append("${feature}_src_${version}.zip").toString(), "${feature.base}");
 	script.printDeleteTask(tab, featurebase, null, null);
 	tab--;
 	script.printString(tab, "</target>");
 }
-protected void generateGatherBinPartsTarget() {
+protected void generateGatherBinPartsTarget() throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
@@ -322,37 +276,15 @@ protected void generateGatherBinPartsTarget() {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
-	String inclusions = getBuildProperty(PROPERTY_BIN_INCLUDES);
-	if (inclusions == null)
-		inclusions = "";
-	String exclusions = getBuildProperty(PROPERTY_BIN_EXCLUDES);
-	if (exclusions == null)
-		exclusions = "";
-	params.clear(); // they are properties, not params, but we'll reuse the variable
-	params.put("includes", inclusions);
-	params.put("excludes", exclusions);
-	params.put("srcdir", getPropertyFormat(PROPERTY_BASEDIR));
-	params.put("dest", "${feature.base}/features/${feature}_${featureVersion}");
-	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, "includesExcludesCopy", null, null, params);
+	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
+	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);
+	String root = "${feature.base}/features/${feature}_${version}";
+	script.printMkdirTask(tab, root);
+	if (include != null || exclude != null) {
+		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
+	}	
 	script.printString(--tab, "</target>");
-}
-protected void generatePropertiesTarget() {
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, null, null, null);
-	generateMandatoryProperties(tab);
-	script.printEndTag(--tab, "target");
-}
-/**
- * 
- */
-protected void generateMandatoryProperties(int tab) {
-	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
-	script.printProperty(tab, "featureVersion", feature.getFeatureVersion());
-	for (Iterator iterator = pluginLocations.entrySet().iterator(); iterator.hasNext();) {
-		Map.Entry entry = (Map.Entry) iterator.next();
-		script.printPluginLocationDeclaration(tab, (String) entry.getKey(), (String) entry.getValue());
-	}
 }
 protected void generateBuildUpdateJarTarget() {
 	int tab = 1;
@@ -372,7 +304,7 @@ protected void generateBuildUpdateJarTarget() {
 	params.clear();
 	params.put(PROPERTY_FEATURE_BASE, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params);
-	script.printJarTask(tab, destination.append("${feature}_${featureVersion}.jar").toString(), "${feature.base}");
+	script.printJarTask(tab, destination.append("${feature}_${version}.jar").toString(), "${feature.base}");
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -392,7 +324,7 @@ protected void generateZipDistributionWholeTarget() {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true");
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, destination.append("${feature}_${featureVersion}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
+	script.printZipTask(tab, destination.append("${feature}_${version}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
 	script.printString(tab, "</target>");
@@ -412,24 +344,6 @@ protected void generateAllChildrenTarget() {
 	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
 	script.printString(1, "</target>");
 }
-protected void generateSourceIndividualTarget(String name, String source) throws CoreException {
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(basedir);
-	destination = destination.append(name);
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab, name, TARGET_INIT, null, null, null);
-	tab++;
-	Map properties = new HashMap(1);
-	properties.put("mapping", source);
-	properties.put("includes", source);
-	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-	properties.put("dest", destination.toString());
-	properties.put("srcdir", basedir);
-	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
-	tab--;
-	script.printString(tab, "</target>");
-}
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
  */
@@ -442,8 +356,8 @@ protected void generateAllPluginsTarget() throws CoreException {
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
-			String location = getPluginLocationProperty(plugin.getId(), false);
-			script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+			IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getFeatureRootLocation()));
+			script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
 	script.printString(--tab, "</target>");
@@ -458,8 +372,8 @@ protected void generateAllFragmentsTarget() throws CoreException {
 	script.printTargetDeclaration(tab++, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
 	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
 		PluginModel fragment = (PluginModel) iterator.next();
-		String location = getPluginLocationProperty(fragment.getId(), true);
-		script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+		IPath location = Utils.makeRelative(new Path(getLocation(fragment)), new Path(getFeatureRootLocation()));
+		script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
 	script.printString(--tab, "</target>");
 }
@@ -482,11 +396,11 @@ protected void generatePrologue() {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_JARS, ".");
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
-	script.printString(--tab, "</target>");
+	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
 	script.println();
-	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
-	script.printString(tab, "<initTemplate/>");
+	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
+	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
+	script.printProperty(tab, PROPERTY_VERSION, feature.getFeatureVersion());
 	script.printString(--tab, "</target>");
 }
 protected void generateChildrenScripts() throws CoreException {
@@ -504,7 +418,7 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		// setModel has to be called before configurePersistentProperties
 		// because it reads the model's properties
 		generator.setModel(model);
-		configurePersistentProperties(generator);
+		configurePersistentProperties(generator, model);
 		generator.generate();
 	}
 }
@@ -512,20 +426,20 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
  * Propagates properties that are set for this feature but should
  * overwrite any values set for the children.
  */
-protected void configurePersistentProperties(AbstractBuildScriptGenerator generator) {
+protected void configurePersistentProperties(AbstractBuildScriptGenerator generator, PluginModel model) throws CoreException {
+	Properties props = generator.getBuildProperties(model);
 	for (int i = 0; i < PERSISTENT_PROPERTIES.length; i++) {
 		String key = PERSISTENT_PROPERTIES[i];
-		String value = getBuildProperty(key);
+		String value = props.getProperty(key);
 		if (value == null)
 			continue;
-		generator.setBuildProperty(key, value);
+		props.setProperty(key, value);
 	}
 }
 public void setFeature(String featureID) throws CoreException {
 	if (featureID == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.missingFeatureId"), null));
 	this.featureID = featureID;
-	readProperties(getFeatureRootLocation());
 }
 /**
  * Reads the target feature from the specified location.
@@ -563,6 +477,16 @@ protected String getFeatureRootLocation() {
 public void setFeatureRootLocation(String location) {
 	this.featureRootLocation = location;
 }
+
+protected Properties getBuildProperties(Feature feature) throws CoreException {
+	VersionedIdentifier identifier = feature.getVersionedIdentifier();
+	Properties result = (Properties) buildProperties.get(identifier);
+	if (result == null) {
+		result = readBuildProperties(getFeatureRootLocation());
+		buildProperties.put(identifier, result);
+	}
+	return result;
+}
 /**
  * Delegates some target call to all-template only if the property
  * includeChildren is set.
@@ -572,5 +496,26 @@ protected void generateChildrenTarget() {
 	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
 	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
 	script.printString(1, "</target>");
+}
+
+/**
+ * 
+ */
+protected void setUpAntBuildScript() throws CoreException {
+	String external = (String) getBuildProperties(feature).get(PROPERTY_ZIP_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setZipExternal(true);
+
+	external = (String) getBuildProperties(feature).get(PROPERTY_JAR_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setJarExternal(true);
+
+	String executable = (String) getBuildProperties(feature).get(PROPERTY_ZIP_PROGRAM);
+	if (executable != null)
+		script.setZipExecutable(executable);
+	
+	String arg = (String) getBuildProperties(feature).get(PROPERTY_ZIP_ARGUMENT);
+	if (arg != null)
+		script.setZipArgument(arg);
 }
 }
