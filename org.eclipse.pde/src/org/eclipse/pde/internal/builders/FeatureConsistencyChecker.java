@@ -183,7 +183,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IFeature feature,
 		XMLErrorReporter reporter) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
-		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_PLUGINS);
+		int flag = CompilerFlags.getFlag(getProject(), CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (flag==CompilerFlags.IGNORE) return;
 
 		for (int i = 0; i < plugins.length; i++) {
@@ -205,7 +205,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IFeature feature,
 		XMLErrorReporter reporter) {
 		IFeatureChild[] included = feature.getIncludedFeatures();
-		int flag = CompilerFlags.getFlag(CompilerFlags.F_UNRESOLVED_FEATURES);
+		int flag = CompilerFlags.getFlag(getProject(), CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (flag==CompilerFlags.IGNORE) return;
 
 		for (int i = 0; i < included.length; i++) {

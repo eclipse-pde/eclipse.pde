@@ -38,6 +38,8 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	protected IFile fFile;
 	
+	protected IProject project;
+	
 	private int fErrorCount;
 
 	private IMarkerFactory fMarkerFactory;
@@ -60,6 +62,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	public XMLErrorReporter(IFile file) {
 		fFile = file;
+		project = file.getProject();
 		try {
 			createTextDocument(file.getContents(true));
 		} catch (Exception e) {

@@ -166,20 +166,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 		return false;
 	}
 
-	public void transform(
-		ISchemaDescriptor desc,
-		InputStream is,
-		PrintWriter out,
-		SchemaHandler reporter) {
-		transform(desc, is, out, reporter, null);
-	}
+//	public void transform(
+//		ISchemaDescriptor desc,
+//		InputStream is,
+//		PrintWriter out,
+//		SchemaHandler reporter) {
+//		transform(desc, is, out, reporter, null);
+//	}
 
 	public void transform(
 		ISchemaDescriptor desc,
 		InputStream is,
 		PrintWriter out,
 		SchemaHandler reporter,
-		URL cssURL) {
+		URL cssURL,
+		boolean generateDoc) {
 		
 		ValidatingSAXParser.parse(is, reporter);
 		
@@ -191,7 +192,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (verifySchema(schema, reporter)
 			&& verifySections(schema, reporter)
-			&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
+			&& generateDoc) {
 			transform(out, schema, cssURL, GENERATE_DOC);
 
 		}
@@ -586,13 +587,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 		XMLErrorReporter reporter) {
 		boolean openTag = false, isPre = false;
 		boolean flagForbidden =
-			CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)
+			CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_FORBIDDEN_END_TAGS)
 				!= CompilerFlags.IGNORE;
 		boolean flagOptional =
-			CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)
+			CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPTIONAL_END_TAGS)
 				!= CompilerFlags.IGNORE;
 		boolean flagGeneral =
-			CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+			CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 				!= CompilerFlags.IGNORE;
 		Stack tagStack = new Stack();
 		Stack lineStack = new Stack();
@@ -827,17 +828,17 @@ public class SchemaTransformer implements ISchemaTransformer {
 				reporter.report(
 					PDE.getResourceString(REPORT_UNMATCHED),
 					((SchemaObject) container).getStartLine() + linenum,
-					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+					CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+				return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
 			}
 			if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
 				reporter.report(
 					PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 					((SchemaObject) container).getStartLine() + linenum,
-					CompilerFlags.getFlag(
+					CompilerFlags.getFlag(reporter.getFile().getProject(), 
 						CompilerFlags.S_FORBIDDEN_END_TAGS));
-				return CompilerFlags.getFlag(
+				return CompilerFlags.getFlag(reporter.getFile().getProject(), 
 					CompilerFlags.S_FORBIDDEN_END_TAGS)
 					== CompilerFlags.ERROR;
 			} 
@@ -845,9 +846,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 				reporter.report(
 					PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 					((SchemaObject) container).getStartLine() + linenum,
-					CompilerFlags.getFlag(
+					CompilerFlags.getFlag(reporter.getFile().getProject(), 
 						CompilerFlags.S_OPTIONAL_END_TAGS));
-				return CompilerFlags.getFlag(
+				return CompilerFlags.getFlag(reporter.getFile().getProject(), 
 					CompilerFlags.S_OPTIONAL_END_TAGS)
 					== CompilerFlags.ERROR;
 			} 
@@ -855,15 +856,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 				reporter.report(
 					PDE.getResourceString(REPORT_OPEN),
 					((SchemaObject) container).getStartLine() + linenum,
-					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+					CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+				return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
 			} 
 			reporter.report(
 				PDE.getFormattedMessage(REPORT_GENERAL, errTag),
 				((SchemaObject) container).getStartLine() + linenum,
-				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 				== CompilerFlags.ERROR;		
 		} 
 		
@@ -871,17 +872,17 @@ public class SchemaTransformer implements ISchemaTransformer {
 			reporter.report(
 				PDE.getResourceString(REPORT_UNMATCHED),
 				((Schema) container).getOverviewStartLine() + linenum,
-				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 				== CompilerFlags.ERROR;
 		} 
 		if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
 			reporter.report(
 				PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 				((Schema) container).getOverviewStartLine() + linenum,
-				CompilerFlags.getFlag(
+				CompilerFlags.getFlag(reporter.getFile().getProject(), 
 					CompilerFlags.S_FORBIDDEN_END_TAGS));
-			return CompilerFlags.getFlag(
+			return CompilerFlags.getFlag(reporter.getFile().getProject(), 
 				CompilerFlags.S_FORBIDDEN_END_TAGS)
 				== CompilerFlags.ERROR;
 		} 
@@ -889,9 +890,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 			reporter.report(
 				PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 				((Schema) container).getOverviewStartLine() + linenum,
-				CompilerFlags.getFlag(
+				CompilerFlags.getFlag(reporter.getFile().getProject(), 
 					CompilerFlags.S_OPTIONAL_END_TAGS));
-			return CompilerFlags.getFlag(
+			return CompilerFlags.getFlag(reporter.getFile().getProject(), 
 				CompilerFlags.S_OPTIONAL_END_TAGS)
 				== CompilerFlags.ERROR;
 		} 
@@ -899,26 +900,26 @@ public class SchemaTransformer implements ISchemaTransformer {
 			reporter.report(
 				PDE.getResourceString(REPORT_OPEN),
 				((Schema) container).getOverviewStartLine() + linenum,
-				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 				== CompilerFlags.ERROR;
 		} 
 		reporter.report(
 			PDE.getFormattedMessage(REPORT_GENERAL, errTag),
 			((Schema) container).getOverviewStartLine() + linenum,
-			CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-		return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+			CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS));
+		return CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 			== CompilerFlags.ERROR;
 	}
 
 	private boolean verifySections(
 		ISchema schema,
 		XMLErrorReporter reporter) {
-		if (CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+		if (CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPEN_TAGS)
 			== CompilerFlags.IGNORE
-			&& CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)
+			&& CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_FORBIDDEN_END_TAGS)
 				== CompilerFlags.IGNORE
-			&& CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)
+			&& CompilerFlags.getFlag(reporter.getFile().getProject(), CompilerFlags.S_OPTIONAL_END_TAGS)
 				== CompilerFlags.IGNORE)
 			return true;
 		boolean hasError = false;

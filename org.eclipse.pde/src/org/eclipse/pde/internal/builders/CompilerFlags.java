@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.*;
-
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.pde.internal.PDE;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class CompilerFlags {
 	public static final int ERROR = 0;
@@ -36,6 +35,10 @@ public class CompilerFlags {
 	public static final int FEATURE_FLAGS = 2;
 	public static final int SITE_FLAGS = 3;
 
+	// Project or Instance preferences
+	public static final String USE_PROJECT_PREF =
+		"compilers.use-project"; //$NON-NLS-1$
+		
 	// Manifest compiler flags
 	public static final String P_UNRESOLVED_IMPORTS =
 		"compilers.p.unresolved-import"; //$NON-NLS-1$
@@ -93,19 +96,77 @@ public class CompilerFlags {
 		return MARKER;
 	}
 
-	public static int getFlag(String flagId) {
-		Preferences pref = PDE.getDefault().getPluginPreferences();
-		return pref.getInt(flagId);
+	public static int getFlag(IProject project, String flagId) {
+		if (project == null) {
+			return getFlag((String) null, flagId);
+		}
+		return getFlag(project.getName(), flagId);
 	}
 
-	public static boolean getBoolean(String flagId) {
-		Preferences pref = PDE.getDefault().getPluginPreferences();
-		return pref.getBoolean(flagId);
+	private static int getFlag(String project, String flagId) {
+		String value = getString(project, flagId);
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException nfe){
+			return 0;
+		}
 	}
 
-	public static String getString(String flagId) {
-		Preferences pref = PDE.getDefault().getPluginPreferences();
-		return pref.getString(flagId);
+	public static boolean getBoolean(IProject project, String flagId) {
+		if (project == null) {
+			return getBoolean((String) null, flagId);
+		}
+		return getBoolean(project.getName(), flagId);
+	}
+	
+	private static boolean getBoolean(String project, String flagId) {
+		String value = getString(project, flagId);
+		return Boolean.valueOf(value).booleanValue();
+	}
+
+	/**
+	 * 
+	 * @param project
+	 *            project to use PROJECT,INSTANCE,DEFAULT scope or null to
+	 *            use only INSTANCE,DEFAULT scope
+	 * @param flagId
+	 * @return value or ""
+	 */
+	public static String getString(IProject project, String flagId) {
+		if (project == null) {
+			return getString((String) null, flagId);
+		}
+		return getString(project.getName(), flagId);
+	}
+	
+	/**
+	 * 
+	 * @param projectName
+	 *            project name to use PROJECT,INSTANCE,DEFAULT scope or null to
+	 *            use only INSTANCE,DEFAULT scope
+	 * @param flagId
+	 * @return value or ""
+	 */
+	private static String getString(String projectName, String flagId) {
+		IPreferencesService service = Platform.getPreferencesService();
+		IEclipsePreferences root = service.getRootNode();
+		org.osgi.service.prefs.Preferences projectNode = null;
+		if (projectName != null) {
+			projectNode = root.node(ProjectScope.SCOPE).node(projectName).node(
+					PDE.PLUGIN_ID);
+		}
+		org.osgi.service.prefs.Preferences instanceNode = root.node(
+				InstanceScope.SCOPE).node(PDE.PLUGIN_ID);
+		org.osgi.service.prefs.Preferences defaultNode = root.node(
+				DefaultScope.SCOPE).node(PDE.PLUGIN_ID);
+		org.osgi.service.prefs.Preferences[] nodes;
+		if (projectNode != null)
+			nodes = new org.osgi.service.prefs.Preferences[] { projectNode,
+					instanceNode, defaultNode };
+		else
+			nodes = new org.osgi.service.prefs.Preferences[] { instanceNode,
+					defaultNode };
+		return service.get(flagId, "", nodes); //$NON-NLS-1$
 	}
 
 	public static int getDefaultFlag(String flagId) {
@@ -128,14 +189,60 @@ public class CompilerFlags {
 		pref.setValue(flagId, value);
 	}
 
+	public static void setFlag(IProject project, String flagId, int value) {
+		setString(project, flagId, Integer.toString(value));
+	}
+
 	public static void setBoolean(String flagId, boolean value) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
 	}
 
+	public static void setBoolean(IProject project, String flagId, boolean value) {
+		setString(project, flagId, Boolean.toString(value));
+	}
+
 	public static void setString(String flagId, String value) {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
 		pref.setValue(flagId, value);
+	}
+
+	/**
+	 * Sets preference on PROJECT scope
+	 * @param project
+	 * @param flagId
+	 * @param value
+	 */
+	public static void setString(IProject project, String flagId, String value) {
+		if(project == null){
+			return;
+		}
+		IPreferencesService service = Platform.getPreferencesService();
+		IEclipsePreferences root = service.getRootNode();
+		org.osgi.service.prefs.Preferences preferences = root.node(ProjectScope.SCOPE).node(project.getName()).node(PDE.PLUGIN_ID);
+		preferences.put(flagId, value);
+		try{
+			preferences.flush();
+		} catch (BackingStoreException bse){
+		}
+	}
+	/**
+	 * Clears preference from Project scope
+	 * @param project
+	 * @param flagId
+	 */
+	public static void clear(IProject project, String flagId) {
+		if(project == null){
+			return;
+		}
+		IPreferencesService service = Platform.getPreferencesService();
+		IEclipsePreferences root = service.getRootNode();
+		org.osgi.service.prefs.Preferences preferences = root.node(ProjectScope.SCOPE).node(project.getName()).node(PDE.PLUGIN_ID);
+		preferences.remove(flagId);
+		try{
+			preferences.flush();
+		} catch (BackingStoreException bse){
+		}
 	}
 
 	public static void initializeDefaults() {
@@ -161,22 +268,13 @@ public class CompilerFlags {
 		pref.setDefault(F_UNRESOLVED_FEATURES, WARNING);
 	}
 
-	public static boolean isGroupActive(int group) {
-		Preferences pref = PDE.getDefault().getPluginPreferences();
-		String[] flagIds = getFlags(group);
-
-		for (int i = 0; i < flagIds.length; i++) {
-			String flagId = flagIds[i];
-			if (pref.getInt(flagId) != IGNORE)
-				return true;
-		}
-		return false;
-	}
-
 	public static String[] getFlags(int group) {
 		return flags[group];
 	}
-
+	
+	/**
+	 * Saves INSTANCE preferences
+	 */
 	public static void save() {
 		PDE.getDefault().savePluginPreferences();
 	}

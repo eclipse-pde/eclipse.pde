@@ -16,7 +16,7 @@ import java.net.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public interface ISchemaTransformer {
-	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter);
+//	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter);
 	
-	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter, URL cssURL);
+	public void transform(ISchemaDescriptor desc, InputStream schema, PrintWriter output, SchemaHandler reporter, URL cssURL, boolean generateDoc);
 }

@@ -41,7 +41,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 				} else if (name.equals("requires")) { //$NON-NLS-1$
 					validateRequires(child);
 				} else {
-					int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+					int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 					if (severity != CompilerFlags.IGNORE)
 						reportIllegalElement(element, severity);
 				}
@@ -63,7 +63,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateVersionAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
 		if (severity != CompilerFlags.IGNORE) {
 			IStatus status = PluginVersionIdentifier.validateVersion(attr.getValue());
 			if (status.getSeverity() != IStatus.OK)
@@ -72,7 +72,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateMatch(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
 		if (severity != CompilerFlags.IGNORE) {
 			String value = attr.getValue();
 			if (!"perfect".equals(value) && !"equivalent".equals(value) //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,7 +84,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	protected abstract String getRootElementName();
 
 	protected void validateRequires(Element element) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
@@ -118,7 +118,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 	
 	protected void validateRuntime(Element element) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
@@ -134,8 +134,8 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	protected void validateLibrary(Element element) {
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
-		int unknownSev = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
-		int deprecatedSev = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
+		int unknownSev = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
+		int deprecatedSev = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);
@@ -154,7 +154,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	
 	protected void validatePluginID(Element element, Attr attr) {
 		int severity = CompilerFlags
-				.getFlag(CompilerFlags.P_UNRESOLVED_IMPORTS);
+				.getFlag(project, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$
 			severity = CompilerFlags.WARNING;
 		if (severity != CompilerFlags.IGNORE) {

@@ -34,7 +34,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
-			int severity = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
+			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
 			if (severity != CompilerFlags.IGNORE) {
 				NamedNodeMap attrs = element.getAttributes();
 				for (int i = 0; i < attrs.getLength(); i++) {
@@ -54,11 +54,11 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					validateExtensionPoint(child);
 				} else {
 					if (!name.equals("runtime") && !name.equals("requires")) { //$NON-NLS-1$ //$NON-NLS-2$
-						severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+						severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 						if (severity != CompilerFlags.IGNORE)
 							reportIllegalElement(child, severity);
 					} else {
-						severity = CompilerFlags.getFlag(CompilerFlags.P_NOT_USED);
+						severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
 						if (severity != CompilerFlags.IGNORE)
 							reportUnusedElement(child, severity);					
 					}
@@ -73,7 +73,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		String pointID = element.getAttribute("point"); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(pointID);
 		if (point == null) {
-			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNRESOLVED_EX_POINTS);
+			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
 				report(PDE.getFormattedMessage(
 					"Builders.Manifest.ex-point", pointID), //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		}
 		
 		if (parentSchema != null) {
-			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 			if (severity != CompilerFlags.IGNORE) {
 				HashSet allowedElements = new HashSet();
 				computeAllowedElements(parentSchema.getType(), allowedElements);
@@ -164,7 +164,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 	
 	private void validateRequiredExtensionAttributes(Element element, ISchemaElement schemaElement) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_NO_REQUIRED_ATT);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NO_REQUIRED_ATT);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		
@@ -200,7 +200,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 				if (allowedElements.contains(attr.getName())) {
 					validateJavaAttribute(element, attr);
 				} else {
-					int flag = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+					int flag = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 					if (flag != CompilerFlags.IGNORE)
 						reportUnknownAttribute(element, attr.getName(), flag);
 				}
@@ -240,7 +240,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		assertAttributeDefined(element, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 		NamedNodeMap attrs = element.getAttributes();
 		for (int i = 0; i < attrs.getLength(); i++) {
 			Attr attr = (Attr)attrs.item(i);
@@ -252,7 +252,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			}
 		}
 		
-		severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
+		severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
 		if (severity != CompilerFlags.IGNORE) {
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++)
@@ -270,7 +270,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 	
 	protected void validateTranslatableString(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_NOT_EXTERNALIZED);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		String value = attr.getValue();
@@ -280,7 +280,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void validateResourceAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_RESOURCE);
 		if (severity != CompilerFlags.IGNORE && !resourceExists(attr.getValue())) {
 			report(PDE.getFormattedMessage(
 							"Builders.Manifest.resource", new String[] { attr.getValue(), attr.getName() }),  //$NON-NLS-1$
@@ -332,7 +332,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 
 	protected void validateJavaAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_CLASS);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 
@@ -356,7 +356,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 	
 	protected void validateBoolean(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		
@@ -368,7 +368,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	}
 
 	protected void validateRestrictionAttribute(Element element, Attr attr, ISchemaRestriction restriction) {
-		int severity = CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE);
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
 		if (severity != CompilerFlags.IGNORE) {
 			Object[] children = restriction.getChildren();
 			String value = attr.getValue();

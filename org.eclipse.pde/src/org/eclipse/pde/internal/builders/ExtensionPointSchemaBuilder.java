@@ -120,11 +120,12 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			PrintWriter pwriter = new PrintWriter(stringWriter);
 
 			FileSchemaDescriptor desc = new FileSchemaDescriptor(file);
-			transform(desc, source, pwriter, reporter, cssURL);
+			boolean generateDoc = CompilerFlags.getBoolean(file.getProject(), CompilerFlags.S_CREATE_DOCS);
+			transform(desc, source, pwriter, reporter, cssURL, generateDoc);
 			stringWriter.close();
 			if (reporter.getErrorCount() == 0
-				&& CompilerFlags.getBoolean(CompilerFlags.S_CREATE_DOCS)) {
-				String docLocation = getDocLocation();
+				&& generateDoc) {
+				String docLocation = getDocLocation(file);
 				ensureFoldersExist(file.getProject(), docLocation);
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				ByteArrayInputStream target =
@@ -138,7 +139,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				
 				
 				// generate CSS files if necessary (schema.css is default below)
-				IPath path = file.getProject().getFullPath().append(getDocLocation());
+				IPath path = file.getProject().getFullPath().append(getDocLocation(file));
 								
 				outputPath = (Path)path.append(SchemaTransformer.getSchemaCSSName());
 				IFile schemaCSSFile = workspace.getRoot().getFile(outputPath);
@@ -269,8 +270,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	
-	public String getDocLocation() {
-		return CompilerFlags.getString(CompilerFlags.S_DOC_FOLDER);
+	public String getDocLocation(IFile file) {
+		return CompilerFlags.getString(file.getProject(), CompilerFlags.S_DOC_FOLDER);
 	}
 	
 	private String getOutputFileName(IFile file) {
@@ -281,7 +282,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		if (mangledPluginId!=null)
 		   pageName = mangledPluginId + "_"+pageName; //$NON-NLS-1$
 		IPath path =
-			file.getProject().getFullPath().append(getDocLocation()).append(
+			file.getProject().getFullPath().append(getDocLocation(file)).append(
 				pageName);
 		return path.toString();
 	}
@@ -350,7 +351,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		InputStream input,
 		PrintWriter output,
 		SchemaHandler reporter,
-		URL cssURL) {
-		transformer.transform(desc, input, output, reporter, cssURL);
+		URL cssURL,
+		boolean generateDoc) {
+		transformer.transform(desc, input, output, reporter, cssURL, generateDoc);
 	}
 }
