@@ -82,6 +82,9 @@ public class LogView extends ViewPart implements ILogListener {
 	private TableColumn column3;
 	private TableColumn column4;
 	
+	private Composite leftContainer;
+	private SashForm sashForm;
+	
 	private boolean firstEvent = true;
 
 	public LogView() {
@@ -91,27 +94,29 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	public void createPartControl(Composite parent) {
 		readLogFile();
-		SashForm container = new SashForm(parent, SWT.HORIZONTAL);
-		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		createTableSection(container);
-		createDetailsSection(container);
+		sashForm = new SashForm(parent, SWT.HORIZONTAL);
+		sashForm.setLayout(new GridLayout());
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		createTableSection(sashForm);
+		createDetailsSection(sashForm);
+		if (!showPreviewAction.isChecked())
+			 sashForm.setMaximizedControl(leftContainer);
 	}
 	
 	private void createTableSection(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		leftContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 0;
-		container.setLayout(layout);
+		leftContainer.setLayout(layout);
 		
-		TableTree tableTree = new TableTree(container, SWT.FULL_SELECTION);
+		TableTree tableTree = new TableTree(leftContainer, SWT.FULL_SELECTION);
 		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createColumns(tableTree.getTable());		
 		createViewer(tableTree);
-		createVerticalLine(container);
+		createVerticalLine(leftContainer);
 		
 		createPopupMenuManager(tableTree);
 		makeActions(tableTree.getTable());
@@ -400,6 +405,12 @@ public class LogView extends ViewPart implements ILogListener {
 		showPreviewAction = new Action(PDERuntimePlugin.getResourceString("LogView.showDetails")) {
 			public void run() {
 				memento.putString(P_SHOW_DETAILS, isChecked() ? "true" : "false");
+				if (isChecked()) {
+					sashForm.setMaximizedControl(null);
+					handleSelectionChanged(tableTreeViewer.getSelection());
+				} else {
+					sashForm.setMaximizedControl(leftContainer);
+				}
 			}
 		};
 		showPreviewAction.setChecked(memento.getString(P_SHOW_DETAILS).equals("true"));
@@ -634,6 +645,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void updatePreview(ISelection selection) {
+		if (!showPreviewAction.isChecked())
+			return;
 		if (selection.isEmpty()) {
 			detailsForm.openTo(null);
 		} else {
