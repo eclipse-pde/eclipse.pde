@@ -36,6 +36,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_OVERVIEW =
 		"BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_SINCE =
+		"BaseExtensionPoint.sections.since"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_USAGE =
 		"BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
 	public static final String KEY_GENERATING = "BaseExtensionPoint.generating"; //$NON-NLS-1$
@@ -118,7 +120,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name);
 		schema.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;
-
+		
+		section = new DocumentSection(schema, IDocumentSection.SINCE, "Since:");
+		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SINCE));
+		schema.addDocumentSection(section);
+		
 		SchemaElement element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
 		SchemaComplexType complexType = new SchemaComplexType(schema);
 		element.setType(complexType);

@@ -83,7 +83,7 @@ public class DescriptionSection extends PDEFormSection {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		GridData gd;
-		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | FormWidgetFactory.BORDER_STYLE;
+		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);

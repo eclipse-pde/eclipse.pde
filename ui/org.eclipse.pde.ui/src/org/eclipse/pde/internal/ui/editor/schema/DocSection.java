@@ -31,6 +31,8 @@ public class DocSection extends PDEFormSection {
 	public static final String SECTION_DESC = "SchemaEditor.DocSection.desc";
 	public static final String KEY_TOPIC_OVERVIEW =
 		"SchemaEditor.topic.overview";
+	public static final String KEY_TOPIC_SINCE =
+		"SchemaEditor.topic.since";
 	public static final String KEY_TOPIC_EXAMPLES =
 		"SchemaEditor.topic.examples";
 	public static final String KEY_TOPIC_IMPLEMENTATION =
@@ -110,7 +112,7 @@ public class DocSection extends PDEFormSection {
 		sectionCombo.setLayoutData(gd);
 		factory.createLabel(container, null);
 
-		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
+		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
 		| FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
@@ -237,6 +239,8 @@ public class DocSection extends PDEFormSection {
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
 				return PDEPlugin.getResourceString(KEY_TOPIC_EXAMPLES);
+			if (sectionId.equals(IDocumentSection.SINCE))
+				return PDEPlugin.getResourceString(KEY_TOPIC_SINCE);
 			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
 				return PDEPlugin.getResourceString(KEY_TOPIC_IMPLEMENTATION);
 			if (sectionId.equals(IDocumentSection.API_INFO))

@@ -91,6 +91,8 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
 				return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_EXAMPLES);
+			if (sectionId.equals(IDocumentSection.SINCE))
+				return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_SINCE);
 			if (sectionId.equals(IDocumentSection.IMPLEMENTATION))
 				return PDEPlugin.getResourceString(DocSection.KEY_TOPIC_IMPLEMENTATION);
 			if (sectionId.equals(IDocumentSection.API_INFO))
