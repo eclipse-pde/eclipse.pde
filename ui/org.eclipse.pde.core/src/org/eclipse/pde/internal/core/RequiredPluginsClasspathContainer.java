@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -23,7 +24,13 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  */
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 	private IPluginModelBase model;
-
+	
+	private static boolean DEBUG = false;
+	
+	static {
+		DEBUG  = PDECore.getDefault().isDebugging() 
+					&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
@@ -35,10 +42,23 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		if (model==null) return new IClasspathEntry[0];
+		if (model==null) {
+			if (DEBUG) {
+				System.out.println("********Returned an empty container");
+				System.out.println();
+			}
+			return new IClasspathEntry[0];
+		}
 		if (entries == null) {
 			entries = ClasspathUtilCore.computePluginEntries(model);
 			entries = verifyWithAttachmentManager(entries);
+		}
+		if (DEBUG) {
+			System.out.println("Dependencies for plugin '" + model.getPluginBase().getId() + "':");
+			for (int i = 0; i < entries.length; i++) {
+				System.out.println(entries[i].toString());
+			}
+			System.out.println();
 		}
 		return entries;
 	}
