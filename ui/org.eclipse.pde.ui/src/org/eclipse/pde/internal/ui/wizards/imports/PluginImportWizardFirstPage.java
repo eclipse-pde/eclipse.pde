@@ -215,7 +215,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(browseButton);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Locations to be searched for library JARs source attachment:");
+		label.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source.label"));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
