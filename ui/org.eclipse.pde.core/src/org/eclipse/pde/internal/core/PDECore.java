@@ -299,7 +299,6 @@ public class PDECore extends Plugin {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				getExternalModelManager().getEclipseHome(monitor);
-				getSourceLocationManager().initializeClasspathVariables(monitor);
 			}
 		};
 		try {
