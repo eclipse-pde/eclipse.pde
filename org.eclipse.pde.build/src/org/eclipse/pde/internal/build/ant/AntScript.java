@@ -282,7 +282,7 @@ public class AntScript {
 			output.println("</copy>"); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void printMoveTask(String todir, FileSet[] fileSets, boolean failOnError) {
 		printTab();
 		output.print("<move"); //$NON-NLS-1$
@@ -385,12 +385,13 @@ public class AntScript {
 	 * @param icons the list of icons to use in the branding
 	 * @param name the name of the resultant launcher
 	 */
-	public void printBrandTask(String root, String icons, String name) {
+	public void printBrandTask(String root, String icons, String name, String os) {
 		printTab();
 		print("<eclipse.brand"); //$NON-NLS-1$
 		printAttribute("root", root, true); //$NON-NLS-1$
 		printAttribute("icons", icons, true); //$NON-NLS-1$
 		printAttribute("name", name, true); //$NON-NLS-1$
+		printAttribute("os", os, true); //$NON-NLS-1$
 		println("/>"); //$NON-NLS-1$
 	}
 
@@ -505,7 +506,7 @@ public class AntScript {
 		printAttribute("refid", ref, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Print the given string to the Ant script within quotes.
 	 * 

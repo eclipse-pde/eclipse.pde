@@ -24,7 +24,7 @@ public class BrandTask extends Task {
 	public BrandTask() {
 		iron = new BrandingIron();
 	}
-	
+
 	public void setName(String value) {
 		iron.setName(value);
 	}
@@ -35,6 +35,10 @@ public class BrandTask extends Task {
 
 	public void setRoot(String value) {
 		iron.setRoot(value);
+	}
+
+	public void setOS(String value) {
+		iron.setOS(value);
 	}
 
 	public void execute() throws BuildException {
