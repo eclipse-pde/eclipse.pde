@@ -61,15 +61,17 @@ public class UpdateClasspathOperation implements IRunnableWithProgress {
 	static IPath getSourcePath(IPath jarPath) {
 		jarPath = getExpandedPath(jarPath);
 		String libName = jarPath.lastSegment();
-		int idx = libName.lastIndexOf('.');
-		if (idx != -1) {
-			String srcName = libName.substring(0, idx) + "src.zip";
-			IPath path = jarPath.removeLastSegments(1).append(srcName);
-			return path;
-		} else
-			return null;
+		if (libName != null) {
+			int idx = libName.lastIndexOf('.');
+			if (idx != -1) {
+				String srcName = libName.substring(0, idx) + "src.zip";
+				IPath path = jarPath.removeLastSegments(1).append(srcName);
+				return path;
+			}
+		}
+		return null;
 	}
-
+	
 	private static IPath getLibraryPath(
 		IProject project,
 		IPluginLibrary curr) {
