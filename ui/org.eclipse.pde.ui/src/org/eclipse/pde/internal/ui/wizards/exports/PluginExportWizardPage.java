@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.util.ArrayList;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -34,8 +39,19 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	}
 
 	public Object[] getListElements() {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ArrayList result = new ArrayList();
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getAllModels();
+		for (int i = 0; i < projects.length; i++) {
+			if (!WorkspaceModelManager.isBinaryPluginProject(projects[i])
+				&& WorkspaceModelManager.isPluginProject(projects[i])) {
+				IModel model = manager.getWorkspaceModel(projects[i]);
+				if (model != null) {
+					result.add(model);
+				}
+			}
+		}
+		return (IModel[]) result.toArray(new IModel[result.size()]);
 	}
 	
 	protected void hookHelpContext(Control control) {
