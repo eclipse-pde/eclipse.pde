@@ -33,8 +33,6 @@ public class LauncherUtils {
 		"WorkbenchLauncherConfigurationDelegate.noJRE"; //$NON-NLS-1$
 	private static final String KEY_JRE_PATH_NOT_FOUND =
 		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound"; //$NON-NLS-1$
-	private static final String KEY_PROBLEMS_DELETING =
-		"WorkbenchLauncherConfigurationDelegate.problemsDeleting"; //$NON-NLS-1$
 	private static final String KEY_TITLE =
 		"WorkbenchLauncherConfigurationDelegate.title"; //$NON-NLS-1$
 	private static final String KEY_DELETE_WORKSPACE =
@@ -424,24 +422,12 @@ public class LauncherUtils {
 				try {
 					deleteContent(workspaceFile, monitor);
 				} catch (IOException e) {
-					showWarningDialog(PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING));
+					PDEPlugin.logErrorMessage("Error occurred while deleting the workspace data upon launching");
 				}
 			}
 		}
 		monitor.done();
 		return true;
-	}
-	
-	private static void showWarningDialog(final String message) {
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				String title = PDEPlugin.getResourceString(KEY_TITLE);
-				MessageDialog.openWarning(
-					getDisplay().getActiveShell(),
-					title,
-					message);
-			}
-		});
 	}
 	
 	private static int confirmDeleteWorkspace(final File workspaceFile) {
@@ -481,7 +467,7 @@ public class LauncherUtils {
 		try {
 			deleteContent(configDir, monitor);
 		} catch (IOException e) {
-			showWarningDialog(PDEPlugin.getResourceString("LauncherUtils.problemsDeletingConfig")); //$NON-NLS-1$
+			PDEPlugin.logErrorMessage("Error occurred while deleting the configuration area upon launching");
 		}
 	}
 	
