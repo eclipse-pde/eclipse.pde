@@ -292,7 +292,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		updateStatus(dropLocationStatus);
 		if (dropLocationStatus.getSeverity() == IStatus.OK
 			&& !runtimeLocationButton.getSelection()
-			&& doExtractCheck.getSelection()) {
+			&& doExtractCheck.getSelection()
+			&& !new Path(dropLocation.getText()).equals(new Path(getTargetHome()))) {
 			updateStatus(
 				createStatus(
 					IStatus.INFO,
