@@ -117,7 +117,8 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType= getWorkbenchLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, PDEPlugin.getResourceString("RuntimeWorkbenchShortcut.name"));  //$NON-NLS-1$
+			String computedName = getComputedName(configType.getName());
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", BasicLauncherTab.getDefaultWorkspace()); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMINSTALL, JavaRuntime.getDefaultVMInstall().getName());
 			String appName = "org.eclipse.ui.workbench"; //$NON-NLS-1$
@@ -142,6 +143,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		// constant?
 		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");		 //$NON-NLS-1$
 	}	
+	
+	private String getComputedName(String prefix) {
+		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+		return lm.generateUniqueLaunchConfigurationNameFrom(prefix);
+	}
 	
 	/**
 	 * Convenience method to get the window that owns this action's Shell.
