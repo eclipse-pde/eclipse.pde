@@ -76,9 +76,6 @@ public class PDEPerspective implements IPerspectiveFactory {
 	
 	private void addNewWizardShortcuts() {
 		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProductConfigurationWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProjectWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFragmentWizard"); //$NON-NLS-1$
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFeatureProjectWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
