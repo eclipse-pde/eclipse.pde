@@ -1,9 +1,16 @@
 package org.eclipse.pde.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-import org.eclipse.core.runtime.IPluginDescriptor;import org.eclipse.core.runtime.Platform;
-import java.io.File;import java.io.IOException;import java.net.URL;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 
 public class InitTemplate extends Task {

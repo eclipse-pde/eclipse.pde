@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.core;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
