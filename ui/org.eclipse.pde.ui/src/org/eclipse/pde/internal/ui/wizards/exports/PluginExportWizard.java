@@ -12,14 +12,12 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
 
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.progress.*;
 
 public class PluginExportWizard extends BaseExportWizard {
 	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle"; //$NON-NLS-1$
-	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -33,14 +31,6 @@ public class PluginExportWizard extends BaseExportWizard {
 		return new PluginExportWizardPage(getSelection());
 	}
 	
-	public IDialogSettings getSettingsSection(IDialogSettings master) {
-		IDialogSettings setting = master.getSection(STORE_SECTION);
-		if (setting == null) {
-			setting = master.addNewSection(STORE_SECTION);
-		}
-		return setting;
-	}
-
 	protected void scheduleExportJob() {
 		String[] signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
 		PluginExportJob job =

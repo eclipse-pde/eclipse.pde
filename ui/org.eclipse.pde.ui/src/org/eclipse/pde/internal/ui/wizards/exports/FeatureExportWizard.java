@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -20,7 +19,6 @@ import org.eclipse.ui.progress.*;
 
 public class FeatureExportWizard extends BaseExportWizard {
 	private static final String KEY_WTITLE = "ExportWizard.Feature.wtitle"; //$NON-NLS-1$
-	private static final String STORE_SECTION = "FeatureExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -34,14 +32,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 		return new FeatureExportWizardPage(getSelection());
 	}
 	
-	public IDialogSettings getSettingsSection(IDialogSettings master) {
-		IDialogSettings setting = master.getSection(STORE_SECTION);
-		if (setting == null) {
-			setting = master.addNewSection(STORE_SECTION);
-		}
-		return setting;
-	}
-
 	protected void scheduleExportJob() {
 		String[] signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
 		String[] jnlpInfo = fPage1.useJARFormat() ? fPage2.getJNLPInfo() : null;
