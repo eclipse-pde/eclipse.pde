@@ -1249,5 +1249,9 @@
             class="org.eclipse.pde.internal.ui.util.PersistablePluginObject"
             id="org.eclipse.pde.ui.elementFactory"/>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.pde.internal.ui.preferences.PreferenceInitializer"/>
+   </extension>
 
 </plugin>

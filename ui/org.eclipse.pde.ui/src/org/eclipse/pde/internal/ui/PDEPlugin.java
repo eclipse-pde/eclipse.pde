@@ -11,33 +11,30 @@
 package org.eclipse.pde.internal.ui;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
+import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.feature.*;
-import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.schema.*;
 import org.eclipse.pde.internal.ui.launcher.*;
-import org.eclipse.pde.internal.ui.launcher.LaunchListener;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.view.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.plugin.*;
 import org.osgi.framework.*;
 
-public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPreferenceConstants {
+public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	// Shared instance
 	private static PDEPlugin inst;
@@ -253,19 +250,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		return fLaunchListener;
 	}
 	
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		ColorManager.initializeDefaults(store);
-		store.setDefault(P_USE_SOURCE_PAGE, false);
-		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
-		store.setDefault(PROP_JAVAC_DEBUG_INFO, true);
-		store.setDefault(PROP_JAVAC_FAIL_ON_ERROR, false);
-		store.setDefault(PROP_JAVAC_VERBOSE, true);
-		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);
-	}
-	
 	public static boolean isFullNameModeEnabled() {
 		IPreferenceStore store = getDefault().getPreferenceStore();
-		return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
+		return store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_NAMES);
 	}
 	
 }
