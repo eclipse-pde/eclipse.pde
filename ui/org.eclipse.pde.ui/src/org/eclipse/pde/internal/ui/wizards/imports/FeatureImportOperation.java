@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.team.core.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -94,7 +95,17 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 	private void createProject(IFeatureModel model, IProgressMonitor monitor)
 		throws CoreException {
-		String name = model.getFeature().getId() + "-feature"; //$NON-NLS-1$
+		String name = model.getFeature().getId();
+
+		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			if (name.equals(plugins[i].getId())) {
+				name += "-feature"; //$NON-NLS-1$
+				break;
+			}
+
+		}
+		
 		String task =
 			PDEPlugin.getFormattedMessage(
 				"FeatureImportWizard.operation.creating2", //$NON-NLS-1$

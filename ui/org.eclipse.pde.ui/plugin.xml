@@ -510,6 +510,55 @@
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.pde.ui.DependenciesView">
       </command>
+<!-- launch shortcuts -->
+      <command
+            name="%EclipseApplicationShortcut.description.debug"
+            description="%EclipseApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D E"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%EclipseApplicationShortcut.description.run"
+            description="%EclipseApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X E"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%JUnitApplicationShortcut.description.debug"
+            description="%EclipseApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.junitWorkbenchShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D P"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%JUnitApplicationShortcut.description.run"
+            description="%EclipseApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.junitWorkbenchShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X P"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
