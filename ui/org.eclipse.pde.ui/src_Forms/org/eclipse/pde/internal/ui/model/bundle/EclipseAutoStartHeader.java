@@ -18,7 +18,7 @@ public class EclipseAutoStartHeader extends ManifestHeader {
 	private ArrayList fExceptions = new ArrayList();
 	
 	public EclipseAutoStartHeader() {
-		setName("Eclipse-AutoStart");
+		setName("Eclipse-AutoStart"); //$NON-NLS-1$
 	}
 	
 	public void addException(String packageName) {

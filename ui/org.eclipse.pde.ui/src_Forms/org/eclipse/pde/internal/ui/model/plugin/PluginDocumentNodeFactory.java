@@ -31,20 +31,20 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 			return createPluginBase(name);
 		
 		if (parent instanceof PluginBaseNode) {
-			if ("extension".equals(name))
+			if ("extension".equals(name)) //$NON-NLS-1$
 				return createExtension(parent);
-			if ("extension-point".equals(name))
+			if ("extension-point".equals(name)) //$NON-NLS-1$
 				return createExtensionPoint(parent);
 		} else {
-			if (name.equals("import") && parent instanceof PluginElementNode) {
-				if (((PluginElementNode)parent).getName().equals("requires")) {
+			if (name.equals("import") && parent instanceof PluginElementNode) { //$NON-NLS-1$
+				if (((PluginElementNode)parent).getName().equals("requires")) { //$NON-NLS-1$
 					IDocumentNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
 						return createImport(parent);
 					}
 				}
-			} else if (name.equals("library") && parent instanceof PluginElementNode) {
-				if (((PluginElementNode)parent).getName().equals("runtime")) {
+			} else if (name.equals("library") && parent instanceof PluginElementNode) { //$NON-NLS-1$
+				if (((PluginElementNode)parent).getName().equals("runtime")) { //$NON-NLS-1$
 					IDocumentNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
 						return createLibrary(parent);
@@ -136,7 +136,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	}
 	
 	private PluginBaseNode createPluginBase(String name) {
-		return (PluginBaseNode)fModel.createPluginBase(name.equals("fragment"));
+		return (PluginBaseNode)fModel.createPluginBase(name.equals("fragment")); //$NON-NLS-1$
 		
 	}
 
@@ -146,7 +146,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	public IPluginImport createImport() {
 		PluginImportNode node = new PluginImportNode();
 		node.setModel(fModel);
-		node.setXMLTagName("import");
+		node.setXMLTagName("import"); //$NON-NLS-1$
 		return node;
 	}
 
@@ -156,7 +156,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	public IPluginLibrary createLibrary() {
 		PluginLibraryNode node = new PluginLibraryNode();
 		node.setModel(fModel);
-		node.setXMLTagName("library");
+		node.setXMLTagName("library"); //$NON-NLS-1$
 		return node;
 	}
 
@@ -183,7 +183,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	public IPluginExtension createExtension() {
 		PluginExtensionNode node = new PluginExtensionNode();
 		node.setModel(fModel);
-		node.setXMLTagName("extension");
+		node.setXMLTagName("extension"); //$NON-NLS-1$
 		return node;
 	}
 
@@ -193,7 +193,7 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	public IPluginExtensionPoint createExtensionPoint() {
 		PluginExtensionPointNode node = new PluginExtensionPointNode();
 		node.setModel(fModel);
-		node.setXMLTagName("extension-point");
+		node.setXMLTagName("extension-point"); //$NON-NLS-1$
 		return node;
 	}
 }

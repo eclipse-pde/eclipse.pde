@@ -30,7 +30,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("runtime", true);
+		IDocumentNode parent = getEnclosingElement("runtime", true); //$NON-NLS-1$
 		if (library instanceof PluginLibraryNode) {
 			PluginLibraryNode node = (PluginLibraryNode)library;
 			node.setModel(getModel());
@@ -43,7 +43,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", true);
+		IDocumentNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		if (pluginImport instanceof PluginImportNode) {
 			PluginImportNode node = (PluginImportNode)pluginImport;
 			node.setModel(getModel());
@@ -56,7 +56,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("requires", false);
+		IDocumentNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (parent != null) {
 			parent.removeChildNode((IDocumentNode)pluginImport);
 			pluginImport.setInTheModel(false);
@@ -69,7 +69,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginLibrary[] getLibraries() {
 		ArrayList result = new ArrayList();
-		IDocumentNode requiresNode = getEnclosingElement("runtime", false);
+		IDocumentNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentNode[] children = requiresNode.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
@@ -98,10 +98,10 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			element.setParentNode(this);
 			element.setModel(getModel());
 			element.setInTheModel(true);
-			if (elementName.equals("runtime")) {
+			if (elementName.equals("runtime")) { //$NON-NLS-1$
 				addChildNode(element, 0);
-			} else if (elementName.equals("requires")) {
-				if (children.length > 0 && children[0].getXMLTagName().equals("runtime")) {
+			} else if (elementName.equals("requires")) { //$NON-NLS-1$
+				if (children.length > 0 && children[0].getXMLTagName().equals("runtime")) { //$NON-NLS-1$
 					addChildNode(element, 1);
 				} else {
 					addChildNode(element, 0);
@@ -116,7 +116,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public IPluginImport[] getImports() {
 		ArrayList result = new ArrayList();
-		IDocumentNode requiresNode = getEnclosingElement("requires", false);
+		IDocumentNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentNode[] children = requiresNode.getChildNodes();
 			for (int i = 0; i < children.length; i++) {
@@ -143,7 +143,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void remove(IPluginLibrary library) throws CoreException {
-		IDocumentNode parent = getEnclosingElement("runtime", false);
+		IDocumentNode parent = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (parent != null) {
 			parent.removeChildNode((IDocumentNode)library);
 			library.setInTheModel(false);
@@ -166,7 +166,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary, org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
-		IDocumentNode node = getEnclosingElement("runtime", false);
+		IDocumentNode node = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (node != null) {
 			node.swap((IDocumentNode)l1, (IDocumentNode)l2);
 			firePropertyChanged(node, P_LIBRARY_ORDER, l1, l2);
@@ -209,11 +209,11 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			if (extPoints.length > 0)
 				addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
 			else {
-				IDocumentNode requires = getEnclosingElement("requires", false);
+				IDocumentNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
 				if (requires != null) {
 					addChildNode(node, indexOf(requires) + 1);
 				} else {
-					IDocumentNode runtime = getEnclosingElement("runtime", false);
+					IDocumentNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
 					if (runtime != null)
 						addChildNode(node, indexOf(runtime) + 1);
 					else
@@ -290,7 +290,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void swap(IPluginImport import1, IPluginImport import2)
 			throws CoreException {
-		IDocumentNode node = getEnclosingElement("requires", false);
+		IDocumentNode node = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (node != null) {
 			node.swap((IDocumentNode)import1, (IDocumentNode)import2);
 			firePropertyChanged(node, P_IMPORT_ORDER, import1, import2);
@@ -327,22 +327,22 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String newLine = System.getProperty("line.separator");
+		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 		
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newLine);
+		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newLine); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			buffer.append("<?eclipse version=\"3.0\"?>" + newLine);
+			buffer.append("<?eclipse version=\"3.0\"?>" + newLine); //$NON-NLS-1$
 		}
 		buffer.append(writeShallow(false) + newLine);
 		
-		IDocumentNode runtime = getEnclosingElement("runtime", false);
+		IDocumentNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (runtime != null) {
 			runtime.setLineIndent(getLineIndent() + 3);
 			buffer.append(runtime.write(true) + newLine);
 		}
 		
-		IDocumentNode requires = getEnclosingElement("requires", false);
+		IDocumentNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requires != null) {
 			requires.setLineIndent(getLineIndent() + 3);
 			buffer.append(requires.write(true) + newLine);
@@ -362,7 +362,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			buffer.append(extension.write(true) + newLine);
 		}
 		
-		buffer.append("</" + getXMLTagName() + ">");
+		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
 	}
 	
@@ -370,34 +370,34 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow()
 	 */
 	public String writeShallow(boolean terminate) {
-		String newLine = System.getProperty("line.separator");
+		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<" + getXMLTagName());
+		buffer.append("<" + getXMLTagName()); //$NON-NLS-1$
 		buffer.append(newLine);
 		
 		String id = getId();
 		if (id != null && id.trim().length() > 0)
-			buffer.append("   " + P_ID + "=\"" + getWritableString(id) + "\"" + newLine);
+			buffer.append("   " + P_ID + "=\"" + getWritableString(id) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		String name = getName();
 		if (name != null && name.trim().length() > 0)
-			buffer.append("   " + P_NAME + "=\"" + getWritableString(name) + "\"" + newLine);
+			buffer.append("   " + P_NAME + "=\"" + getWritableString(name) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		String version = getVersion();
 		if (version != null && version.trim().length() > 0)
-			buffer.append("   " + P_VERSION + "=\"" + getWritableString(version) + "\"" + newLine);
+			buffer.append("   " + P_VERSION + "=\"" + getWritableString(version) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		String provider = getProviderName();
 		if (provider != null && provider.trim().length() > 0) {
-			buffer.append("   " + P_PROVIDER + "=\"" + getWritableString(provider) + "\"");
+			buffer.append("   " + P_PROVIDER + "=\"" + getWritableString(provider) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		String[] specific = getSpecificAttributes();
 		for (int i = 0; i < specific.length; i++)
 			buffer.append(newLine + specific[i]);
 		if (terminate)
-			buffer.append("/");
-		buffer.append(">");
+			buffer.append("/"); //$NON-NLS-1$
+		buffer.append(">"); //$NON-NLS-1$
 
 		return buffer.toString();
 	}

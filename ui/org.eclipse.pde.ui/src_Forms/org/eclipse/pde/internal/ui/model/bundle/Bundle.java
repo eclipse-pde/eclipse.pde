@@ -69,12 +69,12 @@ public class Bundle implements IBundle {
 				String line = document.get(offset, length);
 				
 				if (currentKey != null) {
-					int lineNumber = line.startsWith(" ") ? i : i - 1;
+					int lineNumber = line.startsWith(" ") ? i : i - 1; //$NON-NLS-1$
 					IRegion region = document.getLineInformation(lineNumber);
 					String delimiter = document.getLineDelimiter(lineNumber);
 					int keyLength = region.getOffset() + region.getLength() - currentKey.getOffset();
 					currentKey.setLength(delimiter != null ? keyLength + delimiter.length() : keyLength);
-					if (!line.startsWith(" ")) {
+					if (!line.startsWith(" ")) { //$NON-NLS-1$
 						currentKey = null;
 					} 
 				}  

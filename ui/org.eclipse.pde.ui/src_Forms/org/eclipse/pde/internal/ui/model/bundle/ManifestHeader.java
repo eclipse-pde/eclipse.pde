@@ -72,7 +72,7 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
 	 */
 	public String write() {
-		return fName + ": " + fValue;
+		return fName + ": " + fValue; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)

@@ -35,14 +35,14 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
 	 */
 	public int getRule() {
-		String match = getXMLAttributeValue("match");
+		String match = getXMLAttributeValue("match"); //$NON-NLS-1$
 		if (match == null)
 			return IMatchRules.NONE;
-		if (match.equals("compatible"))			
+		if (match.equals("compatible"))			 //$NON-NLS-1$
 			return IMatchRules.COMPATIBLE;		
-		if (match.equals("perfect"))
+		if (match.equals("perfect")) //$NON-NLS-1$
 			return IMatchRules.PERFECT;
-		if (match.equals("equivalent"))
+		if (match.equals("equivalent")) //$NON-NLS-1$
 			return IMatchRules.EQUIVALENT;
 		return IMatchRules.GREATER_OR_EQUAL;
 	}
@@ -62,19 +62,19 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
 	 */
 	public void setRule(int rule) throws CoreException {
-		String match = "";
+		String match = ""; //$NON-NLS-1$
 		switch (rule) {
 			case IMatchRules.COMPATIBLE:
-				match = "compatible";
+				match = "compatible"; //$NON-NLS-1$
 				break;
 			case IMatchRules.EQUIVALENT:
-				match = "equivalent";
+				match = "equivalent"; //$NON-NLS-1$
 				break;
 			case IMatchRules.PERFECT:
-				match = "perfect";
+				match = "perfect"; //$NON-NLS-1$
 				break;
 			case IMatchRules.GREATER_OR_EQUAL:
-				match = "greaterOrEqual";
+				match = "greaterOrEqual"; //$NON-NLS-1$
 		}
 		setXMLAttribute(P_RULE, match);
 	}
@@ -86,15 +86,15 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		
 		String pluginID = getPluginId();
 		if (pluginID != null && pluginID.trim().length() > 0)
-			result.add("   " + P_PLUGIN_ID + "=\"" + pluginID + "\"");
+			result.add("   " + P_PLUGIN_ID + "=\"" + pluginID + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		String pluginVersion = getPluginVersion();
 		if (pluginVersion != null && pluginVersion.trim().length() > 0) 
-			result.add("   " + P_PLUGIN_VERSION + "=\"" + pluginVersion + "\"");
+			result.add("   " + P_PLUGIN_VERSION + "=\"" + pluginVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		String match = getXMLAttributeValue(P_RULE);
 		if (match != null && match.trim().length() > 0)
-			result.add("   " + P_RULE + "=\"" + match + "\"");
+			result.add("   " + P_RULE + "=\"" + match + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 		return (String[]) result.toArray(new String[result.size()]);
 	}

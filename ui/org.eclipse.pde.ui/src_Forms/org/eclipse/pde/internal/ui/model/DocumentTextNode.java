@@ -42,7 +42,7 @@ public class DocumentTextNode implements IDocumentTextNode {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getText()
 	 */
 	public String getText() {
-		return fText == null ? "" : fText;
+		return fText == null ? "" : fText; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setOffset(int)

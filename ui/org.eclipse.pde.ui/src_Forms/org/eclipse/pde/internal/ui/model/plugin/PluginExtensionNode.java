@@ -69,7 +69,7 @@ public class PluginExtensionNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String sep = System.getProperty("line.separator");
+		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());
@@ -79,7 +79,7 @@ public class PluginExtensionNode extends PluginParentNode
 			children[i].setLineIndent(getLineIndent() + 3);
 			buffer.append(sep + children[i].write(true));
 		}
-		buffer.append(sep + getIndent() + "</extension>");
+		buffer.append(sep + getIndent() + "</extension>"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	
@@ -87,9 +87,9 @@ public class PluginExtensionNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		String sep = System.getProperty("line.separator");
-		String attrIndent = "      ";
-		StringBuffer buffer = new StringBuffer("<extension");
+		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		String attrIndent = "      "; //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer("<extension"); //$NON-NLS-1$
 		IDocumentAttribute attr = getDocumentAttribute(P_ID);
 		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
@@ -100,8 +100,8 @@ public class PluginExtensionNode extends PluginParentNode
 		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		if (terminate)
-			buffer.append("/");
-		buffer.append(">");
+			buffer.append("/"); //$NON-NLS-1$
+		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	

@@ -43,8 +43,8 @@ public abstract class AbstractPluginDocumentHandler extends DocumentHandler {
 	 */
 	public void processingInstruction(String target, String data)
 			throws SAXException {
-		if ("eclipse".equals(target)) {
-			fSchemaVersion = "3.0";
+		if ("eclipse".equals(target)) { //$NON-NLS-1$
+			fSchemaVersion = "3.0"; //$NON-NLS-1$
 		}
 	}
 	

@@ -81,10 +81,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 		ArrayList commentPositions = new ArrayList();
 		for (int idx = 0; idx < text.length();) {
-			idx = text.indexOf("<!--", idx);
+			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)
 				break;
-			int end = text.indexOf("-->", idx);
+			int end = text.indexOf("-->", idx); //$NON-NLS-1$
 			if (end == -1) 
 				break;
 			
@@ -94,7 +94,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 		int idx = 0;
 		for (; idx < text.length(); idx += 1) {
-			idx = text.indexOf("<" + elementName, idx);
+			idx = text.indexOf("<" + elementName, idx); //$NON-NLS-1$
 			if (idx == -1)
 				break;
 			boolean valid = true;
@@ -120,7 +120,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		column = doc.getLineLength(line);
 		String lineText= doc.get(start, column - start + doc.getLineOffset(line));
 		
-		int index = lineText.indexOf("</" + node.getXMLTagName() + ">");
+		int index = lineText.indexOf("</" + node.getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (index == -1) {
 			index= lineText.indexOf("/>"); //$NON-NLS-1$
 			if (index == -1 ) {
@@ -135,7 +135,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	}
 	
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"\\s*=\\s*\"", true, false, false, true);
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"\\s*=\\s*\"", true, false, false, true); //$NON-NLS-1$
 		if (nameRegion != null) {
 			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
 				return new Region(nameRegion.getOffset(), nameRegion.getLength() + value.length() + 1);

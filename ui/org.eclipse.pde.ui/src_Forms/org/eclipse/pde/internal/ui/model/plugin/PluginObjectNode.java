@@ -149,14 +149,14 @@ public class PluginObjectNode extends PluginDocumentNode
 		PluginAttribute attr = (PluginAttribute) fAttributes.get(name);
 		try {
 			if (value == null)
-				value = "";
+				value = ""; //$NON-NLS-1$
 				if (attr == null) {
 					attr = new PluginAttribute();
 					attr.setName(name);
 					attr.setEnclosingElement(this);
 					fAttributes.put(name, attr);
 				}
-				attr.setValue(value == null ? "" : value);
+				attr.setValue(value == null ? "" : value); //$NON-NLS-1$
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)
@@ -222,7 +222,7 @@ public class PluginObjectNode extends PluginDocumentNode
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#writeShallow()
 	 */
 	public String writeShallow(boolean terminate) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/*
@@ -231,7 +231,7 @@ public class PluginObjectNode extends PluginDocumentNode
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#write()
 	 */
 	public String write(boolean indent) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/*
 	 * (non-Javadoc)
@@ -264,7 +264,7 @@ public class PluginObjectNode extends PluginDocumentNode
 		return true;
 	}
 	protected void appendAttribute(StringBuffer buffer, String attrName) {
-		appendAttribute(buffer, attrName, "");
+		appendAttribute(buffer, attrName, ""); //$NON-NLS-1$
 	}
 	
 	protected void appendAttribute(StringBuffer buffer, String attrName, String defaultValue) {
@@ -272,7 +272,7 @@ public class PluginObjectNode extends PluginDocumentNode
 		if (attr != null) {
 			String value = attr.getAttributeValue();
 			if (value != null && value.trim().length() > 0 && !value.equals(defaultValue))
-				buffer.append(" " + attr.write());
+				buffer.append(" " + attr.write()); //$NON-NLS-1$
 		}
 	}
 

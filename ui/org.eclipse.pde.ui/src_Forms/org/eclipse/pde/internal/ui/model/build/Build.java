@@ -86,7 +86,7 @@ public class Build implements IBuild {
 				int offset = document.getLineOffset(i);
 				int length = document.getLineLength(i);
 				String line = document.get(offset, length);
-				if (line.startsWith("#") | line.startsWith("!")) {
+				if (line.startsWith("#") | line.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
 					if (currentKey != null) {
 						currentKey.setLength(offset - 1 - currentKey.getOffset());
 						currentKey = null;
@@ -99,7 +99,7 @@ public class Build implements IBuild {
 					continue;
 				
 				if (currentKey != null) {
-					if (!line.endsWith("\\")) {
+					if (!line.endsWith("\\")) { //$NON-NLS-1$
 						currentKey.setLength(offset + document.getLineLength(i) - currentKey.getOffset());
 						currentKey = null;
 					}
@@ -118,7 +118,7 @@ public class Build implements IBuild {
 							offset += 1;
 						}
 						currentKey.setOffset(offset);
-						if (!line.endsWith("\\")) {
+						if (!line.endsWith("\\")) { //$NON-NLS-1$
 							currentKey.setLength(document.getLineOffset(i) + document.getLineLength(i) - currentKey.getOffset());
 							currentKey = null;
 						}

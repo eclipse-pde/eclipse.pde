@@ -119,7 +119,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	}
 	
 	public void processEntry(String value) {
-		StringTokenizer stok = new StringTokenizer(value, ",");
+		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			fTokens.add(stok.nextToken().trim());
 		}

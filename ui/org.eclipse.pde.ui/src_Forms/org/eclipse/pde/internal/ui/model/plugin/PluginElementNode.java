@@ -53,7 +53,7 @@ public class PluginElementNode extends PluginParentNode
 	 */
 	public String getText() {
 		IDocumentTextNode node = getTextNode();
-		return node == null ? "" : node.getText();
+		return node == null ? "" : node.getText(); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#setAttribute(java.lang.String, java.lang.String)
@@ -79,7 +79,7 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
-		String sep = System.getProperty("line.separator");
+		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
 		if (indent)
 			buffer.append(getIndent());
@@ -89,12 +89,12 @@ public class PluginElementNode extends PluginParentNode
 		if (children.length > 0 || text.length() > 0) {
 			buffer.append(writeShallow(false) + sep);
 			if (text.length() > 0)
-				buffer.append(getIndent() + "   " + text + sep);
+				buffer.append(getIndent() + "   " + text + sep); //$NON-NLS-1$
 			for (int i = 0; i < children.length; i++) {
 				children[i].setLineIndent(getLineIndent() + 3);
 				buffer.append(children[i].write(true) + sep);
 			}
-			buffer.append(getIndent() + "</" + getXMLTagName() + ">");
+			buffer.append(getIndent() + "</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			buffer.append(writeShallow(true));
 		}
@@ -106,22 +106,22 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		String sep = System.getProperty("line.separator");
-		StringBuffer buffer = new StringBuffer("<" + getXMLTagName());
+		String sep = System.getProperty("line.separator"); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
 		if (attrs.length == 1) {
 			if (attrs[0].getAttributeValue().length() > 0)
-				buffer.append(" " + attrs[0].write());
+				buffer.append(" " + attrs[0].write()); //$NON-NLS-1$
 		} else {
 			for (int i = 0; i < attrs.length; i++) {
 				if (attrs[i].getAttributeValue().length() > 0)
-					buffer.append(sep + getIndent() + "      " + attrs[i].write());
+					buffer.append(sep + getIndent() + "      " + attrs[i].write()); //$NON-NLS-1$
 			}
 		}
 		if (terminate)
-			buffer.append("/");
-		buffer.append(">");
+			buffer.append("/"); //$NON-NLS-1$
+		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	

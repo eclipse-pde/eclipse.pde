@@ -60,7 +60,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 */
 	public String getResourceString(String key) {
 		if (key == null || key.length() == 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		
 		if (fNLResourceHelper == null) 
 			fNLResourceHelper = createNLResourceHelper();

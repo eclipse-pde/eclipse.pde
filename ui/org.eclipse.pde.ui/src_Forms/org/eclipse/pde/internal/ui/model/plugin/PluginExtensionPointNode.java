@@ -24,13 +24,13 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getFullId()
 	 */
 	public String getFullId() {
-		return getPluginBase().getId() + "." + getId();
+		return getPluginBase().getId() + "." + getId(); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getSchema()
 	 */
 	public String getSchema() {
-		return getXMLAttributeValue("schema");
+		return getXMLAttributeValue("schema"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#setSchema(java.lang.String)
@@ -76,14 +76,14 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		StringBuffer buffer = new StringBuffer("<extension-point");
+		StringBuffer buffer = new StringBuffer("<extension-point"); //$NON-NLS-1$
 		appendAttribute(buffer, P_ID);
 		appendAttribute(buffer, P_NAME);
 		appendAttribute(buffer, P_SCHEMA);
 
 		if (terminate)
-			buffer.append("/");
-		buffer.append(">");
+			buffer.append("/"); //$NON-NLS-1$
+		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	

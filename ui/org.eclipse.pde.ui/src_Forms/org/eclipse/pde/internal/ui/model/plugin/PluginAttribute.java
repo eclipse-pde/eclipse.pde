@@ -118,7 +118,7 @@ public class PluginAttribute extends PluginObjectNode
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#write()
 	 */
 	public String write() {
-		return getName() + "=\"" + getWritableString(getValue()) + "\"";
+		return getName() + "=\"" + getWritableString(getValue()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/* (non-Javadoc)

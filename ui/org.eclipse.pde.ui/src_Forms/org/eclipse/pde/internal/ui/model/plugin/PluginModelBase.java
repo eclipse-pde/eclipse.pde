@@ -43,10 +43,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public IPluginBase createPluginBase(boolean isFragment) {
 		if (isFragment) {
 			fPluginBase = new FragmentNode();
-			fPluginBase.setXMLTagName("fragment");
+			fPluginBase.setXMLTagName("fragment"); //$NON-NLS-1$
 		} else {
 			fPluginBase = new PluginNode();
-			fPluginBase.setXMLTagName("plugin");
+			fPluginBase.setXMLTagName("plugin"); //$NON-NLS-1$
 		}
 		fPluginBase.setInTheModel(true);
 		fPluginBase.setModel(this);
@@ -120,10 +120,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public URL getNLLookupLocation() {
 		String installLocation = getInstallLocation();
 		if (installLocation==null) return null;
-		if (installLocation.startsWith("file:") == false)
-			installLocation = "file:" + installLocation;
+		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/");
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			return url;
 		} catch (MalformedURLException e) {
 			return null;
@@ -141,7 +141,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = isFragmentModel() ? "fragment" : "plugin";
+		String name = isFragmentModel() ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		URL lookupLocation = getNLLookupLocation();
 		if (lookupLocation==null) return null;
 		return new NLResourceHelper(name, new URL[] {lookupLocation});

@@ -212,7 +212,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	protected String getIndent() {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fIndent; i++) {
-			buffer.append(" ");
+			buffer.append(" "); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
