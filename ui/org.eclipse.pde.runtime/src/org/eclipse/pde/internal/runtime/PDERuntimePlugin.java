@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.runtime;
 
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.*;
 import org.eclipse.swt.widgets.Shell;
@@ -74,9 +73,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public static String getFormattedMessage(String key, String arg) {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, new Object[] { arg });
-	}
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
