@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
@@ -38,17 +37,13 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.ide.*;
 	
 public class ConvertedProjectsPage extends WizardPage  {
-	private Button updateBuildPathButton;
 	private CheckboxTableViewer projectViewer;
 	public static final String KEY_TITLE = "ConvertedProjectWizard.title"; //$NON-NLS-1$
-	public static final String KEY_UPDATE_BUILD_PATH =
-		"ConvertedProjectWizard.updateBuildPath"; //$NON-NLS-1$
 	public static final String KEY_CONVERTING = "ConvertedProjectWizard.converting"; //$NON-NLS-1$
 	public static final String KEY_UPDATING = "ConvertedProjectWizard.updating"; //$NON-NLS-1$
 	public static final String KEY_DESC = "ConvertedProjectWizard.desc"; //$NON-NLS-1$
 	public static final String KEY_PROJECT_LIST =
 		"ConvertedProjectWizard.projectList"; //$NON-NLS-1$
-	private static final String UPDATE_SECTION = "ConvertedProjectsPageUpdate"; //$NON-NLS-1$
 	private TablePart tablePart;
 	private IProject[] fSelected;
 	private IProject[] fUnconverted;
@@ -83,22 +78,6 @@ public class ConvertedProjectsPage extends WizardPage  {
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			setPageComplete(count > 0);
-			if (updateBuildPathButton == null)
-				return;
-
-			Object[] selected = tablePart.getSelection();
-			updateBuildPathButton.setEnabled(false);
-			for (int i = 0; i < selected.length; i++) {
-				try {
-					if (((IProject) selected[i])
-						.hasNature(JavaCore.NATURE_ID)) {
-						updateBuildPathButton.setEnabled(true);
-						break;
-					}
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
 		}
 	}
 
@@ -126,13 +105,6 @@ public class ConvertedProjectsPage extends WizardPage  {
 		projectViewer.setLabelProvider(new ProjectLabelProvider());
 		projectViewer.setInput(PDEPlugin.getWorkspace());
 	
-		updateBuildPathButton = new Button(container, SWT.CHECK);
-		updateBuildPathButton.setText(
-			PDEPlugin.getResourceString(KEY_UPDATE_BUILD_PATH));
-		updateBuildPathButton.setSelection(
-			getDialogSettings().getBoolean(UPDATE_SECTION));
-		updateBuildPathButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		updateBuildPathButton.setEnabled(false);
 		tablePart.setSelection(fSelected);
 		tablePart.updateCounter(fSelected.length);
 
@@ -164,16 +136,12 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 	
 	public boolean finish() {
-		final boolean updateBuildPath = updateBuildPathButton.getSelection() && updateBuildPathButton.isEnabled();
 		final Object [] selected = tablePart.getSelection();
-		
-		IDialogSettings settings = getDialogSettings();
-		settings.put(UPDATE_SECTION, updateBuildPath);
 		
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					convertProjects(selected, updateBuildPath, monitor);
+					convertProjects(selected, monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {
@@ -235,11 +203,9 @@ public class ConvertedProjectsPage extends WizardPage  {
 	
 	private void convertProjects(
 		Object[] selected,
-		boolean updateBuildPath,
 		IProgressMonitor monitor)
 		throws CoreException {
-		int totalCount =
-			updateBuildPath ? (2 * selected.length) : selected.length;
+		int totalCount = 2 * selected.length;
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_CONVERTING),
 			totalCount);
@@ -247,15 +213,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 			convertProject((IProject) selected[i], monitor);
 			monitor.worked(1);
 		}
-
-		if (updateBuildPath) {
-			monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
-			for (int i = 0; i < selected.length; i++) {
-				if (((IProject) selected[i]).hasNature(JavaCore.NATURE_ID)) {
-					updateBuildPath((IProject) selected[i], new SubProgressMonitor(monitor,1));
-				} else {
-					monitor.worked(1);
-				}
+		
+		// update build path
+		monitor.subTask(PDEPlugin.getResourceString(KEY_UPDATING));
+		for (int i = 0; i < selected.length; i++) {
+			if (((IProject) selected[i]).hasNature(JavaCore.NATURE_ID)) {
+				updateBuildPath((IProject) selected[i], new SubProgressMonitor(monitor,1));
+			} else {
+				monitor.worked(1);
 			}
 		}
 		monitor.done();
