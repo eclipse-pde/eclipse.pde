@@ -183,11 +183,11 @@ public class JarManifestErrorReporter {
 					lineDelimiter = ""; //$NON-NLS-1$
 				}
 				ByteBuffer byteBuf = charset.encode(line);
-				if (byteBuf.limit() + lineDelimiter.length() > 72) {
+				if (byteBuf.limit() + lineDelimiter.length() > 512) {
 					report(
 							PDE
 									.getResourceString("BundleErrorReporter.lineTooLong"), //$NON-NLS-1$
-							l + 1, CompilerFlags.WARNING);
+							l + 1, CompilerFlags.ERROR);
 					return;
 				}
 				// parse
