@@ -272,8 +272,8 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fHighestOffset;
 	}
 	
-	private int getAttributeOffset(String name, String value, int offset) throws BadLocationException{
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"\\s*=\\s*\""+value, true, false, false, true); //$NON-NLS-1$
+	private int getAttributeOffset(String name, String value, int offset) throws BadLocationException {
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name+"=\""+value, true, false, false, false); //$NON-NLS-1$
 		if (nameRegion != null) {
 			return nameRegion.getOffset();
 		}
@@ -294,10 +294,11 @@ public class XMLErrorReporter extends DefaultHandler {
 		ElementData data = (ElementData)fOffsetTable.get(element);
 		try {
 			int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
-			return fTextDocument.getLineOfOffset(offset) + 1;
-		} catch (Exception e) {
-			return getLine(element);
+			if (offset != -1)
+				return fTextDocument.getLineOfOffset(offset) + 1;
+		} catch (BadLocationException e) {
 		}
+		return getLine(element);
 	}
 	
 	public void validateContent(IProgressMonitor monitor) {

@@ -330,7 +330,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			IPath currPath = new Path(paths.get(i).toString());
 			if (currPath.isAbsolute() && currPath.toFile().exists())
 				return true;
-			if (!currPath.isAbsolute() && fFile.getProject().findMember(currPath) != null)
+			if (fFile.getProject().findMember(currPath) != null)
 				return true;
 		}
 		
