@@ -595,7 +595,8 @@ public class PDEState {
 		if (DEBUG) {
 			System.out.println("########Time to populate models: " + (end - start) + " ms");
 		}
-		fExtensions.clear();
+		if (fExtensions != null)
+			fExtensions.clear();
 		fPluginInfos.clear();
 		fMonitor.done();		
 	}
