@@ -50,19 +50,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private ResourceBundle resourceBundle;
 	// Shared label labelProvider
 	private PDELabelProvider labelProvider;
-	// A flag that indicates if we are running inside VAJ or not.
-	private static boolean inVAJ;
+
 	private java.util.Hashtable counters;
-
-
-	static {
-		try {
-			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
-			inVAJ = true;
-		} catch (Exception e) {
-			inVAJ = false;
-		}
-	}
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -132,9 +121,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
-	public boolean isVAJ() {
-		return inVAJ;
-	}
+
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
