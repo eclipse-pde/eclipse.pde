@@ -1,12 +1,8 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
@@ -150,52 +146,4 @@ public class PluginExportWizard extends BaseExportWizard {
 		}
 		return (String[]) targets.toArray(new String[targets.size()]);
 	}
-	
-	protected void zipAll(
-		String filename,
-		HashMap properties,
-		IProgressMonitor monitor) {
-		try {
-			String path =
-				PDEPlugin
-					.getDefault()
-					.getStateLocation()
-					.addTrailingSeparator()
-					.toOSString();
-			File zip = new File(path + "zip.xml");
-			if (zip.exists()) {
-				zip.delete();
-				zip.createNewFile();
-			}
-			writer = new PrintWriter(new FileWriter(zip), true);
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
-			writer.println("<target name=\"clean\">");
-			writer.println("<delete dir=\"${build.result.folder}\"/>");
-			writer.println("<delete dir=\"${temp.folder}\"/>");
-			writer.println("</target>");
-			if (filename != null) {
-				writer.println("<target name=\"zip.folder\">");
-				writer.println(
-					"<zip zipfile=\"${plugin.destination}/"
-						+ filename
-						+ "\" basedir=\"${temp.folder}\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
-				writer.println("</target>");
-			}
-			writer.println("</project>");
-			writer.close();
-
-			AntRunner runner = new AntRunner();
-			runner.addUserProperties(properties);
-			runner.setBuildFileLocation(zip.getAbsolutePath());
-			if (filename != null) {
-				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
-			}
-			runner.run(monitor);
-			zip.delete();
-		} catch (IOException e) {
-		} catch (CoreException e) {
-		}
-	}
-
 }

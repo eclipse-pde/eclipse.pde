@@ -99,6 +99,12 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		includeSource.setEnabled(enabled);		
 	}
 	
+	protected void enableUpdateJarsSection(boolean enabled) {
+		directoryLabel.setEnabled(enabled);
+		destination.setEnabled(enabled);
+		browseDirectory.setEnabled(enabled);		
+	}
+	
 	protected void hookListeners() {
 		browseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

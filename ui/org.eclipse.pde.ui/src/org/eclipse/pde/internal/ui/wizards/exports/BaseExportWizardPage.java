@@ -138,13 +138,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	}
 	
-	protected abstract void enableZipSection(boolean enabled);
-	
-	private void enableUpdateJarsSection(boolean enabled) {
-		directoryLabel.setEnabled(enabled);
-		destination.setEnabled(enabled);
-		browseDirectory.setEnabled(enabled);		
+	protected void enableUpdateJarsSection(boolean enabled) {
 	}
+
+	protected void enableZipSection(boolean enabled) {
+	}
+	
 
 	protected void createLabel(Composite container, String text, int span) {
 		Label label = new Label(container, SWT.NULL);
@@ -234,7 +233,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		zipRadio.setSelection(!exportUpdate);
 		updateRadio.setSelection(exportUpdate);
 		enableZipSection(!updateRadio.getSelection());
-		includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < 6; i++) {
@@ -246,6 +244,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		destination.setItems((String[]) items.toArray(new String[items.size()]));
 
 		if (!featureExport) {
+			includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 			enableUpdateJarsSection(!zipRadio.getSelection());
 			items.clear();
 			for (int i = 0; i < 6; i++) {
@@ -261,7 +260,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(S_EXPORT_UPDATE, updateRadio.getSelection());
-		settings.put(S_EXPORT_SOURCE, includeSource.getSelection());
+		
+		if (includeSource != null)
+			settings.put(S_EXPORT_SOURCE, includeSource.getSelection());
+			
 		if (destination.getText().length() > 0) {
 			settings.put(S_DESTINATION + String.valueOf(0), destination.getText());
 			String[] items = destination.getItems();
@@ -289,6 +291,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	}
 	
 	public boolean getExportSource() {
+		if (includeSource == null)
+			return false;
 		return includeSource.getSelection();
 	}
 

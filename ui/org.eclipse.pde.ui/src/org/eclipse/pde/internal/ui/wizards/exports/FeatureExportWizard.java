@@ -1,7 +1,7 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
@@ -9,9 +9,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 
@@ -61,8 +66,40 @@ public class FeatureExportWizard extends BaseExportWizard {
 			if (writer != null && e.getMessage() != null)
 				writer.write(e.getMessage() + System.getProperty("line.separator"));
 		} finally {
+			deleteBuildFiles(feature);
+			monitor.done();
 		}
 	}
+
+	private void deleteBuildFiles(IFeatureModel model) {
+		String scriptName = MainPreferencePage.getBuildScriptName();
+		File file = new File(model.getInstallLocation() + Path.SEPARATOR + scriptName);
+		if (file.exists()) {
+			file.delete();
+		}
+
+		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		for (int i = 0; i < plugins.length; i++) {
+			ModelEntry entry =
+				manager.findEntry(plugins[i].getId(), plugins[i].getVersion());
+			if (entry != null) {
+				IPluginModelBase modelBase = entry.getActiveModel();
+				if (modelBase.getUnderlyingResource() != null) {
+					file =
+						new File(
+							modelBase.getInstallLocation() + Path.SEPARATOR + scriptName);
+					if (file.exists()) {
+						file.delete();
+					}
+				}
+
+			}
+
+		}
+
+	}
+
 
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
 		IDialogSettings setting = master.getSection(STORE_SECTION);
@@ -119,7 +156,4 @@ public class FeatureExportWizard extends BaseExportWizard {
 		runner.run(monitor);
 	}
 	
-	protected void zipAll(String filename, HashMap properties, IProgressMonitor monitor) {
-	}
-
 }

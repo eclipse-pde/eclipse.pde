@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -75,6 +76,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
 		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
 		map.put("destination.temp.folder", destination + Path.SEPARATOR + "temp");
+		map.put("feature.temp.folder", destination + Path.SEPARATOR + "temp");
 		map.put("plugin.destination", destination);
 		map.put("feature.destination", destination);
 		return map;
@@ -108,7 +110,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 					new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory")));
 			}
 
-		monitor.beginTask("", items.length);
+		monitor.beginTask("", items.length + 1);
 		ArrayList statusEntries = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			IModel model = (IModel) items[i];
@@ -120,6 +122,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 				model,
 				new SubProgressMonitor(monitor, 1));
 		}
+		cleanup(zipFileName, createProperties(destination), new SubProgressMonitor(monitor,1));
 	}
 
 	public IStructuredSelection getSelection() {
@@ -149,7 +152,6 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException{
 				doPerformFinish(exportZip, exportSource, destination, zipFileName, items, monitor);
-				zipAll(zipFileName, createProperties(destination), monitor);
 			}
 		};
 		try {
@@ -178,6 +180,52 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		return true;
 	}
 	
-	protected abstract void zipAll(String filename, HashMap properties, IProgressMonitor monitor);
+	protected void cleanup(
+		String filename,
+		HashMap properties,
+		IProgressMonitor monitor) {
+		try {
+			String path =
+				PDEPlugin
+					.getDefault()
+					.getStateLocation()
+					.addTrailingSeparator()
+					.toOSString();
+			File zip = new File(path + "zip.xml");
+			if (zip.exists()) {
+				zip.delete();
+				zip.createNewFile();
+			}
+			writer = new PrintWriter(new FileWriter(zip), true);
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
+			writer.println("<target name=\"clean\">");
+			writer.println("<delete dir=\"${build.result.folder}\"/>");
+			writer.println("<delete dir=\"${temp.folder}\"/>");
+			writer.println("</target>");
+			if (filename != null) {
+				writer.println("<target name=\"zip.folder\">");
+				writer.println(
+					"<zip zipfile=\"${plugin.destination}/"
+						+ filename
+						+ "\" basedir=\"${temp.folder}\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+				writer.println("</target>");
+			}
+			writer.println("</project>");
+			writer.close();
+
+			AntRunner runner = new AntRunner();
+			runner.addUserProperties(properties);
+			runner.setBuildFileLocation(zip.getAbsolutePath());
+			if (filename != null) {
+				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
+			}
+			runner.run(monitor);
+			zip.delete();
+		} catch (IOException e) {
+		} catch (CoreException e) {
+		}
+
+	}
 
 }

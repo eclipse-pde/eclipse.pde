@@ -33,13 +33,13 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 				container,
 				PDEPlugin.getResourceString("ExportWizard.Feature.zip"));
 
-		includeSource = new Button(container, SWT.CHECK);
+		/*includeSource = new Button(container, SWT.CHECK);
 		includeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource"));
 		includeSource.setSelection(true);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		gd.horizontalIndent = 25;
-		includeSource.setLayoutData(gd);		
+		includeSource.setLayoutData(gd);*/		
 
 	}
 	
@@ -61,10 +61,6 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		browseDirectory.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
 		browseDirectory.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(browseDirectory);
-	}
-	
-	protected void enableZipSection(boolean enabled) {
-		includeSource.setEnabled(enabled);		
 	}
 	
 	protected void pageChanged() {
