@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
 
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
@@ -38,7 +38,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	protected IFile fFile;
 	
-	protected IProject project;
+	protected IProject fProject;
 	
 	private int fErrorCount;
 
@@ -61,42 +61,24 @@ public class XMLErrorReporter extends DefaultHandler {
 	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 
 	public XMLErrorReporter(IFile file) {
-		fFile = file;
-		project = file.getProject();
-		InputStream stream = null;
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
-			stream = file.getContents(true);
-			createTextDocument(stream);
-		} catch (Exception e) {
-			PDE.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-			}
+			fFile = file;
+			fProject = file.getProject();
+			manager.connect(file.getFullPath(), null);
+			fTextDocument = manager.getTextFileBuffer(file.getFullPath()).getDocument();
+			manager.disconnect(file.getFullPath(), null);			
+			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
+			fOffsetTable = new HashMap();
+			fElementStack = new Stack();
+			removeFileMarkers();
+		} catch (CoreException e) {
+			PDE.log(e);
 		}
-		fOffsetTable = new HashMap();
-		fElementStack = new Stack();
-		removeFileMarkers();
 	}
 
 	public IFile getFile() {
 		return fFile;
-	}
-
-	private void createTextDocument(InputStream stream) throws IOException {
-		BufferedReader in= new BufferedReader(new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
-		StringBuffer buffer= new StringBuffer();
-		char[] readBuffer= new char[2048];
-		int n = in.read(readBuffer);
-		while (n > 0) {
-			buffer.append(readBuffer, 0, n);
-			n= in.read(readBuffer);
-		}
-		
-		fTextDocument = new org.eclipse.jface.text.Document(buffer.toString());
-		fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
 	}
 
 	private void addMarker(String message, int lineNumber, int severity) {

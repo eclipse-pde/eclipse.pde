@@ -117,7 +117,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	
 	protected void validatePluginID(Element element, Attr attr) {
 		int severity = CompilerFlags
-				.getFlag(project, CompilerFlags.P_UNRESOLVED_IMPORTS);
+				.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
 		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$
 			severity = CompilerFlags.WARNING;
 		if (severity != CompilerFlags.IGNORE) {

@@ -327,7 +327,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validatePluginID(Element element, Attr attr, boolean isFragment) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.F_UNRESOLVED_PLUGINS);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null 
@@ -342,7 +342,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateFeatureID(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.F_UNRESOLVED_FEATURES);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (severity != CompilerFlags.IGNORE) {
 			IFeature feature = PDECore.getDefault().findFeature(attr.getValue());	
 			if (feature == null) {

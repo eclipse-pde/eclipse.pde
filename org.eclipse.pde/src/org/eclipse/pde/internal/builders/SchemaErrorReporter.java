@@ -93,7 +93,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validateDocumentation(Element element) {
-		int flag = CompilerFlags.getFlag(project, CompilerFlags.S_OPEN_TAGS);
+		int flag = CompilerFlags.getFlag(fProject, CompilerFlags.S_OPEN_TAGS);
 		
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
