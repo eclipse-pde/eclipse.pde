@@ -281,7 +281,7 @@ public boolean visit(IResourceDelta delta) throws CoreException {
 	IResource resource = delta.getResource();
 	if (resource instanceof IFile) {
 		IFile file = (IFile) resource;
-		if (file.getName().toLowerCase().endsWith(".xsd")==false) return true;
+		if (file.getName().toLowerCase().endsWith(".exsd")==false) return true;
 		if (WorkspaceModelManager.isPluginProject(file.getProject())==false) return true;
 		if (delta.getKind() == IResourceDelta.CHANGED) {
 			if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
