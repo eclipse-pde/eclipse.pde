@@ -311,7 +311,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((IFeatureURLElement) obj);
 		}
 		if (obj instanceof IFeatureModel) {
-			return get(PDEPluginImages.DESC_FEATURE_OBJ);
+			int flags = 0;
+			if (((IFeatureModel)obj).getUnderlyingResource() == null) 
+				flags |= F_EXTERNAL;
+			return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 		}
 		if (obj instanceof IFeatureChild) {
 			return getObjectImage((IFeatureChild) obj);
