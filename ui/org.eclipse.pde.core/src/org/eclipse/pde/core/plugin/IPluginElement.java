@@ -11,7 +11,6 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ischema.*;
 /**
  * Classes that implement this interface model the
  * XML elements found in the plug-in model.
@@ -66,10 +65,12 @@ public interface IPluginElement extends IPluginParent {
 	String getText();
 	/**
 	 * Returns the schema for this element.
+	 * <p>This information is exposed here as implementation side-effect
+	 * and should not be used by clients.
 	 *
 	 * @return the schema for this element or <samp>null</samp> if not found.
 	 */
-	ISchemaElement getElementInfo();
+	Object getElementInfo();
 	/**
 	 * Sets the attribute with the provided name
 	 * to the provided value. If attribute object

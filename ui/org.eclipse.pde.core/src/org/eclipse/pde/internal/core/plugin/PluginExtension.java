@@ -35,7 +35,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return point!=null;
 	}
 	
-	public ISchema getSchema() {
+	public Object getSchema() {
 		if (schema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			schema = registry.getSchema(point);

@@ -12,7 +12,6 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
 
 /**
  * Classes that implement this interface model the extension
@@ -32,8 +31,10 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	/**
 	 * Returns the schema for the extension point that this extension
 	 * is plugged into or <samp>null</samp> if not found.
+	 * <p>This method is an implementation detail - schema object
+	 * is not needed for clients outside PDE and should not be used.
 	 */
-	ISchema getSchema();
+	Object getSchema();
 	/**
 	 * Sets the value of the extension point Id
 	 * This method will throw a CoreException if

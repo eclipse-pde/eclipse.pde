@@ -137,7 +137,7 @@ public void createPropertyDescriptors() {
 	Image classImage = PDEPluginImages.get(PDEPluginImages.IMG_ATT_CLASS_OBJ);
 	Image resourceImage = PDEPluginImages.get(PDEPluginImages.IMG_ATT_FILE_OBJ);
 	Image elementImage = PDEPluginImages.get(PDEPluginImages.IMG_GENERIC_XML_OBJ);
-	ISchemaElement info = ((PluginElement)getElement()).getElementInfo();
+	ISchemaElement info = (ISchemaElement)((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute[] attributes = info.getAttributes();
 	
 	PropertyDescriptor nameDesc = new PropertyDescriptor(TAG_NAME, TAG_NAME);
@@ -202,7 +202,7 @@ private Object getIndexUsingType(ISchemaSimpleType type, Object value) {
 	return value!=null?value:"";
 }
 public IPropertyDescriptor[] getPropertyDescriptors() {
-	ISchemaElement element = ((PluginElement)getElement()).getElementInfo();
+	ISchemaElement element = (ISchemaElement)((PluginElement)getElement()).getElementInfo();
 	if (element!=null) {
 		ISchema schema = element.getSchema();
 		if (schema.isEditable()) {
@@ -218,7 +218,7 @@ public Object getPropertyValue(Object name) {
 		return getElement().getName();
 	}
 	IPluginAttribute att = getElement().getAttribute(name.toString());
-	ISchemaElement elementInfo = ((PluginElement)getElement()).getElementInfo();
+	ISchemaElement elementInfo = (ISchemaElement)((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute attInfo =
 		elementInfo != null ? elementInfo.getAttribute(name.toString()) : null;
 	IResource resource = getElement().getModel().getUnderlyingResource();
@@ -355,7 +355,7 @@ public void setElement(IPluginElement newElement) {
 }
 public void setPropertyValue(Object name, Object value) {
 	PluginElement ee = (PluginElement) object;
-	ISchemaElement elementInfo = ee.getElementInfo();
+	ISchemaElement elementInfo = (ISchemaElement)ee.getElementInfo();
 
 	if (value instanceof Integer && elementInfo != null) {
 		ISchemaAttribute attInfo = elementInfo.getAttribute(name.toString());

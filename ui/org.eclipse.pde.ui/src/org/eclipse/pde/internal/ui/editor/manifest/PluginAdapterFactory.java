@@ -48,7 +48,7 @@ private Hashtable getElementTable(IPluginElement element) {
 		: readOnlyElementProperties;
 }
 private IPropertySource getExtensionElementProperties(IPluginElement element) {
-	ISchemaElement elementInfo = ((PluginElement)element).getElementInfo();
+	ISchemaElement elementInfo = (ISchemaElement)((PluginElement)element).getElementInfo();
 	if (elementInfo == null) {
 		// Use standard page for unknown elements
 		return new UnknownElementPropertySource(element);

@@ -153,7 +153,7 @@ public class DetailExtensionSection
 		MenuManager menu,
 		IPluginExtension extension,
 		IPluginParent parent) {
-		ISchema schema = ((PluginExtension) extension).getSchema();
+		ISchema schema = (ISchema)((PluginExtension) extension).getSchema();
 		String tagName = (parent == extension ? "extension" : parent.getName());
 		ISchemaElement elementInfo = schema.findElement(tagName);
 		if (elementInfo == null)
@@ -320,7 +320,7 @@ public class DetailExtensionSection
 
 		IPluginExtension extension = getExtension(parent);
 
-		ISchema schema = ((PluginExtension) extension).getSchema();
+		ISchema schema = (ISchema)((PluginExtension) extension).getSchema();
 		if (schema == null) {
 			menu.add(new NewElementAction(null, parent));
 		} else {
@@ -545,7 +545,7 @@ public class DetailExtensionSection
 	}
 
 	static Image getCustomImage(IPluginElement element) {
-		ISchemaElement elementInfo = ((PluginElement) element).getElementInfo();
+		ISchemaElement elementInfo = (ISchemaElement)((PluginElement) element).getElementInfo();
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
 			IPluginAttribute att = element.getAttribute(iconProperty);
@@ -627,7 +627,7 @@ public class DetailExtensionSection
 			String baseName = obj.toString();
 			PluginElement element = (PluginElement) obj;
 			String fullName = null;
-			ISchemaElement elementInfo = element.getElementInfo();
+			ISchemaElement elementInfo = (ISchemaElement)element.getElementInfo();
 			IPluginAttribute labelAtt = null;
 			if (elementInfo != null
 				&& elementInfo.getLabelProperty() != null) {

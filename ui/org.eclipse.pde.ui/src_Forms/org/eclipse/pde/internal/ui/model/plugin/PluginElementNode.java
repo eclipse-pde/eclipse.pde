@@ -130,7 +130,7 @@ public class PluginElementNode extends PluginParentNode
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getElementInfo()
 	 */
-	public ISchemaElement getElementInfo() {
+	public Object getElementInfo() {
 		if (elementInfo == null) {
 			IDocumentNode node = getParentNode();
 			for (;;) {
@@ -140,7 +140,7 @@ public class PluginElementNode extends PluginParentNode
 			}
 			if (node != null) {
 				IPluginExtension extension = (IPluginExtension) node;
-				ISchema schema = extension.getSchema();
+				ISchema schema = (ISchema)extension.getSchema();
 				if (schema != null) {
 					elementInfo = schema.findElement(getName());
 				}

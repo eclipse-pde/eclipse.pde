@@ -38,7 +38,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			attributes.put(att.getName(), att.clone());
 		}
 		this.text = element.getText();
-		this.elementInfo = element.getElementInfo();
+		this.elementInfo = (ISchemaElement)element.getElementInfo();
 	}
 	
 	public boolean equals(Object obj) {
@@ -75,7 +75,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	public int getAttributeCount() {
 		return attributes.size();
 	}
-	public ISchemaElement getElementInfo() {
+	public Object getElementInfo() {
 		if (elementInfo != null) {
 			ISchema schema = elementInfo.getSchema();
 			if (schema.isDisposed()) {
@@ -89,7 +89,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			}
 			if (parent != null) {
 				PluginExtension extension = (PluginExtension) parent;
-				ISchema schema = extension.getSchema();
+				ISchema schema = (ISchema)extension.getSchema();
 				if (schema != null) {
 					elementInfo = schema.findElement(getName());
 				}

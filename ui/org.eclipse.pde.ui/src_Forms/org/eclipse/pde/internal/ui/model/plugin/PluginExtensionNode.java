@@ -84,7 +84,7 @@ public class PluginExtensionNode extends PluginParentNode
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtension#getSchema()
 	 */
-	public ISchema getSchema() {
+	public Object getSchema() {
 		if (fSchema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			fSchema = registry.getSchema(getPoint());

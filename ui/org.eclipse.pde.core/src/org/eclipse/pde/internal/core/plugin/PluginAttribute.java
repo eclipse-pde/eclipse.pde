@@ -59,7 +59,7 @@ public ISchemaAttribute getAttributeInfo() {
 	}
 	if (attributeInfo==null) {
 		PluginElement element = (PluginElement)getParent();
-		ISchemaElement elementInfo = element.getElementInfo();
+		ISchemaElement elementInfo = (ISchemaElement)element.getElementInfo();
 		if (elementInfo!=null) {
 			attributeInfo = elementInfo.getAttribute(getName());
 		}

@@ -87,7 +87,7 @@ private void initializeRequiredAttribute(
 	element.setAttribute(attInfo.getName(), value);
 }
 private void initializeRequiredAttributes(IPluginElement element) throws CoreException {
-	ISchemaElement elementInfo = ((IPluginElement)element).getElementInfo();
+	ISchemaElement elementInfo = (ISchemaElement)((IPluginElement)element).getElementInfo();
 	if (elementInfo==null) return;
 	String counterKey = getCounterKey(elementInfo);
 	Integer counter = (Integer)counters.get(counterKey);
