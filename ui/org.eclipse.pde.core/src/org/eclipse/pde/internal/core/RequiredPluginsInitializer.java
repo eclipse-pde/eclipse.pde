@@ -34,9 +34,7 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 		IProject project = javaProject.getProject();
 		ModelEntry entry =
 			PDECore.getDefault().getModelManager().findEntry(project);
-		if (entry == null) {
-			ModelEntry.updateUnknownClasspathContainer(javaProject);
-		} else {
+		if (entry != null) {
 			entry.updateClasspathContainer(true, false);
 		}
 	}
