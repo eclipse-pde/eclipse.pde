@@ -57,7 +57,7 @@ public class NewFeatureProjectWizard
 		public IConfigurationElement getConfigElement(){
 			return config;
 		}
-	};
+	}
 	public NewFeatureProjectWizard() {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);

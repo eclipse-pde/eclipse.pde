@@ -46,7 +46,7 @@ public static void createFolder(
 
 public static void createProject(IProject project, IPath location, IProgressMonitor monitor) 
 							throws CoreException {
-	IPath defaultLocation = Platform.getLocation();
+	IPath defaultLocation = Platform.getInstanceLocation();
 	if (defaultLocation.equals(location)==false) {
 		IProjectDescription desc = project.getWorkspace().
 		                   newProjectDescription(project.getName());
