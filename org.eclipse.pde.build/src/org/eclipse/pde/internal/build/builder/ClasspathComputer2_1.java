@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,6 +153,9 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(String pluginId, String path, List classpath) {
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
+		if (generator.getCompiledElements().contains(pluginId)) {
+			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)+ '/' + path;
+		}
 		if (!classpath.contains(path))
 			classpath.add(path);
 	}

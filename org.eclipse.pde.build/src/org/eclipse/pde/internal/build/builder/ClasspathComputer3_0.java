@@ -32,7 +32,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	/**
 	 * Compute the classpath for the given jar.
-	 * The path returned conforms to Parent / Self / Prerequisite
+	 * The path returned conforms to Parent / Prerequisite / Self  
 	 * 
 	 * @param model the plugin containing the jar compiled
 	 * @param jar the jar for which the classpath is being compiled
@@ -138,7 +138,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addPathAndCheck(String pluginId, String path, List classpath) {
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		if (generator.getCompiledElements().contains(pluginId)) {
-			path = "${pluginTemp}/" + path;
+			path = generator.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)+ '/' + path;
 		}
 		if (!classpath.contains(path))
 			classpath.add(path);
