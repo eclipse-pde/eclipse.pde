@@ -13,10 +13,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
@@ -25,7 +28,7 @@ import org.eclipse.ui.*;
 /**
  * @author melhem
  */
-public class BuildSiteAction implements IObjectActionDelegate {
+public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConstants {
 	
 	private ISiteBuildModel fBuildModel;
 	private IFile siteXML;
@@ -49,14 +52,14 @@ public class BuildSiteAction implements IObjectActionDelegate {
 						ISiteBuildFeature[] sbFeatures =
 							fBuildModel.getSiteBuild().getFeatures();
 						monitor.beginTask("", sbFeatures.length);
+						deleteLogDestination();
 						for (int i = 0; i < sbFeatures.length; i++) {
 							try {
 								monitor.setTaskName(PDEPlugin.getResourceString("SiteBuild.feature") + " " + sbFeatures[i].getId());
 								doBuildFeature(sbFeatures[i], new SubProgressMonitor(monitor, 1));
-							} catch (Exception e) {
+							} catch (InvocationTargetException e) {
 							} finally {
-								if (siteXML != null)
-									siteXML.touch(null);								
+								deleteBuildFiles(sbFeatures[i].getReferencedFeature().getModel());
 							}
 						}
 					}
@@ -64,8 +67,11 @@ public class BuildSiteAction implements IObjectActionDelegate {
 				try {
 					PDEPlugin.getWorkspace().run(wop, monitor);
 				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+					MessageDialog.openError(
+						PDEPlugin.getActiveWorkbenchShell(),
+						PDEPlugin.getResourceString("SiteBuild.errorDialog"),
+						PDEPlugin.getResourceString("SiteBuild.errorMessage"));
+				} 
 			}
 		};
 		ProgressMonitorDialog pmd =
@@ -95,11 +101,6 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		}
 		IFile scriptFile = makeScript(model, new SubProgressMonitor(monitor, 1));
 		runScript(scriptFile, new SubProgressMonitor(monitor, 7));
-
-		IProject project = fBuildModel.getUnderlyingResource().getProject();
-		project.refreshLocal(
-			IResource.DEPTH_INFINITE,
-			new SubProgressMonitor(monitor, 1));
 	}
 
 	private IFile makeScript(IFeatureModel featureModel, IProgressMonitor monitor)
@@ -153,26 +154,45 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		monitor.done();
 	}
 	
-	private Map createProperties() {
-		HashMap map = new HashMap(3);
-		IPath location = fBuildModel.getUnderlyingResource().getProject().getLocation();
+	private Map createProperties() throws CoreException {
+		HashMap map = new HashMap(13);
+		IProject project = fBuildModel.getUnderlyingResource().getProject();
+		IPath path =
+			new Path(PDECore.SITEBUILD_DIR).append(PDECore.SITEBUILD_TEMP_FOLDER);
+		IFolder folder = project.getFolder(path);
+		if (!folder.exists()) {
+			CoreUtility.createFolder(folder, true, true, null);
+		}
+		map.put("build.result.folder", folder.getLocation().toOSString());
 
-		IPath resultFolder = location.append(PDECore.SITEBUILD_DIR);
-		resultFolder = resultFolder.append(PDECore.SITEBUILD_TEMP_FOLDER);
-		map.put("build.result.folder", resultFolder.toOSString());
-		
 		ISiteBuild siteBuild = fBuildModel.getSiteBuild();
-		map.put("plugin.destination", location.append(siteBuild.getPluginLocation()).toOSString());
-		map.put("feature.destination", location.append(siteBuild.getFeatureLocation()).toOSString());
+		map.put(
+			"plugin.destination",
+			project.getLocation().append(siteBuild.getPluginLocation()).toOSString());
+		map.put(
+			"feature.destination",
+			project.getLocation().append(siteBuild.getFeatureLocation()).toOSString());
 
-		return map;		
+		map.put("baseos", TargetPlatform.getOS());
+		map.put("basews", TargetPlatform.getWS());
+		map.put("basearch", TargetPlatform.getOSArch());
+		map.put("basenl", TargetPlatform.getNL());
+		map.put("eclipse.running", "true");
+
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		map.put("javacFailOnError", "true");
+		map.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
+		map.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
+		map.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
+		map.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
+
+		return map;
 	}
 	
 	private void setConfigInfo(IFeature feature) throws CoreException {
 		String os = feature.getOS() == null ? "*" : feature.getOS();
 		String ws = feature.getWS() == null ? "*" : feature.getWS();
-		String arch = feature.getArch() == null ? "*" : feature.getArch();
-		
+		String arch = feature.getArch() == null ? "*" : feature.getArch();		
 		FeatureBuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch);
 	}
 	
@@ -181,11 +201,14 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		IFolder tempFolder =
 			siteProject.getFolder(
 				PDECore.SITEBUILD_DIR + "/" + PDECore.SITEBUILD_TEMP_FOLDER);
-		if (tempFolder.exists()) {
-			try {
+		try {
+			if (tempFolder.exists()) {
 				tempFolder.delete(true, false, null);
-			} catch (CoreException e) {
 			}
+			if (siteXML != null)
+				siteXML.touch(null);			
+			siteProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
 		}
 	}
 	
@@ -216,6 +239,87 @@ public class BuildSiteAction implements IObjectActionDelegate {
 				}
 			}
 		}
+	}
+	
+	private void deleteBuildFiles(IFeatureModel model) throws CoreException {
+		deleteBuildFile(model);
+		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		for (int i = 0; i < plugins.length; i++) {
+			ModelEntry entry =
+				manager.findEntry(plugins[i].getId(), plugins[i].getVersion());
+			if (entry != null) {
+				deleteBuildFile(entry.getActiveModel());
+			}
+		}
+	}
+
+	public void deleteBuildFile(IModel model) throws CoreException {
+		IResource resource = model.getUnderlyingResource();
+		if (resource == null && isCustomBuild(model))
+			return;
+		
+		IProject project = resource.getProject();
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+		}
+		resource = project.getFile("build.xml");
+		if (resource.exists())
+			resource.delete(true, null);
+		
+		IFolder folder = project.getFolder("temp.folder");
+		if (folder.exists()) {
+			IResource[] files = folder.members();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i] instanceof IFile)
+					files[i].move(getLogDestination().getFullPath().append(files[i].getName()), true, null);
+			}
+			folder.delete(true, null);
+		}
+	}
+
+	protected boolean isCustomBuild(IModel model) throws CoreException {
+		IBuildModel buildModel = null;
+		IFile buildFile =
+			model.getUnderlyingResource().getProject().getFile("build.properties");
+		if (buildFile.exists()) {
+			buildModel = new WorkspaceBuildModel(buildFile);
+			buildModel.load();
+		}
+		if (buildModel != null) {
+			IBuild build = buildModel.getBuild();
+			IBuildEntry entry = build.getEntry("custom");
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					if (tokens[i].equals("true"))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private void deleteLogDestination() {
+		IFolder folder = siteXML.getProject().getFolder("logs");
+		if (folder.exists()) {
+			try {
+				folder.delete(true, null);
+			} catch (CoreException e) {
+			}
+		}
+	}
+	
+	private IFolder getLogDestination() {
+		IFolder folder = siteXML.getProject().getFolder("logs");
+		if (!folder.exists()) {
+			try {
+				CoreUtility.createFolder(folder, true, true, null);
+			} catch (CoreException e) {
+			}
+		}
+		return folder;
 	}
 
 }
