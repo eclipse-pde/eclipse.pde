@@ -70,9 +70,37 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	protected void update() {
 		blockNotification=true;
 		String value = getValue();
-		combo.setText(value!=null?value:""); //$NON-NLS-1$
+		if (value!= null && isValid(value))
+			combo.setText(value); //$NON-NLS-1$
+		else if (getUse()==ISchemaAttribute.REQUIRED)
+			combo.setText(getValidValue());
+		else
+			combo.setText(""); //$NON-NLS-1$
 		blockNotification = false;
 		dirty=false;
+	}
+	
+	protected String getValidValue(){
+		ISchemaAttribute attInfo = getAttribute();
+		if (attInfo.getType().getRestriction()!= null)
+			return attInfo.getType().getRestriction().getChildren()[0].toString();		
+		return ""; //$NON-NLS-1$
+	}
+	
+	protected boolean isValid(String value){
+		if (getAttribute().getUse() != ISchemaAttribute.REQUIRED && value.equals("")) //$NON-NLS-1$
+			return true;
+		
+		ISchemaRestriction restriction = getAttribute().getType().getRestriction();
+		if (restriction == null)
+			return true;
+		Object[] children = restriction.getChildren();
+		for (int i =0; i<children.length; i++){
+			Object rchild = children[i];
+			if (rchild instanceof ISchemaEnumeration && ((ISchemaEnumeration)rchild).getName().equals(value))
+				return true;
+		}
+		return false;
 	}
 	public void commit() {
 		if (dirty && input != null) {
