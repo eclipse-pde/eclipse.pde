@@ -11,7 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.*;
 /**
  * A base interface for all the objects in the plug-in model.
  * <p>
@@ -43,7 +43,9 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	IPluginModelBase getModel();
+	ISharedPluginModel getModel();
+	
+	IPluginModelBase getPluginModel();
 	/**
 	 * Returns the name of this model object
 	 *@return the object name

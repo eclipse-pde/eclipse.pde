@@ -156,7 +156,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement objectContributionElement = factory.createElement(extension);
 		objectContributionElement.setName("objectContribution");

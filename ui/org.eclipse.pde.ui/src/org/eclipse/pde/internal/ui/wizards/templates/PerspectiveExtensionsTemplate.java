@@ -173,7 +173,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement perspectiveElement = factory.createElement(extension);
 		perspectiveElement.setName("perspectiveExtension");

@@ -150,7 +150,7 @@ public class ViewTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 		
 		String cid = getStringOption("viewCategoryId");
 

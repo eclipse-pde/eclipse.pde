@@ -326,7 +326,7 @@ public class ManifestEditor
 		return false;
 	}
 	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
-		boolean isFragment = pluginInfo.getModel().isFragmentModel();
+		boolean isFragment = pluginInfo.getPluginModel().isFragmentModel();
 		String manifest =
 			isFragment
 				? "fragment.xml"

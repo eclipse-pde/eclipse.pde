@@ -127,7 +127,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.actionSets", true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement setElement = factory.createElement(extension);
 		setElement.setName("actionSet");

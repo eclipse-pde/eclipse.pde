@@ -343,7 +343,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPluginBase primaryPlugin = findPlugin(pluginId, models);
 		if (primaryPlugin == null)
 			return;
-		IPath pluginPath = getPluginLocation(primaryPlugin.getModel());
+		IPath pluginPath = getPluginLocation(primaryPlugin.getPluginModel());
 		URL pluginURL = new URL("file:" + pluginPath.toString()); //$NON-NLS-1$
 		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =

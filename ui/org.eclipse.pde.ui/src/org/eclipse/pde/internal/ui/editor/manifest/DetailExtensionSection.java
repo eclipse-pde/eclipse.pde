@@ -559,7 +559,7 @@ public class DetailExtensionSection
 	private static Image getImageFromPlugin(
 		IPluginElement element,
 		String iconPathName) {
-		IPluginModelBase model = element.getModel();
+		IPluginModelBase model = element.getPluginModel();
 		if (model == null)
 			return null;
 		

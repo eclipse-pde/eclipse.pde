@@ -301,7 +301,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			pluginBase.setVersion("1.0.0");
 			pluginBase.setName(structureData.getPluginId());
 			if (structureData.getRuntimeLibraryName() != null) {
-				IPluginLibrary library = model.getFactory().createLibrary();
+				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(structureData.getRuntimeLibraryName());
 				library.setExported(true);
 				model.getPluginBase().add(library);

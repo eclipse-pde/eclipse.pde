@@ -280,7 +280,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		IFragment[] extFragments =
 			getExternalModelManager().getFragmentsFor(id, version);
 		for (int i = 0; i < extFragments.length; i++) {
-			if (extFragments[i].getModel().isEnabled())
+			if (extFragments[i].getPluginModel().isEnabled())
 				result.put(extFragments[i].getId(), extFragments[i]);
 		}
 

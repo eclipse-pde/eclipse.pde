@@ -706,6 +706,36 @@
                id="org.eclipse.pde.ui.PreviewReference">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="plugin.xml"
+            id="org.eclipse.pde.ui.PluginToBundle1">
+         <action
+               label="%PluginToBundleWizardAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.wizards.bundles.PluginToBundleAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.PluginToBundleWizard1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.pde.PluginToBundle3">
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.PluginNature">
+         </filter>
+         <action
+               menubarPath="additions"
+               class="org.eclipse.pde.internal.ui.wizards.bundles.PluginToBundleAction"
+               label="%PluginToBundleWizardAction.label"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.PluginToBundleWizard2"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

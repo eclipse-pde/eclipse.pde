@@ -90,7 +90,7 @@ public class PluginSearchResultCollector
 	}
 	
 	private void annotateExternalMarker(IMarker marker, IPluginObject match) throws CoreException {
-		IPluginModelBase model = match.getModel();
+		IPluginModelBase model = match.getPluginModel();
 		String path = model.getInstallLocation();
 		String manifest =
 				model.isFragmentModel()

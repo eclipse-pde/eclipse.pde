@@ -212,7 +212,7 @@ public class LibrarySection
 	}
 	private void handleNew() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-		IPluginLibrary library = model.getFactory().createLibrary();
+		IPluginLibrary library = model.getPluginFactory().createLibrary();
 		try {
 			library.setName(PDEPlugin.getResourceString(NEW_LIBRARY_ENTRY));
 			model.getPluginBase().add(library);

@@ -206,7 +206,7 @@ public class HelpTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement tocElement = factory.createElement(extension);
 		tocElement.setName("toc");
@@ -233,7 +233,7 @@ public class HelpTemplate extends PDETemplateSection {
 	
 	private void addNonPrimaryTopic(BooleanOption option, String file, IPluginExtension extension) throws CoreException {
 		if (option.isEnabled() && option.isSelected()) {
-			IPluginElement tocElement = extension.getModel().getFactory().createElement(extension);
+			IPluginElement tocElement = extension.getPluginModel().getPluginFactory().createElement(extension);
 			tocElement.setName("toc");
 			tocElement.setAttribute("file", file);
 			extension.add(tocElement);

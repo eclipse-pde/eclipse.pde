@@ -108,7 +108,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 				contextMenuAboutToShow(manager);
 			}
 			private void contextMenuAboutToShow(IMenuManager manager) {
-				IPluginModelBase model = getPlugin().getModel();
+				IPluginModelBase model = getPlugin().getPluginModel();
 				if (model instanceof WorkspacePluginModelBase) {
 					manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)model));
 					manager.add(new Separator());

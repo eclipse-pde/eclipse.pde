@@ -40,7 +40,7 @@ public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
 	}
 
 	private File getInstallLocationFile() {
-		IPluginModelBase model = info.getModel();
+		IPluginModelBase model = info.getPluginModel();
 		String installLocation = model.getInstallLocation() + File.separator;
 		return new File(installLocation + info.getSchema());
 	}
@@ -72,6 +72,6 @@ public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
 	}
 
 	public boolean isEnabled() {
-		return (info!=null)?info.getModel().isEnabled():enabled;
+		return (info!=null)?info.getPluginModel().isEnabled():enabled;
 	}
 }

@@ -324,7 +324,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		IPlugin plugin,
 		boolean checkEnabled,
 		boolean javaSearch) {
-		IPluginModelBase model = plugin.getModel();
+		IPluginModelBase model = plugin.getPluginModel();
 		int flags = getModelFlags(model);
 
 		if (javaSearch)
@@ -372,7 +372,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		IFragment fragment,
 		boolean checkEnabled,
 		boolean javaSearch) {
-		IPluginModelBase model = fragment.getModel();
+		IPluginModelBase model = fragment.getPluginModel();
 		int flags = getModelFlags(model);
 		if (javaSearch)
 			flags |= F_JAVA;
@@ -390,7 +390,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags = F_EXPORT;
 		IPlugin plugin = iobj.getPlugin();
 		if (plugin != null) {
-			IPluginModelBase model = plugin.getModel();
+			IPluginModelBase model = plugin.getPluginModel();
 			flags |= getModelFlags(model);
 		}
 		return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);

@@ -32,7 +32,7 @@ public class PluginExtensionPoint
 	}
 
 	public String getFullId() {
-		IPluginBase pluginBase = getModel().getPluginBase();
+		IPluginBase pluginBase = getPluginModel().getPluginBase();
 		String id = pluginBase.getId();
 		if (pluginBase instanceof IFragment)
 			id = ((IFragment) pluginBase).getPluginId();

@@ -1,0 +1,81 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.core.plugin;
+
+import java.io.PrintWriter;
+import java.util.Hashtable;
+
+import org.eclipse.pde.core.plugin.*;
+import org.w3c.dom.*;
+
+public class Extensions
+	extends AbstractExtensions {
+	private boolean valid;
+
+	public Extensions() {
+	}
+
+	void load(Extensions srcPluginBase) {
+		range= srcPluginBase.range;
+		super.load(srcPluginBase);
+		valid = hasRequiredAttributes();
+	}
+	public void load(IPluginBase srcPluginBase) {
+		this.load(srcPluginBase);
+	}
+
+	void load(Node node, Hashtable lineTable) {
+		bindSourceLocation(node, lineTable);
+
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				processChild(child, lineTable);
+			}
+		}
+		valid = hasRequiredAttributes();
+	}
+
+	public void reset() {
+		super.reset();
+		valid=false;
+	}
+	
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void write(String indent, PrintWriter writer) {
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.print("<extensions>");
+		writer.println();
+	
+		String firstIndent = "   ";
+	
+		Object [] children = getExtensionPoints();
+		if (children.length > 0)
+			writer.println();
+		for (int i = 0; i < children.length; i++) {
+			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
+		}
+	
+		// add extensions
+		children = getExtensions();
+		if (children.length > 0)
+			writer.println();
+		for (int i = 0; i < children.length; i++) {
+			((IPluginExtension) children[i]).write(firstIndent, writer);
+		}
+		writer.println();
+		writer.println("</extensions>");
+	}
+}

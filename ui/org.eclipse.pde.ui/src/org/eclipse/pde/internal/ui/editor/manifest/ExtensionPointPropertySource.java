@@ -90,7 +90,7 @@ public void openInEditor(IPropertySheetEntry entry) {
 	String value = entry.getValueAsString();
 	if (value == null || value.length() == 0)
 		return;
-	IPluginModelBase model = getPoint().getModel();
+	IPluginModelBase model = getPoint().getPluginModel();
 	IResource pluginFile = model.getUnderlyingResource();
 	if (pluginFile != null) {
 		IProject project = pluginFile.getProject();

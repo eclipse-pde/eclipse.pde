@@ -515,7 +515,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		
 		if (structureData.getRuntimeLibraryName() != null) {
 			// add library
-			IPluginLibrary library = model.getFactory().createLibrary();
+			IPluginLibrary library = model.getPluginFactory().createLibrary();
 			library.setName(structureData.getRuntimeLibraryName());
 			library.setExported(true);
 			plugin.add(library);
@@ -523,7 +523,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		
 		for (int i=0; i<dependencies.size(); i++) {
 			IPluginReference ref = (IPluginReference)dependencies.get(i);
-			IPluginImport iimport = model.getFactory().createImport();
+			IPluginImport iimport = model.getPluginFactory().createImport();
 			iimport.setId(ref.getId());
 			iimport.setVersion(ref.getVersion());
 			iimport.setMatch(ref.getMatch());

@@ -25,7 +25,7 @@ public abstract class PluginObject
 	protected String name;
 	private String translatedName;
 	private transient IPluginObject parent;
-	private transient IPluginModelBase model;
+	private transient ISharedPluginModel model;
 	private Vector comments;
 	protected int[] range;
 	private boolean inTheModel;
@@ -70,7 +70,7 @@ public abstract class PluginObject
 		}
 	}
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
-		IPluginModelBase model = getModel();
+		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangedEvent e =
 				new ModelChangedEvent(changeType, new Object[] { child }, null);
@@ -78,15 +78,20 @@ public abstract class PluginObject
 		}
 	}
 	protected void fireModelChanged(IModelChangedEvent e) {
-		IPluginModelBase model = getModel();
+		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
 			provider.fireModelChanged(e);
 		}
 	}
-	public IPluginModelBase getModel() {
+	public ISharedPluginModel getModel() {
 		return model;
 	}
+	
+	public IPluginModelBase getPluginModel() {
+		return model instanceof IPluginModelBase?(IPluginModelBase)model:null;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -110,7 +115,8 @@ public abstract class PluginObject
 		return parent;
 	}
 	public IPluginBase getPluginBase() {
-		return model != null ? model.getPluginBase() : null;
+		IPluginModelBase pluginModel = getPluginModel();
+		return pluginModel != null ? pluginModel.getPluginBase() : null;
 	}
 	public String getResourceString(String key) {
 		return model.getResourceString(key);
@@ -131,7 +137,7 @@ public abstract class PluginObject
 		}
 	}
 
-	public void setModel(IPluginModelBase model) {
+	public void setModel(ISharedPluginModel model) {
 		this.model = model;
 		translatedName = null;
 	}

@@ -134,7 +134,7 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true);
-		IPluginModelFactory factory = model.getFactory();
+		IPluginModelFactory factory = model.getPluginFactory();
 
 		String editorClassName =
 			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName");

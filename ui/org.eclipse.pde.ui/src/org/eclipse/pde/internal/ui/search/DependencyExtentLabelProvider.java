@@ -40,7 +40,7 @@ public class DependencyExtentLabelProvider extends JavaElementLabelProvider {
 		}
 		if (element instanceof IPluginExtensionPoint) {
 			return ((IPluginExtensionPoint) element)
-				.getModel()
+				.getPluginModel()
 				.getPluginBase()
 				.getId()
 				+ "."

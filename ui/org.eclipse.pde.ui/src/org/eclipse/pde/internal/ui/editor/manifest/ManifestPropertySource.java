@@ -33,7 +33,7 @@ protected IJavaProject getJavaProject() {
 	return JavaCore.create(project);
 }
 protected IProject getProject() {
-	IPluginModelBase model = object.getModel();
+	IPluginModelBase model = object.getPluginModel();
 	IResource file = model.getUnderlyingResource();
 	if (file != null) {
 		return file.getProject();

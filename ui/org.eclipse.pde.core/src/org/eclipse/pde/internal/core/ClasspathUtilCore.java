@@ -487,7 +487,7 @@ public class ClasspathUtilCore {
 			boolean isExported =
 				unconditionallyExport ? true : library.isFullyExported();
 
-			IPluginModelBase model = library.getModel();
+			IPluginModelBase model = library.getPluginModel();
 			IPath path = getPath(model, expandedName);
 			if (path == null) {
 				if (model.isFragmentModel())
@@ -607,9 +607,9 @@ public class ClasspathUtilCore {
 				library.getPluginBase().getVersion());
 
 		for (int i = 0; i < fragments.length; i++) {
-			IPath path = getPath(fragments[i].getModel(), libraryName);
+			IPath path = getPath(fragments[i].getPluginModel(), libraryName);
 			if (path != null)
-				return fragments[i].getModel();
+				return fragments[i].getPluginModel();
 		}
 		return null;
 	}

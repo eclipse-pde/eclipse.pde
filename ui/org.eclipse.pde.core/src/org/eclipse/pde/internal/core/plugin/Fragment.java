@@ -60,7 +60,7 @@ public class Fragment extends PluginBase implements IFragment {
 		super.load(pm);
 	}
 	
-	void load(PluginBase srcPluginBase) {
+	public void load(IPluginBase srcPluginBase) {
 		pluginId= ((Fragment)srcPluginBase).pluginId;
 		pluginVersion= ((Fragment)srcPluginBase).pluginVersion;
 		rule= ((Fragment)srcPluginBase).rule;

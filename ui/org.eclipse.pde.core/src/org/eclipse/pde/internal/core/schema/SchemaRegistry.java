@@ -219,7 +219,7 @@ public class SchemaRegistry
 
 	private Object getSchemaFile(IPluginExtensionPoint point) {
 		if (point.getSchema()==null) return null;
-		IPluginModelBase model = point.getModel();
+		IPluginModelBase model = point.getPluginModel();
 		IFile pluginFile = (IFile) model.getUnderlyingResource();
 		IPath path = pluginFile.getProject().getFullPath();
 		path = path.append(point.getSchema());

@@ -147,7 +147,7 @@ public class RequiresSection
 		IPlugin plugin = (IPlugin) linkLabel.getData();
 		if (plugin == null)
 			return;
-		IPluginModelBase model = plugin.getModel();
+		IPluginModelBase model = plugin.getPluginModel();
 		String location = model.getInstallLocation();
 		if (location == null)
 			return;

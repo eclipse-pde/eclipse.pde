@@ -112,7 +112,7 @@ public class NewExtensionTemplateWizard
 		for (int i = 0; i < refs.length; i++) {
 			IPluginReference ref = refs[i];
 			if (modelContains(ref) == false) {
-				IPluginImport iimport = model.getFactory().createImport();
+				IPluginImport iimport = model.getPluginFactory().createImport();
 				iimport.setId(ref.getId());
 				iimport.setMatch(ref.getMatch());
 				iimport.setVersion(ref.getVersion());

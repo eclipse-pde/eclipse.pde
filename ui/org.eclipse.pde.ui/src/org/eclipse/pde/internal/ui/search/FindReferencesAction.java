@@ -43,7 +43,7 @@ public class FindReferencesAction extends Action {
 			input
 				.setSearchString(
 					((IPluginExtensionPoint) object)
-						.getModel()
+						.getPluginModel()
 						.getPluginBase()
 						.getId()
 						+ "."

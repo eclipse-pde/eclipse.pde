@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
 /**
  * This type of model is created by parsing the manifest file.
@@ -40,7 +40,7 @@ import org.eclipse.pde.core.build.IBuildModel;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IPluginModelBase extends IModel, IModelChangeProvider {
+public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvider {
 	/**
 	 * @return org.eclipse.pde.ui.model.plugin.IPluginBase
 	 * <p>
@@ -64,33 +64,6 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	 * </p>
 	 */
 	IBuildModel getBuildModel();
-	/**
-	 * Returns a factory object that should be used
-	 * to create new instances of the model objects.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	IPluginModelFactory getFactory();
-	/**
-	 * Returns a location of the file that was used
-	 * to create this model. This property is used
-	 * only for external models.
-	 *
-	 * @return a location of the external model, or
-	 * <samp>null</samp> if the model is created
-	 * from a resource.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
-	 */
-	public String getInstallLocation();
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(true)</pre>.
@@ -150,4 +123,6 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	 * </p>
 	 */
 	public void setEnabled(boolean enabled);
+	
+	IPluginModelFactory getPluginFactory();
 }

@@ -316,7 +316,7 @@ public class NewDependencyWizardPage extends WizardPage {
 			for (int i = 0; i < candidates.size(); i++) {
 				IPluginModel candidate = (IPluginModel) candidates.get(i);
 				IPluginImport importNode =
-					modelBase.getFactory().createImport();
+					modelBase.getPluginFactory().createImport();
 				importNode.setId(candidate.getPlugin().getId());
 				pluginBase.add(importNode);
 			}
