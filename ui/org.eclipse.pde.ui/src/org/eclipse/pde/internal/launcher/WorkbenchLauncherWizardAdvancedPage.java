@@ -109,6 +109,48 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			return new Object[] { workspacePlugins, externalPlugins };
 		}
 	}
+	
+	static class ExternalState {
+		String id;
+		boolean state;
+	}
+	
+	static class ExternalStates {
+		Vector states = new Vector();
+		
+		ExternalStates() {
+		}
+		ExternalStates(String settings) {
+			parseStates(settings);
+		}
+		
+		public void parseStates(String settings) {
+			StringTokenizer stok = new StringTokenizer(settings, File.pathSeparator);
+			while (stok.hasMoreTokens()) {
+				String token = stok.nextToken();
+				ExternalState state = new ExternalState();
+				int loc = token.lastIndexOf(',');
+				if (loc==-1) {
+					state.id = token;
+					state.state = false;
+				}
+				else {
+					state.id = token.substring(0, loc);
+					state.state = token.charAt(loc+1)=='t';
+				}
+				states.add(state);
+			}
+		}
+		ExternalState getState(String id) {
+			for (int i=0; i<states.size(); i++) {
+				ExternalState state = (ExternalState)states.get(i);
+				if (state.id.equals(id)) {
+					return state;
+				}
+			}
+			return null;
+		}
+	}
 
 	public WorkbenchLauncherWizardAdvancedPage(String title) {
 		super("WorkbenchLauncherWizardAdvancedPage", false);
@@ -202,9 +244,6 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				Vector checked = computeInitialCheckState();
 				pluginTreeViewer.setCheckedElements(checked.toArray());
-				IDialogSettings settings = getDialogSettings();
-				settings.put(SETTINGS_WSPROJECT, (String) null);
-				settings.put(SETTINGS_EXTPLUGINS, (String) null);
 			}
 		});
 	}
@@ -247,6 +286,16 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 				}
 			}
 		});
+		pluginTreeViewer.setSorter(new ViewerSorter() {
+			public int category(Object obj) {
+				if (obj == workspacePlugins)
+				   return -1;
+				if (obj == externalPlugins)
+					return 1;
+				return 0;
+			}
+		});
+	
 		workspacePlugins =
 			new NamedElement(
 				PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS),
@@ -267,7 +316,8 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
-		IPluginModelBase[] all = new IPluginModelBase[plugins.length + fragments.length];
+		IPluginModelBase[] all =
+			new IPluginModelBase[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, all, 0, plugins.length);
 		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
 		return all;
@@ -286,52 +336,87 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		useDefaultCheck.setSelection(useDefault);
 		showNamesCheck.setSelection(showNames);
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
-		Vector checked = computeInitialCheckState();
-
-		// Deselected workspace plug-ins
-		String deselectedPluginIDs = initialSettings.get(SETTINGS_WSPROJECT);
-		if (deselectedPluginIDs != null) {
-			ArrayList deselected = new ArrayList();
-			StringTokenizer tok =
-				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
-			while (tok.hasMoreTokens()) {
-				deselected.add(tok.nextToken());
-			}
-			for (int i = checked.size() - 1; i >= 0; i--) {
-				Object curr = checked.get(i);
-				if (!(curr instanceof IPluginModelBase))
-					continue;
-				IPluginModelBase desc = (IPluginModelBase) curr;
-				if (deselected.contains(desc.getPluginBase().getId())) {
-					checked.remove(i);
-				}
-			}
+		Vector result=null;
+	
+		if (useDefault) {
+			result = computeInitialCheckState();
 		}
-		// Deselected external plug-ins
-		deselectedPluginIDs = initialSettings.get(SETTINGS_EXTPLUGINS);
-		if (deselectedPluginIDs != null) {
-			ArrayList deselected = new ArrayList();
-			StringTokenizer tok =
-				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
-			while (tok.hasMoreTokens()) {
-				deselected.add(tok.nextToken());
-			}
+		else {
+			result = new Vector();
+			boolean addWorkspace = false;
+			boolean addRoot = false;
 			boolean mixed = false;
-			for (int i = checked.size() - 1; i >= 0; i--) {
-				Object curr = checked.get(i);
-				if (!(curr instanceof IPluginModelBase))
-					continue;
-				IPluginModelBase desc = (IPluginModelBase) curr;
-				if (deselected.contains(desc.getPluginBase().getId())) {
-					checked.remove(i);
-					mixed = true;
+			
+			IPluginModelBase [] ws = getWorkspacePlugins();
+		
+			// Deselected workspace plug-ins
+			String deselectedPluginIDs = initialSettings.get(SETTINGS_WSPROJECT);
+			if (deselectedPluginIDs != null) {
+				ArrayList deselected = new ArrayList();
+				StringTokenizer tok =
+					new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
+				while (tok.hasMoreTokens()) {
+					deselected.add(tok.nextToken());
+				}
+				for (int i = 0; i < ws.length; i++) {
+					IPluginModelBase desc = ws[i];
+					if (!deselected.contains(desc.getPluginBase().getId())) {
+						if (!addWorkspace) {
+							addRoot = true;
+							result.add(workspacePlugins);
+						}
+						result.add(desc);
+					}
+					else {
+						mixed = true;
+					}
 				}
 			}
-			if (mixed) {
-				pluginTreeViewer.setGrayed(externalPlugins, true);
+			if (addRoot && mixed) {
+				pluginTreeViewer.setGrayed(workspacePlugins, true);
+			}
+			// External state
+			addRoot = false;
+			mixed = false;
+
+			IPluginModelBase [] ex = getExternalPlugins();
+			
+			String exSettings = initialSettings.get(SETTINGS_EXTPLUGINS);
+			if (exSettings==null) exSettings = "";
+			ExternalStates states = new ExternalStates(exSettings);
+	
+			for (int i=0; i<ex.length; i++) {
+				IPluginModelBase desc = ex[i];
+				ExternalState es = states.getState(desc.getPluginBase().getId());
+				if (es!=null) {
+					// use the saved state
+					if (es.state) {
+						addRoot = true;
+						result.add(desc);
+					}
+					else {
+						mixed = true;
+					}
+				}
+				else {
+					// use the preference
+					if (desc.isEnabled()) {
+						addRoot = true;
+						result.add(desc);
+					}
+					else {
+						mixed = true;
+					}
+				}
+			}
+			if (addRoot) {
+				result.add(externalPlugins);			
+				if (mixed) {
+					pluginTreeViewer.setGrayed(externalPlugins, true);
+				}
 			}
 		}
-		pluginTreeViewer.setCheckedElements(checked.toArray());
+		pluginTreeViewer.setCheckedElements(result.toArray());
 		adjustCustomControlEnableState(!useDefault);
 	}
 
@@ -355,11 +440,13 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 		String exMode = pstore.getString(ExternalPluginsBlock.CHECKED_PLUGINS);
 		boolean externalMixed = false;
-		if (exMode.length() == 0 || exMode.equals(ExternalPluginsBlock.SAVED_ALL)) {
-			checked.add(externalPlugins);
-		} else if (!exMode.equals(ExternalPluginsBlock.SAVED_NONE)) {
-			checked.add(externalPlugins);
-			externalMixed = true;
+		if (exMode.length() > 0) {
+			if (exMode.equals(ExternalPluginsBlock.SAVED_ALL)) {
+				checked.add(externalPlugins);
+			} else if (!exMode.equals(ExternalPluginsBlock.SAVED_NONE)) {
+				checked.add(externalPlugins);
+				externalMixed = true;
+			}
 		}
 		if (pluginTreeViewer.getGrayed(externalPlugins) != externalMixed)
 			pluginTreeViewer.setGrayed(externalPlugins, externalMixed);
@@ -403,6 +490,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 				pluginTreeViewer.setGrayed(parent, false);
 				break;
 			case -1 :
+				pluginTreeViewer.setChecked(parent, true);
 				pluginTreeViewer.setGrayed(parent, true);
 				break;
 		}
@@ -410,7 +498,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 
 	private void handleGroupStateChanged(Object group, boolean checked) {
 		IPluginModelBase[] models;
-
+		
 		if (group.equals(workspacePlugins)) {
 			models = (IPluginModelBase[]) getWorkspacePlugins();
 		} else {
@@ -444,13 +532,14 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		}
 
 		StringBuffer exbuf = new StringBuffer();
-		IPluginModelBase[] externalModels = (IPluginModelBase[]) getExternalPlugins();
+		IPluginModelBase[] externalModels = getExternalPlugins();
 
+		// Store external state
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) externalModels[i];
-			if (pluginTreeViewer.getChecked(model))
-				continue;
+			boolean state = pluginTreeViewer.getChecked(model);
 			exbuf.append(model.getPluginBase().getId());
+			exbuf.append(state?",t":",f");
 			exbuf.append(File.pathSeparatorChar);
 		}
 		initialSettings.put(SETTINGS_WSPROJECT, wbuf.toString());
@@ -466,20 +555,19 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		ArrayList res = new ArrayList();
 		// Deselected workspace plug-ins
 		ArrayList deselectedWSPlugins = new ArrayList();
-		ArrayList deselectedExPlugins = new ArrayList();
+			
 		String wstring = settings.get(SETTINGS_WSPROJECT);
 		String exstring = settings.get(SETTINGS_EXTPLUGINS);
+
 		if (wstring != null) {
 			StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
 			while (tok.hasMoreTokens()) {
 				deselectedWSPlugins.add(tok.nextToken());
 			}
 		}
+		ExternalStates exstates = new ExternalStates();
 		if (exstring != null) {
-			StringTokenizer tok = new StringTokenizer(exstring, File.pathSeparator);
-			while (tok.hasMoreTokens()) {
-				deselectedExPlugins.add(tok.nextToken());
-			}
+			exstates.parseStates(exstring);
 		}
 
 		IPluginModelBase[] models = getWorkspacePlugins();
@@ -490,11 +578,17 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		}
 		models = getExternalPlugins();
 		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
 			if (useDefault) {
-				if (models[i].isEnabled())
-					res.add(models[i]);
-			} else if (!deselectedExPlugins.contains(models[i].getPluginBase().getId())) {
-				res.add(models[i]);
+				if (model.isEnabled())
+					res.add(model);
+			} else {
+				ExternalState es = exstates.getState(model.getPluginBase().getId());
+				if (es!=null && es.state) {
+					res.add(model);
+				}
+				else if (model.isEnabled())
+				    res.add(model);
 			}
 		}
 		IPluginModelBase[] plugins =

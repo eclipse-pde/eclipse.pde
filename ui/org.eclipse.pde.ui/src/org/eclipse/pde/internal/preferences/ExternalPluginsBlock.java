@@ -35,6 +35,7 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 	private Button deselectAllButton;
 	private Button reloadButton;
 	private Button selectAllButton;
+	private Button workspaceButton;
 	private ExternalPluginsEditor editor;
 	private Label selectedLabel;
 	public static final String SAVED_ALL = "[all]";
@@ -42,6 +43,7 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_SELECT_ALL = "ExternalPluginsBlock.selectAll";
 	private static final String KEY_DESELECT_ALL = "ExternalPluginsBlock.deselectAll";
+	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
 	private static final String KEY_SELECTED = "ExternalPluginsBlock.selected";
 
 	private final static int SELECT_ALL = 1;
@@ -172,9 +174,41 @@ public Control createContents(Composite parent) {
 			updateSelectedCount(-1);
 		}
 	});
+	workspaceButton = new Button(buttonContainer, SWT.PUSH);
+	workspaceButton.setText(PDEPlugin.getResourceString(KEY_WORKSPACE));
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+	workspaceButton.setLayoutData(gd);
+	workspaceButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			selectNotInWorkspace();
+		}
+	});
 	this.control = container;
 	return container;
 }
+
+private void selectNotInWorkspace() {
+	WorkspaceModelManager wm = PDEPlugin.getDefault().getWorkspaceModelManager();
+	IPluginModelBase [] wsModels = wm.getWorkspacePluginModels();
+	IPluginModelBase [] exModels = registry.getModels();
+	Vector selected = new Vector();
+	for (int i=0; i<exModels.length; i++) {
+		IPluginModelBase exModel = exModels[i];
+		boolean inWorkspace = false;
+		for (int j=0; j<wsModels.length; j++) {
+			IPluginModelBase wsModel = wsModels[j];
+			if (exModel.getPluginBase().getId().equals(wsModel.getPluginBase().getId())) {
+				inWorkspace = true;
+				break;
+			}
+		}
+		exModel.setEnabled(!inWorkspace);
+		if (!inWorkspace) selected.add(exModel);
+	}
+	pluginListViewer.setCheckedElements(selected.toArray());
+	updateSelectedCount(SELECT_SOME);
+}
+
 private static Vector createSavedList(String saved) {
 	Vector result = new Vector();
 	StringTokenizer stok = new StringTokenizer(saved);
