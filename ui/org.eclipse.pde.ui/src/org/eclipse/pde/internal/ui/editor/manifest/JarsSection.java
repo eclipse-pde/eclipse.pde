@@ -311,7 +311,7 @@ public class JarsSection
 			}
 		}
 		// it is not, so add it
-		IClasspathEntry sourceEntry = JavaCore.newSourceEntry(folder.getFullPath());
+		IClasspathEntry sourceEntry = JavaCore.newSourceEntry(folder.getFullPath().makeAbsolute());
 		final IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
 		System.arraycopy(entries, 0, newEntries, 0, entries.length);
 		newEntries[entries.length] = sourceEntry;
