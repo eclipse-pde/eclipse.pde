@@ -305,7 +305,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	private File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
 			try {
-				if (config.getAttribute(USEFEATURES, false)) {
+				if (config.getAttribute(USEFEATURES, false) && config.getAttribute(CONFIG_USE_DEFAULT_AREA, true)) {
 					String root = getProductPath().toString();
 					if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 						root += "/configuration"; //$NON-NLS-1$
