@@ -63,7 +63,7 @@ public class TargetPlatformRegistryLoader {
 				}
 			}
 
-			registryModel = CompatibilityPlatform.parsePlugins(urls, factory);
+			registryModel = PluginRegistryModel.parsePlugins(urls, factory);
 			monitor.worked(1);
 			IStatus resolveStatus = null;
 			if (resolve) {
