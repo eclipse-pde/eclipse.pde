@@ -116,11 +116,15 @@ public class TargetEnvironmentPreferencePage
 	    preferences.setValue(NL,locale.substring(0,locale.indexOf("-")).trim());
 	    preferences.setValue(ARCH, arch.getItem(arch.getSelectionIndex()));
 	    */
-		preferences.setValue(OS,os.getText());
-		preferences.setValue(WS,ws.getText());
-		String locale = nl.getText();
-		preferences.setValue(NL,locale.substring(0,locale.indexOf("-")).trim());
-		preferences.setValue(ARCH, arch.getText());
+		preferences.setValue(OS,os.getText().trim());
+		preferences.setValue(WS,ws.getText().trim());
+		String locale = nl.getText().trim();
+		int dash = locale.indexOf("-");
+		if (dash != -1)
+			locale = locale.substring(0, dash);
+		locale = locale.trim();
+		preferences.setValue(NL, locale);
+		preferences.setValue(ARCH, arch.getText().trim());
 	    
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
