@@ -93,8 +93,10 @@ public class NewProjectWizard
 	}
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		if (page == mainPage || page == structurePage)
+		if (page == mainPage)
 			return false;
+		if (page == structurePage && page.getNextPage() == null && page.isPageComplete())
+			return true;
 		return super.canFinish();
 	}
 	protected WizardElement createWizardElement(IConfigurationElement config) {
@@ -156,10 +158,12 @@ public class NewProjectWizard
 		return false;
 	}
 	public boolean performFinish() {
-		if (structurePage.finish() && codegenPage.finish()) {
-			BasicNewProjectResourceWizard.updatePerspective(config);
-			revealSelection(mainPage.getProjectHandle());
-			return true;
+		if (structurePage.finish()) {
+			if (structurePage.getNextPage() == null || codegenPage.finish()) {
+				BasicNewProjectResourceWizard.updatePerspective(config);
+				revealSelection(mainPage.getProjectHandle());
+				return true;
+			}
 		}
 		return false;
 	}

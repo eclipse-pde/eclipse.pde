@@ -180,22 +180,27 @@ public abstract class AbstractNewPluginTemplateWizard
 
 	private void doFinish(FieldData data, IProgressMonitor monitor)
 		throws CoreException, InterruptedException {
-		int totalWork = computeTotalWork();
+			
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_GENERATING),
-			totalWork);
+			computeTotalWork());
+			
 		ArrayList dependencies = getDependencies();
 		if (!verifyPluginPath(dependencies))
 			throw new InterruptedException();
+			
 		IProject project = provider.getProject();
-		ProjectStructurePage.createProject(project, provider, monitor);
+
+		ProjectStructurePage.createProject(project, provider, structureData, monitor);
 		// one step
 		monitor.worked(1);
+		
 		ProjectStructurePage.createBuildProperties(
 			project,
 			structureData,
 			monitor);
 		monitor.worked(1);
+		
 		WorkspacePluginModelBase model =
 			firstPage.createPluginManifest(
 				project,
@@ -205,8 +210,10 @@ public abstract class AbstractNewPluginTemplateWizard
 		// one step
 		monitor.worked(1);
 
-		setJavaSettings(model, monitor); // one step
-		monitor.worked(1);
+		if (structureData.getRuntimeLibraryName() != null) {
+			setJavaSettings(model, monitor); // one step
+			monitor.worked(1);
+		}
 		executeTemplates(project, model, monitor); // nsteps
 		model.save();
 		saveTemplateFile(project, monitor); // one step

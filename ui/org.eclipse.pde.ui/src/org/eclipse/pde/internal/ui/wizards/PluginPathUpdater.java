@@ -350,6 +350,8 @@ public class PluginPathUpdater {
 	}
 
 	private static String expandLibraryName(String source) {
+		if (source == null || source.length() == 0)
+			return "";
 		if (source.charAt(0) != '$')
 			return source;
 		IPath path = new Path(source);

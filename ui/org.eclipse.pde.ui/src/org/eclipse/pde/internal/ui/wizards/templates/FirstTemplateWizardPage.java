@@ -119,6 +119,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 	public void becomesVisible(int event) {
 		nameField.setFocus();
 	}
+	
 	private void browsePluginId() {
 		BusyIndicator.showWhile(pluginIdField.getDisplay(), new Runnable() {
 			public void run() {
@@ -138,6 +139,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 			}
 		});
 	}
+	
 	private Button createCheck(Composite parent, String label, boolean state) {
 		Button check = new Button(parent, SWT.CHECK);
 		check.setText(label);
@@ -147,44 +149,42 @@ public class FirstTemplateWizardPage extends WizardPage {
 		check.setSelection(state);
 		return check;
 	}
-	public void createControl(Composite parent) {
-		GridLayout layout = new GridLayout();
-		Composite container = new Composite(parent, SWT.NONE);
-		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
-		container.setLayout(layout);
-
-		String label =
-			fragment
-				? PDEPlugin.getResourceString(KEY_FNAME)
-				: PDEPlugin.getResourceString(KEY_NAME);
-		nameField = createField(container, label);
-		versionField = createField(container, PDEPlugin.getResourceString(KEY_VERSION));
+	
+	private void addCommonControls(Composite parent) {
+		nameField =
+			createField(
+				parent,
+				PDEPlugin.getResourceString(fragment ? KEY_FNAME : KEY_NAME));
+		versionField =
+			createField(parent, PDEPlugin.getResourceString(KEY_VERSION));
 		versionField.setText("1.0.0");
 		versionField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (isVersionValid(versionField.getText()) == false) {
+				if (!isVersionValid(versionField.getText())) {
 					setPageComplete(false);
-					setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
-				} else if (fragment)
+					setErrorMessage(
+						PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
+				} else if (fragment) {
 					verifyPluginFields();
-				else {
+				} else {
 					setPageComplete(true);
 					setErrorMessage(null);
 				}
 			}
 		});
 		providerField =
-			createField(container, PDEPlugin.getResourceString(KEY_PROVIDER));
-		if (fragment) {
+			createField(parent, PDEPlugin.getResourceString(KEY_PROVIDER));
+	}
+	
+	private void addFragmentSpecificControls(Composite parent) {
 			pluginIdField =
-				createField(container, PDEPlugin.getResourceString(KEY_PLUGIN_ID), false);
+				createField(parent, PDEPlugin.getResourceString(KEY_PLUGIN_ID), false);
 			pluginIdField.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					verifyPluginFields();
 				}
 			});
-			Button browsePluginButton = new Button(container, SWT.PUSH);
+			Button browsePluginButton = new Button(parent, SWT.PUSH);
 			browsePluginButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
 			browsePluginButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -192,19 +192,20 @@ public class FirstTemplateWizardPage extends WizardPage {
 				}
 			});
 			pluginVersionField =
-				createField(container, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
+				createField(parent, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
 			pluginVersionField.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					verifyPluginFields();
 				}
 			});
-			matchCombo = createMatchCombo(container);
-		} else
-			classField = createField(container, PDEPlugin.getResourceString(KEY_CLASS));
+			matchCombo = createMatchCombo(parent);
+	}
+	
+	private void addPluginSpecificControls(Composite parent) {
+			classField = createField(parent, PDEPlugin.getResourceString(KEY_CLASS));
 
-		if (!fragment) {
-			new Label(container, SWT.NONE);
-			generateMainClass = new Button(container, SWT.CHECK);
+			new Label(parent, SWT.NONE);
+			generateMainClass = new Button(parent, SWT.CHECK);
 			generateMainClass.setText(PDEPlugin.getResourceString(KEY_GENERATE));
 			generateMainClass.setSelection(true);
 			GridData gd = new GridData();
@@ -221,11 +222,10 @@ public class FirstTemplateWizardPage extends WizardPage {
 
 			gd = new GridData();
 			gd.horizontalSpan = 3;
-			new Label(container, SWT.NONE).setLayoutData(gd);
-			Group checkGroup = new Group(container, SWT.NONE);
+			new Label(parent, SWT.NONE).setLayoutData(gd);
+			Group checkGroup = new Group(parent, SWT.NONE);
 			checkGroup.setText(PDEPlugin.getResourceString(KEY_OPTIONS));
-			GridLayout cl = new GridLayout();
-			checkGroup.setLayout(cl);
+			checkGroup.setLayout(new GridLayout());
 			gd = new GridData();
 			gd.horizontalSpan = 3;
 			gd.horizontalAlignment = GridData.FILL;
@@ -239,6 +239,20 @@ public class FirstTemplateWizardPage extends WizardPage {
 					checkGroup,
 					PDEPlugin.getResourceString(KEY_OPTIONS_WORKSPACE),
 					true);
+	}
+	
+	public void createControl(Composite parent) {
+		GridLayout layout = new GridLayout();
+		Composite container = new Composite(parent, SWT.NONE);
+		layout.numColumns = 3;
+		layout.verticalSpacing = 9;
+		container.setLayout(layout);
+
+		addCommonControls(container);
+		if (fragment) {
+			addFragmentSpecificControls(container);
+		} else {
+			addPluginSpecificControls(container);
 		}
 		presetFields();
 		setControl(container);
@@ -438,10 +452,13 @@ public class FirstTemplateWizardPage extends WizardPage {
 		else {
 			((IPlugin)plugin).setClassName(data.className);
 		}
-		// add library
-		IPluginLibrary library = model.getFactory().createLibrary();
-		library.setName(structureData.getRuntimeLibraryName());
-		plugin.add(library);
+		
+		if (structureData.getRuntimeLibraryName() != null) {
+			// add library
+			IPluginLibrary library = model.getFactory().createLibrary();
+			library.setName(structureData.getRuntimeLibraryName());
+			plugin.add(library);
+		}
 		
 		for (int i=0; i<dependencies.size(); i++) {
 			IPluginReference ref = (IPluginReference)dependencies.get(i);

@@ -154,9 +154,13 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	}
 	public boolean finish() {
 		if (blankPageRadio.getSelection()) {
-			// we must set the Java settings here
-			// because there are no wizards to run
-			runJavaSettingsOperation();
+			if (projectStructurePage.getStructureData().getRuntimeLibraryName() != null) {
+				// we must set the Java settings here
+				// because there are no wizards to run
+				runJavaSettingsOperation();
+			} else {
+				runSimpleManifestOperation();
+			}
 		}
 		return true;
 	}
@@ -173,6 +177,31 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			return true;
 		return super.isPageComplete();
 	}
+	
+	public void runSimpleManifestOperation() {
+		final IPluginStructureData structureData =
+			projectStructurePage.getStructureData();
+		final IProject project = provider.getProject();
+		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) {
+				try {
+					createBlankManifest(project, structureData, monitor);
+					projectStructurePage.createBuildProperties(project, structureData, monitor);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			getContainer().run(false, true, operation);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+		} catch (InterruptedException e) {
+		}
+	}
+	
 	private void runJavaSettingsOperation() {
 		final IPluginStructureData structureData =
 			projectStructurePage.getStructureData();
@@ -227,14 +256,11 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IPluginStructureData structureData,
 		IProgressMonitor monitor)
 		throws CoreException {
+			
 		String id = structureData.getPluginId();
-		IPath path;
-		if (fragment)
-			path = project.getFullPath().append("fragment.xml");
-		else
-			path = project.getFullPath().append("plugin.xml");
+		IPath path = project.getFullPath().append(fragment ? "fragment.xml" : "plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(path);
-		boolean exists = file.exists();
+
 		WorkspacePluginModelBase model = null;
 		if (fragment)
 			model = new WorkspaceFragmentModel(file);
@@ -242,18 +268,20 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			model = new WorkspacePluginModel(file);
 		model.load();
 
-		if (!exists) {
+		if (!file.exists()) {
 			IPluginBase pluginBase = model.getPluginBase();
 			pluginBase.setId(id);
 			pluginBase.setVersion("1.0.0");
 			pluginBase.setName(id);
-			String libName = structureData.getRuntimeLibraryName();
-			IPluginLibrary library = model.getFactory().createLibrary();
-			library.setName(libName);
-			model.getPluginBase().add(library);
+			if (structureData.getRuntimeLibraryName() != null) {
+				String libName = structureData.getRuntimeLibraryName();
+				IPluginLibrary library = model.getFactory().createLibrary();
+				library.setName(libName);
+				model.getPluginBase().add(library);
+			}
 			model.save();
 		}
-		return exists;
+		return !file.exists();
 	}
 
 	private void setWizardListEnabled(boolean enabled) {
