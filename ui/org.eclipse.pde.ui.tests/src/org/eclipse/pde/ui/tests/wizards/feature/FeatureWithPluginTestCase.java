@@ -13,7 +13,6 @@ package org.eclipse.pde.ui.tests.wizards.feature;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -53,29 +52,14 @@ public class FeatureWithPluginTestCase extends NewProjectTest {
 		IFeature feature = models[0].getFeature();
 		assertNotNull("Model's feature is null.", feature);
 		IFeaturePlugin[] plugins = feature.getPlugins();
-		assertTrue("Feature has no plug-ins.", plugins.length > 0);
-		boolean found = false;
-		for (int i = 0; i < plugins.length; i++) {
-			String pluginId = plugins[i].getId();
-			assertNotNull("Feature plug-in ID is null.", pluginId);
-			if (refPlugin.equals(pluginId)) {
-				found = true;
-				if (plugins[i].isFragment()) {
-					IFragmentModel fragmentModel = PDECore.getDefault()
-							.getModelManager().findFragmentModel(pluginId);
-					assertNotNull(
-							"Feature fragment " + pluginId + " not found",
-							fragmentModel);
-				} else {
-					IPluginModel pluginModel = PDECore.getDefault()
-							.getModelManager().findPluginModel(pluginId);
-					assertNotNull("Feature plug-in " + pluginId + " not found",
-							pluginModel);
-				}
-				break;
-			}
-		}
-		assertTrue("Feature does not contain plug-in " + refPlugin, found);
+		assertTrue("Feature does not contain plug-in " + refPlugin + ".",
+				plugins.length == 1);
+		String pluginId = plugins[0].getId();
+		assertNotNull("Feature plug-in ID is null.", pluginId);
+		assertTrue(refPlugin.equals(pluginId));
+		IPluginModel pluginModel = PDECore.getDefault().getModelManager()
+				.findPluginModel(pluginId);
+		assertNotNull("Model for feature plug-in " + pluginId + " not found ", pluginModel);
 	}
 
 }
