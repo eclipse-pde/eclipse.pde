@@ -5,7 +5,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.ui.search.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.search.ui.text.*;
@@ -46,7 +45,6 @@ public class JavaEditorOpener {
 			IDE.gotoMarker(editor, marker);
 			marker.delete();
 		} catch (CoreException e) {
-			throw new PartInitException(SearchMessages.getString("JavaSearchResultPage.error.marker"), e); //$NON-NLS-1$
 		}
 	}
 

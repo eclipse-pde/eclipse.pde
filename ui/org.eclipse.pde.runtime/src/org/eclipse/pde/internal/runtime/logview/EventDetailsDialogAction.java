@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.*;
 
 
 public class EventDetailsDialogAction extends SelectionProviderAction{
@@ -38,7 +37,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	 * the property dialog will describe
 	 */
 	public EventDetailsDialogAction(Shell shell, ISelectionProvider provider){
-		super(provider, WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
+		super(provider, PDERuntimePlugin.getResourceString("EventDetailsDialog.title")); //$NON-NLS-1$
 		Assert.isNotNull(shell);
 		this.shell = shell;
 		this.provider = provider;
