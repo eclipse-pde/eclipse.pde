@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 
@@ -150,8 +151,10 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		String devEntry = LauncherUtils.getBuildOutputFolders();
-		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
+		else
+			programArgs.add(ClasspathHelper.getDevEntries(true));
 
 		// add tracing, if turned on
 		if (configuration.getAttribute(TRACING, false)

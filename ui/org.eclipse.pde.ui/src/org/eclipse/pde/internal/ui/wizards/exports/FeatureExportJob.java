@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 import java.lang.reflect.*;
-import java.net.URL;
 import java.util.*;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
@@ -28,7 +27,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.build.BaseBuildAction;
+import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.swt.widgets.*;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
@@ -50,7 +49,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
 	// Location where the build takes place
 	protected String fBuildTempLocation;
-	private URL fDevProperties;
+	private String fDevProperties;
 	
 	protected HashMap fBuildProperties;
 
@@ -202,9 +201,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
 	private String getDevProperties() {
 		if (fDevProperties == null) {
-			fDevProperties = BaseBuildAction.getDevEntriesProperties(fBuildTempLocation + "/dev.properties"); //$NON-NLS-1$
+			fDevProperties = ClasspathHelper.getDevEntriesProperties(fBuildTempLocation + "/dev.properties", false); //$NON-NLS-1$
 		}
-		return (fDevProperties != null) ? fDevProperties.toString() : "bin"; //$NON-NLS-1$
+		return fDevProperties;
 	}
 
 	protected void runScript(String location, String[] targets, Map properties,

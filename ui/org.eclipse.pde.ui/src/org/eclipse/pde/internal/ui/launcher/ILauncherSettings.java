@@ -22,7 +22,6 @@ public interface ILauncherSettings {
 	String APP_TO_TEST = "testApplication"; //$NON-NLS-1$
 	String VMARGS = "vmargs"; //$NON-NLS-1$
 	String PROGARGS = "progargs"; //$NON-NLS-1$
-	String CLASSPATH_ENTRIES = "classpath"; //$NON-NLS-1$
 	String BOOTSTRAP_ENTRIES = "bootstrap"; //$NON-NLS-1$
 	
 	// Plug-ins and Fragments settings

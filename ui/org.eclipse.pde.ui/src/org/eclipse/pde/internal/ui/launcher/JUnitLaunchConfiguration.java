@@ -19,6 +19,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.*;
 
 /**
  * Launch configuration delegate for a plain JUnit test.
@@ -202,8 +203,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		String devEntry = LauncherUtils.getBuildOutputFolders();
-		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
+		else
+			programArgs.add(ClasspathHelper.getDevEntries(true));
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(TRACING, false)
@@ -353,7 +356,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	public static boolean requiresUI(ILaunchConfiguration configuration) {
 		String id = getPluginID(configuration);
 		if (id != null) {
-			IPluginModelBase[] models = LauncherUtils.getPluginAndPrereqs(id);
+			IPluginModelBase[] models = getPluginAndPrereqs(id);
 			int i = 0;
 			for (; i < models.length; i++) {
 				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId())) //$NON-NLS-1$
@@ -363,6 +366,45 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		return true;
 	}
+	
+	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
+		TreeMap map = new TreeMap();
+		addPluginAndPrereqs(id, map);
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			addPluginAndPrereqs("org.eclipse.core.boot", map); //$NON-NLS-1$
+			addPluginAndPrereqs("org.eclipse.core.runtime", map); //$NON-NLS-1$
+		}
+		
+		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+	
+	private static void addPluginAndPrereqs(String id, TreeMap map) {
+		if (map.containsKey(id))
+			return;
+		
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
+		if (entry == null)
+			return;
+		
+		IPluginModelBase model = entry.getActiveModel();
+		
+		map.put(id, model);
+		
+		IPluginImport[] imports = model.getPluginBase().getImports();
+		for (int i = 0; i < imports.length; i++) {
+			addPluginAndPrereqs(imports[i].getId(), map);
+		}
+		
+		if (model instanceof IFragmentModel) {
+			addPluginAndPrereqs(((IFragmentModel) model).getFragment().getPluginId(), map);
+		} else {
+			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, model.getPluginBase().getVersion());
+			for (int i = 0; i < fragments.length; i++) {
+				addPluginAndPrereqs(fragments[i].getId(), map);
+			}
+		}
+	}
+
 	
 	private File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {

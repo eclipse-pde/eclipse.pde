@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -47,8 +46,8 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setChildren(true);
 		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 
-		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
-		generator.setDevEntries(url != null ? url.toString() : "bin"); //$NON-NLS-1$
+		String url = ClasspathHelper.getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
+		generator.setDevEntries(url);
 		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
 		BuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());

@@ -153,47 +153,7 @@ public class LauncherUtils {
 		
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
-		
-	public static String getBuildOutputFolders() {
-		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		ArrayList result = new ArrayList();
-		result.add(new Path("bin")); //$NON-NLS-1$
-		for (int i = 0; i < wsmodels.length; i++) {
-			addOutputLocations(result, wsmodels[i]);
-		}
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < result.size(); i++) {
-			buffer.append(result.get(i).toString());
-			if (i < result.size() -1)
-				buffer.append(","); //$NON-NLS-1$
-		}
-		return buffer.toString();
-	}
-	
-	private static void addOutputLocations(ArrayList result, IPluginModelBase model) {
-		IProject project = model.getUnderlyingResource().getProject();
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jProject = JavaCore.create(project);
-				addPath(result, jProject.getOutputLocation());
-				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
-						addPath(result, roots[i].getRawClasspathEntry().getOutputLocation());
-				}
-			} 
-		} catch (Exception e) {
-		}
-	}
-	
-	private static void addPath(ArrayList result, IPath path) {
-		if (path != null && path.segmentCount() > 1) {
-			path = path.removeFirstSegments(1);
-			if (!result.contains(path))
-				result.add(path);
-		}		
-	}
-	
+			
 	public static TreeMap getPluginsToRun(ILaunchConfiguration config)
 			throws CoreException {
 		TreeMap map = null;
@@ -311,43 +271,6 @@ public class LauncherUtils {
 		return new Integer(-1);
 	}
 	
-	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
-		TreeMap map = new TreeMap();
-		addPluginAndPrereqs(id, map);
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndPrereqs("org.eclipse.core.boot", map); //$NON-NLS-1$
-			addPluginAndPrereqs("org.eclipse.core.runtime", map); //$NON-NLS-1$
-		}
-		
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
-	}
-	
-	private static void addPluginAndPrereqs(String id, TreeMap map) {
-		if (map.containsKey(id))
-			return;
-		
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
-		if (entry == null)
-			return;
-		
-		IPluginModelBase model = entry.getActiveModel();
-		
-		map.put(id, model);
-		
-		IPluginImport[] imports = model.getPluginBase().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			addPluginAndPrereqs(imports[i].getId(), map);
-		}
-		
-		if (model instanceof IFragmentModel) {
-			addPluginAndPrereqs(((IFragmentModel) model).getFragment().getPluginId(), map);
-		} else {
-			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, model.getPluginBase().getVersion());
-			for (int i = 0; i < fragments.length; i++) {
-				addPluginAndPrereqs(fragments[i].getId(), map);
-			}
-		}
-	}
 	
 	private static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
 		TreeMap map = new TreeMap();

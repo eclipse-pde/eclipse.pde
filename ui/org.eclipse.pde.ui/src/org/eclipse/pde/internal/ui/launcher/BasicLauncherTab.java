@@ -40,12 +40,10 @@ public class BasicLauncherTab
 	private Button fClearWorkspaceCheck;
 	private Button fAskClearCheck;
 	private Combo fJreCombo;
-	private Text fClasspathText;
 	private Text fVmArgsText;
 	private Text fProgArgsText;
 	private Button fDefaultsButton;
 	private Image fImage;
-	private String fCurrentClasspath;
 
 	private IStatus fJreSelectionStatus;
 	private IStatus fWorkspaceSelectionStatus;
@@ -176,7 +174,6 @@ public class BasicLauncherTab
 		createJRESection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
-		createDevEntriesSection(group);
 		createBootstrapEntriesSection(group);
 	}
 	
@@ -301,23 +298,7 @@ public class BasicLauncherTab
 			}
 		});		
 	}
-	
-	protected void createDevEntriesSection(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath")); //$NON-NLS-1$
 		
-		fClasspathText = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		fClasspathText.setLayoutData(gd);
-		fClasspathText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (!fBlockChanges)	
-					updateLaunchConfigurationDialog();
-			}
-		});		
-	}
-	
 	private void createBootstrapEntriesSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.bootstrap")); //$NON-NLS-1$
@@ -343,7 +324,6 @@ public class BasicLauncherTab
 			initializeApplicationSection(config);
 			initializeVMArgsSection(config);
 			initializeProgArgsSection(config);
-			initializeDevEntriesSection(config);
 			initializeBootstrapEntriesSection(config);	
 			fWorkspaceSelectionStatus = validateWorkspaceSelection();
 			fJreSelectionStatus = validateJRESelection();
@@ -431,10 +411,6 @@ public class BasicLauncherTab
 		fProgArgsText.setText(config.getAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments()));		
 	}
 	
-	protected void initializeDevEntriesSection(ILaunchConfiguration config) throws CoreException {
-		fClasspathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));		
-	}
-
 	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
 		fBootstrap.setText(config.getAttribute(BOOTSTRAP_ENTRIES, "")); //$NON-NLS-1$
 	}
@@ -448,17 +424,10 @@ public class BasicLauncherTab
 		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 	}
 	
-	private String getClasspathEntries() {
-		if (fCurrentClasspath == null)
-			fCurrentClasspath = LauncherUtils.getBuildOutputFolders();
-		return fCurrentClasspath;
-	}
-
 	protected void doRestoreDefaults() {
 		fProgArgsText.setText(LauncherUtils.getDefaultProgramArguments());
 		fVmArgsText.setText(""); //$NON-NLS-1$
 		fWorkspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
-		fClasspathText.setText(getClasspathEntries());
 		fClearWorkspaceCheck.setSelection(false);
 		fAskClearCheck.setSelection(true);
 		fAskClearCheck.setEnabled(false);
@@ -478,7 +447,6 @@ public class BasicLauncherTab
 			saveJRESection(config);
 			saveVMArgsSection(config);
 			saveProgArgsSection(config);
-			saveDevEntriesSection(config);
 			saveBootstrapEntriesSection(config);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -525,18 +493,6 @@ public class BasicLauncherTab
 		config.setAttribute(BOOTSTRAP_ENTRIES, fBootstrap.getText().trim());
 	}
 
-	protected void saveDevEntriesSection(ILaunchConfigurationWorkingCopy config)
-		throws CoreException {
-		String classpath = fClasspathText.getText().trim();
-		if (config.getAttribute(CLASSPATH_ENTRIES, (String) null) != null) {
-			config.setAttribute(CLASSPATH_ENTRIES, classpath);
-		} else {
-			config.setAttribute(
-				CLASSPATH_ENTRIES,
-				classpath.equals(getClasspathEntries()) ? null : classpath);
-		}
-	}
-	
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		String text = fApplicationCombo.getText();
 		String attribute = getApplicationAttribute();

@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -34,8 +33,8 @@ public class BuildPluginAction extends BaseBuildAction {
 		
 		IProject project = file.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
-		URL url = getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
-		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin")); //$NON-NLS-1$
+		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
+		generator.setDevEntries(new DevClassPathHelper(url));
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		try {
