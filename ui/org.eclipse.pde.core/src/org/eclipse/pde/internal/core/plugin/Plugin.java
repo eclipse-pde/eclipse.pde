@@ -76,11 +76,9 @@ public class Plugin extends PluginBase implements IPlugin {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println(PDECore.getResourceString("Plugin.xmlHeader")); //$NON-NLS-1$
 		if (getSchemaVersion()!=null) {
-			writer.print("<?eclipse version=\"");
-			writer.print(getSchemaVersion());
-			writer.println("\"?>");
+			writer.print(PDECore.getFormattedMessage("Plugin.eclipseVersion", getSchemaVersion())); //$NON-NLS-1$
 		}		
 		writer.print("<plugin"); //$NON-NLS-1$
 		if (getId() != null) {

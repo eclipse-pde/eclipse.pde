@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Extensions
@@ -56,7 +57,7 @@ public class Extensions
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		writer.println(PDECore.getResourceString("Plugin.xmlHeader")); //$NON-NLS-1$
 		writer.print(fIsFragment ? "<fragment>" : "<plugin>"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		writer.println();

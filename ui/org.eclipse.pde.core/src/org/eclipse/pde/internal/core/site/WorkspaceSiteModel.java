@@ -136,7 +136,7 @@ public class WorkspaceSiteModel
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println(PDECore.getResourceString("Plugin.xmlHeader")); //$NON-NLS-1$
 			//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
 			site.write("", writer); //$NON-NLS-1$
 		}
