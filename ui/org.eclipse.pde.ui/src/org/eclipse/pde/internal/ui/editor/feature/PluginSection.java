@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.editor.PropertiesAction;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridLayout;
@@ -86,6 +87,7 @@ public class PluginSection
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;

@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -26,6 +27,7 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class RequiresSection
 	extends TableSection
 	implements IModelProviderListener {
+		public static final int MULTI_SELECTION = 33;
 	private static final String KEY_TITLE =
 		"FeatureEditor.RequiresSection.title";
 	private static final String KEY_DESC = "FeatureEditor.RequiresSection.desc";
@@ -86,6 +88,7 @@ public class RequiresSection
 		TablePart tablePart = getTablePart();
 		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new ImportContentProvider());
+		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 		pluginViewer.setLabelProvider(
 			PDEPlugin.getDefault().getLabelProvider());
 			
@@ -172,10 +175,13 @@ public class RequiresSection
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		IFeatureImport iimport = (IFeatureImport) selection.getFirstElement();
+		//IFeatureImport iimport = (IFeatureImport) selection.getFirstElement();
 		getFormPage().setSelection(selection);
+		/*
 		if (iimport != null)
 			fireSelectionNotification(iimport);
+		*/
+		fireChangeNotification(MULTI_SELECTION, selection);
 	}
 	public void initialize(Object input) {
 		IFeatureModel model = (IFeatureModel) input;

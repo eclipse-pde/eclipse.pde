@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,6 +76,7 @@ public class IncludedFeaturesSection
 		includesViewer = tablePart.getTableViewer();
 		includesViewer.setContentProvider(new PluginContentProvider());
 		includesViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		includesViewer.setSorter(ListUtil.NAME_SORTER);
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
