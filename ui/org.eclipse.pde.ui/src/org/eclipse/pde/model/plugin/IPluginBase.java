@@ -32,6 +32,11 @@ public interface IPluginBase extends IPluginObject, IIdentifiable {
 	 */
 	public static final String P_LIBRARY_ORDER = "library_order";
 	/**
+	 * A property that will be used to notify
+	 * that extension order in a plug-in has changed. 
+	 */
+	public static final String P_EXTENSION_ORDER = "extension_order";
+	/**
 	 * Adds a new extension to this plugin. This
 	 * method will throw a CoreException if
 	 * model is not editable.
@@ -142,6 +147,14 @@ public interface IPluginBase extends IPluginObject, IIdentifiable {
 	 * @param version the new plug-in version
 	 */
 	void setVersion(String version) throws CoreException;
+	/**
+	 * Swaps the positions of the provided extensions
+	 * in the list of extensions.
+	 *
+	 * @param e1 the first extension object
+	 * @param e2 the second extension object
+	 */
+	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
 	/**
 	 * Swaps the positions of the provided libraries
 	 * in the list of libraries. Libraries are looked up

@@ -90,23 +90,24 @@ public class Fragment extends PluginBase implements IFragment {
 		this.rule = rule;
 		firePropertyChanged(P_RULE, oldValue, new Integer(rule));
 	}
-	
-	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
 		if (name.equals(P_PLUGIN_ID)) {
-			setPluginId(newValue!=null ? newValue.toString():null);
+			setPluginId(newValue != null ? newValue.toString() : null);
 			return;
 		}
 		if (name.equals(P_PLUGIN_VERSION)) {
-			setPluginVersion(newValue!=null ? newValue.toString():null);
+			setPluginVersion(newValue != null ? newValue.toString() : null);
 			return;
 		}
 		if (name.equals(P_RULE)) {
-			setRule(((Integer)newValue).intValue());
+			setRule(((Integer) newValue).intValue());
 			return;
 		}
 		super.restoreProperty(name, oldValue, newValue);
 	}
-	
+
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		//writer.println("<!-- File written by PDE 1.0 -->");
@@ -142,9 +143,11 @@ public class Fragment extends PluginBase implements IFragment {
 		writer.println(">");
 		writer.println();
 
+		String firstIndent = "   ";
+
 		// add runtime
 		Object[] children = getLibraries();
-		writeChildren("runtime", children, writer);
+		writeChildren(firstIndent, "runtime", children, writer);
 		// add extension points
 		writer.println();
 
@@ -152,13 +155,13 @@ public class Fragment extends PluginBase implements IFragment {
 		children = getImports();
 		if (children.length > 0) {
 			writeComments(writer, requiresComments);
-			writeChildren("requires", children, writer);
+			writeChildren(firstIndent, "requires", children, writer);
 			writer.println();
 		}
 
 		children = getExtensionPoints();
 		for (int i = 0; i < children.length; i++) {
-			((IPluginExtensionPoint) children[i]).write("", writer);
+			((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
 		}
 		writer.println();
 
@@ -166,7 +169,7 @@ public class Fragment extends PluginBase implements IFragment {
 		children = getExtensions();
 
 		for (int i = 0; i < children.length; i++) {
-			((IPluginExtension) children[i]).write("", writer);
+			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
 		writer.println("</fragment>");
 	}

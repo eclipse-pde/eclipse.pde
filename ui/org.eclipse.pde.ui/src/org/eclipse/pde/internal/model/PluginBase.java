@@ -305,14 +305,32 @@ public abstract class PluginBase
 		libraries.setElementAt(l2, index1);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
-	void writeChildren(String tag, Object[] children, PrintWriter writer) {
+	
+	public int getExtensionCount() {
+		return extensions.size();
+	}
+	
+	public int getIndexOf(IPluginExtension e) {
+		return extensions.indexOf(e);
+	}
+	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
+		ensureModelEditable();
+		int index1 = extensions.indexOf(e1);
+		int index2 = extensions.indexOf(e2);
+		if (index1 == -1 || index2 == -1)
+			throwCoreException("Extensions not in the model");
+		extensions.setElementAt(e1, index2);
+		extensions.setElementAt(e2, index1);
+		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
+	}
+	void writeChildren(String indent, String tag, Object[] children, PrintWriter writer) {
 		if (tag.equals("runtime"))
 			writeComments(writer);
-		writer.println("<" + tag + ">");
+		writer.println(indent + "<" + tag + ">");
 		for (int i = 0; i < children.length; i++) {
 			IPluginObject obj = (IPluginObject) children[i];
-			obj.write("   ", writer);
+			obj.write(indent + "   ", writer);
 		}
-		writer.println("</" + tag + ">");
+		writer.println(indent + "</" + tag + ">");
 	}
 }

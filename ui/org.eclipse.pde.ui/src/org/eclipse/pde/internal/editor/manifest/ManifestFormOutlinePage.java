@@ -181,7 +181,14 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 		}
 		Object object = event.getChangedObjects()[0];
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			treeViewer.update(object, null);
+			String property = event.getChangedProperty();
+			
+			if (object instanceof IPluginBase &&
+			IPluginBase.P_EXTENSION_ORDER.equals(property)) {
+				treeViewer.refresh(getParentPage(event.getOldValue()));
+			}
+			else
+				treeViewer.update(object, null);
 		} else {
 			// find the parent
 			Object parent = null;

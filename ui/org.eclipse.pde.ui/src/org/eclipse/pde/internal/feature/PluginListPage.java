@@ -59,6 +59,7 @@ public class PluginListPage extends WizardPage {
 		gd.heightHint = 250;
 		pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());
 		pluginViewer.getTable().setFocus();
+		tablePart.setSelection(new Object[0]);
 		setControl(container);
 	}
 

@@ -154,6 +154,13 @@ public class ExtensionSection
 				needsUpdate = true;
 			}
 		}
+		else if (type == IModelChangedEvent.CHANGE) {
+			String property = event.getChangedProperty();
+			if (property.equals(IPluginBase.P_EXTENSION_ORDER) ||
+			property.equals(IPluginParent.P_SIBLING_ORDER)) {
+				needsUpdate = true;
+			}
+		}
 	}
 	public void update() {
 		if (needsUpdate)

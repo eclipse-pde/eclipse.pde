@@ -87,30 +87,32 @@ public void write(String indent, PrintWriter writer) {
 	}
 	writer.println(">");
 	writer.println();
+	
+	String firstIndent = "   ";
 
 	// add runtime
 	Object [] children = getLibraries();
-	writeChildren("runtime", children, writer);
+	writeChildren(firstIndent, "runtime", children, writer);
 	
 	// add requires
 	children = getImports();
 	if (children.length > 0) {
 		writeComments(writer, requiresComments);
-		writeChildren("requires", children, writer);
+		writeChildren(firstIndent, "requires", children, writer);
 		writer.println();
 	}
 
 	children = getExtensionPoints();
 	if (children.length>0) writer.println();
 	for (int i=0; i<children.length; i++) {
-		((IPluginExtensionPoint) children[i]).write("", writer);
+		((IPluginExtensionPoint) children[i]).write(firstIndent, writer);
 	}
 
 	// add extensions
 	children = getExtensions();
 	if (children.length>0) writer.println();
 	for (int i=0; i<children.length; i++) {
-		((IPluginExtension) children[i]).write("", writer);
+		((IPluginExtension) children[i]).write(firstIndent, writer);
 	}
 	writer.println();
 	writer.println("</plugin>");

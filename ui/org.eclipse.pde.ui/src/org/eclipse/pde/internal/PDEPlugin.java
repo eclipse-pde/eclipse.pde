@@ -29,6 +29,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
+import org.eclipse.pde.internal.util.SWTUtil;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -46,8 +47,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String SCHEMA_BUILDER_ID =
 		PLUGIN_ID + "." + "SchemaBuilder";
 	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String FEATURE_NATURE =
-		PLUGIN_ID + "." + "FeatureNature";
+	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature";
 	public static final String FEATURE_BUILDER_ID =
 		PLUGIN_ID + "." + "FeatureBuilder";
 
@@ -320,7 +320,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
 	}
 
-	public static void logException(Throwable e, String title, String message) {
+	public static void logException(
+		Throwable e,
+		final String title,
+		String message) {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
@@ -334,8 +337,15 @@ public class PDEPlugin extends AbstractUIPlugin {
 				message = e.toString();
 			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		}
-		ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
 		ResourcesPlugin.getPlugin().getLog().log(status);
+		Display display = SWTUtil.getStandardDisplay();
+		final IStatus fstatus = status;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(null, title, null, fstatus);
+			}
+		});
+
 	}
 
 	public static void logException(Throwable e) {
@@ -385,9 +395,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				//This causes PDE to bomb - problem in Debug UI
-				//JavaRuntime.initializeJREVariables(monitor);
-				getExternalModelManager().getEclipseHome(monitor);
+					//This causes PDE to bomb - problem in Debug UI
+		//JavaRuntime.initializeJREVariables(monitor);
+	getExternalModelManager().getEclipseHome(monitor);
 			}
 		};
 		try {
@@ -424,9 +434,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 			return null;
 		}
 	}
-	
+
 	public PDELabelProvider getLabelProvider() {
-		if (labelProvider==null) labelProvider = new PDELabelProvider();
+		if (labelProvider == null)
+			labelProvider = new PDELabelProvider();
 		return labelProvider;
 	}
 

@@ -12,6 +12,11 @@ import java.util.*;
  */
 public interface IPluginParent extends IPluginObject {
 	/**
+	 * A property that will be used when firing notification
+	 * of the sibling swap.
+	 */
+	public static final String P_SIBLING_ORDER = "sibling_order";
+	/**
 	 * Adds a child object at the specified index.
 	 * This method may throw a CoreException if
 	 * the model is not editable.
@@ -35,6 +40,21 @@ public interface IPluginParent extends IPluginObject {
 	 * @return the number of children
 	 */
 	public int getChildCount();
+	
+	/**
+	 * Returns the position of the child in this parent.
+	 * @param child a child of this parent
+	 * @return a 0-based index of the child
+	 */
+	int getIndexOf(IPluginObject child);
+	/**
+	 * Swaps the position of of the provided siblings 
+	 * in the parent.
+	 * @param child1 the first child
+	 * @param child2 the second child
+	 * @throws CoreException thrown if the model is not editable.
+	 */	
+	void swap(IPluginObject child1, IPluginObject child2) throws CoreException;
 	/**
 	 * Returns the children owned by this parent.
 	 *

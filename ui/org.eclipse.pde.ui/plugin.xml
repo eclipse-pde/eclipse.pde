@@ -246,7 +246,7 @@
       point="org.eclipse.core.resources.natures">
    <runtime>
       <run
-            class="org.eclipse.pde.internal.feature.FeatureProject">
+            class="org.eclipse.pde.internal.FeatureProject">
       </run>
    </runtime>
 </extension>
