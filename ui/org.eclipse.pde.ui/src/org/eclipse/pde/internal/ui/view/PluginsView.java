@@ -126,6 +126,10 @@ public class PluginsView extends ViewPart {
 			propertyListener);
 		PDECore.getDefault().getTempFileManager().disconnect(this);
 		openDependenciesAction.dispose();
+		if (clipboard!=null) {
+			clipboard.dispose();
+			clipboard=null;
+		}
 		super.dispose();
 	}
 
