@@ -123,6 +123,9 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	}
 
 	protected void doSelectionChanged(SelectionChangedEvent event) {
+		if (isActivePart())
+			return;
+		
 		ISelection selection= event.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
@@ -130,8 +133,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 			if (first instanceof IDocumentNode) {
 				ISourceRange sourceRange= ((IDocumentNode) first).getSourceRange();
 				if (sourceRange != null) {
-					boolean moveCursor= !isActivePart();
-					setHighlightRange(sourceRange, moveCursor);
+					setHighlightRange(sourceRange, true);
 					return;
 				}
 			}
@@ -164,7 +166,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 		IWorkbenchWindow window= getSite().getWorkbenchWindow();
 		IPartService service= window.getPartService();
 		IWorkbenchPart part= service.getActivePart();
-		return part != null && part.equals(this);
+		return part != null && part.equals(getEditor());
 	}
 	
 }

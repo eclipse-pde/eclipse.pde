@@ -127,13 +127,8 @@ public class XMLOutlinePage extends ContentOutlinePage {
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
 		
-		if (fModel != null) {
-			IDocumentNode node = fModel.getChildren()[0];
-			if (node != null)
-				setViewerInput(node);
-			else
-				setViewerInput(fModel);
-		}
+		if (fModel != null)
+			setViewerInput(fModel);
 	}
 	
 	/**

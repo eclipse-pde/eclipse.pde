@@ -49,7 +49,8 @@ public class DocumentModel  implements IDocumentNode {
 	public void setRootNode(IDocumentNode root) {
 		fRootNode= root;
 		fCachedChildren= null;
-		fRootNode.setParent(this);
+		if (fRootNode != null)
+			fRootNode.setParent(this);
 	}
 	
 	public IDocumentNode getRootNode() {
@@ -57,7 +58,7 @@ public class DocumentModel  implements IDocumentNode {
 	}
 	
 	public IDocumentNode[] getChildren() {
-		if (fCachedChildren == null) {
+		if (fCachedChildren == null && fRootNode != null) {
 			fCachedChildren= new IDocumentNode[1];
 			fCachedChildren[0]= fRootNode;
 		}
@@ -136,7 +137,7 @@ public class DocumentModel  implements IDocumentNode {
 			final PluginBase tmpPluginBase;
 			tmpPluginBase= (PluginBase) fPluginModelBase.createPluginBase();
 			tmpPluginBase.setModel(fPluginModelBase);
-			Node documentElement= fParser.getDocument().getDocumentElement();
+			final Node documentElement= fParser.getDocument().getDocumentElement();
 			if (documentElement != null) {
 				tmpPluginBase.load(documentElement, fParser.getLineTable());
 			}
@@ -164,7 +165,21 @@ public class DocumentModel  implements IDocumentNode {
 					}
 					fPluginModelBase.setLoaded(isSuccessful());
 
-					setRootNode(fParser.getModelRoot());	
+					IDocumentNode modelRoot= fParser.getModelRoot();
+					if (modelRoot != null) {
+						IDocumentNode[] children= modelRoot.getChildren();
+						modelRoot= null;
+						if (children != null) {
+							for (int i= 0; i < children.length; i++) {
+								IDocumentNode node= children[i];
+								if (node instanceof PluginDocumentNode && ((PluginDocumentNode) node).getDOMNode() == documentElement) {
+									modelRoot= node;
+									break;
+								}
+							}
+						}
+					}
+					setRootNode(modelRoot);	
 					fContentLineTable= fParser.getLineTable();		
 					XMLCore.getDefault().notifyDocumentModelListeners(new DocumentModelChangeEvent(DocumentModel.this));
 				}
