@@ -82,6 +82,7 @@ public class BodyTextSection
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				markDirty();
 				applyButton.setEnabled(true);
 				resetButton.setEnabled(true);
 			}
@@ -172,12 +173,21 @@ public class BodyTextSection
 
 	private void handleApply() {
 		try {
-			currentElement.setText(
-				text.getText().length() > 0 ? text.getText() : null);
+			if (currentElement!=null)
+				currentElement.setText(
+						text.getText().length() > 0 ? text.getText() : null);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 		applyButton.setEnabled(false);
+	}
+
+	public void commit(boolean onSave) {
+		handleApply();
+		if (onSave) {
+			resetButton.setEnabled(false);
+		}
+		super.commit(onSave);
 	}
 
 	private void handleReset() {
