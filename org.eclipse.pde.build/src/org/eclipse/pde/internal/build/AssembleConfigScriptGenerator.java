@@ -104,7 +104,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateBrandingCalls() {
 		String install = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		script.printBrandTask(install, getPropertyFormat("launcher.icons"), getPropertyFormat("launcher.name")); //$NON-NLS-1$
+		script.printBrandTask(install, getPropertyFormat(PROPERTY_LAUNCHER_ICONS), getPropertyFormat(PROPERTY_LAUNCHER_NAME));
 	}
 
 	private void generateArchivingSteps() {
