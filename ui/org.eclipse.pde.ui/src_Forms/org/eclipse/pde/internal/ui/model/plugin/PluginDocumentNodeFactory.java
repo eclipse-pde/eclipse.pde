@@ -144,7 +144,10 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createLibrary()
 	 */
 	public IPluginLibrary createLibrary() {
-		return null;
+		PluginLibraryNode node = new PluginLibraryNode();
+		node.setModel(fModel);
+		node.setXMLTagName("library");
+		return node;
 	}
 
 	/* (non-Javadoc)

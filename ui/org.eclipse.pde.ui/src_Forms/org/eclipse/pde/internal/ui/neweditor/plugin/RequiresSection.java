@@ -87,7 +87,25 @@ public class RequiresSection
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
+		updateDirectionalButtons();
 	}
+	
+	private void updateDirectionalButtons() {
+		Table table = getTablePart().getTableViewer().getTable();
+		TableItem[] selection = table.getSelection();
+		boolean hasSelection = selection.length > 0;
+		boolean canMove = table.getItemCount() > 1;
+		TablePart tablePart = getTablePart();
+		tablePart.setButtonEnabled(
+			2,
+			canMove && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(
+			3,
+			canMove
+				&& hasSelection
+				&& table.getSelectionIndex() < table.getItemCount() - 1);
+	}
+
 	
 	protected void handleDoubleClick(IStructuredSelection sel) {
 		handleOpen(sel);
@@ -192,6 +210,8 @@ public class RequiresSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		
+		refresh();
 	}
 
 	private void handleNew() {
@@ -217,7 +237,22 @@ public class RequiresSection
 	}
 	
 	private void handleUp() {
+		Table table = getTablePart().getTableViewer().getTable();
+		int index = table.getSelectionIndex();
+		if (index < 1)
+			return;
+
 		
+		IPluginImport dep = ((ImportObject)table.getItem(index).getData()).getImport();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		IPluginBase pluginBase = model.getPluginBase();
+
+		try {
+			pluginBase.swap(dep, ((ImportObject)importTable.getTable().getItem(index - 1).getData()).getImport());
+			refresh();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 	
 	private void handleDown() {
@@ -241,6 +276,8 @@ public class RequiresSection
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		importTable.setInput(model.getPluginBase());
 		getTablePart().setButtonEnabled(0, model.isEditable());
+		getTablePart().setButtonEnabled(2, false);
+		getTablePart().setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
 		PDECore.getDefault().getWorkspaceModelManager().addModelProviderListener(
 			this);

@@ -8,7 +8,6 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.runtime.RuntimePage;
 
 /**
  * @author dejan

@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.neweditor.build;
 
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -21,15 +22,21 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JARFileFilter extends ViewerFilter{
 	private final static String jarExt = "jar";
+	private HashSet fPaths;
 	
 	public JARFileFilter(){
-		super();
+		fPaths = new HashSet();
+	}
+	
+	public JARFileFilter(HashSet names) {
+		fPaths = names;
 	}
 	
 	public boolean select(Viewer viewer, Object parent, Object element){
-		if (element instanceof IFile){
-			return isJarPath(((IFile)element).getFullPath());
-		} else if (element instanceof IContainer){ // i.e. IProject, IFolder
+		if (element instanceof IFile)
+			return isValid(((IFile)element).getProjectRelativePath());
+
+			if (element instanceof IContainer){ // i.e. IProject, IFolder
 			try {
 				IResource[] resources = ((IContainer)element).members();
 				for (int i = 0; i < resources.length; i++){
@@ -43,9 +50,9 @@ public class JARFileFilter extends ViewerFilter{
 		return false;
 	}
 	
-	public boolean isJarPath(IPath path){
+	public boolean isValid(IPath path){
 		String ext = path.getFileExtension();
-		if (ext!=null && ext.length()!=0)
+		if (!fPaths.contains(path) && ext!=null && ext.length()!=0)
 			return ext.equals(jarExt);
 		return false;
 	}

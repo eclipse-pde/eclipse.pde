@@ -399,6 +399,13 @@ public class BundlePluginBase
 			model.fireModelObjectChanged(this, P_EXTENSION_ORDER, e1, e2);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public void swap(IPluginImport import1, IPluginImport import2)
+			throws CoreException {	
+	}
 
 	/*
 	 * (non-Javadoc)

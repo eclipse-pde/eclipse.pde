@@ -14,7 +14,6 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
-import org.eclipse.pde.internal.ui.neweditor.runtime.RuntimePage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;

@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.neweditor.context.InputContext;
+import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -115,5 +116,12 @@ public class BuildInputContext extends InputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
+	 */
+	protected TextEdit[] getMoveOperations() {
+		return null;
 	}
 }

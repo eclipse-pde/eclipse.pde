@@ -154,6 +154,7 @@ public abstract class InputContext {
 				MultiTextEdit edit = new MultiTextEdit();
 				for (int i = 0; i < fEditOperations.size(); i++) {
 					edit.addChild((TextEdit)fEditOperations.get(i));
+					//((TextEdit)fEditOperations.get(i)).apply(doc);
 				}
 				edit.apply(doc);
 				fEditOperations.clear();
@@ -163,7 +164,20 @@ public abstract class InputContext {
 				e.printStackTrace();
 			}
 		}
+		
+		/*TextEdit[] edits = getMoveOperations();
+		try {
+			for (int i = 0; i < edits.length; i++) {
+				edits[i].apply(doc);
+			}
+		} catch (MalformedTreeException e) {
+			e.printStackTrace();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}*/
 	}
+	
+	protected abstract TextEdit[] getMoveOperations();
 	
 	public boolean mustSave() {
 		if (!fIsSourceMode) {

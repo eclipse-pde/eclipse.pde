@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.neweditor.runtime;
+package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;

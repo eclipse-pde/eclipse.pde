@@ -33,6 +33,11 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public String[] getContentFilters() {
 		return contentFilters;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#addContentFilter(java.lang.String)
+	 */
+	public void addContentFilter(String filter) throws CoreException {
+	}
 	public String[] getPackages() {
 		return packages;
 	}

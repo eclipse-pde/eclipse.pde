@@ -384,6 +384,21 @@ public abstract class PluginBase
 		libraries.setElementAt(l2, index1);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public void swap(IPluginImport import1, IPluginImport import2)
+			throws CoreException {
+		ensureModelEditable();
+		int index1 = imports.indexOf(import1);
+		int index2 = imports.indexOf(import2);
+		if (index1 == -1 || index2 == -1)
+			throwCoreException("Imports not in the model");
+		imports.setElementAt(import1, index2);
+		imports.setElementAt(import2, index1);
+		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
+	}
 
 	protected void writeChildren(
 		String indent,

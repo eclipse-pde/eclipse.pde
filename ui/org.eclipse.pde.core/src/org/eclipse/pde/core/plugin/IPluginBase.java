@@ -58,6 +58,19 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * </p>
 	 */
 	public static final String P_LIBRARY_ORDER = "library_order";
+	
+	/**
+	 * A property that will be used to notify
+	 * that import order in a plug-in has changed. 
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public static final String P_IMPORT_ORDER = "import_order";
+	
 	/**
 	 * A property that will be used to notify
 	 * that 3.0 release compatibility flag has been changed. 
@@ -219,6 +232,23 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * </p>
 	 */
 	void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException;
+	
+	
+	/**
+	 * Swaps the positions of the plug-ins provided in
+	 * in the dependency list. This order is the one used
+	 * used by the classloader when loading classes.
+	 *
+	 * @param l1 the first library object
+	 * @param l2 the second library object
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	void swap(IPluginImport import1, IPluginImport import2) throws CoreException;
 	
 	/**
 	 * Returns version of the manifest grammar

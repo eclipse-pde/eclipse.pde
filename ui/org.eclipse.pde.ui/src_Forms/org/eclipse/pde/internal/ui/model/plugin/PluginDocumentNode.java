@@ -19,12 +19,29 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private String fTag;
 	private int fIndent = 0;
 	private IDocumentNode fPreviousSibling;
+	private int fLengthDelta;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getChildNodes()
 	 */
 	public IDocumentNode[] getChildNodes() {
 		return (IDocumentNode[]) fChildren.toArray(new IDocumentNode[fChildren.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#indexOf(org.eclipse.pde.internal.ui.model.IDocumentNode)
+	 */
+	public int indexOf(IDocumentNode child) {
+		return fChildren.indexOf(child);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getChildAt(int)
+	 */
+	public IDocumentNode getChildAt(int index) {
+		if (index < fChildren.size())
+			return (IDocumentNode)fChildren.get(index);
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getParentNode()
@@ -106,6 +123,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 */
 	public int getLength() {
 		return fLength;
+		//return fLength + fLengthDelta;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
@@ -187,5 +205,39 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 			buffer.append(" ");
 		}
 		return buffer.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#swap(org.eclipse.pde.internal.ui.model.IDocumentNode, org.eclipse.pde.internal.ui.model.IDocumentNode)
+	 */
+	public void swap(IDocumentNode child1, IDocumentNode child2) {
+		int index1 = fChildren.indexOf(child1);
+		int index2 = fChildren.indexOf(child2);
+		
+		if (index1 < index2) {
+			fChildren.remove(index1);
+			fChildren.add(index1, child2);
+			fChildren.remove(index2);
+			fChildren.add(index2, child1);
+		} else {
+			fChildren.remove(index2);
+			fChildren.add(index2, child1);
+			fChildren.remove(index1);
+			fChildren.add(index1, child2);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setLengthDelta(int)
+	 */
+	public void setLengthDelta(int delta) {
+		fLengthDelta = delta;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLengthDelta()
+	 */
+	public int getLengthDelta() {
+		return fLengthDelta;
 	}
 }

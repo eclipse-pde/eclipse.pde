@@ -20,6 +20,15 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
+		IDocumentNode parent = getEnclosingElement("runtime", true);
+		if (library instanceof IDocumentNode) {
+			library.setInTheModel(true);
+			IDocumentNode node = (IDocumentNode)library;
+			node.setParentNode(parent);
+			parent.addChildNode(node);
+			library.setInTheModel(true);
+			fireStructureChanged(library, IModelChangedEvent.INSERT);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
@@ -29,8 +38,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (pluginImport instanceof IDocumentNode) {
 			pluginImport.setInTheModel(true);
 			IDocumentNode node = (IDocumentNode)pluginImport;
-			parent.addChildNode(node);
 			node.setParentNode(parent);
+			parent.addChildNode(node);
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
 	}
@@ -213,6 +222,18 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 			throws CoreException {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
+	 */
+	public void swap(IPluginImport import1, IPluginImport import2)
+			throws CoreException {
+		IDocumentNode node = getEnclosingElement("requires", false);
+		if (node != null) {
+			node.swap((IDocumentNode)import1, (IDocumentNode)import2);
+			firePropertyChanged(node, P_IMPORT_ORDER, import1, import2);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()

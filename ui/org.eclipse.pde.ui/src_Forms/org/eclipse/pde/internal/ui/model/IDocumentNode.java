@@ -15,9 +15,17 @@ public interface IDocumentNode {
 	IDocumentNode removeChildNode(IDocumentNode child);
 	
 	IDocumentNode[] getChildNodes();
+	
+	int indexOf(IDocumentNode child);
+	IDocumentNode getChildAt(int index);
+	
+	void setLengthDelta(int delta);
+	int getLengthDelta();
 
 	IDocumentNode getPreviousSibling();
 	void setPreviousSibling(IDocumentNode sibling);
+	
+	void swap(IDocumentNode child1, IDocumentNode child2);
 	
 	void setXMLTagName(String tag);
 	

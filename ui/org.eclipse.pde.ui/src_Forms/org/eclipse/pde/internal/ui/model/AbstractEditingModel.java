@@ -39,6 +39,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 			fNLResourceHelper = null;
 		}
 		fIsDisposed = true;
+		fListeners.clear();
 	}
 	
 	/* (non-Javadoc)
@@ -130,7 +131,8 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 * @see org.eclipse.pde.core.IModelChangeProvider#addModelChangedListener(org.eclipse.pde.core.IModelChangedListener)
 	 */
 	public void addModelChangedListener(IModelChangedListener listener) {
-		fListeners.add(listener);
+		if (!fListeners.contains(listener))
+			fListeners.add(listener);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)

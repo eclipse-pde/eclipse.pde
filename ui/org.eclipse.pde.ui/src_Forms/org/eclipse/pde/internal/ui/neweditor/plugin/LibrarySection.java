@@ -8,22 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.neweditor.runtime;
+package org.eclipse.pde.internal.ui.neweditor.plugin;
 
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.build.JarSelectionValidator;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.model.*;
+import org.eclipse.ui.views.navigator.*;
 
 public class LibrarySection
 	extends TableSection
@@ -43,15 +52,45 @@ public class LibrarySection
 		"ManifestEditor.LibrarySection.newLibraryEntry";
 
 	private TableViewer libraryTable;
+	
+	class LibraryFilter extends JARFileFilter {
+		public LibraryFilter(HashSet set) {
+			super(set);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.internal.ui.neweditor.build.JARFileFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parent, Object element) {
+			if (element instanceof IFolder)
+				return true;
+			if (element instanceof IFile)
+				return isValid(((IFile)element).getProjectRelativePath());
+			return false;
+		}
+	}
+	
+	class LibrarySelectionValidator extends JarSelectionValidator {
+		
+		public LibrarySelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+			super(acceptedTypes, allowMultipleSelection);
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.internal.ui.editor.build.JarSelectionValidator#isValid(java.lang.Object)
+		 */
+		public boolean isValid(Object element) {
+			if (element instanceof IFolder)
+				return true;
+			return super.isValid(element);
+		}
+	}
 
 	class TableContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IPluginBase) {
-				return ((IPluginBase) parent).getLibraries();
-			}
-			return new Object[0];
+			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+			return model.getPluginBase().getLibraries();
 		}
 	}
 
@@ -202,7 +241,7 @@ public class LibrarySection
 		}
 	}
 	private void handleDown() {
-		int index = libraryTable.getTable().getSelectionIndex();
+		/*int index = libraryTable.getTable().getSelectionIndex();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		IPluginLibrary[] libraries = plugin.getLibraries();
@@ -214,20 +253,50 @@ public class LibrarySection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		updateDirectionalButtons();
+		updateDirectionalButtons();*/
 	}
+	
 	private void handleNew() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginLibrary library = model.getPluginFactory().createLibrary();
-		try {
-			library.setName(PDEPlugin.getResourceString(NEW_LIBRARY_ENTRY));
-			model.getPluginBase().add(library);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+		ElementTreeSelectionDialog dialog =
+			new ElementTreeSelectionDialog(
+				getPage().getSite().getShell(),
+				new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
+				
+		Class[] acceptedClasses = new Class[] { IFile.class };
+		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
+		dialog.setTitle(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"));
+		dialog.setMessage("Select JAR archives to be added to the plug-in's classpath:");
+		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
+		HashSet set = new HashSet();
+		for (int i = 0; i < libraries.length; i++) {
+			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}
+		dialog.addFilter(new LibraryFilter(set));
+		dialog.setInput(((IModel)getPage().getModel()).getUnderlyingResource().getProject());
+		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+			Object[] elements = dialog.getResult();
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			for (int i = 0; i < elements.length; i++) {
+				IResource elem = (IResource) elements[i];
+				IPath path = elem.getProjectRelativePath();
+				if (elem instanceof IFolder)
+					path = path.addTrailingSeparator();
+				IPluginLibrary library = model.getPluginFactory().createLibrary();
+				try {
+					library.setName(path.toString());
+					library.setExported(true);
+					model.getPluginBase().add(library);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}							
+			}
+		}	
 	}
 	private void handleUp() {
-		int index = libraryTable.getTable().getSelectionIndex();
+		/*int index = libraryTable.getTable().getSelectionIndex();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		IPluginLibrary[] libraries = plugin.getLibraries();
@@ -239,7 +308,7 @@ public class LibrarySection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		updateDirectionalButtons();
+		updateDirectionalButtons();*/
 	}
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();

@@ -64,16 +64,18 @@ public class PluginElementNode extends PluginParentNode
 		if (indent)
 			buffer.append(getIndent());
 		
-		buffer.append(writeShallow(false));
-		
 		IDocumentNode[] children = getChildNodes();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setLineIndent(getLineIndent() + 3);
-			buffer.append(children[i].write(true) + sep);
+		if (children.length > 0) {
+			buffer.append(writeShallow(false) + sep);
+			for (int i = 0; i < children.length; i++) {
+				children[i].setLineIndent(getLineIndent() + 3);
+				buffer.append(children[i].write(true) + sep);
+			}
+			buffer.append(getIndent() + "</" + getXMLTagName() + ">");
+		} else {
+			buffer.append(writeShallow(true));
 		}
-		buffer.append(getIndent() + "</" + getXMLTagName() + ">");
-		if (indent)
-			buffer.append(sep);
+	
 		return buffer.toString();
 	}
 	
@@ -85,12 +87,16 @@ public class PluginElementNode extends PluginParentNode
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName());
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			buffer.append(sep + getIndent() + "      " + attrs[i].write());
+		if (attrs.length == 1) {
+			buffer.append(" " + attrs[0].write());
+		} else {
+			for (int i = 0; i < attrs.length; i++) {
+				buffer.append(sep + getIndent() + "      " + attrs[i].write());
+			}
 		}
 		if (terminate)
 			buffer.append("/");
-		buffer.append(">" + sep);
+		buffer.append(">");
 		return buffer.toString();
 	}
 	

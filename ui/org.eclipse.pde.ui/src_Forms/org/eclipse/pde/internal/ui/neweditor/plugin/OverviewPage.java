@@ -10,7 +10,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.BuildPage;
-import org.eclipse.pde.internal.ui.neweditor.runtime.RuntimePage;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;

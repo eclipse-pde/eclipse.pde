@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.neweditor.context.UTF8InputContext;
+import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 
 public class BundleInputContext extends UTF8InputContext {
@@ -60,5 +61,12 @@ public class BundleInputContext extends UTF8InputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
+	 */
+	protected TextEdit[] getMoveOperations() {
+		return null;
 	}
 }
