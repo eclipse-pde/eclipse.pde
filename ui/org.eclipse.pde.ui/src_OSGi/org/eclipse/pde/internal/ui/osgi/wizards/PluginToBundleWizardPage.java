@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.bundles;
+package org.eclipse.pde.internal.ui.osgi.wizards;
 
 import java.util.Vector;
 

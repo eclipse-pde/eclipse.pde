@@ -41,8 +41,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	private static PDEPlugin inst;
 	// Resource bundle
 	private ResourceBundle resourceBundle;
-	// Shared label labelProvider
-	private PDELabelProvider labelProvider;
+	// Alternative runtime UI support
+	private IAlternativeRuntimeUISupport runtimeUISupport;
 	// Launches listener
 	private LaunchListener launchListener;
 
@@ -201,9 +201,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 	}
 
 	public PDELabelProvider getLabelProvider() {
-		if (labelProvider == null)
-			labelProvider = new PDELabelProvider();
-		return labelProvider;
+		if (runtimeUISupport==null)
+			loadRuntimeUISupport();
+		return runtimeUISupport.getLabelProvider();
 	}
 	
 	public LaunchListener getLaunchesListener() {
@@ -256,5 +256,31 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		IPreferenceStore store = getDefault().getPreferenceStore();
 		return store.getBoolean(PROP_CLASSPATH_CONTAINERS);
 	}
-
+	private void loadRuntimeUISupport() {
+		IConfigurationElement[] runtimes = Platform.getPluginRegistry().getConfigurationElementsFor(PLUGIN_ID, "alternativeRuntimeUISupport");
+		
+		if (runtimes.length==0) return;
+		IConfigurationElement runtime = runtimes[0];
+		if (runtimes.length>1) {
+			// pick the first runtime support that is
+			// not the default
+			runtime = null;
+			for (int i=0; i<runtimes.length; i++) {
+				String def = runtimes[i].getAttribute("default");
+				if (def!=null && def.equalsIgnoreCase("true"))
+					continue;
+				if (runtime==null) {
+					runtime = runtimes[i];
+					break;
+				}
+			}
+		}
+		if (runtime==null) return;
+		try {
+			runtimeUISupport = (IAlternativeRuntimeUISupport)runtime.createExecutableExtension("class");
+		}
+		catch (CoreException e) {
+			logException(e);
+		}
+	}	
 }

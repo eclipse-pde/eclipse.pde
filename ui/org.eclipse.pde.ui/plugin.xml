@@ -39,6 +39,7 @@
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.exsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
+   <extension-point id="alternativeRuntimeUISupport" name="Alternative Runtime UI Support" schema="schema/alternativeRuntimeUISupport.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1004,6 +1005,18 @@
             markerType="org.eclipse.pde.validation-marker"
             class="org.eclipse.pde.internal.ui.search.SchemaMarkerResolutionGenerator">
       </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.alternativeRuntimeUISupport">
+      <runtimeUI
+            default="true"
+            class="org.eclipse.pde.internal.ui.DefaultRuntimeUISupport"
+            id="org.eclipse.pde.ui.defaultRuntimeUI">
+      </runtimeUI>
+      <runtimeUI
+            class="org.eclipse.pde.internal.ui.osgi.OSGiRuntimeUISupport"
+            id="org.eclipse.pde.ui.osgiRuntimeUI">
+      </runtimeUI>
    </extension>
 
 </plugin>

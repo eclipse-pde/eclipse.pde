@@ -16,8 +16,7 @@ import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 

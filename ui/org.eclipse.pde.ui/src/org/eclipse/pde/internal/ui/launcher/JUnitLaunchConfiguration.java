@@ -17,7 +17,7 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 
 /**
  * Launch configuration delegate for a plain JUnit test.

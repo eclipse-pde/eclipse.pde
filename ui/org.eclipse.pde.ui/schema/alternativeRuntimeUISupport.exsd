@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.ui" id="alternativeRuntimeUISupport" name="Alternative Runtime UI Support"/>
+      </appInfo>
+      <documentation>
+         This extension point is used by PDE for providing alternative run-time (OSGi) support switching. It allows PDE to transparently provide capabilities for OSGi development when PDE OSGi plug-ins are present, and default to the old behaviour when they are not.
+&lt;p&gt;
+&lt;b&gt;Note: This is an internal PDE extension point that should not be used by other plug-ins.&lt;/b&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="runtimeUI" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="runtimeUI">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that will be used for referencing this object
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  &lt;samp&gt;true&lt;/samp&gt; if the runtime UI is the default implementation, &lt;samp&gt;false&lt;/samp&gt; otherwise. When there is a choice between a default and a non-default runtime UI support, the non-default will win.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a Java class that implements &lt;samp&gt;org.eclipse.pde.internal.ui.IAlternativeRuntimeUISupport&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.internal.ui.IAlternativeRuntimeUISupport"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the &lt;samp&gt;class&lt;/samp&gt; attribute should represent a Java class that implements &lt;samp&gt;org.eclipse.pde.internal.ui.IAlternativeRuntimeUISupport&lt;/samp&gt; interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         PDE UI plug-in provides default runtime UI support (classic PDE). PDE OSGi UI plug-in replaces this support with the OSGi runtime UI version.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.bundles;
+package org.eclipse.pde.internal.ui.osgi.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -193,7 +193,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 
 	private static void createBundleManifest(IPluginModel model, IProgressMonitor monitor) throws CoreException {
 		IProject project = model.getUnderlyingResource().getProject();
-		IFile file = project.getFile("META-INF/manifest.mf");
+		IFile file = project.getFile("META-INF/MANIFEST.MF");
 		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
 		IBundle bundle = bmodel.getBundle(true);
 		monitor.beginTask("", 2);

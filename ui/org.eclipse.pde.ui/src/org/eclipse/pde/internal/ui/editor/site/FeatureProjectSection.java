@@ -22,7 +22,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
 
 public class FeatureProjectSection extends CheckboxObjectListSection {

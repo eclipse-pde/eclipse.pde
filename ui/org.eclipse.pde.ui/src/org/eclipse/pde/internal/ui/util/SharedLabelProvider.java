@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import java.net.*;
 
@@ -49,17 +49,17 @@ public class SharedLabelProvider
 	public void disconnect(Object consumer) {
 		consumers.remove(consumer);
 		if (consumers.size() == 0) {
-			reset();
+			dispose();
 		}
 	}
-	private void reset() {
+	public void dispose() {
 		for (Enumeration enum = images.elements(); enum.hasMoreElements();) {
 			Image image = (Image) enum.nextElement();
 			image.dispose();
 		}
 		images.clear();
 	}
-
+	
 	public Image get(ImageDescriptor desc) {
 		return get(desc, 0);
 	}

@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 import org.eclipse.pde.ui.templates.*;
 

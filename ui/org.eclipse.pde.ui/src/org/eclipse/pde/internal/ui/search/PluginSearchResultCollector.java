@@ -22,7 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.search.IPluginSearchResultCollector;
 import org.eclipse.pde.internal.core.search.PluginSearchOperation;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
