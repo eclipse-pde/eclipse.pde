@@ -52,6 +52,7 @@ public interface IXMLConstants {
 	public static final String TARGET_ZIP_LOGS = "zip.logs"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_PLUGIN = "zip.plugin"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_SOURCES = "zip.sources"; //$NON-NLS-1$
+	public static final String TARGET_ZIP_FOLDER = "zip.folder"; //$NON-NLS-1$
 	
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$
@@ -88,4 +89,5 @@ public interface IXMLConstants {
 	public static final String PROPERTY_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix"; //$NON-NLS-1$
 	public static final String PROPERTY_WS = "ws"; //$NON-NLS-1$
+	public static final String PROPERTY_ZIPNAME = "zipname"; //$NON-NLS-1$
 }

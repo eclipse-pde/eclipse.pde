@@ -120,13 +120,19 @@ public void printAntTask(int tab, String antfile, String dir, String target, Str
 /**
  * Print a <code>zip</code> task to this script.
  *  * @param tab the number of tabs to indent * @param zipfile the destination file name * @param basedir the source directory to start the zip * @param filesOnly <code>true</code> if the resulting zip file should contain
- *   only files and not directories * @param fileSets the inclusion/exclusion rules to use when zipping */
-public void printZipTask(int tab, String zipfile, String basedir, boolean filesOnly, FileSet[] fileSets) {
+ *   only files and not directories
+ * @param excludes files which will be excluded from the zip
+ * @param update <code>true</code> if the zip file should be updated 
+ *     and <code>false</code> otherwise
+ * @param fileSets the inclusion/exclusion rules to use when zipping */
+public void printZipTask(int tab, String zipfile, String basedir, boolean filesOnly, String excludes, boolean update, FileSet[] fileSets) {
 	printTab(tab);
 	output.print("<zip"); //$NON-NLS-1$
 	printAttribute("zipfile", zipfile, true); //$NON-NLS-1$
 	printAttribute("basedir", basedir, false); //$NON-NLS-1$
 	printAttribute("filesonly", filesOnly ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	printAttribute("update", update ? "yes" : "no", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	printAttribute("excludes", excludes, false); //$NON-NLS-1$ 
 	if (fileSets == null)
 		output.println("/>"); //$NON-NLS-1$
 	else {

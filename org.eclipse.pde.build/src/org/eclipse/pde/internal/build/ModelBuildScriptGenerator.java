@@ -84,7 +84,17 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateCleanTarget(script);
 	generateRefreshTarget(script);
 	generateZipPluginTarget(script);
+	generateZipFolderTarget(script);
 	generateEpilogue(script);
+}
+
+/**
+ * @param script
+ */
+private void generateZipFolderTarget(AntScript script) {
+	script.printTargetDeclaration(1, TARGET_ZIP_FOLDER, TARGET_INIT, null, null, null);
+	script.printZipTask(2, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, true, "**/*.bin.log", false, null); //$NON-NLS-1$
+	script.printTargetEnd(1);
 }
 
 /**
@@ -149,7 +159,7 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
 	IPath root = new Path(BASEDIR);
-	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null);
+	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null, false, null);
 	script.printTargetEnd(--tab);
 }
 
@@ -242,7 +252,7 @@ protected void generateZipPluginTarget(AntScript script) throws CoreException {
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(TEMP_FOLDER, null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, true, null);
+	script.printAntCallTask(tab, TARGET_ZIP_FOLDER,null, null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printTargetEnd(--tab);
 }
@@ -262,7 +272,7 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, PLUGIN_UPDATE_JAR_DESTINATION, TEMP_FOLDER + "/" + FULL_NAME, false, null); //$NON-NLS-1$
+	script.printZipTask(tab, PLUGIN_UPDATE_JAR_DESTINATION, TEMP_FOLDER + "/" + FULL_NAME, false, null, false, null); //$NON-NLS-1$
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printTargetEnd(--tab);
 }

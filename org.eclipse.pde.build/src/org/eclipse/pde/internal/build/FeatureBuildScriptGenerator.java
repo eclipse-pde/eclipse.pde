@@ -157,9 +157,20 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateZipDistributionWholeTarget(script);
 	generateZipSourcesTarget(script);
 	generateZipLogsTarget(script);
+	generateZipFolderTarget(script);
 	generateCleanTarget(script);
 	generateRefreshTarget(script);
 	generateEpilogue(script);
+}
+
+/**
+ * @param script
+ */
+private void generateZipFolderTarget(AntScript script) {
+	script.println();
+	script.printTargetDeclaration(1, TARGET_ZIP_FOLDER, TARGET_INIT, null, null, null);
+	script.printZipTask(2, getPropertyFormat(PROPERTY_ZIPNAME), FEATURE_TEMP_FOLDER, true, null, true, null);
+	script.printTargetEnd(1);
 }
 
 /**
@@ -202,7 +213,7 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + zipName, BASEDIR + "/" + source, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+	script.printZipTask(tab, FEATURE_DESTINATION + "/" + zipName, BASEDIR + "/" + source, false, null, false, null); //$NON-NLS-1$ //$NON-NLS-2$
 	script.printTargetEnd(--tab);
 }
 
@@ -243,8 +254,9 @@ protected void generateZipLogsTarget(AntScript script) {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(FEATURE_TEMP_FOLDER).append("plugins").toString()); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params); //$NON-NLS-1$
-	IPath destination = new Path(FEATURE_DESTINATION).append(FEATURE_FULL_NAME + ".log.zip"); //$NON-NLS-1$
-	script.printZipTask(tab, destination.toString(), FEATURE_TEMP_FOLDER, true, null);
+	params.clear();
+	params.put(PROPERTY_ZIPNAME, FEATURE_FULL_NAME + ".log.zip"); //$NON-NLS-1$
+	script.printAntCallTask(tab, TARGET_ZIP_FOLDER, null, params);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printTargetEnd(--tab);
 }
@@ -264,7 +276,9 @@ protected void generateZipSourcesTarget(AntScript script) {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".src.zip", FEATURE_TEMP_FOLDER, true, null); //$NON-NLS-1$ //$NON-NLS-2$
+	params.clear();
+	params.put(PROPERTY_ZIPNAME, FEATURE_FULL_NAME + ".src.zip"); //$NON-NLS-1$
+	script.printAntCallTask(tab, TARGET_ZIP_FOLDER, null, params);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printTargetEnd(--tab);
 }
@@ -335,7 +349,9 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	params.put(PROPERTY_FEATURE_BASE, FEATURE_TEMP_FOLDER);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".bin.dist.zip", FEATURE_TEMP_FOLDER, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+	params.clear();
+	params.put(PROPERTY_ZIPNAME, FEATURE_FULL_NAME + ".bin.dist.zip"); //$NON-NLS-1$
+	script.printAntCallTask(tab, TARGET_ZIP_FOLDER, null, params);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printTargetEnd(--tab);
 }

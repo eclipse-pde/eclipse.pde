@@ -494,7 +494,7 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	}
 	String srcLocation = getSRCLocation(name);
 	script.printMkdirTask(tab, new Path(srcLocation).removeLastSegments(1).toString());
-	script.printZipTask(tab, srcLocation, null, false, fileSets);
+	script.printZipTask(tab, srcLocation, null, false, null, false, fileSets);
 	script.printTargetEnd(--tab);
 }
 
