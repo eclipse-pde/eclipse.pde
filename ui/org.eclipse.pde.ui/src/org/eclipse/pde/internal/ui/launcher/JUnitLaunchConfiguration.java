@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.model.PluginDescriptorModel;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
 import org.eclipse.debug.core.ILaunch;
@@ -68,7 +69,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			if ((javaProject == null) || !javaProject.exists()) {
 				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.invalidproject"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			IType[] testTypes = getTestTypes(configuration, javaProject, monitor);
+			IType[] testTypes = getTestTypes(configuration, javaProject, new SubProgressMonitor(monitor, 1));
 			if (testTypes.length == 0) {
 				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notests"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 			}
@@ -78,8 +79,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			monitor.worked(1);
 
 			int port = SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
-			VMRunnerConfiguration runConfig =
+			VMRunnerConfiguration runnerConfig =
 				createVMRunner(configuration, testTypes, port, mode);
+			if (runnerConfig == null) {
+				monitor.setCanceled(true);
+				return;
+			} 
 			monitor.worked(1);
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getJUnitTempWorkspace());
@@ -87,7 +92,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			setDefaultSourceLocator(launch, configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
 			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
-			launcher.getVMRunner(mode).run(runConfig, launch, monitor);
+			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);
 			monitor.worked(1);
 		} catch (CoreException e) {
 			monitor.setCanceled(true);
@@ -103,10 +108,14 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			abort(PDEPlugin.getResourceString(KEY_NO_STARTUP), null, IStatus.OK);
 		}
 
+		String[] programArgs = computeProgramArguments(configuration, testTypes, port, runMode);
+		if (programArgs == null)
+			return null;
+			
 		VMRunnerConfiguration runnerConfig =
 			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
 		runnerConfig.setVMArguments(computeVMArguments(configuration));
-		runnerConfig.setProgramArguments(computeProgramArguments(configuration, testTypes, port, runMode));
+		runnerConfig.setProgramArguments(programArgs);
 		
 		return runnerConfig;
 	}
