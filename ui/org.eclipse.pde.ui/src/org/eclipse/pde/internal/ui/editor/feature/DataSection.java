@@ -178,7 +178,9 @@ public class DataSection extends TableSection implements IModelProviderListener 
 				IPath filePath = file.getProjectRelativePath();
 				int matching = filePath.matchingFirstSegments(folderPath);
 				IPath relativePath = filePath.removeFirstSegments(matching);
-				entries.add(relativePath);
+				String path = relativePath.toString();
+				if (canAdd(model, path))
+					entries.add(path);
 			}
 		}
 		if (entries.size() > 0) {
@@ -186,8 +188,8 @@ public class DataSection extends TableSection implements IModelProviderListener 
 				IFeatureData[] array = new IFeatureData[entries.size()];
 				for (int i = 0; i < array.length; i++) {
 					IFeatureData data = model.getFactory().createData();
-					IPath path = (IPath) entries.get(i);
-					data.setId(path.toString());
+					String path = (String) entries.get(i);
+					data.setId(path);
 					array[i] = data;
 				}
 				model.getFeature().addData(array);
@@ -196,6 +198,18 @@ public class DataSection extends TableSection implements IModelProviderListener 
 				PDEPlugin.logException(e);
 			}
 		}
+	}
+	
+	private boolean canAdd(IFeatureModel model, String path) {
+		if ("feature.xml".equals(path)) //$NON-NLS-1$
+			return false;
+		IFeatureData[] data = model.getFeature().getData();
+		for (int i = 0; i < data.length; i++) {
+			if (path.equals(data[i].getId()))
+				return false;
+		}
+		return true;
+
 	}
 
 	private void handleSelectAll() {
