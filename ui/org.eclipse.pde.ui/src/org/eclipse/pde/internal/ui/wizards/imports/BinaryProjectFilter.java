@@ -25,15 +25,17 @@ public class BinaryProjectFilter extends ViewerFilter {
 	/**
 	 * @see ViewerFilter#select(Viewer, Object, Object)
 	 */
-	public boolean select(
-		Viewer viewer,
-		Object parentElement,
-		Object element) {
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
+		IProject project = null;
+
 		if (element instanceof IJavaProject) {
-			IJavaProject javaProject = (IJavaProject)element;
-			IProject project = javaProject.getProject();
-			if (WorkspaceModelManager.isBinaryPluginProject(project) ||
-				WorkspaceModelManager.isBinaryFeatureProject(project))
+			project = ((IJavaProject) element).getProject();
+		} else if (element instanceof IProject) {
+			project = (IProject) element;
+		}
+		if (project != null) {
+			if (WorkspaceModelManager.isBinaryPluginProject(project)
+				|| WorkspaceModelManager.isBinaryFeatureProject(project))
 				return false;
 		}
 		return true;
