@@ -20,27 +20,27 @@ public interface IBuildEntry extends IWritable {
 	/**
 	 * A property name for changes to the 'name' field.
 	 */
-	public static final String P_NAME = "name";
+	public static final String P_NAME = "name"; //$NON-NLS-1$
 	/**
 	 * A property name for changes to the '' field.
 	 */
-	public static final String JAR_PREFIX = "source.";
+	public static final String JAR_PREFIX = "source."; //$NON-NLS-1$
 	/**
 	 * A property name for changes to the 'name' field.
 	 */	
-	public static final String OUTPUT_PREFIX = "output.";
+	public static final String OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	/**
 	 * A property name for changes to the 'name' field.
 	 */	
-	public static final String BIN_INCLUDES = "bin.includes";
+	public static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	/**
 	 * A property name for changes to the 'name' field.
 	 */	
-	public static final String SRC_INCLUDES = "src.includes";
+	public static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 	/**
 	 * A property name for changes to the 'name' field.
 	 */	
-	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath";
+	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**
 	 * Adds the token to the list of token for this entry.
 	 * This method will throw a CoreException if

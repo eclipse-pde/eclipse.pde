@@ -23,7 +23,7 @@ public interface IIdentifiable {
 	 * A property that will be carried by the change event
 	 * if 'id' field of this object is changed.
 	 */
-	public static final String P_ID = "id";
+	public static final String P_ID = "id"; //$NON-NLS-1$
 	/**
 	 * Returns a unique id of this object.
 	 * @return the id of this object
