@@ -32,7 +32,7 @@ public interface IPlugin extends IPluginBase {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public static final String P_CLASS_NAME = "class_name";
+	public static final String P_CLASS_NAME = "class";
 
 	/**
 	 * Returns a plug-in class name.

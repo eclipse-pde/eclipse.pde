@@ -14,6 +14,10 @@ public interface IDocumentNode {
 	
 	void addChildNode(IDocumentNode child);
 	
+	void setXMLTagName(String tag);
+	
+	String getXMLTagName();
+	
 	void setXMLAttribute(IDocumentAttribute attribute);
 	
 	void setXMLAttribute(String name, String value);

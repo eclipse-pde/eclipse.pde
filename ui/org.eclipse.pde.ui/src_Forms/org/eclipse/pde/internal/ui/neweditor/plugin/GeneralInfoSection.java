@@ -163,6 +163,11 @@ public class GeneralInfoSection extends PDESection {
 		fClassEntry = new FormEntry(client, toolkit, "Class:", "Browse...", true);
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				try {
+					((IPlugin)getPluginBase()).setClassName(entry.getValue());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
 			}
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fClassEntry.getValue();

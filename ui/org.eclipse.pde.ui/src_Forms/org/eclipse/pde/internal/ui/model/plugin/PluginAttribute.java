@@ -14,10 +14,10 @@ public class PluginAttribute extends PluginObjectNode
 	
 	private IDocumentNode fEnclosingElement;
 	private String fValue;
-	private int fNameOffset;
-	private int fNameLength;
-	private int fValueOffset;
-	private int fValueLength;
+	private int fNameOffset = -1;
+	private int fNameLength = -1;
+	private int fValueOffset = -1;
+	private int fValueLength = -1;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginAttribute#getValue()

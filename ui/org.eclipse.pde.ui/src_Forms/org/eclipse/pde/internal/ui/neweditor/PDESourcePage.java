@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.widgets.*;
@@ -82,6 +83,17 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
+		IContentOutlinePage outline = getContentOutline();
+		if (outline != null && outline instanceof IModelChangedListener) {
+			IModelChangedListener listener = (IModelChangedListener)outline;
+			IModel model = getInputContext().getModel();
+			if (model instanceof IModelChangeProvider) {
+				if (active)
+					((IModelChangeProvider)model).addModelChangedListener(listener);
+				else
+					((IModelChangeProvider)model).removeModelChangedListener(listener);
+			}
+		}
 		if (active) {
 			// page becomes visible; notify the context
 			inputContext.setSourceEditingMode(true);

@@ -7,9 +7,11 @@
 package org.eclipse.pde.internal.ui.neweditor.build;
 
 import java.io.File;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -100,5 +102,11 @@ public class BuildInputContext extends InputContext {
 	 */
 	public String getId() {
 		return CONTEXT_ID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
 }

@@ -53,15 +53,27 @@ public class PluginDocumentHandler extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		IDocumentNode parent = fDocumentNodeStack.isEmpty() ? null : (IDocumentNode)fDocumentNodeStack.peek();		
 		IDocumentNode node = fFactory.createDocumentNode(qName, parent);
+		node.setXMLTagName(qName);
 		try {
-			node.setOffset(getStartOffset(qName));
+			int nodeOffset = getStartOffset(qName);
+			node.setOffset(nodeOffset);
+			// create attributes
+			for (int i = 0; i < attributes.getLength(); i++) {
+				String attName = attributes.getQName(i);
+				String attValue = attributes.getValue(i);
+				IDocumentAttribute attribute = fFactory.createAttribute(attName, attValue, node);
+				if (attribute != null) {
+					IRegion region = getAttributeRegion(attName, attValue, nodeOffset);
+					if (region != null) {
+						attribute.setNameOffset(region.getOffset());
+						attribute.setNameLength(attName.length());
+						attribute.setValueOffset(region.getOffset() + region.getLength() - 1 - attValue.length());
+						attribute.setValueLength(attValue.length());
+					}
+					node.setXMLAttribute(attribute);
+				}
+			}
 		} catch (BadLocationException e) {
-		}
-		// create attributes
-		for (int i = 0; i < attributes.getLength(); i++) {
-			IDocumentAttribute attribute = fFactory.createAttribute(attributes.getQName(i), attributes.getValue(i), node);
-			if (attribute != null)
-				node.setXMLAttribute(attribute);
 		}
 		if (parent != null)
 			parent.addChildNode(node);
@@ -84,7 +96,10 @@ public class PluginDocumentHandler extends DefaultHandler {
 		int lineDelimiterLength = lineDelimiter != null ? lineDelimiter.length() : 0;
 		return document.getLineLength(line - 1) - lineDelimiterLength;
 	}
-
+	
+	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{
+		return fFindReplaceAdapter.search(offset, name+"\\s*=\\s*\""+value+"\"", true, false, false, true);
+	}
 
 	
 	/* (non-Javadoc)

@@ -34,7 +34,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public static final String P_PROVIDER = "provider";
+	public static final String P_PROVIDER = "provider-name";
 	/**
 	 * A property that will be used to notify
 	 * that a version has changed.

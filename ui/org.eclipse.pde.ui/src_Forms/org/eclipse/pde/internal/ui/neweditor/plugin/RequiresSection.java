@@ -50,6 +50,7 @@ import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -346,12 +347,15 @@ public class RequiresSection
 
 	public void modelsChanged(IModelProviderEvent e) {
 		imports = null;
-		importTable.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (!importTable.getControl().isDisposed())
-					importTable.refresh();
-			}
-		});
+		final Control control = importTable.getControl();
+		if (!control.isDisposed()) {
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!control.isDisposed())
+						importTable.refresh();
+				}
+			});
+		}
 	}
 
 	private ImportObject findImportObject(IPluginImport iimport) {

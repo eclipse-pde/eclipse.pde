@@ -197,23 +197,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 
 		int offset = node.getOffset();
 		setHighlightRange(offset, node.getLength(), true);
-		sourceViewer.setSelectedRange(offset + 1, getNameLength(node));
-	}
-	
-	private int getNameLength(IDocumentNode node) {
-		if (node instanceof IPlugin)
-			return 6;
-		if (node instanceof IFragment)
-			return 7;
-		if (node instanceof IPluginLibrary)
-			return 7;
-		if (node instanceof IPluginImport)
-			return 6;
-		if (node instanceof IPluginExtensionPoint)
-			return 15;
-		if (node instanceof IPluginExtension)
-			return 9;
-		return 0;
+		sourceViewer.setSelectedRange(offset + 1, node.getXMLTagName().length());
 	}
 	
 

@@ -90,7 +90,6 @@ public abstract class AbstractExtensionsModel
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
-			throwParseErrorsException(e);
 		}
 	}
 	private void processDocument(Document doc, Hashtable lineTable) {

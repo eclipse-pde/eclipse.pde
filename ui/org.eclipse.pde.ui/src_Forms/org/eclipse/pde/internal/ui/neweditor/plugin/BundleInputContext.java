@@ -6,6 +6,9 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
+import java.util.*;
+
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
@@ -13,12 +16,6 @@ import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.neweditor.context.UTF8InputContext;
 import org.eclipse.ui.*;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class BundleInputContext extends UTF8InputContext {
 	public static final String CONTEXT_ID="bundle-context";
 	/**
@@ -59,5 +56,10 @@ public class BundleInputContext extends UTF8InputContext {
 	 */
 	public String getId() {
 		return CONTEXT_ID;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 	}
 }

@@ -12,13 +12,13 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginId()
 	 */
 	public String getPluginId() {
-		return getXMLAttributeValue("plugin-id");
+		return getXMLAttributeValue(P_PLUGIN_ID);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getPluginVersion()
 	 */
 	public String getPluginVersion() {
-		return getXMLAttributeValue("plugin-version");
+		return getXMLAttributeValue(P_PLUGIN_VERSION);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#getRule()
@@ -39,15 +39,32 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginId(java.lang.String)
 	 */
 	public void setPluginId(String id) throws CoreException {
+		setXMLAttribute(P_PLUGIN_ID, id);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setPluginVersion(java.lang.String)
 	 */
 	public void setPluginVersion(String version) throws CoreException {
+		setXMLAttribute(P_PLUGIN_VERSION, version);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IFragment#setRule(int)
 	 */
 	public void setRule(int rule) throws CoreException {
+		String match = "";
+		switch (rule) {
+			case IMatchRules.COMPATIBLE:
+				match = "compatible";
+				break;
+			case IMatchRules.EQUIVALENT:
+				match = "equivalent";
+				break;
+			case IMatchRules.PERFECT:
+				match = "perfect";
+				break;
+			case IMatchRules.GREATER_OR_EQUAL:
+				match = "greaterOrEqual";
+		}
+		setXMLAttribute(P_RULE, match);
 	}
 }

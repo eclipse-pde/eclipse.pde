@@ -35,16 +35,8 @@ public class XMLOutlinePage extends ContentOutlinePage implements IModelChangedL
 		fModel = model;
 		fLabelProvider = lProvider;
 		fContentProvider = cProvider;
-		fModel.addModelChangedListener(this);
 	}
 		
-	/*
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
-	public void dispose() {
-		fModel.removeModelChangedListener(this);
-	}
-	
 	/**  
 	 * Creates the control for this outline page.
 	 */
@@ -54,6 +46,7 @@ public class XMLOutlinePage extends ContentOutlinePage implements IModelChangedL
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
 		viewer.setInput(fModel);
+		viewer.expandAll();
 	}
 
 	/* (non-Javadoc)

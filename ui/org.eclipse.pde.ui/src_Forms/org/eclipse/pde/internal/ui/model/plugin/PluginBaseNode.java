@@ -71,13 +71,13 @@ public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
-		return getXMLAttributeValue("provider-name");
+		return getXMLAttributeValue(P_PROVIDER);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
 	 */
 	public String getVersion() {
-		return getXMLAttributeValue("version");
+		return getXMLAttributeValue(P_VERSION);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
@@ -88,11 +88,13 @@ public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
+		setXMLAttribute(P_PROVIDER, providerName);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
+		setXMLAttribute(P_VERSION, version);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary, org.eclipse.pde.core.plugin.IPluginLibrary)
@@ -166,11 +168,26 @@ public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
-		return getXMLAttributeValue("id");
+		return getXMLAttributeValue(P_ID);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
+		setXMLAttribute(P_ID, id);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
+	 */
+	public String getName() {
+		return getXMLAttributeValue(P_NAME);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
+	 */
+	public void setName(String name) throws CoreException {
+		setXMLAttribute(P_NAME, name);
 	}
 }

@@ -54,7 +54,7 @@ public interface IFragment extends IPluginBase {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	public static final String P_RULE = "rule";
+	public static final String P_RULE = "match";
 	/**
 	 * Returns the id of the plug-in that is the target
 	 * of this fragment.
