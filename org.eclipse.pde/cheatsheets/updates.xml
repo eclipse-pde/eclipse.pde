@@ -25,8 +25,9 @@ This cheat sheet will automatically launch wizards, perform actions, and guide y
 		title="Configuring PDE">
 		<action
 			confirm="true"
-			pluginId=""
-			class=""/>
+			pluginId="org.eclipse.pde.ui"
+		    param1="com.example.xyz"
+			class="org.eclipse.pde.internal.ui.wizards.plugin.OpenProjectWizardAction"/>
 		<description>
 		   	Select <b>File&gt;New&gt;Plug-in Project</b> to bring up the plug-in
 			project creation wizard. Choose 'com.example.xyz' for the project
