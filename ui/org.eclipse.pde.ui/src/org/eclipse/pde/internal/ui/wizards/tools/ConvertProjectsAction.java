@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
@@ -41,8 +40,8 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-	    IProject[] fUnconverted = getUnconvertedProjects();
-		if (fUnconverted.length == 0){
+	    IProject[] unconverted = getUnconvertedProjects();
+		if (unconverted.length == 0){
 			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("ConvertProjectsAction.find"), //$NON-NLS-1$
 					null, PDEPlugin.getResourceString("ConvertProjectsAction.none"), //$NON-NLS-1$
 					MessageDialog.INFORMATION, new String[]{IDialogConstants.OK_LABEL}, 0);
@@ -54,7 +53,6 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			Vector initialSelection = new Vector(elems.length);
 
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -70,17 +68,18 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 				if (project != null)
 					initialSelection.add(project);
 			}
-			
-		ConvertedProjectWizard wizard = new ConvertedProjectWizard(fUnconverted, initialSelection);
-		
-		final Display display = getDisplay();
-		final WizardDialog dialog =
-			new WizardDialog(display.getActiveShell(), wizard);
-		BusyIndicator.showWhile(display, new Runnable() {
-			public void run() {
-				dialog.open();
-			}
-		});
+
+			ConvertedProjectWizard wizard = new ConvertedProjectWizard(
+					unconverted, initialSelection);
+
+			final Display display = getDisplay();
+			final WizardDialog dialog = new WizardDialog(display
+					.getActiveShell(), wizard);
+			BusyIndicator.showWhile(display, new Runnable() {
+				public void run() {
+					dialog.open();
+				}
+			});
 		}
 	}
 	
