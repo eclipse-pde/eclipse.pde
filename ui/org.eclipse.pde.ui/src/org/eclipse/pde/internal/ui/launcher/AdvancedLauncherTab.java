@@ -216,6 +216,7 @@ public class AdvancedLauncherTab
 						Vector checked = computeInitialCheckState();
 						pluginTreeViewer.setCheckedElements(checked.toArray());
 						updateStatus();
+						setChanged(true);
 					}
 				});
 			}
