@@ -48,7 +48,8 @@ public class BuildClasspathSection
 		
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
-
+	private IStructuredSelection fCurrentSelection;
+	private IStructuredSelection fOldSelection;
 	
 
 	/**
@@ -251,6 +252,7 @@ public class BuildClasspathSection
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
 		getTablePart().setButtonEnabled(1, selection != null && selection.size() > 0 && fEnabled);
 	}
 
@@ -258,6 +260,7 @@ public class BuildClasspathSection
 		Object selection =
 			((IStructuredSelection) fTableViewer.getSelection())
 				.getFirstElement();
+		fOldSelection = (IStructuredSelection) fTableViewer.getSelection();
 		int index = fTableViewer.getTable().getSelectionIndex();
 		if (selection != null && selection instanceof String) {
 			IBuild build = getBuildModel().getBuild();
@@ -265,25 +268,21 @@ public class BuildClasspathSection
 			if (entry != null) {
 				try {
 					entry.removeToken(selection.toString());
-					fTableViewer.remove(selection);
+
 					String[] tokens=entry.getTokens();
-					IStructuredSelection ssel = null;
 					if (tokens.length == 0) {
 						build.remove(entry);
 					} else if (tokens.length >index){
-						ssel = new StructuredSelection(tokens[index]);
+						fCurrentSelection = new StructuredSelection(tokens[index]);
 					} else {
-						ssel = new StructuredSelection(tokens[index-1]);
+						fCurrentSelection = new StructuredSelection(tokens[index-1]);
 					}
-					fTableViewer.setSelection(ssel);
-
+					
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
-
 		}
-
 	}
 
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog){
@@ -314,8 +313,8 @@ public class BuildClasspathSection
 				IResource elem = (IResource) elements[i];
 				String tokenName = getRelativePathTokenName(elem);
 				addClasspathToken(tokenName);
-				fTableViewer.refresh();
-				fTableViewer.setSelection(new StructuredSelection(tokenName));
+				fCurrentSelection = new StructuredSelection(tokenName);
+				fOldSelection = null;
 			}
 		}
 	}
@@ -350,16 +349,35 @@ public class BuildClasspathSection
 		switch (index) {
 			case 0 :
 				handleNew();
-				fTableViewer.refresh();
 				break;
 			case 1 :
 				handleDelete();
-				fTableViewer.refresh();
 				break;
 			default :
 				break;
 		}
 	}
-
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+		} else if (event.getChangeType() == IModelChangedEvent.INSERT){
+			
+		} else if (event.getChangeType() == IModelChangedEvent.REMOVE){
+			
+		} else if (event.getChangeType() == IModelChangedEvent.CHANGE){
+			Object changeObject = event.getChangedObjects()[0];
+			
+			if (changeObject instanceof IBuildEntry && ((IBuildEntry)changeObject).getName().equals(IBuildEntry.JARS_EXTRA_CLASSPATH)){
+				if (fOldSelection == null){
+					fTableViewer.refresh();
+					fTableViewer.setSelection(fCurrentSelection);
+				} else {
+					fTableViewer.remove(fOldSelection);
+					fTableViewer.refresh();
+					fTableViewer.setSelection(fCurrentSelection);
+				}
+			}
+		}
+	}
 }
 
