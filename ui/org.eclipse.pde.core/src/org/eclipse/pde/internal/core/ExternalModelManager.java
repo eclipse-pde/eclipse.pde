@@ -26,7 +26,6 @@ public class ExternalModelManager {
 	private Vector models = new Vector();
 	private Vector fmodels = new Vector();
 	private Vector listeners = new Vector();
-	private HashMap eclipseHomeVariables = new HashMap();
 
 	public static String computeDefaultPlatformPath() {
 		URL installURL = BootLoader.getInstallURL();
@@ -212,9 +211,8 @@ public class ExternalModelManager {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
-				pref.getString(ICoreConstants.PLATFORM_PATH),
-				eclipseHomeVariables);
-		EclipseHomeInitializer.resetEclipseHomeVariables(eclipseHomeVariables);
+				pref.getString(ICoreConstants.PLATFORM_PATH));
+		EclipseHomeInitializer.resetEclipseHomeVariables();
 
 		if (pref
 			.getString(ICoreConstants.TARGET_MODE)

@@ -38,7 +38,6 @@ public class ExternalPluginsBlock {
 	private TablePart tablePart;
 	private HashSet changed = new HashSet();
 	private IPluginModelBase[] initialModels;
-	private HashMap eclipseHomeVariables = new HashMap();
 
 
 	private final static boolean DEFAULT_STATE = false;
@@ -72,9 +71,9 @@ public class ExternalPluginsBlock {
 	
 	class SaveOperation implements Runnable {
 		public void run() {
-			if (reloaded)
-				EclipseHomeInitializer.resetEclipseHomeVariables(eclipseHomeVariables);
 			savePreferences();
+			if (reloaded)
+				EclipseHomeInitializer.resetEclipseHomeVariables();
 			updateModels();
 			computeDelta();
 		}
@@ -244,7 +243,7 @@ public class ExternalPluginsBlock {
 	void handleReload() {
 		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
-			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath, eclipseHomeVariables);
+			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
 			ReloadOperation op = new ReloadOperation(pluginPaths, page.getUseOther());
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {

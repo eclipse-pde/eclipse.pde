@@ -24,7 +24,7 @@
 
    <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
 
-<!--
+
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
@@ -32,7 +32,7 @@
             class="org.eclipse.pde.internal.core.EclipseHomeInitializer">
       </classpathVariableInitializer>
    </extension>
--->
+
    <extension
          point="org.eclipse.team.core.repository">
       <repository
