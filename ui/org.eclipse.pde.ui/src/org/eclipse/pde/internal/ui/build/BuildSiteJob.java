@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -60,16 +62,21 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus run(IProgressMonitor monitor) {
+	protected IStatus run(final IProgressMonitor monitor) {
 		fBuildTime = touchSite(monitor);
-		IStatus status = super.run(monitor);
-		refresh(monitor);
-		fDisplay.asyncExec(new Runnable() {
-			public void run() {
-				updateSiteFeatureVersions();
+		this.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				BuildSiteJob.this.removeJobChangeListener(this);
+				super.done(event);
+				refresh(monitor);
+				fDisplay.asyncExec(new Runnable() {
+					public void run() {
+						updateSiteFeatureVersions();
+					}
+				});
 			}
 		});
-		return status;
+		return super.run(monitor);
 	}
 
 	private void updateSiteFeatureVersions() {
