@@ -7,8 +7,7 @@ package org.eclipse.pde.internal.builders;
 
 import java.util.Vector;
 
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 
@@ -65,7 +64,12 @@ public class DependencyLoopFinder {
 			for (int i=0; i<iimports.length; i++) {
 				IPluginImport iimport = iimports[i];
 				String id = iimport.getId();
-				IPlugin child = PDECore.getDefault().findPlugin(id);
+				//Commenting linear lookup - was very slow 
+				//when called from here. We will use
+				//model manager instead because it
+				//has a hash table lookup that is much faster.
+				//IPlugin child = PDECore.getDefault().findPlugin(id);
+				IPlugin child = findPlugin(id);
 				if (child!=null) {
 					findLoops(loops, newPath, child, null, false);
 				}	
@@ -77,6 +81,11 @@ public class DependencyLoopFinder {
 				findLoops(loops, newPath, candidate, null, false);
 			}
 		}
+	}
+	private static IPlugin findPlugin(String id) {
+		IPluginModelBase childModel = PDECore.getDefault().getModelManager().findPlugin(id, null, 0);
+		if (childModel==null || !(childModel instanceof IPluginModel)) return null;
+		return (IPlugin)childModel.getPluginBase();
 	}
 	
 	private static boolean isEquivalent(IPlugin left, IPlugin right) {
