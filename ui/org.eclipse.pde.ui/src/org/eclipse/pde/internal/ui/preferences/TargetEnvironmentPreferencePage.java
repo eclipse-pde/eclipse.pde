@@ -61,28 +61,28 @@ public class TargetEnvironmentPreferencePage
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_OS));
 		
-		os = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		os = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		os.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		os.setItems(BootLoader.knownOSValues());
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WS));
 		
-		ws = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		ws = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		ws.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		ws.setItems(BootLoader.knownWSValues());
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NL));
 		
-		nl = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		nl = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		nl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		nl.setItems(getLocales());
 				
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
 		
-		arch = new Combo(container, SWT.SINGLE | SWT.BORDER);
+		arch = new Combo(container, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		arch.setItems(BootLoader.knownOSArchValues());
 		
