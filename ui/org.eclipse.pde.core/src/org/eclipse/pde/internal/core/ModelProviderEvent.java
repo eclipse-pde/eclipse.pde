@@ -28,15 +28,15 @@ public ModelProviderEvent(Object source, int types, IModel [] added, IModel [] r
 }
 
 public IModel [] getAddedModels() {
-	return added;
+	return (added == null) ? new IModel[0] : added ;
 }
 
 public IModel [] getRemovedModels() {
-	return removed;
+	return (removed == null) ? new IModel[0] : removed;
 }
 
 public IModel [] getChangedModels() {
-	return changed;
+	return (changed == null) ? new IModel[0] : changed;
 }
 
 public int getEventTypes() {
