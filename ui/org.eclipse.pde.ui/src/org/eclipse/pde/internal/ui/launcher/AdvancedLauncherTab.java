@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -241,7 +240,8 @@ public class AdvancedLauncherTab
 	private void initExternalPluginsState(ILaunchConfiguration config)
 		throws CoreException {
 		fNumExternalChecked = 0;
-
+		
+		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
 		TreeSet selected = LauncherUtils.parseSelectedExtIds(config);
 		for (int i = 0; i < fExternalModels.length; i++) {
 			if (selected.contains(fExternalModels[i].getPluginBase().getId())) {
@@ -365,41 +365,34 @@ public class AdvancedLauncherTab
 			config.setAttribute(USEFEATURES, false);
 	}
 
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		final ILaunchConfigurationWorkingCopy config = configuration;
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			public void run() {
-				config.setAttribute(USECUSTOM, fUseDefaultRadio.getSelection());
-				if (fShowFeatures)
-					config.setAttribute(USEFEATURES, fUseFeaturesRadio.getSelection());
-				if (fUseListRadio.getSelection()) {
-					// store deselected projects
-					StringBuffer wbuf = new StringBuffer();
-					for (int i = 0; i < fWorkspaceModels.length; i++) {
-						IPluginModelBase model = (IPluginModelBase) fWorkspaceModels[i];
-						if (!fPluginTreeViewer.getChecked(model))
-							wbuf.append(
-								model.getPluginBase().getId() + File.pathSeparatorChar);
-					}
-					config.setAttribute(WSPROJECT, wbuf.toString());
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(USECUSTOM, fUseDefaultRadio.getSelection());
+		if (fShowFeatures)
+			config.setAttribute(USEFEATURES, fUseFeaturesRadio.getSelection());
+		if (fUseListRadio.getSelection()) {
+			// store deselected projects
+			StringBuffer wbuf = new StringBuffer();
+			for (int i = 0; i < fWorkspaceModels.length; i++) {
+				IPluginModelBase model = (IPluginModelBase) fWorkspaceModels[i];
+				if (!fPluginTreeViewer.getChecked(model))
+					wbuf.append(model.getPluginBase().getId() + File.pathSeparatorChar);
+			}
+			config.setAttribute(WSPROJECT, wbuf.toString());
 
-					// Store selected external models
-					StringBuffer exbuf = new StringBuffer();
-					Object[] checked = fPluginTreeViewer.getCheckedElements();
-					for (int i = 0; i < checked.length; i++) {
-						if (checked[i] instanceof ExternalPluginModelBase) {
-							IPluginModelBase model = (IPluginModelBase) checked[i];
-							exbuf.append(
-								model.getPluginBase().getId() + File.pathSeparatorChar);
-						}
-					}
-					config.setAttribute(EXTPLUGINS, exbuf.toString());
-				} else {
-					config.setAttribute(WSPROJECT, (String)null);
-					config.setAttribute(EXTPLUGINS, (String)null);
+			// Store selected external models
+			StringBuffer exbuf = new StringBuffer();
+			Object[] checked = fPluginTreeViewer.getCheckedElements();
+			for (int i = 0; i < checked.length; i++) {
+				if (checked[i] instanceof ExternalPluginModelBase) {
+					IPluginModelBase model = (IPluginModelBase) checked[i];
+					exbuf.append(model.getPluginBase().getId() + File.pathSeparatorChar);
 				}
 			}
-		});
+			config.setAttribute(EXTPLUGINS, exbuf.toString());
+		} else {
+			config.setAttribute(WSPROJECT, (String) null);
+			config.setAttribute(EXTPLUGINS, (String) null);
+		}
 	}
 
 	private void showPluginPaths() {

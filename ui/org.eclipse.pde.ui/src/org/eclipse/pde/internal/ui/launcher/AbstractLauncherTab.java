@@ -80,11 +80,11 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	public static IStatus createStatus(int severity, String message) {
 		return new Status(severity, PDEPlugin.getPluginId(), severity, message, null);
 	}
+	
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
 	protected void updateLaunchConfigurationDialog() {
-		setDirty(true);
 		super.updateLaunchConfigurationDialog();
 	}
 		
