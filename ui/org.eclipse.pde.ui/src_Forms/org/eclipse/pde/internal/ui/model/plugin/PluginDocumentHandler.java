@@ -141,21 +141,19 @@ public class PluginDocumentHandler extends DefaultHandler {
 		int endIndex = node.getOffset();
 		IDocument doc = fModel.getDocument();
 		int start = Math.max(doc.getLineOffset(line), node.getOffset());
-		if (column <= 0) {
-			column = doc.getLineLength(line);
-			String lineText= doc.get(start, column - start + doc.getLineOffset(line));
-			
-			int index = lineText.indexOf("</" + node.getXMLTagName() + ">");
-			if (index == -1) {
-				index= lineText.indexOf("/>"); //$NON-NLS-1$
-				if (index == -1 ) {
-					endIndex = column;
-				} else {
-					endIndex = index + 2;
-				}
-			} else{
-				endIndex = index + node.getXMLTagName().length() + 3;
+		column = doc.getLineLength(line);
+		String lineText= doc.get(start, column - start + doc.getLineOffset(line));
+		
+		int index = lineText.indexOf("</" + node.getXMLTagName() + ">");
+		if (index == -1) {
+			index= lineText.indexOf("/>"); //$NON-NLS-1$
+			if (index == -1 ) {
+				endIndex = column;
+			} else {
+				endIndex = index + 2;
 			}
+		} else{
+			endIndex = index + node.getXMLTagName().length() + 3;
 		}
 		return start + endIndex - node.getOffset();
 	}
