@@ -231,8 +231,14 @@ public class ManifestEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
-	protected PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name) {
-		return new ManifestSourcePage(editor, title, name);
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		if (contextId.equals(PluginInputContext.CONTEXT_ID))
+			return new ManifestSourcePage(editor, title, name);
+		if (contextId.equals(BuildInputContext.CONTEXT_ID))
+			return new BuildSourcePage(editor, title, name);
+		if (contextId.equals(BundleInputContext.CONTEXT_ID))
+			return new BundleSourcePage(editor, title, name);
+		return super.createSourcePage(editor, title, name, contextId);
 	}
 	
 	protected IContentOutlinePage createContentOutline() {

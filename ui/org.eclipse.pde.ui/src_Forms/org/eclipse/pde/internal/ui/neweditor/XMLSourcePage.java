@@ -6,13 +6,12 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.neweditor.text.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.pde.internal.ui.neweditor.text.XMLSourceViewerConfiguration;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 /**
  * @author dejan
@@ -41,10 +40,6 @@ public abstract class XMLSourcePage extends PDESourcePage {
 		return new XMLSourceViewerConfiguration(this, colorManager);
 	}
 	
-	protected IContentOutlinePage createOutlinePage() {
-		return null;
-	}
-
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();

@@ -154,7 +154,7 @@ public class SiteEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
-	protected PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name) {
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SiteSourcePage(editor, title, name);
 	}
 	

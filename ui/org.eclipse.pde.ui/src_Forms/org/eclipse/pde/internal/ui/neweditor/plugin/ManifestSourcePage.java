@@ -1,18 +1,16 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
-import java.util.*;
-
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
+import java.util.ArrayList;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.model.plugin.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.model.IDocumentNode;
+import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author melhem
@@ -41,6 +39,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 		
 		public String getText(Object obj) {
+			//TODO translate strings
 			if (obj == fLibraries)
 				return "Libraries";
 			if (obj == fImports)
@@ -140,19 +139,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.XMLSourcePage#getContenProvider()
-	 */
-	protected IContentProvider getContenProvider() {
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.XMLSourcePage#getLabelProvider()
-	 */
-	protected ILabelProvider getLabelProvider() {
-		return PDEPlugin.getDefault().getLabelProvider();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.XMLSourcePage#dispose()
 	 */
 	public void dispose() {
@@ -167,19 +153,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return new ContentProvider();
 	}
 
-	protected IContentOutlinePage createOutlinePage() {
-		SourceOutlinePage outline = new SourceOutlinePage(
-				(IEditingModel) getInputContext().getModel(),
-				new OutlineLabelProvider(), new ContentProvider());
-		outline.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				outlineSelectionChanged(event);
-			}
-		});
-		getSelectionProvider().addSelectionChangedListener(outline);
-		return outline;
-	}
-	
 	protected void outlineSelectionChanged(SelectionChangedEvent event) {
 		ISelection selection= event.getSelection();
 		if (selection instanceof IStructuredSelection) {

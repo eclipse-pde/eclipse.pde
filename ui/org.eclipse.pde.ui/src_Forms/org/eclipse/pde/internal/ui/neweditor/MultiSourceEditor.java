@@ -22,15 +22,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		if (context == null)
 			return;
 		PDESourcePage sourcePage;
-		if (context instanceof XMLInputContext)
-			sourcePage = createXMLSourcePage(this, contextId, context.getInput().getName());
-		else if (context instanceof BuildInputContext) {
-			sourcePage = new BuildSourcePage(this, contextId, context.getInput().getName());
-		} else {
-			// We should make all the pages through a factory -
-			// this is not very useful 
-			sourcePage = new GenericSourcePage(this, contextId, context.getInput().getName());
-		}
+		sourcePage = createSourcePage(this, contextId, context.getInput().getName(), context.getId());
 		sourcePage.setInputContext(context);
 		try {
 			addPage(sourcePage, context.getInput());
@@ -52,5 +44,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		}
 	}
 	
-	protected abstract PDESourcePage createXMLSourcePage(PDEFormEditor editor, String title, String name);
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		return new GenericSourcePage(editor, title, name);
+	}
 }
