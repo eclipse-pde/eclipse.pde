@@ -427,7 +427,9 @@ public class PluginActivationSection extends TableSection
 				String filter = filters[i].trim();
 				if (filter.endsWith(".*")) {
 					set.add(filter.substring(0, filter.length() - 2));
-				} 
+				} else {
+					set.add(filter);
+				}
 			}
 		} catch (CoreException e) {
 			return;
