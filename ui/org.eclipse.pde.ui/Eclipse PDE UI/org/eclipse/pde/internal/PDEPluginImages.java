@@ -28,11 +28,15 @@ public class PDEPluginImages {
 	public final static String ICONS_PATH;
 	static {
 		Display display = Display.getCurrent();
-		if (display==null) display = Display.getDefault();
-		if(display.getIconDepth() > 4)
-			ICONS_PATH = "icons/full/";//$NON-NLS-1$
-		else
-			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
+		if (display==null) {
+			ICONS_PATH = "icons/full/";
+		}
+		else {
+			if(display.getIconDepth() > 4)
+				ICONS_PATH = "icons/full/";//$NON-NLS-1$
+			else
+				ICONS_PATH = "icons/basic/";//$NON-NLS-1$
+		}
 	}
 
 	/**

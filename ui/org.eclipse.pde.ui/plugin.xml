@@ -22,10 +22,6 @@
    <import plugin="org.eclipse.debug.ui"/>
 </requires>
 
-<!-- Runtime -->
-<!-- Runtime -->
-<!-- Runtime -->
-<!-- Runtime -->
 <runtime>
    <library name="pde.jar">
       <export name="*"/>
@@ -315,6 +311,38 @@
             menubarPath="additions"
             enablesFor="1"
             id="org.eclipse.pde.BuildComponentJar">
+      </action>
+   </objectContribution>
+   <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
+         nameFilter="*plugin.xml"
+         id="org.eclipse.pde.pluginBuild">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
+      </filter>
+      <action
+            label="%popupMenus.buildPlugin.label"
+            class="org.eclipse.pde.internal.component.BuildPluginAction"
+            menubarPath="additions"
+            enablesFor="1"
+            id="org.eclipse.pde.BuildPluginAction">
+      </action>
+   </objectContribution>
+   <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
+         nameFilter="*fragment.xml"
+         id="org.eclipse.pde.fragmentBuild">
+      <filter
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
+      </filter>
+      <action
+            label="%popupMenus.buildFragment.label"
+            class="org.eclipse.pde.internal.component.BuildPluginAction"
+            menubarPath="additions"
+            enablesFor="1"
+            id="org.eclipse.pde.BuildFragmentAction">
       </action>
    </objectContribution>
 </extension>

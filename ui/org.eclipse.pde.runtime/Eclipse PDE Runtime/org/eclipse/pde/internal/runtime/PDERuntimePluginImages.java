@@ -22,10 +22,16 @@ public class PDERuntimePluginImages {
 
 	public final static String ICONS_PATH;
 	static {
-		if(Display.getCurrent().getIconDepth() > 4)
-			ICONS_PATH = "icons/full/";//$NON-NLS-1$
-		else
-			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
+		Display display = Display.getCurrent();
+		if (display==null) {
+			ICONS_PATH = "icons/full/";
+		}
+		else {
+			if(display.getIconDepth() > 4)
+				ICONS_PATH = "icons/full/";//$NON-NLS-1$
+			else
+				ICONS_PATH = "icons/basic/";//$NON-NLS-1$
+		}
 	}
 	
 	private static final String PATH_OBJ= ICONS_PATH+"obj16/";
