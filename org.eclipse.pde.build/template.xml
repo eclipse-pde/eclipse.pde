@@ -69,15 +69,6 @@
     <delete dir="${dest}.pdetemp"/>
   </target>
 
-  <target name="log">
-    <delete dir="${dest}"/>
-    <mkdir dir="${dest}"/>
-    <copy todir="${dest}">
-      <fileset dir="." includes="*.log"/>
-      <mapper type="glob" from="*.bin.log" to="*.log"/>
-    </copy>
-  </target>
-
   <!-- Delegates the zip call to either the default task or an external program. -->
   <!-- In order to define which one to run, the user should set a property       -->
   <!-- called useExternalZip.                                                    -->
