@@ -338,6 +338,7 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
 	output.println("  <target name=\"initTemplate\" unless=\"template\">");
 	output.println("    <initTemplate/>");
+	output.println("  </target>");
 	output.println("  <target name=\"init\" depends=\"initTemplate\">");
 	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
 	output.println("    <property name=\"version\" value=\"" + descriptor.getVersion() + "\"/>");
