@@ -169,7 +169,8 @@ private String createPluginPath(String eclipseDir) {
 	} catch (IOException e) {
 		return null;
 	}
-	String option = "-plugins " + fileName;
+	//String option = "-plugins " + fileName;
+	String option = "-plugins \"" + fileName + "\"";
 	return option;
 }
 
@@ -324,7 +325,7 @@ protected void initializeSettings() {
 		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
 		mng.ensureTracingFileExists();
 		String optionsFileName = mng.getTracingFileName();
-		String tracingArg = "-debug file:"+optionsFileName;
+		String tracingArg = "-debug \"file:"+optionsFileName+"\"";
 		platformArgs += tracingArg;
 	}
 }
@@ -351,7 +352,7 @@ public boolean launch(Object[] elements, String mode, ILauncher launcher) {
 		String programArgs = "-dev bin -application org.eclipse.ui.workbench";
 
 		if (platformLocation != null && platformLocation.length() > 0)
-			programArgs += " -data " + platformLocation;
+			programArgs += " -data \"" + platformLocation + "\"";
 		String pluginPath = createPluginPath(eclipseDir);
 		if (pluginPath == null)
 			return false;

@@ -15,7 +15,7 @@ by invoking the "Switch To" submenu of the Perspective menu.
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="layout" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,7 +49,7 @@ by invoking the "Switch To" submenu of the Perspective menu.
       </annotation>
    </element>
 
-   <element name="layout">
+   <element name="perspective">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>

@@ -4,7 +4,8 @@
     <classpathentry kind="src" path="Eclipse PDE UI"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.ui/workbench.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ui/workbenchsrc.zip"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="TARGET/org.eclipse.core.boot/bootsrc.zip"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
