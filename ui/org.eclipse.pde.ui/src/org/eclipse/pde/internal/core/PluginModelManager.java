@@ -20,7 +20,8 @@ public class PluginModelManager implements IAdaptable {
 	public PluginModelManager() {
 		providerListener = new IModelProviderListener() {
 			public void modelsChanged(IModelProviderEvent e) {
-				handleModelsChanged(e);
+				if (entries!=null)
+					handleModelsChanged(e);
 			}
 		};
 		listeners = new ArrayList();
