@@ -231,6 +231,8 @@ public abstract class AbstractNewBundleTemplateWizard
 			setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
 		}
 		ArrayList generatedPackages = new ArrayList();
+		if (data.getClassName()!=null)
+			generatedPackages.add(structureData.getPluginId());
 		executeTemplates(project, model, generatedPackages, monitor); // nsteps
 		setPackages(model, generatedPackages);
 		JavaCodeGenerator.ensureFoldersExist(project, "META-INF", "/");
