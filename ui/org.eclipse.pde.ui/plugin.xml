@@ -443,17 +443,16 @@
             default="true"
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
-            filenames="plugin.xml,fragment.xml,MANIFEST.MF"
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
             id="org.eclipse.pde.ui.manifestEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
             <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.jdt.core.JARManifest"/>            
       </editor>
       <editor
             default="true"
             name="%editors.schema.name"
-            extensions="exsd,mxsd"
             icon="icons/obj16/schema_obj.gif"
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
@@ -473,7 +472,6 @@
             default="true"
             name="%editors.featureManifest.name"
             icon="icons/obj16/ftr_xml_obj.gif"
-            filenames="feature.xml"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             id="org.eclipse.pde.ui.featureEditor">
@@ -483,7 +481,6 @@
             default="true"
             name="%editors.siteManifest.name"
             icon="icons/obj16/site_xml_obj.gif"
-            filenames="site.xml"
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
@@ -493,7 +490,6 @@
             default="true"
             name="%product.editor"
             icon="icons/obj16/product_xml_obj.gif"
-            filenames="*.product"
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
