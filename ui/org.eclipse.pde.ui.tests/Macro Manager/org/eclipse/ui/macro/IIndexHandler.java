@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
  * Classes that implement this interface are registered with
  * the macro manager to handle cases where the user interrupted
  * the recording process to insert a named index. Upon playback,
- * index handle will be called to handle the named index
+ * index handler will be called to handle the named index
  * when reached in the script.
  *
  * @since 3.1
