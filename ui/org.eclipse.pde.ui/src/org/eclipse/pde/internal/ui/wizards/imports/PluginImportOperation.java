@@ -235,15 +235,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					FileSystemStructureProvider.INSTANCE,
 					null,
 					new SubProgressMonitor(monitor, 1));
-				if (extractSource) {
-					importSource(
-						project,
-						model.getPluginBase(),
-						new Path(pluginDir.getPath()),
-						new SubProgressMonitor(monitor, 1));
-				} else {
-					monitor.worked(1);
-				}
+				importSource(
+					project,
+					model.getPluginBase(),
+					new Path(pluginDir.getPath()),
+					new SubProgressMonitor(monitor, 1));
 			} else {
 				monitor.worked(2);
 			}
