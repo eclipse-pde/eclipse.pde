@@ -44,19 +44,17 @@ class LogReader {
 	}
 	private static LogEntry[] parse(List lines, ArrayList entries) {
 		ArrayList parents = new ArrayList();
-		StringBuffer buff = null;
 		LogEntry current = null;
 		LogSession session = null;
 		int writerState = UNKNOWN_STATE;
 		StringWriter swriter = null;
 		PrintWriter writer = null;
 		int state = UNKNOWN_STATE;
-		int currentDepth = 0;
 
 		for (int i = 0; i < lines.size(); i++) {
 			String line = (String) lines.get(i);
 			line = line.trim();
-			int oldState = state;
+
 			if (line.startsWith("!SESSION")) {
 				state = SESSION_STATE;
 			} else if (line.startsWith("!ENTRY")) {

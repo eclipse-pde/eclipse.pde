@@ -158,8 +158,8 @@ public class DependenciesView extends ViewPart {
 	}
 	
 	private void handleSelectionChanged(ISelection selection) {
-		String text = "";
-		Object obj = getSelectedObject();
+		//String text = "";
+		//Object obj = getSelectedObject();
 		//getViewSite().getActionBars().getStatusLineManager().setMessage(text);
 	}
 

@@ -169,8 +169,7 @@ public class MatchSection extends PDEFormSection {
 			}
 		});
 
-		Label label =
-			factory.createLabel(
+		factory.createLabel(
 				container,
 				PDEPlugin.getResourceString(KEY_RULE));
 		matchCombo = new CCombo(container, SWT.READ_ONLY | SWT.FLAT);

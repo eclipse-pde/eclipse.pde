@@ -183,7 +183,6 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
-			StringBuffer buffer = new StringBuffer();
 			StringWriter swriter = new StringWriter();
 			PrintWriter pwriter = new PrintWriter(swriter);
 			throwable.printStackTrace(pwriter);
