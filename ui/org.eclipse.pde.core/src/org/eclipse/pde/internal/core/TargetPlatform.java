@@ -167,7 +167,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		Preferences settings = PDECore.getDefault().getPluginPreferences();
 		settings.setDefault(OS, BootLoader.getOS());
 		settings.setDefault(WS, BootLoader.getWS());
-		settings.setDefault(NL, Locale.getDefault().toString() + " - " + Locale.getDefault().getDisplayName());
+		settings.setDefault(NL, Locale.getDefault().toString());
 		settings.setDefault(ARCH, BootLoader.getOSArch());
 	}
 
@@ -192,11 +192,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 		Choice[] choices = new Choice[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			choices[i] = new Choice(locale.toString(), locale.toString() + " - " + locale.getDisplayName());
+			choices[i] = new Choice(locale.toString(),locale.toString() + " - " + locale.getDisplayName());
 		}
 		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
 	}
+	
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(BootLoader.knownOSArchValues());
 	}
