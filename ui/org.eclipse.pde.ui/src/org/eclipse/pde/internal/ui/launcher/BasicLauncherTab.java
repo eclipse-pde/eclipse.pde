@@ -36,9 +36,11 @@ public class BasicLauncherTab
 	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
 	private static final String KEY_APPNAME = "BasicLauncherTab.appName";
 	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
-	private static final String KEY_RESTORE_TEXT = "BasicLauncherTab.restoreText";
+	private static final String KEY_RESTORE_TEXT =
+		"BasicLauncherTab.restoreText";
 	private static final String KEY_WTITLE = "BasicLauncherTab.workspace.title";
-	private static final String KEY_WMESSAGE = "BasicLauncherTab.workspace.message";
+	private static final String KEY_WMESSAGE =
+		"BasicLauncherTab.workspace.message";
 	private static final String KEY_NO_JRE = "BasicLauncherTab.noJRE";
 	private static final String KEY_ENTER_WORKSPACE =
 		"BasicLauncherTab.enterWorkspace";
@@ -70,7 +72,7 @@ public class BasicLauncherTab
 		vmInstallations = getAllVMInstances();
 		image = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		image.dispose();
@@ -165,14 +167,19 @@ public class BasicLauncherTab
 			appName = config.getAttribute(APPLICATION, appName);
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
-				String curr = config.getAttribute(LOCATION + String.valueOf(i), (String) null);
+				String curr =
+					config.getAttribute(
+						LOCATION + String.valueOf(i),
+						(String) null);
 				if (curr != null && !items.contains(curr)) {
 					items.add(curr);
 				}
 			}
-			workspaceSelectionItems = (String[]) items.toArray(new String[items.size()]);
+			workspaceSelectionItems =
+				(String[]) items.toArray(new String[items.size()]);
 
-			String vmInstallName = config.getAttribute(VMINSTALL, (String) null);
+			String vmInstallName =
+				config.getAttribute(VMINSTALL, (String) null);
 			if (vmInstallName != null) {
 				for (int i = 0; i < vmInstallations.length; i++) {
 					if (vmInstallName.equals(vmInstallations[i].getName())) {
@@ -186,7 +193,8 @@ public class BasicLauncherTab
 			PDEPlugin.logException(e);
 		}
 		jreCombo.setItems(getVMInstallNames(vmInstallations));
-		jreCombo.select(jreSelectionIndex);
+		if (jreCombo.getItemCount() > 0)
+			jreCombo.select(jreSelectionIndex);
 		vmArgsText.setText(vmArgs);
 		progArgsText.setText(progArgs);
 		applicationNameText.setText(appName);
@@ -206,7 +214,8 @@ public class BasicLauncherTab
 		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
 			new Path(
-				PDECore.getDefault().getSettings().getString(ICoreConstants.PLATFORM_PATH));
+				PDECore.getDefault().getSettings().getString(
+					ICoreConstants.PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();
 	}
@@ -227,7 +236,6 @@ public class BasicLauncherTab
 		config.setAttribute(LOCATION + "0", defaultWorkspace);
 		config.setAttribute(DOCLEAR, false);
 	}
-	
 
 	private void doRestoreDefaults() {
 		String defaultWorkspace = getDefaultWorkspace();
@@ -237,10 +245,11 @@ public class BasicLauncherTab
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
 	}
-	
+
 	static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-		if (install!=null) return install.getName();
+		if (install != null)
+			return install.getName();
 		return null;
 	}
 
@@ -248,7 +257,7 @@ public class BasicLauncherTab
 		String os = TargetPlatform.getOS();
 		String ws = TargetPlatform.getWS();
 		String arch = TargetPlatform.getOSArch();
-		return "-os "+os+" -ws "+ws+" -arch "+arch;
+		return "-os " + os + " -ws " + ws + " -arch " + arch;
 	}
 
 	private void hookListeners() {
@@ -287,18 +296,23 @@ public class BasicLauncherTab
 	}
 
 	private void updateStatus() {
-		updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+		updateStatus(
+			getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		IVMInstall install = getVMInstall();
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
-		config.setAttribute(VMINSTALL, install!=null?install.getName():null);
+		config.setAttribute(
+			VMINSTALL,
+			install != null ? install.getName() : null);
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 
-		config.setAttribute(LOCATION + String.valueOf(0), workspaceCombo.getText());
+		config.setAttribute(
+			LOCATION + String.valueOf(0),
+			workspaceCombo.getText());
 		String[] items = workspaceCombo.getItems();
 		int nEntries = Math.min(items.length, 5);
 		for (int i = 0; i < nEntries; i++) {
@@ -324,7 +338,9 @@ public class BasicLauncherTab
 	private IStatus validateJRESelection() {
 		IVMInstall curr = getVMInstall();
 		if (curr == null) {
-			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_JRE));
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_NO_JRE));
 		}
 		return createStatus(IStatus.OK, "");
 	}
@@ -415,7 +431,9 @@ public class BasicLauncherTab
 		String[] names = new String[installs.length];
 		for (int i = 0; i < installs.length; i++) {
 			names[i] =
-				installs[i].getName() + " - " + installs[i].getVMInstallType().getName();
+				installs[i].getName()
+					+ " - "
+					+ installs[i].getVMInstallType().getName();
 		}
 		return names;
 	}
@@ -426,5 +444,5 @@ public class BasicLauncherTab
 	public Image getImage() {
 		return image;
 	}
-		
+
 }
