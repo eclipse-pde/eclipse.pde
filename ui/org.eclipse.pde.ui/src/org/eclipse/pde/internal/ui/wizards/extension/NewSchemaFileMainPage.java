@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
 import java.lang.reflect.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
@@ -78,7 +77,8 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public void initializeValues(){
 		if (container!=null){
 			pluginIdText.setText(container.getProject().getName());
-			schemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString());
+			if (!isPluginIdFinal())
+				schemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString());
 		}
 		if (point == null)
 			return;

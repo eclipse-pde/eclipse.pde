@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 import java.io.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -136,7 +135,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				validatePage(false);
 			}
 		});
-		if (isPluginIdNeeded()){
+		if (isPluginIdNeeded() && !isPluginIdFinal()){
 			label = new Label(container, SWT.NONE);
 			label.setText(PDEPlugin.getResourceString(KEY_SCHEMA_LOCATION));
 			schemaLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -355,9 +354,11 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public boolean checkFieldsFilled() {
 		
 		boolean empty = idText.getText().length() == 0 || nameText.getText().length() == 0;
-		if (!empty && pluginIdText != null) {
-			empty = getPluginId().length() == 0 || schemaText.getText().length() == 0 || schemaLocationText.getText().length() == 0;
+		if (!empty && isPluginIdNeeded()) {
+			empty = getPluginId().length() == 0 || schemaText.getText().length() == 0 ;
 		}
+		if (!empty && !isPluginIdFinal())
+			empty = schemaLocationText.getText().length() == 0;
 		return !empty;
 	}
 
@@ -376,7 +377,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		setMessage(message, IMessageProvider.WARNING);
 	}
 	private boolean validateContainer() {
-		if (isPluginIdNeeded()){
+		if (isPluginIdNeeded() && !isPluginIdFinal()){
 			String newContainerName = schemaLocationText.getText();
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 			IPath workspacePath = root.getLocation();

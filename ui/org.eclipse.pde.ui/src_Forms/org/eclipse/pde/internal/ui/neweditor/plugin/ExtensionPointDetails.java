@@ -25,10 +25,13 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.model.*;
 import org.eclipse.ui.part.*;
+import org.eclipse.ui.views.navigator.*;
 
 public class ExtensionPointDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
 	private IPluginExtensionPoint fInput;
@@ -88,11 +91,11 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		GridLayout glayout = new GridLayout();
 		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
 		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
-		glayout.numColumns = 2;
+		glayout.numColumns = 3;
 		if (paintedBorder) glayout.verticalSpacing = 7;
 		client.setLayout(glayout);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		
 		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -117,7 +120,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					}
 			}
 		});
-		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", null, true);
+		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", true);
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -141,6 +144,35 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					openSchemaFile(file);
 				else
 					generateSchema();
+			}
+
+			public void browseButtonSelected(FormEntry entry) {
+				final IProject project = getPage().getPDEEditor().getCommonProject();
+				ElementTreeSelectionDialog dialog =
+					new ElementTreeSelectionDialog(
+						PDEPlugin.getActiveWorkbenchShell(),
+						new WorkbenchLabelProvider(),
+						new WorkbenchContentProvider());
+				dialog.setTitle(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.title"));
+				dialog.setMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.desc"));
+				dialog.setDoubleClickSelects(false);
+				dialog.setAllowMultiple(false);
+				dialog.addFilter(new ViewerFilter(){
+					public boolean select(Viewer viewer, Object parentElement, Object element) {
+						return ((IResource)element).getProject().equals(project);
+					}
+				});
+				
+				dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+				dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+				dialog.setInitialSelection(project);
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] elements = dialog.getResult();
+					if (elements.length >0){
+						IResource elem = (IResource) elements[0];
+						fSchemaEntry.setValue(elem.getProjectRelativePath().toString());
+					}
+				}
 			}
 		});
 		createSpacer(toolkit, client, 2);
@@ -276,4 +308,5 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		update();
 		super.refresh();
 	}
+	
 }
