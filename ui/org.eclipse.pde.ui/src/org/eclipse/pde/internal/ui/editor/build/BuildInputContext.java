@@ -131,6 +131,6 @@ public class BuildInputContext extends InputContext {
 	}
 
 	protected String getPartitionName() {
-		return "___build_partition";
+		return "___build_partition"; //$NON-NLS-1$
 	}	
 }

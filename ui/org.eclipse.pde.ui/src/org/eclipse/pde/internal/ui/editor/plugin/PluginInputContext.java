@@ -129,6 +129,6 @@ public class PluginInputContext extends XMLInputContext {
 		model.reconciled(model.getDocument());
 	}
 	protected String getPartitionName() {
-		return "___plugin_partition";
+		return "___plugin_partition"; //$NON-NLS-1$
 	}
 }

@@ -143,6 +143,6 @@ public class BundleInputContext extends UTF8InputContext {
 		model.reconciled(model.getDocument());
 	}
 	protected String getPartitionName() {
-		return "___bundle_partition";
+		return "___bundle_partition"; //$NON-NLS-1$
 	}
 }

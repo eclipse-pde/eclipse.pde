@@ -104,7 +104,7 @@ public class ProductInfoSection extends PDESection {
 	}
 
 	private void handleNewDefinition() {
-		ProductDefinitionWizard wizard = new ProductDefinitionWizard();
+		ProductDefinitionWizard wizard = new ProductDefinitionWizard(getProduct());
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);

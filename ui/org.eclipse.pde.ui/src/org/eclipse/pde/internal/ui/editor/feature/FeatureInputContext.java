@@ -145,6 +145,6 @@ public class FeatureInputContext extends XMLInputContext {
 	protected void reorderInsertEdits(ArrayList ops) {
 	}
 	protected String getPartitionName() {
-		return "___feature_partition";
+		return "___feature_partition"; //$NON-NLS-1$
 	}
 }

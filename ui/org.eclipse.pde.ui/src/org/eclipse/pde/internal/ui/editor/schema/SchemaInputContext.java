@@ -153,6 +153,6 @@ public class SchemaInputContext extends XMLInputContext {
 	protected void reorderInsertEdits(ArrayList ops) {
 	}
 	protected String getPartitionName() {
-		return "___schema_partition";
+		return "___schema_partition"; //$NON-NLS-1$
 	}
 }

@@ -171,6 +171,6 @@ public class SiteInputContext extends XMLInputContext {
 	}
 
 	protected String getPartitionName() {
-		return "___site_partition";
+		return "___site_partition"; //$NON-NLS-1$
 	}
 }

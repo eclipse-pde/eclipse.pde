@@ -93,7 +93,7 @@ public class ProductInputContext extends UTF8InputContext {
 	}
 
 	protected String getPartitionName() {
-		return "___prod_partition";
+		return "___prod_partition"; //$NON-NLS-1$
 	}
 
 }
