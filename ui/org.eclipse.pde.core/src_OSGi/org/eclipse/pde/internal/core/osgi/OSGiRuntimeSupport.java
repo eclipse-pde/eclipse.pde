@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.osgi.bundle.BundlePluginModelBase;
 
 /**
  * @author dejan
@@ -77,5 +78,24 @@ public class OSGiRuntimeSupport implements IAlternativeRuntimeSupport {
 		}
 	}
 	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IAlternativeRuntimeSupport#getTransientSitePath(org.eclipse.pde.core.plugin.IPluginModelBase)
+	 */
+	public IPath getTransientSitePath(IPluginModelBase model) {
+		boolean bundle=false;
+		if (model instanceof BundlePluginModelBase) {
+			bundle=true;
+		}
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			IPath realPath = resource.getLocation();
+			return realPath.removeLastSegments(bundle?4:3);
+		} else {
+			// external
+			//TODO we may need to do something for external
+			// bundle paths here
+			IPath path = new Path(model.getInstallLocation());
+			return path.removeLastSegments(2);
+		}
+	}
 }

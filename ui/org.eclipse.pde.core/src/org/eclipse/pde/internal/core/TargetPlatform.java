@@ -18,6 +18,7 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.IAlternativeRuntimeSupport;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -216,16 +217,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 			String id = plugin.getId();
 			if (id.equals(BOOT_ID))
 				bootModel = model;
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null) {
-				IPath realPath = resource.getLocation();
-				addToSite(realPath.removeLastSegments(3), model, sites);
-			} else {
-				// external
-				IPath path = new Path(model.getInstallLocation());
-				path = path.removeLastSegments(2);
-				addToSite(path, model, sites);
-			}
+			IAlternativeRuntimeSupport altRuntime = PDECore.getDefault().getRuntimeSupport();
+			IPath sitePath = altRuntime.getTransientSitePath(model);
+			addToSite(sitePath, model, sites);
 		}
 
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$

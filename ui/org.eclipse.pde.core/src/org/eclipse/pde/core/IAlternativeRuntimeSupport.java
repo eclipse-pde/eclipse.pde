@@ -17,5 +17,6 @@ public interface IAlternativeRuntimeSupport {
 	IWorkspaceModelManager getWorkspaceModelManager();
 	IExternalModelManager getExternalModelManager();
 	IPath getPluginLocation(IPluginModelBase model);
+	IPath getTransientSitePath(IPluginModelBase model);
 	void shutdown();
 }

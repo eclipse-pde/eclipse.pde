@@ -62,4 +62,18 @@ public class DefaultRuntimeSupport implements IAlternativeRuntimeSupport {
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IAlternativeRuntimeSupport#getTransientSitePath(org.eclipse.pde.core.plugin.IPluginModelBase)
+	 */
+	public IPath getTransientSitePath(IPluginModelBase model) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource != null) {
+			IPath realPath = resource.getLocation();
+			return realPath.removeLastSegments(3);
+		} else {
+			// external
+			IPath path = new Path(model.getInstallLocation());
+			return path.removeLastSegments(2);
+		}
+	}
 }
