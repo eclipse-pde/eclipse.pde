@@ -167,22 +167,34 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private SourceLocation parseSourceLocation(String text) {
+		text = text.trim();
+		if (text.length() == 0)
+			return null;
+		
 		String name = "";
-		String path = "";
 		boolean enabled = true;
+		
+		// get location name
 		int atLoc = text.indexOf('@');
-		if (atLoc != -1)
-			name = text.substring(0, atLoc);
-		else
-			atLoc = 0;
+		// unexpected format
+		if (atLoc < 1)
+			return null;
+		name = text.substring(0, atLoc);
+		
+		// get path
+		String path = "";
 		int commaLoc = text.lastIndexOf(',');
 		if (commaLoc != -1) {
-			String state = text.substring(commaLoc + 1);
-			if (state.equals("f"))
-				enabled = false;
+			if (text.length() > commaLoc + 1)
+				enabled = !(text.substring(commaLoc + 1).equals("f"));
 			path = text.substring(atLoc + 1, commaLoc);
-		} else
+		} else if (text.length() > atLoc + 2) {
 			path = text.substring(atLoc + 1);
+		}
+		
+		if (path.length() == 0)
+			return null;
+		
 		return new SourceLocation(name, new Path(path), enabled);
 	}
 
@@ -275,11 +287,13 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void parseSavedSourceLocations(String text, ArrayList entries) {
-		StringTokenizer stok = new StringTokenizer(text, File.pathSeparator);
+		text = text.replace(File.pathSeparatorChar, ';');
+		StringTokenizer stok = new StringTokenizer(text, ";");
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			SourceLocation location = parseSourceLocation(token);
-			entries.add(location);
+			if (location != null)
+				entries.add(location);
 		}
 	}
 
