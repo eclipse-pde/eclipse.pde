@@ -87,6 +87,12 @@
             class="org.eclipse.pde.internal.ui.preferences.EditorPreferencePage"
             id="org.eclipse.pde.ui.EditorPreferencePage">
       </page>
+      <page
+            name="%preferences.compilers.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage"
+            id="org.eclipse.pde.ui.CompilersPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

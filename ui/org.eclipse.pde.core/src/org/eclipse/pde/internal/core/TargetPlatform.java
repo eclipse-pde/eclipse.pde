@@ -145,7 +145,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IResource resource = model.getUnderlyingResource();
 		if (resource==null || !resource.isLinked()) return null;
 		// linked resource - redirect
-		IPath path = resource.getLocation();
 		return "file:"+resource.getLocation().toOSString();
 	}
 

@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.util.CompilerFlags;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
@@ -372,6 +373,7 @@ public class PDECore extends Plugin {
 				null);
 		} catch (JavaModelException e) {
 		}
+		CompilerFlags.initializeDefaults();
 			
 	}
 

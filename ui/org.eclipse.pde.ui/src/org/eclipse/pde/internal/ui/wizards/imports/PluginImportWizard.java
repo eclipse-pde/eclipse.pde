@@ -84,7 +84,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 */
 	public boolean performFinish() {
 		final ArrayList modelIds = new ArrayList();
-		long start;
+		//long start;
 		try {
 			final IPluginModelBase[] models = page2.getSelectedModels();
 			if (models.length == 0) {
@@ -106,7 +106,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					page1.doExtractPluginSource(),
 					models,
 					modelIds);
-			start = System.currentTimeMillis();
+			//start = System.currentTimeMillis();
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -116,7 +116,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return true; // exception handled
 		}
 		
-		long stop = System.currentTimeMillis();
+		//long stop = System.currentTimeMillis();
 		//System.out.println("Total time: "+(stop-start)+"ms");
 		return true;
 	}

@@ -113,7 +113,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					IStatus.OK,
 					PDEPlugin.getResourceString(KEY_MULTI_PROBLEM),
 					null);
-			long start = System.currentTimeMillis();
+			//long start = System.currentTimeMillis();
 			for (int i = 0; i < models.length; i++) {
 				try {
 					createProject(
@@ -129,7 +129,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			if (!multiStatus.isOK()) {
 				throw new CoreException(multiStatus);
 			}
-			long stop = System.currentTimeMillis();
+			//long stop = System.currentTimeMillis();
 			//System.out.println("Import time: "+(stop-start)+"ms");
 		} finally {
 			monitor.done();
