@@ -6,22 +6,43 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.CoreSettings;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.TargetPlatform;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -31,12 +52,14 @@ public class AdvancedLauncherTab
 		"AdvancedLauncherTab.workspacePlugins";
 	private static final String KEY_EXTERNAL_PLUGINS =
 		"AdvancedLauncherTab.externalPlugins";
-	private static final String KEY_USE_DEFAULT = "AdvancedLauncherTab.useDefault";
+	private static final String KEY_USE_DEFAULT =
+		"AdvancedLauncherTab.useDefault";
 	private static final String KEY_USE_LIST = "AdvancedLauncherTab.useList";
 	private static final String KEY_VISIBLE_LIST =
 		"AdvancedLauncherTab.visibleList";
 	private static final String KEY_DEFAULTS = "AdvancedLauncherTab.defaults";
-	private static final String KEY_PLUGIN_PATH = "AdvancedLauncherTab.pluginPath";
+	private static final String KEY_PLUGIN_PATH =
+		"AdvancedLauncherTab.pluginPath";
 	private static final String KEY_PLUGIN_PATH_TITLE =
 		"AdvancedLauncherTab.pluginPath.title";
 	private static final String KEY_ERROR_NO_PLUGINS =
@@ -44,8 +67,8 @@ public class AdvancedLauncherTab
 	private static final String KEY_ERROR_NO_BOOT =
 		"AdvancedLauncherTab.error.no_boot";
 
-	private Button useDefaultRadio;
-	private Button useListRadio;
+	//private Button useDefaultRadio;
+	//private Button useListRadio;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
 	private Label restoreLabel;
@@ -103,7 +126,8 @@ public class AdvancedLauncherTab
 		}
 
 		public void parseStates(String settings) {
-			StringTokenizer stok = new StringTokenizer(settings, File.pathSeparator);
+			StringTokenizer stok =
+				new StringTokenizer(settings, File.pathSeparator);
 			while (stok.hasMoreTokens()) {
 				String token = stok.nextToken();
 				ExternalState state = new ExternalState();
@@ -146,14 +170,6 @@ public class AdvancedLauncherTab
 
 		createStartingSpace(composite, 1);
 
-		useDefaultRadio = new Button(composite, SWT.RADIO);
-		useDefaultRadio.setText(PDEPlugin.getResourceString(KEY_USE_DEFAULT));
-		fillIntoGrid(useDefaultRadio, 1, false);
-
-		useListRadio = new Button(composite, SWT.RADIO);
-		useListRadio.setText(PDEPlugin.getResourceString(KEY_USE_LIST));
-		fillIntoGrid(useListRadio, 1, false);
-
 		visibleLabel = new Label(composite, SWT.NULL);
 		visibleLabel.setText(PDEPlugin.getResourceString(KEY_VISIBLE_LIST));
 		fillIntoGrid(visibleLabel, 1, false);
@@ -188,18 +204,16 @@ public class AdvancedLauncherTab
 	}
 
 	private void hookListeners() {
-		SelectionAdapter adapter = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				useDefaultChanged();
-			}
-		};
-		useDefaultRadio.addSelectionListener(adapter);
-		useListRadio.addSelectionListener(adapter);
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				BusyIndicator.showWhile(pluginTreeViewer.getControl().getDisplay(), 
+					new Runnable() {
+						public void run() {
 				Vector checked = computeInitialCheckState();
 				pluginTreeViewer.setCheckedElements(checked.toArray());
 				updateStatus();
+						}
+					});
 			}
 		});
 		pluginPathButton.addSelectionListener(new SelectionAdapter() {
@@ -207,12 +221,6 @@ public class AdvancedLauncherTab
 				showPluginPaths();
 			}
 		});
-	}
-
-	private void useDefaultChanged() {
-		boolean useDefault = useDefaultRadio.getSelection();
-		adjustCustomControlEnableState(!useDefault);
-		updateStatus();
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
@@ -232,13 +240,15 @@ public class AdvancedLauncherTab
 	protected Control createPluginList(Composite parent) {
 		pluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
 		pluginTreeViewer.setContentProvider(new PluginContentProvider());
-		pluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginTreeViewer.setLabelProvider(
+			PDEPlugin.getDefault().getLabelProvider());
 		pluginTreeViewer.setAutoExpandLevel(2);
 		pluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) event.getElement();
+					IPluginModelBase model =
+						(IPluginModelBase) event.getElement();
 					handleCheckStateChanged(model, event.getChecked());
 				} else {
 					handleGroupStateChanged(element, event.getChecked());
@@ -275,7 +285,8 @@ public class AdvancedLauncherTab
 		IPluginModelBase[] plugins =
 			PDECore.getDefault().getExternalModelManager().getModels();
 		IPluginModelBase[] fragments =
-			PDECore.getDefault().getExternalModelManager().getFragmentModels(null);
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(
+				null);
 		return getAllPlugins(plugins, fragments);
 	}
 
@@ -291,29 +302,31 @@ public class AdvancedLauncherTab
 
 	static IPluginModelBase[] getWorkspacePlugins() {
 		IPluginModelBase[] plugins =
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+			PDECore
+				.getDefault()
+				.getWorkspaceModelManager()
+				.getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
-			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			PDECore
+				.getDefault()
+				.getWorkspaceModelManager()
+				.getWorkspaceFragmentModels();
 		return getAllPlugins(plugins, fragments);
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
+		// Need to set these before we refresh the viewer
+		//useDefaultRadio.setSelection(useDefault);
+		//useListRadio.setSelection(!useDefault);
+		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		boolean useDefault = true;
-
 		try {
 			useDefault = config.getAttribute(USECUSTOM, useDefault);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		// Need to set these before we refresh the viewer
-		useDefaultRadio.setSelection(useDefault);
-		useListRadio.setSelection(!useDefault);
-		pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		Vector result = null;
-
-		if (useDefault) {
-			result = computeInitialCheckState();
-		} else {
+		{
 			result = new Vector();
 			boolean addWorkspace = false;
 			boolean addRoot = false;
@@ -322,27 +335,32 @@ public class AdvancedLauncherTab
 			IPluginModelBase[] ws = getWorkspacePlugins();
 
 			try {
-
 				// Deselected workspace plug-ins
-				String deselectedPluginIDs = config.getAttribute(WSPROJECT, (String) null);
-				if (deselectedPluginIDs != null) {
+				String deselectedPluginIDs =
+					config.getAttribute(WSPROJECT, (String) null);
+				if (!useDefault && deselectedPluginIDs != null) {
 					ArrayList deselected = new ArrayList();
 					StringTokenizer tok =
-						new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
+						new StringTokenizer(
+							deselectedPluginIDs,
+							File.pathSeparator);
 					while (tok.hasMoreTokens()) {
 						deselected.add(tok.nextToken());
 					}
 					for (int i = 0; i < ws.length; i++) {
 						IPluginModelBase desc = ws[i];
-						if (!deselected.contains(desc.getPluginBase().getId())) {
+						if (!deselected
+							.contains(desc.getPluginBase().getId())) {
 							if (!addWorkspace) {
 								addRoot = true;
 								result.add(workspacePlugins);
 							}
 							result.add(desc);
-						} else {
-							mixed = true;
 						}
+					}
+				} else {
+					for (int i = 0; i < ws.length; i++) {
+						result.add(ws[i]);
 					}
 				}
 				if (addRoot && mixed) {
@@ -354,14 +372,16 @@ public class AdvancedLauncherTab
 
 				IPluginModelBase[] ex = getExternalPlugins();
 
-				String exSettings = config.getAttribute(EXTPLUGINS, (String) null);
+				String exSettings =
+					config.getAttribute(EXTPLUGINS, (String) null);
 				if (exSettings == null)
 					exSettings = "";
 				ExternalStates states = new ExternalStates(exSettings);
 
 				for (int i = 0; i < ex.length; i++) {
 					IPluginModelBase desc = ex[i];
-					ExternalState es = states.getState(desc.getPluginBase().getId());
+					ExternalState es =
+						states.getState(desc.getPluginBase().getId());
 					if (es != null) {
 						// use the saved state
 						if (es.state) {
@@ -391,7 +411,7 @@ public class AdvancedLauncherTab
 			}
 		}
 		pluginTreeViewer.setCheckedElements(result.toArray());
-		adjustCustomControlEnableState(!useDefault);
+		//adjustCustomControlEnableState(false);
 		updateStatus();
 	}
 
@@ -441,7 +461,9 @@ public class AdvancedLauncherTab
 		return checked;
 	}
 
-	private void handleCheckStateChanged(IPluginModelBase model, boolean checked) {
+	private void handleCheckStateChanged(
+		IPluginModelBase model,
+		boolean checked) {
 		boolean external = model.getUnderlyingResource() == null;
 		NamedElement parent = external ? externalPlugins : workspacePlugins;
 		IPluginModelBase[] siblings;
@@ -500,15 +522,12 @@ public class AdvancedLauncherTab
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(USECUSTOM, true);
+		//config.setAttribute(USECUSTOM, true);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		boolean useDefault = useDefaultRadio.getSelection();
-		config.setAttribute(USECUSTOM, useDefault);
+		config.setAttribute(USECUSTOM, false);
 
-		if (useDefault)
-			return;
 		// store deselected projects
 		StringBuffer wbuf = new StringBuffer();
 		IPluginModelBase[] workspaceModels = getWorkspacePlugins();
@@ -543,7 +562,8 @@ public class AdvancedLauncherTab
 			PluginPathDialog dialog =
 				new PluginPathDialog(pluginPathButton.getShell(), urls);
 			dialog.create();
-			dialog.getShell().setText(PDEPlugin.getResourceString(KEY_PLUGIN_PATH_TITLE));
+			dialog.getShell().setText(
+				PDEPlugin.getResourceString(KEY_PLUGIN_PATH_TITLE));
 			dialog.getShell().setSize(500, 400);
 			dialog.open();
 		} catch (CoreException e) {
@@ -587,7 +607,7 @@ public class AdvancedLauncherTab
 
 	public IPluginModelBase[] getPlugins() {
 		ArrayList res = new ArrayList();
-		boolean useDefault = useDefaultRadio.getSelection();
+		boolean useDefault = false; //useDefaultRadio.getSelection();
 		if (useDefault) {
 			IPluginModelBase[] models = getWorkspacePlugins();
 			Hashtable wtable = new Hashtable();
@@ -611,7 +631,8 @@ public class AdvancedLauncherTab
 					res.add(element);
 			}
 		}
-		return (IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
+		return (IPluginModelBase[]) res.toArray(
+			new IPluginModelBase[res.size()]);
 	}
 	public String getName() {
 		return PDEPlugin.getResourceString(KEY_NAME);

@@ -43,7 +43,7 @@
             name="%perspective.name"
             icon="icons/full/view16/plugin_persp.gif"
             class="org.eclipse.pde.internal.ui.PDEPerspective"
-            id="org.eclipse.pde.PDEPerspective">
+            id="org.eclipse.pde.ui.PDEPerspective">
       </perspective>
    </extension>
    <extension

@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -105,6 +106,7 @@ public class NewFeatureProjectWizard
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 2);
 		CoreUtility.createProject(project, location, monitor);
 		project.open(monitor);
+		CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 		monitor.subTask(PDEPlugin.getResourceString(CREATING_MANIFEST));
 		// create install.xml
