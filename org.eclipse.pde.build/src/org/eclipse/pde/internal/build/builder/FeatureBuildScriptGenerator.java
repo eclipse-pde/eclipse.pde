@@ -728,11 +728,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription model = (BundleDescription) iterator.next();
 			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
 			generator.setBuildSiteFactory(siteFactory);
+			generator.setCompiledElements(getCompiledElements());
 			generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
 			generator.setFeatureGenerator(this);
 			generator.setPluginPath(getPluginPath());
 			generator.setBuildingOSGi(isBuildingOSGi());
-			generator.setCompiledElements(getCompiledElements());
 			generator.setDevEntries(devEntries);
 			generator.generate();
 		}
