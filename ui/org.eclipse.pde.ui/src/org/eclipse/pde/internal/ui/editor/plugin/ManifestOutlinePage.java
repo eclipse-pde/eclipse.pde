@@ -16,6 +16,9 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.ui.model.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.ui.model.bundle.PackageFriend;
 
 public class ManifestOutlinePage extends FormOutlinePage {
 	/**
@@ -49,9 +52,11 @@ public class ManifestOutlinePage extends FormOutlinePage {
 	}
 	protected String getParentPageId(Object item) {
 		String pageId = null;
-		if (item instanceof IPluginImport)
+		if (item instanceof IPluginImport || item instanceof ImportPackageObject)
 			pageId = DependenciesPage.PAGE_ID;
-		else if (item instanceof IPluginLibrary)
+		else if (item instanceof IPluginLibrary 
+                || item instanceof ExportPackageObject
+                || item instanceof PackageFriend)
 			pageId = RuntimePage.PAGE_ID;
 		else if (item instanceof IPluginExtension)
 			pageId = ExtensionsPage.PAGE_ID;
