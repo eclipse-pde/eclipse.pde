@@ -112,26 +112,32 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 
 			createProject(project, new SubProgressMonitor(monitor, 1));
-
-			switch (fImportType) {
-				case IMPORT_BINARY :
-					importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
-					break;
-				case IMPORT_BINARY_WITH_LINKS :
-					importAsBinaryWithLinks(
-						project,
-						model,
-						new SubProgressMonitor(monitor, 4));
-					break;
-				case IMPORT_WITH_SOURCE :
-					if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util") //$NON-NLS-1$ //$NON-NLS-2$
-							|| id.equals("org.eclipse.osgi.services") || id.equals("org.eclipse.swt")) { //$NON-NLS-1$ //$NON-NLS-2$
+			
+			File file = new File(model.getInstallLocation());
+			if (file.isFile()) {
+				// Plugin-in-Jar format
+				extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 4));
+			} else {
+				switch (fImportType) {
+					case IMPORT_BINARY :
 						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
-					} else {
-						importWithSource(project, model, new SubProgressMonitor(monitor, 4));
-					}
+						break;
+					case IMPORT_BINARY_WITH_LINKS :
+						importAsBinaryWithLinks(
+							project,
+							model,
+							new SubProgressMonitor(monitor, 4));
+						break;
+					case IMPORT_WITH_SOURCE :
+						if (id.equals("org.apache.ant") || id.equals("org.eclipse.osgi.util") //$NON-NLS-1$ //$NON-NLS-2$
+								|| id.equals("org.eclipse.osgi.services") || id.equals("org.eclipse.swt")) { //$NON-NLS-1$ //$NON-NLS-2$
+							importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
+						} else {
+							importWithSource(project, model, new SubProgressMonitor(monitor, 4));
+						}
+				}
 			}
-
+			
 			setProjectDescription(project, model);
 
 			if (project.hasNature(JavaCore.NATURE_ID))
@@ -252,7 +258,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					if (!dest.exists()) {
 						dest.create(true, true, null);
 					}
-					extractZipFile(srcZip, dest, monitor);
+					extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), monitor);
 					extractResources(jarFile, dest, monitor);
 					srcZip.delete(true, null);
 					jarFile.delete(true, null);
@@ -411,15 +417,15 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void extractZipFile(IResource res, IFolder dest, IProgressMonitor monitor)
+	private void extractZipFile(File file, IPath destPath, IProgressMonitor monitor)
 		throws CoreException {
 		ZipFile zipFile = null;
 		try {
-			zipFile = new ZipFile(res.getLocation().toFile());
+			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			importContent(
 				provider.getRoot(),
-				dest.getFullPath(),
+				destPath,
 				provider,
 				null,
 				monitor);
@@ -523,7 +529,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		throws JavaModelException {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
-		if (fImportType == IMPORT_BINARY_WITH_LINKS) {
+		if (new File(model.getInstallLocation()).isFile()) {
+			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), project.getFullPath(), null);
+			if (!entries.contains(entry))
+				entries.add(entry);
+		} if (fImportType == IMPORT_BINARY_WITH_LINKS) {
 			getLinkedLibraries(project, model, entries);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
@@ -618,6 +628,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 	
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
+		// Always return true when the model is in the plugin-in-jar format
+		if (new File(model.getInstallLocation()).isFile())
+			return true;
 		boolean isJavaProject = false;
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
