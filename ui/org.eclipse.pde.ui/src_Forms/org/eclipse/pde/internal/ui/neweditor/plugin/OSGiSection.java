@@ -212,7 +212,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		gd.horizontalSpan = 2;
 		exceptionLabel.setLayoutData(gd);
 		exceptionLabel.setFont(boldFont);
-		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore activation rule when loaded classes belong to the following subset of packages:");
+		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		exceptionPkgLabel.setLayoutData(gd);
