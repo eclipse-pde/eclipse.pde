@@ -148,7 +148,7 @@ public abstract class PDEMultiPageEditor
 		clipboard = new Clipboard(parent.getDisplay());
 		formWorkbook.createControl(parent);
 		formWorkbook.addFormSelectionListener(new IFormSelectionListener() {
-			public void formSelected(IFormPage page) {
+			public void formSelected(IFormPage page, boolean setFocus) {
 				updateSynchronizedViews((IPDEEditorPage) page);
 				getContributor().setActivePage((IPDEEditorPage) page);
 				if (page instanceof PDEFormPage) {
@@ -157,7 +157,8 @@ public abstract class PDEMultiPageEditor
 						setSelection(formPage.getSelection());
 				}
 				IPDEEditorPage pdePage = (IPDEEditorPage) page;
-				pdePage.setFocus();
+				if (setFocus) 
+					pdePage.setFocus();
 			}
 		});
 		MenuManager manager = new MenuManager();
@@ -413,7 +414,7 @@ public abstract class PDEMultiPageEditor
 		return null;
 	}
 	public void gotoMarker(IMarker marker) {
-		showPage(getPage(getSourcePageId())).gotoMarker(marker);
+		showPage(getPage(getSourcePageId()), false).gotoMarker(marker);
 	}
 	public void init(IEditorSite site, IEditorInput input)
 		throws PartInitException {
@@ -591,8 +592,12 @@ public abstract class PDEMultiPageEditor
 			}
 		}
 	}
-	public IPDEEditorPage showPage(final IPDEEditorPage page) {
-		formWorkbook.selectPage(page);
+	
+	public IPDEEditorPage showPage(IPDEEditorPage page) {
+		return showPage(page, true);
+	}
+	public IPDEEditorPage showPage(IPDEEditorPage page, boolean setFocus) {
+		formWorkbook.selectPage(page, setFocus);
 		return page;
 	}
 	void updateDocument() {
