@@ -96,7 +96,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 
 	public NewFeaturePatchWizard() {
 		super();
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPTCH_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
