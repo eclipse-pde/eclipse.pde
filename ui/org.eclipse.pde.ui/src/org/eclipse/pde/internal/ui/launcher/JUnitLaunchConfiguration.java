@@ -27,14 +27,14 @@ import org.eclipse.update.configurator.*;
  */
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration implements ILauncherSettings {
 
-	private static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
+	protected static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
 		
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication"; //$NON-NLS-1$
 	
-	private static IPluginModelBase[] registryPlugins;
-	private File fConfigDir = null;
+	protected static IPluginModelBase[] registryPlugins;
+	protected File fConfigDir = null;
 
 	public void launch(
 		ILaunchConfiguration configuration,
@@ -146,7 +146,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.PLUGIN_ID, code, message, exception));
 	}
 	
-	private String[] computeProgramArguments(
+	protected String[] computeProgramArguments(
 		ILaunchConfiguration configuration,
 		IType[] testTypes,
 		int port,
@@ -261,7 +261,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 	
-	private IPluginModelBase[] addRequiredPlugins(TreeMap pluginMap)
+	protected IPluginModelBase[] addRequiredPlugins(TreeMap pluginMap)
 		throws CoreException {
 		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
 			pluginMap.put(
@@ -280,7 +280,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			new IPluginModelBase[pluginMap.size()]);
 	}
 	
-	private IPluginModelBase findPlugin(String id) throws CoreException {
+	protected IPluginModelBase findPlugin(String id) throws CoreException {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel(id);
 		if (model != null)
@@ -304,7 +304,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return null;
 	}
 	
-	private String[] computeVMArguments(ILaunchConfiguration configuration) throws CoreException {
+	protected String[] computeVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		return new ExecutionArguments(getVMArguments(configuration),"").getVMArgumentsArray();		 //$NON-NLS-1$
 	}
 	
@@ -322,13 +322,13 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		LauncherUtils.setDefaultSourceLocator(configuration, launch);
 	}
 	
-	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
+	protected String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
 		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
 			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString(); //$NON-NLS-1$
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				 //$NON-NLS-1$
 	}
 	
-	private String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
+	protected String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
 		try {
 			String application = configuration.getAttribute(APPLICATION, (String)null);
 			if (CORE_APPLICATION.equals(application) || !requiresUI(configuration))
@@ -392,7 +392,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 	
-	private static void addPluginAndPrereqs(String id, TreeMap map) {
+	protected static void addPluginAndPrereqs(String id, TreeMap map) {
 		if (map.containsKey(id))
 			return;
 		
@@ -420,7 +420,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	}
 
 	
-	private File getConfigDir(ILaunchConfiguration config) {
+	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null)
 			fConfigDir = LauncherUtils.createConfigArea(config);
 	

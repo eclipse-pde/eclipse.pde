@@ -25,11 +25,11 @@ import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 
 			implements ILauncherSettings {
-	private static final String KEY_BAD_FEATURE_SETUP =
+	protected static final String KEY_BAD_FEATURE_SETUP =
 		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup"; //$NON-NLS-1$
-	private static final String KEY_NO_STARTUP =
+	protected static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
-	private File fConfigDir = null;
+	protected File fConfigDir = null;
 	
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -79,7 +79,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		}
 	}
 
-	private VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration)
+	protected VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration)
 		throws CoreException {
 		String[] classpath = LauncherUtils.constructClasspath(configuration);
 		if (classpath == null) {
@@ -105,7 +105,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		return runnerConfig;
 	}
 	
-	private String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+	protected String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
 		// If a product is specified, then add it to the program args
@@ -206,11 +206,11 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
 	}
 	
-	private String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
+	protected String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		return new ExecutionArguments(configuration.getAttribute(VMARGS,""),"").getVMArgumentsArray(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 			
-	private void validateFeatures() throws CoreException {
+	protected void validateFeatures() throws CoreException {
 		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 		String lastSegment = installPath.lastSegment();
 		boolean badStructure = lastSegment == null;
@@ -227,21 +227,21 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		ensureProductFilesExist(getProductPath());		
 	}
 	
-	private IPath getInstallPath() {
+	protected IPath getInstallPath() {
 		return PDEPlugin.getWorkspace().getRoot().getLocation();
 	}
 	
-	private IPath getProductPath() {
+	protected IPath getProductPath() {
 		return getInstallPath().removeLastSegments(1);
 	}
 
-	private String computeShowsplashArgument() {
+	protected String computeShowsplashArgument() {
 		IPath eclipseHome = ExternalModelManager.getEclipseHome();
 		IPath fullPath = eclipseHome.append("eclipse"); //$NON-NLS-1$
 		return fullPath.toOSString() + " -showsplash 600"; //$NON-NLS-1$
 	}
 
-	private void ensureProductFilesExist(IPath productArea) {
+	protected void ensureProductFilesExist(IPath productArea) {
 		File productDir = productArea.toFile();		
 		File marker = new File(productDir, ".eclipseproduct"); //$NON-NLS-1$
 		IPath eclipsePath = ExternalModelManager.getEclipseHome();
@@ -262,7 +262,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		}
 	}
 
-	private void copyFile(IPath eclipsePath, String name, File target) {
+	protected void copyFile(IPath eclipsePath, String name, File target) {
 		File source = new File(eclipsePath.toFile(), name);
 		if (source.exists() == false)
 			return;
@@ -308,7 +308,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		return LauncherUtils.getAffectedProjects(configuration);
 	}
 	
-	private File getConfigDir(ILaunchConfiguration config) {
+	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
 			try {
 				if (config.getAttribute(USEFEATURES, false) && config.getAttribute(CONFIG_USE_DEFAULT_AREA, true)) {
