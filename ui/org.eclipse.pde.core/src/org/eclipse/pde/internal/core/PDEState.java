@@ -64,7 +64,7 @@ public class PDEState {
 	public BundleDescription addBundle(File bundleLocation) {
 		Dictionary manifest;
 		manifest = loadManifest(bundleLocation);
-		if (manifest == null) {
+		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			return null;
 		}
 		return addBundle(manifest, bundleLocation);
