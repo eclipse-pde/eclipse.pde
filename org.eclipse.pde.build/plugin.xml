@@ -3,7 +3,7 @@
    id="org.eclipse.pde.build"
    name="%pluginName"
    version="2.2"
-   provider-name="Object Technology International, Inc.">
+   provider-name="%providerName">
 
 <requires>
    <import plugin="org.eclipse.ant.core"/>
