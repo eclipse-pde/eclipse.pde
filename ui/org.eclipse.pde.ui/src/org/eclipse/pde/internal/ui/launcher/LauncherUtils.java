@@ -577,8 +577,40 @@ public class LauncherUtils {
 		return optionsFileName;
 	}
 
-	public static String getPrimaryFeatureId() {
+	public static String getBrandingPluginID(ILaunchConfiguration configuration) throws CoreException {
 		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		String result = null;
+		if (isOSGi) {
+			if (configuration.getAttribute(ILauncherSettings.USE_PRODUCT, false)) {
+				// return the product id.  The TargetPlatform class will parse the plug-in ID
+				result = configuration.getAttribute(ILauncherSettings.PRODUCT, (String)null);
+			} else {
+				// find the product associated with the application, and return its contributing plug-in
+				String appID = configuration.getAttribute(ILauncherSettings.APPLICATION, getDefaultApplicationName());
+				IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+				for (int i = 0; i < plugins.length; i++) {
+					String id = plugins[i].getPluginBase().getId();
+					IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+					for (int j = 0; j < extensions.length; j++) {
+						String point = extensions[j].getPoint();
+						if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+							IPluginObject[] children = extensions[j].getChildren();
+							if (children.length != 1)
+								continue;
+							if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+								continue;
+							if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) {
+								result = id;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (result != null)
+			return result;
+		
 		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		 //$NON-NLS-1$ //$NON-NLS-2$
 		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), filename);		
 

@@ -136,7 +136,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			if (pluginMap == null) 
 				return null;
 				
-			String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
+			String primaryFeatureId = LauncherUtils.getBrandingPluginID(configuration);
 			TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
 					getConfigDir(configuration),
@@ -190,15 +190,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add(tokenizer.nextToken());
 		}
 		
-		// show splash only if we are launching the default application
-		boolean showSplash = true;
-		int index = programArgs.indexOf("-application"); //$NON-NLS-1$
-		if (index != -1 && index <= programArgs.size() - 2) {
-			if (!programArgs.get(index + 1).equals(LauncherUtils.getDefaultApplicationName())) {
-				showSplash = false;
-			}
-		}
-		if (showSplash && !programArgs.contains("-nosplash")) { //$NON-NLS-1$
+		if (!programArgs.contains("-nosplash")) { //$NON-NLS-1$
 			programArgs.add(0, "-showsplash"); //$NON-NLS-1$
 			programArgs.add(1, computeShowsplashArgument());
 		}

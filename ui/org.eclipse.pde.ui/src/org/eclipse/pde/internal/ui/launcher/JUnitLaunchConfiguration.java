@@ -187,7 +187,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(targetWorkspace);
 		
 		// Create the platform configuration for the runtime workbench
-		String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
+		String primaryFeatureId = LauncherUtils.getBrandingPluginID(configuration);
 		
 		TargetPlatform.createPlatformConfigurationArea(
 			pluginMap,
