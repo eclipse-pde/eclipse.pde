@@ -150,7 +150,7 @@ public class ExtensionsSection extends TreeSection
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		extensionTree = treePart.getTreeViewer();
-		extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		//extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		extensionTree.setContentProvider(new ExtensionContentProvider());
 		extensionTree.setLabelProvider(new ExtensionLabelProvider());
 		drillDownAdapter = new DrillDownAdapter(extensionTree);
