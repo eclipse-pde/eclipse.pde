@@ -304,7 +304,7 @@ public class ManifestEditor
 		}
 		return false;
 	}
-	private static void openExternalPlugin(IPluginBase pluginInfo) {
+	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
 		String manifest =
 			pluginInfo.getModel().isFragmentModel()
 				? "fragment.xml"
@@ -318,11 +318,12 @@ public class ManifestEditor
 			String editorId = PDEPlugin.getPluginId() + ".manifestEditor";
 			try {
 				SystemFileEditorInput input = new SystemFileEditorInput(file);
-				PDEPlugin.getActivePage().openEditor(input, editorId);
+				return (ManifestEditor)PDEPlugin.getActivePage().openEditor(input, editorId);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			}
 		}
+		return null;
 	}
 
 	public static void openPluginEditor(String pluginId) {
@@ -334,24 +335,25 @@ public class ManifestEditor
 		}
 	}
 
-	public static void openPluginEditor(IPluginBase plugin) {
+	public static ManifestEditor openPluginEditor(IPluginBase plugin) {
 		IResource underlyingResource =
 			plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
-			openExternalPlugin(plugin);
+			return openExternalPlugin(plugin);
 		} else {
-			openWorkspacePlugin((IFile) underlyingResource);
+			return openWorkspacePlugin((IFile) underlyingResource);
 		}
 	}
 
-	private static void openWorkspacePlugin(IFile pluginFile) {
+	private static ManifestEditor openWorkspacePlugin(IFile pluginFile) {
 		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);
-			PDEPlugin.getActivePage().openEditor(input, editorId);
+			return (ManifestEditor)PDEPlugin.getActivePage().openEditor(input, editorId);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+		return null;
 	}
 	protected boolean updateModel() {
 		IPluginModelBase model = (IPluginModelBase) getModel();
