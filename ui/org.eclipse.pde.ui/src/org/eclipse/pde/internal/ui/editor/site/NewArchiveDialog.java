@@ -10,77 +10,160 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.parts.StatusDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
-public class NewArchiveDialog extends BaseNewDialog {
-	private Text pathText;
-	private Text urlText;
+public class NewArchiveDialog extends StatusDialog {
 
-	public NewArchiveDialog(Shell shell, ISiteModel siteModel, ISiteArchive archive) {
-		super(shell, siteModel, archive);
+	private IStatus fErrorStatus;
+	private Button fOkButton;
+
+	private IStatus fOkStatus;
+
+	private Text fPathText;
+
+	private ISiteArchive fSiteArchive;
+
+	private ISiteModel fSiteModel;
+
+	private Text fUrlText;
+
+	public NewArchiveDialog(Shell shell, ISiteModel siteModel,
+			ISiteArchive archive) {
+		super(shell);
+		this.fSiteModel = siteModel;
+		this.fSiteArchive = archive;
 	}
 
-	protected void createEntries(Composite container) {
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		dialogChanged();
+	}
+
+	protected Control createDialogArea(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 10;
+		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		container.setLayoutData(gd);
+
+		createEntries(container);
+
+		if (fSiteArchive != null)
+			if (fSiteModel.isEditable() == false) {
+				fOkButton.setEnabled(false);
+			}
+		ModifyListener listener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		};
+		fPathText.addModifyListener(listener);
+		fUrlText.addModifyListener(listener);
+		setTitle(PDEPlugin.getResourceString(PDEPlugin
+				.getResourceString("SiteEditor.NewArchiveDialog.title"))); //$NON-NLS-1$
+		Dialog.applyDialogFont(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_ARCHIVE_DIALOG);
+		return container;
+	}
+
+	private void createEntries(Composite container) {
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.path")); //$NON-NLS-1$
-		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		pathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setText(PDEPlugin
+				.getResourceString("SiteEditor.NewArchiveDialog.path")); //$NON-NLS-1$
+		fPathText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.url"))); //$NON-NLS-1$
-		urlText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		ISiteArchive archive = (ISiteArchive)getSiteObject();
-		if (archive != null) {
-			setIfDefined(urlText, archive.getURL());
-			setIfDefined(pathText, archive.getPath());
+		label.setText(PDEPlugin.getResourceString(PDEPlugin
+				.getResourceString("SiteEditor.NewArchiveDialog.url"))); //$NON-NLS-1$
+		fUrlText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fUrlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		if (fSiteArchive != null) {
+			setIfDefined(fUrlText, fSiteArchive.getURL());
+			setIfDefined(fPathText, fSiteArchive.getPath());
 		}
 	}
 
-	protected String getDialogTitle() {
-		return PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.title")); //$NON-NLS-1$
+	private IStatus createErrorStatus(String message) {
+		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK,
+				message, null);
 	}
 
-	protected String getHelpId() {
-		return IHelpContextIds.NEW_ARCHIVE_DIALOG;
-	}
-
-	protected String getEmptyErrorMessage() {
-		return PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.error")); //$NON-NLS-1$
-	}
-
-	protected void hookListeners(ModifyListener modifyListener) {
-		pathText.addModifyListener(modifyListener);
-		urlText.addModifyListener(modifyListener);
-	}
-
-	protected void dialogChanged() {
+	private void dialogChanged() {
 		IStatus status = null;
-		if (urlText.getText().length() == 0
-			|| pathText.getText().length() == 0)
+		if (fUrlText.getText().length() == 0
+				|| fPathText.getText().length() == 0)
 			status = getEmptyErrorStatus();
 		else {
-			if (hasPath(pathText.getText()))
-				status =
-					createErrorStatus(PDEPlugin.getResourceString("NewArchiveDialog.alreadyExists")); //$NON-NLS-1$
+			if (hasPath(fPathText.getText()))
+				status = createErrorStatus(PDEPlugin
+						.getResourceString("NewArchiveDialog.alreadyExists")); //$NON-NLS-1$
 		}
 		if (status == null)
 			status = getOKStatus();
 		updateStatus(status);
 	}
 
+	private void execute() {
+		boolean add = (fSiteArchive == null);
+		if (fSiteArchive == null)
+			fSiteArchive = fSiteModel.getFactory().createArchive();
+
+		try {
+			fSiteArchive.setURL(fUrlText.getText());
+			fSiteArchive.setPath(fPathText.getText());
+			if (add)
+				fSiteModel.getSite().addArchives(
+						new ISiteArchive[] { fSiteArchive });
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	private IStatus getEmptyErrorStatus() {
+		if (fErrorStatus == null)
+			fErrorStatus = createErrorStatus(PDEPlugin
+					.getResourceString(PDEPlugin
+							.getResourceString("SiteEditor.NewArchiveDialog.error"))); //$NON-NLS-1$
+		return fErrorStatus;
+	}
+
+	private IStatus getOKStatus() {
+		if (fOkStatus == null)
+			fOkStatus = new Status(IStatus.OK, PDEPlugin.getPluginId(),
+					IStatus.OK, "", //$NON-NLS-1$
+					null);
+		return fOkStatus;
+	}
+
 	private boolean hasPath(String path) {
-		ISiteArchive thisArchive = (ISiteArchive) getSiteObject();
-		String currentPath = thisArchive != null ? thisArchive.getPath() : null;
-		
-		ISiteModel model = getSiteModel();
+		String currentPath = fSiteArchive != null ? fSiteArchive.getPath()
+				: null;
+
+		ISiteModel model = fSiteModel;
 		ISiteArchive[] archives = model.getSite().getArchives();
 		for (int i = 0; i < archives.length; i++) {
 			ISiteArchive archive = archives[i];
@@ -95,25 +178,14 @@ public class NewArchiveDialog extends BaseNewDialog {
 		}
 		return false;
 	}
-	
-	private ISiteArchive getArchive() {
-		return (ISiteArchive)getSiteObject();
+
+	protected void okPressed() {
+		execute();
+		super.okPressed();
 	}
 
-	protected void execute() {
-		ISiteModel siteModel = getSiteModel();
-		ISiteArchive archive = getArchive();
-		boolean add = (archive == null);
-		if (archive == null)
-			archive = siteModel.getFactory().createArchive();
-
-		try {
-			archive.setURL(urlText.getText());
-			archive.setPath(pathText.getText());
-			if (add)
-				siteModel.getSite().addArchives(new ISiteArchive[] { archive });
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+	private void setIfDefined(Text text, String value) {
+		if (value != null)
+			text.setText(value);
 	}
 }

@@ -37,8 +37,8 @@ public class SiteSourcePage extends XMLSourcePage {
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {
 	}
 	protected ISortableContentOutlinePage createOutlinePage() {
-		//TODO remove this method when the above three stubs
+		// TODO remove this method when the above three stubs
 		// are implemented
-		return null;
+		return new SiteOutlinePage((PDEFormEditor) getEditor());
 	}
 }

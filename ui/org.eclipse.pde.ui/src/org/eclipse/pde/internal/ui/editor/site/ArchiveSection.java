@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -215,10 +216,12 @@ public class ArchiveSection extends PDESection {
 		});
 	}
 	private void handleSelectionChanged() {
+		ISelection selection = fViewer.getSelection();
+		getManagedForm().fireSelectionChanged(this, selection);
+		getPage().getPDEEditor().setSelection(selection);
 		if (!isEditable()) {
 			return;
 		}
-		ISelection selection = fViewer.getSelection();
 		if (selection != null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			fRemoveButton.setEnabled(ssel.size() > 0);
@@ -302,5 +305,15 @@ public class ArchiveSection extends PDESection {
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		control.setMenu(popupMenuManager.createContextMenu(control));
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
+	 */
+	public boolean setFormInput(Object input) {
+		if (input instanceof ISiteArchive){
+			fViewer.setSelection(new StructuredSelection(input), true);
+			return true;
+		}
+		return super.setFormInput(input);
 	}
 }

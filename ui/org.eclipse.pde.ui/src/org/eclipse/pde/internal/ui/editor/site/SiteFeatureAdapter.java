@@ -57,4 +57,14 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 		}
 		return super.equals(obj);
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		int code = feature.getId().hashCode()+feature.getVersion().hashCode();
+		if(category!=null){
+			code+=category.hashCode();
+		}
+		return code;
+	}
 }

@@ -27,7 +27,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class FeaturesPage extends PDEFormPage {
 	public static final String PAGE_ID = "features"; //$NON-NLS-1$
-//	private FeatureSection featureSection;
 	private CategorySection categorySection;
 	private SiteFeaturesBlock block;
 	public class SiteFeaturesBlock extends PDEMasterDetailsBlock {

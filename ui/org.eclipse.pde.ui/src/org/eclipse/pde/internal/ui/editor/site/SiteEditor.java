@@ -169,7 +169,7 @@ public class SiteEditor extends MultiSourceEditor {
 	}
 	
 	protected ISortableContentOutlinePage createContentOutline() {
-		return null;//return new SiteOutlinePage(this);
+		return new SiteOutlinePage(this);
 	}
 		
 	/*

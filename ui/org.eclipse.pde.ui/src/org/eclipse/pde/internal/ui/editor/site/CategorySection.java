@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
@@ -37,7 +38,6 @@ import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -52,7 +52,6 @@ import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -75,12 +74,16 @@ public class CategorySection extends TreeSection {
 	private static final int BUTTON_BUILD_FEATURE = 3;
 
 	private static final int BUTTON_BUILD_ALL = 4;
+	
+	private static int newCategoryCounter;
 
 	private ISiteModel fModel;
 
 	private TreePart fCategoryTreePart;
 
 	private TreeViewer fCategoryViewer;
+	
+	private LabelProvider fSiteLabelProvider;
 
 	class CategoryContentProvider extends DefaultContentProvider implements
 			ITreeContentProvider {
@@ -142,51 +145,6 @@ public class CategorySection extends TreeSection {
 		}
 	}
 
-	class CategoryLabelProvider extends LabelProvider {
-
-		private Image siteFeatureImage;
-
-		private Image missingSiteFeatureImage;
-
-		private Image catDefImage;
-
-		public CategoryLabelProvider() {
-			siteFeatureImage = PDEPluginImages.DESC_FEATURE_OBJ.createImage();
-			missingSiteFeatureImage = PDEPluginImages.DESC_NOREF_FEATURE_OBJ
-					.createImage();
-			catDefImage = PDEPluginImages.DESC_CATEGORY_OBJ.createImage();
-		}
-
-		public Image getImage(Object element) {
-			if (element instanceof ISiteCategoryDefinition)
-				return catDefImage;
-			if (element instanceof SiteFeatureAdapter) {
-				if (getFeature(((SiteFeatureAdapter) element).feature) == null)
-					return missingSiteFeatureImage;
-				return siteFeatureImage;
-			}
-			return super.getImage(element);
-		}
-
-		public String getText(Object element) {
-			if (element instanceof ISiteCategoryDefinition)
-				return ((ISiteCategoryDefinition) element).getName();
-			if (element instanceof SiteFeatureAdapter) {
-				ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
-				if (feature.getId() != null && feature.getVersion() != null)
-					return feature.getId() + " (" + feature.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-				return feature.getURL();
-			}
-			return super.getText(element);
-		}
-
-		public void dispose() {
-			super.dispose();
-			catDefImage.dispose();
-			siteFeatureImage.dispose();
-		}
-	}
-
 	public CategorySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				PDEPlugin.getResourceString("CategorySection.new"), //$NON-NLS-1$
@@ -214,7 +172,8 @@ public class CategorySection extends TreeSection {
 		fCategoryTreePart = getTreePart();
 		fCategoryViewer = fCategoryTreePart.getTreeViewer();
 		fCategoryViewer.setContentProvider(new CategoryContentProvider());
-		fCategoryViewer.setLabelProvider(new CategoryLabelProvider());
+		fSiteLabelProvider = new SiteLabelProvider();
+		fCategoryViewer.setLabelProvider(fSiteLabelProvider);
 
 		fCategoryViewer.setInput(fModel.getSite());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_DEFAULT;
@@ -348,6 +307,17 @@ public class CategorySection extends TreeSection {
 		initialize();
 	}
 
+	private boolean categoryExists(String name) {
+		ISiteCategoryDefinition [] defs = fModel.getSite().getCategoryDefinitions();
+		for (int i=0; i<defs.length; i++) {
+			ISiteCategoryDefinition def = defs[i];
+			String dname = def.getName();
+			if (dname!=null && dname.equals(name))
+				return true;
+		}
+		return false;
+	}
+	
 	private void copyFeature(SiteFeatureAdapter adapter, Object target) {
 		ISiteFeature feature = findRealFeature(adapter);
 		if (feature == null) {
@@ -371,6 +341,7 @@ public class CategorySection extends TreeSection {
 			}
 			ISiteCategory cat = fModel.getFactory().createCategory(aFeature);
 			cat.setName(catName);
+			expandCategory(catName);
 			aFeature.addCategories(new ISiteCategory[] { cat });
 		} catch (CoreException e) {
 		}
@@ -428,7 +399,27 @@ public class CategorySection extends TreeSection {
 	}
 
 	private void handleAddCategoryDefinition() {
-		showCategoryDialog(null);
+		String name = PDEPlugin.getFormattedMessage(
+				"CategorySection.newCategoryName", //$NON-NLS-1$
+				Integer .toString(++newCategoryCounter));
+		while (categoryExists(name)) {
+			name = PDEPlugin.getFormattedMessage(
+					"CategorySection.newCategoryName", //$NON-NLS-1$
+					Integer .toString(++newCategoryCounter));
+		}
+		String label = PDEPlugin.getFormattedMessage(
+				"CategorySection.newCategoryLabel", //$NON-NLS-1$
+				Integer .toString(newCategoryCounter));
+		ISiteCategoryDefinition categoryDef = fModel.getFactory()
+				.createCategoryDefinition();
+		try {
+			categoryDef.setName(name);
+			categoryDef.setLabel(label);
+			fModel.getSite().addCategoryDefinitions(
+					new ISiteCategoryDefinition[] { categoryDef });
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	private boolean handleRemove() {
@@ -512,23 +503,11 @@ public class CategorySection extends TreeSection {
 		return null;
 	}
 
-	private void showCategoryDialog(final ISiteCategoryDefinition def) {
-		BusyIndicator.showWhile(fCategoryViewer.getControl().getDisplay(),
-				new Runnable() {
-					public void run() {
-						NewCategoryDefinitionDialog dialog = new NewCategoryDefinitionDialog(
-								fCategoryViewer.getControl().getShell(),
-								fModel, def);
-						dialog.create();
-						if (dialog.open() == Window.OK) {
-						}
-					}
-				});
-	}
-
 	public void dispose() {
 		super.dispose();
 		fModel.removeModelChangedListener(this);
+		if(fSiteLabelProvider!=null)
+			fSiteLabelProvider.dispose();
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -808,5 +787,35 @@ public class CategorySection extends TreeSection {
 	void fireSelection() {
 		fCategoryViewer.setSelection(fCategoryViewer.getSelection());
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
+	 */
+	public boolean setFormInput(Object input) {
+		if (input instanceof ISiteCategoryDefinition){
+			fCategoryViewer.setSelection(new StructuredSelection(input), true);
+			return true;
+		}
+		if (input instanceof SiteFeatureAdapter ) {
+			// first, expand the category, otherwise tree will not find the feature
+			String category = ((SiteFeatureAdapter)input).category;
+			if(category!=null){
+				expandCategory(category);
+			}
+			fCategoryViewer.setSelection(new StructuredSelection(input), true);
+			return true;
+		}
+		return super.setFormInput(input);
+	}
+	private void expandCategory(String category){
+		if(category!=null){
+			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
+			for (int i = 0; i < catDefs.length; i++) {
+				if (category.equals(catDefs[i].getName())){
+					fCategoryViewer.expandToLevel(catDefs[i], 1);
+					break;
+				}
+			}
+		}
+		
+	}
 }
