@@ -48,6 +48,8 @@ public class NewSiteProjectWizard
 	private SiteHTMLPage htmlPage;
 	private IConfigurationElement config;
 	private boolean createdProject = false;
+	public static final String DEFAULT_PLUGIN_DIR = "plugins";
+	public static final String DEFAULT_FEATURE_DIR = "features";
 
 	public NewSiteProjectWizard() {
 		super();
@@ -89,8 +91,8 @@ public class NewSiteProjectWizard
 		buildModel.setFile(buildFile);
 		ISiteBuild siteBuild = buildModel.getSiteBuild();
 	 	siteBuild.setAutobuild(false);
-	 	siteBuild.setPluginLocation(new Path(htmlPage.getPluginLocation()));
-	 	siteBuild.setFeatureLocation(new Path(htmlPage.getFeaturesLocation()));
+	 	siteBuild.setPluginLocation(new Path(DEFAULT_PLUGIN_DIR));
+	 	siteBuild.setFeatureLocation(new Path(DEFAULT_FEATURE_DIR));
 	 	siteBuild.setShowConsole(true);
 	 	buildModel.save();
 		buildModel.dispose();
@@ -491,7 +493,7 @@ public class NewSiteProjectWizard
 	}
 	
 	private void createFolders(IProject project, IProgressMonitor monitor) throws CoreException {
-		String[] names = new String[]{htmlPage.getWebLocation(), htmlPage.getFeaturesLocation(), htmlPage.getPluginLocation()};
+		String[] names = new String[]{htmlPage.getWebLocation(), DEFAULT_FEATURE_DIR, DEFAULT_PLUGIN_DIR};
 		IFolder folder;
 		IPath path;
 		
