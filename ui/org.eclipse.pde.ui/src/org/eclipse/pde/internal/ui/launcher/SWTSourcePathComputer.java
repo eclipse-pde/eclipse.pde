@@ -1,7 +1,9 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
+import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.sourcelookup.*;
@@ -42,7 +44,38 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 					}
 				}
 			}
-		}	
+		}
+		ArrayList extra = new ArrayList();
+		IResource resource = fragment.getModel().getUnderlyingResource();
+		if (resource != null) {
+			IProject project = resource.getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				extra.add(new JavaProjectSourceContainer(jProject));
+				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_BINARY 
+							&& roots[i].getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY) 
+						extra.add(new PackageFragmentRootSourceContainer(roots[i]));
+				}
+			}
+		} else {
+			IPluginLibrary[] libraries = fragment.getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
+				String location = getLibrarySourceLocation(fragment, name);
+				if (location != null)
+					extra.add(new ExternalArchiveSourceContainer(location, false));
+			}
+		}
+		if (extra.size() > 0) {
+			ISourceContainer[] all = new ISourceContainer[containers.length + extra.size()];
+			System.arraycopy(containers, 0, all, 0, containers.length);
+			for (int i = 0; i < extra.size(); i++) {
+				all[i+containers.length] = (ISourceContainer) extra.get(i);
+			}
+			return all;
+		}
 		return containers;
 	}
 	

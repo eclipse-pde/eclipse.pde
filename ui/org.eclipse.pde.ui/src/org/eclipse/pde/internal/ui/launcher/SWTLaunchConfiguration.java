@@ -7,6 +7,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -25,15 +26,13 @@ public class SWTLaunchConfiguration extends
 			return;
 		}
 		
-		monitor.subTask(""); //$NON-NLS-1$
-						
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IVMInstall vm = verifyVMInstall(configuration);
 
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort("", null, 0); //$NON-NLS-1$
+			monitor.setCanceled(true);
 		}
 
 		File workingDir = verifyWorkingDirectory(configuration);
@@ -81,7 +80,6 @@ public class SWTLaunchConfiguration extends
 		// done the verification phase
 		monitor.worked(1);
 		
-		monitor.subTask(""); //$NON-NLS-1$
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
 		monitor.worked(1);		
@@ -141,8 +139,18 @@ public class SWTLaunchConfiguration extends
 		ArrayList extra = new ArrayList();
 		IResource resource = fragment.getModel().getUnderlyingResource();
 		if (resource != null) {
-			IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(resource.getProject().getFullPath(), IRuntimeClasspathEntry.USER_CLASSES);
-			extra.add(entry.getLocation());
+			IProject project = resource.getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				extra.add(JavaRuntime.newProjectRuntimeClasspathEntry(jProject).getPath());
+				IClasspathEntry[] classEntries = jProject.getRawClasspath();
+				for (int i = 0; i < classEntries.length; i++) {
+					int kind = classEntries[i].getEntryKind();
+					if (kind == IClasspathEntry.CPE_LIBRARY) {
+						extra.add(JavaRuntime.newArchiveRuntimeClasspathEntry(classEntries[i].getPath()).getLocation());
+					} 
+				}
+			}
 		} else {
 			IPluginLibrary[] libraries = fragment.getLibraries();
 			String location = fragment.getModel().getInstallLocation();
@@ -150,6 +158,14 @@ public class SWTLaunchConfiguration extends
 				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
 				extra.add(new Path(location).append(name).toOSString());
 			}
+		}
+		if (extra.size() > 0) {
+			String[] all = new String[entries.length + extra.size()];
+			System.arraycopy(entries, 0, all, 0, entries.length);
+			for (int i = 0; i < extra.size(); i++) {
+				all[i+entries.length] = extra.get(i).toString();
+			}
+			return all;
 		}
 		return entries;
 	}
