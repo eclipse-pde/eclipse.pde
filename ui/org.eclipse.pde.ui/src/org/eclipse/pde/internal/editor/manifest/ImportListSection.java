@@ -39,6 +39,7 @@ import org.eclipse.pde.internal.parts.TablePart;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.pde.internal.wizards.imports.PluginImportWizard;
 import org.eclipse.pde.model.*;
+import org.eclipse.pde.internal.model.plugin.PluginImport;
 
 public class ImportListSection
 	extends TableSection
@@ -133,8 +134,18 @@ public class ImportListSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
 			handleDelete();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
 			return true;
 		}
 		return false;
@@ -348,4 +359,27 @@ public class ImportListSection
 			importTable.getTable().setFocus();
 	}
 
+	protected void doPaste(Object target, Object[] objects) {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				Object obj = objects[i];
+				if (obj instanceof ImportObject) {
+					ImportObject iobj = (ImportObject)obj;
+					PluginImport iimport = (PluginImport)iobj.getImport();
+					iimport.setModel(model);
+					iimport.setParent(plugin);
+					plugin.add(iimport);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		if (objects[0] instanceof ImportObject) return true;
+		return false;
+	}
 }

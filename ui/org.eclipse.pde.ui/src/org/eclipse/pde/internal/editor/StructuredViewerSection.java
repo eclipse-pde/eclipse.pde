@@ -74,6 +74,23 @@ public abstract class StructuredViewerSection extends PDEFormSection {
 			doPaste(target, objects);
 		}
 	}
+	public boolean canPaste(Clipboard clipboard) {
+		ISelection selection = viewerPart.getViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()>1) return false;
+			
+		Object target = ssel.getFirstElement();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		if (objects!=null && objects.length>0) {
+			return canPaste(target, objects);
+		}
+		else return false;
+	}
 	protected void doPaste(Object target, Object[] objects) {
+	}
+	
+	protected boolean canPaste(Object target, Object [] objects) {
+		return false;
 	}
 }

@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
 import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.model.plugin.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 public class DetailChildrenSection
 	extends TreeSection
@@ -184,8 +185,18 @@ public class DetailChildrenSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
 			handleDelete();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
 			return true;
 		}
 		return false;
@@ -348,5 +359,9 @@ public class DetailChildrenSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent) return true;
+		return false;
 	}
 }

@@ -10,6 +10,7 @@ import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.swt.dnd.Clipboard;
 
 public interface IPDEEditorPage extends IEditorPart, IFormPage {
 
@@ -20,4 +21,5 @@ IAction getAction(String id);
 void openTo(Object object);
 boolean performGlobalAction(String id);
 void update();
+boolean canPaste(Clipboard clipboard);
 }

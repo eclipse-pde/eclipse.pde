@@ -29,6 +29,8 @@ import org.eclipse.pde.internal.parts.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;
+import org.eclipse.pde.internal.model.plugin.PluginLibrary;
+
 
 public class LibrarySection
 	extends TableSection
@@ -141,8 +143,18 @@ public class LibrarySection
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
 			handleDelete();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
 			return true;
 		}
 		return false;
@@ -272,5 +284,26 @@ public class LibrarySection
 			canMove
 				&& hasSelection
 				&& table.getSelectionIndex() < table.getItemCount() - 1);
+	}
+	protected void doPaste(Object target, Object[] objects) {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				Object obj = objects[i];
+				if (obj instanceof IPluginLibrary) {
+					PluginLibrary library = (PluginLibrary) obj;
+					library.setModel(model);
+					library.setParent(plugin);
+					plugin.add(library);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		if (objects[0] instanceof IPluginLibrary) return true;
+		return false;
 	}
 }

@@ -24,6 +24,7 @@ import org.eclipse.ui.texteditor.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.dnd.Clipboard;
 
 public abstract class PDESourcePage extends AbstractTextEditor implements IPDEEditorPage {
 	public static final String PAGE_TITLE = "SourcePage.title";
@@ -152,5 +153,9 @@ protected void createActions () {
 
 public void close(boolean save) {
 	editor.close(save);
+}
+
+public boolean canPaste(Clipboard clipboard) {
+	return true;
 }
 }

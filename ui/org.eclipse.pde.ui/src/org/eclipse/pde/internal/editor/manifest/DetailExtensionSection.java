@@ -258,6 +258,12 @@ public class DetailExtensionSection
 			handleDelete();
 			return true;
 		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
 		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
 			doPaste();
 			return true;
@@ -620,5 +626,10 @@ public class DetailExtensionSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		if (objects[0] instanceof IPluginExtension) return true;
+		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent) return true;
+		return false;
 	}
 }

@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.editor;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.model.*;
+import org.eclipse.swt.dnd.Clipboard;
 
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
@@ -161,5 +162,9 @@ public String toString() {
 }
 public void update() {
 	form.update();
+}
+
+public boolean canPaste(Clipboard clipboard) {
+	return form.canPaste(clipboard);
 }
 }

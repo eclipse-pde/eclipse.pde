@@ -371,9 +371,9 @@ public abstract class PDEMultiPageEditor
 		return true;
 	}
 	protected void performGlobalAction(String id) {
-		boolean handled = getCurrentPage().performGlobalAction(id);
 		// preserve selection
 		ISelection selection = getSelection();
+		boolean handled = getCurrentPage().performGlobalAction(id);
 
 		if (!handled) {
 			IPDEEditorPage page = getCurrentPage();
@@ -508,5 +508,13 @@ public abstract class PDEMultiPageEditor
 		clipboard.setContents(
 			new Object[] { objects, textVersion },
 			new Transfer[] { ModelDataTransfer.getInstance(), TextTransfer.getInstance()});
+	}
+	
+	public boolean canPasteFromClipboard() {
+		IPDEEditorPage page = getCurrentPage();
+		if (page instanceof PDEFormPage) {
+			return page.canPaste(getClipboard());
+		}
+		return false;
 	}
 }

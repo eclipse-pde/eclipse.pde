@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.pde.internal.parts.TablePart;
+import org.eclipse.pde.internal.model.plugin.PluginExtensionPoint;
 
 public class DetailExtensionPointSection
 	extends TableSection
@@ -91,8 +92,18 @@ public class DetailExtensionPointSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
 			handleDelete();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
 			return true;
 		}
 		return false;
@@ -201,5 +212,26 @@ public class DetailExtensionPointSection
 	}
 	public void setFocus() {
 		pointTable.getTable().setFocus();
+	}
+	protected void doPaste(Object target, Object[] objects) {
+		IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				Object obj = objects[i];
+				if (obj instanceof IPluginExtensionPoint) {
+					PluginExtensionPoint point = (PluginExtensionPoint) obj;
+					point.setModel(model);
+					point.setParent(plugin);
+					plugin.add(point);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		if (objects[0] instanceof IPluginExtensionPoint) return true;
+		return false;
 	}
 }

@@ -51,7 +51,8 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		public void selectionChanged(ISelection selection) {
 		}
 		public boolean isEditable() {
-			return ((IModel)editor.getModel()).isEditable();
+			IModel model = (IModel)editor.getModel();
+			return model==null || model.isEditable();
 		}
 	}
 
@@ -61,7 +62,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(isEditable() && selection.isEmpty() == false);
+			setEnabled(isEditable() && selection!=null && !selection.isEmpty());
 		}
 	}
 
@@ -71,7 +72,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(selection.isEmpty() == false);
+			setEnabled(selection!=null && !selection.isEmpty());
 		}
 	}
 
@@ -79,6 +80,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		public PasteAction() {
 			super(ITextEditorActionConstants.PASTE);
 			setText(PDEPlugin.getResourceString(ACTIONS_PASTE));
+			//selectionChanged(null);
 		}
 		public void selectionChanged(ISelection selection) {
 			boolean enabled = isEditable();
@@ -93,6 +95,9 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 					}
 				}
 				enabled = knownType;
+				if (knownType) {
+					enabled = editor.canPasteFromClipboard();
+				}
 			}
 			setEnabled(enabled);
 		}

@@ -19,7 +19,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	private static final ModelDataTransfer instance =
 		new ModelDataTransfer();
 	// Create a unique ID to make sure that different Eclipse
-	// applications use different "types" of <code>ResourceTransfer</code>
+	// applications use different "types" of <code>ModelDataTransfer</code>
 	
 	public static final String TYPE_PREFIX = "pde-model-transfer-format";
 	private static final String TYPE_NAME =
