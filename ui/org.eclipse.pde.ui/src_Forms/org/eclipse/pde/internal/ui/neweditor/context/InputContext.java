@@ -37,6 +37,7 @@ public abstract class InputContext {
 	private boolean primary;
 	protected ArrayList fEditOperations = new ArrayList();
 	private boolean fIsSourceMode;
+	private boolean mustSynchronize;
 
 	class ElementListener implements IElementStateListener {
 		public void elementContentAboutToBeReplaced(Object element) {
@@ -48,6 +49,7 @@ public abstract class InputContext {
 		public void elementDeleted(Object element) {
 		}
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
+			mustSynchronize=true;
 		}
 		public void elementMoved(Object originalElement, Object movedElement) {
 			editor.close(true);
@@ -251,7 +253,7 @@ public abstract class InputContext {
 		this.primary = primary;
 	}
 	
-	public void setSourceEditingMode(boolean sourceMode) {
+	public boolean setSourceEditingMode(boolean sourceMode) {
 		fIsSourceMode = sourceMode;
 		if (sourceMode) {
 			// entered source editing mode; in this mode,
@@ -260,21 +262,34 @@ public abstract class InputContext {
 			// are caused by reconciliation and should not be 
 			// fired to the world.
 			flushModel(documentProvider.getDocument(input));
+			mustSynchronize=true;
+			return true;
 		}
 		else {
 			// leaving source editing mode; if the document
 			// has been modified while in this mode,
 			// fire the 'world changed' event from the model
 			// to cause all the model listeners to become stale.
-			boolean cleanSource = synchronizeModel(documentProvider.getDocument(input));
-			if (!cleanSource) {
-				// should go back to the source mode
-			}
+			return synchronizeModelIfNeeded();
 		}
 	}
 	
+	private boolean synchronizeModelIfNeeded() {
+		if (mustSynchronize) {
+			boolean result = synchronizeModel(documentProvider.getDocument(input));
+			mustSynchronize=false;
+			return result;
+		}
+		return true;
+	}
+
 	public boolean isInSourceMode() {
 		return fIsSourceMode;
+	}
+
+	public boolean isModelCorrect() {
+		synchronizeModelIfNeeded();
+		return model!=null ? model.isValid() : false;
 	}
 	
 	protected boolean synchronizeModel(IDocument doc) {

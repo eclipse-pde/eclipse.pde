@@ -113,6 +113,17 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		}
 		return null;
 	}
+	public InputContext [] getInvalidContexts() {
+		ArrayList result = new ArrayList();
+		for (Enumeration enum = inputContexts.elements(); enum
+				.hasMoreElements();) {
+			InputContext context = (InputContext) enum.nextElement();
+			if (context.isModelCorrect()==false)
+				result.add(context);
+		}
+		return (InputContext[])result.toArray(new InputContext[result.size()]);
+	}
+	
 	public boolean isDirty() {
 		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
 			InputContext context = (InputContext)enum.nextElement();

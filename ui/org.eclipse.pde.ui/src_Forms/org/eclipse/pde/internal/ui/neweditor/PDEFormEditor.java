@@ -22,6 +22,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -159,18 +160,36 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		String storedFirstPageId = loadDefaultPage();
 		if (storedFirstPageId != null)
 			firstPageId = storedFirstPageId;
-		/*
 		else if (EditorPreferencePage.getUseSourcePage())
 			firstPageId = getSourcePageId();
-		*/
-		/*
 		// Regardless what is the stored value,
 		// use source page if model is not valid
-		if (isModelCorrect(getModel())==false)
-			firstPageId = getSourcePageId();
-		*/
+		String invalidContextId = getFirstInvalidContextId();
+		if (invalidContextId!=null)
+			return invalidContextId;
 		return firstPageId;
-	}	
+	}
+
+	private String getSourcePageId() {
+		InputContext context = inputContextManager.getPrimaryContext();
+		if (context!=null)
+			return context.getId();
+		return null;
+	}
+	
+	private String getFirstInvalidContextId() {
+		InputContext [] invalidContexts = inputContextManager.getInvalidContexts();
+		if (invalidContexts.length==0) return null;
+
+		// If primary context is among the invalid ones, return that.
+		for (int i=0; i<invalidContexts.length; i++) {
+			if (invalidContexts[i].isPrimary())
+				return invalidContexts[i].getId();
+		}
+		// Return the first one
+		return invalidContexts[0].getId();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -287,7 +306,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			return true;
 		return super.isDirty();
 	}
-
+	
 	public void fireSaveNeeded(String contextId, boolean notify) {
 		if (contextId==null) return;
 		InputContext context = inputContextManager.findContext(contextId);

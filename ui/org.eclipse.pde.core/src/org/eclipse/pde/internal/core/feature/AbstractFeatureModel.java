@@ -68,6 +68,7 @@ public abstract class AbstractFeatureModel
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
+		} catch (SAXException e) {
 		} catch (Exception e) {
 			PDECore.logException(e);
 		}
