@@ -6,7 +6,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.pluginconversion.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -215,23 +214,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 	
 	private void convertToOSGIFormat(IProject project) throws CoreException {
-		try {
-			String filename = (fData instanceof IFragmentFieldData)
-					? "fragment.xml"
-					: "plugin.xml";
-			File outputFile = new File(project.getLocation().append(
-					"META-INF/MANIFEST.MF").toOSString());
-			File inputFile = new File(project.getLocation().append(filename).toOSString());
-			ServiceTracker tracker = new ServiceTracker(PDEPlugin.getDefault()
-					.getBundleContext(), PluginConverter.class.getName(), null);
-			tracker.open();
-			PluginConverter converter = (PluginConverter) tracker.getService();
-			converter.convertManifest(inputFile, outputFile, false, null);
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			tracker.close();
-		} catch (PluginConversionException e) {
-		} catch (CoreException e) {
-		}
+		String filename = (fData instanceof IFragmentFieldData)
+				? "fragment.xml"
+				: "plugin.xml";
+		File outputFile = new File(project.getLocation().append(
+				"META-INF/MANIFEST.MF").toOSString());
+		File inputFile = new File(project.getLocation().append(filename).toOSString());
+		ServiceTracker tracker = new ServiceTracker(PDEPlugin.getDefault()
+				.getBundleContext(), PluginConverter.class.getName(), null);
+		tracker.open();
+		PluginConverter converter = (PluginConverter) tracker.getService();
+		converter.convertManifest(inputFile, outputFile, false, null);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		tracker.close();
 	}
 	
 	private void setClasspath(IProject project, IFieldData data)

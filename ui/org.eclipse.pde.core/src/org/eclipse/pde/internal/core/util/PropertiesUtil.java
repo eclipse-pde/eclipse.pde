@@ -107,4 +107,23 @@ public class PropertiesUtil {
 				writer.println("");
 		}
 	}
+	
+	public static String writeKeyValuePair(String name, String[] tokens) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(createWritableName(name));
+		buffer.append(" = ");
+		int indentLength = name.length() + 3;
+		for (int i = 0; i < tokens.length; i++) {
+			buffer.append(createEscapedValue(tokens[i]));
+			if (i < tokens.length - 1) {
+				buffer.append(",\\" + System.getProperty("line.separator"));
+				for (int j = 0; j < indentLength; j++) {
+					buffer.append(" ");
+				}
+			} else {
+				buffer.append(System.getProperty("line.separator"));
+			}
+		}	
+		return buffer.toString();
+	}
 }

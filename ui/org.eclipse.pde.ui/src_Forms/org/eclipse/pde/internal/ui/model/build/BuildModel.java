@@ -5,6 +5,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.model.*;
@@ -48,11 +49,28 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	 */
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
-			getProperties().load(source);
-			fBuild.load(getProperties());
+			fIsLoaded = true;
+			Properties prop = getProperties();
+			prop.clear();
+			prop.load(source);
+			((Build)getBuild()).load(prop);
 		} catch (IOException e) {
+			fIsLoaded = false;
 			e.printStackTrace();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
+	 */
+	public void reload(InputStream source, boolean outOfSync)
+			throws CoreException {
+		load(source, outOfSync);
+		fireModelChanged(
+			new ModelChangedEvent(this, 
+				IModelChangedEvent.WORLD_CHANGED,
+				new Object[] {getBuild()},
+				null));
 	}
 	
 	private  Properties getProperties() {

@@ -243,8 +243,7 @@ public abstract class InputContext {
 			return thisOffset <= otherOffset && otherEnd <= thisEnd;
 		}
 	}		
-	protected abstract TextEdit[] getMoveOperations();
-	
+
 	public boolean mustSave() {
 		if (!fIsSourceMode) {
 			if (model instanceof IEditable) {

@@ -3,13 +3,15 @@ package org.eclipse.pde.internal.ui.model.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class BuildEntry implements IBuildEntry, IDocumentKey {
 
-	private int fLineSpan;
-	private int fOffset;
+	private int fLineSpan = -1;
+	private int fOffset = -1;
 	private IBuildModel fModel;
 	private String fName;
 	private ArrayList fTokens = new ArrayList();
@@ -18,6 +20,12 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.core.build.IBuildEntry#addToken(java.lang.String)
 	 */
 	public void addToken(String token) throws CoreException {
+		fTokens.add(token);
+		getModel().fireModelChanged(
+			new ModelChangedEvent(getModel(), 
+				IModelChangedEvent.CHANGE,
+				new Object[] { this },
+				null));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
@@ -41,29 +49,33 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.core.build.IBuildEntry#removeToken(java.lang.String)
 	 */
 	public void removeToken(String token) throws CoreException {
+		fTokens.remove(token);
+		getModel().fireModelChanged(
+			new ModelChangedEvent(getModel(),
+				IModelChangedEvent.CHANGE,
+				new Object[] { this },
+				null));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#renameToken(java.lang.String, java.lang.String)
 	 */
 	public void renameToken(String oldToken, String newToken)
 			throws CoreException {
+		int index = fTokens.indexOf(oldToken);
+		if (index != -1) {
+			fTokens.set(index, newToken);
+			getModel().fireModelChanged(
+				new ModelChangedEvent(getModel(),
+					IModelChangedEvent.CHANGE,
+					new Object[] { this },
+					null));
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
 	 */
 	public void setName(String name) {
 		fName = name;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setValue(java.lang.String)
-	 */
-	public void setValue(String value) {
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getValue()
-	 */
-	public String getValue() {
-		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
@@ -108,5 +120,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		while (stok.hasMoreTokens()) {
 			fTokens.add(stok.nextToken().trim());
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
+	 */
+	public String write() {
+		return PropertiesUtil.writeKeyValuePair(getName(), getTokens());
 	}
 }

@@ -445,12 +445,5 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	protected HashMap getOperationTable() {
 		return fOperationTable;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
-	 */
-	protected TextEdit[] getMoveOperations() {
-		return new TextEdit[0];
-	}
-
 
 }

@@ -4,13 +4,14 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class Build implements IBuild {
 	
 	private BuildModel fModel;
-	private ArrayList fEntries = new ArrayList();
+	private HashMap fEntries = new HashMap();
 
 	public Build(BuildModel model) {
 		fModel = model;	
@@ -20,26 +21,35 @@ public class Build implements IBuild {
 	 * @see org.eclipse.pde.core.build.IBuild#add(org.eclipse.pde.core.build.IBuildEntry)
 	 */
 	public void add(IBuildEntry entry) throws CoreException {
+		fEntries.put(entry.getName(), entry);
+		fModel.fireModelChanged(new ModelChangedEvent(fModel,
+				IModelChangedEvent.INSERT, new Object[]{entry}, null));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#getBuildEntries()
 	 */
 	public IBuildEntry[] getBuildEntries() {
-		return null;
+		return (IBuildEntry[])fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#getEntry(java.lang.String)
 	 */
 	public IBuildEntry getEntry(String name) {
-		return null;
+		return (IBuildEntry)fEntries.get(name);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#remove(org.eclipse.pde.core.build.IBuildEntry)
 	 */
 	public void remove(IBuildEntry entry) throws CoreException {
+		fEntries.remove(entry.getName());
+		fModel.fireModelChanged(new ModelChangedEvent(fModel,
+				IModelChangedEvent.REMOVE, new Object[]{entry}, null));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
+	 *      java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
@@ -51,7 +61,7 @@ public class Build implements IBuild {
 			String name = enum.nextElement().toString();
 			BuildEntry entry = (BuildEntry)fModel.getFactory().createEntry(name);
 			entry.processEntry(properties.get(name).toString());
-			fEntries.add(entry);
+			fEntries.put(name, entry);
 		}
 		addOffsets();
 	}
@@ -89,8 +99,13 @@ public class Build implements IBuild {
 					if (index != -1) {
 						String name = line.substring(0, index).trim();
 						currentKey = (IDocumentKey)getEntry(name);
-						if (currentKey != null)
+						if (currentKey != null) {
 							currentKey.setOffset(document.getLineOffset(i));
+							if (!line.endsWith("\\")) {
+								currentKey.setLineSpan(1);
+								currentKey = null;
+							}
+						}
 					}
 				}
 			}

@@ -9,6 +9,7 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
@@ -47,15 +48,19 @@ public class PluginInputContext extends XMLInputContext {
 				model = new PluginModel(document, isReconciling);
 			}
 			if (input instanceof IFileEditorInput) {
-				model.setUnderlyingResource(((IFileEditorInput)input).getFile());
+				IFile file = ((IFileEditorInput)input).getFile();
+				model.setUnderlyingResource(file);
+				model.setCharset(file.getCharset());
 			} else if (input instanceof SystemFileEditorInput){
 				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
 				model.setInstallLocation(file.getParent());
+				model.setCharset(getDefaultCharset());
 			}
 			model.load();
 		}
 		return model;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
 	 */
