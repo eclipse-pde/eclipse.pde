@@ -535,6 +535,8 @@ public class DetailExtensionSection
 				extensionTree.add(parent, pobj);
 				extensionTree.setSelection(new StructuredSelection(changeObject), true);
 				extensionTree.getTree().setFocus();
+				// defect 16606: update property sheet
+				asyncResendSelection(getFormPage().getSelection());
 			} else if (event.getChangeType() == event.REMOVE) {
 				extensionTree.remove(pobj);
 			} else {

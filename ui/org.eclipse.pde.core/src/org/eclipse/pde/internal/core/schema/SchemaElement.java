@@ -23,7 +23,7 @@ private String calculateChildRepresentation(ISchemaObject object) {
 	String child = "";
 	if (object instanceof ISchemaCompositor) {
 		child = calculateCompositorRepresentation((ISchemaCompositor) object);
-		if (child.length()>0) {
+		if (!child.equals("EMPTY") && child.length()>0) {
 			child = "("+child+")";
 		}
 	} else
@@ -89,7 +89,7 @@ public ISchemaAttribute[] getAttributes() {
 public String getDTDRepresentation() {
 	String text = "";
 	if (type == null)
-		text += "(EMPTY)";
+		text += "EMPTY";
 	else {
 		if (type instanceof ISchemaComplexType) {
 			ISchemaComplexType complexType = (ISchemaComplexType) type;
@@ -97,13 +97,13 @@ public String getDTDRepresentation() {
 			if (compositor != null)
 				text += calculateChildRepresentation(compositor);
 			else
-				text += "(EMPTY)";
+				text += "EMPTY";
 
 		} else
 			text += "(#CDATA)";
 	}
 	if (text.length() > 0) {
-		if (text.charAt(0) != '(')
+		if (!text.equals("EMPTY") && text.charAt(0) != '(')
 			text = "(" + text + ")";
 	}
 	return text;
