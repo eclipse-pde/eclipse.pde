@@ -31,7 +31,6 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 
 	/** constants */
 	protected static final String FULL_NAME = getPropertyFormat(PROPERTY_FULL_NAME);
-	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 	protected static final String PLUGIN_DESTINATION = getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
 	protected static final String PLUGIN_ZIP_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 	protected static final String PLUGIN_UPDATE_JAR_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -87,20 +86,16 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	IPath basedir = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	for (int i = 0; i < availableJars.length; i++) {
 		String jarName = availableJars[i].getName();
 		script.printDeleteTask(tab, null, getJARLocation(jarName), null);
-		script.printDeleteTask(tab, null, getLogLocation(jarName), null);
 		script.printDeleteTask(tab, null, getSRCLocation(jarName), null);
 	}
 	script.printDeleteTask(tab, null, PLUGIN_UPDATE_JAR_DESTINATION, null);
 	script.printDeleteTask(tab, null, PLUGIN_ZIP_DESTINATION, null);
-	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_SRC).toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_LOG).toString(), null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
@@ -121,7 +116,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 			script.printMkdirTask(tab, destination.toString());
 			destinations.add(destination);
 		}
-		script.printCopyTask(tab, name + ".bin.log", destination.toString(), null); //$NON-NLS-1$
+		script.printCopyTask(tab, getTempJARFolderLocation(name) + ".log", destination.toString(), null); //$NON-NLS-1$
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 }

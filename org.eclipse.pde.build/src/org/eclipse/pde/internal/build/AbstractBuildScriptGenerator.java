@@ -72,6 +72,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	/** constants */
 	protected static final String BASEDIR = getPropertyFormat(PROPERTY_BASEDIR);
 	protected static final String BUILD_RESULT_FOLDER = getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER);
+	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 
 public AbstractBuildScriptGenerator() {
 	buildProperties = new HashMap();
@@ -283,10 +284,10 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	List jarNames = new ArrayList(availableJars.length);
-	List srcNames = new ArrayList(availableJars.length);
 	Map jars = new HashMap(availableJars.length);
 	for (int i = 0; i < availableJars.length; i++)
 		jars.put(availableJars[i].getName(), availableJars[i]);
+	// try to put the jars in a correct compile order
 	String jarOrder = (String) getBuildProperties(model).get(PROPERTY_JAR_ORDER);
 	if (jarOrder != null) {
 		String[] order = Utils.getArrayFromString(jarOrder);
@@ -298,7 +299,6 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 			jarNames.add(name);
 			generateJARTarget(script, getClasspath(model, jar), jar);
 			generateSRCTarget(script, jar);
-			srcNames.add(getSRCName(name));
 			jars.remove(order[i]);
 		}
 	}
@@ -308,27 +308,33 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 		jarNames.add(name);
 		generateJARTarget(script, getClasspath(model, jar), jar);
 		generateSRCTarget(script, jar);
-		srcNames.add(getSRCName(name));
 	}
+	int tab = 1;
 	script.println();
-	String depends = Utils.getStringFromCollection(jarNames, ","); //$NON-NLS-1$
-	if (!depends.equals("")) //$NON-NLS-1$
-		depends = TARGET_INIT + "," + depends; //$NON-NLS-1$
-	script.printTargetDeclaration(1, TARGET_BUILD_JARS, depends, null, null, null);
-	script.printEndTag(1, "target"); //$NON-NLS-1$
+	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, TARGET_INIT, null, null, null);
+	for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
+		String name = (String) iter.next();
+		script.printAvailableTask(tab, name, getJARLocation(name));
+		script.printAntCallTask(tab, name, null, null);
+	}
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
+	
 	script.println();
-	depends = Utils.getStringFromCollection(srcNames, ","); //$NON-NLS-1$
-	if (!depends.equals("")) //$NON-NLS-1$
-		depends = TARGET_INIT + "," + depends; //$NON-NLS-1$
-	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, depends, null, null, null);
-	script.printEndTag(1, "target"); //$NON-NLS-1$
+	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
+	for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
+		String jarName = (String) iter.next();
+		String srcName = getSRCName(jarName);
+		script.printAvailableTask(tab, srcName, getSRCLocation(jarName));
+		script.printAntCallTask(tab, srcName, null, null);
+	}
+	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
 protected void generateJARTarget(AntScript script, String classpath, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
-	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, name, null);
 	String destdir = getTempJARFolderLocation(name);
 	script.printProperty(tab, "destdir", destdir); //$NON-NLS-1$
 	script.printDeleteTask(tab, destdir, null, null);
@@ -361,7 +367,8 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
-	script.printTargetDeclaration(tab++, getSRCName(name), TARGET_INIT, null, null, null);
+	String srcName = getSRCName(name);
+	script.printTargetDeclaration(tab++, srcName, TARGET_INIT, null, srcName, null);
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
@@ -375,10 +382,6 @@ protected String getSRCName(String jarName) {
 	return jarName.substring(0, jarName.length() - 4) + "src.zip"; //$NON-NLS-1$
 }
 
-protected String getLogLocation(String jarName) {
-	return getJARLocation(jarName) + ".bin.log"; //$NON-NLS-1$
-}
-
 protected String getJARLocation(String jarName) {
 	IPath destination = new Path(BUILD_RESULT_FOLDER);
 	destination = destination.append(jarName);
@@ -390,7 +393,7 @@ protected String getSRCLocation(String jarName) {
 }
 
 protected String getTempJARFolderLocation(String jarName) {
-	IPath destination = new Path(BASEDIR);
+	IPath destination = new Path(TEMP_FOLDER);
 	destination = destination.append(jarName + ".bin"); //$NON-NLS-1$
 	return destination.toString();
 }

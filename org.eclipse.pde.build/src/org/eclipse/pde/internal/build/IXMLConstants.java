@@ -15,8 +15,6 @@ package org.eclipse.pde.internal.build;
 public interface IXMLConstants {
 
 	// general
-	public static final String DEFAULT_FILENAME_SRC = ".src.zip"; //$NON-NLS-1$
-	public static final String DEFAULT_FILENAME_LOG = ".log.zip"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSIGNMENT_PREFIX = "${"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSIGNMENT_SUFFIX = "}"; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$

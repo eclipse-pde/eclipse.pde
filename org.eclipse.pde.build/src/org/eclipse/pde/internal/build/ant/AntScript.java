@@ -61,7 +61,13 @@ public void printJarTask(int tab, String jarFile, String basedir) {
 	output.println("/>"); //$NON-NLS-1$
 }
 
-public void printAntTask(int tab, String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
+public void printAvailableTask(int tab, String property, String file) {
+	printTab(tab);
+	output.print("<available"); //$NON-NLS-1$
+	printAttribute("property", property, true); //$NON-NLS-1$
+	printAttribute("file", file, false); //$NON-NLS-1$
+	output.println("/>"); //$NON-NLS-1$
+}public void printAntTask(int tab, String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
 	printTab(tab);
 	output.print("<ant"); //$NON-NLS-1$
 	printAttribute("antfile", antfile, false); //$NON-NLS-1$
