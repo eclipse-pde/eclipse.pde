@@ -190,8 +190,18 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		IPluginExtensionPoint[] extPoints = getExtensionPoints();
 		if (extPoints.length > 0)
 			addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
-		else
-			addChildNode(node);
+		else {
+			IDocumentNode requires = getEnclosingElement("requires", false);
+			if (requires != null) {
+				addChildNode(node, indexOf(requires) + 1);
+			} else {
+				IDocumentNode runtime = getEnclosingElement("runtime", false);
+				if (runtime != null)
+					addChildNode(node, indexOf(runtime) + 1);
+				else
+					addChildNode(node, 0);
+			}
+		}
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
@@ -236,6 +246,11 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 */
 	public void remove(IPluginExtensionPoint extensionPoint)
 			throws CoreException {
+		if (extensionPoint instanceof IDocumentNode) {
+			removeChildNode((IDocumentNode)extensionPoint);
+			extensionPoint.setInTheModel(false);
+			fireStructureChanged(extensionPoint, IModelChangedEvent.REMOVE);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#swap(org.eclipse.pde.core.plugin.IPluginExtension, org.eclipse.pde.core.plugin.IPluginExtension)
