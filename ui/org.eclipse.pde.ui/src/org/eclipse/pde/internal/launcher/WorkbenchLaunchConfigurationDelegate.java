@@ -46,6 +46,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		final boolean tracing = configuration.getAttribute(TRACING, false);
 		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
+		
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(new Path(data));
+		if (running != null) {
+			throw new CoreException(running);
+		}
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
@@ -60,21 +65,22 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		} else
 			launcher = vmInstallations[0];
-		final IVMRunner runner = launcher.getVMRunner(mode);
-		final ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
+		IVMRunner runner = launcher.getVMRunner(mode);
+		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
+		IPath path = new Path(data);
 
 		ILaunch launch =  doLaunch(
 			configuration,
 			mode,
 			runner,
-			new Path(data),
+			path,
 			clearWorkspace,
 			args,
 			plugins,
 			appName,
 			tracing,
 			monitor);
-		PDEPlugin.getDefault().registerLaunch(launch);
+		PDEPlugin.getDefault().registerLaunch(launch, path);
 		return launch;
 	}
 

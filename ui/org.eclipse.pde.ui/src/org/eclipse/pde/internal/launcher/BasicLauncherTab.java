@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
 
-public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings, ICurrentLaunchListener {
+public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings {
 	private static final String KEY_DESC = "";
 
 	private static final String KEY_WORKSPACE =
@@ -280,21 +280,9 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	}
 	
 	private void updateStatus() {
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-		if (running != null)
-			updateStatus(running);
-		else
-			updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+		updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 	
-	public void currentLaunchChanged() {
-		getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateStatus();
-			}
-		});
-	}
-
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());

@@ -17,13 +17,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
 import org.eclipse.pde.internal.preferences.TargetEnvironmentPreferencePage;
 import org.eclipse.pde.internal.TargetPlatform;
 
 public class PluginImportWizardFirstPage
-	extends StatusWizardPage
-	implements ICurrentLaunchListener {
+	extends StatusWizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation";
 	private static final String SETTINGS_DOOTHER = "doother";
@@ -78,12 +76,10 @@ public class PluginImportWizardFirstPage
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+			IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(null);
 			if (running != null)
 				updateStatus(running);
-		} else {
-			PDEPlugin.getDefault().removeCurrentLaunchListener(this);
-		}
+		} 
 	}
 
 	/*
@@ -243,21 +239,13 @@ public class PluginImportWizardFirstPage
 	}
 
 	private void updateStatus() {
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(null);
 		if (running != null) {
 			updateStatus(running);
 		} else {
 			validateDropLocation();
 			updateStatus(dropLocationStatus);
 		}
-	}
-
-	public void currentLaunchChanged() {
-		getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateStatus();
-			}
-		});
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {
@@ -300,7 +288,6 @@ public class PluginImportWizardFirstPage
 
 		validateDropLocation();
 		updateStatus(dropLocationStatus);
-		PDEPlugin.getDefault().addCurrentLaunchListener(this);
 	}
 
 	private void setOtherEnabled(boolean enabled) {

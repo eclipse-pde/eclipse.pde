@@ -78,6 +78,11 @@ public class WorkbenchLauncherDelegate
 		boolean tracing,
 		IProgressMonitor monitor)
 		throws CoreException {
+			
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(targetWorkbenchLocation)	;
+		if (running!=null)
+			throw new CoreException(running);
+			
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -141,7 +146,7 @@ public class WorkbenchLauncherDelegate
 						sourceLocator,
 						result.getProcesses(),
 						result.getDebugTarget());
-				registerLaunch(launch);
+				registerLaunch(launch, targetWorkbenchLocation);
 			} else {
 				String message = "Launch was not successful.";
 				showErrorDialog(message, null);
@@ -181,7 +186,7 @@ public class WorkbenchLauncherDelegate
 		return display;
 	}
 
-	private void registerLaunch(final ILaunch launch) {
+	private void registerLaunch(final ILaunch launch, IPath data) {
 		Display display = getDisplay();
 		;
 		display.syncExec(new Runnable() {
@@ -189,7 +194,7 @@ public class WorkbenchLauncherDelegate
 				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
 		});
-		PDEPlugin.getDefault().registerLaunch(launch);
+		PDEPlugin.getDefault().registerLaunch(launch, data);
 	}
 
 	private void showErrorDialog(final String message, final IStatus status) {

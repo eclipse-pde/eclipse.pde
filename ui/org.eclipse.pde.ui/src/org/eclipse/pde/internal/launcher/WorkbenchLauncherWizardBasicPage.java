@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage 
-					implements ILauncherSettings, ICurrentLaunchListener {
+					implements ILauncherSettings {
 	private static final String KEY_DESC = "";
 
 	private static final String KEY_WORKSPACE =
@@ -88,14 +88,6 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		vmInstallations = getAllVMInstances();
 	}
 	
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-			if (running!=null) updateStatus(running);
-		}
-	}	
-
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -249,7 +241,6 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		//validate
 		workspaceSelectionStatus = validateWorkspaceSelection();
 		jreSelectionStatus = validateJRESelection();
-		PDEPlugin.getDefault().addCurrentLaunchListener(this);
 		updateStatus();
 	}
 
@@ -374,23 +365,10 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	}
 
 	private void updateStatus() {
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-		if (running != null)
-			updateStatus(running);
-		else
-			updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+		updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 	
-	public void currentLaunchChanged() {
-		getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateStatus();
-			}
-		});
-	}
-
 	public void storeSettings(boolean finishPressed) {
-		PDEPlugin.getDefault().removeCurrentLaunchListener(this);
 		IDialogSettings initialSettings = getDialogSettings();
 		if (finishPressed) {
 			initialSettings.put(VMARGS, getVMArguments());

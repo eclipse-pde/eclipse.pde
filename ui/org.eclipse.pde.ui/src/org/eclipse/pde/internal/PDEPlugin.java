@@ -28,8 +28,8 @@ import java.net.URL;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.model.plugin.IMatchRules;
-import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
 import org.eclipse.pde.internal.util.SWTUtil;
+import java.util.ArrayList;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -83,8 +83,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private WorkspaceModelManager workspaceModelManager;
 	private ModelSynchronizer modelSynchronizer;
 	private Vector currentLaunchListeners = new Vector();
-	private IDebugEventListener debugListener;
-	private ILaunch currentLaunch = null;
+	private RunningInstanceManager runningInstanceManager;
 
 	static {
 		try {
@@ -92,33 +91,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 			inVAJ = true;
 		} catch (Exception e) {
 			inVAJ = false;
-		}
-	}
-
-	class DebugListener implements IDebugEventListener {
-		public void handleDebugEvent(DebugEvent e) {
-			if (currentLaunch == null)
-				return;
-			Object obj = e.getSource();
-			if (obj instanceof IProcess) {
-				if ((e.getKind() & DebugEvent.TERMINATE) != 0) {
-					ILaunch launch = ((IProcess) obj).getLaunch();
-					if (launch != null
-						&& launch.equals(currentLaunch)
-						&& currentLaunch.isTerminated()) {
-						currentLaunch = null;
-						fireCurrentLaunchChanged();
-					}
-				}
-			}
-		}
-
-		private void fireCurrentLaunchChanged() {
-			for (Enumeration enum = currentLaunchListeners.elements();
-				enum.hasMoreElements();
-				) {
-				((ICurrentLaunchListener) enum.nextElement()).currentLaunchChanged();
-			}
 		}
 	}
 
@@ -131,15 +103,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
-	}
-
-	public void addCurrentLaunchListener(ICurrentLaunchListener listener) {
-		if (currentLaunchListeners.contains(listener) == false)
-			currentLaunchListeners.add(listener);
-	}
-	public void removeCurrentLaunchListener(ICurrentLaunchListener listener) {
-		if (currentLaunchListeners.contains(listener))
-			currentLaunchListeners.remove(listener);
 	}
 
 	public IPluginExtensionPoint findExtensionPoint(String fullID) {
@@ -438,12 +401,13 @@ public class PDEPlugin extends AbstractUIPlugin {
 	}
 
 	private void attachToLaunchManager() {
-		debugListener = new DebugListener();
-		DebugPlugin.getDefault().addDebugEventListener(debugListener);
+		runningInstanceManager = new RunningInstanceManager();
+		DebugPlugin.getDefault().addDebugEventListener(runningInstanceManager);
 	}
 
 	private void detachFromLaunchManager() {
-		DebugPlugin.getDefault().removeDebugEventListener(debugListener);
+		DebugPlugin.getDefault().removeDebugEventListener(runningInstanceManager);
+		runningInstanceManager.clear();
 	}
 
 	public static File getFileInPlugin(IPath path) {
@@ -463,19 +427,15 @@ public class PDEPlugin extends AbstractUIPlugin {
 		return labelProvider;
 	}
 
-	public void registerLaunch(ILaunch launch) {
-		this.currentLaunch = launch;
+	public void registerLaunch(ILaunch launch, IPath path) {
+		runningInstanceManager.register(launch, path);
 	}
-
-	public IStatus getCurrentLaunchStatus() {
-		if (currentLaunch == null)
-			return null;
-
-		if (currentLaunch.isTerminated()) {
-			currentLaunch = null;
-			return null;
-		}
-		// The run-time workbench is still running
+	
+	public IStatus getCurrentLaunchStatus(IPath path) {
+		if (!runningInstanceManager.isRunning(path)) return null;
+		// The run-time workbench is still running with the
+		// specified workspace path (if path is null, at least
+		// one workbench is still running)
 		String message = getResourceString(KEY_RUNNING);
 		Status status =
 			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, null);
