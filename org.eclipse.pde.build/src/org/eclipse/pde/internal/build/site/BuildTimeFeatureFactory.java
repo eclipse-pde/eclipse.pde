@@ -40,7 +40,7 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			).asURL();
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 
-			featureStream = new FileInputStream(resolvedURL.getFile());
+			featureStream = resolvedURL.openStream();
 			feature = (Feature) this.parseFeature(featureStream);
 			feature.setSite(site);
 			feature.setFeatureContentProvider(contentProvider);
