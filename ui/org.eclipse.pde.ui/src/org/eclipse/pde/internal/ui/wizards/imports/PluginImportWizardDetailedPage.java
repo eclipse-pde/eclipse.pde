@@ -42,7 +42,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Label countLabel;
 	private TableViewer availableListViewer;
 	private Text filterText;
-	private Button caseCheck;
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
@@ -116,7 +115,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 225;
-		gd.heightHint = 250;
+		gd.heightHint = 200;
 		table.setLayoutData(gd);
 
 		availableListViewer = new TableViewer(table);
@@ -242,32 +241,23 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	
 	private Composite createScrollArea(Composite parent){
 		Group container = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(2,false);
 		layout.marginWidth = layout.marginHeight = 6;
 		container.setLayout(layout);
+		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=3;
 		container.setLayoutData(gd);
-		container.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.filterDesc"));
+		container.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.locate"));
 	
 		Label filterLabel = new Label(container, SWT.NONE);
-		filterLabel.setText(PDEPlugin.getResourceString("SearchPage.searchString"));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		filterLabel.setLayoutData(gd);
+		filterLabel.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.search"));
 		
 		filterText = new Text(container, SWT.BORDER);
 		filterText.setText("");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		gd.widthHint=450;
 		filterText.setLayoutData(gd);
 			
-		caseCheck = new Button(container, SWT.CHECK);
-		caseCheck.setText(PDEPlugin.getResourceString("SearchPage.caseSensitive"));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		caseCheck.setLayoutData(gd);
-		
 		return container;
 	}
 	public void setVisible(boolean visible) {
@@ -322,12 +312,16 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	
 	private void handleFilter() {
-		if (filterText == null || filterText.getText() == null || filterText.getText().length() == 0){
+		if (filterText == null ||filterText.getText().trim().length() == 0){
 			availableListViewer.setSelection(null);
 			return;
 		}
 
-		StringMatcher stringMatcher = new StringMatcher(filterText.getText(), !caseCheck.getSelection(), false);
+		String text = filterText.getText().trim();
+		if (text.indexOf('*') == -1 && text.indexOf('?') == -1)
+			text += "*";
+		
+		StringMatcher stringMatcher = new StringMatcher(text, false, false);
 		TableItem[] tableItems = availableListViewer.getTable().getItems();
 		ArrayList results = new ArrayList();
 		for (int i = 0; i<tableItems.length; i++){
