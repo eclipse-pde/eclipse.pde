@@ -640,8 +640,11 @@ public class AdvancedLauncherTab
 		if (useDefault) {
 			Hashtable wtable = new Hashtable();
 			for (int i = 0; i < workspaceModels.length; i++) {
-				res.add(workspaceModels[i]);
-				wtable.put(workspaceModels[i].getPluginBase().getId(), workspaceModels[i]);
+				// check for null is to accomodate previous unclean exits (e.g. workspace crashes)
+				if (workspaceModels[i].getPluginBase().getId() != null) {
+					res.add(workspaceModels[i]);
+					wtable.put(workspaceModels[i].getPluginBase().getId(), workspaceModels[i]);
+				}
 			}
 			for (int i = 0; i < externalModels.length; i++) {
 				IPluginModelBase model = externalModels[i];
