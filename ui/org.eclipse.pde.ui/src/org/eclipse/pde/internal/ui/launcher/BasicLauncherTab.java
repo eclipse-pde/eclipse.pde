@@ -128,7 +128,10 @@ public class BasicLauncherTab
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
-					fWorkspaceCombo.setText(chosen.toOSString());
+					String destination = chosen.toOSString();
+					if (fWorkspaceCombo.indexOf(destination) == -1)
+						fWorkspaceCombo.add(destination, 0);
+					fWorkspaceCombo.setText(destination);
 					updateStatus();
 				}
 			}
@@ -460,14 +463,12 @@ public class BasicLauncherTab
 	protected void saveWorkspaceDataSection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
 		config.setAttribute(LOCATION + String.valueOf(0), fWorkspaceCombo.getText());
-		if (fWorkspaceCombo.getItemCount() > 1) {
-			String[] items = fWorkspaceCombo.getItems();
-			int nEntries = Math.min(items.length, 5);
-			for (int i = 0; i < nEntries; i++) {
-				config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
-			}
+		String[] items = fWorkspaceCombo.getItems();
+		int nEntries = Math.min(items.length, 5);
+		for (int i = 0; i < nEntries; i++) {
+			config.setAttribute(LOCATION + String.valueOf(i+1), items[i]);
 		}
-
+	
 		config.setAttribute(DOCLEAR, fClearWorkspaceCheck.getSelection());
 		config.setAttribute(ASKCLEAR, fAskClearCheck.getSelection());
 	}
