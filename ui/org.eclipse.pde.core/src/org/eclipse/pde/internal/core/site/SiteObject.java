@@ -40,7 +40,7 @@ public abstract class SiteObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException("Illegal attempt to change read-only site manifest model");
+			throwCoreException(PDECore.getResourceString("SiteObject.readOnlyChange")); //$NON-NLS-1$
 		}
 	}
 	protected void firePropertyChanged(
@@ -80,7 +80,7 @@ public abstract class SiteObject
 
 	public String getTranslatableLabel() {
 		if (label == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return model.getResourceString(label);
 	}
 	public ISiteModel getModel() {
@@ -110,7 +110,7 @@ public abstract class SiteObject
 	boolean getBooleanAttribute(Node node, String name) {
 		String value = getNodeAttribute(node, name);
 		if (value != null) {
-			return value.equalsIgnoreCase("true");
+			return value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -127,7 +127,7 @@ public abstract class SiteObject
 	}
 
 	protected void parse(Node node, Hashtable lineTable) {
-		label = getNodeAttribute(node, "label");
+		label = getNodeAttribute(node, "label"); //$NON-NLS-1$
 	}
 
 	protected void reset() {
@@ -143,30 +143,32 @@ public abstract class SiteObject
 	protected void throwCoreException(String message) throws CoreException {
 		Status status =
 			new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.OK, message, null);
-		throw new CoreException(status);
+		CoreException ce= new CoreException(status);
+		ce.fillInStackTrace();
+		throw ce;
 	}
 
 	public static String getWritableString(String source) {
 		if (source == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);
 			switch (c) {
 				case '&' :
-					buf.append("&amp;");
+					buf.append("&amp;"); //$NON-NLS-1$
 					break;
 				case '<' :
-					buf.append("&lt;");
+					buf.append("&lt;"); //$NON-NLS-1$
 					break;
 				case '>' :
-					buf.append("&gt;");
+					buf.append("&gt;"); //$NON-NLS-1$
 					break;
 				case '\'' :
-					buf.append("&apos;");
+					buf.append("&apos;"); //$NON-NLS-1$
 					break;
 				case '\"' :
-					buf.append("&quot;");
+					buf.append("&quot;"); //$NON-NLS-1$
 					break;
 				default :
 					buf.append(c);
