@@ -104,7 +104,7 @@ public class PluginPathUpdater {
 
 			String name = expandLibraryName(library.getName());
 			IPath libraryPath = modelPath.append(name);
-			IPath[] sourceAnnot = getSourceAnnotation(libraryPath);
+			IPath[] sourceAnnot = getSourceAnnotation(plugin, modelPath, name);
 			if (!isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) {
 				IClasspathEntry libraryEntry =
 					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
@@ -143,7 +143,7 @@ public class PluginPathUpdater {
 			IFragmentModel fmodel = fragments[i];
 			IPath modelPath = getExternalPath(fmodel);
 			IPath libraryPath = modelPath.append(name);
-			IPath[] sourceAnnot = getSourceAnnotation(libraryPath);
+			IPath[] sourceAnnot = getSourceAnnotation(fmodel.getFragment(), modelPath, name);
 			IClasspathEntry libraryEntry =
 					JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
 			IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(libraryEntry);
@@ -169,7 +169,7 @@ public class PluginPathUpdater {
 		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
 		IPath libraryPath = rootPath.append(name);
-		IPath[] sourceAnnot = getSourceAnnotation(libraryPath);
+		IPath[] sourceAnnot = getSourceAnnotation(library.getPluginBase(), rootPath, name);
 		return JavaCore.newLibraryEntry(
 			libraryPath,
 			sourceAnnot[0],
@@ -214,11 +214,54 @@ public class PluginPathUpdater {
 	}
 
 	private static IPath[] getSourceAnnotation(
-		IPath libraryPath) {
+		IPluginBase pluginBase, IPath rootPath, String name) {
 		IPath[] annot = new IPath[2];
-		annot[0] = new Path(libraryPath.removeFileExtension().toString() + "src.zip");
+		int dot = name.lastIndexOf('.');
+		if (dot!= -1) {
+			String zipName = name.substring(0, dot)+"src.zip";
+			// test the sibling location
+			if (exists(pluginBase, rootPath, zipName)) {
+				annot[0] = rootPath.append(zipName);
+			}
+			else {
+				// must look up source locations
+				annot[0] = findSourceZip(pluginBase, zipName);
+			}
+		}
 		return annot;
 	}
+	
+	private static IPath findSourceZip(IPluginBase pluginBase, String zipName) {
+		SourceLocationManager manager = PDEPlugin.getDefault().getSourceLocationManager();
+		File file = manager.findSourceFile(pluginBase, new Path(zipName));
+		if (file!=null) return new Path(file.getPath());
+		else return null;
+	}
+
+	private static boolean exists(IPluginBase plugin, IPath rootPath, String zipName) {
+		IResource resource = plugin.getModel().getUnderlyingResource();
+		if (resource!=null) {
+			IProject project = resource.getProject();
+			IFile file = project.getFile(zipName);
+			return file.exists();
+		}
+		else {
+			rootPath = getAbsolutePath(rootPath);
+			File file = rootPath.append(zipName).toFile();
+			return file.exists();
+		}
+	}
+
+	private static IPath getAbsolutePath(IPath path) {
+		String firstSegment = path.segment(0);
+		if (firstSegment.equals("ECLIPSE_HOME")) {
+			IPath root = JavaCore.getClasspathVariable(firstSegment);
+			if (root!=null)
+				return root.append(path.removeFirstSegments(1));
+		}
+		return path;
+	}
+	
 	public IClasspathEntry[] getSourceClasspathEntries(IPluginModel model) {
 		Vector result = new Vector();
 

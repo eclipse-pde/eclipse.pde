@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.core.plugin.IPluginBase;
 
 /**
  * @author dejan
@@ -38,9 +39,12 @@ public class SourceLocationManager {
 		return (SourceLocation[]) list.toArray(new SourceLocation[list.size()]);
 	}
 
-	public File findSourceFile(IPath sourcePath) {
+	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
 		initialize();
-		File file = findSourceFile(extensionLocations, sourcePath);
+		String pluginDir = pluginBase.getId()+"_"+pluginBase.getVersion();
+		IPath locationRelativePath = new Path(pluginDir);
+		locationRelativePath = locationRelativePath.append(sourcePath);
+		File file = findSourceFile(extensionLocations, locationRelativePath);
 		if (file != null)
 			return file;
 		file = findSourceFile(userLocations, sourcePath);
@@ -50,6 +54,8 @@ public class SourceLocationManager {
 	private File findSourceFile(ArrayList list, IPath sourcePath) {
 		for (int i = 0; i < list.size(); i++) {
 			SourceLocation location = (SourceLocation) list.get(i);
+			if (location.isEnabled() == false)
+				continue;
 			File file = findSourcePath(location, sourcePath);
 			if (file != null)
 				return file;
@@ -57,8 +63,14 @@ public class SourceLocationManager {
 		return null;
 	}
 
-	private File findSourcePath(SourceLocation location, IPath libraryPath) {
-		return null;
+	private File findSourcePath(SourceLocation location, IPath sourcePath) {
+		IPath locationPath = location.getPath();
+		IPath fullPath = locationPath.append(sourcePath);
+		File file = fullPath.toFile();
+		if (file.exists())
+			return file;
+		else
+			return null;
 	}
 
 	public SourceLocation[] getAllLocations() {
