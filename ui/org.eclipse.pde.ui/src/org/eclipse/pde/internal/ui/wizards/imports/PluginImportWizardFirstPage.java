@@ -66,6 +66,14 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.errors.buildFolderInvalid";
 	private static final String KEY_BUILD_MISSING =
 		"ImportWizard.errors.buildFolderMissing";
+	private static final String KEY_OS =
+		"ImportWizard.FirstPage.os";
+	private static final String KEY_WS =
+		"ImportWizard.FirstPage.ws";
+	private static final String KEY_NL =
+		"ImportWizard.FirstPage.nl";
+	private static final String KEY_ARCH =
+		"ImportWizard.FirstPage.arch";
 
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
@@ -193,26 +201,26 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			2);
 		createTargetLine(
 			container,
-			TargetEnvironmentPreferencePage.KEY_OS,
+			KEY_OS,
 			TargetPlatform.getOS());
 		createTargetLine(
 			container,
-			TargetEnvironmentPreferencePage.KEY_WS,
+			KEY_WS,
 			TargetPlatform.getWS());
 		createTargetLine(
 			container,
-			TargetEnvironmentPreferencePage.KEY_NL,
+			KEY_NL,
 			TargetPlatform.getNL());
 		createTargetLine(
 			container,
-			TargetEnvironmentPreferencePage.KEY_ARCH,
+			KEY_ARCH,
 			TargetPlatform.getOSArch());
 	}
 
 	private void createTargetLine(Composite parent, String nameKey, String value) {
 		GridData gd = new GridData();
 		Label label = new Label(parent, SWT.NULL);
-		label.setText(trimMnemonics(PDEPlugin.getResourceString(nameKey)));
+		label.setText(PDEPlugin.getResourceString(nameKey));
 		gd.horizontalIndent = 10;
 		label.setLayoutData(gd);
 
@@ -220,15 +228,6 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		label.setText(value);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(gd);
-	}
-	private String trimMnemonics(String name) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-			if (c != '&')
-				buf.append(c);
-		}
-		return buf.toString();
 	}
 	
 	private String getTargetHome() {
