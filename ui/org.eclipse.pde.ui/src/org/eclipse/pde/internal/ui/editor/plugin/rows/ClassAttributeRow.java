@@ -43,16 +43,17 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 	protected void openReference() {
 		String name = text.getText();
 		name = trimNonAlphaChars(name);
-		String path = name.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
-				IJavaElement result = javaProject.findElement(new Path(path));
+				IJavaElement result = null;
+				if (name.length() > 0)
+					result = javaProject.findType(name);
 				if (result != null) {
 					JavaUI.openInEditor(result);
 				} else {
-					JavaAttributeValue value = createJavaAttributeValue();
+					JavaAttributeValue value = createJavaAttributeValue(name);
 					JavaAttributeWizard wizard = new JavaAttributeWizard(value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin
 							.getActiveWorkbenchShell(), wizard);
@@ -60,21 +61,20 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
 					if (dResult == WizardDialog.OK) {
-						path = wizard.getClassName().replace('.', '/')
-								+ ".java"; //$NON-NLS-1$
-						text.setText(wizard.getClassNameWithArgs());
-						result = javaProject.findElement(new Path(path));
+						name = wizard.getClassNameWithArgs();
+						text.setText(name);
+						result = javaProject.findType(name);
 						if (result != null)
 							JavaUI.openInEditor(result);
 					}
 				}
 			} else {
-				IResource resource = project.findMember(new Path(path));
+				IResource resource = project.findMember(new Path(name));
 				if (resource != null && resource instanceof IFile) {
 					IWorkbenchPage page = PDEPlugin.getActivePage();
 					IDE.openEditor(page, (IFile) resource, true);
 				} else {
-					JavaAttributeValue value = createJavaAttributeValue();
+					JavaAttributeValue value = createJavaAttributeValue(name);
 					JavaAttributeWizard wizard = new JavaAttributeWizard(value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin
 							.getActiveWorkbenchShell(), wizard);
@@ -83,9 +83,9 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					int dResult = dialog.open();
 					if (dResult == WizardDialog.OK) {
 						String newValue = wizard.getClassName();
-						path = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
+						name = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
 						text.setText(newValue);
-						resource = project.findMember(new Path(path));
+						resource = project.findMember(new Path(name));
 						if (resource != null && resource instanceof IFile) {
 							IWorkbenchPage page = PDEPlugin.getActivePage();
 							IDE.openEditor(page, (IFile) resource, true);
@@ -114,11 +114,10 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 			}
 		});
 	}
-	private JavaAttributeValue createJavaAttributeValue() {
+	private JavaAttributeValue createJavaAttributeValue(String name) {
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = (IPluginModelBase) part.getPage().getModel();
-		String value = text.getText();
-		return new JavaAttributeValue(project, model, getAttribute(), value);
+		return new JavaAttributeValue(project, model, getAttribute(), name);
 	}
 	private void doOpenSelectionDialog() {
 		try {
