@@ -55,6 +55,11 @@ protected void createFormClient(Composite parent) {
 public void expandTo(Object object) {
    extensionSection.expandTo(object);
 }
+
+public void openNewExtensionWizard() {
+	extensionSection.handleNew();
+}
+
 public void initialize(Object model) {
 	setHeadingText(PDEPlugin.getResourceString(FORM_TITLE));
 	super.initialize(model);

@@ -10,17 +10,26 @@ import java.net.URL;
  * This interface represents a section of the template
  * wizard that generates a new extension or plug-in.
  * Typically, it maps to one wizard page, but more
- * complex sections may span several pages. If a section
- * generates extensions, it should be written in such 
- * a way to be used both in the 'New Extension' wizard
- * and as a part of a new plug-in template.
+ * complex sections may span several pages. Also note
+ * that in very simple cases it may not contribute any
+ * wizard pages. 
+ * <p>If a section generates extensions, it should be written 
+ * in such a way to be used both in the 'New Extension' wizard
+ * and as a part of a new plug-in project template.
+ * </p>
  */
 
 public interface ITemplateSection {
 	/**
 	 * Returns the URL of the zip file containing 
 	 * template files and directories that will
-	 * be created in the plug-in project.
+	 * be created in the plug-in project. If URL protocol
+	 * is 'file', and the URL ends with a trailing file
+	 * separator, an attempt will be made to treat the
+	 * URL as a root directory and iterate using standard
+	 * Java IO. If template files are stored in a ZIP 
+	 * or JAR archive, the name of the archive must
+	 * be part of the URL.
 	 */
 	public URL getTemplateLocation();
 	
@@ -56,9 +65,9 @@ public interface ITemplateSection {
 	/**
 	 * Provides the list of template dependencies. A template
 	 * may generate a number of Java classes that reference
-	 * classes and interfaces that belong to other plug-ins.
+	 * classes and interfaces from other plug-ins.
 	 * By providing this list, a template enables the template
-	 * wizard to update the correct Java build path so that
+	 * wizard to create the correct Java build path so that
 	 * these classes and interfaces are correctly resolved.
 	 */
 	public IPluginReference[] getDependencies();

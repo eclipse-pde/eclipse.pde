@@ -464,7 +464,7 @@ public class DetailExtensionSection
 			}
 		}
 	}
-	private void handleNew() {
+	void handleNew() {
 		IFile file =
 			((IFileEditorInput) getFormPage().getEditor().getEditorInput()).getFile();
 		final IProject project = file.getProject();

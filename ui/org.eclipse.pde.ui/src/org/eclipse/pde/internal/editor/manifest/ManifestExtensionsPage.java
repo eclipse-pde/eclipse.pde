@@ -32,4 +32,7 @@ protected AbstractSectionForm createForm() {
 public IPropertySheetPage createPropertySheetPage() {
 	return new ExtensionsPropertySheet(getEditor());
 }
+public void openNewExtensionWizard() {
+	((ExtensionsForm)getForm()).openNewExtensionWizard();
+}
 }

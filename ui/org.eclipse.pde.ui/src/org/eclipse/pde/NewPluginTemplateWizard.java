@@ -10,22 +10,19 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.core.resources.*;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.pde.model.plugin.*;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.pde.internal.model.plugin.*;
 import org.eclipse.pde.internal.wizards.templates.*;
 import java.util.*;
-
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.pde.internal.wizards.PluginPathUpdater;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.PDEPluginImages;
 import org.eclipse.pde.internal.wizards.project.ProjectStructurePage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.jface.viewers.*;
 
 /**
  * This wizard should be used as a base class for 
@@ -67,7 +64,7 @@ public abstract class NewPluginTemplateWizard
 		setNeedsProgressMonitor(true);
 		sections = createTemplateSections();
 	}
-	
+
 	/*
 	 * @see IPluginContentWizard#init(IProjectProvider, IPluginStructureData, boolean)
 	 */
@@ -78,9 +75,9 @@ public abstract class NewPluginTemplateWizard
 		this.provider = provider;
 		this.structureData = structureData;
 		this.fragment = fragment;
-		setWindowTitle(PDEPlugin.getResourceString(fragment?KEY_WFTITLE:KEY_WTITLE));
+		setWindowTitle(
+			PDEPlugin.getResourceString(fragment ? KEY_WFTITLE : KEY_WTITLE));
 	}
-
 
 	public abstract ITemplateSection[] createTemplateSections();
 
@@ -122,17 +119,18 @@ public abstract class NewPluginTemplateWizard
 		}
 		return true;
 	}
-	
+
 	private int computeTotalWork() {
 		int totalWork = 4;
 
-		for (int i=0; i<sections.length; i++) {
+		for (int i = 0; i < sections.length; i++) {
 			totalWork += sections[i].getNumberOfWorkUnits();
 		}
 		return totalWork;
 	}
-	
-	protected void doFinish(FieldData data, IProgressMonitor monitor) throws CoreException {
+
+	protected void doFinish(FieldData data, IProgressMonitor monitor)
+		throws CoreException {
 		int totalWork = computeTotalWork();
 		monitor.beginTask("Generating content...", totalWork);
 		IProject project = provider.getProject();
@@ -141,70 +139,85 @@ public abstract class NewPluginTemplateWizard
 		ProjectStructurePage.createBuildProperties(project, structureData, monitor);
 		monitor.worked(1);
 		ArrayList dependencies = getDependencies();
-		WorkspacePluginModelBase model = firstPage.createPluginManifest(project, data, dependencies, monitor); // one step
+		WorkspacePluginModelBase model =
+			firstPage.createPluginManifest(project, data, dependencies, monitor);
+		// one step
 		monitor.worked(1);
 		setJavaSettings(model, monitor); // one step
 		monitor.worked(1);
 		executeTemplates(project, model, monitor); // nsteps
 		model.save();
-	
-		IFile file = (IFile)model.getUnderlyingResource();
+
+		IFile file = (IFile) model.getUnderlyingResource();
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getEditorRegistry().setDefaultEditor(
 			file,
 			PDEPlugin.MANIFEST_EDITOR_ID);
 		openPluginFile(file);
 	}
-	
-	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+
+	private void setJavaSettings(IPluginModelBase model, IProgressMonitor monitor)
+		throws CoreException {
 		try {
 			BuildPathUtil.setBuildPath(model, monitor);
-		}
-		catch (JavaModelException e) {
+		} catch (JavaModelException e) {
 			String message = e.getMessage();
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, e);
+			IStatus status =
+				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, e);
 			throw new CoreException(status);
 		}
 	}
 
 	private ArrayList getDependencies() {
 		ArrayList result = new ArrayList();
-		IPluginReference [] list = firstPage.getDependencies();
+		IPluginReference[] list = firstPage.getDependencies();
 		addDependencies(list, result);
-		for (int i=0; i<sections.length; i++) {
+		for (int i = 0; i < sections.length; i++) {
 			addDependencies(sections[i].getDependencies(), result);
 		}
 		return result;
 	}
-	
-	private void addDependencies(IPluginReference [] list, ArrayList result) {
-		for (int i=0; i<list.length; i++) {
+
+	private void addDependencies(IPluginReference[] list, ArrayList result) {
+		for (int i = 0; i < list.length; i++) {
 			IPluginReference reference = list[i];
 			if (!result.contains(reference))
 				result.add(reference);
 		}
 	}
-	
-	private void executeTemplates(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		for (int i=0; i<sections.length; i++) {
+
+	private void executeTemplates(
+		IProject project,
+		IPluginModelBase model,
+		IProgressMonitor monitor)
+		throws CoreException {
+		for (int i = 0; i < sections.length; i++) {
 			ITemplateSection section = sections[i];
 			section.execute(project, model, monitor);
 		}
 	}
-	
+
 	protected IEditorInput createEditorInput(IFile file) {
 		return new FileEditorInput(file);
 	}
-	
+
 	private void openPluginFile(final IFile file) {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 
+		final IWorkbenchPage page = ww.getActivePage();
+		if (page==null) return;
 		Display d = ww.getShell().getDisplay();
+		final IWorkbenchPart focusPart = page.getActivePart();
 		d.asyncExec(new Runnable() {
 			public void run() {
 				try {
 					String editorId =
 						fragment ? PDEPlugin.FRAGMENT_EDITOR_ID : PDEPlugin.MANIFEST_EDITOR_ID;
+
+					if (focusPart instanceof ISetSelectionTarget) {
+						ISelection selection = new StructuredSelection(file);
+						((ISetSelectionTarget) focusPart).selectReveal(selection);
+					}
 					IEditorInput input = createEditorInput(file);
 					ww.getActivePage().openEditor(input, editorId);
 				} catch (PartInitException e) {
@@ -213,6 +226,5 @@ public abstract class NewPluginTemplateWizard
 			}
 		});
 	}
-
 
 }
