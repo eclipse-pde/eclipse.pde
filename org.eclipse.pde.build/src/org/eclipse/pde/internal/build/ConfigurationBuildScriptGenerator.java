@@ -45,16 +45,16 @@ protected String determineFullConfigurationModelId() {
 
 	return configurationModel.getId() + "_" + configurationModel.getVersion();
 }
-public void execute() {
+public IStatus execute() {
 	if (!readConfigurationModel())
-		return;
+		return getProblems();
 		
 	if (generateChildren) {
 		ComponentModel components[] = determineComponents();
 		for (int i = 0; i < components.length; i++) {
 			ComponentBuildScriptGenerator generator = new ComponentBuildScriptGenerator(components[i].getId(),getInstall(),getRegistry());
 			generator.setDevEntries(getDevEntries());
-			generator.execute();
+			addProblems(generator.execute());
 		}
 	}
 	
@@ -69,6 +69,8 @@ public void execute() {
 	} catch (IOException e) {
 		e.printStackTrace(System.out);
 	}
+	
+	return getProblems();
 }
 protected void generateAllTarget(PrintWriter output) {
 	ArrayList targets = new ArrayList(5);
@@ -238,11 +240,23 @@ protected ComponentModel[] readComponentsFromConfigurationModel() {
 		ComponentModel currentReadComponent = configurationComponents[i];
 		ComponentModel resultingComponent = fullComponentRegistry.getComponent(currentReadComponent.getId());
 		if (resultingComponent == null) {
-			System.out.println(Policy.bind("exception.missingComponent",currentReadComponent.getId()));
+			addProblem(new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_COMPONENT_MISSING,
+				Policy.bind(Policy.bind("exception.missingComponent",currentReadComponent.getId())),
+				null));
 			continue;
 		}
-		if (!currentReadComponent.getVersion().equals(resultingComponent.getVersion()))
-			System.out.println(Policy.bind("info.usingIncorrectComponentVersion",currentReadComponent.getId()));
+		if (!currentReadComponent.getVersion().equals(resultingComponent.getVersion())) {
+			addProblem(new Status(
+				IStatus.WARNING,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.WARNING_COMPONENT_INCORRECTVERSION,
+				Policy.bind("warning.usingIncorrectComponentVersion",currentReadComponent.getId()),
+				null));
+		}
+		
 		accumulatingResult.addElement(resultingComponent);
 	}
 	
@@ -253,7 +267,13 @@ protected ComponentModel[] readComponentsFromConfigurationModel() {
 }
 protected boolean readConfigurationModel() {
 	if (configurationId == null) {
-		System.out.println(Policy.bind("error.missingConfigurationId"));
+		addProblem(new Status(
+			IStatus.ERROR,
+			PluginTool.PI_PDECORE,
+			ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_MISSING,
+			Policy.bind(Policy.bind("error.missingConfigurationId")),
+			null));
+
 		return false;
 	}
 		
@@ -269,8 +289,7 @@ protected boolean readConfigurationModel() {
 }
 public Object run(Object args) throws Exception {
 	super.run(args);
-	execute();
-	return null;
+	return execute();
 }
 public static void main(String[] args) throws Exception {
 	new ConfigurationBuildScriptGenerator().run(args);

@@ -71,20 +71,20 @@ protected PluginModel[] determinePlugins() {
 	return plugins;
 }
 
-public void execute() {
+public IStatus execute() {
 	if (!readComponentModel())
-		return;
+		return getProblems();
 
 	if (generateChildren) {
 		PluginModel plugins[] = determinePlugins();
 		PluginBuildScriptGenerator pluginGenerator = new PluginBuildScriptGenerator(plugins,getRegistry());
 		pluginGenerator.setDevEntries(getDevEntries());
-		pluginGenerator.execute();
+		addProblems(pluginGenerator.execute());
 		
 		PluginModel fragments[] = determineFragments();
 		FragmentBuildScriptGenerator fragmentGenerator = new FragmentBuildScriptGenerator(fragments,getRegistry());
 		fragmentGenerator.setDevEntries(getDevEntries());
-		fragmentGenerator.execute();
+		addProblems(fragmentGenerator.execute());
 	}
 
 	try {
@@ -98,6 +98,8 @@ public void execute() {
 	} catch (IOException e) {
 		e.printStackTrace(System.out);
 	}
+	
+	return getProblems();
 }
 protected void generateAllTarget(PrintWriter output) {
 	ArrayList targets = new ArrayList(5);
@@ -306,7 +308,12 @@ protected String[] processCommandLine(String[] args) {
 }
 protected boolean readComponentModel() {
 	if (componentId == null) {
-		System.out.println(Policy.bind("error.missingComponentId"));
+		addProblem(new Status(
+			IStatus.ERROR,
+			PluginTool.PI_PDECORE,
+			ScriptGeneratorConstants.EXCEPTION_COMPONENT_MISSING,
+			Policy.bind("error.missingComponentId"),
+			null));
 		return false;
 	}
 	
@@ -328,11 +335,23 @@ protected PluginModel[] readFragmentsFromComponentModel() {
 		PluginModel currentReadFragment = componentFragments[i];
 		PluginModel resultingFragment = getRegistry().getFragment(currentReadFragment.getId());
 		if (resultingFragment == null) {
-			System.out.println(Policy.bind("exception.missingFragment",currentReadFragment.getId()));
+			addProblem(new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_FRAGMENT_MISSING,
+				Policy.bind("exception.missingFragment",currentReadFragment.getId()),
+				null));
 			continue;
 		}
-		if (!currentReadFragment.getVersion().equals(resultingFragment.getVersion()))
-			System.out.println(Policy.bind("info.usingIncorrectFragmentVersion",currentReadFragment.getId()));
+		if (!currentReadFragment.getVersion().equals(resultingFragment.getVersion())) {
+			addProblem(new Status(
+				IStatus.WARNING,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.WARNING_FRAGMENT_INCORRECTVERSION,
+				Policy.bind("warning.usingIncorrectFragmentVersion",currentReadFragment.getId()),
+				null));
+		}
+
 		accumulatingResult.addElement(resultingFragment);
 	}
 	
@@ -349,11 +368,23 @@ protected PluginModel[] readPluginsFromComponentModel() {
 		PluginModel currentReadPlugin = componentPlugins[i];
 		PluginModel resultingPlugin = getRegistry().getPlugin(currentReadPlugin.getId());
 		if (resultingPlugin == null) {
-			System.out.println(Policy.bind("exception.missingPlugin",currentReadPlugin.getId()));
+			addProblem(new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_PLUGIN_MISSING,
+				Policy.bind("exception.missingPlugin",currentReadPlugin.getId()),
+				null));
 			continue;
 		}
-		if (!currentReadPlugin.getVersion().equals(resultingPlugin.getVersion()))
-			System.out.println(Policy.bind("info.usingIncorrectPluginVersion",currentReadPlugin.getId()));
+		if (!currentReadPlugin.getVersion().equals(resultingPlugin.getVersion())) {
+			addProblem(new Status(
+				IStatus.WARNING,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.WARNING_PLUGIN_INCORRECTVERSION,
+				Policy.bind("warning.usingIncorrectPluginVersion",currentReadPlugin.getId()),
+				null));
+		}
+		
 		accumulatingResult.addElement(resultingPlugin);
 	}
 	
@@ -364,8 +395,7 @@ protected PluginModel[] readPluginsFromComponentModel() {
 }
 public Object run(Object args) throws Exception {
 	super.run(args);
-	execute();
-	return null;
+	return execute();
 }
 public void setComponentId(String value) {
 	componentId = value;

@@ -80,13 +80,11 @@ protected String computeCompleteSrc(PluginModel descriptor) {
 		jars.addAll((Collection) i.next());
 	return getStringFromCollection(jars, "", "/", ",");
 }
-public void execute() {
+public IStatus execute() {
 	if (modelsToGenerate == null)
 		retrieveCommandLineModels();
 		
 	for (int i = 0; i < modelsToGenerate.length; i++) {
-		System.out.flush();
-		
 		try {
 			PrintWriter output = openOutput(modelsToGenerate[i]);
 			try {
@@ -98,6 +96,8 @@ public void execute() {
 			e.printStackTrace(System.out);
 		}
 	}
+	
+	return getProblems();
 }
 public void generateBuildScript(PrintWriter output,PluginModel descriptor) {
 	initializeFor(descriptor);
@@ -452,7 +452,13 @@ protected Hashtable loadJarDefinitions(PluginModel descriptor) {
 			is.close();
 		}
 	} catch (IOException e) {
-		System.out.println(Policy.bind("exception.missingFile",location.toString()));
+		addProblem(new Status(
+			IStatus.ERROR,
+			PluginTool.PI_PDECORE,
+			ScriptGeneratorConstants.EXCEPTION_FILE_MISSING,
+			Policy.bind("exception.missingFile",location.toString()),
+			null));
+				
 		return new Hashtable(1);
 	}
 	
@@ -520,8 +526,14 @@ protected void retrieveCommandLineModels() {
 		PluginModel model = retrieveModelNamed(modelName);
 		if (model != null)
 			modelsToGenerate.addElement(model);
-		else
-			System.out.println(Policy.bind("exception.missingPlugin",modelName));
+		else {
+			addProblem(new Status(
+				IStatus.ERROR,
+				PluginTool.PI_PDECORE,
+				ScriptGeneratorConstants.EXCEPTION_PLUGIN_MISSING,
+				Policy.bind("exception.missingPlugin",modelName),
+				null));
+		}
 	}
 	
 	PluginModel result[] = new PluginModel[modelsToGenerate.size()];
@@ -532,8 +544,7 @@ protected abstract PluginModel retrieveModelNamed(String modelName);
 
 public Object run(Object args) throws Exception {
 	super.run(args);
-	execute();
-	return null;
+	return execute();
 }
 public void setModelsToGenerate(PluginModel models[]) {
 	modelsToGenerate = models;

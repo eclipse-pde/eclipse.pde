@@ -21,13 +21,10 @@ public abstract class PluginTool implements IPlatformRunnable {
 	String install = null;
 	private List devEntries = null;
 	private Hashtable propertyValues = new Hashtable(9);
+	private MultiStatus problems = new MultiStatus(PI_PDECORE,IStatus.OK,Policy.bind("label.generationProblems"),null);
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";
-	public final static int EXCEPTION_PLUGIN_PARSE = 1;
-	public final static int EXCEPTION_COMPONENT_PARSE = 2;
-	public final static int EXCEPTION_CONFIGURATION_PARSE = 4;
-	
-	public static final String FILENAME_PROPERTIES = "build.properties";
+	public final static String FILENAME_PROPERTIES = "build.properties";
 	private static final String SEPARATOR_VERSION = "_";
 	private static final String USAGE = "-?";
 	private static final String PLUGINS = "-plugins";
@@ -41,7 +38,7 @@ public abstract class PluginTool implements IPlatformRunnable {
  * at any point in the deletion.
  * Even if an exception occurs, a best effort is made to continue deleting.
  */
-public static boolean clear(java.io.File root) {
+public static boolean clear(File root) {
 	boolean result = true;
 	if (root.isDirectory()) {
 		String[] list = root.list();
@@ -58,6 +55,12 @@ public static boolean clear(java.io.File root) {
 		result = false;
 	}
 	return result;
+}
+protected void addProblem(IStatus problem) {
+	problems.add(problem);
+}
+protected void addProblems(IStatus problem) {
+	problems.addAll(problem);
 }
 protected String extractPropertyName(String propertyString) {
 	String prefixRemoved = propertyString.substring(PROPERTYASSIGNMENT_PREFIX.length());
@@ -140,6 +143,9 @@ private URL[] getPluginPath() {
 		return BootLoader.getPluginPath(pluginPath);
 	}
 	return null;
+}
+protected IStatus getProblems() {
+	return problems;
 }
 protected Properties getProperties(InstallModel descriptor) {
 	Properties result = (Properties)propertyValues.get(descriptor);
@@ -274,7 +280,7 @@ public Object run(Object args) throws Exception {
 		return null;
 	}
 	URL[] path = getPluginPath();
-	MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,PluginTool.EXCEPTION_PLUGIN_PARSE,Policy.bind("exception.pluginParse"),null);
+	MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,ScriptGeneratorConstants.EXCEPTION_MODEL_PARSE,Policy.bind("exception.pluginParse"),null);
 	Factory factory = new Factory(problems);
 	registry = Platform.parsePlugins(path, factory);
 	return null;
