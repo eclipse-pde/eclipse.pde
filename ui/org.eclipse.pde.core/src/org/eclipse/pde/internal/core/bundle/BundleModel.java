@@ -22,12 +22,18 @@ import org.osgi.framework.*;
 public abstract class BundleModel
 	extends AbstractModel
 	implements IBundleModel {
-	private Dictionary fManifest;
 
-	public Dictionary getManifest() {
-		if (isLoaded() == false)
+	private Bundle fBundle;
+	
+	public BundleModel() {
+		fBundle = new Bundle();
+		fBundle.setModel(this);
+	}
+
+	public IBundle getBundle() {
+		if (!isLoaded())
 			load();
-		return fManifest;
+		return fBundle;
 	}
 
 	public String getInstallLocation() {
@@ -37,15 +43,13 @@ public abstract class BundleModel
 	public abstract void load();
 
 	public boolean isFragmentModel() {
-		Dictionary manifest = getManifest();
-		return (manifest != null && manifest.get(Constants.FRAGMENT_HOST) != null);
+		return fBundle.getHeader(Constants.FRAGMENT_HOST) != null;
 	}
 
 	public void load(InputStream source, boolean outOfSync) {
 		try {
-			fManifest = null;
 			Manifest m = new Manifest(source);
-			fManifest = manifestToProperties(m.getMainAttributes());
+			fBundle.load(manifestToProperties(m.getMainAttributes()));
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (IOException e) {

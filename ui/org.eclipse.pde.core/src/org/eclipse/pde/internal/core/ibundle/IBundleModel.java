@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
-import java.util.Dictionary;
+
 import org.eclipse.pde.core.*;
 /**
  * This model is created from the "META-INF/MANIFEST.MF" file that represents
@@ -25,9 +25,9 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns the top-level model object of this model.
 	 * 
-	 * @return a dictionary containing the manifest headers
+	 * @return an object containing the manifest headers
 	 */
-	Dictionary getManifest();
+	IBundle getBundle();
 	/**
 	 * Returns the location of the file used to create the model.
 	 * 
@@ -43,9 +43,4 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 */
 	public boolean isFragmentModel();
 	
-	/**
-	 * Returns a factory object that should be used
-	 * to create new instances of the model objects.
-	 */
-	public IBundleModelFactory getFactory();
 }

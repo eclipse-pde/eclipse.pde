@@ -22,7 +22,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
-				Dictionary manifest = model.getHeaders();
+				Dictionary manifest = ((Bundle)model.getBundle()).getDocumentHeaders();
 				Object[] keys = new Object[manifest.size()];
 				int i = 0;
 				for (Enumeration enum = manifest.keys(); enum.hasMoreElements();) {

@@ -68,24 +68,17 @@ public class BundleInputContext extends UTF8InputContext {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
-				/*IDocumentKey key = (IDocumentKey)object;
-				TextEdit op = (TextEdit)fOperationTable.get(key);
+				ManifestHeader header = (ManifestHeader)object;
+				TextEdit op = (TextEdit)fOperationTable.get(header);
 				if (op != null) {
-					fOperationTable.remove(key);
+					fOperationTable.remove(header);
 					ops.remove(op);
 				}
-				switch (event.getChangeType()) {
-					case IModelChangedEvent.REMOVE :
-						deleteKey(key, ops);
-						break;
-					case IModelChangedEvent.INSERT :
-						insertKey(key, ops);
-						break;
-					case IModelChangedEvent.CHANGE :
-						modifyKey(key, ops);
-					default:
-						break;
-				}*/
+				if (header.getValue() == null || header.getValue().trim().length() == 0) {
+						deleteKey(header, ops);						
+				} else {
+					modifyKey(header, ops);
+				}
 			}
 		}
 	}
@@ -99,7 +92,7 @@ public class BundleInputContext extends UTF8InputContext {
 	
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		InsertEdit op = new InsertEdit(doc.getLength(), key.write());
+		InsertEdit op = new InsertEdit(doc.getLength(), key.write() + System.getProperty("line.separator"));
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}

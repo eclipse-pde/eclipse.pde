@@ -6,18 +6,10 @@
  */
 package org.eclipse.pde.internal.core.bundle;
 
-import java.util.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.osgi.framework.*;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 
 	/* (non-Javadoc)
@@ -31,9 +23,10 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
 	 */
 	public void setClassName(String className) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest != null) {
-			manifest.put(Constants.BUNDLE_ACTIVATOR, className);
+		IBundle bundle = getBundle();
+		if (bundle != null) {
+			model.fireModelObjectChanged(this, P_CLASS_NAME, getClassName(), className);
+			bundle.setHeader(Constants.BUNDLE_ACTIVATOR, className);
 		}
 	}
 }

@@ -17,21 +17,13 @@ import org.osgi.framework.Constants;
 public class BundlePluginBase
 	extends PlatformObject
 	implements IBundlePluginBase {
-	private IBundlePluginModelBase model;
+	protected IBundlePluginModelBase model;
 	private ArrayList libraries;
 	private ArrayList imports;
-	private String fId;
-	private String fName;
-	private String fProvider;
-	private String fVersion;
 
 	public void reset() {
 		libraries = null;
 		imports = null;
-		fId = null;
-		fName = null;
-		fProvider = null;
-		fVersion = null;
 	}
 	
 	public String getSchemaVersion() {
@@ -59,10 +51,10 @@ public class BundlePluginBase
 	 * 
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getBundle()
 	 */
-	public Dictionary getManifest() {
+	public IBundle getBundle() {
 		if (model != null) {
 			IBundleModel bmodel = model.getBundleModel();
-			return bmodel != null ? bmodel.getManifest() : null;
+			return bmodel != null ? bmodel.getBundle() : null;
 		}
 		return null;
 	}
@@ -96,6 +88,9 @@ public class BundlePluginBase
 	public void add(IPluginLibrary library) throws CoreException {
 		if (libraries != null) {
 			libraries.add(library);
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
 			fireStructureChanged(library, true);
 		}
 	}
@@ -108,8 +103,24 @@ public class BundlePluginBase
 	public void remove(IPluginLibrary library) throws CoreException {
 		if (libraries != null) {
 			libraries.remove(library);
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
 			fireStructureChanged(library, false);
 		}
+	}
+	
+	private String writeLibraries() {
+		StringBuffer buffer = new StringBuffer();
+		if (libraries != null) {
+			for (int i = 0; i < libraries.size(); i++) {
+				IPluginLibrary library = (IPluginLibrary)libraries.get(i);
+				buffer.append(library.getName());
+				if (i < libraries.size() - 1)
+					buffer.append(",");
+			}
+		}
+		return buffer.toString();
 	}
 
 	/*
@@ -120,8 +131,29 @@ public class BundlePluginBase
 	public void add(IPluginImport pluginImport) throws CoreException {
 		if (imports != null) {
 			imports.add(pluginImport);
-			fireStructureChanged(pluginImport, true);			
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
+			fireStructureChanged(pluginImport, true);
 		}
+	}
+	
+	private String writeImports() {
+		StringBuffer buffer = new StringBuffer();
+		if (imports != null) {
+			for (int i = 0; i < imports.size(); i++) {
+				IPluginImport iimport = (IPluginImport)imports.get(i);
+				buffer.append(iimport.getId());
+				if (iimport.isOptional())
+					buffer.append(";" + Constants.OPTIONAL_ATTRIBUTE + "=true");
+				if (iimport.isReexported())
+					buffer.append(";" + Constants.REPROVIDE_ATTRIBUTE + "=true");
+				if (i < imports.size() - 1) {
+					buffer.append("," + System.getProperty("line.separator") + " ");
+				}
+			}
+		}
+		return buffer.toString();
 	}
 
 	/*
@@ -132,6 +164,9 @@ public class BundlePluginBase
 	public void remove(IPluginImport pluginImport) throws CoreException {
 		if (imports != null) {
 			imports.remove(pluginImport);
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
 			fireStructureChanged(pluginImport, false);	
 		}
 	}
@@ -142,12 +177,12 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
 	public IPluginLibrary[] getLibraries() {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
+		IBundle bundle = getBundle();
+		if (bundle == null)
 			return new IPluginLibrary[0];
 		if (libraries == null) {
 			libraries = new ArrayList();
-			String[] libNames = PDEStateHelper.getClasspath(manifest);
+			String[] libNames = parseMultiValuedHeader(Constants.BUNDLE_CLASSPATH);
 			for (int i = 0; i < libNames.length; i++) {
 				PluginLibrary library = new PluginLibrary();
 				library.setModel(getModel());
@@ -189,10 +224,10 @@ public class BundlePluginBase
 					importElement.load(imported[i]);
 				}
 			} else {
-				Dictionary manifest = getManifest();
-				if (manifest != null) {
+				IBundle bundle = getBundle();
+				if (bundle != null) {
 					try {
-						String value = (String) manifest.get(Constants.REQUIRE_BUNDLE);
+						String value = bundle.getHeader(Constants.REQUIRE_BUNDLE);
 						if (value != null) {
 							ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, value);
 							for (int i = 0; i < elements.length; i++) {
@@ -218,7 +253,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
-		return fProvider != null ? fProvider : parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
+		return parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
 	}
 	
 	protected String parseSingleValuedHeader(String header) {
@@ -227,10 +262,10 @@ public class BundlePluginBase
 	}
 	
 	protected String[] parseMultiValuedHeader(String header) {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
+		IBundle bundle = getBundle();
+		if (bundle == null)
 			return new String[0];
-		String value = (String)manifest.get(header);
+		String value = bundle.getHeader(header);
 		if (value == null)
 			return new String[0];
 		try {
@@ -239,8 +274,23 @@ public class BundlePluginBase
 				return elements[0].getValueComponents();
 		} catch (BundleException e) {
 		}
-		return new String[0];		
-		
+		return new String[0];				
+	}
+	
+	protected String getAttribute(String header, String attribute) {
+		IBundle bundle = getBundle();
+		if (bundle == null)
+			return null;
+		String value = bundle.getHeader(header);
+		if (value == null)
+			return null;
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
+			if (elements.length > 0)
+				return elements[0].getAttribute(attribute);
+		} catch (BundleException e) {
+		}
+		return null;
 	}
 
 	/*
@@ -249,9 +299,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
-		Object oldValue = getProviderName();
-		fProvider = providerName;
-		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, oldValue, providerName);			
+		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, getProviderName(), providerName);			
+		IBundle bundle = getBundle();
+		if (bundle != null) 
+			bundle.setHeader(Constants.BUNDLE_VENDOR, providerName);
 	}
 
 	/*
@@ -268,7 +319,7 @@ public class BundlePluginBase
 			else
 				return null;
 		} 
-		return fVersion != null ? fVersion : parseSingleValuedHeader(Constants.BUNDLE_VERSION);
+		return parseSingleValuedHeader(Constants.BUNDLE_VERSION);
 	}
 	
 
@@ -278,9 +329,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
-		Object oldValue = getVersion();
-		fVersion = version;
-		model.fireModelObjectChanged(this, IPluginBase.P_VERSION, oldValue, version);
+		model.fireModelObjectChanged(this, IPluginBase.P_VERSION, getVersion(), version);
+		IBundle bundle = getBundle();
+		if (bundle != null) 
+			bundle.setHeader(Constants.BUNDLE_VERSION, getVersion());
 	}
 
 	/*
@@ -296,11 +348,14 @@ public class BundlePluginBase
 			int index2 = imports.indexOf(l2);
 			imports.set(index1, l2);
 			imports.set(index2, l1);
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
 			model.fireModelObjectChanged(this, P_IMPORT_ORDER, l1, l2);
 		}		
 	}
 	
-	private void fireStructureChanged(Object object, boolean added) {
+	protected void fireStructureChanged(Object object, boolean added) {
 		int type = (added)?IModelChangedEvent.INSERT:IModelChangedEvent.REMOVE;
 		model.fireModelChanged(new ModelChangedEvent(model, type, new Object[]{object}, null ));
 	}
@@ -414,6 +469,9 @@ public class BundlePluginBase
 			int index2 = imports.indexOf(import2);
 			imports.set(index1, import2);
 			imports.set(index2, import1);
+			IBundle bundle = getBundle();
+			if (bundle != null) 
+				bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());
 			model.fireModelObjectChanged(this, P_IMPORT_ORDER, import1, import2);
 		}
 	}
@@ -427,7 +485,7 @@ public class BundlePluginBase
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) 
 			return desc.getSymbolicName();
-		return fId != null ? fId : parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
+		return parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
 	}
 	
 	/*
@@ -437,7 +495,6 @@ public class BundlePluginBase
 	 */
 	public void setId(String id) throws CoreException {
 		Object oldValue = getId();
-		fId = id;
 		model.fireModelObjectChanged(this, IPluginBase.P_ID, oldValue, id);
 	}
 
@@ -456,7 +513,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		return fName != null ? fName : parseSingleValuedHeader(Constants.BUNDLE_NAME);
+		return parseSingleValuedHeader(Constants.BUNDLE_NAME);
 	}
 
 	/*
@@ -465,9 +522,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
-		Object oldValue = getName();
-		fName = name;
-		model.fireModelObjectChanged(this, IPluginBase.P_NAME, oldValue, name);
+		model.fireModelObjectChanged(this, IPluginBase.P_NAME, getName(), name);
+		IBundle bundle = getBundle();
+		if (bundle != null) 
+			bundle.setHeader(Constants.BUNDLE_NAME, name);
 	}
 	/*
 	 * (non-Javadoc)
@@ -522,8 +580,8 @@ public class BundlePluginBase
 	 */
 	public boolean isValid() {
 		IExtensions extensions = getExtensionsRoot();
-		return getManifest() != null
-			&& getManifest().get(Constants.BUNDLE_SYMBOLICNAME) != null
+		return getBundle() != null
+			&& getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME) != null
 			&& (extensions == null || extensions.isValid());
 	}
 

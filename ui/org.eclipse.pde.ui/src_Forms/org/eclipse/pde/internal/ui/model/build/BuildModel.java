@@ -41,7 +41,6 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 			((Build)getBuild()).load(prop);
 		} catch (IOException e) {
 			fLoaded = false;
-			e.printStackTrace();
 		}
 	}
 	
