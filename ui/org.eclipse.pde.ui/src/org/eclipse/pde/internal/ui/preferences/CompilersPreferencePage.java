@@ -34,8 +34,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CompilersPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
-	private ArrayList flagControls;
-	private HashSet changedControls = null;
+	private ArrayList fFlagControls;
+	private HashSet fChangedControls = new HashSet();
 
 	public CompilersPreferencePage() {
 		setDescription(PDEPlugin.getResourceString("CompilersPreferencePage.desc")); //$NON-NLS-1$
@@ -53,20 +53,16 @@ public class CompilersPreferencePage
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		folder.setLayoutData(gd);
 
-		flagControls = new ArrayList();
+		fFlagControls = new ArrayList();
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (changedControls == null)  
-					changedControls = new HashSet();  
-				changedControls.add(e.widget);
+				addChangedConrol((Control)e.widget);
 			}
 		};
 
 		ModifyListener mlistener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (changedControls == null)
-					changedControls = new HashSet();  
-				changedControls.add(e.widget);
+				addChangedConrol((Control)e.widget);
 			}
 		};
 		
@@ -77,8 +73,8 @@ public class CompilersPreferencePage
 		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
 		//createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.sites"), CompilerFlags.SITE_FLAGS, choices); //$NON-NLS-1$
 
-		for (int i = 0; i < flagControls.size(); i++) {
-			Control control = (Control) flagControls.get(i);
+		for (int i = 0; i < fFlagControls.size(); i++) {
+			Control control = (Control) fFlagControls.get(i);
 			if (control instanceof Combo)
 				 ((Combo) control).addSelectionListener(listener);
 			else if (control instanceof Button)
@@ -89,6 +85,28 @@ public class CompilersPreferencePage
 		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 		return container;
+	}
+	
+	private void addChangedConrol(Control control) {
+		String flagId = (String) control.getData();
+		boolean doAdd = false;
+		if (control instanceof Combo) {
+			int newIndex = ((Combo) control).getSelectionIndex();
+			int oldIndex = CompilerFlags.getFlag(flagId);
+			doAdd = (newIndex != oldIndex);
+		} else if (control instanceof Button) {
+			boolean newValue = ((Button) control).getSelection();
+			boolean oldValue = CompilerFlags.getBoolean(flagId);
+			doAdd = oldValue != newValue;
+		} else if (control instanceof Text) {
+			String newValue = ((Text) control).getText();
+			String oldValue = CompilerFlags.getString(flagId);
+			doAdd = !newValue.equals(oldValue);
+		}
+		if (doAdd)
+			fChangedControls.add(control);
+		else if (fChangedControls.contains(control))
+			fChangedControls.remove(control);
 	}
 
 	private void createPage(
@@ -111,7 +129,7 @@ public class CompilersPreferencePage
 			textKey = "CompilersPreferencePage.altlabel"; //$NON-NLS-1$
 		else
 			textKey = "CompilersPreferencePage.label"; //$NON-NLS-1$
-		label.setText(PDEPlugin.getResourceString(textKey)); //$NON-NLS-1$
+		label.setText(PDEPlugin.getResourceString(textKey)); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -119,7 +137,7 @@ public class CompilersPreferencePage
 		String[] flagIds = CompilerFlags.getFlags(index);
 		for (int i = 0; i < flagIds.length; i++) {
 			Control control = createFlag(page, flagIds[i], choices);
-			flagControls.add(control);
+			fFlagControls.add(control);
 		}
 	}
 
@@ -170,10 +188,10 @@ public class CompilersPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		boolean hasChange = false;
-		changedControls = new HashSet();
-		for (int i = 0; i < flagControls.size(); i++) {
-			Control control = (Control) flagControls.get(i);
+		fChangedControls.clear();
+		for (int i = 0; i < fFlagControls.size(); i++) {
+			boolean hasChange = false;
+			Control control = (Control) fFlagControls.get(i);
 			String flagId = (String) control.getData();
 			if (control instanceof Combo) {
 				hasChange = ((Combo)control).getSelectionIndex() != CompilerFlags.getDefaultFlag(flagId);
@@ -188,14 +206,12 @@ public class CompilersPreferencePage
 					CompilerFlags.getDefaultString(flagId));
 			}
 			if (hasChange)
-				changedControls.add(control);
-			hasChange = false;
+				fChangedControls.add(control);
 		}
-
 	}
 
 	public boolean performOk() {
-		if (changedControls != null) {
+		if (fChangedControls.size() > 0) {
 
 			String title = PDEPlugin.getResourceString("CompilersPreferencePage.rebuild.title"); //$NON-NLS-1$
 			String message = PDEPlugin.getResourceString("CompilersPreferencePage.rebuild.message"); //$NON-NLS-1$
@@ -214,10 +230,10 @@ public class CompilersPreferencePage
 					2);
 			int res = dialog.open();
 
-			if (res != 0 && res != 1) {
+			if (res == 2) {
 				return false;
 			}
-			for (Iterator iter = changedControls.iterator(); iter.hasNext();) {
+			for (Iterator iter = fChangedControls.iterator(); iter.hasNext();) {
 				Control control = (Control) iter.next();
 				String flagId = (String) control.getData();
 				if (control instanceof Combo) {
@@ -236,7 +252,7 @@ public class CompilersPreferencePage
 			if (res == 0) {
 				doFullBuild();
 			}
-			changedControls=null; 
+			fChangedControls.clear();
 		}
 
 		return super.performOk();
