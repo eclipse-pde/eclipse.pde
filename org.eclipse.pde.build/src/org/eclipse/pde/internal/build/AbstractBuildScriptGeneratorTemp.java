@@ -64,11 +64,11 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	Set classpath = new HashSet(20);
 	String location = getLocation(model);
 	// always add boot and runtime
-	PluginModel boot = getRegistry().getPlugin(PI_BOOT);
+	PluginModel boot = getPlugin(PI_BOOT, null);
 	addLibraries(boot, classpath, location);
 	addFragmentsLibraries(boot, classpath, location);
 	addDevEntries(boot, location, classpath);
-	PluginModel runtime = getRegistry().getPlugin(PI_RUNTIME);
+	PluginModel runtime = getPlugin(PI_RUNTIME, null);
 	addLibraries(runtime, classpath, location);
 	addFragmentsLibraries(runtime, classpath, location);
 	addDevEntries(runtime, location, classpath);
@@ -76,7 +76,7 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	PluginPrerequisiteModel[] requires = model.getRequires();
 	if (requires != null) {
 		for (int i = 0; i < requires.length; i++) {
-			PluginModel prerequisite = getRegistry().getPlugin(requires[i].getPlugin(), requires[i].getVersion());
+			PluginModel prerequisite = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 			addPrerequisiteLibraries(prerequisite, classpath, location);
 			addFragmentsLibraries(prerequisite, classpath, location);
 			addDevEntries(prerequisite, location, classpath);
@@ -117,6 +117,15 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 		}
 	}
 	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
+}
+
+protected PluginModel getPlugin(String id, String version) throws CoreException {
+	PluginModel plugin = getRegistry().getPlugin(id, version);
+	if (plugin == null) {
+		String pluginName = (version == null) ? id : id + "_" + version;
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", pluginName), null));
+	}
+	return plugin;
 }
 
 protected void addDevEntries(PluginModel model, String baseLocation, Set classpath) throws CoreException {
@@ -167,7 +176,7 @@ protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath,
 	for (int i = 0; i < requires.length; i++) {
 		if (!requires[i].getExport())
 			continue;
-		PluginModel plugin = getRegistry().getPlugin(requires[i].getPlugin(), requires[i].getVersion());
+		PluginModel plugin = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 		addLibraries(plugin, classpath, baseLocation);
 		addFragmentsLibraries(plugin, classpath, baseLocation);
 		addDevEntries(plugin, baseLocation, classpath);
