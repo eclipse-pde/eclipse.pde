@@ -420,13 +420,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String root = getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + featureFolderName; //$NON-NLS-1$
 
 		//TODO Ugly handling to not create the feature folder if nothing is being gathered
-		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("folder") && include != null)
+		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("folder") && include != null) //$NON-NLS-1$
 			script.printMkdirTask(root);
 
-		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("antzip"))
+		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("antzip")) //$NON-NLS-1$
 			script.printMkdirTask(root);
 
-		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("zip") && include != null)
+		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("zip") && include != null) //$NON-NLS-1$
 			script.printMkdirTask(root);
 
 		if (include != null) {
@@ -460,7 +460,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				model = getSite(false).getRegistry().getResolvedBundle(entryIdentifier, versionRequested);
 				pluginVersionInfo += (entryIdentifier + ',' + model.getVersion() + ',');
 			}
-			script.println("<eclipse.idReplacer featureFilePath=\"" + root + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersionedIdentifier().getVersion()  + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			script.println("<eclipse.idReplacer featureFilePath=\"" + root + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersionedIdentifier().getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		generateRootFilesAndPermissionsCalls();
 		script.printTargetEnd();
@@ -940,7 +940,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription model;
 			// see if we have a plug-in or a fragment
 
-			model = getSite(false).getRegistry().getResolvedBundle(extraPlugins[i].startsWith("plugin@") ? extraPlugins[i].substring(7) : extraPlugins[i].substring(8));
+			model = getSite(false).getRegistry().getResolvedBundle(extraPlugins[i].startsWith("plugin@") ? extraPlugins[i].substring(7) : extraPlugins[i].substring(8)); //$NON-NLS-1$
 
 			if (model == null) {
 				String message = Policy.bind("exception.missingPlugin", extraPlugins[i]); //$NON-NLS-1$

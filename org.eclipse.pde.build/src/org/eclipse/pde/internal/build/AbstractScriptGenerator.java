@@ -22,7 +22,7 @@ import org.eclipse.update.core.SiteManager;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
-	protected static String outputFormat = "zip";
+	protected static String outputFormat = "zip"; //$NON-NLS-1$
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
 	private static List configInfos;
@@ -71,7 +71,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		String[] ws = new String[configs.length];
 		String[] archs = new String[configs.length];
 		for (int i = 0; i < configs.length; i++) {
-			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ",");
+			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
 			if (configElements.length != 3) {
 				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, Policy.bind("error.configWrongFormat", configs[i]), null); //$NON-NLS-1$
 				throw new CoreException(error);
@@ -169,7 +169,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public static String getDefaultOutputFormat() {
-		return "zip";
+		return "zip"; //$NON-NLS-1$
 	}
 
 	public static void setOutputFormat(String format) {
@@ -193,7 +193,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public static String getDefaultConfigInfos() {
-		return "*, *, *";
+		return "*, *, *"; //$NON-NLS-1$
 	}
 
 	public static boolean getDefaultBuildingOSGi() {

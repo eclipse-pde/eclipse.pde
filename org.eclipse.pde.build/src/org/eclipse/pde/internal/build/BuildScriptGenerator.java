@@ -14,12 +14,10 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.builder.*;
 
-/**
- * 
- */
 public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/**
-	 * Indicates whether the assemble script should contain the archive generation statement.
+	 * Indicates whether the assemble script should contain the archive
+	 * generation statement.
 	 */
 	protected boolean generateArchive = true;
 	/**
@@ -43,8 +41,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected String[] pluginPath;
 
 	protected boolean recursiveGeneration = true;
-	
-	/** 
+
+	/**
 	 * flag indicating if the assemble script should be generated
 	 */
 	private boolean generateAssembleScript = true;
@@ -58,7 +56,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		List features = new ArrayList(5);
 		sortElements(features, plugins);
 
-		// It is not required to filter in the two first generateModels, since it is only for the building of a single plugin
+		// It is not required to filter in the two first generateModels, since
+		// it is only for the building of a single plugin
 		generateModels(new ModelBuildScriptGenerator(), plugins);
 		generateFeatures(features);
 	}
@@ -86,7 +85,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	protected void generateModels(ModelBuildScriptGenerator generator, List models) throws CoreException {
 		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
-			//Filtering is not required here, since we are only generating the build for a plugin or a fragment
+			//Filtering is not required here, since we are only generating the
+			// build for a plugin or a fragment
 			String model = (String) iterator.next();
 			generator.setModelId(model);
 			generator.generate();
@@ -105,9 +105,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 			String featureId = (String) i.next();
 			String versionId = null;
-			int versionPosition = featureId.indexOf(":");
-			if(versionPosition != -1) {
-				versionId = featureId.substring(versionPosition+1);
+			int versionPosition = featureId.indexOf(":"); //$NON-NLS-1$
+			if (versionPosition != -1) {
+				versionId = featureId.substring(versionPosition + 1);
 				featureId = featureId.substring(0, versionPosition);
 			}
 			FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator(featureId, versionId, assemblageInformation);
@@ -123,7 +123,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setCompiledElements(generator.getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.generate();
-			
+
 			if (generateAssembleScript = true) {
 				AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
 				assembler.generate();
@@ -166,14 +166,17 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/**
 	 * Sets the recursiveGeneration.
-	 * @param recursiveGeneration The recursiveGeneration to set
+	 * 
+	 * @param recursiveGeneration
+	 *            The recursiveGeneration to set
 	 */
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		this.recursiveGeneration = recursiveGeneration;
 	}
-	
+
 	/**
-	 * @param generateAssembleScript The generateAssembleScript to set.
+	 * @param generateAssembleScript
+	 *            The generateAssembleScript to set.
 	 */
 	public void setGenerateAssembleScript(boolean generateAssembleScript) {
 		this.generateAssembleScript = generateAssembleScript;
