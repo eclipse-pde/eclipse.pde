@@ -447,6 +447,8 @@
             class="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
             id="org.eclipse.pde.ui.manifestEditor">
+            <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
       </editor>
       <editor
             default="true"
@@ -456,6 +458,7 @@
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
+            <contentTypeBinding contentTypeId="org.eclipse.pde.schema"/>
       </editor>
       <editor
             default="true"
@@ -474,6 +477,7 @@
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             id="org.eclipse.pde.ui.featureEditor">
+            <contentTypeBinding contentTypeId="org.eclipse.pde.featureManifest"/>
       </editor>
       <editor
             default="true"
@@ -483,7 +487,8 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
-      </editor>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.siteManifest"/>
+     </editor>
       <editor
             default="true"
             name="%product.editor"
@@ -492,6 +497,7 @@
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
+            <contentTypeBinding contentTypeId="org.eclipse.pde.productFile"/>
       </editor>
       <editor
             name="%editors.sample.name"
