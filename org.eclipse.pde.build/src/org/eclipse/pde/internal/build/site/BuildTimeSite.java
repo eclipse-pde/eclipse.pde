@@ -32,9 +32,10 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
 			MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
-			pluginRegistry = Platform.parsePlugins(contentProvider.getPluginPaths(), factory);
+			pluginRegistry = CompatibilityPlatform.parsePlugins(contentProvider.getPluginPaths(), factory);
 			setFragments();
-			setExtraPrerequisites();
+			if (AbstractScriptGenerator.isBuildingOSGi())
+				setExtraPrerequisites();
 			IStatus status = factory.getStatus();
 			if (!status.isOK())
 				throw new CoreException(status);
@@ -57,16 +58,15 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 	}
 
 	private void addPrerequisites(PluginModel model) {
-		//Read the build.properties
-		Properties buildProperties = new Properties();
-		try {
-			buildProperties.load(new URL(model.getLocation() + "/" + PROPERTIES_FILE).openStream()); //$NON-NLS-1$
-		} catch (Exception e) {
-			return;
-		}
-
-		String extraPrereqs = (String) buildProperties.get(PROPERTY_EXTRA_PREREQUISITES);
-		if (extraPrereqs==null)
+		String id = model.getId();
+		if("org.eclipse.osgi".equals(id) ||
+		"org.eclipse.osgi.services".equals(id) ||
+		"org.eclipse.osgi.util".equals(id) ||
+		"org.eclipse.core.runtime".equals(id) ||
+		"org.eclipse.core.runtime.compatibility".equals(id) ||
+		"org.eclipse.core.boot".equals(id) ||
+		"org.eclipse.core.applicationrunner".equals(id) ||
+		"org.eclipse.update.configurator".equals(id))
 			return;
 
 		//Create the new prerequisite from the list
