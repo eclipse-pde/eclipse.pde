@@ -56,7 +56,7 @@ public class Extensions
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.print("<extensions>");
+		writer.print("<bundle>");
 		writer.println();
 	
 		String firstIndent = "   ";
@@ -76,6 +76,6 @@ public class Extensions
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
 		writer.println();
-		writer.println("</extensions>");
+		writer.println("</bundle>");
 	}
 }
