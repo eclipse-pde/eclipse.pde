@@ -366,18 +366,16 @@ public class PDEState {
 			if (!all[i].isResolved()) {
 				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 				if (unsatisfiedConstraints.length == 0) {
-					BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
-					if (activeBundle == null) {
-						String message = PDECore.getFormattedMessage("ECLIPSE_IGNORE", all[i].getLocation()); //$NON-NLS-1$
-						errors.add(new Status(IStatus.ERROR, all[i].getSymbolicName(), IStatus.WARNING, message, null));
-					} else {
-						String message = PDECore.getFormattedMessage("ECLIPSE_OTHER_VERSION", new String[] {all[i].getLocation(), activeBundle.getLocation()}); //$NON-NLS-1$
-						errors.add(new Status(IStatus.INFO, all[i].getSymbolicName(), IStatus.INFO, message, null));
+					if (DEBUG) {
+						BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
+						String message = "Plug-in located at \"" + all[i].getLocation() + "\" was disabled because plug-in located at \"" +  activeBundle.getLocation() + "\" was selected."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.out.print(message);
 					}
 				} else {
 					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
                         String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-    	                errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
+						if (message != null)
+							errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					}
                 }
 			}
@@ -390,13 +388,12 @@ public class PDEState {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
-			return PDECore.getFormattedMessage("ECLIPSE_MISSING_IMPORTED_PACKAGE", toString(unsatisfied)); //$NON-NLS-1$
-		if (unsatisfied instanceof BundleSpecification) {
-			if (((BundleSpecification) unsatisfied).isOptional())
-				return PDECore.getFormattedMessage("ECLIPSE_MISSING_OPTIONAL_REQUIRED_BUNDLE", toString(unsatisfied)); //$NON-NLS-1$
-			return PDECore.getFormattedMessage("ECLIPSE_MISSING_REQUIRED_BUNDLE", toString(unsatisfied)); //$NON-NLS-1$
-		}
-		return PDECore.getFormattedMessage("ECLIPSE_MISSING_HOST", toString(unsatisfied)); //$NON-NLS-1$
+			return "Missing imported package: " +  toString(unsatisfied); //$NON-NLS-1$
+		if (unsatisfied instanceof BundleSpecification)
+			return "Missing required plug-in: " + toString(unsatisfied); //$NON-NLS-1$
+		if (unsatisfied instanceof HostSpecification)
+			return "Missing Fragment Host: " +  toString(unsatisfied); //$NON-NLS-1$
+		return null;
 	}
 	
 	private String toString(VersionConstraint constraint) {
