@@ -517,7 +517,7 @@
             id="org.eclipse.pde.ui.UpdateClasspathAction1">
          <filter
                name="projectNature"
-               value="org.eclipse.pde.PluginNature">
+               value="org.eclipse.jdt.core.javanature">
          </filter>
          <action
                label="%UpdateClasspathAction.label"
@@ -534,7 +534,7 @@
             id="org.eclipse.pde.ui.UpdateClasspathAction2">
          <filter
                name="projectNature"
-               value="org.eclipse.pde.PluginNature">
+               value="org.eclipse.jdt.core.javanature">
          </filter>
          <action
                label="%UpdateClasspathAction.label"
