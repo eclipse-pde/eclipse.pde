@@ -10,26 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.feature.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
+import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard;
+import org.eclipse.ui.PlatformUI;
 
 public class EditorBuildFeatureAction extends Action {
 	public static final String LABEL = "FeatureEditor.BuildAction.label";
-	BuildFeatureAction buildDelegate;
-	FeatureEditor activeEditor;
+	private FeatureEditor activeEditor;
+	private IFile featureFile;
 
 public EditorBuildFeatureAction() {
 	setText(PDEPlugin.getResourceString(LABEL));
-	buildDelegate = new BuildFeatureAction();
-
 }
+
 private void ensureContentSaved() {
 	if (activeEditor.isDirty()) {
 		ProgressMonitorDialog monitor =
@@ -48,13 +52,23 @@ private void ensureContentSaved() {
 }
 public void run() {
 	ensureContentSaved();
-	buildDelegate.run(this);
+	FeatureExportWizard wizard = new FeatureExportWizard();
+	IStructuredSelection selection;
+	if (featureFile !=null)
+		selection = new StructuredSelection(featureFile);
+	else
+		selection = new StructuredSelection(); 
+	wizard.init(PlatformUI.getWorkbench(), selection);
+	WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+	wd.create();
+	wd.getShell().setSize(450, 600);
+	wd.open();
 }
+
 public void setActiveEditor(FeatureEditor editor) {
 	this.activeEditor = editor;
-	buildDelegate.setActivePart(this, editor);
 	IFeatureModel model = (IFeatureModel) editor.getModel();
-	buildDelegate.setFeatureFile((IFile) model.getUnderlyingResource());
+	featureFile = (IFile) model.getUnderlyingResource();
 	setEnabled(model.isEditable());
 }
 }

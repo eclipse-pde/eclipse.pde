@@ -267,6 +267,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		blayout.numColumns = 2;
 		blayout.marginWidth = 0;
 
+
 		createJarButton =
 			factory.createButton(
 				buttonContainer,
@@ -345,7 +346,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	private void handleSynchronize() {
 		final FeatureEditorContributor contributor =
 			(FeatureEditorContributor) getFormPage().getEditor().getContributor();
-		BusyIndicator.showWhile(createJarButton.getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(synchronizeButton.getDisplay(), new Runnable() {
 			public void run() {
 				contributor.getSynchronizeAction().run();
 			}
