@@ -877,6 +877,12 @@
       </launchConfigurationTabGroup>
    </extension>
    <extension
+         point="org.eclipse.jdt.junit.junitLaunchConfigs">
+      <launchConfigType
+            configTypeID="org.eclipse.pde.ui.JunitLaunchConfig">
+      </launchConfigType>
+   </extension>
+   <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%launcher.junit.name"
