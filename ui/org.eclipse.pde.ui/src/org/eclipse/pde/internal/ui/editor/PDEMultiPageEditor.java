@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
@@ -217,10 +218,10 @@ public abstract class PDEMultiPageEditor
 		PDEEditorContributor contributor = getContributor();
 		if (contributor != null)
 			contributor.updateActions();
-		//validateEdit();
+		validateEdit();
 	}
 	
-	/*private void validateEdit() {
+	private void validateEdit() {
 		if (!isDirty()) return;
 		if (!validated) {
 			IEditorInput input = getEditorInput();
@@ -236,7 +237,7 @@ public abstract class PDEMultiPageEditor
 			}
 			validated = true;
 		}
-	}*/
+	}
 	
 	public IAction getAction(String id) {
 		return getContributor().getGlobalAction(id);

@@ -88,8 +88,6 @@ public abstract class WorkspacePluginModelBase
 		return dirty;
 	}
 	public boolean isEditable() {
-		if (file != null)
-			return editable && !file.isReadOnly();
 		return editable;
 	}
 

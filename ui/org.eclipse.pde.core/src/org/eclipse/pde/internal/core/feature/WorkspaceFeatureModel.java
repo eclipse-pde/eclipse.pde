@@ -69,8 +69,6 @@ public boolean isDirty() {
 	return dirty;
 }
 public boolean isEditable() {
-	if (file != null)
-		return editable && !file.isReadOnly();
 	return editable;
 }
 
