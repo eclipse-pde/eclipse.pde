@@ -18,52 +18,57 @@ public class BuildForm extends ScrollableSectionForm {
 	private VariableSection variableSection;
 	private TokenSection tokenSection;
 
-public BuildForm(BuildPage page) {
-	this.page = page;
-	setScrollable(false);
-	//setVerticalFit(true);
-}
-protected void createFormClient(Composite parent) {
-	FormWidgetFactory factory = getFactory();
-	GridLayout layout = new GridLayout();
-	parent.setLayout(layout);
-	layout.numColumns = 2;
-	layout.marginWidth = 10;
-	layout.horizontalSpacing=15;
-	layout.makeColumnsEqualWidth = true;
+	public BuildForm(BuildPage page) {
+		this.page = page;
+		setScrollable(false);
+		//setVerticalFit(true);
+	}
 	
-	variableSection = new VariableSection(page);
-	Control control = variableSection.createControl(parent, factory);
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
+	protected void createFormClient(Composite parent) {
+		FormWidgetFactory factory = getFactory();
+		GridLayout layout = new GridLayout();
+		parent.setLayout(layout);
+		layout.numColumns = 2;
+		layout.marginWidth = 10;
+		layout.horizontalSpacing = 15;
+		layout.makeColumnsEqualWidth = true;
 
-	tokenSection = new TokenSection(page);
-	control = tokenSection.createControl(parent, factory);
-	gd = new GridData(GridData.FILL_BOTH);
-	control.setLayoutData(gd);
+		variableSection = new VariableSection(page);
+		Control control = variableSection.createControl(parent, factory);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
 
-	// Link
-	SectionChangeManager manager = new SectionChangeManager();
-	manager.linkSections(variableSection, tokenSection);
+		tokenSection = new TokenSection(page);
+		control = tokenSection.createControl(parent, factory);
+		gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);
 
-	registerSection(variableSection);
-	registerSection(tokenSection);
-}
-public void expandTo(Object object) {
-	variableSection.expandTo(object);
-}
-public void initialize(Object modelObject) {
-	IBuildModel model = (IBuildModel) modelObject;
+		// Link
+		SectionChangeManager manager = new SectionChangeManager();
+		manager.linkSections(variableSection, tokenSection);
 
-	super.initialize(model);
-	String title = "";
-	if (model instanceof IEditable && model.isEditable() == false) {
-		title =
-			PDEPlugin.getResourceString(FORM_RTITLE);
-	} else
-		title =
-			PDEPlugin.getResourceString(FORM_TITLE);
-	setHeadingText(title);
-	((Composite)getControl()).layout(true);
-}
+		registerSection(variableSection);
+		registerSection(tokenSection);
+	}
+	
+	public void expandTo(Object object) {
+		variableSection.expandTo(object);
+	}
+	
+	public void initialize(Object modelObject) {
+		IBuildModel model = (IBuildModel) modelObject;
+
+		super.initialize(model);
+		String title = "";
+		if (model instanceof IEditable && model.isEditable() == false) {
+			title = PDEPlugin.getResourceString(FORM_RTITLE);
+		} else
+			title = PDEPlugin.getResourceString(FORM_TITLE);
+		setHeadingText(title);
+		((Composite) getControl()).layout(true);
+	}
+	
+	public void setFocus() {
+	}
+
 }

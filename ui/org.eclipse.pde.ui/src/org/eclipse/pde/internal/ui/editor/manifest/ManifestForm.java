@@ -108,6 +108,9 @@ public class ManifestForm extends ScrollableSectionForm {
 		setHeadingText(name);
 	}
 	
+	public void setFocus() {
+	}
+	
 	public void setHeadingText(String text) {
 		super.setHeadingText(text);
 		Composite control = (Composite)getControl();

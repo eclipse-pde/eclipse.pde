@@ -262,7 +262,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	}
 
 	public void updateSelectableActions(ISelection selection) {
-		if (getEditor() != null) {
+		if (editor != null) {
 			cutAction.selectionChanged(selection);
 			copyAction.selectionChanged(selection);
 			pasteAction.selectionChanged(selection);
