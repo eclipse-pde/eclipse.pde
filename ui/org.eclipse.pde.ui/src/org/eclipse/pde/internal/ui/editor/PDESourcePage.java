@@ -186,7 +186,7 @@ public abstract class PDESourcePage
 
 	public void openTo(Object object) {
 		if (object instanceof IMarker) {
-			gotoMarker((IMarker) object);
+			IDE.gotoMarker(this, (IMarker) object);
 		}
 	}
 

@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.io.*;
+
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.source.*;
@@ -74,5 +76,13 @@ protected void setDocumentContent(IDocument document, InputStream contentStream)
 
 	protected IDocument createEmptyDocument() {
 		return new Document();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
+		//TODO figure out what this method does
+		return null;
 	}
 }
