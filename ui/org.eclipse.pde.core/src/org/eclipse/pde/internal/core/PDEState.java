@@ -511,7 +511,7 @@ public class PDEState {
 				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 					throw new Exception();
 			} catch (Exception e1) {
-				if (logException)
+				if (logException && fResolve)
 					PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plugin manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 				return null;
 			}
