@@ -172,7 +172,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		// If model is a fragment, we need to add in the classpath the plugin to which it is related
 		HostSpecification host = model.getHost();
 		if (host != null) {
-			addPluginAndPrerequisites(host.getSupplier(), classpath, location, pluginChain, addedPlugins);
+			BundleDescription[] hosts = host.getHosts();
+			for(int i=0; i<hosts.length; i++)
+				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain, addedPlugins);
 		}
 
 		// Add the libraries

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
+import org.osgi.framework.Version;
 
 /**
  * This site represent a site at build time. A build time site is made of code
@@ -87,7 +88,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 	public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
-		if (unsatisfied instanceof PackageSpecification)
+		if (unsatisfied instanceof ImportPackageSpecification)
 			return Policy.bind("unsatisfied.import", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
 		if (unsatisfied instanceof BundleSpecification) {
 			if (((BundleSpecification) unsatisfied).isOptional())
@@ -115,9 +116,14 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		}
 		int qualifierIdx = -1;
 		if (versionId != null && (qualifierIdx = versionId.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER))!= -1) {
-			Version versionToMatch = new Version(versionId.substring(0, qualifierIdx));
+			Version versionToMatch = Version.parseVersion(versionId.substring(0, qualifierIdx));
 			for (int i = 0; i < features.length; i++) {
-				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) && new Version(features[i].getVersionedIdentifier().getVersion().toString()).matchMinor(versionToMatch))
+				Version featureVersion = Version.parseVersion(features[i].getVersionedIdentifier().getVersion().toString());
+				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) &&
+						featureVersion.getMajor() == versionToMatch.getMajor() &&
+						featureVersion.getMinor() == versionToMatch.getMinor() &&
+						featureVersion.getMicro() >= versionToMatch.getMicro() &&
+						featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
 					return features[i].getFeature(null);
 			}		
 		}

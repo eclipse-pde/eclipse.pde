@@ -20,6 +20,7 @@ import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.build.*;
+import org.osgi.framework.*;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -289,15 +290,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
 		if (root == null)
 			return new BundleDescription[0];
-		PackageSpecification[] packages = root.getPackages();
-		ArrayList resolvedImported = new ArrayList(packages.length);
-		for (int i = 0; i < packages.length; i++) {
-			if (!packages[i].isExported() && packages[i].isResolved() && !resolvedImported.contains(packages[i].getSupplier()))
-				resolvedImported.add(packages[i].getSupplier());
+		ExportPackageDescription[] packages = root.getResolvedImports();
+		ArrayList resolvedImports = new ArrayList(packages.length);
+		for (int i = 0; i < packages.length; i++)
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
+				resolvedImports.add(packages[i].getExporter());
+		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 		}
-		BundleDescription[] result = new BundleDescription[resolvedImported.size()];
-		return (BundleDescription[]) resolvedImported.toArray(result);
-	}
 
 	/**
 	 * This methods return the bundleDescriptions to which required bundles
@@ -308,30 +307,27 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
 		if (root == null)
 			return new BundleDescription[0];
-		BundleSpecification[] required = root.getRequiredBundles();
-		ArrayList resolvedRequired = new ArrayList(required.length);
-		for (int i = 0; i < required.length; i++) {
-			if (required[i].isResolved() && !resolvedRequired.contains(required[i].getSupplier()))
-				resolvedRequired.add(required[i].getSupplier());
+		return root.getResolvedRequires();
 		}
-		BundleDescription[] result = new BundleDescription[resolvedRequired.size()];
-		return (BundleDescription[]) resolvedRequired.toArray(result);
-	}
 
 	public BundleDescription getResolvedBundle(String bundleId, String version) {
 		if (IPDEBuildConstants.GENERIC_VERSION_NUMBER.equals(version) || version == null) {
 			return getResolvedBundle(bundleId);
 		}
-		BundleDescription description = getState().getBundle(bundleId, new Version(version));
+		BundleDescription description = getState().getBundle(bundleId, Version.parseVersion(version));
 		if (description != null && description.isResolved())
 			return description;
 
 		int qualifierIdx = -1;
 		if ((qualifierIdx = version.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
-			Version versionToMatch = new Version(version.substring(0, qualifierIdx));
+			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx));
 			for (int i = 0; i < bundles.length; i++) {
-				if (bundles[i].getVersion().matchMinor(versionToMatch))
+				Version bundleVersion = bundles[i].getVersion();
+				if (bundleVersion.getMajor() == versionToMatch.getMajor() &&
+						bundleVersion.getMinor() == versionToMatch.getMinor() &&
+						bundleVersion.getMicro() >= versionToMatch.getMicro() &&
+						bundleVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
 					return bundles[i];
 			}
 		}

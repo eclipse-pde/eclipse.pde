@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.model.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /** 
  * @deprecated
@@ -59,7 +60,7 @@ public class PluginRegistryConverter extends PDEState {
 		PluginFragmentModel[] fragments = registry.getFragments();
 
 		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), plugins[i].getPluginId(), new Version(plugins[i].getVersion()), plugins[i].getLocation(), createBundleSpecification(plugins[i].getRequires()), (HostSpecification[]) null, null, null, true);
+			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), plugins[i].getPluginId(), Version.parseVersion(plugins[i].getVersion()), plugins[i].getLocation(), createBundleSpecification(plugins[i].getRequires()), (HostSpecification) null, null, null, null, true);
 			String libs = createClasspath(plugins[i].getRuntime());
 			Properties manifest = new Properties();
 			if (libs != null)
@@ -70,8 +71,8 @@ public class PluginRegistryConverter extends PDEState {
 		}
 
 		for (int i = 0; i < fragments.length; i++) {
-			HostSpecification host = state.getFactory().createHostSpecification(fragments[i].getPluginId(), new Version(fragments[i].getPluginVersion()), fragments[i].getMatch(), false);
-			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), fragments[i].getId(), new Version(fragments[i].getVersion()), fragments[i].getLocation(), createBundleSpecification(fragments[i].getRequires()), new HostSpecification[] {host}, null, null, true);
+			HostSpecification host = state.getFactory().createHostSpecification(fragments[i].getPluginId(), new VersionRange(fragments[i].getPluginVersion()));
+			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), fragments[i].getId(), Version.parseVersion(fragments[i].getVersion()), fragments[i].getLocation(), createBundleSpecification(fragments[i].getRequires()), host, null, null, null, true);
 			String libs = createClasspath(fragments[i].getRuntime());
 			Properties manifest = new Properties();
 			if (libs != null)
@@ -87,7 +88,7 @@ public class PluginRegistryConverter extends PDEState {
 			return new BundleSpecification[0];
 		BundleSpecification[] specs = new BundleSpecification[prereqs.length];
 		for (int i = 0; i < prereqs.length; i++) {
-			specs[i] = state.getFactory().createBundleSpecification(prereqs[i].getPlugin(), new Version(prereqs[i].getVersion()), prereqs[i].getMatchByte(), prereqs[i].getExport(), prereqs[i].getOptional());
+			specs[i] = state.getFactory().createBundleSpecification(prereqs[i].getPlugin(), new VersionRange(prereqs[i].getVersion()), prereqs[i].getExport(), prereqs[i].getOptional());
 		}
 		return specs;
 	}
