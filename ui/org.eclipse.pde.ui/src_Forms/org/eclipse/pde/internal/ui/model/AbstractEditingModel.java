@@ -85,7 +85,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
 	public boolean isValid() {
-		return fIsValid;
+		return isLoaded();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getTimeStamp()

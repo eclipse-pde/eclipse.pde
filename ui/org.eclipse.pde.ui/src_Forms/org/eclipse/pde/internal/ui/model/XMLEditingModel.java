@@ -6,6 +6,7 @@ import javax.xml.parsers.*;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
+import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 /**
@@ -39,10 +40,13 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	 */
 	public void load(InputStream source, boolean outOfSync) {
 		try {
-			fIsValid = true;
+			fIsLoaded = true;
 			getParser().parse(source, createDocumentHandler(this));
-		} catch (Exception e) {
-			fIsValid = false;
+		} catch (SAXException e) {
+			fIsLoaded = false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 		
