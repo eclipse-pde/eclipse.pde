@@ -112,12 +112,11 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add("-product"); //$NON-NLS-1$
 			programArgs.add(configuration.getAttribute(PRODUCT, "")); //$NON-NLS-1$
 		} else {
-			// specify the application to launch, only if it is not the default.
-			String appName = configuration.getAttribute(APPLICATION, (String)null);
-			if (appName != null && appName.length() > 0) {
-				programArgs.add("-application"); //$NON-NLS-1$
-				programArgs.add(appName);
-			}
+			// specify the application to launch
+			String defaultApp = PDECore.getDefault().getModelManager().isOSGiRuntime() ? "org.eclipse.ui.ide.workbench" : "org.eclipse.ui.workbench"; //$NON-NLS-1$ //$NON-NLS-2$
+			String appName = configuration.getAttribute(APPLICATION, defaultApp);
+			programArgs.add("-application"); //$NON-NLS-1$
+			programArgs.add(appName);
 		}
 		
 		// specify the workspace location for the runtime workbench
