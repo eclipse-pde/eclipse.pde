@@ -61,8 +61,8 @@ public class NewExtensionTemplateWizard
 
 	public void addPages() {
 		section.addPages(this);
-		if (section instanceof OptionTemplateSection) {
-			((OptionTemplateSection)section).initializeFields(model);
+		if (section instanceof BaseOptionTemplateSection) {
+			((BaseOptionTemplateSection)section).initializeFields(model);
 		}
 	}
 

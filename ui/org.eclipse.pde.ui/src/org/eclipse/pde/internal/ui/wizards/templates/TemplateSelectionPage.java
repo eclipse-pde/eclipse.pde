@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.core.runtime.*;
 
 public class TemplateSelectionPage extends WizardPage {
 	private ArrayList candidates;
@@ -82,6 +83,13 @@ public class TemplateSelectionPage extends WizardPage {
 	
 	private void createCandidates() {
 		candidates = new ArrayList();
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		IConfigurationElement [] elements = registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates");
+		for (int i=0; i<elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			addTemplate(element, candidates);
+		}
+		/*
 		candidates.add(new HelloWorldTemplate());
 		candidates.add(new ViewTemplate());
 		candidates.add(new EditorTemplate());
@@ -91,6 +99,21 @@ public class TemplateSelectionPage extends WizardPage {
 		candidates.add(new PropertyPageTemplate());
 		candidates.add(new PopupMenuTemplate());
 		candidates.add(new PerspectiveExtensionsTemplate());
+		*/
+	}
+	
+	private void addTemplate(IConfigurationElement config, ArrayList result) {
+		if (config.getName().equalsIgnoreCase("template")==false) return;
+
+		try {
+			Object template = config.createExecutableExtension("class");
+			if (template instanceof ITemplateSection) {
+				result.add(template);
+			}
+		}
+		catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
 	}
 
 	/**
@@ -116,6 +139,7 @@ public class TemplateSelectionPage extends WizardPage {
 		descriptionBrowser.createControl(container);
 		Control c = descriptionBrowser.getControl();
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);	
+		gd.heightHint = 100;
 		//gd.horizontalSpan = 2;
 		c.setLayoutData(gd);
 		viewer.setInput(PDEPlugin.getDefault());
@@ -163,12 +187,11 @@ public class TemplateSelectionPage extends WizardPage {
 
 		for (int i=0; i<sections.length; i++) {
 			ITemplateSection section = sections[i];
-			if (section.getPages()==null)
+			if (section.getPageCount()==0)
 				section.addPages((Wizard)getWizard());
-			WizardPage [] pages = section.getPages();
-			if (pages!=null) {
-				for (int j=0; j<pages.length; j++)
-				visiblePages.add(pages[j]);
+				
+			for (int j=0; j<section.getPageCount(); j++) {
+				visiblePages.add(section.getPage(j));
 			}
 		}
 		if (visiblePages.size()>0)

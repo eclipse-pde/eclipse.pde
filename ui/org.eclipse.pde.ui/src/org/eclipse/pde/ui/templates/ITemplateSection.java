@@ -87,7 +87,9 @@ public interface ITemplateSection {
 	 * no pages have been added).
 	 */
 
-	public WizardPage[] getPages();
+	public WizardPage getPage(int pageIndex);
+	
+	public int getPageCount();
 
 	/**
 	 * Returns the number of work units that this template will

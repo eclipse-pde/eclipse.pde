@@ -34,36 +34,31 @@ public class ViewTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	private ArrayList [] createOptions() {
-		lists = new ArrayList[2];
-		lists[0] = new ArrayList();
-		lists[1] = new ArrayList();
-
+	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption("className", "&View Class Name:", "SampleView", lists[0]);
-		addOption("viewName", "View &Name:", "Sample View", lists[0]);
-		addOption("viewCategoryId", "View &Category Id:", (String)null, lists[0]);
-		addOption("viewCategoryName", "V&iew Category Name:", "Sample Category", lists[0]);
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption("className", "&View Class Name:", "SampleView", 0);
+		addOption("viewName", "View &Name:", "Sample View", 0);
+		addOption("viewCategoryId", "View &Category Id:", (String)null, 0);
+		addOption("viewCategoryName", "V&iew Category Name:", "Sample Category", 0);
 		addOption("viewType", "Select the viewer type that should be hosted in the view:", 
 					new String [][] {
 						{"tableViewer", "&Table viewer (can also be used for lists)"},
 						{"treeViewer", "T&ree viewer" }},
-						"tableViewer", lists[0]);
+						"tableViewer", 0);
 		// second page
-		addOption("react", "&View should react to selections in the workbench", true, lists[1]);
-		addOption("doubleClick", "&Add a double-click support", true, lists[1]);
-		addOption("popup", "A&dd actions to the pop-up menu", true, lists[1]);
-		addOption("localToolbar", "Add a&ctions to the view's tool bar", true, lists[1]);
-		addOption("localPulldown", "Add ac&tions to the view's pull-down menu", true, lists[1]);
-		addOption("sorter", "Add &support for sorting", true, lists[1]);
+		addOption("react", "&View should react to selections in the workbench", true, 1);
+		addOption("doubleClick", "&Add a double-click support", true, 1);
+		addOption("popup", "A&dd actions to the pop-up menu", true, 1);
+		addOption("localToolbar", "Add a&ctions to the view's tool bar", true, 1);
+		addOption("localPulldown", "Add ac&tions to the view's pull-down menu", true, 1);
+		addOption("sorter", "Add &support for sorting", true, 1);
 		//addOption("filter", "Add support for filtering", true, lists[1]);
-		addOption("drillDown", "Add d&rill-down capability", true, lists[1]);
+		addOption("drillDown", "Add d&rill-down capability", true, 1);
 		setOptionEnabled("drillDown", false);
-		return lists;
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -83,17 +78,17 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[2];
+		setPageCount(2);
 		createOptions();
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Main View Settings");
-		pages[0].setDescription("Choose the way the new view will be added to the plug-in.");
-		wizard.addPage(pages[0]);
+		WizardPage page0 = createPage(0);
+		page0.setTitle("Main View Settings");
+		page0.setDescription("Choose the way the new view will be added to the plug-in.");
+		wizard.addPage(page0);
 		
-		pages[1] = new OptionTemplateWizardPage(this, lists[1]);
-		pages[1].setTitle("View Features");
-		pages[1].setDescription("Choose the features that the new view should have.");
-		wizard.addPage(pages[1]);
+		WizardPage page1 = createPage(1);
+		page1.setTitle("View Features");
+		page1.setDescription("Choose the features that the new view should have.");
+		wizard.addPage(page1);
 	}
 
 	public void validateOptions(TemplateOption source) {

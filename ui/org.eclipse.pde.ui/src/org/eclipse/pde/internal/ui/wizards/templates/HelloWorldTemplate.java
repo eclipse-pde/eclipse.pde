@@ -40,18 +40,16 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
+		setPageCount(1);
 
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption(KEY_CLASS_NAME, "&Action Class Name:", CLASS_NAME, lists[0]);
-		addOption(KEY_MESSAGE, "&Message Box Text:", "Hello, Eclipse world", lists[0]);
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption(KEY_CLASS_NAME, "&Action Class Name:", CLASS_NAME, 0);
+		addOption(KEY_MESSAGE, "&Message Box Text:", "Hello, Eclipse world", 0);
 		
-		pages = new WizardPage[1];
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample Action Set");
-		pages[0].setDescription("This template will generate a sample action set extension with a menu, a menu item and a tool bar button. When selected, they will show a simple message dialog.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample Action Set");
+		page.setDescription("This template will generate a sample action set extension with a menu, a menu item and a tool bar button. When selected, they will show a simple message dialog.");
+		wizard.addPage(page);
 	}
 	
 	public void validateOptions(TemplateOption source) {
@@ -65,7 +63,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		return true;
 	}
 	
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();

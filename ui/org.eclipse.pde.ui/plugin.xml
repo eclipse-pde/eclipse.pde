@@ -33,6 +33,7 @@
 <!-- Extension points -->
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
+   <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -326,8 +327,8 @@
       <wizard
             availableAsShortcut="true"
             name="%newExtension.templates.perspectiveExtensions.name"
-            icon="icons/full/ctool16/newex_wiz.gif"
             template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
             id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
@@ -336,37 +337,37 @@
          </description>
       </wizard>
       <wizard
-            category="templates"
-            class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
+            availableAsShortcut="true"
+            name="%newExtension.templates.propertyPages.name"
             template="true"
             icon="icons/full/ctool16/newex_wiz.gif"
-            availableAsShortcut="true"
-            id="org.eclipse.pde.ui.newExtension.propertyPages"
-            name="%newExtension.templates.propertyPages.name">
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
+            id="org.eclipse.pde.ui.newExtension.propertyPages">
          <description>
             %newExtension.templates.propertyPages.desc
          </description>
       </wizard>
       <wizard
-            category="templates"
             availableAsShortcut="true"
-            icon="icons/full/ctool16/newex_wiz.gif"
+            name="%newExtension.templates.popupMenus.name"
             template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
-            id="org.eclipse.pde.ui.newExtension.popupMenus"
-            name="%newExtension.templates.popupMenus.name">
+            id="org.eclipse.pde.ui.newExtension.popupMenus">
          <description>
             %newExtension.templates.popupMenus.desc
          </description>
       </wizard>
       <wizard
-            category="templates"
-            class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
+            availableAsShortcut="true"
+            name="%newExtension.templates.editor.name"
             template="true"
             icon="icons/full/ctool16/newex_wiz.gif"
-            availableAsShortcut="true"
-            id="org.eclipse.pde.ui.newExtension.editor"
-            name="%newExtension.templates.editor.name">
+            category="templates"
+            class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
+            id="org.eclipse.pde.ui.newExtension.editor">
          <description>
             %newExtension.templates.editor.desc
          </description>
@@ -751,6 +752,54 @@
             class="org.eclipse.pde.internal.ui.editor.SystemFileEditorInputFactory"
             id="org.eclipse.pde.ui.systemFileEditorInputFactory">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.templates">
+      <template
+            name="%template.helloWorld.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.perspectiveExtensions.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.propertyPages.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.editor.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.popupMenus.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.view.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.multiPageEditor.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.newWizard.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
+      <template
+            name="%template.preferences.name"
+            class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
+            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+      </template>
    </extension>
 
 </plugin>

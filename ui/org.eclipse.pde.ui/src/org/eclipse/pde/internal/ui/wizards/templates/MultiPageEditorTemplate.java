@@ -34,20 +34,16 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	private ArrayList [] createOptions() {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-
+	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption("editorClassName", "&Editor Class Name:", "MultiPageEditor", lists[0]);
-		addOption("contributorClassName", "Editor &Contributor Class &Name:", "MultiPageEditorContributor", lists[0]);
-		addOption("editorName", "Editor &Name:", "Sample Multi-page Editor", lists[0]);
-		addOption("extensions", "&File Extensions:", "mpe", lists[0]);
-		return lists;
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption("editorClassName", "&Editor Class Name:", "MultiPageEditor", 0);
+		addOption("contributorClassName", "Editor &Contributor Class &Name:", "MultiPageEditorContributor", 0);
+		addOption("editorName", "Editor &Name:", "Sample Multi-page Editor", 0);
+		addOption("extensions", "&File Extensions:", "mpe", 0);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -65,12 +61,12 @@ public class MultiPageEditorTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[1];
+		setPageCount(1);
 		createOptions();
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample Multi-Page Editor");
-		pages[0].setDescription("Choose the options that will be used to generate the multi-page editor.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample Multi-Page Editor");
+		page.setDescription("Choose the options that will be used to generate the multi-page editor.");
+		wizard.addPage(page);
 	}
 
 	public void validateOptions(TemplateOption source) {

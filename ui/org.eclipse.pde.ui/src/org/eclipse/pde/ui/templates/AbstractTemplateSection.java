@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.wizards.templates.*;
+import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
 /**
  * Common function for template sections. It is recommended

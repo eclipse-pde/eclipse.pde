@@ -33,24 +33,21 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	}
 
 	public void addPages(Wizard wizard) {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-		
+		setPageCount(1);
 		createOptions();
 
-		pages = new WizardPage[1];
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample Property Page");
-		pages[0].setDescription("This template adds a property page to a resource and will appear in the Properties Dialog for that resource.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample Property Page");
+		page.setDescription("This template adds a property page to a resource and will appear in the Properties Dialog for that resource.");
+		wizard.addPage(page);
 	}
 	
 	private void createOptions() {
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption(KEY_CLASSNAME, "&Property Page Class:", "SamplePropertyPage", lists[0]);
-		addOption(KEY_PAGE_NAME, "P&roperty Page Name:", "Sample Page", lists[0]);
-		addOption(KEY_TARGET_CLASS, "&Target Class:","org.eclipse.core.resources.IFile", lists[0]);
-		addOption(KEY_NAME_FILTER, "&Name Filter:", "*.*",lists[0]);
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption(KEY_CLASSNAME, "&Property Page Class:", "SamplePropertyPage", 0);
+		addOption(KEY_PAGE_NAME, "P&roperty Page Name:", "Sample Page", 0);
+		addOption(KEY_TARGET_CLASS, "&Target Class:","org.eclipse.core.resources.IFile", 0);
+		addOption(KEY_NAME_FILTER, "&Name Filter:", "*.*", 0);
 	}
 	/**
 	 * @see PDETemplateSection#getSectionId()
@@ -63,7 +60,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		return true;
 	}
 	
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -89,9 +86,9 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		ArrayList allPageOptions = lists[0];
-		for (int i = 0; i < allPageOptions.size(); i++) {
-			TemplateOption nextOption = (TemplateOption) allPageOptions.get(i);
+		TemplateOption [] allPageOptions = getOptions(0);
+		for (int i = 0; i < allPageOptions.length; i++) {
+			TemplateOption nextOption = allPageOptions[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

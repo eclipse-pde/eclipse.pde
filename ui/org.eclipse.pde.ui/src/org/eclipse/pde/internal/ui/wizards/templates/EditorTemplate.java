@@ -30,25 +30,21 @@ public class EditorTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[1];
+		setPageCount(1);
 		createOptions();
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample XML Editor");
-		pages[0].setDescription("Choose the options that will be used to generate the XML editor.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample XML Editor");
+		page.setDescription("Choose the options that will be used to generate the XML editor.");
+		wizard.addPage(page);
 	}
 
-	private ArrayList [] createOptions() {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-
+	private void createOptions() {
 		// first page	
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption(EDITOR_CLASS_NAME, "&Editor Class Name:", "XMLEditor", lists[0]);
-		addOption(CONTRIBUTOR_CLASS, "Editor &Contributor Class Name:", "XMLEditorContributor", lists[0]);
-		addOption(EDITOR_NAME, "Editor &Name:", "Sample XML Editor", lists[0]);
-		addOption(EXTENSIONS, "&File Extension:", "xml", lists[0]);
-		return lists;
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption(EDITOR_CLASS_NAME, "&Editor Class Name:", "XMLEditor", 0);
+		addOption(CONTRIBUTOR_CLASS, "Editor &Contributor Class Name:", "XMLEditorContributor", 0);
+		addOption(EDITOR_NAME, "Editor &Name:", "Sample XML Editor", 0);
+		addOption(EXTENSIONS, "&File Extension:", "xml", 0);
 	}
 
 	public String getSectionId() {
@@ -61,7 +57,7 @@ public class EditorTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -90,9 +86,9 @@ public class EditorTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		ArrayList allPageOptions = lists[0];
-		for (int i = 0; i < allPageOptions.size(); i++) {
-			TemplateOption nextOption = (TemplateOption) allPageOptions.get(i);
+		TemplateOption [] options = getOptions(0);
+		for (int i = 0; i < options.length; i++) {
+			TemplateOption nextOption = options[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

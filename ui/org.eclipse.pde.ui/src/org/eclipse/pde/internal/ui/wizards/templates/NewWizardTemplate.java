@@ -32,23 +32,19 @@ public class NewWizardTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	private ArrayList [] createOptions() {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-
+	private void createOptions() {
 		// first page
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption("categoryId", "&Wizard Category Id:", (String)null, lists[0]);
-		addOption("categoryName", "Wi&zard Category Name:", "Sample Wizards", lists[0]);
-		addOption("wizardClassName", "Wizard &Class Name:", "SampleNewWizard", lists[0]);
-		addOption("wizardPageClassName", "Wizard &Page Class Name:", "SampleNewWizardPage", lists[0]);
-		addOption("wizardName", "Wizard &Name:", "Multi-page Editor file", lists[0]);
-		addOption("extension", "&File Extension:", "mpe", lists[0]);
-		addOption("initialFileName", "&Initial File Name:", "new_file.mpe", lists[0]);
-		return lists;
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption("categoryId", "&Wizard Category Id:", (String)null, 0);
+		addOption("categoryName", "Wi&zard Category Name:", "Sample Wizards", 0);
+		addOption("wizardClassName", "Wizard &Class Name:", "SampleNewWizard", 0);
+		addOption("wizardPageClassName", "Wizard &Page Class Name:", "SampleNewWizardPage", 0);
+		addOption("wizardName", "Wizard &Name:", "Multi-page Editor file", 0);
+		addOption("extension", "&File Extension:", "mpe", 0);
+		addOption("initialFileName", "&Initial File Name:", "new_file.mpe", 0);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -68,12 +64,12 @@ public class NewWizardTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[1];
+		setPageCount(1);
 		createOptions();
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("New Wizard Options");
-		pages[0].setDescription("The provided options allow you to control the new wizard will be created.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("New Wizard Options");
+		page.setDescription("The provided options allow you to control the new wizard will be created.");
+		wizard.addPage(page);
 	}
 
 	public void validateOptions(TemplateOption source) {

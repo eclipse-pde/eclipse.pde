@@ -4,8 +4,7 @@ package org.eclipse.pde.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jface.wizard.*;
+
 /**
  * Clients should implement this interface if they
  * want to provide a wizard that will define the

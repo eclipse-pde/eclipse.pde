@@ -4,20 +4,12 @@ package org.eclipse.pde.internal.ui.wizards.templates;
  * All Rights Reserved.
  */
 
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.apache.xerces.validators.schema.identity.ValueStore;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	
@@ -38,55 +30,39 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	}
 
 	public void addPages(Wizard wizard) {
-		lists = new ArrayList[2];
-		lists[0] = new ArrayList();
-		lists[1] = new ArrayList();
-		
+		setPageCount(2);
 		createOptions();
 		
-		pages = new WizardPage[2];
-		createPage1(wizard);
-		createPage2(wizard);
-		wizard.addPage(pages[0]);
-		wizard.addPage(pages[1]);
+		WizardPage page0 = createPage(0);
+		page0.setTitle("Target Perspective and Shortcuts");
+		page0.setDescription("Add an action set and shortcuts to the target perspective");
+		wizard.addPage(page0);
 		
-		
+		WizardPage page1 = createPage(1);
+		page1.setTitle("View");
+		page1.setDescription("Add a view to the Show submenu of the target perspective");
+		wizard.addPage(page1);
 	}
 
-	private void createPage1(Wizard wizard) {
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Target Perspective and Shortcuts");
-		pages[0].setDescription("Add an action set and shortcuts to the target perspective");
-		
-	}
-	
-	private void createPage2(Wizard wizard) {
-		pages[1] = new OptionTemplateWizardPage(this,lists[1]);
-		pages[1].setTitle("View");
-		pages[1].setDescription("Add a view to the Show submenu of the target perspective");
-	}
-	
 	private void createOptions() {
 		// add options to first page
-		addOption(KEY_TARGET_PERSPECTIVE, "&Target Perspective ID:", "org.eclipse.ui.resourcePerspective", lists[0]);
-		addOption(KEY_ACTION_SET,"&Action Set:", "org.eclipse.jdt.ui.JavaActionSet",lists[0]);
-		addOption(KEY_PERSPECTIVE_SHORTCUT, "&Perspective Shortcut ID:", "org.eclipse.debug.ui.DebugPerspective", lists[0]);
-		addOption(KEY_VIEW_SHORTCUT, "&View Shortcut ID:","org.eclipse.jdt.ui.wizards.NewProjectCreationWizard", lists[0]);
-		addOption(KEY_WIZARD_SHORTCUT,"&Wizard Shortcut ID:","org.eclipse.jdt.ui.TypeHierarchy",lists[0]);
+		addOption(KEY_TARGET_PERSPECTIVE, "&Target Perspective ID:", "org.eclipse.ui.resourcePerspective", 0);
+		addOption(KEY_ACTION_SET,"&Action Set:", "org.eclipse.jdt.ui.JavaActionSet", 0);
+		addOption(KEY_PERSPECTIVE_SHORTCUT, "&Perspective Shortcut ID:", "org.eclipse.debug.ui.DebugPerspective", 0);
+		addOption(KEY_VIEW_SHORTCUT, "&View Shortcut ID:","org.eclipse.jdt.ui.wizards.NewProjectCreationWizard", 0);
+		addOption(KEY_WIZARD_SHORTCUT,"&Wizard Shortcut ID:","org.eclipse.jdt.ui.TypeHierarchy", 0);
 
 		// add options to second page 
-		addOption(KEY_VIEW,"&View ID:","org.eclipse.jdt.ui.PackageExplorer", lists[1]);
-		addOption(KEY_VIEW_RELATIVE,"&Relative View:","org.eclipse.ui.views.ResourceNavigator",lists[1]);
+		addOption(KEY_VIEW,"&View ID:","org.eclipse.jdt.ui.PackageExplorer", 1);
+		addOption(KEY_VIEW_RELATIVE,"&Relative View:","org.eclipse.ui.views.ResourceNavigator", 1);
 		addOption(KEY_VIEW_RELATIONSHIP,"Relative Position: ", new String[][] {
-						{"stack","stack"},{"left","left"},{"right","right"},{"top","top"},{"bottom","bottom"}},"stack",lists[1]);
+						{"stack","stack"},{"left","left"},{"right","right"},{"top","top"},{"bottom","bottom"}},"stack", 1);
 	}
 	
-	private ArrayList getAllPageOptions(TemplateOption source) {
-		for (int i = 0; i < lists.length; i++) {
-			if (lists[i].contains(source)) 
-				return (ArrayList)lists[i];
-		}
-		return new ArrayList();
+	private TemplateOption [] getAllPageOptions(TemplateOption source) {
+		int pageIndex = getPageIndex(source);
+		if (pageIndex!= -1) return getOptions(pageIndex);
+		return new TemplateOption[0];
 	}
 			
 	/**
@@ -108,9 +84,9 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		ArrayList allPageOptions = getAllPageOptions(source);
-		for (int i = 0; i < allPageOptions.size(); i++) {
-			TemplateOption nextOption = (TemplateOption) allPageOptions.get(i);
+		TemplateOption [] siblings = getAllPageOptions(source);
+		for (int i = 0; i < siblings.length; i++) {
+			TemplateOption nextOption = siblings[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

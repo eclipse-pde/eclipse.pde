@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.runtime.logview;
 import java.io.File;
 import java.util.Vector;
 
-import org.eclipse.core.internal.runtime.PlatformLogReader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -177,14 +176,8 @@ public class LogView
 	}
 	private void readLogFile() {
 		logs.clear();
-		PlatformLogReader reader = new PlatformLogReader();
 		File logFile = Platform.getLogFileLocation().toFile();
 		if (!logFile.exists()) return;
-		IStatus[] entries =
-			reader.readLogFile(logFile.getAbsolutePath());
-		for (int i = 0; i < entries.length; i++) {
-			logs.add(new StatusAdapter(entries[i]));
-		}
 	}
 	public void logging(IStatus status) {
 		logs.insertElementAt(new StatusAdapter(status), 0);

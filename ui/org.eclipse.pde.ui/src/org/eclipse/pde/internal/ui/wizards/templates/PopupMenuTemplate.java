@@ -35,27 +35,24 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	}
 
 	public void addPages(Wizard wizard) {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-		
+		setPageCount(1);
 		createOptions();
 
-		pages = new WizardPage[1];
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample Popup Menu");
-		pages[0].setDescription("This template creates a submenu and adds a new action to a selected object's popup menu");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample Popup Menu");
+		page.setDescription("This template creates a submenu and adds a new action to a selected object's popup menu");
+		wizard.addPage(page);
 	}
 	
 	private void createOptions() {
-		addOption(KEY_TARGET_OBJECT,"&Target Object's Class:","org.eclipse.core.resources.IFile", lists[0]);
-		addOption(KEY_NAME_FILTER,"&Name Filter:","plugin.xml",lists[0]);
-		addOption(KEY_SUBMENU_LABEL,"&Submenu Name:","New Submenu",lists[0]);
-		addOption(KEY_ACTION_LABEL,"&Action Label:","New Action",lists[0]);
-		addOption(KEY_PACKAGE_NAME,"&Java Package Name:",(String)null,lists[0]);
-		addOption(KEY_ACTION_CLASS,"Action &Class:","NewAction",lists[0]);		
+		addOption(KEY_TARGET_OBJECT,"&Target Object's Class:","org.eclipse.core.resources.IFile", 0);
+		addOption(KEY_NAME_FILTER,"&Name Filter:","plugin.xml", 0);
+		addOption(KEY_SUBMENU_LABEL,"&Submenu Name:","New Submenu", 0);
+		addOption(KEY_ACTION_LABEL,"&Action Label:","New Action", 0);
+		addOption(KEY_PACKAGE_NAME,"&Java Package Name:",(String)null, 0);
+		addOption(KEY_ACTION_CLASS,"Action &Class:","NewAction", 0);		
 		addOption(KEY_SELECTION,"Action is enabled for:", new String[][] {
-						{"singleSelection","single selection"},{"multipleSelection", "multiple selection"}},"singleSelection",lists[0]);
+						{"singleSelection","single selection"},{"multipleSelection", "multiple selection"}},"singleSelection", 0);
 	}
 	/**
 	 * @see PDETemplateSection#getSectionId()
@@ -68,7 +65,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		return true;
 	}
 	
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
@@ -94,9 +91,9 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		ArrayList allPageOptions = lists[0];
-		for (int i = 0; i < allPageOptions.size(); i++) {
-			TemplateOption nextOption = (TemplateOption) allPageOptions.get(i);
+		TemplateOption [] allPageOptions = getOptions(0);
+		for (int i = 0; i < allPageOptions.length; i++) {
+			TemplateOption nextOption = allPageOptions[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
 				flagMissingRequiredOption(nextOption);
 				return;

@@ -1,12 +1,14 @@
-package org.eclipse.pde.internal.ui.wizards.templates;
+package org.eclipse.pde.ui.templates;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
+/**
+ * Implementation of the TemplateOption that allows users to
+ * choose a value from the fixed set of options.
+ */
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
 	private Control labelControl;
@@ -15,12 +17,16 @@ public class ChoiceOption extends TemplateOption {
 
 	/**
 	 * Constructor for ChoiceOption.
-	 * @param section
-	 * @param name
-	 * @param label
+	 * @param section the parent section.
+	 * @param name the unique name
+	 * @param label the presentable label 
+	 * @param choices the list of choices from which the value
+	 * can be chosen. Each array entry should be an array of size 2,
+	 * where position 0 will be interpeted as the choice unique
+	 * name, and position 1 as the choice presentable label.
 	 */
 	public ChoiceOption(
-		OptionTemplateSection section,
+		BaseOptionTemplateSection section,
 		String name,
 		String label,
 		String[][] choices) {
@@ -31,16 +37,13 @@ public class ChoiceOption extends TemplateOption {
 	/**
 	 * @see TemplateField#createControl(Composite, int, FormWidgetFactory)
 	 */
-	public void createControl(
-		Composite parent,
-		int span,
-		FormWidgetFactory factory) {
-		Composite container = createComposite(parent, span, factory);
+	public void createControl(Composite parent, int span) {
+		Composite container = createComposite(parent, span);
 		fill(container, span);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		container.setLayout(layout);
-		labelControl = createLabel(container, span, factory);
+		labelControl = createLabel(container, span);
 		labelControl.setEnabled(isEnabled());
 		fill(labelControl, span);
 
@@ -60,7 +63,7 @@ public class ChoiceOption extends TemplateOption {
 
 		for (int i = 0; i < choices.length; i++) {
 			String[] choice = choices[i];
-			Button button = createRadioButton(parent, span, factory, choice);
+			Button button = createRadioButton(parent, span, choice);
 			buttons[i] = button;
 			button.addSelectionListener(listener);
 			button.setEnabled(isEnabled());
@@ -68,11 +71,39 @@ public class ChoiceOption extends TemplateOption {
 		if (getChoice() != null)
 			selectChoice(getChoice());
 	}
-
+	/**
+	 * Returns the string value of the current choice.
+	 * @return the current choice or <samp>null</samp> if not initialized.
+	 */
 	public String getChoice() {
 		return getValue() != null ? getValue().toString() : null;
 	}
 
+	/**
+	 * Implements the superclass method by passing the new value
+	 * to the option's widget.
+	 * @param value the new value.
+	 */
+	public void setValue(Object value) {
+		super.setValue(value);
+		if (buttons != null && value != null) {
+			selectChoice(value.toString());
+		}
+	}
+	/**
+	 * Implements the superclass method by updating the
+	 * enable state of the option's widget.
+	 */
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		if (labelControl != null) {
+			labelControl.setEnabled(enabled);
+			for (int i = 0; i < buttons.length; i++) {
+				buttons[i].setEnabled(isEnabled());
+			}
+		}
+	}
+	
 	private GridData fill(Control control, int span) {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
@@ -80,52 +111,19 @@ public class ChoiceOption extends TemplateOption {
 		return gd;
 	}
 
-	private Composite createComposite(
-		Composite parent,
-		int span,
-		FormWidgetFactory factory) {
-		Composite composite;
-		if (factory == null)
-			composite = new Composite(parent, SWT.NULL);
-		else
-			composite = factory.createComposite(parent);
+	private Composite createComposite(Composite parent, int span) {
+		Composite composite = new Composite(parent, SWT.NULL);
 		fill(composite, span);
 		return composite;
 	}
 
-	private Button createRadioButton(
-		Composite parent,
-		int span,
-		FormWidgetFactory factory,
-		String[] choice) {
-		Button button;
-		if (factory == null) {
-			button = new Button(parent, SWT.RADIO);
-		} else {
-			button = factory.createButton(parent, null, SWT.RADIO);
-		}
+	private Button createRadioButton(Composite parent, int span, String[] choice) {
+		Button button = new Button(parent, SWT.RADIO);
 		button.setData(choice[0]);
 		button.setText(choice[1]);
 		GridData gd = fill(button, span);
 		gd.horizontalIndent = 10;
 		return button;
-	}
-
-	public void setValue(Object value) {
-		super.setValue(value);
-		if (buttons != null && value != null) {
-			selectChoice(value.toString());
-		}
-	}
-	
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		if (labelControl!=null) {
-			labelControl.setEnabled(enabled);
-			for (int i=0; i<buttons.length; i++) {
-				buttons[i].setEnabled(isEnabled());
-			}
-		}
 	}
 
 	private void selectChoice(String choice) {

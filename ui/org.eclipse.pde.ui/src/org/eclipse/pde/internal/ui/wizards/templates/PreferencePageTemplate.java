@@ -33,23 +33,19 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	private ArrayList [] createOptions() {
-		lists = new ArrayList[1];
-		lists[0] = new ArrayList();
-
+	private void createOptions() {
 		// first page
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption("pageClassName", "&Page Class Name:", "SamplePreferencePage", lists[0]);
-		addOption("pageName", "Page &Name:", "Sample Preferences", lists[0]);
-		return lists;
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
+		addOption("pageClassName", "&Page Class Name:", "SamplePreferencePage", 0);
+		addOption("pageName", "Page &Name:", "Sample Preferences", 0);
 	}
 
-	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
 		initializeOption(KEY_PACKAGE_NAME, pluginId+".preferences");
-		mainClassName = data.className;
+		mainClassName = data.getClassName();
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -82,12 +78,12 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[1];
+		setPageCount(1);
 		createOptions();
-		pages[0] = new OptionTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Sample Preference Page");
-		pages[0].setDescription("The provided options allow you to control the preference page that will be created.");
-		wizard.addPage(pages[0]);
+		WizardPage page = createPage(0);
+		page.setTitle("Sample Preference Page");
+		page.setDescription("The provided options allow you to control the preference page that will be created.");
+		wizard.addPage(page);
 	}
 
 	public void validateOptions(TemplateOption source) {

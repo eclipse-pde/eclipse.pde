@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.wizards.templates;
+package org.eclipse.pde.ui.templates;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -17,8 +17,8 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
+import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -50,6 +50,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	}
 
 	/*
+	 * 
 	 * @see IPluginContentWizard#init(IProjectProvider, IPluginStructureData, boolean)
 	 */
 	public void init(
@@ -63,17 +64,32 @@ public abstract class AbstractNewPluginTemplateWizard
 			PDEPlugin.getResourceString(fragment ? KEY_WFTITLE : KEY_WTITLE));
 	}
 
+/**
+ * Subclasses must implement this method by returning an array
+ * of templates that will contribute pages to this wizard.
+ * @return an array of template sections that will contribute
+ * pages to this wizard.
+ */
 	protected abstract ITemplateSection[] getTemplateSections();
+/**
+ * This wizard adds a mandatory first page. Subclasses implement
+ * this method to add additional pages to the wizard.
+ */
 	protected abstract void addAdditionalPages();
 
-	public void addPages() {
+/**
+ * Implements wizard method. Subclasses cannot override it.
+ */
+	public final void addPages() {
 		// add the mandatory first page
 		firstPage = new FirstTemplateWizardPage(provider, structureData, fragment);
 		addPage(firstPage);
 		addAdditionalPages();
 	}
-
-	public boolean performFinish() {
+/**
+ * Implements required wizard method. Subclasses cannot override it.
+ */
+	public final boolean performFinish() {
 		activeSections = getTemplateSections();
 		final FieldData data = firstPage.createFieldData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
@@ -98,6 +114,8 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 		return true;
 	}
+	
+	// private methods
 
 	private int computeTotalWork() {
 		int totalWork = 5;
@@ -108,7 +126,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		return totalWork;
 	}
 
-	protected void doFinish(FieldData data, IProgressMonitor monitor)
+	private void doFinish(FieldData data, IProgressMonitor monitor)
 		throws CoreException {
 		int totalWork = computeTotalWork();
 		monitor.beginTask("Generating content...", totalWork);
@@ -217,7 +235,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 	}
 
-	protected void writeTemplateFile(PrintWriter writer) {
+	private void writeTemplateFile(PrintWriter writer) {
 		String indent = "   ";
 		// open
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -274,7 +292,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		}
 	}
 
-	public IEditorInput createEditorInput(IFile file) {
+	private IEditorInput createEditorInput(IFile file) {
 		return new TemplateEditorInput(file, ManifestEditor.TEMPLATE_PAGE);
 	}
 
@@ -304,5 +322,4 @@ public abstract class AbstractNewPluginTemplateWizard
 			}
 		});
 	}
-
 }
