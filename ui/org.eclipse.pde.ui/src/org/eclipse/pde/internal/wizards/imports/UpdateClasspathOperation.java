@@ -15,22 +15,36 @@ import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jdt.core.*;
 
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.internal.PDEPlugin;
 
 public class UpdateClasspathOperation implements IWorkspaceRunnable {
 
 	private IJavaProject javaProject;
 	private IPluginModelBase model;
+	private IPluginModelBase [] models;
+	private IFragmentModel [] fragments;
 	private IClasspathEntry[] libraryClasspathEntries;
 	private IPath outputLocation;
 	private IWorkspaceRoot root;
 
-	public UpdateClasspathOperation(IJavaProject jproject, IPluginModelBase model, IClasspathEntry[] libraryClasspathEntries, IPath outputLocation) {
+	public UpdateClasspathOperation(IJavaProject jproject, IPluginModelBase model, IPluginModelBase [] models, IClasspathEntry[] libraryClasspathEntries, IPath outputLocation) {
 		this.javaProject= jproject;
 		this.model = model;
+		this.models = models;
 		this.outputLocation= outputLocation;
 		this.libraryClasspathEntries= libraryClasspathEntries;
 		root= ResourcesPlugin.getWorkspace().getRoot();
+		createFragments();
 	}
+	
+		private void createFragments() {
+			ArrayList result = new ArrayList();
+			for (int i=0; i<models.length; i++) {
+				if (models[i].isFragmentModel())
+					result.add(models[i]);
+			}
+			fragments =(IFragmentModel[])result.toArray(new IFragmentModel[result.size()]);
+		}
 
 	/*
 	 * @see IWorkspaceRunnable#run(IProgressMonitor)
@@ -51,12 +65,15 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				IClasspathEntry entry = libraryClasspathEntries[i];
 				if (root.findMember(entry.getPath())!=null)
 				   entries.add(libraryClasspathEntries[i]);
+				else if (model.isFragmentModel()==false) {
+					resolveEntryInFragments(root, entry, entries);
+				}
 			}
 			
 			// add project prerequisits
-			if (entries.size() > 0) {
-				addProjectClasspathEntries(proj, model, entries);
-			}
+			//if (entries.size() > 0) {
+				addProjectClasspathEntries(proj, entries);
+			//}
 			
 			// add JRE
 			entries.add(JavaRuntime.getJREVariableEntry());
@@ -73,10 +90,44 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		} finally {
 			monitor.done();
 		}		
-		
 	}
 	
-	private void addProjectClasspathEntries(IProject project, IPluginModelBase model, ArrayList entries) {
+	private void resolveEntryInFragments(IWorkspaceRoot root, IClasspathEntry entry, ArrayList entries) {
+		IPlugin plugin = (IPlugin)model.getPluginBase();
+		IProject [] projects = root.getProjects();
+	
+		for (int i=0; i<projects.length; i++) {
+			IProject project = projects[i];
+			if (project.exists() && project.isOpen()) {
+				resolveEntry(root, project, entry, entries);
+			}
+		}
+	}
+	private boolean resolveEntry(IWorkspaceRoot root, IProject project, IClasspathEntry entry, ArrayList entries) {
+		IPlugin plugin = (IPlugin)model.getPluginBase();
+		for (int i=0; i<fragments.length; i++) {
+			IFragmentModel fmodel = fragments[i];
+			IFragment fragment = fmodel.getFragment();
+			if (fragment.getId().equals(project.getName())) {
+				String fid = fragment.getPluginId();
+				String fversion = fragment.getPluginVersion();
+				if (PDEPlugin.compare(fid, fversion, plugin.getId(), plugin.getVersion(), fragment.getRule())) {
+					// Match - try this one
+					IPath path = entry.getPath().removeFirstSegments(1);
+					String name = path.toString();
+					IClasspathEntry newEntry = getLibraryEntry(project, name, true);
+					if (root.exists(newEntry.getPath())) {
+						// Resolved - finish
+						entries.add(newEntry);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private void addProjectClasspathEntries(IProject project, ArrayList entries) {
 		// avoid duplicate project entries
 		HashSet projectsAdded= new HashSet();
 				
@@ -119,7 +170,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 	}	
 	
 	
-	private static IPath getSourceAttchmentPath(IProject project, IPath jarPath) {
+	private static IPath getSourceAttachmentPath(IProject project, IPath jarPath) {
 		String libName= jarPath.lastSegment();
 		int idx= libName.lastIndexOf('.');
 		if (idx != -1) {
@@ -134,7 +185,11 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 	}
 
 	private static IPath getLibraryPath(IProject project, IPluginLibrary curr) {
-		IPath path= new Path(curr.getName());
+		return getLibraryPath(project, curr.getName());
+	}
+	
+	private static IPath getLibraryPath(IProject project, String libraryName) {
+		IPath path= new Path(libraryName);
 		String first= path.segment(0);
 		if (first != null) {
 			IPath rest= path.removeFirstSegments(1);
@@ -152,8 +207,12 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 	}
 	
 	public static IClasspathEntry getLibraryEntry(IProject project, IPluginLibrary library, boolean exported) {
-		IPath jarPath= getLibraryPath(project, library);
-		IPath srcAttach= getSourceAttchmentPath(project, jarPath);
+		return getLibraryEntry(project, library.getName(), exported);
+	}	
+	
+	private static IClasspathEntry getLibraryEntry(IProject project, String libraryName, boolean exported) {
+		IPath jarPath= getLibraryPath(project, libraryName);
+		IPath srcAttach= getSourceAttachmentPath(project, jarPath);
 		IPath srcRoot= srcAttach != null ? Path.EMPTY : null;
 		return JavaCore.newLibraryEntry(jarPath, srcAttach, srcRoot, exported);
 	}	

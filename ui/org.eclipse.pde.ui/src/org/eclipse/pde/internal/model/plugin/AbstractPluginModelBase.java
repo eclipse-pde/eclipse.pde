@@ -102,7 +102,7 @@ public abstract class AbstractPluginModelBase
 			String refid = fragment.getPluginId();
 			String refversion = fragment.getPluginVersion();
 			int refmatch = fragment.getRule();
-			if (PDEPlugin.compare(id, version, refid, refversion, refmatch)) {
+			if (PDEPlugin.compare(refid, refversion, id, version, refmatch)) {
 				URL location = ((AbstractPluginModelBase)model).getNLLookupLocation();
 				result.add(location);
 				IPluginLibrary libraries[] = fragment.getLibraries();

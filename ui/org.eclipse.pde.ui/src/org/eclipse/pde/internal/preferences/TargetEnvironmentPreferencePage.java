@@ -26,13 +26,13 @@ public class TargetEnvironmentPreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
 	private static final String KEY_DESCRIPTION =
 		"Preferences.TargetEnvironmentPage.Description";
-	private static final String KEY_OS =
+	public static final String KEY_OS =
 		"Preferences.TargetEnvironmentPage.os";
-	private static final String KEY_WS =
+	public static final String KEY_WS =
 		"Preferences.TargetEnvironmentPage.ws";
-	private static final String KEY_NL =
+	public static final String KEY_NL =
 		"Preferences.TargetEnvironmentPage.nl";
-	private static final String KEY_ARCH =
+	public static final String KEY_ARCH =
 		"Preferences.TargetEnvironmentPage.arch";
 
 	public TargetEnvironmentPreferencePage() {

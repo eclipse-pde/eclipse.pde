@@ -103,10 +103,7 @@ public class PluginPathUpdater {
 			}
 			return;
 		}
-		IPath modelPath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE);
-		modelPath =
-			modelPath.append(
-				((ExternalPluginModelBase) model).getEclipseHomeRelativePath());
+		IPath modelPath = getExternalPath(model);
 
 		IPluginLibrary[] libraries = plugin.getLibraries();
 
@@ -139,10 +136,25 @@ public class PluginPathUpdater {
 			}
 		}
 	}
-
+	
+	public static IPath getExternalPath(IPluginModelBase model) {
+		IPath modelPath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE);
+		modelPath =
+			modelPath.append(
+				((ExternalPluginModelBase) model).getEclipseHomeRelativePath());
+		return modelPath;
+	}
+	
 	public static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
 		IPath rootPath) {
+			return createLibraryEntry(library, rootPath, false);
+		}
+
+	public static IClasspathEntry createLibraryEntry(
+		IPluginLibrary library,
+		IPath rootPath,
+		boolean unconditionallyExport) {
 		String name = expandLibraryName(library.getName());
 		IPath libraryPath = rootPath.append(name);
 		IPath[] sourceAnnot = getSourceAnnotation(libraryPath, library);
@@ -150,7 +162,7 @@ public class PluginPathUpdater {
 			libraryPath,
 			sourceAnnot[0],
 			sourceAnnot[1],
-			library.isFullyExported());
+			unconditionallyExport? true : library.isFullyExported());
 	}
 
 	private static boolean isEntryAdded(IPath path, int kind, Vector entries) {

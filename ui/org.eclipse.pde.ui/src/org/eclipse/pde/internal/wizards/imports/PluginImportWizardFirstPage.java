@@ -18,8 +18,12 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
+import org.eclipse.pde.internal.preferences.TargetEnvironmentPreferencePage;
+import org.eclipse.pde.internal.TargetPlatform;
 
-public class PluginImportWizardFirstPage extends StatusWizardPage implements ICurrentLaunchListener {
+public class PluginImportWizardFirstPage
+	extends StatusWizardPage
+	implements ICurrentLaunchListener {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation";
 	private static final String SETTINGS_DOOTHER = "doother";
@@ -41,6 +45,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
 		"ImportWizard.FirstPage.extractCheck";
+	private static final String KEY_TARGET_DESC = "ImportWizard.FirstPage.targetDesc";
 	private static final String KEY_FOLDER_TITLE =
 		"ImportWizard.messages.folder.title";
 	private static final String KEY_FOLDER_MESSAGE =
@@ -69,14 +74,14 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 
 		dropLocationStatus = createStatus(IStatus.OK, "");
 	}
-	
+
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-			if (running!=null) updateStatus(running);
-		}
-		else {
+			if (running != null)
+				updateStatus(running);
+		} else {
 			PDEPlugin.getDefault().removeCurrentLaunchListener(this);
 		}
 	}
@@ -85,6 +90,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Label label;
+		GridData gd;
 		initializeDialogUnits(parent);
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -97,24 +104,15 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		fillHorizontal(runtimeLocationButton, 3, false);
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
+			
+		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString(KEY_RUNTIME_DESC));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		gd.widthHint = parent.getSize().x - 2*layout.marginWidth;
-		label.setLayoutData(gd);
+		createMultiLineLabel(composite, wizardClientWidth, PDEPlugin.getResourceString(KEY_RUNTIME_DESC), 3);
 
 		otherLocationButton = new Button(composite, SWT.RADIO);
 		fillHorizontal(otherLocationButton, 3, false);
 		otherLocationButton.setText(PDEPlugin.getResourceString(KEY_OTHER_LOCATION));
-
-		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString(KEY_OTHER_DESC));
-		gd = new GridData();
-		gd.widthHint = parent.getSize().x - 2*layout.marginWidth;
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
+		createMultiLineLabel(composite, wizardClientWidth, PDEPlugin.getResourceString(KEY_OTHER_DESC), 3);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
 		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
@@ -135,7 +133,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = fillHorizontal(label, 3, false);
 		gd.heightHint = 20;
-
+		
 		doImportCheck = new Button(composite, SWT.CHECK);
 		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
 		fillHorizontal(doImportCheck, 3, false);
@@ -143,8 +141,65 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 		doExtractCheck = new Button(composite, SWT.CHECK);
 		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
 		fillHorizontal(doExtractCheck, 3, false);
+		
+		createTargetEnvironmentLabels(composite, wizardClientWidth, 3);
+		
 		initializeFields(getDialogSettings());
+		hookListeners();
 
+		setControl(composite);
+	}
+	
+	private Label createMultiLineLabel(Composite composite, int parentWidth, String text, int span) {
+		Label label = new Label(composite, SWT.WRAP);
+		label.setText(text);
+		GridData gd = new GridData();
+		gd.horizontalSpan = span;
+		gd.widthHint = parentWidth;
+		label.setLayoutData(gd);
+		return label;
+	}
+	
+	private void createTargetEnvironmentLabels(Composite composite, int width, int span) {
+		Label label = new Label(composite, SWT.NULL);
+		fillHorizontal(label, 3, false);
+		Composite container = new Composite(composite, SWT.NULL);
+		fillHorizontal(container, 3, false);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		container.setLayout(layout);
+		
+		createMultiLineLabel(container, width, PDEPlugin.getResourceString(KEY_TARGET_DESC), 2);
+		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_OS, TargetPlatform.getOS());
+		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_WS, TargetPlatform.getWS());
+		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_NL, TargetPlatform.getNL());
+		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_ARCH, TargetPlatform.getOSArch());
+	}
+	
+	private void createTargetLine(Composite parent, String nameKey, String value) {
+		GridData gd = new GridData();
+		Label label = new Label(parent, SWT.NULL);
+		label.setText(trimMnemonics(PDEPlugin.getResourceString(nameKey)));
+		gd.horizontalIndent = 10;
+		label.setLayoutData(gd);
+		
+		label = new Label(parent, SWT.NULL);
+		label.setText(value);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		label.setLayoutData(gd);
+	}
+	private String trimMnemonics(String name) {
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<name.length(); i++) {
+			char c = name.charAt(i);
+			if (c!='&') 
+				buf.append(c);
+		}
+		return buf.toString();
+	}
+
+	private void hookListeners() {
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (runtimeLocationButton.getSelection()) {
@@ -185,20 +240,18 @@ public class PluginImportWizardFirstPage extends StatusWizardPage implements ICu
 				updateStatus();
 			}
 		});
-		setControl(composite);
 	}
-	
+
 	private void updateStatus() {
 		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-		if (running!=null) {
+		if (running != null) {
 			updateStatus(running);
-		}
-		else {
+		} else {
 			validateDropLocation();
 			updateStatus(dropLocationStatus);
 		}
 	}
-	
+
 	public void currentLaunchChanged() {
 		getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {

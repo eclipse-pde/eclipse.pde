@@ -57,12 +57,29 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IReplaceQuery replaceQuery) {
 		Assert.isNotNull(models);
 		Assert.isNotNull(replaceQuery);
-		this.models = models;
+		this.models = placeFragmentsFirst(models);
 		this.extractSource = doExtractSource;
 		this.doImport = doExtractSource ? true : doImport;
 
 		root = ResourcesPlugin.getWorkspace().getRoot();
 		this.replaceQuery = replaceQuery;
+	}
+	
+	private IPluginModelBase[] placeFragmentsFirst(IPluginModelBase [] models) {
+		ArrayList result = new ArrayList();
+		for (int i=0; i<models.length; i++) {
+			if (models[i].isFragmentModel())
+				result.add(models[i]);
+		}
+		if (result.size()>0) {
+			// Now add plug-ins
+			for (int i=0; i<models.length; i++) {
+				if (models[i].isFragmentModel()==false)
+					result.add(models[i]);
+			}
+			return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		}
+		else return models;
 	}
 
 	/*
@@ -191,7 +208,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 			IJavaProject jproject = JavaCore.create(project);
 			UpdateClasspathOperation op =
-				new UpdateClasspathOperation(jproject, model, classpathEntries, outputLocation);
+				new UpdateClasspathOperation(jproject, model, models, classpathEntries, outputLocation);
 			op.run(new SubProgressMonitor(monitor, 2));
 		} finally {
 			monitor.done();

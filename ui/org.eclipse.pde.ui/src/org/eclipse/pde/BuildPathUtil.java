@@ -108,7 +108,7 @@ public class BuildPathUtil {
 		}
 
 		// add own libraries, if present
-		addLibraries(project, model, result);
+		addLibraries(project, model, false, result);
 
 		// add dependencies
 		addDependencies(project, model.getPluginBase().getImports(), result);
@@ -116,6 +116,8 @@ public class BuildPathUtil {
 		// if fragment, add referenced plug-in
 		if (model instanceof IFragmentModel) {
 			addFragmentPlugin((IFragmentModel) model, result);
+		} else {
+			addFragmentLibraries((IPluginModel) model, result, monitor);
 		}
 		// add implicit libraries
 		addImplicitLibraries(result, model.getPluginBase().getId());
@@ -178,16 +180,88 @@ public class BuildPathUtil {
 	private static void addLibraries(
 		IProject project,
 		IPluginModelBase model,
+		boolean unconditionallyExport,
 		Vector result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		IPluginLibrary[] libraries = pluginBase.getLibraries();
-		IPath rootPath = project.getFullPath();
-		IWorkspaceRoot root = project.getWorkspace().getRoot();
+		IPath rootPath = getRootPath(model);
+
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
-			IClasspathEntry entry = PluginPathUpdater.createLibraryEntry(library, rootPath);
-			if (root.findMember(entry.getPath()) != null)
+			IClasspathEntry entry =
+				PluginPathUpdater.createLibraryEntry(library, rootPath, unconditionallyExport);
+			if (exists(model, entry))
 				result.add(entry);
+			else {
+				// missing entry - search fragments
+				if (!model.isFragmentModel()) {
+					resolveLibraryInFragments(model, library, result);
+				}
+			}
+		}
+	}
+
+	private static void resolveLibraryInFragments(
+		IPluginModelBase model,
+		IPluginLibrary library,
+		Vector result) {
+		IPlugin plugin = (IPlugin) model.getPluginBase();
+		IResource resource = model.getUnderlyingResource();
+
+		IFragmentModel[] fmodels;
+
+		if (resource != null)
+			fmodels =
+				PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+		else
+			fmodels =
+				PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+		for (int i = 0; i < fmodels.length; i++) {
+			IFragmentModel fmodel = fmodels[i];
+			if (fmodel.isEnabled() == false)
+				continue;
+
+			IFragment fragment = fmodel.getFragment();
+			if (PDEPlugin
+				.compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					plugin.getId(),
+					plugin.getVersion(),
+					fragment.getRule())) {
+
+				IClasspathEntry entry =
+					PluginPathUpdater.createLibraryEntry(library, getRootPath(fmodel), false);
+				if (exists(fmodel, entry)) {
+					result.add(entry);
+					// we resolved the missing library - no
+					// need to search any more
+					break;
+				}
+			}
+		}
+	}
+
+	private static IPath getRootPath(IPluginModelBase model) {
+		IResource resource = model.getUnderlyingResource();
+		IProject project = resource != null ? resource.getProject() : null;
+
+		if (project != null)
+			return project.getFullPath();
+		else
+			return PluginPathUpdater.getExternalPath(model);
+	}
+
+	private static boolean exists(IPluginModelBase model, IClasspathEntry entry) {
+		IResource resource = model.getUnderlyingResource();
+		IProject project = resource != null ? resource.getProject() : null;
+		IPath path = entry.getPath();
+		if (project == null) {
+			File file = path.toFile();
+			return file.exists();
+		} else {
+			IWorkspaceRoot root = project.getWorkspace().getRoot();
+			return root.findMember(path) != null;
 		}
 	}
 
@@ -225,6 +299,43 @@ public class BuildPathUtil {
 			PluginPathUpdater ppu =
 				new PluginPathUpdater(project, checkedPlugins.iterator());
 			ppu.addClasspathEntries(result);
+		}
+	}
+
+	private static void addFragmentLibraries(
+		IPluginModel model,
+		Vector result,
+		IProgressMonitor monitor) {
+		IPlugin plugin = model.getPlugin();
+		addFragmentLibraries(
+			plugin,
+			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels(),
+			result);
+		addFragmentLibraries(
+			plugin,
+			PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(monitor),
+			result);
+	}
+	private static void addFragmentLibraries(
+		IPlugin plugin,
+		IFragmentModel[] models,
+		Vector result) {
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].isEnabled() == false)
+				continue;
+			IFragment fragment = models[i].getFragment();
+			if (PDEPlugin
+				.compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					plugin.getId(),
+					plugin.getVersion(),
+					fragment.getRule())) {
+				IResource resource = models[i].getUnderlyingResource();
+				IProject project = resource != null ? resource.getProject() : null;
+
+				addLibraries(project, models[i], true, result);
+			}
 		}
 	}
 

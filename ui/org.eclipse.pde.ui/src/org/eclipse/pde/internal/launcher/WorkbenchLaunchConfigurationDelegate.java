@@ -79,7 +79,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
 		throws CoreException {
-		boolean useDefault = !config.getAttribute(USECUSTOM, false);
+		boolean useDefault = config.getAttribute(USECUSTOM, true);
 		ArrayList res = new ArrayList();
 
 		ArrayList deselectedWSPlugins = new ArrayList();

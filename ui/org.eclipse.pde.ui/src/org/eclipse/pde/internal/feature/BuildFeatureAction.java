@@ -153,6 +153,7 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 
 		String scriptName = MainPreferencePage.getBuildScriptName();
+		generator.setBuildScriptName(scriptName);
 
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());

@@ -162,6 +162,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 			generator = new PluginBuildScriptGenerator();
 		
 		String scriptName = MainPreferencePage.getBuildScriptName();
+		generator.setBuildScriptName(scriptName);
 
 		IProject project = pluginBaseFile.getProject();
 		IPluginModelBase model =
