@@ -191,9 +191,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			programArgs.add(primaryFeatureId);
 		}
 
-		if (LauncherUtils.isBootInSource()) {
-			String bootPath = LauncherUtils.getBootPath();
-			if (bootPath != null) {
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot");
+			String bootPath = LauncherUtils.getBootPath(bootModel);
+			if (bootPath != null && !bootPath.endsWith(".jar")) {
 				programArgs.add("-boot");
 				programArgs.add("file:" + bootPath);
 			}

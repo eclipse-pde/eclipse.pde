@@ -34,9 +34,6 @@ public class LauncherUtils {
 	private static final String KEY_DELETE_WORKSPACE =
 		"WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
 
-	private static String bootPath = null;
-	private static boolean bootInSource = false;
-	
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
@@ -140,8 +137,6 @@ public class LauncherUtils {
 		}
 		File startupJar =
 			ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
-		//TODO remove after memory profiling
-		//return startupJar.exists() ? new String[] { startupJar.getAbsolutePath(), "C:\\ymp-1.0.2-build115\\lib\\ympagent.jar"} : null;
 		
 		return startupJar.exists() ? new String[] { startupJar.getAbsolutePath()} : null;
 	}
@@ -208,8 +203,6 @@ public class LauncherUtils {
 		IPluginModelBase[] wsmodels,
 		IPluginModelBase[] exmodels)
 		throws CoreException {
-		bootPath = null;
-		bootInSource = false;
 		TreeMap result = new TreeMap();
 		ArrayList statusEntries = new ArrayList();
 
@@ -234,10 +227,9 @@ public class LauncherUtils {
 		
 		StringBuffer errorText = new StringBuffer();
 		
-		bootPath = getBootPath((IPluginModelBase) result.get("org.eclipse.core.boot"));
 		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		final String lineSeparator = System.getProperty("line.separator");
-		if (bootPath == null && !isOSGI) {
+		if (!result.containsKey("org.eclipse.core.boot") && !isOSGI) {
 			errorText.append("org.eclipse.core.boot" + lineSeparator);
 		}
 		
@@ -297,9 +289,7 @@ public class LauncherUtils {
 				null);
 	}
 
-	private static String getBootPath(IPluginModelBase bootModel) {
-		if (bootModel == null)
-			return null;
+	public static String getBootPath(IPluginModelBase bootModel) {
 		try {
 			IResource resource = bootModel.getUnderlyingResource();
 			if (resource != null) {
@@ -310,17 +300,12 @@ public class LauncherUtils {
 						return "file:" + resource.getLocation().toOSString();
 					IPath path = JavaCore.create(project).getOutputLocation();
 					if (path != null) {
-						bootInSource = true;
 						IPath sourceBootPath =
 							project.getParent().getLocation().append(path);
 						return sourceBootPath.addTrailingSeparator().toOSString();
 					}
 				}
 			} else {
-				File binDir = new File(bootModel.getInstallLocation(), "bin/");
-				if (binDir.exists())
-					return binDir.getAbsolutePath();
-
 				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar");
 				if (bootJar.exists())
 					return "file:" + bootJar.getAbsolutePath();
@@ -350,14 +335,6 @@ public class LauncherUtils {
 			display = Display.getDefault();
 		}
 		return display;
-	}
-	
-	public static boolean isBootInSource() {
-		return bootInSource;
-	}
-	
-	public static String getBootPath() {
-		return bootPath;
 	}
 	
 	public static IVMInstall createLauncher(

@@ -146,16 +146,16 @@ public class WorkbenchLaunchConfigurationDelegate
 				programArgs.add("-feature");
 				programArgs.add(primaryFeatureId);
 			}
-		}
-		
-		if (LauncherUtils.isBootInSource() && !isOSGI) {
-			String bootPath = LauncherUtils.getBootPath();
-			if (bootPath != null) {
-				programArgs.add("-boot");
-				programArgs.add("file:" + bootPath);
+			if (!isOSGI) {
+				IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot");
+				String bootPath = LauncherUtils.getBootPath(bootModel);
+				if (bootPath != null && !bootPath.endsWith(".jar")) {
+					programArgs.add("-boot");
+					programArgs.add("file:" + bootPath);
+				}
 			}
 		}
-
+		
 		programArgs.add("-dev");
 		String devEntry =
 			LauncherUtils.getBuildOutputFolders(
