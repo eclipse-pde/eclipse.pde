@@ -48,6 +48,7 @@ public class TemplateForm extends WebForm {
 	public TemplateForm(ManifestTemplatePage page) {
 		this.page = page;
 		launchShortcut = new RuntimeWorkbenchShortcut();
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	protected void createContents(final Composite parent) {
@@ -154,6 +155,7 @@ public class TemplateForm extends WebForm {
 	public void dispose() {
 		if (dontShow)
 			deleteTemplateFile(page.getTemplateFile());
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
