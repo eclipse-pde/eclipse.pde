@@ -263,12 +263,14 @@ public class LauncherUtils {
 					if (prop != null)
 						bundles = prop.getProperty("osgi.bundles");
 					if (prop == null || bundles == null) {
-						IPlugin osgi = PDECore.getDefault().findPlugin("org.eclipse.osgi");
-						if (osgi != null) {
-							prop = getConfigIniProperties(new Path(osgi.getModel().getInstallLocation()), "eclipse.properties");
-							if (prop != null)
-								bundles = prop.getProperty("osgi.bundles");
+						ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.osgi");
+						if (entry != null) {
+							IPluginModelBase model = entry.getExternalModel();
+							if (model != null)
+								prop = getConfigIniProperties(new Path(model.getInstallLocation()), "eclipse.properties");
 						}
+						if (prop != null)
+							bundles = prop.getProperty("osgi.bundles");
 					} 
 				} else {
 					bundles = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
