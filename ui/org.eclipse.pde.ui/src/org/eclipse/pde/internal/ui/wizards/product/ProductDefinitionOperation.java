@@ -24,7 +24,7 @@ import org.eclipse.ui.branding.*;
 
 public class ProductDefinitionOperation implements IRunnableWithProgress {
 
-	private String fPluginId;
+	protected String fPluginId;
 	private String fProductId;
 	private String fApplication;
 	private Shell fShell;
@@ -38,7 +38,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		fShell = shell;
 		fProduct = product;
 	}
-
+	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		try {

@@ -122,10 +122,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
-			MessageDialog.openInformation(getSite().getShell(), "Synchronize", "The product's defining plug-in has been successfully synchronized");
+			MessageDialog.openInformation(getSite().getShell(), "Synchronize", "The product's defining plug-in has been synchronized successfully.");
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		
-			MessageDialog.openError(getSite().getShell(), PDEPlugin.getResourceString("ProductDefinitionWizard.error"), e.getTargetException().getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
 		}
 	}
 	
