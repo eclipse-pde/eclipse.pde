@@ -70,12 +70,12 @@ public abstract class PDEMultiPageEditor
 		table.put(id, page);
 		pages.addElement(page);
 	}
-	
+
 	public void addPage(String id, IPDEEditorPage page, int index) {
 		table.put(id, page);
 		pages.add(index, page);
 	}
-	
+
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
 	}
@@ -130,7 +130,7 @@ public abstract class PDEMultiPageEditor
 					if (formPage.getSelection() != null)
 						setSelection(formPage.getSelection());
 				}
-				((IPDEEditorPage)page).setFocus();
+				((IPDEEditorPage) page).setFocus();
 			}
 		});
 		MenuManager manager = new MenuManager();
@@ -256,7 +256,7 @@ public abstract class PDEMultiPageEditor
 		}
 		return propertySheet;
 	}
-	
+
 	public Clipboard getClipboard() {
 		return clipboard;
 	}
@@ -292,12 +292,10 @@ public abstract class PDEMultiPageEditor
 			inputObject = input.getAdapter(File.class);
 		} else if (input instanceof IFileEditorInput) {
 			inputObject = input.getAdapter(IFile.class);
-		}
-		else if (input instanceof IStorageEditorInput) {
+		} else if (input instanceof IStorageEditorInput) {
 			try {
-			inputObject = ((IStorageEditorInput)input).getStorage();
-			}
-			catch (CoreException e) {
+				inputObject = ((IStorageEditorInput) input).getStorage();
+			} catch (CoreException e) {
 				throw new PartInitException(e.getStatus());
 			}
 		}
@@ -392,8 +390,8 @@ public abstract class PDEMultiPageEditor
 					undoManager.redo();
 					return;
 				}
-				if (id.equals(ITextEditorActionConstants.CUT) ||
-					id.equals(ITextEditorActionConstants.COPY)) {
+				if (id.equals(ITextEditorActionConstants.CUT)
+					|| id.equals(ITextEditorActionConstants.COPY)) {
 					copyToClipboard(selection);
 					return;
 				}
@@ -486,8 +484,8 @@ public abstract class PDEMultiPageEditor
 		});
 	}
 	private void copyToClipboard(ISelection selection) {
-		IStructuredSelection ssel = (IStructuredSelection)selection;
-		Object [] objects = ssel.toArray();
+		IStructuredSelection ssel = (IStructuredSelection) selection;
+		Object[] objects = ssel.toArray();
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
 
@@ -515,7 +513,7 @@ public abstract class PDEMultiPageEditor
 			new Object[] { objects, textVersion },
 			new Transfer[] { ModelDataTransfer.getInstance(), TextTransfer.getInstance()});
 	}
-	
+
 	public boolean canPasteFromClipboard() {
 		IPDEEditorPage page = getCurrentPage();
 		if (page instanceof PDEFormPage) {

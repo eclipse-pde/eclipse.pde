@@ -122,6 +122,8 @@ public class ManifestEditor
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
+		if (input instanceof IStorage)
+			return createStorageModel((IStorage)input);
 		if (input instanceof File)
 			return createFileSystemModel((File) input);
 		return null;
