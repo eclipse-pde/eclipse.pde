@@ -302,9 +302,9 @@ public abstract class PDEFormEditor extends FormEditor
 			clipboard.dispose();
 			clipboard = null;
 		}
-		inputContextManager.dispose();
-		inputContextManager = null;
 		super.dispose();
+		inputContextManager.dispose();
+		inputContextManager = null;		
 	}
 	public boolean isDirty() {
 		IFormPage page = getActivePageInstance();

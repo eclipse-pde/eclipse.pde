@@ -7,25 +7,25 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Vector;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 public class ExportSection extends TableSection
@@ -191,6 +191,12 @@ public class ExportSection extends TableSection
 		model.addModelChangedListener(this);
 	}
 	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			if (fCurrentLibrary!=null)
+				update(null);
+			markStale();
+			return;
+		}
 		update(fCurrentLibrary);
 	}
 	public void selectionChanged(IFormPart source, ISelection selection) {
