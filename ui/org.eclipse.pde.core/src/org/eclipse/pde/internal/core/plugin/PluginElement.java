@@ -117,6 +117,8 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				childElement.load(child);
 			}
 		}
+		int line = elementModel.getStartLine();
+		range = new int [] { line, line };
 	}
 	public void reconnect() {
 		super.reconnect();

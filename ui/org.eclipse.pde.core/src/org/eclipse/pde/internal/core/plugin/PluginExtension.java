@@ -51,6 +51,8 @@ void load(ExtensionModel extensionModel) {
 			childElement.load(childModel);
 		}
 	}
+	int line = extensionModel.getStartLine();
+	range = new int [] { line, line };
 }
 void load(Node node, Hashtable lineTable) {
 	this.id = getNodeAttribute(node, "id");

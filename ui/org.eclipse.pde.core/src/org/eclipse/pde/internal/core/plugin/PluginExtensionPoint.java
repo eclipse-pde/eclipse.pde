@@ -32,6 +32,9 @@ void load(ExtensionPointModel extensionPointModel) {
 	this.id = extensionPointModel.getId();
 	this.name = extensionPointModel.getName();
 	this.schema = extensionPointModel.getSchema();
+	int line = extensionPointModel.getStartLine();
+	this.range = new int[] { line, line };
+	
 }
 void load(Node node, Hashtable lineTable) {
 	this.id = getNodeAttribute(node, "id");

@@ -37,6 +37,7 @@ void load(LibraryModel libraryModel) {
 	this.name = libraryModel.getName();
 	this.contentFilters = libraryModel.getExports();
 	this.exported = libraryModel.isExported();
+	range = new int [] { libraryModel.getStartLine(), libraryModel.getStartLine() };
 }
 void load(Node node, Hashtable lineTable) {
 	this.name = getNodeAttribute(node, "name");

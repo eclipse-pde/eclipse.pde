@@ -59,6 +59,7 @@ public class PluginImport
 				break;
 		}
 		this.optional = importModel.getOptional();
+		range = new int [] { importModel.getStartLine(), importModel.getStartLine() };
 	}
 
 	public boolean equals(Object obj) {
