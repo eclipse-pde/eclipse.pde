@@ -439,8 +439,28 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		return null;
 	}
+	
+	private IFragmentModel [] findFragments(IPlugin plugin) {
+		String pluginId = plugin.getId();
+		ArrayList result = new ArrayList();
+		for (int i=0; i<models.length; i++) {
+			IPluginModelBase model = (IPluginModelBase)models[i];
+			if (model instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel)model).getFragment();
+				String refId = fragment.getPluginId();
+				if (pluginId.equalsIgnoreCase(refId)) {
+					result.add(model);
+				}
+			}
+		}
+		return (IFragmentModel[])result.toArray(new IFragmentModel [result.size()]);
+	}
 
 	private void addPluginAndDependent(IPluginModelBase model, HashSet checked) {
+		addPluginAndDependent(model, checked, true);
+	}
+
+	private void addPluginAndDependent(IPluginModelBase model, HashSet checked, boolean addFragmentPlugin) {
 		if (checked.contains(model)) {
 			return;
 		}
@@ -457,8 +477,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					}
 				}
 			}
+			IFragmentModel [] fragments = findFragments(plugin);
+			for (int i=0; i<fragments.length; i++) {
+				addPluginAndDependent(fragments[i], checked, false);
+			}
 		}
-		if (model instanceof IFragmentModel) {
+		if (addFragmentPlugin && model instanceof IFragmentModel) {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
 			String id = fragment.getPluginId();
 			IPluginModelBase found = findModel(id);

@@ -18,9 +18,10 @@ import org.eclipse.pde.internal.core.plugin.*;
 
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
-		
+
 	private static final String KEY_MISSING_NATURE_TITLE = "MissingPDENature.title";
-	private static final String KEY_MISSING_NATURE_MESSAGE = "MissingPDENature.message";
+	private static final String KEY_MISSING_NATURE_MESSAGE =
+		"MissingPDENature.message";
 	private Hashtable models = new Hashtable();
 	private Vector listeners = new Vector();
 	private Vector workspaceModels = null;
@@ -271,6 +272,21 @@ public class WorkspaceModelManager
 		workspaceModels.copyInto(result);
 		return result;
 	}
+
+	public IPluginModelBase[] getAllModels() {
+		if (workspaceModels == null) {
+			initializeWorkspacePluginModels();
+		}
+		validate();
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < workspaceModels.size(); i++) {
+			result.add(workspaceModels.get(i));
+		}
+		for (int i = 0; i < workspaceFragmentModels.size(); i++) {
+			result.add(workspaceFragmentModels.get(i));
+		}
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+	}
 	private void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
 		checkTracing(file);
@@ -297,7 +313,7 @@ public class WorkspaceModelManager
 			}
 		}
 	}
-	
+
 	private void handleProjectClosing(IProject project) {
 		// not reason to keep it around if it is closed
 		handleProjectToBeDeleted(project);
@@ -309,7 +325,7 @@ public class WorkspaceModelManager
 
 		if (project.isOpen() == false)
 			return;
-		
+
 		if (kind == IResourceDelta.CHANGED
 			&& (delta.getFlags() | IResourceDelta.DESCRIPTION) != 0) {
 			// Project description changed. Test if this
@@ -343,7 +359,8 @@ public class WorkspaceModelManager
 		IProject[] projects = workspace.getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
-			if (!project.isOpen()) continue;
+			if (!project.isOpen())
+				continue;
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
 					IPluginModelBase model = createWorkspacePluginModel(project);
@@ -365,36 +382,39 @@ public class WorkspaceModelManager
 				| IResourceChangeEvent.PRE_AUTO_BUILD);
 		initialized = true;
 	}
-//	private boolean isEditorOpened(PDEMultiPageEditor pdeEditor) {
-////		IWorkbench workbench = PlatformUI.getWorkbench();
-////		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-////		for (int i = 0; i < windows.length; i++) {
-////			IWorkbenchWindow window = windows[i];
-////			IWorkbenchPage[] pages = window.getPages();
-////			for (int j = 0; j < pages.length; j++) {
-////				IWorkbenchPage page = pages[j];
-////				IEditorPart[] editors = page.getEditors();
-////				for (int k = 0; k < editors.length; k++) {
-////					IEditorPart editor = editors[k];
-////					if (editor == pdeEditor) {
-////						return true;
-////					}
-////				}
-////			}
-////		}
-//		return false;
-//	}
+	//	private boolean isEditorOpened(PDEMultiPageEditor pdeEditor) {
+	////		IWorkbench workbench = PlatformUI.getWorkbench();
+	////		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+	////		for (int i = 0; i < windows.length; i++) {
+	////			IWorkbenchWindow window = windows[i];
+	////			IWorkbenchPage[] pages = window.getPages();
+	////			for (int j = 0; j < pages.length; j++) {
+	////				IWorkbenchPage page = pages[j];
+	////				IEditorPart[] editors = page.getEditors();
+	////				for (int k = 0; k < editors.length; k++) {
+	////					IEditorPart editor = editors[k];
+	////					if (editor == pdeEditor) {
+	////						return true;
+	////					}
+	////				}
+	////			}
+	////		}
+	//		return false;
+	//	}
 
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen() == false)
 			return false;
-		return project.exists(new Path("plugin.xml")) || project.exists(new Path("fragment.xml"));
+		return project.exists(new Path("plugin.xml"))
+			|| project.exists(new Path("fragment.xml"));
 	}
-	
+
 	public static boolean isJavaPluginProject(IProject project) {
-		if (!isPluginProject(project)) return false;
+		if (!isPluginProject(project))
+			return false;
 		try {
-			if (!project.hasNature(JavaCore.NATURE_ID)) return false;
+			if (!project.hasNature(JavaCore.NATURE_ID))
+				return false;
 		} catch (CoreException e) {
 			PDECore.logException(e);
 			return false;
@@ -428,15 +448,13 @@ public class WorkspaceModelManager
 		boolean outOfSync = false;
 		try {
 			stream = file.getContents(false);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			outOfSync = true;
 		}
 		if (outOfSync) {
 			try {
 				stream = file.getContents(true);
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				// cannot get file contents - something is 
 				// seriously wrong
 				IPluginBase base = model.getPluginBase(true);
@@ -445,8 +463,7 @@ public class WorkspaceModelManager
 					base.setName(base.getId());
 					base.setVersion("0.0.0");
 					PDECore.log(e);
-				}
-				catch (CoreException ex) {
+				} catch (CoreException ex) {
 					PDECore.logException(ex);
 				}
 				return;
@@ -521,11 +538,11 @@ public class WorkspaceModelManager
 	}
 
 	private void processModelChanges() {
-		if (modelChanges.size()==0) {
+		if (modelChanges.size() == 0) {
 			modelChanges = null;
 			return;
 		}
-		
+
 		Vector added = new Vector();
 		Vector removed = new Vector();
 		for (int i = 0; i < modelChanges.size(); i++) {
@@ -574,15 +591,15 @@ public class WorkspaceModelManager
 		initialized = false;
 	}
 	private void verifyConsumer(ModelInfo info) {
-//		Object consumer = info.consumer;
-//		if (consumer instanceof PDEMultiPageEditor) {
-//			PDEMultiPageEditor editor = (PDEMultiPageEditor) consumer;
-//			if (isEditorOpened(editor) == false) { // stale reference
-//				info.consumer = null;
-//				info.model.dispose();
-//				info.model = null;
-//			}
-//		}
+		//		Object consumer = info.consumer;
+		//		if (consumer instanceof PDEMultiPageEditor) {
+		//			PDEMultiPageEditor editor = (PDEMultiPageEditor) consumer;
+		//			if (isEditorOpened(editor) == false) { // stale reference
+		//				info.consumer = null;
+		//				info.model.dispose();
+		//				info.model = null;
+		//			}
+		//		}
 	}
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {
@@ -596,21 +613,21 @@ public class WorkspaceModelManager
 		}
 		return true;
 	}
-	
+
 	private void validate() {
 		// let's be paranoid - see if the underlying resources
 		// are still valid
-		if (workspaceModels!=null) {
+		if (workspaceModels != null) {
 			validate(workspaceModels);
 		}
-		if (workspaceFragmentModels!=null) {
+		if (workspaceFragmentModels != null) {
 			validate(workspaceFragmentModels);
 		}
 	}
 	private void validate(Vector models) {
-		Object [] entries = models.toArray();
-		for (int i=0; i<entries.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)entries[i];
+		Object[] entries = models.toArray();
+		for (int i = 0; i < entries.length; i++) {
+			IPluginModelBase model = (IPluginModelBase) entries[i];
 			if (!isValid(model)) {
 				// drop it
 				models.remove(model);
@@ -620,13 +637,17 @@ public class WorkspaceModelManager
 	private boolean isValid(IPluginModelBase model) {
 		IResource resource = model.getUnderlyingResource();
 		// Must have the resource handle
-		if (resource==null) return false;
+		if (resource == null)
+			return false;
 		// Must have a resource handle that exists
-		if (resource.exists()==false) return false;
+		if (resource.exists() == false)
+			return false;
 		// The project must not be closed
 		IProject project = resource.getProject();
-		if (project==null) return false;
-		if (project.isOpen()==false) return false;
+		if (project == null)
+			return false;
+		if (project.isOpen() == false)
+			return false;
 		// passed
 		return true;
 	}
