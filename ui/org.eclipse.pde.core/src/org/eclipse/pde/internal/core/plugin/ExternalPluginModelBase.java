@@ -62,7 +62,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		String device = path.getDevice();
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
-		setInstallLocation(path.addTrailingSeparator().toOSString());
+		setInstallLocation(path.toOSString());
 		setBundleDescription(description);
 		((PluginBase)getPluginBase()).load(description, state);
 		updateTimeStamp();
@@ -93,5 +93,8 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	public void setInstallLocation(String newInstallLocation) {
 		installLocation = newInstallLocation;
+		File file = new File(newInstallLocation);
+		if (file.isDirectory())
+			installLocation += File.separator;
 	}
 }

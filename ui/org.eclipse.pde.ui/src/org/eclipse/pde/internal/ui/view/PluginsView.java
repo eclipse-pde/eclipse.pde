@@ -648,9 +648,7 @@ public class PluginsView extends ViewPart {
 		};
 
 		try {
-			PlatformUI.getWorkbench().getProgressService().runInUI(
-					PDEPlugin.getActiveWorkbenchWindow(), op,
-					PDEPlugin.getWorkspace().getRoot());
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
