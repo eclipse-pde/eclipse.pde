@@ -19,11 +19,12 @@ public abstract class BasePreviewSection extends FormSection {
 	private Text text;
 	private ScrollableSectionForm form;
 	
-	public BasePreviewSection(ScrollableSectionForm form, String title) {
+	public BasePreviewSection(ScrollableSectionForm form, String title, boolean collapsed) {
 		this.form = form;
 		setHeaderText(title);
 		setCollapsable(true);
 		setCompactMode(true);
+		setCollapsed(collapsed);
 	}
 	
 	public LogEntry getEntry() {

@@ -48,9 +48,10 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String P_COLUMN_3 = "column3";
 	private static final String P_COLUMN_4 = "column4";
 	
-	private static final String P_ACTIVATE = "activate";
-	
-		
+	public static final String P_ACTIVATE = "activate";
+	public static final String P_COLLAPSE_SESSION = "collapseSession";
+	public static final String P_COLLAPSE_STACK = "collapseStack";
+			
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
 	private int DATE_ORDER = -1;
@@ -133,7 +134,7 @@ public class LogView extends ViewPart implements ILogListener {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createVerticalLine(container);
 		
-		detailsForm = new DetailsForm();
+		detailsForm = new DetailsForm(memento);
 		Control formControl = detailsForm.createControl(container);
 		formControl.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (logs.size() > 0) {
@@ -672,6 +673,10 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putInteger(P_COLUMN_4, 150);
 		if (memento.getString(P_ACTIVATE) == null)
 			memento.putString(P_ACTIVATE, "true");
+		if (memento.getString(P_COLLAPSE_SESSION) == null)
+			memento.putString(P_COLLAPSE_SESSION, "true");
+		if (memento.getString(P_COLLAPSE_STACK) == null)
+			memento.putString(P_COLLAPSE_STACK, "true");
 	}
 	
 	public void saveState(IMemento memento) {
@@ -682,7 +687,7 @@ public class LogView extends ViewPart implements ILogListener {
 		this.memento.putString(
 			P_ACTIVATE,
 			activateViewAction.isChecked() ? "true" : "false");
-
+		detailsForm.saveState();
 		memento.putMemento(this.memento);
 	}
 	

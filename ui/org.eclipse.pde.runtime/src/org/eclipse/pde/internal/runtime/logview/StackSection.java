@@ -14,9 +14,11 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
  */
 public class StackSection extends BasePreviewSection {
 	
-	public StackSection(ScrollableSectionForm form) {
-		super(form, PDERuntimePlugin.getResourceString("LogView.preview.stackTrace"));
-		setCollapsed(true);
+	public StackSection(ScrollableSectionForm form, boolean collapsed) {
+		super(
+			form,
+			PDERuntimePlugin.getResourceString("LogView.preview.stackTrace"),
+			collapsed);
 	}
 	
 	protected String getTextFromEntry() {

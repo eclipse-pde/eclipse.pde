@@ -14,9 +14,8 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
  */
 public class SessionDataSection extends BasePreviewSection {
 	
-	public SessionDataSection(ScrollableSectionForm form) {
-		super(form, PDERuntimePlugin.getResourceString("LogView.preview.sessionData"));
-		setCollapsed(true);
+	public SessionDataSection(ScrollableSectionForm form, boolean collapsed) {
+		super(form, PDERuntimePlugin.getResourceString("LogView.preview.sessionData"), collapsed);
 	}
 
 	protected String getTextFromEntry() {

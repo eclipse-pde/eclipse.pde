@@ -11,6 +11,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
 import org.eclipse.update.ui.forms.internal.*;
 
 /**
@@ -25,9 +26,11 @@ public class DetailsForm extends ScrollableSectionForm {
 	private Label message;
 	private Composite parent;
 	private Label eventType;
+	private IMemento memento;
 
-	public DetailsForm() {
+	public DetailsForm(IMemento memento) {
 		setVerticalFit(true);
+		this.memento = memento;
 		headingImage = PDERuntimePluginImages.DESC_FORM_BANNER_SHORT.createImage();
 		if (isWhiteBackground())
 			setHeadingImage(headingImage);
@@ -63,16 +66,16 @@ public class DetailsForm extends ScrollableSectionForm {
 
 		createTopSection(parent);
 
-		sessionSection = new SessionDataSection(this);
-		Control control = sessionSection.createControl(parent, factory);
-		control.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-
-		stackSection = new StackSection(this);
-		control = stackSection.createControl(parent, factory);
+		stackSection = new StackSection(this, memento.getString(LogView.P_COLLAPSE_STACK).equals("true"));
+		Control control = stackSection.createControl(parent, factory);
 		control.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL));
-
+		
+		sessionSection = new SessionDataSection(this, memento.getString(LogView.P_COLLAPSE_SESSION).equals("true"));
+		control = sessionSection.createControl(parent, factory);
+		control.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		
 		registerSection(sessionSection);
 		registerSection(stackSection);
 	}
@@ -135,5 +138,14 @@ public class DetailsForm extends ScrollableSectionForm {
 		headingImage.dispose();
 		unregisterSection(sessionSection);
 		unregisterSection(stackSection);
+	}
+	
+	public void saveState() {
+		memento.putString(
+			LogView.P_COLLAPSE_SESSION,
+			sessionSection.isCollapsed() ? "true" : "false");
+		memento.putString(
+			LogView.P_COLLAPSE_STACK,
+			stackSection.isCollapsed() ? "true" : "false");
 	}
 }
