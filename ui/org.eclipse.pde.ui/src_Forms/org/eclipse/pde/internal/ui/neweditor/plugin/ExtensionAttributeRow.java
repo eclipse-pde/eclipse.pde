@@ -50,7 +50,7 @@ public abstract class ExtensionAttributeRow {
 		if (dot != -1) {
 			StringBuffer buf = new StringBuffer();
 			boolean inTag=false;
-			for (int i=0; i<dot; i++) {
+			for (int i=0; i<text.length(); i++) {
 				char c = text.charAt(i);
 				if (inTag) {
 					if (c=='>') {
@@ -63,10 +63,13 @@ public abstract class ExtensionAttributeRow {
 						inTag = true;
 						continue;
 					}
-					else if (c=='.')
-						break;
-					else
-						buf.append(c);
+					else if (c=='.') {
+						if (i<text.length()-1) {
+							char c2 = text.charAt(i+1);
+							if (c2==' ' || c2=='\t' || c2=='\n') break;
+						}
+					}
+					buf.append(c);
 				}
 			}
 			return buf.toString();

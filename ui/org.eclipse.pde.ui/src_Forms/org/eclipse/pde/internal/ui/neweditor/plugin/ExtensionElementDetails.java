@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.layout.*;
@@ -95,6 +96,7 @@ public class ExtensionElementDetails implements IDetailsPage {
 		ExtensionAttributeRow row;
 		if (att.getKind() == ISchemaAttribute.JAVA)
 			row = new ClassAttributeRow(att);
+		else
 		if (att.getKind() == ISchemaAttribute.RESOURCE)
 			row = new ResourceAttributeRow(att);
 		else {
