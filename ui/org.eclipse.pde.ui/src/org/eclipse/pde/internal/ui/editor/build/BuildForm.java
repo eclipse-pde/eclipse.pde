@@ -160,7 +160,7 @@ public class BuildForm extends ScrollableSectionForm {
 	public void initialize(Object modelObject) {
 		IBuildModel model = (IBuildModel) modelObject;
 		super.initialize(model);
-		setHeadingText(getText());
+		setHeadingText(PDEPlugin.getResourceString("BuildPropertiesEditor.header"));
 		((Composite) getControl()).layout(true);
 	}
 	
@@ -181,25 +181,6 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 
 	public void setFocus() {
-	}
-	
-	private String getText() {
-		return "Build Configuration";
-		/*IBuildModel buildModel = (IBuildModel)page.getModel();
-		IProject project = buildModel.getUnderlyingResource().getProject();
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		String label = "";
-		if (model instanceof IFeatureModel) {
-			label = ((IFeatureModel)model).getFeature().getLabel();
-			if (label == null || label.trim().length() == 0)
-			label = ((IFeatureModel)model).getFeature().getId();
-		} else {
-			label = ((IPluginModelBase)model).getPluginBase().getName();
-			if (label == null || label.trim().length() == 0)
-			label = ((IPluginModelBase)model).getPluginBase().getId();
-		}
-		
-		return label;*/
 	}
 	
 	private String getCustomText() {
