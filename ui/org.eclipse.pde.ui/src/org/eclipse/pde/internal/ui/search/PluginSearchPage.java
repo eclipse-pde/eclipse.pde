@@ -159,7 +159,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				PDEPlugin.getResourceString(KEY_PLUGIN),
 				PDEPlugin.getResourceString(KEY_FRAGMENT),
 				PDEPlugin.getResourceString(KEY_EXT_PT)},
-			0);
+			2);
 		createGroup(
 			result,
 			limitToButtons,
