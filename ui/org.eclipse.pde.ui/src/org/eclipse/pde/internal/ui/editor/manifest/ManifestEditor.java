@@ -395,6 +395,8 @@ public class ManifestEditor
 				new ByteArrayInputStream(text.getBytes("UTF8"));
 			try {
 				model.reload(stream, false);
+				if (model instanceof IEditable && model.isEditable())
+					((IEditable)model).setDirty(false);
 			} catch (CoreException e) {
 				cleanModel = false;
 			}

@@ -55,6 +55,8 @@ public class DetailExtensionSection
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_NEW_EXTENSION =
 		"ManifestEditor.DetailExtensionSection.newExtension";
+	public static final String POPUP_COLLAPSE_ALL =
+		"ManifestEditor.DetailExtensionSection.collapseAll";
 	public static final String POPUP_GO_TO = "Menus.goTo.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private static final String SETTING_SHOW_ALL =
@@ -65,6 +67,7 @@ public class DetailExtensionSection
 	private ExternalModelManager pluginInfoRegistry;
 	private DrillDownAdapter drillDownAdapter;
 	private Action newExtensionAction;
+	private Action collapseAllAction;
 	private static final String[] COMMON_LABEL_PROPERTIES =
 		{ "label", "name", "id" };
 
@@ -379,6 +382,8 @@ public class DetailExtensionSection
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
+		manager.add(collapseAllAction);
+		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().addClipboardActions(manager);
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
@@ -513,6 +518,11 @@ public class DetailExtensionSection
 			}
 		});
 	}
+
+	private void handleCollapseAll() {
+		getTreePart().getTreeViewer().collapseAll();
+	}
+
 	public void initialize(Object input) {
 		IPluginModelBase model = (IPluginModelBase) input;
 		extensionTree.setInput(model.getPluginBase());
@@ -534,6 +544,13 @@ public class DetailExtensionSection
 		newExtensionAction.setImageDescriptor(
 			PDEPluginImages.DESC_EXTENSION_OBJ);
 		newExtensionAction.setEnabled(editable);
+		collapseAllAction = new Action() {
+			public void run() {
+				handleCollapseAll();
+			}
+		};
+		collapseAllAction.setText(
+			PDEPlugin.getResourceString(POPUP_COLLAPSE_ALL));
 	}
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
@@ -629,9 +646,12 @@ public class DetailExtensionSection
 			Image customImage = getCustomImage(element);
 			if (customImage != null)
 				elementImage = customImage;
-			boolean hasBodyText = element.getText()!=null;
+			boolean hasBodyText = element.getText() != null;
 			if (hasBodyText) {
-				elementImage = PDEPlugin.getDefault().getLabelProvider().get(elementImage, PDELabelProvider.F_EDIT);
+				elementImage =
+					PDEPlugin.getDefault().getLabelProvider().get(
+						elementImage,
+						PDELabelProvider.F_EDIT);
 			}
 		}
 		return elementImage;
@@ -725,8 +745,8 @@ public class DetailExtensionSection
 				if (labelAtt == null) {
 					// Last try - if there is only one attribute,
 					// use that
-					if (element.getAttributeCount()==1)
-					   labelAtt = element.getAttributes()[0];
+					if (element.getAttributeCount() == 1)
+						labelAtt = element.getAttributes()[0];
 				}
 			}
 			if (labelAtt != null && labelAtt.getValue() != null)
