@@ -520,10 +520,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	
 	public int getExportType() {
 		if (directoryRadio.getSelection())
-			return BaseExportWizard.EXPORT_AS_DIRECTORY;
+			return BaseExportJob.EXPORT_AS_DIRECTORY;
 		if (zipRadio.getSelection())
-			return BaseExportWizard.EXPORT_AS_ZIP;
-		return BaseExportWizard.EXPORT_AS_UPDATE_JARS;
+			return BaseExportJob.EXPORT_AS_ZIP;
+		return BaseExportJob.EXPORT_AS_UPDATE_JARS;
 	}
 	
 	protected abstract void hookHelpContext(Control control);
