@@ -126,7 +126,6 @@ public abstract class PDESourcePage
 		service.unregisterAction(getAction(ActionFactory.PASTE.getId()));
 		service.unregisterAction(getAction(ActionFactory.SELECT_ALL.getId()));
 		service.unregisterAction(getAction(ActionFactory.FIND.getId()));
-		service.unregisterAction(getAction(IDEActionFactory.BOOKMARK.getId()));
 	}
 
 	public void dispose() {
