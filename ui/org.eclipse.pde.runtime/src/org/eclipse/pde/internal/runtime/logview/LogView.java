@@ -50,6 +50,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String P_COLUMN_4 = "column4";
 	
 	public static final String P_ACTIVATE = "activate";
+	public static final String P_SHOW_DETAILS = "showDetails";
 	public static final String P_COLLAPSE_SESSION = "collapseSession";
 	public static final String P_COLLAPSE_STACK = "collapseStack";
 			
@@ -67,6 +68,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action exportAction;
 	private Action importAction;
 	private Action activateViewAction;
+	private Action showPreviewAction;
 	private Action propertiesAction;
 	
 	private Action filterAction;
@@ -170,6 +172,7 @@ public class LogView extends ViewPart implements ILogListener {
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(filterAction);
 		mgr.add(new Separator());
+		mgr.add(showPreviewAction);
 		mgr.add(activateViewAction);		
 	}
 	
@@ -393,6 +396,13 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		};
 		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));
+		
+		showPreviewAction = new Action(PDERuntimePlugin.getResourceString("LogView.showDetails")) {
+			public void run() {
+				memento.putString(P_SHOW_DETAILS, isChecked() ? "true" : "false");
+			}
+		};
+		showPreviewAction.setChecked(memento.getString(P_SHOW_DETAILS).equals("true"));
 	}
 	
 	public void dispose() {
@@ -695,6 +705,8 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putInteger(P_COLUMN_4, 150);
 		if (memento.getString(P_ACTIVATE) == null)
 			memento.putString(P_ACTIVATE, "true");
+		if (memento.getString(P_SHOW_DETAILS) == null)
+			memento.putString(P_SHOW_DETAILS, "true");
 		if (memento.getString(P_COLLAPSE_SESSION) == null)
 			memento.putString(P_COLLAPSE_SESSION, "true");
 		if (memento.getString(P_COLLAPSE_STACK) == null)
