@@ -63,8 +63,6 @@ public class PDERuntimePluginImages {
 		create(PATH_OBJ, "runtime_obj.gif");
 	public static final ImageDescriptor DESC_WARNING_ST_OBJ =
 		create(PATH_OBJ, "warning_st_obj.gif");
-	public static final ImageDescriptor DESC_PAGE_OBJ =
-		create(PATH_OBJ, "page_obj.gif");
 
 	/*
 	 * Local tool bar image descriptors
@@ -72,6 +70,8 @@ public class PDERuntimePluginImages {
 
 	public static final ImageDescriptor DESC_PROPERTIES =
 		create(PATH_LCL, "properties.gif");
+	public static final ImageDescriptor DESC_OPEN_LOG =
+		create(PATH_LCL, "open_log.gif");
 	public static final ImageDescriptor DESC_PROPERTIES_DISABLED =
 		create(PATH_LCL_DISABLED, "properties.gif");
 	public static final ImageDescriptor DESC_REFRESH =

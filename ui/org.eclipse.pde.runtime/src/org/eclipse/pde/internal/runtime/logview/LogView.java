@@ -430,7 +430,7 @@ public class LogView extends ViewPart implements ILogListener {
 					}
 			}
 		};
-		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_PAGE_OBJ);
+		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
 		viewLogAction.setEnabled(inputFile.exists());
 		viewLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip"));
 	}
