@@ -114,14 +114,23 @@ public class InfoSection extends PDEFormSection {
 
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
 
-		urlText = factory.createText(container, null, SWT.SINGLE | borderStyle);
-		urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		urlText.setLayoutData(gd);
+		if (SWT.getPlatform().equals("motif") == false) {
+			urlText =
+				factory.createText(container, null, SWT.SINGLE | borderStyle);
+			urlText.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					infoModified();
+				}
+			});
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			urlText.setLayoutData(gd);
+		}
+		else {
+			Composite textContainer = createText(container, factory);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			textContainer.setLayoutData(gd);			
+		}
+
 		factory.createLabel(container, null);
 
 		label =
@@ -198,6 +207,24 @@ public class InfoSection extends PDEFormSection {
 			}
 		});
 		return container;
+	}
+
+	private Composite createText(Composite parent, FormWidgetFactory factory) {
+		Composite textContainer = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 1;
+		layout.marginHeight = 1;
+		textContainer.setLayout(layout);
+		factory.paintBordersFor(textContainer);
+		urlText = factory.createText(textContainer, null);
+		urlText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				infoModified();
+			}
+		});
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		urlText.setLayoutData(gd);
+		return textContainer;
 	}
 	private void updateSelection(ISelection selection) {
 		getFormPage().getEditor().setSelection(selection);
