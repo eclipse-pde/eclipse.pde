@@ -169,9 +169,8 @@ public class ConvertSchemaToHTML extends Task {
 		} catch (Exception e) {
 			if (e.getMessage() != null)
 				System.out.println(e.getMessage());
-		} finally {
-			return model;
-		}
+		} 
+		return model;
 	}
 
 	private boolean validateDestination() {
