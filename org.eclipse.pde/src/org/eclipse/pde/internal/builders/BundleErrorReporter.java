@@ -121,8 +121,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					IJavaElement[] children = roots[i].getChildren();
 					for (int j = 0; j < children.length; j++) {
 						IPackageFragment f = (IPackageFragment) children[j];
-						if (f.hasChildren())
-							map.put(f.getElementName(), f);
+						map.put(f.getElementName(), f);
 					}
 				}
 			}
@@ -219,7 +218,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
                                 .collectPackageFragments(
                                         new IPluginBase[] { model
                                                 .getPluginBase() }, JavaCore
-                                                .create(fProject));
+                                                .create(fProject), false);
                         for (int i = 0; i < packages.length; i++)
                             map.put(packages[i].getElementName(),
                                     packages[i]);
