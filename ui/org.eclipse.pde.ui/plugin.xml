@@ -461,7 +461,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
-<!-- -->
+<!-- 
       <editor
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
@@ -470,7 +470,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
       </editor>
-<!--   -->
+-->
       <editor
             default="true"
             name="%editors.fragmentManifest.name"
