@@ -356,7 +356,7 @@ public class LauncherUtils {
 				}
 				result[0] =
 					MessageDialog.openConfirm(
-						PDEPlugin.getActiveWorkbenchShell(),
+						getDisplay().getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
 						message.toString());
 			}
@@ -370,7 +370,7 @@ public class LauncherUtils {
 			public void run() {
 				result[0] =
 					MessageDialog.openConfirm(
-						PDEPlugin.getActiveWorkbenchShell(),
+						getDisplay().getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
 						status.getMessage());
 			}
@@ -457,7 +457,7 @@ public class LauncherUtils {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
 				MessageDialog.openWarning(
-					PDEPlugin.getActiveWorkbenchShell(),
+					getDisplay().getActiveShell(),
 					title,
 					message);
 			}
@@ -475,7 +475,7 @@ public class LauncherUtils {
 						workspaceFile.getPath());
 				result[0] =
 					MessageDialog.openQuestion(
-						PDEPlugin.getActiveWorkbenchShell(),
+						getDisplay().getActiveShell(),
 						title,
 						message);
 			}
