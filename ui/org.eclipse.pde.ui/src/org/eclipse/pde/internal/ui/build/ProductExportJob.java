@@ -152,8 +152,8 @@ public class ProductExportJob extends FeatureExportJob {
 		File file = new File(model.getInstallLocation(), "build.properties");
 		if (!file.exists()) {
 			Properties properties = new Properties();
-			properties.put("bin.includes", "*");
-			properties.put("bin.excludes", "build.properties");
+			properties.put(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES, "*");
+			properties.put(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES, "build.properties");
 			save(file, properties, "Build Properties");
 			fTransientFeatureProps.add(model.getInstallLocation());
 		}
