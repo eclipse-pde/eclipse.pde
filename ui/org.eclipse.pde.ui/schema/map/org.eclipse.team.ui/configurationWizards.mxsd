@@ -74,7 +74,7 @@ which gathers the necessary information and configures the projects.
                   a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.team.ui.IConfigurationWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.team.ui.IConfigurationWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.team.ui.IConfigurationWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -97,14 +97,14 @@ which gathers the necessary information and configures the projects.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.team.ui.configurationWizard"&gt;
-		&lt;wizard 
-			name="WebDAV"
-			icon="webdav.gif"
-			class="com.xyz.DAVDecorator"
-			id="com.xyz.dav"&gt;
-		&lt;/wizard&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.team.ui.configurationWizard"&gt;
+  &lt;wizard 
+   name="WebDAV"
+   icon="webdav.gif"
+   class="com.xyz.DAVDecorator"
+   id="com.xyz.dav"&gt;
+  &lt;/wizard&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

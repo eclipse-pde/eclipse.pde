@@ -58,7 +58,7 @@ A UI for managing IVMInstalls is provided by the Java UI plug-in.
                   the class that implements this VM install type.  The class must implement IVMInstallType.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IVMInstallType"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.AbstractVMInstallType"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -74,12 +74,12 @@ A UI for managing IVMInstalls is provided by the Java UI plug-in.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.jdt.launching.vmInstallTypes"&gt;
-		&lt;vmInstallType
-			class="org.eclipse.jdt.internal.launching.j9.J9VMInstallType"
-			id="org.eclipse.jdt.internal.launching.j9.J9Type"&gt;
-		&lt;/vmInstallType&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.jdt.launching.vmInstallTypes"&gt;
+  &lt;vmInstallType
+   class="org.eclipse.jdt.internal.launching.j9.J9VMInstallType"
+   id="org.eclipse.jdt.internal.launching.j9.J9Type"&gt;
+  &lt;/vmInstallType&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

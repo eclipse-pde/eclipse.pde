@@ -63,7 +63,7 @@ launch configuration type extension).
                   specifies a fully qualified name of a Java class that implements &lt;samp&gt;ILaunchConfigurationTabGroup&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchConfigurationTabGroup"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -79,13 +79,13 @@ launch configuration type extension).
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
-		&lt;launchConfigurationTabGroup
-			id="com.example.ExampleTabGroup"
-			type="com.example.ExampleLaunchConfigurationTypeIdentifier"
-			class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
-		&lt;/launchConfigurationTabGroup&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.debug.ui.launchConfigurationTabGroups"&gt;
+  &lt;launchConfigurationTabGroup
+   id="com.example.ExampleTabGroup"
+   type="com.example.ExampleLaunchConfigurationTypeIdentifier"
+   class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
+  &lt;/launchConfigurationTabGroup&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 

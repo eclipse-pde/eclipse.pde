@@ -72,7 +72,7 @@ with it by any means except through the file system.
    <element name="editor">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -148,7 +148,7 @@ contributor is made per editor ID, regardless of the number of
 editor instances currently opened.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorActionBarContributor"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.part.EditorActionBarContributor"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -65,7 +65,7 @@ class must be public and implement
 with a public 0-argument constructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.ui.wizards.IClasspathContainerPage"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.WizardPage:org.eclipse.jdt.ui.wizards.IClasspathContainerPage"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -81,13 +81,13 @@ with a public 0-argument constructor.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.jdt.ui.classpathContainerPage"&gt;
-		&lt;classpathContainerPage
-			id="JRE"
-			name="JRE System Libraries"
-			class="com.example.NewJDKEntryPage"&gt;
-		&lt;/classpathContainerPage&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.jdt.ui.classpathContainerPage"&gt;
+  &lt;classpathContainerPage
+   id="JRE"
+   name="JRE System Libraries"
+   class="com.example.NewJDKEntryPage"&gt;
+  &lt;/classpathContainerPage&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

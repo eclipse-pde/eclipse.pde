@@ -124,7 +124,7 @@ The wizard is responsible for collecting any necessary information from the user
 and adding this capability's nature along will all other natures from capabilities this capability handles the UI for.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.ICapabilityInstallWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.ICapabilityInstallWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -143,6 +143,9 @@ The wizard is responsible for collecting any necessary information from the user
 and removing this capability's nature along with any other natures from capabilities that the user wants removed and this capability handles the UI for.
 If omitted, the workbench will provide a wizard that will remove this capability's nature from the project along with any other natures from capabilites that the user wants removed and this capability handles the UI for.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.ICapabilityUninstallWizard"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="uninstallDetails" type="string">
@@ -205,31 +208,31 @@ If omitted, the workbench will provide a wizard that will remove this capability
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.ui.capabilities"&gt;
-		&lt;category id="com.xyz.weather" name="Weather Elements"/&gt;
-		&lt;capability
-			id="com.xyz.snowCapability"
-			natureId="com.xyz.snowNature"
-			category="com.xyz.weather"
-			icon="./icons/snowCapability.gif"
-			installWizard="com.xyz.SnowCapabilityWizard"
-			description="Turn your project into a winter wonderland!"&gt;
-			&lt;handleUI id="com.xyz.waterCapability"/&gt;
-			&lt;perspectiveChoice id="com.xyz.skiPerspective"/&gt;
-			&lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
-		&lt;/capability&gt;
-		&lt;capability
-			id="com.xyz.waterCapability"
-			natureId="com.xyz.waterNature"
-			category="com.xyz.weather"
-			icon="./icons/waterCapability.gif"
-			installWizard="com.xyz.WaterCapabilityWizard"
-			installDetails="You will be asked to supply a locale id."
-			description="Turn your project into a waterly wonderland!"&gt;
-			&lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
-			&lt;perspectiveChoice id="com.xyz.drinkPerspective"/&gt;
-		&lt;/capability&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.ui.capabilities"&gt;
+  &lt;category id="com.xyz.weather" name="Weather Elements"/&gt;
+  &lt;capability
+   id="com.xyz.snowCapability"
+   natureId="com.xyz.snowNature"
+   category="com.xyz.weather"
+   icon="./icons/snowCapability.gif"
+   installWizard="com.xyz.SnowCapabilityWizard"
+   description="Turn your project into a winter wonderland!"&gt;
+   &lt;handleUI id="com.xyz.waterCapability"/&gt;
+   &lt;perspectiveChoice id="com.xyz.skiPerspective"/&gt;
+   &lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
+  &lt;/capability&gt;
+  &lt;capability
+   id="com.xyz.waterCapability"
+   natureId="com.xyz.waterNature"
+   category="com.xyz.weather"
+   icon="./icons/waterCapability.gif"
+   installWizard="com.xyz.WaterCapabilityWizard"
+   installDetails="You will be asked to supply a locale id."
+   description="Turn your project into a waterly wonderland!"&gt;
+   &lt;perspectiveChoice id="com.xyz.rainPerspective"/&gt;
+   &lt;perspectiveChoice id="com.xyz.drinkPerspective"/&gt;
+  &lt;/capability&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

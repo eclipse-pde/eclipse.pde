@@ -81,7 +81,7 @@ source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
 interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IExportWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IExportWizard"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -61,7 +61,7 @@
                   specifies the fully qualified name of the java class that implements &lt;samp&gt;IBreakpoint&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.IBreakpoint"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.Breakpoint"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -77,13 +77,13 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.breakpoint"&gt;
-		&lt;breakpoint
-			id="com.example.ExampleBreakpoint"
-			markerType="com.example.ExampleBreakpointMarker"
-			class="com.example.ExampleBreakpointImpl"&gt;
-		&lt;/breakpoint&gt;
-	&lt;/extension&gt;
+ &lt;extension point="org.eclipse.debug.core.breakpoint"&gt;
+  &lt;breakpoint
+   id="com.example.ExampleBreakpoint"
+   markerType="com.example.ExampleBreakpointMarker"
+   class="com.example.ExampleBreakpointImpl"&gt;
+  &lt;/breakpoint&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 

@@ -288,7 +288,7 @@ The latter should be implemented in cases where &lt;samp&gt;pulldown&lt;/samp&gt
 If the retarget attribute is true, this attribute will not be supplied.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchWindowActionDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
