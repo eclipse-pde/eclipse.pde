@@ -192,6 +192,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			fIdText.setFocus();
 		setControl(container);
+		validatePage(false);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
