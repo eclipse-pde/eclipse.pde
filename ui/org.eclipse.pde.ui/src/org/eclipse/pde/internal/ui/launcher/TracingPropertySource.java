@@ -117,11 +117,11 @@ public class TracingPropertySource {
 	public IPluginModelBase getModel() {
 		return fModel;
 	}
-	private Object[] getSortedKeys(int size, Enumeration keys) {
+	private Object[] getSortedKeys(int size) {
 		Object[] keyArray = new Object[size];
 		int i = 0;
-		for (Enumeration enum = fTemplate.keys(); enum.hasMoreElements();) {
-			String key = (String) enum.nextElement();
+		for (Enumeration keys = fTemplate.keys(); keys.hasMoreElements();) {
+			String key = (String) keys.nextElement();
 			keyArray[i++] = key;
 		}
 		Arrays.sort(keyArray, new Comparator() {
@@ -144,7 +144,7 @@ public class TracingPropertySource {
 		layout.numColumns = 2;
 		parent.setLayout(layout);
 		boolean bordersNeeded=false;
-		Object[] sortedKeys = getSortedKeys(fTemplate.size(), fTemplate.keys());
+		Object[] sortedKeys = getSortedKeys(fTemplate.size());
 		for (int i = 0; i < sortedKeys.length; i++) {
 			String key = (String) sortedKeys[i];
 			IPath path = new Path(key);
@@ -187,8 +187,8 @@ public class TracingPropertySource {
 	 */
 	public void save() {
 		String pid = fModel.getPluginBase().getId();
-		for (Enumeration enum = fValues.keys(); enum.hasMoreElements();) {
-			String shortKey = (String) enum.nextElement();
+		for (Enumeration keys = fValues.keys(); keys.hasMoreElements();) {
+			String shortKey = (String) keys.nextElement();
 			Object value = fValues.get(shortKey);
 			String svalue = value.toString();
 			if (value instanceof Integer)
