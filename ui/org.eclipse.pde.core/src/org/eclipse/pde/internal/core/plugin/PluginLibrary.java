@@ -48,7 +48,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		}
 		if (!isExported())
 			return new String[0];
-		return isFullyExported() ? new String[] {"**"} : fContentFilters;
+		return isFullyExported() ? new String[] {"**"} : fContentFilters; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

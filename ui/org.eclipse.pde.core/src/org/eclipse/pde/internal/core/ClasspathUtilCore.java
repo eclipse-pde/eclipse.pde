@@ -514,9 +514,9 @@ public class ClasspathUtilCore {
 		String[] exports = library.getContentFilters();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < exports.length; i++) {
-			String export = exports[i].replaceAll("\\.", "/");
-			if (!export.endsWith("/*"))
-				export = export + "/*";
+			String export = exports[i].replaceAll("\\.", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!export.endsWith("/*")) //$NON-NLS-1$
+				export = export + "/*"; //$NON-NLS-1$
 			list.add(new Path(export)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return (IPath[])list.toArray(new IPath[list.size()]);

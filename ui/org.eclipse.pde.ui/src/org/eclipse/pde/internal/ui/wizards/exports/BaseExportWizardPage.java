@@ -61,7 +61,9 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
-		container.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = getVerticalSpacing();
+		container.setLayout(layout);
 		
 		createTopSection(container);
 		createExportDestinationSection(container);
@@ -79,6 +81,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		hookHelpContext(container);
 	}
 	
+	protected int getVerticalSpacing() {
+		return 5;
+	}
+
 	protected abstract void createTopSection(Composite parent);
 	
 	private void createExportDestinationSection(Composite parent) {

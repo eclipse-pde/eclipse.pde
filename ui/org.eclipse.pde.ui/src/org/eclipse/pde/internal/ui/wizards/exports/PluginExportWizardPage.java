@@ -85,7 +85,7 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected String getJarButtonText() {
-		return PDEPlugin.getResourceString("BaseExportWizardPage.packageJARs");
+		return PDEPlugin.getResourceString("BaseExportWizardPage.packageJARs"); //$NON-NLS-1$
 	}
 				
 }

@@ -13,12 +13,10 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.ui.progress.*;
 
 public class FeatureExportWizard extends BaseExportWizard {
-	private static final String KEY_WTITLE = "ExportWizard.Feature.wtitle"; //$NON-NLS-1$
 	private static final String STORE_SECTION = "FeatureExportWizard"; //$NON-NLS-1$
 
 	/**
@@ -26,7 +24,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 	 */
 	public FeatureExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_EXPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
 	protected BaseExportWizardPage createPage1() {
@@ -89,7 +86,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 
 	protected AdvancedPluginExportPage createPage2() {
-		return new AdvancedFeatureExportPage("feature-sign"); //$NON-NLS-1$
+		return new AdvancedFeatureExportPage();
 	}
 
 

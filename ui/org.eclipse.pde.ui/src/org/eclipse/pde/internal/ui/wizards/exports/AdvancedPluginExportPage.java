@@ -41,7 +41,7 @@ public class AdvancedPluginExportPage extends WizardPage {
 	}
 	
 	protected String getDescriptionText() {
-		return PDEPlugin.getResourceString("AdvancedPluginExportPage.desc");
+		return PDEPlugin.getResourceString("AdvancedPluginExportPage.desc"); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {

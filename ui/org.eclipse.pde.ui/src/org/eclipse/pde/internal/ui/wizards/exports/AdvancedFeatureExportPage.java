@@ -30,12 +30,12 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	private Text fVersionText;
 	private Button fButton;
 
-	public AdvancedFeatureExportPage(String pageName) {
-		super(pageName);
+	public AdvancedFeatureExportPage() {
+		super("feature-sign"); //$NON-NLS-1$
 	}
 	
 	protected String getDescriptionText() {
-		return PDEPlugin.getResourceString("AdvancedFeatureExportPage.desc");
+		return PDEPlugin.getResourceString("AdvancedFeatureExportPage.desc"); //$NON-NLS-1$
 	}
 	
 	protected void createJNLPSection(Composite parent) {

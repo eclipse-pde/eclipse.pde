@@ -45,6 +45,7 @@ public abstract class BaseExportWizard
 			PDEPlugin.getDefault().getDialogSettings();
 		setNeedsProgressMonitor(true);
 		setDialogSettings(getSettingsSection(masterSettings));
+		setWindowTitle(PDEPlugin.getResourceString("BaseExportWizard.wtitle")); //$NON-NLS-1$
 	}
 
 	public void addPages() {

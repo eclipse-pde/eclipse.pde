@@ -245,7 +245,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			
 			String libraryName = fData.getLibraryName();
             if (!fData.isSimple() && libraryName != null) {
-				if (!libraryName.equals("."))
+				if (!libraryName.equals(".")) //$NON-NLS-1$
 					binEntry.addToken(fData.getLibraryName());
                 if (fContentWizard != null) {
                     String[] files = fContentWizard.getNewFiles();

@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.progress.*;
 
 public class PluginExportWizard extends BaseExportWizard {
-	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle"; //$NON-NLS-1$
 	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
 
 	/**
@@ -25,7 +24,6 @@ public class PluginExportWizard extends BaseExportWizard {
 	 */
 	public PluginExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_EXPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
 	protected BaseExportWizardPage createPage1() {

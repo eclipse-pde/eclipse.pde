@@ -168,7 +168,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 	protected void pageChanged() {
 		String message = fExportPart.getSelectionCount() > 0 
 							? null 
-				            : PDEPlugin.getResourceString("ExportWizard.status.noselection");
+				            : PDEPlugin.getResourceString("ExportWizard.status.noselection"); //$NON-NLS-1$
 		if (message == null) {
 			message = validateBottomSections();
 		}

@@ -60,6 +60,6 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected String getJarButtonText() {
-		return PDEPlugin.getResourceString("BaseExportWizardPage.fPackageJARs");
+		return PDEPlugin.getResourceString("BaseExportWizardPage.fPackageJARs"); //$NON-NLS-1$
 	}
 }
