@@ -90,6 +90,11 @@ public class BodyTextSection
 				resetButton.setEnabled(true);
 			}
 		});
+		text.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getPage().getPDEEditor().getContributor().updateSelectableActions(new StructuredSelection());
+			}
+		});
 
 		Composite buttonContainer = toolkit.createComposite(container);
 		layout = new GridLayout();
