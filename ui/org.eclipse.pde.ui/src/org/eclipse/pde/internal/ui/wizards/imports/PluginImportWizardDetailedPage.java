@@ -254,12 +254,15 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleAdd() {
 		IStructuredSelection ssel = (IStructuredSelection)availableListViewer.getSelection();
 		if (ssel.size() > 0) {
+			Table table = availableListViewer.getTable();
+			int index = table.getSelectionIndices()[0];
 			availableListViewer.remove(ssel.toArray());
 			importListViewer.add(ssel.toArray());
+			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
 		}		
 	}
-	
+
 	private void handleAddAll() {
 		TableItem[] items = availableListViewer.getTable().getItems();
 
@@ -277,8 +280,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection)importListViewer.getSelection();
 		if (ssel.size() > 0) {
+			Table table = importListViewer.getTable();
+			int index = table.getSelectionIndices()[0];
 			importListViewer.remove(ssel.toArray());
 			availableListViewer.add(ssel.toArray());
+			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			pageChanged();
 		}		
 	}
