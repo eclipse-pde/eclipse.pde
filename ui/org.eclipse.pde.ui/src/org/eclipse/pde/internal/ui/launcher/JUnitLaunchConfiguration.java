@@ -9,7 +9,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -21,6 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.*;
+import org.eclipse.update.configurator.*;
 
 /**
  * Launch configuration delegate for a plain JUnit test.
@@ -285,8 +285,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			return model;
 
 		if (registryPlugins == null) {
-			URL[] pluginPaths =
-				PluginPathFinder.getPluginPaths(BootLoader.getInstallURL().getFile());
+			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 			registryPlugins = TargetPlatformRegistryLoader.loadModels(pluginPaths, false, new NullProgressMonitor());
 		}
 

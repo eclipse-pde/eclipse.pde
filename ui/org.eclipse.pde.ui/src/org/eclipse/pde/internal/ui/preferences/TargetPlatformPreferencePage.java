@@ -124,7 +124,7 @@ public class TargetPlatformPreferencePage
 			dialog.setFilterPath(fHomeText.getText());
 		String newPath = dialog.open();
 		if (newPath != null
-				&& !ExternalPluginsBlock.arePathsEqual(new Path(fHomeText.getText()), new Path(newPath))) {
+				&& !ExternalModelManager.arePathsEqual(new Path(fHomeText.getText()), new Path(newPath))) {
 			if (fHomeText.indexOf(newPath) == -1)
 				fHomeText.add(newPath, 0);
 			fHomeText.setText(newPath);
@@ -143,7 +143,7 @@ public class TargetPlatformPreferencePage
 	}
 
 	public boolean performOk() {
-		if (fNeedsReload && !ExternalPluginsBlock.arePathsEqual(new Path(fOriginalText), new Path(fHomeText.getText()))) {
+		if (fNeedsReload && !ExternalModelManager.arePathsEqual(new Path(fOriginalText), new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),
