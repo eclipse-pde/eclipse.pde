@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import java.util.Vector;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.ModifiedTextPropertyDescriptor;
