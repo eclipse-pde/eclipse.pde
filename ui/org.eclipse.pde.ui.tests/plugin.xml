@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.pde.ui.tests"
    name="PDE JUnit Tests"
-   version="3.1.0"
+   version="2.1.3"
    provider-name="Eclipse.org">
    
    <runtime>
