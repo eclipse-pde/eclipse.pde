@@ -10,19 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.IModelChangeProvider;
-
+import org.eclipse.pde.core.IModelChangedListener;
 
 /**
- *
+ * This filted is to be used when listeners are copied from
+ * model to model. It allows some listeners to be skipped in
+ * the process.
  */
-public interface IModelChangeProviderExtension extends IModelChangeProvider {
+public interface IModelChangedListenerFilter {
 /**
- * Passes all the listeners to the target change provider.
- * @param target the target provider
- * @param filter if not <code>null</code>, the filter will be used to
- * filter listeners that need to be transfered. Listeners that
- * do not pass the filter will be exempt from the transfer.
+ * Tests if the listener should be accepted.
+ * @param listener the listener to test
+ * @return <code>true</code> if the listener should pass
+ * the filter, <code>false</code> otherwise.
  */
-	void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter);
+	public boolean accept(IModelChangedListener listener);
+
 }

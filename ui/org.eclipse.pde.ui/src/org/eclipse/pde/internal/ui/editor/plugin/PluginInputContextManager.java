@@ -1,13 +1,18 @@
-/*
- * Created on Mar 1, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -94,11 +99,12 @@ public class PluginInputContextManager extends InputContextManager {
 
 	private void bundleRemoved(InputContext bundleContext) {
 		if (bmodel!=null) {
+			BundlePluginModelBase preserved = bmodel;
+			bmodel = null;
 			IModel emodel = findPluginModel();
 			if (emodel!=null) 
-				transferListeners(bmodel, emodel);
+				transferListeners(preserved, emodel);
 		}
-		bmodel = null;
 	}
 	
 	private void transferListeners(IModel source, IModel target) {
@@ -110,7 +116,11 @@ public class PluginInputContextManager extends InputContextManager {
 			// refresh
 			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
 			// now pass the listener to the target model
-			smodel.transferListenersTo(tmodel);
+			smodel.transferListenersTo(tmodel, new IModelChangedListenerFilter() {
+				public boolean accept(IModelChangedListener listener) {
+					return false;
+				}
+			});
 		}
 	}
 	

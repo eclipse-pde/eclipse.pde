@@ -37,23 +37,15 @@ public abstract class AbstractModel
 	public void addModelChangedListener(IModelChangedListener listener) {
 		listeners.add(listener);
 	}
-	public void transferListenersTo(IModelChangeProviderExtension target) {
+	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		for (int i=0; i<listeners.size(); i++) {
-			target.addModelChangedListener((IModelChangedListener)listeners.get(i));
+			IModelChangedListener listener = (IModelChangedListener)listeners.get(i);
+			if (filter==null || filter.accept(listener))
+			target.addModelChangedListener(listener);
 		}
 		listeners.clear();
 	}
-	/**
-	 * Accepts all the listeners from the source change provider.
-	 * @param target
-	 */
-	public void acceptListenersFrom(IModelChangeProviderExtension source) {
-		List slisteners = source.getListeners();
-		listeners.addAll(slisteners);
-	}
-	public List getListeners() {
-		return listeners;
-	}
+
 	protected NLResourceHelper createNLResourceHelper() {
 		return null;
 	}
