@@ -19,6 +19,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BasicLauncherTab
 	extends AbstractLauncherTab
@@ -137,6 +138,8 @@ public class BasicLauncherTab
 
 		hookListeners();
 		setControl(composite);
+		
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 
 	private GridData fillIntoGrid(

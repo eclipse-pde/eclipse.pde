@@ -13,6 +13,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -21,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class IncludeFeaturesWizardPage extends WizardPage {
@@ -87,6 +89,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		createPluginList(container);
 		initialize();
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_INCLUDED_FEATURES_WIZARD);
 	}
 
 	protected void createPluginList(Composite parent) {

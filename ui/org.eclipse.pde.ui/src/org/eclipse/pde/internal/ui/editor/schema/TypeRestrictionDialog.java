@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
  */
 
 import org.eclipse.swt.events.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -70,6 +71,7 @@ protected Control createDialogArea(Composite parent) {
 	pageBook = new PageBook(container, SWT.NULL);
 	pageBook.setLayoutData(gd);
 	initializePages();
+	WorkbenchHelp.setHelp(container, IHelpContextIds.SCHEMA_TYPE_RESTRICTION);
 	return container;
 }
 public Object getValue() {

@@ -12,6 +12,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.graphics.*;
@@ -153,6 +154,8 @@ public void createControl(Composite parent) {
 	createDescriptionIn(outerContainer);
 	initialize();
 	setControl(outerContainer);
+	
+	WorkbenchHelp.setHelp(outerContainer, IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 }
 
 public boolean canFinish() {

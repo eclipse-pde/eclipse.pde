@@ -9,6 +9,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.elements.*;
@@ -92,6 +93,7 @@ public class PluginSelectionDialog extends SelectionDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		messageLabel.setLayoutData(gd);
 		updateMessageLabel();
+		WorkbenchHelp.setHelp(container, IHelpContextIds.FRAGMENT_ADD_TARGET);
 		return container;
 	}
 	private Control createTree(Composite container) {

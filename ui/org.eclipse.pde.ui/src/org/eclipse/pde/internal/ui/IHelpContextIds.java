@@ -35,6 +35,38 @@ public interface IHelpContextIds {
  	public static final String PLUGIN_IMPORT_FIRST_PAGE = PREFIX + "plugin_import_first_page";
  	public static final String PLUGIN_IMPORT_SECOND_PAGE = PREFIX + "plugin_import_second_page";
  	
+ 	public static final String TEMPLATE_SELECTION = PREFIX + "template_selection";
+ 	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor";
+ 	public static final String TEMPLATE_HELLO_WORLD = PREFIX + "template_hello_world";
+ 	public static final String TEMPLATE_HELP = PREFIX + "template_help";
+ 	public static final String TEMPLATE_MULTIPAGE_EDITOR = PREFIX + "template_multipage_editor";
+ 	public static final String TEMPLATE_NEW_WIZARD = PREFIX + "template_new_wizard";
+ 	public static final String TEMPLATE_PERSPECTIVE_EXTENSIONS = PREFIX + "template_perspective_extensions";
+ 	public static final String TEMPLATE_POPUP_MENU = PREFIX + "template_popup_menu";
+ 	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "template_preference_page";
+ 	public static final String TEMPLATE_PROPERTY_PAGE = PREFIX + "template_property_page";
+ 	public static final String TEMPLATE_VIEW = PREFIX + "template_view";
+ 	
+ 	public static final String MANIFEST_ADD_DEPENDENCIES = PREFIX + "manifest_add_dependencies";
+ 	public static final String ADD_EXTENSIONS_MAIN = PREFIX + "add_extensions_main";
+ 	public static final String ADD_EXTENSIONS_SCHEMA_BASED = PREFIX + "add_extensions_schema_based";
+ 	public static final String JAVA_ATTRIBUTE_WIZARD_PAGE = PREFIX + "java_attribute_wizard_page";
+	public static final String UPDATE_CLASSPATH = PREFIX + "update_classpath";
+	public static final String FEATURE_ADD_REQUIRED_WIZARD = PREFIX + "feature_add_required_wizard";
+	public static final String FEATURE_ADD_PACKAGED_WIZARD = PREFIX + "feature_add_packaged_wizard";
+	public static final String FEATURE_INCLUDED_FEATURES_WIZARD = PREFIX + "feature_included_features_wizard";
+	public static final String FEATURE_PORTABILITY_WIZARD = PREFIX + "feature_portability_wizard";
+	
+	// dialogs
+	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target";
+	public static final String BUILD_ADD_VARIABLE = PREFIX + "build_add_variable";
+	public static final String SCHEMA_TYPE_RESTRICTION = PREFIX + "schema_type_restriction";
+	public static final String SEARCH_PAGE = PREFIX + "search_page";
+	public static final String LAUNCHER_BASIC = PREFIX + "launcher_basic";
+	public static final String LAUNCHER_ADVANCED = PREFIX + "launcher_advanced";
+	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing";
+	
+	
  	// Manifest Editor
  	public static final String MANIFEST_WELCOME = PREFIX + "manifest_welcome";
  	public static final String MANIFEST_PLUGIN_OVERVIEW = PREFIX + "manifest_plugin_overview";
@@ -63,4 +95,5 @@ public interface IHelpContextIds {
  	public static final String MANIFEST_FEATURE_ADVANCED = PREFIX + "manifest_feature_advanced";
  	
  	public static final String FEATURE_SYNCHRONIZE_VERSIONS = PREFIX + "feature_synchronize_versions";	
+	
 }

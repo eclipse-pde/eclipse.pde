@@ -24,6 +24,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -196,6 +197,8 @@ public class AdvancedLauncherTab
 
 		hookListeners();
 		setControl(composite);
+		
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
 	}
 
 	private void hookListeners() {

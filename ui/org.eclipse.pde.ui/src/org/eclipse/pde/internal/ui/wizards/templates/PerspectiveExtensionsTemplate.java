@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
@@ -58,12 +59,12 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	}
 
 	public void addPages(Wizard wizard) {
-		WizardPage page0 = createPage(0);
+		WizardPage page0 = createPage(0,IHelpContextIds.TEMPLATE_PERSPECTIVE_EXTENSIONS);
 		page0.setTitle(PDEPlugin.getResourceString(NL_TITLE0));
 		page0.setDescription(PDEPlugin.getResourceString(NL_DESC0));
 		wizard.addPage(page0);
 
-		WizardPage page1 = createPage(1);
+		WizardPage page1 = createPage(1, IHelpContextIds.TEMPLATE_PERSPECTIVE_EXTENSIONS);
 		page1.setTitle(PDEPlugin.getResourceString(NL_TITLE1));
 		page1.setDescription(PDEPlugin.getResourceString(NL_DESC1));
 		wizard.addPage(page1);

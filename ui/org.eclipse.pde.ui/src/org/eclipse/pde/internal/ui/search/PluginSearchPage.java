@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 
 
@@ -90,6 +92,8 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		hookListeners();	
 		
 		setControl(result);
+		
+		WorkbenchHelp.setHelp(result, IHelpContextIds.SEARCH_PAGE);
 	}
 		
 	private void createGroup(
@@ -366,6 +370,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				container.setPerformActionEnabled(
 					patternCombo.getText().length() > 0);
 			}
+			patternCombo.setFocus();
 		}
 		super.setVisible(visible);
 	}

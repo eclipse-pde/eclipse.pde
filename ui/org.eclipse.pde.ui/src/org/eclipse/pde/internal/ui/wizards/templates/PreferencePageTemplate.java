@@ -5,6 +5,7 @@ import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
@@ -93,7 +94,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	}
 
 	public void addPages(Wizard wizard) {
-		WizardPage page = createPage(0);
+		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
 		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
 		wizard.addPage(page);

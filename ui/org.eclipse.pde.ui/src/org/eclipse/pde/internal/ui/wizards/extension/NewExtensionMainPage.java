@@ -10,6 +10,8 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
 
@@ -48,6 +50,11 @@ public class NewExtensionMainPage extends WizardTreeSelectionPage {
 				}
 			}
 		};
+	}
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ADD_EXTENSIONS_MAIN);
+		
 	}
 
 }

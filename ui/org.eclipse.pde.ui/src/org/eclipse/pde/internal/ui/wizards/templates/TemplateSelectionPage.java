@@ -13,6 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class TemplateSelectionPage extends WizardPage {
@@ -148,6 +149,7 @@ public class TemplateSelectionPage extends WizardPage {
 		viewer.setInput(PDEPlugin.getDefault());
 		tablePart.selectAll(true);
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
 	}
 
 	public ITemplateSection[] getSelectedTemplates() {

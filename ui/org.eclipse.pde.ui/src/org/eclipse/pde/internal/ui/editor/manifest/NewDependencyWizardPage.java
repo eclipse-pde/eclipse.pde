@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewDependencyWizardPage extends WizardPage {
 	public static final String KEY_TITLE =
@@ -144,6 +145,7 @@ public class NewDependencyWizardPage extends WizardPage {
 
 		initialize();
 		setControl(container);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.MANIFEST_ADD_DEPENDENCIES);
 	}
 
 	protected Control createPluginList(Composite parent) {

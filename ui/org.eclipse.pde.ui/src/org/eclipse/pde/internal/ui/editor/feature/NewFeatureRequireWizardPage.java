@@ -14,7 +14,10 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.RequiresSection.new.title";
@@ -69,4 +72,10 @@ public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
 		monitor.worked(1);
 	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FEATURE_ADD_REQUIRED_WIZARD);
+	}
+
 }

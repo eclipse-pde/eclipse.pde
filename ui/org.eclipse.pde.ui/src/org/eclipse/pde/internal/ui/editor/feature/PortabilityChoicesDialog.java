@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.util.Vector;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.*;
@@ -91,6 +92,7 @@ public class PortabilityChoicesDialog extends Dialog {
 		gd.heightHint = 350;
 
 		initialize();
+		WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_PORTABILITY_WIZARD);
 		return container;
 	}
 	public String getValue() {

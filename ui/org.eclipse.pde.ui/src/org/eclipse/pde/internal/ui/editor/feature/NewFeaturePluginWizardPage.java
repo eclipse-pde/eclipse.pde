@@ -12,7 +12,10 @@ import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title";
@@ -58,4 +61,10 @@ public class NewFeaturePluginWizardPage extends ReferenceWizardPage {
 		feature.addPlugins(added);
 		monitor.worked(1);
 	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(),IHelpContextIds.FEATURE_ADD_PACKAGED_WIZARD);
+	}
+
 }

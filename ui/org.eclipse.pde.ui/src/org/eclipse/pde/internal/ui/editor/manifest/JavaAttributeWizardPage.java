@@ -10,6 +10,7 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.core.resources.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.part.*;
@@ -122,6 +123,7 @@ public void createControl(Composite parent) {
 	createSearchPage();
 	createGeneratePage();
 	setControl(container);
+	WorkbenchHelp.setHelp(container, IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
 }
 private void createGeneratePage() {
 	Composite page = new Composite(pageBook, SWT.NULL);

@@ -15,6 +15,8 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
+
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.debug.core.*;
@@ -173,6 +175,8 @@ public class TracingLauncherTab
 		});
 		initialize();
 		setControl(container);
+		
+		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
 
 	private void toggleMaximize() {

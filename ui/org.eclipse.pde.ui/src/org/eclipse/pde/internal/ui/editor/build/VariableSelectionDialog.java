@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.core.build.*;
@@ -109,6 +110,8 @@ public Control createDialogArea(Composite parent) {
 		}
 	});
 	variableTable.setInput(model);
+	
+	WorkbenchHelp.setHelp(container, IHelpContextIds.BUILD_ADD_VARIABLE);
 	return container;
 }
 private Object[] getRemainingVariables() {
