@@ -43,7 +43,7 @@ protected String determineFullConfigurationModelId() {
 	if (configurationModel == null)
 		return "";
 
-	return configurationModel.getId() + "_" + configurationModel.getVersion();
+	return configurationModel.getId() + SEPARATOR_VERSION + configurationModel.getVersion();
 }
 public IStatus execute() {
 	if (!readConfigurationModel())
@@ -67,7 +67,7 @@ public IStatus execute() {
 			output.close();
 		}
 	} catch (IOException e) {
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,"Output exception",e));
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
 	}
 	
 	return getProblems();

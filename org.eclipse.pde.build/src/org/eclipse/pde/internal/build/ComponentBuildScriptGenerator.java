@@ -96,7 +96,7 @@ public IStatus execute() {
 			output.close();
 		}
 	} catch (IOException e) {
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,"Output exception",e));
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
 	}
 	
 	return getProblems();

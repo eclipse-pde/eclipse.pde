@@ -93,7 +93,7 @@ public IStatus execute() {
 				output.flush();
 			}
 		} catch (IOException e) {
-			getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,"Output exception",e));
+			getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_OUTPUT,Policy.bind("exception.output"),e));
 		}
 	}
 	
@@ -209,7 +209,7 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor,Stri
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,Policy.bind("exception.url"),e));
 	}
 	
 	String jar = fullJar.substring(fullJar.lastIndexOf('/') + 1);
@@ -342,7 +342,7 @@ protected void generateSrcTarget(PrintWriter output,PluginModel descriptor,Strin
 		fullJar = new URL(descriptor.getLocation() + relativeJar).getFile();
 	} catch (MalformedURLException e) {
 		// should not happen
-		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,"URL exception",e));
+		getPluginLog().log(new Status(IStatus.ERROR,PI_PDECORE,EXCEPTION_URL,Policy.bind("exception.url"),e));
 	}
 	
 	// zip name is jar name without the ".jar" but with SOURCE_EXTENSION appended		
