@@ -178,6 +178,7 @@ public class ProjectStructurePage extends WizardPage {
 					source += "/";
 				entry.addToken(source);
 				ientry.addToken("*.jar");
+				ientry.addToken(library);
 				model.getBuild().add(entry);
 			}
 			model.getBuild().add(ientry);
