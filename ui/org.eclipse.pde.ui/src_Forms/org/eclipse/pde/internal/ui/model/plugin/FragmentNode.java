@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.model.plugin;
 
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -70,15 +71,21 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
 	 */
-	protected String getSpecificAttributes() {
-		StringBuffer buffer = new StringBuffer();
-		String newLine = System.getProperty("line.separator");
+	protected String[] getSpecificAttributes() {
+		ArrayList result = new ArrayList();
 		
 		String pluginID = getPluginId();
 		if (pluginID != null && pluginID.length() > 0)
-			buffer.append("\t" + P_PLUGIN_ID + "=\"" + pluginID + "\"" + newLine);
+			result.add("   " + P_PLUGIN_ID + "=\"" + pluginID + "\"");
 		
-		//TODO fill in plugin version/match
-		return buffer.toString();
+		String pluginVersion = getPluginVersion();
+		if (pluginVersion != null && pluginVersion.length() > 0) 
+			result.add("   " + P_PLUGIN_VERSION + "=\"" + pluginVersion + "\"");
+		
+		String match = getXMLAttributeValue(P_RULE);
+		if (match != null && match.length() > 0)
+			result.add("   " + P_RULE + "=\"" + match + "\"");
+			
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 }

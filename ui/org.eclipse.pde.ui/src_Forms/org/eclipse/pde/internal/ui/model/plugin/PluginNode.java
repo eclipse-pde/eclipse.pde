@@ -24,11 +24,11 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
 	 */
-	protected String getSpecificAttributes() {
+	protected String[] getSpecificAttributes() {
 		String classname = getClassName();
 		if (classname != null && classname.length() > 0)
-			return "\tclass=\"" + classname + "\"";
-		return "";
+			return new String[] {"   " + P_CLASS_NAME + "=\"" + classname + "\""};
+		return new String[0];
 	}
 	
 }

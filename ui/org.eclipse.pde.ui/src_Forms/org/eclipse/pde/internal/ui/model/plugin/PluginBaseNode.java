@@ -367,24 +367,24 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		
 		String id = getId();
 		if (id != null && id.length() > 0)
-			buffer.append("\tid=\"" + getWritableString(id) + "\"" + newLine);
-		
-		String version = getVersion();
-		if (version != null && version.length() > 0)
-			buffer.append("\tversion=\"" + getWritableString(version) + "\"" + newLine);
+			buffer.append("   " + P_ID + "=\"" + getWritableString(id) + "\"" + newLine);
 		
 		String name = getName();
 		if (name != null && name.length() > 0)
-			buffer.append("\tname=\"" + getWritableString(name) + "\"" + newLine);
+			buffer.append("   " + P_NAME + "=\"" + getWritableString(name) + "\"" + newLine);
+		
+		String version = getVersion();
+		if (version != null && version.length() > 0)
+			buffer.append("   " + P_VERSION + "=\"" + getWritableString(version) + "\"" + newLine);
 		
 		String provider = getProviderName();
 		if (provider != null && provider.length() > 0) {
-			buffer.append("\tprovider-name=\"" + getWritableString(provider) + "\"");
+			buffer.append("   " + P_PROVIDER + "=\"" + getWritableString(provider) + "\"");
 		}
 		
-		String specific = getSpecificAttributes();
-		if (specific.length() > 0)
-			buffer.append(newLine + specific);
+		String[] specific = getSpecificAttributes();
+		for (int i = 0; i < specific.length; i++)
+			buffer.append(newLine + specific[i]);
 		if (terminate)
 			buffer.append("/");
 		buffer.append(">");
@@ -392,6 +392,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		return buffer.toString();
 	}
 	
-	protected abstract String getSpecificAttributes();
+	protected abstract String[] getSpecificAttributes();
 	
 }
