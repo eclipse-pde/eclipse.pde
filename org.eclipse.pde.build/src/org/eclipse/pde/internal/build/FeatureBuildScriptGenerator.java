@@ -85,6 +85,19 @@ public void setGenerateChildrenScript(boolean generate) {
 }
 
 /**
+ * Overrides the method by providing the default script
+ * target location if not set. The default location is
+ * the same as the feature root location.
+ * @see org.eclipse.pde.internal.build.AbstractBuildScriptGenerator#getScriptTargetLocation()
+ */
+
+public String getScriptTargetLocation() {
+	String location = super.getScriptTargetLocation();
+	if (location!=null) return location;
+	return getFeatureRootLocation();
+}
+
+/**
  * @see AbstractScriptGenerator#generate() */
 public void generate() throws CoreException {
 	if (featureID == null)
@@ -106,7 +119,7 @@ public void generate() throws CoreException {
 		if (generateChildrenScript)
 			generateChildrenScripts();
 
-		File root = new File(getFeatureRootLocation());
+		File root = new File(getScriptTargetLocation());
 		File target = new File(root, buildScriptName);
 		AntScript script = new AntScript(new FileOutputStream(target));
 		try {

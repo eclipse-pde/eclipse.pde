@@ -34,6 +34,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	protected static final String PLUGIN_ZIP_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 	protected static final String PLUGIN_UPDATE_JAR_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 
+
 /**
  * @see AbstractScriptGenerator#generate()
  */
@@ -51,8 +52,9 @@ public void generate() throws CoreException {
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion());
 			return;
 		}
-
-		File root = new File(getLocation(model));
+		String targetLocation = getScriptTargetLocation();
+		if (targetLocation==null) targetLocation = getLocation(model);
+		File root = new File(targetLocation);
 		File target = new File(root, buildScriptName);
 		AntScript script = new AntScript(new FileOutputStream(target));
 		try {
@@ -67,7 +69,10 @@ public void generate() throws CoreException {
 
 /**
  * Main call for generating the script.
- *  * @param script the script to generate * @throws CoreException */
+ * 
+ * @param script the script to generate
+ * @throws CoreException
+ */
 protected void generateBuildScript(AntScript script) throws CoreException {
 	generatePrologue(script);
 	generateBuildUpdateJarTarget(script);
@@ -84,7 +89,10 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 
 /**
  * Add the <code>clean</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -104,7 +112,10 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 
 /**
  * Add the <code>gather.logs</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -127,7 +138,12 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 }
 
 /**
- *  * @param script * @param zipName * @param source * @throws CoreException */
+ * 
+ * @param script
+ * @param zipName
+ * @param source
+ * @throws CoreException
+ */
 protected void generateZipIndividualTarget(AntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -139,7 +155,10 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 
 /**
  * Add the <code>gather.sources</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateGatherSourcesTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -169,7 +188,10 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 
 /**
  * Add the <code>gather.bin.parts</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -202,7 +224,10 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 
 /**
  * Add the <code>zip.plugin</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateZipPluginTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -224,7 +249,9 @@ protected void generateZipPluginTarget(AntScript script) throws CoreException {
 
 /**
  * Add the <code>build.update.jar</code> target to the given Ant script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -242,7 +269,9 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 
 /**
  * Add the <code>refresh</code> target to the given Ant script.
- *  * @param script the script to add the target to */
+ * 
+ * @param script the script to add the target to
+ */
 protected void generateRefreshTarget(AntScript script) {
 	int tab = 1;
 	script.println();
@@ -253,7 +282,9 @@ protected void generateRefreshTarget(AntScript script) {
 
 /**
  * End the script by closing the project element.
- *  * @param script the script to end */
+ * 
+ * @param script the script to end
+ */
 protected void generateEpilogue(AntScript script) {
 	script.println();
 	script.printProjectEnd();
@@ -261,7 +292,9 @@ protected void generateEpilogue(AntScript script) {
 
 /**
  * Defines, the XML declaration, Ant project and targets init and initTemplate.
- *  * @param script the script to begin */
+ * 
+ * @param script the script to begin
+ */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, "."); //$NON-NLS-1$
@@ -286,12 +319,17 @@ protected void generatePrologue(AntScript script) {
 }
 
 /**
- *  * @return String */
+ * 
+ * @return String
+ */
 protected abstract String getModelTypeName();
 
 /**
  * Sets the PluginModel to generate script from.
- *  * @param model * @throws CoreException */
+ * 
+ * @param model
+ * @throws CoreException
+ */
 public void setModel(PluginModel model) throws CoreException {
 	if (model == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
@@ -300,7 +338,10 @@ public void setModel(PluginModel model) throws CoreException {
 
 /**
  * Sets model to generate scripts from.
- *  * @param modelId * @throws CoreException */
+ * 
+ * @param modelId
+ * @throws CoreException
+ */
 public void setModelId(String modelId) throws CoreException {
 	PluginModel newModel = getModel(modelId);
 	if (newModel == null)
@@ -309,12 +350,19 @@ public void setModelId(String modelId) throws CoreException {
 }
 
 /**
- *  * @param modelId * @return PluginModel * @throws CoreException */
+ * 
+ * @param modelId
+ * @return PluginModel
+ * @throws CoreException
+ */
 protected abstract PluginModel getModel(String modelId) throws CoreException;
 
 /**
  * Add the <code>build.zips</code> target to the given Ant script.
- *  * @param script the script to add the target to * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @throws CoreException
+ */
 protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(model);

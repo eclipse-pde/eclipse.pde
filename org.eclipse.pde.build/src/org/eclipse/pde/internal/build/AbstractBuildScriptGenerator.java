@@ -36,6 +36,11 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Where to find the elements.
 	 */
 	protected String installLocation;
+	
+	/**
+	 * Where to put the generated script.
+	 */
+	protected String scriptTargetLocation;
 
 	/**
 	 * Location of the plug-ins and fragments.
@@ -74,13 +79,19 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 
 /**
- * Default constructor for the class. */
+ * Default constructor for the class.
+ */
 public AbstractBuildScriptGenerator() {
 	buildProperties = new HashMap();
 }
 
 /**
- *  * @param model * @param jar * @return String * @throws CoreException */
+ * 
+ * @param model
+ * @param jar
+ * @return String
+ * @throws CoreException
+ */
 protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	Set classpath = new HashSet(20);
 	String location = getLocation(model);
@@ -160,7 +171,12 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
  * Return the plug-in model object from the plug-in registry for the given
  * plug-in identifier and version. If the plug-in is not in the registry then
  * throw an exception.
- *  * @param id the plug-in identifier * @param version the plug-in version * @return PluginModel * @throws CoreException if the specified plug-in version does not exist in the registry */
+ * 
+ * @param id the plug-in identifier
+ * @param version the plug-in version
+ * @return PluginModel
+ * @throws CoreException if the specified plug-in version does not exist in the registry
+ */
 protected PluginModel getPlugin(String id, String version) throws CoreException {
 	PluginModel plugin = getRegistry().getPlugin(id, version);
 	if (plugin == null) {
@@ -171,7 +187,12 @@ protected PluginModel getPlugin(String id, String version) throws CoreException 
 }
 
 /**
- *  * @param model * @param baseLocation * @param classpath * @throws CoreException */
+ * 
+ * @param model
+ * @param baseLocation
+ * @param classpath
+ * @throws CoreException
+ */
 protected void addDevEntries(PluginModel model, String baseLocation, Set classpath) throws CoreException {
 	if (devEntries == null)
 		return;
@@ -182,7 +203,11 @@ protected void addDevEntries(PluginModel model, String baseLocation, Set classpa
 
 /**
  * Return the file system location for the given plug-in model object.
- *  * @param model the plug-in * @return String * @throws CoreException if a valid file-system location could not be constructed */
+ * 
+ * @param model the plug-in
+ * @return String
+ * @throws CoreException if a valid file-system location could not be constructed
+ */
 protected String getLocation(PluginModel model) throws CoreException {
 	try {
 		return new URL(model.getLocation()).getFile();
@@ -191,8 +216,17 @@ protected String getLocation(PluginModel model) throws CoreException {
 	}
 }
 
+public String getScriptTargetLocation() {
+	return scriptTargetLocation;
+}
+
 /**
- *  * @param model * @param classpath * @param baseLocation * @throws CoreException */
+ * 
+ * @param model
+ * @param classpath
+ * @param baseLocation
+ * @throws CoreException
+ */
 protected void addLibraries(PluginModel model, Set classpath, String baseLocation) throws CoreException {
 	LibraryModel[] libraries = model.getRuntime();
 	if (libraries == null)
@@ -206,7 +240,12 @@ protected void addLibraries(PluginModel model, Set classpath, String baseLocatio
 }
 
 /**
- *  * @param plugin * @param classpath * @param baseLocation * @throws CoreException */
+ * 
+ * @param plugin
+ * @param classpath
+ * @param baseLocation
+ * @throws CoreException
+ */
 protected void addFragmentsLibraries(PluginModel plugin, Set classpath, String baseLocation) throws CoreException {
 	PluginFragmentModel[] fragments = getRegistry().getFragments();
 	for (int i = 0; i < fragments.length; i++) {
@@ -221,7 +260,13 @@ protected void addFragmentsLibraries(PluginModel plugin, Set classpath, String b
  * There are cases where the plug-in only declares a library but the real JAR is under
  * a fragment location. This method gets all the plugin libraries and place them in the
  * possible fragment location.
- *  * @param plugin * @param fragment * @param classpath * @param baseLocation * @throws CoreException */
+ * 
+ * @param plugin
+ * @param fragment
+ * @param classpath
+ * @param baseLocation
+ * @throws CoreException
+ */
 protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginFragmentModel fragment, Set classpath, String baseLocation) throws CoreException {
 	LibraryModel[] libraries = plugin.getRuntime();
 	if (libraries == null)
@@ -237,7 +282,14 @@ protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginF
 /**
  * The pluginChain parameter is used to keep track of possible cycles. If prerequisite is already
  * present in the chain it is not included in the classpath.
- *  * @param prerequisite * @param classpath * @param baseLocation * @param pluginChain * @param considerExport * @throws CoreException */
+ * 
+ * @param prerequisite
+ * @param classpath
+ * @param baseLocation
+ * @param pluginChain
+ * @param considerExport
+ * @throws CoreException
+ */
 protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation, List pluginChain, boolean considerExport) throws CoreException {
 	if (pluginChain.contains(prerequisite))
 		throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CLASSPATH_CYCLE, Policy.bind("error.pluginCycle"), null)); //$NON-NLS-1$
@@ -259,7 +311,11 @@ protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath,
 }
 
 /**
- *  * @param model * @return Properties * @throws CoreException */
+ * 
+ * @param model
+ * @return Properties
+ * @throws CoreException
+ */
 protected Properties getBuildProperties(PluginModel model) throws CoreException {
 	VersionedIdentifier identifier = new VersionedIdentifier(model.getId(), model.getVersion());
 	Properties result = (Properties) buildProperties.get(identifier);
@@ -274,7 +330,11 @@ protected Properties getBuildProperties(PluginModel model) throws CoreException 
  * Read the "build.properties" file from the given location and return the associated
  * <code>java.io.Properties</code> object. Throw a <code>CoreException</code>
  * if there is a problem reading the file.
- *  * @param rootLocation the parent directory of the build.properties file * @return Properties * @throws CoreException if there was a problem reading the file */
+ * 
+ * @param rootLocation the parent directory of the build.properties file
+ * @return Properties
+ * @throws CoreException if there was a problem reading the file
+ */
 protected Properties readBuildProperties(String rootLocation) throws CoreException {
 	Properties result = new Properties();
 	File file = new File(rootLocation, PROPERTIES_FILE);
@@ -294,7 +354,10 @@ protected Properties readBuildProperties(String rootLocation) throws CoreExcepti
 }
 
 /**
- *  * @param properties * @return JAR[] */
+ * 
+ * @param properties
+ * @return JAR[]
+ */
 protected JAR[] extractJars(Properties properties) {
 	List result = new ArrayList(5);
 	int n = PROPERTY_SOURCE_PREFIX.length();
@@ -313,7 +376,11 @@ protected JAR[] extractJars(Properties properties) {
 
 /**
  * Add the "build.jars" target to the given Ant script using the specified plug-in model.
- *  * @param script the script to add the target to * @param model the plug-in model to reference * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @param model the plug-in model to reference
+ * @throws CoreException
+ */
 protected void generateBuildJarsTarget(AntScript script, PluginModel model) throws CoreException {
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
@@ -367,7 +434,12 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 /**
  * Add the "jar" target to the given Ant script using the given classpath and
  * jar as parameters.
- *  * @param script the script to add the target to * @param classpath the classpath for the jar command * @param jar * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @param classpath the classpath for the jar command
+ * @param jar
+ * @throws CoreException
+ */
 protected void generateJARTarget(AntScript script, String classpath, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -404,7 +476,11 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 
 /**
  * Add the "src" target to the given Ant script.
- *  * @param script the script to add the target to * @param jar * @throws CoreException */
+ * 
+ * @param script the script to add the target to
+ * @param jar
+ * @throws CoreException
+ */
 protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -424,14 +500,20 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 
 /**
  * Return the name of the zip file for the source from the given jar name.
- *  * @param jarName the name of the jar file * @return String */
+ * 
+ * @param jarName the name of the jar file
+ * @return String
+ */
 protected String getSRCName(String jarName) {
 	return jarName.substring(0, jarName.length() - 4) + "src.zip"; //$NON-NLS-1$
 }
 
 /**
  * Return the full location of the jar file.
- *  * @param jarName the name of the jar file * @return String */
+ * 
+ * @param jarName the name of the jar file
+ * @return String
+ */
 protected String getJARLocation(String jarName) {
 	IPath destination = new Path(BUILD_RESULT_FOLDER);
 	destination = destination.append(jarName);
@@ -441,7 +523,10 @@ protected String getJARLocation(String jarName) {
 /**
  * Return the name of the zip file for the source for the jar with
  * the given name.
- *  * @param jarName the name of the jar file * @return String */
+ * 
+ * @param jarName the name of the jar file
+ * @return String
+ */
 protected String getSRCLocation(String jarName) {
 	return getSRCName(getJARLocation(jarName));
 }
@@ -449,7 +534,10 @@ protected String getSRCLocation(String jarName) {
 /**
  * Return the location for a temporary file for the jar file with
  * the given name.
- *  * @param jarName the name of the jar file * @return String */
+ * 
+ * @param jarName the name of the jar file
+ * @return String
+ */
 protected String getTempJARFolderLocation(String jarName) {
 	IPath destination = new Path(TEMP_FOLDER);
 	destination = destination.append(jarName + ".bin"); //$NON-NLS-1$
@@ -459,7 +547,10 @@ protected String getTempJARFolderLocation(String jarName) {
 /**
  * Substitute the value of an element description variable (variables that
  * are found in files like plugin.xml, e.g. $ws$) by an Ant property.
- *  * @param sourceString * @return String */
+ * 
+ * @param sourceString
+ * @return String
+ */
 protected String replaceVariables(String sourceString) {
 	int i = -1;
 	String result = sourceString;
@@ -473,14 +564,18 @@ protected String replaceVariables(String sourceString) {
 }
 
 /**
- *  * @param entries */
+ * 
+ * @param entries
+ */
 public void setDevEntries(String[] entries) {
 	this.devEntries = entries;
 }
 
 /**
  * Sets the buildScriptName.
- *  * @param buildScriptName */
+ * 
+ * @param buildScriptName
+ */
 public void setBuildScriptName(String buildScriptName) {
 	if (buildScriptName == null)
 		this.buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
@@ -489,8 +584,18 @@ public void setBuildScriptName(String buildScriptName) {
 }
 
 /**
+ * Sets the alternative location of the build script.
+ */
+
+public void setScriptTargetLocation(String location) {
+	this.scriptTargetLocation = location;
+}
+
+/**
  * Set this object's install location variable.
- *  * @param location the install location */
+ * 
+ * @param location the install location
+ */
 public void setInstallLocation(String location) {
 	this.installLocation = location;
 }
@@ -498,7 +603,10 @@ public void setInstallLocation(String location) {
 /**
  * Return the plug-in registry. If this value isn't cached, then read
  * it from disk.
- *  * @return PluginRegistryModel * @throws CoreException */
+ * 
+ * @return PluginRegistryModel
+ * @throws CoreException
+ */
 protected PluginRegistryModel getRegistry() throws CoreException {
 	if (registry == null) {
 		URL[] pluginPath = getPluginPath();
@@ -513,7 +621,9 @@ protected PluginRegistryModel getRegistry() throws CoreException {
 }
 
 /**
- *  * @return URL[] */
+ * 
+ * @return URL[]
+ */
 protected URL[] getPluginPath() {
 	// Get the plugin path if one was spec'd.
 	if (pluginPath != null)
@@ -537,19 +647,31 @@ protected URL[] getPluginPath() {
 
 /**
  * Sets the pluginPath.
- *  * @param pluginPath */
+ * 
+ * @param pluginPath
+ */
 public void setPluginPath(URL[] pluginPath) {
 	this.pluginPath = pluginPath;
 }
 
 /**
- *  * @param buf * @param start * @param target * @return int */
+ * 
+ * @param buf
+ * @param start
+ * @param target
+ * @return int
+ */
 protected int scan(StringBuffer buf, int start, String target) {
 	return scan(buf, start, new String[] {target});
 }
 
 /**
- *  * @param buf * @param start * @param targets * @return int */
+ * 
+ * @param buf
+ * @param start
+ * @param targets
+ * @return int
+ */
 protected int scan(StringBuffer buf, int start, String[] targets) {
 	for (int i=start; i<buf.length(); i++) {
 		for (int j=0; j<targets.length; j++) {
@@ -565,7 +687,11 @@ protected int scan(StringBuffer buf, int start, String[] targets) {
 
 /**
  * Return a buffer containing the contents of the file at the specified location.
- *  * @param target the file * @return StringBuffer * @throws IOException */
+ * 
+ * @param target the file
+ * @return StringBuffer
+ * @throws IOException
+ */
 protected StringBuffer readFile(File target) throws IOException {
 	FileInputStream fis = new FileInputStream(target);
 	InputStreamReader reader = new InputStreamReader(fis);
@@ -594,7 +720,13 @@ protected StringBuffer readFile(File target) throws IOException {
  * version number defined by the feature/plugin/fragment descriptor.
  * This is a best effort job so do not worry if the expected tags were
  * not found and just return without modifying the file.
- *  * @param buildFile * @param propertyName * @param version * @throws CoreException * @throws IOException */
+ * 
+ * @param buildFile
+ * @param propertyName
+ * @param version
+ * @throws CoreException
+ * @throws IOException
+ */
 protected void updateVersion(File buildFile, String propertyName, String version) throws CoreException, IOException {
 	StringBuffer buffer = readFile(buildFile);
 	int pos = scan(buffer, 0, propertyName);
