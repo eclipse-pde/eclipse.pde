@@ -54,14 +54,4 @@ public class FeaturesPage extends PDEFormPage {
 		String name = input.getName();
 		form.setText(model.getResourceString(name));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#isDirty()
-	 */
-	public boolean isDirty() {
-		if ((featureSection != null && featureSection.isDirty()) 
-				|| (categorySection != null && categorySection.isDirty()))
-				return true;
-		return super.isDirty();
-	}
-	
 }
