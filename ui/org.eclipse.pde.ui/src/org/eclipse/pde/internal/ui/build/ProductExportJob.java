@@ -92,6 +92,7 @@ public class ProductExportJob extends FeatureExportJob {
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
 			createConfigIniFile();
+			createEclipseProductFile();
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(),
 					TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
 		} catch (IOException e) {
@@ -145,13 +146,45 @@ public class ProductExportJob extends FeatureExportJob {
 			file.mkdirs();
 
 		Properties properties = new Properties();
-		//TODO I am not sure what keys to use here
-		// The idea is to include to list in this build.properties all the files that will be
-		// included at the root such as the config.ini file, startup.jar, etc.
-		// Note that since we are building against the os-ws-arch combination of the target platform,
-		// no rcp delta pack should be required.  We should just copy JARs and other root files
-		// from the target into the zip.
+		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations()); //To copy a folder
 		save(new File(file, "build.properties"), properties, "Build Configuration");
+	}
+	
+	private String getRootFileLocations() {
+		StringBuffer buffer = new StringBuffer();
+		
+		// add eclipse.exe  - add for now until we can generate our custom executable
+		buffer.append("absolute:file:");
+		buffer.append(ExternalModelManager.getEclipseHome().append("eclipse.exe").toOSString());
+		buffer.append(",");
+
+		// add startup.jar
+		buffer.append("absolute:file:");
+		buffer.append(ExternalModelManager.getEclipseHome().append("startup.jar").toOSString());
+		buffer.append(",");
+		
+		// add config.ini
+		buffer.append("absolute:file:");
+		buffer.append(fFeatureLocation);
+		buffer.append("/configuration/config.ini");
+		buffer.append(",");
+
+		// add .eclipseproduct
+		buffer.append("absolute:file:");
+		buffer.append(fFeatureLocation);
+		buffer.append("/.eclipseproduct");
+
+		return buffer.toString();
+	}
+	
+	private void createEclipseProductFile() {
+		Properties properties = new Properties();
+		properties.put("name", fProduct.getName());
+		properties.put("id", fProduct.getId());		
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
+		if (model != null)
+			properties.put("version", model.getPluginBase().getVersion());
+		save(new File(fFeatureLocation, ".eclipseproduct"), properties, "Eclipse Product File");
 	}
 	
 	private void createConfigIniFile() {
@@ -176,12 +209,17 @@ public class ProductExportJob extends FeatureExportJob {
 	
 	private String getSplashLocation() {
 		ISplashInfo info = fProduct.getSplashInfo();
+		String location = null;
 		if (info != null) {
-			String location = info.getLocation();
-			if (location != null && location.length() > 0)
-				return location;
+			location = info.getLocation();
 		}
+		if (location == null)
+			location = getBrandingPlugin();
 		
+		return location == null ? null : "platform:/base/plugins/" + location;
+	}
+	
+	private String getBrandingPlugin() {
 		int dot = fProduct.getId().lastIndexOf('.');
 		return (dot != -1) ? fProduct.getId().substring(0, dot) : null;
 	}
@@ -206,13 +244,15 @@ public class ProductExportJob extends FeatureExportJob {
 		HashMap properties = super.createAntBuildProperties(os, ws, arch);
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		
-		//TODO Here I am loading the images and splash name as per Jeff's instructions
-		// Not sure what to do with them otherwise or how to tell the build script generator
-		// to generate the branding task.
+		//To turn on the brander, set this static to true. Like always with those, please put it back to false after...
+		//Note that this may change in the near future as I'm working to improve that.
+		AbstractScriptGenerator.setBrandExecutable(false);
+		
+		//Just to make sure, Here the values that are put in properties must be passed to the script.
 		if (info != null) {
 			String name = info.getLauncherName();
 			if (name != null && name.length() > 0)
-				properties.put("launcher.name", name);
+				properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, name);
 			String images = null;
 			if (os.equals("win32")) {
 				images = getWin32Images(info);
@@ -224,15 +264,11 @@ public class ProductExportJob extends FeatureExportJob {
 				images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
 			}
 			if (images != null && images.length() > 0)
-				properties.put("launcher.icons", images);
+				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
 		}
 		
-		//TODO  As opposed to the feature/plugin export, we want the path in the zip file
-		// generated to start with eclipse/...
-		// Pascal, make sure these are the correct properties to be overridden.
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, "eclipse"); //$NON-NLS-1$
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "eclipse"); //$NON-NLS-1$
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, "eclipse");	
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "eclipse"); //$NON-NLS-1$  This value and the next one can be set to the product name if the user desires it
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, "eclipse");	// or it can be more than one segment ( like bar/eclipse ) 
 		return properties;
 	}
 	
@@ -286,7 +322,4 @@ public class ProductExportJob extends FeatureExportJob {
 			PDECore.logException(e);
 		}
 	}
-	
-	
-
 }
