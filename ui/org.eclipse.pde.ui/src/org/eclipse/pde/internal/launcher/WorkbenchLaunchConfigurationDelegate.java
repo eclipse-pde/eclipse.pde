@@ -43,7 +43,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		final String appName = configuration.getAttribute(APPLICATION, (String) null);
 		final String data = configuration.getAttribute(LOCATION + "0", (String) null);
 		final boolean tracing = configuration.getAttribute(TRACING, false);
-		final boolean clearWorkspace = false;
+		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
