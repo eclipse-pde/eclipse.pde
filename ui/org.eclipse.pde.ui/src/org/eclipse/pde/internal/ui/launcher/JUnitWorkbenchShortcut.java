@@ -1,17 +1,12 @@
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
-import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.debug.ui.*;
+import org.eclipse.jdt.internal.junit.launcher.*;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.internal.ui.*;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -37,7 +32,9 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation());
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
-			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
+			wc.setAttribute(ILauncherSettings.USECUSTOM, false);
+			wc.setAttribute(ILauncherSettings.USE_ONE_PLUGIN, true);
+			wc.setAttribute(ILauncherSettings.ONE_PLUGIN_ID, JUnitLaunchConfiguration.getPluginId(project));
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
@@ -60,5 +57,4 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	protected String getDefaultWorkspaceLocation() {
 		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();				
 	}
-
 }

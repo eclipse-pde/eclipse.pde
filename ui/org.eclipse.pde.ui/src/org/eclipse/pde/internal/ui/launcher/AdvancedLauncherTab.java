@@ -13,11 +13,14 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -40,6 +43,11 @@ public class AdvancedLauncherTab
 	private Button fUseDefaultRadio;
 	private Button fUseFeaturesRadio;
 	private Button fUseListRadio;
+	private Button fAddRequiredButton;
+	private Button fOnePluginRadio;
+	private Label fPluginLabel;
+	private Text fPluginText;
+	private Button fBrowseButton;
 	private CheckboxTreeViewer fPluginTreeViewer;
 	private Label fVisibleLabel;
 	private NamedElement fWorkspacePlugins;
@@ -51,7 +59,6 @@ public class AdvancedLauncherTab
 	private int fNumWorkspaceChecked = 0;
 	private Image fImage;
 	private boolean fShowFeatures = true;
-	private Button fAddRequiredButton;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -77,7 +84,7 @@ public class AdvancedLauncherTab
 	public AdvancedLauncherTab() {
 		this(true);
 	}
-	
+
 	public AdvancedLauncherTab(boolean showFeatures) {
 		this.fShowFeatures = showFeatures;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -96,15 +103,21 @@ public class AdvancedLauncherTab
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 
-		createStartingSpace(composite, 1);
-
 		fUseDefaultRadio = new Button(composite, SWT.RADIO);
-		fUseDefaultRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useDefault"));
+		fUseDefaultRadio.setText(
+			PDEPlugin.getResourceString("AdvancedLauncherTab.useDefault"));
 
 		if (fShowFeatures) {
 			fUseFeaturesRadio = new Button(composite, SWT.RADIO);
-			fUseFeaturesRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useFeatures"));
+			fUseFeaturesRadio.setText(
+				PDEPlugin.getResourceString("AdvancedLauncherTab.useFeatures"));
 		}
+
+		fOnePluginRadio = new Button(composite, SWT.RADIO);
+		fOnePluginRadio.setText(
+			PDEPlugin.getResourceString("AdvancedLauncherTab.onePlugin"));
+
+		createOnePluginSection(composite);
 
 		fUseListRadio = new Button(composite, SWT.RADIO);
 		fUseListRadio.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.useList"));
@@ -125,17 +138,19 @@ public class AdvancedLauncherTab
 			}
 		};
 		fUseDefaultRadio.addSelectionListener(adapter);
-		
+
 		if (fShowFeatures)
 			fUseFeaturesRadio.addSelectionListener(adapter);
-		
+
+		fOnePluginRadio.addSelectionListener(adapter);
+
 		fDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				computeInitialCheckState();
 				updateStatus();
 			}
 		});
-		
+
 		fAddRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
@@ -146,10 +161,38 @@ public class AdvancedLauncherTab
 				});
 			}
 		});
+
+		fPluginText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateStatus();
+			}
+		});
+
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				browsePluginId();
+			}
+		});
+	}
+	private void browsePluginId() {
+		final Display display = getControl().getDisplay();
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				PluginSelectionDialog dialog =
+					new PluginSelectionDialog(display.getActiveShell(), false, false);
+				dialog.create();
+				if (dialog.open() == PluginSelectionDialog.OK) {
+					IPluginModel model = (IPluginModel) dialog.getFirstResult();
+					IPlugin plugin = model.getPlugin();
+					fPluginText.setText(plugin.getId());
+				}
+			}
+		});
 	}
 
 	private void useDefaultChanged() {
 		adjustCustomControlEnableState(fUseListRadio.getSelection());
+		adjustPluginArea(fOnePluginRadio.getSelection());
 		updateStatus();
 	}
 
@@ -160,29 +203,57 @@ public class AdvancedLauncherTab
 		fDefaultsButton.setVisible(enable);
 	}
 
-	protected void createPluginList(final Composite parent) {
+	private void adjustPluginArea(boolean enable) {
+		fPluginLabel.setEnabled(enable);
+		fPluginText.setEnabled(enable);
+		fBrowseButton.setEnabled(enable);
+	}
+
+	private void createPluginList(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		fVisibleLabel = new Label(composite, SWT.NULL);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fVisibleLabel.setLayoutData(gd);
-		fVisibleLabel.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.visibleList"));
-			
+		fVisibleLabel.setText(
+			PDEPlugin.getResourceString("AdvancedLauncherTab.visibleList"));
+
 		createPluginViewer(composite);
 		createButtonContainer(composite);
 	}
-	
+
+	private void createOnePluginSection(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 20;
+		layout.marginHeight = 0;
+		layout.numColumns = 3;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fPluginLabel = new Label(composite, SWT.NONE);
+		fPluginLabel.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.pluginId"));
+
+		fPluginText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		fPluginText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fBrowseButton = new Button(composite, SWT.PUSH);
+		fBrowseButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.browse"));
+		fBrowseButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(fBrowseButton);
+	}
+
 	private void computeSubset() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
 		TreeMap map = new TreeMap();
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase)checked[i];
+				IPluginModelBase model = (IPluginModelBase) checked[i];
 				addPluginAndDependencies(model, map);
 			}
 		}
@@ -195,33 +266,34 @@ public class AdvancedLauncherTab
 			addPluginAndDependencies(findPlugin("org.eclipse.core.boot"), map);
 		}
 		addPluginAndDependencies(findPlugin("org.eclipse.core.runtime"), map);
-		
+
 		checked = map.values().toArray();
-		
+
 		fPluginTreeViewer.setCheckedElements(map.values().toArray());
-		fNumExternalChecked = 0; 
+		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof WorkspacePluginModelBase)
 				fNumWorkspaceChecked += 1;
-			else 
+			else
 				fNumExternalChecked += 1;
 		}
-		adjustGroupState();		
+		adjustGroupState();
 	}
-	
+
 	private void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {
 		if (model == null)
 			return;
-		
+
 		String id = model.getPluginBase().getId();
 		if (map.containsKey(id))
 			return;
-		
+
 		map.put(id, model);
-		
+
 		if (model instanceof IFragmentModel) {
-			IPluginModelBase parent = findPlugin(((IFragmentModel)model).getFragment().getPluginId());
+			IPluginModelBase parent =
+				findPlugin(((IFragmentModel) model).getFragment().getPluginId());
 			addPluginAndDependencies(parent, map);
 		} else {
 			IFragmentModel[] fragments = findFragments(model.getPluginBase());
@@ -229,13 +301,23 @@ public class AdvancedLauncherTab
 				addPluginAndDependencies(fragments[i], map);
 			}
 		}
-		
+
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
 			addPluginAndDependencies(findPlugin(imports[i].getId()), map);
 		}
+		
+		if (!map.containsKey("org.apache.ant")) {
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				if (extensions[i].getPoint().startsWith("org.eclipse.ant.core")) {
+					addPluginAndDependencies(findPlugin("org.apache.ant"), map);
+					break;
+				}
+			}
+		}
 	}
-	
+
 	private IPluginModelBase findPlugin(String id) {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ModelEntry entry = manager.findEntry(id);
@@ -243,7 +325,7 @@ public class AdvancedLauncherTab
 			IPluginModelBase model = entry.getActiveModel();
 			if (fPluginTreeViewer.getChecked(model))
 				return model;
-			
+
 			model = entry.getExternalModel();
 			if (model != null && fPluginTreeViewer.getChecked(model)) {
 				return model;
@@ -252,7 +334,7 @@ public class AdvancedLauncherTab
 		}
 		return null;
 	}
-	
+
 	private IFragmentModel[] findFragments(IPluginBase plugin) {
 		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
 		ArrayList result = new ArrayList();
@@ -260,7 +342,7 @@ public class AdvancedLauncherTab
 			ModelEntry entry = entries[i];
 			IPluginModelBase model = entry.getActiveModel();
 			if (model instanceof IFragmentModel) {
-				String id = ((IFragmentModel)model).getFragment().getPluginId();
+				String id = ((IFragmentModel) model).getFragment().getPluginId();
 				if (id.equals(plugin.getId())) {
 					if (fPluginTreeViewer.getChecked(model)) {
 						result.add(model);
@@ -277,16 +359,16 @@ public class AdvancedLauncherTab
 		}
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
-	
+
 	private void adjustGroupState() {
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
 		fPluginTreeViewer.setGrayed(
-				fExternalPlugins,
-				fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+			fExternalPlugins,
+			fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
 		fPluginTreeViewer.setGrayed(
-				fWorkspacePlugins,
-				fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);		
+			fWorkspacePlugins,
+			fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
 	}
 
 	private void createPluginViewer(Composite composite) {
@@ -299,8 +381,8 @@ public class AdvancedLauncherTab
 				Object element = event.getElement();
 				if (element instanceof IPluginModelBase) {
 					handleCheckStateChanged(
-							(IPluginModelBase) element,
-							event.getChecked());
+						(IPluginModelBase) element,
+						event.getChecked());
 				} else {
 					handleGroupStateChanged(element, event.getChecked());
 				}
@@ -314,21 +396,21 @@ public class AdvancedLauncherTab
 				return 0;
 			}
 		});
-		
+
 		fPluginTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Image pluginsImage =
 			PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-		
+				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+
 		fWorkspacePlugins =
 			new NamedElement(
-					PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"),
-					pluginsImage);
+				PDEPlugin.getResourceString("AdvancedLauncherTab.workspacePlugins"),
+				pluginsImage);
 		fExternalPlugins =
 			new NamedElement(
-					PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"),
-					pluginsImage);		
+				PDEPlugin.getResourceString("AdvancedLauncherTab.externalPlugins"),
+				pluginsImage);
 	}
 
 	private void createButtonContainer(Composite parent) {
@@ -337,16 +419,19 @@ public class AdvancedLauncherTab
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
+
 		fAddRequiredButton = new Button(composite, SWT.PUSH);
-		fAddRequiredButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.subset"));
-		fAddRequiredButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING|GridData.FILL_HORIZONTAL));
+		fAddRequiredButton.setText(
+			PDEPlugin.getResourceString("AdvancedLauncherTab.subset"));
+		fAddRequiredButton.setLayoutData(
+			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fAddRequiredButton);
-		
+
 		fDefaultsButton = new Button(composite, SWT.PUSH);
-		fDefaultsButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.defaults"));
+		fDefaultsButton.setText(
+			PDEPlugin.getResourceString("AdvancedLauncherTab.defaults"));
 		fDefaultsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		SWTUtil.setButtonDimensionHint(fDefaultsButton);		
+		SWTUtil.setButtonDimensionHint(fDefaultsButton);
 	}
 	private void initWorkspacePluginsState(ILaunchConfiguration config)
 		throws CoreException {
@@ -371,7 +456,7 @@ public class AdvancedLauncherTab
 	private void initExternalPluginsState(ILaunchConfiguration config)
 		throws CoreException {
 		fNumExternalChecked = 0;
-		
+
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
 		TreeSet selected = LauncherUtils.parseSelectedExtIds(config);
 		for (int i = 0; i < fExternalModels.length; i++) {
@@ -387,19 +472,28 @@ public class AdvancedLauncherTab
 			fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fUseDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
+			fOnePluginRadio.setSelection(config.getAttribute(USE_ONE_PLUGIN, false));
 			if (fShowFeatures) {
 				fUseFeaturesRadio.setSelection(config.getAttribute(USEFEATURES, false));
 				fUseListRadio.setSelection(
-					!fUseDefaultRadio.getSelection() && !fUseFeaturesRadio.getSelection());
+					!fUseDefaultRadio.getSelection()
+						&& !fUseFeaturesRadio.getSelection()
+						&& !fOnePluginRadio.getSelection());
 			} else {
-				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
+				fUseListRadio.setSelection(
+					!fUseDefaultRadio.getSelection() && !fOnePluginRadio.getSelection());
 			}
+
+			fPluginText.setText(config.getAttribute(ONE_PLUGIN_ID, ""));
+
 			if (fPluginTreeViewer.getInput() == null) {
 				fPluginTreeViewer.setUseHashlookup(true);
 				fPluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -417,6 +511,7 @@ public class AdvancedLauncherTab
 		}
 
 		adjustCustomControlEnableState(fUseListRadio.getSelection());
+		adjustPluginArea(fOnePluginRadio.getSelection());
 		updateStatus();
 	}
 
@@ -432,6 +527,7 @@ public class AdvancedLauncherTab
 			if (id != null)
 				wtable.add(model.getPluginBase().getId());
 		}
+		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, true);
 
 		fNumExternalChecked = 0;
 		for (int i = 0; i < fExternalModels.length; i++) {
@@ -474,15 +570,39 @@ public class AdvancedLauncherTab
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(USECUSTOM, true);
-		if (fShowFeatures)
+		if (fShowFeatures) {
+			config.setAttribute(USECUSTOM, true);
 			config.setAttribute(USEFEATURES, false);
+			config.setAttribute(USE_ONE_PLUGIN, false);
+			config.setAttribute(ONE_PLUGIN_ID, "");
+		} else {
+			config.setAttribute(USECUSTOM, false);
+			config.setAttribute(USE_ONE_PLUGIN, true);
+			try {
+				String projectName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+				config.setAttribute(ONE_PLUGIN_ID, getPluginId(projectName));
+			} catch (CoreException e) {
+			}
+		}
+	}
+	
+	private String getPluginId(String projectName) {
+		IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectName);
+		if (project != null && project instanceof IProject) {
+			IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel((IProject)project);
+			if (model != null && model instanceof IPluginModelBase) {
+				return ((IPluginModelBase)model).getPluginBase().getId();
+			}
+		}
+		return "";
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(USECUSTOM, fUseDefaultRadio.getSelection());
 		if (fShowFeatures)
 			config.setAttribute(USEFEATURES, fUseFeaturesRadio.getSelection());
+		config.setAttribute(USE_ONE_PLUGIN, fOnePluginRadio.getSelection());
+		config.setAttribute(ONE_PLUGIN_ID, fPluginText.getText());
 		if (fUseListRadio.getSelection()) {
 			// store deselected projects
 			StringBuffer wbuf = new StringBuffer();
@@ -510,10 +630,10 @@ public class AdvancedLauncherTab
 	}
 
 	private void updateStatus() {
-		updateStatus(validatePlugins());
+		updateStatus(validate());
 	}
 
-	private IStatus validatePlugins() {
+	private IStatus validate() {
 		if (fShowFeatures && fUseFeaturesRadio.getSelection()) {
 			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			IPath featurePath = workspacePath.removeLastSegments(1).append("features");
@@ -521,16 +641,28 @@ public class AdvancedLauncherTab
 				|| !featurePath.toFile().exists())
 				return createStatus(
 					IStatus.ERROR,
-					PDEPlugin.getResourceString("AdvancedLauncherTab.error.featureSetup"));
-		} 
+					PDEPlugin.getResourceString(
+						"AdvancedLauncherTab.error.featureSetup"));
+		} else if (fOnePluginRadio.getSelection()) {
+			if (fPluginText.getText().length() == 0)
+				return createStatus(
+					IStatus.ERROR,
+					PDEPlugin.getResourceString("AdvancedLauncherTab.error.noPlugin"));
+			if (PDECore.getDefault().getModelManager().findEntry(fPluginText.getText())
+				== null)
+				return createStatus(
+					IStatus.ERROR,
+					PDEPlugin.getResourceString(
+						"AdvancedLauncherTab.error.pluginNotExists"));
+		}
 		return createStatus(IStatus.OK, "");
 	}
-	
+
 	public String getName() {
 		return PDEPlugin.getResourceString("AdvancedLauncherTab.name");
 	}
-	
+
 	public Image getImage() {
-			return fImage;
+		return fImage;
 	}
 }

@@ -16,9 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
-import org.eclipse.pde.core.IWorkspaceModelManager;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -361,11 +358,8 @@ public class BasicLauncherTab
 	}
 	
 	private String getClasspathEntries() {
-		if (fCurrentClasspath != null)
-			return fCurrentClasspath;
-		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] wsmodels = manager.getAllModels();
-		fCurrentClasspath = LauncherUtils.getBuildOutputFolders(wsmodels);
+		if (fCurrentClasspath == null)
+			fCurrentClasspath = LauncherUtils.getBuildOutputFolders();
 		return fCurrentClasspath;
 	}
 

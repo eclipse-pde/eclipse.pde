@@ -149,11 +149,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
-		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
-		TreeMap pluginMap =
-			LauncherUtils.validatePlugins(
-				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault),
-				getExternalPluginsToRun(configuration, useDefault));
+		TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
 		if (pluginMap == null)
 			return null;
 		
@@ -201,9 +197,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 
 		programArgs.add("-dev");
-		String devEntry =
-			LauncherUtils.getBuildOutputFolders(
-				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault));
+		String devEntry = LauncherUtils.getBuildOutputFolders();
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
 		if (configuration.getAttribute(TRACING, false)) {
@@ -329,26 +323,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 	}
 	
-	private IPluginModelBase[] getExternalPluginsToRun(
-		ILaunchConfiguration config,
-		boolean useDefault)
-		throws CoreException {
-
-		if (useDefault)
-			return PDECore.getDefault().getExternalModelManager().getAllEnabledModels();
-
-		ArrayList exList = new ArrayList();
-		TreeSet selectedExModels = LauncherUtils.parseSelectedExtIds(config);
-		IPluginModelBase[] exmodels =
-			PDECore.getDefault().getExternalModelManager().getAllModels();
-		for (int i = 0; i < exmodels.length; i++) {
-			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && selectedExModels.contains(id))
-				exList.add(exmodels[i]);
-		}
-		return (IPluginModelBase[])exList.toArray(new IPluginModelBase[exList.size()]);
-	}
-
 	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
 		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
 			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();
@@ -399,5 +373,14 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 	}
 	
+	public static String getPluginId(IJavaProject jProject) {
+		IProject project = jProject.getProject();
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		if (model != null && model instanceof IPluginModelBase) {
+			return ((IPluginModelBase)model).getPluginBase().getId();
+		}
+		return project.getName();
+	}
 
+	
 }

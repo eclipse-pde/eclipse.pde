@@ -116,7 +116,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		programArgs.add("-data");
 		programArgs.add(targetWorkspace);
 		
-		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
 		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		if (configuration.getAttribute(USEFEATURES, false)) {
 			validateFeatures();
@@ -126,10 +125,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			programArgs.add("file:" + installDir.getPath() + File.separator);
 			programArgs.add("-update");
 		} else {
-			TreeMap pluginMap =
-				LauncherUtils.validatePlugins(
-					LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault),
-					getExternalPluginsToRun(configuration, useDefault));
+			TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
 			if (pluginMap == null) 
 				return null;
 				
@@ -157,9 +153,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		
 		programArgs.add("-dev");
-		String devEntry =
-			LauncherUtils.getBuildOutputFolders(
-				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault));
+		String devEntry = LauncherUtils.getBuildOutputFolders();
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
 		if (configuration.getAttribute(TRACING, false)) {
@@ -234,26 +228,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		return getInstallPath().removeLastSegments(1);
 	}
 
-	private IPluginModelBase[] getExternalPluginsToRun(
-		ILaunchConfiguration config,
-		boolean useDefault)
-		throws CoreException {
-
-		if (useDefault)
-			return PDECore.getDefault().getExternalModelManager().getAllEnabledModels();
-
-		ArrayList exList = new ArrayList();
-		TreeSet selectedExModels = LauncherUtils.parseSelectedExtIds(config);
-		IPluginModelBase[] exmodels =
-			PDECore.getDefault().getExternalModelManager().getAllModels();
-		for (int i = 0; i < exmodels.length; i++) {
-			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && selectedExModels.contains(id))
-				exList.add(exmodels[i]);
-		}
-		return (IPluginModelBase[])exList.toArray(new IPluginModelBase[exList.size()]);
-	}
-	
 	private String computeShowsplashArgument() {
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(null);
 		IPath fullPath = eclipseHome.append("eclipse");

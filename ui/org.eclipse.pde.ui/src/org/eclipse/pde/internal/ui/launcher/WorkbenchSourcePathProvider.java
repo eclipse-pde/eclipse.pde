@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,132 +28,142 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
  */
 public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
-	
 	/**
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
-		
-		boolean defaultPath = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
+	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(
+			ILaunchConfiguration configuration) throws CoreException {
+		boolean defaultPath = configuration.getAttribute(
+				IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH,
+				true);
 		if (!defaultPath) {
-			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
+			return recoverRuntimePath(configuration,
+					IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
 		}
-		
 		List sourcePath = new ArrayList();
-
-		// first on the source lookup path, goes the class libraries for the JRE		
-		String vmInstallName =
-			configuration.getAttribute(
-				ILauncherSettings.VMINSTALL,
-				LauncherUtils.getDefaultVMInstallName());
+		// first on the source lookup path, goes the class libraries for the
+		// JRE
+		String vmInstallName = configuration.getAttribute(
+				ILauncherSettings.VMINSTALL, LauncherUtils
+						.getDefaultVMInstallName());
 		IVMInstall[] vmInstallations = LauncherUtils.getAllVMInstances();
 		IVMInstall jre = null;
-
 		for (int i = 0; i < vmInstallations.length; i++) {
 			if (vmInstallName.equals(vmInstallations[i].getName())) {
 				jre = vmInstallations[i];
 				break;
 			}
-		}		
-
+		}
 		if (jre != null) {
 			// add container that corresponds to JRE
 			IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
-			containerPath = containerPath.append(jre.getVMInstallType().getId());
+			containerPath = containerPath
+					.append(jre.getVMInstallType().getId());
 			containerPath = containerPath.append(jre.getName());
-			IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+			IRuntimeClasspathEntry entry = JavaRuntime
+					.newRuntimeContainerClasspathEntry(containerPath,
+							IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 			sourcePath.add(entry);
 		}
-
-		// next go the projects
-		boolean useFeatures = configuration.getAttribute(ILauncherSettings.USEFEATURES, false);		
-		boolean useDefault = configuration.getAttribute(ILauncherSettings.USECUSTOM, true);
-		
-		IPluginModelBase[] plugins = LauncherUtils.getWorkspacePluginsToRun(configuration, (useDefault || useFeatures));		
-		
-		if (plugins != null) {
-			IProject[] projects = getJavaProjects(plugins);
-			for (int i = 0; i < projects.length; i++){
-				sourcePath.add(JavaRuntime.newProjectRuntimeClasspathEntry(JavaCore.create(projects[i])));
-			}
+		IProject[] projects = getJavaProjects(configuration);
+		for (int i = 0; i < projects.length; i++) {
+			sourcePath.add(JavaRuntime
+					.newProjectRuntimeClasspathEntry(JavaCore.create(projects[i])));
 		}
-		
-		return (IRuntimeClasspathEntry[])sourcePath.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
-
+		return (IRuntimeClasspathEntry[]) sourcePath
+				.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
 	}
-	
 	/**
 	 * Converts plugin models to java projects
 	 */
-	private IProject[] getJavaProjects(IPluginModelBase[] plugins) throws CoreException {
+	private IProject[] getJavaProjects(ILaunchConfiguration configuration)
+			throws CoreException {
+		boolean useFeatures = configuration.getAttribute(
+				ILauncherSettings.USEFEATURES, false);
+		boolean useDefault = configuration.getAttribute(
+				ILauncherSettings.USECUSTOM, true);
+		
+		IPluginModelBase[] models = PDECore.getDefault()
+				.getWorkspaceModelManager().getAllModels();
+		
+		Set deselected = (!useFeatures && !useDefault) ? LauncherUtils
+				.parseDeselectedWSIds(configuration) : new TreeSet();
+		
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < plugins.length; i++) {
-			IResource resource = plugins[i].getUnderlyingResource();
-			if (resource != null) {
-				IProject project = resource.getProject();
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					result.add(project);
-				}
+		for (int i = 0; i < models.length; i++) {
+			if (deselected.contains(models[i].getPluginBase().getId()))
+				continue;
+			IProject project = models[i].getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				result.add(project);
 			}
 		}
-		IProject[] projects = (IProject[])result.toArray(new IProject[result.size()]);
-		
+		IProject[] projects = (IProject[]) result.toArray(new IProject[result
+				.size()]);
 		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 	/**
-	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
+	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[],
+	 *      ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+	public IRuntimeClasspathEntry[] resolveClasspath(
+			IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration)
+			throws CoreException {
 		List all = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
-				// a project resolves to itself for source lookup (rather than the class file output locations)
+				// a project resolves to itself for source lookup (rather than
+				// the class file output locations)
 				all.add(entries[i]);
 				// also add non-JRE libraries
 				IResource resource = entries[i].getResource();
 				if (resource instanceof IProject) {
-					IJavaProject project = JavaCore.create((IProject)resource);
-					IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
+					IJavaProject project = JavaCore.create((IProject) resource);
+					IPackageFragmentRoot[] roots = project
+							.getPackageFragmentRoots();
 					for (int j = 0; j < roots.length; j++) {
 						if (roots[j].isArchive() && !isJRELibrary(roots[j])) {
-							IRuntimeClasspathEntry rte = JavaRuntime.newArchiveRuntimeClasspathEntry(roots[j].getPath());
+							IRuntimeClasspathEntry rte = JavaRuntime
+									.newArchiveRuntimeClasspathEntry(roots[j]
+											.getPath());
 							IPath path = roots[j].getSourceAttachmentPath();
 							if (path != null) {
 								rte.setSourceAttachmentPath(path);
-								rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
+								rte.setSourceAttachmentRootPath(roots[j]
+										.getSourceAttachmentRootPath());
 							}
 							if (!all.contains(rte))
-								all.add(rte);							
+								all.add(rte);
 						}
 					}
 				}
 			} else {
-				IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
+				IRuntimeClasspathEntry[] resolved = JavaRuntime
+						.resolveRuntimeClasspathEntry(entries[i], configuration);
 				for (int j = 0; j < resolved.length; j++) {
 					all.add(resolved[j]);
-				}				
+				}
 			}
 		}
-		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
+		return (IRuntimeClasspathEntry[]) all
+				.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
-	
 	private boolean isJRELibrary(IPackageFragmentRoot root) {
 		try {
 			IPath path = root.getRawClasspathEntry().getPath();
 			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))
-				|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+					|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
 				return true;
 			}
 		} catch (JavaModelException e) {
 		}
 		return false;
 	}
-
 }

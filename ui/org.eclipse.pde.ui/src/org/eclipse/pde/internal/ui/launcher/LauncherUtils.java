@@ -140,27 +140,9 @@ public class LauncherUtils {
 		
 		return startupJar.exists() ? new String[] { startupJar.getAbsolutePath()} : null;
 	}
-	
-	protected static IPluginModelBase[] getWorkspacePluginsToRun(
-		ILaunchConfiguration config,
-		boolean useDefault)
-		throws CoreException {
-		IPluginModelBase[] wsmodels =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
-		if (useDefault)
-			return wsmodels;
-
-		ArrayList result = new ArrayList();
-		TreeSet deselectedWSPlugins = parseDeselectedWSIds(config);
-		for (int i = 0; i < wsmodels.length; i++) {
-			String id = wsmodels[i].getPluginBase().getId();
-			if (id != null && !deselectedWSPlugins.contains(id))
-				result.add(wsmodels[i]);
-		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
-	}
-	
-	public static String getBuildOutputFolders(IPluginModelBase[] wsmodels) {
+		
+	public static String getBuildOutputFolders() {
+		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		ArrayList result = new ArrayList();
 		result.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
@@ -199,50 +181,39 @@ public class LauncherUtils {
 		}		
 	}
 	
-	public static TreeMap validatePlugins(
-		IPluginModelBase[] wsmodels,
-		IPluginModelBase[] exmodels)
-		throws CoreException {
-		TreeMap result = new TreeMap();
+	public static TreeMap getPluginsToRun(ILaunchConfiguration config)
+			throws CoreException {
+		TreeMap map = null;
 		ArrayList statusEntries = new ArrayList();
+		
+		if (config.getAttribute(ILauncherSettings.USE_ONE_PLUGIN, false)) {
+			String id = config.getAttribute(ILauncherSettings.ONE_PLUGIN_ID, "");
+			if (id.length() > 0)
+				map = validatePlugins(getPluginAndPrereqs(id), statusEntries);
+		} else if (!config.getAttribute(ILauncherSettings.USECUSTOM, true)) {
+			map = validatePlugins(getSelectedPlugins(config), statusEntries);
+		}
+		
+		if (map == null)
+			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(),
+					statusEntries);
 
-		for (int i = 0; i < wsmodels.length; i++) {
-			IStatus status = validateModel(wsmodels[i]);
-			if (status == null) {
-				String id = wsmodels[i].getPluginBase().getId();
-				if (id != null) {
-					result.put(id, wsmodels[i]);
-				}
-			} else {
-				statusEntries.add(status);
-			}
-		}
-		
-		for (int i = 0; i < exmodels.length; i++) {
-			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && !result.containsKey(id)) {
-				result.put(id, exmodels[i]);
-			}
-		}
-		
-		StringBuffer errorText = new StringBuffer();
-		
-		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		StringBuffer errorText = new StringBuffer();		
 		final String lineSeparator = System.getProperty("line.separator");
-		if (!result.containsKey("org.eclipse.core.boot") && !isOSGI) {
-			errorText.append("org.eclipse.core.boot" + lineSeparator);
-		}
-		
-		if (isOSGI) {
-			if (!result.containsKey("org.eclipse.osgi"))
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			if (!map.containsKey("org.eclipse.core.boot")) {
+				errorText.append("org.eclipse.core.boot" + lineSeparator);
+			}
+		} else {
+			if (!map.containsKey("org.eclipse.osgi"))
 				errorText.append("org.eclipse.osgi" + lineSeparator);
-			if (!result.containsKey("org.eclipse.osgi.services"))
+			if (!map.containsKey("org.eclipse.osgi.services"))
 				errorText.append("org.eclipse.osgi.services" + lineSeparator);
-			if (!result.containsKey("org.eclipse.osgi.util"))
+			if (!map.containsKey("org.eclipse.osgi.util"))
 				errorText.append("org.eclipse.osgi.util" + lineSeparator);
-			if (!result.containsKey("org.eclipse.core.runtime"))
+			if (!map.containsKey("org.eclipse.core.runtime"))
 				errorText.append("org.eclipse.core.runtime" + lineSeparator);
-			if (!result.containsKey("org.eclipse.update.configurator"))
+			if (!map.containsKey("org.eclipse.update.configurator"))
 				errorText.append("org.eclipse.update.configurator");
 		}
 		
@@ -252,32 +223,123 @@ public class LauncherUtils {
 			display.syncExec(new Runnable() {
 				public void run() {
 					MessageDialog.openError(
-						display.getActiveShell(),
-						PDEPlugin.getResourceString(KEY_TITLE),
-						PDEPlugin.getResourceString(KEY_MISSING_REQUIRED)
+							display.getActiveShell(),
+							PDEPlugin.getResourceString(KEY_TITLE),
+							PDEPlugin.getResourceString(KEY_MISSING_REQUIRED)
 							+ lineSeparator
 							+ text);
 				}
 			});
 			return null;
 		}
-
+		
 		// alert user if any plug-ins are not loaded correctly.
 		if (statusEntries.size() > 0) {
 			final MultiStatus multiStatus =
 				new MultiStatus(
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					(IStatus[])statusEntries.toArray(new IStatus[statusEntries.size()]),
-					PDEPlugin.getResourceString(KEY_BROKEN_PLUGINS),
-					null);
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						(IStatus[])statusEntries.toArray(new IStatus[statusEntries.size()]),
+						PDEPlugin.getResourceString(KEY_BROKEN_PLUGINS),
+						null);
 			if (!ignoreValidationErrors(multiStatus)) {
 				return null;
 			}
-		}
-		return result;
+		}		
+		return map;
 	}
+	
+	private static IPluginModelBase[] getPluginAndPrereqs(String id) {
+		TreeMap map = new TreeMap();
+		addPluginAndPrereqs(id, map);
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			addPluginAndPrereqs("org.eclipse.osgi", map);
+			addPluginAndPrereqs("org.eclipse.osgi.services", map);
+			addPluginAndPrereqs("org.eclipse.osgi.util", map);
+			addPluginAndPrereqs("org.eclipse.update.configurator", map);
+		} else {
+			addPluginAndPrereqs("org.eclipse.core.boot", map);
+		}
+		addPluginAndPrereqs("org.eclipse.core.runtime", map);
+		
+		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+	
+	private static void addPluginAndPrereqs(String id, TreeMap map) {
+		if (map.containsKey(id))
+			return;
+		
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
+		if (entry == null)
+			return;
+		
+		IPluginModelBase model = entry.getActiveModel();
+		
+		map.put(id, model);
+		
+		IPluginImport[] imports = model.getPluginBase().getImports();
+		for (int i = 0; i < imports.length; i++) {
+			addPluginAndPrereqs(imports[i].getId(), map);
+		}
+		
+		if (!map.containsKey("org.apache.ant")) {
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				if (extensions[i].getPoint().startsWith("org.eclipse.ant.core")) {
+					addPluginAndPrereqs("org.apache.ant", map);
+					break;
+				}
+			}
+		}
+		
+		if (model instanceof IFragmentModel) {
+			addPluginAndPrereqs(((IFragmentModel) model).getFragment().getPluginId(), map);
+		} else {
+			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, model.getPluginBase().getVersion());
+			for (int i = 0; i < fragments.length; i++) {
+				addPluginAndPrereqs(fragments[i].getId(), map);
+			}
+		}
+	}
+	
+	private static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config) throws CoreException {
+		TreeMap map = new TreeMap();
+		IPluginModelBase[] wsmodels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		Set deselectedWSPlugins = parseDeselectedWSIds(config);
+		for (int i = 0; i < wsmodels.length; i++) {
+			String id = wsmodels[i].getPluginBase().getId();
+			if (id != null && !deselectedWSPlugins.contains(id))
+				map.put(id, wsmodels[i]);
+		}
+		
+		Set selectedExModels = parseSelectedExtIds(config);
+		IPluginModelBase[] exmodels =
+			PDECore.getDefault().getExternalModelManager().getAllModels();
+		for (int i = 0; i < exmodels.length; i++) {
+			String id = exmodels[i].getPluginBase().getId();
+			if (id != null && selectedExModels.contains(id) && !map.containsKey(id))
+				map.put(id, exmodels[i]);
+		}
 
+		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+	
+	private static TreeMap validatePlugins(IPluginModelBase[] models, ArrayList statusEntries) {
+		TreeMap map = new TreeMap();
+		for (int i = 0; i < models.length; i++) {
+			IStatus status = validateModel(models[i]);
+			if (status == null) {
+				String id = models[i].getPluginBase().getId();
+				if (id != null) {
+					map.put(id, models[i]);
+				}
+			} else {
+				statusEntries.add(status);
+			}
+		}
+		return map;
+	}
+	
 	private static IStatus validateModel(IPluginModelBase model) {
 		return model.isLoaded()
 			? null
