@@ -29,19 +29,14 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class ExtensionPointDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
-	private IPluginExtensionPoint input;
-	private FormEntry id;
-	private FormEntry name;
-	private FormEntry schema;
-	private FormText rtext;
-	private String rtextData;
+	private IPluginExtensionPoint fInput;
+	private FormEntry fIdEntry;
+	private FormEntry fNameEntry;
+	private FormEntry fSchemaEntry;
+	private FormText fRichText;
+	private String fRichTextData;
 	
 	private static final String SCHEMA_RTEXT_DATA = "<form>"
 			+ "<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"
@@ -98,35 +93,36 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		client.setLayout(glayout);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		id = new FormEntry(client, toolkit, "Id:", null, false);
-		id.setFormEntryListener(new FormEntryAdapter(this) {
+		
+		fIdEntry = new FormEntry(client, toolkit, "ID:", null, false);
+		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				if (input != null) {
+				if (fInput != null) {
 					try {
-						input.setId(id.getValue());
+						fInput.setId(fIdEntry.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
 				}
 			}
 		});
-		name = new FormEntry(client, toolkit, "Name:", null, false);
-		name.setFormEntryListener(new FormEntryAdapter(this) {
+		fNameEntry = new FormEntry(client, toolkit, "Name:", null, false);
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				if (input != null)
+				if (fInput != null)
 					try {
-						input.setName(name.getValue());
+						fInput.setName(fNameEntry.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
 			}
 		});
-		schema = new FormEntry(client, toolkit, "Schema:", null, true);
-		schema.setFormEntryListener(new FormEntryAdapter(this) {
+		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", null, true);
+		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				if (input != null) {
+				if (fInput != null) {
 					try {
-						input.setSchema(schema.getValue());
+						fInput.setSchema(fSchemaEntry.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
@@ -136,7 +132,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 
 			public void linkActivated(HyperlinkEvent e) {
 				IProject project = getPage().getPDEEditor().getCommonProject();
-				IFile file = project.getFile(schema.getValue());
+				IFile file = project.getFile(fSchemaEntry.getValue());
 				if (file.exists())
 					openSchemaFile(file);
 				else
@@ -144,32 +140,32 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 			}
 		});
 		createSpacer(toolkit, client, 2);
-		rtext = toolkit.createFormText(parent, true);
+		fRichText = toolkit.createFormText(parent, true);
 		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		td.indent = 10;
-		rtext.setLayoutData(td);
-		rtext.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setLayoutData(td);
+		fRichText.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_SCHEMA_OBJ));
-		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_DOC_SECTION_OBJ));
-		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(
+		fRichText.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_PSEARCH_OBJ));
-		rtext.addHyperlinkListener(new HyperlinkAdapter() {
+		fRichText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("search")) {
-					FindReferencesAction pluginReferencesAction = new FindReferencesAction(input);
+					FindReferencesAction pluginReferencesAction = new FindReferencesAction(fInput);
 					pluginReferencesAction.run();
 				} else {
-					ShowDescriptionAction showDescAction = new ShowDescriptionAction(input);
+					ShowDescriptionAction showDescAction = new ShowDescriptionAction(fInput);
 					showDescAction.run();
 				}
 			}
 		});
 		
-		id.setEditable(isEditable());
-		name.setEditable(isEditable());
-		schema.setEditable(isEditable());
+		fIdEntry.setEditable(isEditable());
+		fNameEntry.setEditable(isEditable());
+		fSchemaEntry.setEditable(isEditable());
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
@@ -180,23 +176,23 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		spacer.setLayoutData(gd);
 	}
 	private void update() {
-		id.setValue(
-				input != null && input.getId() != null ? input.getId() : "",
+		fIdEntry.setValue(
+				fInput != null && fInput.getId() != null ? fInput.getId() : "",
 				true);
-		name.setValue(input != null && input.getName() != null ? input
+		fNameEntry.setValue(fInput != null && fInput.getName() != null ? fInput
 				.getName() : "", true);
-		schema.setValue(input != null && input.getSchema() != null ? input
+		fSchemaEntry.setValue(fInput != null && fInput.getSchema() != null ? fInput
 				.getSchema() : "", true);
 		updateRichText();
 	}
 	private void updateRichText() {
-		boolean hasSchema = schema.getValue().length() > 0;
-		if (hasSchema && rtextData == SCHEMA_RTEXT_DATA)
+		boolean hasSchema = fSchemaEntry.getValue().length() > 0;
+		if (hasSchema && fRichTextData == SCHEMA_RTEXT_DATA)
 			return;
-		if (!hasSchema && rtextData == NO_SCHEMA_RTEXT_DATA)
+		if (!hasSchema && fRichTextData == NO_SCHEMA_RTEXT_DATA)
 			return;
-		rtextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
-		rtext.setText(rtextData, true, false);
+		fRichTextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
+		fRichText.setText(fRichTextData, true, false);
 		getManagedForm().getForm().reflow(true);
 	}
 	private void openSchemaFile(final IFile file) {
@@ -225,7 +221,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				NewExtensionPointWizard wizard =
 					new NewExtensionPointWizard(
 						project,
-						(IPluginModelBase) getPage().getModel(), input);
+						(IPluginModelBase) getPage().getModel(), fInput);
 				WizardDialog dialog =
 					new WizardDialog(
 						PDEPlugin.getActiveWorkbenchShell(),
@@ -244,9 +240,9 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
-			input = (IPluginExtensionPoint) ssel.getFirstElement();
+			fInput = (IPluginExtensionPoint) ssel.getFirstElement();
 		} else
-			input = null;
+			fInput = null;
 		update();
 	}
 	/*
@@ -255,9 +251,9 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
 	public void commit(boolean onSave) {
-		id.commit();
-		name.commit();
-		schema.commit();
+		fIdEntry.commit();
+		fNameEntry.commit();
+		fSchemaEntry.commit();
 		super.commit(onSave);
 	}
 	/*
@@ -266,7 +262,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
 	public void setFocus() {
-		id.getText().setFocus();
+		fIdEntry.getText().setFocus();
 	}
 	/*
 	 * (non-Javadoc)

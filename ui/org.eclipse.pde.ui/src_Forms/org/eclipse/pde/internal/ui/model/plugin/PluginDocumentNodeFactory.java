@@ -175,6 +175,9 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	 * @see org.eclipse.pde.core.plugin.IExtensionsModelFactory#createExtensionPoint()
 	 */
 	public IPluginExtensionPoint createExtensionPoint() {
-		return null;
+		PluginExtensionPointNode node = new PluginExtensionPointNode();
+		node.setModel(fModel);
+		node.setXMLTagName("extension-point");
+		return node;
 	}
 }

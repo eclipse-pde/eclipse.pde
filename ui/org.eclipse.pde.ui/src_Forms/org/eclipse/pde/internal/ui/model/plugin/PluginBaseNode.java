@@ -183,7 +183,16 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtensionPoint)
 	 */
-	public void add(IPluginExtensionPoint extension) throws CoreException {
+	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
+		extensionPoint.setInTheModel(true);
+		IDocumentNode node = (IDocumentNode)extensionPoint;
+		node.setParentNode(this);
+		IPluginExtensionPoint[] extPoints = getExtensionPoints();
+		if (extPoints.length > 0)
+			addChildNode(node, indexOf((IDocumentNode)extPoints[extPoints.length - 1]) + 1);
+		else
+			addChildNode(node);
+		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()

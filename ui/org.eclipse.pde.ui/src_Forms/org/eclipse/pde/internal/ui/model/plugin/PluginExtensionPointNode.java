@@ -43,6 +43,20 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
+	 */
+	public void setName(String name) throws CoreException {
+		setXMLAttribute(P_NAME, name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
+	 */
+	public String getName() {
+		return getXMLAttributeValue(P_NAME);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#write()
 	 */
 	public String write(boolean indent) {
@@ -53,7 +67,6 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode#writeShallow(boolean)
 	 */
 	public String writeShallow(boolean terminate) {
-		String sep = System.getProperty("line.separator");
 		StringBuffer buffer = new StringBuffer("<extension-point");
 		IDocumentAttribute attr = getDocumentAttribute(P_ID);
 		if (attr != null)
@@ -67,7 +80,7 @@ public class PluginExtensionPointNode extends PluginObjectNode
 		
 		if (terminate)
 			buffer.append("/");
-		buffer.append(">" + sep);
+		buffer.append(">");
 		return buffer.toString();
 	}
 	

@@ -41,7 +41,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	protected IPluginReference currentImport;
 	protected IStructuredSelection multiSelection;
 	private boolean blockChanges = false;
-	private boolean ignoreModelEvents = false;
 	private boolean addReexport = true;
 	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional";
 	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport";
@@ -73,7 +72,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	public void commit(boolean onSave) {
 		if (isDirty() == false)
 			return;
-		ignoreModelEvents = true;
 		if ((currentImport != null || multiSelection != null)
 				&& versionText.getText().isEnabled()) {
 			versionText.commit();
@@ -85,7 +83,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 			applyMatch(match);
 		}
-		ignoreModelEvents = false;
 		super.commit(onSave);
 	}
 	public void createClient(Section section, FormToolkit toolkit) {
@@ -107,7 +104,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
-					ignoreModelEvents = true;
 					if (value != null && value.length() > 0) {
 						PluginVersionIdentifier pvi = new PluginVersionIdentifier(
 								text.getValue());
@@ -117,7 +113,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 					} else {
 						applyVersion(null);
 					}
-					ignoreModelEvents = false;
 				} catch (Throwable e) {
 					text.setValue(currentImport.getVersion(), true);
 					String message = PDEPlugin
@@ -172,9 +167,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 				if (currentImport != null) {
 					try {
 						IPluginImport iimport = (IPluginImport) currentImport;
-						ignoreModelEvents = true;
 						iimport.setReexported(reexportButton.getSelection());
-						ignoreModelEvents = false;
 					} catch (CoreException ex) {
 						PDEPlugin.logException(ex);
 					}

@@ -12,10 +12,10 @@ import org.eclipse.pde.internal.ui.model.*;
  *
  */
 public class PluginObjectNode extends PluginDocumentNode implements IPluginObject {
-	
+	private String fName;
 	private boolean fInTheModel;
 	private ISharedPluginModel fModel;
-	private String fName;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getModel()
 	 */
