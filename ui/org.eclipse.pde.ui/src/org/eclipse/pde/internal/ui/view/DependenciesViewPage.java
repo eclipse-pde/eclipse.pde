@@ -33,7 +33,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.plugin.PluginReference;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -133,9 +132,6 @@ public abstract class DependenciesViewPage extends Page {
 			// actionGroup.setContext(new ActionContext(selection));
 			// actionGroup.fillContextMenu(manager);
 			Object importObj = selectionElement;
-			if (importObj instanceof ImportObject) {
-				importObj = ((ImportObject) importObj).getImport();
-			}
 			if (importObj instanceof IPluginImport) {
 				String id = ((IPluginImport) importObj).getId();
 				IResource resource = ((IPluginImport) importObj).getModel()
@@ -190,14 +186,11 @@ public abstract class DependenciesViewPage extends Page {
 
 	private void handleDoubleClick() {
 		Object obj = getSelectedObject();
-		if (obj instanceof ImportObject) {
-			IPlugin plugin = ((ImportObject) obj).getPlugin();
-			if (plugin != null) {
-				obj = plugin;
-			}
-		}
-		if (obj instanceof IPluginBase)
+		if (obj instanceof IPluginImport) {
+			ManifestEditor.openPluginEditor(((IPluginImport) obj).getId());
+		} else if (obj instanceof IPluginBase) {
 			ManifestEditor.openPluginEditor((IPluginBase) obj);
+		}
 	}
 
 	private void handleFocusOn() {
