@@ -229,7 +229,7 @@ public class CategorySection extends TreeSection {
 					: aFeature;
 			if (feature == null)
 				return;
-			ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) target;
+			ISiteCategoryDefinition catDef = target;
 			ISiteCategory[] cats = feature.getCategories();
 			int j = 0;
 			for (; j < cats.length; j++) {
