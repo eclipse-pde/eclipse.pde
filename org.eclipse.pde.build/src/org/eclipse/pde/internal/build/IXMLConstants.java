@@ -70,35 +70,19 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
+	public static final String PROPERTY_FEATURE_VERSION = "feature.version";
 	public static final String PROPERTY_INCLUDE_CHILDREN = "includeChildren";
 	public static final String PROPERTY_INSTALL = "install";
 	public static final String PROPERTY_INSTALL_LOCATION = "install.location";
-	public static final String PROPERTY_JAR_EXTERNAL = "jar.external";
 	public static final String PROPERTY_JAR_EXTRA_CLASSPATH = "jars.extra.classpath";
 	public static final String PROPERTY_JAR_ORDER = "jars.compile.order";
 	public static final String PROPERTY_NL = "nl";
 	public static final String PROPERTY_OS = "os";
 	public static final String PROPERTY_QUIET = "quiet";
-	public static final String PROPERTY_PLUGIN_PATH = "plugin.path";
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
 	public static final String PROPERTY_TEMPLATE = "template";
-	public static final String PROPERTY_FEATURE_VERSION = "feature.version";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_WS = "ws";
-	public static final String PROPERTY_ZIP_ARGUMENT = "zip.argument";
-	public static final String PROPERTY_ZIP_EXTERNAL = "zip.external";
-	public static final String PROPERTY_ZIP_FILE = "${zip.file}";
-	public static final String PROPERTY_ZIP_PROGRAM = "zip.program";
-
-
-	/**
-	 * Persistent properties. Properties that should not have its
-	 * value changed during a generate script batch.
-	 */
-	public static final String[] PERSISTENT_PROPERTIES = {
-		PROPERTY_ZIP_ARGUMENT, PROPERTY_ZIP_EXTERNAL, PROPERTY_ZIP_PROGRAM,
-		PROPERTY_JAR_EXTERNAL
-	};
 }

@@ -73,7 +73,7 @@ public void generate() throws CoreException {
 		// if scriptName is not absolute, make it relative to the installLocation
 		if (!target.isAbsolute())
 			target = new File(root, scriptName);
-		script = new BuildAntScript(new FileOutputStream(target));
+		script = new AntScript(new FileOutputStream(target));
 		try {
 			generateFetchScript();
 		} finally {
