@@ -18,6 +18,7 @@ import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.*;
@@ -40,7 +41,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private ClipboardAction copyAction;
 	private ClipboardAction pasteAction;
 	private Hashtable globalActions = new Hashtable();
-	private BasicTextEditorActionContributor sourceContributor;
+	private TextEditorActionContributor sourceContributor;
 
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
@@ -99,7 +100,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			//selectionChanged(null);
 		}
 		public void selectionChanged(ISelection selection) {
-			setEnabled(isEditable() && editor.canPasteFromClipboard());
+			setEnabled(isEditable()&& editor.canPasteFromClipboard());
 		}
 	}
 
@@ -135,7 +136,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	}
 
 	public PDEEditorContributor(String menuName) {
-		sourceContributor = new BasicTextEditorActionContributor();
+		sourceContributor = new TextEditorActionContributor();
 		makeActions();
 	}
 	private void addGlobalAction(String id) {

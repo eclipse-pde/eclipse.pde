@@ -24,15 +24,15 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.*;
-import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public abstract class PDESourcePage
-	extends ExtendedTextEditor
+	extends TextEditor
 	implements IPDEEditorPage, IGotoMarker {
 	public static final String PAGE_TITLE = "SourcePage.title";
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
@@ -56,10 +56,10 @@ public abstract class PDESourcePage
 
 	public PDESourcePage(PDEMultiPageEditor editor) {
 		this.editor = editor;
+		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		initializeDocumentListener();
-		setEditorContextMenuId("#PDESourcePageEditorContext"); //$NON-NLS-1$
-		setRulerContextMenuId("#PDESourcePageRulerContext"); //$NON-NLS-1$
 	}
+	
 	public boolean becomesInvisible(IFormPage newPage) {
 	if (errorMode || isModelNeedsUpdating()) {
 			boolean cleanModel = getEditor().updateModel();
@@ -73,6 +73,7 @@ public abstract class PDESourcePage
 			}
 			errorMode = false;
 		}
+	unregisterGlobalActions();
 		//getSite().setSelectionProvider(getEditor());
 		return true;
 	}
@@ -82,6 +83,7 @@ public abstract class PDESourcePage
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage) oldPage).getSelection());
 		}
+		registerGlobalActions();
 		//getSite().setSelectionProvider(getSelectionProvider());
 	}
 
@@ -104,14 +106,14 @@ public abstract class PDESourcePage
 			getDocumentProvider().getDocument(getEditorInput());
 		document.addDocumentListener(documentListener);
 		errorMode = !getEditor().isModelCorrect(getEditor().getModel());
-		unregisterGlobalActions();
+		//unregisterGlobalActions();
 		// Important - must reset the provider to the multi-page
 		// editor.
 		// See 32622
 		getSite().setSelectionProvider(getEditor());
 	}
 	
-	private void unregisterGlobalActions() {
+	protected void unregisterGlobalActions() {
 		// A workaround for bug 27539
 		// Unregistering important actions from
 		// the key binding service allows
@@ -127,8 +129,23 @@ public abstract class PDESourcePage
 		service.unregisterAction(getAction(ActionFactory.SELECT_ALL.getId()));
 		service.unregisterAction(getAction(ActionFactory.FIND.getId()));
 		service.unregisterAction(getAction(IDEActionFactory.BOOKMARK.getId()));
+		service.unregisterAction(getAction(IDEActionFactory.ADD_TASK.getId()));
 	}
-
+	
+	protected void registerGlobalActions() {
+		IKeyBindingService service = getEditor().getSite().getKeyBindingService();
+		service.registerAction(getAction(ActionFactory.DELETE.getId()));
+		service.registerAction(getAction(ActionFactory.UNDO.getId()));
+		service.registerAction(getAction(ActionFactory.REDO.getId()));
+		service.registerAction(getAction(ActionFactory.CUT.getId()));
+		service.registerAction(getAction(ActionFactory.COPY.getId()));
+		service.registerAction(getAction(ActionFactory.PASTE.getId()));
+		service.registerAction(getAction(ActionFactory.SELECT_ALL.getId()));
+		service.registerAction(getAction(ActionFactory.FIND.getId()));
+		service.registerAction(getAction(IDEActionFactory.BOOKMARK.getId()));
+		service.registerAction(getAction(IDEActionFactory.ADD_TASK.getId()));
+	}
+	
 	public void dispose() {
 		IDocument document =
 			getDocumentProvider().getDocument(getEditorInput());

@@ -77,6 +77,7 @@ public abstract class PDEFormPage
 	public void becomesVisible(IFormPage oldPage) {
 		update();
 		setFocus();
+		getEditor().getContributor().updateSelectableActions(null);
 	}
 	public boolean contextMenuAboutToShow(IMenuManager manager) {
 		return true;

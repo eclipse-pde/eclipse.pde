@@ -10,21 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.update.ui.forms.internal.IFormPage;
+import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class ManifestSourcePageNew extends ManifestSourcePage implements IPDEColorConstants {
 	class SelectionChangedListener  implements ISelectionChangedListener {
@@ -43,7 +41,6 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 		dynamicReconcilingLock= new Object();
 		modelNeedsUpdatingLock= new Object();
 		setRangeIndicator(new DefaultRangeIndicator());
-		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 	}
 	
 	public IContentOutlinePage createContentOutlinePage() {
@@ -65,6 +62,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 			warnErrorsInSource();
 			return false;
 		}
+		unregisterGlobalActions();
 		//getSite().setSelectionProvider(getEditor());
 		return true;
 	}
@@ -76,6 +74,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage)oldPage).getSelection());
 		}
+		registerGlobalActions();
 		//getSite().setSelectionProvider(getSelectionProvider());
 	}
 	
