@@ -180,6 +180,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (sourceFolder != null) {
 				properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
 				properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
+			} else {
+				return false;
 			}
 			String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
 			if (outputValue != null) {
