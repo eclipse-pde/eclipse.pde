@@ -159,15 +159,21 @@
       		name="%pluginManifestName" 
     		base-type="org.eclipse.core.runtime.xml"
    			priority="high"				
-    		file-names="plugin.xml"
-			describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:plugin"/>
+    		file-names="plugin.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="plugin"/>
+		</describer>
+	  </content-type>
    	  <content-type 
    	  		id="fragmentManifest" 
    	  		name="%fragmentManifestName" 
        		base-type="org.eclipse.core.runtime.xml"
     		priority="high"				
-    		file-names="fragment.xml"
-			describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:fragment"/>
+    		file-names="fragment.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="fragment"/>
+		</describer>
+	  </content-type>
 	  <content-type 
 	  		id="pluginProperties" 
 	  		name="%pluginPropertiesName" 
