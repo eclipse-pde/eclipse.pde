@@ -56,7 +56,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0); //$NON-NLS-1$
 			dep[4] = new PluginReference("org.eclipse.ui.ide", null, 0); //$NON-NLS-1$
 			dep[5] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0); //$NON-NLS-1$
-			dep[6] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0); //$NON-NLS-1$
+			dep[6] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
 			return dep;
 		}
 		return super.getDependencies(schemaVersion);

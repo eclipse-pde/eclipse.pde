@@ -48,7 +48,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion != null) {
 			IPluginReference[] dep = new IPluginReference[5];
-			dep[0] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0); //$NON-NLS-1$
+			dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
 			dep[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
 			dep[2] = new PluginReference("org.eclipse.jface.text", null, 0); //$NON-NLS-1$
 			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0); //$NON-NLS-1$

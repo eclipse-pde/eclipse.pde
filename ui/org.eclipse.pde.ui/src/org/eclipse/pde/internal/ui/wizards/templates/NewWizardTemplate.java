@@ -86,7 +86,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (schemaVersion != null) {
 			result.add(new PluginReference("org.eclipse.ui.ide", null, 0)); //$NON-NLS-1$
-			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0)); //$NON-NLS-1$
+			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		}
 		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}

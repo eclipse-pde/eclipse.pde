@@ -118,7 +118,7 @@ public class Fragment extends PluginBase implements IFragment {
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		if (getSchemaVersion()!=null) {
-			writer.print("<?eclipse version=\"" + getSchemaVersion() +"\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println("<?eclipse version=\"" + getSchemaVersion() +"\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.print("<fragment"); //$NON-NLS-1$
 		if (getId() != null) {
