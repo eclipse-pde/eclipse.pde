@@ -13,15 +13,13 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
-import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.*;
@@ -187,22 +185,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 			status =
 				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
-	}
-
-	public static void registerPlatformLaunchers(IProject project) {
-		try {
-			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILauncher[] launchers = manager.getLaunchers();
-			for (int i = 0; i < launchers.length; i++) {
-				ILauncher launcher = launchers[i];
-				if (launcher.getIdentifier().equals(RUN_LAUNCHER_ID)) {
-					manager.setDefaultLauncher(project, launcher);
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
 	}
 
 	public void startup() throws CoreException {

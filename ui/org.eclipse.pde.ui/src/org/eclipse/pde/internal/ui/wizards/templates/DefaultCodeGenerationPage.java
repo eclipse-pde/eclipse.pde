@@ -406,7 +406,6 @@ public class DefaultCodeGenerationPage extends WizardPage {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		if (!PDE.hasPluginNature(project))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
-		PDEPlugin.registerPlatformLaunchers(project);
 	}
 	public boolean finish() {
 		final IProject project = (IProject) projectProvider.getProject();

@@ -274,7 +274,6 @@ public class ConvertedProjectsPage extends WizardPage {
 				buildFile,
 				PDEPlugin.BUILD_EDITOR_ID);
 		}
-		PDEPlugin.registerPlatformLaunchers(project);
 	}
 	private void convertProjects(Object[] selected, boolean updateBuildPath, IProgressMonitor monitor)
 		throws CoreException {

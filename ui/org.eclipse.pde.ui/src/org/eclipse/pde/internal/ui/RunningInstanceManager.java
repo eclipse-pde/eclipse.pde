@@ -1,13 +1,12 @@
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.IDebugEventListener;
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
 
-public class RunningInstanceManager implements IDebugEventListener {
+public class RunningInstanceManager implements IDebugEventSetListener {
 	ArrayList instances = new ArrayList();
 	
 	class Instance {
@@ -42,6 +41,11 @@ public class RunningInstanceManager implements IDebugEventListener {
 		return null;
 	}
 	
+	public void handleDebugEvents(DebugEvent [] events) {
+		for (int i=0; i<events.length; i++) {
+			handleDebugEvent(events[i]);
+		}
+	}
 	public void handleDebugEvent(DebugEvent e) {
 		if (instances.size() == 0)
 			return;

@@ -52,24 +52,6 @@
             id="org.eclipse.pde.ui.MainPreferencePage">
       </page>
       <page
-            name="%preferences.runtimeTracing.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.RuntimeTracingPreferencePage"
-            id="org.eclipse.pde.ui.RuntimeTracingPage">
-      </page>
-      <page
-            name="%preferences.advancedTracing.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.AdvancedTracingPreferencePage"
-            id="org.eclipse.pde.ui.AdvancedTracingPage">
-      </page>
-      <page
-            name="%preferences.buildpath.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
-            id="org.eclipse.pde.ui.BuildpathPreferencePage">
-      </page>
-      <page
             name="%preferences.target.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage"
@@ -80,6 +62,12 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage"
             id="org.eclipse.pde.ui.TargetEnvironmentPreferencePage">
+      </page>
+      <page
+            name="%preferences.buildpath.name"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage"
+            id="org.eclipse.pde.ui.BuildpathPreferencePage">
       </page>
    </extension>
    <extension
@@ -478,26 +466,6 @@
                id="org.eclipse.pde.ui.UpdateClasspathAction3">
          </action>
       </objectContribution>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.launchers">
-      <launcher
-            label="%newlauncher.withWizard.label"
-            icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
-            description="%newlauncher.withWizard.description"
-            wizard="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherWizard"
-            modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherDelegate:withWizard"
-            id="org.eclipse.pde.ui.WorkbenchLauncherWithWizard">
-      </launcher>
-      <launcher
-            label="%newlauncher.regular.label"
-            icon="icons/full/ctool16/eclipse_launcher.gif"
-            description="%newlauncher.regular.description"
-            modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.WorkbenchLauncherDelegate"
-            id="org.eclipse.pde.ui.WorkbenchLauncher">
-      </launcher>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">

@@ -113,7 +113,6 @@ public class ProjectStructurePage extends WizardPage {
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 
 		setDefaultVM(project);
-		PDEPlugin.registerPlatformLaunchers(project);
 	}
 
 	static void setDefaultVM(IProject project) throws CoreException {

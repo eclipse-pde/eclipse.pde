@@ -44,6 +44,7 @@ private static void initializeDefaults() {
 }
 
 protected void createFieldEditors() {
+	/*
 	BooleanFieldEditor editor =
 		new BooleanFieldEditor(
 			PROP_NO_PDE_NATURE,
@@ -52,6 +53,7 @@ protected void createFieldEditors() {
 	addField(editor);
 	
 	new Label(getFieldEditorParent(), SWT.NULL);
+	*/
 	
 	RadioGroupFieldEditor reditor =
 		new RadioGroupFieldEditor(

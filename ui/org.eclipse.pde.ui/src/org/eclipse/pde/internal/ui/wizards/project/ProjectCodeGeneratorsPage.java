@@ -206,7 +206,6 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		ProjectStructurePage.setDefaultVM(project);
-		PDEPlugin.registerPlatformLaunchers(project);
 		IClasspathEntry[] libraries = new IClasspathEntry[0];
 		if (setBuildpath)
 			BuildPathUtil.setBuildPath(project, structureData, libraries, monitor);
