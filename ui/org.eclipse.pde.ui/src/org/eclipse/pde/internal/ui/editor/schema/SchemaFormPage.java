@@ -30,7 +30,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	private DescriptionSection descriptionSection;
 	private GrammarSection grammarSection;
 	private SchemaPropertySheet propertySheetPage;
-	private IColorManager colorManager=new ColorManager();	
+	private IColorManager colorManager= ColorManager.getDefault();	
 
 	public SchemaFormPage(PDEFormEditor editor) {
 		super(editor, PAGE_ID, PDEPlugin.getResourceString(PAGE_TITLE));

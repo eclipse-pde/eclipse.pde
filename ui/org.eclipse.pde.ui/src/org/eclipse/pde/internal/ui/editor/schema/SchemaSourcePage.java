@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.contentoutline.*;
 
 public class SchemaSourcePage extends XMLSourcePage {
 	public SchemaSourcePage(PDEFormEditor editor, String id, String title) {

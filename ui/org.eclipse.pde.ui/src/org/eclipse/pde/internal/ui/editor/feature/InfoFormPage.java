@@ -28,7 +28,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class InfoFormPage extends PDEFormPage {
 	public static final String PAGE_ID = "info";	 //$NON-NLS-1$
 	private static final String KEY_TITLE = "FeatureEditor.InfoPage.heading"; //$NON-NLS-1$
-	private IColorManager colorManager = new ColorManager();
+	private IColorManager colorManager = ColorManager.getDefault();
 	private InfoSection infoSection;
 /**
  * 

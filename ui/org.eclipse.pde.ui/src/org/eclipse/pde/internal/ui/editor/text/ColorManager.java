@@ -20,12 +20,20 @@ import org.eclipse.swt.widgets.Display;
 
 public class ColorManager implements IColorManager, IPDEColorConstants {
 
-	private static Map fColorTable = new HashMap(10);
+	private static ColorManager fColorManager;
+	private Map fColorTable = new HashMap(5);
 	private static int counter = 0;
 
 	public ColorManager() {
 		initialize();
+	}
+	
+	public static ColorManager getDefault(){
+		if (fColorManager == null){
+			fColorManager = new ColorManager();
+		}
 		counter++;
+		return fColorManager;
 	}
 
 	public static void initializeDefaults(IPreferenceStore store) {
@@ -51,13 +59,24 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 			Iterator e = fColorTable.values().iterator();
 			while (e.hasNext())
 				 ((Color) e.next()).dispose();
+			fColorManager = null;
 		}
 	}
-
+	
 	private void putColor(IPreferenceStore pstore, String property) {
 		RGB setting = PreferenceConverter.getColor(pstore, property);
-		Color color = new Color(Display.getCurrent(), setting);
-		fColorTable.put(property, color);
+		Color oldColor = (Color) fColorTable.get(property);
+		if (oldColor != null){
+			if (oldColor.getRGB().equals(setting))
+				return;
+			oldColor.dispose();
+		}
+		fColorTable.put(property, new Color(Display.getCurrent(), setting));
+	}
+
+	public void updateProperty(String property){
+		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
+		putColor(pstore, property);
 	}
 
 	public Color getColor(String key) {
