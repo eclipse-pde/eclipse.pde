@@ -493,6 +493,25 @@
       </launchConfigurationTabGroup>
    </extension>
    <extension
+         point="org.eclipse.debug.ui.launchConfigurationShortcuts">
+      <shortcut
+            configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
+            id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+   </extension>
+   <extension
          point="org.eclipse.pde.core.schemaMap">
       <map
             point="org.eclipse.ant.core.antObjects"
