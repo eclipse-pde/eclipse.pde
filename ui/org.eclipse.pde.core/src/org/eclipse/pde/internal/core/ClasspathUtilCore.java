@@ -211,7 +211,7 @@ public class ClasspathUtilCore {
 
 		boolean inWorkspace = addPlugin(plugin, isExported, true, result, alreadyAdded);
 		
-		if (plugin instanceof Plugin && ((Plugin)plugin).hasExtensibleAPI()) {
+		if (plugin instanceof IPlugin && hasExtensibleAPI((IPlugin)plugin)) {
 			String id  = plugin.getId();
 			String version = plugin.getVersion();
 			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, version);
