@@ -170,7 +170,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			File configDir = createWorkingDirectory(data);
 			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
-				if (pluginMap.containsKey("org.eclipse.update.configurator")) 
+				if (autoStartPlugins.containsKey("org.eclipse.update.configurator")) 
 					savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
 			} else {
 				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
