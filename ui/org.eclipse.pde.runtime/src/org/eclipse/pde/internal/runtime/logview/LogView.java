@@ -15,7 +15,12 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
@@ -33,6 +38,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
+
 
 public class LogView extends ViewPart implements ILogListener {
     private TableTreeViewer tableTreeViewer;
