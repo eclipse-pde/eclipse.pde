@@ -10,34 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -165,7 +145,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				}
 				
 				
-				// generate CSS files if necessary
+				// generate CSS files if necessary (schema.css is default below)
 				IPath path = file.getProject().getFullPath().append(getDocLocation());
 								
 				outputPath = (Path)path.append(SchemaTransformer.getSchemaCSSName());
@@ -180,7 +160,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
 					schemaCSSFile.create(target, true, monitor);
 				}
-					
+
+				// generate CSS files if necessary (book.css is default below)
 				if (getCSSURL()==null)
 					outputPath=(Path)path.append(SchemaTransformer.getPlatformCSSName());
 				else
@@ -224,6 +205,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				return false;
 			cssFile = new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getSchemaCSSName());
 		} else{
+			if (getCSSURL() == null)
+				return false;
 			cssFile = new File(getCSSURL().getFile());
 		}
 		
@@ -277,9 +260,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 		monitor.done();
 	}
+	
 	public String getDocLocation() {
 		return CompilerFlags.getString(CompilerFlags.S_DOC_FOLDER);
 	}
+	
 	private String getOutputFileName(IFile file) {
 		String fileName = file.getName();
 		int dot = fileName.lastIndexOf('.');
@@ -327,6 +312,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		String name = file.getName();
 		return name.endsWith(".exsd") || name.endsWith(".xsd");
 	}
+	
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 		String outputFileName = getOutputFileName(file);
 		String message =
@@ -348,9 +334,11 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 		monitor.done();
 	}
+	
 	protected void startupOnInitialize() {
 		super.startupOnInitialize();
 	}
+	
 	private void transform(
 		URL schemaURL,
 		InputStream input,

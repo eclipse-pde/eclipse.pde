@@ -11,9 +11,11 @@
 package org.eclipse.pde.ant;
 
 import java.io.*;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -21,11 +23,9 @@ import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.SourceDOMParser;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.Schema;
-import org.xml.sax.*;
+import org.xml.sax.InputSource;
 
 public class ConvertSchemaToHTML extends Task {
 
@@ -36,10 +36,7 @@ public class ConvertSchemaToHTML extends Task {
 	private URL cssURL;
 
 	public ConvertSchemaToHTML(){
-		try {
-			cssURL = new URL ("file:\\../book.css");
-		} catch (MalformedURLException e) {
-		}
+		cssURL = null;
 	}
 
 	public void execute() throws BuildException {
@@ -129,7 +126,7 @@ public class ConvertSchemaToHTML extends Task {
 	public void setCSSURL(URL url){
 		cssURL = url;
 	}
-	
+
 	private IPluginModelBase readManifestFile() {
 		if (manifest == null) {
 			System.out.println(

@@ -10,13 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Stack;
@@ -31,20 +25,8 @@ import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceDOMParser;
-import org.eclipse.pde.internal.core.ischema.IDocumentSection;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.ischema.ISchemaType;
-import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
-import org.eclipse.pde.internal.core.schema.DocumentSection;
-import org.eclipse.pde.internal.core.schema.Schema;
-import org.eclipse.pde.internal.core.schema.SchemaObject;
-import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -343,6 +325,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 	public static String getPlatformCSSName(){
 		return "book.css";
 	}
+	
 	public void addCSS(PrintWriter out, URL cssURL, byte cssPurpose) {
 		File cssFile;
 
@@ -356,7 +339,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+getPlatformCSSName()+"\"/>");
 				return;
 			} else if (cssPurpose == BUILD){
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
+//				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+getPlatformCSSName()+"\"/>"); //defect 43227
 				return;
 			}
 		} else {
@@ -365,7 +349,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssFile.getName()+"\"/>");
 				return;
 			} else if (cssPurpose == BUILD){
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssURL.toExternalForm()+"\"/>");
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+cssURL.toExternalForm()+"\"/>"); 
 				return;
 			}
 		}
@@ -392,7 +376,6 @@ public class SchemaTransformer implements ISchemaTransformer {
 			// may want to log this error in the future.
 		}
 	}
-
 
 	public void transform(PrintWriter out, ISchema schema) {
 		transform(out, schema, null,TEMP); 
@@ -452,7 +435,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getSchemaCSSName()+"\"/>");
 				break;
 			case(BUILD):
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+ getSchemaCSSName()+"\"/>");
+				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getSchemaCSSName()+"\"/>"); // defect 43227
 				break;
 			default:
 				break;
