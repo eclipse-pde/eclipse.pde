@@ -89,7 +89,7 @@ public abstract class BaseExportWizard
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
 						PDEPlugin.getResourceString("BaseExportWizard.confirmReplace.title"),  //$NON-NLS-1$
 						PDEPlugin.getFormattedMessage("BaseExportWizard.confirmReplace.desc", //$NON-NLS-1$
-								page1.getDestination() + File.separator + page1.getFileName())))
+								new Path(page1.getDestination(),page1.getFileName()).toOSString())))
 					return false;
 				zipFile.delete();
 			}
