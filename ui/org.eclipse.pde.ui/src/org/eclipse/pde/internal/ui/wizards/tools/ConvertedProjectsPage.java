@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.convert;
+package org.eclipse.pde.internal.ui.wizards.tools;
 
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.*;

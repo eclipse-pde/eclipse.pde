@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.convert;
+package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -23,7 +23,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.imports.*;
 
 public class MigratePluginWizard extends Wizard {
 	private MigratePluginWizardPage page1;

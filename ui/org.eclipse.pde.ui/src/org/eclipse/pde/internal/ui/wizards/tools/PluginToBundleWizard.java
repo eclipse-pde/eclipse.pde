@@ -8,24 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.imports;
+package org.eclipse.pde.internal.ui.wizards.tools;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
 
-public class UpdateBuildpathWizard extends Wizard {
-	private UpdateBuildpathWizardPage page1;
+public class PluginToBundleWizard extends Wizard {
+	private PluginToBundleWizardPage page1;
 	private IPluginModelBase [] selected;
-	private static final String STORE_SECTION = "UpdateBuildpathWizard";
-	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle";
+	private static final String STORE_SECTION = "PluginToBundleWizard";
+	private static final String KEY_WTITLE = "PluginToBundleWizard.wtitle";
 
-	public UpdateBuildpathWizard(IPluginModelBase[] selected) {
+	public PluginToBundleWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN2BUNDLE_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 		this.selected = selected;
@@ -44,12 +43,19 @@ public class UpdateBuildpathWizard extends Wizard {
 		page1.storeSettings();
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
 		System.arraycopy(finalSelected, 0, modelArray, 0, finalSelected.length);
-		UpdateClasspathAction.run(true, getContainer(), modelArray);
+		PluginToBundleAction.run(true, getContainer(), modelArray);
 		return true;
 	}
 	
 	public void addPages() {
-		page1 = new UpdateBuildpathWizardPage(selected);
+		page1 = new PluginToBundleWizardPage(selected);
 		addPage(page1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	public boolean canFinish() {
+		return page1.isPageComplete();
 	}
 }

@@ -152,7 +152,7 @@
             name="%new.convert.name"
             icon="icons/ctool16/convjpprj_wiz.gif"
             category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.wizards.convert.ConvertedProjectWizard"
+            class="org.eclipse.pde.internal.ui.wizards.tools.ConvertedProjectWizard"
             id="org.eclipse.pde.ui.ConvertedProjectWizard">
          <description>
             %new.convert.description
@@ -687,21 +687,21 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.UpdateClasspathAction1">
          </action>
          <action
                label="%PluginToBundleWizardAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.convert.PluginToBundleAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.PluginToBundleAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.PluginToBundleWizard1">
          </action>
          <action
                label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.convert.MigrationAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction1">
@@ -743,7 +743,7 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
                menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.UpdateClasspathAction2">
@@ -751,14 +751,14 @@
          <action
                label="%PluginToBundleWizardAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.convert.PluginToBundleAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.PluginToBundleAction"
                menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.PluginToBundleWizard1">
          </action>
          <action
                label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.convert.MigrationAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction2">
@@ -820,7 +820,7 @@
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
                menubarPath="org.eclipse.pde.ui.project.tools/group0"
                enablesFor="*"
                id="org.eclipse.pde.ui.UpdateClasspathAction3">
@@ -828,14 +828,14 @@
          <action
                label="%PluginToBundleWizardAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.convert.PluginToBundleAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.PluginToBundleAction"
                menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.PluginToBundleWizard2">
          </action>
          <action
                label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.convert.MigrationAction"
+               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction3">

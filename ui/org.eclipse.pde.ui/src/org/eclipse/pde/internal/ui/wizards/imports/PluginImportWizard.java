@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.*;
+import org.eclipse.pde.internal.ui.wizards.tools.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 

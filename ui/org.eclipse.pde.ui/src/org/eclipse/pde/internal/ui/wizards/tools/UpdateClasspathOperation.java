@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.imports;
+package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -42,7 +42,7 @@ public class UpdateClasspathOperation implements IRunnableWithProgress {
 		return null;
 	}
 
-	static IPath getExpandedPath(IPath path) {
+	public static IPath getExpandedPath(IPath path) {
 		String first = path.segment(0);
 		if (first != null) {
 			IPath rest = path.removeFirstSegments(1);
@@ -64,7 +64,7 @@ public class UpdateClasspathOperation implements IRunnableWithProgress {
 		return path;
 	}
 
-	static IPath getSourcePath(IPath jarPath) {
+	public static IPath getSourcePath(IPath jarPath) {
 		jarPath = getExpandedPath(jarPath);
 		String libName = jarPath.lastSegment();
 		if (libName != null) {
