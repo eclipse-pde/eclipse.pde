@@ -37,12 +37,13 @@ public class FindReferencesAction extends Action {
 			input.setSearchString(((IPlugin) object).getId());
 		} else if (object instanceof IPluginExtensionPoint) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
+			IPluginModelBase model = ((IPluginExtensionPoint) object).getPluginModel();
+			String id = model.getPluginBase().getId();
+			if (id == null || id.trim().length() == 0)
+				id = "*";
 			input
 				.setSearchString(
-					((IPluginExtensionPoint) object)
-						.getPluginModel()
-						.getPluginBase()
-						.getId()
+						id
 						+ "." //$NON-NLS-1$
 						+ ((IPluginExtensionPoint) object).getId());
 		} else if (object instanceof IPluginImport) {
