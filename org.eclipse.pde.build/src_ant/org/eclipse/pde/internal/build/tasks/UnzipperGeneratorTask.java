@@ -44,4 +44,11 @@ public class UnzipperGeneratorTask extends Task {
 		}
 	}
 
+	/**
+	 *  Set the property file containing information about packaging
+	 * @param propertyFile: the path to a property file
+	 */
+	public void setPackagePropertyFile(String propertyFile) {
+		generator.setPropertyFile(propertyFile);
+	}
 }
