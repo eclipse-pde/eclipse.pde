@@ -38,7 +38,7 @@ public class BinSection
 		super.initializeCheckState();
 		IBuild build = buildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		
 		if (binIncl == null)
 			return;
@@ -49,7 +49,7 @@ public class BinSection
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = buildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
 
 		removeChildren(binIncl, parentFolder);
