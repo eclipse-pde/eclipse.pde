@@ -46,6 +46,17 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			script.printEchoTask(PROPERTY_ASSEMBLY_TMP + ": " + getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$
 			script.printEchoTask(PROPERTY_DESTINATION_TEMP_FOLDER + ": " + getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER)); //$NON-NLS-1$
 		}
+		script.println("<condition property=\"" + PROPERTY_PLUGIN_ARCHIVE_PREFIX + "\" value=\"" + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("\t<equals arg1=\"" + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("</condition>"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_PLUGIN_ARCHIVE_PREFIX, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION);
+		
+		script.println();
+		script.println("<condition property=\"" + PROPERTY_FEATURE_ARCHIVE_PREFIX + "\" value=\"" + DEFAULT_FEATURE_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("\t<equals arg1=\"" + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + "\"  arg2=\"\" trim=\"true\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.println("</condition>"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_FEATURE_ARCHIVE_PREFIX, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION);
+		
 		Map parameters = new HashMap(1);
 		parameters.put("assembleScriptName", filename); //$NON-NLS-1$
 		//TODO Improve the name handling
@@ -97,7 +108,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + plugins[i].getSymbolicName() + "_" + plugins[i].getVersion()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			parameters.add(getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + plugins[i].getSymbolicName() + "_" + plugins[i].getVersion()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -114,7 +125,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		}
 
 		for (int i = 0; i < features.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + features[i].getVersionedIdentifier().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			parameters.add(getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + features[i].getVersionedIdentifier().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -171,13 +182,13 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
-			files[index++] = new TarFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null);
+			files[index++] = new TarFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), null);
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			files[index++] = new TarFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + featureLocation.lastSegment(), null);
+			files[index++] = new TarFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + featureLocation.lastSegment(), null);
 		}
 
 		if (!copyRootFile) {
@@ -207,13 +218,13 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
-			files[index++] = new ZipFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null);
+			files[index++] = new ZipFileSet(pluginLocation.toOSString(), !isFolder, null, null, null, null, null, getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), null);
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			files[index++] = new ZipFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + featureLocation.lastSegment(), null);
+			files[index++] = new ZipFileSet(featureLocation.toOSString(), false, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + featureLocation.lastSegment(), null);
 		}
 
 		if (!copyRootFile) {
@@ -239,16 +250,16 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
 			if (isFolder) {
-				script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
+				script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, null, null, null)}, false);
 			} else {
-				script.printCopyTask(pluginLocation.toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + pluginLocation.lastSegment(), null, false);
+				script.printCopyTask(pluginLocation.toOSString(), getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), null, false);
 			}
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
+			script.printCopyTask(null, getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + featureLocation.lastSegment(), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false);
 		}
 
 		for (int i = 0; i < rootFiles.length; i++) {
