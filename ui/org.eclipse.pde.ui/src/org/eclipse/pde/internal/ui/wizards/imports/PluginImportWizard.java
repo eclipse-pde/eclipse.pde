@@ -95,15 +95,17 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page2.storeSettings(true);
 			final boolean doImportToWorkspace = page1.doImportToWorkspace();
 			final boolean doExtractPluginSource = page1.doExtractPluginSource();
+			final ArrayList modelIds = new ArrayList();
 			IRunnableWithProgress op =
 				getImportOperation(
 					getShell(),
 					doImportToWorkspace,
 					doExtractPluginSource,
-					models);
+					models,
+					modelIds);
 			getContainer().run(true, true, op);
 					
-			UpdateClasspathAction.run(true, getContainer(), getWorkspaceCounterparts(models));
+			UpdateClasspathAction.run(true, getContainer(), getWorkspaceCounterparts(modelIds));
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -117,7 +119,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		final Shell shell,
 		final boolean doImport,
 		final boolean doExtract,
-		final IPluginModelBase[] models) {
+		final IPluginModelBase[] models,
+		final ArrayList modelIds) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
@@ -126,6 +129,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					PluginImportOperation op =
 						new PluginImportOperation(
 							models,
+							modelIds,
 							doImport,
 							doExtract,
 							query);
@@ -207,12 +211,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 	
-	private IPluginModelBase[] getWorkspaceCounterparts(IPluginModelBase[] models) {
-		ArrayList modelIds = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getPluginBase().getLibraries().length > 0)
-				modelIds.add(models[i].getPluginBase().getId());
-		}
+	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
 		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
 		for (int i = 0; i < modelIds.size(); i++) {
 			IPlugin plugin =

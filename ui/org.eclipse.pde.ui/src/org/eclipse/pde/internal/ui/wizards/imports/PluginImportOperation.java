@@ -82,6 +82,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	}
 
 	private IPluginModelBase[] models;
+	private ArrayList modelIds;
 	private boolean doImport;
 	private boolean extractSource;
 
@@ -90,12 +91,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 	public PluginImportOperation(
 		IPluginModelBase[] models,
+		ArrayList modelIds,
 		boolean doImport,
 		boolean doExtractSource,
 		IReplaceQuery replaceQuery) {
 		Assert.isNotNull(models);
 		Assert.isNotNull(replaceQuery);
 		this.models = models;
+		this.modelIds = modelIds;
 		this.extractSource = doExtractSource;
 		this.doImport = doExtractSource ? true : doImport;
 
@@ -225,10 +228,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
 					PDECore.BINARY_PROJECT_VALUE);
 
-			if (isJavaProject)
+			if (isJavaProject) {
 				JavaCore.create(project).setRawClasspath(
 					new IClasspathEntry[0],
 					monitor);
+				modelIds.add(model.getPluginBase().getId());
+			}
 		} finally {
 			monitor.done();
 		}

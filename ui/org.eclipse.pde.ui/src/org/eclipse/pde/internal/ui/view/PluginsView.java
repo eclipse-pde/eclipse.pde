@@ -394,11 +394,12 @@ public class PluginsView extends ViewPart {
 		}
 		try {
 			Shell shell = treeViewer.getTree().getShell();
+			ArrayList modelIds = new ArrayList();
 			IRunnableWithProgress op =
-				PluginImportWizard.getImportOperation(shell, true, extractSource, models);
+				PluginImportWizard.getImportOperation(shell, true, extractSource, models, modelIds);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
-			UpdateClasspathAction.doUpdateClasspath(new NullProgressMonitor(),getWorkspaceCounterparts(models));
+			UpdateClasspathAction.doUpdateClasspath(new NullProgressMonitor(),getWorkspaceCounterparts(modelIds));
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -560,12 +561,7 @@ public class PluginsView extends ViewPart {
 		}
 		return "";
 	}
-	private IPluginModelBase[] getWorkspaceCounterparts(IPluginModelBase[] models) {
-		ArrayList modelIds = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getPluginBase().getLibraries().length > 0)
-				modelIds.add(models[i].getPluginBase().getId());
-		}
+	private IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
 		IPluginModelBase[] wModels = new IPluginModelBase[modelIds.size()];
 		for (int i = 0; i < modelIds.size(); i++) {
 			IPlugin plugin =
