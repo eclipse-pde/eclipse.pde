@@ -6,9 +6,14 @@
    provider-name="International Business Machines Corp.">
 
    <runtime>
+      <library name="pde.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde.core" export="true"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -18,7 +23,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.pde.internal.core.PluginProject">
+               class="org.eclipse.pde.internal.PluginProject">
          </run>
       </runtime>
    </extension>
@@ -28,7 +33,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.pde.internal.core.FeatureProject">
+               class="org.eclipse.pde.internal.FeatureProject">
          </run>
       </runtime>
    </extension>
@@ -38,7 +43,7 @@
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
-               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
+               class="org.eclipse.pde.internal.builders.ManifestConsistencyChecker">
          </run>
       </builder>
    </extension>
@@ -48,7 +53,7 @@
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
-               class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
+               class="org.eclipse.pde.internal.builders.ExtensionPointSchemaBuilder">
          </run>
       </builder>
    </extension>
@@ -58,7 +63,7 @@
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
-               class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
+               class="org.eclipse.pde.internal.builders.FeatureConsistencyChecker">
          </run>
       </builder>
    </extension>
