@@ -57,6 +57,9 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		"NewFeatureWizard.creatingFolders";
 	public static final String CREATING_MANIFEST =
 		"NewFeatureWizard.creatingManifest";
+	
+	public static final int COPYRIGHT_INDEX = 1;
+	public static final int LICENSE_INDEX = 2;
 
 	private WizardNewProjectCreationPage mainPage;
 	private PatchSpecPage specPage;
@@ -323,6 +326,19 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		StructureData structureData = structurePage.getStructureData();
 		handler.setLibrary(structureData.getRuntimeLibraryName());
 			
+		IFeatureInfo info = model.getFactory().createInfo(COPYRIGHT_INDEX);
+		feature.setFeatureInfo(info, COPYRIGHT_INDEX);
+		
+		info.setURL(feature.getId() + " Copyright URL");
+		info.setDescription(feature.getId() + " Copyright Description");
+		
+		info = model.getFactory().createInfo(LICENSE_INDEX);
+		feature.setFeatureInfo(info, LICENSE_INDEX);
+		
+		info.setURL(feature.getId() + " License URL");
+		info.setDescription(feature.getId() + " License Description");
+
+		
 		// Save the model
 		model.save();
 		model.dispose();
