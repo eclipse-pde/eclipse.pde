@@ -48,7 +48,6 @@ public class ImportListSection
 	public static final String SECTION_FDESC =
 		"ManifestEditor.ImportListSection.fdesc";
 	public static final String SECTION_NEW = "ManifestEditor.ImportListSection.new";
-	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String KEY_UPDATING_BUILD_PATH =
@@ -157,21 +156,23 @@ public class ImportListSection
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = importTable.getSelection();
 		manager.add(newAction);
-		manager.add(new Separator());
 		if (!selection.isEmpty()) {
 			manager.add(openAction);
-			manager.add(deleteAction);
-			manager.add(new Separator());
 		}
+		manager.add(new Separator());
+		
 		((DependenciesForm) getFormPage().getForm()).fillContextMenu(manager);
+		
+		if (!selection.isEmpty())
+			manager.add(deleteAction);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
+		
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
 		if (getFormPage().getModel() instanceof WorkspacePluginModelBase) {
-			manager.add(new Separator());
 			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase) getFormPage().getModel()));
 		}
 	}
@@ -245,7 +246,7 @@ public class ImportListSection
 				handleNew();
 			}
 		};
-		newAction.setText(PDEPlugin.getResourceString(POPUP_NEW));
+		newAction.setText(PDEPlugin.getResourceString("ManifestEditor.ImportListSection.new"));
 
 		openAction = new Action() {
 			public void run() {

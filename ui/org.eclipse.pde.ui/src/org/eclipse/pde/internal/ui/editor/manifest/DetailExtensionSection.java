@@ -385,7 +385,7 @@ public class DetailExtensionSection
 		manager.add(collapseAllAction);
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().addClipboardActions(manager);
-		manager.add(new Separator());
+		//manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager,
 			false);

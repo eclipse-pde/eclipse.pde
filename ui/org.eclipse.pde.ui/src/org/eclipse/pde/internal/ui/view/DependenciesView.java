@@ -149,17 +149,16 @@ public class DependenciesView extends ViewPart {
 		if (focusOnSelectionAction.isEnabled())
 			manager.add(focusOnSelectionAction);		
 		manager.add(focusOnAction);
-		manager.add(new Separator());
 		if (selection.size() == 1) {
+			manager.add(new Separator());
 			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 			actionGroup.setContext(new ActionContext(selection));
 			actionGroup.fillContextMenu(manager);
-			manager.add(new Separator());
 		}
 		if (treeViewer.getInput() instanceof WorkspacePluginModelBase) {
 			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)treeViewer.getInput()));
-			manager.add(new Separator());
 		}
+		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions")); //$NON-NLS-1$
 	}

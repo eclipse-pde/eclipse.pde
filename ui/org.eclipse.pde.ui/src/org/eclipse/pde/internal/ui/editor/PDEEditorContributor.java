@@ -156,7 +156,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 			updateSelectableActions(editor.getSelection());
 		if (addClipboard) {
 			addClipboardActions(mng);
-			mng.add(new Separator());
+			//mng.add(new Separator());
 		}
 		mng.add(saveAction);
 	}
