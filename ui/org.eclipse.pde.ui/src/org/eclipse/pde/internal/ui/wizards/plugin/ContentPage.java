@@ -210,20 +210,23 @@ public abstract class ContentPage extends WizardPage {
 			} else {
 				fLegacyButton.setEnabled(true);
 			}
-			if (!creationPage.isJavaProject()) {
-				fLibraryLabel.setEnabled(false);
-				fLibraryText.setEnabled(false);
-			} 
+			
+			fLibraryLabel.setEnabled(creationPage.isJavaProject());
+			fLibraryText.setEnabled(creationPage.isJavaProject());
+
 			if (!fIsFragment) {
 				if (!creationPage.isJavaProject()) {
 					fGenerateClass.setEnabled(false);
 					fClassLabel.setEnabled(false);
 					fClassText.setEnabled(false);
 					fUIPlugin.setEnabled(false);
-					fLibraryLabel.setEnabled(false);
-					fLibraryText.setEnabled(false);
 				} else {
 					fGenerateClass.setEnabled(true);
+					if (fGenerateClass.getSelection()){
+						fClassLabel.setEnabled(true);
+						fClassText.setEnabled(true);
+						fUIPlugin.setEnabled(true);
+					}
 				}
 			}
 		}
