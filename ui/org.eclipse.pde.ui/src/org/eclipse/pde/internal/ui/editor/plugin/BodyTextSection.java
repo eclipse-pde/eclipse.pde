@@ -17,6 +17,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -239,5 +240,8 @@ public class BodyTextSection
 
 		updateTitle(bodyText != null && bodyText.length()>0);
 		blockNotification=false;
+	}
+	public boolean canPaste(Clipboard clipboard) {
+		return true;
 	}
 }

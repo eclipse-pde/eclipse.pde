@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -576,6 +577,13 @@ public class GeneralInfoSection extends PDESection
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
 	 */
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
+		return false;
+	}
+	public boolean canPaste(Clipboard clipboard) {
+		Display d = getSection().getDisplay();
+		Control c = d.getFocusControl();
+		if (c instanceof Text)
+			return true;
 		return false;
 	}
 }
