@@ -2,37 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.pde.ui</name>
 	<comment></comment>
-	<projects>
-		<project>org.apache.xerces</project>
-		<project>org.eclipse.ant.core</project>
-		<project>org.eclipse.ant.ui</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.debug.core</project>
-		<project>org.eclipse.debug.ui</project>
-		<project>org.eclipse.help.base</project>
-		<project>org.eclipse.jdt.core</project>
-		<project>org.eclipse.jdt.debug.ui</project>
-		<project>org.eclipse.jdt.junit</project>
-		<project>org.eclipse.jdt.launching</project>
-		<project>org.eclipse.jdt.ui</project>
-		<project>org.eclipse.jface.text</project>
-		<project>org.eclipse.pde</project>
-		<project>org.eclipse.pde.build</project>
-		<project>org.eclipse.search</project>
-		<project>org.eclipse.team.core</project>
-		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.editors</project>
-		<project>org.eclipse.ui.forms</project>
-		<project>org.eclipse.ui.ide</project>
-		<project>org.eclipse.ui.intro</project>
-		<project>org.eclipse.ui.views</project>
-		<project>org.eclipse.ui.workbench.texteditor</project>
-		<project>org.eclipse.update.core</project>
-		<project>org.eclipse.update.ui.forms</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
