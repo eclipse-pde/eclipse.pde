@@ -13,13 +13,13 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -36,91 +36,42 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class PointSelectionPage
 	extends WizardPage
 	implements ISelectionChangedListener {
-	private TableViewer pointListViewer;
-	private IPluginBase pluginBase;
-	private Text pointIdText;
-	private Text pointNameText;
-	private Label description;
-	private Button descriptionButton;
-	private Button filterCheck;
-	private IPluginExtensionPoint currentPoint;
-	private final static String KEY_TITLE =
-		"NewExtensionWizard.PointSelectionPage.title";
-	private final static String KEY_POINT_ID =
-		"NewExtensionWizard.PointSelectionPage.pointId";
-	private final static String KEY_POINT_NAME =
-		"NewExtensionWizard.PointSelectionPage.pointName";
-	private final static String KEY_DESC =
-		"NewExtensionWizard.PointSelectionPage.desc";
-	private final static String KEY_MISSING_TITLE =
-		"NewExtensionWizard.PointSelectionPage.missingTitle";
-	private final static String KEY_MISSING_IMPORT =
-		"NewExtensionWizard.PointSelectionPage.missingImport";
-		
-	private final static String KEY_FILTER_CHECK =
-			"NewExtensionWizard.PointSelectionPage.filterCheck";
-	private final static String KEY_DESC_BUTTON =
-			"NewExtensionWizard.PointSelectionPage.descButton";
-	private final static String KEY_WARNING =
-			"NewExtensionWizard.PointSelectionPage.warning";
-	private IPluginExtension newExtension;
-	private ShowDescriptionAction showDescriptionAction;
+	private TableViewer fPointListViewer;
+	private IPluginBase fPluginBase;
+	private Text fPointIdText;
+	private Text fPointNameText;
+	private Label fDescription;
+	private Button fDescriptionButton;
+	private Button fFilterCheck;
+	private IPluginExtensionPoint fCurrentPoint;
+
+	private IPluginExtension fNewExtension;
+	private ShowDescriptionAction fShowDescriptionAction;
+	
+	private HashSet fAvailableImports = new HashSet();
 	
 	class PointFilter extends ViewerFilter {
-		public boolean select(
-			Viewer viewer,
-			Object parentElement,
-			Object element) {
-			if (!filterCheck.getSelection()) return true;
-			ExPoint ep = (ExPoint)element;
-			return ep.isFromDependency();
-		}
-	}
-
-	class ExPoint {
-		boolean fromDependency;
-		IPluginExtensionPoint point;
-		public ExPoint(IPluginExtensionPoint point, boolean fromDependency) {
-			this.point = point;
-			this.fromDependency = fromDependency;
-		}
-		public IPluginExtensionPoint getPoint() {
-			return point;
-		}
-		public boolean isFromDependency() {
-			return fromDependency;
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (!fFilterCheck.getSelection())
+				return true;
+			IPluginExtensionPoint point = (IPluginExtensionPoint) element;
+			return fAvailableImports.contains(point.getPluginBase().getId());
 		}
 	}
 
 	class ContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
-		private Vector points = null;
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IExternalModelManager) {
-				if (points == null) {
-					points = new Vector();
-					IWorkspaceModelManager manager =
-						PDECore.getDefault().getWorkspaceModelManager();
-					addPoints(manager.getPluginModels());
-					IExternalModelManager registry =
-						(IExternalModelManager) parent;
-					addPoints(registry.getPluginModels());
-				}
-				Object[] result = new Object[points.size()];
-				points.copyInto(result);
-				return result;
+			HashSet extPoints = new HashSet();
+			PluginModelManager manager = (PluginModelManager)parent;
+			IPluginModelBase[] plugins = manager.getPlugins();
+			for (int i = 0; i < plugins.length; i++) {
+				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
+				for (int j = 0; j < points.length; j++)
+					extPoints.add(points[j]);
 			}
-			return new Object[0];
-		}
-		private void addPoints(IPluginModel[] models) {
-			for (int i = 0; i < models.length; i++) {
-				IPluginModel model = models[i];
-				if (model.isEnabled()) {
-					IPlugin pluginInfo = model.getPlugin();
-					PointSelectionPage.this.addPoints(pluginInfo, points);
-				}
-			}
+			return extPoints.toArray();
 		}
 	}
 
@@ -131,23 +82,22 @@ public class PointSelectionPage
 			return getColumnText(obj, 0);
 		}
 		public String getColumnText(Object obj, int index) {
-			if (obj instanceof ExPoint) {
-				PDELabelProvider provider =
-					PDEPlugin.getDefault().getLabelProvider();
-				IPluginExtensionPoint point = ((ExPoint) obj).getPoint();
-				if (provider.isFullNameModeEnabled())
-					return provider.getText(point);
-				return (point).getFullId();
-			}
-			return obj.toString();
+			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+			if (provider.isFullNameModeEnabled())
+				return provider.getText((IPluginExtensionPoint) obj);
+			return ((IPluginExtensionPoint) obj).getFullId();
 		}
+		
 		public Image getImage(Object obj) {
 			return getColumnImage(obj, 0);
 		}
+		
 		public Image getColumnImage(Object obj, int index) {
-			ExPoint exp = (ExPoint) obj;
+			IPluginExtensionPoint exp = (IPluginExtensionPoint) obj;
 			int flag =
-				exp.isFromDependency() ? 0 : SharedLabelProvider.F_WARNING;
+				fAvailableImports.contains(exp.getPluginBase().getId())
+					? 0
+					: SharedLabelProvider.F_WARNING;
 			return PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_EXT_POINT_OBJ,
 				flag);
@@ -156,34 +106,59 @@ public class PointSelectionPage
 
 	public PointSelectionPage(IPluginBase model) {
 		super("pointSelectionPage");
-		this.pluginBase = model;
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		provider.connect(this);
+		this.fPluginBase = model;
+		setAvailableImports();
+		setTitle(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.title"));
+		setDescription(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.desc"));
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
-
-	void addPoints(IPluginBase pluginBase, Vector points) {
-		IPluginExtensionPoint[] pts = pluginBase.getExtensionPoints();
-		for (int i = 0; i < pts.length; i++) {
-			IPluginExtensionPoint pt = pts[i];
-			boolean fromDependency = isFromDependency(pt);
-			points.addElement(new ExPoint(pt, fromDependency));
-		}
-		if (pluginBase instanceof IPlugin
-			&& pluginBase.getModel().getUnderlyingResource() != null) {
-			// merge points from fragments
-			IWorkspaceModelManager manager =
-				PDECore.getDefault().getWorkspaceModelManager();
-			IFragment[] fragments =
-				manager.getFragmentsFor(
-					pluginBase.getId(),
-					pluginBase.getVersion());
-			for (int i = 0; i < fragments.length; i++) {
-				addPoints(fragments[i], points);
+	
+	private void setAvailableImports() {
+		fAvailableImports.clear();
+		fAvailableImports.add("org.eclipse.core.boot");
+		fAvailableImports.add("org.eclipse.core.runtime");
+		addSelfAndDirectImports(fPluginBase);
+		if (fPluginBase instanceof IFragment) {
+			IPlugin parent = getParentPlugin((IFragment)fPluginBase);
+			if (parent != null) {
+				addSelfAndDirectImports(parent);				
 			}
 		}
 	}
+	
+	
+	private IPlugin getParentPlugin(IFragment fragment) {
+		String targetId = fragment.getPluginId();
+		String targetVersion = fragment.getPluginVersion();
+		int match = fragment.getRule();
+		return PDECore.getDefault().findPlugin(targetId, targetVersion, match);
+	}
+
+	private void addSelfAndDirectImports(IPluginBase pluginBase) {
+		fAvailableImports.add(pluginBase.getId());
+		IPluginImport[] imports = fPluginBase.getImports();
+		for (int i = 0; i < imports.length; i++) {
+			String id = imports[i].getId();
+			if (fAvailableImports.add(id)) {
+				addReexportedImport(id);
+			}
+		}
+	}
+	
+	private void addReexportedImport(String id) {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginModelBase model = entry.getActiveModel();
+			IPluginImport[] imports = model.getPluginBase().getImports();
+			for (int i = 0; i < imports.length; i++) {
+				if (imports[i].isReexported() && fAvailableImports.add(imports[i].getId())) {
+					addReexportedImport(imports[i].getId());
+				}
+			}
+		}
+	}
+
 	public void createControl(Composite parent) {
 		// top level group
 		Composite outerContainer = new Composite(parent, SWT.NONE);
@@ -195,26 +170,26 @@ public class PointSelectionPage
 			new GridData(
 				GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		filterCheck = new Button(outerContainer, SWT.CHECK);
-		filterCheck.setText(PDEPlugin.getResourceString(KEY_FILTER_CHECK));
+		fFilterCheck = new Button(outerContainer, SWT.CHECK);
+		fFilterCheck.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.filterCheck"));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
-		filterCheck.setLayoutData(gd);
-		filterCheck.setSelection(true);
-		filterCheck.addSelectionListener(new SelectionAdapter() {
+		fFilterCheck.setLayoutData(gd);
+		fFilterCheck.setSelection(true);
+		fFilterCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				pointListViewer.refresh();
+				fPointListViewer.refresh();
 			}
 		});
 
-		pointListViewer =
+		fPointListViewer =
 			new TableViewer(
 				outerContainer,
 				SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		pointListViewer.setContentProvider(new ContentProvider());
-		pointListViewer.setLabelProvider(new PointLabelProvider());
-		pointListViewer.addSelectionChangedListener(this);
-		pointListViewer.setSorter(ListUtil.NAME_SORTER);
+		fPointListViewer.setContentProvider(new ContentProvider());
+		fPointListViewer.setLabelProvider(new PointLabelProvider());
+		fPointListViewer.addSelectionChangedListener(this);
+		fPointListViewer.setSorter(ListUtil.NAME_SORTER);
 
 		gd =
 			new GridData(
@@ -223,32 +198,32 @@ public class PointSelectionPage
 					| GridData.GRAB_VERTICAL);
 		gd.heightHint = 300;
 		gd.horizontalSpan = 2;
-		pointListViewer.getTable().setLayoutData(gd);
+		fPointListViewer.getTable().setLayoutData(gd);
 
-		descriptionButton = new Button(outerContainer, SWT.PUSH);
-		descriptionButton.setText(PDEPlugin.getResourceString(KEY_DESC_BUTTON));
+		fDescriptionButton = new Button(outerContainer, SWT.PUSH);
+		fDescriptionButton.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.descButton"));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		descriptionButton.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(descriptionButton);
-		descriptionButton.setEnabled(false);
-		descriptionButton.addSelectionListener(new SelectionAdapter() {
+		fDescriptionButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fDescriptionButton);
+		fDescriptionButton.setEnabled(false);
+		fDescriptionButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doShowDescription();
 			}
 		});
 
 		Label label = new Label(outerContainer, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_POINT_ID));
-		pointIdText = new Text(outerContainer, SWT.SINGLE | SWT.BORDER);
+		label.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.pointId"));
+		fPointIdText = new Text(outerContainer, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		pointIdText.setLayoutData(gd);
+		fPointIdText.setLayoutData(gd);
 		new Label(outerContainer, SWT.NULL);
 
 		label = new Label(outerContainer, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString(KEY_POINT_NAME));
-		pointNameText = new Text(outerContainer, SWT.SINGLE | SWT.BORDER);
+		label.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.pointName"));
+		fPointNameText = new Text(outerContainer, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		pointNameText.setLayoutData(gd);
+		fPointNameText.setLayoutData(gd);
 		new Label(outerContainer, SWT.NULL);
 
 		createDescriptionIn(outerContainer);
@@ -261,8 +236,8 @@ public class PointSelectionPage
 	}
 
 	public boolean canFinish() {
-		if (pointListViewer != null) {
-			ISelection selection = pointListViewer.getSelection();
+		if (fPointListViewer != null) {
+			ISelection selection = fPointListViewer.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				if (ssel.isEmpty() == false)
@@ -273,39 +248,46 @@ public class PointSelectionPage
 	}
 
 	public void createDescriptionIn(Composite composite) {
-		description = new Label(composite, SWT.NONE);
+		fDescription = new Label(composite, SWT.NONE);
 		GridData gd =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		description.setLayoutData(gd);
+		fDescription.setLayoutData(gd);
 	}
+	
 	public void dispose() {
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		provider.disconnect(this);
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
+	
 	public boolean finish() {
-		String id = pointIdText.getText();
+		String id = fPointIdText.getText();
 		if (id.length() == 0)
 			id = null;
 
-		String name = pointNameText.getText();
+		String name = fPointNameText.getText();
 		if (name.length() == 0)
 			name = null;
 
-		String point = currentPoint.getFullId();
+		String point = fCurrentPoint.getFullId();
 
 		try {
-			if (!ensureImportExists(currentPoint))
-				return false;
 			IPluginExtension extension =
-				pluginBase.getModel().getFactory().createExtension();
+				fPluginBase.getModel().getFactory().createExtension();
 			extension.setName(name);
 			extension.setPoint(point);
 			if (id != null)
 				extension.setId(id);
-			pluginBase.add(extension);
+			fPluginBase.add(extension);
+			
+			String pluginID = fCurrentPoint.getPluginBase().getId();
+			if (!fAvailableImports.contains(pluginID)) {
+				IPluginModelBase modelBase = ((IPluginModelBase) fPluginBase.getModel());
+				IPluginImport importNode = modelBase.getPluginFactory().createImport();
+				importNode.setId(pluginID);
+				fPluginBase.add(importNode);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
@@ -313,119 +295,48 @@ public class PointSelectionPage
 	}
 
 	private void doShowDescription() {
-		if (showDescriptionAction == null)
-			showDescriptionAction = new ShowDescriptionAction(currentPoint);
+		if (fShowDescriptionAction == null)
+			fShowDescriptionAction = new ShowDescriptionAction(fCurrentPoint);
 		else
-			showDescriptionAction.setExtensionPoint(currentPoint);
-		BusyIndicator
-			.showWhile(descriptionButton.getDisplay(), new Runnable() {
+			fShowDescriptionAction.setExtensionPoint(fCurrentPoint);
+		BusyIndicator.showWhile(fDescriptionButton.getDisplay(), new Runnable() {
 			public void run() {
-				showDescriptionAction.run();
+				fShowDescriptionAction.run();
 			}
 		});
 	}
 
-	private boolean isFromDependency(IPluginExtensionPoint point) {
-		IPlugin thisPlugin = getTargetPlugin(pluginBase);
-		IPlugin exPlugin = getTargetPlugin(point.getPluginBase());
-		if (thisPlugin == null || exPlugin == null)
-			return true;
-
-		String exId = exPlugin.getId();
-		// Check if it is us
-		if (exId.equals(thisPlugin.getId()))
-			return true;
-		//Check if it is implicit
-		if (exId.equals("org.eclipse.core.boot")
-			|| exId.equals("org.eclipse.core.runtime"))
-			return true;
-		// We must have it
-
-		IPluginImport[] iimports = thisPlugin.getImports();
-		for (int i = 0; i < iimports.length; i++) {
-			IPluginImport iimport = iimports[i];
-			if (iimport.getId().equals(exId)) {
-				// found it
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean ensureImportExists(IPluginExtensionPoint point)
-		throws CoreException {
-		if (isFromDependency(point))
-			return true;
-		// Don't have it - warn
-		IPlugin exPlugin = getTargetPlugin(point.getPluginBase());
-		if (exPlugin == null)
-			return true;
-		String[] args =
-			{
-				point.getResourceString(point.getName()),
-				exPlugin.getResourceString(exPlugin.getName())};
-		String message =
-			PDEPlugin.getFormattedMessage(KEY_MISSING_IMPORT, args);
-		MessageDialog.openWarning(
-			PDEPlugin.getActiveWorkbenchShell(),
-			PDEPlugin.getResourceString(KEY_MISSING_TITLE),
-			message);
-		return false;
-	}
-
-	private IPlugin getTargetPlugin(IPluginBase base) {
-		if (base instanceof IPlugin)
-			return (IPlugin) base;
-		else {
-			IFragment fragment = (IFragment) base;
-			String targetId = fragment.getPluginId();
-			String targetVersion = fragment.getPluginVersion();
-			int match = fragment.getRule();
-			return PDECore.getDefault().findPlugin(
-				targetId,
-				targetVersion,
-				match);
-		}
-	}
-
 	public IPluginExtension getNewExtension() {
-		return newExtension;
+		return fNewExtension;
 	}
+	
 	protected void initialize() {
-		pointListViewer.addFilter(new PointFilter());
-		pointListViewer.setInput(
-			PDECore.getDefault().getExternalModelManager());
-		pointListViewer.getTable().setFocus();
+		fPointListViewer.addFilter(new PointFilter());
+		fPointListViewer.setInput(PDECore.getDefault().getModelManager());
+		fPointListViewer.getTable().setFocus();
 	}
+	
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
-
-		ExPoint input = null;
-
+		setDescription("");
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			Iterator elements = ssel.iterator();
-			if (elements.hasNext()) {
-				input = (ExPoint) elements.next();
-				if (elements.hasNext())
-					input = null;
+			if (ssel != null && !ssel.isEmpty()) {
+				fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
+				if (fAvailableImports.contains(fCurrentPoint.getPluginBase().getId()))
+					setMessage(null);
+				else
+					setMessage(
+						PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.message"),
+						INFORMATION);
+				setDescription(fCurrentPoint.getFullId());
+				fDescriptionButton.setEnabled(true);
 			}
 		}
-		boolean fromDependency = input != null && input.isFromDependency();
-		setPageComplete(input != null && fromDependency);
-		descriptionButton.setEnabled(input != null);
-		String message = null;
-		if (!fromDependency)
-			message = PDEPlugin.getResourceString(KEY_WARNING);
-		setMessage(message, WARNING);
-		currentPoint = input!=null? input.getPoint():null;
-		String description = "";
-		if (currentPoint != null)
-			description = currentPoint.getFullId();
-		setDescriptionText(description);
 		getContainer().updateButtons();
 	}
+	
 	public void setDescriptionText(String text) {
-		description.setText(text);
+		fDescription.setText(text);
 	}
 }

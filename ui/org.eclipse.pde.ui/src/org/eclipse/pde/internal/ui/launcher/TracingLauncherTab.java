@@ -304,15 +304,6 @@ public class TracingLauncherTab
 		setChanged(userChange);
 	}
 
-	private IPluginModel findModel(String id, ArrayList list) {
-		for (int i = 0; i < list.size(); i++) {
-			IPluginModel model = (IPluginModel) list.get(i);
-			if (model.getPlugin().getId().equals(id))
-				return model;
-		}
-		return null;
-	}
-
 	public void initializeFrom(final ILaunchConfiguration config) {
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {

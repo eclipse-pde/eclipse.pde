@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class ExtensionPointMappings {
 	
-	private static HashMap fMap = new HashMap();;
+	private static HashMap fMap = new HashMap();
 	
 	private static void initialize() {
 		fMap.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider");
