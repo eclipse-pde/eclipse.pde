@@ -269,7 +269,8 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
-		return parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
+		IBundle bundle = getBundle();
+		return bundle == null ? null : bundle.getHeader(Constants.BUNDLE_VENDOR);
 	}
 	
 	protected String parseSingleValuedHeader(String header) {
