@@ -484,6 +484,14 @@ public class AntScript {
 		output.println("/>"); //$NON-NLS-1$
 	}
 
+	public void printPropertyRefid(String name, String ref) {
+		printTab();
+		output.print("<property"); //$NON-NLS-1$
+		printAttribute("name", name, true); //$NON-NLS-1$
+		printAttribute("refid", ref, true); //$NON-NLS-1$
+		output.println("/>"); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Print the given string to the Ant script within quotes.
 	 * 

@@ -542,20 +542,28 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generatePrologue() {
 		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
 		script.println();
-		script.printProperty(PROPERTY_BOOTCLASSPATH, ""); //$NON-NLS-1$
+		
 		script.printProperty(PROPERTY_BASE_WS, getPropertyFormat(PROPERTY_WS));
 		script.printProperty(PROPERTY_BASE_OS, getPropertyFormat(PROPERTY_OS));
 		script.printProperty(PROPERTY_BASE_ARCH, getPropertyFormat(PROPERTY_ARCH));
 		script.printProperty(PROPERTY_BASE_NL, getPropertyFormat(PROPERTY_NL));
-
+		script.println();
+		
+		script.printComment(Messages.build_compilerSetting);
 		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
-
+		script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
+		script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
+        script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
+		script.println("\t</fileset>"); //$NON-NLS-1$
+		script.println("</path>"); //$NON-NLS-1$
+		script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
 		script.println();
+		
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 
 		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -575,6 +583,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
 		script.printProperty(PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
+		script.println();
+
 		script.printTargetEnd();
 	}
 

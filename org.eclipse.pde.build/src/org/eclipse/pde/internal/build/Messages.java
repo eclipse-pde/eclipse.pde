@@ -63,6 +63,8 @@ public class Messages extends NLS {
 	public static String build_feature_zips;
 	public static String build_feature_refresh;
 
+	public static String build_compilerSetting;
+	
 	// assemble.xml
 	public static String assemble_jarUp;
 
