@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.core.bundle;
 import java.io.*;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.*;
 import java.net.URL;
 import java.util.zip.*;
 
@@ -30,6 +31,7 @@ import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -218,9 +220,17 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		}
 		return url;
 	}
+	
+	protected NLResourceHelper createNLResourceHelper() {
+		return new NLResourceHelper("plugin", new URL[] {getNLLookupLocation()});
+	}
 
 	public URL getNLLookupLocation() {
-		return null;
+		try {
+			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 	/*
 	 * (non-Javadoc)

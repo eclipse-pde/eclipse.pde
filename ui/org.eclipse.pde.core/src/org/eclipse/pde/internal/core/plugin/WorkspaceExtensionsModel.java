@@ -30,8 +30,7 @@ public class WorkspaceExtensionsModel
 
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = fUnderlyingResource.getName().equals("plugin.xml") ? "plugin" : "fragment"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return new NLResourceHelper(name, getNLLookupLocations());
+		return new NLResourceHelper("plugin", getNLLookupLocations());
 	}
 	
 	public URL getNLLookupLocation() {
