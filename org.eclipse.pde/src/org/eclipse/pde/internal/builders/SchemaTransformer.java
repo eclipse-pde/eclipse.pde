@@ -63,6 +63,38 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private static final String COLOR_DTD = "#800000";
 	private static final String COLOR_COPYRIGHT = "#336699";
 	private File tempCSSFile;
+	public static final String[] forbiddenEndTagKeys = {
+		"area",
+		"base",
+		"basefont",
+		"br",
+		"col",
+		"frame",
+		"hr",
+		"img",
+		"input",
+		"isindex",
+		"link",
+		"meta",
+		"param"
+	};
+	private static final String[] optionalEndTagKeys={
+		"body",
+		"colgroup",
+		"dd",
+		"dt",
+		"head",
+		"html",
+		"li",
+		"option",
+		"p",
+		"tbody",
+		"td",
+		"tfoot",
+		"th",
+		"thead",
+		"tr"
+	};
 
 	private void appendAttlist(
 		PrintWriter out,
@@ -291,13 +323,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 	
 	public void addPlatformCSS(PrintWriter out, URL cssURL){
 		File cssFile;
-
-		if (cssURL ==null){
-			cssFile = new File(((PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user")).getInstallURLInternal().getFile() + "book.css");
-		} else {
-			cssFile = new File (cssURL.getFile());
-		}
 		try {
+			if (cssURL ==null){
+				cssFile = new File(((PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.platform.doc.user")).getInstallURLInternal().getFile() + "book.css");
+			} else {
+				cssFile = new File (cssURL.getFile());
+			}
+		
 			tempCSSFile = PDECore.getDefault().getTempFileManager().createTempFile(this,"book", ".css");
 			FileReader freader = new FileReader(cssFile);
 			BufferedReader breader = new BufferedReader(freader);
@@ -351,11 +383,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 	private void addStyle(PrintWriter out) {
 		out.println("<STYLE type=\"text/css\">");
-		out.println(".header {font-family: serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
-		out.println(".copyright-text {font-size: 10px; color: "+COLOR_COPYRIGHT+"; display:inline }");
-		out.println("samp.dtd {color: "+COLOR_DTD +"; display: inline}");
-		out.println(".tag {color: "+COLOR_TAG +"; display:inline}");
-		out.println(".cstring {color: "+COLOR_CSTRING +"; display:inline}");
+		out.println(".header {font-family: sans-serif; font-style: italic; font-weight: bold ; font-size:16px; display:inline}");
+		out.println(".copyright-text {font-family: sans-serif; font-size: 10px; color: "+COLOR_COPYRIGHT+"; display:inline }");
+		out.println("samp.dtd {font-family: sans-serif; color: "+COLOR_DTD +"; display: inline}");
+		out.println(".tag {font-family: sans-serif; color: "+COLOR_TAG +"; display:inline}");
+		out.println(".cstring {font-family: sans-serif; color: "+COLOR_CSTRING +"; display:inline}");
 		out.println("</STYLE>");
 	}
 
@@ -462,7 +494,22 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 		return null;
 	}
+	
+	private boolean optionalEndTag(String tag){
+		for (int i = 0; i<optionalEndTagKeys.length; i++){
+			if (tag.equalsIgnoreCase(optionalEndTagKeys[i]))
+				return true;
+		}
+		return false;
+	}
 
+	private boolean forbiddenEndTag(String tag){
+		for (int i = 0; i<forbiddenEndTagKeys.length; i++){
+			if (tag.equalsIgnoreCase(forbiddenEndTagKeys[i]))
+				return true;
+		}
+		return false;
+	}
 	private String verifyDescription(String desc){
 		boolean openTag = false;
 		boolean isPre = false;
@@ -484,30 +531,43 @@ public class SchemaTransformer implements ISchemaTransformer {
 							tag = tag.replace('\n', ' ');
 						
 						int loc = tag.indexOf(" ");
-						int locEnd = tag.indexOf("/");
+						int locEnd = tag.lastIndexOf("/");
 						
-						// ignore opened tag if it ends itself or is a comment
+						tag = (loc == -1 ? tag.substring(0) : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
+						// ignore opened tag if it is empty, ends itself or is a comment 
 						if (tag.equalsIgnoreCase(">")  
 							|| (locEnd==tag.length()-1 && text.hasMoreTokens() && text.nextToken().equals(">"))
-							|| (tag.indexOf("!")==0 && text.hasMoreTokens() && text.nextToken().equals(">"))){
+							|| (tag.indexOf("!")==0 && text.hasMoreTokens() && text.nextToken().equals(">"))
+							|| (forbiddenEndTag(tag) && text.hasMoreTokens() && text.nextToken().equals(">"))){
 							openTag = false;
 							continue;
 						}
 
 						if (locEnd!=0){ // assert it is not an end tag
-							tag = (loc == -1 ? tag.substring(0) : tag.substring(0,loc));  // trim all attributes if existing (i.e. color=blue)
 							if (tag.equalsIgnoreCase("pre")){
 								isPre = true;		
-							} else if (!isPre){					
-								tagStack.add(tag);	
+							} else if (!isPre){
+								if (!forbiddenEndTag(tag) &&
+								(!optionalEndTag(tag) 
+									|| CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)!=CompilerFlags.IGNORE)){
+									tagStack.add(tag);
+								}
 							}							
 						} else {
-							tag = (loc == -1 ? tag.substring(1) : tag.substring(1,loc));  // take off "/" prefix and all existing attributes
+							tag = tag.substring(1);  // take off "/" prefix and all existing attributes
 							if (isPre){
 								if (tag.equalsIgnoreCase("pre"))
 									isPre = false;
+								else
+									continue;
+							} else if (forbiddenEndTag(tag)){
+								if (CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)!=CompilerFlags.IGNORE)
+									return tag;
 							} else if (!tagStack.isEmpty() && tagStack.peek().toString().equalsIgnoreCase(tag)){
 								tagStack.pop();
+							} else if (optionalEndTag(tag)){
+								if (CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)!=CompilerFlags.IGNORE)
+									return tag;
 							} else {
 								return (!tagStack.isEmpty() ? tagStack.peek().toString(): tag);
 							}
@@ -530,6 +590,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	private boolean verifySections(ISchema schema, PluginErrorReporter reporter){
+		if (CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)==CompilerFlags.IGNORE 
+			&& CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)== CompilerFlags.IGNORE
+			&& CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)==CompilerFlags.IGNORE)
+			return true;
 		boolean hasError = false;
 		IDocumentSection section = null;
 		String sectionIds[] =
@@ -546,22 +610,42 @@ public class SchemaTransformer implements ISchemaTransformer {
 				String desc = section.getDescription();
 				errTag = verifyDescription(desc);
 				if (errTag!=null){
-					if (errTag.equals(""))
+					if (errTag.equals("")){
 						reporter.report(sectionIds[i] + ": Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-					else
-						reporter.report(sectionIds[i] + ": Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+						hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+					}else{
+						if (forbiddenEndTag(errTag)){
+							reporter.report(sectionIds[i] + ": Forbidden end tag found. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) );
+							hasError = CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) == CompilerFlags.ERROR;
+						}else if (optionalEndTag(errTag)){
+							reporter.report(sectionIds[i] + ": Optional end tag unmatched. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) );
+							hasError = CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) == CompilerFlags.ERROR;
+						}else{
+							reporter.report(sectionIds[i] + ": Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+							hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+						}
+					}
 				}
 			}
 		}
 		errTag = verifyDescription(schema.getDescription());
 		if (errTag!=null){
-			if (errTag.equals(""))
+			if (errTag.equals("")){
 				reporter.report("description: Unmatched tags in documentation.",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-			else
-				reporter.report("description: Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
-			hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
-		}
+				hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+			}else{
+				if (forbiddenEndTag(errTag)){
+					reporter.report("description: Forbidden end tag found. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) );
+					hasError = CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS) == CompilerFlags.ERROR;
+				}else if (optionalEndTag(errTag)){
+					reporter.report("description: Optional end tag unmatched. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) );
+					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS) == CompilerFlags.ERROR;
+				}else{
+					reporter.report("description: Unmatched tags in documentation. Error on \""+errTag+"\"",-1,CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) );
+					hasError = CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS) == CompilerFlags.ERROR;
+				}
+			}
+		}	
 		return !hasError;
 	}
 
@@ -647,6 +731,5 @@ public class SchemaTransformer implements ISchemaTransformer {
 				out.print(c);
 		}
 	}
-	
 
 }
