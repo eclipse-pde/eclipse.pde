@@ -291,5 +291,8 @@ public abstract class AbstractPluginModelBase
 	public void setReconcilingModel(boolean reconcilingModel) {
 		this.reconcilingModel = reconcilingModel;
 	}
+	public boolean isBundleModel() {
+		return false;
+	}
 
 }

@@ -98,4 +98,11 @@ public class OSGiRuntimeSupport implements IAlternativeRuntimeSupport {
 			return path.removeLastSegments(2);
 		}
 	}
+	
+	public String [] getImplicitDependencies(boolean bundle) {
+		if (bundle)
+			return new String [] {};
+		else
+			return new String [] { "org.eclipse.core.runtime" }; 
+	}
 }

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.pde.core.IAlternativeRuntimeSupport;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -108,6 +109,7 @@ public class ClasspathUtilCore {
 			addImplicitDependencies(
 				model.getPluginBase().getId(),
 				relative,
+				model.isBundleModel(),
 				result,
 				alreadyAdded);
 			if (monitor != null)
@@ -249,15 +251,26 @@ public class ClasspathUtilCore {
 	protected static void addImplicitDependencies(
 		String id,
 		boolean relative,
+		boolean bundle,
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-		if (isOSGiRuntime()
-			|| id.equals("org.eclipse.core.boot")
-			|| id.equals("org.apache.xerces")
-			|| id.startsWith("org.eclipse.swt"))
+		if (id.equals("org.eclipse.core.boot")
+		|| id.equals("org.apache.xerces")
+		|| id.startsWith("org.eclipse.swt"))
 			return;
-
+		
+		IAlternativeRuntimeSupport support = PDECore.getDefault().getRuntimeSupport();
+		String [] dependencies = support.getImplicitDependencies(bundle);
+		for (int i=0; i<dependencies.length; i++) {
+			if (id.equals(dependencies[i])) continue;
+			IPlugin plugin = PDECore.getDefault().findPlugin(dependencies[i]);
+			if (plugin!=null)
+				addDependency(plugin, false, relative, result, alreadyAdded);
+		}
+		
+/*
+		
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.core.boot");
 		if (plugin != null)
 			addDependency(plugin, false, relative, result, alreadyAdded);
@@ -266,6 +279,7 @@ public class ClasspathUtilCore {
 			if (plugin != null)
 				addDependency(plugin, false, relative, result, alreadyAdded);
 		}
+*/
 	}
 
 	protected static void addJRE(Vector result) {

@@ -76,4 +76,8 @@ public class DefaultRuntimeSupport implements IAlternativeRuntimeSupport {
 			return path.removeLastSegments(2);
 		}
 	}
+	public String [] getImplicitDependencies(boolean bundle) {
+		return new String [] { "org.eclipse.core.boot", 
+								"org.eclipse.core.runtime" }; 
+	}
 }

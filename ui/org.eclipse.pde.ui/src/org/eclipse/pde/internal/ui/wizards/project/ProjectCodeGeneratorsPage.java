@@ -296,6 +296,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 				project,
 				structureData,
 				new IClasspathEntry[0],
+				false,
 				monitor);
 	}
 

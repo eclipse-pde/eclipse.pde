@@ -312,4 +312,7 @@ public abstract class BundlePluginModelBase
 	public boolean isReconcilingModel() {
 		return false;
 	}
+	public boolean isBundleModel() {
+		return true;
+	}
 }

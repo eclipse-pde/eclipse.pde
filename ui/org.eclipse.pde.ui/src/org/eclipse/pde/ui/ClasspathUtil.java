@@ -57,6 +57,8 @@ public class ClasspathUtil extends ClasspathUtilCore {
 	 * @param project the plug-in project handle
 	 * @param data structure data passed in by the master wizard
 	 * @param libraries an array of the library entries to be set
+	 * @param bundle <code>true</code> if classpath is for an OSGi bundle,
+	 * <code>false</code> otherwise.
 	 * @param monitor for reporting progress
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
@@ -69,6 +71,7 @@ public class ClasspathUtil extends ClasspathUtilCore {
 		IProject project,
 		IPluginStructureData data,
 		IClasspathEntry[] libraries,
+		boolean bundle,
 		IProgressMonitor monitor)
 		throws JavaModelException, CoreException {
 
@@ -86,7 +89,7 @@ public class ClasspathUtil extends ClasspathUtilCore {
 			result.add(libraries[i]);
 		}
 		// add implicit libraries
-		addImplicitDependencies(data.getPluginId(),true, result, new HashSet());
+		addImplicitDependencies(data.getPluginId(),true, bundle, result, new HashSet());
 		// JRE the last
 		addJRE(result);
 		
