@@ -731,6 +731,13 @@ protected String getFeatureRootLocation() {
 }
 
 /**
+ *
+ */
+public void setFeatureRootLocation(String location) {
+	this.featureRootLocation = location;
+}
+
+/**
  * Delegates some target call to all-template only if the property
  * includeChildren is set.
  */
