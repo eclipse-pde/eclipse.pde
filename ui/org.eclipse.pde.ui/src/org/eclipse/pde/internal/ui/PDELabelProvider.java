@@ -174,9 +174,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(FeaturePlugin obj) {
 		FeaturePlugin fref = (FeaturePlugin) obj;
-		IPluginBase pluginBase = fref.getPluginBase();
-		if (pluginBase != null)
-			return getObjectText(pluginBase);
 		String name =
 			isFullNameModeEnabled() ? obj.getTranslatableLabel() : obj.getId();
 		String version = obj.getVersion();
