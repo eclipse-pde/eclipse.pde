@@ -1081,5 +1081,19 @@
             id="org.eclipse.pde.ui.sampleStandbyPart">
       </standbyContentPart>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            class="org.eclipse.pde.internal.ui.properties.SelfHostingPropertyPage"
+            name="%PropertyPage.selfHosting"
+            id="org.eclipse.pde.internal.ui.properties.selfHostingPropertyPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.PluginNature">
+         </filter>
+      </page>      
+   </extension>
 
 </plugin>

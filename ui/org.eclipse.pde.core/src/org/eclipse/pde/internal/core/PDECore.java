@@ -24,7 +24,7 @@ import org.osgi.util.tracker.*;
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
-	public static final String ARG_PDELAUNCH = "-pdelaunch"; //$NON-NLS-1$
+	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
 	public static final String BINARY_PROJECT_VALUE = "binary"; //$NON-NLS-1$
 	public static final String BINARY_REPOSITORY_PROVIDER =
 		PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
