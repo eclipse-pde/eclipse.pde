@@ -112,7 +112,6 @@ public class ConvertSchemaToHTML extends Task {
 				}
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
 				XMLDefaultHandler handler = new XMLDefaultHandler();
-				fParser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 				fParser.parse(schemaFile, handler);
 
 				URL url = null;
