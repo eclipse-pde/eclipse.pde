@@ -387,6 +387,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 	
 	private void presetFields() {
 		String name = projectProvider.getProjectName();
+		String noSpaceName = removeSpaces(name);
 		int loc = name.lastIndexOf('.');
 		String lastSegment = name;
 		if (loc != -1) {
@@ -394,9 +395,10 @@ public class FirstTemplateWizardPage extends WizardPage {
 			buf.setCharAt(0, Character.toUpperCase(buf.charAt(0)));
 			lastSegment = buf.toString();
 		}
+		String noSpaceLastSegment = removeSpaces(lastSegment);
 
 		if (!fragment) {
-			classField.setText(name + "." + lastSegment.toString() + "Plugin");
+			classField.setText(noSpaceName + "." + noSpaceLastSegment.toString() + "Plugin");
 		}
 		versionField.setText("1.0.0");
 		if (fragment)
@@ -423,8 +425,17 @@ public class FirstTemplateWizardPage extends WizardPage {
 		}
 		setErrorMessage(null);
 	}
-
 	
+	private String removeSpaces(String name) {
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<name.length(); i++) {
+			char c = name.charAt(i);
+			if (c!=' ')
+				buf.append(c);
+		}
+		return buf.toString();
+	}
+
 	public FieldData createFieldData() {
 		FieldData data = new FieldData();
 		data.name = nameField.getText();
