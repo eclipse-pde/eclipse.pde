@@ -43,8 +43,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private static final byte BUNDLE = 0;
 	private static final byte FEATURE = 1;
 
-	private static final String FOLDER = "folder";
-	private static final String FILE = "file";
+	private static final String FOLDER = "folder"; //$NON-NLS-1$
+	private static final String FILE = "file"; //$NON-NLS-1$
 	private String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	private String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
 

@@ -307,7 +307,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return description;
 
 		int qualifierIdx = -1;
-		if ((qualifierIdx = version.indexOf(".qualifier")) != -1) {
+		if ((qualifierIdx = version.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
 			Version versionToMatch = new Version(version.substring(0, qualifierIdx));
 			for (int i = 0; i < bundles.length; i++) {

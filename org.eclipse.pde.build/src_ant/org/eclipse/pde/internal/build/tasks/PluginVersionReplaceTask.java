@@ -41,7 +41,7 @@ public class PluginVersionReplaceTask extends Task {
 	}
 
 	public void setInput(String input) {
-		if (input.equalsIgnoreCase("fragment.xml"))
+		if (input.equalsIgnoreCase("fragment.xml")) //$NON-NLS-1$
 			plugin = false;
 	}
 
