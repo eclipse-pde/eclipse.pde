@@ -114,11 +114,11 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Composite mainContainer = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.numColumns = 4;
+		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		mainContainer.setLayout(layout);
-		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd =new GridData(GridData.FILL_BOTH);
+		mainContainer.setLayoutData(gd);
 		
 		/*
 		 * create new manifest part
@@ -129,8 +129,8 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth= true;
 		createManifestContainer.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 4;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		createManifestContainer.setLayoutData(gd);
 		Label manifestLabel = toolkit.createLabel(createManifestContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
 		gd = new GridData();
@@ -158,11 +158,11 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout = new GridLayout();
 		layout.makeColumnsEqualWidth = true;
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.numColumns = 4;
+		layout.numColumns = 2;
 		bottomContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 4;
+		gd.horizontalSpan = 2;
 		bottomContainer.setLayoutData(gd);
 		/*
 		 * Activation rule part
@@ -170,7 +170,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Composite ruleContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.makeColumnsEqualWidth = true;
 		ruleContainer.setLayout(layout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -179,7 +179,7 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		
 		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 1;
 		activateLabel.setLayoutData(gd);
 		activateLabel.setFont(boldFont);
 
@@ -189,7 +189,6 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						"Always activate this plug-in",
 						SWT.RADIO);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		autoActivateButton
 				.setLayoutData(gd);
 		autoActivateButton.addSelectionListener(new SelectionAdapter() {
@@ -209,7 +208,6 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						"Do not activate this plug-in",
 						SWT.RADIO);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		nonAutoActivateButton.setLayoutData(gd);
 		nonAutoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -225,20 +223,19 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Composite exceptionsContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.makeColumnsEqualWidth = false;
 		exceptionsContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan=2;
 		exceptionsContainer.setLayoutData(gd);
 		
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
-		gd = new GridData();//GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		exceptionLabel.setLayoutData(gd);
 		exceptionLabel.setFont(boldFont);
 		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
-		gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 100;
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 2;
 		exceptionPkgLabel.setLayoutData(gd);
@@ -250,10 +247,10 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.makeColumnsEqualWidth = false;
 		exceptionsPkgContainer.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
-//		gd.grabExcessHorizontalSpace = false;
-		gd.horizontalSpan = 2;
+		gd.grabExcessHorizontalSpace = false;
+		gd.horizontalSpan = 1;
 		exceptionsPkgContainer.setLayoutData(gd);
-		
+				
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getPage().getModel();
 		tablePart.setEditable(model.isEditable());
