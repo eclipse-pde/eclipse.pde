@@ -338,6 +338,7 @@ private boolean isEditorOpened(PDEMultiPageEditor pdeEditor) {
 	return false;
 }
 public static boolean isPluginProject(IProject project) {
+	if (project.isOpen()==false) return false;
 	try {
 		return project.hasNature(PDEPlugin.PLUGIN_NATURE);
 	} catch (CoreException e) {
@@ -388,12 +389,39 @@ private void removeWorkspaceModel(IPluginModelBase model) {
 			workspaceModels.remove(model);
 	// disconnect
 	IResource element = model.getUnderlyingResource();
+	//closeOpenedEditors(model);
 	disconnect(element, null);
 	PDEPlugin.getDefault().getTracingOptionsManager().reset();
 }
 public void reset() {
 	initializeWorkspacePluginModels();
 }
+
+private void closeOpenedEditors(IPluginModelBase model) {
+	IResource element = model.getUnderlyingResource();
+	ModelInfo info = (ModelInfo) models.get(element);
+	if (info.consumer!=null && 
+		info.consumer instanceof PDEMultiPageEditor) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow [] windows = workbench.getWorkbenchWindows();
+		for (int i=0; i<windows.length; i++) {
+			IWorkbenchWindow window = windows[i];
+			IWorkbenchPage [] pages = window.getPages();
+			for (int j=0; j<pages.length; j++) {
+				IWorkbenchPage page = pages[j];
+				IEditorPart [] editors = page.getEditors();
+				for (int k=0; k<editors.length; k++) {
+					IEditorPart editor = editors[k];
+					if (editor.equals(info.consumer)) {
+						page.closeEditor(editor, true);
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
 public void resourceChanged(IResourceChangeEvent event) {
 	// No need to do anything if nobody has the models
 	if (workspaceModels==null) return;

@@ -253,5 +253,6 @@ public void startup() throws CoreException {
 	// set eclipse home variable if not sets
 	getExternalModelManager().getEclipseHome();
 	if (isVAJ()==false) initializePlatformPath();
+	getWorkspaceModelManager().reset();
 }
 }

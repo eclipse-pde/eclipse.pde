@@ -20,7 +20,8 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.swt.custom.*;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class ComponentSpecSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ComponentEditor.SpecSection.title";
@@ -30,9 +31,15 @@ public class ComponentSpecSection extends PDEFormSection {
 	public static final String SECTION_VERSION = "ComponentEditor.SpecSection.version";
 	public static final String SECTION_PROVIDER = "ComponentEditor.SpecSection.provider";
 	public static final String SECTION_CREATE_JAR = "ComponentEditor.SpecSection.createJar";
+	public static final String SECTION_SYNCHRONIZE = "ComponentEditor.SpecSection.synchronize";
+	public static final String KEY_BAD_VERSION_TITLE = "ComponentEditor.SpecSection.badVersionTitle";
+	public static final String KEY_BAD_VERSION_MESSAGE = "ComponentEditor.SpecSection.badVersionMessage";
+	
 	private FormText idText;
 	private FormText titleText;
 	private Button createJarButton;
+	private Button synchronizeButton;
+
 	private boolean updateNeeded;
 	private FormText providerText;
 	private FormText versionText;
@@ -103,10 +110,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	versionText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory));
 	versionText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormText text) {
-			try {
-				component.setVersion(text.getValue());
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
+			if (verifySetVersion(component, text.getValue())==false) {
+				warnBadVersionFormat(text.getValue());
+				text.setValue(component.getVersion());
 			}
 		}
 	});
@@ -124,20 +130,55 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 
 	GridData gd = (GridData) idText.getControl().getLayoutData();
 	gd.widthHint = 150;
-
-	createJarButton = factory.createButton(container, PDEPlugin.getResourceString(SECTION_CREATE_JAR), SWT.PUSH);
+	
+	Composite buttonContainer = factory.createComposite(container);
+	gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+	gd.horizontalSpan = 2;
+	buttonContainer.setLayoutData(gd);
+	GridLayout blayout = new GridLayout();
+	buttonContainer.setLayout(blayout);
+	blayout.makeColumnsEqualWidth=true;
+	
+	
+	createJarButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_CREATE_JAR), SWT.PUSH);
 	createJarButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleCreateJar();
 		}
 	});
-	gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-	gd.horizontalSpan = 2;
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	createJarButton.setLayoutData(gd);
+	
+	synchronizeButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_SYNCHRONIZE), SWT.PUSH);
+	synchronizeButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleSynchronize();
+		}
+	});
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+	synchronizeButton.setLayoutData(gd);
 
 	factory.paintBordersFor(container);
 	return container;
 }
+
+private boolean verifySetVersion(IComponent component, String value) {
+	try {
+		PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
+		component.setVersion(pvi.toString());
+	}
+	catch (Exception e) {
+		return false;
+	}
+	return true;
+}
+
+private void warnBadVersionFormat(String text) {
+	MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
+		PDEPlugin.getResourceString(KEY_BAD_VERSION_TITLE),
+		PDEPlugin.getResourceString(KEY_BAD_VERSION_MESSAGE));
+}
+
 public void dispose() {
 	IComponentModel model = (IComponentModel) getFormPage().getModel();
 	model.removeModelChangedListener(this);

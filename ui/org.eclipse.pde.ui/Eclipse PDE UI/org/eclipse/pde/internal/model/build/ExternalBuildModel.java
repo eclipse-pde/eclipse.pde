@@ -30,9 +30,12 @@ public void load() {
 		load(stream);
 		stream.close();
 	} catch (IOException e) {
-		PDEPlugin.logException(e);
+		build = new Build();
+		build.setModel(this);
+		loaded = true;
 	}
 }
+
 public void setInstallLocation(String newInstallLocation) {
 	installLocation = newInstallLocation;
 }

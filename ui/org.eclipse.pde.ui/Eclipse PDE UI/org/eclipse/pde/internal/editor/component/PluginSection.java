@@ -307,10 +307,16 @@ public void modelChanged(IModelChangedEvent e) {
 				pluginViewer.refresh();
 		}
 }
+
 public void modelsChanged(IModelProviderEvent event) {
-	references = null;
-	pluginViewer.refresh();
+	IModel model = event.getAffectedModel();
+	if (model instanceof IFragmentModel && isFragmentSection() ||
+	         model instanceof IPluginModel && !isFragmentSection()) {
+	   updateNeeded=true;
+	   update();
+	}
 }
+
 public void setFocus() {
 	if (pluginViewer != null)
 		pluginViewer.getTable().setFocus();

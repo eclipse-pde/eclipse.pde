@@ -437,8 +437,13 @@ private FieldData initializeFieldData() {
 	data.provider = providerField.getText();
 	if (fragment) {
 		data.pluginId = pluginIdField.getText();
-		PluginVersionIdentifier fvi = new PluginVersionIdentifier(pluginIdField.getText());
-		data.pluginVersion = fvi.toString();
+		try {
+		    PluginVersionIdentifier fvi = new PluginVersionIdentifier(pluginVersionField.getText());
+		    data.pluginVersion = fvi.toString();
+		}
+		catch (NumberFormatException e) {
+			data.pluginVersion = pluginVersionField.getText();
+		}
 	} else {
 		data.className = classField.getText();
 		data.thisCheck = thisCheck.getSelection();

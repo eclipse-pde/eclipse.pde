@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.base.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.core.runtime.*;
 
 public class ComponentSpecPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewComponentWizard.SpecPage.title";
@@ -82,16 +83,35 @@ public boolean finish() {
 public ComponentData getComponentData() {
 	ComponentData data = new ComponentData();
 	data.id = idText.getText();
-	data.version = versionText.getText();
+	try {
+	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(versionText.getText());
+	   data.version = pvi.toString();
+	}
+	catch (NumberFormatException e) {
+	   data.version = versionText.getText();
+	}
 	data.provider = providerText.getText();
 	data.description = descriptionText.getText();
 	return data;
 }
 private void verifyComplete() {
-	boolean complete =
-		idText.getText().length() > 0
-			&& versionText.getText().length() > 0
+	if (verifyVersion()) {
+	   boolean complete =
+		   idText.getText().length() > 0
 			&& providerText.getText().length() > 0;
-	setPageComplete(complete);
+	   setPageComplete(complete);
+	}
+}
+
+private boolean verifyVersion() {
+	String value = versionText.getText();
+	if (value.length()==0) return false;
+	try {
+	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
+	}
+	catch (Exception e) {
+		return false;
+	}
+	return true;
 }
 }
