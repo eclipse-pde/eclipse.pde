@@ -9,10 +9,7 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 import java.io.PrintWriter;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.search.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
@@ -191,8 +188,8 @@ public class BundlePluginBase
 			imports = new ArrayList();
 			Set uniqueIds = new HashSet();
 			addImportsFromRequiredBundles(imports, uniqueIds);
-			if (imports.size() == 0)
-				addImportsFromImportedPackages(imports, uniqueIds);
+			//if (imports.size() == 0)
+				//addImportsFromImportedPackages(imports, uniqueIds);
 		}
 		return (IPluginImport[]) imports.toArray(
 			new IPluginImport[imports.size()]);
@@ -251,7 +248,7 @@ public class BundlePluginBase
 		}
 	}
 
-	private void addImportsFromImportedPackages(ArrayList imports, Set uniqueIds) {
+	/*private void addImportsFromImportedPackages(ArrayList imports, Set uniqueIds) {
 		StringTokenizer stok =
 			new StringTokenizer(getSafeHeader(IBundle.KEY_IMPORT_PACKAGE), ",");
 
@@ -271,13 +268,13 @@ public class BundlePluginBase
 				PDECore.logException(e);
 			}
 		}
-	}
+	}*/
 
 	/*
 	 * Finds a plug-in that owns the package with a given name. Returns plug-in
 	 * Id or null if not found.
 	 */
-	private String findOwningPluginId(final String packageName) {
+	/*private String findOwningPluginId(final String packageName) {
 		ISearchPattern pattern =
 			SearchEngine.createSearchPattern(
 				packageName,
@@ -349,7 +346,7 @@ public class BundlePluginBase
 			PDECore.logException(e);
 		}
 		return null;
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
