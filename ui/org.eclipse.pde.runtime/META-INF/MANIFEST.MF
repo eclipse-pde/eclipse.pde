@@ -7,9 +7,6 @@ Bundle-ClassPath: pdert.jar
 Bundle-Activator: org.eclipse.pde.internal.runtime.PDERuntimePlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
-Export-Package: org.eclipse.pde.internal.runtime,
- org.eclipse.pde.internal.runtime.logview,
- org.eclipse.pde.internal.runtime.registry
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.views
