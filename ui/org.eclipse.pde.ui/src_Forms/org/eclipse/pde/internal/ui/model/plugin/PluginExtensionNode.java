@@ -67,9 +67,9 @@ public class PluginExtensionNode extends PluginParentNode
 		IDocumentNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			children[i].setLineIndent(getLineIndent() + 3);
-			buffer.append(children[i].write(true) + sep);
+			buffer.append(sep + children[i].write(true));
 		}
-		buffer.append(getIndent() + "</extension>");
+		buffer.append(sep + getIndent() + "</extension>");
 		return buffer.toString();
 	}
 	
@@ -91,7 +91,7 @@ public class PluginExtensionNode extends PluginParentNode
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		if (terminate)
 			buffer.append("/");
-		buffer.append(">" + sep);
+		buffer.append(">");
 		return buffer.toString();
 	}
 	

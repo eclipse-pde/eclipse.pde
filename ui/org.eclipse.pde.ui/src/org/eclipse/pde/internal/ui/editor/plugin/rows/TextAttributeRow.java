@@ -61,14 +61,12 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	 */
 	protected void update() {
 		blockNotification = true;
-		String value = getValue();
-		text.setText(value != null ? value : "");
+		text.setText(getValue());
 		blockNotification = false;
 	}
 	public void commit() {
 		if (dirty && input!=null) {
 			String value = text.getText();
-			if (value.length()==0) value=null;
 			try {
 				input.setAttribute(getName(), value);
 				dirty = false;

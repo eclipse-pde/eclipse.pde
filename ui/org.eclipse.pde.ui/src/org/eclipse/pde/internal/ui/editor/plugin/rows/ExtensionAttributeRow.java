@@ -62,7 +62,7 @@ public abstract class ExtensionAttributeRow {
 	}
 	
 	protected String getValue() {
-		String value=null;
+		String value= "";
 		if (input!=null) {
 			IPluginAttribute patt = input.getAttribute(getName());
 			if (patt!=null)

@@ -18,6 +18,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
@@ -137,6 +138,7 @@ public abstract class InputContext {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		
 	}
 	
 	public void validateEdit() {
@@ -189,6 +191,8 @@ public abstract class InputContext {
 				fEditOperations.clear();
 				if (model instanceof IEditable)
 					((IEditable)model).setDirty(false);
+				if (model instanceof IEditingModel && !isInSourceMode())
+					((IEditingModel)model).reconciled(doc);
 			} catch (MalformedTreeException e) {
 				PDEPlugin.logException(e);
 			} catch (BadLocationException e) {
@@ -260,6 +264,7 @@ public abstract class InputContext {
 		IAnnotationModel amodel = documentProvider.getAnnotationModel(input);
 		if (amodel != null)
 			amodel.disconnect(documentProvider.getDocument(input));
+		documentProvider.removeElementStateListener(elementListener);
 		documentProvider.disconnect(input);
 		if (modelListener != null && model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model)
