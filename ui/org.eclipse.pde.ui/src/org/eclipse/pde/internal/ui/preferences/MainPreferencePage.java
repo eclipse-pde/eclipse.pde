@@ -27,12 +27,12 @@ public class MainPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private static final String KEY_DESCRIPTION =
-		"Preferences.MainPage.Description";
+		"Preferences.MainPage.Description"; //$NON-NLS-1$
 	private static final String KEY_SHOW_OBJECTS =
-		"Preferences.MainPage.showObjects";
-	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds";
+		"Preferences.MainPage.showObjects"; //$NON-NLS-1$
+	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds"; //$NON-NLS-1$
 	private static final String KEY_USE_FULL_NAMES =
-		"Preferences.MainPage.useFullNames";
+		"Preferences.MainPage.useFullNames"; //$NON-NLS-1$
 
 	private Button useID;
 	private Button useName;

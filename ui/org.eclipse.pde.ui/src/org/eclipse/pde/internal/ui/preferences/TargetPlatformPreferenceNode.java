@@ -58,7 +58,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.TargetPlatformPreferencePage";
+		return "org.eclipse.pde.ui.TargetPlatformPreferencePage"; //$NON-NLS-1$
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.target.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.target.name"); //$NON-NLS-1$
 	}
 
 	/**

@@ -32,10 +32,10 @@ public class EditorPreferencePage
 	
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
-				PDEPlugin.getResourceString("EditorPreferencePage.useSourcePage"),
+				PDEPlugin.getResourceString("EditorPreferencePage.useSourcePage"), //$NON-NLS-1$
 				getFieldEditorParent()));
-		addLabel("", 2);
-		addLabel(PDEPlugin.getResourceString("EditorPreferencePage.colorSettings"), 2);
+		addLabel("", 2); //$NON-NLS-1$
+		addLabel(PDEPlugin.getResourceString("EditorPreferencePage.colorSettings"), 2); //$NON-NLS-1$
 		addSourceColorFields();
 	}
 	

@@ -30,12 +30,12 @@ public class TargetEnvironmentPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
 	private static final String KEY_DESCRIPTION =
-		"Preferences.TargetEnvironmentPage.Description";
-	public static final String KEY_OS = "Preferences.TargetEnvironmentPage.os";
-	public static final String KEY_WS = "Preferences.TargetEnvironmentPage.ws";
-	public static final String KEY_NL = "Preferences.TargetEnvironmentPage.nl";
+		"Preferences.TargetEnvironmentPage.Description"; //$NON-NLS-1$
+	public static final String KEY_OS = "Preferences.TargetEnvironmentPage.os"; //$NON-NLS-1$
+	public static final String KEY_WS = "Preferences.TargetEnvironmentPage.ws"; //$NON-NLS-1$
+	public static final String KEY_NL = "Preferences.TargetEnvironmentPage.nl"; //$NON-NLS-1$
 	public static final String KEY_ARCH =
-		"Preferences.TargetEnvironmentPage.arch";
+		"Preferences.TargetEnvironmentPage.arch"; //$NON-NLS-1$
 		
 	private Combo os;
 	private Combo ws;
@@ -113,7 +113,7 @@ public class TargetEnvironmentPreferencePage
 		preferences.setValue(OS, os.getText().trim());
 		preferences.setValue(WS, ws.getText().trim());
 		String locale = nl.getText().trim();
-		int dash = locale.indexOf("-");
+		int dash = locale.indexOf("-"); //$NON-NLS-1$
 		if (dash != -1)
 			locale = locale.substring(0, dash);
 		locale = locale.trim();
@@ -133,11 +133,11 @@ public class TargetEnvironmentPreferencePage
 	}
 	
 	private String expandLocaleName(String name) {
-		String language = "";
-		String country = "";
-		String variant = "";
+		String language = ""; //$NON-NLS-1$
+		String country = ""; //$NON-NLS-1$
+		String variant = ""; //$NON-NLS-1$
 		
-		StringTokenizer tokenizer = new StringTokenizer(name, "_");
+		StringTokenizer tokenizer = new StringTokenizer(name, "_"); //$NON-NLS-1$
 		if (tokenizer.hasMoreTokens())
 			language = tokenizer.nextToken();
 		if (tokenizer.hasMoreTokens())
@@ -146,7 +146,7 @@ public class TargetEnvironmentPreferencePage
 			variant = tokenizer.nextToken();
 			
 		Locale locale = new Locale(language, country, variant);
-		return locale.toString() + " - " + locale.getDisplayName();
+		return locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
 	}
 
 	private static String[] getLocales() {
@@ -154,7 +154,7 @@ public class TargetEnvironmentPreferencePage
 		String[] result = new String[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			result[i] = locale.toString() + " - " + locale.getDisplayName();
+			result[i] = locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
 		}
 		return result;
 	}

@@ -46,7 +46,7 @@ public class TargetPlatformPreferencePage
 	 * MainPreferencePage constructor comment.
 	 */
 	public TargetPlatformPreferencePage() {
-		setDescription(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.Description"));
+		setDescription(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.Description")); //$NON-NLS-1$
 		fPreferences = PDECore.getDefault().getPluginPreferences();
 		fPluginsBlock = new ExternalPluginsBlock(this);
 	}
@@ -64,14 +64,14 @@ public class TargetPlatformPreferencePage
 		container.setLayout(layout);
 
 		fHomeLabel = new Label(container, SWT.NULL);
-		fHomeLabel.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome"));
+		fHomeLabel.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome")); //$NON-NLS-1$
 		
 		fHomeText = new Combo(container, SWT.NONE);
 		fHomeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		ArrayList locations = new ArrayList();
 		for (int i = 0; i < 5; i++) {
 			String value = fPreferences.getString(ICoreConstants.SAVED_PLATFORM + i);
-			if (value.equals("")) 
+			if (value.equals(""))  //$NON-NLS-1$
 				break;
 			locations.add(value);
 		}
@@ -94,7 +94,7 @@ public class TargetPlatformPreferencePage
 		});
 		
 		fBrowseButton = new Button(container, SWT.PUSH);
-		fBrowseButton.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome.Button"));
+		fBrowseButton.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome.Button")); //$NON-NLS-1$
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -146,9 +146,9 @@ public class TargetPlatformPreferencePage
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),
-					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.title"),
+					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.title"), //$NON-NLS-1$
 					null,
-					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.question"),
+					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.question"), //$NON-NLS-1$
 					MessageDialog.QUESTION,
 					new String[] {
 						IDialogConstants.YES_LABEL,

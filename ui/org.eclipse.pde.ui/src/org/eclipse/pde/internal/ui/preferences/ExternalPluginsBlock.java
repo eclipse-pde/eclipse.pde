@@ -36,8 +36,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class ExternalPluginsBlock {
 	private CheckboxTableViewer pluginListViewer;
 	private TargetPlatformPreferencePage page;
-	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
-	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
+	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload"; //$NON-NLS-1$
+	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace"; //$NON-NLS-1$
 
 	private boolean reloaded;
 	private TablePart tablePart;
@@ -193,7 +193,7 @@ public class ExternalPluginsBlock {
 		container.setLayout(layout);
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.title"));
+		label.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.title")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

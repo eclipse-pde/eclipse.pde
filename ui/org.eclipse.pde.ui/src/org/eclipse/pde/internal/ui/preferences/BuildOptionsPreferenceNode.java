@@ -52,7 +52,7 @@ public class BuildOptionsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.buildOptionsPreferencePage";
+		return "org.eclipse.pde.ui.buildOptionsPreferencePage"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -66,7 +66,7 @@ public class BuildOptionsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.buildOptions.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.buildOptions.name"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -58,7 +58,7 @@ public class TargetEnvironmentPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.TargetEnvironmentPreferencePage";
+		return "org.eclipse.pde.ui.TargetEnvironmentPreferencePage"; //$NON-NLS-1$
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class TargetEnvironmentPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.targetEnv.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.targetEnv.name"); //$NON-NLS-1$
 	}
 
 	/**

@@ -108,9 +108,9 @@ public class CompilersPreferencePage
 		Label label = new Label(page, SWT.NULL);
 		String textKey;
 		if (index == CompilerFlags.SCHEMA_FLAGS)
-			textKey = "CompilersPreferencePage.altlabel";
+			textKey = "CompilersPreferencePage.altlabel"; //$NON-NLS-1$
 		else
-			textKey = "CompilersPreferencePage.label";
+			textKey = "CompilersPreferencePage.label"; //$NON-NLS-1$
 		label.setText(PDEPlugin.getResourceString(textKey)); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -156,7 +156,7 @@ public class CompilersPreferencePage
 			new Label(page, SWT.NULL).setLayoutData(new GridData());
 			GridData sgd = new GridData();
 			Label slabel = new Label(page, SWT.NULL);
-			slabel.setText(PDEPlugin.getResourceString("CompilersPreferencePage.label"));
+			slabel.setText(PDEPlugin.getResourceString("CompilersPreferencePage.label")); //$NON-NLS-1$
 			sgd.horizontalSpan = 2;
 			slabel.setLayoutData(sgd);
 			

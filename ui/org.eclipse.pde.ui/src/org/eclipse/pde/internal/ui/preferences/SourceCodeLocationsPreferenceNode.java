@@ -58,7 +58,7 @@ public class SourceCodeLocationsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.SourcePreferencePage";
+		return "org.eclipse.pde.ui.SourcePreferencePage"; //$NON-NLS-1$
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class SourceCodeLocationsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.source.name");
+		return PDEPlugin.getDefault().getDescriptor().getResourceString("%preferences.source.name"); //$NON-NLS-1$
 	}
 
 	/**

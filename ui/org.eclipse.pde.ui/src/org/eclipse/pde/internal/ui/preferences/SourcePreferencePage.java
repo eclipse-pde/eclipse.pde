@@ -139,7 +139,7 @@ public class SourcePreferencePage
 			new LocationPart(
 				new String[] {
 					PDEPlugin.getResourceString(KEY_ADD),
-					PDEPlugin.getResourceString("SourcePreferencePage.edit"),
+					PDEPlugin.getResourceString("SourcePreferencePage.edit"), //$NON-NLS-1$
 					PDEPlugin.getResourceString(KEY_DELETE),
 					null,
 					PDEPlugin.getResourceString(KEY_SELECT_ALL),
@@ -182,7 +182,7 @@ public class SourcePreferencePage
 	}
 
 	private String encodeSourceLocation(SourceLocation location) {
-		return location.getPath().toOSString() + "," + (location.isEnabled() ? "t" : "f");
+		return location.getPath().toOSString() + "," + (location.isEnabled() ? "t" : "f"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public void dispose() {
@@ -268,7 +268,7 @@ public class SourcePreferencePage
 	private DirectoryDialog getDirectoryDialog(String filterPath) {
 		if (dialog == null)
 			dialog = new DirectoryDialog(getShell());
-		dialog.setMessage("Choose a source code location:");
+		dialog.setMessage(PDEPlugin.getResourceString("SourcePreferencePage.dialogMessage")); //$NON-NLS-1$
 		if (filterPath != null)
 			dialog.setFilterPath(filterPath);
 		return dialog;
