@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteCategory;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.isite.ISiteObject;
@@ -31,7 +32,16 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected String getPageId(Object obj) {
-		return FeaturesPage.PAGE_ID;
+		if (obj instanceof ISiteDescription) {
+			return ArchivePage.PAGE_ID;
+		}
+		if (obj instanceof ISiteFeature || obj instanceof ISiteCategory
+				|| obj instanceof ISiteCategoryDefinition) {
+			return FeaturesPage.PAGE_ID;
+		}
+		// site elements and attributes are on different pages, stay on the
+		// current page
+		return null;
 	}
 	/*
 	 * @see IModelUndoManager#execute(ModelUndoOperation)
