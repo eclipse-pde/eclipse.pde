@@ -10,98 +10,96 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.runtime.registry.PluginObjectAdapter;
-import org.eclipse.pde.internal.runtime.registry.RegistryPropertySourceFactory;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.runtime.registry.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.*;
+import org.osgi.framework.*;
+
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	private static PDERuntimePlugin inst;
 	private ResourceBundle resourceBundle;
-	private BundleContext context;
+	private BundleContext fContext;
 
-	public PDERuntimePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		inst = this;
-		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.pde.internal.runtime.pderuntimeresources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
+	
 	public static Shell getActiveWorkbenchShell() {
 		return getActiveWorkbenchWindow().getShell();
 	}
+	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
+	
 	public static PDERuntimePlugin getDefault() {
 		return inst;
 	}
-	/* package */
-	static IPath getInstallLocation() {
-		return new Path(getDefault().getDescriptor().getInstallURL().getFile());
-	}
+	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
+	
+	public PDERuntimePlugin() {
+		inst = this;
+	}
+	
 	public java.util.ResourceBundle getResourceBundle() {
+		try {
+			if (resourceBundle == null)
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.pderuntimeresources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
 		return resourceBundle;
 	}
+	
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = inst.getResourceBundle();
-		if (bundle != null) {
-			try {
-				String bundleString = bundle.getString(key);
-				//return "$"+bundleString;
-				return bundleString;
-			} catch (MissingResourceException e) {
-				// default actions is to return key, which is OK
-			}
+		ResourceBundle bundle = PDERuntimePlugin.getDefault().getResourceBundle();
+		try {
+			return (bundle != null) ? bundle.getString(key) : key;
+		} catch (MissingResourceException e) {
+			return key;
 		}
-		return key;
 	}
 	
 	public static String getFormattedMessage(String key, String arg) {
 		String text = getResourceString(key);
 		return java.text.MessageFormat.format(text, new Object[] { arg });
 	}
+	
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	}
-	public void startup() throws CoreException {
-		IAdapterManager manager = Platform.getAdapterManager();
-		RegistryPropertySourceFactory factory =
-			new RegistryPropertySourceFactory();
-		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		this.context = context;
+		this.fContext = context;
+		IAdapterManager manager = Platform.getAdapterManager();
+		RegistryPropertySourceFactory factory =
+			new RegistryPropertySourceFactory();
+		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
 	
 	public BundleContext getBundleContext() {
-		return this.context;
+		return this.fContext;
 	}
+	
+	/**
+	 * This method is called when the plug-in is stopped
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		inst = null;
+		resourceBundle = null;
+	}
+
 }

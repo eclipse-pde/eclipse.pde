@@ -20,6 +20,5 @@ public interface IPluginFolder extends IAdaptable {
 	public static final int F_LIBRARIES = 4;
 	public static final int F_FRAGMENTS = 5;
 	public Object[] getChildren();
-int getFolderId();
-	public IPluginDescriptor getPluginDescriptor();
+	int getFolderId();
 }

@@ -12,13 +12,12 @@ package org.eclipse.pde.internal.runtime;
 
 import java.net.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
 
 public class PDERuntimePluginImages {
 
-	private final static URL BASE_URL =
-		PDERuntimePlugin.getDefault().getDescriptor().getInstallURL();
 	private final static ImageRegistry PLUGIN_REGISTRY =
 		PDERuntimePlugin.getDefault().getImageRegistry();
 
@@ -152,8 +151,9 @@ public class PDERuntimePluginImages {
 		String path = prefix + name;
 		URL url = null;
 		try {
-			url = new URL(BASE_URL, path);
-		} catch (MalformedURLException e) {
+			URL baseURL = Platform.resolve(PDERuntimePlugin.getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
+			url = new URL(baseURL, path);
+		} catch (Exception e) {
 			return null;
 		}
 		return url;
