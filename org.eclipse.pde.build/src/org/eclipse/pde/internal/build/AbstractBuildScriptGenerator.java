@@ -14,6 +14,10 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
+import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
+import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.internal.build.ant.*;
@@ -180,10 +184,12 @@ protected void addSelf(PluginModel model, JAR jar, List classpath, String locati
 	String extraClasspath = (String) modelProperties.get(PROPERTY_JAR_EXTRA_CLASSPATH);
 	if (extraClasspath != null) {
 		String[] extra = Utils.getArrayFromString(extraClasspath, ";,"); //$NON-NLS-1$
-		for (int i = 0; i < extra.length; i++)
+		
+		for (int i = 0; i < extra.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			addPathAndCheck(extra[i], classpath); 
+			addPathAndCheck(computeExtraPath(extra[i], location), classpath);
+		}	 
 	}
 
 	//	add extra classpath if it is specified for the given jar
@@ -191,10 +197,61 @@ protected void addSelf(PluginModel model, JAR jar, List classpath, String locati
 	for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 		//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 		//the user will get $basexx instead of $ws 
-		addPathAndCheck(jarSpecificExtraClasspath[i], classpath); 
+		addPathAndCheck(computeExtraPath(jarSpecificExtraClasspath[i], location), classpath); 
 	}
 }
 
+/** 
+ * Convenience method that compute the relative classpath of extra.classpath entries  
+ * @param url : a url
+ * @param location : location used as a base location to compute the relative path 
+ * @return String : the relative path 
+ * @throws CoreException
+ */
+private String computeExtraPath(String url, String location) throws CoreException {
+	String relativePath = null;
+	
+	String[] urlfragments = Utils.getArrayFromString(url, "/");	 //$NON-NLS-1$
+	
+	// A valid platform url for a plugin has a leat 3 segments.
+	if (urlfragments.length>2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL+PlatformURLHandler.PROTOCOL_SEPARATOR)){
+		String modelLocation = null;
+		if (urlfragments[1].equalsIgnoreCase(PlatformURLPluginConnection.PLUGIN))
+			modelLocation = getLocation(getRegistry().getPlugin(urlfragments[2]));
+		
+		if (urlfragments[1].equalsIgnoreCase(PlatformURLFragmentConnection.FRAGMENT))
+			modelLocation = getLocation(getRegistry().getFragment(urlfragments[2]));
+		
+		if (urlfragments[1].equalsIgnoreCase("resource")) { 	//TODO I did not find the declaration of the constant 
+			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url);  //$NON-NLS-1$  //$NON-NLS-2$
+			throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,null));
+		}			
+		if (modelLocation != null) {
+			for (int i = 3; i < urlfragments.length; i++) {
+				if (i==3)
+					modelLocation += urlfragments[i];
+				else	
+					modelLocation += "/"+urlfragments[i];	//$NON-NLS-1$
+			}			
+			return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
+		}
+	}
+	
+	// Then it's just a regular URL
+	try {
+		URL extraURL = new URL(url);
+		try {
+			relativePath = Utils.makeRelative(new Path(Platform.resolve(extraURL).getFile()), new Path(location)).toOSString();
+		} catch (IOException e) {
+			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url);  //$NON-NLS-1$  //$NON-NLS-2$
+			throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
+		}
+	} catch (MalformedURLException e) {
+		String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url); //$NON-NLS-1$  //$NON-NLS-2$
+		throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
+	}		 
+	return relativePath;
+}
 
 /**
  * Return the plug-in model object from the plug-in registry for the given
