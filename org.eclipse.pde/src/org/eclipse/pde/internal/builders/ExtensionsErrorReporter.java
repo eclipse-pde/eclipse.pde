@@ -406,14 +406,6 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					getLine(element), severity);
 	}
 	
-	protected void reportDeprecatedAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (severity != CompilerFlags.IGNORE) {
-			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", //$NON-NLS-1$
-					attr.getName()), getLine(element, attr.getName()), severity);
-		}	
-	}
-
 	protected void reportDeprecatedElement(Element element) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {

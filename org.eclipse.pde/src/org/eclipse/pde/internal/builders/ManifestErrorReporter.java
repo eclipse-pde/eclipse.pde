@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.builders;
 
 import java.net.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -93,15 +94,14 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 	
 	protected void reportExtraneousElements(NodeList elements, int maximum) {
-		//TODO disable for now
-		/*if (elements.getLength() > maximum) {
+		if (elements.getLength() > maximum) {
 			for (int i = maximum; i < elements.getLength(); i++) {
 				Element element = (Element) elements.item(i);
 				report(PDE.getFormattedMessage("Builders.Feature.multiplicity", //$NON-NLS-1$
 						element.getNodeName()), getLine(element),
 						CompilerFlags.ERROR);
 			}
-		}*/
+		}
 	}
 
 	protected void validateURL(Element element, String attName) {
@@ -136,4 +136,38 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 			reportIllegalAttributeValue(element, attr);
 	}	
 
+	protected NodeList getChildrenByName(Element element, String name) {
+		class NodeListImpl implements NodeList {
+			ArrayList nodes = new ArrayList();
+
+			public int getLength() {
+				return nodes.size();
+			}
+
+			public Node item(int index) {
+				return (Node) nodes.get(index);
+			}
+
+			protected void add(Node node) {
+				nodes.add(node);
+			}
+		}
+		NodeListImpl list = new NodeListImpl();
+		NodeList allChildren = element.getChildNodes();
+		for (int i = 0; i < allChildren.getLength(); i++) {
+			Node node = allChildren.item(i);
+			if (name.equals(node.getNodeName())) {
+				list.add(node);
+			}
+		}
+		return list;
+	}
+
+	protected void reportDeprecatedAttribute(Element element, Attr attr) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+		if (severity != CompilerFlags.IGNORE) {
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", //$NON-NLS-1$
+					attr.getName()), getLine(element, attr.getName()), severity);
+		}	
+	}
 }

@@ -53,7 +53,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateData(Element parent) {
-		NodeList list = parent.getElementsByTagName("data"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "data"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -76,7 +76,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	 * @param element
 	 */
 	private void validatePlugins(Element parent) {
-		NodeList list = parent.getElementsByTagName("plugin"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "plugin"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -104,7 +104,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateRequires(Element parent) {
-		NodeList list = parent.getElementsByTagName("requires"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "requires"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			validateImports((Element)list.item(0));
 			reportExtraneousElements(list, 1);
@@ -112,7 +112,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validateImports(Element parent) {
-		NodeList list = parent.getElementsByTagName("import"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "import"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -121,6 +121,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			Attr feature = element.getAttributeNode("feature"); //$NON-NLS-1$
 			if (plugin == null && feature == null) {
 				assertAttributeDefined(element, "plugin", CompilerFlags.ERROR); //$NON-NLS-1$
+			} else if (plugin != null && feature != null){
+				reportExclusiveAttributes(element, "plugin", "feature", CompilerFlags.ERROR);  //$NON-NLS-1$//$NON-NLS-2$
 			} else if (plugin != null) {
 				validatePluginID(element, plugin, false);
 			} else if (feature != null) {
@@ -128,14 +130,39 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			}
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
-				Attr attr = (Attr)attributes.item(j);
+				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (name.equals("version")) { //$NON-NLS-1$
 					validateVersionAttribute(element, attr);
 				} else if (name.equals("match")) { //$NON-NLS-1$
-					validateMatch(element, attr);
+					if (element.getAttributeNode("patch") != null) { //$NON-NLS-1$
+						report(
+								PDE
+										.getFormattedMessage(
+												"Builders.Feature.patchedMatch", attr.getValue()), //$NON-NLS-1$
+								getLine(element, attr.getValue()), //$NON-NLS-1$
+								CompilerFlags.ERROR);
+					} else {
+						validateMatch(element, attr);
+					}
 				} else if (name.equals("patch")) { //$NON-NLS-1$
-					validateBoolean(element, attr);
+					if ("true".equalsIgnoreCase(attr.getValue()) && feature == null) { //$NON-NLS-1$
+						report(
+								PDE
+										.getFormattedMessage(
+												"Builders.Feature.patchPlugin", attr.getValue()), //$NON-NLS-1$
+								getLine(element, attr.getValue()), //$NON-NLS-1$
+								CompilerFlags.ERROR);
+					} else if ("true".equalsIgnoreCase(attr.getValue()) && element.getAttributeNode("version") == null) { //$NON-NLS-1$ //$NON-NLS-2$
+						report(
+								PDE
+										.getFormattedMessage(
+												"Builders.Feature.patchedVersion", attr.getValue()), //$NON-NLS-1$
+								getLine(element, attr.getValue()), //$NON-NLS-1$
+								CompilerFlags.ERROR);
+					} else {
+						validateBoolean(element, attr);
+					}
 				} else if (!name.equals("plugin") && !name.equals("feature")) { //$NON-NLS-1$ //$NON-NLS-2$
 					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
 				}
@@ -146,7 +173,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateIncludes(Element parent) {
-		NodeList list = parent.getElementsByTagName("includes"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "includes"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -175,7 +202,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateURLElement(Element parent) {
-		NodeList list = parent.getElementsByTagName("url"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "url"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			Element url = (Element)list.item(0);
 			validateUpdateURL(url);
@@ -185,7 +212,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validateUpdateURL(Element parent) {
-		NodeList list = parent.getElementsByTagName("update"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "update"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -205,7 +232,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validateDiscoveryURL(Element parent) {
-		NodeList list = parent.getElementsByTagName("discovery"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "discovery"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -221,6 +248,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					if (!value.equals("web") && !value.equals("update")) { //$NON-NLS-1$ //$NON-NLS-2$
 						reportIllegalAttributeValue(discovery, (Attr)attributes.item(i));
 					}
+					reportDeprecatedAttribute(discovery, discovery.getAttributeNode("type")); //$NON-NLS-1$
 				} else if (!name.equals("label")) { //$NON-NLS-1$
 					reportUnknownAttribute(discovery, name, CompilerFlags.ERROR);
 				}
@@ -229,7 +257,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validateCopyright(Element parent) {
-		NodeList list = parent.getElementsByTagName("copyright"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "copyright"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -250,7 +278,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateLicense(Element parent) {
-		NodeList list = parent.getElementsByTagName("license"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "license"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -271,7 +299,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private void validateDescription(Element parent) {
-		NodeList list = parent.getElementsByTagName("description"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -293,7 +321,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 
 
 	private void validateInstallHandler(Element element) {
-		NodeList elements = element.getElementsByTagName("install-handler"); //$NON-NLS-1$
+		NodeList elements = getChildrenByName(element, "install-handler"); //$NON-NLS-1$
 		if (elements.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
@@ -323,6 +351,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			} else if (name.equals("version")) { //$NON-NLS-1$
 				validateVersionAttribute(element, (Attr)attributes.item(i));
 			}
+			if (name.equals("primary") || name.equals("plugin")){ //$NON-NLS-1$ //$NON-NLS-2$
+				reportDeprecatedAttribute(element, (Attr)attributes.item(i));
+			}
 		}
 	}
 	
@@ -351,6 +382,11 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 						severity);
 			}
 		}
+	}
+	protected void reportExclusiveAttributes(Element element, String attName1, String attName2, int severity) {
+		String message = PDE.getFormattedMessage("Builders.Feature.exclusiveAttributes", //$NON-NLS-1$
+				new String[] {attName1, attName2});
+		report(message, getLine(element, attName2), severity);
 	}
 
 }

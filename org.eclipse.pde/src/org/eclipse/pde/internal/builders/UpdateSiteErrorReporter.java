@@ -44,7 +44,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	 * @param root
 	 */
 	private void validateArchives(Element root) {
-		NodeList list = root.getElementsByTagName("archive"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(root, "archive"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -68,7 +68,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	 * @param root
 	 */
 	private void validateCategoryDefinitions(Element root) {
-		NodeList list = root.getElementsByTagName("category-def"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(root, "category-def"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -91,7 +91,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	 * @param root
 	 */
 	private void validateCategories(Element root) {
-		NodeList list = root.getElementsByTagName("category"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(root, "category"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			if (fMonitor.isCanceled())
 				return;
@@ -109,7 +109,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void validateFeatures(Element parent) {
-		NodeList list = parent.getElementsByTagName("feature"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "feature"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
 			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "url", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -137,7 +137,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	 * @param root
 	 */
 	private void validateDescription(Element parent) {
-		NodeList list = parent.getElementsByTagName("description"); //$NON-NLS-1$
+		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
 			if (fMonitor.isCanceled())
 				return;
