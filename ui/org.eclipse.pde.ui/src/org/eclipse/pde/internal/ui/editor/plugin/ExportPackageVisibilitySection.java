@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -41,6 +42,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
@@ -229,9 +231,14 @@ public class ExportPackageVisibilitySection extends TableSection
                 switch (event.getChangeType()) {
                     case IModelChangedEvent.INSERT:
                         fFriendViewer.add(objects[i]);
+                        fFriendViewer.setSelection(new StructuredSelection(objects[i]));
+                        fFriendViewer.getTable().setFocus();
                         break;
                     case IModelChangedEvent.REMOVE:
+                        Table table = fFriendViewer.getTable();
+                        int index = table.getSelectionIndex();
                         fFriendViewer.remove(objects[i]);
+                        table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
                         break;
                     default:
                         fFriendViewer.refresh(objects[i]);
