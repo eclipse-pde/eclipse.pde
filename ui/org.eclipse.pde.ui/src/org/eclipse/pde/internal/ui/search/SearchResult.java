@@ -99,9 +99,11 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	
 	protected boolean isMatchContained(IEditorPart editor, IPluginObject object) {
 		IFile resource = (IFile)editor.getEditorInput().getAdapter(IFile.class);
-		if (resource != null)
-			return resource.equals(object.getModel().getUnderlyingResource());
-	
+		if (resource != null) {
+			IResource objectResource = object.getModel().getUnderlyingResource();
+			if (objectResource != null)
+				return resource.getProject().equals(objectResource.getProject());
+		}
 		File file = (File)editor.getEditorInput().getAdapter(File.class);
 		if (file != null) {
 			IPath path = new Path(object.getModel().getInstallLocation());

@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.search.ui.text.*;
 import org.eclipse.ui.*;
@@ -13,10 +14,14 @@ public class ManifestEditorOpener {
 		IEditorPart editorPart = null;
 		Object element = match.getElement();
 		if (element instanceof IPluginObject) {
-			IPluginModelBase model = (IPluginModelBase)((IPluginObject)element).getModel();
-			editorPart = ManifestEditor.openPluginEditor(model.getPluginBase());
+			ISharedPluginModel model = ((IPluginObject)element).getModel();
+			if (model instanceof WorkspaceExtensionsModel) {
+				model = ((WorkspaceExtensionsModel)model).getBundlePluginModel();
+			}
+			if (model instanceof IPluginModelBase)
+				editorPart = ManifestEditor.openPluginEditor(((IPluginModelBase)model).getPluginBase());
 		}
-		if (editorPart instanceof ManifestEditor) {
+		if (editorPart != null && editorPart instanceof ManifestEditor) {
 			ManifestEditor editor = (ManifestEditor)editorPart;
 			IDocument doc = editor.getDocument(match);
 			if (doc != null) {
