@@ -80,7 +80,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 
-			int port = SocketUtil.findFeePort();
+			int port = SocketUtil.findFreePort();
 			VMRunnerConfiguration runnerConfig =
 				createVMRunner(configuration, testTypes, port, mode);
 			if (runnerConfig == null) {
