@@ -131,6 +131,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		contextMenuAboutToShow(mng, true);
 	}
 	public void contextMenuAboutToShow(IMenuManager mng, boolean addClipboard) {
+		updateSelectableActions(editor.getSelection());
 		if (addClipboard) {
 			addClipboardActions(mng);
 			mng.add(new Separator());

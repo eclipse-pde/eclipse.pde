@@ -14,7 +14,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
@@ -114,6 +113,11 @@ public class DescriptionSection extends PDEFormSection {
 		gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		styledText.setMenu(getFormPage().getEditor().getContextMenu());
+		styledText.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				updateSelection(sourceViewer.getSelection());
+			}
+		});
 
 		Composite buttonContainer = factory.createComposite(container);
 		layout = new GridLayout();
