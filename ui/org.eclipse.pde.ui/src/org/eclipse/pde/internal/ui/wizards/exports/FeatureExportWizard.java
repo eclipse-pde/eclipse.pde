@@ -57,8 +57,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 	protected HashMap createProperties(String destination, boolean exportZip) {		
 		HashMap map = new HashMap(5);
-		map.put("temp.folder", buildTempLocation);
-		map.put("feature.temp.folder", buildTempLocation);
+		map.put("feature.temp.folder", buildTempLocation + "/destination");
 		if (exportZip) {
 			map.put("plugin.destination", destination);
 			map.put("feature.destination", destination);

@@ -276,6 +276,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 			if (logFile != null && logFile.exists() && logFile.length() > 0) {
 				errors = true;
 				writer.println("<target name=\"zip.logs\">");
+				writer.println("<delete file=\"" + destination + "/logs.zip\"/>");
 				writer.println("<zip zipfile=\"" + destination+ "/logs.zip\" basedir=\""
 						+ buildTempLocation + "/temp.folder\"/>");
 				writer.println("</target>");

@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.build.Config;
 import org.eclipse.pde.internal.build.Policy;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.update.core.IPluginEntry;
 
 public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerator {
@@ -93,7 +94,8 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 					params.put(PROPERTY_WS, aMatchingConfig.getWs());
 				if (!aMatchingConfig.getArch().equals(Config.ANY))
 					params.put(PROPERTY_ARCH, aMatchingConfig.getArch());
-				params.put(PROPERTY_BUILD_RESULT_FOLDER, getPropertyFormat(PROPERTY_TEMP_FOLDER) + "/build_result/" + plugin.getId());
+				params.put(PROPERTY_BUILD_RESULT_FOLDER, PDEPlugin.getDefault().getStateLocation() + "/temp/build_result/" + plugin.getId());
+				params.put(PROPERTY_TEMP_FOLDER, PDEPlugin.getDefault().getStateLocation() + "/temp/temp.folder/" + plugin.getId());
 
 				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(featureRootLocation));
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, params);
