@@ -23,7 +23,7 @@ public class DetailsForm extends ScrollableSectionForm {
 	private StackSection stackSection;
 	private Image headingImage;
 	private Label date;
-	private Label message;
+	private Text message;
 	private Composite parent;
 	private Label eventType;
 	private IMemento memento;
@@ -105,11 +105,12 @@ public class DetailsForm extends ScrollableSectionForm {
 				SWT.NONE);
 		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
-		message = factory.createLabel(comp, "", SWT.WRAP);
+		message = new Text(comp, SWT.MULTI|SWT.WRAP);
 		gd = new GridData();
 		gd.widthHint = 380;
 		message.setLayoutData(gd);
-		
+		message.setEditable(false);
+		message.setBackground(factory.getBackgroundColor());
 	}
 
 	private void updateTopSection(LogEntry entry) {
