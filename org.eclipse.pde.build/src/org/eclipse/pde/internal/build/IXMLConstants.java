@@ -66,6 +66,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_INCLUDE_CHILDREN = "includeChildren";
 	public static final String PROPERTY_INSTALL = "install";
 	public static final String PROPERTY_JAR_EXTERNAL = "jar.external";
+	public static final String PROPERTY_JAR_ORDER = "jars.compile.order";
 	public static final String PROPERTY_NL = "nl";
 	public static final String PROPERTY_OS = "os";
 	public static final String PROPERTY_QUIET = "quiet";

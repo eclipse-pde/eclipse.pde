@@ -57,5 +57,6 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_READING_FILE = 10;
 	public final static int EXCEPTION_SOURCE_LOCATION_MISSING = 11;
 	public final static int EXCEPTION_WRITING_FILE = 12;
+	public final static int EXCEPTION_INVALID_JAR_ORDER = 13;
 	public final static int WARNING_MISSING_SOURCE = 20;
 }

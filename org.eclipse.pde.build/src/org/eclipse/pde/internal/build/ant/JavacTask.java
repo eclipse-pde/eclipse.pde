@@ -18,7 +18,7 @@ public class JavacTask implements ITask {
 	protected String classpath;
 	protected String destdir;
 	protected String failonerror;
-	protected String srcdir;
+	protected String[] srcdir;
 	protected String verbose;
 
 public JavacTask() {
@@ -27,67 +27,38 @@ public JavacTask() {
 public void print(AntScript script, int tab) {
 	script.printTab(tab);
 	script.print("<javac");
-	script.println();
-	script.printTab(++tab);
-	script.printAttribute("srcdir", srcdir, false);
-	script.println();
-	script.printTab(tab);
 	script.printAttribute("destdir", destdir, false);
-	script.println();
-	script.printTab(tab);
 	script.printAttribute("failonerror", failonerror, false);
-	script.println();
-	script.printTab(tab);
 	script.printAttribute("verbose", verbose, false);
-	script.println();
-	script.printTab(tab--);
 	script.printAttribute("classpath", classpath, false);
 	script.println(">");
-	script.printEndTag(tab, "javac");
+	for (int i = 0; i < srcdir.length; i++) {
+		script.printTab(tab);
+		script.print("<src path=");
+		script.printQuotes(srcdir[i]);
+		script.println("/>");
+	}
+	script.printEndTag(--tab, "javac");
 }
-	
-	/**
-	 * Sets the classpath.
-	 * @param classpath The classpath to set
-	 */
-	public void setClasspath(String classpath) {
-		this.classpath = classpath;
-	}
 
-	
-	/**
-	 * Sets the destdir.
-	 * @param destdir The destdir to set
-	 */
-	public void setDestdir(String destdir) {
-		this.destdir = destdir;
-	}
+public void setClasspath(String classpath) {
+	this.classpath = classpath;
+}
 
-	
-	/**
-	 * Sets the failonerror.
-	 * @param failonerror The failonerror to set
-	 */
-	public void setFailOnError(String failonerror) {
-		this.failonerror = failonerror;
-	}
+public void setDestdir(String destdir) {
+	this.destdir = destdir;
+}
 
-	
-	/**
-	 * Sets the srcdir.
-	 * @param srcdir The srcdir to set
-	 */
-	public void setSrcdir(String srcdir) {
-		this.srcdir = srcdir;
-	}
+public void setFailOnError(String failonerror) {
+	this.failonerror = failonerror;
+}
 
-	
-	/**
-	 * Sets the verbose.
-	 * @param verbose The verbose to set
-	 */
-	public void setVerbose(String verbose) {
-		this.verbose = verbose;
-	}
+public void setSrcdir(String[] srcdir) {
+	this.srcdir = srcdir;
+}
+
+public void setVerbose(String verbose) {
+	this.verbose = verbose;
+}
 
 }

@@ -243,13 +243,28 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	IPath destination = new Path(basedir);
 	destination = destination.append(name + ".bin");
 	String destdir = destination.toString();
-	Map properties = new HashMap(5);
-	properties.put("srcdir", Utils.getStringFromArray(jar.getSource(), ","));
-	properties.put("destdir", destdir);
-	properties.put("jarName", name);
-	properties.put("classpath", getClasspath(model, jar));
-	String library = makeRelative(getLibraryLocation(), new Path(getLocation(model)));
-	script.printAntTask(tab, library, null, TARGET_JAR, null, null, properties);
+	script.printProperty(tab, "destdir", destdir);
+	script.printDeleteTask(tab, destdir, null, null);
+	script.printMkdirTask(tab, destdir);
+	script.printComment(tab, "compiles the source code");
+	JavacTask javac = new JavacTask();
+	javac.setClasspath(getClasspath(model, jar));
+	javac.setDestdir(destdir);
+	javac.setFailOnError("no");
+	javac.setSrcdir(jar.getSource());
+	script.print(tab, javac);
+
+//    <!-- copies the necessary resources -->
+//    <copy todir="${destdir}">
+//      <fileset dir="${srcdir}" includes="" excludes="**/*.java"/>
+//    </copy>
+
+//    <copy todir="${basedir}">
+//      <fileset dir="." includes="*.log" />
+//    </copy>
+
+	script.printJarTask(tab, name, basedir);
+	script.printMkdirTask(tab, destdir);
 	script.printEndTag(--tab, "target");
 }
 
@@ -260,11 +275,35 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	addFragmentsLibraries(getRegistry().getPlugin(PI_BOOT), classpath);
 	addLibraries(getRegistry().getPlugin(PI_RUNTIME), classpath);
 	addFragmentsLibraries(getRegistry().getPlugin(PI_RUNTIME), classpath);
+	// add libraries from pre-requisite plug-ins
 	PluginPrerequisiteModel[] requires = model.getRequires();
 	if (requires != null) {
 		for (int i = 0; i < requires.length; i++) {
-			PluginModel prerequisite = getRegistry().getPlugin(requires[0].getPlugin(), requires[0].getVersion());
+			PluginModel prerequisite = getRegistry().getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 			addLibraries(prerequisite, classpath);
+			addFragmentsLibraries(prerequisite, classpath);
+		}
+	}
+	// add libraries from this plug-in
+	String jarOrder = (String) getBuildProperties(model).get(PROPERTY_JAR_ORDER);
+	String root = getLocation(model);
+	if (jarOrder == null) {
+		// if no jar order was specified in build.properties, we add all the libraries but the current one
+		JAR[] jars = extractJars(getBuildProperties(model));
+		for (int i = 0; i < jars.length; i++) {
+			if (jar.getName().equals(jars[i].getName()))
+				continue;
+			File library = new File(root, jars[i].getName());
+			classpath.add(library.getAbsolutePath());
+		}
+	} else {
+		// otherwise we add all the predecessor jars
+		String[] order = Utils.getArrayFromString(jarOrder);
+		for (int i = 0; i < order.length; i++) {
+			if (order[i].equals(jar.getName()))
+				break;
+			File library = new File(root, order[i]);
+			classpath.add(library.getAbsolutePath());
 		}
 	}
 	return Utils.getStringFromCollection(classpath, ";");
