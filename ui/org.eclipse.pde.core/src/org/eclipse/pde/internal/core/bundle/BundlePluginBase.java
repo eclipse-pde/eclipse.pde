@@ -37,10 +37,6 @@ public class BundlePluginBase
 		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {
 			reset();
 			getModel().fireModelChanged(event);
-		} else {
-			if (!(event.getChangeProvider() instanceof IBundleModel)) {
-				getModel().fireModelChanged(event);
-			}
 		}
 	}
 
@@ -527,7 +523,7 @@ public class BundlePluginBase
 		if (bundle != null) {
 			String old = getName();
 			bundle.setHeader(Constants.BUNDLE_NAME, name);
-			//model.fireModelObjectChanged(this, IPluginBase.P_NAME, old, name);
+			model.fireModelObjectChanged(this, IPluginBase.P_NAME, old, name);
 		}
 	}
 	

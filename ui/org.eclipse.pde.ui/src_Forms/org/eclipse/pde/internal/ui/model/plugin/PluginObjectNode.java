@@ -201,7 +201,7 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 				return false;
 		}
 		
-		if (node.getNodeAttributes().length != node.getNodeAttributes().length)
+		if (node.getNodeAttributes().length != getNodeAttributes().length)
 			return false;
 		for (int i = 0; i < node.getNodeAttributes().length; i++) {
 			if (!node.getNodeAttributes()[i].equals(getNodeAttributes()[i]))
