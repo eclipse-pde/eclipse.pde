@@ -188,11 +188,13 @@ public class TargetPlatformPreferencePage
 	
 	private void handleBrowse() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		if (homeText.getText().length()>0)
+		if (homeText.getText().length() > 0)
 			dialog.setFilterPath(homeText.getText());
 		String newPath = dialog.open();
-		if (newPath!=null) 
+		if (newPath != null && !homeText.getText().equals(newPath)) {
 			homeText.setText(newPath);
+			pluginsBlock.handleReload();
+		}
 	}
 
 	public void init(IWorkbench workbench) {

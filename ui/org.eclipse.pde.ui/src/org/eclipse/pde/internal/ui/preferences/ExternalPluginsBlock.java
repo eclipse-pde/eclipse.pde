@@ -45,7 +45,7 @@ public class ExternalPluginsBlock {
 	private IPluginModelBase[] initialModels;
 
 
-	private final static boolean DEFAULT_STATE = false;
+	private final static boolean DEFAULT_STATE = true;
 	
 	class ReloadOperation implements IRunnableWithProgress {
 		private Vector models = new Vector();
@@ -264,8 +264,8 @@ public class ExternalPluginsBlock {
 			models = op.getPluginModels();
 			fmodels = op.getFragmentModels();
 			pluginListViewer.refresh();
+			
 			tablePart.selectAll(DEFAULT_STATE);
-
 			reloaded = true;
 		}
 		page.resetNeedsReload();

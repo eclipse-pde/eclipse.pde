@@ -370,7 +370,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 				: ICoreConstants.VALUE_USE_THIS);
 		preferences.setDefault(
 			ICoreConstants.CHECKED_PLUGINS,
-			ICoreConstants.VALUE_SAVED_NONE);
+			ICoreConstants.VALUE_SAVED_ALL);
 		if (preferences
 			.getString(ICoreConstants.TARGET_MODE)
 			.equals(ICoreConstants.VALUE_USE_THIS))
