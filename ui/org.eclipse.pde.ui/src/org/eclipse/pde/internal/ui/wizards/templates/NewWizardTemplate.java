@@ -34,13 +34,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 	private static final String KEY_DEFAULT_NAME = "NewWizardTemplate.defaultName"; //$NON-NLS-1$
 	private static final String KEY_EXTENSION_LABEL = "NewWizardTemplate.extension"; //$NON-NLS-1$
 	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName"; //$NON-NLS-1$
-	private MultiPageEditorNewWizard wizard;
 	
 	public NewWizardTemplate() {
-		this(null);
-	}
-	public NewWizardTemplate(MultiPageEditorNewWizard wizard){
-		this.wizard = wizard;
 		setPageCount(1);
 		createOptions();
 	}
@@ -63,8 +58,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0); //$NON-NLS-1$
-		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), (String)null, 0); //$NON-NLS-1$ //$NON-NLS-2$
-		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL), (String)null, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0); 
+		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL),"new_file.mpe", 0); 
 	}
 
 	protected void initializeFields(IFieldData data) {
@@ -73,8 +68,6 @@ public class NewWizardTemplate extends PDETemplateSection {
 		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, id+".wizards"); //$NON-NLS-1$
 		initializeOption("categoryId", id); //$NON-NLS-1$
-		initializeOption("extension", wizard == null ? "mpe" : wizard.getFileExtension()); //$NON-NLS-1$ //$NON-NLS-2$
-		initializeOption("initialFileName", wizard == null ? "new_file.mpe" : "new_file." + wizard.getFileExtension()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
