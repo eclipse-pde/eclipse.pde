@@ -408,7 +408,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 	private String computeShowsplashArgument(IProgressMonitor monitor) {
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(monitor);
-		IPath fullPath = eclipseHome.append("eclipse.exe");
+		IPath fullPath = eclipseHome.append("eclipse");
 		return fullPath.toOSString() + " -showsplash 600";
 	}
 
