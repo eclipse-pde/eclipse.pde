@@ -13,9 +13,7 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
 
 
 public class NewWizard extends Wizard implements INewWizard {
@@ -39,19 +37,5 @@ public void init(IWorkbench workbench, IStructuredSelection selection) {
 }
 public boolean performFinish() {
 	return true;
-}
-protected void revealSelection(final Object toSelect) {
-	IWorkbenchWindow ww = workbench.getActiveWorkbenchWindow();
-	final IWorkbenchPart focusPart = ww.getActivePage().getActivePart();
-
-	if (focusPart instanceof ISetSelectionTarget) {
-		Display d = getShell().getDisplay();
-		d.asyncExec(new Runnable() {
-			public void run() {
-				ISelection selection = new StructuredSelection(toSelect);
-				((ISetSelectionTarget) focusPart).selectReveal(selection);
-			}
-		});
-	}
 }
 }

@@ -79,7 +79,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fPluginData, fProjectProvider));
-			revealSelection(fMainPage.getProjectHandle());
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
