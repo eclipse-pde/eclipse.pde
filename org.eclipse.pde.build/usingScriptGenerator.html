@@ -17,13 +17,13 @@
 <h1>Plug-ins:</h1>
 <h3>How do I build a plug-in using PDE Core?</h3>
 <p>
-Actually, PDE Core does not build plug-ins. It only generates Ant build scripts. Ant will do
-the job later for you.
+Actually, PDE Core does not build plug-ins. It only generates Ant scripts that will do the job.
 </p>
 <p>
 One way to generate a build.xml script for a plug-in is through the command line. EXPLAIN WHAT IS THE CORRECT SETUP
 <pre>
 java -cp startup.jar org.eclipse.core.launcher.Main -dev bin -application org.eclipse.pde.core.plugin -plugin org.eclipse.core.resources
+java -cp startup.jar org.eclipse.core.launcher.Main -dev bin -application org.eclipse.ant.core.antRunner -file plugins\org.eclipse.core.resources\plugin.xml
 </pre>
 </p>
 <p>
