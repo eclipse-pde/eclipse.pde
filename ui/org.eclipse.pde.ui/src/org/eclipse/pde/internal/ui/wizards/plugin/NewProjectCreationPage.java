@@ -138,7 +138,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Text createText(Composite container) {
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 225;
+		gd.widthHint = 300;
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
