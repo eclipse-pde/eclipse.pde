@@ -23,7 +23,6 @@ import org.eclipse.jface.window.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -49,7 +48,6 @@ public class ExternalPluginsBlock {
 	private HashSet changed = new HashSet();
 	private IPluginModelBase[] initialModels;
 	private IPluginModelBase[] fModels;
-	private IFeatureModel[] fFeatureModels;
 	private PDEState fCurrentState;
 	private Button fIncludeFragments;
 
@@ -69,8 +67,6 @@ public class ExternalPluginsBlock {
 					new SubProgressMonitor(monitor, 85));
 			fModels = fCurrentState.getModels();
 
-			fFeatureModels = ExternalFeatureLoader.loadFeatureModels(
-					new SubProgressMonitor(monitor, 15), platformPath);
 			monitor.done();
 		}
 		
@@ -313,7 +309,7 @@ public class ExternalPluginsBlock {
 		}
 
 		if (reloaded) {
-			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels, fFeatureModels);
+			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
 		}
 	}
 	

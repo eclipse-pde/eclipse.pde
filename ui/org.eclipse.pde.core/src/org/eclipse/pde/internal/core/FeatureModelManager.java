@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -40,7 +41,7 @@ public class FeatureModelManager {
 	 */
 	private FeatureTable fInactiveModels;
 
-	private ExternalModelManager fExternalManager;
+	//private ExternalModelManager fExternalManager;
 
 	private WorkspaceModelManager fWorkspaceManager;
 
@@ -61,9 +62,11 @@ public class FeatureModelManager {
 	}
 
 	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
-		fExternalManager = em;
+		
+		//TODO disable all connectivity with external model manager for now.
+		//fExternalManager = em;
 		fWorkspaceManager = wm;
-		fExternalManager.addModelProviderListener(fProviderListener);
+		//fExternalManager.addModelProviderListener(fProviderListener);
 		fWorkspaceManager.addModelProviderListener(fProviderListener);
 
 	}
@@ -71,8 +74,8 @@ public class FeatureModelManager {
 	public void shutdown() {
 		if (fWorkspaceManager != null)
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
-		if (fExternalManager != null)
-			fExternalManager.removeModelProviderListener(fProviderListener);
+		//if (fExternalManager != null)
+			//fExternalManager.removeModelProviderListener(fProviderListener);
 	}
 
 	private synchronized void init() {
@@ -88,7 +91,8 @@ public class FeatureModelManager {
 			fActiveModels.add(models[i]);
 		}
 
-		models = fExternalManager.getAllFeatureModels();
+		//TODO temporary
+		models = ExternalFeatureLoader.loadFeatureModels(new NullProgressMonitor(), ExternalModelManager.getEclipseHome().toString());
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].isValid()) {
 				// ignore invalid external models
