@@ -8,7 +8,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.model.IEditingModel;
@@ -104,17 +103,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
-		IContentOutlinePage outline = getContentOutline();
-		if (outline != null && outline instanceof IModelChangedListener) {
-			IModelChangedListener listener = (IModelChangedListener)outline;
-			IBaseModel model = getInputContext().getModel();
-			if (model instanceof IModelChangeProvider) {
-				if (active)
-					((IModelChangeProvider)model).addModelChangedListener(listener);
-				else
-					((IModelChangeProvider)model).removeModelChangedListener(listener);
-			}
-		}
 		if (active) {
 			// page becomes visible; notify the context
 			inputContext.setSourceEditingMode(true);
