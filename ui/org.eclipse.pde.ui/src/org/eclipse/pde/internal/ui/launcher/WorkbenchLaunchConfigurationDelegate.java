@@ -159,22 +159,34 @@ public class WorkbenchLaunchConfigurationDelegate
 		return plugins;
 	}
 	
-	private void mergeWithoutDuplicates(ArrayList wsmodels, ArrayList exmodels, ArrayList result) {
-		
-		for (int i=0; i<wsmodels.size(); i++) {
-			result.add(wsmodels.get(i));
+	private void mergeWithoutDuplicates(
+		ArrayList wsmodels,
+		ArrayList exmodels,
+		ArrayList result) {
+
+		for (int i = 0; i < wsmodels.size(); i++) {
+			if (((IPluginModelBase) wsmodels.get(i)).getPluginBase().getId()
+				!= null)
+				result.add(wsmodels.get(i));
 		}
 		duplicates = new Vector();
-		for (int i=0; i<exmodels.size(); i++) {
-			IPluginModelBase exmodel = (IPluginModelBase)exmodels.get(i);
+		for (int i = 0; i < exmodels.size(); i++) {
+			IPluginModelBase exmodel = (IPluginModelBase) exmodels.get(i);
 			boolean duplicate = false;
-			for (int j=0; j<wsmodels.size(); j++) {
-				IPluginModelBase wsmodel = (IPluginModelBase)wsmodels.get(j);
-				if (isDuplicate(wsmodel, exmodel)) {
-					duplicates.add(exmodel.getPluginBase().getId() + " (" + exmodel.getPluginBase().getVersion() + ")");
-					duplicate = true;
-					break;
-				} 
+			for (int j = 0; j < wsmodels.size(); j++) {
+				IPluginModelBase wsmodel = (IPluginModelBase) wsmodels.get(j);
+				if (wsmodel.getPluginBase().getId() != null
+					&& exmodel.getPluginBase().getId() != null) {
+					if (isDuplicate(wsmodel, exmodel)) {
+						duplicates.add(
+							exmodel.getPluginBase().getId()
+								+ " ("
+								+ exmodel.getPluginBase().getVersion()
+								+ ")");
+						duplicate = true;
+						break;
+					}
+				}
 			}
 			if (!duplicate)
 				result.add(exmodel);
