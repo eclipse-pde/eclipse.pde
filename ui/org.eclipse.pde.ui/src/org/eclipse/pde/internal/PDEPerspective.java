@@ -56,5 +56,6 @@ public void createInitialLayout(IPageLayout factory) {
 	factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 	factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
 	factory.addActionSet(JavaUI.ID_ACTION_SET);
+	factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
 }
 }

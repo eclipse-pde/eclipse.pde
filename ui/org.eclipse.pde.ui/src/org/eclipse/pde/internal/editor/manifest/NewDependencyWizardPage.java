@@ -32,6 +32,7 @@ public class NewDependencyWizardPage extends WizardPage {
 	private IPluginModel model;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Image pluginImage;
+	private Image errorPluginImage;
 	private Image pluginsImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
@@ -49,8 +50,10 @@ public class NewDependencyWizardPage extends WizardPage {
 			return obj.toString();
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModel)
-				return pluginImage;
+			if (obj instanceof IPluginModel) {
+				boolean error = !((IPluginModel)obj).isLoaded();
+				return error?errorPluginImage:pluginImage;
+			}
 			if (obj instanceof NamedElement)
 				return ((NamedElement) obj).getImage();
 			return null;
@@ -91,7 +94,8 @@ public class NewDependencyWizardPage extends WizardPage {
 public NewDependencyWizardPage(IPluginModel model) {
 	super("newDependencyPage");
 	this.model = model;
-	pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
+	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
+	errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
 	pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 	setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -161,7 +165,6 @@ protected Control createPluginList(Composite parent) {
 }
 
 public void dispose() {
-	pluginImage.dispose();
 	pluginsImage.dispose();
 	super.dispose();
 }

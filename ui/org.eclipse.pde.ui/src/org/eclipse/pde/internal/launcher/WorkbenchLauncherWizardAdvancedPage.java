@@ -49,6 +49,8 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 	private Image pluginImage;
 	private Image fragmentImage;
 	private Image pluginsImage;
+	private Image errorFragmentImage;
+	private Image errorPluginImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
 	private Vector externalList;
@@ -60,18 +62,27 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			if (obj instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) obj;
 				IPluginBase plugin = model.getPluginBase();
-				String name = plugin.getId();
-				if (showNamesCheck.getSelection())
-					name = plugin.getTranslatedName();
-				return name + " (" + plugin.getVersion() + ")";
+				String id = plugin.getId();
+				String name = plugin.getTranslatedName();
+				String version = plugin.getVersion();
+				String result = id;
+
+				if (showNamesCheck.getSelection() && name != null)
+					result = name;
+				if (version != null)
+					result += " (" + version + ")";
+				return result;
 			}
 			return obj.toString();
 		}
 		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModel)
-				return pluginImage;
-			if (obj instanceof IFragmentModel)
-				return fragmentImage;
+			if (obj instanceof IPluginModelBase) {
+				boolean error = !((IPluginModelBase) obj).isLoaded();
+				if (obj instanceof IPluginModel)
+					return error ? errorPluginImage : pluginImage;
+				if (obj instanceof IFragmentModel)
+					return error ? errorFragmentImage : fragmentImage;
+			}
 			if (obj instanceof NamedElement)
 				return ((NamedElement) obj).getImage();
 			return null;
@@ -109,41 +120,40 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			return new Object[] { workspacePlugins, externalPlugins };
 		}
 	}
-	
+
 	static class ExternalState {
 		String id;
 		boolean state;
 	}
-	
+
 	static class ExternalStates {
 		Vector states = new Vector();
-		
+
 		ExternalStates() {
 		}
 		ExternalStates(String settings) {
 			parseStates(settings);
 		}
-		
+
 		public void parseStates(String settings) {
 			StringTokenizer stok = new StringTokenizer(settings, File.pathSeparator);
 			while (stok.hasMoreTokens()) {
 				String token = stok.nextToken();
 				ExternalState state = new ExternalState();
 				int loc = token.lastIndexOf(',');
-				if (loc==-1) {
+				if (loc == -1) {
 					state.id = token;
 					state.state = false;
-				}
-				else {
+				} else {
 					state.id = token.substring(0, loc);
-					state.state = token.charAt(loc+1)=='t';
+					state.state = token.charAt(loc + 1) == 't';
 				}
 				states.add(state);
 			}
 		}
 		ExternalState getState(String id) {
-			for (int i=0; i<states.size(); i++) {
-				ExternalState state = (ExternalState)states.get(i);
+			for (int i = 0; i < states.size(); i++) {
+				ExternalState state = (ExternalState) states.get(i);
 				if (state.id.equals(id)) {
 					return state;
 				}
@@ -156,14 +166,14 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		super("WorkbenchLauncherWizardAdvancedPage", false);
 		setTitle(title);
 		setDescription("Plug-ins and fragments visible to the plug-in loader.");
-		pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
-		fragmentImage = PDEPluginImages.DESC_FRAGMENT_OBJ.createImage();
+		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
+		errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
+		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
+		errorFragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
 		pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 	}
 
 	public void dispose() {
-		pluginImage.dispose();
-		fragmentImage.dispose();
 		pluginsImage.dispose();
 		super.dispose();
 	}
@@ -291,13 +301,13 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		pluginTreeViewer.setSorter(new ViewerSorter() {
 			public int category(Object obj) {
 				if (obj == workspacePlugins)
-				   return -1;
+					return -1;
 				if (obj == externalPlugins)
 					return 1;
 				return 0;
 			}
 		});
-	
+
 		workspacePlugins =
 			new NamedElement(
 				PDEPlugin.getResourceString(KEY_WORKSPACE_PLUGINS),
@@ -338,19 +348,18 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		useDefaultCheck.setSelection(useDefault);
 		showNamesCheck.setSelection(showNames);
 		pluginTreeViewer.setInput(PDEPlugin.getDefault());
-		Vector result=null;
-	
+		Vector result = null;
+
 		if (useDefault) {
 			result = computeInitialCheckState();
-		}
-		else {
+		} else {
 			result = new Vector();
 			boolean addWorkspace = false;
 			boolean addRoot = false;
 			boolean mixed = false;
-			
-			IPluginModelBase [] ws = getWorkspacePlugins();
-		
+
+			IPluginModelBase[] ws = getWorkspacePlugins();
+
 			// Deselected workspace plug-ins
 			String deselectedPluginIDs = initialSettings.get(SETTINGS_WSPROJECT);
 			if (deselectedPluginIDs != null) {
@@ -368,8 +377,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 							result.add(workspacePlugins);
 						}
 						result.add(desc);
-					}
-					else {
+					} else {
 						mixed = true;
 					}
 				}
@@ -381,38 +389,36 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			addRoot = false;
 			mixed = false;
 
-			IPluginModelBase [] ex = getExternalPlugins();
-			
+			IPluginModelBase[] ex = getExternalPlugins();
+
 			String exSettings = initialSettings.get(SETTINGS_EXTPLUGINS);
-			if (exSettings==null) exSettings = "";
+			if (exSettings == null)
+				exSettings = "";
 			ExternalStates states = new ExternalStates(exSettings);
-	
-			for (int i=0; i<ex.length; i++) {
+
+			for (int i = 0; i < ex.length; i++) {
 				IPluginModelBase desc = ex[i];
 				ExternalState es = states.getState(desc.getPluginBase().getId());
-				if (es!=null) {
+				if (es != null) {
 					// use the saved state
 					if (es.state) {
 						addRoot = true;
 						result.add(desc);
-					}
-					else {
+					} else {
 						mixed = true;
 					}
-				}
-				else {
+				} else {
 					// use the preference
 					if (desc.isEnabled()) {
 						addRoot = true;
 						result.add(desc);
-					}
-					else {
+					} else {
 						mixed = true;
 					}
 				}
 			}
 			if (addRoot) {
-				result.add(externalPlugins);			
+				result.add(externalPlugins);
 				if (mixed) {
 					pluginTreeViewer.setGrayed(externalPlugins, true);
 				}
@@ -501,7 +507,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 
 	private void handleGroupStateChanged(Object group, boolean checked) {
 		IPluginModelBase[] models;
-		
+
 		if (group.equals(workspacePlugins)) {
 			models = (IPluginModelBase[]) getWorkspacePlugins();
 		} else {
@@ -542,7 +548,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 			IPluginModelBase model = (IPluginModelBase) externalModels[i];
 			boolean state = pluginTreeViewer.getChecked(model);
 			exbuf.append(model.getPluginBase().getId());
-			exbuf.append(state?",t":",f");
+			exbuf.append(state ? ",t" : ",f");
 			exbuf.append(File.pathSeparatorChar);
 		}
 		initialSettings.put(SETTINGS_WSPROJECT, wbuf.toString());
@@ -558,7 +564,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		ArrayList res = new ArrayList();
 		// Deselected workspace plug-ins
 		ArrayList deselectedWSPlugins = new ArrayList();
-			
+
 		String wstring = settings.get(SETTINGS_WSPROJECT);
 		String exstring = settings.get(SETTINGS_EXTPLUGINS);
 
@@ -587,11 +593,10 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 					res.add(model);
 			} else {
 				ExternalState es = exstates.getState(model.getPluginBase().getId());
-				if (es!=null && es.state) {
+				if (es != null && es.state) {
 					res.add(model);
-				}
-				else if (model.isEnabled())
-				    res.add(model);
+				} else if (model.isEnabled())
+					res.add(model);
 			}
 		}
 		IPluginModelBase[] plugins =
