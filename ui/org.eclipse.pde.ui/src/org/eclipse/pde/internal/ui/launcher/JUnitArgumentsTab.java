@@ -40,9 +40,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		result.add(PDEPlugin.getResourceString("JUnitArgumentsTab.headless")); //$NON-NLS-1$
 		String[] appNames = super.getApplicationNames();
 		for (int i = 0; i < appNames.length; i++) {
-			if (!appNames[i].startsWith("org.eclipse.pde.junit.runtime")) {
-				result.add(appNames[i]);
-			}
+			result.add(appNames[i]);
 		}
 		return (String[])result.toArray(new String[result.size()]);
 	}
