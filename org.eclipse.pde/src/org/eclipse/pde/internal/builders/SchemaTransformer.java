@@ -331,13 +331,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (cssURL == null) {
 			if (cssPurpose == GENERATE_DOC) {
 				out.println("<!-- default platform documentation stylesheets -->");
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getPlatformCSSName()+ "\"/>");
+				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getPlatformCSSName()+ "\"/>");
+				out.println("<style>@import url(\"" + getPlatformCSSName() + "\");</style>");
 				return;
 			} else if (cssPurpose == BUILD) {
 				out.println(
 					"<!-- default platform documentation stylesheets -->");
 				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getPlatformCSSName()+ "\"/>");	//defect 43227
+				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getPlatformCSSName()+ "\"/>");	//defect 43227
+				out.println("<style>@import url(\"../../" + getPlatformCSSName() + "\");</style>");
 				return;
 			} else { // cssPurpose is TEMP
 				IPluginDescriptor descriptor =
@@ -358,11 +360,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 			cssFile = new File(cssURL.getFile());
 			if (cssPurpose == GENERATE_DOC) {
 				out.println("<!-- custom platform documentation stylesheets -->");
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + cssFile.getName()+ "\"/>");
+				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + cssFile.getName()+ "\"/>");
+				out.println("<style>@import url(\"" + cssFile.getName() + "\");</style>");
 				return;
 			} else if (cssPurpose == BUILD) {
 				out.println("<!-- custom platform documentation stylesheets -->");
-				out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ cssURL.toString()+ "\"/>");
+				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ cssURL.toString()+ "\"/>");
+				out.println("<style>@import url(\"" + cssURL.toString() + "\");</style>");
 				return;
 			}
 		}
@@ -380,10 +384,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 				pwriter.println(breader.readLine());
 			}
 			out.println("<!-- temporary documentation stylesheets -->");
-			out.println(
-				"<link rel=\"stylesheet\" type=\"text/css\" href=\""
-					+ tempCSSFile.getName()
-					+ "\"/>");
+//			out.println(
+//				"<link rel=\"stylesheet\" type=\"text/css\" href=\""
+//					+ tempCSSFile.getName()
+//					+ "\"/>");
+			out.println("<style>@import url(\"" + tempCSSFile.getName() + "\");</style>");
 			pwriter.close();
 			breader.close();
 			freader.close();
@@ -416,9 +421,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 		out.println("<HTML>");
 		out.println("<BODY>");
 		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
+		out.println("<p></p>");
 		out.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>");
 		out.print(schema.getQualifiedPointId());
-		out.println("<p>");
+		out.println("<p></p>");
 		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
 		transformDescription(out, schema);
 		out.println(
@@ -435,9 +441,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 			schema,
 			"Supplied Implementation:",
 			IDocumentSection.IMPLEMENTATION);
-		out.println("<h6 class=CaptionFigColumn id=copyright-text>");
+		out.println("<p class=note id=copyright>");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
-		out.println("</h6>");
+		out.println("</p>");
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
@@ -465,19 +471,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 				case (GENERATE_DOC) :
 					out.println(
 						"<!-- default schema documentation stylesheets -->");
-					out.println(
-						"<link rel=\"stylesheet\" type=\"text/css\" href=\""
-							+ getSchemaCSSName()
-							+ "\"/>");
+//					out.println(
+//						"<link rel=\"stylesheet\" type=\"text/css\" href=\""
+//							+ getSchemaCSSName()
+//							+ "\"/>");
+					out.println("<style>@import url(\"" + getSchemaCSSName() + "\");</style>");
 					break;
 				case (BUILD) :
 					out.println(
 						"<!-- default schema documentation stylesheets -->");
-					out.println(
-						"<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"
-							+ getSchemaCSSName()
-							+ "\"/>");
+//					out.println(
+//						"<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"
+//							+ getSchemaCSSName()
+//							+ "\"/>");
 					// defect 43227
+				out.println("<style>@import url(\"../../" + getSchemaCSSName() + "\");</style>");
 					break;
 				default :
 					break;
@@ -488,6 +496,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
+		out.println("<p>");
 		out.print("<h6 class=CaptionFigColumn id=header>Description: </h6>");
 		transformText(out, schema.getDescription());
 		ISchemaInclude[] includes = schema.getIncludes();
@@ -499,6 +508,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				transformText(out, ischema.getDescription());
 			}
 		}
+		out.println("</p>");
 	}
 
 	private void transformElement(PrintWriter out, ISchemaElement element) {
@@ -1002,7 +1012,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 			out.print(
 				"<h6 class=CaptionFigColumn id=header>" + title + " </h6>");
 		transformText(out, description);
-		out.println("<p>");
+		out.println();
+		out.println("<p></p>");
+		out.println();
 	}
 	private void transformText(PrintWriter out, String text) {
 		if (text == null)
