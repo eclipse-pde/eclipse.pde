@@ -105,6 +105,10 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 				result.add(project);
 			}
 		}
+		SearchablePluginsManager manager = PDECore.getDefault().getModelManager().getSearchablePluginsManager();
+		IJavaProject proxy = manager.getProxyProject();
+		if (proxy != null)
+			result.add(proxy.getProject());
 		IProject[] projects = (IProject[]) result.toArray(new IProject[result
 				.size()]);
 		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
