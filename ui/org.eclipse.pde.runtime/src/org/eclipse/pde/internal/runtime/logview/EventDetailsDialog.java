@@ -26,7 +26,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.*;
-import org.eclipse.update.ui.forms.internal.*;
 
 public class EventDetailsDialog extends Dialog {
 	private LogEntry entry, parentEntry;
@@ -54,7 +53,6 @@ public class EventDetailsDialog extends Dialog {
 	
 	// sorting
 	private static int ASCENDING = 1;
-	private static int DESCENDING = -1;
 	private Comparator comparator = null;
 	private Collator collator;
 	
@@ -437,7 +435,7 @@ public class EventDetailsDialog extends Dialog {
 		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.message")); //$NON-NLS-1$
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
-		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER | FormWidgetFactory.BORDER_STYLE);
+		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
 		msgText.setEditable(false);
 		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
 		gd.horizontalSpan = 2;
@@ -450,8 +448,6 @@ public class EventDetailsDialog extends Dialog {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		String stack = entry.getStack();
 
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.exception")); //$NON-NLS-1$
@@ -467,7 +463,6 @@ public class EventDetailsDialog extends Dialog {
 	}
 
 	private void createSessionSection(Composite parent) {
-		LogSession session = entry.getSession();
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

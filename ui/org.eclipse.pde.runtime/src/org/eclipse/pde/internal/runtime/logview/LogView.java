@@ -35,7 +35,6 @@ import org.eclipse.ui.part.*;
 
 public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
-	private DetailsForm detailsForm;
 	private ArrayList logs = new ArrayList();
 	
 	public static final String P_LOG_WARNING = "warning";
@@ -51,9 +50,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String P_COLUMN_4 = "column4";
 	
 	public static final String P_ACTIVATE = "activate";
-	public static final String P_SHOW_DETAILS = "showDetails";
-	public static final String P_COLLAPSE_SESSION = "collapseSession";
-	public static final String P_COLLAPSE_STACK = "collapseStack";
 			
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
@@ -73,7 +69,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action exportAction;
 	private Action importAction;
 	private Action activateViewAction;
-	private Action showPreviewAction;
 	private Action propertiesAction;
 	
 	private Action filterAction;
@@ -87,9 +82,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private TableColumn column2;
 	private TableColumn column3;
 	private TableColumn column4;
-	
-	private Composite leftContainer;
-	private SashForm sashForm;
 	
 	// hover text
 	private boolean canOpenTextShell; 
@@ -105,29 +97,10 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	public void createPartControl(Composite parent) {
 		readLogFile();
-		sashForm = new SashForm(parent, SWT.HORIZONTAL);
-		sashForm.setLayout(new GridLayout());
-		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		createTableSection(sashForm);
-		createDetailsSection(sashForm);
-		if (!showPreviewAction.isChecked())
-			 sashForm.setMaximizedControl(leftContainer);
-	}
-	
-	private void createTableSection(Composite parent) {
-		leftContainer = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 2;
-		layout.horizontalSpacing = 0;
-		leftContainer.setLayout(layout);
-		
-		TableTree tableTree = new TableTree(leftContainer, SWT.FULL_SELECTION);
+		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
 		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createColumns(tableTree.getTable());		
 		createViewer(tableTree);
-		createVerticalLine(leftContainer);
 		
 		createPopupMenuManager(tableTree);
 		makeActions(tableTree.getTable());
@@ -138,39 +111,8 @@ public class LogView extends ViewPart implements ILogListener {
 		clipboard = new Clipboard(tableTree.getDisplay());
 		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
-		
 	}
 	
-	private void createDetailsSection(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 2;
-		layout.horizontalSpacing = 0;
-		container.setLayout(layout);
-		
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		createVerticalLine(container);
-		
-		detailsForm = new DetailsForm(memento);
-		Control formControl = detailsForm.createControl(container);
-		formControl.setLayoutData(new GridData(GridData.FILL_BOTH));
-		if (logs.size() > 0) {
-			tableTreeViewer.setSelection(new StructuredSelection(logs.get(0)));
-		} else {
-			detailsForm.openTo(null);
-		}
-		detailsForm.update();
-
-	}
-	
-	private void createVerticalLine(Composite parent) {
-		Label line = new Label(parent, SWT.SEPARATOR | SWT.VERTICAL);
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = 1;
-		line.setLayoutData(gd);
-	}
 	
 	private void fillToolBar() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -188,7 +130,6 @@ public class LogView extends ViewPart implements ILogListener {
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(filterAction);
 		mgr.add(new Separator());
-		mgr.add(showPreviewAction);
 		mgr.add(activateViewAction);		
 	}
 	
@@ -360,11 +301,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
 			public void run() {
-				if (detailsForm.hasFocus()) {
-					detailsForm.doGlobalAction(ActionFactory.COPY.getId());
-				} else {
-					copyToClipboard(tableTreeViewer.getSelection());
-				}
+				copyToClipboard(tableTreeViewer.getSelection());
 			}
 		};
 		copyAction.setImageDescriptor(
@@ -417,26 +354,12 @@ public class LogView extends ViewPart implements ILogListener {
 			public void run() {				
 			}
 		};
-		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));
-		
-		showPreviewAction = new Action(PDERuntimePlugin.getResourceString("LogView.showDetails")) {
-			public void run() {
-				memento.putString(P_SHOW_DETAILS, isChecked() ? "true" : "false");
-				if (isChecked()) {
-					sashForm.setMaximizedControl(null);
-					handleSelectionChanged(tableTreeViewer.getSelection());
-				} else {
-					sashForm.setMaximizedControl(leftContainer);
-				}
-			}
-		};
-		showPreviewAction.setChecked(memento.getString(P_SHOW_DETAILS).equals("true"));
+		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));		
 	}
 	
 	public void dispose() {
 		Platform.removeLogListener(this);
 		clipboard.dispose();
-		detailsForm.dispose();
 		LogReader.reset();
 		super.dispose();
 	}
@@ -661,20 +584,8 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void handleSelectionChanged(ISelection selection) {
 		updateStatus(selection);
-		updatePreview(selection);
 		copyAction.setEnabled(!selection.isEmpty());
 		propertiesAction.setEnabled(!selection.isEmpty());
-	}
-	
-	private void updatePreview(ISelection selection) {
-		if (!showPreviewAction.isChecked())
-			return;
-		if (selection.isEmpty()) {
-			detailsForm.openTo(null);
-		} else {
-			detailsForm.openTo(
-				(LogEntry) ((IStructuredSelection) selection).getFirstElement());
-		}
 	}
 	
 	private void updateStatus(ISelection selection) {
@@ -746,12 +657,6 @@ public class LogView extends ViewPart implements ILogListener {
 			
 		if (memento.getString(P_ACTIVATE) == null)
 			memento.putString(P_ACTIVATE, "true");
-		if (memento.getString(P_SHOW_DETAILS) == null)
-			memento.putString(P_SHOW_DETAILS, "false");
-		if (memento.getString(P_COLLAPSE_SESSION) == null)
-			memento.putString(P_COLLAPSE_SESSION, "true");
-		if (memento.getString(P_COLLAPSE_STACK) == null)
-			memento.putString(P_COLLAPSE_STACK, "true");
 	}
 	
 	public void saveState(IMemento memento) {
@@ -762,7 +667,6 @@ public class LogView extends ViewPart implements ILogListener {
 		this.memento.putString(
 			P_ACTIVATE,
 			activateViewAction.isChecked() ? "true" : "false");
-		detailsForm.saveState();
 		memento.putMemento(this.memento);
 	}	
 	
@@ -796,8 +700,7 @@ public class LogView extends ViewPart implements ILogListener {
 		layout.marginHeight= border;
 		layout.marginWidth= border;
 		textShell.setLayout(layout);
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		textShell.setLayoutData(gd);
+		textShell.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite shellComposite = new Composite(textShell, SWT.NONE);
 		layout =new GridLayout();
@@ -807,7 +710,7 @@ public class LogView extends ViewPart implements ILogListener {
 		shellComposite.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		textLabel= new Text(shellComposite,  SWT.WRAP | SWT.MULTI );
-		gd= new GridData(GridData.FILL_BOTH);
+		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= 100;
 		gd.grabExcessHorizontalSpace = true;
 		textLabel.setLayoutData(gd);
@@ -824,7 +727,7 @@ public class LogView extends ViewPart implements ILogListener {
 			} 
 		});
 
-		textShell.setSize(column2.getWidth() + column3.getWidth() + column4.getWidth(),isStack ? 50 : 25);
+		textShell.setSize(column2.getWidth() + column3.getWidth(), isStack ? 125 : 25);
 	}
 
 	void onTextShellDispose(DisposeEvent e){
