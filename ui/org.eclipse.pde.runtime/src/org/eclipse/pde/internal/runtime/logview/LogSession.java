@@ -24,7 +24,7 @@ public class LogSession {
 	}
 
 	public Date getDate() {
-		return (date != null) ? date : new Date();
+		return date;
 	}
 	
 	public void setDate(String dateString) {

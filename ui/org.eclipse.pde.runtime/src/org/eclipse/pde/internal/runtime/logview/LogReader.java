@@ -84,7 +84,10 @@ class LogReader {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
-					if (currentSession == null || session.getDate().after(currentSession.getDate())) {
+					if (currentSession == null
+						|| (currentSession.getDate() == null && session.getDate() != null)
+						|| (currentSession.getDate() != null && session.getDate() == null)
+						|| session.getDate().after(currentSession.getDate())) {
 						currentSession = session;
 					}
 					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true"))
