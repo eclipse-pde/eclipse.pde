@@ -14,21 +14,21 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.intro.config.IStandbyContentPart;
-import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.part.*;
 /**
  * @author dejan
  * 
@@ -45,6 +45,11 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	private FormText instText;
 	private ILaunchShortcut defaultShortcut;
 	private IConfigurationElement sample;
+	// cached input.
+	private String input;
+	
+	private static String MEMENTO_SAMPLE_ID_ATT = "sampleId"; //$NON-NLS-1$
+	
 	/**
 	 *  
 	 */
@@ -205,7 +210,10 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
 	 */
 	public void setInput(Object input) {
-		String sampleId = input.toString();
+	    // if the new input is null, use cached input from momento.
+        if (input != null)
+            this.input = (String) input;
+		String sampleId = this.input.toString();
 		IConfigurationElement[] samples = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.pde.ui.samples"); //$NON-NLS-1$
 		for (int i = 0; i < samples.length; i++) {
@@ -264,14 +272,31 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart, org.eclipse.ui.IMemento)
 	 */
 	public void init(IIntroPart introPart, IMemento memento) {
-		// TODO Load from the memento
+	    // try to restore last state.
+        input = getCachedInput(memento);
 
 	}
+	
+	 /**
+     * Tries to create the last content part viewed, based on sample id.
+     * 
+     * @param memento
+     * @return
+     */
+    private String getCachedInput(IMemento memento) {
+        if (memento == null)
+            return null;
+        return memento.getString(MEMENTO_SAMPLE_ID_ATT);
+
+    }
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
-		// TODO save into the memento
+	    String currentSampleId = input;
+        if (input != null)
+            memento.putString(MEMENTO_SAMPLE_ID_ATT, currentSampleId);
 
 	}
 }
