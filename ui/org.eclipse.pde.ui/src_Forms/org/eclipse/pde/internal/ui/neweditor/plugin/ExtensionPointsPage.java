@@ -57,7 +57,6 @@ public class ExtensionPointsPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Extension Points");
 		block.createContent(managedForm);
 		extensionPointsSection.fireSelection();
