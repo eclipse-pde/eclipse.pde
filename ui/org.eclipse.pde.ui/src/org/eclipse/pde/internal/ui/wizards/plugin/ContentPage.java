@@ -197,7 +197,7 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	protected abstract void updateBranding(boolean isLegacy);
-	public abstract boolean isBrandingPlugin();
+	public abstract boolean isRCPApplication();
 	
 	private boolean isVersionValid(String version) {
 		try {
@@ -216,7 +216,7 @@ public abstract class ContentPage extends WizardPage {
 	public void setVisible(boolean visible) {
 
 		if (visible) {
-			if (creationPage.hasBundleStructure() || isBrandingPlugin()) {
+			if (creationPage.hasBundleStructure() || isRCPApplication()) {
 				fLegacyButton.setEnabled(false);
 			} else {
 				fLegacyButton.setEnabled(true);

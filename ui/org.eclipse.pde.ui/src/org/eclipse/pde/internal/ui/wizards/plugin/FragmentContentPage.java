@@ -153,7 +153,7 @@ public class FragmentContentPage extends ContentPage {
 	/* (non-Javadoc)
      * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#isBrandingPlugin()
      */
-    public boolean isBrandingPlugin() {
+    public boolean isRCPApplication() {
         return false;
     }
 

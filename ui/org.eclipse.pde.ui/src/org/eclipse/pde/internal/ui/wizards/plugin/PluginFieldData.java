@@ -24,7 +24,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private String fClassname;	
 	private boolean fIsUIPlugin = true;
 	private boolean fDoGenerateClass = true;
-	private boolean fIsBrandingPlugin = false;
+	private boolean fRCPAppPlugin = false;
 	private ArrayList templates = new ArrayList();
 	
 	/* (non-Javadoc)
@@ -69,11 +69,11 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 		return fDoGenerateClass;
 	}
 	
-	public void setIsBrandingPlugin(boolean isBrandingPlugin){
-	    fIsBrandingPlugin = isBrandingPlugin;
+	public void setRCPAppPlugin(boolean isRCPAppPlugin){
+	    fRCPAppPlugin = isRCPAppPlugin;
 	}
 	
-	public boolean isBrandingPlugin(){
-	    return fIsBrandingPlugin;
+	public boolean isRCPAppPlugin(){
+	    return fRCPAppPlugin;
 	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
-import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -30,6 +29,7 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.part.*;
+import org.osgi.framework.*;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     private IFieldData fData;
@@ -37,16 +37,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     private WorkspacePluginModelBase fModel;
     private PluginClassCodeGenerator fGenerator;
     private IPluginContentWizard fContentWizard;
-    private BrandingData fBrandingData;
+    private RCPData fRCPData;
     private boolean result;
     
+    public static final String[] defaultWindowImages = new String[]{
+            "eclipse.gif", "eclipse32.gif"}; //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String defaultAboutImage = "eclipse_lg.gif"; //$NON-NLS-1$
+    public static final String defaultSplashImage = "splash.bmp"; //$NON-NLS-1$
+   
     public NewProjectCreationOperation(IFieldData data,
-            IProjectProvider provider, BrandingData bData,
+            IProjectProvider provider, RCPData bData,
             IPluginContentWizard contentWizard) {
         fData = data;
         fProjectProvider = provider;
         fContentWizard = contentWizard;
-        fBrandingData = bData;
+        fRCPData = bData;
     }
     
     /*
@@ -55,69 +60,90 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
      * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected void execute(IProgressMonitor monitor) throws CoreException,
-    InvocationTargetException, InterruptedException {
-        monitor
-        .beginTask(
-                PDEPlugin
-                .getResourceString("NewProjectCreationOperation.creating"), getNumberOfWorkUnits()); //$NON-NLS-1$
-        monitor.subTask(PDEPlugin
-                .getResourceString("NewProjectCreationOperation.project")); //$NON-NLS-1$
-        IProject project = createProject();
-        monitor.worked(1);
-        if (project.hasNature(JavaCore.NATURE_ID)) {
-            monitor
-            .subTask(PDEPlugin
-                    .getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
-            setClasspath(project, fData);
-            monitor.worked(1);
-        }
-        if (fData instanceof IPluginFieldData
-                && ((IPluginFieldData) fData).doGenerateClass()) {
-            generateTopLevelPluginClass(project, new SubProgressMonitor(
-                    monitor, 1));
-        }
-        monitor.subTask(PDEPlugin
-                .getResourceString("NewProjectCreationOperation.manifestFile")); //$NON-NLS-1$
-        createManifest(project);
-        monitor.worked(1);
-        monitor
-        .subTask(PDEPlugin
-                .getResourceString("NewProjectCreationOperation.buildPropertiesFile")); //$NON-NLS-1$
-        createBuildPropertiesFile(project);
-        monitor.worked(1);
-        boolean contentWizardResult = true;
-        if (fContentWizard != null) {
-            contentWizardResult = fContentWizard.performFinish(project, fModel,
-                    new SubProgressMonitor(monitor, 1));
-        }
-        if (fData instanceof PluginFieldData
-                && ((PluginFieldData) fData).isBrandingPlugin()) {
-            createBrandingExtension(fBrandingData, new SubProgressMonitor(monitor, 1));
-            copyBrandingImages(fBrandingData);
-            createAboutPropertiesFile(project);
-            createPreferencesFile(project);
-            createAboutIniFile(project);
-            createPluginProperties(project);
-        }
-        fModel.save();
-        if (fData.hasBundleStructure()) {
-            String filename = (fData instanceof IFragmentFieldData) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-            PDEPluginConverter.convertToOSGIFormat(project, filename,
-                    new SubProgressMonitor(monitor, 1));
-            trimModel(fModel.getPluginBase());
-            fModel.save();
-            openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-        } else {
-            openFile((IFile) fModel.getUnderlyingResource());
-        }
-        monitor.worked(1);
-        result = contentWizardResult;
-    }
+			InvocationTargetException, InterruptedException {
+    	
+    	// start task
+		monitor.beginTask(
+				PDEPlugin.getResourceString("NewProjectCreationOperation.creating"), getNumberOfWorkUnits()); //$NON-NLS-1$
+		monitor.subTask(PDEPlugin
+				.getResourceString("NewProjectCreationOperation.project")); //$NON-NLS-1$
+
+		// create project
+		IProject project = createProject();
+		monitor.worked(1);
+		
+		// set classpath if project has a Java nature
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			monitor.subTask(PDEPlugin
+							.getResourceString("NewProjectCreationOperation.setClasspath")); //$NON-NLS-1$
+			setClasspath(project, fData);
+			monitor.worked(1);
+		}
+		
+		// generate top-level Java class if that option is selected
+		if (fData instanceof IPluginFieldData && ((IPluginFieldData) fData).doGenerateClass()) {
+			generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
+		}
+		
+		// generate the manifest file
+		monitor.subTask(PDEPlugin
+				.getResourceString("NewProjectCreationOperation.manifestFile")); //$NON-NLS-1$
+		createManifest(project);
+		monitor.worked(1);
+		
+		// generate the build.properties file
+		monitor.subTask(PDEPlugin
+						.getResourceString("NewProjectCreationOperation.buildPropertiesFile")); //$NON-NLS-1$
+		createBuildPropertiesFile(project);
+		monitor.worked(1);
+		
+		
+		// if it's an RCP plugin, generate application and product branding if necessary
+		if (fData instanceof PluginFieldData
+				&& ((PluginFieldData) fData).isRCPAppPlugin()) {
+			createApplicationExtension();
+			createApplicationClass(new SubProgressMonitor(monitor, 1));
+			if (fRCPData.getAddBranding()) {
+				createProductExtension();
+				if (fRCPData.useDefaultImages())
+					copyBrandingImages();
+				if (fRCPData.getGenerateTemplateFiles()) {
+					createAboutPropertiesFile(project);
+					createPluginCustomizationFile(project);
+					createAboutIniFile(project);
+					createPluginProperties(project);
+				}
+				monitor.worked(1);
+			}
+		}
+
+		// generate content contributed by template wizards
+		boolean contentWizardResult = true;
+		if (fContentWizard != null) {
+			contentWizardResult = fContentWizard.performFinish(project, fModel,
+					new SubProgressMonitor(monitor, 1));
+		}
+		
+		fModel.save();
+
+		if (fData.hasBundleStructure()) {
+			String filename = (fData instanceof IFragmentFieldData) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+			PDEPluginConverter.convertToOSGIFormat(project, filename,
+					new SubProgressMonitor(monitor, 1));
+			trimModel(fModel.getPluginBase());
+			fModel.save();
+			openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
+		} else {
+			openFile((IFile) fModel.getUnderlyingResource());
+		}
+		monitor.worked(1);
+		result = contentWizardResult;
+	}
     
     /**
-     * @param project
-     */
-    private void createPreferencesFile(IProject project) {
+	 * @param project
+	 */
+    private void createPluginCustomizationFile(IProject project) {
         IFile newFile = project.getFile("plugin_customization.ini"); //$NON-NLS-1$
         StringWriter sWriter = new StringWriter();
         PrintWriter pWriter = new PrintWriter(sWriter);
@@ -129,20 +155,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         pWriter.println("# keys are qualified by plug-in id"); //$NON-NLS-1$
         pWriter.println("# e.g., com.example.acmeplugin/myproperty=myvalue"); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"org.eclipse.ui/defaultPerspectiveId\" controls the"); //$NON-NLS-1$
-        pWriter.println("# perspective that the workbench opens initially"); //$NON-NLS-1$
-        pWriter
-        .println("org.eclipse.ui/defaultPerspectiveId=org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# new-style tabs by default"); //$NON-NLS-1$
-        pWriter.println("org.eclipse.ui/SHOW_TRADITIONAL_STYLE_TABS=false"); //$NON-NLS-1$
-        pWriter.println();
-        pWriter.println("# put the perspective switcher on the top right"); //$NON-NLS-1$
-        pWriter.println("org.eclipse.ui/DOCK_PERSPECTIVE_BAR=topRight"); //$NON-NLS-1$
         try {
             ByteArrayInputStream target = new ByteArrayInputStream(sWriter
-                    .toString().getBytes("UTF8")); //$NON-NLS-1$
+                    .toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
             newFile.create(target, true, null);
         } catch (UnsupportedEncodingException e) {
             PDEPlugin.logException(e);
@@ -162,25 +177,23 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             return;
         pWriter.println("# about.properties"); //$NON-NLS-1$
         pWriter.println("# contains externalized strings for about.ini"); //$NON-NLS-1$
-        pWriter
-        .println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
+        pWriter.println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
         pWriter.println("# fill-ins are supplied by about.mappings"); //$NON-NLS-1$
         pWriter.println("# This file should be translated."); //$NON-NLS-1$
         pWriter.println("#"); //$NON-NLS-1$
         pWriter.println("# Do not translate any values surrounded by {}"); //$NON-NLS-1$
         pWriter.println(""); //$NON-NLS-1$
-        pWriter.println("blurb=" + fBrandingData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
+        pWriter.println("blurb=" + fRCPData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
         pWriter.println("\\n\\"); //$NON-NLS-1$
         pWriter.println("Version: {featureVersion}\\n\\"); //$NON-NLS-1$
         try {
-            ByteArrayInputStream target = new ByteArrayInputStream(sWriter
-                    .toString().getBytes("UTF8")); //$NON-NLS-1$
+            ByteArrayInputStream target = new ByteArrayInputStream(sWriter.toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
             newFile.create(target, true, null);
         } catch (UnsupportedEncodingException e) {
             PDEPlugin.logException(e);
         } catch (CoreException e) {
             PDEPlugin.logException(e);
-        }
+        } 
     }
     
     private void createPluginProperties(IProject project) {
@@ -189,22 +202,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         PrintWriter pWriter = new PrintWriter(sWriter);
         if (newFile.exists())
             return;
-        pWriter.println("pluginName=" + fBrandingData.getProductName()); //$NON-NLS-1$
-        if (fData.getProvider() != null && fData.getProvider().length() != 0)
-            pWriter.println("providerName=" + fData.getProvider()); //$NON-NLS-1$
-        else {
-            pWriter.println("# Insert provider name for value below"); //$NON-NLS-1$
-            pWriter.println("#providerName="); //$NON-NLS-1$
-        }
-        pWriter.println();
-        pWriter.println("productName=" + fBrandingData.getProductName()); //$NON-NLS-1$
-        pWriter
-        .println("productBlurb= " + fBrandingData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
+        pWriter.println("productBlurb= " + fRCPData.getProductName() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
         pWriter.println("\\n\\"); //$NON-NLS-1$
         pWriter.println("Version: " + fData.getVersion() + "\\n\\"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             ByteArrayInputStream target = new ByteArrayInputStream(sWriter
-                    .toString().getBytes("UTF8")); //$NON-NLS-1$
+                    .toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
             newFile.create(target, true, null);
         } catch (UnsupportedEncodingException e) {
             PDEPlugin.logException(e);
@@ -221,35 +224,27 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             return;
         pWriter.println("# about.ini"); //$NON-NLS-1$
         pWriter.println("# contains information about a feature"); //$NON-NLS-1$
-        pWriter
-        .println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
-        pWriter
-        .println("# \"%key\" are externalized strings defined in about.properties"); //$NON-NLS-1$
+        pWriter.println("# java.io.Properties file (ISO 8859-1 with \"\\\" escapes)"); //$NON-NLS-1$
+        pWriter.println("# \"%key\" are externalized strings defined in about.properties"); //$NON-NLS-1$
         pWriter.println(" # This file does not need to be translated."); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"aboutText\" contains blurb for feature details in the \"About\""); //$NON-NLS-1$
-        pWriter
-        .println("# dialog (translated).  Maximum 15 lines and 75 characters per line."); //$NON-NLS-1$
+        pWriter.println("# Property \"aboutText\" contains blurb for feature details in the \"About\""); //$NON-NLS-1$
+        pWriter.println("# dialog (translated).  Maximum 15 lines and 75 characters per line."); //$NON-NLS-1$
         pWriter.println("aboutText=%blurb"); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"featureImage\" contains path to feature image (32x32)"); //$NON-NLS-1$
+        pWriter.println("# Property \"featureImage\" contains path to feature image (32x32)"); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"windowImage\" contains path to window icon (16x16)"); //$NON-NLS-1$
+        pWriter.println("# Property \"windowImage\" contains path to window icon (16x16)"); //$NON-NLS-1$
         pWriter.println("# needed for primary features only"); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"aboutImage\" contains path to product image (500x330 or 115x164)"); //$NON-NLS-1$
+        pWriter.println("# Property \"aboutImage\" contains path to product image (500x330 or 115x164)"); //$NON-NLS-1$
         pWriter.println("# needed for primary features only"); //$NON-NLS-1$
         pWriter.println();
-        pWriter
-        .println("# Property \"appName\" contains name of the application (translated)"); //$NON-NLS-1$
+        pWriter.println("# Property \"appName\" contains name of the application (translated)"); //$NON-NLS-1$
         pWriter.println("# needed for primary features only"); //$NON-NLS-1$
         try {
             ByteArrayInputStream target = new ByteArrayInputStream(sWriter
-                    .toString().getBytes("UTF8")); //$NON-NLS-1$
+                    .toString().getBytes("ISO-8859-1")); //$NON-NLS-1$
             newFile.create(target, true, null);
         } catch (UnsupportedEncodingException e) {
             PDEPlugin.logException(e);
@@ -258,10 +253,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
     }
     
-    /**
-     * @param brandingData
-     */
-    private void copyBrandingImages(BrandingData brandingData) {
+    private void copyBrandingImages() {
         //create icons/ folder if d.n.e
         IFolder iconFolder = fProjectProvider.getProject().getFolder("icons"); //$NON-NLS-1$
         try {
@@ -270,32 +262,23 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         } catch (CoreException e) {
             PDEPlugin.logException(e);
         }
+        
         try {
             File image = null;
             FileInputStream fiStream = null;
             IFile copy = null;
-            if (brandingData.useDefaultImages()) {
-                IPluginDescriptor descriptor = (IPluginDescriptor) Platform
-                .getPluginRegistry().getPluginDescriptor(
-                "org.eclipse.platform"); //$NON-NLS-1$
-                if (descriptor == null)
+            if (fRCPData.useDefaultImages()) {
+                Bundle bundle = Platform.getBundle("org.eclipse.platform"); //$NON-NLS-1$
+                if (bundle == null)
                     return;
-                String[] imageNames = new String[BrandingData.defaultWindowImages.length + 2]; // add
-                // 2
-                // for
-                // about
-                // and
-                // splash
-                // image
-                System.arraycopy(BrandingData.defaultWindowImages, 0,
-                        imageNames, 0, BrandingData.defaultWindowImages.length);
-                imageNames[imageNames.length - 2] = BrandingData.defaultAboutImage;
-                imageNames[imageNames.length - 1] = BrandingData.defaultSplashImage;
+                
+                String[] imageNames = new String[defaultWindowImages.length + 2]; // add
+                System.arraycopy(defaultWindowImages, 0,imageNames, 0, defaultWindowImages.length);
+                imageNames[imageNames.length - 2] = defaultAboutImage;
+                imageNames[imageNames.length - 1] = defaultSplashImage;
+                
                 for (int i = 0; i < imageNames.length; i++) {
-                    image = new File(BootLoader.getInstallURL().getFile()
-                            + "/plugins/" //$NON-NLS-1$
-                            + descriptor.toString() + File.separator
-                            + imageNames[i]);
+                     image = new File(Platform.resolve(Platform.find(bundle, new Path(imageNames[i]))).getFile());
                     if (image.exists()) {
                         fiStream = new FileInputStream(image);
                         if (i == imageNames.length - 1)
@@ -304,49 +287,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                         else
                             copy = iconFolder.getFile(image.getName());
                         if (!copy.exists())
-                            copy.create(fiStream, true,
-                                    new NullProgressMonitor());
+                            copy.create(fiStream, true, new NullProgressMonitor());
                         fiStream.close();
                     }
                 }
                 return;
-            }
-            // copy aboutImage
-            String aboutImage = fBrandingData.getAboutImage();
-            if (aboutImage.length() != 0) {
-                image = new Path(aboutImage).toFile();
-                if (image.exists()) {
-                    fiStream = new FileInputStream(image);
-                    copy = iconFolder.getFile(image.getName());
-                    if (!copy.exists())
-                        copy.create(fiStream, true, new NullProgressMonitor());
-                    fiStream.close();
-                }
-            }
-            // copy splashImage
-            String splashImage = fBrandingData.getSplashImage();
-            if (splashImage.length() != 0) {
-                image = new Path(splashImage).toFile();
-                if (image.exists()) {
-                    fiStream = new FileInputStream(image);
-                    copy = fProjectProvider.getProject().getFile(
-                            image.getName());
-                    if (!copy.exists())
-                        copy.create(fiStream, true, new NullProgressMonitor());
-                    fiStream.close();
-                }
-            }
-            // copy windowImages
-            String[] images = fBrandingData.getWindowImages();
-            for (int i = 0; i < images.length; i++) {
-                image = new Path(images[i]).toFile();
-                if (image.exists()) {
-                    fiStream = new FileInputStream(image);
-                    copy = iconFolder.getFile(image.getName());
-                    if (!copy.exists())
-                        copy.create(fiStream, true, new NullProgressMonitor());
-                    fiStream.close();
-                }
             }
         } catch (FileNotFoundException e) {
             PDEPlugin.logException(e);
@@ -389,19 +334,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
     /**
      * @param applicationId
      */
-    private void createApplicationExtension(String applicationId) {
+    private void createApplicationExtension() {
         IPluginBase plugin = fModel.getPluginBase();
         IPluginModelFactory factory = fModel.getPluginFactory();
         try {
             IPluginExtension extension = createExtension(
                     "org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
-            extension.setId(fBrandingData.getApplicationId());
+            extension.setId(fRCPData.getApplicationId());
             IPluginElement appElement = factory.createElement(extension);
             appElement.setName("application"); //$NON-NLS-1$
             IPluginElement runElement = factory.createElement(appElement);
             runElement.setName("run"); //$NON-NLS-1$
             runElement.setAttribute(
-                    "class", getApplicationClassId(fData.getId())); //$NON-NLS-1$ //$NON-NLS-2$
+                    "class", fRCPData.getApplicationClass()); //$NON-NLS-1$ //$NON-NLS-2$
             appElement.add(runElement);
             extension.add(appElement);
             if (!extension.isInTheModel())
@@ -410,87 +355,58 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             PDEPlugin.logException(e);
         }
     }
-    
-    private String getApplicationClassId(String id) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < id.length(); i++) {
-            char ch = id.charAt(i);
-            if (buffer.length() == 0) {
-                if (Character.isJavaIdentifierStart(ch))
-                    buffer.append(Character.toLowerCase(ch));
-            } else {
-                if (Character.isJavaIdentifierPart(ch) || ch == '.')
-                    buffer.append(ch);
-            }
-        }
-        StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
-        while (tok.hasMoreTokens()) {
-            String token = tok.nextToken();
-            if (!tok.hasMoreTokens())
-                buffer.append("." + Character.toUpperCase(token.charAt(0)) //$NON-NLS-1$
-                        + token.substring(1) + "Application"); //$NON-NLS-1$
-        }
-        return buffer.toString();
-    }
-    
-    /**
-     * @param brandingData
-     */
-    private void createBrandingExtension(BrandingData brandingData,
-            IProgressMonitor monitor) {
+        
+    private void createProductExtension() {
         try {
             IPluginBase plugin = fModel.getPluginBase();
             IPluginModelFactory factory = fModel.getPluginFactory();
-            String appId = fBrandingData.getApplicationId();
-            if (!doesApplicationExist(appId) && appId.indexOf(".") == -1) { //$NON-NLS-1$
-                createApplicationExtension(appId);
-                fBrandingData.setApplicationId(plugin.getId() + "." + appId); //$NON-NLS-1$
-                createApplicationClass(getApplicationClassId(fData.getId()),
-                        monitor);
-            }
             IPluginExtension extension = createExtension(
                     "org.eclipse.core.runtime.products", true); //$NON-NLS-1$
             extension.setId("product"); //$NON-NLS-1$
             IPluginElement extElement = factory.createElement(extension);
             extElement.setName("product"); //$NON-NLS-1$
-            extElement.setAttribute("name", fBrandingData.getProductName()); //$NON-NLS-1$
+            extElement.setAttribute("name", fRCPData.getProductName()); //$NON-NLS-1$
             extElement.setAttribute(
-                    "application", fBrandingData.getApplicationId()); //$NON-NLS-1$
-            // windowImages
-            IPluginElement windowImagesProperty = factory
-            .createElement(extElement);
-            windowImagesProperty.setName("property"); //$NON-NLS-1$
-            windowImagesProperty.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
-            windowImagesProperty.setAttribute(
-                    "value", fBrandingData.getExtWindowImages()); //$NON-NLS-1$
-            extElement.add(windowImagesProperty);
-            // aboutImage
-            IPluginElement aboutImageProperty = factory
-            .createElement(extElement);
-            aboutImageProperty.setName("property"); //$NON-NLS-1$
-            aboutImageProperty.setAttribute("name", "aboutImage"); //$NON-NLS-1$ //$NON-NLS-2$
-            aboutImageProperty.setAttribute(
-                    "value", fBrandingData.getExtAboutImage()); //$NON-NLS-1$
-            extElement.add(aboutImageProperty);
-            // aboutText
-            IPluginElement aboutTextProperty = factory
-            .createElement(extElement);
-            aboutTextProperty.setName("property"); //$NON-NLS-1$
-            aboutTextProperty.setAttribute("name", "aboutText"); //$NON-NLS-1$ //$NON-NLS-2$
-            aboutTextProperty.setAttribute("value", "%productBlurb"); //$NON-NLS-1$ //$NON-NLS-2$
-            extElement.add(aboutTextProperty);
-            // preferenceCustomization
-            IPluginElement prefProperty = factory.createElement(extElement);
-            prefProperty.setName("property"); //$NON-NLS-1$
-            prefProperty.setAttribute("name", "preferenceCustomization"); //$NON-NLS-1$ //$NON-NLS-2$
-            prefProperty.setAttribute("value", "plugin_customization.ini"); //$NON-NLS-1$ //$NON-NLS-2$
-            extElement.add(prefProperty);
-            /**
-             * TODO: remember to adjust config for splash.bmp (i.e. have some
-             * kind of handle to easily retrieve splashLocation within this
-             * plug-in for config file) Also, copy to splash.bmp in with all the
-             * other images
-             */
+                    "application", fData.getId() + "." + fRCPData.getApplicationId()); //$NON-NLS-1$ //$NON-NLS-2$
+
+            // add markup for images if the images option is selected
+            if (fRCPData.useDefaultImages()) {
+	            // windowImages
+	            IPluginElement windowImagesProperty = factory
+	            .createElement(extElement);
+	            windowImagesProperty.setName("property"); //$NON-NLS-1$
+	            windowImagesProperty.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
+	            windowImagesProperty.setAttribute(
+	                    "value", "icons/eclipse.gif,icons/eclipse32.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+	            extElement.add(windowImagesProperty);
+	            
+	            // aboutImage
+	            IPluginElement aboutImageProperty = factory
+	            .createElement(extElement);
+	            aboutImageProperty.setName("property"); //$NON-NLS-1$
+	            aboutImageProperty.setAttribute("name", "aboutImage"); //$NON-NLS-1$ //$NON-NLS-2$
+	            aboutImageProperty.setAttribute(
+	                    "value", "icons/" + defaultAboutImage); //$NON-NLS-1$ //$NON-NLS-2$
+	            extElement.add(aboutImageProperty);
+            }
+            
+            // generate markup for about.ini and plugin_customization.ini
+            // if that option is selected
+            if (fRCPData.getGenerateTemplateFiles()) {
+	            // aboutText
+	            IPluginElement aboutTextProperty = factory.createElement(extElement);
+	            aboutTextProperty.setName("property"); //$NON-NLS-1$
+	            aboutTextProperty.setAttribute("name", "aboutText"); //$NON-NLS-1$ //$NON-NLS-2$
+	            aboutTextProperty.setAttribute("value", "%productBlurb"); //$NON-NLS-1$ //$NON-NLS-2$
+	            extElement.add(aboutTextProperty);
+	            // preferenceCustomization
+	            IPluginElement prefProperty = factory.createElement(extElement);
+	            prefProperty.setName("property"); //$NON-NLS-1$
+	            prefProperty.setAttribute("name", "preferenceCustomization"); //$NON-NLS-1$ //$NON-NLS-2$
+	            prefProperty.setAttribute("value", "plugin_customization.ini"); //$NON-NLS-1$ //$NON-NLS-2$
+	            extElement.add(prefProperty);
+            }
+
             extension.add(extElement);
             if (!extension.isInTheModel())
                 plugin.add(extension);
@@ -499,13 +415,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
     }
     
-    /**
-     * @param applicationClassName
-     */
-    private void createApplicationClass(String applicationClassId, IProgressMonitor monitor) {
+     private void createApplicationClass(IProgressMonitor monitor) {
         try {
             ApplicationClassCodeGenerator generator = new ApplicationClassCodeGenerator(fProjectProvider.getProject(), 
-                    getApplicationClassId(fData.getId()), (IPluginFieldData) fData);
+                    fRCPData.getApplicationClass(), (IPluginFieldData) fData);
             generator.generate(monitor);
             monitor.done();
         } catch (CoreException e) {
@@ -513,35 +426,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
         }
         
     }
-    /**
-     * @param applicationId
-     * @return
-     */
-    private boolean doesApplicationExist(String applicationId) {
-        IPluginModelBase[] plugins = PDECore.getDefault().getModelManager()
-        .getPlugins();
-        for (int i = 0; i < plugins.length; i++) {
-            IPluginExtension[] extensions = plugins[i].getPluginBase()
-            .getExtensions();
-            for (int j = 0; j < extensions.length; j++) {
-                String point = extensions[j].getPoint();
-                if (point != null
-                        && point
-                        .equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
-                    String id = extensions[j].getPluginBase().getId();
-                    if (id == null || id.trim().length() == 0
-                            || id.startsWith("org.eclipse.pde.junit.runtime")) //$NON-NLS-1$
-                        continue;
-                    if (extensions[j].getId() != null)
-                        if (applicationId.equals(id
-                                + "." + extensions[j].getId())) //$NON-NLS-1$
-                            return true;
-                }
-            }
-        }
-        return false;
-    }
-    
     private void trimModel(IPluginBase base) throws CoreException {
         base.setId(null);
         base.setVersion(null);
@@ -587,6 +471,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 numUnits++;
             if (fContentWizard != null)
                 numUnits++;
+        }
+        if (fData instanceof PluginFieldData) {
+        	if (((PluginFieldData)fData).isRCPAppPlugin()) {
+        		numUnits += 1;
+        		if (fRCPData.getAddBranding())
+        		numUnits += 1;
+        	}
         }
         return numUnits;
     }
@@ -660,8 +551,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             IBuildModelFactory factory = model.getFactory();
             IBuildEntry binEntry = factory
             .createEntry(IBuildEntry.BIN_INCLUDES);
-            binEntry
-            .addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
+            binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
                     : "plugin.xml"); //$NON-NLS-1$
             if (fData.hasBundleStructure())
                 binEntry.addToken("META-INF/"); //$NON-NLS-1$
