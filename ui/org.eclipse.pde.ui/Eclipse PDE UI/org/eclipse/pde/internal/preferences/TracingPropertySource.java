@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.preferences;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
@@ -13,6 +9,9 @@ import org.eclipse.ui.views.properties.*;
 import java.util.Vector;
 import org.eclipse.jface.viewers.*;
 /**
+ * Insert the type's description here.
+ * Creation date: (5/14/2001 3:09:04 PM)
+ * @author: Dejan Glozic
  */
 public class TracingPropertySource implements IPropertySource, IAdaptable {
 	private IPluginModel model;
@@ -38,6 +37,8 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 		}
 	}
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 3:10:08 PM)
  * @param model org.eclipse.pde.internal.base.model.plugin.IPluginModel
  */
 public TracingPropertySource(IPluginModel model, Properties masterOptions, Hashtable template) {
@@ -48,6 +49,8 @@ public TracingPropertySource(IPluginModel model, Properties masterOptions, Hasht
 	dvalues = new Hashtable();
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 3:40:36 PM)
  * @return org.eclipse.ui.views.properties.PropertyDescriptor
  * @param key java.lang.String
  * @param value java.lang.String
@@ -61,6 +64,8 @@ private PropertyDescriptor createBooleanPropertyDescriptor(
 	return desc;
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 3:31:08 PM)
  * @param options java.util.Properties
  */
 private void createDescriptors() {
@@ -96,6 +101,8 @@ private void createDescriptors() {
 	}
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 3:40:36 PM)
  * @return org.eclipse.ui.views.properties.PropertyDescriptor
  * @param key java.lang.String
  * @param value java.lang.String
@@ -143,6 +150,8 @@ public boolean isPropertySet(Object id) {
 	return false;
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 4:59:03 PM)
  */
 public void reset() {
 	values = (Hashtable)dvalues.clone();
@@ -157,6 +166,8 @@ public void reset() {
  */
 public void resetPropertyValue(Object id) {}
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 4:40:53 PM)
  */
 public void save() {
 	String pid = model.getPlugin().getId();

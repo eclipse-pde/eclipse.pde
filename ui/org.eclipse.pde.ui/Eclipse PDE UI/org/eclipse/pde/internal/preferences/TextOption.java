@@ -1,14 +1,13 @@
 package org.eclipse.pde.internal.preferences;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 /**
+ * Insert the type's description here.
+ * Creation date: (5/14/2001 8:45:10 PM)
+ * @author: Dejan Glozic
  */
 public class TextOption extends RuntimeOption {
 	private Text text;
@@ -32,12 +31,16 @@ public Control createControl(Composite parent) {
 	return text;
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 8:45:10 PM)
  * @param value java.lang.Object
  */
 public String getValue() {
 	return text.getText();
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (5/14/2001 8:45:10 PM)
  * @param value java.lang.Object
  */
 public void setValue(Object value) {

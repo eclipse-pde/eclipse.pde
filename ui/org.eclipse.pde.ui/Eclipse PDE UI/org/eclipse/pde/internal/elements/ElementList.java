@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.elements;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.*;
 import org.eclipse.swt.graphics.*;

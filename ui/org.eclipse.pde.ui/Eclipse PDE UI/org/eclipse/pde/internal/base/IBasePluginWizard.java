@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.base;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * This is a tagging interface that should

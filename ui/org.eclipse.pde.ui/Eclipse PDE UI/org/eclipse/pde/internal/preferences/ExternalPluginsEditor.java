@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.preferences;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

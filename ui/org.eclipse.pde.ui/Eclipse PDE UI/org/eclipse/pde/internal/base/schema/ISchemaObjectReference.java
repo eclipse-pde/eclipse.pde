@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.base.schema;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * Classes that implement this interface store a reference

@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.wizards.extension;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Path;

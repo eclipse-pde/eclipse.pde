@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.preferences;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import org.eclipse.core.runtime.*;

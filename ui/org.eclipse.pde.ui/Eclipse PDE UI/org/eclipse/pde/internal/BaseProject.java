@@ -1,13 +1,12 @@
 package org.eclipse.pde.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
 /**
+ * Insert the type's description here.
+ * Creation date: (12/13/2000 6:20:05 PM)
+ * @author: Dejan Glozic
  */
 public abstract class BaseProject extends PlatformObject implements IProjectNature {
 	private IProject project;

@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.editor.jars;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.swt.widgets.*;

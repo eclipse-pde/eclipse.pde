@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.component;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;

@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.base.model.plugin;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.*;
@@ -32,6 +28,8 @@ public static final String P_VERSION = "version";
  */
 void add(IPluginExtension extension) throws CoreException;
 /**
+ * Insert the method's description here.
+ * Creation date: (3/21/2001 6:40:15 PM)
  * @param extension org.eclipse.pde.internal.base.model.plugin.IPluginExtension
  */
 void add(IPluginExtensionPoint extension) throws CoreException;

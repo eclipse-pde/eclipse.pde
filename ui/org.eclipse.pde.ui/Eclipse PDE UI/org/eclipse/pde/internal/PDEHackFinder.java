@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 public class PDEHackFinder {
 /**
@@ -12,6 +8,8 @@ public PDEHackFinder() {
 	super();
 }
 /**
+ * Insert the method's description here.
+ * Creation date: (11/28/2000 12:26:11 PM)
  */
 public static void fixMe(String message) {
 }

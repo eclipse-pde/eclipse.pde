@@ -1,8 +1,4 @@
 package org.eclipse.pde.internal.launcher;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.ui.plugin.*;
 import org.eclipse.jface.dialogs.*;
