@@ -412,5 +412,8 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 		}
 		return names;
 	}
-
+	
+	public String getName() {
+		return "&Arguments";
+	}
 }

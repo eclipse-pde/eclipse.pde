@@ -614,4 +614,7 @@ public class AdvancedLauncherTab
 		}
 		return (IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
 	}
+	public String getName() {
+		return "&Plug-ins and Fragments";
+	}
 }

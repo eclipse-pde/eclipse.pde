@@ -447,4 +447,7 @@ public class TracingLauncherTab
 		currentSource = (TracingPropertySource) adaptable;
 		updatePropertyLabel(model);
 	}
+	public String getName() {
+		return "&Tracing";
+	}
 }
