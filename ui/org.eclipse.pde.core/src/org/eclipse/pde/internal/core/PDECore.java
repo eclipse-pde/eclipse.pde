@@ -401,10 +401,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		modelsLocked = true;
 		if (runtimeSupport == null)
 			loadRuntimeSupport();
+        IExternalModelManager exManager = runtimeSupport.getExternalModelManager();
+        IWorkspaceModelManager wsManager = runtimeSupport.getWorkspaceModelManager();
+        
 		if (modelManager == null) {
 			modelManager = new PluginModelManager();
-			modelManager.connect(runtimeSupport.getWorkspaceModelManager(), 
-					runtimeSupport.getExternalModelManager());
+			modelManager.connect(wsManager,  exManager);
 		}
 		modelsLocked = false;
 	}
