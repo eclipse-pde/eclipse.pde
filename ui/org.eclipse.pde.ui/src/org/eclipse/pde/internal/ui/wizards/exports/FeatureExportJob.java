@@ -154,21 +154,21 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
 	private String getOS(IFeature feature) {
 		String os = feature.getOS();
-		if (os == null || os.trim().length() == 0 || os.indexOf(',') != -1 || os.equals("*"))
+		if (os == null || os.trim().length() == 0 || os.indexOf(',') != -1 || os.equals("*")) //$NON-NLS-1$
 			return TargetPlatform.getOS();
 		return os;
 	}
 	
 	private String getWS(IFeature feature) {
 		String ws = feature.getWS();
-		if (ws == null || ws.trim().length() == 0 || ws.indexOf(',') != -1 || ws.equals("*"))
+		if (ws == null || ws.trim().length() == 0 || ws.indexOf(',') != -1 || ws.equals("*")) //$NON-NLS-1$
 			return TargetPlatform.getWS();
 		return ws;
 	}
 	
 	private String getOSArch(IFeature feature) {
 		String arch = feature.getArch();
-		if (arch == null || arch.trim().length() == 0 || arch.indexOf(',') != -1 || arch.equals("*"))
+		if (arch == null || arch.trim().length() == 0 || arch.indexOf(',') != -1 || arch.equals("*")) //$NON-NLS-1$
 			return TargetPlatform.getOSArch();
 		return arch;
 	}
