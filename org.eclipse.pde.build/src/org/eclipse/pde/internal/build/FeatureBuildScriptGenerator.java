@@ -397,6 +397,9 @@ protected void generatePrologue() {
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_JARS, ".");
 	script.println();
 	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
+	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
+	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
+	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
