@@ -94,7 +94,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		boolean cleanModel = true;
 		try {
 			model.load(stream, false);
-			checkStaleReferences(model);
+			//checkStaleReferences(model);
 		} catch (CoreException e) {
 			cleanModel = false;
 		}

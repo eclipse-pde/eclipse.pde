@@ -6,20 +6,33 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 
@@ -34,34 +47,6 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	private IFeatureModel model;
 	private TablePart checkboxTablePart;
 	private CheckboxTableViewer pluginViewer;
-	private Image pluginImage;
-	private Image errorPluginImage;
-	private Image fragmentImage;
-	private Image errorFragmentImage;
-
-	class PluginLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase plugin = model.getPluginBase();
-				return plugin.getTranslatedName() + " (" + plugin.getVersion() + ")";
-			}
-			return obj.toString();
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (obj instanceof IPluginModelBase) {
-				boolean error = !((IPluginModelBase) obj).isLoaded();
-				if (obj instanceof IPluginModel)
-					return error ? errorPluginImage : pluginImage;
-				else
-					return error ? errorFragmentImage : fragmentImage;
-
-			}
-			return null;
-		}
-	}
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -84,16 +69,17 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	public NewFeaturePluginWizardPage(IFeatureModel model) {
 		super("newFeaturePluginPage");
 		this.model = model;
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-		errorFragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		setPageComplete(false);
 		
 		checkboxTablePart = new TablePart();	
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
 	
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	public void createControl(Composite parent) {
@@ -111,7 +97,7 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		checkboxTablePart.createControl(parent);
 		pluginViewer = checkboxTablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
-		pluginViewer.setLabelProvider(new PluginLabelProvider());
+		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object object) {
 				if (object instanceof IPluginModelBase) {
@@ -145,13 +131,16 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
+		/*
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getWorkspacePluginModels();
 		IFragmentModel[] fragments = mng.getWorkspaceFragmentModels();
 		Object[] choices = new Object[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, choices, 0, plugins.length);
 		System.arraycopy(fragments, 0, choices, plugins.length, fragments.length);
-		return choices;
+		*/
+		PluginModelManager mng = PDECore.getDefault().getModelManager();
+		return mng.getPlugins();
 	}
 
 	public boolean finish() {

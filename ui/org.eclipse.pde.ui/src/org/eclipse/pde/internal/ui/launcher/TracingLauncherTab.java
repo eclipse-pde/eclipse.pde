@@ -400,9 +400,12 @@ public class TracingLauncherTab
 		IStructuredSelection sel =
 			(IStructuredSelection) pluginTreeViewer.getSelection();
 		if (!sel.isEmpty()) {
-			IPluginModel model = (IPluginModel) sel.getFirstElement();
-			IPlugin plugin = model.getPlugin();
-			settings.put(S_SELECTED_PLUGIN, plugin.getId());
+			Object el = sel.getFirstElement();
+			if (el instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) sel.getFirstElement();
+				IPluginBase pluginBase = model.getPluginBase();
+				settings.put(S_SELECTED_PLUGIN, pluginBase.getId());
+			}
 		}
 		if (changes)
 			config.setAttribute(TRACING_OPTIONS, masterOptions);
