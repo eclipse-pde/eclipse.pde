@@ -811,6 +811,15 @@ public class CategorySection extends TreeSection {
 		monitor.setTaskName(PDEPlugin
 				.getResourceString("CategorySection.updating")); //$NON-NLS-1$
 		fModel.getSite().addFeatures(added);
+		// Select last added feature
+		if (added.length > 0) {
+			if (categoryName != null) {
+				expandCategory(categoryName);
+			}
+			fCategoryViewer.setSelection(new StructuredSelection(
+					new SiteFeatureAdapter(categoryName, added[added.length-1])),
+					true);
+		}
 		monitor.worked(1);
 	}
 
