@@ -71,7 +71,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	
 	/** constants */
 	protected static final String BASEDIR = getPropertyFormat(PROPERTY_BASEDIR);
-	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 
 public AbstractBuildScriptGenerator() {
 	buildProperties = new HashMap();

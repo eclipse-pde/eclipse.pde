@@ -59,7 +59,6 @@ public interface IXMLConstants {
 	
 	// properties
 	public static final String PROPERTY_ARCH = "arch";
-	public static final String PROPERTY_BASE = "base";
 	public static final String PROPERTY_BASEDIR = "basedir";
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes";
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes";
@@ -74,6 +73,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
 	public static final String PROPERTY_FEATURE_FULL_NAME = "feature.full.name";
+	public static final String PROPERTY_FEATURE_TEMP_FOLDER = "feature.temp.folder";
 	public static final String PROPERTY_FEATURE_VERSION_SUFFIX = "feature.version.suffix";
 	public static final String PROPERTY_FULL_NAME = "full.name";
 	public static final String PROPERTY_INCLUDE_CHILDREN = "include.children";
@@ -87,7 +87,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
-	public static final String PROPERTY_TEMP_FOLDER = "pde.temp.folder";
+	public static final String PROPERTY_TEMP_FOLDER = "temp.folder";
 	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix";
 	public static final String PROPERTY_WS = "ws";
 }
