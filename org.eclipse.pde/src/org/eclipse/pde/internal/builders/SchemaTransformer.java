@@ -46,31 +46,22 @@ public class SchemaTransformer {
 	
 	private void setCssURL(URL cssURL) {
 		try {
-			if (cssURL != null) {
+			if (cssURL != null) 
 				fCssURL = Platform.resolve(cssURL);
-			} else {
-				if (fCssPurpose == BUILD) {
-					File file = new File("../../" + PLATFORM_CSS); //$NON-NLS-1$
-					if (file.exists())
-						fCssURL = file.toURL();
-				} 
-				if (fCssURL == null) {
-					fCssURL = getResourceURL(PLATFORM_PLUGIN_DOC, PLATFORM_CSS);
-				}
-			}
-		} catch (MalformedURLException e) {
 		} catch (IOException e) {
 		}
+		if (fCssURL == null && fCssPurpose != BUILD)
+			fCssURL = getResourceURL(PLATFORM_PLUGIN_DOC, PLATFORM_CSS);
 	}
 	
-	private URL getSchemaCssURL() {
-		try {
-			File file = new File("../../", SCHEMA_CSS); //$NON-NLS-1$
-			if (file.exists())
-				return file.toURL();
-		} catch (MalformedURLException e) {
-		}	
-		return getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS);
+	private String getCssURL() {
+		return (fCssURL != null) ? fCssURL.toString() : "../../" + PLATFORM_CSS;
+	}
+	
+	private String getSchemaCssURL() {
+		if (fCssPurpose == BUILD)
+			return "../../" +  SCHEMA_CSS;
+		return getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS).toString();
 	}
 	
 	private void printHTMLContent() {
@@ -90,11 +81,8 @@ public class SchemaTransformer {
 	}
 
 	private void printStyles() {
-		if (fCssURL != null)
-			fWriter.println("<style>@import url(\"" + fCssURL.toString() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
-		URL schemaCss = getSchemaCssURL();
-		if (schemaCss != null)
-			fWriter.println("<style>@import url(\"" + schemaCss.toString() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		fWriter.println("<style>@import url(\"" + getCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
+		fWriter.println("<style>@import url(\"" + getSchemaCssURL() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private URL getResourceURL(String bundleID, String resourcePath) {
