@@ -17,8 +17,8 @@ public class FeatureData
 	private String ws;
 	private String nl;
 	private String arch;
-	private int downloadSize;
-	private int installSize;
+	private long downloadSize;
+	private long installSize;
 
 	public FeatureData() {
 	}
@@ -165,7 +165,7 @@ public class FeatureData
 	 * Gets the downloadSize.
 	 * @return Returns a int
 	 */
-	public int getDownloadSize() {
+	public long getDownloadSize() {
 		return downloadSize;
 	}
 
@@ -173,18 +173,18 @@ public class FeatureData
 	 * Sets the downloadSize.
 	 * @param downloadSize The downloadSize to set
 	 */
-	public void setDownloadSize(int downloadSize) throws CoreException {
+	public void setDownloadSize(long downloadSize) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Integer(this.downloadSize);
+		Object oldValue = new Long(this.downloadSize);
 		this.downloadSize = downloadSize;
-		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, new Integer(downloadSize));
+		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, new Long(downloadSize));
 	}
 
 	/**
 	 * Gets the installSize.
 	 * @return Returns a int
 	 */
-	public int getInstallSize() {
+	public long getInstallSize() {
 		return installSize;
 	}
 
@@ -192,11 +192,11 @@ public class FeatureData
 	 * Sets the installSize.
 	 * @param installSize The installSize to set
 	 */
-	public void setInstallSize(int installSize) throws CoreException {
+	public void setInstallSize(long installSize) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Integer(this.installSize);
+		Object oldValue = new Long(this.installSize);
 		this.installSize = installSize;
-		firePropertyChanged(P_INSTALL_SIZE, oldValue, new Integer(installSize));
+		firePropertyChanged(P_INSTALL_SIZE, oldValue, new Long(installSize));
 	}
 	
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {

@@ -36,11 +36,11 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	/**
 	 * 	Returns estimated download size of this plug-in.
 	 */
-	public int getDownloadSize();
+	public long getDownloadSize();
 	/**
 	 * Returns estimated size of this plug-in when installed.
 	 */
-	public int getInstallSize();
+	public long getInstallSize();
 	/**
 	 * Sets a comma-separated list of the operating systems this plug-in supports.
 	 */
@@ -60,9 +60,9 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	/**
 	 * 	Sets the estimated download size of this plug-in.
 	 */
-	public void setDownloadSize(int size) throws CoreException;
+	public void setDownloadSize(long size) throws CoreException;
 	/**
 	 * Sets the estimated size of this plug-in when installed.
 	 */
-	public void setInstallSize(int size) throws CoreException;
+	public void setInstallSize(long size) throws CoreException;
 }

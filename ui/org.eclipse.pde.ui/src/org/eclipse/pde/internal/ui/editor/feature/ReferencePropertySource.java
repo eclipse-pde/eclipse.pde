@@ -22,9 +22,14 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	private Image errorImage;
 	public final static String KEY_ID = "FeatureEditor.ReferenceProp.id";
 	public final static String KEY_NAME = "FeatureEditor.ReferenceProp.name";
-	public final static String KEY_VERSION = "FeatureEditor.ReferenceProp.version";
+	public final static String KEY_VERSION =
+		"FeatureEditor.ReferenceProp.version";
 	public final static String KEY_ORIGINAL_VERSION =
 		"FeatureEditor.ReferenceProp.originalVersion";
+	public final static String KEY_DOWNLOAD_SIZE =
+		"FeatureEditor.ReferenceProp.download-size";
+	public final static String KEY_INSTALL_SIZE =
+		"FeatureEditor.ReferenceProp.install-size";
 
 	private final static String P_NAME = "name";
 	private final static String P_ID = "id";
@@ -34,6 +39,8 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	private final static String P_WS = "ws";
 	private final static String P_NL = "nl";
 	private final static String P_ARCH = "arch";
+	private final static String P_INSTALL_SIZE = "install-size";
+	private final static String P_DOWNLOAD_SIZE = "download-size";
 
 	public class VersionProvider extends LabelProvider {
 		public Image getImage(Object obj) {
@@ -44,19 +51,22 @@ public class ReferencePropertySource extends FeaturePropertySource {
 		}
 	}
 
-	public ReferencePropertySource(IFeaturePlugin reference, Image errorImage) {
+	public ReferencePropertySource(
+		IFeaturePlugin reference,
+		Image errorImage) {
 		super(reference);
 		this.errorImage = errorImage;
 	}
 	private String getOriginalVersion() {
 		IPluginBase pluginBase = getPluginBase();
-		if (pluginBase==null) return "";
+		if (pluginBase == null)
+			return "";
 		return pluginBase.getVersion();
 	}
 	private IPluginBase getPluginBase() {
 		if (pluginBase == null) {
 			IFeaturePlugin reference = getPluginReference();
-			if (reference.getModel().getUnderlyingResource()==null)
+			if (reference.getModel().getUnderlyingResource() == null)
 				return null;
 			String id = reference.getId();
 			WorkspaceModelManager manager =
@@ -85,14 +95,30 @@ public class ReferencePropertySource extends FeaturePropertySource {
 		if (descriptors == null) {
 			descriptors = new Vector();
 			PropertyDescriptor desc =
-				new PropertyDescriptor(P_ID, PDEPlugin.getResourceString(KEY_ID));
+				new PropertyDescriptor(
+					P_ID,
+					PDEPlugin.getResourceString(KEY_ID));
 			descriptors.addElement(desc);
-			desc = new PropertyDescriptor(P_NAME, PDEPlugin.getResourceString(KEY_NAME));
+			desc =
+				new PropertyDescriptor(
+					P_NAME,
+					PDEPlugin.getResourceString(KEY_NAME));
 			descriptors.addElement(desc);
 			desc =
 				createTextPropertyDescriptor(
 					P_VERSION,
 					PDEPlugin.getResourceString(KEY_VERSION));
+			//desc.setLabelProvider(new VersionProvider());
+			descriptors.addElement(desc);
+			desc =
+				createTextPropertyDescriptor(
+					P_INSTALL_SIZE,
+					PDEPlugin.getResourceString(KEY_INSTALL_SIZE));
+			descriptors.addElement(desc);
+			desc =
+				createTextPropertyDescriptor(
+					P_DOWNLOAD_SIZE,
+					PDEPlugin.getResourceString(KEY_DOWNLOAD_SIZE));
 			//desc.setLabelProvider(new VersionProvider());
 			descriptors.addElement(desc);
 			desc =
@@ -106,7 +132,11 @@ public class ReferencePropertySource extends FeaturePropertySource {
 			descriptors.addElement(desc);
 			desc = createChoicePropertyDescriptor(P_NL, P_NL, getNLChoices());
 			descriptors.addElement(desc);
-			desc = createChoicePropertyDescriptor(P_ARCH, P_ARCH, getArchChoices());
+			desc =
+				createChoicePropertyDescriptor(
+					P_ARCH,
+					P_ARCH,
+					getArchChoices());
 			descriptors.addElement(desc);
 		}
 		return toDescriptorArray(descriptors);
@@ -136,6 +166,20 @@ public class ReferencePropertySource extends FeaturePropertySource {
 		if (name.equals(P_REF_VERSION)) {
 			return getOriginalVersion();
 		}
+		if (name.equals(P_INSTALL_SIZE)) {
+			long installSize = getPluginReference().getInstallSize();
+			if (installSize == -1)
+				return "";
+			else
+				return "" + installSize;
+		}
+		if (name.equals(P_DOWNLOAD_SIZE)) {
+			long downloadSize = getPluginReference().getDownloadSize();
+			if (downloadSize == -1)
+				return "";
+			else
+				return "" + downloadSize;
+		}
 		if (name.equals(P_OS)) {
 			return getPluginReference().getOS();
 		}
@@ -155,7 +199,8 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	}
 	public void setPropertyValue(Object name, Object value) {
 		String svalue = value.toString();
-		String realValue = svalue == null | svalue.length() == 0 ? null : svalue;
+		String realValue =
+			svalue == null | svalue.length() == 0 ? null : svalue;
 		try {
 			if (name.equals(P_NAME)) {
 				getPluginReference().setLabel(realValue);
@@ -169,9 +214,25 @@ public class ReferencePropertySource extends FeaturePropertySource {
 				getPluginReference().setNL(realValue);
 			} else if (name.equals(P_ARCH)) {
 				getPluginReference().setArch(realValue);
+			} else if (name.equals(P_DOWNLOAD_SIZE)) {
+				long lvalue = getLong(realValue);
+				getPluginReference().setDownloadSize(lvalue);
+			} else if (name.equals(P_INSTALL_SIZE)) {
+				long lvalue = getLong(realValue);
+				getPluginReference().setInstallSize(lvalue);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+		}
+	}
+	
+	private long getLong(String svalue) {
+		if (svalue==null) return -1;
+		try {
+			return Long.parseLong(svalue);
+		}
+		catch (NumberFormatException e) {
+			return -1;
 		}
 	}
 
@@ -182,7 +243,7 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	public static Choice[] getWSChoices() {
 		return TargetPlatform.getWSChoices();
 	}
-	
+
 	public static Choice[] getArchChoices() {
 		return TargetPlatform.getArchChoices();
 	}
