@@ -14,6 +14,8 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
 /**
  * A utility class that can be used by plug-in project
@@ -129,6 +131,13 @@ public class BuildPathUtil {
 		// Set classpath
 		Vector result = new Vector();
 		IBuildModel buildModel = model.getBuildModel();
+		if (buildModel == null) {
+			IFile buildFile = project.getFile("build.properties");
+			if (buildFile.exists()) {
+				buildModel = new WorkspaceBuildModel(buildFile);
+				buildModel.load();
+			}
+		}
 		if (buildModel != null)
 			addSourceFolders(buildModel, result);
 		else {
@@ -403,5 +412,5 @@ public class BuildPathUtil {
 		if (jrePath != null)
 			result.add(JavaCore.newVariableEntry(jrePath, annot[0], annot[1]));
 	}
-
+	
 }
