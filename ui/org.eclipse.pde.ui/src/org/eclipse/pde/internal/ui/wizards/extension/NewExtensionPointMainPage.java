@@ -11,33 +11,54 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
 import java.lang.reflect.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.widgets.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public static final String SCHEMA_DIR = "schema";
 	public static final String KEY_TITLE = "NewExtensionPointWizard.title";
 	public static final String KEY_DESC = "NewExtensionPointWizard.desc";
 	private IPluginModelBase model;
-
+	private IPluginExtensionPoint point;
+	
 	public NewExtensionPointMainPage(
-		IProject project,
-		IPluginModelBase model) {
+			IProject project,
+			IPluginModelBase model) {
 		super(project);
+		initialize();
+		this.model = model;
+		this.point = null;
+	}
+	
+	public NewExtensionPointMainPage(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
+		super(project);
+		initialize();
+		this.model = model;
+		this.point = point;
+	}
+	public void initialize(){
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-		this.model = model;
 	}
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		initializeValues();
+		setMessage(null, IMessageProvider.WARNING);
+	}
+
 	public boolean finish() {
 		final String id = idText.getText();
 		final String name = nameText.getText();
 		final String schema = schemaText.getText();
-
+		
 		IPluginBase plugin = model.getPluginBase();
-
+		
 		IPluginExtensionPoint point = model.getFactory().createExtensionPoint();
 		try {
 			point.setId(id);
@@ -45,12 +66,12 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 				point.setName(name);
 			if (schema.length() > 0)
 				point.setSchema(schema);
-
+			
 			plugin.add(point);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-
+		
 		if (schema.length() > 0) {
 			IRunnableWithProgress operation = getOperation();
 			try {
@@ -69,5 +90,16 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	}
 	public String getSchemaLocation() {
 		return SCHEMA_DIR;
+	}
+	
+	public void initializeValues(){
+		if (point == null)
+			return;
+		if (idText!=null && point.getId()!=null)
+			idText.setText(point.getId());
+		if (nameText !=null && point.getName() != null)
+			nameText.setText(point.getName());
+		if (schemaText!= null && point.getSchema()!=null)
+			schemaText.setText(point.getSchema());
 	}
 }

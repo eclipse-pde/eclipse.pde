@@ -25,7 +25,6 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 	}
 	public boolean finish() {
-		saveSettings();
 		IRunnableWithProgress operation = getOperation();
 		try {
 			getContainer().run(false, true, operation);

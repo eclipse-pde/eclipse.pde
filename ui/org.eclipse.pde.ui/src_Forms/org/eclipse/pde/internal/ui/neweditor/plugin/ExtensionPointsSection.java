@@ -137,7 +137,6 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		Object item = selection.getFirstElement();
 		getPage().getPDEEditor().setSelection(selection);
 		super.selectionChanged(selection);
 	}
@@ -245,7 +244,7 @@ public class ExtensionPointsSection extends TableSection {
 		final IProject project = file.getProject();
 		BusyIndicator
 			.showWhile(pointTable.getTable().getDisplay(), new Runnable() {
-			public void run() {
+			public void run(){
 				NewExtensionPointWizard wizard =
 					new NewExtensionPointWizard(
 						project,

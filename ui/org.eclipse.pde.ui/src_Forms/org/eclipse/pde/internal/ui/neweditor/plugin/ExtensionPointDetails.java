@@ -225,7 +225,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				NewExtensionPointWizard wizard =
 					new NewExtensionPointWizard(
 						project,
-						(IPluginModelBase) getPage().getModel());
+						(IPluginModelBase) getPage().getModel(), input);
 				WizardDialog dialog =
 					new WizardDialog(
 						PDEPlugin.getActiveWorkbenchShell(),
