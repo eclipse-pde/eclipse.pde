@@ -43,6 +43,11 @@ locates the most specific registered search page for it.
    </element>
 
    <element name="page">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" iconName="icon"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>

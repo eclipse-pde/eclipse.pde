@@ -20,11 +20,11 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.*;
 
-public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage 
-					implements ILauncherSettings {
+public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILauncherSettings {
 	private static final String KEY_DESC = "";
 
 	private static final String KEY_WORKSPACE =
@@ -59,9 +59,10 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	private static final String KEY_EXISTING_WORKSPACE =
 		"WorkbenchLauncherWizardBasicPage.workspaceExisting";
 
-	private static final String DEFAULT_VALUE = "[-]";
-
 	public static final String RT_WORKSPACE = "runtime-workspace";
+	private Composite control;
+	private ILaunchConfigurationWorkingCopy config;
+	private ILaunchConfigurationDialog launchDialog;
 	private Combo workspaceCombo;
 	private Button browseButton;
 	private Button clearWorkspaceCheck;
@@ -77,27 +78,18 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 
 	private IVMInstall[] vmInstallations;
 
-	public WorkbenchLauncherWizardBasicPage(String title) {
-		super("WorkbenchLauncherWizardBasicPage", true);
-		setTitle(title);
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-
-		jreSelectionStatus = createStatus(IStatus.OK, "");
-		workspaceSelectionStatus = createStatus(IStatus.OK, "");
+	public WorkbenchLauncherBasicTab() {
+		//jreSelectionStatus = createStatus(IStatus.OK, "");
+		//workspaceSelectionStatus = createStatus(IStatus.OK, "");
 
 		vmInstallations = getAllVMInstances();
 	}
-	
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-		if (running!=null) updateStatus(running);
-	}	
 
-	public void createControl(Composite parent) {
-		initializeDialogUnits(parent);
-
-		Composite composite = new Composite(parent, SWT.NONE);
+	public Control createTabControl(
+		ILaunchConfigurationDialog dialog,
+		TabItem tab) {
+		this.launchDialog = dialog;
+		Composite composite = new Composite(tab.getParent(), SWT.NONE);
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -153,23 +145,36 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText(PDEPlugin.getResourceString(KEY_RESTORE));
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		/*
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint =
 			Math.max(
 				widthHint,
 				defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		*/
 		defaultsButton.setLayoutData(data);
-
+/*
 		label = new Label(composite, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_RESTORE_TEXT));
 		data = fillIntoGrid(label, 2, false);
 		//data.verticalAlignment = GridData.BEGINNING;
+*/
 
-		initializeFields();
 		hookListeners();
 
-		setControl(composite);
+		control = composite;
+		return composite;
+	}
+
+	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy config) {
+		if (config.equals(this.config))
+			return;
+		this.config = config;
+		initializeFields();
+	}
+
+	public void dispose() {
 	}
 
 	private GridData fillIntoGrid(
@@ -184,7 +189,6 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	}
 
 	private void initializeFields() {
-		IDialogSettings initialSettings = getDialogSettings();
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
 		String progArgs = "";
@@ -197,31 +201,23 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 
 		String defaultWorkspace = getDefaultWorkspace(pstore);
 
-		if (initialSettings != null) {
-			String value = initialSettings.get(VMARGS);
-			if (value != null && !isDefault(value)) {
-				vmArgs = value;
-			}
-			value = initialSettings.get(PROGARGS);
-			if (value != null && !isDefault(value)) {
-				progArgs = value;
-			}
-			value = initialSettings.get(APPLICATION);
-			if (value != null) {
-				appName = value;
-			}
-			tracing = initialSettings.getBoolean(TRACING);
+		try {
+			vmArgs = config.getAttribute(VMARGS, vmArgs);
+			progArgs = config.getAttribute(PROGARGS, progArgs);
+			appName = config.getAttribute(APPLICATION, appName);
+			tracing = config.getAttribute(TRACING, tracing);
 
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
-				String curr = initialSettings.get(LOCATION + String.valueOf(i));
+				String curr =
+					config.getAttribute(LOCATION + String.valueOf(i), (String) null);
 				if (curr != null && !items.contains(curr)) {
 					items.add(curr);
 				}
 			}
 			workspaceSelectionItems = (String[]) items.toArray(new String[items.size()]);
 
-			String vmInstallName = initialSettings.get(VMINSTALL);
+			String vmInstallName = config.getAttribute(VMINSTALL, (String) null);
 			if (vmInstallName != null) {
 				for (int i = 0; i < vmInstallations.length; i++) {
 					if (vmInstallName.equals(vmInstallations[i].getName())) {
@@ -230,7 +226,8 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 					}
 				}
 			}
-			//doClear= initialSettings.getBoolean(SETTINGS_DOCLEAR);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		jreCombo.setItems(getVMInstallNames(vmInstallations));
 		jreCombo.select(jreSelectionIndex);
@@ -250,7 +247,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		updateStatus();
 	}
 
-	private static String getDefaultWorkspace(IPreferenceStore pstore) {
+	static String getDefaultWorkspace(IPreferenceStore pstore) {
 		TargetPlatformPreferencePage.initializePlatformPath();
 		IPath ppath =
 			new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
@@ -258,83 +255,15 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		return runtimeWorkspace.toOSString();
 	}
 
-	/**
-	 * Load the stored settings into the provided data object to be
-	 * used by the headless launcher
-	 */
-	static void setLauncherData(IDialogSettings settings, LauncherData data) {
-		IVMInstall launcher = null;
-		int jreSelectionIndex = 0;
-		String vmArgs = "";
-		String progArgs = "";
-		String appName = "org.eclipse.ui.workbench";
-		String[] workspaceSelectionItems = new String[0];
-		boolean doClear = false;
-		String defaultWorkspace = "";
-		boolean tracing = false;
-
-		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		defaultWorkspace = getDefaultWorkspace(pstore);
-
-		if (settings != null) {
-			String value = settings.get(VMARGS);
-			if (value != null && !isDefault(value)) {
-				vmArgs = value;
-			}
-			value = settings.get(PROGARGS);
-			if (value != null && !isDefault(value)) {
-				progArgs = value;
-			}
-			value = settings.get(APPLICATION);
-			if (value != null && !isDefault(value)) {
-				appName = value;
-			}
-			value = settings.get(LOCATION + "0");
-			if (value != null && !isDefault(value)) {
-				defaultWorkspace = value;
-			}
-			tracing = settings.getBoolean(TRACING);
-
-			String vmInstallName = settings.get(VMINSTALL);
-			IVMInstall[] vmInstallations = getAllVMInstances();
-			if (vmInstallName != null) {
-				for (int i = 0; i < vmInstallations.length; i++) {
-					if (vmInstallName.equals(vmInstallations[i].getName())) {
-						launcher = vmInstallations[i];
-						break;
-					}
-				}
-			} else
-				launcher = vmInstallations[0];
-			//doClear= initialSettings.getBoolean(DOCLEAR);
-		}
-		// Initialize launcher data
-		data.setVmInstall(launcher);
-		data.setVmArguments(vmArgs);
-		data.setProgramArguments(progArgs);
-		data.setApplicationName(appName);
-		data.setClearWorkspace(doClear);
-		data.setWorkspaceLocation(new Path(defaultWorkspace));
-		data.setTracingEnabled(tracing);
-	}
-
-	private static boolean isDefault(String value) {
-		return value.equals(DEFAULT_VALUE);
-	}
-
 	private void doRestoreDefaults() {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-
 		String defaultWorkspace = getDefaultWorkspace(pstore);
 		progArgsText.setText("");
 		vmArgsText.setText("");
 		workspaceCombo.setText(defaultWorkspace);
-		IDialogSettings settings = getDialogSettings();
-		settings.put(VMARGS, DEFAULT_VALUE);
-		settings.put(PROGARGS, DEFAULT_VALUE);
-		settings.put(LOCATION + "0", defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
 		tracingCheck.setSelection(false);
+		storeSettings();
 	}
 
 	private void hookListeners() {
@@ -344,6 +273,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
 					updateStatus();
+					storeSettings();
 				}
 			}
 		});
@@ -357,12 +287,14 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
 				updateStatus();
+				storeSettings();
 			}
 		});
 		jreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jreSelectionStatus = validateJRESelection();
 				updateStatus();
+				storeSettings();
 			}
 		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
@@ -373,33 +305,23 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	}
 
 	private void updateStatus() {
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
-		if (running != null)
-			updateStatus(running);
-		else
-			updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+		launchDialog.refreshStatus();
 	}
 
-	public void storeSettings(boolean finishPressed) {
-		IDialogSettings initialSettings = getDialogSettings();
-		if (finishPressed) {
-			initialSettings.put(VMARGS, getVMArguments());
-			initialSettings.put(PROGARGS, getProgramArguments());
-			initialSettings.put(VMINSTALL, getVMInstall().getName());
-			initialSettings.put(APPLICATION, getApplicationName());
-			initialSettings.put(DOCLEAR, doClearWorkspace());
-			initialSettings.put(TRACING, isTracingEnabled());
-		}
-
-		if (finishPressed || workspaceCombo.getText().length() > 0) {
-			initialSettings.put(
-				LOCATION + String.valueOf(0),
-				workspaceCombo.getText());
-			String[] items = workspaceCombo.getItems();
-			int nEntries = Math.min(items.length, 5);
-			for (int i = 0; i < nEntries; i++) {
-				initialSettings.put(LOCATION + String.valueOf(i + 1), items[i]);
-			}
+	public void storeSettings() {
+		config.setAttribute(VMARGS, getVMArguments());
+		config.setAttribute(PROGARGS, getProgramArguments());
+		config.setAttribute(VMINSTALL, getVMInstall().getName());
+		config.setAttribute(APPLICATION, getApplicationName());
+		config.setAttribute(DOCLEAR, doClearWorkspace());
+		config.setAttribute(TRACING, isTracingEnabled());
+		
+		config.setAttribute(LOCATION + String.valueOf(0),
+									workspaceCombo.getText());
+		String[] items = workspaceCombo.getItems();
+		int nEntries = Math.min(items.length, 5);
+		for (int i = 0; i < nEntries; i++) {
+			config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
 		}
 	}
 
@@ -407,7 +329,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	 * Browses for a workbench location.
 	 */
 	private IPath chooseWorkspaceLocation() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		DirectoryDialog dialog = new DirectoryDialog(control.getShell());
 		dialog.setFilterPath(workspaceCombo.getText());
 		dialog.setText(PDEPlugin.getResourceString(KEY_WTITLE));
 		dialog.setMessage(PDEPlugin.getResourceString(KEY_WMESSAGE));
@@ -420,13 +342,17 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 
 	private IStatus validateJRESelection() {
 		IVMInstall curr = getVMInstall();
+		/*
 		if (curr == null) {
 			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_JRE));
 		}
-		return createStatus(IStatus.OK, "");
+		*/
+		//return createStatus(IStatus.OK, "");
+		return null;
 	}
 
 	private IStatus validateWorkspaceSelection() {
+		/*
 		IPath curr = getWorkspaceLocation();
 		if (curr.segmentCount() == 0) {
 			return createStatus(
@@ -438,7 +364,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 				IStatus.ERROR,
 				PDEPlugin.getResourceString(KEY_INVALID_WORKSPACE));
 		}
-
+		
 		File file = curr.toFile();
 		if (file.isFile()) {
 			return createStatus(
@@ -446,6 +372,8 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 				PDEPlugin.getResourceString(KEY_EXISTING_WORKSPACE));
 		}
 		return createStatus(IStatus.OK, "");
+		*/
+		return null;
 	}
 
 	// ----- public API -------
@@ -503,7 +431,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 		return tracingCheck.getSelection();
 	}
 
-	private static IVMInstall[] getAllVMInstances() {
+	static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {

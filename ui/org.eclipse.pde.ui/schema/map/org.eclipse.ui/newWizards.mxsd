@@ -90,7 +90,7 @@ text about the wizard.
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" iconName="icon"/>
          </appInfo>
       </annotation>
       <complexType>

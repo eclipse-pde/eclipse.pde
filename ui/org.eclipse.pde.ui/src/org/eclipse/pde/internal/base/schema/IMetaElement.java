@@ -13,11 +13,13 @@ import org.eclipse.jface.resource.*;
 public interface IMetaElement {
 	public ImageDescriptor getIconDescriptor();
 /**
- * Returns optional name of the icon that should be used to
- * represent this element in the UI, or <samp>null</samp> if default
- * icon should be used.
+ * Returns a property (attribute) name whose value should
+ * be used to load element icon in the UI. For example,
+ * if icon property is set to "icon" and the element has
+ * an "icon" attribute that represents icon path relative
+ * to the plug-in, an attempt will be made to load that icon.
  */
-public String getIconName();
+public String getIconProperty();
 /**
  * Returns a property (attribute) name whose value should
  * be used to represent this element in the UI. For example,

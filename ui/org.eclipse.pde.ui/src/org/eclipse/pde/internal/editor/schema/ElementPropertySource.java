@@ -58,7 +58,7 @@ public Object getPropertyValue(Object name) {
 	if (name.equals(P_LABEL_ATTRIBUTE))
 		return getNonzeroValue(element.getLabelProperty());
 	if (name.equals(P_ICON))
-		return getNonzeroValue(element.getIconName());
+		return getNonzeroValue(element.getIconProperty());
 	if (name.equals(P_NAME))
 		return getNonzeroValue(element.getName());
 	return "";
@@ -79,7 +79,7 @@ public void setPropertyValue(Object name, Object value) {
 		element.setLabelProperty(svalue);
 	else
 		if (name.equals(P_ICON))
-			element.setIconName(svalue);
+			element.setIconProperty(svalue);
 	else
 		if (name.equals(P_NAME)) {
 			element.setName(svalue);

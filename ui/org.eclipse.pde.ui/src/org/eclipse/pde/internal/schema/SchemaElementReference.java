@@ -50,8 +50,8 @@ public String getDTDRepresentation() {
 public org.eclipse.jface.resource.ImageDescriptor getIconDescriptor() {
    return getReferencedElement().getIconDescriptor();
 }
-public java.lang.String getIconName() {
-   return getReferencedElement().getIconName();
+public java.lang.String getIconProperty() {
+   return getReferencedElement().getIconProperty();
 }
 public String getLabelProperty() {
    return getReferencedElement().getLabelProperty();

@@ -230,6 +230,12 @@ public static Image getImageFromPlugin(
 	IPluginDescriptor pluginDescriptor,
 	String subdirectoryAndFilename) {
 	URL installURL = pluginDescriptor.getInstallURL();
+	return getImageFromURL(installURL, subdirectoryAndFilename);
+}
+
+public static Image getImageFromURL(
+	URL installURL,
+	String subdirectoryAndFilename) {
 	Image image = null;
 	try {
 		URL newURL = new URL(installURL, subdirectoryAndFilename);
@@ -246,6 +252,7 @@ public static Image getImageFromPlugin(
 	}
 	return image;
 }
+
 /* package */
 private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();

@@ -119,7 +119,7 @@ public ImageDescriptor getIconDescriptor() {
 	}
 	return imageDescriptor;
 }
-public String getIconName() {
+public String getIconProperty() {
 	return iconName;
 }
 public String getLabelProperty() {
@@ -128,7 +128,7 @@ public String getLabelProperty() {
 public ISchemaType getType() {
 	return type;
 }
-public void setIconName(String newIconName) {
+public void setIconProperty(String newIconName) {
 	String oldValue = iconName;
 	iconName = newIconName;
 	getSchema().fireModelObjectChanged(this, P_ICON_NAME, oldValue, iconName);
@@ -165,7 +165,7 @@ public void write(String indent, PrintWriter writer) {
 			if (labelProperty != null)
 				writer.print(" labelAttribute=\"" + labelProperty + "\"");
 			if (iconName != null)
-				writer.print(" iconName=\"" + iconName + "\"");
+				writer.print(" icon=\"" + iconName + "\"");
 			writer.println("/>");
 			writer.println(indent3 + "</appInfo>");
 		}

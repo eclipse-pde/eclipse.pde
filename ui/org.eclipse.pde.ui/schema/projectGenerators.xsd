@@ -49,6 +49,9 @@ is only used by PDE.&lt;/b&gt;
 
    <element name="wizard">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" iconName="icon"/>
+         </appInfo>
          <documentation>
             Short description of this wizard.
          </documentation>

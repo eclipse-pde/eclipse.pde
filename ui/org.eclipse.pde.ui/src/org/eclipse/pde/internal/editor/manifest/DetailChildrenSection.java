@@ -297,9 +297,8 @@ public void modelChanged(IModelChangedEvent event) {
 private Image resolveObjectImage(Object obj) {
 	if (obj instanceof IPluginElement) {
 		IPluginElement element = (IPluginElement) obj;
-		ISchemaElement elementInfo = element.getElementInfo();
-		if (elementInfo != null) {
-		}
+		Image customImage = DetailExtensionSection.getCustomImage(element);
+		if (customImage!=null) return customImage;
 		return genericElementImage;
 	}
 	return null;
@@ -315,7 +314,8 @@ private String resolveObjectName(Object obj) {
 				value = att.getValue();
 		}
 	}
-	return DetailExtensionSection.stripShortcuts(value);
+	value = DetailExtensionSection.stripShortcuts(value);
+	return ((IModel)getFormPage().getModel()).getResourceString(value);
 }
 public void sectionChanged(
 	FormSection source,

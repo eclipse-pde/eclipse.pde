@@ -45,7 +45,7 @@ launch manager.
    <element name="launcher">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label"/>
+            <meta.element labelAttribute="label" iconName="icon"/>
          </appInfo>
       </annotation>
       <complexType>

@@ -49,7 +49,7 @@ source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" iconName="icon"/>
          </appInfo>
          <documentation>
             an element that will be used to create export wizard

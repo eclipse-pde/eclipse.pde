@@ -27,6 +27,8 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 public class DetailExtensionSection
 	extends PDEFormSection
@@ -398,13 +400,52 @@ public class DetailExtensionSection
 		} else if (obj instanceof IPluginElement) {
 			String name = obj.toString();
 			IPluginElement element = (IPluginElement) obj;
-			ISchemaElement elementInfo = element.getElementInfo();
-			if (elementInfo != null && elementInfo.getIconName() != null) {
-				//ImageDescriptor desc = elementInfo.getIconDescriptor();
-			}
+			Image customImage = getCustomImage(element);
+			if (customImage != null)
+				return customImage;
 		}
 		return genericElementImage;
 	}
+
+	static Image getCustomImage(IPluginElement element) {
+		ISchemaElement elementInfo = element.getElementInfo();
+		if (elementInfo != null && elementInfo.getIconProperty() != null) {
+			String iconProperty = elementInfo.getIconProperty();
+			IPluginAttribute att = element.getAttribute(iconProperty);
+			String iconPath = null;
+			if (att != null && att.getValue() != null) {
+				iconPath = att.getValue();
+			}
+			if (iconPath != null) {
+				//OK, we have an icon path relative to the plug-in
+				return getImageFromPlugin(element, iconPath);
+			}
+		}
+		return null;
+	}
+
+	private static Image getImageFromPlugin(
+		IPluginElement element,
+		String iconPathName) {
+		IPluginModelBase model = element.getModel();
+		URL modelURL = null;
+		String path = null;
+
+		if (model.getUnderlyingResource() == null) {
+			// External
+			path = model.getInstallLocation();
+		} else {
+			// Workspace
+			path = model.getUnderlyingResource().getLocation().toOSString();
+		}
+		try {
+			modelURL = new URL("file:" + path);
+			return PDEPluginImages.getImageFromURL(modelURL, iconPathName);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+
 	private String resolveObjectName(Object obj) {
 		return resolveObjectName(schemaRegistry, pluginInfoRegistry, obj);
 	}

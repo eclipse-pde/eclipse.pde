@@ -86,7 +86,7 @@ attribute provides for creating category hierarchy.
    <element name="view">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" iconName="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -113,7 +113,7 @@ in this attribute.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required" value="">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified name of the class the implements 

@@ -423,6 +423,7 @@
    <launcher
          label="%newlauncher.withWizard.label"
          icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
+         description="%newlauncher.withWizard.description"
          wizard="org.eclipse.pde.internal.launcher.WorkbenchLauncherWizard"
          modes="run, debug"
          class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate:withWizard"
@@ -431,11 +432,46 @@
    <launcher
          label="%newlauncher.regular.label"
          icon="icons/full/ctool16/eclipse_launcher.gif"
+         description="%newlauncher.regular.description"
          modes="run, debug"
          class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate"
          id="org.eclipse.pde.WorkbenchLauncher">
    </launcher>
 </extension>
+<!--
+<extension
+      point="org.eclipse.debug.core.launchConfigurationTypes">
+   <launchConfigurationType
+         name="%launchConfigurationType.name"
+         delegate="org.eclipse.pde.internal.launcher.WorkbenchLaunchConfigurationDelegate"
+         modes="run, debug"
+         id="org.eclipse.pde.RuntimeWorkbench">
+   </launchConfigurationType>
+</extension>
+<extension
+      point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+   <launchConfigurationTypeImage
+         icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
+         configTypeID="org.eclipse.pde.RuntimeWorkbench"
+         id="org.eclipse.pde.runtimeWorkbenchLaunchImage">
+   </launchConfigurationTypeImage>
+</extension>
+
+<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
+	<launchConfigurationTab
+		id="org.eclipse.pde.launchConfigurationTab.FirstTab"
+		type ="org.eclipse.pde.RuntimeWorkbench"
+		class="org.eclipse.pde.internal.launcher.WorkbenchLauncherBasicTab"
+		name="%launchConfigurationTab.firstTab.name">
+	</launchConfigurationTab>
+	<launchConfigurationTab
+		id="org.eclipse.pde.launchConfigurationTab.AdvancedTab"
+		type ="org.eclipse.pde.RuntimeWorkbench"
+		class="org.eclipse.pde.internal.launcher.WorkbenchLauncherAdvancedTab"
+		name="%launchConfigurationTab.advancedTab.name">
+	</launchConfigurationTab>
+</extension>
+-->
 <extension
       point="org.eclipse.pde.schemaMap">
    <map
@@ -587,19 +623,7 @@
          schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
 </extension>
-
-<extension
-      point="org.eclipse.ui.decorators">
-   <decorator
-         objectClass="org.eclipse.core.resources.IProject"
-         adaptable="true"
-         label="%decorator.label"
-         state="true"
-         class="org.eclipse.pde.internal.wizards.imports.BinaryProjectDecorator"
-         id="org.eclipse.pde.binaryProjectDecorator">
-   </decorator>
-</extension>
-
+<!--
 <extension
       point="org.eclipse.ui.views">
    <category
@@ -614,5 +638,16 @@
          id="org.eclipse.pde.pluginsView">
    </view>
 </extension>
-
+-->
+<extension
+      point="org.eclipse.ui.decorators">
+   <decorator
+         objectClass="org.eclipse.core.resources.IProject"
+         adaptable="true"
+         label="%decorator.label"
+         state="true"
+         class="org.eclipse.pde.internal.wizards.imports.BinaryProjectDecorator"
+         id="org.eclipse.pde.binaryProjectDecorator">
+   </decorator>
+</extension>
 </plugin>

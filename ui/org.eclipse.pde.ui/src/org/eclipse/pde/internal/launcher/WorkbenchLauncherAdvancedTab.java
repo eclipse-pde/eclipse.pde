@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
-import org.eclipse.pde.internal.wizards.StatusWizardPage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
@@ -27,16 +26,20 @@ import org.eclipse.pde.internal.preferences.ExternalPluginsBlock;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.debug.ui.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.jface.dialogs.Dialog;
 
-public class WorkbenchLauncherWizardAdvancedPage
-	extends StatusWizardPage
-	implements ILauncherSettings {
-
+public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, ILauncherSettings {
 	public static final String KEY_WORKSPACE_PLUGINS =
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
 		"Preferences.AdvancedTracingPage.externalPlugins";
 
+	private ILaunchConfigurationDialog launchDialog;
+	private ILaunchConfigurationWorkingCopy config;
+	private Control control;
+	private FontMetrics fontMetrics;
 	private Button useDefaultCheck;
 	private Button showNamesCheck;
 	private CheckboxTreeViewer pluginTreeViewer;
@@ -158,26 +161,26 @@ public class WorkbenchLauncherWizardAdvancedPage
 		}
 	}
 
-	public WorkbenchLauncherWizardAdvancedPage(String title) {
-		super("WorkbenchLauncherWizardAdvancedPage", false);
-		setTitle(title);
-		setDescription("Plug-ins and fragments visible to the plug-in loader.");
+	public WorkbenchLauncherAdvancedTab() {
 		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
 		errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
 		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
 		errorFragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
 		pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 	}
+	
+	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy config) {
+		this.config = config;
+	}
 
 	public void dispose() {
 		pluginsImage.dispose();
-		super.dispose();
 	}
 
-	public void createControl(Composite parent) {
-		initializeDialogUnits(parent);
-
-		Composite composite = new Composite(parent, SWT.NONE);
+	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tab) {
+		this.launchDialog = dialog;
+		Composite composite = new Composite(tab.getParent(), SWT.NONE);
+		initializeDialogUnits(composite);
 
 		GridLayout layout = new GridLayout();
 		GridData gd;
@@ -192,7 +195,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		label.setText(
 			"If this option is checked, the workbench instance you are about to launch will 'see' all the plug-ins and fragments in the workspace, as well as all the external projects enabled in the Preferences.");
 		gd = fillIntoGrid(label, 2, false);
-		gd.widthHint = convertWidthInCharsToPixels(70);
+		gd.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, 70);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		fillIntoGrid(label, 2, false);
@@ -209,30 +212,42 @@ public class WorkbenchLauncherWizardAdvancedPage
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		//gd.verticalSpan = 2;
-		gd.heightHint = 250;
+		//gd.heightHint = 250;
 		list.setLayoutData(gd);
 
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText("Restore &Defaults");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		/*
 		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		gd.widthHint =
 			Math.max(
 				widthHint,
 				defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		*/
 		defaultsButton.setLayoutData(gd);
-
+/*
 		restoreLabel = new Label(composite, SWT.NULL);
 		restoreLabel.setText(
 			"You can restore plug-in and fragment visibility to the default values.");
 		gd = fillIntoGrid(restoreLabel, 1, false);
 		//gd.verticalAlignment = GridData.BEGINNING;
-
+*/
 		initializeFields();
 		hookListeners();
 		pluginTreeViewer.reveal(workspacePlugins);
-		setControl(composite);
+		control = composite;
+		return control;
+	}
+	
+	
+	private void initializeDialogUnits(Control control) {
+		// Compute and store a font metric
+		GC gc = new GC(control);
+		gc.setFont(control.getFont());
+		fontMetrics = gc.getFontMetrics();
+		gc.dispose();
 	}
 
 	private void hookListeners() {
@@ -251,6 +266,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 				Vector checked = computeInitialCheckState();
 				pluginTreeViewer.setCheckedElements(checked.toArray());
 				updateStatus();
+				storeSettings();
 			}
 		});
 	}
@@ -259,6 +275,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		boolean useDefault = useDefaultCheck.getSelection();
 		adjustCustomControlEnableState(!useDefault);
 		updateStatus();
+		storeSettings();
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
@@ -266,7 +283,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		showNamesCheck.setEnabled(enable);
 		pluginTreeViewer.getTree().setEnabled(enable);
 		defaultsButton.setEnabled(enable);
-		restoreLabel.setEnabled(enable);
+		//restoreLabel.setEnabled(enable);
 	}
 
 	private GridData fillIntoGrid(Control control, int hspan, boolean grab) {
@@ -292,6 +309,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 					handleGroupStateChanged(element, event.getChecked());
 				}
 				updateStatus();
+				storeSettings();
 			}
 		});
 		pluginTreeViewer.setSorter(new ViewerSorter() {
@@ -332,7 +350,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 	}
 
 	private void initializeFields() {
-		IDialogSettings initialSettings = getDialogSettings();
+		IDialogSettings initialSettings = null;
 		boolean useDefault = true;
 		boolean showNames = true;
 
@@ -357,7 +375,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 			IPluginModelBase[] ws = getWorkspacePlugins();
 
 			// Deselected workspace plug-ins
-			String deselectedPluginIDs = initialSettings.get(WSPROJECT);
+			String deselectedPluginIDs = initialSettings!=null?initialSettings.get(WSPROJECT):null;
 			if (deselectedPluginIDs != null) {
 				ArrayList deselected = new ArrayList();
 				StringTokenizer tok =
@@ -387,7 +405,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 
 			IPluginModelBase[] ex = getExternalPlugins();
 
-			String exSettings = initialSettings.get(EXTPLUGINS);
+			String exSettings = initialSettings!=null?initialSettings.get(EXTPLUGINS):null;
 			if (exSettings == null)
 				exSettings = "";
 			ExternalStates states = new ExternalStates(exSettings);
@@ -517,10 +535,9 @@ public class WorkbenchLauncherWizardAdvancedPage
 	}
 
 	public void storeSettings() {
-		IDialogSettings initialSettings = getDialogSettings();
 		boolean useDefault = useDefaultCheck.getSelection();
-		initialSettings.put(USECUSTOM, !useDefault);
-		initialSettings.put(SHOWNAMES, !showNamesCheck.getSelection());
+		config.setAttribute(USECUSTOM, !useDefault);
+		config.setAttribute(SHOWNAMES, !showNamesCheck.getSelection());
 
 		if (useDefault)
 			return;
@@ -547,65 +564,16 @@ public class WorkbenchLauncherWizardAdvancedPage
 			exbuf.append(state ? ",t" : ",f");
 			exbuf.append(File.pathSeparatorChar);
 		}
-		initialSettings.put(WSPROJECT, wbuf.toString());
-		initialSettings.put(EXTPLUGINS, exbuf.toString());
+		config.setAttribute(WSPROJECT, wbuf.toString());
+		config.setAttribute(EXTPLUGINS, exbuf.toString());
 	}
-
-	static void setLauncherData(IDialogSettings settings, LauncherData data) {
-		boolean useDefault = true;
-
-		if (settings != null) {
-			useDefault = !settings.getBoolean(USECUSTOM);
-		}
-		ArrayList res = new ArrayList();
-		// Deselected workspace plug-ins
-		ArrayList deselectedWSPlugins = new ArrayList();
-
-		String wstring = settings.get(WSPROJECT);
-		String exstring = settings.get(EXTPLUGINS);
-
-		if (wstring != null) {
-			StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
-			while (tok.hasMoreTokens()) {
-				deselectedWSPlugins.add(tok.nextToken());
-			}
-		}
-		ExternalStates exstates = new ExternalStates();
-		if (exstring != null) {
-			exstates.parseStates(exstring);
-		}
-
-		IPluginModelBase[] models = getWorkspacePlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
-				res.add(model);
-		}
-		models = getExternalPlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			if (useDefault) {
-				if (model.isEnabled())
-					res.add(model);
-			} else {
-				ExternalState es = exstates.getState(model.getPluginBase().getId());
-				if (es != null && es.state) {
-					res.add(model);
-				} else if (model.isEnabled())
-					res.add(model);
-			}
-		}
-		IPluginModelBase[] plugins =
-			(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
-		data.setPlugins(plugins);
-	}
-
+	
 	private void updateStatus() {
-		IStatus genStatus = validatePlugins();
-		updateStatus(genStatus);
+		launchDialog.refreshStatus();
 	}
 
 	private IStatus validatePlugins() {
+		/*
 		IPluginModelBase[] plugins = getPlugins();
 		if (plugins.length == 0) {
 			return createStatus(IStatus.ERROR, "No plugins available.");
@@ -630,6 +598,8 @@ public class WorkbenchLauncherWizardAdvancedPage
 			}
 		};
 		return createStatus(IStatus.OK, "");
+		*/
+		return null;
 	}
 
 	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {

@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.builders.SourceDOMParser;
+import org.eclipse.swt.graphics.Image;
 
 public class Schema extends PlatformObject implements ISchema {
 	private URL url;
@@ -80,6 +81,7 @@ public void dispose() {
 	reset();
 	disposed = true;
 }
+
 public ISchemaElement findElement(String name) {
 	if (!isLoaded()) load();
 	for (int i = 0; i < elements.size(); i++) {
@@ -494,7 +496,9 @@ private void processElementAnnotation(SchemaElement element, Node node) {
 						if (meta.getNodeType() == Node.ELEMENT_NODE) {
 							if (meta.getNodeName().equals("meta.element")) {
 								element.setLabelProperty(getAttribute(meta, "labelAttribute"));
-								element.setIconName(getAttribute(meta, "icon"));
+								element.setIconProperty(getAttribute(meta, "icon"));
+								if (element.getIconProperty()==null)
+								   element.setIconProperty(getAttribute(meta, "iconName"));
 							}
 						}
 					}

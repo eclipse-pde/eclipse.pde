@@ -72,7 +72,7 @@ with it by any means except through the file system.
    <element name="editor">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" iconName="icon"/>
          </appInfo>
       </annotation>
       <complexType>
