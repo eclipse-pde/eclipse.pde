@@ -14,10 +14,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class ResourceAttributeCellEditor extends DialogCellEditor {
 	class ContentProvider extends WorkbenchContentProvider {
@@ -63,8 +66,7 @@ protected Object openDialogBox(Control cellEditorWindow) {
 			new ContentProvider());
 	dialog.setInput(project.getWorkspace());
 	
-	dialog.addFilter(new ViewerFilter() {
-		
+	dialog.addFilter(new ViewerFilter() {		
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IFile) {
 				String extension = ((IFile) element).getFileExtension();
@@ -80,13 +82,32 @@ protected Object openDialogBox(Control cellEditorWindow) {
 	dialog.setAllowMultiple(false);
 	dialog.setTitle(PDEPlugin.getResourceString(TITLE));
 	dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ResourceAttributeCellEditor.message"));
-
-	if (dialog.open() == ElementTreeSelectionDialog.OK) {
-		IResource resource = (IResource) dialog.getResult()[0];
-		if (resource instanceof IFile) {
-			String stringValue = resource.getProjectRelativePath().toString();
-			return new ResourceAttributeValue(project, stringValue);
+	dialog.setValidator(new ISelectionStatusValidator() {
+		public IStatus validate(Object[] selection) {
+			if (selection != null
+				&& selection.length > 0
+				&& selection[0] instanceof IFile)
+				return new Status(
+					IStatus.OK,
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					"",
+					null);
+			else
+				return new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.ERROR,
+					"",
+					null);
 		}
+	});
+	
+	if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		IFile file = (IFile) dialog.getFirstResult();
+		return new ResourceAttributeValue(
+			project,
+			file.getProjectRelativePath().toString());
 	}
 	return value;
 }
