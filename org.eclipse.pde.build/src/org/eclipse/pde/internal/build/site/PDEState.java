@@ -168,10 +168,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (versionInfo[0].getValue().endsWith(PROPERTY_QUALIFIER)) {
 				try {
 					String qualifierInfo = AbstractScriptGenerator.readProperties(bundleLocation.getAbsolutePath(), IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
-					//TODO Log a warning when no qualifier has been found in the manifest
-					manifest.put(PROPERTY_QUALIFIER, qualifierInfo);
+					//TODO Log a warning when no qualifier has been found in the manifest, or if the qualifierInfo is null
+					if (qualifierInfo != null)
+						manifest.put(PROPERTY_QUALIFIER, qualifierInfo);
 				} catch (CoreException e1) {
-
 					//Ignore
 				}
 			}
