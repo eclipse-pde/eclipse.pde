@@ -522,14 +522,17 @@ public abstract class BuildContentsSection extends TableSection
 
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource resource = delta.getResource();
+		IProject project = fBuildModel.getUnderlyingResource().getProject();
+		
 		if ((resource instanceof IFile || resource instanceof IFolder)
-				&& resource.getProject().equals(
-						fBuildModel.getUnderlyingResource().getProject())) {
+				&& resource.getProject().equals(project)) {
 			if (delta.getKind() == IResourceDelta.ADDED
 					|| delta.getKind() == IResourceDelta.REMOVED) {
 				fDoRefresh = true;
 				return false;
 			}
+		} else if (resource instanceof IProject && ((IProject)resource).equals(project)) {
+			return delta.getKind() != IResourceDelta.REMOVED;
 		}
 		return true;
 	}
