@@ -153,16 +153,20 @@ public class ProductExportJob extends FeatureExportJob {
 	private String getRootFileLocations() {
 		StringBuffer buffer = new StringBuffer();
 		
-		// add eclipse.exe  - add for now until we can generate our custom executable
-		buffer.append("absolute:file:");
-		buffer.append(ExternalModelManager.getEclipseHome().append("eclipse.exe").toOSString());
-		buffer.append(",");
-
-		// add startup.jar
-		buffer.append("absolute:file:");
-		buffer.append(ExternalModelManager.getEclipseHome().append("startup.jar").toOSString());
-		buffer.append(",");
-		
+		File homeDir = ExternalModelManager.getEclipseHome().toFile();
+		if (homeDir.exists() && homeDir.isDirectory()) {
+			File[] files = homeDir.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				// TODO for now copy everything except .eclipseproduct
+				// Once the branded executable is generated, we should not copy
+				// eclipse.exe nor icon.xpm
+				if (files[i].isFile() && !".eclipseproduct".equals(files[i].getName())) {
+					buffer.append("absolute:file:");
+					buffer.append(files[i].getAbsolutePath());
+					buffer.append(",");
+				}	
+			}		
+		}
 		// add config.ini
 		buffer.append("absolute:file:");
 		buffer.append(fFeatureLocation);
@@ -244,8 +248,7 @@ public class ProductExportJob extends FeatureExportJob {
 		HashMap properties = super.createAntBuildProperties(os, ws, arch);
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		
-		//To turn on the brander, set this static to true. Like always with those, please put it back to false after...
-		//Note that this may change in the near future as I'm working to improve that.
+		//TODO branding is off.  If turned on, we get troubles while running the scripts.
 		AbstractScriptGenerator.setBrandExecutable(false);
 		
 		//Just to make sure, Here the values that are put in properties must be passed to the script.
