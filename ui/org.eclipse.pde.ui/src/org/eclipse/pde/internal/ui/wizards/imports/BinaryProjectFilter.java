@@ -1,9 +1,9 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 /**
  * @author dejan
@@ -14,6 +14,8 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
  * Window>Preferences>Java>Code Generation.
  */
 public class BinaryProjectFilter extends ViewerFilter {
+	private static final QualifiedName IMPORTED_KEY = new QualifiedName("org.eclipse.pde.core", "imported");
+	private static final QualifiedName TEAM_KEY = new QualifiedName("org.eclipse.team.core", "repository");
 
 	/**
 	 * Constructor for BinaryProjectFilter.
@@ -34,11 +36,40 @@ public class BinaryProjectFilter extends ViewerFilter {
 			project = (IProject) element;
 		}
 		if (project != null) {
-			if (WorkspaceModelManager.isBinaryPluginProject(project)
-				|| WorkspaceModelManager.isBinaryFeatureProject(project))
-				return false;
+			if (isPluginProject(project) || isFeatureProject(project)) {
+				return !isBinary(project);
+			}
 		}
 		return true;
 	}
-
+	
+	private boolean isPluginProject(IProject project) {
+		if (project.isOpen() == false)
+			return false;
+		return project.exists(new Path("plugin.xml"))
+			|| project.exists(new Path("fragment.xml"));
+	}
+	
+	private boolean isFeatureProject(IProject project) {
+		if (project.isOpen() == false)
+			return false;
+		return project.exists(new Path("feature.xml"));
+	}
+	
+	private boolean isBinary(IProject project) {
+		try {
+			String value = project.getPersistentProperty(IMPORTED_KEY);
+			if (value==null) return false;
+			if (value.equals("external"))
+				return true;
+			if (value.equals("binary")) {
+				if (project.getSessionProperty(TEAM_KEY)==null)
+					return true;
+			}
+			return false;
+		}
+		catch (CoreException e) {
+			return false;
+		}
+	}
 }
