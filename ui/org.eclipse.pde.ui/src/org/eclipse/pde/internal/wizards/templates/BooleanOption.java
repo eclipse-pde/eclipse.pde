@@ -15,7 +15,7 @@ public class BooleanOption extends TemplateOption {
 	}
 	
 	public boolean isSelected() {
-		return value!=null && value.equals(Boolean.TRUE);
+		return getValue()!=null && getValue().equals(Boolean.TRUE);
 	}
 	public void setSelected(boolean selected) {
 		setValue(selected?Boolean.TRUE:Boolean.FALSE);
@@ -39,8 +39,8 @@ public class BooleanOption extends TemplateOption {
 		button.setSelection(isSelected());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				value = button.getSelection()?Boolean.TRUE:Boolean.FALSE;
-				section.validateOptions(BooleanOption.this);
+				setValue(button.getSelection()?Boolean.TRUE:Boolean.FALSE);
+				getSection().validateOptions(BooleanOption.this);
 			}
 		});
 	}

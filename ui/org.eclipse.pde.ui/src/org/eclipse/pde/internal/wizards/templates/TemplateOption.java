@@ -4,16 +4,13 @@ package org.eclipse.pde.internal.wizards.templates;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public abstract class TemplateOption {
-	GenericTemplateSection section;
-	String name;
-	String label;
-	Object value;
+public abstract class TemplateOption extends TemplateField {
+	private String name;
+	private Object value;
 	
 	public TemplateOption(GenericTemplateSection section, String name, String label) {
-		this.section = section;
+		super(section, label);
 		this.name = name;
-		this.label = label;
 	}
 	
 	public String getName() {
@@ -21,14 +18,6 @@ public abstract class TemplateOption {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String getLabel() {
-		return label;
-	}
-	
-	public void setLabel(String label) {
-		this.label = label;
 	}
 	
 	public Object getValue() {
@@ -42,5 +31,4 @@ public abstract class TemplateOption {
 	public void setValue(Object value) {
 		this.value = value;
 	}
-	public abstract void createControl(Composite parent, int span, FormWidgetFactory factory);
 }

@@ -18,7 +18,7 @@ import org.eclipse.jface.wizard.*;
 public class ViewTemplate extends PDETemplateSection {
 	public static final String KEY_MESSAGE = "message";
 	public static final String CLASS_NAME = "SampleView";
-	private WizardPage page;
+	private WizardPage page1, page2;
 	private Hashtable options = new Hashtable();
 	/**
 	 * Constructor for HelloWorldTemplate.
@@ -36,31 +36,45 @@ public class ViewTemplate extends PDETemplateSection {
 		return super.getNumberOfWorkUnits()+1;
 	}
 	
-	private ArrayList createOptions() {
-		ArrayList list = new ArrayList();
-	
-		addOption("packageName", "&Java Package Name:", "", list);
-		addOption("className", "&View Class Name:", CLASS_NAME, list);
-		addOption("viewName", "View &Name:", "Sample View", list);
-		addOption("viewCategory", "View &Category Name:", "Sample Category", list);
-		addOption("react", "View &should react to selections in the workbench", true, list);
-		addOption("doubleClick", "Add a double-click support", true, list);
-		addOption("popup", "&Add actions to the pop-up menu", true, list);
-		addOption("localToolbar", "Add actions to the view's tool bar", true, list);
-		addOption("localPulldown", "Add actions to the view's pull-down menu", true, list);
-		addOption("sorter", "Add support for sorting", true, list);
-		addOption("filter", "Add support for filtering", true, list);
-		return list;
+	private ArrayList [] createOptions() {
+		ArrayList [] lists = new ArrayList[2];
+		lists[0] = new ArrayList();
+		lists[1] = new ArrayList();
+
+		// first page	
+		addOption("packageName", "&Java Package Name:", "", lists[0]);
+		addOption("className", "&View Class Name:", CLASS_NAME, lists[0]);
+		addOption("viewName", "View &Name:", "Sample View", lists[0]);
+		addOption("viewCategory", "View &Category Name:", "Sample Category", lists[0]);
+		addOption("viewType", "Select the control the view should host:", 
+					new String [][] {
+						{"tableViewer", "Table (can also used for lists)"},
+						{"treeViewer", "Tree" }},
+						"tableViewer", lists[0]);
+		
+		addOption("react", "View &should react to selections in the workbench", true, lists[1]);
+		addOption("doubleClick", "Add a double-click support", true, lists[1]);
+		addOption("popup", "&Add actions to the pop-up menu", true, lists[1]);
+		addOption("localToolbar", "Add actions to the view's tool bar", true, lists[1]);
+		addOption("localPulldown", "Add actions to the view's pull-down menu", true, lists[1]);
+		addOption("sorter", "Add support for sorting", true, lists[1]);
+		addOption("filter", "Add support for filtering", true, lists[1]);
+		return lists;
 	}
 	
 	public void addPages(Wizard wizard) {
-		ArrayList list = createOptions();
-		page = new GenericTemplateWizardPage(this, list);
-		page.setTitle("Sample View");
-		page.setDescription("This template will generate a sample view and add it into the platform by registering a new view category.");
-		wizard.addPage(page);
+		ArrayList [] lists = createOptions();
+		page1 = new GenericTemplateWizardPage(this, lists[0]);
+		page1.setTitle("Main View Settings");
+		page1.setDescription("Choose the way the new view will be added to the plug-in");
+		wizard.addPage(page1);
+		
+		page2 = new GenericTemplateWizardPage(this, lists[1]);
+		page2.setTitle("View Features");
+		page2.setDescription("Choose the features that the new view should have");
+		wizard.addPage(page2);
 	}
-	
+
 	public void validateOptions(TemplateOption source) {
 		String message = null;
 		String name = source.getName();

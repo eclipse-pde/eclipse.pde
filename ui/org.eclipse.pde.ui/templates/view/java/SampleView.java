@@ -15,7 +15,13 @@ import org.eclipse.swt.SWT;
  * 
  */
 public class SampleView extends ViewPart {
+%if viewType == "tableViewer"
 	private TableViewer viewer;
+%else
+%  if viewType == "treeViewer"
+	private TreeViewer viewer;
+%  endif
+%endif
 	private Action action1;
 	private Action action2;
 %if doubleClick
@@ -31,6 +37,8 @@ public class SampleView extends ViewPart {
 	 * it and always show the same content 
 	 * (like Task List, for example).
 	 */
+	 
+%if viewType == "tableViewer"
 	class ViewContentProvider implements IStructuredContentProvider {
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
@@ -40,15 +48,45 @@ public class SampleView extends ViewPart {
 			return new String[] { "One", "Two", "Three" };
 		}
 	}
-
+%else
+%  if viewType =="treeViewer"
+	class ViewContentProvider implements IStructuredContentProvider, 
+										   ITreeContentProvider {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+		public void dispose() {
+		}
+		public Object[] getElements(Object parent) {
+			return new String[] { "One", "Two", "Three" };
+		}
+		public Object getParent(Object child) {
+			return null;
+		}
+		public Object [] getChildren(Object parent) {
+			return new Object[0];
+		}
+		public boolean hasChildren(Object parent) {
+			return true;
+		}
+	}
+%  endif
+%endif
+%if viewType == "tableViewer"
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
-
 		public Image getColumnImage(Object obj, int index) {
 			return getImage(obj);
+		}
+%else
+	class ViewLabelProvider extends LabelProvider {
+%endif
+		public String getText(Object obj) {
+			return obj.toString();
+		}
+		public Image getImage(Object obj) {
+			return null;
 		}
 	}
 
@@ -63,7 +101,13 @@ public class SampleView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+%if viewType =="tableViewer"
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+%else
+%  if viewType =="treeViewer"
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+%  endif
+%endif
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(ResourcesPlugin.getWorkspace());

@@ -23,6 +23,12 @@ public abstract class GenericTemplateSection extends AbstractTemplateSection {
 		registerOption(option);
 	}	
 	
+	protected void addOption(String name, String label, String [][] choices, String value, ArrayList list) {
+		ChoiceOption option = new ChoiceOption(this, name, label, choices);
+		option.setValue(value);
+		list.add(option);
+		registerOption(option);
+	}
 	
 	protected void registerOption(TemplateOption option) {
 		options.put(option.getName(), option);

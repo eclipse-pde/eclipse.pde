@@ -15,7 +15,7 @@ public class StringOption extends TemplateOption {
 	}
 	
 	public String getText() {
-		if (value!=null) return value.toString();
+		if (getValue()!=null) return getValue().toString();
 		return null;
 	}
 	public void setText(String newText) {
@@ -27,14 +27,13 @@ public class StringOption extends TemplateOption {
 		Composite parent,
 		int span,
 		FormWidgetFactory factory) {
+		
+		createLabel(parent, 1, factory);
 		if (factory==null) {
-			Label label = new Label(parent, SWT.NULL);
-			label.setText(getLabel());
 			text = new Text(parent, SWT.SINGLE | SWT.BORDER);
-			if (value!=null) text.setText(value.toString());
+			if (getValue()!=null) text.setText(getValue().toString());
 		}
 		else {
-			factory.createLabel(parent, getLabel());
 			text = factory.createText(parent, getText(), SWT.SINGLE);
 		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -42,13 +41,13 @@ public class StringOption extends TemplateOption {
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				value = text.getText();
-				section.validateOptions(StringOption.this);
+				setValue(text.getText());
+				getSection().validateOptions(StringOption.this);
 			}
 		});
 	}
 	
 	public boolean isEmpty() {
-		return value==null || value.toString().length()==0;
+		return getValue()==null || getValue().toString().length()==0;
 	}
 }
