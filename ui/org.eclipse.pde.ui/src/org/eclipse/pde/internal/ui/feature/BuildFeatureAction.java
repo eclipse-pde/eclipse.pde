@@ -238,7 +238,8 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 	}
 
 	private void runAnt() {
-		IFile file = featureFile.getProject().getFile("build.xml");
+		String scriptName = MainPreferencePage.getBuildScriptName();
+		IFile file = featureFile.getProject().getFile(scriptName);
 		if (!file.exists()) {
 			// should probably warn the user
 			return;

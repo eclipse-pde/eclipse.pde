@@ -242,7 +242,8 @@ public class BuildPluginAction implements IObjectActionDelegate {
 	}
 
 	private void runAnt() {
-		IFile file = pluginBaseFile.getProject().getFile("build.xml");
+		String scriptName = MainPreferencePage.getBuildScriptName();
+		IFile file = pluginBaseFile.getProject().getFile(scriptName);
 		if (!file.exists()) {
 			// should probably warn the user
 			return;
