@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -128,6 +129,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 				updateLaunchConfigurationDialog();
 			}
 		});
+		Dialog.applyDialogFont(container);
+		setControl(container);
 	}
 	
 	private void createViewer(Composite container) {

@@ -61,6 +61,7 @@ public class TracingLauncherTab
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createSashSection(container);
 		createButtonSection(container);
+		Dialog.applyDialogFont(container);
 		setControl(container);		
 		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
