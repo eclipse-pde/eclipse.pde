@@ -443,9 +443,12 @@ public class WorkbenchLaunchConfigurationDelegate
 		// Look for boot path.  Cancel launch, if not found.
 		bootPath = getBootPath(bootModel);
 		if (bootPath == null) {
-			String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
 			monitor.setCanceled(true);
-			throw new CoreException(createErrorStatus(message));
+			MessageDialog.openError(
+				PDEPlugin.getActiveWorkbenchShell(),
+				PDEPlugin.getResourceString(KEY_TITLE),
+				PDEPlugin.getResourceString(KEY_NO_BOOT));
+			return null;
 		}
 
 		// alert user if there are duplicate plug-ins.
