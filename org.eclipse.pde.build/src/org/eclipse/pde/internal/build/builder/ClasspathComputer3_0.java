@@ -182,7 +182,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
 					// of its build.property file
-					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, null, classpath);
+					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		} else {
@@ -192,7 +192,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (order[i].equals(jar.getName(false)))
 					break;
 				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
-				addPathAndCheck(model.getSymbolicName(), Path.EMPTY, order[i], null, classpath);
+				addPathAndCheck(model.getSymbolicName(), Path.EMPTY, order[i], modelProperties, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
 			String[] libraries = getClasspathEntries(model);
@@ -201,7 +201,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
 					//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
 					//the user will get $basexx instead of $ws 
-					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, null, classpath);
+					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		}
@@ -214,7 +214,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < extra.length; i++) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
-				addPathAndCheck(null, new Path(computeExtraPath(extra[i], location)), "", null, classpath); //$NON-NLS-1$
+				addPathAndCheck(null, new Path(computeExtraPath(extra[i], location)), "", modelProperties, classpath); //$NON-NLS-1$
 			}
 		}
 
@@ -223,7 +223,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			addPathAndCheck(null, new Path(computeExtraPath(jarSpecificExtraClasspath[i], location)), "", null, classpath); //$NON-NLS-1$
+			addPathAndCheck(null, new Path(computeExtraPath(jarSpecificExtraClasspath[i], location)), "", modelProperties, classpath); //$NON-NLS-1$
 		}
 	}
 
