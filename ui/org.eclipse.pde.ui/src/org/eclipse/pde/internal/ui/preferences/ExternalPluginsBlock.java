@@ -172,10 +172,10 @@ public class ExternalPluginsBlock {
 			removedArray = initialModels;
 			addedArray = getAllModels();
 		}
-		if (changed != null && changed.size() > 0) {
+		if (changed.size() > 0) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
 			changedArray = (IModel[]) changed.toArray(new IModel[changed.size()]);
-			changed = null;
+			changed.clear();
 		}
 		if (type != 0) {
 			ExternalModelManager registry =
