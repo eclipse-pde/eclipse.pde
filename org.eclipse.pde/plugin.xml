@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
+   name="%pluginName"
    id="org.eclipse.pde"
-   name="%name"
    version="2.0.0"
-   provider-name="International Business Machines Corp."
+   provider-name="%providerName"
    class="org.eclipse.pde.internal.PDE">
 
    <runtime>
@@ -11,6 +11,7 @@
          <export name="*"/>
       </library>
    </runtime>
+
    <requires>
       <import plugin="org.eclipse.pde.core" export="true"/>
       <import plugin="org.eclipse.core.resources"/>
