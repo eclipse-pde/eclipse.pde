@@ -291,7 +291,11 @@ public class DataSection
 
 	public void update() {
 		if (updateNeeded) {
-			this.update(getFormPage().getModel());
+			dataViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					update(getFormPage().getModel());
+				}
+			});
 		}
 	}
 

@@ -256,7 +256,11 @@ public class IncludedFeaturesSection
 
 	public void update() {
 		if (updateNeeded) {
-			this.update(getFormPage().getModel());
+			includesViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					update(getFormPage().getModel());
+				}
+			});
 		}
 	}
 
