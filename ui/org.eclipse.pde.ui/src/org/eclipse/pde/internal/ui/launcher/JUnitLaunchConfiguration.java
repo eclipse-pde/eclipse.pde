@@ -204,6 +204,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				LauncherUtils.getWorkspacePluginsToRun(configuration, useDefault));
 		programArgs.add(configuration.getAttribute(CLASSPATH_ENTRIES, devEntry));
 
+		if (configuration.getAttribute(TRACING, false)) {
+			programArgs.add("-debug");
+			programArgs.add(LauncherUtils.getTracingFileArgument(configuration));
+		}
+		
 		StringTokenizer tokenizer =
 			new StringTokenizer(configuration.getAttribute(PROGARGS, ""));
 		while (tokenizer.hasMoreTokens()) {

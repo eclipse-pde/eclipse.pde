@@ -28,6 +28,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new JUnitMainTab(),
 			new JUnitArgumentsTab(),
 			new AdvancedLauncherTab(false),
+			new TracingLauncherTab(),
 			new JavaSourceLookupTab(),
 			new CommonTab()
 		};

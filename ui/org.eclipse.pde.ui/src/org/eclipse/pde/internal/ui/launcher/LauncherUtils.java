@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -28,10 +29,12 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
 public class LauncherUtils {
@@ -480,5 +483,32 @@ public class LauncherUtils {
 		}
 		curr.delete();
 	}
+	
+	public static String getTracingFileArgument(ILaunchConfiguration config) {
+		TracingOptionsManager mng =
+			PDECore.getDefault().getTracingOptionsManager();
+		Map options;
+		try {
+			options =
+				config.getAttribute(
+					ILauncherSettings.TRACING_OPTIONS,
+					mng.getTracingTemplateCopy());
+		} catch (CoreException e) {
+			return "";
+		}
+		mng.save(options);
+		String optionsFileName = mng.getTracingFileName();
+		String tracingArg;
+		if (SWT.getPlatform().equals("motif"))
+			tracingArg = "file:" + optionsFileName;
+		// defect 17661
+		else if (SWT.getPlatform().equals("gtk"))
+			tracingArg = "file://localhost" + optionsFileName;
+		else
+			tracingArg = "\"file:" + optionsFileName + "\"";
+		return tracingArg;
+	}
+
+
 
 }

@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate
@@ -151,7 +150,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 		if (configuration.getAttribute(TRACING, false)) {
 			programArgs.add("-debug");
-			programArgs.add(getTracingFileArgument(configuration));
+			programArgs.add(LauncherUtils.getTracingFileArgument(configuration));
 		}
 
 		StringTokenizer tokenizer =
@@ -236,31 +235,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		IPath eclipseHome = ExternalModelManager.getEclipseHome(null);
 		IPath fullPath = eclipseHome.append("eclipse");
 		return fullPath.toOSString() + " -showsplash 600";
-	}
-
-	private String getTracingFileArgument(ILaunchConfiguration config) {
-		TracingOptionsManager mng =
-			PDECore.getDefault().getTracingOptionsManager();
-		Map options;
-		try {
-			options =
-				config.getAttribute(
-					ILauncherSettings.TRACING_OPTIONS,
-					mng.getTracingTemplateCopy());
-		} catch (CoreException e) {
-			return "";
-		}
-		mng.save(options);
-		String optionsFileName = mng.getTracingFileName();
-		String tracingArg;
-		if (SWT.getPlatform().equals("motif"))
-			tracingArg = "file:" + optionsFileName;
-		// defect 17661
-		else if (SWT.getPlatform().equals("gtk"))
-			tracingArg = "file://localhost" + optionsFileName;
-		else
-			tracingArg = "\"file:" + optionsFileName + "\"";
-		return tracingArg;
 	}
 
 	private String getPrimaryFeatureId() {
