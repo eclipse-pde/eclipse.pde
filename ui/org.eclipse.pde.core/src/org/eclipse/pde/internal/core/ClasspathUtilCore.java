@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -488,10 +489,9 @@ public class ClasspathUtilCore {
 			if (jarFile != null)
 				return jarFile.getFullPath();
 		} else {
-			IPath path = new Path(model.getInstallLocation()).append(libraryName);
-			if (path.toFile().exists()) {
-				return path;
-			}
+			File file = new File(model.getInstallLocation(), libraryName);
+			if (file.exists())
+				return new Path(file.getAbsolutePath());
 		}
 		return null;
 	}
