@@ -170,16 +170,28 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		ModelEntry[] entries = manager.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
-			if (entry.isInJavaSearch() == false)
-				continue;
-			if (entry.getWorkspaceModel() != null)
-				continue;
-			IPluginModelBase model = entries[i].getExternalModel();
-			if (model == null)
-				continue;
-			Vector modelResult = new Vector();
-			ClasspathUtilCore.addLibraries(model, false, modelResult);
-			addUniqueEntries(result, modelResult);
+			Vector entryResult = new Vector();			
+			if (entry.getWorkspaceModel() != null) {
+				// We used to skip workspace models before.
+				// If we add them as references,
+				// scoped searches will work according
+				// to bug 52667
+				IProject eproject = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+				if (eproject.hasNature(JavaCore.NATURE_ID)) {
+					IClasspathEntry pentry =
+						JavaCore.newProjectEntry(eproject.getFullPath());
+					entryResult.add(pentry);
+				}
+			}
+			else {
+				if (entry.isInJavaSearch() == false)
+					continue;				
+				IPluginModelBase model = entry.getExternalModel();
+				if (model == null)
+					continue;
+				ClasspathUtilCore.addLibraries(model, false, entryResult);
+			}
+			addUniqueEntries(result, entryResult);			
 		}
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result
 				.size()]);
