@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.ui.*;
 
 public class PreviewReferenceAction implements IObjectActionDelegate {
@@ -33,8 +33,8 @@ public class PreviewReferenceAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		if (fFile == null)
 			return;
-		FileSchemaDescriptor sd = new FileSchemaDescriptor(fFile);
-		ISchema schema = sd.getSchema();
+		SchemaDescriptor sd = new SchemaDescriptor(fFile, false);
+		ISchema schema = sd.getSchema(false);
 		if (fDelegate == null) {
 			fDelegate = new ShowDescriptionAction(schema);
 		} else

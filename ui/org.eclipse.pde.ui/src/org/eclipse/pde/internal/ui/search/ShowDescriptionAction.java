@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.io.*;
+import java.net.*;
 
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
@@ -52,9 +53,16 @@ public class ShowDescriptionAction extends Action {
 	
 	public void run() {
 		if (fSchema == null) {
-			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			fSchema = registry.getSchema(fPointID);
-			if (fSchema == null) {
+			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(fPointID);
+			URL url = null;
+			if (point == null) {
+				url = SchemaRegistry.getSchemaURL(point);
+				if (url != null) {
+					ISchemaDescriptor desc = new SchemaDescriptor(fPointID, url);
+					fSchema = desc.getSchema(false);
+				}
+			}
+			if (point == null|| url == null || fSchema == null) {
 				showNoSchemaMessage();
 				return;
 			}

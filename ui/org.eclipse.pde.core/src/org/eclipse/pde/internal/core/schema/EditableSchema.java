@@ -11,35 +11,44 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.*;
+import java.net.*;
 
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public class EditableSchema extends Schema implements IEditable {
+
+	public EditableSchema(ISchemaDescriptor schemaDescriptor, URL url, boolean abbreviated) {
+		super(schemaDescriptor, url, abbreviated);
+	}
+	
+	public EditableSchema(String pluginId, String pointId, String name, boolean abbreviated) {
+		super(pluginId, pointId, name, abbreviated);
+	}
+	
+
 	private boolean dirty;
 
-public EditableSchema(String pluginId, String pointId, String name) {
-	super(pluginId, pointId, name);
-}
-public EditableSchema(ISchemaDescriptor schemaDescriptor, java.net.URL url) {
-	super(schemaDescriptor, url);
-}
-public void fireModelChanged(IModelChangedEvent event) {
-	if (isNotificationEnabled())
-		dirty = true;
-	super.fireModelChanged(event);
-}
-public boolean isDirty() {
-	return dirty;
-}
-public boolean isEditable() {
-	return true;
-}
-public void save(PrintWriter writer) {
-	this.write("", writer); //$NON-NLS-1$
-	dirty = false;
-}
-public void setDirty(boolean newDirty) {
-	dirty = newDirty;
-}
+	public void fireModelChanged(IModelChangedEvent event) {
+		if (isNotificationEnabled())
+			dirty = true;
+		super.fireModelChanged(event);
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public boolean isEditable() {
+		return true;
+	}
+
+	public void save(PrintWriter writer) {
+		this.write("", writer); //$NON-NLS-1$
+		dirty = false;
+	}
+
+	public void setDirty(boolean newDirty) {
+		dirty = newDirty;
+	}
 }

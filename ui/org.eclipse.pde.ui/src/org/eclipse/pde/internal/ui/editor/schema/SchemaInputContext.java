@@ -21,7 +21,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
@@ -64,8 +63,8 @@ public class SchemaInputContext extends XMLInputContext {
 		}
 
 		IFile file = ((IFileEditorInput)input).getFile();
-		FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
-		ISchema schema = sd.getSchema();
+		SchemaDescriptor sd = new SchemaDescriptor(file, true);
+		ISchema schema = sd.getSchema(false);
 		if (schema.isValid() == false)
 			return null;
 		if (schema instanceof EditableSchema) {
@@ -76,9 +75,9 @@ public class SchemaInputContext extends XMLInputContext {
 		
 	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		File file = (File)input.getAdapter(File.class);
-		ExternalSchemaDescriptor sd = new ExternalSchemaDescriptor(file, "", false); //$NON-NLS-1$
+		SchemaDescriptor sd = new SchemaDescriptor(file); //$NON-NLS-1$
 
-		ISchema schema = sd.getSchema();
+		ISchema schema = sd.getSchema(false);
 		if (schema.isValid() == false)
 			return null;
 		if (schema instanceof EditableSchema) {
@@ -91,7 +90,7 @@ public class SchemaInputContext extends XMLInputContext {
 		try {
 			IStorage storage = input.getStorage();
 			StorageSchemaDescriptor sd = new StorageSchemaDescriptor(storage);
-			ISchema schema = sd.getSchema();
+			ISchema schema = sd.getSchema(false);
 			if (schema.isValid()==false)
 				return null;
 			return schema;

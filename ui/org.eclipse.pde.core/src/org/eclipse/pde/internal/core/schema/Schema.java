@@ -56,14 +56,6 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private boolean fAbbreviated;
 
-	public Schema(String pluginId, String pointId, String name) {
-		this(pluginId, pointId, name, false);
-	}
-
-	public Schema(ISchemaDescriptor schemaDescriptor, URL url) {
-		this(schemaDescriptor, url, false);
-	}
-	
 	public Schema(String pluginId, String pointId, String name, boolean abbreviated) {
 		fPluginID = pluginId;
 		fPointID = pointId;
@@ -725,7 +717,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void processInclude(Node node) {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
-		SchemaInclude include = new SchemaInclude(this, location);
+		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated);
 		if (fIncludes == null)
 			fIncludes = new Vector();
 		fIncludes.add(include);

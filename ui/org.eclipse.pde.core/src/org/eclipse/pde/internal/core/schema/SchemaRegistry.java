@@ -1,421 +1,94 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
-public class SchemaRegistry
-	implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {
-	public static final String PLUGIN_POINT = "schemaMap"; //$NON-NLS-1$
-	public static final String TAG_MAP = "map"; //$NON-NLS-1$
-	private Hashtable workspaceDescriptors;
-	private Hashtable externalDescriptors;
-	private Vector dirtyWorkspaceModels;
 
-	public SchemaRegistry() {
+public class SchemaRegistry {
+	
+	private HashMap fRegistry = new HashMap();
+	
+	public ISchema getSchema(String extPointID) {
+		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPointID);
+		if (point == null) {
+			// if there is an old schema associated with this extension point, release it.
+			if (fRegistry.containsKey(extPointID))
+				fRegistry.remove(extPointID);
+			return null;
+		}
+		
+		URL url = getSchemaURL(point);
+		if (url == null)
+			return null;
+		
+		ISchemaDescriptor desc = getExistingDescriptor(extPointID, url);
+		if (desc == null) {
+			desc = new SchemaDescriptor(extPointID, url);
+			fRegistry.put(extPointID, desc);
+		}
+		
+		return (desc == null) ? null : desc.getSchema(true);
 	}
 	
-	private void addExtensionPoint(IFile file) {
-		IProject project = file.getProject();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
-		if (model==null) return;
-		IPluginExtensionPoint [] points = model.getPluginBase().getExtensionPoints();
-		if (points.length==0) return;
-
-		for (int i=0; i<points.length; i++) {
-			IPluginExtensionPoint point = points[i];
-			IPath path = project.getFullPath();
-			String schemaArg = point.getSchema();
-			if (schemaArg==null) continue;
-			path = path.append(schemaArg);
-			IFile schemaFile = file.getWorkspace().getRoot().getFile(path);
-			if (file.equals(schemaFile)) {
-				// The extension point is referencing this
-				// file and it is now added - OK to
-				// add the descriptor
-				FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
-				workspaceDescriptors.put(point.getFullId(), sd);
-				return;
-			}
-		}
-	}
-
-	private AbstractSchemaDescriptor getSchemaDescriptor(String extensionPointId) {
-		ensureCurrent();
-		AbstractSchemaDescriptor descriptor =
-			(AbstractSchemaDescriptor) workspaceDescriptors.get(
-				extensionPointId);
-		if (descriptor == null) {
-			// try external
-			descriptor =
-				(AbstractSchemaDescriptor) externalDescriptors.get(
-					extensionPointId);
-		}
-		if (descriptor != null && descriptor.isEnabled())
-			return descriptor;
-		return null;
-	}
-
-	private void ensureCurrent() {
-		if (workspaceDescriptors == null) {
-			initializeDescriptors();
-		}
-		if (dirtyWorkspaceModels != null && dirtyWorkspaceModels.size() > 0) {
-			updateWorkspaceDescriptors();
-		}
-	}
-
-	public ISchema getSchema(String extensionPointId) {
-		AbstractSchemaDescriptor descriptor =
-			getSchemaDescriptor(extensionPointId);
-		if (descriptor == null)
-			return null;
-		return descriptor.getSchema();
-	}
-
-	public ISchema getIncludedSchema(
-		ISchemaDescriptor parent,
-		String schemaLocation) {
-		ensureCurrent();
-		Hashtable descriptors = null;
-
-		if (parent instanceof FileSchemaDescriptor)
-			descriptors = workspaceDescriptors;
-		else if (parent instanceof ExternalSchemaDescriptor)
-			descriptors = externalDescriptors;
-		if (descriptors == null)
-			return null;
+	public ISchema getIncludedSchema(ISchemaDescriptor parent, String schemaLocation) {
 		try {
-			URL url =
-				IncludedSchemaDescriptor.computeURL(
-					parent,
-					parent.getSchemaURL(),
-					schemaLocation);
+			URL url = IncludedSchemaDescriptor.computeURL(parent, schemaLocation);
 			if (url == null)
 				return null;
-			String key = url.toString();
-			ISchemaDescriptor desc = (ISchemaDescriptor) descriptors.get(key);
+			
+			ISchemaDescriptor desc = getExistingDescriptor(url.toString(), url);
 			if (desc == null) {
-				desc = new IncludedSchemaDescriptor(parent, schemaLocation);
-				descriptors.put(key, desc);
+				desc = new IncludedSchemaDescriptor(url);
+				fRegistry.put(url.toString(), desc);
 			}
-			return desc.getSchema();
+			return desc.getSchema(true);
 		} catch (MalformedURLException e) {
 		}
 		return null;
 	}
-
-	private void initializeDescriptors() {
-		workspaceDescriptors = new Hashtable();
-		externalDescriptors = new Hashtable();
-		// Check workspace plug-ins
-		loadWorkspaceDescriptors();
-		// Check external plug-ins
-		loadExternalDescriptors();
-
-		// Register for further changes
-		PDECore
-			.getDefault()
-			.getWorkspaceModelManager()
-			.addModelProviderListener(
-			this);
-		PDECore.getWorkspace().addResourceChangeListener(this);
-	}
-	private void loadExternalDescriptors() {
-		ExternalModelManager registry =
-			PDECore.getDefault().getExternalModelManager();
-		IPluginModelBase[] models = registry.getAllModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtensionPoint[] points = models[i].getPluginBase().getExtensionPoints();
-			for (int j = 0; j < points.length; j++) {
-				IPluginExtensionPoint point = points[j];
-				if (point.getSchema() != null) {
-					ExternalSchemaDescriptor desc =
-						new ExternalSchemaDescriptor(point);
-					externalDescriptors.put(point.getFullId(), desc);
-				}
-			}
-
+	
+	private ISchemaDescriptor getExistingDescriptor(String key, URL url) {
+		ISchemaDescriptor desc = null;
+		if (fRegistry.containsKey(key)) {
+			desc = (ISchemaDescriptor)fRegistry.get(key);
+			if (hasSchemaChanged(desc, url))
+				desc = null;
 		}
-	}
-
-	private void loadWorkspaceDescriptor(IPluginModelBase model) {
-		IPluginBase pluginInfo = model.getPluginBase();
-		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
-		for (int j = 0; j < points.length; j++) {
-			IPluginExtensionPoint point = points[j];
-			if (point.getSchema() != null) {
-				Object schemaFile = getSchemaFile(point);
-
-				if (schemaFile instanceof IFile) {
-					FileSchemaDescriptor desc =
-						new FileSchemaDescriptor((IFile) schemaFile);
-					workspaceDescriptors.put(point.getFullId(), desc);
-				} else if (schemaFile instanceof File) {
-					ExternalSchemaDescriptor desc =
-						new ExternalSchemaDescriptor(
-							(File) schemaFile,
-							point.getFullId(),
-							true);
-					workspaceDescriptors.put(point.getFullId(), desc);
-				}
-			}
-		}
-	}
-	private void loadWorkspaceDescriptors() {
-		WorkspaceModelManager manager =
-			PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModel[] models = manager.getPluginModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
-			loadWorkspaceDescriptor(model);
-		}
-		IFragmentModel[] fmodels = manager.getFragmentModels();
-		for (int i = 0; i < fmodels.length; i++) {
-			IFragmentModel fmodel = fmodels[i];
-			loadWorkspaceDescriptor(fmodel);
-		}
-	}
-	private void loadWorkspaceDescriptors(IPluginModelBase model) {
-		IPluginBase pluginInfo = model.getPluginBase();
-		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
-		for (int j = 0; j < points.length; j++) {
-			IPluginExtensionPoint point = points[j];
-			if (point.getSchema() != null) {
-				Object schemaFile = getSchemaFile(point);
-
-				if (schemaFile instanceof IFile) {
-					FileSchemaDescriptor desc =
-						new FileSchemaDescriptor((IFile) schemaFile);
-					workspaceDescriptors.put(point.getFullId(), desc);
-				} else if (schemaFile instanceof File) {
-					ExternalSchemaDescriptor desc =
-						new ExternalSchemaDescriptor(
-							(File) schemaFile,
-							point.getFullId(),
-							true);
-					workspaceDescriptors.put(point.getFullId(), desc);
-				}
-			}
-		}
-	}
-
-	private Object getSchemaFile(IPluginExtensionPoint point) {
-		if (point.getSchema()==null) return null;
-		IPluginModelBase model = point.getPluginModel();
-		IFile pluginFile = (IFile) model.getUnderlyingResource();
-		IPath path = pluginFile.getProject().getFullPath();
-		path = path.append(point.getSchema());
-		IFile schemaFile = pluginFile.getWorkspace().getRoot().getFile(path);
-		if (schemaFile.exists())
-			return schemaFile;
-		// Does not exist in the plug-in itself - try source location
-		SourceLocationManager sourceManager =
-			PDECore.getDefault().getSourceLocationManager();
-		return sourceManager.findSourceFile(
-			model.getPluginBase(),
-			new Path(point.getSchema()));
-	}
-
-	public void modelsChanged(IModelProviderEvent e) {
-
-		int type = e.getEventTypes();
-
-		if ((type & IModelProviderEvent.MODELS_ADDED) != 0) {
-			IModel[] added = e.getAddedModels();
-			for (int i = 0; i < added.length; i++) {
-				IModel model = added[i];
-				if (!(model instanceof IPluginModelBase))
-					continue;
-				loadWorkspaceDescriptors((IPluginModelBase) model);
-			}
-		}
-		if ((type & IModelProviderEvent.MODELS_REMOVED) != 0) {
-			IModel[] removed = e.getRemovedModels();
-
-			for (int i = 0; i < removed.length; i++) {
-				IModel model = removed[i];
-				if (!(model instanceof IPluginModelBase))
-					continue;
-				removeWorkspaceDescriptors((IPluginModelBase) model);
-			}
-		}
-		if ((type & IModelProviderEvent.MODELS_CHANGED) != 0) {
-			IModel[] changed = e.getChangedModels();
-			if (dirtyWorkspaceModels == null)
-				dirtyWorkspaceModels = new Vector();
-			for (int i = 0; i < changed.length; i++) {
-				IModel model = changed[i];
-				if (!(model instanceof IPluginModelBase))
-					continue;
-				dirtyWorkspaceModels.add((IPluginModelBase) model);
-			}
-		}
-	}
-
-	private void removeExtensionPoint(IFile file) {
-		for (Enumeration keys = workspaceDescriptors.keys();
-			keys.hasMoreElements();
-			) {
-			String key = (String) keys.nextElement();
-			Object desc = workspaceDescriptors.get(key);
-			if (desc instanceof FileSchemaDescriptor) {
-				FileSchemaDescriptor fd = (FileSchemaDescriptor) desc;
-				if (fd.getFile().equals(file)) {
-					workspaceDescriptors.remove(key);
-					fd.dispose();
-					return;
-				}
-			}
-			if (desc instanceof IncludedSchemaDescriptor) {
-				IncludedSchemaDescriptor id = (IncludedSchemaDescriptor) desc;
-				if (file.equals(id.getFile())) {
-					workspaceDescriptors.remove(key);
-					id.dispose();
-					return;
-				}
-			}
-		}
+		return desc;
 	}
 	
-	private void removeWorkspaceDescriptors(IPluginModelBase model) {
-		IPluginBase pluginInfo = model.getPluginBase();
-		IProject project = model.getUnderlyingResource().getProject();
-		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
-		for (int i = 0; i < points.length; i++) {
-			IPluginExtensionPoint point = points[i];
-			Object descObj = workspaceDescriptors.get(point.getFullId());
-			if (descObj != null && descObj instanceof FileSchemaDescriptor) {
-				FileSchemaDescriptor desc = (FileSchemaDescriptor) descObj;
-				IFile schemaFile = desc.getFile();
-				if (project.equals(schemaFile.getProject())) {
-					// same project - remove
-					workspaceDescriptors.remove(point.getFullId());
-				}
+	public static URL getSchemaURL(IPluginExtensionPoint point) {
+		String schema = point.getSchema();
+		if (schema == null || schema.trim().length() == 0)
+			return null;
+		URL url = point.getModel().getResourceURL(schema);
+		if (url == null && point.getModel().getUnderlyingResource() == null) {
+			try {
+				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
+				File file = mgr.findSourceFile(point.getPluginBase(), new Path(schema));
+				if (file != null && file.exists())
+					url = file.toURL();
+			} catch (MalformedURLException e) {
 			}
 		}
-		// Also remove all included descriptors from the same project
-		for (Enumeration keys = workspaceDescriptors.keys();
-			keys.hasMoreElements();
-			) {
-			String key = (String) keys.nextElement();
-			Object desc = workspaceDescriptors.get(key);
-			if (desc instanceof IncludedSchemaDescriptor) {
-				IncludedSchemaDescriptor id = (IncludedSchemaDescriptor) desc;
-				IFile file = id.getFile();
-				if (file != null && file.getProject().equals(project))
-					workspaceDescriptors.remove(key);
-				id.dispose();
-			}
-		}
+		return url;
 	}
-
-	public void resourceChanged(IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			IResourceDelta delta = event.getDelta();
-			if (delta != null) {
-				try {
-					delta.accept(this);
-				} catch (CoreException e) {
-					PDECore.logException(e);
-				}
-			}
-		}
+	
+	private boolean hasSchemaChanged(ISchemaDescriptor desc, URL url) {
+		if (!desc.getSchemaURL().equals(url))
+			return true;
+		File file = new File(url.getFile());
+		return (desc.getLastModified() != file.lastModified());
 	}
+	
 	public void shutdown() {
-		if (workspaceDescriptors == null)
-			return;
-		disposeDescriptors(workspaceDescriptors);
-		disposeDescriptors(externalDescriptors);
-		workspaceDescriptors = null;
-		externalDescriptors = null;
-		dirtyWorkspaceModels = null;
-		PDECore
-			.getDefault()
-			.getWorkspaceModelManager()
-			.removeModelProviderListener(
-			this);
-		PDECore.getWorkspace().removeResourceChangeListener(this);
+		fRegistry.clear();
 	}
 
-	private void disposeDescriptors(Hashtable descriptors) {
-		for (Iterator iter = descriptors.values().iterator();
-			iter.hasNext();
-			) {
-			AbstractSchemaDescriptor desc =
-				(AbstractSchemaDescriptor) iter.next();
-			desc.dispose();
-		}
-		descriptors.clear();
-	}
-
-	private void updateExtensionPoint(IFile file) {
-		for (Iterator iter = workspaceDescriptors.values().iterator();
-			iter.hasNext();
-			) {
-			AbstractSchemaDescriptor sd =
-				(AbstractSchemaDescriptor) iter.next();
-			IFile schemaFile = null;
-			if (sd instanceof FileSchemaDescriptor) {
-				schemaFile = ((FileSchemaDescriptor) sd).getFile();
-			} else if (sd instanceof IncludedSchemaDescriptor) {
-				schemaFile = ((IncludedSchemaDescriptor) sd).getFile();
-			}
-			if (schemaFile != null && schemaFile.equals(file)) {
-				sd.dispose();
-				break;
-			}
-		}
-	}
-	private void updateWorkspaceDescriptors() {
-		for (int i = 0; i < dirtyWorkspaceModels.size(); i++) {
-			IPluginModelBase model =
-				(IPluginModelBase) dirtyWorkspaceModels.elementAt(i);
-			updateWorkspaceDescriptors(model);
-		}
-		dirtyWorkspaceModels.clear();
-	}
-	private void updateWorkspaceDescriptors(IPluginModelBase model) {
-		removeWorkspaceDescriptors(model);
-		loadWorkspaceDescriptors(model);
-	}
-	public boolean visit(IResourceDelta delta) throws CoreException {
-		IResource resource = delta.getResource();
-		if (resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			String fileName = file.getName().toLowerCase();
-			if (!(fileName.endsWith(".exsd") || fileName.endsWith(".mxsd"))) //$NON-NLS-1$ //$NON-NLS-2$
-				return true;
-			if (WorkspaceModelManager.isPluginProject(file.getProject())
-				== false)
-				return true;
-			if (delta.getKind() == IResourceDelta.CHANGED) {
-				if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-					updateExtensionPoint(file);
-				}
-			} else if (delta.getKind() == IResourceDelta.ADDED) {
-				addExtensionPoint(file);
-			} else if (delta.getKind() == IResourceDelta.REMOVED) {
-				removeExtensionPoint(file);
-			}
-		}
-		return true;
-	}
 }

@@ -10,62 +10,56 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
+import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
-public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
-	private URL url;
-	private String schemaLocation;
-	private ISchemaDescriptor parent;
+public class IncludedSchemaDescriptor implements ISchemaDescriptor {
+	private URL fSchemaURL;
+	private String fSchemaLocation;
+	private Schema fSchema;
+	private long fLastModified;
 
-	public IncludedSchemaDescriptor(ISchemaDescriptor parent, String schemaLocation) {
-		this.parent = parent;
-		this.schemaLocation = schemaLocation;
-
-		try {
-			url = computeURL(parent, parent.getSchemaURL(), schemaLocation);
-		}
-		catch (MalformedURLException e) {
-		}
+	public IncludedSchemaDescriptor(URL schemaURL) {
+		fSchemaURL = schemaURL;
+		File file = new File(fSchemaURL.getFile());
+		if (file.exists())
+			fLastModified = file.lastModified();
 	}
 	
-	public IFile getFile() {
-		if (parent instanceof FileSchemaDescriptor) {
-			FileSchemaDescriptor fparent = (FileSchemaDescriptor)parent;
-			IFile parentFile = fparent.getFile();
-			if (parentFile==null) return null;
-			IPath parentPath = parentFile.getProjectRelativePath();
-			IPath childPath = parentPath.removeLastSegments(1).append(schemaLocation);
-			return parentFile.getProject().getFile(childPath);
-		}
-		return null;
-	}
-	
-	public static URL computeURL(IPluginLocationProvider locationProvider, URL parentURL, String schemaLocation) throws MalformedURLException {
+	public static URL computeURL(ISchemaDescriptor parentDesc, String schemaLocation) throws MalformedURLException {
 		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
-			// plugin-relative location
-			String rem = schemaLocation.substring(9);
 			// extract plug-in ID
-			IPath path = new Path(rem);
-			String pluginId = path.segment(0);
-			path = path.removeFirstSegments(1);
-			// the resulting path is relative to the plug-in.
-			// Use location provider to find the referenced plug-in
-			// location.
-			if (locationProvider!=null) {
-				IPath includedLocation = locationProvider.getPluginRelativePath(pluginId, path);
-				if (includedLocation==null) return null;
-				return new URL(parentURL.getProtocol(), parentURL.getHost(), includedLocation.toString());
-			}
-			return null;
+			IPath path = new Path( schemaLocation.substring(9));
+			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1));
 		}
 		// parent-relative location
+		URL parentURL = parentDesc.getSchemaURL();
 		IPath path = new Path(parentURL.getPath());
 		path = path.removeLastSegments(1).append(schemaLocation);
 		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
+	}
+	
+	private static URL getPluginRelativePath(String pluginID, IPath path) {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+		if (model == null)
+			return null;
+		
+		URL url = model.getResourceURL(path.toString());
+		if (url == null && model.getUnderlyingResource() == null) {
+			try {
+				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
+				File file = mgr.findSourceFile(model.getPluginBase(), path);
+				if (file != null && file.exists())
+					url = file.toURL();
+			} catch (MalformedURLException e) {
+			}			
+		}
+		return url;
 	}
 
 	/**
@@ -79,9 +73,9 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getPointId()
 	 */
 	public String getPointId() {
-		int dotLoc = schemaLocation.lastIndexOf('.');
+		int dotLoc = fSchemaLocation.lastIndexOf('.');
 		if (dotLoc!= -1) {
-			return schemaLocation.substring(0, dotLoc);
+			return fSchemaLocation.substring(0, dotLoc);
 		}
 		return null;
 	}
@@ -90,6 +84,32 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchemaURL()
 	 */
 	public URL getSchemaURL() {
-		return url;
+		return fSchemaURL;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
+	 */
+	public ISchema getSchema(boolean abbreviated) {
+		if (fSchema == null && fSchemaURL != null) {
+			fSchema = new Schema(this, fSchemaURL, abbreviated);
+			fSchema.load();
+		}
+		return fSchema;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
+	 */
+	public boolean isStandalone() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getLastModified()
+	 */
+	public long getLastModified() {
+		return fLastModified;
+	}
+
 }

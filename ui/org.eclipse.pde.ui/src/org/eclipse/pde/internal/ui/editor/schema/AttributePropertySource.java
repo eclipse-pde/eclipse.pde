@@ -90,57 +90,46 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
     }
 
     public IPropertyDescriptor[] getPropertyDescriptors() {
-        if (descriptors == null) {
-            descriptors = new Vector();
-            PropertyDescriptor cdesc = createComboBoxPropertyDescriptor(P_USE, PDEPlugin
-                    .getResourceString(KEY_USE), ISchemaAttribute.useTable);
-            if (cdesc instanceof ComboBoxPropertyDescriptor)
-                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
-                        P_USE, ISchemaAttribute.useTable));
-            descriptors.addElement(cdesc);
-            
-            cdesc = createComboBoxPropertyDescriptor(P_KIND, PDEPlugin
-                    .getResourceString(KEY_KIND), ISchemaAttribute.kindTable);
-            if (cdesc instanceof ComboBoxPropertyDescriptor)
-                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
-                        P_KIND, ISchemaAttribute.kindTable));
-            descriptors.addElement(cdesc);
-            
-            cdesc = createComboBoxPropertyDescriptor(P_TYPE, PDEPlugin
-                    .getResourceString(KEY_TYPE), typeTable);
-            if (cdesc instanceof ComboBoxPropertyDescriptor)
-                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
-                        P_TYPE, typeTable));
-            descriptors.addElement(cdesc);
-            
-            cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEPlugin.getResourceString("AttributePropertySource.translatable"), booleanTable); //$NON-NLS-1$
-            if (cdesc instanceof ComboBoxPropertyDescriptor)
-                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
-                        P_TRANSLATABLE, booleanTable));
-            descriptors.addElement(cdesc);
+        descriptors = new Vector();
+        PropertyDescriptor cdesc = createComboBoxPropertyDescriptor(P_USE, PDEPlugin
+                .getResourceString(KEY_USE), ISchemaAttribute.useTable);
+        cdesc.setLabelProvider(new ComboProvider(P_USE, ISchemaAttribute.useTable));
+        descriptors.addElement(cdesc);
+        
+        cdesc = createComboBoxPropertyDescriptor(P_KIND, PDEPlugin
+                .getResourceString(KEY_KIND), ISchemaAttribute.kindTable);
+        cdesc.setLabelProvider(new ComboProvider(P_KIND, ISchemaAttribute.kindTable));
+        descriptors.addElement(cdesc);
+        
+        cdesc = createComboBoxPropertyDescriptor(P_TYPE, PDEPlugin
+                .getResourceString(KEY_TYPE), typeTable);
+        cdesc.setLabelProvider(new ComboProvider(P_TYPE, typeTable));
+        descriptors.addElement(cdesc);
+        
+        cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEPlugin.getResourceString("AttributePropertySource.translatable"), booleanTable); //$NON-NLS-1$
+        cdesc.setLabelProvider(new ComboProvider(P_TRANSLATABLE, booleanTable));
+        descriptors.addElement(cdesc);
 
-            cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEPlugin.getResourceString("AttributePropertySource.deprecated"), booleanTable); //$NON-NLS-1$
-            if (cdesc instanceof ComboBoxPropertyDescriptor)
-                ((ComboBoxPropertyDescriptor) cdesc).setLabelProvider(new ComboProvider(
-                        P_DEPRECATED, booleanTable));
-            descriptors.addElement(cdesc);
+        cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEPlugin.getResourceString("AttributePropertySource.deprecated"), booleanTable); //$NON-NLS-1$
+        cdesc.setLabelProvider(new ComboProvider(P_DEPRECATED, booleanTable));
+        descriptors.addElement(cdesc);
 
-            cdesc = new TypeRestrictionDescriptor(P_RESTRICTION, PDEPlugin
-                    .getResourceString(KEY_RESTRICTION), !isEditable());
-            descriptors.addElement(cdesc);
-            cdesc = createTextPropertyDescriptor(P_VALUE, PDEPlugin
-                    .getResourceString(KEY_VALUE));
-            cdesc.setValidator(new ValueValidator());
-            descriptors.addElement(cdesc);
-            
-            PropertyDescriptor desc = createTextPropertyDescriptor(P_BASED_ON, PDEPlugin
-                    .getResourceString(KEY_BASED_ON));
-            descriptors.addElement(desc);
-            
-            desc = createTextPropertyDescriptor(P_NAME, PDEPlugin
-                    .getResourceString(KEY_NAME));
-            descriptors.addElement(desc);
-        }
+        cdesc = new TypeRestrictionDescriptor(P_RESTRICTION, PDEPlugin
+                .getResourceString(KEY_RESTRICTION), !isEditable());
+        descriptors.addElement(cdesc);
+        cdesc = createTextPropertyDescriptor(P_VALUE, PDEPlugin
+                .getResourceString(KEY_VALUE));
+        cdesc.setValidator(new ValueValidator());
+        descriptors.addElement(cdesc);
+        
+        PropertyDescriptor desc = createTextPropertyDescriptor(P_BASED_ON, PDEPlugin
+                .getResourceString(KEY_BASED_ON));
+        descriptors.addElement(desc);
+        
+        desc = createTextPropertyDescriptor(P_NAME, PDEPlugin
+                .getResourceString(KEY_NAME));
+        descriptors.addElement(desc);
+
         return toDescriptorArray(descriptors);
     }
 

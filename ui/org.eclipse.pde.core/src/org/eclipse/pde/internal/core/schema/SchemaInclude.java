@@ -17,94 +17,73 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SchemaInclude extends SchemaObject implements ISchemaInclude {
-	private String location;
-	private ISchema includedSchema;
-	private boolean internal;
+	private String fLocation;
 
-	public SchemaInclude(ISchemaObject parent, String location) {
+	private ISchema fIncludedSchema;
+
+	private boolean fAbbreviated;
+
+	public SchemaInclude(ISchemaObject parent, String location,
+			boolean abbreviated) {
 		super(parent, location);
-		this.location = location;
+		fLocation = location;
+		fAbbreviated = abbreviated;
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#getLocation()
 	 */
 	public String getLocation() {
-		return location;
+		return fLocation;
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaInclude#setLocation(java.lang.String)
 	 */
 	public void setLocation(String location) throws CoreException {
-		String oldValue = (String) this.location;
-		this.location = location;
-		includedSchema = null;
-		getSchema().fireModelObjectChanged(
-			this,
-			P_LOCATION,
-			oldValue,
-			location);
+		String oldValue = (String) this.fLocation;
+		this.fLocation = location;
+		fIncludedSchema = null;
+		getSchema()
+				.fireModelObjectChanged(this, P_LOCATION, oldValue, location);
 	}
 
 	/**
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
+	 *      java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.println("<include schemaLocation=\"" + location + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<include schemaLocation=\"" + fLocation + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public ISchema getIncludedSchema() {
-		if (includedSchema != null && includedSchema.isDisposed()) {
-			includedSchema = null;
+		ISchemaDescriptor descriptor = getSchema().getSchemaDescriptor();
+		if (fAbbreviated) {
+			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+			fIncludedSchema = registry.getIncludedSchema(descriptor, fLocation);
+		} else {
+			fIncludedSchema = createInternalSchema(descriptor, fLocation);
 		}
-		if (includedSchema == null) {
-			// load it relative to the parent schema
-			ISchemaDescriptor descriptor = getSchema().getSchemaDescriptor();
-			if (descriptor != null && !descriptor.isStandalone()) {
-				includedSchema =
-					PDECore.getDefault().getSchemaRegistry().getIncludedSchema(
-						descriptor,
-						location);
-				internal = false;
-			} else {
-				URL url = getSchema().getURL();
-				if (url != null) {
-					includedSchema = createInternalSchema(descriptor, url, location);
-					if (includedSchema != null)
-						internal = true;
-
-				}
-			}
-		}
-		return includedSchema;
+		return fIncludedSchema;
 	}
-	private ISchema createInternalSchema(IPluginLocationProvider locationProvider, URL parentURL, String location) {
+
+	private ISchema createInternalSchema(ISchemaDescriptor desc, String location) {
 		try {
-			URL schemaURL =
-				IncludedSchemaDescriptor.computeURL(locationProvider, parentURL, location);
-			Schema ischema = new Schema(null, schemaURL);
+			URL schemaURL = IncludedSchemaDescriptor.computeURL(desc, location);
+			Schema ischema = new Schema(null, schemaURL, fAbbreviated);
 			ischema.load();
 			return ischema;
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
+
 	public void dispose() {
-		if (internal && includedSchema!=null && !includedSchema.isDisposed()) {
-			includedSchema.dispose();
-			includedSchema = null;
-			internal = false;
+		if (fIncludedSchema != null && !fIncludedSchema.isDisposed()) {
+			fIncludedSchema.dispose();
+			fIncludedSchema = null;
 		}
 	}
 }

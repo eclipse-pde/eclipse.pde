@@ -196,7 +196,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			String name, boolean shared) {
 		if (name.length() == 0)
 			name = pointId;
-		EditableSchema schema = new EditableSchema(pluginId, pointId, name);
+		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
 		schema.setDescription(PDEPlugin
 				.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;

@@ -16,28 +16,29 @@ import java.net.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
-public class StorageSchemaDescriptor extends AbstractSchemaDescriptor {
-	private IStorage storage;
+public class StorageSchemaDescriptor implements ISchemaDescriptor {
+	private IStorage fStorage;
+	private Schema fSchema;
 
 	public StorageSchemaDescriptor(IStorage storage) {
-		this.storage = storage;
+		fStorage = storage;
 	}
 
 	public URL getSchemaURL() {
-		return null;
+		return fSchema != null ? fSchema.getURL() : null;
 	}
 	
 	public String getPointId() {
-		if (schema==null) return null;
-		return schema.getQualifiedPointId();
+		return fSchema == null ? null : fSchema.getQualifiedPointId();
 	}
 	
-	protected void loadSchema() {
-		schema = new Schema(this, null);
+	protected void loadSchema(boolean abbreviated) {
+		fSchema = new Schema(this, null, false);
 		try {
-			InputStream stream = storage.getContents();
-			schema.load(storage.getContents());
+			InputStream stream = fStorage.getContents();
+			fSchema.load(fStorage.getContents());
 			stream.close();
 		}
 		catch (CoreException e) {
@@ -49,12 +50,36 @@ public class StorageSchemaDescriptor extends AbstractSchemaDescriptor {
 	}
 
 	public void reload() {
-		if (schema != null) {
-			schema.reload();
+		if (fSchema != null) {
+			fSchema.reload();
 		}
 	}	
 
 	public boolean isEnabled() {
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchema(boolean)
+	 */
+	public ISchema getSchema(boolean abbreviated) {
+		if (fSchema == null)
+			loadSchema(abbreviated);
+		return fSchema;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#isStandalone()
+	 */
+	public boolean isStandalone() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getLastModified()
+	 */
+	public long getLastModified() {
+		return 0;
+	}
+
 }
