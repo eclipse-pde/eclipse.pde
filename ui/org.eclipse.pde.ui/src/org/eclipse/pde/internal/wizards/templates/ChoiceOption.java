@@ -53,19 +53,19 @@ public class ChoiceOption extends TemplateOption {
 				}
 			}
 		};
-		
+
 		for (int i = 0; i < choices.length; i++) {
 			String[] choice = choices[i];
 			Button button = createRadioButton(parent, span, factory, choice);
 			buttons[i] = button;
 			button.addSelectionListener(listener);
 		}
-		if (getChoice()!=null)
+		if (getChoice() != null)
 			selectChoice(getChoice());
 	}
-	
+
 	public String getChoice() {
-		return getValue()!=null?getValue().toString():null;
+		return getValue() != null ? getValue().toString() : null;
 	}
 
 	private GridData fill(Control control, int span) {
@@ -108,7 +108,7 @@ public class ChoiceOption extends TemplateOption {
 
 	public void setValue(Object value) {
 		super.setValue(value);
-		if (buttons != null && value!=null) {
+		if (buttons != null && value != null) {
 			selectChoice(value.toString());
 		}
 	}

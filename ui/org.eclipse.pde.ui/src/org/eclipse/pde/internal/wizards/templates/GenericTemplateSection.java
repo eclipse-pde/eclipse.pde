@@ -31,6 +31,7 @@ public abstract class GenericTemplateSection extends AbstractTemplateSection {
 	}
 	
 	protected void registerOption(TemplateOption option) {
+		System.out.println("Registering "+option+", key="+option.getName());
 		options.put(option.getName(), option);
 	}
 	
