@@ -61,33 +61,22 @@ public class TargetPlatformPreferencePage
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
 		layout.marginWidth = layout.marginHeight = 0;
 		container.setLayout(layout);
 
-		GridData gd;
 		Label label;
 
-		label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_TARGET_MODE));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		label.setLayoutData(gd);
-
-		thisRadio = new Button(container, SWT.RADIO);
+		Group group = new Group(container, SWT.NULL);
+		group.setText(PDEPlugin.getResourceString(KEY_TARGET_MODE));
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		thisRadio = new Button(group, SWT.RADIO);
 		thisRadio.setText(PDEPlugin.getResourceString(KEY_USE_THIS));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		gd.horizontalIndent = 15;
-		thisRadio.setLayoutData(gd);
 
-		otherRadio = new Button(container, SWT.RADIO);
+		otherRadio = new Button(group, SWT.RADIO);
 		otherRadio.setText(PDEPlugin.getResourceString(KEY_USE_OTHER));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		gd.horizontalIndent = 15;
-		otherRadio.setLayoutData(gd);
 		
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -97,14 +86,19 @@ public class TargetPlatformPreferencePage
 		thisRadio.addSelectionListener(listener);
 		otherRadio.addSelectionListener(listener);
 
-		homeLabel = new Label(container, SWT.NULL);
+		Composite home = new Composite(container, SWT.NULL);
+		home.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginWidth = 0;
+		home.setLayout(layout);
+		homeLabel = new Label(home, SWT.NULL);
 		homeLabel.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME));
-		homeText = new Text(container, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		homeText.setLayoutData(gd);
+		homeText = new Text(home, SWT.BORDER);
+		homeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 
-		browseButton = new Button(container, SWT.PUSH);
+		browseButton = new Button(home, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 		browseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(browseButton);
@@ -115,9 +109,7 @@ public class TargetPlatformPreferencePage
 		});
 
 		Control block = pluginsBlock.createContents(container);
-		gd = new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		block.setLayoutData(gd);
+		block.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
 		load();
 		homeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

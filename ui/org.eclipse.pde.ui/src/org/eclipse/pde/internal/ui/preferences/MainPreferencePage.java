@@ -5,13 +5,21 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.pde.internal.ui.*;
 
 public class MainPreferencePage
-	extends FieldEditorPreferencePage
+	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 	private static final String KEY_DESCRIPTION =
 		"Preferences.MainPage.Description";
@@ -25,8 +33,6 @@ public class MainPreferencePage
 	private static final String KEY_BUILD_SCRIPT_NAME =
 		"Preferences.MainPage.buildScriptName";
 
-	public static final String PROP_NO_PDE_NATURE =
-		"Preferences.MainPage.noPDENature";
 	public static final String PROP_SHOW_OBJECTS =
 		"Preferences.MainPage.showObjects";
 	public static final String VALUE_USE_IDS = "useIds";
@@ -34,8 +40,11 @@ public class MainPreferencePage
 	public static final String PROP_BUILD_SCRIPT_NAME =
 		"Preferences.MainPage.buildScriptName";
 
+	private Button useID;
+	private Button useName;
+	private Text buildText;
+	
 	public MainPreferencePage() {
-		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
 		initializeDefaults();
@@ -43,42 +52,54 @@ public class MainPreferencePage
 
 	private static void initializeDefaults() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setDefault(PROP_NO_PDE_NATURE, true);
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
 		store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
 	}
 
-	protected void createFieldEditors() {
-		RadioGroupFieldEditor reditor =
-			new RadioGroupFieldEditor(
-				PROP_SHOW_OBJECTS,
-				PDEPlugin.getResourceString(KEY_SHOW_OBJECTS),
-				1,
-				new String[][] {
-					{ PDEPlugin.getResourceString(KEY_USE_IDS), VALUE_USE_IDS },
-					{
-				PDEPlugin.getResourceString(KEY_USE_FULL_NAMES),
-					VALUE_USE_NAMES }
-		}, getFieldEditorParent());
-		addField(reditor);
-		StringFieldEditor textEditor =
-			new StringFieldEditor(
-				PROP_BUILD_SCRIPT_NAME,
-				PDEPlugin.getResourceString(KEY_BUILD_SCRIPT_NAME),
-				getFieldEditorParent());
-		addField(textEditor);
+	protected Control createContents(Composite parent) {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		initializeDefaults();
+		
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		
+		Group group = new Group(composite, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		group.setText(PDEPlugin.getResourceString(KEY_SHOW_OBJECTS));
+		group.setLayout(new GridLayout());
+		
+		useID = new Button(group, SWT.RADIO);
+		useID.setText(PDEPlugin.getResourceString(KEY_USE_IDS));
+		
+		useName = new Button(group, SWT.RADIO);
+		useName.setText(PDEPlugin.getResourceString(KEY_USE_FULL_NAMES));
+		
+		if (store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_IDS)) {
+			useID.setSelection(true);
+		} else {
+			useName.setSelection(true);
+		}
+		
+		Composite buildArea = new Composite(composite, SWT.NONE);
+		buildArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		buildArea.setLayout(layout);
+		
+		Label label = new Label(buildArea, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString(KEY_BUILD_SCRIPT_NAME));
+		
+		buildText = new Text(buildArea, SWT.BORDER);
+		buildText.setText(store.getString(PROP_BUILD_SCRIPT_NAME));
+		buildText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		return composite;		
 	}
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}	
-
-	public static boolean isNoPDENature() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		initializeDefaults();
-		return store.getBoolean(PROP_NO_PDE_NATURE);
-	}
 
 	public static boolean isFullNameModeEnabled() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
@@ -93,9 +114,28 @@ public class MainPreferencePage
 	}
 
 	public boolean performOk() {
-		boolean value = super.performOk();
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		if (useID.getSelection()) {
+			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
+		} else {
+			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
+		}
+		store.setValue(PROP_BUILD_SCRIPT_NAME, buildText.getText());
+		
 		PDEPlugin.getDefault().savePluginPreferences();
-		return value;
+		return super.performOk();
+	}
+	
+	protected void performDefaults() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		if (store.getDefaultString(PROP_SHOW_OBJECTS).equals(VALUE_USE_IDS)) {
+			useID.setSelection(true);
+			useName.setSelection(false);
+		} else {
+			useID.setSelection(false);
+			useName.setSelection(true);
+		}
+		buildText.setText(store.getDefaultString(PROP_BUILD_SCRIPT_NAME));
 	}
 
 	/**
