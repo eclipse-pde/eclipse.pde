@@ -46,19 +46,17 @@ public class JavaElementChangeListener implements IElementChangedListener {
 				}
 			}
 		} else if (element instanceof IPackageFragmentRoot) {
-			if (delta.getKind() == IJavaElementDelta.CHANGED) {
-				handleChildDeltas(delta);
-			} 
+			handleChildDeltas(delta);
 		}
 	}
 	
 	private void handleChildDeltas(IJavaElementDelta delta) {
 		IJavaElementDelta[] deltas = delta.getAffectedChildren();
 		for (int i = 0; i < deltas.length; i++) {
-			IJavaElement element = deltas[i].getElement();		
-			if ((element instanceof IPackageFragmentRoot || element instanceof IPackageFragment)
-					&& isInterestingDelta(deltas[i])) {
-				updateTable(element);
+			if (ignoreDelta(deltas[i]))
+				continue;
+			if (isInterestingDelta(deltas[i])) {
+				updateTable(deltas[i].getElement());
 				break;
 			}
 			handleDelta(deltas[i]);
@@ -67,7 +65,28 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	
 	private boolean isInterestingDelta(IJavaElementDelta delta) {
 		int kind = delta.getKind();
-		return kind == IJavaElementDelta.ADDED || kind == IJavaElementDelta.REMOVED;
+		boolean interestingKind = kind == IJavaElementDelta.ADDED
+				|| kind == IJavaElementDelta.REMOVED;
+		
+		IJavaElement element = delta.getElement();
+		boolean interestingElement = element instanceof IPackageFragment
+				|| element instanceof IPackageFragmentRoot;
+
+		return interestingElement && interestingKind;
+	}
+	
+	private boolean ignoreDelta(IJavaElementDelta delta) {
+		try {
+			IJavaElement element = delta.getElement();
+			if (element instanceof IPackageFragmentRoot) {
+				IPackageFragmentRoot root = (IPackageFragmentRoot)element;
+				IClasspathEntry entry = root.getRawClasspathEntry();
+				if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
+					return true;
+			}
+		} catch (JavaModelException e) {
+		}
+		return false;
 	}
 	
 	private boolean isInterestingProject(IJavaProject jProject) {
