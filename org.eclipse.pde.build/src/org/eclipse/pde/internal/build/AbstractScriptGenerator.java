@@ -101,9 +101,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * 
 	 * @param model the plug-in
 	 * @return String
-	 * @throws CoreException if a valid file-system location could not be constructed
 	 */
-	public String getLocation(BundleDescription model) throws CoreException {
+	public String getLocation(BundleDescription model) {
 		return model.getLocation();
 	}
 

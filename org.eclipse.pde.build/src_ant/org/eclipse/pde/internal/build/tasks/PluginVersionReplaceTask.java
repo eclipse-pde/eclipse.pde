@@ -40,7 +40,7 @@ public class PluginVersionReplaceTask extends Task {
 
 	/**
 	 * Set the new version.
-	 * @param version the version that will be set in the manifest file.
+	 * @param qualifier the version that will be set in the manifest file.
 	 */
 	public void setVersionNumber(String qualifier) {
 		newVersion = qualifier;

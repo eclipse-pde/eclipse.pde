@@ -69,11 +69,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		super();
 	}
 
-	public FetchScriptGenerator(String element) throws CoreException {
+	public FetchScriptGenerator(String element) {
 		setElement(element);
 	}
 
-	public void setElement(String element) throws CoreException {
+	public void setElement(String element) {
 		this.element = element;
 	}
 
@@ -170,7 +170,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		generateEpilogue();
 	}
 
-	protected void generateFetchTarget() throws CoreException {
+	protected void generateFetchTarget() {
 		//CONDITION Here we could check the values contained in the header of the file.
 		// However it will require to have either generic value or to be sure that the value can be omitted
 		// This would be necessary for the top level feature

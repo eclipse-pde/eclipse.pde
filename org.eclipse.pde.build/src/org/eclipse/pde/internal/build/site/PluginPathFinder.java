@@ -44,6 +44,7 @@ public class PluginPathFinder {
 				}
 			}
 		} catch (IOException e) {
+			//ignore
 		}
 		return null;
 	}

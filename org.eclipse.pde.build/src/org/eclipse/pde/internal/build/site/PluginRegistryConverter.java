@@ -19,6 +19,9 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.build.*;
 import org.osgi.framework.Constants;
 
+/** 
+ * @deprecated
+ */
 public class PluginRegistryConverter extends PDEState {
 	private PluginRegistryModel registry;
 

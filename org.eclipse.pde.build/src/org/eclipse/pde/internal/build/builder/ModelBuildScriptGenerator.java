@@ -241,7 +241,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Method generateBuildJarsTargetForSourceGathering.
 	 */
-	private void generateBuildJarsTargetForSourceGathering() throws CoreException {
+	private void generateBuildJarsTargetForSourceGathering() {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 		compiledJarNames = new ArrayList(0);
 		IPluginEntry entry = Utils.getPluginEntry(featureGenerator.feature, model.getSymbolicName(), false)[0];
@@ -325,9 +325,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * 
 	 * @param zipName
 	 * @param source
-	 * @throws CoreException
 	 */
-	private void generateZipIndividualTarget(String zipName, String source) throws CoreException {
+	private void generateZipIndividualTarget(String zipName, String source) {
 		script.println();
 		script.printTargetDeclaration(zipName, TARGET_INIT, null, null, null);
 		IPath root = new Path(getPropertyFormat(IXMLConstants.PROPERTY_BASEDIR));
@@ -478,10 +477,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	/**
 	 * Add the <code>zip.plugin</code> target to the given Ant script.
-	 * 
-	 * @throws CoreException
 	 */
-	private void generateZipPluginTarget() throws CoreException {
+	private void generateZipPluginTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, Policy.bind("build.plugin.zipPlugin", model.getSymbolicName())); //$NON-NLS-1$
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
@@ -519,7 +516,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	/**
 	 * Add the <code>refresh</code> target to the given Ant script.
 	 */
-	private void generateRefreshTarget() throws CoreException {
+	private void generateRefreshTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Policy.bind("build.plugin.refresh")); //$NON-NLS-1$
 		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
@@ -711,9 +708,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * 
 	 * @param classpath the classpath for the jar command
 	 * @param entry
-	 * @throws CoreException
 	 */
-	private void generateCompilationTarget(List classpath, CompiledEntry entry) throws CoreException {
+	private void generateCompilationTarget(List classpath, CompiledEntry entry) {
 		script.println();
 		String name = entry.getName(false);
 		script.printTargetDeclaration(name, TARGET_INIT, null, entry.getName(true), Policy.bind("build.plugin.jar", name)); //$NON-NLS-1$
@@ -791,9 +787,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Add the "src" target to the given Ant script.
 	 * 
 	 * @param jar
-	 * @throws CoreException
 	 */
-	private void generateSRCTarget(CompiledEntry jar) throws CoreException {
+	private void generateSRCTarget(CompiledEntry jar) {
 		script.println();
 		String name = jar.getName(false);
 		String srcName = getSRCName(name);
@@ -818,12 +813,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void filterNonExistingSourceFolders(String[] sources) {
 		File pluginRoot;
-		try {
-			pluginRoot = new File(getLocation(model));
-		} catch (CoreException e) {
-			BundleHelper.getDefault().getLog().log(e.getStatus());
-			return;
-		}
+		pluginRoot = new File(getLocation(model));
 		for (int i = 0; i < sources.length; i++) {
 			File file = new File(pluginRoot, sources[i]);
 			if (!file.exists()) {

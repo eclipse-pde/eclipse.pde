@@ -347,9 +347,8 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param model
 	 * @param baseLocation
 	 * @param classpath
-	 * @throws CoreException
 	 */
-	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries) throws CoreException {
+	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries) {
 		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
 			return;
 

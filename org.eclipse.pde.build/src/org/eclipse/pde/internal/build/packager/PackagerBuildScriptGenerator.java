@@ -27,7 +27,6 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 	private String[] rootFiles;
 	private String[] rootDirs;
 	private String outputFormat = "zip"; //$NON-NLS-1$
-	private String[] ignoredFeatures;
 	private boolean groupConfigs = false;
 	
 	public void groupConfigs(boolean group) {
@@ -76,7 +75,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			if (groupConfigs == false)
 				break;
 		}
-		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", groupConfigs ? new Config("delta", "delta", "delta") : (Config) getConfigInfos().get(0), allPlugins, allFeatures, allRootFiles); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
+		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", groupConfigs ? new Config("delta", "delta", "delta") : (Config) getConfigInfos().get(0), allPlugins, allFeatures, allRootFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$  //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configAssembler.rootFiles(rootFiles);
 		configAssembler.rootDirs(rootDirs);
@@ -130,7 +129,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 		this.outputFormat = format;
 	}
 
-	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
+	protected void collectElementToAssemble(IFeature featureToCollect) {
 		if (assemblyData == null)
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);

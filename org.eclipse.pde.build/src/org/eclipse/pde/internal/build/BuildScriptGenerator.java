@@ -161,7 +161,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.elements = elements;
 	}
 
-	public void setPluginPath(String[] pluginPath) throws CoreException {
+	public void setPluginPath(String[] pluginPath) {
 		this.pluginPath = pluginPath;
 	}
 

@@ -124,9 +124,8 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * 
 	 * @param output
 	 * @param entries
-	 * @throws CoreException
 	 */
-	protected void generateEntries(PrintWriter output, List entries) throws CoreException {
+	protected void generateEntries(PrintWriter output, List entries) {
 		Collections.sort(entries);
 		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
 			String entry = (String) iterator.next();

@@ -20,7 +20,6 @@ import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.builder.AbstractBuildScriptGenerator;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -214,9 +213,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (generatedManifest == null)
 				return originalManifest;
 			//merge manifests
-			Enumeration enum = originalManifest.keys();
-			while (enum.hasMoreElements()) {
-				Object key = enum.nextElement();
+			Enumeration enumeration = originalManifest.keys();
+			while (enumeration.hasMoreElements()) {
+				Object key = enumeration.nextElement();
 				generatedManifest.put(key, originalManifest.get(key));
 			}
 			return generatedManifest;
@@ -235,7 +234,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		PluginConverter converter;
 		try {
 			converter = acquirePluginConverter();
-			return converter.convertManifest(bundleLocation, false, AbstractBuildScriptGenerator.isBuildingOSGi() ? null : "2.1", false); //$NON-NLS-1$
+			return converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false); //$NON-NLS-1$
 		} catch (PluginConversionException convertException) {
 			if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
 				return null;
@@ -286,7 +285,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * bound to.
 	 * 
 	 * @param root
-	 * @return
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
 		if (root == null)
@@ -306,7 +304,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * have been bound to.
 	 * 
 	 * @param root
-	 * @return
 	 */
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
 		if (root == null)

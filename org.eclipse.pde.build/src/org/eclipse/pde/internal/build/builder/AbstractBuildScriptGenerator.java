@@ -11,9 +11,8 @@
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
@@ -76,7 +75,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	/**
 	 * Return a build time site referencing things to be built.   
 	 * @param refresh : indicate if a refresh must be performed. Although this flag is set to true, a new site is not rebuild if the urls of the site did not changed 
-	 * @return
+	 * @return BuildTimeSite
 	 * @throws CoreException
 	 */
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
@@ -86,12 +85,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (siteFactory == null || refresh == true)
 			siteFactory = new BuildTimeSiteFactory();
 
-		try {
-			siteFactory.setSitePaths(getPaths());
-		} catch (MalformedURLException e) {
-			String message = Policy.bind("error.incorrectDirectoryEntry"); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
-		}
+		siteFactory.setSitePaths(getPaths());
 		return (BuildTimeSite) siteFactory.createSite();
 	}
 
@@ -99,7 +93,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Method getPaths. 
 	 * @return URL[]
 	 */
-	private String[] getPaths() throws MalformedURLException {
+	private String[] getPaths() {
 		if (pluginPath != null)
 			return pluginPath;
 
@@ -182,11 +176,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @param buildFile
 	 * @param propertyName
 	 * @param version
-	 * @throws CoreException
 	 * @throws IOException
 	 *
 	 */
-	protected void updateVersion(File buildFile, String propertyName, String version) throws CoreException, IOException {
+	protected void updateVersion(File buildFile, String propertyName, String version) throws IOException {
 		StringBuffer buffer = readFile(buildFile);
 		int pos = scan(buffer, 0, propertyName);
 		if (pos == -1)

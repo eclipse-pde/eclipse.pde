@@ -62,7 +62,7 @@ public class IdReplaceTask extends Task {
 	 * Set the values to use when replacing a generic value used in a plugin reference.
 	 * Note all the pluginIds that have a generic number into the feature.xml must be
 	 * listed in <param>values</param>.
-	 * @param values: a comma separated list alternating pluginId and versionNumber.
+	 * @param values a comma separated list alternating pluginId and versionNumber.
 	 * For example: org.eclipse.pde.build,2.1.0,org.eclipse.core.resources,1.2.0
 	 */
 	public void setPluginIds(String values) {

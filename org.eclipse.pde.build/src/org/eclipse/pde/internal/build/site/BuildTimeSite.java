@@ -124,9 +124,8 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		if (throwsException) {
 			String message = Policy.bind("exception.missingFeature", featureId); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
-		} else { 
-			return null;
 		}
+		return null;
 	}
 
 	public void addFeatureReferenceModel(File featureXML) {

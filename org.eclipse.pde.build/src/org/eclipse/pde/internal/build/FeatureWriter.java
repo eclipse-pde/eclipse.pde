@@ -148,7 +148,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		}
 	}
 
-	private void printRequires() throws CoreException {
+	private void printRequires() {
 		if (feature.getImportModels().length == 0)
 			return;
 		startTag("requires", null); //$NON-NLS-1$
@@ -156,7 +156,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		endTag("requires"); //$NON-NLS-1$
 	}
 
-	private void printImports() throws CoreException {
+	private void printImports() {
 		IImport[] imports = feature.getRawImports();
 		for (int i = 0; i < imports.length; i++) {
 			parameters.clear();

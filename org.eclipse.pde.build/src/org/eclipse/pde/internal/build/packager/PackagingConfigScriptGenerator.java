@@ -64,7 +64,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		script.printTargetEnd();
 	}
 
-	private void generateAssembleTarget() throws CoreException {
+	private void generateAssembleTarget() {
 		script.printTargetDeclaration("assemble", null, null, null, null); //$NON-NLS-1$
 		if (output.equalsIgnoreCase("tarGz")) { //$NON-NLS-1$
 			generateAntTarTarget();
@@ -104,7 +104,7 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		}
 	}
 
-	private void generateZip() throws CoreException {
+	private void generateZip() {
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
@@ -273,12 +273,12 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 		}
 	}
 
-	public void rootFiles(String[] rootFiles) {
-		this.rootFiles = rootFiles;
+	public void rootFiles(String[] root) {
+		this.rootFiles = root;
 	}
 
-	public void rootDirs(String[] rootDirs) {
-		this.rootDirs = rootDirs;
+	public void rootDirs(String[] root) {
+		this.rootDirs = root;
 	}
 
 	public void setOutput(String outputFormat) {

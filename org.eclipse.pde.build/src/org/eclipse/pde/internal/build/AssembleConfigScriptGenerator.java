@@ -52,11 +52,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		super();
 	}
 
-	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection rootFileProviders) throws CoreException {
+	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection rootProviders) throws CoreException {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-		this.rootFileProviders = rootFileProviders;
+		this.rootFileProviders = rootProviders;
 
 		this.features = new IFeature[featureList.size()];
 		featureList.toArray(this.features);
@@ -77,7 +77,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		loadPostProcessingSteps();
 	}
 
-	private void loadPostProcessingSteps() throws CoreException {
+	private void loadPostProcessingSteps() {
 		try {
 			pluginsPostProcessingSteps = readProperties(AbstractScriptGenerator.getWorkingDirectory(), DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR, IStatus.INFO);
 			featuresPostProcessingSteps = readProperties(AbstractScriptGenerator.getWorkingDirectory(), DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR, IStatus.INFO);
@@ -110,7 +110,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * 
 	 */
-	private void generateGatherSourceCalls() throws CoreException {
+	private void generateGatherSourceCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 		for (int i = 0; i < plugins.length; i++) {
@@ -208,7 +208,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printMkdirTask(getPropertyFormat(PROPERTY_BUILD_LABEL));
 	}
 
-	private void generatePostProcessingSteps() throws CoreException {
+	private void generatePostProcessingSteps() {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
 			if (forceUpdateJarFormat) //Force the updateJar if it is asked as an output format
@@ -224,7 +224,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void generateGatherBinPartsCalls() throws CoreException {
+	private void generateGatherBinPartsCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 		for (int i = 0; i < plugins.length; i++) {

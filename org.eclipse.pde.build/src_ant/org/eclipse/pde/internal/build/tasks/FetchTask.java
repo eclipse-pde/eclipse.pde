@@ -65,11 +65,7 @@ public class FetchTask extends Task {
 	 * @param element
 	 */
 	public void setElements(String element) {
-		try {
-			generator.setElement(element);
-		} catch (CoreException e) {
-			throw new BuildException(e);
-		}
+		generator.setElement(element);
 	}
 
 	/**

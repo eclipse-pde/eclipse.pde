@@ -149,7 +149,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 	/**
 	 *  Set the property file containing information about packaging
-	 * @param propertyFile: the path to a property file
+	 * @param propertyFile the path to a property file
 	 */
 	public void setPropertyFile(String propertyFile) {
 		packagingPropertiesLocation = propertyFile;

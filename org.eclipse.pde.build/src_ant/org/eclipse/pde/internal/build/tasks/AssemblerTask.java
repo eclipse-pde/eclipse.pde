@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.net.MalformedURLException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -38,16 +37,15 @@ public class AssemblerTask extends Task {
 
 	/**
 	 * Set the directory where the packaging will occur
-	 * @param workingLocation: the location
-	 * @throws MalformedURLException
+	 * @param workingLocation the location
 	 */
-	public void setWorkingDirectory(String workingLocation) throws MalformedURLException {
+	public void setWorkingDirectory(String workingLocation) {
 		generator.setWorkingDirectory(workingLocation);
 	}
 
 	/**
 	 * Set the features to assemble
-	 * @param featureList: a comma separated list of features to package 
+	 * @param featureList a comma separated list of features to package 
 	 */
 	public void setFeatureList(String featureList) throws BuildException {
 		generator.setFeatureList(featureList);
@@ -55,7 +53,7 @@ public class AssemblerTask extends Task {
 
 	/**
 	 * Set the configuration for which the assembling is being done
-	 * @param configInfo: a configuration
+	 * @param configInfo a configuration
 	 * @throws CoreException
 	 */
 	public void setConfigInfo(String configInfo) throws CoreException {
@@ -64,7 +62,7 @@ public class AssemblerTask extends Task {
 
 	/**
 	 * Set the location where to find features, plugins and fragments
-	 * @param baseLocation: a comma separated list of paths
+	 * @param baseLocation a comma separated list of paths
 	 */
 	public void setBaseLocation(String baseLocation) throws BuildException {
 		String[] locations = Utils.getArrayFromString(baseLocation);
@@ -81,7 +79,7 @@ public class AssemblerTask extends Task {
 
 	/**
 	 *  Set the property file containing information about packaging
-	 * @param propertyFile: the path to a property file
+	 * @param propertyFile the path to a property file
 	 */
 	public void setPackagePropertyFile(String propertyFile) {
 		generator.setPropertyFile(propertyFile);

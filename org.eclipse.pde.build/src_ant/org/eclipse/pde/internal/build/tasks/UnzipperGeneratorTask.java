@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.net.MalformedURLException;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.ant.core.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +34,7 @@ public class UnzipperGeneratorTask extends Task {
 
 	/**
 	 * Set the name of the file listing all the files that must be unzipped.
-	 * @param fileName
+	 * @param filename
 	 */
 	public void setZipsDirectory(String filename) {
 		generator.setDirectoryLocation(filename);
@@ -43,16 +42,16 @@ public class UnzipperGeneratorTask extends Task {
 
 	/**
 	 * Set the folder in which the scripts will be generated.
-	 * @param buildDirectory the location where the scripts will be generated and the files fetched.
+	 * @param installLocation the location where the scripts will be generated and the files fetched.
 	 */
-	public void setWorkingDirectory(String installLocation) throws MalformedURLException {
+	public void setWorkingDirectory(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
 	}
 
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
-	 * @throws CoreException
+	 * @throws BuildException
 	 */
 	public void setConfigInfo(String configInfo) throws BuildException {
 		try {
@@ -64,7 +63,7 @@ public class UnzipperGeneratorTask extends Task {
 
 	/**
 	 *  Set the property file containing information about packaging
-	 * @param propertyFile: the path to a property file
+	 * @param propertyFile the path to a property file
 	 */
 	public void setPackagePropertyFile(String propertyFile) {
 		generator.setPropertyFile(propertyFile);

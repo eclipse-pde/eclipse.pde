@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.net.MalformedURLException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -53,7 +52,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * 
 	 * @param pluginPath the plug-in path
 	 */
-	public void setPluginPath(String pluginPath) throws CoreException {
+	public void setPluginPath(String pluginPath) {
 		generator.setPluginPath(Utils.getArrayFromString(pluginPath));
 	}
 
@@ -83,7 +82,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * @param buildDirectory the location where the build will occur.
 	 * @since 3.0
 	 */
-	public void setBuildDirectory(String buildDirectory) throws MalformedURLException {
+	public void setBuildDirectory(String buildDirectory) {
 		generator.setWorkingDirectory(buildDirectory);
 	}
 
@@ -145,7 +144,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * 
 	 * @param installLocation the location where the build will occur
 	 */
-	public void setWorkingDirectory(String installLocation) throws MalformedURLException {
+	public void setWorkingDirectory(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
 	}
 }

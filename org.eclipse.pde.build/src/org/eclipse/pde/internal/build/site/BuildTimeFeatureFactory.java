@@ -65,6 +65,7 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 				if (featureStream != null)
 					featureStream.close();
 			} catch (IOException e) {
+				//ignore
 			}
 		}
 		return feature;
