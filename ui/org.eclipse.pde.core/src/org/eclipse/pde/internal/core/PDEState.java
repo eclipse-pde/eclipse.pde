@@ -17,6 +17,7 @@ public class PDEState {
 	private long fId;
 	private HashMap fBundleClasspaths;
 	private String fTargetMode = null;
+	private PluginConverter fConverter = null;
 	
 	protected long getNextId() {
 		return ++fId;
@@ -38,10 +39,14 @@ public class PDEState {
 	}
 	
 	private PluginConverter acquirePluginConverter() throws Exception {
-		ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
-				.getBundleContext(), PluginConverter.class.getName(), null);
-		tracker.open();
-		return (PluginConverter) tracker.getService();
+		if (fConverter == null) { 
+			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
+					.getBundleContext(), PluginConverter.class.getName(), null);
+			tracker.open();
+			fConverter = (PluginConverter) tracker.getService();
+			tracker.close();
+		}
+		return fConverter;
 	}
 	
 	public BundleDescription addBundle(Dictionary manifest, File bundleLocation) {

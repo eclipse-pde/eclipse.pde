@@ -227,6 +227,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		PluginConverter converter = (PluginConverter) tracker.getService();
 		converter.convertManifest(inputFile, outputFile, false, null);
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		tracker.close();
 	}
 	
 	private void setClasspath(IProject project, IFieldData data)
