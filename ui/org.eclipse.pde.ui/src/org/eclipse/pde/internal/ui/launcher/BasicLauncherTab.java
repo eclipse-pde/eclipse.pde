@@ -219,7 +219,7 @@ public class BasicLauncherTab
 		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
 			new Path(
-				PDECore.getDefault().getSettings().getString(
+				PDECore.getDefault().getPluginPreferences().getString(
 					ICoreConstants.PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();

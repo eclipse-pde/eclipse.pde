@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.core.CoreSettings;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
@@ -231,8 +231,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	}
 	
 	private String getTargetHome() {
-		CoreSettings settings = PDECore.getDefault().getSettings();
-		return settings.getString(ICoreConstants.PLATFORM_PATH);
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
 
 	private void hookListeners() {

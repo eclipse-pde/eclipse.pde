@@ -173,8 +173,8 @@ public class ExternalModelManager {
 
 	private String[] getPluginPaths(String platformHome) {
 		if (platformHome == null) {
-			CoreSettings settings = PDECore.getDefault().getSettings();
-			platformHome = settings.getString(ICoreConstants.PLATFORM_PATH);
+			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			platformHome = preferences.getString(ICoreConstants.PLATFORM_PATH);
 		}
 		if (platformHome == null || platformHome.length() == 0) {
 			//			Display.getCurrent().beep();
@@ -192,8 +192,8 @@ public class ExternalModelManager {
 
 	public boolean hasEnabledModels() {
 		if (models == null) {
-			CoreSettings settings = PDECore.getDefault().getSettings();
-			String saved = settings.getString(ICoreConstants.CHECKED_PLUGINS);
+			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			String saved = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 			if (saved != null && saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 				return false;
 			}
@@ -396,8 +396,8 @@ public class ExternalModelManager {
 	public static IPath getEclipseHome(IProgressMonitor monitor) {
 		IPath eclipseHome =
 			JavaCore.getClasspathVariable(PDECore.ECLIPSE_HOME_VARIABLE);
-		CoreSettings settings = PDECore.getDefault().getSettings();
-		String platformHome = settings.getString(ICoreConstants.PLATFORM_PATH);
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String platformHome = preferences.getString(ICoreConstants.PLATFORM_PATH);
 		IPath platformPath = new Path(platformHome);
 		if (eclipseHome == null || !eclipseHome.equals(platformPath)) {
 			setEclipseHome(platformHome, monitor);
@@ -416,8 +416,9 @@ public class ExternalModelManager {
 				PDECore.ECLIPSE_HOME_VARIABLE,
 				new Path(newValue),
 				monitor);
-			CoreSettings store = PDECore.getDefault().getSettings();
-			store.setValue(ICoreConstants.PLATFORM_PATH, newValue);
+			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			preferences.setValue(ICoreConstants.PLATFORM_PATH, newValue);
+			PDECore.getDefault().savePluginPreferences();
 		} catch (JavaModelException e) {
 			PDECore.logException(e);
 		} finally {
@@ -425,28 +426,29 @@ public class ExternalModelManager {
 		}
 	}
 	public static void initializePlatformPath() {
-		CoreSettings store = PDECore.getDefault().getSettings();
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		boolean useThis = true;
-		String mode = store.getString(ICoreConstants.TARGET_MODE);
+		String mode = preferences.getString(ICoreConstants.TARGET_MODE);
 
 		if (mode != null && mode.equals(ICoreConstants.VALUE_USE_OTHER))
 			useThis = false;
-		String path = store.getString(ICoreConstants.PLATFORM_PATH);
+		String path = preferences.getString(ICoreConstants.PLATFORM_PATH);
 		String currentPath = computeDefaultPlatformPath();
 
 		if (path == null
 			|| path.length() == 0
 			|| (useThis && !currentPath.equals(path))) {
 			path = currentPath;
-			store.setDefault(ICoreConstants.PLATFORM_PATH, path);
-			store.setValue(ICoreConstants.PLATFORM_PATH, path);
+			preferences.setDefault(ICoreConstants.PLATFORM_PATH, path);
+			preferences.setValue(ICoreConstants.PLATFORM_PATH, path);
+			PDECore.getDefault().savePluginPreferences();
 		}
 	}
 
 	public static boolean getUseOther() {
-		CoreSettings store = PDECore.getDefault().getSettings();
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		boolean useOther = false;
-		String mode = store.getString(ICoreConstants.TARGET_MODE);
+		String mode = preferences.getString(ICoreConstants.TARGET_MODE);
 		if (mode != null && mode.equals(ICoreConstants.VALUE_USE_OTHER))
 			useOther = true;
 		return useOther;
@@ -481,12 +483,12 @@ public class ExternalModelManager {
 	}
 	public void initializeAndStore(boolean selectAll) {
 		String toSave = selectAll ? ICoreConstants.VALUE_SAVED_ALL : ICoreConstants.VALUE_SAVED_NONE;
-		PDECore.getDefault().getSettings().setValue(ICoreConstants.CHECKED_PLUGINS, toSave);
+		PDECore.getDefault().getPluginPreferences().setValue(ICoreConstants.CHECKED_PLUGINS, toSave);
 		initialize();
 	}
 	public void initialize() {
-		CoreSettings store = PDECore.getDefault().getSettings();
-		String saved = store.getString(ICoreConstants.CHECKED_PLUGINS);
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String saved = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 
 		if (saved.length() == 0 || saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			initializeDefault(false);

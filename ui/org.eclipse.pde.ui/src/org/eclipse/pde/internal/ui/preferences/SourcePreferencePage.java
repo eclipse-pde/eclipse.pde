@@ -1,7 +1,13 @@
 package org.eclipse.pde.internal.ui.preferences;
 
+import java.io.File;
 import java.util.*;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -36,9 +42,11 @@ public class SourcePreferencePage
 	private static final String KEY_DESC = "SourcePreferencePage.desc"; //$NON-NLS-1$
 	private CheckboxTablePart tablePart;
 	private CheckboxTableViewer tableViewer;
-	private ArrayList userLocations;
 	private Image extensionImage;
 	private Image userImage;
+	private Preferences preferences;
+	private ArrayList extensionLocations = new ArrayList();
+	private ArrayList userLocations = new ArrayList();
 
 	class SourceProvider
 		extends DefaultContentProvider
@@ -125,6 +133,13 @@ public class SourcePreferencePage
 			}
 			tablePart.setButtonEnabled(4, enabled);
 		}
+		/**
+		 * @see org.eclipse.pde.internal.ui.parts.CheckboxTablePart#elementChecked(Object, boolean)
+		 */
+		protected void elementChecked(Object element, boolean checked) {
+			((SourceLocation)element).setEnabled(checked);
+		}
+
 	}
 
 	public SourcePreferencePage() {
@@ -147,8 +162,51 @@ public class SourcePreferencePage
 		});
 		userImage = userDesc.createImage();
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 
+	private void initializeExtensionLocations() {
+		extensionLocations = new ArrayList();
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		IConfigurationElement[] elements =
+			registry.getConfigurationElementsFor(
+				PDECore.getPluginId(),
+				"source");
+		SourceLocation[] storedLocations = getSavedSourceLocations(preferences.getString(ICoreConstants.P_EXT_LOCATIONS));
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			if (element.getName().equalsIgnoreCase("location")) {
+				SourceLocation location = new SourceLocation(element);
+				location.setEnabled(getSavedState(location.getName(), storedLocations));
+				extensionLocations.add(location);
+			}
+		}
+	}
+	
+	private void initializeUserlocations() {
+		userLocations = new ArrayList();
+		parseSavedSourceLocations(preferences.getString(ICoreConstants.P_SOURCE_LOCATIONS), userLocations);
+	}
+	
+	private String encodeSourceLocations(ArrayList locations) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < locations.size(); i++) {
+			SourceLocation loc = (SourceLocation) locations.get(i);
+			if (i > 0)
+				buf.append(File.pathSeparatorChar);
+			buf.append(encodeSourceLocation(loc));
+		}
+		return buf.toString();
+	}
+
+	private String encodeSourceLocation(SourceLocation location) {
+		return location.getName()
+			+ "@"
+			+ location.getPath().toOSString()
+			+ ","
+			+ (location.isEnabled() ? "t" : "f");
+	}
+	
 	public void dispose() {
 		super.dispose();
 		userImage.dispose();
@@ -158,60 +216,61 @@ public class SourcePreferencePage
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-	}
-
-	private void load() {
-		SourceLocationManager mng =
-			PDECore.getDefault().getSourceLocationManager();
-		userLocations = (ArrayList) mng.getUserLocationArray().clone();
-	}
-
-	private void store() {
-		SourceLocationManager mng =
-			PDECore.getDefault().getSourceLocationManager();
-		transferSelections();
-		mng.setUserLocations(userLocations);
+		initializeExtensionLocations();
+		initializeUserlocations();
 	}
 
 	/**
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		store();
-		boolean value = super.performOk();
-		return value;
+		preferences.setValue(ICoreConstants.P_EXT_LOCATIONS, encodeSourceLocations(extensionLocations));
+		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations(userLocations));
+		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().getSourceLocationManager().initializeClasspathVariables(null);
+		return super.performOk();
 	}
 
 	public void performDefaults() {
-		load();
+		for (int i = 0; i < extensionLocations.size(); i++) {
+			SourceLocation location = (SourceLocation)extensionLocations.get(i);
+			location.setEnabled(true);
+			tableViewer.setChecked(location, true);
+		}
+		for (int i = 0; i < userLocations.size(); i++) {
+			SourceLocation location = (SourceLocation)userLocations.get(i);
+			location.setEnabled(false);
+			tableViewer.setChecked(location, false);
+		}
 		tableViewer.refresh();
-		initializeStates();
 		super.performDefaults();
 	}
 
 	private Object[] getLocations() {
-		SourceLocationManager mng =
-			PDECore.getDefault().getSourceLocationManager();
-		Object[] extensionLocations = mng.getExtensionLocations();
-		Object[] userArray = userLocations.toArray();
 		Object[] merged =
-			new Object[extensionLocations.length + userArray.length];
+			new Object[extensionLocations.size() + userLocations.size()];
 		System.arraycopy(
-			extensionLocations,
+			extensionLocations.toArray(),
 			0,
 			merged,
 			0,
-			extensionLocations.length);
+			extensionLocations.size());
 		System.arraycopy(
-			userArray,
+			userLocations.toArray(),
 			0,
 			merged,
-			extensionLocations.length,
-			userArray.length);
+			extensionLocations.size(),
+			userLocations.size());
 		return merged;
 	}
 
 	private void selectAll(boolean selected) {
+		for (int i = 0; i < extensionLocations.size(); i++) {
+			((SourceLocation)extensionLocations.get(i)).setEnabled(selected);
+		}
+		for (int i = 0; i < userLocations.size(); i++) {
+			((SourceLocation)userLocations.get(i)).setEnabled(selected);
+		}
 		tableViewer.setAllChecked(selected);
 	}
 
@@ -257,7 +316,6 @@ public class SourcePreferencePage
 		configureColumns(tableViewer.getTable());
 		tableViewer.setContentProvider(new SourceProvider());
 		tableViewer.setLabelProvider(new SourceLabelProvider());
-		load();
 		tableViewer.setInput(this);
 		initializeStates();
 		tablePart.setButtonEnabled(4, false);
@@ -279,33 +337,62 @@ public class SourcePreferencePage
 	}
 
 	private void initializeStates() {
-		SourceLocationManager mng =
-			PDECore.getDefault().getSourceLocationManager();
-		Object[] extensionLocations = mng.getExtensionLocations();
 		ArrayList selected = new ArrayList();
-		for (int i = 0; i < extensionLocations.length; i++) {
-			SourceLocation loc = (SourceLocation) extensionLocations[i];
-			if (loc.isEnabled())
-				selected.add(loc);
+		for (int i = 0; i < extensionLocations.size(); i++) {
+			SourceLocation loc = (SourceLocation) extensionLocations.get(i);
+			tableViewer.setChecked(loc, loc.isEnabled());
 		}
 		for (int i = 0; i < userLocations.size(); i++) {
 			SourceLocation loc = (SourceLocation) userLocations.get(i);
-			if (loc.isEnabled())
-				selected.add(loc);
-		}
-		tableViewer.setCheckedElements(selected.toArray());
-	}
-	private void transferSelections() {
-		SourceLocationManager mng =
-			PDECore.getDefault().getSourceLocationManager();
-		Object[] extensionLocations = mng.getExtensionLocations();
-		for (int i = 0; i < extensionLocations.length; i++) {
-			SourceLocation loc = (SourceLocation) extensionLocations[i];
-			loc.setEnabled(tableViewer.getChecked(loc));
-		}
-		for (int i = 0; i < userLocations.size(); i++) {
-			SourceLocation loc = (SourceLocation) userLocations.get(i);
-			loc.setEnabled(tableViewer.getChecked(loc));
+			tableViewer.setChecked(loc, loc.isEnabled());
 		}
 	}
+	
+	private SourceLocation parseSourceLocation(String text) {
+		String name = "";
+		String path = "";
+		boolean enabled = true;
+		int atLoc = text.indexOf('@');
+		if (atLoc != -1)
+			name = text.substring(0, atLoc);
+		else
+			atLoc = 0;
+		int commaLoc = text.lastIndexOf(',');
+		if (commaLoc != -1) {
+			String state = text.substring(commaLoc + 1);
+			if (state.equals("f"))
+				enabled = false;
+			path = text.substring(atLoc + 1, commaLoc);
+		} else
+			path = text.substring(atLoc + 1);
+		return new SourceLocation(name, new Path(path), enabled);
+	}
+	
+	private void parseSavedSourceLocations(String text, ArrayList entries) {
+		StringTokenizer stok = new StringTokenizer(text, File.pathSeparator);
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken();
+			SourceLocation location = parseSourceLocation(token);
+			entries.add(location);
+		}
+	}
+
+	private SourceLocation[] getSavedSourceLocations(String text) {
+		if (text == null || text.length() == 0)
+			return new SourceLocation[0];
+		ArrayList entries = new ArrayList();
+		parseSavedSourceLocations(text, entries);
+		return (SourceLocation[]) entries.toArray(
+			new SourceLocation[entries.size()]);
+	}
+	private boolean getSavedState(String name, SourceLocation[] list) {
+		for (int i = 0; i < list.length; i++) {
+			SourceLocation saved = list[i];
+			if (name.equals(saved.getName()))
+				return saved.isEnabled();
+		}
+		return true;
+	}
+
+
 }

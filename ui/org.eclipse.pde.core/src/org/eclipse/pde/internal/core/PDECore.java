@@ -38,7 +38,6 @@ public class PDECore extends Plugin {
 	private WorkspaceModelManager workspaceModelManager;
 	private PluginModelManager modelManager;
 	private SourceLocationManager sourceLocationManager;
-	private CoreSettings settings;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -164,9 +163,6 @@ public class PDECore extends Plugin {
 		return inst;
 	}
 
-	public CoreSettings getSettings() {
-		return settings;
-	}
 	public ExternalModelManager getExternalModelManager() {
 		if (externalModelManager == null)
 			externalModelManager = new ExternalModelManager();
@@ -318,7 +314,7 @@ public class PDECore extends Plugin {
 	}
 
 	public void shutdown() throws CoreException {
-		storeSettings();
+		PDECore.getDefault().savePluginPreferences();
 		if (schemaRegistry != null)
 			schemaRegistry.shutdown();
 
@@ -328,12 +324,34 @@ public class PDECore extends Plugin {
 	}
 
 	private void loadSettings() {
-		settings = new CoreSettings();
-		settings.load(getStateLocation());
+		File file = new File(getStateLocation().append("settings.properties").toOSString());
+		if (file.exists()) {
+			Properties settings = new Properties();
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				settings.load(fis);
+				fis.close();
+			} catch (IOException e) {
+			}
+			Preferences preferences =
+				PDECore.getDefault().getPluginPreferences();
+			Enumeration propertyNames = settings.propertyNames();
+			while (propertyNames.hasMoreElements()) {
+				String property = propertyNames.nextElement().toString();
+				preferences.setValue(property, settings.getProperty(property));
+			}
+			file.delete();
+		}
 	}
 
-	private void storeSettings() {
-		settings.store();
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
+	 */
+	protected void initializeDefaultPluginPreferences() {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		preferences.setDefault(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 	}
+
 
 }

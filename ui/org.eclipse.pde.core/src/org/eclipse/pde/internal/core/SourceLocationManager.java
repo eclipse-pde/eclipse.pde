@@ -118,37 +118,9 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void initializeUserLocations() {
-		if (userLocations != null)
-			return;
 		userLocations = new ArrayList();
-		CoreSettings settings = PDECore.getDefault().getSettings();
-		String pref = settings.getString(P_SOURCE_LOCATIONS);
-		if (pref == null)
-			return;
+		String pref = PDECore.getDefault().getPluginPreferences().getString(P_SOURCE_LOCATIONS);
 		parseSavedSourceLocations(pref, userLocations);
-	}
-
-	public void setUserLocations(ArrayList locations) {
-		SourceLocation [] oldLocations = getUserLocations();
-		userLocations = locations;
-		if (oldLocations.length>0)
-			computeOrphanedLocations(oldLocations);
-		storeSourceLocations();
-	}
-
-	public void storeSourceLocations() {
-		CoreSettings settings = PDECore.getDefault().getSettings();
-
-		if (extensionLocations != null) {
-			String value = encodeSourceLocations(extensionLocations);
-			settings.setValue(P_EXT_LOCATIONS, value);
-		}
-		if (userLocations == null)
-			return;
-		String value = encodeSourceLocations(userLocations);
-		settings.setValue(P_SOURCE_LOCATIONS, value);
-		settings.store();
-		initializeClasspathVariables(null);
 	}
 	
 	public void initializeClasspathVariables(IProgressMonitor monitor) {
@@ -214,11 +186,8 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private void initializeExtensionLocations() {
-		if (extensionLocations != null)
-			return;
 		extensionLocations = new ArrayList();
-		CoreSettings settings = PDECore.getDefault().getSettings();
-		String pref = settings.getString(P_EXT_LOCATIONS);
+		String pref = PDECore.getDefault().getPluginPreferences().getString(P_EXT_LOCATIONS);
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements =
 			registry.getConfigurationElementsFor(
@@ -299,7 +268,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private SourceLocation[] getSavedSourceLocations(String text) {
-		if (text == null)
+		if (text == null || text.length() == 0)
 			return new SourceLocation[0];
 		ArrayList entries = new ArrayList();
 		parseSavedSourceLocations(text, entries);

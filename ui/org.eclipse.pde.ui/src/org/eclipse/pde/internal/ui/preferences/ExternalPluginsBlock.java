@@ -132,6 +132,7 @@ public class ExternalPluginsBlock {
 		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsModels = wm.getAllModels();
 		IPluginModelBase[] exModels = getAllModels();
+		changed = new Vector();
 		Vector selected = new Vector();
 		for (int i = 0; i < exModels.length; i++) {
 			IPluginModelBase exModel = exModels[i];
@@ -143,6 +144,8 @@ public class ExternalPluginsBlock {
 					break;
 				}
 			}
+			if (exModel.isEnabled() == inWorkspace)
+				changed.add(exModel);
 			exModel.setEnabled(!inWorkspace);
 			if (!inWorkspace)
 				selected.add(exModel);
@@ -215,10 +218,13 @@ public class ExternalPluginsBlock {
 			return;
 
 		pluginListViewer.setInput(registry);
-		CoreSettings store = PDECore.getDefault().getSettings();
-		String saved = store.getString(ICoreConstants.CHECKED_PLUGINS);
-		IPluginModelBase [] allModels = getAllModels();
-		if (saved.length() == 0 || saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+		String saved =
+			PDECore.getDefault().getPluginPreferences().getString(
+				ICoreConstants.CHECKED_PLUGINS);
+		IPluginModelBase[] allModels = getAllModels();
+		
+		if (saved.length() == 0
+			|| saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			initializeDefault(false);
 		} else if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 			initializeDefault(true);
@@ -226,14 +232,26 @@ public class ExternalPluginsBlock {
 			Vector savedList = createSavedList(saved);
 
 			Vector selection = new Vector();
+			changed = new Vector();
 			for (int i = 0; i < allModels.length; i++) {
 				IPluginModelBase model = allModels[i];
-				if (model.isEnabled())
+				if (!savedList.contains(model.getPluginBase().getId())) {
 					selection.add(model);
+					if (!model.isEnabled()) {
+						changed.add(model);
+						model.setEnabled(true);
+					}
+				} else {
+					if (model.isEnabled()) {
+						changed.add(model);
+						model.setEnabled(false);
+					}
+				}
 			}
 			tablePart.setSelection(selection.toArray());
 		}
 		initialModels = allModels;
+		computeDelta();
 	}
 	private static void initializeDefault(
 		ExternalModelManager registry,
@@ -265,7 +283,7 @@ public class ExternalPluginsBlock {
 		System.arraycopy(fmodels, 0, all, models.length, fmodels.length);
 		return all;
 	}
-	public boolean save() {
+	public void save() {
 		String saved = "";
 		IPluginModelBase[] models = getAllModels();
 		if (tablePart.getSelectionCount() == models.length) {
@@ -282,10 +300,10 @@ public class ExternalPluginsBlock {
 				}
 			}
 		}
-		PDECore.getDefault().getSettings().setValue(
+		PDECore.getDefault().getPluginPreferences().setValue(
 			ICoreConstants.CHECKED_PLUGINS,
 			saved);
-		return computeDelta();
+		computeDelta();
 	}
 	private Vector createSavedList(String saved) {
 		Vector result = new Vector();
@@ -296,7 +314,7 @@ public class ExternalPluginsBlock {
 		return result;
 	}
 
-	boolean computeDelta() {
+	void computeDelta() {
 		int type = 0;
 		IModel[] addedArray = null;
 		IModel[] removedArray = null;
@@ -316,7 +334,6 @@ public class ExternalPluginsBlock {
 				new ModelProviderEvent(registry, type, addedArray, removedArray, changedArray);
 			registry.fireModelProviderEvent(event);
 		}
-		return type != 0;
 	}
 
 }
