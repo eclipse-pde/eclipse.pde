@@ -31,6 +31,7 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 	private Hashtable fLineTable;
 	private Element fRootElement;
 	private IDocumentNode fModelRoot;
+	private String fSchemaVersion;
 	
 	private Stack fDocumentNodeStack = new Stack();
 	
@@ -114,6 +115,9 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 	 */
 	public void processingInstruction(String target, String data) throws SAXException {
 		ProcessingInstruction instruction = fDocument.createProcessingInstruction(target, data);
+		if ("eclipse".equals(target)) {
+			fSchemaVersion = "3.0";
+		}
 		fDocument.appendChild(instruction);
 	}
 	
@@ -242,12 +246,13 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 		createTextDocument(stream);
 		fRootElement = null;
 		fModelRoot = null;
+		fSchemaVersion = null;
 		fDocumentNodeStack.clear();
 		fLineTable.clear();
 	}
 	
 	public String getSchemaVersion() {
-		return "3.0";
+		return fSchemaVersion;
 	}
 	
 	public IDocumentNode getModelRoot() {
