@@ -334,7 +334,11 @@ public class RequiresSection
 
 	public void update() {
 		if (updateNeeded) {
-			this.update(getFormPage().getModel());
+			Display.getCurrent().asyncExec(new Runnable() {
+				public void run() {
+					update(getFormPage().getModel());
+				}
+			});
 		}
 	}
 
