@@ -75,7 +75,7 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 	if (requires != null) {
 		for (int i = 0; i < requires.length; i++) {
 			PluginModel prerequisite = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
-			addPrerequisiteLibraries(prerequisite, classpath, location);
+			addPrerequisiteLibraries(prerequisite, classpath, location, true);
 			addFragmentsLibraries(prerequisite, classpath, location);
 			addDevEntries(prerequisite, location, classpath);
 		}
@@ -113,6 +113,11 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 				break;
 			classpath.add(order[i]);
 		}
+	}
+	// if it is a fragment, add the plugin as prerequisite
+	if (model instanceof PluginFragmentModel) {
+		PluginModel plugin = getRegistry().getPlugin(((PluginFragmentModel) model).getPlugin());
+		addPrerequisiteLibraries(plugin, classpath, location, false);
 	}
 	return replaceVariables(Utils.getStringFromCollection(classpath, ";"));
 }
@@ -185,14 +190,14 @@ protected void addPluginLibrariesToFragmentLocations(PluginModel plugin, PluginF
 	}
 }
 
-protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation) throws CoreException {
+protected void addPrerequisiteLibraries(PluginModel prerequisite, Set classpath, String baseLocation, boolean considerExport) throws CoreException {
 	addLibraries(prerequisite, classpath, baseLocation);
 	// add libraries (if exported) from pre-requisite plug-ins
 	PluginPrerequisiteModel[] requires = prerequisite.getRequires();
 	if (requires == null)
 		return;
 	for (int i = 0; i < requires.length; i++) {
-		if (!requires[i].getExport())
+		if (considerExport && !requires[i].getExport())
 			continue;
 		PluginModel plugin = getPlugin(requires[i].getPlugin(), requires[i].getVersion());
 		addLibraries(plugin, classpath, baseLocation);
