@@ -241,6 +241,8 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
 		out.println("<H2>Identifier</H2>");
 		out.print(schema.getQualifiedPointId());
+		out.println("<H2>Since:</H2>");
+		transformSection(out, schema, IDocumentSection.SINCE);
 		out.println("<H2>Description</H2>");
 		transformText(out, schema.getDescription());
 		out.println("<H2>Markup</H2>");
