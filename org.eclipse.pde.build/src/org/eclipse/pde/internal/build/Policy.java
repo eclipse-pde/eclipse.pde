@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.text.MessageFormat;
@@ -65,7 +65,10 @@ public static String bind(String id, String[] bindings) {
 /**
  * Return a progress monitor for the given monitor. Ensures that the resulting
  * monitor is not <code>null</code>.
- *  * @param monitor the monitor to wrap, or <code>null</code> * @return IProgressMonitor */
+ * 
+ * @param monitor the monitor to wrap, or <code>null</code>
+ * @return IProgressMonitor
+ */
 public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 	if (monitor == null)
 		return new NullProgressMonitor();
@@ -74,7 +77,11 @@ public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 
 /**
  * Create a sub progress monitor with the given units of work, for the given monitor.
- *  * @param monitor the parent monitor, or <code>null</code> * @param ticks the number of units of work * @return IProgressMonitor */
+ * 
+ * @param monitor the parent monitor, or <code>null</code>
+ * @param ticks the number of units of work
+ * @return IProgressMonitor
+ */
 public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 	if (monitor == null)
 		return new NullProgressMonitor();
@@ -86,7 +93,12 @@ public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks
 /**
  * Create a sub progress monitor with the given number of units of work and in the 
  * given style, for the specified parent monitor.
- *  * @param monitor the parent monitor, or <code>null</code> * @param ticks the number of units of work * @param style the style of the sub progress monitor * @return IProgressMonitor */
+ * 
+ * @param monitor the parent monitor, or <code>null</code>
+ * @param ticks the number of units of work
+ * @param style the style of the sub progress monitor
+ * @return IProgressMonitor
+ */
 public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
 	if (monitor == null)
 		return new NullProgressMonitor();

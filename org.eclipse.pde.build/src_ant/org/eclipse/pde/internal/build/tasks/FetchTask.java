@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
 import org.apache.tools.ant.BuildException;
@@ -36,39 +36,50 @@ public FetchTask() {
 /**
  * Set the boolean value indicating whether or not the fetch scripts should be
  * generated for the children of this feature.
- *  * @param children <code>true</code> if the children scripts should be generated
- *     and <code>false</code> otherwise */
+ * 
+ * @param children <code>true</code> if the children scripts should be generated
+ *     and <code>false</code> otherwise
+ */
 public void setChildren(boolean children) {
 	generator.setChildren(children);
 }
 
 /**
  * Set the location for the CVS password file.
- *  * @param cvsPassFileLocation the location of the password file */
+ * 
+ * @param cvsPassFileLocation the location of the password file
+ */
 public void setCvsPassFile(String cvsPassFileLocation) {
 	generator.setCvsPassFile(cvsPassFileLocation);
 }
 
 /**
- *  * @param directoryLocation */
+ * 
+ * @param directoryLocation
+ */
 public void setDirectory(String directoryLocation) {
 	generator.setDirectory(directoryLocation);
 }
 
 /**
- *  * @param elements */
+ * 
+ * @param elements
+ */
 public void setElements(String elements) {
 	generator.setElements(Utils.getArrayFromString(elements));
 }
 
 /**
- *  * @param installLocation */
+ * 
+ * @param installLocation
+ */
 public void setInstall(String installLocation) {
 	generator.setInstall(installLocation);
 }
 
 /**
- * @see org.apache.tools.ant.Task#execute() */
+ * @see org.apache.tools.ant.Task#execute()
+ */
 public void execute() throws BuildException {
 	try {
 		generator.run();
@@ -78,7 +89,9 @@ public void execute() throws BuildException {
 }
 
 /**
- *  * @param scriptName */
+ * 
+ * @param scriptName
+ */
 public void setScriptName(String scriptName) {
 	generator.setScriptName(scriptName);
 }

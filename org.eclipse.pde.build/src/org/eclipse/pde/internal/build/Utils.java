@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
@@ -40,7 +40,10 @@ public static String[] getArrayFromString(String list, String separator) {
 
 /**
  * Return a string array constructed from the given list of comma-separated tokens. 
- *  * @param list the list to convert * @return the array of strings */
+ * 
+ * @param list the list to convert
+ * @return the array of strings
+ */
 public static String[] getArrayFromString(String list) {
 	return getArrayFromString(list, ","); //$NON-NLS-1$
 }
@@ -48,7 +51,11 @@ public static String[] getArrayFromString(String list) {
 /**
  * Finds out if an status has the given severity. In case of a multi status,
  * its children are also included.
- *  * @param status * @param severity * @return boolean */
+ * 
+ * @param status
+ * @param severity
+ * @return boolean
+ */
 public static boolean contains(IStatus status, int severity) {
 	if (status.matches(severity))
 		return true;
@@ -63,7 +70,11 @@ public static boolean contains(IStatus status, int severity) {
 
 /**
  * Converts an array of strings into an array of URLs.
- *  * @param target * @return URL[] * @throws CoreException */
+ * 
+ * @param target
+ * @return URL[]
+ * @throws CoreException
+ */
 public static URL[] asURL(String[] target) throws CoreException {
 	if (target == null)
 		return null;
@@ -80,7 +91,11 @@ public static URL[] asURL(String[] target) throws CoreException {
 /**
  * Return a string which is a concatination of each member of the given collection,
  * separated by the given separator.
- *  * @param collection the collection to concatinate * @param separator the separator to use * @return String */
+ * 
+ * @param collection the collection to concatinate
+ * @param separator the separator to use
+ * @return String
+ */
 public static String getStringFromCollection(Collection collection, String separator) {
 	StringBuffer result = new StringBuffer();
 	boolean first = true;
@@ -96,7 +111,11 @@ public static String getStringFromCollection(Collection collection, String separ
 /**
  * Return a string which is a concatination of each member of the given array,
  * separated by the given separator.
- *  * @param values the array to concatinate * @param separator the separator to use * @return String */
+ * 
+ * @param values the array to concatinate
+ * @param separator the separator to use
+ * @return String
+ */
 public static String getStringFromArray(String[] values, String separator) {
 	StringBuffer result = new StringBuffer();
 	for (int i = 0; i < values.length; i++) {
@@ -196,7 +215,10 @@ protected static String[] computeNodeOrder(String[][] specs) {
 }
 
 /**
- *  * @param counts * @return List */
+ * 
+ * @param counts
+ * @return List
+ */
 protected static List findRootNodes(Map counts) {
 	List result = new ArrayList(5);
 	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
@@ -209,7 +231,11 @@ protected static List findRootNodes(Map counts) {
 }
 
 /**
- *  * @param mappings * @param roots * @param counts */
+ * 
+ * @param mappings
+ * @param roots
+ * @param counts
+ */
 protected static void removeArcs(String[][] mappings, List roots, Map counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
 		String root = (String) j.next();
@@ -225,7 +251,10 @@ protected static void removeArcs(String[][] mappings, List roots, Map counts) {
 }
 
 /**
- *  * @param mappings * @return HashMap */
+ * 
+ * @param mappings
+ * @return HashMap
+ */
 protected static HashMap computeCounts(String[][] mappings) {
 	HashMap counts = new HashMap(5);
 	for (int i = 0; i < mappings.length; i++) {
@@ -246,7 +275,10 @@ protected static HashMap computeCounts(String[][] mappings) {
 
 /**
  * Helper method to ensure an array is converted into an ArrayList.
- *  * @param args * @return ArrayList */
+ * 
+ * @param args
+ * @return ArrayList
+ */
 public static ArrayList getArrayList(Object[] args) {
 	// We could be using Arrays.asList() here, but it does not specify
 	// what kind of list it will return. We do need a list that
@@ -260,7 +292,11 @@ public static ArrayList getArrayList(Object[] args) {
 /**
  * Return a path which is equivalent to the given location relative to the specified
  * base path.
- *  * @param location the location to convert * @param base the base path * @return IPath */
+ * 
+ * @param location the location to convert
+ * @param base the base path
+ * @return IPath
+ */
 public static IPath makeRelative(IPath location, IPath base) {
 	IPath result = location;
 	if (result.getDevice() != null && !result.getDevice().equalsIgnoreCase(base.getDevice()))
@@ -277,7 +313,11 @@ public static IPath makeRelative(IPath location, IPath base) {
 /**
  * Transfers all available bytes from the given input stream to the given output stream. 
  * Regardless of failure, this method closes both streams.
- *  * @param source * @param destination * @throws IOException */
+ * 
+ * @param source
+ * @param destination
+ * @throws IOException
+ */
 public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
 	try {
 		byte[] buffer = new byte[8192];

@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
 import java.util.List;
@@ -51,7 +51,9 @@ public class FetchScriptGeneratorApplication extends AbstractApplication {
 public FetchScriptGeneratorApplication() {
 }
 
-/** * @see AbstractApplication#run() */
+/**
+ * @see AbstractApplication#run()
+ */
 public void run() throws CoreException {
 	if (this.elements == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null)); //$NON-NLS-1$
@@ -92,37 +94,49 @@ protected void processCommandLine(List commands) {
 }
 
 /**
- *  * @param children */
+ * 
+ * @param children
+ */
 public void setChildren(boolean children) {
 	this.children = children;
 }
 
 /**
- *  * @param cvsPassFileLocation */
+ * 
+ * @param cvsPassFileLocation
+ */
 public void setCvsPassFile(String cvsPassFileLocation) {
 	this.cvsPassFileLocation = cvsPassFileLocation;
 }
 
 /**
- *  * @param directoryLocation */
+ * 
+ * @param directoryLocation
+ */
 public void setDirectory(String directoryLocation) {
 	this.directoryLocation = directoryLocation;
 }
 
 /**
- *  * @param elements */
+ * 
+ * @param elements
+ */
 public void setElements(String[] elements) {
 	this.elements = elements;
 }
 
 /**
- *  * @param installLocation */
+ * 
+ * @param installLocation
+ */
 public void setInstall(String installLocation) {
 	this.installLocation = installLocation;
 }
 
 /**
- *  * @param scriptName */
+ * 
+ * @param scriptName
+ */
 public void setScriptName(String scriptName) {
 	this.scriptName = scriptName;
 }

@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
 /**
@@ -21,7 +21,11 @@ public class ConditionTask implements ITask {
 
 /**
  * Constructor for the condition.
- *  * @param property * @param value * @param condition */
+ * 
+ * @param property
+ * @param value
+ * @param condition
+ */
 public ConditionTask(String property, String value, Condition condition) {
 	this.property = property;
 	this.value = value;
@@ -29,7 +33,8 @@ public ConditionTask(String property, String value, Condition condition) {
 }
 
 /**
- * @see ITask#print(AntScript, int) */
+ * @see ITask#print(AntScript, int)
+ */
 public void print(AntScript script, int tab) {
 	script.printTab(tab);
 	script.print("<condition"); //$NON-NLS-1$
