@@ -39,8 +39,10 @@ public class BuildPluginAction extends BaseBuildAction {
 		try {
 			IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);
-			generator.setModelId(model.getPluginBase().getId());
-			generator.generate();
+			if (model != null) {
+				generator.setModelId(model.getPluginBase().getId());
+				generator.generate();
+			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}

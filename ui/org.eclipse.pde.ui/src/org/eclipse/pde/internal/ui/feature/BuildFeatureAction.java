@@ -92,6 +92,4 @@ public class BuildFeatureAction extends BaseBuildAction {
 		super.refreshLocal(monitor);
 		refreshLocal(model.getFeature(), monitor);
 	}
-	
-
 }
