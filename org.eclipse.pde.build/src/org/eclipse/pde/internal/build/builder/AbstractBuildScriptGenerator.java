@@ -235,7 +235,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	public Set getCompiledElements() {
 		if (compiledElements == null)
-			compiledElements = new HashSet(65);
+			compiledElements = new HashSet();
 		return compiledElements;
 	}
 
