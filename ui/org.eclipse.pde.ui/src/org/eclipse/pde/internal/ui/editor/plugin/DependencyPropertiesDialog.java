@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;

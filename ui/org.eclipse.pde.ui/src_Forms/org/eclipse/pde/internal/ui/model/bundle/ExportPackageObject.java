@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.plugin;
+package org.eclipse.pde.internal.ui.model.bundle;
 
 import java.io.*;
 import java.util.*;

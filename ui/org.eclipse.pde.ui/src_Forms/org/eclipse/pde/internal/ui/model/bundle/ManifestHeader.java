@@ -12,13 +12,21 @@ package org.eclipse.pde.internal.ui.model.bundle;
 
 import java.io.*;
 import org.eclipse.pde.internal.core.bundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class ManifestHeader extends BundleObject implements IDocumentKey {
 	private int fOffset = -1;
 	private int fLength = -1;
-	private String fName;
-	private String fValue;
+    
+	protected String fName;
+	protected String fValue;
+    private IBundle fBundle;
+    
+    public ManifestHeader(String name, String value) {
+        fName = name;
+        fValue = value;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
@@ -75,5 +83,13 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
+    
+    public void setBundle(IBundle bundle) {
+        fBundle = bundle;
+    }
+    
+    public IBundle getBundle() {
+        return fBundle;
+    }
 	
 }

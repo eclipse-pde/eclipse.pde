@@ -13,8 +13,10 @@ package org.eclipse.pde.internal.ui.model.bundle;
 import java.util.*;
 import java.util.jar.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.model.*;
+import org.osgi.framework.*;
 
 public class Bundle implements IBundle {
 	
@@ -34,9 +36,8 @@ public class Bundle implements IBundle {
 		Iterator iter = attributes.keySet().iterator();
 		while (iter.hasNext()) {
 			Attributes.Name key = (Attributes.Name) iter.next();
-			ManifestHeader header = new ManifestHeader();
-			header.setName(key.toString());
-			header.setValue((String)attributes.get(key));
+            String value = (String)attributes.get(key);
+			ManifestHeader header = createHeader(key.toString(), value);
 			fDocumentHeaders.put(key.toString(), header);
 		}
 		adjustOffsets(fModel.getDocument());		
@@ -103,14 +104,25 @@ public class Bundle implements IBundle {
 		ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
         String old = header == null ? null : header.getValue();
 		if (header == null) {
-			header = new ManifestHeader();
-		}
-		header.setName(key);
-		header.setValue(value);
+			header = createHeader(key, value);
+		} else {
+            header.setValue(value);
+        }
 		fDocumentHeaders.put(key, header);
 		
 		fModel.fireModelObjectChanged(header, key, old, value);
 	}
+    
+    private ManifestHeader createHeader(String key, String value) {
+        ManifestHeader header = null;
+        if (key.equals(Constants.EXPORT_PACKAGE) || key.equals(ICoreConstants.PROVIDE_PACKAGE)) {
+            header = new ExportPackageHeader(key, value);
+        } else {
+            header = new ManifestHeader(key, value);
+        }
+        header.setBundle(this);
+        return header;
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
 	 */
@@ -118,6 +130,10 @@ public class Bundle implements IBundle {
 		ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
 		return (header != null) ? header.getValue() : null;
 	}
+    
+    public ManifestHeader getManifestHeader(String key) {
+        return (ManifestHeader)fDocumentHeaders.get(key);
+    }
 	
 	public Dictionary getHeaders() {
 		return fDocumentHeaders;

@@ -11,34 +11,50 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.bundle.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.osgi.framework.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 public class ExportPackageSection extends TableSection implements IModelChangedListener {
 
@@ -48,27 +64,15 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     
 	class ExportPackageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
-			if (fPackages == null)
-				createExportObjects();
-			return fPackages.values().toArray();
+			if (fHeader == null) {
+                //TODO bad cast
+                Bundle bundle = (Bundle)getBundle();
+                fHeader = (ExportPackageHeader)bundle.getManifestHeader(getExportedPackageHeader());
+            }
+            return fHeader == null ? new Object[0] : fHeader.getPackages();
 		}
-
-		private void createExportObjects() {
-			fPackages = new TreeMap();
-			try {
-				String value = getBundle().getHeader(getExportedPackageHeader());
-				if (value != null) {
-					ManifestElement[] elements = ManifestElement.parseHeader(Constants.IMPORT_PACKAGE, value);
-					for (int i = 0; i < elements.length; i++) {
-						ExportPackageObject p = new ExportPackageObject(elements[i], getVersionAttribute());
-                        fPackages.put(p.getName(), p);
-					}
-				}
-			} catch (BundleException e) {
-			}
-        }
-	}
-
+    }
+    
 	class ExportPackageLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
@@ -100,10 +104,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 
     private TableViewer fPackageViewer;
 
-    private Map fPackages;
     private Action fAddAction;
     private Action fRemoveAction;
     private Action fPropertiesAction;
+    private ExportPackageHeader fHeader;
 
 	public ExportPackageSection(PDEFormPage page, Composite parent) {
 		super(
@@ -222,21 +226,14 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         dialog.setTitle(exportObject.getName());
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
              exportObject.setVersion(dialog.getVersion());
-             writeExportPackageHeader();
          }
     }
 
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer.getSelection();
-		removeExportPackages(ssel.toArray());
-	}
-
-	private void removeExportPackages(Object[] removed) {
-		for (int k = 0; k < removed.length; k++) {
-			ExportPackageObject p = (ExportPackageObject) removed[k];
-			fPackages.remove(p.getName());
-		}
-		writeExportPackageHeader();
+		Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+        for (int i = 0; i < removed.length; i++) {
+            fHeader.removePackage((ExportPackageObject) removed[i]);
+        }
 	}
 
 	private void handleAdd() {
@@ -247,16 +244,12 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                 ILabelProvider labelProvider = new JavaElementLabelProvider();
                 PackageSelectionDialog dialog = new PackageSelectionDialog(
                         PDEPlugin.getActiveWorkbenchShell(),
-                        labelProvider, JavaCore.create(project), getNames());
+                        labelProvider, JavaCore.create(project), fHeader.getPackageNames());
                 if (dialog.open() == PackageSelectionDialog.OK) {
                     Object[] selected = dialog.getResult();
                     for (int i = 0; i < selected.length; i++) {
                         IPackageFragment candidate = (IPackageFragment) selected[i];
-                        ExportPackageObject p = new ExportPackageObject(candidate, getVersionAttribute());
-                        fPackages.put(p.getName(), p);
-                    }
-                    if (selected.length > 0) {
-                        writeExportPackageHeader();
+                        fHeader.addPackage(new ExportPackageObject(candidate, getVersionAttribute()));
                     }
                 }
                 labelProvider.dispose();
@@ -265,32 +258,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         }
 	}
     
-    private Vector getNames() {
-        Vector vector = new Vector(fPackages.size());
-        Iterator iter = fPackages.keySet().iterator();
-        for (int i = 0; iter.hasNext(); i++) {
-            vector.add(iter.next().toString());
-        }
-        return vector;
-    }
-
-	public void writeExportPackageHeader() {
-		StringBuffer buffer = new StringBuffer();
-		if (fPackages != null) {
-            Iterator iter = fPackages.values().iterator();
-			while (iter.hasNext()) {
-				buffer.append(((ExportPackageObject)iter.next()).write());
-				if (iter.hasNext()) {
-					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-			}
-		}
-		getBundle().setHeader(getExportedPackageHeader(), buffer.toString());
-	}
-
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-            fPackages = null;
+            fHeader = null;
 			markStale();
 			return;
 		}
