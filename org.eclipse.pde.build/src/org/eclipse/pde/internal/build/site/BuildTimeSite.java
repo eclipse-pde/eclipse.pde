@@ -79,7 +79,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 	}
 
 	private String displayVersionConstraint(VersionConstraint constraint) {
-		Version versionSpec = constraint.getVersionSpecification();
+		VersionRange versionSpec = constraint.getVersionRange();
 		if (versionSpec == null)
 			return constraint.getName();
 		return constraint.getName() + '_' + versionSpec;
