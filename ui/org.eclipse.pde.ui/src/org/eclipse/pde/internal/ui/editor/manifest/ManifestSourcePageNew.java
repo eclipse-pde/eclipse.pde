@@ -139,8 +139,6 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 				}
 			}
 		}
-		
-		resetHighlightRange();
 	}
 	
 	public void setHighlightRange(ISourceRange sourceRange, String nodeName, boolean moveCursor) {
