@@ -182,7 +182,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 			&& ((IEditable) model).isDirty();
 	}
 	protected boolean isModelCorrect(Object model) {
-		return model != null ? ((IFeatureModel) model).isLoaded() : false;
+		return model != null ? ((IFeatureModel) model).isValid() : false;
 	}
 	protected boolean isValidContentType(IEditorInput input) {
 		String name = input.getName().toLowerCase();

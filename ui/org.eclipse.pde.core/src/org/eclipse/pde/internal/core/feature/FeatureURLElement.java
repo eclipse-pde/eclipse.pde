@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import java.net.*;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
@@ -40,8 +41,9 @@ public class FeatureURLElement
 	public int getSiteType() {
 		return siteType;
 	}
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
+		bindSourceLocation(node, lineTable);
 		String urlName = getNodeAttribute(node, "url");
 		try {
 			url = new URL(urlName);

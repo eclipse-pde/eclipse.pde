@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -78,14 +79,16 @@ public class FeatureImport
 		ws = null;
 	}
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
+		bindSourceLocation(node, lineTable);
 		this.id = getNodeAttribute(node, "plugin");
 		if (id != null)
 			type = PLUGIN;
 		else {
 			this.id = getNodeAttribute(node, "feature");
-			type = FEATURE;
+			if (id != null)
+				type = FEATURE;
 		}
 		this.os = getNodeAttribute(node, "os");
 		this.ws = getNodeAttribute(node, "ws");
@@ -107,11 +110,14 @@ public class FeatureImport
 				idMatch = PREFIX;
 		}
 		patch = getBooleanAttribute(node, "patch");
-		if (type == PLUGIN)
-			setPlugin(PDECore.getDefault().findPlugin(id, getVersion(), match));
-		else
-			setFeature(
-				PDECore.getDefault().findFeature(id, getVersion(), match));
+		if (id != null) {
+			if (type == PLUGIN)
+				setPlugin(
+					PDECore.getDefault().findPlugin(id, getVersion(), match));
+			else
+				setFeature(
+					PDECore.getDefault().findFeature(id, getVersion(), match));
+		}
 	}
 
 	public void loadFrom(IFeature feature) {

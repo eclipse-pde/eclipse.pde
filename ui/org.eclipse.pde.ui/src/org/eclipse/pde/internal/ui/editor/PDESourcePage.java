@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -63,13 +64,13 @@ public abstract class PDESourcePage
 	if (errorMode || isModelNeedsUpdating()) {
 			boolean cleanModel = getEditor().updateModel();
 			if (cleanModel)
-				cleanModel = validateModelSemantics();
-			if (cleanModel == false) {
+				setModelNeedsUpdating(false);
+			boolean valid = validateModelSemantics();
+			if (cleanModel == false || valid==false) {
 				warnErrorsInSource();
 				errorMode = true;
 				return false;
 			}
-			modelNeedsUpdating = false;
 			errorMode = false;
 		}
 		//getSite().setSelectionProvider(getEditor());
@@ -77,7 +78,8 @@ public abstract class PDESourcePage
 	}
 	
 	protected boolean validateModelSemantics() {
-		return true;
+		IModel model = (IModel)getEditor().getModel();
+		return model!=null && model.isValid();
 	}
 
 	public void becomesVisible(IFormPage oldPage) {

@@ -29,6 +29,7 @@ public abstract class PluginBase
 	protected Vector requiresComments;
 	private String providerName;
 	private String version;
+	private boolean valid;
 
 	public PluginBase() {
 	}
@@ -134,6 +135,7 @@ public abstract class PluginBase
 		addArrayToVector(extensionPoints, srcPluginBase.getExtensionPoints());
 		addArrayToVector(imports, srcPluginBase.getImports());
 		addArrayToVector(libraries, srcPluginBase.getLibraries());
+		valid = hasRequiredAttributes();
 	}
 
 	private void addArrayToVector(Vector vector, Object[] array) {
@@ -161,6 +163,7 @@ public abstract class PluginBase
 				processChild(child, lineTable);
 			}
 		}
+		valid = hasRequiredAttributes();
 	}
 	void loadExtensionPoints(ExtensionPointModel[] extensionPointModels) {
 		if (extensionPointModels == null)
@@ -318,6 +321,7 @@ public abstract class PluginBase
 			this.name = this.id;
 			this.version = "0.0.0";
 		}
+		valid=false;
 	}
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
@@ -379,5 +383,35 @@ public abstract class PluginBase
 			obj.write(indent + "   ", writer);
 		}
 		writer.println(indent + "</" + tag + ">");
+	}
+	public boolean isValid() {
+		return valid;
+	}
+	protected boolean hasRequiredAttributes(){
+		if (name==null) return false;
+		if (id==null) return false;
+		if (version==null) return false;
+
+		// validate libraries
+		for (int i = 0; i < libraries.size(); i++) {
+			IPluginLibrary library = (IPluginLibrary)libraries.get(i);
+			if (!library.isValid()) return false;
+		}
+		// validate imports
+		for (int i = 0; i < imports.size(); i++) {
+			IPluginImport iimport = (IPluginImport)imports.get(i);
+			if (!iimport.isValid()) return false;
+		}
+		// validate extensions
+		for (int i = 0; i < extensions.size(); i++) {
+			IPluginExtension extension = (IPluginExtension)extensions.get(i);
+			if (!extension.isValid()) return false;
+		}
+		// validate extension points
+		for (int i = 0; i < extensionPoints.size(); i++) {
+			IPluginExtensionPoint expoint = (IPluginExtensionPoint)extensionPoints.get(i);
+			if (!expoint.isValid()) return false;
+		}
+		return true;
 	}
 }

@@ -64,6 +64,11 @@ public class TargetPlatformPreferencePage
 		preferences = PDECore.getDefault().getPluginPreferences();
 		pluginsBlock = new ExternalPluginsBlock(this);
 	}
+	
+	public void dispose() {
+		pluginsBlock.dispose();
+		super.dispose();
+	}
 
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);

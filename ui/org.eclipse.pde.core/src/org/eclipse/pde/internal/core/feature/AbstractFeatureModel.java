@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
@@ -73,7 +74,7 @@ public abstract class AbstractFeatureModel
 				|| errorHandler.getFatalErrorCount() > 0) {
 				throwParseErrorsException();
 			}
-			processDocument(parser.getDocument());
+			processDocument(parser.getDocument(), parser.getLineTable());
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
@@ -82,8 +83,14 @@ public abstract class AbstractFeatureModel
 			PDECore.logException(e);
 		}
 	}
+	
+	public boolean isValid() {
+		if (!isLoaded()) return false;
+		IFeature feature = getFeature();
+		return feature!=null && feature.isValid();
+	}
 
-	private void processDocument(Document doc) {
+	private void processDocument(Document doc, Hashtable lineTable) {
 		Node rootNode = doc.getDocumentElement();
 		if (feature == null) {
 			feature = new Feature();
@@ -91,7 +98,7 @@ public abstract class AbstractFeatureModel
 		} else {
 			feature.reset();
 		}
-		feature.parse(rootNode);
+		feature.parse(rootNode, lineTable);
 	}
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {

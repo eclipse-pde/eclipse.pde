@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +45,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		updates.copyInto(result);
 		return result;
 	}
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -59,7 +60,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 				if (urlType != -1) {
 					IFeatureURLElement element =
 						getModel().getFactory().createURLElement(this, urlType);
-					((FeatureURLElement) element).parse(child);
+					((FeatureURLElement) element).parse(child, lineTable);
 					if (urlType == IFeatureURLElement.UPDATE) {
 						((FeatureURLElement)element).setInTheModel(true);
 						updates.add(element);

@@ -267,6 +267,25 @@ public class Site extends SiteObject implements ISite {
 		writeChildren(indent2, categoryDefs, writer);
 		writer.println(indent + "</site>");
 	}
+	
+	public boolean isValid() {
+		for (int i=0; i<features.size(); i++) {
+			ISiteFeature feature = (ISiteFeature)features.get(i);
+			if (!feature.isValid()) return false;
+		}
+		for (int i=0; i<archives.size(); i++) {
+			ISiteArchive archive = (ISiteArchive)archives.get(i);
+			if (!archive.isValid()) return false;
+		}
+		for (int i=0; i<features.size(); i++) {
+			ISiteCategoryDefinition def = (ISiteCategoryDefinition)categoryDefs.get(i);
+			if (!def.isValid()) return false;
+		}
+		return true;
+	}
+	
+	
+	
 	private void writeChildren(
 		String indent,
 		Vector children,

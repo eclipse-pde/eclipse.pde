@@ -198,7 +198,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		}
 	}
 	protected boolean isModelCorrect(Object model) {
-		return model != null ? ((ISiteModel) model).isLoaded() : false;
+		return model != null ? ((ISiteModel) model).isValid() : false;
 	}
 	protected boolean isModelDirty(Object model) {
 		return model != null

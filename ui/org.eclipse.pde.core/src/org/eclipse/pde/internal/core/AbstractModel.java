@@ -91,6 +91,10 @@ public abstract class AbstractModel
 		return true;
 		//	return  (localFile.lastModified()==getTimeStamp());
 	}
+	
+	public boolean isValid() {
+		return !isDisposed() && isLoaded();
+	}
 
 	public final long getTimeStamp() {
 		return timeStamp;

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import java.net.*;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
@@ -89,7 +90,8 @@ public class FeatureInstallHandler
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
+		bindSourceLocation(node, lineTable);
 		String urlName = getNodeAttribute(node, "url");
 		if (urlName != null) {
 			try {

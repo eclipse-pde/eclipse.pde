@@ -37,6 +37,10 @@ public class SiteCategoryDefinition
 	public String getName() {
 		return name;
 	}
+	
+	public boolean isValid() {
+		return name!=null && getLabel()!=null;
+	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setName(java.lang.String)

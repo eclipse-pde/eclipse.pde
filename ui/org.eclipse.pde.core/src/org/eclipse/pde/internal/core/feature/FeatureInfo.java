@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
@@ -87,7 +88,8 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		this.description = description;
 		firePropertyChanged(P_DESC, oldValue, description);
 	}
-	protected void parse(Node node) {
+	protected void parse(Node node, Hashtable lineTable) {
+		bindSourceLocation(node, lineTable);
 		url = getNodeAttribute(node, "url");
 		Node firstChild = node.getFirstChild();
 		if (firstChild!=null)

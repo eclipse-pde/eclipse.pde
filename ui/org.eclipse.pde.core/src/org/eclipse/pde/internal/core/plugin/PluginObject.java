@@ -32,6 +32,9 @@ public abstract class PluginObject
 
 	public PluginObject() {
 	}
+	public boolean isValid() {
+		return true;
+	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
 			throwCoreException("Illegal attempt to change read-only plug-in manifest model");

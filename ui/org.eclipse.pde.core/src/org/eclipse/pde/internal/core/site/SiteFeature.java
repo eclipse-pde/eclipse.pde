@@ -31,6 +31,15 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private Vector categories = new Vector();
 	private String type;
 	private String url;
+	
+	public boolean isValid() {
+		if (url==null) return false;
+		for (int i=0; i<categories.size(); i++) {
+			ISiteCategory category = (ISiteCategory)categories.get(i);
+			if (!category.isValid()) return false;
+		}
+		return true;
+	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)

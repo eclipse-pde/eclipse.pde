@@ -29,6 +29,10 @@ public class PluginImport
 
 	public PluginImport() {
 	}
+	
+	public boolean isValid() {
+		return getId()!=null;
+	}
 
 	public int getMatch() {
 		return match;

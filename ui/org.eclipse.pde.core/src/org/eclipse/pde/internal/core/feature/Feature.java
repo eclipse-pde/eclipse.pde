@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -40,6 +41,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String colocationAffinity;
 	private String application;
 	private String plugin;
+	private boolean valid;
 	
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
@@ -142,8 +144,8 @@ public class Feature extends VersionableObject implements IFeature {
 		return exclusive;
 	}	
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
 		providerName = getNodeAttribute(node, "provider-name");
 		plugin = getNodeAttribute(node, "plugin");
 		os = getNodeAttribute(node, "os");
@@ -165,58 +167,59 @@ public class Feature extends VersionableObject implements IFeature {
 					IFeatureInfo info =
 						getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
+					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_DESCRIPTION] = info;
 				} else if (tag.equals("license")) {
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
+					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_LICENSE] = info;
 				} else if (tag.equals("copyright")) {
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
+					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_COPYRIGHT] = info;
 				} else if (tag.equals("url")) {
 					if (url == null) {
 						url = getModel().getFactory().createURL();
 						((FeatureURL) url).setInTheModel(true);
-						((FeatureURL) url).parse(child);
+						((FeatureURL) url).parse(child, lineTable);
 					}
 				} else if (tag.equals("requires")) {
-					parseRequires(child);
+					parseRequires(child, lineTable);
 				} else if (tag.equals("install-handler")) {
 					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
-					((FeatureInstallHandler) handler).parse(child);
+					((FeatureInstallHandler) handler).parse(child, lineTable);
 					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.handler = handler;
 				} else if (tag.equals("plugin")) {
 					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
-					((FeaturePlugin) plugin).parse(child);
+					((FeaturePlugin) plugin).parse(child, lineTable);
 					((FeaturePlugin) plugin).setInTheModel(true);
 					plugins.add(plugin);
 				} else if (tag.equals("data")) {
 					IFeatureData newData = getModel().getFactory().createData();
-					((FeatureData) newData).parse(child);
+					((FeatureData) newData).parse(child, lineTable);
 					((FeatureData) newData).setInTheModel(true);
 					data.add(newData);
 				} else if (tag.equals("includes")) {
 					IFeatureChild newChild = getModel().getFactory().createChild();
-					((FeatureChild) newChild).parse(child);
+					((FeatureChild) newChild).parse(child, lineTable);
 					((FeatureChild) newChild).setInTheModel(true);
 					this.children.add(newChild);
 				}
 			}
 		}
+		valid = hasRequiredAttributes();
 	}
-	private void parseRequires(Node node) {
+	private void parseRequires(Node node, Hashtable lineTable) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equalsIgnoreCase("import")) {
 					IFeatureImport iimport = getModel().getFactory().createImport();
-					((FeatureImport) iimport).parse(child);
+					((FeatureImport) iimport).parse(child, lineTable);
 					((FeatureImport) iimport).setInTheModel(true);
 					imports.add(iimport);
 				}
@@ -564,6 +567,35 @@ public class Feature extends VersionableObject implements IFeature {
 		exclusive = false;
 		colocationAffinity = null;
 		application = null;
+		valid=false;
+	}
+	
+	public boolean isValid() {
+		return valid;
+	}
+
+	private boolean hasRequiredAttributes() {
+		// Verify that all the required attributes are
+		// defined.
+		if (id==null) return false;
+		if (version==null) return false;
+
+		for (int i = 0; i < children.size(); i++) {
+			IFeatureChild child = (IFeatureChild) children.elementAt(i);
+			if (child.getId()==null || child.getVersion()==null)
+				return false;
+		}
+		for (int i = 0; i < plugins.size(); i++) {
+			IFeaturePlugin plugin = (IFeaturePlugin) plugins.elementAt(i);
+			if (plugin.getId()==null || plugin.getVersion()==null)
+				return false;
+			
+		}
+		for (int i = 0; i < data.size(); i++) {
+			IFeatureData entry = (IFeatureData) data.elementAt(i);
+			if (entry.getId()==null) return false;
+		}
+		return true;
 	}
 
 	public void write(String indent, PrintWriter writer) {

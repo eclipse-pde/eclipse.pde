@@ -27,6 +27,10 @@ import org.w3c.dom.Node;
 public class SiteArchive extends SiteObject implements ISiteArchive {
 	private String url;
 	private String path;
+	
+	public boolean isValid() {
+		return url!=null && path!=null;
+	}
 
 	public String getURL() {
 		return url;

@@ -44,7 +44,9 @@ public class SchemaRegistry
 		for (int i=0; i<points.length; i++) {
 			IPluginExtensionPoint point = points[i];
 			IPath path = project.getFullPath();
-			path = path.append(point.getSchema());
+			String schemaArg = point.getSchema();
+			if (schemaArg==null) continue;
+			path = path.append(schemaArg);
 			IFile schemaFile = file.getWorkspace().getRoot().getFile(path);
 			if (file.equals(schemaFile)) {
 				// The extension point is referencing this
@@ -216,6 +218,7 @@ public class SchemaRegistry
 	}
 
 	private Object getSchemaFile(IPluginExtensionPoint point) {
+		if (point.getSchema()==null) return null;
 		IPluginModelBase model = point.getModel();
 		IFile pluginFile = (IFile) model.getUnderlyingResource();
 		IPath path = pluginFile.getProject().getFullPath();

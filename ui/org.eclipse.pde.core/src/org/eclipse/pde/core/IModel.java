@@ -145,6 +145,24 @@ public interface IModel extends IAdaptable {
 	 * </p>
 	 */
 	boolean isInSync();
+	
+	/**
+	 * Tests if this model valid. When models
+	 * are loaded from the file, they may pass the
+	 * syntax error checking and load all the model objects.
+	 * However, some of the objects may contain invalid
+	 * values that make the model unusable.
+	 * This method should return <samp>true</samp> only
+	 * if the model can be safely used in all
+	 * computations.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	boolean isValid();	
 
 	/**
 	 * Returns the last modification time stamp.

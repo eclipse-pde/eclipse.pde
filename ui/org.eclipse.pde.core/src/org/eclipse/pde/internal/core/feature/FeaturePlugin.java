@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
@@ -62,13 +63,13 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		this.fragment = fragment;
 	}
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
 		version = getNodeAttribute(node, "version");
 		String f = getNodeAttribute(node, "fragment");
 		if (f != null && f.equalsIgnoreCase("true"))
 			fragment = true;
-		hookWithWorkspace();
+		if (id!=null && version!=null) hookWithWorkspace();
 	}
 
 	public void hookWithWorkspace() {

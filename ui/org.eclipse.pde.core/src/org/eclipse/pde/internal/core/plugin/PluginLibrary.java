@@ -27,6 +27,10 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public PluginLibrary() {
 	}
+	
+	public boolean isValid() {
+		return name!=null;
+	}
 	public String[] getContentFilters() {
 		return contentFilters;
 	}

@@ -59,6 +59,10 @@ public abstract class AbstractSiteModel
 	public boolean isEnabled() {
 		return enabled;
 	}
+	public boolean isValid() {
+		if (!isLoaded() || site==null) return false;
+		return site.isValid();
+	}
 	public void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		SourceDOMParser parser = new SourceDOMParser();

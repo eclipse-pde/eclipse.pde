@@ -55,4 +55,9 @@ public ISiteObject getParent();
  * @param label the new label
  */
 void setLabel(String label) throws CoreException;
+/**
+ * Returns true if this object as all the
+ * required attributes set, false otherwise.
+ */
+boolean isValid();
 }

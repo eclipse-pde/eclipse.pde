@@ -295,7 +295,7 @@ public class ManifestEditor
 		return false;
 	}
 	protected boolean isModelCorrect(Object model) {
-		return model != null ? ((IPluginModelBase) model).isLoaded() : false;
+		return model != null ? ((IPluginModelBase) model).isValid() : false;
 	}
 	protected boolean isModelDirty(Object model) {
 		return model != null

@@ -25,124 +25,133 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	private String point;
 	private transient ISchema schema;
 
-
-public PluginExtension() {
-}
-public String getPoint() {
-	return point;
-}
-public ISchema getSchema() {
-	if (schema == null) {
-		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-		schema = registry.getSchema(point);
-	} else
-		if (schema.isDisposed()) {
+	public PluginExtension() {
+	}
+	public String getPoint() {
+		return point;
+	}
+	
+	public boolean isValid() {
+		return point!=null;
+	}
+	
+	public ISchema getSchema() {
+		if (schema == null) {
+			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+			schema = registry.getSchema(point);
+		} else if (schema.isDisposed()) {
 			schema = null;
 		}
-	return schema;
-}
-void load(ExtensionModel extensionModel) {
-	this.id = extensionModel.getId();
-	this.name = extensionModel.getName();
-	this.point = extensionModel.getExtensionPoint();
+		return schema;
+	}
+	void load(ExtensionModel extensionModel) {
+		this.id = extensionModel.getId();
+		this.name = extensionModel.getName();
+		this.point = extensionModel.getExtensionPoint();
 
-	ConfigurationElementModel[] childModels = extensionModel.getSubElements();
-	if (childModels != null) {
-		for (int i = 0; i < childModels.length; i++) {
-			ConfigurationElementModel childModel = childModels[i];
-			PluginElement childElement = new PluginElement();
-			childElement.setModel(getModel());
-			childElement.setParent(this);
-			this.children.add(childElement);
-			childElement.load(childModel);
+		ConfigurationElementModel[] childModels =
+			extensionModel.getSubElements();
+		if (childModels != null) {
+			for (int i = 0; i < childModels.length; i++) {
+				ConfigurationElementModel childModel = childModels[i];
+				PluginElement childElement = new PluginElement();
+				childElement.setModel(getModel());
+				childElement.setParent(this);
+				this.children.add(childElement);
+				childElement.load(childModel);
+			}
 		}
+		int line = extensionModel.getStartLine();
+		range = new int[] { line, line };
 	}
-	int line = extensionModel.getStartLine();
-	range = new int [] { line, line };
-}
-void load(Node node, Hashtable lineTable) {
-	this.id = getNodeAttribute(node, "id");
-	this.name = getNodeAttribute(node, "name");
-	this.point = getNodeAttribute(node, "point");
-	NodeList children = node.getChildNodes();
-	for (int i = 0; i < children.getLength(); i++) {
-		Node child = children.item(i);
-		if (child.getNodeType() == Node.ELEMENT_NODE) {
-			PluginElement childElement = new PluginElement();
-			childElement.setModel(getModel());
-			childElement.setInTheModel(true);
-			childElement.setParent(this);
-			this.children.add(childElement);
-			childElement.load(child, lineTable);
+	void load(Node node, Hashtable lineTable) {
+		this.id = getNodeAttribute(node, "id");
+		this.name = getNodeAttribute(node, "name");
+		this.point = getNodeAttribute(node, "point");
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				PluginElement childElement = new PluginElement();
+				childElement.setModel(getModel());
+				childElement.setInTheModel(true);
+				childElement.setParent(this);
+				this.children.add(childElement);
+				childElement.load(child, lineTable);
+			}
 		}
+		addComments(node);
+		bindSourceLocation(node, lineTable);
 	}
-	addComments(node);
-	bindSourceLocation(node, lineTable);
-}
 
-public boolean equals(Object obj) {
-	if (obj==this) return true;
-	if (obj==null) return false;
-	if (obj instanceof IPluginExtension) {
-		IPluginExtension target = (IPluginExtension)obj;
-		// Objects from the same model must be
-		// binary equal
-		if (target.getModel().equals(getModel()))
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj == null)
 			return false;
-		if (!stringEqualWithNull(target.getId(), getId()))
-			return false;
-		if (!stringEqualWithNull(target.getName(), getName()))
-			return false;
-		if (!stringEqualWithNull(target.getPoint(), getPoint()))
-			return false;
-		// Children
-		return super.equals(obj);
+		if (obj instanceof IPluginExtension) {
+			IPluginExtension target = (IPluginExtension) obj;
+			// Objects from the same model must be
+			// binary equal
+			if (target.getModel().equals(getModel()))
+				return false;
+			if (!stringEqualWithNull(target.getId(), getId()))
+				return false;
+			if (!stringEqualWithNull(target.getName(), getName()))
+				return false;
+			if (!stringEqualWithNull(target.getPoint(), getPoint()))
+				return false;
+			// Children
+			return super.equals(obj);
+		}
+		return false;
 	}
-	return false;
-}
 
-public void setPoint(String point) throws CoreException {
-	ensureModelEditable();
-	String oldValue = this.point;
-	this.point = point;
-	firePropertyChanged(P_POINT, oldValue, point);
-}
+	public void setPoint(String point) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.point;
+		this.point = point;
+		firePropertyChanged(P_POINT, oldValue, point);
+	}
 
-public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-	if (name.equals(P_POINT)) {
-		setPoint(newValue!=null ? newValue.toString():null);
-		return;
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_POINT)) {
+			setPoint(newValue != null ? newValue.toString() : null);
+			return;
+		}
+		super.restoreProperty(name, oldValue, newValue);
 	}
-	super.restoreProperty(name, oldValue, newValue);
-}
 
-public String toString() {
-	if (getName()!=null) return getName();
-	return getPoint();
-}
-public void write(String indent, PrintWriter writer) {
-	writeComments(writer);
-	writer.print(indent);
-	writer.print("<extension");
-	String attIndent = indent + PluginElement.ATTRIBUTE_SHIFT;
-	if (getId() != null) {
-		writer.println();
-		writer.print(attIndent + "id=\"" + getId() + "\"");
+	public String toString() {
+		if (getName() != null)
+			return getName();
+		return getPoint();
 	}
-	if (getName() != null) {
-		writer.println();
-		writer.print(attIndent + "name=\"" + getWritableString(getName()) + "\"");
+	public void write(String indent, PrintWriter writer) {
+		writeComments(writer);
+		writer.print(indent);
+		writer.print("<extension");
+		String attIndent = indent + PluginElement.ATTRIBUTE_SHIFT;
+		if (getId() != null) {
+			writer.println();
+			writer.print(attIndent + "id=\"" + getId() + "\"");
+		}
+		if (getName() != null) {
+			writer.println();
+			writer.print(
+				attIndent + "name=\"" + getWritableString(getName()) + "\"");
+		}
+		if (getPoint() != null) {
+			writer.println();
+			writer.print(attIndent + "point=\"" + getPoint() + "\"");
+		}
+		writer.println(">");
+		IPluginObject[] children = getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IPluginElement child = (IPluginElement) children[i];
+			child.write(indent + PluginElement.ELEMENT_SHIFT, writer);
+		}
+		writer.println(indent + "</extension>");
 	}
-	if (getPoint() != null) {
-		writer.println();
-		writer.print(attIndent + "point=\"" + getPoint() + "\"");
-	}
-	writer.println(">");
-	IPluginObject [] children = getChildren();
-	for (int i=0; i<children.length; i++) {
-		IPluginElement child = (IPluginElement) children[i];
-		child.write(indent + PluginElement.ELEMENT_SHIFT, writer);
-	}
-	writer.println(indent + "</extension>");
-}
 }

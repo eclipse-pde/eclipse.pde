@@ -34,6 +34,11 @@ public class Fragment extends PluginBase implements IFragment {
 	public int getRule() {
 		return rule;
 	}
+	
+	protected boolean hasRequiredAttributes() {
+		if (pluginId==null || pluginVersion==null) return false;
+		return super.hasRequiredAttributes();
+	}
 	void load(PluginModel pm) {
 		PluginFragmentModel pfm = (PluginFragmentModel) pm;
 		this.pluginId = pfm.getPluginId();

@@ -25,6 +25,10 @@ public class IdentifiableObject extends SiteObject implements IIdentifiable {
 		super.parse(node);
 		id = getNodeAttribute(node, "id");
 	}
+	
+	public boolean isValid() {
+		return id!=null;
+	}
 
 	public void setId(String id) throws CoreException {
 		ensureModelEditable();

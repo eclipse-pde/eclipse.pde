@@ -103,5 +103,8 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		}
 		writer.println(indent+"</description>");
 	}
+	public boolean isValid() {
+		return true;
+	}
 
 }

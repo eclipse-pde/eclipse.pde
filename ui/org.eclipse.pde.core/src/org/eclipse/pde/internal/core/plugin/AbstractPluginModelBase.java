@@ -254,4 +254,10 @@ public abstract class AbstractPluginModelBase
 		library.setParent(getPluginBase());
 		return library;
 	}
+	
+	public boolean isValid() {
+		if (!isLoaded()) return false;
+		if (pluginBase==null) return false;
+		return pluginBase.isValid();	
+	}
 }

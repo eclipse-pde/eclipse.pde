@@ -33,6 +33,10 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		return name;
 	}
 	
+	public boolean isValid() {
+		return name!=null;
+	}
+	
 	protected void parse(Node node) {
 		name = getNodeAttribute(node, "name");
 	}

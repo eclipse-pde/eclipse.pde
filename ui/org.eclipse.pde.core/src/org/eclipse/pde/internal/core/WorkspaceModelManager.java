@@ -871,8 +871,9 @@ public class WorkspaceModelManager
 			return false;
 		if (project.isOpen() == false)
 			return false;
-		return hasRootObject(model);
+		return hasRootObject(model) && model.isValid();
 	}
+	
 	private boolean hasRootObject(IModel model) {
 		if (model instanceof IPluginModelBase)
 			return hasRootObject((IPluginModelBase) model);

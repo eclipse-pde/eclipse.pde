@@ -30,7 +30,8 @@ public WorkspaceFeatureModel(IFile file) {
 	setFile(file);
 }
 public void fireModelChanged(IModelChangedEvent event) {
-	dirty = true;
+	if (event.getChangeType()!=IModelChangedEvent.WORLD_CHANGED)
+		dirty = true;
 	super.fireModelChanged(event);
 }
 

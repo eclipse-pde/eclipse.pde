@@ -138,4 +138,16 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * </p>
 	 */
 	void setName(String name) throws CoreException;
+	/**
+	 * Returns <samp>true</samp> if this object has all
+	 * the required attributes set, <samp>false</samp> otherwise.
+	 * @return <samp>true</samp> if all the required attributes are set.
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	boolean isValid();
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IVersionable;
 import org.w3c.dom.Node;
@@ -23,8 +25,8 @@ public class VersionableObject
 		return version;
 	}
 
-	protected void parse(Node node) {
-		super.parse(node);
+	protected void parse(Node node, Hashtable lineTable) {
+		super.parse(node, lineTable);
 		version = getNodeAttribute(node, "version");
 	}
 

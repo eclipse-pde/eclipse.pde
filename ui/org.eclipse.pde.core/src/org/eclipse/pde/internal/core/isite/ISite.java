@@ -41,4 +41,5 @@ public interface ISite extends ISiteObject {
 	ISiteFeature[] getFeatures();
 	ISiteArchive[] getArchives();
 	ISiteCategoryDefinition[] getCategoryDefinitions();
+	boolean isValid();
 }
