@@ -212,7 +212,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ   = create(PATH_WIZBAN, "newsiteprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINT_SCHEMA_WIZ = create(PATH_WIZBAN, "schema_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORM_WIZ     = create(PATH_WIZBAN, "form_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extplug_wiz.gif"); //$NON-NLS-1$
@@ -221,7 +220,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployfeat_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN2BUNDLE_WIZ  = create(PATH_WIZBAN, "plugin2bundle_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif"); //$NON-NLS-1$
 	
 	
 	/**
@@ -239,8 +237,6 @@ public class PDEPluginImages {
 /* package */
 private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
-	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
-	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
 	manage(IMG_ATT_CLASS_OBJ,DESC_ATT_CLASS_OBJ);
 	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
 	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);

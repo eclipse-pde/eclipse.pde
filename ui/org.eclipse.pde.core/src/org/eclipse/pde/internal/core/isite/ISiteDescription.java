@@ -12,10 +12,6 @@ package org.eclipse.pde.internal.core.isite;
 
 import org.eclipse.core.runtime.*;
 
-/**
- * @author dejan
- *
- */
 public interface ISiteDescription extends ISiteObject {
 	String P_URL = "url"; //$NON-NLS-1$
 	String P_TEXT = "text"; //$NON-NLS-1$

@@ -11,35 +11,48 @@
 package org.eclipse.pde.internal.core.isite;
 
 import org.eclipse.core.runtime.*;
+
 /**
  * The top-level model object of the Eclipse update site model.
  */
 public interface ISite extends ISiteObject {
 	String P_URL = "URL"; //$NON-NLS-1$
+
 	String P_TYPE = "type"; //$NON-NLS-1$
+
 	String P_DESCRIPTION = "description"; //$NON-NLS-1$
-	
+
 	void setType(String type) throws CoreException;
+
 	String getType();
-	
+
 	void setURL(String url) throws CoreException;
+
 	String getURL();
 
 	ISiteDescription getDescription();
+
 	void setDescription(ISiteDescription description) throws CoreException;
 
 	void addFeatures(ISiteFeature[] features) throws CoreException;
+
 	void addArchives(ISiteArchive[] archives) throws CoreException;
+
 	void addCategoryDefinitions(ISiteCategoryDefinition[] defs)
-		throws CoreException;
+			throws CoreException;
 
 	void removeFeatures(ISiteFeature[] features) throws CoreException;
+
 	void removeArchives(ISiteArchive[] archives) throws CoreException;
+
 	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs)
-		throws CoreException;
+			throws CoreException;
 
 	ISiteFeature[] getFeatures();
+
 	ISiteArchive[] getArchives();
+
 	ISiteCategoryDefinition[] getCategoryDefinitions();
+
 	boolean isValid();
 }

@@ -11,7 +11,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.progress.*;
 
 
 public class UnusedDependenciesJob extends Job {
@@ -68,11 +67,6 @@ public class UnusedDependenciesJob extends Job {
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEPlugin.getResourceString("UnusedDependenciesJob.viewResults"), null); //$NON-NLS-1$
 	}
 	
-	protected boolean isModal() {
-		Boolean isModal = (Boolean)getProperty(IProgressConstants.PROPERTY_IN_DIALOG);
-		return (isModal == null) ? false : isModal.booleanValue();
-	}
-
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {
 		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(plugin);
 		if (PluginJavaSearchUtil.provideExtensionPoint(fModel, plugins))
