@@ -67,11 +67,11 @@ public class PluginModelManager implements IAdaptable {
 		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
 		if (prop != null) {
 			String property = prop.getProperty("eclipse.buildId"); //$NON-NLS-1$
-			if (property != null) {
+			if (property != null && property.length() >= 10) {
 				try {
 					if (Integer.parseInt(property.substring(1, 9)) < 20050119)
 						return ICoreConstants.TARGET30;
-				} catch (NumberFormatException e) {
+				} catch (RuntimeException e) {
 				}
 			}
 		}
