@@ -22,8 +22,8 @@ public class AntScript {
 	protected PrintWriter output;
 	protected final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 	
-public AntScript(OutputStream out) {
-	output = new PrintWriter(out);
+public AntScript(OutputStream out) throws IOException {
+	output = new PrintWriter(new OutputStreamWriter(out, "UTF8")); //$NON-NLS-1$
 	output.println(XML_PROLOG);
 }
 
