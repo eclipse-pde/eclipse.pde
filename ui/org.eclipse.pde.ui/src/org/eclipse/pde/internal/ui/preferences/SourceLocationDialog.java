@@ -102,6 +102,8 @@ public class SourceLocationDialog extends Dialog {
 		};
 		nameText.addModifyListener(listener);
 		pathText.addModifyListener(listener);
+		
+		Dialog.applyDialogFont(container);
 		return container;
 	}
 
@@ -172,7 +174,7 @@ public class SourceLocationDialog extends Dialog {
 	
 	public void create() {
 		super.create();
-		dialogChanged();
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 	
 	public void setInvalidNames(HashSet names) {
