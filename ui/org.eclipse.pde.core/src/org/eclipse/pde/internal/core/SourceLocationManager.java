@@ -139,7 +139,8 @@ public class SourceLocationManager implements ICoreConstants {
 	private void initializeUserLocations() {
 		userLocations = new ArrayList();
 		String pref = PDECore.getDefault().getPluginPreferences().getString(P_SOURCE_LOCATIONS);
-		parseSavedSourceLocations(pref, userLocations);
+		if (pref.length() > 0)
+			parseSavedSourceLocations(pref, userLocations);
 	}
 	
 	public void initializeClasspathVariables(IProgressMonitor monitor) {
