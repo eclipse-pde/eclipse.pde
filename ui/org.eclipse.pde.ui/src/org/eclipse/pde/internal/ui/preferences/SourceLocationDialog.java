@@ -8,6 +8,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.pde.internal.core.SourceLocation;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -49,7 +50,7 @@ public class SourceLocationDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Location Name:");
+		label.setText(PDEPlugin.getResourceString("SourceLocationDialog.locationName")); //$NON-NLS-1$
 
 		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -58,14 +59,14 @@ public class SourceLocationDialog extends Dialog {
 		new Label(container, SWT.NULL);
 
 		label = new Label(container, SWT.NULL);
-		label.setText("Location &Path:");
+		label.setText(PDEPlugin.getResourceString("SourceLocationDialog.locationPath")); //$NON-NLS-1$
 
 		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		pathText.setLayoutData(gd);
 
 		browseButton = new Button(container, SWT.PUSH);
-		browseButton.setText("&Browse...");
+		browseButton.setText(PDEPlugin.getResourceString("SourceLocationDialog.browse")); //$NON-NLS-1$
 		browseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(browseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
@@ -105,18 +106,18 @@ public class SourceLocationDialog extends Dialog {
 		String name = nameText.getText();
 		String path = pathText.getText();
 		if (name.length()==0) {
-			error = "Location name must be defined.";
+			error = PDEPlugin.getResourceString("SourceLocationDialog.nameNotDefined"); //$NON-NLS-1$
 		}
 		else if (isInvalidVariable(name)) {
-			error = "Classpath variable with the same name already exists.";
+			error = PDEPlugin.getResourceString("SourceLocationDialog.exists"); //$NON-NLS-1$
 		}
 		else if (path.length()==0) {
-			error = "Location path must be defined.";
+			error = PDEPlugin.getResourceString("SourceLocationDialog.pathNotDefined"); //$NON-NLS-1$
 		}
 		else {
 			File file = new File(path);
 			if (!file.exists() || !file.isDirectory()) {
-				error = "Location does not exist or is not a directory";
+				error = PDEPlugin.getResourceString("SourceLocationDialog.locationNotFound"); //$NON-NLS-1$
 			}
 		}
 		setError(error);
@@ -128,7 +129,7 @@ public class SourceLocationDialog extends Dialog {
 			statusLabel.setForeground(JFaceColors.getErrorText(getShell().getDisplay()));
 		}
 		else {
-			statusLabel.setText("");
+			statusLabel.setText(""); //$NON-NLS-1$
 			statusLabel.setForeground(null);
 		}
 		getButton(IDialogConstants.OK_ID).setEnabled(error==null);
