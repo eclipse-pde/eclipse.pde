@@ -101,7 +101,18 @@ public class BuildInputContext extends InputContext {
 	
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		InsertEdit op = new InsertEdit(doc.getLength(), key.write());
+		String preTermination = ""; //$NON-NLS-1$
+		if (doc.getNumberOfLines() > 0) {
+			try {
+				if (doc.getLineDelimiter(doc.getNumberOfLines() - 1) == null
+						&& doc.getLineLength(doc.getNumberOfLines() - 1) > 0) {
+					preTermination = System.getProperty("line.separator"); //$NON-NLS-1$
+				}
+			} catch (BadLocationException ble) {
+			}
+		}
+		InsertEdit op = new InsertEdit(doc.getLength(), preTermination
+				+ key.write());
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
