@@ -56,8 +56,35 @@ IRegistryChangeListener {
 	private Label fPropertyLabel;
 	private Label fPropertyImage;
 	private PropertySheetPage fPropertySheet;
-	
-	
+	/*
+	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
+	 * plug-ins action - see Bug 58467
+	 */
+	class RegistryDrillDownAdapter extends DrillDownAdapter{
+		public RegistryDrillDownAdapter(TreeViewer tree){
+			super(tree);
+		}
+
+		public void goInto() {
+			super.goInto();
+			showPluginsAction.setEnabled(!canGoHome());
+		}
+
+		public void goBack() {
+			super.goBack();
+			showPluginsAction.setEnabled(!canGoHome());
+		}
+
+		public void goHome() {
+			super.goHome();
+			showPluginsAction.setEnabled(!canGoHome());
+		}
+
+		public void goInto(Object newInput) {
+			super.goInto(newInput);
+			showPluginsAction.setEnabled(!canGoHome());
+		}
+	}
 	public RegistryBrowser() {
 		super();
 	}
@@ -188,7 +215,7 @@ IRegistryChangeListener {
 				new ToolBarManager(), null);
 	}
 	private void fillToolBar(){
-		drillDownAdapter = new DrillDownAdapter(treeViewer);
+		drillDownAdapter = new RegistryDrillDownAdapter(treeViewer);
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager mng = bars.getToolBarManager();
 		drillDownAdapter.addNavigationActions(mng);
