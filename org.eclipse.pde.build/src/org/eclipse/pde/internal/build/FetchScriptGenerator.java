@@ -315,7 +315,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateGetFromCVSTarget() {
-		script.printTargetDeclaration(TARGET_GET_FROM_CVS, null, null, "${fileToCheck}", null); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_GET_FROM_CVS, null, null, "Fetching ${fileToCheck}", "${destination}"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printCVSTask("export -d ${destination} -r ${tag} ${package}", "${cvsRoot}", null, null, null, "${quiet}", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printTargetEnd();
 	}
