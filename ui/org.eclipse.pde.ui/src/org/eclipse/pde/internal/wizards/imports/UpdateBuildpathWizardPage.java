@@ -32,7 +32,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
-	private static final String KEY_OUT_OF_SYNC = "WorkspaceModelManager.outOfSync";
+	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
 	
 	private TablePart tablePart;
 

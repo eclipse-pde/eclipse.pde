@@ -399,6 +399,20 @@
       </builder>
    </extension>
    <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%views.category.name"
+            id="org.eclipse.pde">
+      </category>
+      <view
+            name="%views.plugins.name"
+            icon="icons/full/view16/plugins.gif"
+            category="org.eclipse.pde"
+            class="org.eclipse.pde.internal.view.PluginsView"
+            id="org.eclipse.pde.internal.view.PluginsView">
+      </view>
+   </extension>
+   <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"

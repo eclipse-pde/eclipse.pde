@@ -36,7 +36,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		"Preferences.AdvancedTracingPage.workspacePlugins";
 	public static final String KEY_EXTERNAL_PLUGINS =
 		"Preferences.AdvancedTracingPage.externalPlugins";
-	private static final String KEY_OUT_OF_SYNC = "WorkspaceModelManager.outOfSync";
+	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
 
 	private Button useDefaultCheck;
 	private Button showNamesCheck;

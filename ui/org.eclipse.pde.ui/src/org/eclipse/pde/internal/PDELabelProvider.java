@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author
  */
 public class PDELabelProvider extends SharedLabelProvider {
-	private static final String KEY_OUT_OF_SYNC = "WorkspaceModelManager.outOfSync";
+	private static final String KEY_OUT_OF_SYNC = "PluginModelManager.outOfSync";
 
 	public PDELabelProvider() {
 
@@ -200,9 +200,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IPlugin plugin) {
+		return getObjectImage(plugin, false);
+	}
+	
+	public Image getObjectImage(IPlugin plugin, boolean checkEnabled) {
 		IPluginModelBase model = plugin.getModel();
 		int flags = getModelFlags(model);
-		return get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
+		ImageDescriptor desc = PDEPluginImages.DESC_PLUGIN_OBJ;
+		if (checkEnabled && model.isEnabled()==false) 
+			desc = PDEPluginImages.DESC_EXT_PLUGIN_OBJ;
+		return get(desc, flags);
 	}
 
 	private int getModelFlags(IPluginModelBase model) {

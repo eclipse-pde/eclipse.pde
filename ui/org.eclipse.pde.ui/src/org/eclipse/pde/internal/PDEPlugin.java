@@ -30,6 +30,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.util.SWTUtil;
 import java.util.ArrayList;
+import org.eclipse.pde.internal.core.PluginModelManager;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -40,7 +41,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String JARS_EDITOR_ID = PLUGIN_ID + ".jarsEditor";
 	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
-	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.pluginsView";
+	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.internal.view.PluginsView";
 
 	public static final String MANIFEST_BUILDER_ID =
 		PLUGIN_ID + "." + "ManifestBuilder";
@@ -81,7 +82,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private static boolean inVAJ;
 	private java.util.Hashtable counters;
 	private WorkspaceModelManager workspaceModelManager;
-	private ModelSynchronizer modelSynchronizer;
+	private PluginModelManager modelManager;
 	private Vector currentLaunchListeners = new Vector();
 	private RunningInstanceManager runningInstanceManager;
 
@@ -279,6 +280,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 			workspaceModelManager = new WorkspaceModelManager();
 		return workspaceModelManager;
 	}
+	public PluginModelManager getModelManager() {
+		return modelManager;
+	}
 	private void initializePlatformPath() {
 		TargetPlatformPreferencePage.initializePlatformPath();
 	}
@@ -383,10 +387,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 		getWorkspaceModelManager().reset();
 		
-		modelSynchronizer = new ModelSynchronizer();
-		modelSynchronizer.setExternalModelManager(externalModelManager);
-		modelSynchronizer.register(workspaceModelManager);		
-
+		modelManager = new PluginModelManager();
+		modelManager.connect(workspaceModelManager, externalModelManager);
 		attachToLaunchManager();
 	}
 	
@@ -395,7 +397,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 			schemaRegistry.shutdown();
 
 		detachFromLaunchManager();
-		modelSynchronizer.unregister(workspaceModelManager);
+		modelManager.shutdown();
 		workspaceModelManager.shutdown();
 		super.shutdown();
 	}

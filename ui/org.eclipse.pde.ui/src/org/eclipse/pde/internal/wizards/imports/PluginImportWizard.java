@@ -44,7 +44,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		"ImportWizard.messages.doNotAsk";
 	private static final String KEY_MESSAGES_EXISTS =
 		"ImportWizard.messages.exists";
-		
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
@@ -100,25 +99,13 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page2.storeSettings(true);
 			final boolean doImportToWorkspace = page1.doImportToWorkspace();
 			final boolean doExtractPluginSource = page1.doExtractPluginSource();
-			getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-					try {
-						IReplaceQuery query = new ReplaceQuery();
-						PluginImportOperation op =
-							new PluginImportOperation(
-								models,
-								doImportToWorkspace,
-								doExtractPluginSource,
-								query);
-						PDEPlugin.getWorkspace().run(op, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} catch (OperationCanceledException e) {
-						throw new InterruptedException(e.getMessage());
-					}
-				}
-			});
+			IRunnableWithProgress op =
+				getImportOperation(
+					getShell(),
+					doImportToWorkspace,
+					doExtractPluginSource,
+					models);
+			getContainer().run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -126,6 +113,28 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return true; // exception handled
 		}
 		return true;
+	}
+
+	public static IRunnableWithProgress getImportOperation(
+		final Shell shell,
+		final boolean doImport,
+		final boolean doExtract,
+		final IPluginModelBase[] models) {
+		return new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+				try {
+					IReplaceQuery query = new ReplaceQuery(shell);
+					PluginImportOperation op =
+						new PluginImportOperation(models, doImport, doExtract, query);
+					PDEPlugin.getWorkspace().run(op, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				} catch (OperationCanceledException e) {
+					throw new InterruptedException(e.getMessage());
+				}
+			}
+		};
 	}
 
 	/*
@@ -137,7 +146,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		return super.performCancel();
 	}
 
-	private class ReplaceDialog extends MessageDialog {
+	private static class ReplaceDialog extends MessageDialog {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
@@ -155,30 +164,38 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 
-	private class ReplaceQuery implements IReplaceQuery {
+	private static class ReplaceQuery implements IReplaceQuery {
+		private Shell shell;
+		public ReplaceQuery(Shell shell) {
+			this.shell = shell;
+		}
 
 		private int yesToAll = 0;
 		private int[] RETURNCODES =
-			{ IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.NO, IReplaceQuery.CANCEL };
+			{
+				IReplaceQuery.YES,
+				IReplaceQuery.YES,
+				IReplaceQuery.NO,
+				IReplaceQuery.NO,
+				IReplaceQuery.CANCEL };
 
 		public int doQuery(IProject project) {
-			if (yesToAll!=0) {
-				return yesToAll>0?IReplaceQuery.YES : IReplaceQuery.NO;
+			if (yesToAll != 0) {
+				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
 			}
 
 			final String message =
 				PDEPlugin.getFormattedMessage(KEY_MESSAGES_EXISTS, project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
-			getShell().getDisplay().syncExec(new Runnable() {
+			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(getShell(), message);
+					ReplaceDialog dialog = new ReplaceDialog(shell, message);
 					int retVal = dialog.open();
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];
 						if (retVal == 1) {
 							yesToAll = 1;
-						}
-						else if (retVal == 3) {
+						} else if (retVal == 3) {
 							yesToAll = -1;
 						}
 					}
