@@ -72,6 +72,10 @@ public class PDEState {
 	
 	
 	public BundleDescription addBundle(File bundleLocation) {
+		return addBundle(bundleLocation, true);
+	}
+	
+	public BundleDescription addBundle(File bundleLocation, boolean logException) {
 		Dictionary manifest =  loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			try {
@@ -83,7 +87,8 @@ public class PDEState {
 				if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 					throw new Exception();
 			} catch (Exception e1) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plugin manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
+				if (logException)
+					PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plugin manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 				return null;
 			}
 		}

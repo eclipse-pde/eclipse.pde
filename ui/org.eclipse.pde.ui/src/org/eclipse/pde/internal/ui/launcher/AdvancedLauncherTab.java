@@ -120,12 +120,12 @@ public class AdvancedLauncherTab
 
 		createPluginList(composite);
 		
-		createSeparator(composite, 1);
+		/*createSeparator(composite, 1);
 		
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.validatePlugins")); //$NON-NLS-1$
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(button);
+		SWTUtil.setButtonDimensionHint(button);*/
 		
 
 		hookListeners();
