@@ -60,7 +60,6 @@ public abstract class InputContext {
 		}
 		public void elementContentReplaced(Object element) {
 			doRevert();
-			//editor.fireSaveNeeded(input, true);
 		}
 		public void elementDeleted(Object element) {
 		}
@@ -133,7 +132,8 @@ public abstract class InputContext {
 				modelListener = new IModelChangedListener() {
 					public void modelChanged(IModelChangedEvent e) {
 						if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
-							editor.fireSaveNeeded(input, true);
+							if (!editor.getLastDirtyState())
+								editor.fireSaveNeeded(input, true);
 							if (!fIsSourceMode) {
 								addTextEditOperation(fEditOperations, e);
 							}
@@ -159,14 +159,16 @@ public abstract class InputContext {
 		if (!validated) {
 			if (input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput) input).getFile();
-				Shell shell = editor.getEditorSite().getShell();
-				IStatus validateStatus = PDEPlugin.getWorkspace().validateEdit(
+				if (file.isReadOnly()) {
+					Shell shell = editor.getEditorSite().getShell();
+					IStatus validateStatus = PDEPlugin.getWorkspace().validateEdit(
 						new IFile[]{file}, shell);
-				validated=true;
-				if (validateStatus.getCode() != IStatus.OK)
-					ErrorDialog.openError(shell, editor.getTitle(), null,
+					validated=true; // to prevent loops
+					if (validateStatus.getSeverity() != IStatus.OK)
+						ErrorDialog.openError(shell, editor.getTitle(), null,
 							validateStatus);
-				return validateStatus.getCode() == IStatus.OK;
+					return validateStatus.getSeverity() == IStatus.OK;
+				}
 			}
 		}
 		return true;
@@ -202,6 +204,7 @@ public abstract class InputContext {
 			flushModel(doc);			
 			documentProvider.saveDocument(monitor, input, doc, true);
 			documentProvider.changed(input);
+			validated=false;
 		}
 		catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -378,5 +381,17 @@ public abstract class InputContext {
 				return true;
 		}
 		return false;
+	}
+	/**
+	 * @return Returns the validated.
+	 */
+	public boolean isValidated() {
+		return validated;
+	}
+	/**
+	 * @param validated The validated to set.
+	 */
+	public void setValidated(boolean validated) {
+		this.validated = validated;
 	}
 }

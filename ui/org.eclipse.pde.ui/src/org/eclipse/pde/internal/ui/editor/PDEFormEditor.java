@@ -53,6 +53,7 @@ public abstract class PDEFormEditor extends FormEditor
 	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
 	private String lastActivePageId;
+	private boolean lastDirtyState;
 
 	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
 		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor,
@@ -249,10 +250,23 @@ public abstract class PDEFormEditor extends FormEditor
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
 				PDESourcePage page = (PDESourcePage) pages[i];
-			    //InputContext context = inputContextManager.findContext(page.getId());
-			    //if (page.isDirty() || context.mustSave())
+			    InputContext context = inputContextManager.findContext(page.getId());
+			    //context.setBlocked(true);
 			    page.doRevertToSaved();
+			    //context.setBlocked(false);
 			}
+		}
+		editorDirtyStateChanged();
+	}
+	public void doRevert(IEditorInput input) {
+		IFormPage currentPage = getActivePageInstance();
+		if (currentPage != null && currentPage instanceof PDEFormPage)
+			((PDEFormPage) currentPage).cancelEdit();
+		InputContext context = inputContextManager.getContext(input);
+		IFormPage page = findPage(context.getId());
+		if (page!=null && page instanceof PDESourcePage) {
+			PDESourcePage spage = (PDESourcePage) page;
+		    spage.doRevertToSaved();
 		}
 		editorDirtyStateChanged();
 	}
@@ -342,12 +356,21 @@ public abstract class PDEFormEditor extends FormEditor
 		inputContextManager = null;
 	}
 	public boolean isDirty() {
+		lastDirtyState = computeDirtyState();
+		return lastDirtyState;
+	}
+	
+	private boolean computeDirtyState() {
 		IFormPage page = getActivePageInstance();
 		if ((page != null && page.isDirty())
 				|| (inputContextManager != null && inputContextManager
 						.isDirty()))
 			return true;
 		return super.isDirty();
+	}
+	
+	public boolean getLastDirtyState() {
+		return lastDirtyState;
 	}
 
 	public void fireSaveNeeded(String contextId, boolean notify) {
@@ -370,9 +393,15 @@ public abstract class PDEFormEditor extends FormEditor
 			contributor.updateActions();
 	}
 	private void validateEdit(IEditorInput input) {
-		InputContext context = inputContextManager.getContext(input);
-		if (!context.validateEdit())
-			doRevert();
+		final InputContext context = inputContextManager.getContext(input);
+		if (!context.validateEdit()) {
+			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					doRevert(context.getInput());
+					context.setValidated(false);
+				}
+			});
+		}
 	}
 	private IDialogSettings getSettingsSection() {
 		// store the setting in dialog settings
