@@ -219,10 +219,10 @@ public abstract class PDEMultiPageEditor
 		PDEEditorContributor contributor = getContributor();
 		if (contributor != null)
 			contributor.updateActions();
-		validateEdit();
+		//validateEdit();
 	}
 	
-	private void validateEdit() {
+	/*private void validateEdit() {
 		if (!isDirty()) return;
 		if (!validated) {
 			IEditorInput input = getEditorInput();
@@ -238,7 +238,8 @@ public abstract class PDEMultiPageEditor
 			}
 			validated = true;
 		}
-	}
+	}*/
+	
 	public IAction getAction(String id) {
 		return getContributor().getGlobalAction(id);
 	}
