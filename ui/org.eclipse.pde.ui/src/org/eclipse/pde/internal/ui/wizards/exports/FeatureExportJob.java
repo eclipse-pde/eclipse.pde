@@ -267,6 +267,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
 			else 
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fDestinationDirectory);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_TAR_ARGS,""); //$NON-NLS-1$
 		}
 		return fAntBuildProperties;
 	}
