@@ -10,24 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 public class BuildPage extends PDEFormPage {
-	public static final String FORM_TITLE = "BuildPropertiesEditor.BuildPage.title";
+	public static final String FORM_TITLE = "BuildEditor.BuildPage.title";
 	public static final String PAGE_ID = "build";
 	private BuildClasspathSection classpathSection;
 	private BuildContentsSection srcSection;

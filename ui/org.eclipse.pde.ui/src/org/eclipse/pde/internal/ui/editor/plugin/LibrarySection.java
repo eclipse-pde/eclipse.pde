@@ -320,7 +320,7 @@ public class LibrarySection
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"));
+		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.JarsSelection.title"));
 		dialog.setMessage("Select JAR archives to be added to the plug-in's classpath:");
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();

@@ -56,7 +56,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 					PDEPlugin.getPluginId(),
 					IStatus.ERROR,
 					PDEPlugin.getResourceString(
-						"BuildPropertiesEditor.RuntimeInfoSection.missingSource.duplicateLibrary"),
+						"BuildEditor.RuntimeInfoSection.missingSource.duplicateLibrary"),
 					null);
 			}
 			return new Status(
@@ -120,7 +120,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString("BuildPropertiesEditor.AddLibraryDialog.label")); //$NON-NLS-1$
+		label.setText(PDEPlugin.getResourceString("BuildEditor.AddLibraryDialog.label")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);

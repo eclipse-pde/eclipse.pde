@@ -38,17 +38,14 @@ public class BuildClasspathSection
 	implements IModelChangedListener {
 
 	private final static String SECTION_ADD =
-		"BuildPropertiesEditor.BuildClasspathSection.add";
+		"BuildEditor.ClasspathSection.add";
 	private final static String SECTION_REMOVE =
-		"BuildPropertiesEditor.BuildClasspathSection.remove";
+		"BuildEditor.ClasspathSection.remove";
 	private final static String SECTION_TITLE =
-		"BuildPropertiesEditor.BuildClasspathSection.title";
+		"BuildEditor.ClasspathSection.title";
 	private final static String SECTION_DESC =
-		"BuildPropertiesEditor.BuildClasspathSection.desc";
-	private final static String POPUP_NEW =
-		"BuildPropertiesEditor.BuildClasspathSection.popupAdd";
-	private final static String POPUP_DELETE =
-		"BuildPropertiesEditor.BuildClasspathSection.popupDelete";			
+		"BuildEditor.ClasspathSection.desc";
+		
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
 
@@ -203,7 +200,7 @@ public class BuildClasspathSection
 
 		// add NEW action
 		Action action =
-			new Action(PDEPlugin.getResourceString(POPUP_NEW)) {
+			new Action(PDEPlugin.getResourceString(SECTION_ADD)) {
 				public void run() {
 					handleNew();
 				}
@@ -215,7 +212,7 @@ public class BuildClasspathSection
 
 		// add DELETE action
 		action =
-			new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			new Action(PDEPlugin.getResourceString(SECTION_REMOVE)) {
 				public void run() {
 					handleDelete();
 				}
@@ -292,8 +289,8 @@ public class BuildClasspathSection
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog){
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"));
-		dialog.setMessage(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.desc"));
+		dialog.setTitle(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.JarsSelection.title"));
+		dialog.setMessage(PDEPlugin.getResourceString("BuildEditor.ClasspathSection.JarsSelection.desc"));
 		dialog.addFilter(new JARFileFilter());
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

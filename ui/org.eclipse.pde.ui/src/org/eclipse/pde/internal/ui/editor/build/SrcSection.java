@@ -23,9 +23,9 @@ public class SrcSection
 	implements IModelChangedListener {
 
 	private static String SECTION_TITLE =
-		"BuildPropertiesEditor.SrcSection.title";
+		"BuildEditor.SrcSection.title";
 	private static String SECTION_DESC =
-		"BuildPropertiesEditor.SrcSection.desc";
+		"BuildEditor.SrcSection.desc";
 
 	public SrcSection(BuildPage page, Composite parent) {
 		super(page, parent);

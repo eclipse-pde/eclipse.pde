@@ -43,7 +43,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		getTreeViewer().addSelectionChangedListener(this);
 		getTreeViewer().expandToLevel(2);
 		Button button = new Button(result, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("BuildPropertiesEditor.SourceFolderSelectionDialog.button")); //$NON-NLS-1$
+		button.setText(PDEPlugin.getResourceString("BuildEditor.SourceFolderSelectionDialog.button")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();

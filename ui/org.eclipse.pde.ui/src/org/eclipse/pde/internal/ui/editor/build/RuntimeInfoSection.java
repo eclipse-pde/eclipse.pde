@@ -45,24 +45,20 @@ public class RuntimeInfoSection
 	implements IModelChangedListener {
 
 	public static final String SECTION_TITLE =
-		"BuildPropertiesEditor.RuntimeInfoSection.title";
+		"BuildEditor.RuntimeInfoSection.title";
 	public static final String SECTION_DESC =
-		"BuildPropertiesEditor.RuntimeInfoSection.desc";
+		"BuildEditor.RuntimeInfoSection.desc";
 	public static final String SECTION_NEW =
-		"BuildPropertiesEditor.RuntimeInfoSection.addLibrary";
+		"BuildEditor.RuntimeInfoSection.addLibrary";
 	public static final String SECTION_UP = "ManifestEditor.LibrarySection.up";
 	public static final String SECTION_DOWN =
 		"ManifestEditor.LibrarySection.down";
-	public static final String POPUP_NEW_LIBRARY =
-		"ManifestEditor.LibrarySection.newLibrary";
+	public static final String POPUP_NEW_LIBRARY = "BuildEditor.RuntimeInfoSection.popupAdd";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	public static final String NEW_LIBRARY_ENTRY =
-		"ManifestEditor.LibrarySection.newLibraryEntry";
-	public static final String JSECTION_NEW = "BuildPropertiesEditor.RuntimeInfoSection.addFolder";
-	public static final String POPUP_NEW_FOLDER =
-		"ManifestEditor.JarsSection.newFolder";
+	public static final String JSECTION_NEW = "BuildEditor.RuntimeInfoSection.addFolder";
+	public static final String POPUP_NEW_FOLDER = "BuildEditor.RuntimeInfoSection.popupFolder";
 	public static final String JAR_INCLUDE =
-		"BuildPropertiesEditor.RuntimeInfoSection.buildInclude";
+		"BuildEditor.RuntimeInfoSection.buildInclude";
 
 	protected TableViewer fLibraryViewer;
 	protected TableViewer fFolderViewer;
@@ -438,7 +434,6 @@ public class RuntimeInfoSection
 		deleteAction.setEnabled(!selection.isEmpty() && fEnabled);
 		manager.add(deleteAction);
 
-		manager.add(new Separator());
 		// defect 19550
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager,
@@ -910,7 +905,7 @@ public class RuntimeInfoSection
 						PDEPlugin.getPluginId(),
 						IStatus.ERROR,
 						PDEPlugin.getResourceString(
-							"BuildPropertiesEditor.RuntimeInfoSection.missingSource.duplicateFolder"),
+							"BuildEditor.RuntimeInfoSection.missingSource.duplicateFolder"),
 						null);
 
 				return new Status(
