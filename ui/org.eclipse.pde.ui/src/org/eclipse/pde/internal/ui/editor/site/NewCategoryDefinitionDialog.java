@@ -5,25 +5,20 @@ package org.eclipse.pde.internal.ui.editor.site;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.parts.StatusDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class NewCategoryDefinitionDialog extends StatusDialog {
+public class NewCategoryDefinitionDialog extends BaseDialog {
 	private static final String KEY_TITLE = "NewCategoryDefinitionDialog.title";	
 	private static final String KEY_NAME = "NewCategoryDefinitionDialog.name";
 	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label";
 	private static final String KEY_DESC = "NewCategoryDefinitionDialog.desc";
 	private static final String KEY_EMPTY = "NewCategoryDefinitionDialog.empty";
-	private Button okButton;
-	private ISiteModel siteModel;
-	private ISiteCategoryDefinition categoryDef;
 	private Text nameText;
 	private Text labelText;
 	private Text descText;
@@ -32,35 +27,11 @@ public class NewCategoryDefinitionDialog extends StatusDialog {
 		Shell shell,
 		ISiteModel siteModel,
 		ISiteCategoryDefinition def) {
-		super(shell);
-		this.siteModel = siteModel;
-		this.categoryDef = def;
+		super(shell, siteModel, def);
 	}
 
-	protected void createButtonsForButtonBar(Composite parent) {
-		// create OK and Cancel buttons by default
-		okButton =
-			createButton(
-				parent,
-				IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL,
-				true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
-		dialogChanged();
-	}
-
-	protected Control createDialogArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		container.setLayoutData(gd);
-
+	protected void createEntries(Composite container) {
+		GridData gd;
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
@@ -81,28 +52,33 @@ public class NewCategoryDefinitionDialog extends StatusDialog {
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
 		descText.setLayoutData(gd);
-
-		if (categoryDef != null)
-			initializeFields();
-		hookListeners();
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-
-		//WorkbenchHelp.setHelp(container, IHelpContextIds.SCHEMA_TYPE_RESTRICTION);
-		return container;
+	}
+	
+	private ISiteCategoryDefinition getCategoryDefinition() {
+		return (ISiteCategoryDefinition)getSiteObject();
+	}
+	
+	protected String getDialogTitle() {
+		return PDEPlugin.getResourceString(KEY_TITLE);
+	}
+	
+	protected String getHelpId() {
+		return IHelpContextIds.NEW_CATEGORY_DEF_DIALOG;
+	}
+	
+	protected String getEmptyErrorMessage() {
+		return PDEPlugin.getResourceString(KEY_EMPTY);
 	}
 
-	private void hookListeners() {
-		ModifyListener listener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		};
-		nameText.addModifyListener(listener);
-		labelText.addModifyListener(listener);
-		descText.addModifyListener(listener);
+	protected void hookListeners(ModifyListener modifyListener) {
+		nameText.addModifyListener(modifyListener);
+		labelText.addModifyListener(modifyListener);
+		descText.addModifyListener(modifyListener);
 	}
 
-	private void initializeFields() {
+	protected void initializeFields() {
+		super.initializeFields();
+		ISiteCategoryDefinition categoryDef = getCategoryDefinition();
 		setIfDefined(nameText, categoryDef.getName());
 		setIfDefined(labelText, categoryDef.getLabel());
 		setIfDefined(
@@ -110,39 +86,22 @@ public class NewCategoryDefinitionDialog extends StatusDialog {
 			categoryDef.getDescription() != null
 				? categoryDef.getDescription().getText()
 				: null);
-		if (siteModel.isEditable()==false) {
-			okButton.setEnabled(false);
-			nameText.setEditable(false);
-			labelText.setEditable(false);
-			descText.setEditable(false);
-		}
 	}
 
-	private void setIfDefined(Text text, String value) {
-		if (value != null)
-			text.setText(value);
-	}
-
-	private void dialogChanged() {
+	protected void dialogChanged() {
 		IStatus status = null;
 		if (nameText.getText().length() == 0
 			|| labelText.getText().length() == 0)
-			status =
-				new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					PDEPlugin.getResourceString(KEY_EMPTY),
-					null);
+			status = getEmptyErrorStatus();
+		else
+			status = getOKStatus();
 		updateStatus(status);
 	}
 
-	protected void okPressed() {
-		execute();
-		super.okPressed();
-	}
-	private void execute() {
+	protected void execute() {
 		boolean add = false;
+		ISiteCategoryDefinition categoryDef = getCategoryDefinition();
+		ISiteModel siteModel = getSiteModel();
 		if (categoryDef == null) {
 			add = true;
 			categoryDef = siteModel.getFactory().createCategoryDefinition();

@@ -9,6 +9,8 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.custom.BusyIndicator;
 
 public class SiteFeatureSection extends ObjectListSection {
 	private static final String SECTION_TITLE =
@@ -57,24 +59,19 @@ public class SiteFeatureSection extends ObjectListSection {
 	}
 
 	protected void handleNew() {
-		/*
-				final ISiteModel model = (ISiteModel) getFormPage().getModel();
-				final ISiteBuildModel buildModel = model.getBuildModel();
-		
-				BusyIndicator
-					.showWhile(projectViewer.getTable().getDisplay(), new Runnable() {
-					public void run() {
-						BuiltFeaturesWizard wizard =
-							new BuiltFeaturesWizard(buildModel);
-						WizardDialog dialog =
-							new WizardDialog(
-								projectViewer.getControl().getShell(),
-								wizard);
-						dialog.open();
-						forceDirty();
-					}
-				});
-		*/
+		final ISiteModel model = (ISiteModel) getFormPage().getModel();
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				NewFeatureDialog dialog =
+					new NewFeatureDialog(
+						tableViewer.getControl().getShell(),
+						model);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, -1);
+				dialog.open();
+			}
+		});
 	}
 	
 	protected void remove(Object input, List objects) throws CoreException {

@@ -171,7 +171,7 @@ public abstract class ObjectListSection
 		else
 			fireSelectionNotification(null);
 		boolean singleSelection = selection.size() == 1;
-		openAction.setEnabled(singleSelection);
+		if (openAction!=null) openAction.setEnabled(singleSelection);
 		deleteAction.setEnabled(selection.isEmpty() == false);
 	}
 

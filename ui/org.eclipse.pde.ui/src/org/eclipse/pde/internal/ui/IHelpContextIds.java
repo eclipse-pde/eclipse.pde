@@ -114,5 +114,7 @@ public interface IHelpContextIds {
 	public static final String MANIFEST_SITE_FEATURES = PREFIX + "manifest_site_features";
 	public static final String MANIFEST_SITE_ARCHIVES = PREFIX + "manifest_site_archives";	
 	public static final String NEW_CATEGORY_DEF_DIALOG = PREFIX + "new_category_def_dialog";	
+	public static final String NEW_FEATURE_DIALOG = PREFIX + "new_feature_dialog";	
+	public static final String NEW_ARCHIVE_DIALOG = PREFIX + "new_archive_dialog";	
 	
 }
