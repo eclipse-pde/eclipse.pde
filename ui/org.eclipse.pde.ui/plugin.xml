@@ -986,6 +986,21 @@
              <count value="*"/>
            </with>
          </enablement>
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <or>
+                  	<and>
+	                  <count value="1"/>
+	                  <iterate>
+		                  <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
+		              </iterate>
+		            </and>
+		            <count value="0"/>
+		          </or>
+               </with>
+            </enablement>
+         </contextualLaunch>         
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
