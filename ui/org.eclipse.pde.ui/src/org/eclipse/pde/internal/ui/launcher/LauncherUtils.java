@@ -602,7 +602,7 @@ public class LauncherUtils {
 				Iterator iter = map.keySet().iterator();
 				while (iter.hasNext()) {
 					String id = iter.next().toString();
-					if ("org.eclipse.osgi".equals(id))
+					if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
 						continue;
 					buffer.append(id);
 					if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
