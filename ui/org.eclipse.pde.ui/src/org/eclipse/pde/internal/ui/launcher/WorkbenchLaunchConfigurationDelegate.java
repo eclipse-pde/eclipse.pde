@@ -188,7 +188,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				showSplash = false;
 			}
 		}
-		if (showSplash) {
+		if (showSplash && !programArgs.contains("-nosplash")) {
 			programArgs.add("-showsplash");
 			programArgs.add(computeShowsplashArgument());
 		}
