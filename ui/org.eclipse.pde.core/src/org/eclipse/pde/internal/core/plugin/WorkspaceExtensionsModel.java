@@ -30,7 +30,7 @@ public class WorkspaceExtensionsModel
 
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin", getNLLookupLocations());
+		return new NLResourceHelper("plugin", getNLLookupLocations()); //$NON-NLS-1$
 	}
 	
 	public URL getNLLookupLocation() {

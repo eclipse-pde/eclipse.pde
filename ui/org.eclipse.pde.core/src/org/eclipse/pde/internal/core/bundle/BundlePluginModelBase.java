@@ -222,7 +222,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	}
 	
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin", new URL[] {getNLLookupLocation()});
+		return new NLResourceHelper("plugin", new URL[] {getNLLookupLocation()}); //$NON-NLS-1$
 	}
 
 	public URL getNLLookupLocation() {

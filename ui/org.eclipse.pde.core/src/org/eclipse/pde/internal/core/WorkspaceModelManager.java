@@ -176,7 +176,7 @@ public class WorkspaceModelManager
 			return;
 		}
 		
-		if (file.getName().equals("plugin.properties")) {
+		if (file.getName().equals("plugin.properties")) { //$NON-NLS-1$
 			IProject project = file.getProject();
 			if (isPluginProject(project) && !isBinaryPluginProject(project)) {
 				IPluginModelBase model = getWorkspacePluginModel(project);
