@@ -14,6 +14,7 @@ import junit.framework.*;
 
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.test.performance.*;
 
@@ -24,14 +25,19 @@ public class SchemaPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testLoadAllSchemas() throws Exception {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getAllPlugins();
+		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
 		startMeasuring();
-		for (int i = 0; i < models.length; i++) {
-			IPluginExtensionPoint[] extPoints = models[i].getPluginBase().getExtensionPoints();
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < entries.length; i++) {
+			IPluginModelBase model = entries[i].getActiveModel();
+			if (model == null)
+				continue;
+			IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 			for (int j = 0; j < extPoints.length; j++) {
 				PDECore.getDefault().getSchemaRegistry().getSchema(extPoints[j].getFullId());
 			}
 		}
+		System.out.println("Time elapsed: " + (System.currentTimeMillis() - start) + " ms");
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
