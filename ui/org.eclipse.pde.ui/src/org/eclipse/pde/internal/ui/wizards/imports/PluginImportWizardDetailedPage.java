@@ -246,7 +246,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		if (dropLocation == null)
 			return null;
 			
-		if (!dropLocation.equals(ExternalModelManager.getEclipseHome(null))) {
+		if (dropLocation.equals(ExternalModelManager.getEclipseHome(null))) {
 			final ExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
 			IRunnableWithProgress op = new IRunnableWithProgress() {
