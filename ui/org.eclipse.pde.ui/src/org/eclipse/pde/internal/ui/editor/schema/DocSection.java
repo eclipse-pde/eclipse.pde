@@ -33,7 +33,6 @@ public class DocSection extends PDEFormSection {
 		"SchemaEditor.topic.implementation";
 	public static final String KEY_TOPIC_API = "SchemaEditor.topic.api";
 	public static final String KEY_TOPIC_COPYRIGHT = "SchemaEditor.topic.copyright";
-	private SourceViewer editor;
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private boolean editable = true;
@@ -104,7 +103,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	sourceViewer = new SourceViewer(container, null, styles);
 	sourceViewer.configure(sourceConfiguration);
 	sourceViewer.setDocument(document);
-	sourceViewer.setEditable(isEditable());
 	StyledText styledText= sourceViewer.getTextWidget();
 	styledText.setFont(JFaceResources.getTextFont());
 	if (SWT.getPlatform().equals("motif")==false)
@@ -223,10 +221,11 @@ private void handleReset() {
 }
 public void initialize(Object model) {
 	schema = (ISchema) model;
+	sourceViewer.setEditable(schema.isEditable());
 	initializeSectionCombo();
 	document.addDocumentListener(new IDocumentListener() {
 		public void documentChanged(DocumentEvent e) {
-			if (!ignoreChange && schema instanceof IEditable) {
+			if (!ignoreChange && schema.isEditable()) {
 				setDirty(true);
 				((IEditable) schema).setDirty(true);
 				getFormPage().getEditor().fireSaveNeeded();
@@ -239,6 +238,7 @@ public void initialize(Object model) {
 	});
 	updateEditorInput(schema);
 }
+
 private void initializeSectionCombo() {
 	IDocumentSection[] sections = schema.getDocumentSections();
 	sectionCombo.add(getTopicName(schema));
@@ -250,6 +250,9 @@ private void initializeSectionCombo() {
 	sectionCombo.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			int index = sectionCombo.getSelectionIndex();
+			if (schema.isEditable() && isDirty()) {
+				handleApply();
+			}
 			if (index == 0)
 				updateEditorInput(schema);
 			else {
@@ -259,17 +262,12 @@ private void initializeSectionCombo() {
 		}
 	});
 }
-public boolean isEditable() {
-	return editable;
-}
+
 private String resolveObjectName(Object object) {
 	if (object instanceof ISchemaObject) {
 		return ((ISchemaObject)object).getName();
 	}
 	return object.toString();
-}
-public void setEditable(boolean newEditable) {
-	editable = newEditable;
 }
 public void setFocus() {
 	sourceViewer.getTextWidget().setFocus();
@@ -284,7 +282,6 @@ public void updateEditorInput(Object input) {
 		text = "";
 	else
 		text = TextUtil.createMultiLine(text, 60, false);
-	//updateHeading(input);
 	document.set(text);
 	applyButton.setEnabled(false);
 	resetButton.setEnabled(false);
