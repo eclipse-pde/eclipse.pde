@@ -10,35 +10,61 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
+import org.eclipse.pde.internal.ui.model.IEditingModel;
+import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
+import org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode;
+import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
+import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
 	public static final int USE_PLUGINS = 2;
 	public static final int USE_REFERENCES = 3;
-	private FeatureEditor featureEditor;
-	private Button useComponentButton;
-	private Button usePluginsButton;
-	private Button useReferencesButton;
+	private FeatureEditor fFeatureEditor;
+	private Button fUseComponentButton;
+	private Button fUsePluginsButton;
+	private Button fUseReferencesButton;
 
 	private static final String PREFIX =
 		PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
@@ -55,7 +81,7 @@ public SynchronizeVersionsWizardPage(FeatureEditor featureEditor) {
 	super("featureJar"); //$NON-NLS-1$
 	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-	this.featureEditor = featureEditor;
+	this.fFeatureEditor = featureEditor;
 }
 public void createControl(Composite parent) {
 	Composite container = new Composite(parent, SWT.NULL);
@@ -69,20 +95,20 @@ public void createControl(Composite parent) {
 	group.setLayoutData(gd);
 	group.setText(PDEPlugin.getResourceString(KEY_GROUP));
 
-	useComponentButton = new Button(group, SWT.RADIO);
-	useComponentButton.setText(PDEPlugin.getResourceString(KEY_USE_COMPONENT));
+	fUseComponentButton = new Button(group, SWT.RADIO);
+	fUseComponentButton.setText(PDEPlugin.getResourceString(KEY_USE_COMPONENT));
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	useComponentButton.setLayoutData(gd);
+	fUseComponentButton.setLayoutData(gd);
 
-	usePluginsButton = new Button(group, SWT.RADIO);
-	usePluginsButton.setText(PDEPlugin.getResourceString(KEY_USE_PLUGINS));
+	fUsePluginsButton = new Button(group, SWT.RADIO);
+	fUsePluginsButton.setText(PDEPlugin.getResourceString(KEY_USE_PLUGINS));
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	usePluginsButton.setLayoutData(gd);
+	fUsePluginsButton.setLayoutData(gd);
 	
-	useReferencesButton = new Button(group, SWT.RADIO);
-	useReferencesButton.setText(PDEPlugin.getResourceString(KEY_USE_REFERENCES));
+	fUseReferencesButton = new Button(group, SWT.RADIO);
+	fUseReferencesButton.setText(PDEPlugin.getResourceString(KEY_USE_REFERENCES));
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	useReferencesButton.setLayoutData(gd);  
+	fUseReferencesButton.setLayoutData(gd);  
 
 	setControl(container);
 	Dialog.applyDialogFont(container);
@@ -98,15 +124,7 @@ private WorkspacePluginModelBase findModel(String id) {
 	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getPluginModels();
 	return findWorkspaceModelBase(models, id);
 }
-private IFeaturePlugin findPluginReference(String id) {
-	IFeatureModel model = (IFeatureModel) featureEditor.getAggregateModel();
-	IFeaturePlugin[] references = model.getFeature().getPlugins();
-	for (int i = 0; i<references.length; i++) {
-		if (references[i].getId().equals(id))
-			return references[i];
-	}
-	return null;
-}
+
 private WorkspacePluginModelBase findWorkspaceModelBase(
 	IPluginModelBase[] models,
 	String id) {
@@ -118,6 +136,7 @@ private WorkspacePluginModelBase findWorkspaceModelBase(
 	}
 	return null;
 }
+
 public boolean finish() {
 	final int mode = saveSettings();
 
@@ -127,7 +146,7 @@ public boolean finish() {
 				runOperation(mode, monitor);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
-			} catch (InvocationTargetException e) {
+			} catch (BadLocationException e) {
 				PDEPlugin.logException(e);
 			} finally {
 				monitor.done();
@@ -144,58 +163,105 @@ public boolean finish() {
 	}
 	return true;
 }
-private void forceVersion(String targetVersion, IPluginModelBase modelBase)
-	throws CoreException {
-	IFile file = (IFile) modelBase.getUnderlyingResource();
-	WorkspaceModelManager modelProvider =
-		PDECore.getDefault().getWorkspaceModelManager();
-	WorkspacePluginModelBase model =
-		(WorkspacePluginModelBase) modelProvider.getModel(file);
-	model.load();
-	if (model.isLoaded()) {
-		IPluginBase base = model.getPluginBase();
-		base.setVersion(targetVersion);
-		if (base instanceof IFragment) {
-			// also fix target plug-in version
-			IFragment fragment = (IFragment) base;
-			IFeaturePlugin ref = findPluginReference(fragment.getPluginId());
-			if (ref != null)
-				fragment.setPluginVersion(targetVersion);
+
+	/**
+	 * Forces a version into plugin/fragment .xml
+	 * 
+	 * @param targetVersion
+	 * @param modelBase
+	 * @throws CoreException
+	 */
+	private void forceVersion(String targetVersion, IPluginModelBase modelBase,
+			IProgressMonitor monitor) throws CoreException,
+			BadLocationException {
+		IFile file = (IFile) modelBase.getUnderlyingResource();
+		if (file == null) {
+			return;
 		}
-		model.save();
-		if (base instanceof IPlugin) {
-		   IPlugin local = PDECore.getDefault().findPlugin(base.getId());
-		   if (local!=null && 
-		       local.getModel().getUnderlyingResource()!=null &&
-		       local.getModel().getUnderlyingResource().equals(file)) {
-		      ((PluginBase)local).internalSetVersion(base.getVersion());
-		   }
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		try {
+			manager.connect(file.getFullPath(), monitor);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file
+					.getFullPath());
+
+			IDocument document = buffer.getDocument();
+			PluginModelBase model = getEditingModel(document,
+					"fragment.xml".equals(file.getName())); //$NON-NLS-1$
+			model.load();
+			if (!model.isLoaded())
+				throw new CoreException(
+						new Status(
+								IStatus.ERROR,
+								IPDEUIConstants.PLUGIN_ID,
+								IStatus.ERROR,
+								"The synchronize version operation cannot proceed because plug-in '" + modelBase.getPluginBase().getId() + "' has a malformed manifest file.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+
+			TextEdit edit = modifyVersion(model, targetVersion);
+			if (edit != null) {
+				edit.apply(document);
+				buffer.commit(monitor, true);
+			}
+		} finally {
+			manager.disconnect(file.getFullPath(), monitor);
 		}
 	}
-}
+
+	private TextEdit modifyVersion(PluginModelBase model, String version)
+			throws CoreException, MalformedTreeException, BadLocationException {
+		IPluginBase pluginBase = model.getPluginBase();
+
+		PluginBaseNode element = (PluginBaseNode) pluginBase;// (PluginElementNode)extension.getChildren()[0];
+		IDocumentAttribute versionAttr = element
+				.getDocumentAttribute("version"); //$NON-NLS-1$
+		if (versionAttr != null)
+			return new ReplaceEdit(versionAttr.getValueOffset(), versionAttr
+					.getValueLength(), version);
+		// insert new version attribute (after name, or id attribute)
+		IDocumentAttribute attr = element.getDocumentAttribute("name"); //$NON-NLS-1$
+		if (attr == null) {
+			attr = element.getDocumentAttribute("id"); //$NON-NLS-1$			
+		}
+		if (attr != null) {
+			String newLine = TextUtilities
+					.getDefaultLineDelimiter(((IEditingModel) model)
+							.getDocument());
+			return new ReplaceEdit(attr.getValueOffset()
+					+ attr.getValueLength() + 1, 0, newLine + "   version=\"" //$NON-NLS-1$
+					+ version + "\""); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private PluginModelBase getEditingModel(IDocument document,
+			boolean isFragment) {
+		if (isFragment)
+			return new FragmentModel(document, false);
+		return new PluginModel(document, false);
+	}
+
 private void loadSettings() {
 	IDialogSettings settings = getDialogSettings();
 	if (settings.get(PROP_SYNCHRO_MODE) != null) {
 		int mode = settings.getInt(PROP_SYNCHRO_MODE);
 		switch (mode) {
 			case USE_FEATURE :
-				useComponentButton.setSelection(true);
+				fUseComponentButton.setSelection(true);
 				break;
 			case USE_PLUGINS :
-				usePluginsButton.setSelection(true);
+				fUsePluginsButton.setSelection(true);
 				break;
 			case USE_REFERENCES :
-				useReferencesButton.setSelection(true);
+				fUseReferencesButton.setSelection(true);
 				break;
 		}
 	}
 	else 
-	   useComponentButton.setSelection(true);
+	   fUseComponentButton.setSelection(true);
 }
 private void runOperation(int mode, IProgressMonitor monitor)
-	throws CoreException, InvocationTargetException {
+	throws CoreException, BadLocationException {
 	WorkspaceFeatureModel model =
-		(WorkspaceFeatureModel) featureEditor.getAggregateModel();
+		(WorkspaceFeatureModel) fFeatureEditor.getAggregateModel();
 	IFeature feature = model.getFeature();
 	IFeaturePlugin[] plugins = feature.getPlugins();
 	int size = plugins.length;
@@ -211,10 +277,10 @@ private int saveSettings() {
 
 	int mode = USE_FEATURE;
 
-	if (usePluginsButton.getSelection())
+	if (fUsePluginsButton.getSelection())
 		mode = USE_PLUGINS;
 	else
-		if (useReferencesButton.getSelection())
+		if (fUseReferencesButton.getSelection())
 			mode = USE_REFERENCES;
 	settings.put(PROP_SYNCHRO_MODE, mode);
 	return mode;
@@ -224,7 +290,8 @@ private void synchronizeVersion(
 	String featureVersion,
 	IFeaturePlugin ref,
 	IProgressMonitor monitor)
-	throws CoreException {
+	throws CoreException,
+	BadLocationException{
 	String id = ref.getId();
 	WorkspacePluginModelBase modelBase = null;
 	if (ref.isFragment()) {
@@ -236,7 +303,7 @@ private void synchronizeVersion(
 		return;
 	if (mode == USE_PLUGINS) {
 		String baseVersion = modelBase.getPluginBase().getVersion();
-		if (ref.getVersion().equals(baseVersion) == false) {
+		if (!ref.getVersion().equals(baseVersion)) {
 			ref.setVersion(baseVersion);
 		}
 	} else {
@@ -245,12 +312,11 @@ private void synchronizeVersion(
 			targetVersion = ref.getVersion();
 		else
 			ref.setVersion(targetVersion);
+		
 		String baseVersion = modelBase.getPluginBase().getVersion();
-		if (targetVersion.equals(baseVersion) == false) {
-			forceVersion(targetVersion, modelBase);
+		if (!targetVersion.equals(baseVersion)) {
+			forceVersion(targetVersion, modelBase, monitor);
 		}
-		if (mode == USE_FEATURE)
-			ref.setVersion(targetVersion);
 	}
 	monitor.worked(1);
 }
