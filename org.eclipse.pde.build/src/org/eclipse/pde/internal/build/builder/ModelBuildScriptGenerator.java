@@ -155,10 +155,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		specialDotProcessing(classpathInfo);
 	}
 
+	private boolean findAndReplaceDot(String[] classpathInfo) {
+		for (int i = 0; i < classpathInfo.length; i++) {
+			if (DOT.equals(classpathInfo[i])) {
+				classpathInfo[i] = EXPANDED_DOT;
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void specialDotProcessing(String[] classpathInfo) throws CoreException {
-		if (classpathInfo.length > 0 && DOT.equals(classpathInfo[0])) {
-			getSite(false).getRegistry().getExtraData().put(new Long(model.getBundleId()), new String[] {EXPANDED_DOT});
-
+		if (findAndReplaceDot(classpathInfo)) {			
 			getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT));
 			getBuildProperties().remove(PROPERTY_SOURCE_PREFIX + DOT);
 			String outputValue = getBuildProperties().getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
@@ -175,6 +183,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ",")); //$NON-NLS-1$
 			}
 
+			String extraEntries = getBuildProperties().getProperty(PROPERTY_EXTRAPATH_PREFIX + '.');
+			if(extraEntries != null) {
+				getBuildProperties().setProperty(PROPERTY_EXTRAPATH_PREFIX + EXPANDED_DOT, extraEntries);
+			}
+			
 			String includeString = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
 			if (includeString != null) {
 				String[] includes = Utils.getArrayFromString(includeString);
