@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.internal.*;
 
 
 public class EventDetailsDialogAction extends SelectionProviderAction{
@@ -27,6 +29,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	private Shell shell;
 	private ISelectionProvider provider;
 	private EventDetailsDialog propertyDialog;
+	private Comparator comparator;
 	/**
 	 * Creates a new action for opening a property dialog
 	 * on the elements from the given selection provider
@@ -43,12 +46,15 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		//WorkbenchHelp.setHelp
 	}
 	
-	public void resetSelection(byte sortType, int sortOrder){
+	public boolean resetSelection(byte sortType, int sortOrder){
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
 		if (element == null)
-			return;
-		if (propertyDialog != null && propertyDialog.isOpen())
+			return false;
+		if (propertyDialog != null && propertyDialog.isOpen()){
 			propertyDialog.resetSelection(element, sortType, sortOrder);
+			return true;
+		}
+		return false;
 	}
 	public void resetSelection(){
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
@@ -61,6 +67,10 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 	public void resetDialogButtons(){
 		if (propertyDialog != null && propertyDialog.isOpen())
 			propertyDialog.resetButtons();
+	}
+	
+	public void setComparator(Comparator comparator){
+		this.comparator = comparator;
 	}
 	public void run(){
 		if (propertyDialog != null && propertyDialog.isOpen()){
@@ -76,6 +86,7 @@ public class EventDetailsDialogAction extends SelectionProviderAction{
 		propertyDialog = new EventDetailsDialog(shell, element, provider);
 		propertyDialog.create();
 		propertyDialog.getShell().setText(PDERuntimePlugin.getResourceString("EventDetailsDialog.title")); //$NON-NLS-1$
+		propertyDialog.setComparator(comparator);
 		propertyDialog.open();
 	}
 }

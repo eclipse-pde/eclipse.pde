@@ -231,6 +231,7 @@ public class LogView extends ViewPart implements ILogListener {
 		});	
 		tableTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
+				((EventDetailsDialogAction)propertiesAction).setComparator(comparator);
 				propertiesAction.run();
 			}
 		});
@@ -277,8 +278,10 @@ public class LogView extends ViewPart implements ILogListener {
 				ViewerSorter sorter = getViewerSorter(MESSAGE);
 				tableTreeViewer.setSorter(sorter);
 				collator = sorter.getCollator();
-				((EventDetailsDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
+				boolean isComparatorSet = ((EventDetailsDialogAction)propertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
 				setComparator(MESSAGE);
+				if (!isComparatorSet)
+					((EventDetailsDialogAction)propertiesAction).setComparator(comparator);
 				applyFonts();
 			}
 		});
@@ -291,8 +294,10 @@ public class LogView extends ViewPart implements ILogListener {
 				ViewerSorter sorter = getViewerSorter(PLUGIN);
 				tableTreeViewer.setSorter(sorter);
 				collator = sorter.getCollator();
-				((EventDetailsDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
+				boolean isComparatorSet = ((EventDetailsDialogAction)propertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
 				setComparator(PLUGIN);
+				if (!isComparatorSet)
+					((EventDetailsDialogAction)propertiesAction).setComparator(comparator);
 				applyFonts();
 			}
 		});
@@ -309,8 +314,10 @@ public class LogView extends ViewPart implements ILogListener {
 				ViewerSorter sorter = getViewerSorter(DATE);
 				tableTreeViewer.setSorter(sorter);
 				collator = sorter.getCollator();
-				((EventDetailsDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
+				boolean isComparatorSet = ((EventDetailsDialogAction)propertiesAction).resetSelection(DATE, DATE_ORDER);
 				setComparator(DATE);
+				if (!isComparatorSet)
+					((EventDetailsDialogAction)propertiesAction).setComparator(comparator);
 				applyFonts();
 			}
 		});
@@ -567,6 +574,7 @@ public class LogView extends ViewPart implements ILogListener {
 		manager.add(exportAction);
 		manager.add(importAction);
 		manager.add(new Separator());
+		((EventDetailsDialogAction)propertiesAction).setComparator(comparator);
 		manager.add(propertiesAction);
 	}
 	public LogEntry[] getLogs() {
@@ -870,6 +878,9 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 	
+	public Comparator getComparator(){
+		return comparator;
+	}
 	private void setComparator(byte sortType){
 		if (sortType == DATE){
 			comparator = new Comparator(){
