@@ -271,13 +271,30 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			i++;
 		}
 		Hashtable properties = new Hashtable(3);
-		properties.put(OSGI_WS, ws);
-		properties.put(OSGI_OS, os);
-		properties.put(OSGI_ARCH, archs);
+		if (ws.length == 1 && Config.ANY.equalsIgnoreCase(ws[0])) {
+			properties.put(OSGI_WS, CatchAllValue.singleton);
+		} else {
+			properties.put(OSGI_WS, ws);
+		}
+		
+		if (os.length == 1 && Config.ANY.equalsIgnoreCase(os[0])) {
+			properties.put(OSGI_OS, CatchAllValue.singleton);
+		} else {
+			properties.put(OSGI_OS, os);
+		}
+		
+		if (archs.length == 1 && Config.ANY.equalsIgnoreCase(archs[0])) {
+			properties.put(OSGI_ARCH, CatchAllValue.singleton);
+		} else {
+			properties.put(OSGI_ARCH, archs);
+		}
+		
 		state.setPlatformProperties(properties);
 		state.resolve(false);
 	}
 
+
+	
 	public State getState() {
 		return state;
 	}

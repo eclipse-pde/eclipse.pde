@@ -402,17 +402,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		return f.match(properties);
 	}
 	
-	public static class CatchAllValue {
-		public static CatchAllValue singleton = new CatchAllValue("*"); //$NON-NLS-1$
-		public CatchAllValue(String s) {
-			//do nothing
-		}
-		
-		public boolean equals(Object obj) {
-			return true;
-		}
-	}
-	
 	/**
 	 * 
 	 * @param model
