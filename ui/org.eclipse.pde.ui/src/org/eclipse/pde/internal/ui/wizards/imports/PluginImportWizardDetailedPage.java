@@ -320,6 +320,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private void dialogChanged() {
 		IStatus genStatus = validatePlugins();
 		updateStatus(genStatus);
+		if (tablePart.getSelectionCount() == 0)
+			setPageComplete(false);
 	}
 
 	private void buttonSelected(int index) {
