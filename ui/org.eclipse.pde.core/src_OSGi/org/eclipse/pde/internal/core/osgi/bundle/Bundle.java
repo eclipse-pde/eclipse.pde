@@ -59,49 +59,53 @@ public class Bundle extends BundleObject implements IBundle {
 			&& headers.containsValue(KEY_DESC)
 			&& headers.containsValue(KEY_VERSION);
 	}
-
+	
 	public void load(IPluginBase plugin, IProgressMonitor monitor) {
 		reset();
 		monitor.beginTask("", 2);
+		load(headers, plugin, monitor);
+	}
+	
+	public static void load(Dictionary d, IPluginBase plugin, IProgressMonitor monitor) {
 		// migrate from a plug-in
-		headers.put(KEY_LEGACY, "true");
-		headers.put(KEY_NAME, plugin.getId());
-		headers.put(KEY_GLOBAL_NAME, plugin.getId());
-		headers.put(KEY_DESC, plugin.getName());
-		headers.put(KEY_VENDOR, plugin.getProviderName());
-		headers.put(KEY_VERSION, plugin.getVersion());
+		d.put(KEY_LEGACY, "true");
+		d.put(KEY_NAME, plugin.getId());
+		d.put(KEY_GLOBAL_NAME, plugin.getId());
+		d.put(KEY_DESC, plugin.getName());
+		d.put(KEY_VENDOR, plugin.getProviderName());
+		d.put(KEY_VERSION, plugin.getVersion());
 
 		if (plugin instanceof IFragment)
-			loadFragment((IFragment) plugin);
+			loadFragment(d, (IFragment) plugin);
 		else
-			loadPlugin((IPlugin) plugin);
-		loadLibraries(
+			loadPlugin(d, (IPlugin) plugin);
+		loadLibraries(d, 
 			plugin.getLibraries(),
 			new SubProgressMonitor(monitor, 1));
-		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
+		loadImports(d, plugin.getImports(), new SubProgressMonitor(monitor, 1));
 		if (plugin.getModel().getUnderlyingResource() != null)
-			loadExports(plugin.getModel().getUnderlyingResource().getProject());
+			loadExports(d, plugin.getModel().getUnderlyingResource().getProject());
 	}
 
-	private boolean loadPlugin(IPlugin plugin) {
+	private static boolean loadPlugin(Dictionary d, IPlugin plugin) {
 		String pluginClass = plugin.getClassName();
 		if (pluginClass != null) {
-			headers.put(KEY_ACTIVATOR, pluginClass);
+			d.put(KEY_ACTIVATOR, pluginClass);
 			return true;
 		}
 		return false;
 	}
 
-	private void loadFragment(IFragment fragment) {
+	private static void loadFragment(Dictionary d, IFragment fragment) {
 		FragmentUtil futil = new FragmentUtil(fragment);
-		headers.put(KEY_HOST_BUNDLE, futil.getHeader());
+		d.put(KEY_HOST_BUNDLE, futil.getHeader());
 	}
 
-	private void loadLibraries(
+	private static void loadLibraries(
+		Dictionary d,
 		IPluginLibrary[] libraries,
 		IProgressMonitor monitor) {
 		StringBuffer classpath = new StringBuffer();
-		//StringBuffer packageExport = new StringBuffer();
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
 			String name = library.getName();
@@ -109,10 +113,11 @@ public class Bundle extends BundleObject implements IBundle {
 				classpath.append(",");
 			classpath.append(name);
 		}
-		headers.put(KEY_CLASSPATH, classpath.toString());
+		d.put(KEY_CLASSPATH, classpath.toString());
 	}
 
-	private void loadImports(
+	private static void loadImports(
+		Dictionary d,
 		IPluginImport[] imports,
 		IProgressMonitor monitor) {
 		StringBuffer requires = new StringBuffer();
@@ -135,10 +140,10 @@ public class Bundle extends BundleObject implements IBundle {
 				requires.append(", ");
 			requires.append("org.eclipse.core.runtime");
 		}
-		headers.put(KEY_REQUIRE_BUNDLE, requires.toString());
+		d.put(KEY_REQUIRE_BUNDLE, requires.toString());
 	}
 
-	private void loadExports(IProject project) {
+	private static void loadExports(Dictionary d, IProject project) {
 		if (!OSGiWorkspaceModelManager.isJavaPluginProject(project))
 			return;
 		IJavaProject javaProject = JavaCore.create(project);
@@ -171,7 +176,7 @@ public class Bundle extends BundleObject implements IBundle {
 			}
 
 			if (added > 0)
-				headers.put(KEY_PROVIDE_PACKAGE, provides.toString());
+				d.put(KEY_PROVIDE_PACKAGE, provides.toString());
 		} catch (JavaModelException e) {
 			PDECore.logException(e);
 		}

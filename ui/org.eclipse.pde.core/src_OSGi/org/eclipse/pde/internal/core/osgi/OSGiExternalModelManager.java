@@ -235,7 +235,10 @@ public class OSGiExternalModelManager implements IExternalModelManager {
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
 
-		RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+		if (isTargetOSGi())
+			BundleLoader.reload(pluginPaths, models, fmodels, monitor);
+		else
+			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initialized=true;
 		initializeAllModels();
 		EclipseHomeInitializer.resetEclipseHomeVariables();

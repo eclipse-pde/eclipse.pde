@@ -10,22 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.io.File;
+
 import org.eclipse.pde.core.plugin.*;
 
-public class ExternalFragmentModel extends ExternalPluginModelBase implements IFragmentModel {
+public class ExternalFragmentModel
+	extends ExternalPluginModelBase
+	implements IFragmentModel {
 
-public ExternalFragmentModel() {
-	super();
-}
-public IPluginBase createPluginBase() {
-	PluginBase base = new Fragment();
-	base.setModel(this);
-	return base;
-}
-public IFragment getFragment() {
-	return (IFragment)getPluginBase();
-}
-public boolean isFragmentModel() {
-	return true;
-}
+	public ExternalFragmentModel() {
+		super();
+	}
+	public IPluginBase createPluginBase() {
+		PluginBase base = new Fragment();
+		base.setModel(this);
+		return base;
+	}
+	public IFragment getFragment() {
+		return (IFragment) getPluginBase();
+	}
+	public boolean isFragmentModel() {
+		return true;
+	}
+
+	protected File getFile() {
+		return new File(getInstallLocation() + File.separator + "fragment.xml");
+	}
 }

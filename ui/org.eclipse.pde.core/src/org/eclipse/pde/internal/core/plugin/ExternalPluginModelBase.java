@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.File;
+import java.io.*;
 import java.net.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
@@ -49,6 +50,8 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		}
 		return buildModel;
 	}
+	
+	protected abstract File getFile();
 
 	public String getInstallLocation() {
 		return installLocation;
@@ -57,6 +60,23 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return false;
 	}
 	public void load() {
+		File file = getFile();
+		if (file == null)
+			return;
+		if (file.exists()) {
+			try {
+				InputStream stream = new FileInputStream(file); 
+				load(stream, false);
+				stream.close();
+			} catch (CoreException e) {
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
+		} else {
+			pluginBase = (PluginBase) createPluginBase();
+			pluginBase.setModel(this);
+			loaded = true;
+		}
 	}
 	public void load(PluginModel descriptorModel) {
 		PluginBase pluginBase = (PluginBase) getPluginBase();
