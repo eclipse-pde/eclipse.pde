@@ -47,6 +47,14 @@ public class MigratePluginWizard extends Wizard {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
+				
+				if (PDEPlugin.getWorkspace().validateEdit(
+						getFilesToValidate(models), 
+						getContainer().getShell()).getSeverity() != IStatus.OK) {
+					monitor.done();
+					return;
+				}
+				
 				int numUnits = doUpdateClasspath ? models.length * 2 : models.length;
 				monitor.beginTask(PDEPlugin.getResourceString("MigrationWizard.progress"), numUnits); //$NON-NLS-1$
 				try {
@@ -63,14 +71,14 @@ public class MigratePluginWizard extends Wizard {
 							desc.setReferencedProjects(new IProject[0]);
 							project.setDescription(desc, null);
 						}
-					}
-					if (doUpdateClasspath) {
-						UpdateClasspathAction.doUpdateClasspath(
-							new SubProgressMonitor(monitor, models.length),
-							models);
-					}
+						if (doUpdateClasspath) {
+							UpdateClasspathAction.doUpdateClasspath(
+								new SubProgressMonitor(monitor, 1),
+								new IPluginModelBase[] {models[i]});
+						}
+					}				
 				} catch (Exception e) {
-					e.printStackTrace();
+					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();
 				}
@@ -83,6 +91,17 @@ public class MigratePluginWizard extends Wizard {
 		} catch (InterruptedException e) {
 		}
 		return true;
+	}
+	
+	private IFile[] getFilesToValidate(IPluginModelBase[] models) {
+		ArrayList files = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			IProject project = models[i].getUnderlyingResource().getProject();
+			files.add(models[i].getUnderlyingResource());
+			files.add(project.getFile(".project"));
+			files.add(project.getFile(".classpath"));
+		}
+		return (IFile[])files.toArray(new IFile[files.size()]);
 	}
 	
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -276,7 +295,6 @@ public class MigratePluginWizard extends Wizard {
 			}
 			adapter.replace(buffer.toString(), false);
 		} catch (BadLocationException e) {
-			e.printStackTrace();
 		}
 	}
 	
