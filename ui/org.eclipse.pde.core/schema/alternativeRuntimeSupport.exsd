@@ -50,13 +50,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a user-friendly name of this runtime
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="default" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
