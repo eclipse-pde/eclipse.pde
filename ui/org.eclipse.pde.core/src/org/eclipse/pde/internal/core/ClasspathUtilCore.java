@@ -66,6 +66,9 @@ public class ClasspathUtilCore {
 		try {
 			HashSet alreadyAdded = new HashSet();
 			if (model.isFragmentModel()) {
+				// SO THAT FRAGMENTS DO NOT ADD THEMSELVES
+				// ON THE CLASSPATH
+				alreadyAdded.add(model.getPluginBase());
 				addParentPlugin(
 					(IFragment) model.getPluginBase(),
 					result,
@@ -390,7 +393,6 @@ public class ClasspathUtilCore {
 				}
 			}
 		}
-
 	}
 
 	protected static void addSourceFolder(String name, IProject project, Vector result)
@@ -400,7 +402,6 @@ public class ClasspathUtilCore {
 		if (!result.contains(entry))
 			result.add(entry);
 	}
-
 
 	/**
 	 * Creates a new instance of the classpath container entry for the given
