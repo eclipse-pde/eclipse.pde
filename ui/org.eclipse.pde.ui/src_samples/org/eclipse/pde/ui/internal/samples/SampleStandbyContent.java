@@ -235,7 +235,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
-			String content = PDEPlugin.getFormattedMessage("SampleStandbyContent.desc",(desc != null ? desc : "")); //$NON-NLS-1$
+			String content = PDEPlugin.getFormattedMessage("SampleStandbyContent.desc",(desc != null ? desc : "")); //$NON-NLS-1$ //$NON-NLS-2$
 			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);

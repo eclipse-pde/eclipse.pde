@@ -67,18 +67,23 @@ public class FeatureExportWizard extends BaseExportWizard {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
 	 */
 	protected void generateAntTask(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<project name=\"build\" default=\"feature_export\">");
-		writer.println("\t<target name=\"feature_export\">");
-		writer.print("\t\t<pde.exportFeatures features=\"" + getFeatureIDs()
-				+ "\" destination=\"" + page1.getDestination() + "\" ");
-		String filename = page1.getFileName();
-		if (filename != null)
-			writer.print("filename =\"" + filename + "\" ");
-		writer.print("exportType=\"" + getExportOperation() + "\" ");
-		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>"); 
-		writer.println("\t</target>");
-		writer.println("</project>");
+		if (page1.getFileName() != null)
+			writer.println(PDEPlugin.getFormattedMessage("FeatureExportWizard.ant.filenameContent",  //$NON-NLS-1$
+					new String[]{
+					getFeatureIDs(),
+					page1.getDestination(),
+					page1.getFileName(),
+					getExportOperation(),
+					(page1.doExportSource() ? "true" : "false")  //$NON-NLS-1$ //$NON-NLS-2$
+			})); //$NON-NLS-1$
+		else 
+			writer.println(PDEPlugin.getFormattedMessage("FeatureExportWizard.ant.content", //$NON-NLS-1$
+					new String[]{
+					getFeatureIDs(),
+					page1.getDestination(),
+					getExportOperation(),
+					(page1.doExportSource() ? "true" : "false") //$NON-NLS-1$ //$NON-NLS-2$
+			})); //$NON-NLS-1$
 	}
 	
 	private String getFeatureIDs() {
@@ -89,7 +94,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 			if (object instanceof IFeatureModel) {
 				buffer.append(((IFeatureModel)object).getFeature().getId());
 				if (i < objects.length - 1)
-					buffer.append(",");					
+					buffer.append(",");					 //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();

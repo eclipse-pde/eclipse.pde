@@ -93,7 +93,7 @@ public class SampleEditor extends EditorPart {
 		descText = toolkit.createFormText(form.getBody(), true);
 		descText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String desc = properties.getProperty("description"); //$NON-NLS-1$
-		String content = PDEPlugin.getFormattedMessage("SampleEditor.desc",(desc!=null?desc:"")); //$NON-NLS-1$
+		String content = PDEPlugin.getFormattedMessage("SampleEditor.desc",(desc!=null?desc:"")); //$NON-NLS-1$ //$NON-NLS-2$
 		descText.setText(content, true, false);
 		final String helpURL = properties.getProperty("helpHref"); //$NON-NLS-1$
 		if (helpURL!=null) {

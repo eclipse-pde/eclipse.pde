@@ -139,7 +139,7 @@ public class LauncherUtils {
 				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE &&
-							roots[i].getPackageFragment("org.eclipse.core.launcher").exists()){
+							roots[i].getPackageFragment("org.eclipse.core.launcher").exists()){ //$NON-NLS-1$
 						IPath path = jProject.getOutputLocation().removeFirstSegments(1);
 						return project.getLocation().append(path).toOSString();
 					}
