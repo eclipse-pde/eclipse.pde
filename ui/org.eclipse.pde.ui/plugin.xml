@@ -771,7 +771,7 @@
       <template
             name="%template.helloWorld.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.helloWorld">
       </template>
       <template
             name="%template.perspectiveExtensions.name"
@@ -781,37 +781,37 @@
       <template
             name="%template.propertyPages.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.propertyPage">
       </template>
       <template
             name="%template.editor.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.editor">
       </template>
       <template
             name="%template.popupMenus.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.popup">
       </template>
       <template
             name="%template.view.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.view">
       </template>
       <template
             name="%template.multiPageEditor.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.multiPageEditor">
       </template>
       <template
             name="%template.newWizard.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.new">
       </template>
       <template
             name="%template.preferences.name"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
-            id="org.eclipse.pde.ui.templates.perspectiveExtensions">
+            id="org.eclipse.pde.ui.templates.preferences">
       </template>
       <template
             name="%template.help.name"
