@@ -234,13 +234,18 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		fTableViewer = new TableViewer(table);
 		fTableViewer.setContentProvider(new ContentProvider());
 		fTableViewer.setLabelProvider(new ConfigurationLabelProvider());
+		fTableViewer.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				String id1 = ((Entry)e1).model.getPluginBase().getId();
+				String id2 = ((Entry)e2).model.getPluginBase().getId();
+				return super.compare(viewer, id1, id2);
+		}});
 		fTableViewer.setInput(fPluginList);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				enableButtons(!fUseDefault.getSelection());
 			}
 		});
-		fTableViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 300;
@@ -260,8 +265,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPluginsOnly();
-				SelectionDialog dialog = new SelectionDialog(getShell(), models, true);
+				IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+				ArrayList list = new ArrayList();
+				for (int i = 0; i < models.length; i++) {
+					if (!fPluginList.contains(new Entry(models[i], -1)))
+						list.add(models[i]);
+				}
+				SelectionDialog dialog = new SelectionDialog(getShell(), (IPluginModelBase[])list.toArray(new IPluginModelBase[list.size()]), true);
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					Object[] selected = dialog.getResult();
 					for (int i = 0; i < selected.length; i++) {
