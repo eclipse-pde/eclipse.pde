@@ -111,9 +111,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				parent,
 				Section.DESCRIPTION,
 				new String[] {"Add...", "Remove", "Properties..."}); 
-		getSection().setText("Required Packages"); 
+		getSection().setText("Exported Packages"); 
 		getSection()
-				.setDescription("You can specify packages this plug-in depends on without explicitly restricting what plug-ins they must come from."); 
+				.setDescription("Enumerate all the packages that this plug-in exposes to clients.  All other packages will be hidden from clients at all times."); 
 		getTablePart().setEditable(false);
 	}
 
@@ -172,6 +172,13 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         return false;
     }
     
+    public void dispose() {
+        IBundleModel model = getBundleModel();
+        if (model != null)
+            model.removeModelChangedListener(this);
+        super.dispose();
+    }
+        
     protected void doPaste() {
     }
 
@@ -216,15 +223,12 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
              exportObject.setVersion(dialog.getVersion());
              writeExportPackageHeader();
-             fPackageViewer.refresh(exportObject);
          }
     }
 
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer.getSelection();
-		Object[] items = ssel.toArray();
-		fPackageViewer.remove(items);
-		removeExportPackages(items);
+		removeExportPackages(ssel.toArray());
 	}
 
 	private void removeExportPackages(Object[] removed) {
@@ -250,7 +254,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                         IPackageFragment candidate = (IPackageFragment) selected[i];
                         ExportPackageObject p = new ExportPackageObject(candidate, getVersionAttribute());
                         fPackages.put(p.getName(), p);
-                        fPackageViewer.add(p);
                     }
                     if (selected.length > 0) {
                         writeExportPackageHeader();
@@ -271,7 +274,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         return vector;
     }
 
-	private void writeExportPackageHeader() {
+	public void writeExportPackageHeader() {
 		StringBuffer buffer = new StringBuffer();
 		if (fPackages != null) {
             Iterator iter = fPackages.values().iterator();
@@ -287,14 +290,15 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+            fPackages = null;
 			markStale();
 			return;
 		}
-		refresh();
+        if (event.getChangedProperty().equals(getExportedPackageHeader()))
+            refresh();
 	}
 
 	public void refresh() {
-		fPackages = null;
 		fPackageViewer.refresh();
 		super.refresh();
 	}
@@ -352,11 +356,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
  
-    private String getExportedPackageHeader() {
+    public String getExportedPackageHeader() {
         int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
         return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
     }
 
-    
- 
 }

@@ -14,8 +14,10 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
@@ -39,6 +41,7 @@ public class ExportPackageVisibilitySection extends TableSection
 	private TableViewer fPackageExportViewer;
     private Action fAddAction;
     private Action fRemoveAction;
+    private ExportPackageSection fMaster;
 	
 	class TableContentProvider extends DefaultContentProvider
 			implements IStructuredContentProvider {
@@ -62,11 +65,12 @@ public class ExportPackageVisibilitySection extends TableSection
 		}
 	}
     
-	public ExportPackageVisibilitySection(PDEFormPage formPage, Composite parent) {
+	public ExportPackageVisibilitySection(PDEFormPage formPage, Composite parent, ExportPackageSection master) {
 		super(formPage, parent, Section.DESCRIPTION, new String[]{
 				PDEPlugin.getResourceString(KEY_ADD),
 				PDEPlugin.getResourceString(KEY_REMOVE)});
 		handleDefaultButton = false;
+        fMaster = master;
 	}
     
 	public void createClient(Section section, FormToolkit toolkit) {
@@ -83,8 +87,7 @@ public class ExportPackageVisibilitySection extends TableSection
         createPackageViewer(container, toolkit);       
         makeActions();
         
-        IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-        model.addModelChangedListener(this);
+        getBundleModel().addModelChangedListener(this);
         
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
@@ -147,8 +150,8 @@ public class ExportPackageVisibilitySection extends TableSection
 	}
     
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model!=null)
+		IBundleModel model = getBundleModel();
+		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
@@ -168,7 +171,8 @@ public class ExportPackageVisibilitySection extends TableSection
 			markStale();
 			return;
 		}
-		refresh();
+        if (e.getChangedProperty().equals(fMaster.getExportedPackageHeader()))
+            refresh();
 	}
 
 	public void refresh() {
@@ -178,5 +182,13 @@ public class ExportPackageVisibilitySection extends TableSection
 	public void selectionChanged(IFormPart source, ISelection selection) {
 	}
     
-	
+    private BundleInputContext getBundleContext() {
+        InputContextManager manager = getPage().getPDEEditor().getContextManager();
+        return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
+    }
+    
+    private IBundleModel getBundleModel() {
+        BundleInputContext context = getBundleContext();
+        return (context != null) ? (IBundleModel)context.getModel() : null;       
+    }
 }

@@ -101,6 +101,7 @@ public class Bundle implements IBundle {
 	 */
 	public void setHeader(String key, String value) {
 		ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
+        String old = header == null ? null : header.getValue();
 		if (header == null) {
 			header = new ManifestHeader();
 		}
@@ -108,7 +109,7 @@ public class Bundle implements IBundle {
 		header.setValue(value);
 		fDocumentHeaders.put(key, header);
 		
-		fModel.fireModelObjectChanged(header, key, null, value);
+		fModel.fireModelObjectChanged(header, key, old, value);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)

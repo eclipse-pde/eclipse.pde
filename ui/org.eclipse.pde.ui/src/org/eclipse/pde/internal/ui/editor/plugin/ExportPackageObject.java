@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.util.*;
-import org.osgi.framework.*;
 
 public class ExportPackageObject implements Serializable {
     
@@ -24,12 +23,14 @@ public class ExportPackageObject implements Serializable {
     private String fVersionAttribute;
     private String name;
     private String version;
+    private boolean internal;
     private transient ManifestElement element;
     
     public ExportPackageObject(ManifestElement element, String versionAttribute) {
         fVersionAttribute = versionAttribute;
         name = element.getValue();
         version = element.getAttribute(fVersionAttribute);
+        internal = "true".equals(element.getDirective("x-internal"));
         this.element = element;
     }
     
@@ -62,6 +63,9 @@ public class ExportPackageObject implements Serializable {
             buffer.append(version.trim());
             buffer.append("\"");
         }
+        if (internal)
+            buffer.append(";x-internal:=true");
+
         if (element == null)
             return buffer.toString();
         
@@ -78,11 +82,12 @@ public class ExportPackageObject implements Serializable {
                 buffer.append("\"");
             }
         }
+        
         Enumeration directives = element.getDirectiveKeys();
         if (directives != null) {
             while (directives.hasMoreElements()) {
                 String directive = directives.nextElement().toString();
-                if (directive.equals(Constants.RESOLUTION_DIRECTIVE))
+                if (directive.equals("x-internal"))
                     continue;
                 buffer.append(";");
                 buffer.append(directive);
@@ -109,6 +114,14 @@ public class ExportPackageObject implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public boolean isInternal() {
+        return internal;
+    }
+
+    public void setInternal(boolean internal) {
+        this.internal = internal;
     }
 
 }

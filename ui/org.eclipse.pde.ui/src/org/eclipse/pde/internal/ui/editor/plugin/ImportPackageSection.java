@@ -169,6 +169,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         return false;
     }
     
+    public void dispose() {
+        IBundleModel model = getBundleModel();
+        if (model != null)
+            model.removeModelChangedListener(this);
+        super.dispose();
+    }
+    
     protected void doPaste() {
     }
 
@@ -214,15 +221,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             importObject.setOptional(dialog.isOptional());
             importObject.setVersion(dialog.getVersion());
             writeImportPackages();
-            fPackageViewer.refresh(importObject);
          }
     }
 
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer.getSelection();
-		Object[] items = ssel.toArray();
-		fPackageViewer.remove(items);
-		removeImportPackages(items);
+		removeImportPackages(ssel.toArray());
 	}
 
 	/**
@@ -252,7 +256,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				ExportPackageDescription candidate = (ExportPackageDescription) selected[i];
 				ImportPackageObject p = new ImportPackageObject(candidate, getVersionAttribute());
                 fPackages.put(p.getName(), p);
-                fPackageViewer.add(p);
             }
 			if (selected.length > 0) {
 				writeImportPackages();
@@ -297,13 +300,14 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
+            fPackages = null;
 			return;
 		}
-		refresh();
+        if (event.getChangedProperty().equals(Constants.IMPORT_PACKAGE))
+            refresh();
 	}
 
 	public void refresh() {
-		fPackages = null;
 		fPackageViewer.refresh();
 		super.refresh();
 	}

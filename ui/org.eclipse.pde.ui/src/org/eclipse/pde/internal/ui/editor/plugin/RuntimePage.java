@@ -39,8 +39,9 @@ public class RuntimePage extends PDEFormPage {
         form.getBody().setLayout(layout);
 		
         if (isBundle()) {
-            mform.addPart(new ExportPackageSection(this, form.getBody()));
-            mform.addPart(new ExportPackageVisibilitySection(this, form.getBody()));
+            ExportPackageSection section = new ExportPackageSection(this, form.getBody());
+            mform.addPart(section);
+            mform.addPart(new ExportPackageVisibilitySection(this, form.getBody(), section));
             mform.addPart(new LibrarySection(this, form.getBody()));
         } else {
             mform.addPart(new LibrarySection(this, form.getBody()));		
