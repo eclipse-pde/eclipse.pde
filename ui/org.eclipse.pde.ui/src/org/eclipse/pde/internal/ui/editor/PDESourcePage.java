@@ -33,7 +33,7 @@ import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public abstract class PDESourcePage
 	extends ExtendedTextEditor
-	implements IPDEEditorPage {
+	implements IPDEEditorPage, IGotoMarker {
 	public static final String PAGE_TITLE = "SourcePage.title";
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
 	public static final String ERROR_TITLE = "SourcePage.errorTitle";

@@ -39,7 +39,7 @@ import org.eclipse.update.ui.forms.internal.*;
 
 public abstract class PDEMultiPageEditor
 	extends EditorPart
-	implements ISelectionProvider {
+	implements ISelectionProvider, IGotoMarker {
 	public static final String WRONG_EDITOR = "MultiPageEditor.wrongEditor";
 	public static final String TAG_TYPE = "input_type";
 	public static final String TYPE_WORKBENCH = "workbench_file";
@@ -367,6 +367,9 @@ public abstract class PDEMultiPageEditor
 		}
 		if (key.equals(IPropertySheetPage.class)) {
 			return getPropertySheet();
+		}
+		if (key.equals(IGotoMarker.class)) {
+			return this;
 		}
 		return super.getAdapter(key);
 	}
