@@ -26,13 +26,17 @@ public void run() {
 	if (obj instanceof FeaturePlugin) {
 		FeaturePlugin reference = (FeaturePlugin) obj;
 		IPluginBase pluginBase = reference.getPluginBase();
-		file = (IFile) pluginBase.getModel().getUnderlyingResource();
+		if (pluginBase!=null)
+			file = (IFile) pluginBase.getModel().getUnderlyingResource();
 	}
 	else if (obj instanceof IFeatureData) {
 		IFeatureData data = (IFeatureData)obj;
 		String id = data.getId();
-		IProject project = (IProject)data.getModel().getUnderlyingResource().getProject();
-		file = project.getFile(id);
+		IResource resource = data.getModel().getUnderlyingResource();
+		if (resource!=null) {
+			IProject project = resource.getProject();
+			file = project.getFile(id);
+		}
 	}
 	if (file!=null && file.exists()) {
 		IWorkbenchPage page = PDEPlugin.getDefault().getActivePage();

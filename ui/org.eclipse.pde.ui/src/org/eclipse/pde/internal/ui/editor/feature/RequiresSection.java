@@ -112,15 +112,12 @@ public class RequiresSection
 		IFeatureModel model = (IFeatureModel) input;
 		update(input);
 		if (model.isEditable() == false) {
-			pluginViewer.getTable().setEnabled(false);
+			getTablePart().setButtonEnabled(0, false);
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
-	}
-	private void initializeOverlays() {
-
 	}
 
 	public void modelChanged(IModelChangedEvent e) {

@@ -151,9 +151,9 @@ public class HandlerSection extends PDEFormSection {
 		IFeatureModel model = (IFeatureModel) input;
 		update(input);
 		if (model.isEditable() == false) {
-			urlText.getControl().setEnabled(false);
-			libraryText.getControl().setEnabled(false);
-			handlerText.getControl().setEnabled(false);
+			urlText.getControl().setEditable(false);
+			libraryText.getControl().setEditable(false);
+			handlerText.getControl().setEditable(false);
 		}
 		model.addModelChangedListener(this);
 	}

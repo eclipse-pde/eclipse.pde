@@ -177,9 +177,7 @@ public class IncludedFeaturesSection
 	public void initialize(Object input) {
 		IFeatureModel model = (IFeatureModel) input;
 		update(input);
-		if (model.isEditable() == false) {
-			includesViewer.getTable().setEnabled(false);
-		}
+		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);

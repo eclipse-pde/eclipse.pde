@@ -327,14 +327,15 @@ public class FeatureSpecSection extends PDEFormSection {
 		IFeatureModel model = (IFeatureModel) input;
 		update(input);
 		if (model.isEditable() == false) {
-			idText.getControl().setEnabled(false);
-			titleText.getControl().setEnabled(false);
-			versionText.getControl().setEnabled(false);
-			providerText.getControl().setEnabled(false);
-			imageText.getControl().setEnabled(false);
+			idText.getControl().setEditable(false);
+			titleText.getControl().setEditable(false);
+			versionText.getControl().setEditable(false);
+			providerText.getControl().setEditable(false);
+			imageText.getControl().setEditable(false);
 			primaryButton.setEnabled(false);
 			createJarButton.setEnabled(false);
 			synchronizeButton.setEnabled(false);
+			browseImageButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}

@@ -50,11 +50,14 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	}
 	private String getOriginalVersion() {
 		IPluginBase pluginBase = getPluginBase();
+		if (pluginBase==null) return "";
 		return pluginBase.getVersion();
 	}
 	private IPluginBase getPluginBase() {
 		if (pluginBase == null) {
 			IFeaturePlugin reference = getPluginReference();
+			if (reference.getModel().getUnderlyingResource()==null)
+				return null;
 			String id = reference.getId();
 			WorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();

@@ -37,8 +37,10 @@ public class ManifestEditor
 	public static final String DEPENDENCIES_PAGE = "DependenciesPage";
 	public static final String SOURCE_PAGE = "SourcePage";
 
-	public static final String KEY_TEMPLATE = "ManifestEditor.TemplatePage.title";
-	public static final String KEY_OVERVIEW = "ManifestEditor.OverviewPage.title";
+	public static final String KEY_TEMPLATE =
+		"ManifestEditor.TemplatePage.title";
+	public static final String KEY_OVERVIEW =
+		"ManifestEditor.OverviewPage.title";
 	public static final String KEY_DEPENDENCIES =
 		"ManifestEditor.DependenciesPage.title";
 	public static final String KEY_RUNTIME = "ManifestEditor.RuntimePage.title";
@@ -47,18 +49,20 @@ public class ManifestEditor
 		"ManifestEditor.ExtensionsPage.title";
 	public static final String KEY_EXTENSION_POINTS =
 		"ManifestEditor.ExtensionPointsPage.title";
-	public static final String NO_PLATFORM_HOME = "ManifestEditor.noPlatformHome";
-
+	public static final String NO_PLATFORM_HOME =
+		"ManifestEditor.noPlatformHome";
 
 	public ManifestEditor() {
 		super();
-		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
+			this);
 	}
 	private void checkPlatformHome() throws PartInitException {
 		CoreSettings store = PDECore.getDefault().getSettings();
 		String home = store.getString(ICoreConstants.PLATFORM_PATH);
 		if (home == null || home.length() == 0) {
-			throw new PartInitException(PDEPlugin.getResourceString(NO_PLATFORM_HOME));
+			throw new PartInitException(
+				PDEPlugin.getResourceString(NO_PLATFORM_HOME));
 		}
 	}
 	private IPluginModelBase createFileSystemModel(File file) {
@@ -91,7 +95,8 @@ public class ManifestEditor
 		return model;
 	}
 	private IPluginModelBase createStorageModel(IStorage storage) {
-		boolean fragment = storage.getName().toLowerCase().equals("fragment.xml");
+		String lname = storage.getName().toLowerCase();
+		boolean fragment = lname.startsWith("fragment.xml");
 		InputStream stream = null;
 		try {
 			stream = storage.getContents();
@@ -123,7 +128,7 @@ public class ManifestEditor
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
 		if (input instanceof IStorage)
-			return createStorageModel((IStorage)input);
+			return createStorageModel((IStorage) input);
 		if (input instanceof File)
 			return createFileSystemModel((File) input);
 		return null;
@@ -137,7 +142,9 @@ public class ManifestEditor
 		firstPageId = OVERVIEW_PAGE;
 		formWorkbook.setFirstPageSelected(false);
 		ManifestFormPage formPage =
-			new ManifestFormPage(this, PDEPlugin.getResourceString(KEY_OVERVIEW));
+			new ManifestFormPage(
+				this,
+				PDEPlugin.getResourceString(KEY_OVERVIEW));
 		addPage(OVERVIEW_PAGE, formPage);
 		addPage(
 			DEPENDENCIES_PAGE,
@@ -146,7 +153,9 @@ public class ManifestEditor
 				PDEPlugin.getResourceString(KEY_DEPENDENCIES)));
 		addPage(
 			RUNTIME_PAGE,
-			new ManifestRuntimePage(formPage, PDEPlugin.getResourceString(KEY_RUNTIME)));
+			new ManifestRuntimePage(
+				formPage,
+				PDEPlugin.getResourceString(KEY_RUNTIME)));
 		addPage(
 			EXTENSIONS_PAGE,
 			new ManifestExtensionsPage(
@@ -159,17 +168,22 @@ public class ManifestEditor
 				PDEPlugin.getResourceString(KEY_EXTENSION_POINTS)));
 		addPage(SOURCE_PAGE, new ManifestSourcePage(this));
 	}
-	
+
 	private void addTemplatePage(IProject project) {
 		IFile templateFile = project.getFile(".template");
-		if (!templateFile.exists()) return;
-		ManifestFormPage parent = (ManifestFormPage)getPage(OVERVIEW_PAGE);
-		ManifestTemplatePage page = new ManifestTemplatePage(parent, 
-				PDEPlugin.getResourceString(KEY_TEMPLATE), templateFile);
+		if (!templateFile.exists())
+			return;
+		ManifestFormPage parent = (ManifestFormPage) getPage(OVERVIEW_PAGE);
+		ManifestTemplatePage page =
+			new ManifestTemplatePage(
+				parent,
+				PDEPlugin.getResourceString(KEY_TEMPLATE),
+				templateFile);
 		addPage(TEMPLATE_PAGE, page, 0);
 	}
-	
-	private IPluginModelBase createResourceModel(IFile file) throws CoreException {
+
+	private IPluginModelBase createResourceModel(IFile file)
+		throws CoreException {
 		InputStream stream = null;
 
 		stream = file.getContents(false);
@@ -188,7 +202,8 @@ public class ManifestEditor
 		IPath buildPath = file.getProject().getFullPath().append(buildName);
 		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
 		modelProvider.connect(buildFile, this);
-		IBuildModel buildModel = (IBuildModel) modelProvider.getModel(buildFile, this);
+		IBuildModel buildModel =
+			(IBuildModel) modelProvider.getModel(buildFile, this);
 		try {
 			buildModel.load();
 		} catch (CoreException e) {
@@ -213,7 +228,11 @@ public class ManifestEditor
 			((WorkspacePluginModelBase) model).setBuildModel(null);
 			modelProvider.disconnect(model.getUnderlyingResource(), this);
 		}
-		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		PDEPlugin
+			.getDefault()
+			.getPreferenceStore()
+			.removePropertyChangeListener(
+			this);
 	}
 
 	public IPDEEditorPage getHomePage() {
@@ -236,16 +255,16 @@ public class ManifestEditor
 		throws PartInitException {
 		checkPlatformHome();
 		if (input instanceof TemplateEditorInput) {
-			firstPageId = ((TemplateEditorInput)input).getFirstPageId();
+			firstPageId = ((TemplateEditorInput) input).getFirstPageId();
 		}
 		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput)input).getFile();
+			IFile file = ((IFileEditorInput) input).getFile();
 			IProject project = file.getProject();
 			addTemplatePage(project);
 		}
 		super.init(site, input);
 	}
-	
+
 	public boolean isFragmentEditor() {
 		return false;
 	}
@@ -261,20 +280,36 @@ public class ManifestEditor
 	}
 	protected boolean isValidContentType(IEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (isFragmentEditor()) {
-			if (name.equals("fragment.xml"))
-				return true;
+
+		if (input instanceof IStorageEditorInput
+			&& !(input instanceof IFileEditorInput)) {
+			if (isFragmentEditor()) {
+				if (name.startsWith("fragment.xml"))
+					return true;
+			} else {
+				if (name.startsWith("plugin.xml"))
+					return true;
+			}
 		} else {
-			if (name.equals("plugin.xml"))
-				return true;
+			if (isFragmentEditor()) {
+				if (name.equals("fragment.xml"))
+					return true;
+			} else {
+				if (name.equals("plugin.xml"))
+					return true;
+			}
 		}
 		return false;
 	}
 	private void openExternalPlugin(IPluginBase pluginInfo) {
 		String manifest =
-			pluginInfo.getModel().isFragmentModel() ? "fragment.xml" : "plugin.xml";
+			pluginInfo.getModel().isFragmentModel()
+				? "fragment.xml"
+				: "plugin.xml";
 		String fileName =
-			pluginInfo.getModel().getInstallLocation() + File.separator + manifest;
+			pluginInfo.getModel().getInstallLocation()
+				+ File.separator
+				+ manifest;
 		File file = new File(fileName);
 		if (file.exists()) {
 			String editorId = PDEPlugin.getPluginId() + ".manifestEditor";
@@ -297,7 +332,8 @@ public class ManifestEditor
 	}
 
 	public void openPluginEditor(IPluginBase plugin) {
-		IResource underlyingResource = plugin.getModel().getUnderlyingResource();
+		IResource underlyingResource =
+			plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
 			openExternalPlugin(plugin);
 		} else {
@@ -316,11 +352,13 @@ public class ManifestEditor
 	}
 	protected boolean updateModel() {
 		IPluginModelBase model = (IPluginModelBase) getModel();
-		IDocument document = getDocumentProvider().getDocument(getEditorInput());
+		IDocument document =
+			getDocumentProvider().getDocument(getEditorInput());
 		String text = document.get();
 		boolean cleanModel = true;
 		try {
-			InputStream stream = new ByteArrayInputStream(text.getBytes("UTF8"));
+			InputStream stream =
+				new ByteArrayInputStream(text.getBytes("UTF8"));
 			try {
 				model.reload(stream, false);
 			} catch (CoreException e) {
@@ -342,11 +380,17 @@ public class ManifestEditor
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(MainPreferencePage.PROP_SHOW_OBJECTS)) {
-			final IModelChangeProvider provider = (IModelChangeProvider) getModel();
+			final IModelChangeProvider provider =
+				(IModelChangeProvider) getModel();
 			final ModelChangedEvent e =
-				new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null);
+				new ModelChangedEvent(
+					IModelChangedEvent.WORLD_CHANGED,
+					null,
+					null);
 			BusyIndicator
-				.showWhile(formWorkbook.getControl().getDisplay(), new Runnable() {
+				.showWhile(
+					formWorkbook.getControl().getDisplay(),
+					new Runnable() {
 				public void run() {
 					provider.fireModelChanged(e);
 				}

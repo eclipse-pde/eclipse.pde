@@ -231,10 +231,10 @@ public class PortabilitySection extends PDEFormSection {
 		IFeatureModel model = (IFeatureModel) input;
 		update(input);
 		if (model.isEditable() == false) {
-			osText.getControl().setEnabled(false);
-			wsText.getControl().setEnabled(false);
-			nlText.getControl().setEnabled(false);
-			archText.getControl().setEnabled(false);
+			osText.getControl().setEditable(false);
+			wsText.getControl().setEditable(false);
+			nlText.getControl().setEditable(false);
+			archText.getControl().setEditable(false);
 			osButton.setEnabled(false);
 			wsButton.setEnabled(false);
 			nlButton.setEnabled(false);

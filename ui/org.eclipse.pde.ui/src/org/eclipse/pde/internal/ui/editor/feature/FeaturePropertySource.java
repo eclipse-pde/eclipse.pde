@@ -19,27 +19,31 @@ import org.eclipse.pde.internal.core.ifeature.*;
 public abstract class FeaturePropertySource implements IPropertySource {
 	protected IFeatureObject object;
 
-public FeaturePropertySource(IFeatureObject object) {
-	this.object = object;
-}
-protected PropertyDescriptor createTextPropertyDescriptor(String name, String displayName) {
-	if (isEditable()) return new ModifiedTextPropertyDescriptor(name, displayName);
-	else return new PropertyDescriptor(name, displayName);
-}
-public Object getEditableValue() {
-	return null;
-}
-public boolean isEditable() {
-	return object.getModel().isEditable();
-}
-public boolean isPropertySet(Object property) {
-	return false;
-}
-public void resetPropertyValue(Object property) {
-}
-protected IPropertyDescriptor[] toDescriptorArray(Vector result) {
-	IPropertyDescriptor [] array = new IPropertyDescriptor[result.size()];
-	result.copyInto(array);
-	return array;
-}
+	public FeaturePropertySource(IFeatureObject object) {
+		this.object = object;
+	}
+	protected PropertyDescriptor createTextPropertyDescriptor(
+		String name,
+		String displayName) {
+		if (isEditable())
+			return new ModifiedTextPropertyDescriptor(name, displayName);
+		else
+			return new PropertyDescriptor(name, displayName);
+	}
+	public Object getEditableValue() {
+		return null;
+	}
+	public boolean isEditable() {
+		return object.getModel().isEditable();
+	}
+	public boolean isPropertySet(Object property) {
+		return false;
+	}
+	public void resetPropertyValue(Object property) {
+	}
+	protected IPropertyDescriptor[] toDescriptorArray(Vector result) {
+		IPropertyDescriptor[] array = new IPropertyDescriptor[result.size()];
+		result.copyInto(array);
+		return array;
+	}
 }

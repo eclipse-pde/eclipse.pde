@@ -4,19 +4,18 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.*;
 import java.io.*;
-import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.dialogs.ContainerGenerator;
-import org.eclipse.core.resources.IFile;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.text.PDEPartitionScanner;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.dialogs.ContainerGenerator;
+import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.texteditor.*;
 
 public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 
@@ -41,7 +40,10 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 
 			try {
 
-				in = new InputStreamReader(new BufferedInputStream(contentStream), "UTF8");
+				in =
+					new InputStreamReader(
+						new BufferedInputStream(contentStream),
+						"UTF8");
 				StringBuffer buffer = new StringBuffer();
 				char[] readBuffer = new char[2048];
 				int n = in.read(readBuffer);
@@ -74,7 +76,9 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 				IFileEditorInput input = (IFileEditorInput) element;
 				InputStream stream = null;
 				try {
-					stream = new ByteArrayInputStream(document.get().getBytes("UTF8"));
+					stream =
+						new ByteArrayInputStream(
+							document.get().getBytes("UTF8"));
 				} catch (UnsupportedEncodingException e) {
 				}
 
@@ -85,7 +89,9 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 					FileInfo info = (FileInfo) getElementInfo(element);
 
 					if (info != null && !overwrite)
-						checkSynchronizationState(info.fModificationStamp, file);
+						checkSynchronizationState(
+							info.fModificationStamp,
+							file);
 
 					file.setContents(stream, overwrite, true, monitor);
 
@@ -95,7 +101,8 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 							(ResourceMarkerAnnotationModel) info.fModel;
 						model.updateMarkers(info.fDocument);
 
-						info.fModificationStamp = computeModificationStamp(file);
+						info.fModificationStamp =
+							computeModificationStamp(file);
 					}
 
 				} else {
@@ -103,9 +110,14 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 						//monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
 						monitor.beginTask("Saving", 2000);
 						ContainerGenerator generator =
-							new ContainerGenerator(file.getParent().getFullPath());
-						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
-						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+							new ContainerGenerator(
+								file.getParent().getFullPath());
+						generator.generateContainer(
+							new SubProgressMonitor(monitor, 1000));
+						file.create(
+							stream,
+							false,
+							new SubProgressMonitor(monitor, 1000));
 					} finally {
 						monitor.done();
 					}
@@ -123,7 +135,9 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 		RuleBasedPartitioner partitioner =
 			new RuleBasedPartitioner(
 				new PDEPartitionScanner(),
-				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
+				new String[] {
+					PDEPartitionScanner.XML_TAG,
+					PDEPartitionScanner.XML_COMMENT });
 		return partitioner;
 	}
 
@@ -133,7 +147,14 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 			documentProvider = new UTF8FileDocumentProvider();
 		else if (input instanceof File)
 			documentProvider =
-				new SystemFileDocumentProvider(createDocumentPartitioner(), "UTF8");
+				new SystemFileDocumentProvider(
+					createDocumentPartitioner(),
+					"UTF8");
+		else if (input instanceof IStorage)
+			documentProvider =
+				new StorageDocumentProvider(
+					createDocumentPartitioner(),
+					"UTF8");
 		return documentProvider;
 	}
 }
