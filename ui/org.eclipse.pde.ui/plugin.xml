@@ -460,7 +460,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditorContributor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
-<!-- -->
+<!--
       <editor
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
@@ -469,7 +469,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
       </editor>
-<!-- -->
+-->
       <editor
             default="true"
             name="%editors.fragmentManifest.name"
@@ -488,7 +488,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
       </editor>
-<!-- -->
+<!--
       <editor
             name="%editors.schema.name"
             default="false"
@@ -498,7 +498,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.schema.SchemaEditor"
             id="org.eclipse.pde.ui.newSchemaEditor">
       </editor>
-<!-- -->
+-->
       <editor
             default="true"
             name="%editors.buildProperties.name"
@@ -517,7 +517,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             id="org.eclipse.pde.ui.featureEditor">
       </editor>
-<!-- -->
+<!--
       <editor
             name="%editors.featureManifest.name"
             icon="icons/obj16/ftr_xml_obj.gif"
@@ -526,7 +526,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.feature.FeatureEditor"
             id="org.eclipse.pde.ui.newFeatureEditor">
       </editor>
-<!-- -->
+-->
       <editor
             default="true"
             name="%editors.siteManifest.name"
@@ -536,7 +536,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
-<!-- -->
+<!--
       <editor
             name="%editors.siteManifest.name"
             icon="icons/obj16/site_xml_obj.gif"
@@ -545,7 +545,7 @@
             class="org.eclipse.pde.internal.ui.neweditor.site.SiteEditor"
             id="org.eclipse.pde.ui.newSiteEditor">
       </editor>
-<!-- -->
+-->
       <editor
             default="true"
             name="%editors.sample.name"

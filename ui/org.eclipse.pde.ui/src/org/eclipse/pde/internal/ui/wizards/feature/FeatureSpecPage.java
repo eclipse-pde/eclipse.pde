@@ -106,7 +106,8 @@ private void initialize() {
 	String projectName = mainPage.getProjectName();
 	if (initialId==null)
 		idText.setText(computeInitialId(projectName));
-	nameText.setText(projectName);
+	if (initialName==null)
+		nameText.setText(projectName);
 	versionText.setText("1.0.0");	
 }
 
