@@ -314,7 +314,6 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 					if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 						root += "/configuration"; //$NON-NLS-1$
 					fConfigDir = new File(root);
-					fConfigDir.mkdirs();
 				} else {
 					fConfigDir = LauncherUtils.createConfigArea(config.getName());
 				}
