@@ -67,6 +67,12 @@ public abstract class SchemaObject
 				case '&' :
 					buf.append("&amp;");
 					break;
+				case '\'' :
+					buf.append("&apos;");
+					break;
+				case '\"' :
+					buf.append("&quot;");
+					break;
 				default :
 					buf.append(c);
 			}
