@@ -153,7 +153,12 @@ public class ConfigurationSection extends PDESection {
 
 	private void handleOpen() {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(fCustomEntry.getValue()));
+		Path path = new Path(fCustomEntry.getValue());
+		if(path.isEmpty()){
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.emptyPath")); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		IResource resource = root.findMember(path);
 		try {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);

@@ -135,6 +135,10 @@ public class WindowImagesSection extends PDESection {
 	private void openImage(String value) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IPath path = new Path(value);
+		if(path.isEmpty()){
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.emptyPath")); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
 		if (!path.isAbsolute()) {
 			path = getFullPath(path);
 		}

@@ -298,6 +298,11 @@ public class LauncherSection extends PDESection {
 	
 	private void openImage(String value) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		Path path = new Path(value);
+		if(path.isEmpty()){
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("WindowImagesSection.open"), PDEPlugin.getResourceString("WindowImagesSection.emptyPath")); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
 		IResource resource = root.findMember(new Path(value));
 		try {
 			if (resource != null && resource instanceof IFile)
