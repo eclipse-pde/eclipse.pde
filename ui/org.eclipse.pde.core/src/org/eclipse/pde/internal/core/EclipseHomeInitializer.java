@@ -25,6 +25,6 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
 	public void initialize(String variable) {
-		ExternalModelManager.getEclipseHome(new NullProgressMonitor());
+		//ExternalModelManager.getEclipseHome(new NullProgressMonitor());
 	}
 }
