@@ -33,7 +33,7 @@
 	<mkdir dir="${buildDirectory}" />
 	<ant antfile="${customTargets}" target="preSetup" /> 
 	<ant antfile="${customTargets}" target="getMapFiles" /> 
-	<concat destfile="${buildDirectory}/directory.txt">
+	<concat destfile="${buildDirectory}/directory.txt" fixlastline="yes">
 		<fileset dir="${buildDirectory}" includes="maps/**/*.map"/>
 	</concat>
 	<ant antfile="${customTargets}" target="postSetup" />
