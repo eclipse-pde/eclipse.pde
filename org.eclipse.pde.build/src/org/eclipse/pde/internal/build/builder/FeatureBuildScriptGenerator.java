@@ -424,7 +424,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printMkdirTask(root);
 
 		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("antzip")) //$NON-NLS-1$
-			script.printMkdirTask(root);
+//			script.printMkdirTask(root);
 
 		if (AbstractScriptGenerator.outputFormat.equalsIgnoreCase("zip") && include != null) //$NON-NLS-1$
 			script.printMkdirTask(root);
@@ -851,7 +851,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
-		if (assemblyData == null)
+		if (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null)
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by

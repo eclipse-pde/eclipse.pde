@@ -377,14 +377,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
 			filesPlugins[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1].equals(new Byte(FILE)), null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], null);
 		}
-		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
+		if (plugins.length != 0)
+			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
 
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
 			Object[] shape = getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE);
 			filesFeatures[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1].equals(new Byte(FILE)), null, null, null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], null);
 		}
-		script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
+		if (features.length != 0)
+			script.printZipTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
 
 		if (!copyRootFile)
 			return;

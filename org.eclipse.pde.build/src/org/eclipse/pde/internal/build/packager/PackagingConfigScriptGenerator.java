@@ -165,6 +165,9 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 	private void generateAntTarTarget() {
 		int index = 0;
 		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
+		if (files.length == 0)
+			return;
+		
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
@@ -198,6 +201,9 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 	private void generateAntZipTarget() {
 		int index = 0;
 		FileSet[] files = new FileSet[plugins.length + features.length + rootFiles.length + rootDirs.length];
+		if (files.length == 0)
+			return;
+		
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			boolean isFolder = isFolder(pluginLocation);
