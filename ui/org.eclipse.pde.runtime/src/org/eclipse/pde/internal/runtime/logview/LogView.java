@@ -138,8 +138,11 @@ public class LogView extends ViewPart implements ILogListener {
 		formControl.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (logs.size() > 0) {
 			tableTreeViewer.setSelection(new StructuredSelection(logs.get(0)));
-			detailsForm.update();
+		} else {
+			detailsForm.openTo(null);
 		}
+		detailsForm.update();
+
 	}
 	
 	private void createVerticalLine(Composite parent) {
@@ -598,13 +601,12 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void updatePreview(ISelection selection) {
-		LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
-		if (entry == null && logs.size() > 0) {
-			entry = (LogEntry)logs.get(0);
-			tableTreeViewer.setSelection(new StructuredSelection(entry));
+		if (selection.isEmpty()) {
+			detailsForm.openTo(null);
+		} else {
+			detailsForm.openTo(
+				(LogEntry) ((IStructuredSelection) selection).getFirstElement());
 		}
-		if (entry != null)
-			detailsForm.openTo(entry);
 	}
 	
 	private void updateStatus(ISelection selection) {

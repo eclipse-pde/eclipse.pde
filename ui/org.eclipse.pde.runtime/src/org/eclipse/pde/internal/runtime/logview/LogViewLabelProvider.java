@@ -21,16 +21,19 @@ public class LogViewLabelProvider
 	private Image infoImage;
 	private Image errorImage;
 	private Image warningImage;
+	private Image errorWithStackImage;
 
 	public LogViewLabelProvider() {
 		errorImage = PDERuntimePluginImages.DESC_ERROR_ST_OBJ.createImage();
 		warningImage = PDERuntimePluginImages.DESC_WARNING_ST_OBJ.createImage();
 		infoImage = PDERuntimePluginImages.DESC_INFO_ST_OBJ.createImage();
+		errorWithStackImage = PDERuntimePluginImages.DESC_ERROR_STACK_OBJ.createImage();
 	}
 	public void dispose() {
 		errorImage.dispose();
 		infoImage.dispose();
 		warningImage.dispose();
+		errorWithStackImage.dispose();
 		super.dispose();
 	}
 	public Image getColumnImage(Object element, int columnIndex) {
@@ -42,7 +45,7 @@ public class LogViewLabelProvider
 				case IStatus.WARNING :
 					return warningImage;
 				case IStatus.ERROR :
-					return errorImage;
+					return (entry.getStack() == null ? errorImage : errorWithStackImage);
 			}
 		}
 		return null;

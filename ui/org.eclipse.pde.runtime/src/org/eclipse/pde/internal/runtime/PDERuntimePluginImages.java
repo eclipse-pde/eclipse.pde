@@ -35,6 +35,8 @@ public class PDERuntimePluginImages {
 
 	public static final ImageDescriptor DESC_ERROR_ST_OBJ =
 		create(PATH_OBJ, "error_st_obj.gif");
+	public static final ImageDescriptor DESC_ERROR_STACK_OBJ =
+		create(PATH_OBJ, "error_stack.gif");
 	public static final ImageDescriptor DESC_EXT_POINT_OBJ =
 		create(PATH_OBJ, "ext_point_obj.gif");
 	public static final ImageDescriptor DESC_EXT_POINTS_OBJ =

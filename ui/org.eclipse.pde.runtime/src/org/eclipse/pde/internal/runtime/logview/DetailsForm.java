@@ -21,19 +21,23 @@ public class DetailsForm extends ScrollableSectionForm {
 	private SessionDataSection sessionSection;
 	private StackSection stackSection;
 	private Image headingImage;
-	private Label dateLabel;
+	private Label date;
 	private Label message;
+	private Composite parent;
+	private Label eventType;
 
 	public DetailsForm() {
 		setVerticalFit(true);
 		headingImage = PDERuntimePluginImages.DESC_FORM_BANNER_SHORT.createImage();
 		if (isWhiteBackground())
 			setHeadingImage(headingImage);
+		setHeadingText(PDERuntimePlugin.getResourceString("logView.preview.header"));
 	}
 	
 	protected void createFormClient(Composite parent) {
+		this.parent = parent;
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 3;
+		layout.marginWidth = 5;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 15;
 		parent.setLayout(layout);
@@ -48,10 +52,15 @@ public class DetailsForm extends ScrollableSectionForm {
 		comp.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
-		dateLabel = factory.createLabel(comp, "", SWT.NONE);
+		eventType = factory.createLabel(comp, "", SWT.NONE);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		dateLabel.setLayoutData(gd);
+		eventType.setLayoutData(gd);
+		
+		date = factory.createLabel(comp, "", SWT.NONE);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		date.setLayoutData(gd);
 
 		Label label =
 			factory.createLabel(
@@ -86,20 +95,30 @@ public class DetailsForm extends ScrollableSectionForm {
 	}
 
 	public void openTo(LogEntry entry) {
-		sessionSection.expandTo(entry);
-		stackSection.expandTo(entry);
-		setHeadingText(entry.getSeverityText());
-		dateLabel.setText(
-			PDERuntimePlugin.getResourceString("LogView.preview.date")
-				+ " "
-				+ entry.getDate());
-		message.setText(entry.getMessage());
-		updateLabel(dateLabel.getParent());
+		if (entry == null) {
+			parent.setVisible(false);
+		} else {
+			parent.setVisible(true);
+			sessionSection.expandTo(entry);
+			stackSection.expandTo(entry);
+			updateTopSection(entry);
+		}
 		update();
 
 	}
 
-	private void updateLabel(Composite control) {
+	private void updateTopSection(LogEntry entry) {
+		date.setText(
+			PDERuntimePlugin.getResourceString("LogView.preview.date")
+				+ " "
+				+ entry.getDate());
+		eventType.setText(
+			PDERuntimePlugin.getResourceString("LogView.preview.type")
+				+ " "
+				+ entry.getSeverityText());
+		message.setText(entry.getMessage());
+
+		Composite control = date.getParent();
 		control.setRedraw(false);
 		control.getParent().setRedraw(false);
 		control.layout(true);
@@ -108,6 +127,7 @@ public class DetailsForm extends ScrollableSectionForm {
 		control.getParent().setRedraw(true);
 
 	}
+	
 	public void dispose() {
 		super.dispose();
 		headingImage.dispose();
