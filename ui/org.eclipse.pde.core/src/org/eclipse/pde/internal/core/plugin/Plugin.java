@@ -81,7 +81,7 @@ public void write(String indent, PrintWriter writer) {
 	}
 	if (getProviderName() != null) {
 		writer.println();
-		writer.print("   provider-name=\"" + getProviderName() + "\"");
+		writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\"");
 	}
 	if (getClassName() != null) {
 		writer.println();

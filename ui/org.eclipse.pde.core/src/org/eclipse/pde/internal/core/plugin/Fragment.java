@@ -130,7 +130,7 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		if (getProviderName() != null) {
 			writer.println();
-			writer.print("   provider-name=\"" + getProviderName() + "\"");
+			writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\"");
 		}
 		if (getPluginId() != null) {
 			writer.println();
