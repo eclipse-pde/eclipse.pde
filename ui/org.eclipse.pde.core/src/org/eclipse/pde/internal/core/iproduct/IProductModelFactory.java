@@ -8,5 +8,7 @@ public interface IProductModelFactory {
 	IAboutInfo createAboutInfo();
 	
 	IProductPlugin createPlugin();
+	
+	IConfigurationFileInfo createConfigFileInfo();
 
 }

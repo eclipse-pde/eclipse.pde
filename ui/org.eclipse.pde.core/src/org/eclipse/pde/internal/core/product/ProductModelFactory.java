@@ -31,5 +31,12 @@ public class ProductModelFactory implements IProductModelFactory {
 	public IProductPlugin createPlugin() {
 		return new ProductPlugin(fModel);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductModelFactory#createConfigFileInfo()
+	 */
+	public IConfigurationFileInfo createConfigFileInfo() {
+		return new ConfigurationFileInfo(fModel);
+	}
 
 }

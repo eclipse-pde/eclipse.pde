@@ -11,6 +11,8 @@ public interface IProduct extends IProductObject {
 	
 	IAboutInfo getAboutInfo();
 	
+	IConfigurationFileInfo getConfigurationFileInfo();
+	
 	void addPlugin(IProductPlugin plugin);
 	
 	void removePlugin(IProductPlugin plugin);
@@ -24,6 +26,8 @@ public interface IProduct extends IProductObject {
 	void setAboutInfo(IAboutInfo info);
 	
 	void setApplication(String application);
+	
+	void setConfigurationFileInfo(IConfigurationFileInfo info);
 	
 	void reset();
 	

@@ -16,6 +16,7 @@ public class Product extends ProductObject implements IProduct {
 	private IAboutInfo fAboutInfo;
 	
 	private ArrayList fPlugins = new ArrayList();
+	private IConfigurationFileInfo fConfigIniInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -139,6 +140,9 @@ public class Product extends ProductObject implements IProduct {
 						fAboutInfo.parse(child);
 					} else if (child.getNodeName().equals("plugins")) {
 						parsePlugins(child.getChildNodes());
+					} else if (child.getNodeName().equals("configIni")) {
+						fConfigIniInfo = getModel().getFactory().createConfigFileInfo();
+						fConfigIniInfo.parse(child);
 					}
 				}
 			}
@@ -177,6 +181,20 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IProductPlugin[] getPlugins() {
 		return (IProductPlugin[])fPlugins.toArray(new IProductPlugin[fPlugins.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo()
+	 */
+	public IConfigurationFileInfo getConfigurationFileInfo() {
+		return fConfigIniInfo;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setConfigurationFileInfo(org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo)
+	 */
+	public void setConfigurationFileInfo(IConfigurationFileInfo info) {
+		fConfigIniInfo = info;
 	}
 
 }
