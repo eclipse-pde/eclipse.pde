@@ -58,7 +58,7 @@ public class PluginExportJob extends FeatureExportJob {
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 		File featureXML = new File(file, "feature.xml");
-		PrintWriter writer = new PrintWriter(new FileWriter(featureXML), true);
+		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(featureXML), "UTF-8"), true);
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">");
 		for (int i = 0; i < fItems.length; i++) {
