@@ -50,14 +50,14 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 						try {
 							doBuildFeature(monitor);
 						} catch (InvocationTargetException e) {
-							PDEPlugin.logException(e);
+							syncLogException(e);
 						}
 					}
 				};
 				try {
 					PDEPlugin.getWorkspace().run(wop, monitor);
 				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					syncLogException(e);
 				}
 			}
 		};
@@ -79,6 +79,15 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	
+	private void syncLogException(final Throwable e) {
+		final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				PDEPlugin.logException(e);
+			}
+		});
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
