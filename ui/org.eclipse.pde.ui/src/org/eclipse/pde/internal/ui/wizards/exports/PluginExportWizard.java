@@ -1,14 +1,10 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-//import java.io.File;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -37,6 +33,45 @@ public class PluginExportWizard extends BaseExportWizard {
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
+	private void cleanup(IModel model, String destination) throws CoreException {
+		deleteBuildScript(model);
+		deleteBuildFolders(destination);
+	}
+
+	protected BaseExportWizardPage createPage1() {
+		return new PluginExportWizardPage(getSelection());
+	}
+
+	protected void doExport(
+		boolean exportZip,
+		boolean exportChildren,
+		String destination,
+		IModel model,
+		IProgressMonitor monitor) {
+		try {
+			IPluginModelBase modelBase = (IPluginModelBase) model;
+
+			String label =
+				PDEPlugin.getDefault().getLabelProvider().getObjectText(
+					modelBase.getPluginBase());
+			monitor.beginTask(label, 3);
+			makeScript(modelBase);
+			monitor.worked(1);
+			runScript(modelBase, destination, exportZip, monitor);
+			monitor.worked(1);
+		} catch (Exception e) {
+			if (writer != null)
+				writer.write(e.getMessage());
+		} finally {
+			try {
+				cleanup(model, destination);
+			} catch (CoreException e) {
+			}
+			monitor.done();
+		}
+
+	}
+
 	public IDialogSettings getSettingsSection(IDialogSettings master) {
 		IDialogSettings setting = master.getSection(STORE_SECTION);
 		if (setting == null) {
@@ -45,42 +80,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		return setting;
 	}
 
-	protected BaseExportWizardPage createPage1() {
-		return new PluginExportWizardPage(getSelection());
-	}
-
-	/**
-	 * 
-	 */
-	protected void doExport(
-		boolean exportZip,
-		String destination,
-		IModel model,
-		IProgressMonitor monitor)
-		throws InvocationTargetException, CoreException {
-		try {
-			IPluginModelBase modelBase = (IPluginModelBase) model;
-
-			String label =
-				PDEPlugin.getDefault().getLabelProvider().getObjectText(
-					modelBase.getPluginBase());
-			monitor.subTask(label);
-			String scriptName = MainPreferencePage.getBuildScriptName();
-			makeScript(modelBase);
-			monitor.worked(1);
-			runScript(modelBase, destination, exportZip, monitor);
-			monitor.worked(1);
-		} finally {
-			File file = new File(destination + Path.SEPARATOR + "build_result");
-			cleanup(model.getUnderlyingResource().getProject(), file);
-			monitor.done();
-
-		}
-
-	}
-
-	private void makeScript(IPluginModelBase model)
-		throws CoreException {
+	private void makeScript(IPluginModelBase model) throws CoreException {
 		ModelBuildScriptGenerator generator = null;
 		if (model.isFragmentModel())
 			generator = new FragmentBuildScriptGenerator();
@@ -105,7 +105,7 @@ public class PluginExportWizard extends BaseExportWizard {
 		generator.setModelId(model.getPluginBase().getId());
 		generator.generate();
 	}
-	
+
 	private void runScript(
 		IPluginModelBase model,
 		String destination,
@@ -119,7 +119,7 @@ public class PluginExportWizard extends BaseExportWizard {
 			runner.setExecutionTargets(new String[] { "build.update.jar" });
 		}
 		runner.setMessageOutputLevel(Project.MSG_ERR);
-		runner.addBuildLogger("org.apache.tools.ant.DefaultLogger");
+		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
 		runner.addUserProperties(createProperties(destination));
 		runner.setAntHome(model.getInstallLocation());
 		runner.setBuildFileLocation(
@@ -127,32 +127,6 @@ public class PluginExportWizard extends BaseExportWizard {
 				+ Path.SEPARATOR
 				+ MainPreferencePage.getBuildScriptName());
 		runner.run(monitor);
-		monitor.worked(1);
+	}
 
-	}
-	
-	private HashMap createProperties(String destination) {
-		HashMap map = new HashMap(3);
-		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
-		map.put("temp.folder", destination + Path.SEPARATOR + "temp.folder");
-		map.put("plugin.destination", destination);
-		return map;
-	}
-	
-	private void cleanup(IProject project, File resultFolder) throws CoreException {
-		IResource buildFile = project.findMember(MainPreferencePage.getBuildScriptName());
-		if (buildFile != null)
-			buildFile.delete(true, null);
-			
-		if (resultFolder.exists() && resultFolder.isDirectory()) {
-			File[] files = resultFolder.listFiles();
-			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					files[i].delete();
-				}
-			}
-			resultFolder.delete();
-		}
-
-	}
 }

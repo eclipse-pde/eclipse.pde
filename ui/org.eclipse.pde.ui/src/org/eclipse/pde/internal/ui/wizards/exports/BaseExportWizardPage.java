@@ -23,14 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
+
 public class BaseExportWizardPage extends WizardPage {
 	private String S_EXPORT_UPDATE = "exportUpdate";
 	private String S_DESTINATION = "destination";
@@ -42,6 +35,7 @@ public class BaseExportWizardPage extends WizardPage {
 	private Button zipRadio;
 	private Button updateRadio;
 	private Button browseButton;
+	private Button includeChildren;
 
 	class ExportListProvider
 		extends DefaultContentProvider
@@ -71,6 +65,7 @@ public class BaseExportWizardPage extends WizardPage {
 		this.selection = selection;
 		this.featureExport = featureExport;
 		exportPart = new ExportPart(choiceLabel);
+		setDescription(PDEPlugin.getResourceString("ExportWizard.Plugin.description"));
 	}
 
 	/**
@@ -86,22 +81,34 @@ public class BaseExportWizardPage extends WizardPage {
 		gd.heightHint = 175;
 		gd.widthHint = 150;
 
-		if (!featureExport) {
-			createLabel(container, "", 2);
-			createLabel(
+		createLabel(container, "", 2);
+		createLabel(
+			container,
+			PDEPlugin.getResourceString(
+				featureExport
+					? "ExportWizard.Feature.label"
+					: "ExportWizard.Plugin.label"),
+			2);
+		zipRadio =
+			createRadioButton(
 				container,
-				PDEPlugin.getResourceString("ExportWizard.Plugin.label"),
-				2);
-			zipRadio =
-				createRadioButton(
-					container,
-					PDEPlugin.getResourceString("ExportWizard.Plugin.zip"));
-			updateRadio =
-				createRadioButton(
-					container,
-					PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"));
-		}
+				PDEPlugin.getResourceString(
+					featureExport
+						? "ExportWizard.Feature.zip"
+						: "ExportWizard.Plugin.zip"));
+		updateRadio =
+			createRadioButton(
+				container,
+				PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"));
 
+		if (featureExport) {
+			includeChildren = new Button(container, SWT.CHECK);
+			includeChildren.setText(
+				PDEPlugin.getResourceString("ExportWizard.Feature.include"));
+			includeChildren.setSelection(true);
+			includeChildren.setEnabled(false);
+		}
+		
 		createLabel(container, "", 2);
 		createLabel(
 			container,
@@ -239,11 +246,9 @@ public class BaseExportWizardPage extends WizardPage {
 
 	private void loadSettings() {
 		IDialogSettings settings = getDialogSettings();
-		if (!featureExport) {
-			boolean exportUpdate = settings.getBoolean(S_EXPORT_UPDATE);
-			zipRadio.setSelection(!exportUpdate);
-			updateRadio.setSelection(exportUpdate);
-		}
+		boolean exportUpdate = settings.getBoolean(S_EXPORT_UPDATE);
+		zipRadio.setSelection(!exportUpdate);
+		updateRadio.setSelection(exportUpdate);
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(S_DESTINATION + String.valueOf(i));
@@ -256,9 +261,7 @@ public class BaseExportWizardPage extends WizardPage {
 
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
-		if (!featureExport) {
-			settings.put(S_EXPORT_UPDATE, updateRadio.getSelection());
-		}
+		settings.put(S_EXPORT_UPDATE, updateRadio.getSelection());
 		settings.put(S_DESTINATION + String.valueOf(0), destination.getText());
 		String[] items = destination.getItems();
 		int nEntries = Math.min(items.length, 5);
@@ -272,8 +275,6 @@ public class BaseExportWizardPage extends WizardPage {
 	}
 
 	public boolean getExportZip() {
-		if (featureExport)
-			return false;
 		return zipRadio.getSelection();
 	}
 
@@ -281,5 +282,12 @@ public class BaseExportWizardPage extends WizardPage {
 		if (destination == null || destination.isDisposed())
 			return "";
 		return destination.getText();
+	}
+	
+	public boolean getExportChildren() {
+		if (featureExport) {
+			return includeChildren.getSelection();
+		}
+		return false;
 	}
 }

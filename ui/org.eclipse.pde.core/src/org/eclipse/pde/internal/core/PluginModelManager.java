@@ -79,6 +79,11 @@ public class PluginModelManager implements IAdaptable {
 		return (ModelEntry)entries.get(id);
 	}
 	
+	public ModelEntry findEntry(String id, String version) {
+		if (entries == null) initializeTable();
+		return (ModelEntry)entries.get(id);
+	}
+	
 	public ModelEntry findEntry(String id, String version, int match) {
 		if (entries == null) initializeTable();
 		return (ModelEntry)entries.get(id);
