@@ -27,6 +27,8 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 	public static final String KEY_LOCATION ="Preferences.MainPage.Location";
 	public static final String KEY_LOCATION_BUTTON ="Preferences.MainPage.Location.Button";
 	public static final String PROP_PLATFORM_ARGS="org.eclipse.pde.platformArgs";
+	
+	public static final String RT_WORKSPACE = "runtime-workspace";
 	private DirectoryFieldEditor editor;
 	
 	class ModifiedDirectoryFieldEditor extends DirectoryFieldEditor {
@@ -45,6 +47,11 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 			gd.grabExcessHorizontalSpace = true;
 			Button button = super.getChangeControl(text.getParent());
 			button.setLayoutData(null);
+		}
+		// It is OK to specify directory that does not
+		// exist - the platform will create it
+		protected boolean doCheckState() {
+			return true;
 		}
 	}
 		
@@ -106,13 +113,14 @@ public static void initializePlatformPath() {
 	if (path == null || path.length() == 0) {
 		URL installURL = BootLoader.getInstallURL();
 		String file = installURL.getFile();
-		//IPath ppath = new Path(file).removeTrailingSeparator().removeLastSegments(1);
-		//path = ppath.toOSString();
-		//if (path.charAt(0)=='/') path = path.substring(1);
 		IPath ppath = new Path(file).removeTrailingSeparator();
 		path = ppath.toOSString();
 		store.setDefault(PROP_PLATFORM_PATH, path);
 		store.setValue(PROP_PLATFORM_PATH, path);
+		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
+		path = runtimeWorkspace.toOSString();
+		store.setDefault(PROP_PLATFORM_LOCATION, path);
+		store.setValue(PROP_PLATFORM_LOCATION, path);
 	}
 }
 /** 
