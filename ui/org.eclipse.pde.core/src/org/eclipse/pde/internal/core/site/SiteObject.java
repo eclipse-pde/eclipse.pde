@@ -5,13 +5,12 @@ package org.eclipse.pde.internal.core.site;
  */
 
 import java.io.PrintWriter;
-import java.net.*;
-import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.isite.*;
+import org.w3c.dom.*;
 import org.w3c.dom.Node;
 
 public abstract class SiteObject
@@ -79,19 +78,13 @@ public abstract class SiteObject
 		return model;
 	}
 	String getNodeAttribute(Node node, String name) {
-		Node attribute = node.getAttributes().getNamedItem(name);
+		NamedNodeMap atts = node.getAttributes();
+		Node attribute = null;
+		if (atts != null)
+		   attribute = atts.getNamedItem(name);
 		if (attribute != null)
 			return attribute.getNodeValue();
 		return null;
-	}
-	URL parseURL(String text) {
-		if (text==null) return null;
-		try {
-			return new URL(text);
-		}
-		catch (MalformedURLException e) {
-			return null;
-		}
 	}
 
 	int getIntegerAttribute(Node node, String name) {

@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.core.isite;
  * All Rights Reserved.
  */
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 /**
  * The top-level model object of the Eclipse update site model.
@@ -18,8 +16,8 @@ public interface ISite extends ISiteObject {
 	void setType(String type) throws CoreException;
 	String getType();
 	
-	void setURL(URL url) throws CoreException;
-	URL getURL();
+	void setURL(String url) throws CoreException;
+	String getURL();
 
 	ISiteDescription getDescription();
 	void setDescription(ISiteDescription description) throws CoreException;

@@ -181,7 +181,8 @@ public abstract class PDEMultiPageEditor
 		if (modelListener != null && model instanceof IModelChangeProvider) {
 			((IModelChangeProvider) model).removeModelChangedListener(
 				modelListener);
-			undoManager.disconnect((IModelChangeProvider) model);
+			if (undoManager!=null)
+			   undoManager.disconnect((IModelChangeProvider) model);
 		}
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		disposed = true;

@@ -1,7 +1,5 @@
 package org.eclipse.pde.internal.core.isite;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -15,8 +13,8 @@ import org.eclipse.core.runtime.CoreException;
 public interface ISiteArchive extends ISiteObject {
 	String P_URL = "url";
 	String P_PATH = "path";
-	URL getURL();
-	void setURL(URL url) throws CoreException;
+	String getURL();
+	void setURL(String url) throws CoreException;
 	String getPath();
 	void setPath(String path) throws CoreException;
 }

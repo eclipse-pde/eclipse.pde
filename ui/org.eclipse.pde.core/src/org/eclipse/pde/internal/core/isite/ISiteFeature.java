@@ -1,7 +1,5 @@
 package org.eclipse.pde.internal.core.isite;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IVersionable;
 
@@ -20,7 +18,7 @@ public interface ISiteFeature extends IVersionable, ISiteObject {
 	void removeCategories(ISiteCategory [] categories) throws CoreException;
 	ISiteCategory [] getCategories();
 	String getType();
-	URL getURL();
+	String getURL();
 	void setType(String type) throws CoreException;
-	void setURL(URL url) throws CoreException;
+	void setURL(String url) throws CoreException;
 }

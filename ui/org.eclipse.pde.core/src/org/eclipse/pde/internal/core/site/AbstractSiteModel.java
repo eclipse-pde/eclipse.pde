@@ -5,8 +5,8 @@ package org.eclipse.pde.internal.core.site;
  */
 
 import java.io.*;
+import java.net.URL;
 
-import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
@@ -47,10 +47,24 @@ public abstract class AbstractSiteModel
 		return enabled;
 	}
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
-		DOMParser parser = new DOMParser();
+		SourceDOMParser parser = new SourceDOMParser();
+		XMLErrorHandler errorHandler = new XMLErrorHandler();
+		parser.setErrorHandler(errorHandler);
+		try {
+			parser.setFeature("http://xml.org/sax/features/validation", true);
+			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
+		}
+		catch (SAXException e) {
+		}
 		try {
 			InputSource source = new InputSource(stream);
+			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
+			source.setSystemId(dtdLocation.toString());
 			parser.parse(source);
+			if (errorHandler.getErrorCount() > 0
+				|| errorHandler.getFatalErrorCount() > 0) {
+				throwParseErrorsException();
+			}
 			processDocument(parser.getDocument());
 			loaded = true;
 			if (!outOfSync)

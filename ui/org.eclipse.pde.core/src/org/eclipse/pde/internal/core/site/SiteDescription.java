@@ -1,9 +1,10 @@
 package org.eclipse.pde.internal.core.site;
 
-import java.net.URL;
+import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.w3c.dom.*;
 import org.w3c.dom.Node;
 
 /**
@@ -15,13 +16,13 @@ import org.w3c.dom.Node;
  * Window>Preferences>Java>Code Generation.
  */
 public class SiteDescription extends SiteObject implements ISiteDescription {
-	private URL url;
+	private String url;
 	private String text;
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#getURL()
 	 */
-	public URL getURL() {
+	public String getURL() {
 		return url;
 	}
 
@@ -35,7 +36,7 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteDescription#setURL(java.net.URL)
 	 */
-	public void setURL(URL url) throws CoreException {
+	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
 		this.url = url;
@@ -58,18 +59,37 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	}
 
 	protected void parse(Node node) {
-		url = parseURL(getNodeAttribute(node, "url"));
-		text = getNormalizedText(node.getFirstChild().getNodeValue());
+		url = getNodeAttribute(node, "url");
+		NodeList children = node.getChildNodes();
+		for (int i=0; i<children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType()==Node.TEXT_NODE) {
+				text = getNormalizedText(node.getFirstChild().getNodeValue());
+				break;
+			}
+		}
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_URL)) {
-			setURL((URL) newValue);
+			setURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_TEXT)) {
 			setText(newValue != null ? newValue.toString() : null);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
+	}
+	
+	public void write(String indent, PrintWriter writer) {
+		writer.print(indent);
+		writer.print("<description");
+		if (url!=null)
+			writer.print(" url=\""+url+"\"");
+		writer.println(">");
+		if (text!=null) {
+			writer.println(indent+Site.INDENT+ getNormalizedText(text));
+		}
+		writer.println(indent+"</description>");
 	}
 
 }

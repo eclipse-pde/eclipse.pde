@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
@@ -20,6 +21,7 @@ import org.eclipse.pde.core.ModelChangedEvent;
 public abstract class AbstractModel
 	extends PlatformObject
 	implements IModel, IModelChangeProvider, Serializable {
+	private static final String KEY_ERROR = "Errors.modelError";
 	private Vector listeners = new Vector();
 	protected boolean loaded;
 	protected NLResourceHelper nlHelper;
@@ -105,6 +107,17 @@ public abstract class AbstractModel
 	}
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		listeners.remove(listener);
+	}
+
+	protected void throwParseErrorsException() throws CoreException {
+		Status status =
+			new Status(
+				IStatus.ERROR,
+				PDECore.getPluginId(),
+				IStatus.OK,
+				PDECore.getResourceString(KEY_ERROR),
+				null);
+		throw new CoreException(status);
 	}
 
 }

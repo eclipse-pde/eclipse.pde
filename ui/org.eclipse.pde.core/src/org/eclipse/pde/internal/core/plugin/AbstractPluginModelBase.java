@@ -18,7 +18,6 @@ import org.xml.sax.*;
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
 	implements IPluginModelBase, IPluginModelFactory {
-	public static final String KEY_ERROR = "AbstractPluginModelBase.error";
 	protected PluginBase pluginBase;
 	private boolean enabled;
 
@@ -161,16 +160,6 @@ public abstract class AbstractPluginModelBase
 	}
 	public void setEnabled(boolean newEnabled) {
 		enabled = newEnabled;
-	}
-	private void throwParseErrorsException() throws CoreException {
-		Status status =
-			new Status(
-				IStatus.ERROR,
-				PDECore.getPluginId(),
-				IStatus.OK,
-				PDECore.getResourceString(KEY_ERROR),
-				null);
-		throw new CoreException(status);
 	}
 	public String toString() {
 		IPluginBase pluginBase = getPluginBase();

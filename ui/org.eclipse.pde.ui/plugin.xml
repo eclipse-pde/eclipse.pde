@@ -464,7 +464,7 @@
             default="true"
             icon="icons/full/obj16/ftr_mf_obj.gif"
             filenames="site.xml"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>

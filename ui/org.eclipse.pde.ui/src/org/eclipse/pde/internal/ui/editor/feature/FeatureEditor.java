@@ -107,7 +107,8 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-		return cleanModel ? model : null;
+		//return cleanModel ? model : null;
+		return model;
 	}
 	private IFeatureModel createStorageModel(IStorage storage) {
 		InputStream stream = null;
@@ -173,6 +174,9 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 			&& model instanceof IModel
 			&& ((IModel) model).isEditable()
 			&& ((IEditable) model).isDirty();
+	}
+	protected boolean isModelCorrect(Object model) {
+		return model != null ? ((IFeatureModel) model).isLoaded() : false;
 	}
 	protected boolean isValidContentType(IEditorInput input) {
 		String name = input.getName().toLowerCase();

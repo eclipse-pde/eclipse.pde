@@ -1,13 +1,12 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-import java.net.*;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 /**
  * @author dejan
@@ -20,7 +19,7 @@ import org.w3c.dom.Node;
 public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private Vector categories = new Vector();
 	private String type;
-	private URL url;
+	private String url;
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
@@ -68,7 +67,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getURL()
 	 */
-	public URL getURL() {
+	public String getURL() {
 		return url;
 	}
 
@@ -85,7 +84,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setURL(java.net.URL)
 	 */
-	public void setURL(URL url) throws CoreException {
+	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
 		this.url = url;
@@ -95,24 +94,36 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	protected void parse(Node node) {
 		super.parse(node);
 		type = getNodeAttribute(node, "type");
-		url = parseURL(getNodeAttribute(node, "url"));
+		url = getNodeAttribute(node, "url");
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE
+				&& child.getNodeName().equalsIgnoreCase("category")) {
+				SiteCategory category =
+					(SiteCategory) getModel().getFactory().createCategory(this);
+				((SiteCategory) category).parse(child);
+				((SiteCategory) category).setInTheModel(true);
+				categories.add(category);
+			}
+		}
 	}
 
 	protected void reset() {
 		super.reset();
 		type = null;
+		url = null;
 		categories.clear();
 	}
-	
+
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
-		}
-		else if (name.equals(P_URL) && newValue instanceof URL) {
-			setURL((URL)newValue);
-		}
-		else super.restoreProperty(name, oldValue, newValue);
+		} else if (name.equals(P_URL)) {
+			setURL(newValue != null ? newValue.toString() : null);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 
 	/**
@@ -124,7 +135,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		if (type != null)
 			writer.print(" type=\"" + type + "\"");
 		if (url != null)
-			writer.print(" url=\"" + url.toString() + "\"");
+			writer.print(" url=\"" + url + "\"");
 		if (id != null)
 			writer.print(" id=\"" + getId() + "\"");
 		if (version != null)

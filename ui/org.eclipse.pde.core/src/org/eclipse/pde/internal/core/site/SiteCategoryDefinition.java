@@ -1,5 +1,7 @@
 package org.eclipse.pde.internal.core.site;
 
+import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
@@ -62,7 +64,7 @@ public class SiteCategoryDefinition
 
 	protected void parse(Node node) {
 		super.parse(node);
-		name = getNodeAttribute(node, name);
+		name = getNodeAttribute(node, "name");
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = (Node) children.item(i);
@@ -70,6 +72,7 @@ public class SiteCategoryDefinition
 				&& child.getNodeName().equalsIgnoreCase("description")) {
 				description = getModel().getFactory().createDescription(this);
 				((SiteDescription) description).parse(child);
+				((SiteDescription)description).setInTheModel(true);
 				break;
 			}
 		}
@@ -84,5 +87,19 @@ public class SiteCategoryDefinition
 			setDescription((ISiteDescription) newValue);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
+	}
+	public void write(String indent, PrintWriter writer) {
+		writer.print(indent);
+		writer.print("<category-def");
+		if (name != null)
+			writer.print(" name=\"" + name + "\"");
+		if (label != null)
+			writer.print(" label=\"" + label + "\"");
+		if (description != null) {
+			writer.println(">");
+			description.write(indent + Site.INDENT, writer);
+			writer.println(indent + "</category-def>");
+		} else
+			writer.println("/>");
 	}
 }

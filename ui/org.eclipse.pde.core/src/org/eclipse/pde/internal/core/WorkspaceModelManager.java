@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class WorkspaceModelManager
@@ -145,6 +146,11 @@ public class WorkspaceModelManager
 			}
 			if (name.equals("feature.xml")) {
 				WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
+				model.setEditable(editable && model.isEditable());
+				return model;
+			}
+			if (name.equals("site.xml")) {
+				WorkspaceSiteModel model = new WorkspaceSiteModel(file);
 				model.setEditable(editable && model.isEditable());
 				return model;
 			}

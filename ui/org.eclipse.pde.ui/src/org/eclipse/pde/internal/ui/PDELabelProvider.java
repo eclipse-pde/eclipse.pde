@@ -11,11 +11,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -68,6 +68,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof FeatureChild) {
 			return getObjectText((FeatureChild) obj);
+		}
+		if (obj instanceof ISiteFeature) {
+			return getObjectText((ISiteFeature)obj);
+		}
+		if (obj instanceof ISiteArchive) {
+			return getObjectText((ISiteArchive)obj);
+		}
+		if (obj instanceof ISiteCategoryDefinition) {
+			return getObjectText((ISiteCategoryDefinition)obj);
 		}
 		return super.getText(obj);
 	}
@@ -165,6 +174,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(FeatureChild obj) {
 		return obj.getId() + " (" + obj.getVersion() + ")";
 	}
+	
+	public String getObjectText(ISiteFeature obj) {
+		return obj.getURL();
+	}
+	
+	public String getObjectText(ISiteArchive obj) {
+		return obj.getPath();
+	}
+	public String getObjectText(ISiteCategoryDefinition obj) {
+		return obj.getLabel();
+	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
@@ -236,6 +256,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IBuildEntry) {
 			return get(PDEPluginImages.DESC_BUILD_VAR_OBJ);
+		}
+		if (obj instanceof ISiteFeature) {
+			return getObjectImage((ISiteFeature)obj);
+		}
+		if (obj instanceof ISiteArchive) {
+			return getObjectImage((ISiteArchive)obj);
+		}
+		if (obj instanceof ISiteCategoryDefinition) {
+			return getObjectImage((ISiteCategoryDefinition)obj);
 		}
 		return super.getImage(obj);
 	}
@@ -419,6 +448,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags = F_EDIT;
 		}
 		return get(PDEPluginImages.DESC_DOC_SECTION_OBJ, flags);
+	}
+	
+	public Image getObjectImage(ISiteFeature obj) {
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
+	}
+
+	public Image getObjectImage(ISiteArchive obj) {
+		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ, 0);
+	}
+	public Image getObjectImage(ISiteCategoryDefinition obj) {
+		return get(PDEPluginImages.DESC_CATEGORY_OBJ);
 	}
 
 	public boolean isFullNameModeEnabled() {

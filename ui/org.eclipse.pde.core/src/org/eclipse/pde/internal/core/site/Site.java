@@ -1,15 +1,12 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
-import org.w3c.dom.Node;
 
 /**
  * @author dejan
@@ -25,7 +22,7 @@ public class Site extends SiteObject implements ISite {
 	private Vector archives = new Vector();
 	private Vector categoryDefs = new Vector();
 	private String type;
-	private URL url;
+	private String url;
 	private ISiteDescription description;
 
 	/**
@@ -48,7 +45,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setURL(java.net.URL)
 	 */
-	public void setURL(URL url) throws CoreException {
+	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.type;
 		this.url = url;
@@ -58,7 +55,7 @@ public class Site extends SiteObject implements ISite {
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getURL()
 	 */
-	public URL getURL() {
+	public String getURL() {
 		return url;
 	}
 
@@ -194,7 +191,7 @@ public class Site extends SiteObject implements ISite {
 	}
 	protected void parse(Node node) {
 		type = getNodeAttribute(node, "type");
-		url = parseURL(getNodeAttribute(node, "url"));
+		url = getNodeAttribute(node, "url");
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -234,8 +231,8 @@ public class Site extends SiteObject implements ISite {
 		throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL) && newValue instanceof URL) {
-			setURL((URL) newValue);
+		} else if (name.equals(P_URL)) {
+			setURL(newValue != null ? newValue.toString() : null);
 		} else if (
 			name.equals(P_DESCRIPTION)
 				&& newValue instanceof ISiteDescription) {
@@ -248,7 +245,7 @@ public class Site extends SiteObject implements ISite {
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
 		writeIfDefined(indenta, writer, "type", getType());
-		writeIfDefined(indenta, writer, "url", url!=null?url.toString():null);
+		writeIfDefined(indenta, writer, "url", getURL());
 		writer.println(">");
 
 		if (description != null) {

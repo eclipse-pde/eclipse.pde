@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-import java.net.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
@@ -16,13 +15,13 @@ import org.w3c.dom.Node;
  * Window>Preferences>Java>Code Generation.
  */
 public class SiteArchive extends SiteObject implements ISiteArchive {
-	private URL url;
+	private String url;
 	private String path;
 
-	public URL getURL() {
+	public String getURL() {
 		return url;
 	}
-	public void setURL(URL url) throws CoreException {
+	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
 		this.url = url;
@@ -45,7 +44,7 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 	protected void parse(Node node) {
 		super.parse(node);
 		path = getNodeAttribute(node, "path");
-		url = parseURL(getNodeAttribute(node, "url"));
+		url = getNodeAttribute(node, "url");
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
@@ -53,15 +52,15 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		if (path != null)
 			writer.print(" path=\"" + path + "\"");
 		if (url != null)
-			writer.print(" url=\"" + url.toString() + "\"");
+			writer.print(" url=\"" + url + "\"");
 		writer.println("/>");
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_PATH)) {
 			setPath(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL) && newValue instanceof URL) {
-			setURL((URL) newValue);
+		} else if (name.equals(P_URL)) {
+			setURL(newValue != null ? newValue.toString() : null);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}

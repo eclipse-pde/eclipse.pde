@@ -48,6 +48,8 @@ public abstract class AbstractFeatureModel
 	}
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		SourceDOMParser parser = new SourceDOMParser();
+		XMLErrorHandler errorHandler = new XMLErrorHandler();
+		parser.setErrorHandler(errorHandler);
 		try {
 			parser.setFeature("http://xml.org/sax/features/validation", true);
 			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
@@ -59,6 +61,10 @@ public abstract class AbstractFeatureModel
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
 			parser.parse(source);
+			if (errorHandler.getErrorCount() > 0
+				|| errorHandler.getFatalErrorCount() > 0) {
+				throwParseErrorsException();
+			}
 			processDocument(parser.getDocument());
 			loaded = true;
 			if (!outOfSync)
