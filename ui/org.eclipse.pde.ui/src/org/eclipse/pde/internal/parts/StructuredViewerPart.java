@@ -32,11 +32,15 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 	 */
 	protected void createMainControl(
 		Composite parent,
+		int style,
 		int span,
 		FormWidgetFactory factory) {
 		
-		viewer = createStructuredViewer(parent, factory);
+		viewer = createStructuredViewer(parent, style, factory);
 		Control control = viewer.getControl();
+		if (factory!=null) {
+			factory.hookDeleteListener(control);
+		}
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = span;
 		control.setLayoutData(gd);
@@ -47,5 +51,5 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 		super.updateEnabledState();
 	}
 	
-	protected abstract StructuredViewer createStructuredViewer(Composite parent, FormWidgetFactory factory);
+	protected abstract StructuredViewer createStructuredViewer(Composite parent, int style, FormWidgetFactory factory);
 }

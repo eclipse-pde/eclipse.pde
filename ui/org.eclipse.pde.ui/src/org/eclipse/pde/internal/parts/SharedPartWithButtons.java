@@ -28,7 +28,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		}
 		private void buttonSelected(SelectionEvent e) {
 			Integer index = (Integer)e.widget.getData();
-			SharedPartWithButtons.this.buttonSelected(index.intValue());
+			SharedPartWithButtons.this.buttonSelected((Button)e.widget, index.intValue());
 		}
 	}
 	
@@ -36,15 +36,23 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		this.buttonLabels = buttonLabels;
 	}
 	
-	protected abstract void createMainControl(Composite parent, int span, FormWidgetFactory factory);
-	protected abstract void buttonSelected(int index);
+	public void setButtonEnabled(int index, boolean enabled) {
+		if (controls!=null && controls.length>=index) {
+			Control c = controls[index];
+			if (c instanceof Button)
+				c.setEnabled(enabled);
+		}
+	}
+	
+	protected abstract void createMainControl(Composite parent, int style, int span, FormWidgetFactory factory);
+	protected abstract void buttonSelected(Button button, int index);
 
 	/*
 	 * @see SharedPart#createControl(Composite, FormWidgetFactory)
 	 */
-	public void createControl(Composite parent, int span, FormWidgetFactory factory) {
+	public void createControl(Composite parent, int style, int span, FormWidgetFactory factory) {
 		createMainLabel(parent, span, factory);
-		createMainControl(parent, span-1, factory);
+		createMainControl(parent, style, span-1, factory);
 		if (buttonLabels!=null && buttonLabels.length>0) {
 			buttonContainer = createComposite(parent, factory);
 			GridData gd = new GridData(GridData.FILL_VERTICAL);

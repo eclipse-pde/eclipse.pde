@@ -79,9 +79,9 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 		public TablePart() {
 			super(PDEPlugin.getResourceString(KEY_PLUGINS));
 		}
-		public void updateCounterLabel() {
-			super.updateCounterLabel();
-			setPageComplete(getSelectionCount()>0);
+		public void updateCounter(int count) {
+			super.updateCounter(count);
+			setPageComplete(count>0);
 		}
 	}
 

@@ -324,7 +324,7 @@
          id="org.eclipse.pde.featureJar">
       <filter
             name="projectNature"
-            value="org.eclipse.pde.ComponentNature">
+            value="org.eclipse.pde.FeatureNature">
       </filter>
       <action
             label="%popupMenus.createJar.label"

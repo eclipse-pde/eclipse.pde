@@ -23,8 +23,9 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	 */
 	protected StructuredViewer createStructuredViewer(
 		Composite parent,
+		int style,
 		FormWidgetFactory factory) {
-		int style = SWT.H_SCROLL | SWT.V_SCROLL;
+		style |= SWT.H_SCROLL | SWT.V_SCROLL;
 		if (factory==null) {
 			style |= SWT.BORDER;
 		}
@@ -47,7 +48,7 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	/*
 	 * @see SharedPartWithButtons#buttonSelected(int)
 	 */
-	protected void buttonSelected(int index) {
+	protected void buttonSelected(Button button, int index) {
 	}
 	
 	protected void elementChecked(Object element, boolean checked) {

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.viewers.*;
@@ -30,6 +31,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 
 public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_TITLE = "ImportWizard.DetailedPage.title";
@@ -38,23 +40,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private IPath dropLocation;
 	private Button showNamesCheck;
 	private CheckboxTableViewer pluginListViewer;
-	private Button deselectAllButton;
-	private Button selectAllButton;
-	private Button invertSelectionButton;
-	private Button existingButton;
-	private Button existingBinaryButton;
-	private Button existingExternalButton;
-	private Button addRequiredButton;
-	private Label counterLabel;
+	private WizardCheckboxTablePart tablePart;
 	private static final String SETTINGS_SHOW_IDS = "showIds";
 	private static final String KEY_SHOW_NAMES =
 		"ImportWizard.DetailedPage.showNames";
 	private static final String KEY_PLUGIN_LIST =
 		"ImportWizard.DetailedPage.pluginList";
-	private static final String KEY_SELECT_ALL =
-		"ImportWizard.DetailedPage.selectAll";
-	private static final String KEY_DESELECT_ALL =
-		"ImportWizard.DetailedPage.deselectAll";
 	private static final String KEY_INVERT_SELECTION =
 		"ImportWizard.DetailedPage.invertSelection";
 	private static final String KEY_EXISTING = "ImportWizard.DetailedPage.existing";
@@ -69,19 +60,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		"ImportWizard.messages.loadingRuntime";
 	private static final String KEY_LOADING_FILE =
 		"ImportWizard.messages.loadingFile";
-	private static final String KEY_SELECTED = "ImportWizard.DetailedPage.selected";
-
 	private static final String KEY_NO_PLUGINS = "ImportWizard.messages.noPlugins";
 	private static final String KEY_NO_SELECTED =
 		"ImportWizard.errors.noPluginSelected";
-	private int counter;
 	private Image externalPluginImage;
 	private Image externalFragmentImage;
-	private Vector selected;
 	private IPluginModelBase[] models;
 	private boolean loadFromRegistry;
 	private boolean block;
-	private IPluginModelBase launchingModel;
 
 	public class PluginContentProvider
 		extends DefaultContentProvider
@@ -123,9 +109,25 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 	}
 
-	public PluginImportWizardDetailedPage(
-		PluginImportWizardFirstPage firstPage,
-		IPluginModelBase launchingModel) {
+	class TablePart extends WizardCheckboxTablePart {
+		public TablePart(String mainLabel, String[] buttonLabels) {
+			super(mainLabel, buttonLabels);
+			setSelectAllIndex(0);
+			setDeselectAllIndex(1);
+		}
+		public void updateCounter(int count) {
+			super.updateCounter(count);
+			dialogChanged();
+		}
+		public void buttonSelected(Button button, int index) {
+			if (index == 0 || index == 1)
+				super.buttonSelected(button, index);
+			else
+				PluginImportWizardDetailedPage.this.buttonSelected(index);
+		}
+	}
+
+	public PluginImportWizardDetailedPage(PluginImportWizardFirstPage firstPage) {
 		super("PluginImportWizardDetailedPage", false);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -133,10 +135,23 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		externalPluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
 		externalFragmentImage = PDEPluginImages.DESC_FRAGMENT_OBJ.createImage();
 		this.firstPage = firstPage;
-		this.launchingModel = launchingModel;
 		dropLocation = null;
-		selected = new Vector();
 		updateStatus(createStatus(IStatus.ERROR, ""));
+
+		String[] buttonLabels =
+			{
+				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
+				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
+				PDEPlugin.getResourceString(KEY_INVERT_SELECTION),
+				null,
+				PDEPlugin.getResourceString(KEY_EXISTING),
+				PDEPlugin.getResourceString(KEY_EXISTING_BINARY),
+				PDEPlugin.getResourceString(KEY_EXISTING_EXTERNAL),
+				null,
+				PDEPlugin.getResourceString(KEY_ADD_REQUIRED)};
+
+		tablePart =
+			new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST), buttonLabels);
 	}
 
 	private void initializeFields(IPath dropLocation) {
@@ -154,27 +169,9 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			updateStatus(createStatus(IStatus.OK, ""));
 			this.dropLocation = dropLocation;
 			models = null;
-			selected.clear();
 		}
 		pluginListViewer.setInput(PDEPlugin.getDefault());
-		if (launchingModel != null) {
-			checkLaunchingImports();
-		}
 		dialogChanged();
-	}
-
-	private void checkLaunchingImports() {
-		IPlugin plugin = ((IPluginModel) launchingModel).getPlugin();
-		IPluginImport[] imports = plugin.getImports();
-
-		for (int i = 0; i < imports.length; i++) {
-			String id = imports[i].getId();
-			IPluginModelBase model = findModel(id);
-			if (model != null)
-				selected.add(model);
-		}
-		counter = selected.size();
-		pluginListViewer.setCheckedElements(selected.toArray());
 	}
 
 	public void storeSettings(boolean finishPressed) {
@@ -220,123 +217,34 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			}
 		});
 
-		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-
-		pluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
+		tablePart.createControl(container);
+		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new PluginContentProvider());
 		pluginListViewer.setLabelProvider(new PluginLabelProvider());
-		pluginListViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				modelChecked((IPluginModelBase) event.getElement(), event.getChecked());
-			}
-		});
-		pluginListViewer.setSorter(ListUtil.NAME_SORTER);
-
-		gd =
-			new GridData(
-				GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
-		gd.verticalSpan = 3;
-
-		pluginListViewer.getTable().setLayoutData(gd);
-
-		Composite buttons1 = createButtonContainer(container, 0);
-		Composite buttons2 = createButtonContainer(container, 10);
-		Composite buttons3 = createButtonContainer(container, 0);
-
-		counterLabel = new Label(container, SWT.NONE);
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.horizontalSpan = 2;
-		counterLabel.setLayoutData(gd);
-
-		SelectionListener buttonListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonSelected((Button) e.widget);
-			}
-		};
-
-		selectAllButton =
-			createButton(
-				buttons1,
-				PDEPlugin.getResourceString(KEY_SELECT_ALL),
-				buttonListener);
-		deselectAllButton =
-			createButton(
-				buttons1,
-				PDEPlugin.getResourceString(KEY_DESELECT_ALL),
-				buttonListener);
-		invertSelectionButton =
-			createButton(
-				buttons1,
-				PDEPlugin.getResourceString(KEY_INVERT_SELECTION),
-				buttonListener);
-
-
-		existingButton =
-			createButton(
-				buttons2,
-				PDEPlugin.getResourceString(KEY_EXISTING),
-				buttonListener);
-		existingBinaryButton =
-			createButton(
-				buttons2,
-				PDEPlugin.getResourceString(KEY_EXISTING_BINARY),
-				buttonListener);
-		existingExternalButton =
-			createButton(
-				buttons2,
-				PDEPlugin.getResourceString(KEY_EXISTING_EXTERNAL),
-				buttonListener);
-
-		addRequiredButton =
-			createButton(
-				buttons3,
-				PDEPlugin.getResourceString(KEY_ADD_REQUIRED),
-				buttonListener);
-
-		counterLabel = new Label(container, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		counterLabel.setLayoutData(gd);
 		setControl(container);
 	}
 
-	private Composite createButtonContainer(Composite container, int vmargin) {
-		Composite buttonContainer = new Composite(container, SWT.NULL);
-		GridData gd =
-			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
-		buttonContainer.setLayoutData(gd);
-		GridLayout buttonLayout = new GridLayout();
-		buttonLayout.marginWidth = 0;
-		buttonLayout.marginHeight = vmargin;
-		buttonContainer.setLayout(buttonLayout);
-		return buttonContainer;
-	}
-
-	private Button createButton(
-		Composite container,
-		String text,
-		SelectionListener listener) {
-		Button button = new Button(container, SWT.PUSH);
-		button.setText(text);
-		GridData gd =
-			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint =
-			Math.max(
-				widthHint,
-				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		button.setLayoutData(gd);
-		button.addSelectionListener(listener);
-		return button;
-	}
+	/*
+		private Button createButton(
+			Composite container,
+			String text,
+			SelectionListener listener) {
+			Button button = new Button(container, SWT.PUSH);
+			button.setText(text);
+			GridData gd =
+				new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			gd.widthHint =
+				Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+			button.setLayoutData(gd);
+			button.addSelectionListener(listener);
+			return button;
+		}
+	*/
 
 	public void dispose() {
 		externalPluginImage.dispose();
@@ -411,8 +319,10 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	public IPluginModelBase[] getSelectedModels() {
-		return (IPluginModelBase[]) selected.toArray(
-			new IPluginModelBase[selected.size()]);
+		Object[] selected = tablePart.getSelection();
+		IPluginModelBase[] result = new IPluginModelBase[selected.length];
+		System.arraycopy(selected, 0, result, 0, selected.length);
+		return result;
 	}
 
 	private IStatus validatePlugins() {
@@ -420,7 +330,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		if (allModels == null || allModels.length == 0) {
 			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_PLUGINS));
 		}
-		if (selected.size() == 0) {
+		if (tablePart.getSelectionCount() == 0) {
 			return createStatus(
 				IStatus.ERROR,
 				PDEPlugin.getResourceString(KEY_NO_SELECTED));
@@ -428,90 +338,46 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		return createStatus(IStatus.OK, "");
 	}
 
-	private void modelChecked(IPluginModelBase model, boolean checked) {
-		if (checked) {
-			selected.add(model);
-			counter++;
-		} else {
-			selected.remove(model);
-			counter--;
-		}
-		dialogChanged();
-	}
-
 	private void dialogChanged() {
 		IStatus genStatus = validatePlugins();
 		updateStatus(genStatus);
-		updateCounterLabel();
 	}
 
-	private void buttonSelected(Button button) {
-		if (button.equals(selectAllButton)) {
-			selectAll();
-			return;
-		}
-		if (button.equals(deselectAllButton)) {
-			deselectAll();
-			return;
-		}
-		if (button.equals(invertSelectionButton)) {
+	private void buttonSelected(int index) {
+		if (index == 2) {
 			invertSelection();
 			return;
 		}
 		ArrayList checked = null;
-		if (button.equals(existingButton))
-			checked = selectExistingProjects();
-		else if (button.equals(existingBinaryButton))
-			checked = selectLibraryProjects();
-		else if (button.equals(existingExternalButton))
-			checked = selectExternalProjects();
-		else if (button.equals(addRequiredButton))
-			checked = selectDependentPlugins();
-		else
-			return;
-		for (Iterator iter = checked.iterator(); iter.hasNext();) {
-			IPluginModelBase candidate = (IPluginModelBase) iter.next();
-			if (!selected.contains(candidate)) {
-				pluginListViewer.setChecked(candidate, true);
-				selected.add(candidate);
-				counter++;
-			}
+		switch (index) {
+			case 4 : // existing
+				checked = selectExistingProjects();
+				break;
+			case 5 : // existing binary
+				checked = selectLibraryProjects();
+				break;
+			case 6 : // existing external
+				checked = selectExternalProjects();
+				break;
+			case 8 : // select dependent
+				checked = selectDependentPlugins();
+				break;
+			default :
+				return;
 		}
-		dialogChanged();
+		tablePart.setSelection(checked.toArray());
 	}
 
-	private void selectAll() {
-		IPluginModelBase[] models = getModels();
-		selected.clear();
-
-		pluginListViewer.setAllChecked(true);
-		for (int i = 0; i < models.length; i++) {
-			selected.add(models[i]);
-		}
-		counter = models.length;
-		dialogChanged();
-	}
-	
 	private void invertSelection() {
 		IPluginModelBase[] models = getModels();
-		selected.clear();
 
-		//pluginListViewer.setAllChecked(true);
+		Vector selected = new Vector();
 		for (int i = 0; i < models.length; i++) {
 			Object model = models[i];
 			if (!pluginListViewer.getChecked(model))
-			   selected.add(model);
+				selected.add(model);
 		}
-		counter = selected.size();
-		pluginListViewer.setCheckedElements(selected.toArray());
-		dialogChanged();
-	}
-
-	private void deselectAll() {
-		pluginListViewer.setAllChecked(false);
-		selected.clear();
-		counter = 0;
-		dialogChanged();
+		tablePart.setSelection(selected.toArray());
 	}
 
 	private ArrayList selectExistingProjects() {
@@ -576,14 +442,15 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
-		if (selected.size() > 0) {
-			if (selected.size() > 1
-				|| !((IPluginModelBase) selected.get(0)).getPluginBase().getId().equals(
+		Object[] selected = tablePart.getSelection();
+		if (selected.length > 0) {
+			if (selected.length > 1
+				|| !((IPluginModelBase) selected[0]).getPluginBase().getId().equals(
 					"org.eclipse.core.boot")) {
 				addImplicitDependencies(checked);
 			}
-			for (int i = 0; i < selected.size(); i++) {
-				addPluginAndDependent((IPluginModelBase) selected.get(i), checked);
+			for (int i = 0; i < selected.length; i++) {
+				addPluginAndDependent((IPluginModelBase) selected[i], checked);
 			}
 		}
 
@@ -652,11 +519,5 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				addPluginAndDependent(found, checked);
 			}
 		}
-	}
-
-	protected void updateCounterLabel() {
-		String[] args = { "" + counter };
-		String selectedLabelText = PDEPlugin.getFormattedMessage(KEY_SELECTED, args);
-		counterLabel.setText(selectedLabelText);
 	}
 }

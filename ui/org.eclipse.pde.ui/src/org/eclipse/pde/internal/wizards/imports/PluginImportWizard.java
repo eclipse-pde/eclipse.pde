@@ -45,20 +45,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
-	private IPluginModelBase launchingModel;
 
-	/**
-	 * Constructor for DropPluginInportWizard.
-	 */
 	public PluginImportWizard() {
-		this(null);
-	}
-	
-	public PluginImportWizard(IPluginModelBase model) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
-		this.launchingModel = model;
 	}
 
 	/*
@@ -75,7 +66,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 		page1 = new PluginImportWizardFirstPage();
 		addPage(page1);
-		page2 = new PluginImportWizardDetailedPage(page1, launchingModel);
+		page2 = new PluginImportWizardDetailedPage(page1);
 		addPage(page2);
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
+import org.eclipse.pde.internal.parts.*;
 import org.eclipse.swt.graphics.*;
 import java.util.*;
 import org.eclipse.pde.internal.PDEPlugin;

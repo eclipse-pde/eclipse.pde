@@ -33,14 +33,15 @@ import org.eclipse.pde.internal.preferences.BuildpathPreferencePage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.base.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-
+import org.eclipse.pde.internal.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.parts.TablePart;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.pde.internal.wizards.imports.PluginImportWizard;
 
 public class ImportListSection
-	extends PDEFormSection
+	extends TableSection
 	implements IModelChangedListener, IModelProviderListener {
-	private TreeViewer importTree;
+	private TableViewer importTable;
 	private FormWidgetFactory factory;
 	private Image importImage;
 	private Image exportImportImage;
@@ -48,14 +49,11 @@ public class ImportListSection
 	public static final String SECTION_TITLE = "ManifestEditor.ImportListSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.ImportListSection.desc";
 	public static final String SECTION_NEW = "ManifestEditor.ImportListSection.new";
-	public static final String SECTION_IMPORT = "ManifestEditor.ImportListSection.import";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_OPEN = "Actions.open.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String KEY_UPDATING_BUILD_PATH = "ManifestEditor.ImportListSection.updatingBuildPath";
 	public static final String KEY_COMPUTE_BUILD_PATH = "ManifestEditor.ImportListSection.updateBuildPath";
-	private Button newButton;
-	private Button buildpathButton;
 	private Vector imports;
 	private Action openAction;
 	private Action newAction;
@@ -63,18 +61,7 @@ public class ImportListSection
 	private Action buildpathAction;
 	
 	class ImportContentProvider
-		extends DefaultContentProvider
-		implements ITreeContentProvider {
-
-		public Object[] getChildren(Object parent) {
-			return new Object[0];
-		}
-		public boolean hasChildren(Object parent) {
-			return false;
-		}
-		public Object getParent(Object child) {
-			return null;
-		}
+		extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			if (imports==null) {
 				createImportObjects();
@@ -92,17 +79,17 @@ public class ImportListSection
 		}
 	}
 
-	class ImportLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
+	class ImportLabelProvider extends LabelProvider implements ITableLabelProvider {
+		public String getColumnText(Object obj, int index) {
 			return resolveObjectName(obj);
 		}
-		public Image getImage(Object obj) {
+		public Image getColumnImage(Object obj, int index) {
 			return resolveObjectImage(obj);
 		}
 	}
 
 public ImportListSection(ManifestDependenciesPage page) {
-	super(page);
+	super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 }
@@ -115,63 +102,31 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.numColumns = 2;
 
 	container.setLayout(layout);
-	Tree tree = new Tree(container, SWT.MULTI | factory.BORDER_STYLE);
-	factory.hookDeleteListener(tree);
+	TablePart tablePart = getTablePart();
+	tablePart.createControl(container, SWT.MULTI, 2, factory);
+	importTable = tablePart.getTableViewer();
 
-	MenuManager popupMenuManager = new MenuManager();
-	IMenuListener listener = new IMenuListener () {
-		public void menuAboutToShow(IMenuManager mng) {
-			fillContextMenu(mng);
-		}
-	};
-	popupMenuManager.setRemoveAllWhenShown(true);
-	popupMenuManager.addMenuListener(listener);
-	Menu menu = popupMenuManager.createContextMenu(tree);
-	tree.setMenu(menu);
-
-	//importTree = new TableTreeViewer(tree);
-	importTree = new TreeViewer(tree);
-	importTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-	importTree.setContentProvider(new ImportContentProvider());
-	importTree.setLabelProvider(new ImportLabelProvider());
+	importTable.setContentProvider(new ImportContentProvider());
+	importTable.setLabelProvider(new ImportLabelProvider());
 	factory.paintBordersFor(container);
-
-	importTree.addSelectionChangedListener(new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent event) {
-			Object item = ((IStructuredSelection)event.getSelection()).getFirstElement();
-			fireSelectionNotification(item);
-			getFormPage().setSelection(event.getSelection());
-		}
-	});
-	importTree.addDoubleClickListener(new IDoubleClickListener() {
-		public void doubleClick(DoubleClickEvent e) {
-			handleOpen(e.getSelection());
-		}
-	});
-	
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	tree.setLayoutData(gd);
-
-	Composite buttonContainer = factory.createComposite(container);
-	gd = new GridData(GridData.FILL_VERTICAL);
-	buttonContainer.setLayoutData(gd);
-	layout = new GridLayout();
-	layout.marginHeight = 0;
-	buttonContainer.setLayout(layout);
-
-	newButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_NEW), SWT.PUSH);
-	gd = new GridData(GridData.FILL_HORIZONTAL);
-	gd.verticalAlignment= GridData.BEGINNING;
-	newButton.setLayoutData(gd);
-	newButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			handleNew();
-			newButton.getShell().setDefaultButton(null);
-		}
-	});
 	makeActions();
 	return container;
 }
+
+	protected void selectionChanged(IStructuredSelection sel) {
+		Object item = sel.getFirstElement();
+		fireSelectionNotification(item);
+		getFormPage().setSelection(sel);
+	}
+	protected void handleDoubleClick(IStructuredSelection sel) {
+		handleOpen(sel);
+	}
+	
+	protected void buttonSelected(int index) {
+		if (index==0) {
+			handleNew();
+		}
+	}
 
 public void dispose() {
 	importImage.dispose();
@@ -194,12 +149,12 @@ public boolean doGlobalAction(String actionId) {
 public void expandTo(Object object) {
 	if (object instanceof IPluginImport) {
 		ImportObject iobj = new ImportObject((IPluginImport)object);
-		importTree.setSelection(new StructuredSelection(iobj), true);
+		importTable.setSelection(new StructuredSelection(iobj), true);
 	}
 }
 
-private void fillContextMenu(IMenuManager manager) {
-	ISelection selection = importTree.getSelection();
+protected void fillContextMenu(IMenuManager manager) {
+	ISelection selection = importTable.getSelection();
 	manager.add(newAction);
 	manager.add(new Separator());
 	if (!selection.isEmpty()) {
@@ -212,7 +167,7 @@ private void fillContextMenu(IMenuManager manager) {
 }
 
 private void handleDelete() {
-	IStructuredSelection ssel = (IStructuredSelection)importTree.getSelection();
+	IStructuredSelection ssel = (IStructuredSelection)importTable.getSelection();
 
 	if (ssel.isEmpty()) return;	
 	IPluginModel model = (IPluginModel)getFormPage().getModel();
@@ -230,24 +185,10 @@ private void handleDelete() {
 
 private void handleNew() {
 	final IPluginModel model = (IPluginModel)getFormPage().getModel();
-	BusyIndicator.showWhile(importTree.getTree().getDisplay(), new Runnable() {
+	BusyIndicator.showWhile(importTable.getTable().getDisplay(), new Runnable() {
 		public void run() {
 			NewDependencyWizard wizard =
 				new NewDependencyWizard(model);
-			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-			dialog.create();
-			dialog.getShell().setSize(500, 500);
-			dialog.open();
-		}
-	});
-}
-
-private void handleImport() {
-	final IPluginModel model = (IPluginModel)getFormPage().getModel();
-	BusyIndicator.showWhile(importTree.getTree().getDisplay(), new Runnable() {
-		public void run() {
-			PluginImportWizard wizard =
-				new PluginImportWizard(model);
 			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 			dialog.create();
 			dialog.getShell().setSize(500, 500);
@@ -275,9 +216,9 @@ private void handleOpen(Object obj) {
 
 public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase)input;
-	importTree.setInput(model.getPluginBase());
+	importTable.setInput(model.getPluginBase());
 	setReadOnly(!model.isEditable());
-	newButton.setEnabled(model.isEditable());
+	getTablePart().setButtonEnabled(0, model.isEditable());
 	model.addModelChangedListener(this);
 	PDEPlugin.getDefault().getWorkspaceModelManager().addModelProviderListener(this);
 	PDEPlugin.getDefault().getExternalModelManager().addModelProviderListener(this);
@@ -307,7 +248,7 @@ private void makeActions() {
 	
 	openAction = new Action() {
 		public void run() {
-			handleOpen(importTree.getSelection());
+			handleOpen(importTable.getSelection());
 		}
 	};
 	openAction.setText(PDEPlugin.getResourceString(POPUP_OPEN));
@@ -330,7 +271,7 @@ private void makeActions() {
 public void modelChanged(IModelChangedEvent event) {
 	if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 		imports=null;
-		importTree.refresh();
+		importTable.refresh();
 		return;
 	}
 
@@ -340,17 +281,17 @@ public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == event.INSERT) {
 			ImportObject iobj = new ImportObject(iimport);
 			imports.add(iobj);
-			importTree.add(iimport.getParent(), iobj);
-			importTree.setSelection(new StructuredSelection(iobj), true);
-			importTree.getTree().setFocus();
+			importTable.add(iobj);
+			importTable.setSelection(new StructuredSelection(iobj), true);
+			importTable.getTable().setFocus();
 		} else {
 			ImportObject iobj = findImportObject(iimport);
 			if (iobj!=null) {
 				if (event.getChangeType() == event.REMOVE) {
 					imports.remove(iobj);
-					importTree.remove(iobj);
+					importTable.remove(iobj);
 				} else {
-					importTree.update(iobj, null);
+					importTable.update(iobj, null);
 				}
 			}
 		}
@@ -360,7 +301,7 @@ public void modelChanged(IModelChangedEvent event) {
 
 public void modelsChanged(IModelProviderEvent e) {
 	imports = null;
-	importTree.refresh();
+	importTable.refresh();
 }
 
 private ImportObject findImportObject(IPluginImport iimport) {
@@ -438,8 +379,8 @@ private void computeBuildPath(final IPluginModel model, final boolean save) {
 }
 
 public void setFocus() {
-	if (importTree != null)
-		importTree.getTree().setFocus();
+	if (importTable != null)
+		importTable.getTable().setFocus();
 }
 
 }

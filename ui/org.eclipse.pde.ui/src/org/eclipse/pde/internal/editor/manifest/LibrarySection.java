@@ -24,6 +24,7 @@ import java.util.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.parts.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.window.*;

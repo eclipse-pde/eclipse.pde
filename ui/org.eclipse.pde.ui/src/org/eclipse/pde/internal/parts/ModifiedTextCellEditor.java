@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.editor;
+package org.eclipse.pde.internal.parts;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
