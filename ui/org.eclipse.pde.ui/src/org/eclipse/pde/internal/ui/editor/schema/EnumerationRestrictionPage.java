@@ -31,43 +31,27 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 
 	public Control createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
+		container.setLayout(new GridLayout());
+
+		Composite top = new Composite(container, SWT.NULL);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		container.setLayout(layout);
-
-		Composite listColumn = new Composite(container, SWT.NULL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		listColumn.setLayoutData(gd);
-		GridLayout llayout = new GridLayout();
-		llayout.marginHeight = 0;
-		llayout.marginWidth = 0;
-		listColumn.setLayout(llayout);
-
-		Label label = new Label(listColumn, SWT.NULL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(gd);
-		label.setText(PDEPlugin.getResourceString(KEY_CHOICES));
-		choiceList = new List(listColumn, SWT.MULTI | SWT.BORDER);
-		gd = new GridData(GridData.FILL_BOTH);
-		choiceList.setLayoutData(gd);
-
-		Composite editColumn = new Composite(container, SWT.NULL);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		editColumn.setLayoutData(gd);
-		GridLayout clayout = new GridLayout();
-		clayout.marginHeight = 0;
-		clayout.marginWidth = 0;
-		editColumn.setLayout(clayout);
-		label = new Label(editColumn, SWT.NULL);
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		
+		Label label = new Label(top, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NEW_CHOICE));
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text = new Text(editColumn, SWT.SINGLE | SWT.BORDER);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		
+		text = new Text(top, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		addButton = new Button(editColumn, SWT.PUSH);
+		addButton = new Button(top, SWT.PUSH);
 		addButton.setText(PDEPlugin.getResourceString(KEY_ADD));
 		addButton.setEnabled(false);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -75,10 +59,28 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleAdd();
 			}
 		});
-		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(addButton);
+		
 
-		deleteButton = new Button(editColumn, SWT.PUSH);
+		Composite bottom = new Composite(container, SWT.NULL);
+		bottom.setLayoutData(new GridData(GridData.FILL_BOTH));
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		bottom.setLayout(layout);
+
+		label = new Label(bottom, SWT.NULL);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		label.setText(PDEPlugin.getResourceString(KEY_CHOICES));
+		
+		choiceList = new List(bottom, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		choiceList.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		deleteButton = new Button(bottom, SWT.PUSH);
 		deleteButton.setText(PDEPlugin.getResourceString(KEY_REMOVE));
 		deleteButton.setEnabled(false);
 		deleteButton.addSelectionListener(new SelectionAdapter() {
@@ -86,7 +88,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 				handleDelete();
 			}
 		});
-		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(deleteButton);
 
 		text.addModifyListener(new ModifyListener() {
@@ -154,6 +156,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		choiceList.setRedraw(true);
 		deleteButton.setEnabled(false);
 	}
+	
 	public void initialize(ISchemaRestriction restriction) {
 		if (restriction != null) {
 			Object[] children = restriction.getChildren();
