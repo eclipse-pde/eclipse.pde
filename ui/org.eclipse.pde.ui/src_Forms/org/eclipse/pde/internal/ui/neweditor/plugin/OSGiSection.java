@@ -77,6 +77,12 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#isEditable()
+	 */
+	public boolean isEditable() {
+		return getPage().getModel().isEditable();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
