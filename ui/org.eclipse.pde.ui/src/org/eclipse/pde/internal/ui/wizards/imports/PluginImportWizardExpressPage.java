@@ -124,7 +124,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			}
 		});
 		
-		addFragments.addSelectionListener(new SelectionAdapter() {
+		addFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
 			}
@@ -200,7 +200,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		Object[] wModels = tablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)wModels[i];
-			addDependencies(model, result, true);
+			addDependencies(model, result, addFragmentsButton.getSelection());
 			addExtraPrerequisites(model, result);
 		}
 		
@@ -208,9 +208,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (!(wModels.length == 1
 				&& ((IPluginModelBase) wModels[0]).getPluginBase().getId().equals(
 					"org.eclipse.core.boot"))
-				&& implicitButton.isVisible()
 				&& implicitButton.getSelection())
-				addImplicitDependencies(result);
+				addImplicitDependencies(result, addFragmentsButton.getSelection());
 			removeCheckedModels(result);
 		}
 		

@@ -344,10 +344,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
-			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
+			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, addFragmentsButton.getSelection());
 		}
 		if (implicitButton.isVisible() && implicitButton.getSelection()) {
-			addImplicitDependencies(result);
+			addImplicitDependencies(result, addFragmentsButton.getSelection());
 		}
 		
 		handleRemoveAll(false);
