@@ -75,6 +75,8 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	private ISchema createInternalSchema(ISchemaDescriptor desc, String location) {
 		try {
 			URL schemaURL = IncludedSchemaDescriptor.computeURL(desc, location);
+			if (schemaURL == null)
+				return null;
 			Schema ischema = new Schema(null, schemaURL, fAbbreviated);
 			ischema.load();
 			return ischema;
