@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.jface.wizard.*;
@@ -27,11 +26,9 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -190,23 +187,19 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(fBrowseDirectory);
 	}
 	
-	private void createOptionsSection(Composite parent) {
+	protected Composite createOptionsSection(Composite parent) {
 		Group comp = new Group(parent, SWT.NONE);
 		comp.setText(PDEPlugin.getResourceString("ExportWizard.options")); //$NON-NLS-1$
-		comp.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout(3, false);
+		layout.verticalSpacing = 10;
+		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Composite top = new Composite(comp, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = layout.marginWidth = 0;
-		top.setLayout(layout);
-		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Label label = new Label(top, SWT.NONE);
+		Label label = new Label(comp, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("ExportWizard.format")); //$NON-NLS-1$
 		
-		fExportFormats = new Combo(top, SWT.READ_ONLY);
+		fExportFormats = new Combo(comp, SWT.READ_ONLY);
 		fExportFormats.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] formats = new String[3];
 		if (Platform.getOS().equals("macosx")) //$NON-NLS-1$
@@ -217,26 +210,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		formats[2] = PDEPlugin.getResourceString("ExportWizard.updateJars"); //$NON-NLS-1$
 		fExportFormats.setItems(formats);
 						
-		Composite bottom = new Composite(comp, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = layout.marginWidth = 0;
-		bottom.setLayout(layout);
-		bottom.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fIncludeSource = new Button(bottom, SWT.CHECK);
+		fIncludeSource = new Button(comp, SWT.CHECK);
 		fIncludeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource")); //$NON-NLS-1$
-		fIncludeSource.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-						
-		Button button = new Button(bottom, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ExportWizard.targetEnv.button")); //$NON-NLS-1$
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showPreferencePage(new TargetPlatformPreferenceNode());
-			}
-		});
-		SWTUtil.setButtonDimensionHint(button);		
+		fIncludeSource.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		
+		return comp;
 	}
 	
 	private void createAntBuildSection(Composite parent) {
@@ -267,20 +246,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fBrowseAnt.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseAnt);
 		
-	}
-	
-	private void showPreferencePage(final IPreferenceNode targetNode) {
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog =
-			new PreferenceDialog(getControl().getShell(), manager);
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				dialog.open();
-			}
-		});
 	}
 	
 	private void hookListeners() {
