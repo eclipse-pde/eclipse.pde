@@ -93,6 +93,7 @@ public class RCPContentPage extends WizardPage {
         
         fClassText = new Text(group, SWT.BORDER|SWT.SINGLE);
         fClassText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        fClassText.setText("ApplicationClass"); //$NON-NLS-1$
         fClassText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
@@ -176,6 +177,7 @@ public class RCPContentPage extends WizardPage {
         
         fProductText = new Text(container, SWT.BORDER|SWT.SINGLE);
         fProductText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
+        fProductText.setText("My Product"); //$NON-NLS-1$
         fProductText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fProductChanged = true;

@@ -16,9 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.ui.*;
 
-/**
- * @author cgwong
- */
 public class ApplicationClassCodeGenerator {
     private IPluginFieldData fPluginData;
     private IProject fProject;
