@@ -95,6 +95,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String buildScriptFileName = DEFAULT_BUILD_SCRIPT_FILENAME;
 	//This list is initialized by the generateBuildJarsTarget
 	private ArrayList compiledJarNames;
+	private boolean dotOnTheClasspath = false;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -108,7 +109,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// If the the plugin we want to generate is a source plugin, and the feature that required the generation of this plugin is not being asked to build the source
 		// we want to leave. This is particularly usefull for the case of the pde.source building (at least for now since the source of pde is not in a feature)
-		if (featureGenerator != null && featureGenerator.isSourceFeatureGeneration() == false && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getUniqueId()))
+		if (featureGenerator != null && featureGenerator.isSourceFeatureGeneration() == false && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
 			return;
 
 		if (!AbstractScriptGenerator.isBuildingOSGi())
@@ -116,7 +117,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		initializeVariables();
 		if (BundleHelper.getDefault().isDebugging())
-			System.out.println("Generating plugin " + model.getUniqueId());
+			System.out.println("Generating plugin " + model.getSymbolicName());
 
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
 		if (custom != null && custom.equalsIgnoreCase("true")) { //$NON-NLS-1$
@@ -147,7 +148,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void initializeVariables() throws CoreException {
-		fullName = model.getUniqueId() + "_" + model.getVersion(); //$NON-NLS-1$
+		fullName = model.getSymbolicName() + "_" + model.getVersion(); //$NON-NLS-1$
 		pluginZipDestination = PLUGIN_DESTINATION + '/' + fullName + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		String[] classpathInfo = getClasspathEntries(model);
@@ -173,6 +174,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 						order[i] = EXPANDED_DOT;
 				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ","));
 			}
+
+			String includeString  = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
+			if (includeString != null) {
+				String[] includes = Utils.getArrayFromString(includeString);
+				for (int i = 0; i < includes.length; i++)
+					if (includes[i].equals(DOT))
+						includes[i] = null;
+				getBuildProperties().setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ","));
+			}
+			dotOnTheClasspath = true;
 		}
 	}
 
@@ -215,7 +226,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildJarsTargetForSourceGathering() throws CoreException {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 
-		IPluginEntry entry = Utils.getPluginEntry(featureGenerator.feature, model.getUniqueId(), false)[0];
+		IPluginEntry entry = Utils.getPluginEntry(featureGenerator.feature, model.getSymbolicName(), false)[0];
 		Config configInfo;
 		if (entry.getOS() == null && entry.getWS() == null && entry.getOSArch() == null)
 			configInfo = Config.genericConfig();
@@ -226,7 +237,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (pluginsToGatherSourceFrom != null) {
 			for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 				BundleDescription plugin = (BundleDescription) iter.next();
-				if (plugin.getUniqueId().equals(model.getUniqueId())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
+				if (plugin.getSymbolicName().equals(model.getSymbolicName())) // We are not trying to gather the source from ourself since we are generated and we know we don't have source...
 					continue;
 
 				// The two steps are required, because some plugins (xerces, junit, ...) don't build their source: the source already comes zipped
@@ -249,7 +260,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
-		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getUniqueId())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getSymbolicName())); //$NON-NLS-1$
 		for (int i = 0; i < availableJars.length; i++) {
 			String jarName = availableJars[i].getName(true);
 			if (availableJars[i].type == CompiledEntry.JAR) {
@@ -335,6 +346,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
+
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script.
 	 * 
@@ -352,28 +364,29 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
-		//TODO This needs to be improved for . on the classpath and folders (if they don't have a / at the end)
-		if (compiledJarNames != null && compiledJarNames.size() != 0) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromCollection(compiledJarNames, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
+		//Copy only the jars that has been compiled and are listed in the includes
+		String[] splitIncludes = Utils.getArrayFromString(include);
+		String[] fileSetValues = new String[compiledJarNames.size()];
+		int count = 0;
+		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
+			CompiledEntry entry = (CompiledEntry) iter.next();
+			String formatedName = entry.getName(false) + (entry.getType()==CompiledEntry.FOLDER ? "/" : "");
+			if (Utils.isStringIn(splitIncludes,formatedName)) {
+				fileSetValues[count++] = formatedName;
+				break;
+			}
+		}
+		if(count != 0) {
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
+		if(dotOnTheClasspath) {
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, null, null, null); //$NON-NLS-1$
+			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
+		}
+		
+		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
-			if (include != null) {
-				String[] splitIncludes = Utils.getArrayFromString(include);
-				boolean found = false;
-				for (int i = 0; i < splitIncludes.length; i++) {
-					if (splitIncludes[i].equals(DOT)) {
-						splitIncludes[i] = "";
-						found = true;
-						break;
-					}
-				}
-				if (found) {
-					include = Utils.getStringFromArray(splitIncludes, ",");
-					FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR) + '/' + EXPANDED_DOT, null, "**", null, null, null, null);
-					script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
-				}
-			}
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
@@ -439,7 +452,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateZipPluginTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, Policy.bind("build.plugin.zipPlugin", model.getUniqueId())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, Policy.bind("build.plugin.zipPlugin", model.getSymbolicName())); //$NON-NLS-1$
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
@@ -460,7 +473,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateBuildUpdateJarTarget() {
 		script.println();
-		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, Policy.bind("build.plugin.buildUpdateJar", model.getUniqueId())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, Policy.bind("build.plugin.buildUpdateJar", model.getSymbolicName())); //$NON-NLS-1$
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
@@ -495,7 +508,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Defines, the XML declaration, Ant project and targets init and initTemplate.
 	 */
 	private void generatePrologue() {
-		script.printProjectDeclaration(model.getUniqueId(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
+		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
 		script.println();
 		script.printProperty(PROPERTY_BOOTCLASSPATH, ""); //$NON-NLS-1$
 		script.printProperty(PROPERTY_BASE_WS, getPropertyFormat(PROPERTY_WS));
@@ -544,7 +557,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 		}
 		this.model = model;
-		getCompiledElements().add(model.getUniqueId());
+		getCompiledElements().add(model.getSymbolicName());
 	}
 
 	/**
@@ -622,8 +635,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				if (jar == null)
 					continue;
 
-				String name = jar.getName(false);
-				compiledJarNames.add(name);
+				compiledJarNames.add(jar);
 				generateCompilationTarget(classpath.getClasspath(pluginModel, jar), jar);
 				generateSRCTarget(jar);
 				jars.remove(order[i]);
@@ -631,15 +643,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		for (Iterator iterator = jars.values().iterator(); iterator.hasNext();) {
 			CompiledEntry jar = (CompiledEntry) iterator.next();
-			String name = jar.getName(false);
-			compiledJarNames.add(name);
+			compiledJarNames.add(jar);
 			generateCompilationTarget(classpath.getClasspath(pluginModel, jar), jar);
 			generateSRCTarget(jar);
 		}
 		script.println();
-		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.plugin.buildJars", pluginModel.getUniqueId())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.plugin.buildJars", pluginModel.getSymbolicName())); //$NON-NLS-1$
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
-			String name = (String) iter.next();
+			String name = ((CompiledEntry) iter.next()).getName(false);
 			script.printAvailableTask(name, replaceVariables(getJARLocation(name), true));
 			script.printAntCallTask(name, null, null);
 		}
@@ -648,7 +659,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
-			String jarName = (String) iter.next();
+			String jarName = ((CompiledEntry) iter.next()).getName(false);
 			String srcName = getSRCName(jarName);
 			script.printAvailableTask(srcName, getSRCLocation(jarName));
 			script.printAntCallTask(srcName, null, null);

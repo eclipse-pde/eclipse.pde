@@ -455,4 +455,11 @@ public final class Utils implements IPDEBuildConstants {
 		}
 	}
 
+	public static boolean isStringIn(String[] searched, String toSearch) {
+		for (int i = 0; i < searched.length; i++) {
+			if (toSearch.startsWith(searched[i]))
+				return true;
+		}
+		return false;
+	}
 }
