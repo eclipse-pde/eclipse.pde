@@ -29,7 +29,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
-	public String[] getFoldersToInclude() {
+	public String[] getNewFiles() {
 		return new String[0];
 	}
 }

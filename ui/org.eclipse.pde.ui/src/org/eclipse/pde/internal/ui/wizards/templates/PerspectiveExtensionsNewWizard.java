@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PerspectiveExtensionsNewWizard extends NewPluginTemplateWizard {
@@ -22,8 +23,8 @@ public class PerspectiveExtensionsNewWizard extends NewPluginTemplateWizard {
 		super();
 	}
 
-	public void init(String id) {
-		super.init(id);
+	public void init(IPluginFieldData data) {
+		super.init(data);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 	/**

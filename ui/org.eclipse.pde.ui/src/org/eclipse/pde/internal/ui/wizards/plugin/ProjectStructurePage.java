@@ -1,12 +1,11 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.*;
-
+import java.util.StringTokenizer;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.swt.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

@@ -11,10 +11,8 @@
 package org.eclipse.pde.ui.templates;
 
 import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -77,8 +75,9 @@ public class OptionTemplateWizardPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		if (visible && section.isDependentOnFirstPage()) {
 			IWizard wizard = getWizard();
-			if (wizard instanceof IPluginContentWizard) {
-				section.initializeFields(((IPluginContentWizard)wizard).getPluginId());
+			if (wizard instanceof AbstractNewPluginTemplateWizard) {
+				AbstractNewPluginTemplateWizard templateWizard = (AbstractNewPluginTemplateWizard)wizard;
+				section.initializeFields(templateWizard.getData());
 			}
 		}
 		super.setVisible(visible);

@@ -6,8 +6,12 @@
          <meta.schema plugin="org.eclipse.pde.ui" id="templates" name="Extension Templates"/>
       </appInfo>
       <documentation>
-         This extension point registers plug-in project content templates that are used to generate code for the new extensions.
-&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;&lt;/p&gt;
+         This extension point registers plug-in project content templates that are used to generate code for the new extensions. Templates are used in two contexts:
+&lt;ul&gt;
+&lt;li&gt;One or more templates are combined in a wizard that is contributed as plug-in content wizard using &lt;code&gt;org.eclipse.pde.ui.pluginContent&lt;/code&gt; extension point. These templates create interesting content for newly created plug-in projects. In addition, all the templates contributed using this extension point can be seen in a spectial version of the plug-in content wizard that lists the templates and allows users to freely combine the templates by checking them in the list.&lt;/li&gt;
+&lt;li&gt;New extension can be added to an existing plug-in using a template.
+&lt;/li&gt;
+&lt;/ul&gt;
       </documentation>
    </annotation>
 
@@ -76,7 +80,7 @@ represent the template.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.templates.ITemplateSection"/>
@@ -100,7 +104,7 @@ represent the template.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/code&gt; interface. However, abstract classes that implement the interface and can be extended are available.
       </documentation>
    </annotation>
 

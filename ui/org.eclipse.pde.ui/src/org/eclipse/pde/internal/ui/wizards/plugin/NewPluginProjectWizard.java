@@ -1,23 +1,22 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.lang.reflect.*;
-
-import org.eclipse.core.resources.*;
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.wizards.newresource.*;
+import org.eclipse.pde.ui.IPluginContentWizard;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
  * @author melhem
  *
  */
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
-	public static final String PLUGIN_POINT = "projectGenerators";
+	public static final String PLUGIN_POINT = "pluginContent";
 	public static final String TAG_WIZARD = "wizard";
 
 	private IConfigurationElement fConfig;
@@ -77,8 +76,11 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fWizardListPage.finish(fPluginData);
 		try {
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
+			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
+			if (contentWizard!=null)
+				contentWizard.init(fPluginData);
 			getContainer().run(false, true,
-					new NewProjectCreationOperation(fPluginData, fProjectProvider));
+					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

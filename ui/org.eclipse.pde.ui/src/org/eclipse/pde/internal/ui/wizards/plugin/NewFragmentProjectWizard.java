@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.lang.reflect.*;
-
-import org.eclipse.core.resources.*;
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.wizards.newresource.*;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewFragmentProjectWizard extends NewWizard implements IExecutableExtension {
 
@@ -75,7 +73,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		try {
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,
-					new NewProjectCreationOperation(fFragmentData, fProjectProvider));
+					new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);

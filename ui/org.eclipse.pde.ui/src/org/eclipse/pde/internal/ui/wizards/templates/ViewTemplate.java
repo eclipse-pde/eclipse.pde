@@ -214,7 +214,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
-	public String[] getFoldersToInclude() {
+	public String[] getNewFiles() {
 		return new String[] {"icons/"};
 	}
 	

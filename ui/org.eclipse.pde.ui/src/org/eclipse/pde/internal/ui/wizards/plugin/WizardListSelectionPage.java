@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.util.Iterator;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
-import java.util.*;
+import org.eclipse.swt.widgets.*;
 
 
 public class WizardListSelectionPage extends BaseWizardSelectionPage
@@ -164,7 +163,7 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 			public IBasePluginWizard createWizard() throws CoreException {
 				IPluginContentWizard wizard =
 					(IPluginContentWizard) wizardElement.createExecutableExtension();
-				wizard.init(fContentPage.getId());
+				//wizard.init(fContentPage.getId());
 				return wizard;
 			}
 		};
@@ -176,18 +175,15 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	}
 	
 	public void finish(PluginFieldData data) {
+	}
+	
+	public IPluginContentWizard getSelectedWizard() {
 		if (fUseTemplate.getSelection()) {
 			IWizardNode node = getSelectedNode();
-			if (node != null) {
-				IPluginContentWizard wizard = (IPluginContentWizard)node.getWizard();
-				if (wizard != null) {
-					ITemplateSection[] sections = wizard.getTemplateSections();
-					for (int i = 0; i < sections.length; i++) {
-						data.addTemplate(sections[i]);
-					}
-				}
-			}
+			if (node != null)
+				return (IPluginContentWizard)node.getWizard();
 		}
+		return null;
 	}
 	
 	public boolean isPageComplete() {

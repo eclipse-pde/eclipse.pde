@@ -1,20 +1,18 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.*;
-
+import java.util.StringTokenizer;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

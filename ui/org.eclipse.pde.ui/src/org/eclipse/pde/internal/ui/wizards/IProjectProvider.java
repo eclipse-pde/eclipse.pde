@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui;
+package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 /**

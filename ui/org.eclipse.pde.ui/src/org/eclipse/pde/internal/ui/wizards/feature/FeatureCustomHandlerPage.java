@@ -10,38 +10,37 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.lang.reflect.*;
-import java.util.*;
-
+import java.lang.reflect.InvocationTargetException;
+import java.util.StringTokenizer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard.FeatureProjectProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.ide.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.wizards.newresource.*;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class FeatureCustomHandlerPage extends WizardPage {
 	private static final String KEY_TITLE = "FeatureCustomHandlerPage.title";

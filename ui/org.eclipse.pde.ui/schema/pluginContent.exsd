@@ -3,15 +3,18 @@
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.pde.ui" id="projectGenerators" name="Plug-in Content Wizards"/>
+         <meta.schema plugin="org.eclipse.pde.ui" id="pluginContent" name="Plug-in Content Wizards"/>
       </appInfo>
       <documentation>
-         This extension point provides for plugging in 
-wizards that create initial content of the PDE plug-in
-projects. These wizards can create plug-in manifest,
-key classes, initial folder structure and even
-generate some extensions and the required code for them.
-&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;&lt;/p&gt;
+         This extension point provides for contributing wizards that create additional content of the PDE plug-in
+projects. After the plug-in manifest and key files have been
+created, these wizards can be used to add more files and
+extensions to the initial structure. A typical implementation
+of this wizard would add content based on a parametrized
+template customized based on the user choices in the wizard.
+The goal is to arrive at a plug-in that is does something
+useful right after the creation (e.g. contributes a view, 
+an editor etc.).
       </documentation>
    </annotation>
 
@@ -87,7 +90,7 @@ represent the wizard.
 &lt;samp&gt;org.eclipse.pde.ui.IPluginContentWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.IPluginContentWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.Wizard:org.eclipse.pde.IPluginContentWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -116,14 +119,14 @@ represent the wizard.
       <documentation>
          The following is an example of this extension point:
 &lt;pre&gt;   
-   &lt;extension point=&quot;org.eclipse.pde.ui.projectGenerators&quot;&gt;
+   &lt;extension point=&quot;org.eclipse.pde.ui.pluginContent&quot;&gt;
       &lt;wizard
-         name=&quot;Default Plug-in Content Generator&quot;
+         name=&quot;Example Plug-in Content Generator&quot;
          icon=&quot;icons/content_wizard.gif&quot;
          class=&quot;com.example.xyz.ContentGeneratorWizard&quot;
-         id=&quot;com.example.xyz.DefaultContentGenerator&quot;&gt;
+         id=&quot;com.example.xyz.ExampleContentGenerator&quot;&gt;
          &lt;description&gt;
-            Generates plugin.xml and plugin top-level class
+            Adds a view and a preference page.
          &lt;/description&gt;
       &lt;/wizard&gt;
    &lt;/extension&gt;
@@ -138,7 +141,7 @@ represent the wizard.
       <documentation>
          Wizards that plug into this extension point must
 implement &lt;samp&gt;org.eclipse.pde.ui.IPluginContentWizard&lt;/samp&gt;
-interface.
+interface and is expected to extend &lt;code&gt;org.eclipse.jface.wizard.Wizard&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -147,9 +150,7 @@ interface.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         PDE provides default implementation of this wizard
-that generates the manifest file and the top-level
-plug-in class.
+         PDE provides APIs for contributing content wizards based on customizable templates. A number of concrete wizards based on these templates is contributed by PDE UI itself.
       </documentation>
    </annotation>
 

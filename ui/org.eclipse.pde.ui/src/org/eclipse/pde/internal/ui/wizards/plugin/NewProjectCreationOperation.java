@@ -1,27 +1,27 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.pluginconversion.*;
+import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
-import org.eclipse.pde.internal.ui.wizards.templates.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.templates.TemplateEditorInput;
 import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.part.*;
-import org.osgi.util.tracker.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.part.ISetSelectionTarget;
+import org.osgi.util.tracker.ServiceTracker;
 /**
  * @author melhem
  *  
@@ -31,12 +31,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private IProjectProvider fProjectProvider;
 	private WorkspacePluginModelBase fModel;
 	private PluginClassCodeGenerator fGenerator;
-	private ITemplateSection[] fTemplateSections = new ITemplateSection[0];
+	private IPluginContentWizard fContentWizard;
+	private boolean result;
 	
 	
-	public NewProjectCreationOperation(IFieldData data, IProjectProvider provider) {
+	public NewProjectCreationOperation(IFieldData data, IProjectProvider provider, IPluginContentWizard contentWizard) {
 		fData = data;
 		fProjectProvider = provider;
+		fContentWizard = contentWizard;
 	}
 	/*
 	 * (non-Javadoc)
@@ -62,10 +64,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			generateTopLevelPluginClass(project, new SubProgressMonitor(monitor, 1));
 		}
 		
-		if (fData instanceof IPluginFieldData) {
-			fTemplateSections = ((IPluginFieldData) fData).getTemplateSections();
-		}
-		
 		monitor.subTask(PDEPlugin.getResourceString("NewProjectCreationOperation.manifestFile"));
 		createManifest(project);
 		monitor.worked(1);
@@ -74,7 +72,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		createBuildPropertiesFile(project);
 		monitor.worked(1);
 		
-		executeTemplates(project, monitor);
+		boolean contentWizardResult=true;
+		
+		if (fContentWizard!=null) {
+			contentWizardResult = fContentWizard.performFinish(project, fModel, new SubProgressMonitor(monitor, 1));
+		}
 		fModel.save();
 		
 		if (fData.hasBundleStructure()) {
@@ -83,15 +85,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		monitor.worked(1);
 		openFile();
+		result = contentWizardResult;
 	}
 	
-	private void executeTemplates(IProject project, IProgressMonitor monitor)
-			throws CoreException {
-		for (int i = 0; i < fTemplateSections.length; i++) {
-			fTemplateSections[i].execute(project, fModel,
-					new SubProgressMonitor(monitor, 1));
-		}
-		saveTemplateFile(project, null);
+	public boolean getResult() {
+		return result;
 	}
 	
 	private void generateTopLevelPluginClass(IProject project,
@@ -106,12 +104,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private int getNumberOfWorkUnits() {
 		int numUnits = 4;
 		if (fData.hasBundleStructure())
-			numUnits += 1;		
+			numUnits++;		
 		if (fData instanceof IPluginFieldData) {
 			IPluginFieldData data = (IPluginFieldData)fData;
 			if (data.doGenerateClass())
-				numUnits += 1;
-			numUnits += data.getTemplateSections().length;
+				numUnits++;
+			if (fContentWizard!=null)
+				numUnits++;
 		}
 		return numUnits;
 	}
@@ -193,11 +192,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				binEntry.addToken("META-INF/");
 			if (!fData.isSimple()) {
 				binEntry.addToken(fData.getLibraryName());
-				for (int i = 0; i < fTemplateSections.length; i++) {
-					String[] folders = fTemplateSections[i].getFoldersToInclude();
-					for (int j = 0; j < folders.length; j++) {
-						if (!binEntry.contains(folders[j]))
-							binEntry.addToken(folders[j]);
+				if (fContentWizard!=null) {
+				String[] files = fContentWizard.getNewFiles();
+					for (int j = 0; j < files.length; j++) {
+						if (!binEntry.contains(files[j]))
+							binEntry.addToken(files[j]);
 					}
 				}
 				
@@ -253,9 +252,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				result.add(refs[i]);
 			}
 		}
-		for (int i = 0; i < fTemplateSections.length; i++) {
-			IPluginReference[] refs = fTemplateSections[i]
-					.getDependencies(fData.isLegacy() ? null : "3.0");
+		if (fContentWizard!=null) {
+			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0");
 			for (int j = 0; j < refs.length; j++) {
 				if (!result.contains(refs[j]))
 					result.add(refs[j]);
@@ -263,60 +261,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		return (IPluginReference[]) result.toArray(new IPluginReference[result
 				.size()]);
-	}
-	
-	private void writeTemplateFile(PrintWriter writer) {
-		String indent = "   ";
-		// open
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<form>");
-		if (fTemplateSections.length > 0) {
-			// add the standard prolog
-			writer
-					.println(indent
-							+ PDEPlugin
-									.getResourceString("ManifestEditor.TemplatePage.intro"));
-			// add template section descriptions
-			for (int i = 0; i < fTemplateSections.length; i++) {
-				ITemplateSection section = fTemplateSections[i];
-				String list = "<li style=\"text\" value=\"" + (i + 1) + ".\">";
-				writer.println(indent + list + "<b>" + section.getLabel()
-						+ ".</b>" + section.getDescription() + "</li>");
-			}
-		}
-		// add the standard epilogue
-		writer
-				.println(indent
-						+ PDEPlugin
-								.getResourceString("ManifestEditor.TemplatePage.common"));
-		// close
-		writer.println("</form>");
-	}
-	
-	private void saveTemplateFile(IProject project, IProgressMonitor monitor) {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		writeTemplateFile(writer);
-		writer.flush();
-		try {
-			swriter.close();
-		} catch (IOException e) {
-		}
-		String contents = swriter.toString();
-		IFile file = project.getFile(".template");
-		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8"));
-			if (file.exists()) {
-				file.setContents(stream, false, false, null);
-			} else {
-				file.create(stream, false, null);
-			}
-			stream.close();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		} catch (IOException e) {
-		}
 	}
 	
 	private void openFile() {

@@ -12,13 +12,12 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewFeatureProjectWizard
 	extends NewWizard

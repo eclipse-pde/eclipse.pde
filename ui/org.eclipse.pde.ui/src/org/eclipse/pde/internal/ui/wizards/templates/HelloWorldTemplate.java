@@ -164,7 +164,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
-	public String[] getFoldersToInclude() {
+	public String[] getNewFiles() {
 		return new String[] {"icons/"};
 	}
 }

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 import java.util.Hashtable;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.ui.IPluginFieldData;
 
 /**
  * This class adds a notion of options to the default
@@ -199,7 +199,7 @@ public abstract class BaseOptionTemplateSection
 	 * @param data plug-in structure data as defined in the common plug-in project
 	 * wizard pages
 	 */
-	protected void initializeFields(String pluginId) {
+	protected void initializeFields(IPluginFieldData data) {
 	}
 	/**
 	 * Initializes options in the wizard page using the data provided
