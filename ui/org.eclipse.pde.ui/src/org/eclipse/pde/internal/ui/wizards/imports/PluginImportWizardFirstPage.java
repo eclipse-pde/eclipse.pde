@@ -1,121 +1,246 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+/*
+ * Created on May 30, 2003
+ *
+ * To change this generated comment go to 
+ * Window>Preferences>Java>Code Generation>Code Template
+ */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.RegistryLoader;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
-public class PluginImportWizardFirstPage extends StatusWizardPage {
-
-	private static final String SETTINGS_DROPLOCATION = "droplocation";
-	private static final String SETTINGS_DOOTHER = "doother";
-	private static final String SETTINGS_DOIMPORT = "doimport";
-	private static final String SETTINGS_DOEXTRACT = "doextract";
-	private static final String KEY_TITLE = "ImportWizard.FirstPage.title";
-	private static final String KEY_DESC = "ImportWizard.FirstPage.desc";
-	private static final String KEY_RUNTIME_LOCATION =
-		"ImportWizard.FirstPage.runtimeLocation";
-	private static final String KEY_OTHER_FOLDER =
-		"ImportWizard.FirstPage.otherFolder";
-	private static final String KEY_CHANGE = "ImportWizard.FirstPage.change";
-	private static final String KEY_BROWSE = "ImportWizard.FirstPage.browse";
-	private static final String KEY_CHANGE_TARGET = "ImportWizard.FirstPage.changeTarget";
-	private static final String KEY_IMPORT_CHECK =
-		"ImportWizard.FirstPage.importCheck";
-	private static final String KEY_EXTRACT_CHECK =
-		"ImportWizard.FirstPage.extractCheck";
-	private static final String KEY_SOURCE_REMINDER = 
-		"ImportWizard.FirstPage.sourceReminder";
-	private static final String KEY_TARGET_DESC =
-		"ImportWizard.FirstPage.targetDesc";
-	private static final String KEY_FOLDER_TITLE =
-		"ImportWizard.messages.folder.title";
-	private static final String KEY_FOLDER_MESSAGE =
-		"ImportWizard.messages.folder.message";
-	private static final String KEY_LOCATION_MISSING =
-		"ImportWizard.errors.locationMissing";
-	private static final String KEY_BUILD_INVALID =
-		"ImportWizard.errors.buildFolderInvalid";
-	private static final String KEY_BUILD_MISSING =
-		"ImportWizard.errors.buildFolderMissing";
-	private static final String KEY_OS =
-		"ImportWizard.FirstPage.os";
-	private static final String KEY_WS =
-		"ImportWizard.FirstPage.ws";
-	private static final String KEY_NL =
-		"ImportWizard.FirstPage.nl";
-	private static final String KEY_ARCH =
-		"ImportWizard.FirstPage.arch";
-
-	private Label otherLocationLabel;
+/**
+ * @author Wassim Melhem
+ */
+public class PluginImportWizardFirstPage extends WizardPage {
+	
+	private static String SETTINGS_IMPORTTYPE = "importType";
+	private static String SETTINGS_DOOTHER = "doother";
+	private static String SETTINGS_DROPLOCATION = "droplocation";
+	private static String SETTTINGS_SCAN_ALL = "scanAll";
+	
 	private Button runtimeLocationButton;
-	private Button changeButton;
 	private Button browseButton;
+	private Label otherLocationLabel;
 	private Combo dropLocation;
-	private Button doImportCheck;
-	private Button doExtractCheck;
-	private Button changeEnvButton;
-	private Label osLabel;
-	private Label wsLabel;
-	private Label archLabel;
-	private Label nlLabel;
+	private Button changeButton;
+	
+	private Button importButton;
+	private Button scanButton;
 
-	private IStatus dropLocationStatus;
-
-	public PluginImportWizardFirstPage() {
-		super("PluginImportWizardPage", true);
-		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-		setDescription(PDEPlugin.getResourceString(KEY_DESC));
-
-		dropLocationStatus = createStatus(IStatus.OK, "");
+	private Button binaryButton;
+	private Button binaryWithLinksButton;
+	private Button sourceButton;
+	
+	private String currentLocation;
+	private IPluginModelBase[] models = new IPluginModelBase[0];
+	
+	public PluginImportWizardFirstPage(String name) {
+		super(name);
+		setTitle(PDEPlugin.getResourceString("ImportWizard.FirstPage.title"));
+		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc"));
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/*
-	 * @see IDialogPage#createControl(Composite)
-	 */
 	public void createControl(Composite parent) {
-		Label label;
-		GridData gd;
-		initializeDialogUnits(parent);
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 15;
+		container.setLayout(layout);
+		
+		createDirectoryGroup(container);
+		createImportChoicesGroup(container);
+		createImportOptionsGroup(container);
+		createEnvVariablesGroup(container);
+		
+		initialize();
+		setControl(container);
+		Dialog.applyDialogFont(container);
+	}
+	
+	private void createImportChoicesGroup(Composite container) {
+		Group importChoices = new Group(container, SWT.NONE);
+		importChoices.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importGroup"));
+		importChoices.setLayout(new GridLayout());
+		importChoices.setLayoutData(new GridData(GridData.FILL_BOTH));
+				
+		importButton = new Button(importChoices, SWT.RADIO);
+		importButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importPrereqs"));
+		
+		scanButton = new Button(importChoices, SWT.RADIO);
+		scanButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.scanAll"));		
+		
+	}
+	
+	private void createImportOptionsGroup(Composite container) {
+		Group options = new Group(container, SWT.NONE);
+		options.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importAs"));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		options.setLayout(layout);
+		options.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		binaryButton = new Button(options, SWT.RADIO);
+		binaryButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binary"));
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		binaryButton.setLayoutData(gd);
+		
+		binaryWithLinksButton = new Button(options, SWT.RADIO);
+		binaryWithLinksButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.binaryLinks"));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		binaryWithLinksButton.setLayoutData(gd);
+		
+		sourceButton = new Button(options, SWT.RADIO);
+		sourceButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.source"));
+		sourceButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Button sourceLocations = new Button(options, SWT.PUSH);
+		sourceLocations.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.codeLocations"));
+		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		sourceLocations.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleSourceLocations();
+			}
+		});
+	}
+	
+	
+	private void createEnvVariablesGroup(Composite container) {
+		Group variables = new Group(container, SWT.NONE);
+		variables.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.pathResolution"));
+		variables.setLayout(new GridLayout());
+		variables.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Text text = new Text(variables, SWT.WRAP);
+		GridData gd = new GridData();
+		gd.widthHint = 470;
+		text.setLayoutData(gd);
+		text.setEditable(false);
+		text.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.variables"));
+	
+		Button envButton = new Button(variables, SWT.PUSH);
+		envButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.env"));
+		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END| GridData.FILL_HORIZONTAL));
+		envButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEnvChange();
+			}
+		});
+	}
+	
+	private void initialize() {
+		IDialogSettings settings = getDialogSettings();
+		
+		ArrayList items = new ArrayList();
+		for (int i = 0; i < 6; i++) {
+			String curr = settings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
+			if (curr != null && !items.contains(curr)) {
+				items.add(curr);
+			}
+		}
+		dropLocation.setItems((String[]) items.toArray(new String[items.size()]));
+		
+		if (settings.getBoolean(SETTINGS_DOOTHER)) {
+			runtimeLocationButton.setSelection(false);
+			changeButton.setEnabled(false);
+			dropLocation.select(0);		
+		} else {
+			runtimeLocationButton.setSelection(true);
+			otherLocationLabel.setEnabled(false);
+			dropLocation.setEnabled(false);
+			browseButton.setEnabled(false);
+			dropLocation.setText(getTargetHome());
+		}
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		
+		int importType = PluginImportOperation.IMPORT_BINARY;
+		try {
+			importType = settings.getInt(SETTINGS_IMPORTTYPE);
+		} catch (NumberFormatException e) {
+		}
+		if (importType == PluginImportOperation.IMPORT_BINARY) {
+			binaryButton.setSelection(true);
+		} else if (importType == PluginImportOperation.IMPORT_BINARY_WITH_LINKS) {
+			binaryWithLinksButton.setSelection(true);
+		} else {
+			sourceButton.setSelection(true);
+		}
+		
+		boolean scan = settings.getBoolean(SETTTINGS_SCAN_ALL);
+		scanButton.setSelection(scan);
+		importButton.setSelection(!scan);
+		
+	}
+	
+	private void createDirectoryGroup(Composite parent) {
+		Group composite = new Group(parent, SWT.NONE);
+		composite.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.importFrom"));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		runtimeLocationButton = new Button(composite, SWT.CHECK);
-		fillHorizontal(runtimeLocationButton, 2, false);
-		runtimeLocationButton.setText(
-			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
-			
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		runtimeLocationButton.setLayoutData(gd);
+		
+		runtimeLocationButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.target"));
+		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = runtimeLocationButton.getSelection();
+				if (selected) {
+					dropLocation.setText(getTargetHome());
+				}
+				otherLocationLabel.setEnabled(!selected);
+				dropLocation.setEnabled(!selected);
+				browseButton.setEnabled(!selected);				
+			}
+		});
+
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEPlugin.getResourceString(KEY_CHANGE));
+		changeButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.change"));
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
@@ -124,15 +249,19 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		changeButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(changeButton);
 
-		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 		otherLocationLabel = new Label(composite, SWT.NULL);
-		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
+		otherLocationLabel.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.otherFolder"));
 
 		dropLocation = new Combo(composite, SWT.DROP_DOWN);
-		fillHorizontal(dropLocation, 1, true);
+		dropLocation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dropLocation.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateDropLocation();
+			}
+		});
 
 		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+		browseButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.browse"));
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -141,178 +270,20 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			}
 		});
 		browseButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(browseButton);		
-
-		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = fillHorizontal(label, 3, false);
-		gd.heightHint = 20;
-
-		doImportCheck = new Button(composite, SWT.CHECK);
-		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
-		doImportCheck.setEnabled(false);
-		fillHorizontal(doImportCheck, 3, false);
-
-		doExtractCheck = new Button(composite, SWT.CHECK);
-		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
-		fillHorizontal(doExtractCheck, 3, false);
-
-		createTargetEnvironmentLabels(composite, wizardClientWidth, 3);
-		
-		changeEnvButton = new Button(composite, SWT.PUSH);
-		changeEnvButton.setText(PDEPlugin.getResourceString(KEY_CHANGE_TARGET));
-		changeEnvButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleEnvChange();
-			}
-		});
-		changeEnvButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(changeEnvButton);
-
-		initializeFields(getDialogSettings());
-		hookListeners();
-
-		setControl(composite);
-		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
-	}
-
-	private Label createMultiLineLabel(
-		Composite composite,
-		int parentWidth,
-		String text,
-		int span) {
-		Label label = new Label(composite, SWT.WRAP);
-		label.setText(text);
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		gd.widthHint = parentWidth;
-		label.setLayoutData(gd);
-		return label;
-	}
-
-	private void createTargetEnvironmentLabels(
-		Composite composite,
-		int width,
-		int span) {
-		Label label = new Label(composite, SWT.NULL);
-		fillHorizontal(label, 3, false);
-		Composite container = new Composite(composite, SWT.NULL);
-		fillHorizontal(container, 3, false);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = layout.marginHeight = 0;
-		container.setLayout(layout);
-
-		createMultiLineLabel(
-			container,
-			width,
-			PDEPlugin.getResourceString(KEY_TARGET_DESC),
-			2);
-		osLabel = createTargetLine(
-			container,
-			KEY_OS,
-			TargetPlatform.getOS());
-		wsLabel = createTargetLine(
-			container,
-			KEY_WS,
-			TargetPlatform.getWS());
-		nlLabel = createTargetLine(
-			container,
-			KEY_NL,
-			TargetPlatform.getNL());
-		archLabel = createTargetLine(
-			container,
-			KEY_ARCH,
-			TargetPlatform.getOSArch());
+		SWTUtil.setButtonDimensionHint(browseButton);
 	}
 	
-	private void updateTargetLabels() {
-		osLabel.setText(TargetPlatform.getOS());
-		wsLabel.setText(TargetPlatform.getWS());
-		nlLabel.setText(TargetPlatform.getNL());
-		archLabel.setText(TargetPlatform.getOSArch());
-		osLabel.getParent().layout(true);
-		osLabel.getParent().getParent().layout(true);
-	}
-
-	private Label createTargetLine(Composite parent, String nameKey, String value) {
-		GridData gd = new GridData();
-		Label label = new Label(parent, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(nameKey));
-		gd.horizontalIndent = 10;
-		label.setLayoutData(gd);
-
-		label = new Label(parent, SWT.NULL);
-		label.setText(value);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		label.setLayoutData(gd);
-		return label;
-	}
 	
-	private String getTargetHome() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		return preferences.getString(ICoreConstants.PLATFORM_PATH);
-	}
-
-	private void hookListeners() {
-		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setOtherEnabled(!runtimeLocationButton.getSelection());
-				updateStatus();
-				if (runtimeLocationButton.getSelection()) {
-					dropLocation.setText(getTargetHome());
-				}
-			}
-		});
-		doImportCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-
-		doExtractCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateStatus();
-
-				if (doExtractCheck.getSelection()) {
-					if (!doImportCheck.getSelection()) {
-						doImportCheck.setSelection(true);
-					}
-				}
-				doImportCheck.setEnabled(!doExtractCheck.getSelection());
-			}
-		});
-		dropLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateStatus();
-			}
-		});
-		dropLocation.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				updateStatus();
-			}
-		});
-	}
-
-	private void updateStatus() {
-		validateDropLocation();
-		updateStatus(dropLocationStatus);
-		if (dropLocationStatus.getSeverity() == IStatus.OK
-			&& !runtimeLocationButton.getSelection()
-			&& doExtractCheck.getSelection()
-			&& !new Path(dropLocation.getText()).equals(new Path(getTargetHome()))) {
-			updateStatus(
-				createStatus(
-					IStatus.INFO,
-					PDEPlugin.getResourceString(KEY_SOURCE_REMINDER)));
+	private IPath chooseDropLocation() {
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		dialog.setFilterPath(dropLocation.getText());
+		dialog.setText(PDEPlugin.getResourceString("ImportWizard.messages.folder.title"));
+		dialog.setMessage(PDEPlugin.getResourceString("ImportWizard.messages.folder.message"));
+		String res = dialog.open();
+		if (res != null) {
+			return new Path(res);
 		}
-	}
-
-	private GridData fillHorizontal(Control control, int span, boolean grab) {
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = span;
-		gd.grabExcessHorizontalSpace = grab;
-		control.setLayoutData(gd);
-		return gd;
+		return null;
 	}
 	
 	private void handleChangeTargetPlatform() {
@@ -321,150 +292,183 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			dropLocation.setText(ExternalModelManager.getEclipseHome(null).toOSString());
 	}
 	
-	private void handleEnvChange() {
-		IPreferenceNode targetNode = new TargetEnvironmentPreferenceNode();
-		if (showPreferencePage(targetNode))
-			updateTargetLabels();
+	private void handleSourceLocations() {
+		IPreferenceNode sourceNode = new SourceCodeLocationsPreferenceNode();
+		showPreferencePage(sourceNode);
 	}
 	
-	private boolean  showPreferencePage(final IPreferenceNode targetNode) {
+	private void handleEnvChange() {
+		IPreferenceNode targetNode = new TargetEnvironmentPreferenceNode();
+		showPreferencePage(targetNode);
+	}
+
+	private boolean showPreferencePage(final IPreferenceNode targetNode) {
 		PreferenceManager manager = new PreferenceManager();
 		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(getControl().getShell(), manager);
-		final boolean [] result = new boolean[] { false };
+		final PreferenceDialog dialog =
+			new PreferenceDialog(getControl().getShell(), manager);
+		final boolean[] result = new boolean[] { false };
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());
-				if (dialog.open()==PreferenceDialog.OK)
+				if (dialog.open() == PreferenceDialog.OK)
 					result[0] = true;
 			}
 		});
 		return result[0];
 	}
-
-	private void initializeFields(IDialogSettings initialSettings) {
-		String[] dropItems = new String[0];
-		boolean doExtract = false;
-		boolean doOther = false;
-		boolean doImport = true;
-
-		if (initialSettings != null) {
-			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
-			doImport = !initialSettings.getBoolean(SETTINGS_DOIMPORT);
-			doExtract = initialSettings.getBoolean(SETTINGS_DOEXTRACT);
-
-			ArrayList items = new ArrayList();
-			for (int i = 0; i < 6; i++) {
-				String curr = initialSettings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
-				if (curr != null && !items.contains(curr)) {
-					items.add(curr);
-				}
-			}
-			dropItems = (String[]) items.toArray(new String[items.size()]);
+	
+	private String getTargetHome() {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		return preferences.getString(ICoreConstants.PLATFORM_PATH);
+	}
+	
+	public boolean getScanAllPlugins() {
+		return scanButton.getSelection();
+	}
+	
+	public int getImportType() {
+		if (binaryButton.getSelection()) {
+			return PluginImportOperation.IMPORT_BINARY;
 		}
-		dropLocation.setItems(dropItems);
-		runtimeLocationButton.setSelection(!doOther);
-		setOtherEnabled(doOther);
-		if (doOther)
-			dropLocation.select(0);
-		else
-			dropLocation.setText(getTargetHome());
-		doImportCheck.setSelection(doImport);
-		doImportCheck.setEnabled(!doExtract);
-		doExtractCheck.setSelection(doExtract);
-
-		validateDropLocation();
-		updateStatus(dropLocationStatus);
+		
+		if (binaryWithLinksButton.getSelection()) {
+			return PluginImportOperation.IMPORT_BINARY_WITH_LINKS;
+		}
+		
+		return PluginImportOperation.IMPORT_WITH_SOURCE;
 	}
-
-	private void setOtherEnabled(boolean enabled) {
-		otherLocationLabel.setEnabled(enabled);
-		dropLocation.setEnabled(enabled);
-		browseButton.setEnabled(enabled);
-		changeButton.setEnabled(!enabled);
+	
+	public String getDropLocation() {
+		return dropLocation.getText().trim();
 	}
-
-	public void storeSettings(boolean finishPressed) {
+	
+	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		boolean other = !runtimeLocationButton.getSelection();
-		if (finishPressed || dropLocation.getText().length() > 0 && other) {
-			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), dropLocation.getText());
+		if (dropLocation.getText().length() > 0 && other) {
+			settings.put(
+				SETTINGS_DROPLOCATION + String.valueOf(0),
+				dropLocation.getText().trim());
 			String[] items = dropLocation.getItems();
 			int nEntries = Math.min(items.length, 5);
 			for (int i = 0; i < nEntries; i++) {
 				settings.put(SETTINGS_DROPLOCATION + String.valueOf(i + 1), items[i]);
 			}
 		}
-		if (finishPressed) {
-			settings.put(SETTINGS_DOOTHER, other);
-			settings.put(SETTINGS_DOIMPORT, !doImportCheck.getSelection());
-			settings.put(SETTINGS_DOEXTRACT, doExtractCheck.getSelection());
-		}
+		settings.put(SETTINGS_DOOTHER, other);
+		settings.put(SETTINGS_IMPORTTYPE, getImportType());
+		settings.put(SETTTINGS_SCAN_ALL, getScanAllPlugins());
 	}
-
-	/**
-	 * Browses for a drop location.
-	 */
-	private IPath chooseDropLocation() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(dropLocation.getText());
-		dialog.setText(PDEPlugin.getResourceString(KEY_FOLDER_TITLE));
-		dialog.setMessage(PDEPlugin.getResourceString(KEY_FOLDER_MESSAGE));
-		String res = dialog.open();
-		if (res != null) {
-			return new Path(res);
-		}
-		return null;
+	
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
-
+	
 	private void validateDropLocation() {
-		if (isOtherLocation()) {
-			IPath curr = getDropLocation();
+		if (!runtimeLocationButton.getSelection()) {
+			IPath curr = new Path(dropLocation.getText());
 			if (curr.segmentCount() == 0) {
-				dropLocationStatus =
-					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_LOCATION_MISSING));
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.locationMissing"));
+				setPageComplete(false);
 				return;
 			}
 			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
-				dropLocationStatus =
-					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_BUILD_INVALID));
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderInvalid"));
+				setPageComplete(false);
 				return;
 			}
 
-			File file = curr.toFile();
-			if (!file.isDirectory()) {
-				dropLocationStatus =
-					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_BUILD_MISSING));
+			if (!curr.toFile().isDirectory()) {
+				setErrorMessage(PDEPlugin.getResourceString("ImportWizard.errors.buildFolderMissing"));
+				setPageComplete(false);
 				return;
 			}
 		}
-		dropLocationStatus = createStatus(IStatus.OK, "");
+		setErrorMessage(null);
+		setPageComplete(true);
+	}
+	
+	private void resolveModels() {
+		if (currentLocation == null || !currentLocation.equals(dropLocation.getText())) {
+			currentLocation = dropLocation.getText();
+
+			if (new Path(currentLocation).equals(ExternalModelManager.getEclipseHome(null))) {
+				resolveTargetPlatform();
+			} else {
+				resolveArbitraryLocation();
+			}
+		}
+	}
+	
+	private void resolveTargetPlatform() {
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				models = PDECore.getDefault().getExternalModelManager().getAllModels();
+				monitor.done();
+			}
+		};
+		try {
+			getContainer().run(true, false, op);
+		} catch (Throwable e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	
+	private void resolveArbitraryLocation() {
+		final Vector result = new Vector();
+		final Vector fresult = new Vector();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				MultiStatus errors =
+					RegistryLoader.loadFromDirectories(
+						result,
+						fresult,
+						createPaths(new Path(currentLocation)),
+						false,
+						false,
+						monitor);
+				if (errors != null && errors.getChildren().length > 0) {
+					PDEPlugin.log(errors);
+				}
+				models = new IPluginModelBase[result.size() + fresult.size()];
+				System.arraycopy(
+					result.toArray(new IPluginModel[result.size()]),
+					0,
+					models,
+					0,
+					result.size());
+				System.arraycopy(
+					fresult.toArray(new IFragmentModel[fresult.size()]),
+					0,
+					models,
+					result.size(),
+					fresult.size());
+				monitor.done();
+			}
+		};
+		try {
+			getContainer().run(true, false, op);
+		} catch (Throwable e) {
+			PDEPlugin.logException(e);
+		}
+	}
+		
+	private String[] createPaths(IPath location) {
+		ArrayList paths = new ArrayList();
+		File pluginsDir = new File(location.toFile(), "plugins");		
+		if (pluginsDir.exists()) 
+			paths.add(pluginsDir.getAbsolutePath());
+		if (location.toFile().exists())
+			paths.add(location.toFile().getAbsolutePath());
+		return (String[]) paths.toArray(new String[paths.size()]);
 	}
 
-	/**
-	 * Returns the drop location.
-	 */
-	public IPath getDropLocation() {
-		return new Path(dropLocation.getText());
+	public IPluginModelBase[] getModels() {
+		resolveModels();
+		return models;
 	}
-
-	public boolean isOtherLocation() {
-		return !runtimeLocationButton.getSelection();
-	}
-
-	/**
-	 * Returns the drop location.
-	 */
-	public boolean doImportToWorkspace() {
-		return doImportCheck.getSelection();
-	}
-
-	/**
-	 * Returns the drop location.
-	 */
-	public boolean doExtractPluginSource() {
-		return doExtractCheck.getSelection();
-	}
+	
 
 }

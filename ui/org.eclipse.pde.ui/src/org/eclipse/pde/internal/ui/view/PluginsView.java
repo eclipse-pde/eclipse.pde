@@ -595,11 +595,15 @@ public class PluginsView extends ViewPart {
 				new IPluginModelBase[externalModels.size()]);
 		try {
 			Shell shell = treeViewer.getTree().getShell();
+			int importType =
+				extractSource
+					? PluginImportOperation.IMPORT_WITH_SOURCE
+					: PluginImportOperation.IMPORT_BINARY;
+					
 			IRunnableWithProgress op =
 				PluginImportWizard.getImportOperation(
 					shell,
-					true,
-					extractSource,
+					importType,
 					models,
 					new ArrayList());
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);

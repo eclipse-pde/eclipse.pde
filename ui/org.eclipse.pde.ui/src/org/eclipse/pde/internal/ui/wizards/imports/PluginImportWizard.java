@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -24,18 +22,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
@@ -46,63 +41,31 @@ import org.eclipse.ui.IWorkbench;
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "PluginImportWizard";
-	private static final String KEY_WTITLE = "ImportWizard.title";
-	private static final String KEY_NO_TO_ALL_LABEL = "ImportWizard.noToAll";
-	private static final String KEY_MESSAGES_TITLE = "ImportWizard.messages.title";
-	private static final String KEY_MESSAGES_NO_PLUGINS =
-		"ImportWizard.messages.noPlugins";
-	private static final String KEY_MESSAGES_EXISTS =
-		"ImportWizard.messages.exists";
-
+		
+	private IStructuredSelection selection;	
 	private PluginImportWizardFirstPage page1;
-	private PluginImportWizardDetailedPage page2;
-	private HashSet preSelectedModels = new HashSet();
+	private BaseImportWizardSecondPage page2;
+	private BaseImportWizardSecondPage page3;
 
 	public PluginImportWizard() {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
-		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		setWindowTitle(PDEPlugin.getResourceString("ImportWizard.title"));
 	}
 
-	/*
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		Object[] items = selection.toArray();
-		WorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
-		for (int i = 0; i < items.length; i++) {
-			IProject project = null;
-			if (items[i] instanceof IProject) {
-				project = (IProject) items[i];
-			} else if (items[i] instanceof IJavaProject) {
-				project = ((IJavaProject)items[i]).getProject();
-			} else if (items[i] instanceof IFile) {
-				IFile file = (IFile) items[i];
-				if (file.getName().equals("plugin.xml") || file.getName().equals("fragment.xml")) {
-					project = file.getProject();
-				}
-			}
-			if (project != null) {
-				IModel model = wManager.getWorkspaceModel(project);
-				if (model != null && model instanceof WorkspacePluginModelBase) {
-					preSelectedModels.add(
-						((WorkspacePluginModelBase) model).getPluginBase().getId());
-				}
-			}
-		}
+		this.selection = selection;
 	}
 
-	/*
-	 * @see org.eclipse.jface.wizard.IWizard#addPages
-	 */
 	public void addPages() {
 		setNeedsProgressMonitor(true);
-
-		page1 = new PluginImportWizardFirstPage();
+		page1 = new PluginImportWizardFirstPage("first");
 		addPage(page1);
-		page2 = new PluginImportWizardDetailedPage(page1, preSelectedModels);
+		page2 = new PluginImportWizardExpressPage("express", page1, selection);
 		addPage(page2);
+		page3 = new PluginImportWizardDetailedPage("detailed", page1);
+		addPage(page3);
 	}
 
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -113,33 +76,22 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		return setting;
 	}
 
-	/*
-	 * @see Wizard#performFinish()
-	 */
+	private IPluginModelBase[] getModelsToImport() {
+		return ((BaseImportWizardSecondPage)page1.getNextPage()).getModelsToImport();
+	}
+
 	public boolean performFinish() {
+		page1.storeSettings();
+		
 		final ArrayList modelIds = new ArrayList();
 		try {
-			final IPluginModelBase[] models = page2.getSelectedModels();
-			if (models.length == 0) {
-				MessageDialog.openInformation(
-					getShell(),
-					PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
-					PDEPlugin.getResourceString(KEY_MESSAGES_NO_PLUGINS));
-				return false;
-			}
-
-			page1.storeSettings(true);
-			page2.storeSettings(true);
-			
-			
+			final IPluginModelBase[] models = getModelsToImport();
 			IRunnableWithProgress op =
 				getImportOperation(
 					getShell(),
-					page1.doImportToWorkspace(),
-					page1.doExtractPluginSource(),
+					page1.getImportType(),
 					models,
 					modelIds);
-			//start = System.currentTimeMillis();
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -147,15 +99,13 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return true; // exception handled
-		}
-		
+		}		
 		return true;
 	}
 	
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
-		final boolean doImport,
-		final boolean doExtract,
+		final int importType,
 		final IPluginModelBase[] models,
 		final ArrayList modelIds) {
 		return new IRunnableWithProgress() {
@@ -174,12 +124,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					monitor.beginTask("", numUnits);
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
-						new PluginImportOperation(
-							models,
-							modelIds,
-							doImport,
-							doExtract,
-							query);
+						new PluginImportOperation(models, modelIds, importType, query);
 					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -220,20 +165,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		};
 	}
 
-	/*
-	 * @see Wizard#performCancel()
-	 */
-	public boolean performCancel() {
-		page1.storeSettings(false);
-		page2.storeSettings(false);
-		return super.performCancel();
-	}
-
 	private static class ReplaceDialog extends MessageDialog {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
-				PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
+				PDEPlugin.getResourceString("ImportWizard.messages.title"),
 				null,
 				dialogMessage,
 				MessageDialog.QUESTION,
@@ -241,7 +177,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEPlugin.getResourceString(KEY_NO_TO_ALL_LABEL),
+					PDEPlugin.getResourceString("ImportWizard.noToAll"),
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -268,7 +204,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			}
 
 			final String message =
-				PDEPlugin.getFormattedMessage(KEY_MESSAGES_EXISTS, project.getName());
+				PDEPlugin.getFormattedMessage("ImportWizard.messages.exists", project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -288,15 +224,31 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 	
-	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
-		
+	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {		
 		IPluginModelBase[] allModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		ArrayList desiredModels = new ArrayList();
 		for (int i = 0; i < allModels.length; i++) {
 			if (modelIds.contains(allModels[i].getPluginBase().getId()))
 				desiredModels.add(allModels[i]);				
-		}
-		
+		}		
 		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
+	}
+	
+	public IWizardPage getNextPage(IWizardPage page) {
+		if (page.equals(page1)) {
+			if (page1.getScanAllPlugins()) {
+				return page3;
+			}
+			return page2;			
+		}
+		return null;
+	}
+	
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		return page.equals(page1) ? null : page1;
+	}
+	
+	public boolean canFinish() {
+		return page1.getNextPage().isPageComplete();
 	}
 }

@@ -171,6 +171,9 @@ public class SourcePreferencePage
 		userImage = userDesc.createImage();
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		preferences = PDECore.getDefault().getPluginPreferences();
+		initializeExtensionLocations();
+		initializeUserlocations();
+
 	}
 
 	private void initializeExtensionLocations() {
@@ -209,8 +212,8 @@ public class SourcePreferencePage
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		initializeExtensionLocations();
-		initializeUserlocations();
+		//initializeExtensionLocations();
+		//initializeUserlocations();
 	}
 
 	/**
@@ -328,8 +331,8 @@ public class SourcePreferencePage
 		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.path")); //$NON-NLS-1$
 		
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(50, 100, true));
-		layout.addColumnData(new ColumnWeightData(50, 100, true));
+		layout.addColumnData(new ColumnWeightData(50, 150, true));
+		layout.addColumnData(new ColumnWeightData(50, 150, true));
 		table.setLayout(layout);
 	}
 

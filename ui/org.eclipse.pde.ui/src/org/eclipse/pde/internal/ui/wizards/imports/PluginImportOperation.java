@@ -30,19 +30,12 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
-	private static final String KEY_CREATING =
-		"ImportWizard.operation.creating";
-	private static final String KEY_MULTI_PROBLEM =
-		"ImportWizard.operation.multiProblem";
-	private static final String KEY_CREATING2 =
-		"ImportWizard.operation.creating2";
-	private static final String KEY_EXTRACTING =
-		"ImportWizard.operation.extracting";
-	private static final String KEY_COPYING_SOURCE =
-		"ImportWizard.operation.copyingSource";
+		
+	public static int IMPORT_BINARY = 1;
+	public static int IMPORT_BINARY_WITH_LINKS = 2;
+	public static int IMPORT_WITH_SOURCE = 3;
 
 	public interface IReplaceQuery {
-
 		// return codes
 		public static final int CANCEL = 0;
 		public static final int NO = 1;
@@ -53,29 +46,22 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		 */
 		int doQuery(IProject project);
 	}
-
+	
 	private IPluginModelBase[] models;
 	private ArrayList modelIds;
-	private boolean doImport;
-	private boolean extractSource;
+	private int importType;
 
-	private IWorkspaceRoot root;
 	private IReplaceQuery replaceQuery;
 
 	public PluginImportOperation(
 		IPluginModelBase[] models,
-		ArrayList modelIds,
-		boolean doImport,
-		boolean doExtractSource,
+		ArrayList modelIds,int importType,
 		IReplaceQuery replaceQuery) {
 		Assert.isNotNull(models);
 		Assert.isNotNull(replaceQuery);
 		this.models = models;
 		this.modelIds = modelIds;
-		this.extractSource = doExtractSource;
-		this.doImport = doExtractSource ? true : doImport;
-
-		root = ResourcesPlugin.getWorkspace().getRoot();
+		this.importType = importType;
 		this.replaceQuery = replaceQuery;
 	}
 
@@ -108,14 +94,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_CREATING),
+			PDEPlugin.getResourceString("ImportWizard.operation.creating"),
 			models.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString(KEY_MULTI_PROBLEM),
+					PDEPlugin.getResourceString("ImportWizard.operation.multiProblem"),
 					null);
 			//long start = System.currentTimeMillis();
 			for (int i = 0; i < models.length; i++) {
@@ -145,10 +131,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IProgressMonitor monitor)
 		throws CoreException {
 		String name = model.getPluginBase().getId();
-		String task = PDEPlugin.getFormattedMessage(KEY_CREATING2, name);
+		String task = PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", name);
 		monitor.beginTask(task, 8);
 		try {
-			IProject project = root.getProject(name);
+			IProject project = PDEPlugin.getWorkspace().getRoot().getProject(name);
 
 			if (project.exists()) {
 				if (queryReplace(project)) {
@@ -175,21 +161,20 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			IFile buildFile = project.getFile("build.properties");
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 
-			if (doImport) {
+			if (importType != IMPORT_BINARY_WITH_LINKS) {
 				importContent(
 					pluginDir,
 					project.getFullPath(),
 					FileSystemStructureProvider.INSTANCE,
 					null,
 					new SubProgressMonitor(monitor, 1));
-				if (extractSource)
+				if (importType == IMPORT_WITH_SOURCE)
 					configureBinIncludes(pluginDir, buildModel);
 
 				importSource(
 					project,
 					model.getPluginBase(),
 					new Path(pluginDir.getPath()),
-					doImport,
 					new SubProgressMonitor(monitor, 1));
 			} else {
 				linkContent(
@@ -202,7 +187,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				model.getPluginBase().getLibraries().length > 0;
 
 			setProjectDescription(project, isJavaProject, monitor);
-			if (!doImport) {
+			if (importType == IMPORT_BINARY_WITH_LINKS) {
 				try {
 					RepositoryProvider.map(
 						project,
@@ -213,13 +198,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 
 			boolean sourceFound = false;
-			if (isJavaProject & extractSource)
+			if (isJavaProject & importType == IMPORT_WITH_SOURCE)
 				sourceFound =
 					doExtractSource(project, model, buildModel, monitor);
 
 			//Mark this project so that we can show image overlay
 			// using the label decorator
-			if (doImport && (!isJavaProject || !sourceFound)) {
+			if (importType != IMPORT_BINARY_WITH_LINKS && (!isJavaProject || !sourceFound)) {
 				project.setPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
 					PDECore.BINARY_PROJECT_VALUE);
@@ -302,14 +287,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IProject project,
 		IPluginBase plugin,
 		IPath pluginPath,
-		boolean doImport,
 		IProgressMonitor monitor)
 		throws CoreException {
 		SourceLocationManager manager =
 			PDECore.getDefault().getSourceLocationManager();
 		IPluginLibrary[] libraries = plugin.getLibraries();
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_COPYING_SOURCE),
+			PDEPlugin.getResourceString("ImportWizard.operation.copyingSource"),
 			libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
@@ -330,7 +314,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				File srcFile = manager.findSourceFile(plugin, srcPath);
 				// cannot find it
 				if (srcFile != null) {
-					importSourceFile(project, srcFile, srcPath, doImport);
+					importSourceFile(project, srcFile, srcPath);
 					continue;
 				}
 				// if we are here, either root source path is null
@@ -345,8 +329,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							manager,
 							(IPlugin) plugin,
 							srcPath,
-							fragment,
-							doImport))
+							fragment))
 							break;
 					}
 				}
@@ -355,15 +338,19 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void importSourceFile(
-		IProject project,
-		File srcFile,
-		IPath srcPath,
-		boolean doImport)
+	private void importSourceFile(IProject project, File srcFile, IPath srcPath)
 		throws CoreException {
 		try {
 
-			if (doImport) {
+			if (importType == IMPORT_BINARY_WITH_LINKS) {
+				IFile file = project.getFile(srcPath);
+				if (!(file.getParent() instanceof IProject)) {
+					// cannot link the file directly - must make
+					// a flat path
+					file = project.getFile(getFlatPath(srcPath));
+				}
+				file.createLink(new Path(srcFile.getPath()), IResource.NONE, null);
+			} else {
 				IFile file = project.getFile(srcPath);
 				FileInputStream fstream = new FileInputStream(srcFile);
 				if (file.exists())
@@ -371,17 +358,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				else
 					file.create(fstream, true, null);
 				fstream.close();
-			} else {
-				IFile file = project.getFile(srcPath);
-				if (!(file.getParent() instanceof IProject)) {
-					// cannot link the file directly - must make
-					// a flat path
-					file = project.getFile(getFlatPath(srcPath));
-				}
-				file.createLink(
-					new Path(srcFile.getPath()),
-					IResource.NONE,
-					null);
 			}
 
 		} catch (IOException e) {
@@ -411,8 +387,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		SourceLocationManager manager,
 		IPlugin plugin,
 		IPath srcPath,
-		IFragment fragment,
-		boolean doImport) {
+		IFragment fragment) {
 		String id = fragment.getId();
 		IProject fragmentProject =
 			PDEPlugin.getWorkspace().getRoot().getProject(id);
@@ -428,7 +403,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		if (srcFile == null)
 			return false;
 		try {
-			importSourceFile(fragmentProject, srcFile, srcPath, doImport);
+			importSourceFile(fragmentProject, srcFile, srcPath);
 			return true;
 		} catch (CoreException e) {
 			return false;
@@ -493,9 +468,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 
 		monitor.beginTask(
-			PDEPlugin.getResourceString(KEY_EXTRACTING),
+			PDEPlugin.getResourceString("ImportWizard.operation.extracting"),
 			entries.length * 2);
 		try {
+			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 			IBuild build = buildModel.getBuild(true);
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
