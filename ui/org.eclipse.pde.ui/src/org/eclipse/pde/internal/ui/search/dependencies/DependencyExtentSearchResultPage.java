@@ -109,11 +109,31 @@ public class DependencyExtentSearchResultPage extends
 		JavaSearchActionGroup group = new JavaSearchActionGroup(this);
 		group.setContext(new ActionContext(getViewer().getSelection()));
 		group.fillContextMenu(mgr);
+		addJavaSearchGroup(mgr);
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(new ActionContext(getViewer().getSelection()));
 		actionGroup.fillContextMenu(mgr);
 	}
 	
+	private void addJavaSearchGroup(IMenuManager mgr) {
+		IStructuredSelection ssel = (IStructuredSelection)getViewer().getSelection();
+		if (ssel.size() == 1) {
+			final Object object = ssel.getFirstElement();
+			if (object instanceof IType) {
+				mgr.add(new Separator());
+				mgr.add(new Action("Find references in this plug-in") {
+					public void run() {
+						DependencyExtentQuery query = (DependencyExtentQuery)getInput().getQuery();
+						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+						IWorkingSet set = manager.createWorkingSet("temp", query.getDirectRoots());
+						new FindReferencesInWorkingSetAction(getViewPart().getSite(), new IWorkingSet[] {set}).run((IType)object);
+						manager.removeWorkingSet(set);
+					}
+				});
+			}
+		}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 	 */
