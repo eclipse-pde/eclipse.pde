@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
@@ -165,23 +166,21 @@ public abstract class BaseBuildAction
 			properties = launchCopy.getAttribute(
 					IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES,
 					properties);
-			properties.put("basews", TargetPlatform.getWS()); //$NON-NLS-1$
-			properties.put("baseos", TargetPlatform.getOS()); //$NON-NLS-1$
-			properties.put("basearch", TargetPlatform.getOSArch()); //$NON-NLS-1$
-			properties.put("basenl", TargetPlatform.getNL()); //$NON-NLS-1$
+			properties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS()); 
+			properties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS()); 
+			properties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
+			properties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL()); 
 			properties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			IPreferenceStore store = PDEPlugin.getDefault()
-					.getPreferenceStore();
-			properties
-					.put(
-							"javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR)); //$NON-NLS-1$
-			properties
-					.put(
-							"javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			properties.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE)); //$NON-NLS-1$
-			properties.put("javacSource", store.getString(PROP_JAVAC_SOURCE)); //$NON-NLS-1$
-			properties.put("javacTarget", store.getString(PROP_JAVAC_TARGET)); //$NON-NLS-1$
+			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, store.getString(PROP_JAVAC_FAIL_ON_ERROR));
+			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE)); 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, store.getString(PROP_JAVAC_SOURCE)); 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, store.getString(PROP_JAVAC_TARGET)); 
+
+			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, getBootClasspath()); 
+			
 			launchCopy.setAttribute(
 					IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES,
 					properties);
@@ -194,6 +193,17 @@ public abstract class BaseBuildAction
 			launchCopy.doSave();
 		} catch (CoreException e) {
 		}
+	}
+	
+	public static String getBootClasspath() {
+		StringBuffer buffer = new StringBuffer();
+		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(JavaRuntime.getDefaultVMInstall());
+		for (int i = 0; i < locations.length; i++) {
+			buffer.append(locations[i].getSystemLibraryPath().toOSString());
+			if (i < locations.length - 1)
+				buffer.append(";"); //$NON-NLS-1$
+		}
+		return buffer.toString();
 	}
 
 }

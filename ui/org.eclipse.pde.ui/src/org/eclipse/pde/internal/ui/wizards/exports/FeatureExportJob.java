@@ -183,6 +183,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
+			fBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BaseBuildAction.getBootClasspath());
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$
