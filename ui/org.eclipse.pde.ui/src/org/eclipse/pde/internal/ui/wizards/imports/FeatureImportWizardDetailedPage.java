@@ -305,6 +305,8 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		throws CoreException {
 		if (path==null) return null;
 		File[] dirs = path.listFiles();
+		if (dirs == null)
+			return null;
 		monitor.beginTask(PDEPlugin.getResourceString("FeatureImportWizard.DetailedPage.loading"), dirs.length); //$NON-NLS-1$
 		ArrayList resultStatus = new ArrayList();
 		for (int i = 0; i < dirs.length; i++) {
