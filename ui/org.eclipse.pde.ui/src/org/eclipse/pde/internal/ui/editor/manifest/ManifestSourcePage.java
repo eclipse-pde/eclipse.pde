@@ -11,10 +11,13 @@ import org.eclipse.pde.internal.ui.editor.text.*;
 
 public class ManifestSourcePage extends PDESourcePage {
 	public static final String MANIFEST_TYPE = "__plugin_manifest";
-	private IColorManager colorManager = new ColorManager();
+	protected IColorManager colorManager = new ColorManager();
 
 	public ManifestSourcePage(ManifestEditor editor) {
 		super(editor);
+		initializeViewerConfiguration();
+	}
+	protected void initializeViewerConfiguration() {
 		setSourceViewerConfiguration(new XMLConfiguration(colorManager));
 	}
 	public IContentOutlinePage createContentOutlinePage() {

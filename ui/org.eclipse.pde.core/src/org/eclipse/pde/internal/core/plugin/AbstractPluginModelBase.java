@@ -22,9 +22,12 @@ public abstract class AbstractPluginModelBase
 	private boolean enabled;
 	private transient static SourceDOMParser parser;
 	private transient static XMLErrorHandler errorHandler;
+	private DocumentModel documentModel;
 	
 	static {
-		initializeParser();
+		if (!XMLCore.NEW_CODE_PATHS) {
+			initializeParser();
+		}
 	}
 
 	public AbstractPluginModelBase() {
@@ -35,6 +38,13 @@ public abstract class AbstractPluginModelBase
 	
 	public IPluginModelFactory getFactory() {
 		return this;
+	}
+
+	public DocumentModel getDocumentModel() {
+		if (documentModel == null) {
+			documentModel= new  DocumentModel(this);
+		}
+		return documentModel;
 	}
 
 	public IPluginBase getPluginBase() {
@@ -131,6 +141,15 @@ public abstract class AbstractPluginModelBase
 
 	public synchronized void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
+		if (XMLCore.NEW_CODE_PATHS) {
+			getDocumentModel().load(stream, outOfSync);
+		} else {
+			loadOrig(stream, outOfSync);
+		}
+	}
+	
+	private synchronized void loadOrig(InputStream stream, boolean outOfSync)
+		throws CoreException {
 
 		if (pluginBase == null) {
 			pluginBase = (PluginBase) createPluginBase();
@@ -165,6 +184,14 @@ public abstract class AbstractPluginModelBase
 		pluginBase.load(pluginNode, lineTable);
 	}
 	public void reload(InputStream stream, boolean outOfSync)
+		throws CoreException {
+		if (XMLCore.NEW_CODE_PATHS) {
+			getDocumentModel().reload(stream, outOfSync);
+		} else {
+			reloadOrig(stream, outOfSync);
+		}
+	}
+	private void reloadOrig(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		load(stream, outOfSync);
 		fireModelChanged(

@@ -32,6 +32,11 @@ void load(PluginModel pm) {
 	super.load(pm);
 }
 
+void load(PluginBase srcPluginBase) {
+	className= ((Plugin)srcPluginBase).className;
+	super.load(srcPluginBase);
+}
+
 void load(Node node, Hashtable lineTable) {
 	this.className = getNodeAttribute(node, "class");
 	super.load(node, lineTable);

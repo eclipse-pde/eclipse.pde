@@ -19,7 +19,7 @@ import org.eclipse.ui.texteditor.*;
 
 public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 
-	class UTF8FileDocumentProvider extends FileDocumentProvider {
+	protected class UTF8FileDocumentProvider extends FileDocumentProvider {
 		public IDocument createDocument(Object element) throws CoreException {
 			IDocument document = super.createDocument(element);
 			if (document != null) {

@@ -103,12 +103,16 @@ public abstract class AbstractModel
 	public boolean isLoaded() {
 		return loaded;
 	}
+	
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
+	}
 
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		listeners.remove(listener);
 	}
 
-	protected void throwParseErrorsException() throws CoreException {
+	public void throwParseErrorsException() throws CoreException {
 		Status status =
 			new Status(
 				IStatus.ERROR,

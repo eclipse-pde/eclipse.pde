@@ -48,6 +48,13 @@ public class Fragment extends PluginBase implements IFragment {
 		}
 		super.load(pm);
 	}
+	
+	void load(PluginBase srcPluginBase) {
+		pluginId= ((Fragment)srcPluginBase).pluginId;
+		pluginVersion= ((Fragment)srcPluginBase).pluginVersion;
+		rule= ((Fragment)srcPluginBase).rule;
+		super.load(srcPluginBase);
+	}
 	void load(Node node, Hashtable lineTable) {
 		this.pluginId = getNodeAttribute(node, "plugin-id");
 		this.pluginVersion = getNodeAttribute(node, "plugin-version");

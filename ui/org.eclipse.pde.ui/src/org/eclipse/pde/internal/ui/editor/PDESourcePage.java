@@ -33,25 +33,26 @@ public abstract class PDESourcePage
 	private PDEMultiPageEditor editor;
 	private boolean modelNeedsUpdating = false;
 	private Control control;
-	private DocumentListener documentListener = new DocumentListener();
+	private IDocumentListener documentListener;
 
 	class DocumentListener implements IDocumentListener {
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 		public void documentChanged(DocumentEvent e) {
 			if (isVisible()) {
-				modelNeedsUpdating = true;
+				setModelNeedsUpdating(true);
 			}
 		}
 	}
 
 	public PDESourcePage(PDEMultiPageEditor editor) {
 		this.editor = editor;
+		initializeDocumentListener();
 		setEditorContextMenuId("#PDESourcePageEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#PDESourcePageRulerContext"); //$NON-NLS-1$
 	}
 	public boolean becomesInvisible(IFormPage newPage) {
-		if (errorMode || modelNeedsUpdating) {
+	if (errorMode || isModelNeedsUpdating()) {
 			boolean cleanModel = getEditor().updateModel();
 			if (cleanModel == false) {
 				warnErrorsInSource();
@@ -66,7 +67,7 @@ public abstract class PDESourcePage
 	}
 
 	public void becomesVisible(IFormPage oldPage) {
-		modelNeedsUpdating = false;
+		setModelNeedsUpdating(false);
 		if (oldPage instanceof PDEFormPage) {
 			selectObjectRange(((PDEFormPage) oldPage).getSelection());
 		}
@@ -148,7 +149,7 @@ public abstract class PDESourcePage
 		}
 	}
 
-	private void selectObjectRange(ISelection selection) {
+protected void selectObjectRange(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			int start = 0;
@@ -201,7 +202,7 @@ public abstract class PDESourcePage
 	}
 	public void update() {
 	}
-	private void warnErrorsInSource() {
+	protected void warnErrorsInSource() {
 		Display.getCurrent().beep();
 		String title = editor.getSite().getRegisteredName();
 		MessageDialog.openError(
@@ -228,6 +229,22 @@ public abstract class PDESourcePage
 
 	public boolean containsError() {
 		return errorMode;
+	}
+
+	protected boolean isModelNeedsUpdating() {
+		return modelNeedsUpdating;
+	}
+
+	protected void setModelNeedsUpdating(boolean modelNeedsUpdating) {
+		this.modelNeedsUpdating= modelNeedsUpdating;
+	}
+
+	protected void setDocumentListener(IDocumentListener documentListener) {
+		this.documentListener= documentListener;
+	}
+
+	protected void initializeDocumentListener() {
+		setDocumentListener(new DocumentListener());
 	}
 
 }

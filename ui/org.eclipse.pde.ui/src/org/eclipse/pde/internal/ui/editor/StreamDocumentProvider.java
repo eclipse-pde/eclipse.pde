@@ -65,4 +65,8 @@ protected void setDocumentContent(IDocument document, InputStream contentStream)
 	public boolean isDeleted(Object element) {
 		return false;
 	}
+
+	protected IDocument createEmptyDocument() {
+		return new Document();
+	}
 }

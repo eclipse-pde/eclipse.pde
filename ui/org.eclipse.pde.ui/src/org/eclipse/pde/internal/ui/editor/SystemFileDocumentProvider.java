@@ -37,7 +37,7 @@ public class SystemFileDocumentProvider extends StreamDocumentProvider {
 
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof SystemFileEditorInput) {
-			Document document = new Document();
+			IDocument document = createEmptyDocument();
 			IDocumentPartitioner part = getPartitioner();
 			if (part != null) {
 				part.connect(document);

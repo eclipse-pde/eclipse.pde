@@ -114,6 +114,24 @@ public abstract class PluginBase
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
+	void load(PluginBase srcPluginBase) {
+		range= srcPluginBase.range;
+		id= srcPluginBase.id;
+		name= srcPluginBase.name;
+		providerName= srcPluginBase.providerName;
+		version= srcPluginBase.version;
+		addArrayToVector(extensions, srcPluginBase.getExtensions());
+		addArrayToVector(extensionPoints, srcPluginBase.getExtensionPoints());
+		addArrayToVector(imports, srcPluginBase.getImports());
+		addArrayToVector(libraries, srcPluginBase.getLibraries());
+	}
+
+	private void addArrayToVector(Vector vector, Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			vector.add(array[i]);
+		}
+	}
+
 	void load(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.id = getNodeAttribute(node, "id");

@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.jdt.core" export="true"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ant.core"/>
    </requires>
 

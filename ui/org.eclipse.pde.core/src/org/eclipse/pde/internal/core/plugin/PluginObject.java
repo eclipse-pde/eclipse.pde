@@ -223,7 +223,24 @@ public abstract class PluginObject
 		return buf.toString();
 	}
 
-	void bindSourceLocation(Node node, Hashtable lineTable) {
+	void bindSourceLocation(Node node, Map lineTable) {
+		if (XMLCore.NEW_CODE_PATHS) {
+			bindSourceLocationNew(node, lineTable);
+		} else {
+			bindSourceLocationOrig(node, lineTable);
+		}
+	}
+
+	private void bindSourceLocationNew(Node node, Map lineTable) {
+		ISourceRange lines = (ISourceRange) lineTable.get(node);
+		if (lines != null) {
+			range = new int[2];
+			range[0] = lines.getStartLine();
+			range[1] = lines.getEndLine();
+		}
+	}
+
+	private void bindSourceLocationOrig(Node node, Map lineTable) {
 		Integer[] lines = (Integer[]) lineTable.get(node);
 		if (lines != null) {
 			range = new int[2];

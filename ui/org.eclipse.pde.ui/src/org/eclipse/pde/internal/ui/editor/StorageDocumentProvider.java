@@ -26,7 +26,7 @@ public class StorageDocumentProvider extends StreamDocumentProvider {
 
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
-			Document document = new Document();
+			IDocument document = createEmptyDocument();
 			IDocumentPartitioner part = getPartitioner();
 			if (part != null) {
 				part.connect(document);

@@ -24,10 +24,18 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public class ManifestEditor
 	extends PDEMultiPageXMLEditor
 	implements IPropertyChangeListener {
+	
+	protected class SynchronizedUTF8FileDocumentProvider extends UTF8FileDocumentProvider {
+		public IDocument createEmptyDocument() {
+			return new PartiallySynchronizedDocument();
+		}
+	}
+	
 	public static final String TEMPLATE_PAGE = "TemplatePage";
 	public static final String OVERVIEW_PAGE = "OverviewPage";
 	public static final String EXTENSIONS_PAGE = "ExtensionsPage";
@@ -167,7 +175,11 @@ public class ManifestEditor
 			new ManifestExtensionPointPage(
 				formPage,
 				PDEPlugin.getResourceString(KEY_EXTENSION_POINTS)));
-		addPage(SOURCE_PAGE, new ManifestSourcePage(this));
+		if (XMLCore.NEW_CODE_PATHS) {
+			addPage(SOURCE_PAGE, new ManifestSourcePageNew(this));
+		} else {
+			addPage(SOURCE_PAGE, new ManifestSourcePage(this));
+		}
 	}
 
 	private void addTemplatePage(IProject project) {
@@ -385,6 +397,23 @@ public class ManifestEditor
 		return null;
 	}
 	protected boolean updateModel() {
+		if (XMLCore.NEW_CODE_PATHS) {
+			return updateModelNew();
+		} else {
+			return updateModelOrig();
+		}
+	}
+	private boolean updateModelNew() {
+		boolean result;
+		ManifestSourcePageNew sourcePage = (ManifestSourcePageNew)getPage(getSourcePageId());
+		if (sourcePage.tryGetModelUpdatingTicket()) {
+			result= updateModelOrig();
+		} else {
+			result= sourcePage.containsError();
+		}
+		return result;
+	}
+	private boolean updateModelOrig() {
 		IPluginModelBase model = (IPluginModelBase) getModel();
 		IDocument document =
 			getDocumentProvider().getDocument(getEditorInput());
@@ -450,4 +479,24 @@ public class ManifestEditor
 		}
 		return null;
 	}
+
+	protected IDocumentProvider createDocumentProvider(Object input) {
+		if (XMLCore.NEW_CODE_PATHS) {
+			return createDocumentProviderNew(input);
+		} else {
+			return super.createDocumentProvider(input);
+		}
+	}
+	private IDocumentProvider createDocumentProviderNew(Object input) {
+		IDocumentProvider documentProvider= null;
+		if (input instanceof IFile) {
+			documentProvider= new SynchronizedUTF8FileDocumentProvider();
+		} else if (input instanceof File) {
+			documentProvider= new SynchronizedSystemFileDocumentProvider(createDocumentPartitioner(), "UTF8");
+		} else if (input instanceof IStorage) {
+			documentProvider= new SynchronizedStorageDocumentProvider(createDocumentPartitioner(), "UTF8");
+		}
+		return documentProvider;
+	}
+
 }
