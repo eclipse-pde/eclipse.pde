@@ -4,11 +4,9 @@
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="var" path="TARGET/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="var" path="TARGET/org.eclipse.jdt.core/jdtcore.jar"/>
-    <classpathentry kind="var" path="TARGET/org.eclipse.ant.core/antsupport.jar"/>
-    <classpathentry kind="var" path="TARGET/org.eclipse.ant.core/ant.jar"/>
-    <classpathentry kind="var"
-        path="TARGET/org.eclipse.core.runtime/runtime.jar" sourcepath="TARGET/org.eclipse.core.runtime/runtimesrc.zip"/>
-    <classpathentry kind="var"
-        path="TARGET/org.eclipse.core.boot/boot.jar" sourcepath="TARGET/org.eclipse.core.boot/bootsrc.zip"/>
+    <classpathentry kind="src" path="/org.eclipse.ant.core"/>
+    <classpathentry kind="src" path="/org.eclipse.core.boot"/>
+    <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
+    <classpathentry kind="lib" path="/org.eclipse.ant.core/ant.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
