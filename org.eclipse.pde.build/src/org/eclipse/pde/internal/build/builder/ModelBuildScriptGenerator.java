@@ -93,6 +93,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 		if (featureGenerator != null && featureGenerator.isSourceFeatureGeneration() == false && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getId()))
 			return;
 
+		checkBootAndRuntime();
 		initializeVariables();
 
 		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
@@ -106,6 +107,20 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 			generateBuildScript();
 		} finally {
 			closeScript();
+		}
+	}
+
+	/**
+	 * Check that boot and runtime are available, otherwise throws an exception because the build will fail.
+	 */
+	private void checkBootAndRuntime() throws CoreException {
+		if (getSite(false).getPluginRegistry().getPlugin(PI_BOOT)==null) {
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_BOOT), null);//$NON-NLS-1$
+			throw new CoreException(status); 
+		}
+		if (getSite(false).getPluginRegistry().getPlugin(PI_RUNTIME)==null) {
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null);//$NON-NLS-1$
+			throw new CoreException(status); 
 		}
 	}
 
