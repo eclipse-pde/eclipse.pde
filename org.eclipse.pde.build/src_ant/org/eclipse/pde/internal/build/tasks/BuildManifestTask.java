@@ -37,7 +37,8 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	protected String installLocation;
 
 /**
- * @see org.apache.tools.ant.Task#execute() */
+ * @see org.apache.tools.ant.Task#execute()
+ */
 public void execute() throws BuildException {
 	try {
 		if (this.elements == null)
@@ -59,7 +60,9 @@ public void execute() throws BuildException {
 }
 
 /**
- *  * @param output */
+ * 
+ * @param output
+ */
 protected void generatePrologue(PrintWriter output) {
 	output.print("# Build Manifest for "); //$NON-NLS-1$
 	output.println(buildName);
@@ -86,7 +89,9 @@ protected void generatePrologue(PrintWriter output) {
 }
 
 /**
- *  * @return String */
+ * 
+ * @return String
+ */
 protected String getBuildId() {
 	if (buildId == null)
 		buildId = getProject().getProperty(PROPERTY_BUILD_ID);
@@ -94,7 +99,9 @@ protected String getBuildId() {
 }
 
 /**
- *  * @return String */
+ * 
+ * @return String
+ */
 protected String getBuildQualifier() {
 	if (buildQualifier == null)
 		buildQualifier = getProject().getProperty(PROPERTY_BUILD_QUALIFIER);
@@ -102,7 +109,9 @@ protected String getBuildQualifier() {
 }
 
 /**
- *  * @return String */
+ * 
+ * @return String
+ */
 protected String getBuildType() {
 	if (buildType == null)
 		buildType = getProject().getProperty(PROPERTY_BUILD_TYPE);
@@ -110,7 +119,11 @@ protected String getBuildType() {
 }
 
 /**
- *  * @param output * @param entries * @throws CoreException */
+ * 
+ * @param output
+ * @param entries
+ * @throws CoreException
+ */
 protected void generateEntries(PrintWriter output, List entries) throws CoreException {
 	Collections.sort(entries);
 	for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
@@ -145,7 +158,11 @@ protected void collectEntries(List entries, String entry) throws CoreException {
 }
 
 /**
- *  * @param entries * @param feature * @throws CoreException */
+ * 
+ * @param entries
+ * @param feature
+ * @throws CoreException
+ */
 protected void collectChildrenEntries(List entries, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
@@ -158,14 +175,18 @@ protected void collectChildrenEntries(List entries, Feature feature) throws Core
 }
 
 /**
- *  * @param element * @return Feature * @throws CoreException */
+ * 
+ * @param element
+ * @return Feature
+ * @throws CoreException
+ */
 protected Feature readFeature(String element) throws CoreException {
 	IPath root = new Path(installLocation);
 	root = root.append(DEFAULT_FEATURE_LOCATION);
 	root = root.append(element);
 	try {
 		FeatureExecutableFactory factory = new FeatureExecutableFactory();
-		return (Feature) factory.createFeature(root.toFile().toURL(), null);
+		return (Feature) factory.createFeature(root.toFile().toURL(), null, null);
 	} catch (Exception e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e)); //$NON-NLS-1$
 	}	
@@ -197,13 +218,17 @@ protected void readDirectory() throws CoreException {
 }
 
 /**
- *  * @param directory */
+ * 
+ * @param directory
+ */
 public void setDirectory(String directory) {
 	directoryLocation = directory;
 }
 
 /**
- *  * @param value */
+ * 
+ * @param value
+ */
 public void setElements(String value) {
 	elements = Utils.getArrayFromString(value);
 }
@@ -223,7 +248,9 @@ public void setChildren(boolean children) {
 }
 
 /**
- *  * @param value */
+ * 
+ * @param value
+ */
 public void setBuildName(String value) {
 	buildName = value;
 }

@@ -70,7 +70,9 @@ public void generate() throws CoreException {
 
 /**
  * Main call for generating the script.
- *  * @throws CoreException */
+ * 
+ * @throws CoreException
+ */
 protected void generateFetchScript() throws CoreException {
 	generatePrologue();
 	generateFetchTarget();
@@ -78,7 +80,9 @@ protected void generateFetchScript() throws CoreException {
 }
 
 /**
- *  * @throws CoreException */
+ * 
+ * @throws CoreException
+ */
 protected void generateFetchTarget() throws CoreException {
 	int tab = 1;
 	script.println();
@@ -88,7 +92,11 @@ protected void generateFetchTarget() throws CoreException {
 }
 
 /**
- *  * @param tab * @param entry * @throws CoreException */
+ * 
+ * @param tab
+ * @param entry
+ * @throws CoreException
+ */
 protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String cvsInfo = getCVSInfo(entry);
 	if (cvsInfo == null)
@@ -121,7 +129,10 @@ protected void generateFetchEntry(int tab, String entry) throws CoreException {
 /**
  * Helper method to control for what locations a mkdir Ant task was already
  * generated so we can reduce replication.
- *  * @param tab * @param location */
+ * 
+ * @param tab
+ * @param location
+ */
 protected void generateMkdirs(int tab, String location) {
 	if (mkdirLocations.contains(location))
 		return;
@@ -130,7 +141,11 @@ protected void generateMkdirs(int tab, String location) {
 }
 
 /**
- *  * @param tab * @param feature * @throws CoreException */
+ * 
+ * @param tab
+ * @param feature
+ * @throws CoreException
+ */
 protected void generateChildrenFetchScript(int tab, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
@@ -146,7 +161,14 @@ protected void generateChildrenFetchScript(int tab, Feature feature) throws Core
  * Return the feature object for the feature with the given info. Generate an Ant script
  * which will retrieve the "feature.xml" file from CVS, and then call the feature object
  * constructor from Update.
- *  * @param element the feature to retrieve * @param cvsRoot the root in CVS * @param tag the CVS tag * @param password the CVS password * @return Feature * @throws CoreException */
+ * 
+ * @param element the feature to retrieve
+ * @param cvsRoot the root in CVS
+ * @param tag the CVS tag
+ * @param password the CVS password
+ * @return Feature
+ * @throws CoreException
+ */
 protected Feature retrieveFeature(String element, String cvsRoot, String tag, String password) throws CoreException {
 	
 	// Generate a temporary Ant script which retrieves the feature.xml for this
@@ -180,7 +202,7 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 		target.delete();
 		FeatureExecutableFactory factory = new FeatureExecutableFactory();
 		File featureFolder = new File(root, element);
-		Feature feature = (Feature) factory.createFeature(featureFolder.toURL(), null);
+		Feature feature = (Feature) factory.createFeature(featureFolder.toURL(), null, null);
 		clear(featureFolder);
 		if (feature == null)
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, Policy.bind("exception.missingFeature", new String[] {element}), null)); //$NON-NLS-1$
@@ -195,7 +217,10 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
  * Returns false if we could not delete some file or an exception occurred
  * at any point in the deletion.
  * Even if an exception occurs, a best effort is made to continue deleting.
- *  * @param root * @return boolean */
+ * 
+ * @param root
+ * @return boolean
+ */
 public static boolean clear(File root) {
 	boolean result = true;
 	if (root.isDirectory()) {
@@ -217,7 +242,10 @@ public static boolean clear(File root) {
 }
 
 /**
- *  * @param type * @return String */
+ * 
+ * @param type
+ * @return String
+ */
 protected String getElementLocation(String type) {
 	IPath location = new Path(getPropertyFormat(PROPERTY_INSTALL));
 	if (type.equals("feature")) //$NON-NLS-1$
@@ -229,7 +257,11 @@ protected String getElementLocation(String type) {
 
 /**
  * Get information stored in the directory file.
- *  * @param element * @return String * @throws CoreException */
+ * 
+ * @param element
+ * @return String
+ * @throws CoreException
+ */
 protected String getCVSInfo(String element) throws CoreException {
 	if (directory == null)
 		readDirectory();
@@ -238,7 +270,9 @@ protected String getCVSInfo(String element) throws CoreException {
 
 /**
  * Reads directory file at the directoryLocation.
- *  * @throws CoreException if there is an IOException when reading the file */
+ * 
+ * @throws CoreException if there is an IOException when reading the file
+ */
 protected void readDirectory() throws CoreException {
 	try {
 		directory = new Properties();
@@ -275,35 +309,45 @@ protected void generateEpilogue() {
 
 /**
  * Set the directory location to be the given value.
- *  * @param directoryLocation */
+ * 
+ * @param directoryLocation
+ */
 public void setDirectoryLocation(String directoryLocation) {
 	this.directoryLocation = directoryLocation;
 }
 
 /**
  * Sets the element to generate fetch script from.
- *  * @param element */
+ * 
+ * @param element
+ */
 public void setElement(String element) {
 	this.element = element;
 }
 
 /**
  * Sets whether children of the current element should be fetched.
- *  * @param fetchChildren */
+ * 
+ * @param fetchChildren
+ */
 public void setFetchChildren(boolean fetchChildren) {
 	this.fetchChildren = fetchChildren;
 }
 
 /**
  * Sets the install location to be the given value.
- *  * @param installLocation */
+ * 
+ * @param installLocation
+ */
 public void setInstallLocation(String installLocation) {
 	this.installLocation = installLocation;
 }
 
 /**
  * Sets the CVS password file location to be the given value.
- *  * @param cvsPassFileLocation the CVS password file location */
+ * 
+ * @param cvsPassFileLocation the CVS password file location
+ */
 public void setCvsPassFileLocation(String cvsPassFileLocation) {
 	this.cvsPassFileLocation = cvsPassFileLocation;
 }
@@ -312,8 +356,10 @@ public void setCvsPassFileLocation(String cvsPassFileLocation) {
  * Sets the script name to be the given value. If <code>null</code> is
  * passed as the argument, then <code>IPDEBuildConstants.DEFAULT_FETCH_SCRIPT_FILENAME</code>
  * is used.
- *  * @param scriptName the name of the script or <code>null</code>
- * @see IPDEBuildConstants.DEFAULT_FETCH_SCRIPT_FILENAME */
+ * 
+ * @param scriptName the name of the script or <code>null</code>
+ * @see IPDEBuildConstants.DEFAULT_FETCH_SCRIPT_FILENAME
+ */
 public void setScriptName(String scriptName) {
 	if (scriptName == null)
 		this.scriptName = DEFAULT_FETCH_SCRIPT_FILENAME;
