@@ -1113,8 +1113,7 @@ public class RuntimeInfoSection extends PDESection
 				fIncludeLibraryButton.setVisible(false);
 			}
 			if (fCurrentLibrary != null)
-				update(fCurrentLibrary);
-			
+				update(fCurrentLibrary);		
 		} else if (keyName!= null && keyName.equals(IBuildPropertiesConstants.PROPERTY_JAR_ORDER)){
 			// account for change in jars compile order
 			if (event.getNewValue() == null && event.getOldValue() != null){

@@ -558,8 +558,6 @@ public class ExtensionsSection extends TreeSection
 				extensionTree.setSelection(
 						new StructuredSelection(changeObject), true);
 				extensionTree.getTree().setFocus();
-				// defect 16606: update property sheet
-				//asyncResendSelection(getPage().getSelection());
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 				extensionTree.remove(pobj);
 			} else {
@@ -572,24 +570,11 @@ public class ExtensionsSection extends TreeSection
 					extensionTree.setSelection(new StructuredSelection(child));
 				} else {
 					extensionTree.update(changeObject, null);
-					/*
-					 * if (extensionTree.getTree().isFocusControl()) {
-					 * ISelection sel = getFormPage().getSelection(); if (sel !=
-					 * null && sel instanceof IStructuredSelection) {
-					 * IStructuredSelection ssel = (IStructuredSelection) sel;
-					 * if (!ssel.isEmpty() &&
-					 * ssel.getFirstElement().equals(changeObject)) { // update
-					 * property sheet asyncResendSelection(sel); } } }
-					 */
 				}
 			}
 		}
 	}
-	/*
-	 * private void asyncResendSelection(final ISelection sel) {
-	 * extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
-	 * public void run() { getFormPage().setSelection(sel); } }); }
-	 */
+
 	private Image resolveObjectImage(Object obj) {
 		if (obj instanceof IPluginExtension) {
 			return extensionImage;
