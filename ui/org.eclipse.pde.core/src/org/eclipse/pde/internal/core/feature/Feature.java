@@ -575,7 +575,7 @@ public class Feature extends VersionableObject implements IFeature {
 			indenta,
 			writer,
 			"plugin",
-			getWritableString(plugin));
+			getPlugin());
 		writeIfDefined(indenta, writer, "os", os);
 		writeIfDefined(indenta, writer, "ws", ws);
 		writeIfDefined(indenta, writer, "nl", nl);

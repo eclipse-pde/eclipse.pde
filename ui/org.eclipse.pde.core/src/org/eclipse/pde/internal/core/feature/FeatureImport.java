@@ -183,7 +183,7 @@ public class FeatureImport
 		if (getVersion() != null) {
 			writer.print(" version=\"" + getVersion() + "\"");
 		}
-		if (match != NONE) {
+		if (!patch && match != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
 		}
 		if (os!=null) {
@@ -194,6 +194,9 @@ public class FeatureImport
 		}
 		if (arch!=null) {
 			writer.print(" arch=\""+getArch()+"\"");
+		}
+		if (patch) {
+			writer.print(" patch=\"true\"");
 		}
 		writer.println("/>");
 	}

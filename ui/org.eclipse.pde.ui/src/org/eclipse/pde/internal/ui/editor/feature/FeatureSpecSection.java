@@ -150,7 +150,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		providerText.addFormTextListener(new IFormTextListener() {
 			public void textValueChanged(FormEntry text) {
 				try {
-					feature.setProviderName(text.getValue());
+					feature.setProviderName(getNonNullValue(text.getValue()));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -166,7 +166,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		pluginText.addFormTextListener(new IFormTextListener() {
 			public void textValueChanged(FormEntry text) {
 				try {
-					feature.setPlugin(text.getValue());
+					feature.setPlugin(getNonNullValue(text.getValue()));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -182,7 +182,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		imageText.addFormTextListener(new IFormTextListener() {
 			public void textValueChanged(FormEntry text) {
 				try {
-					feature.setImageName(text.getValue());
+					feature.setImageName(getNonNullValue(text.getValue()));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -289,6 +289,10 @@ public class FeatureSpecSection extends PDEFormSection {
 
 		factory.paintBordersFor(container);
 		return container;
+	}
+	
+	private String getNonNullValue(String value) {
+		return value.length()>0?value:null;
 	}
 
 	private void forceDirty() {
