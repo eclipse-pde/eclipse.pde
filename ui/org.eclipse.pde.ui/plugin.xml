@@ -757,9 +757,13 @@
             <objectState 
 	            name="projectNature" 
 	            value="org.eclipse.pde.UpdateSiteNature"/>
+	        <objectState
+	        	name="open"
+	        	value="false"/>
             </or>
             </not>
        	 </visibility>
+
          <action
             label="%new.convert.name"
             class="org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectsAction"
