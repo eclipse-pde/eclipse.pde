@@ -127,18 +127,18 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 
+	output.println("    <property name=\"comp.auto.includes\" value=\"install.xml\"/>");
+	output.println("    <property name=\"comp.auto.excludes\" value=\"\"/>");
 	output.println("    <ant antfile=\"${template}\" target=\"bin\">");
-	output.println("      <property name=\"auto.includes\" value=\"install.xml\"/>");
-	output.println("      <property name=\"auto.excludes\" value=\"\"/>");
-
+	
 	String inclusions = getSubstitution(componentModel,BIN_INCLUDES);
 	if (inclusions == null)
-		inclusions = "${auto.includes}";
+		inclusions = "${comp.auto.includes}";
 	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
 
 	String exclusions = getSubstitution(componentModel,BIN_EXCLUDES);
 	if (exclusions == null)
-		exclusions = "${auto.excludes}";
+		exclusions = "${comp.auto.excludes}";
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 
 	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/components/${component}_${compVersion}\"/>");

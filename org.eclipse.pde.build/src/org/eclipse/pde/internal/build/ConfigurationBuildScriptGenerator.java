@@ -92,18 +92,18 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <param name=\"target\" value=\"" + TARGET_BIN + "\"/>");
 	output.println("    </antcall>");
 
-	output.println("    <ant antfile=\"${template}\" target=\"bin\">");	
-	output.println("      <property name=\"auto.includes\" value=\"install.xml\"/>");
-	output.println("      <property name=\"auto.excludes\" value=\"\"/>");
+	output.println("    <property name=\"conf.auto.includes\" value=\"install.xml\"/>");
+	output.println("    <property name=\"conf.auto.excludes\" value=\"\"/>");
+	output.println("    <ant antfile=\"${template}\" target=\"bin\">");
 
 	String inclusions = getSubstitution(configurationModel,BIN_INCLUDES);
 	if (inclusions == null)
-		inclusions = "${auto.includes}";
+		inclusions = "${conf.auto.includes}";
 	output.println("      <property name=\"includes\" value=\"" + inclusions + "\"/>");
 
 	String exclusions = getSubstitution(configurationModel,BIN_EXCLUDES);
 	if (exclusions == null)
-		exclusions = "${auto.excludes}";
+		exclusions = "${conf.auto.excludes}";
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 
 	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/configurations/${configuration}_${configVersion}\"/>");
