@@ -14,6 +14,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.osgi.framework.Constants;
 
 /**
  * @author dejan
@@ -231,19 +232,22 @@ public class BundlePluginBase
 		if (value == null || value.length() == 0)
 			return;
 		
-		if (key.equals("version")) {
+		if (key.equals(Constants.BUNDLE_VERSION_ATTRIBUTE )) {
 			iimport.setVersion(value);
-		} else if (key.equals("provide-packages")) {
+		//TODO uncomment this for the I-build.
+		//} else if (key.equals(Constants.REPROVIDE_ATTRIBUTE) || key.equals("provide-packages")) {
+		} else if (key.equals("reprovide") || key.equals("provide-packages")) {
 			iimport.setReexported(value.equals("true"));
-		} else if (key.equals("match")) {
-			if (value.equalsIgnoreCase("perfect")) {
+		} else if (key.equals(Constants.VERSION_MATCH_ATTRIBUTE)) {
+			if (value.equalsIgnoreCase(Constants.VERSION_MATCH_QUALIFIER) || 
+					value.equalsIgnoreCase(Constants.VERSION_MATCH_MICRO)) {
 				iimport.setMatch(IMatchRules.PERFECT);
-			} else if (value.equalsIgnoreCase("greaterOrEquals")) {
+			} else if (value.equalsIgnoreCase(Constants.VERSION_MATCH_GREATERTHANOREQUAL)) {
 				iimport.setMatch(IMatchRules.GREATER_OR_EQUAL);
-			} else if (value.equalsIgnoreCase("equivalent")) {
+			} else if (value.equalsIgnoreCase(Constants.VERSION_MATCH_MINOR)) {
 				iimport.setMatch(IMatchRules.EQUIVALENT);
 			}
-		} else if (key.equals("optional")) {
+		} else if (key.equals(Constants.OPTIONAL_ATTRIBUTE)) {
 			iimport.setOptional(value.equals("true"));
 		}
 	}
