@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.internal.ui.wizards.project.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
@@ -26,7 +27,20 @@ public class DependenciesView extends ViewPart {
 	private TreeViewer treeViewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action openAction;
+	private FocusOnSelectionAction focusOnSelectionAction;
+	private Action focusOnAction;
 	private IPropertyChangeListener propertyListener;
+	
+	class FocusOnSelectionAction extends Action {
+		public void run() {
+			handleFocusOn(getSelectedObject());
+		}
+		public void update(Object object) {
+			setEnabled(object!=null);
+			String name = ((LabelProvider)treeViewer.getLabelProvider()).getText(object);
+			setText(PDEPlugin.getFormattedMessage("DependenciesView.focusOnSelection", name));
+		}
+	}
 
 	/**
 	 * Constructor for PluginsView.
@@ -98,8 +112,19 @@ public class DependenciesView extends ViewPart {
 			public void run() {
 				handleDoubleClick();
 			}
+			public void update(Object object) {
+			}
 		};
 		openAction.setText(PDEPlugin.getResourceString("DependenciesView.open")); //$NON-NLS-1$
+		
+		focusOnSelectionAction = new FocusOnSelectionAction();
+
+		focusOnAction = new Action() {
+			public void run() {
+				handleFocusOn();
+			}
+		};
+		focusOnAction.setText(PDEPlugin.getResourceString("DependenciesView.focusOn"));
 	}
 	
 	private Object getSelectedObject() {
@@ -117,12 +142,18 @@ public class DependenciesView extends ViewPart {
 		if (selection.size() == 1) {
 			manager.add(openAction);
 			manager.add(new Separator());
+		}
+		focusOnSelectionAction.update(getSelectedObject());
+		if (focusOnSelectionAction.isEnabled())
+			manager.add(focusOnSelectionAction);		
+		manager.add(focusOnAction);
+		manager.add(new Separator());
+		if (selection.size() == 1) {
 			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 			actionGroup.setContext(new ActionContext(selection));
 			actionGroup.fillContextMenu(manager);
+			manager.add(new Separator());
 		}
-		manager.add(new Separator());
-
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions")); //$NON-NLS-1$
 	}
@@ -159,6 +190,35 @@ public class DependenciesView extends ViewPart {
 		}
 		if (obj instanceof IPluginBase)
 			ManifestEditor.openPluginEditor((IPluginBase)obj);
+	}
+	
+	private void handleFocusOn(Object newFocus) {
+		if (newFocus instanceof IPluginModelBase) {
+			openTo(newFocus);
+		}
+		if (newFocus instanceof IPluginBase) {
+			openTo(((IPluginBase)newFocus).getModel());
+		}
+		if (newFocus instanceof ImportObject) {
+			ImportObject iimport = (ImportObject)newFocus;
+			IPlugin plugin = iimport.getPlugin();
+			if (plugin != null) {
+				openTo(plugin.getModel());
+			}
+		}
+	}
+	
+	private void handleFocusOn() {
+		PluginSelectionDialog dialog = new PluginSelectionDialog(treeViewer.getControl().getShell());
+		dialog.create();
+		dialog.getShell().setText(PDEPlugin.getResourceString("DependenciesView.pluginSelection.title"));
+		dialog.getShell().setSize(300, 400);
+		if (dialog.open()==PluginSelectionDialog.OK) {
+			Object [] result = dialog.getResult();
+			if (result.length==1) {
+				handleFocusOn(result[0]);
+			}
+		}
 	}
 	
 	private void handleSelectionChanged(ISelection selection) {
