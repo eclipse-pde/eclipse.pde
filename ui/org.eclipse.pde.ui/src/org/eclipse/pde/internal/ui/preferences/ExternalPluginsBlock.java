@@ -60,10 +60,7 @@ public class ExternalPluginsBlock {
 			
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-			if (!useOther && !Platform.isRunningOSGi())
-				RegistryLoader.reloadFromLive(models, fmodels, monitor);
-			else
-				RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		}
 		
 		public Vector getPluginModels() {

@@ -238,11 +238,7 @@ public class ExternalModelManager implements IExternalModelManager {
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
 
-		if (pref.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS)
-			  && !Platform.isRunningOSGi())
-			RegistryLoader.reloadFromLive(models, fmodels, monitor);
-		else
-			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+		RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initializeAllModels();
 		initialized=true;
 	}
