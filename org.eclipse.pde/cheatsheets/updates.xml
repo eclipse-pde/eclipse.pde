@@ -87,7 +87,7 @@
 		<action
 			confirm="true"
 			pluginId="org.eclipse.pde.ui"
-		    param1="update_site"
+		    param1="updates"
 			class="org.eclipse.pde.internal.ui.wizards.site.OpenProjectWizardAction"/>
 		<description>
 		   	Select <b>File&gt;New&gt;Project&gt;Plug-in Development&gt;Update Site Project</b>
@@ -173,9 +173,10 @@
 		title="Installing the feature">
 		<description>
 		   	When ready to test the feature itself, install
-		   	another Eclipse instance and open 'Find and Install...'
-		   	wizard for it. Repeat the previous two steps in 
-		   	that instance. This time, go all the way to the
+		   	another Eclipse instance and start it.
+		   	Select <b>Help&gt;Software Updates&gt;Find and Install...</b>.
+		   	in that instance. Repeat the previous two steps. This 
+		   	time, go all the way to the
 		   	end of the wizard and press <b>Finish</b>.
 		   	Accept to restart the workbench.
 		</description>
