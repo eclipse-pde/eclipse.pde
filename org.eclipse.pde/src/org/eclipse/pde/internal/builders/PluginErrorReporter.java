@@ -12,14 +12,31 @@ import org.xml.sax.*;
 public class PluginErrorReporter implements ErrorHandler {
 	private IFile file;
 	private int errorCount;
+	private IMarkerFactory markerFactory;
+	private DefaultMarkerFactory defaultMarkerFactory;
+	
+	class DefaultMarkerFactory implements IMarkerFactory {
+		public IMarker createMarker(IFile file) throws CoreException {
+			return file.createMarker(IMarker.PROBLEM);
+		}
+	}
 
 	public PluginErrorReporter(IFile file) {
 		this.file = file;
 		removeFileMarkers();
 		errorCount = 0;
+		defaultMarkerFactory = new DefaultMarkerFactory();
+		markerFactory = defaultMarkerFactory; 
 	}
+	
 	public IFile getFile() {
 		return file;
+	}
+	
+	public void setMarkerFactory(IMarkerFactory factory) {
+		if (factory!=null) markerFactory = factory;
+		else
+			markerFactory = defaultMarkerFactory;
 	}
 
 	private void addMarker(
@@ -28,7 +45,7 @@ public class PluginErrorReporter implements ErrorHandler {
 		int severity,
 		boolean fatal) {
 		try {
-			IMarker marker = file.createMarker(IMarker.PROBLEM);
+			IMarker marker = markerFactory.createMarker(file);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			if (lineNumber != -1)

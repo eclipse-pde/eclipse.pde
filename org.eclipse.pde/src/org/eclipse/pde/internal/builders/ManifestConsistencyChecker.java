@@ -267,6 +267,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IPluginBase pluginBase,
 		PluginErrorReporter reporter) {
 		IPluginExtension[] extensions = pluginBase.getExtensions();
+		SchemaMarkerFactory factory = new SchemaMarkerFactory();
+		
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
 			IPluginExtensionPoint point =
@@ -283,8 +285,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				ISchema schema =
 					PDECore.getDefault().getSchemaRegistry().getSchema(
 						extension.getPoint());
-				if (schema != null)
+				if (schema != null) {
+					factory.setPoint(extension.getPoint());
+					reporter.setMarkerFactory(factory);
 					validateExtensionContent(extension, schema, reporter);
+					reporter.setMarkerFactory(null);
+				}
 			}
 		}
 	}
