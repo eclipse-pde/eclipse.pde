@@ -16,6 +16,7 @@ public class RuntimeForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.RuntimeForm.title";
 	private JarsSection jarsSection;
 	private ExportSection exportSection;
+	private PackagePrefixesSection prefixesSection;
 
 public RuntimeForm(ManifestRuntimePage page) {
 	this.page = page;
@@ -39,11 +40,17 @@ protected void createFormClient(Composite parent) {
 	exportSection = new ExportSection(page);
 	control = exportSection.createControl(parent, getFactory());
 	gd = new GridData(GridData.FILL_BOTH);
-	gd.verticalSpan = 2;
 	control.setLayoutData(gd);
 
 	jarsSection = new JarsSection(page);
 	control = jarsSection.createControl(parent, getFactory());
+	gd = new GridData(GridData.FILL_BOTH);
+	control.setLayoutData(gd);
+	
+	prefixesSection = new PackagePrefixesSection(page);
+	prefixesSection.setCollapsable(true);
+	prefixesSection.setCollapsed(true);
+	control = prefixesSection.createControl(parent, getFactory());
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
@@ -51,10 +58,12 @@ protected void createFormClient(Composite parent) {
 	SectionChangeManager manager = new SectionChangeManager();
 	manager.linkSections(librarySection, exportSection);
 	manager.linkSections(librarySection, jarsSection);
+	manager.linkSections(librarySection, prefixesSection);
 
 	registerSection(librarySection);
 	registerSection(exportSection);
 	registerSection(jarsSection);
+	registerSection(prefixesSection);
 
 	if (((ManifestEditor)page.getEditor()).isFragmentEditor()	)
 		WorkbenchHelp.setHelp(parent,IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
