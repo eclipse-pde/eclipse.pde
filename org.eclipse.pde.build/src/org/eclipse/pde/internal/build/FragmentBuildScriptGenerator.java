@@ -20,6 +20,6 @@ protected String getModelTypeName() {
 }
 
 protected String getDirectoryName() {
-	return "plugins/${fragment}";
+	return "plugins/${fragment}_${version}";
 }
 }

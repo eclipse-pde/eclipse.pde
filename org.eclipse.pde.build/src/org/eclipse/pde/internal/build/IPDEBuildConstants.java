@@ -38,7 +38,7 @@ public interface IPDEBuildConstants {
 	// default values
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml";
 	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml";
-	public final static String DEFAULT_FEATURE_LOCATION = "install/features";
+	public final static String DEFAULT_FEATURE_LOCATION = "features";
 	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml";
 	public final static String DEFAULT_PLUGIN_LOCATION = "plugins";
 	public final static String DEFAULT_TEMPLATE_SCRIPT_FILENAME = "template.xml";

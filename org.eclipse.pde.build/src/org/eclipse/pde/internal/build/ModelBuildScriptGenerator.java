@@ -29,21 +29,6 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	/**
 	 * FIXME: add comment
 	 */
-	protected Map jarsCache;
-
-	/**
-	 * FIXME: add comment
-	 */
-	protected List requiredJars;
-
-	/**
-	 * FIXME: add comment
-	 */
-	protected Map trimmedDevJars;
-
-	/**
-	 * FIXME: add comment
-	 */
 	protected List jarOrder;
 
 
@@ -83,10 +68,9 @@ protected void generateBuildScript() throws CoreException {
 	generatePrologue();
 	generateBuildUpdateJarTarget();
 	generateGatherBinPartsTarget();
-	generateBuildJarsTarget();
+	generateBuildJarsTarget(script, model);
 	generateBuildZipsTarget();
 	generateGatherSourcesTarget();
-	generateBuildSourcesTarget();
 	generateGatherLogTarget();
 	generateCleanTarget();
 	generatePropertiesTarget();
@@ -145,60 +129,7 @@ protected void generateGatherLogTarget() {
 }
 
 
-protected void generateBuildSourcesTarget() throws CoreException {
-	StringBuffer jars = new StringBuffer();
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		jars.append(",");
-		// zip name is jar name without the ".jar" but with "src.zip" appended
-		String jar = (String) i.next();
-		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
-		jars.append(zip);
-		generateSourceIndividualTarget(jar, zip);
-	}
-	script.println();
-	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, TARGET_INIT + jars.toString(), null, null, null);
-	script.printString(1, "</target>");
-}
 
-protected void generateSourceIndividualTarget(String relativeJar, String target) throws CoreException {
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
-	destination = destination.append(target);
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab++, target, TARGET_INIT, null, null, null);
-	String fullJar = null;
-	try {
-		fullJar = new URL(model.getLocation() + relativeJar).getFile();
-	} catch (MalformedURLException e) {
-		// should not happen
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
-	}
-	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
-	String mapping = ""; 
-	String src = ""; 
-	if (source != null && !source.isEmpty()) {
-		mapping = getStringFromCollection(source, "", "", ",");
-		source = trimSlashes(source);
-		src = getSourceList(source, "**/*.java");
-	}
-	if (src.length() != 0) {
-		Map properties = new HashMap(1);
-		properties.put("mapping", mapping);
-		String inclusions = getBuildProperty(PROPERTY_SRC_INCLUDES);
-		if (inclusions == null)
-			inclusions = src;
-		properties.put("includes", inclusions);
-		String exclusions = getBuildProperty(PROPERTY_SRC_EXCLUDES);
-		if (exclusions == null)
-			exclusions = ""; // FIXME: why empty???
-		properties.put("excludes", exclusions);
-		properties.put("dest", destination.toString());
-		properties.put("srcdir", basedir);
-		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
-	}
-	script.printString(--tab, "</target>");
-}
 
 /**
  * FIXME: add comments
@@ -247,183 +178,15 @@ protected void generateGatherSourcesTarget() {
 
 
 
-protected void generateBuildJarsTarget() throws CoreException {
-	StringBuffer jars = new StringBuffer();
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		jars.append(',');
-		String currentJar = (String) i.next();
-		jars.append(currentJar);
-		generateJarIndividualTarget(currentJar);
-	}
-	script.println();
-	script.printTargetDeclaration(1, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
-	script.printString(1, "</target>");
-}
-
-
-protected void generateJarIndividualTarget(String jarName) throws CoreException {
-	int tab = 1;
-	script.println();
-	script.printTargetDeclaration(tab++, jarName, TARGET_INIT, null, null, null);
-	String fullJar = null;
-	try {
-		fullJar = new URL(model.getLocation() + jarName).getFile();
-	} catch (MalformedURLException e) {
-		// should not happen
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url") ,e));
-	}
-	Collection source = (Collection) getTrimmedDevJars().get(fullJar);
-	String mapping = ""; 
-	String src = ""; 
-	if (source != null && !source.isEmpty()) {
-		mapping = getStringFromCollection(source, "", "", ",");
-		source = trimSlashes(source);
-		src = getStringFromCollection(source, "", "", ",");
-	}
-	if (src.length() != 0) {
-		String compilePath = computeCompilePathClause(fullJar);
-		Map properties = new HashMap(1);
-		properties.put("mapping", mapping);
-		properties.put("includes", src);
-		properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-		String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-		IPath destination = new Path(basedir);
-		destination = destination.append(jarName);
-		properties.put("dest", destination.toString());
-		properties.put("compilePath", compilePath);
-		properties.put("srcdir", basedir);
-		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
-	}
-	script.printString(--tab, "</target>");
-}
 
 
 
-/**
- * FIXME: add comments
- */
-protected String computeCompilePathClause(String fullJar) throws CoreException {
-	List jars = new ArrayList(9);
-	PluginModel runtime = getRegistry().getPlugin(PI_RUNTIME);
-	if (runtime == null)
-		throw new CoreException(new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
-	else {
-		IPath runtimeLocation = new Path(getPluginLocationProperty(PI_RUNTIME, false));
-		if (devEntries != null)
-			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, runtimeLocation.append((String) i.next()).toString());
-		addEntry(jars, runtimeLocation.append(PI_RUNTIME_JAR_NAME).toString());
-		IPath bootLocation = new Path(getPluginLocationProperty(PI_BOOT, false));
-		if (devEntries != null)
-			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, bootLocation.append((String) i.next()).toString());
-		addEntry(jars, bootLocation.append(PI_BOOT_JAR_NAME).toString());
-	}
-
-	for (Iterator i = getRequiredJars().iterator(); i.hasNext();) 
-		addEntry(jars, i.next());
-	// see if the relative jar is in variable form (e.g., {ws/win32})
-	String[] var = extractVars(fullJar);
-	// add the dev jars which match the ws of the relative jar
-	for (Iterator i = devJars.keySet().iterator(); i.hasNext();) {
-		String jar = (String)i.next();
-		String[] jarVar = extractVars(jar);
-		if (jarVar[0] != null && jarVar[0].equals(var[0]) && jarVar[1].equals(var[1]))
-			addEntry(jars, jar);
-	}
-	jars.remove(fullJar);
-	if (var[0] != null) {
-		int start = fullJar.indexOf('{');
-		int end = fullJar.indexOf('}');
-		String resolvedFullJar = fullJar; 
-		resolvedFullJar = fullJar.substring(0, start);
-		resolvedFullJar += fullJar.substring(start + 1, end);
-		resolvedFullJar += fullJar.substring(end + 1);
-		jars.remove(resolvedFullJar);
-		resolvedFullJar = fullJar.substring(0, start);
-		resolvedFullJar += "$" + var[0] + "$";
-		resolvedFullJar += fullJar.substring(end + 1);
-		jars.remove(resolvedFullJar);
-	}
-	IPath pluginLocation = new Path(getPropertyFormat(getPluginLocationProperty(model.getId(), getModelTypeName().equals("fragment"))));
-	if (devEntries != null)
-		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			jars.remove(pluginLocation.append((String) i.next()).toString());
-	
-	String jar = pluginLocation.append(new Path(fullJar).lastSegment()).toString();
-	jars.remove(jar);
-	// FIXME: hack - it should be either transparent or not necessary
-	String entry = (getModelTypeName().equals("fragment") ? "fragment@" : "plugin@") + model.getId();
-	pluginLocations.remove(entry);
-	
-	String result = getStringFromCollection(jars, "", "", ";");
-	result = replaceVariables(result);
-	return result;
-}
 
 
-/**
- * Substitute the value of an element description variable (variables that
- * are found in files like plugin.xml, e.g. $ws$) by an Ant property.
- */
-protected String replaceVariables(String sourceString) {
-	int i = -1;
-	String result = sourceString;
-	while ((i = result.indexOf(DESCRIPTION_VARIABLE_WS)) >= 0)
-		result = result.substring(0, i) + "ws/" + getPropertyFormat(PROPERTY_WS) + result.substring(i + DESCRIPTION_VARIABLE_WS.length());
-	while ((i = result.indexOf(DESCRIPTION_VARIABLE_OS)) >= 0)
-		result = result.substring(0, i) + "os/" + getPropertyFormat(PROPERTY_OS) + result.substring(i + DESCRIPTION_VARIABLE_OS.length());
-	while ((i = result.indexOf(DESCRIPTION_VARIABLE_NL)) >= 0)
-		result = result.substring(0, i) + "nl/" + getPropertyFormat(PROPERTY_NL) + result.substring(i + DESCRIPTION_VARIABLE_NL.length());
-	return result;
-}
 
-protected String[] extractVars(String entry) {
-	// see if the relative jar is in variable form (e.g., {ws/win32})
-	String[] result = new String[2];
-	int start = entry.indexOf('{');
-	if (start > -1) {
-		result[0] = entry.substring(start + 1, start + 3);
-		int end = entry.indexOf('}', start);
-		result[1] = entry.substring(start + 4, end);
-	}
-	return result;
-}
 
-/**
- * FIXME: add comments
- */
-protected List getJars(PluginModel descriptor) throws CoreException {
-	List result = (List) jarsCache.get(descriptor.getId());
-	if (result != null)
-		return result;
-	result = new ArrayList(9);
-	LibraryModel[] libs = descriptor.getRuntime();
-	
-	if (libs != null) {
-		IPath location = new Path(getPluginLocationProperty(descriptor.getId(), getModelTypeName().equals("fragment")));
-		if (devEntries != null)
-			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(result, location.append((String) i.next()).toString());
-		for (int i = 0; i < libs.length; i++)
-			addEntry(result, location.append(libs[i].getName()).toString());
-	}
-	
-	PluginPrerequisiteModel[] prereqs = descriptor.getRequires();
-	if (prereqs != null) {
-		for (int i = 0; i < prereqs.length; i++) {
-			PluginModel prereq = getRegistry().getPlugin(prereqs[i].getPlugin());
-			if (prereq != null) {
-				List prereqJars = getJars(prereq);
-				for (Iterator j = prereqJars.iterator(); j.hasNext();) 
-					addEntry(result, j.next());
-			}
-		}
-	}
-	
-	jarsCache.put(descriptor.getId(), result);
-	return result;
-}
+
+
 
 protected void addEntry(List list, Object entry) {
 	if (list.contains(entry))
@@ -572,17 +335,7 @@ protected Map getDevJars() {
 	return devJars;
 }
 
-protected List getRequiredJars() throws CoreException {
-	if (requiredJars == null)
-		requiredJars = getJars(model);
-	return requiredJars;
-}
 
-protected Map getTrimmedDevJars() throws CoreException {
-	if (trimmedDevJars == null)
-		trimmedDevJars = trimDevJars(getDevJars());
-	return trimmedDevJars;
-}
 
 /**
  * FIXME: add comment
@@ -648,6 +401,8 @@ protected void generatePrologue() {
 	int tab = 1;
 	script.printProjectDeclaration(model.getId(), TARGET_BUILD_JARS, ".");
 	script.println();
+	script.printProperty(tab, PROPERTY_BUILD_COMPILER, JDT_COMPILER_ADAPTER);
+	script.println();
 	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
 	script.printString(tab, "<initTemplate/>");
 	script.printString(--tab, "</target>");
@@ -667,9 +422,6 @@ public void setModel(PluginModel model) throws CoreException {
 	this.model = model;
 	devJars = null;
 	jarOrder = null;
-	jarsCache = new HashMap(5);
-	trimmedDevJars = null;
-	requiredJars = null;
 	readProperties(getModelLocation(model));
 }
 

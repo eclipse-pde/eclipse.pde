@@ -292,7 +292,7 @@ protected void generateGatherSourcesTarget() {
  * 
  */
 protected String getDirectoryName() {
-	return "install/features/${feature}";
+	return "features/${feature}_${featureVersion}";
 }
 protected void generateZipSourcesTarget() {
 	String featurebase = getPropertyFormat(PROPERTY_FEATURE_BASE);
@@ -332,7 +332,7 @@ protected void generateGatherBinPartsTarget() {
 	params.put("includes", inclusions);
 	params.put("excludes", exclusions);
 	params.put("srcdir", getPropertyFormat(PROPERTY_BASEDIR));
-	params.put("dest", "${feature.base}/install/features/${feature}");
+	params.put("dest", "${feature.base}/features/${feature}_${featureVersion}");
 	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, "includesExcludesCopy", null, null, params);
 	script.printString(--tab, "</target>");
 }

@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.build.ant.AntScript;
 /**
  * 
  */
-public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerator {
+public abstract class AbstractBuildScriptGenerator extends AbstractBuildScriptGeneratorTemp {
 
 	/**
 	 * 
@@ -261,4 +261,6 @@ public void setBuildScriptName(String buildScriptName) {
 	else
 		this.buildScriptName = buildScriptName;
 }
+
+
 }
