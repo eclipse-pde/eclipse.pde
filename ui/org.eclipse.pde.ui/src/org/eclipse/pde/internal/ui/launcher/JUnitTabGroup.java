@@ -6,15 +6,21 @@ package org.eclipse.pde.internal.ui.launcher;
  */
  
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.debug.ui.launchConfigurations.*;
-import org.eclipse.jdt.internal.junit.launcher.*;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
+import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 
 public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 	/**
@@ -26,12 +32,12 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
 					new NewTracingLauncherTab(), new ConfigurationTab(),
-					new JavaSourceLookupTab(), new EnvironmentTab(),
+					new SourceLookupTab(), new EnvironmentTab(),
 					new CommonTab()};
 		} else {
 			tabs = new ILaunchConfigurationTab[]{new JUnitMainTab(),
 					new JUnitArgumentsTab(), new AdvancedLauncherTab(false),
-					new NewTracingLauncherTab(), new JavaSourceLookupTab(),
+					new NewTracingLauncherTab(), new SourceLookupTab(),
 					new EnvironmentTab(), new CommonTab()};
 		}
 		setTabs(tabs);

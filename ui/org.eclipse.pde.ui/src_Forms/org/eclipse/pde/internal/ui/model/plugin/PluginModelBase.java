@@ -70,7 +70,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		if (!fIsLoaded && createIfMissing) {
 			createPluginBase();
 			load();
-			fIsLoaded = true;
 		}
 		return fPluginBase;
 	}

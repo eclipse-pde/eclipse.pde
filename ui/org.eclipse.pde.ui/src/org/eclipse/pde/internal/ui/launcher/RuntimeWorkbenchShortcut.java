@@ -11,11 +11,15 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -132,7 +136,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
 				"org.eclipse.pde.ui.workbenchClasspathProvider");

@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.debug.ui.launchConfigurations.*;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 
 public class WorkbenchLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 
@@ -30,12 +36,12 @@ public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
 					new AdvancedLauncherTab(), new NewTracingLauncherTab(),
-					new ConfigurationTab(), new JavaSourceLookupTab(),
+					new ConfigurationTab(), new SourceLookupTab(),
 					new EnvironmentTab(), new CommonTab()};
 		} else {
 			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
 					new AdvancedLauncherTab(), new NewTracingLauncherTab(),
-					new JavaSourceLookupTab(), new EnvironmentTab(),
+					new SourceLookupTab(), new EnvironmentTab(),
 					new CommonTab()};
 		}
 		setTabs(tabs);
