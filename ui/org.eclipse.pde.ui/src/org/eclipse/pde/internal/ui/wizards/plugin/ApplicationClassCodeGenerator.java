@@ -19,19 +19,17 @@ import org.eclipse.pde.ui.*;
 public class ApplicationClassCodeGenerator {
     private IPluginFieldData fPluginData;
     private IProject fProject;
-    private String fAppClassName;
 
-    public ApplicationClassCodeGenerator(IProject project,
-            String qualifiedClassName, IPluginFieldData data) {
+    public ApplicationClassCodeGenerator(IProject project, IPluginFieldData data) {
         this.fProject = project;
-        this.fAppClassName = qualifiedClassName;
         fPluginData = data;
     }
 
     public IFile generate(IProgressMonitor monitor) throws CoreException {
-        int nameloc = fAppClassName.lastIndexOf('.');
-        String packageName = (nameloc == -1) ? "" : fAppClassName.substring(0, nameloc); //$NON-NLS-1$
-        String className = fAppClassName.substring(nameloc + 1);
+    	String qualifiedName = fPluginData.getApplicationClassname();
+        int nameloc = qualifiedName.lastIndexOf('.');
+        String packageName = (nameloc == -1) ? "" : qualifiedName.substring(0, nameloc); //$NON-NLS-1$
+        String className = qualifiedName.substring(nameloc + 1);
         IPath path = new Path(packageName.replace('.', '/'));
         if (fPluginData.getSourceFolderName().trim().length() > 0)
             path = new Path(fPluginData.getSourceFolderName()).append(path);

@@ -23,10 +23,6 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.wizards.newresource.*;
 
-/**
- * @author melhem
- *
- */
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
 	public static final String PLUGIN_POINT = "pluginContent"; //$NON-NLS-1$
 	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
@@ -38,7 +34,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private IProjectProvider fProjectProvider;
 	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
-	private RCPContentPage fRCPPage;
 	private TemplateListSelectionPage fWizardListPage;
 
 	public NewPluginProjectWizard() {
@@ -75,7 +70,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		};
 		
 		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
-        fRCPPage = new RCPContentPage("branding", fProjectProvider); //$NON-NLS-1$
         
 		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates")); //$NON-NLS-1$
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
@@ -83,7 +77,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			fWizardListPage.setInitialTemplateId(tid);
 
 		addPage(fContentPage);
-		addPage(fRCPPage);
 		addPage(fWizardListPage);
 	}
 	
@@ -104,15 +97,10 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		try {
 			fMainPage.updateData();
 			fContentPage.updateData();
-			RCPData rcpData = null;
-			if (fContentPage.isRCPApplication()){
-			    fRCPPage.updateData();
-			    rcpData = fRCPPage.getBrandingData();
-			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true,
-					new NewProjectCreationOperation(fPluginData, fProjectProvider, rcpData, contentWizard));
+					new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
@@ -175,4 +163,5 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		}
 		return wizards;
 	}
+	
 }

@@ -15,10 +15,6 @@ import java.util.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginFieldData extends AbstractFieldData implements IPluginFieldData {
 	
 	private String fClassname;	
@@ -26,6 +22,8 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
 	private ArrayList templates = new ArrayList();
+	private String fApplicationID;
+	private String fApplicationClass;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()
@@ -45,7 +43,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 		return fIsUIPlugin;
 	}
 	
-	public void setIsUIPlugin(boolean isUIPlugin) {
+	public void setUIPlugin(boolean isUIPlugin) {
 		fIsUIPlugin = isUIPlugin;
 	}
 	
@@ -69,11 +67,33 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 		return fDoGenerateClass;
 	}
 	
-	public void setRCPAppPlugin(boolean isRCPAppPlugin){
+	public void setRCPApplicationPlugin(boolean isRCPAppPlugin){
 	    fRCPAppPlugin = isRCPAppPlugin;
 	}
 	
-	public boolean isRCPAppPlugin(){
+	public boolean isRCPApplicationPlugin(){
 	    return fRCPAppPlugin;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IPluginFieldData#getApplicationID()
+	 */
+	public String getApplicationID() {
+		return fApplicationID;
+	}
+	
+	public void setApplicationID(String appID) {
+		fApplicationID = appID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IPluginFieldData#getApplicationClassname()
+	 */
+	public String getApplicationClassname() {
+		return fApplicationClass;
+	}
+	
+	public void setApplicationClassname(String className) {
+		fApplicationClass = className;
 	}
 }

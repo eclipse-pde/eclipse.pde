@@ -22,9 +22,6 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 
 
-/**
- * @author cgwong
- */
 public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	protected Button fJavaButton;
 	protected boolean fIsFragment;
@@ -34,6 +31,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Label fOutputlabel;
 	private Text fOutputText;
 	private AbstractFieldData fData;
+	private Button fLegacyButton;
+	private Label fBundleNote;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment){
 		super(pageName);
@@ -50,6 +49,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		createProjectTypeGroup(control);
 		createBundleStructureGroup(control);
+		
+		fLegacyButton = new Button(control, SWT.CHECK);
+		fLegacyButton.setText(PDEPlugin.getResourceString("ProjectStructurePage.legacy")); //$NON-NLS-1$
+		fLegacyButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fBundleCheck.setEnabled(!fLegacyButton.getSelection());
+				fBundleNote.setEnabled(!fLegacyButton.getSelection());
+			}
+		});
+				
 		Dialog.applyDialogFont(control);
 		WorkbenchHelp.setHelp(control,
 				fIsFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE
@@ -99,13 +108,18 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.fbundle")); //$NON-NLS-1$
 		else
 			fBundleCheck.setText(PDEPlugin.getResourceString("ProjectStructurePage.pbundle")); //$NON-NLS-1$
-		
-		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEPlugin.getResourceString("ProjectStructurePage.note")); //$NON-NLS-1$
+		fBundleCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fLegacyButton.setEnabled(!fBundleCheck.getSelection());
+			}
+		});
+				
+		fBundleNote = new Label(group, SWT.WRAP);
+		fBundleNote.setText(PDEPlugin.getResourceString("ProjectStructurePage.note")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		gd.horizontalIndent = 22;
-		label.setLayoutData(gd);		
+		fBundleNote.setLayoutData(gd);		
 	}
 	
 	private Button createButton(Composite container) {
@@ -122,12 +136,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		return fBundleCheck.getSelection();
 	}
 
-	public boolean isJavaProject(){
-		if (fJavaButton == null)
-			return false;
-		return fJavaButton.getSelection();
-	}
-	
 	private Label createLabel(Composite container, String text) {
 		Label label = new Label(container, SWT.NONE);
 		label.setText(text);
@@ -149,19 +157,13 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 		return text;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewProjectCreationPage#setVisible(boolean)
-	 */
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (!visible)
-			updateData();
-	}
+	
 	public void updateData() {
-		fData.setIsSimple(!isJavaProject());
+		fData.setSimple(!fJavaButton.getSelection());
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
-		fData.setHasBundleStructure(fBundleCheck.getSelection());
+		fData.setHasBundleStructure(fBundleCheck.isEnabled() && fBundleCheck.getSelection());
+		fData.setLegacy(fLegacyButton.isEnabled() && fLegacyButton.getSelection());
 	}
 	
 }

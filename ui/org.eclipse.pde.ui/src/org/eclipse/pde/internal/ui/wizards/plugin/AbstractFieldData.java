@@ -22,12 +22,12 @@ public abstract class AbstractFieldData implements IFieldData {
 	private String fVersion;
 	private String fName;
 	private String fProvider;
-	private boolean fIsLegacy;
+	private boolean fLegacy;
 	private String fLibraryName;
 	private String fSourceFolderName;
 	private String fOutputFolderName;
 	private boolean fHasBundleStructure;
-	private boolean fIsSimple;
+	private boolean fSimple;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -55,7 +55,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	}
 	
 	public boolean isLegacy() {
-		return fIsLegacy;
+		return fLegacy;
 	}
 	
 	/* (non-Javadoc)
@@ -90,7 +90,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	 * @see org.eclipse.pde.ui.IFieldData2#isSimple()
 	 */
 	public boolean isSimple() {
-		return fIsSimple;
+		return fSimple;
 	}
 	
 	public void setId(String id) {
@@ -109,8 +109,8 @@ public abstract class AbstractFieldData implements IFieldData {
 		fVersion = version;
 	}
 	
-	public void setIsLegacy(boolean isLegacy) {
-		fIsLegacy = isLegacy;
+	public void setLegacy(boolean isLegacy) {
+		fLegacy = isLegacy;
 	}
 	
 	public void setLibraryName(String name) {
@@ -129,7 +129,7 @@ public abstract class AbstractFieldData implements IFieldData {
 		fHasBundleStructure = isBundle;
 	}
 	
-	public void setIsSimple(boolean simple) {
-		fIsSimple = simple;
+	public void setSimple(boolean simple) {
+		fSimple = simple;
 	}
 }
