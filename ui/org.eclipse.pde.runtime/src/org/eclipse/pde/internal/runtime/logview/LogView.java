@@ -11,12 +11,14 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.SWT;
@@ -342,17 +344,24 @@ public class LogView extends ViewPart implements ILogListener {
 		if (path != null && new Path(path).toFile().exists()) {
 			inputFile = new Path(path).toFile();
 			directory = inputFile.getParent();
-			BusyIndicator
-				.showWhile(
-					tableTreeViewer.getControl().getDisplay(),
-					new Runnable() {
-				public void run() {
-					readLogFile();
-					readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-					readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
-					tableTreeViewer.refresh();
+			
+			IRunnableWithProgress op = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+						monitor.beginTask("Importing Log...", IProgressMonitor.UNKNOWN);
+						readLogFile();
 				}
-			});
+			};
+			ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
+			try {
+				pmd.run(true, true, op);
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			} finally {
+				readLogAction.setText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+				readLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.readLog.reload"));
+				asyncRefresh();				
+			}
 		}	
 	}
 	
