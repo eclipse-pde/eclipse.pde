@@ -10,7 +10,6 @@
    <runtime>
       <library name="pdert.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.pde.internal.runtime"/>
       </library>
    </runtime>
    <requires>

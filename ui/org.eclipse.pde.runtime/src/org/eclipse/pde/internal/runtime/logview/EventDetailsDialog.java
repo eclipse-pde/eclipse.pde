@@ -191,7 +191,7 @@ public class EventDetailsDialog extends Dialog {
 		} else {
 			if (elementNum - 1 >= 0)
 				elementNum -= 1;
-			entry = (LogEntry) ((TableTreeViewer) provider).getElementAt(elementNum);
+			entry = (LogEntry) provider.getElementAt(elementNum);
 		}
 		setEntrySelectionInTable();
 	}
@@ -202,7 +202,7 @@ public class EventDetailsDialog extends Dialog {
 			entry = entryChildren[childIndex];
 		} else if (elementNum + 1 < totalElementCount){
 				elementNum += 1;
-			entry = (LogEntry) ((TableTreeViewer) provider).getElementAt(elementNum);
+			entry = (LogEntry) provider.getElementAt(elementNum);
 		} else { // at end of list but can branch into child elements - bug 58083
 			setEntryChildren(entry);
 			entry = entryChildren[0];
@@ -226,6 +226,10 @@ public class EventDetailsDialog extends Dialog {
 		clipboard.setContents(new Object[] { textVersion }, new Transfer[] { TextTransfer.getInstance()});	
 	}
 
+	public void setComparator(Comparator comparator){
+		this.comparator = comparator;
+		updateProperties();
+	}
 	private void setComparator(byte sortType, final int sortOrder){
 		if (sortType == LogView.DATE){
 			comparator = new Comparator(){
@@ -234,11 +238,9 @@ public class EventDetailsDialog extends Dialog {
 						SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
 						Date date1 = formatter.parse(((LogEntry)e1).getDate());
 						Date date2 = formatter.parse(((LogEntry)e2).getDate());
-						if (sortOrder == ASCENDING) {
+						if (sortOrder == ASCENDING) 
 							return date1.before(date2) ? -1 : 1;
-						} else {
-							return date1.after(date2) ? -1 : 1;
-						}
+						return date1.after(date2) ? -1 : 1;
 					} catch (ParseException e) {
 					}
 					return 0;
@@ -269,7 +271,7 @@ public class EventDetailsDialog extends Dialog {
 	}
 	
 	public void resetSelection(IAdaptable selectedEntry){
-		if (entry.equals((LogEntry)selectedEntry) &&
+		if (entry.equals(selectedEntry) &&
 				elementNum == getParentElementNum()){
 			updateProperties();
 			return;
@@ -332,6 +334,7 @@ public class EventDetailsDialog extends Dialog {
 		if (comparator != null)
 			Arrays.sort(children, comparator);
 		entryChildren = new LogEntry[children.length];
+		
 		System.arraycopy(children,0,entryChildren,0,children.length);
 	}
 	

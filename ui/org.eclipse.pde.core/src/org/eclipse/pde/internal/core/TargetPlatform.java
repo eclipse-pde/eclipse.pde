@@ -233,10 +233,28 @@ public class TargetPlatform implements IEnvironmentVariables {
 					buffer.append(","); //$NON-NLS-1$
 			}
 			
+			if (!autoStartPlugins.containsKey("org.eclipse.update.configurator")) {
+				iter = pluginMap.keySet().iterator();
+				while (iter.hasNext()) {
+					String id = iter.next().toString();
+					if ("org.eclipse.osgi".equals(id) || autoStartPlugins.containsKey(id))
+						continue;
+					String url = getBundleURL(id, pluginMap);
+					if (url == null)
+						continue;
+					if (buffer.length() > 0)
+						buffer.append(","); //$NON-NLS-1$
+					buffer.append("reference:" + url); //$NON-NLS-1$					
+				}
+			}
+			
 			if (buffer.length() > 0) {
 				bWriter.write("osgi.bundles=" + buffer.toString()); //$NON-NLS-1$
 				bWriter.newLine();
-			}			
+			}	
+			
+			bWriter.write("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$
+			bWriter.newLine();
 			
 			bWriter.write("eof=eof"); //$NON-NLS-1$
 			bWriter.flush();
