@@ -414,6 +414,9 @@ public class AdvancedLauncherTab
 						}
 					}
 					config.setAttribute(EXTPLUGINS, exbuf.toString());
+				} else {
+					config.setAttribute(WSPROJECT, (String)null);
+					config.setAttribute(EXTPLUGINS, (String)null);
 				}
 			}
 		});
