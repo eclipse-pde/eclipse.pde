@@ -7,20 +7,21 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.pde.internal.ui.model.IEditingModel;
+import org.eclipse.pde.internal.ui.neweditor.context.InputContext;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.*;
-import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
+public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
 	private PDEFormEditor editor;
 	private Control control;
 	private int index;
@@ -51,8 +52,21 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 		super.dispose();
 	}
 	
+	protected abstract ILabelProvider createOutlineLabelProvider();
+	protected abstract ITreeContentProvider createOutlineContentProvider();
+	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
+	
 	protected IContentOutlinePage createOutlinePage() {
-		return null;
+		SourceOutlinePage outline = new SourceOutlinePage(
+				(IEditingModel) getInputContext().getModel(),
+				createOutlineLabelProvider(), createOutlineContentProvider());
+		outline.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				outlineSelectionChanged(event);
+			}
+		});
+		getSelectionProvider().addSelectionChangedListener(outline);
+		return outline;
 	}
 
 	public IContentOutlinePage getContentOutline() {

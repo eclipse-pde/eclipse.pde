@@ -20,7 +20,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class XMLSourcePage extends PDESourcePage {
+public abstract class XMLSourcePage extends PDESourcePage {
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
 	protected IColorManager colorManager;
 	/**

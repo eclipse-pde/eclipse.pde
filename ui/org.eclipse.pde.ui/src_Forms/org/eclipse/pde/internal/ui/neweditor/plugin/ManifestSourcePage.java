@@ -160,20 +160,27 @@ public class ManifestSourcePage extends XMLSourcePage {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 	
+	protected ILabelProvider createOutlineLabelProvider() {
+		return new OutlineLabelProvider();
+	}
+	protected ITreeContentProvider createOutlineContentProvider() {
+		return new ContentProvider();
+	}
+
 	protected IContentOutlinePage createOutlinePage() {
 		SourceOutlinePage outline = new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
 				new OutlineLabelProvider(), new ContentProvider());
 		outline.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				doSelectionChanged(event);
+				outlineSelectionChanged(event);
 			}
 		});
 		getSelectionProvider().addSelectionChangedListener(outline);
 		return outline;
 	}
 	
-	protected void doSelectionChanged(SelectionChangedEvent event) {
+	protected void outlineSelectionChanged(SelectionChangedEvent event) {
 		ISelection selection= event.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;

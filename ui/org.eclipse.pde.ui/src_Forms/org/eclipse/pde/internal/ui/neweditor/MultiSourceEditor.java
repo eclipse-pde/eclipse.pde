@@ -27,7 +27,9 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		else if (context instanceof BuildInputContext) {
 			sourcePage = new BuildSourcePage(this, contextId, context.getInput().getName());
 		} else {
-			sourcePage = new PDESourcePage(this, contextId, context.getInput().getName());
+			// We should make all the pages through a factory -
+			// this is not very useful 
+			sourcePage = new GenericSourcePage(this, contextId, context.getInput().getName());
 		}
 		sourcePage.setInputContext(context);
 		try {

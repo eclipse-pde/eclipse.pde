@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.schema;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.XMLSourcePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class SchemaSourcePage extends XMLSourcePage {
@@ -32,5 +31,18 @@ public class SchemaSourcePage extends XMLSourcePage {
 		SchemaEditorContributor contributor = (SchemaEditorContributor) ((PDEFormEditor) getEditor())
 				.getContributor();
 		menu.add(contributor.getPreviewAction());
+	}
+	protected ILabelProvider createOutlineLabelProvider() {
+		return null;
+	}
+	protected ITreeContentProvider createOutlineContentProvider() {
+		return null;
+	}
+	protected void outlineSelectionChanged(SelectionChangedEvent e) {
+	}
+	protected IContentOutlinePage createOutlinePage() {
+		//TODO remove this method when the above three stubs
+		// are implemented
+		return null;
 	}
 }
