@@ -43,6 +43,10 @@ public class SchemaEditorContributor extends PDEEditorContributor {
 		mm.add(new Separator());
 		mm.add(previewAction);
 	}
+	
+	public Action getPreviewAction() {
+		return previewAction;
+	}
 
 	protected void makeActions() {
 		super.makeActions();
