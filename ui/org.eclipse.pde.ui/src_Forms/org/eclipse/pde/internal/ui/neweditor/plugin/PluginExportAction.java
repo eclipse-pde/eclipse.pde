@@ -60,7 +60,7 @@ public class PluginExportAction extends Action {
 		WizardDialog wd = new ResizableWizardDialog(PDEPlugin
 				.getActiveWorkbenchShell(), wizard);
 		wd.create();
-		wd.getShell().setSize(450, 600);
+		//wd.getShell().setSize(450, 600);
 		wd.open();
 	}
 	
