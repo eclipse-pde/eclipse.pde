@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
+import org.osgi.framework.*;
 
 /**
  * @author dejan
@@ -154,8 +155,8 @@ public class SampleOperation implements IRunnableWithProgress {
 		}
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new NullProgressMonitor());
-		ZipFile zipFile = getZipFileFromPluginDir(path, sample
-				.getDeclaringExtension().getDeclaringPluginDescriptor());
+		Bundle bundle = Platform.getBundle(sample.getDeclaringExtension().getNamespace());
+		ZipFile zipFile = getZipFileFromPluginDir(path, bundle);
 		importFilesFromZip(zipFile, project.getFullPath(),
 				new SubProgressMonitor(monitor, 1));
 		return createSampleManifest(project, config, new SubProgressMonitor(
@@ -208,10 +209,9 @@ public class SampleOperation implements IRunnableWithProgress {
 	}
 
 	private ZipFile getZipFileFromPluginDir(String pluginRelativePath,
-			IPluginDescriptor pluginDescriptor) throws CoreException {
+			Bundle bundle) throws CoreException {
 		try {
-			URL starterURL = new URL(pluginDescriptor.getInstallURL(),
-					pluginRelativePath);
+			URL starterURL = Platform.resolve(bundle.getEntry(pluginRelativePath));
 			return new ZipFile(Platform.asLocalURL(starterURL).getFile());
 		} catch (IOException e) {
 			String message = pluginRelativePath + ": " + e.getMessage(); //$NON-NLS-1$
