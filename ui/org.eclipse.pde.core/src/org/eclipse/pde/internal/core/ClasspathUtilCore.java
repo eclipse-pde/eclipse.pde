@@ -319,7 +319,7 @@ public class ClasspathUtilCore {
 			}
 			// add library, since no source folder was found.
 			if (!found) {
-				IClasspathEntry entry = createLibraryEntry(library, false, true);
+				IClasspathEntry entry = createLibraryEntry(library, library.isExported(), true);
 				if (entry != null)
 					result.add(entry);
 				
