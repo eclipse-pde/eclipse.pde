@@ -139,7 +139,7 @@ public class SchemaHandler extends PluginErrorReporter {
 		if (colNumber < 0)
 			colNumber = getLastCharColumn(lineNumber);
 		int offset = fTextDocument.getLineOffset(lineNumber - 1) + colNumber - 1;
-		IRegion region = fFindReplaceAdapter.search(offset, "<" + elementName, false, false, false, false);
+		IRegion region = fFindReplaceAdapter.find(offset, "<" + elementName, false, false, false, false);
 		return new Integer(fTextDocument.getLineOfOffset(region.getOffset()) + 1);
 	}
 	
