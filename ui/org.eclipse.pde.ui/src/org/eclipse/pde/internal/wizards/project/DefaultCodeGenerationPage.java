@@ -6,13 +6,17 @@ package org.eclipse.pde.internal.wizards.project;
 
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.base.model.*;
+
 import java.util.*;
 import org.eclipse.ui.part.*;
+
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
+
 import java.io.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.views.navigator.*;
@@ -28,6 +32,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.editor.manifest.*;
 import org.eclipse.pde.internal.editor.*;
+
 import java.util.List;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.preferences.*;

@@ -9,6 +9,7 @@ import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.extension.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
@@ -20,6 +21,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.elements.*;
+
 import java.util.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.graphics.*;

@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.pde.internal.base.model.component.*;
 import org.eclipse.pde.internal.model.component.*;
 import org.eclipse.ui.actions.*;
+
 import java.lang.reflect.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
@@ -21,6 +22,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.ui.wizards.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.core.runtime.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;;

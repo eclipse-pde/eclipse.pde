@@ -8,6 +8,7 @@ import org.eclipse.pde.internal.base.model.build.*;
 import org.eclipse.pde.internal.model.build.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
@@ -15,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.core.runtime.*;
+
 import java.util.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.swt.layout.*;
@@ -22,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.base.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.launching.*;

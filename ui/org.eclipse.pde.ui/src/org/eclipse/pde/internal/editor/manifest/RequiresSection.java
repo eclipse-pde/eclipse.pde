@@ -12,10 +12,12 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
+
 import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.base.model.*;

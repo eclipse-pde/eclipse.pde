@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.wizards.project;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.ui.*;
+
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
@@ -20,7 +21,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
+
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.core.*;

@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal;
+package org.eclipse.pde.internal.util;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.*;
 
 
 public class CoreUtility {

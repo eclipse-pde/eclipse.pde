@@ -25,6 +25,7 @@ import java.io.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.preferences.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.model.*;
@@ -32,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**

@@ -13,6 +13,7 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.swt.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 

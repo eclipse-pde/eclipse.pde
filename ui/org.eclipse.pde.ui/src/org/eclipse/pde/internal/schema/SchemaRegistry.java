@@ -7,10 +7,12 @@ package org.eclipse.pde.internal.schema;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.pde.internal.base.model.*;
+
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.Platform;

@@ -9,6 +9,7 @@ import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;

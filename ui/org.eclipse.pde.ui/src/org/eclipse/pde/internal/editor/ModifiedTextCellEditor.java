@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.editor;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.PDEProblemFinder;
 import org.eclipse.swt.SWT;
 
 public class ModifiedTextCellEditor extends TextCellEditor {

@@ -23,6 +23,7 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.graphics.*;
 

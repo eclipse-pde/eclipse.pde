@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -22,6 +23,7 @@ import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.presentation.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.text.*;
+
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;

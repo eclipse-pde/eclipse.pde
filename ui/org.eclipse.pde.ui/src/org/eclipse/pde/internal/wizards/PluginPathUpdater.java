@@ -19,6 +19,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.*;
+
 import java.util.*;
 import java.io.*;
 import org.eclipse.swt.*;
@@ -26,6 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.preferences.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.pde.internal.base.model.*;
 

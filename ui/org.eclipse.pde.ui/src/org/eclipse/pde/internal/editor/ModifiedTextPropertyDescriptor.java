@@ -8,8 +8,6 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.PDEProblemFinder;
-
 
 public class ModifiedTextPropertyDescriptor extends TextPropertyDescriptor {
 	public ModifiedTextPropertyDescriptor(String name, String displayName) {

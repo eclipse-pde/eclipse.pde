@@ -12,7 +12,6 @@ import org.eclipse.ui.part.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.PDEProblemFinder;
 import java.util.*;
 
 

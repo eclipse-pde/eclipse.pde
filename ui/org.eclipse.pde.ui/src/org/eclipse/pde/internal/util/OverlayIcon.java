@@ -1,9 +1,10 @@
-package org.eclipse.pde.internal;
+package org.eclipse.pde.internal.util;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
+import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 

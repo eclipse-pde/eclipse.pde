@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.editor.manifest;
 
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.jdt.internal.ui.util.*;
+
 import java.lang.reflect.*;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.resources.*;
@@ -23,12 +24,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.*;
+
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.IProgressMonitor;
 

@@ -1,4 +1,6 @@
-package org.eclipse.pde.internal;
+package org.eclipse.pde.internal.util;
+
+import org.eclipse.pde.internal.*;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

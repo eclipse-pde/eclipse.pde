@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.wizards.project;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.jface.operation.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.wizard.*;
