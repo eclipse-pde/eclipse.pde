@@ -20,8 +20,6 @@ public class PluginDocumentHandler extends DefaultHandler {
 	private Locator fLocator;
 	private Stack fDocumentNodeStack = new Stack();
 	private int fHighestOffset = 0;
-	private long fStart;
-	
 	
 	public PluginDocumentHandler(PluginModelBase model) {
 		fModel = model;
@@ -34,16 +32,8 @@ public class PluginDocumentHandler extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		fDocumentNodeStack.clear();
 		fHighestOffset = 0;
-		fStart = System.currentTimeMillis();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
-	 */
-	public void endDocument() throws SAXException {
-		System.out.println("Time elapsed: " + (System.currentTimeMillis() - fStart) + " ms");
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
