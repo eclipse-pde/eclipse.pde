@@ -208,7 +208,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.newLine();
 			
 			if (primaryFeatureId != null) {
-				String splashPath = getLocation(primaryFeatureId, pluginMap);
+				String splashPath = getBundleURL(primaryFeatureId, pluginMap);
 				if (splashPath != null) {
 					bWriter.write("osgi.splashPath=" + splashPath);
 					bWriter.newLine();
@@ -218,7 +218,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.write("osgi.configuration.cascaded=false");
 			bWriter.newLine();
 			
-			bWriter.write("osgi.framework=" + getLocation("org.eclipse.osgi", pluginMap));
+			bWriter.write("osgi.framework=" + getBundleURL("org.eclipse.osgi", pluginMap));
 			bWriter.newLine();
 			
 			autoStartPlugins.remove("org.eclipse.osgi");
@@ -227,7 +227,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			while (iter.hasNext()) {
 				String id = iter.next().toString();
-				buffer.append(getOSGiLocation(id, pluginMap));
+				String url = getBundleURL(id, pluginMap);
+				if (url == null)
+					continue;
+				buffer.append("reference:" + url);
 				Integer integer = (Integer)autoStartPlugins.get(id);
 				if (integer.intValue() > 0)
 					buffer.append("@" + integer.intValue());
@@ -248,23 +251,21 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
-	private static String getLocation(String id, TreeMap pluginMap) {
+	private static String getBundleURL(String id, TreeMap pluginMap) {
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
 		if (model == null)
 			return null;
 		
-		IPath path = null;
+		String location = model.getInstallLocation();
 		IResource resource = model.getUnderlyingResource();
-		if (resource != null && resource.isLinked()) {
-			path = resource.getLocation().removeLastSegments(1).addTrailingSeparator();
-		} else {
-			path = new Path(model.getInstallLocation()).addTrailingSeparator();
-		}	
-		return "file:" + path.toString();
-	}
-	
-	private static String getOSGiLocation(String id, TreeMap pluginMap) {
-		return "reference:" + getLocation(id, pluginMap);
+		if (resource != null) {
+			if (model instanceof IBundlePluginModelBase) {
+				location = resource.getLocation().removeLastSegments(2).toString();
+			} else {
+				location = resource.getLocation().removeLastSegments(1).toString();
+			}
+		}
+		return "file:" + new Path(location).addTrailingSeparator().toString();
 	}
 	
 	public static File createWorkingDirectory(IPath data) {
@@ -401,11 +402,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static IPath getPluginLocation(IPluginModelBase model) {
 		String location = model.getInstallLocation();
 		IResource resource = model.getUnderlyingResource();
-		if (resource != null && resource.isLinked()) {
-			// special case - linked resource
+		if (resource != null) {
 			if (model instanceof IBundlePluginModelBase) {
-				// OSGi bundle - remove two segments.
-				// We must get rid of META-INF
 				location = resource.getLocation().removeLastSegments(2).toOSString();
 			} else {
 				location = resource.getLocation().removeLastSegments(1).toOSString();

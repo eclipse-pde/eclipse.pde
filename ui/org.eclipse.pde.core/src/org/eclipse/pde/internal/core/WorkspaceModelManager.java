@@ -124,7 +124,7 @@ public class WorkspaceModelManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
 	 */
-	public synchronized IModel getWorkspaceModel(IProject project) {
+	public IModel getWorkspaceModel(IProject project) {
 		if (!fInitialized)
 			initializeWorkspaceModels();
 		
