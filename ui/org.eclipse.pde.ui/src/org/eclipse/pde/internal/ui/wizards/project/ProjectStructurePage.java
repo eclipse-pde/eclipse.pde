@@ -70,6 +70,9 @@ public class ProjectStructurePage extends WizardPage {
 	private Button r21Check;
 	private StructureData data;
 	private String projectName;
+	private Label libraryLabel;
+	private	Label sourceLabel;
+	private Label buildOutputLabel;
 
 	class StructureData implements IPluginStructureData {
 		String pluginId;
@@ -207,6 +210,11 @@ public class ProjectStructurePage extends WizardPage {
 				verifyId(idText.getText());
 			}
 		});
+		
+		Label spacer = new Label(topContainer, SWT.NULL);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		spacer.setLayoutData(gd);
 	}
 
 	private void addMiddleSection(Composite container) {
@@ -221,7 +229,12 @@ public class ProjectStructurePage extends WizardPage {
 		simpleChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isSelected = ((Button) e.widget).getSelection();
-				bottomContainer.setVisible(!isSelected);
+				libraryText.setEnabled(!isSelected);
+				sourceText.setEnabled(!isSelected);
+				buildOutputText.setEnabled(!isSelected);
+				libraryLabel.setEnabled(!isSelected);
+				sourceLabel.setEnabled(!isSelected);
+				buildOutputLabel.setEnabled(!isSelected);
 				getContainer().updateButtons();
 			}
 		});
@@ -239,24 +252,33 @@ public class ProjectStructurePage extends WizardPage {
 		bottomContainer.setLayout(layout);
 		bottomContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label libraryLabel = new Label(bottomContainer, SWT.NULL);
+		libraryLabel = new Label(bottomContainer, SWT.NULL);
 		libraryLabel.setText(
 			PDEPlugin.getResourceString(fragment ? KEY_FLIBRARY : KEY_LIBRARY));
+		GridData gd = new GridData();
+		gd.horizontalIndent = 25;
+		libraryLabel.setLayoutData(gd);
 		libraryText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		libraryText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label sourceLabel = new Label(bottomContainer, SWT.NULL);
+		sourceLabel = new Label(bottomContainer, SWT.NULL);
 		sourceLabel.setText(PDEPlugin.getResourceString(KEY_SOURCE));
+		gd = new GridData();
+		gd.horizontalIndent = 25;
+		sourceLabel.setLayoutData(gd);
 		sourceText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		sourceText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label buildOutputLabel = new Label(bottomContainer, SWT.NULL);
+		
+		buildOutputLabel = new Label(bottomContainer, SWT.NULL);
 		buildOutputLabel.setText(PDEPlugin.getResourceString(KEY_OUTPUT));
+		gd = new GridData();
+		gd.horizontalIndent = 25;
+		buildOutputLabel.setLayoutData(gd);
 		buildOutputText = new Text(bottomContainer, SWT.SINGLE | SWT.BORDER);
 		buildOutputText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label spacer = new Label(bottomContainer, SWT.NULL);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 		
@@ -270,7 +292,7 @@ public class ProjectStructurePage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 9;
+		layout.verticalSpacing = 0;
 		container.setLayout(layout);
 
 		addTopSection(container);

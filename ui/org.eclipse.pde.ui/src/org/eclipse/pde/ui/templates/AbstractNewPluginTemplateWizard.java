@@ -64,6 +64,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	private FirstTemplateWizardPage firstPage;
 	private ITemplateSection[] activeSections;
 	private IConfigurationElement config;
+	private boolean showTemplatePages = true;
 
 	/**
 	 * Creates a new template wizard.
@@ -144,7 +145,8 @@ public abstract class AbstractNewPluginTemplateWizard
 		firstPage =
 			new FirstTemplateWizardPage(provider, structureData, fragment);
 		addPage(firstPage);
-		addAdditionalPages();
+		if (showTemplatePages)
+			addAdditionalPages();
 	}
 	/**
 	 * Implements required wizard method. Subclasses cannot override it.
@@ -157,7 +159,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	 */
 	public final boolean performFinish() {
 		activeSections = getTemplateSections();
-		final IFieldData data = firstPage.createFieldData(activeSections);
+		final IFieldData data = firstPage.createFieldData(activeSections, showTemplatePages);
 		for (int i =0 ; i<activeSections.length; i++){
 			if (activeSections[i].getLabel().equals("Preference Page")){
 				((PreferencePageTemplate)activeSections[i]).addDefaultOption(data.isThisCheck());
@@ -249,9 +251,13 @@ public abstract class AbstractNewPluginTemplateWizard
 		ClasspathUtil.setClasspath(model, useContainers, null, monitor);
 	}
 
+	public void setShowTemplatePages(boolean val){
+		showTemplatePages = val;
+	}
+	
 	private ArrayList getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
-		IPluginReference[] list = firstPage.getDependencies();
+		IPluginReference[] list = firstPage.getDependencies(showTemplatePages);
 		addDependencies(list, result);
 		for (int i = 0; i < activeSections.length; i++) {
 			addDependencies(activeSections[i].getDependencies(schemaVersion), result);

@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
@@ -347,7 +348,7 @@ public class $className$ extends ViewPart {
 		action2.setText("Action 2");
 		action2.setToolTipText("Action 2 tooltip");
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
+			getImageDescriptor(IDE.SharedImages.IMG_OBJS_TASK_TSK));
 %   if doubleClick		
 		doubleClickAction = new Action() {
 			public void run() {

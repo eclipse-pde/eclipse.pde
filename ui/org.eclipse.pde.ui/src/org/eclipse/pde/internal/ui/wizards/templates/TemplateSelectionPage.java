@@ -92,6 +92,10 @@ public class TemplateSelectionPage extends WizardPage {
 		super("templateSelection");
 		setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		setDescription(PDEPlugin.getResourceString(NL_DESC));
+		initializeTemplates();
+	}
+
+	private void initializeTemplates(){
 		createCandidates();
 		tablePart = new TablePart(PDEPlugin.getResourceString(NL_TABLE));
 		descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
@@ -214,8 +218,8 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 		if (visiblePages.size() > 0)
 			return (IWizardPage) visiblePages.get(0);
-		else
-			return null;
+		
+		return null;
 	}
 
 	public IWizardPage getNextVisiblePage(IWizardPage page) {

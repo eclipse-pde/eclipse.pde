@@ -10,33 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.project;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.CoreUtility;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.ui.templates.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.ui.wizards.newresource.*;
 
 public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private Button blankPageRadio;
+	private Button noUIRadio;
 	private Button templateRadio;
 	private Control wizardList;
 	private ControlEnableState wizardListEnableState;
@@ -53,6 +55,10 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		"NewProjectWizard.ProjectCodeGeneratorsPage.templateLabel";
 	private static final String KEY_TEMPLATE_FLABEL =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.templateFLabel";
+	private static final String KEY_NOUI_FLABEL = 
+		"NewProjectWizard.ProjectCodeGeneratorsPage.noUIFLabel";
+	private static final String KEY_NOUI_LABEL =
+		"NewProjectWizard.ProjectCodeGeneratorsPage.noUILabel";
 	private static final String KEY_DESC =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.desc";
 	private static final String KEY_FTITLE =
@@ -104,6 +110,21 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			}
 		});
 
+		noUIRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
+		noUIRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_NOUI_FLABEL : KEY_NOUI_LABEL));
+		noUIRadio.setSelection(false);
+		gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.verticalAlignment = GridData.BEGINNING;
+		gd.grabExcessHorizontalSpace = true;
+		noUIRadio.setLayoutData(gd);
+		noUIRadio.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				setWizardListEnabled(!noUIRadio.getSelection());
+				getContainer().updateButtons();
+			}
+		});
+		
 		templateRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
 		templateRadio.setText(
 			PDEPlugin.getResourceString(
@@ -156,6 +177,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 					projectStructurePage.getStructureData(),
 					fragment,
 					config);
+				((AbstractNewPluginTemplateWizard)wizard).setShowTemplatePages(!noUIRadio.getSelection());
 				return wizard;
 			}
 		};

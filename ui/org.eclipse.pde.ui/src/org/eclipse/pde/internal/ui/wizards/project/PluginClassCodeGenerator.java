@@ -19,6 +19,7 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 	public static final int F_WORKSPACE = 0x2;
 	public static final int F_BUNDLES = 0x8;
 	public static final int F_PREF = 0x10;
+	public static final int F_UI = 0x20;
 	private int flags;
 
 public PluginClassCodeGenerator(IFolder sourceFolder, String fullyQualifiedClassName, int flags) {
@@ -33,7 +34,8 @@ public void generateContents(
 		writer.println("package " + packageName + ";");
 		writer.println();
 	}
-	writer.println("import org.eclipse.ui.plugin.*;");
+	if ((flags & F_UI) != 0)
+		writer.println("import org.eclipse.ui.plugin.*;");
 	writer.println("import org.eclipse.core.runtime.*;");
 	if ((flags & F_WORKSPACE) != 0) {
 		writer.println("import org.eclipse.core.resources.*;");
@@ -48,7 +50,10 @@ public void generateContents(
 	writer.println("/**");
 	writer.println(" * The main plugin class to be used in the desktop.");
 	writer.println(" */");
-	writer.println("public class " + className + " extends AbstractUIPlugin {");
+	if ((flags & F_UI) !=0 )
+		writer.println("public class " + className + " extends AbstractUIPlugin {");	
+	else
+		writer.println("public class " + className + " extends Plugin {");
 	if ((flags & F_THIS) != 0) {
 		writer.println("\t//The shared instance.");
 		writer.println("\tprivate static " + className + " plugin;");

@@ -470,13 +470,14 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		}
 		return buf.toString();
 	}
-
-	public IFieldData createFieldData(ITemplateSection[] activeSections){
+	
+	public IFieldData createFieldData(ITemplateSection[] activeSections, boolean isUIPlugin){
 		FieldData data = (FieldData)createFieldData();
+		data.setIsUIPlugin(isUIPlugin); // delete and eval properly later
 		data.setHasPreference(false);
 		// only need to set this value to true if a preference page
 		// will be generated and there is no default instance access
-		if (thisCheck.getSelection())
+		if (thisCheck!=null && thisCheck.getSelection())
 			return data;
 		
 		for (int i =0 ; i<activeSections.length; i++){
@@ -583,6 +584,8 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			flags |= PluginClassCodeGenerator.F_BUNDLES;
 		if (data.hasPreference())
 			flags |= PluginClassCodeGenerator.F_PREF;
+		if (data.isUIPlugin())
+			flags |= PluginClassCodeGenerator.F_UI;
 		String sourceFolder = structureData.getSourceFolderName();
 		IPath folderPath = project.getFullPath().append(sourceFolder);
 		IFolder folder = project.getWorkspace().getRoot().getFolder(folderPath);
@@ -594,11 +597,16 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		generator.generate(monitor);
 		monitor.worked(1);
 	}
-	
-	public IPluginReference [] getDependencies() {
-		IPluginReference [] dependencies = new IPluginReference[2];
-		dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
-		dependencies[1] = new PluginReference("org.eclipse.ui", null, 0);
+	public IPluginReference [] getDependencies(boolean isUIPlugin) {
+		IPluginReference [] dependencies;
+		if (isUIPlugin){
+			dependencies = new IPluginReference[2];
+			dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
+			dependencies[1] = new PluginReference("org.eclipse.ui", null, 0);
+		} else {
+			dependencies = new IPluginReference[1];
+			dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
+		}	
 		return dependencies;
 	}
 	

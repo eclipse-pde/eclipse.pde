@@ -80,5 +80,6 @@ public interface IFieldData {
 	public boolean isBundleCheck();
 	public boolean isWorkspaceCheck();
 	public boolean hasPreference();
+	public boolean isUIPlugin();
 	
 }

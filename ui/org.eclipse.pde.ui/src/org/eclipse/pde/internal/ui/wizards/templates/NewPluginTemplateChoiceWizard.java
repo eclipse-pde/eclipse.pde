@@ -21,6 +21,8 @@ public class NewPluginTemplateChoiceWizard
 	}
 
 	public ITemplateSection[] getTemplateSections() {
+		if (selectionPage == null)
+			return new ITemplateSection[0];
 		return selectionPage.getSelectedTemplates();
 	}
 
@@ -30,9 +32,13 @@ public class NewPluginTemplateChoiceWizard
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
+		if (selectionPage == null)
+			return null;
 		return selectionPage.getNextVisiblePage(page);
 	}
 	public IWizardPage getPreviousPage(IWizardPage page) {
+		if (selectionPage == null)
+			return null;
 		return selectionPage.getPreviousVisiblePage(page);
 	}
 }

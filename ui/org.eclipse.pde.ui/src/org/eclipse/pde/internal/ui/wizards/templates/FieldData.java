@@ -27,6 +27,7 @@ import org.eclipse.pde.ui.templates.IFieldData;
 		private boolean bundleCheck;
 		private boolean workspaceCheck;
 		private boolean hasPreference;
+		private boolean isUIPlugin;
 		
 		public boolean isFragment() {
 			return fragment;
@@ -49,6 +50,12 @@ import org.eclipse.pde.ui.templates.IFieldData;
 		 */
 		public boolean isBundleCheck() {
 			return bundleCheck;
+		}
+		/**
+		 * @return Returns true if generated plugin extends AbstractUIPlugin
+		 */
+		public boolean isUIPlugin(){
+			return isUIPlugin;
 		}
 		/**
 		 * @return Returns the preference page check
@@ -160,6 +167,9 @@ import org.eclipse.pde.ui.templates.IFieldData;
 			this.className = className;
 		}
 
+		public void setIsUIPlugin(boolean UIPlugin){
+			isUIPlugin = UIPlugin;
+		}
 		/**
 		 * @param fragment The fragment to set.
 		 */

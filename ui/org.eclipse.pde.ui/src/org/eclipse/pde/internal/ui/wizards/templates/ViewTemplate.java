@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
-public class ViewTemplate extends PDETemplateSection {
+public class ViewTemplate extends BaseEditorTemplate {
 	private static final String NL_TITLE0 = "ViewTemplate.title0";
 	private static final String NL_DESC0 = "ViewTemplate.desc0";
 	private static final String NL_TITLE1 = "ViewTemplate.title1";

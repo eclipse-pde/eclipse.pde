@@ -1,16 +1,17 @@
 package $packageName$;
 
-
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ISharedImages;
 
 /**
  * Manages the installation/deinstallation of global actions for multi-page editors.
@@ -50,32 +51,32 @@ public class $contributorClassName$ extends MultiPageEditorActionBarContributor 
 			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part : null;
 
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.DELETE,
+				ActionFactory.DELETE.getId(),
 				getAction(editor, ITextEditorActionConstants.DELETE));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.UNDO,
+				ActionFactory.UNDO.getId(),
 				getAction(editor, ITextEditorActionConstants.UNDO));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.REDO,
+				ActionFactory.REDO.getId(),
 				getAction(editor, ITextEditorActionConstants.REDO));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.CUT,
+				ActionFactory.CUT.getId(),
 				getAction(editor, ITextEditorActionConstants.CUT));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.COPY,
+				ActionFactory.COPY.getId(),
 				getAction(editor, ITextEditorActionConstants.COPY));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.PASTE,
+				ActionFactory.PASTE.getId(),
 				getAction(editor, ITextEditorActionConstants.PASTE));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.SELECT_ALL,
+				ActionFactory.SELECT_ALL.getId(),
 				getAction(editor, ITextEditorActionConstants.SELECT_ALL));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.FIND,
+				ActionFactory.FIND.getId(),
 				getAction(editor, ITextEditorActionConstants.FIND));
 			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.BOOKMARK,
-				getAction(editor, ITextEditorActionConstants.BOOKMARK));
+				IDEActionFactory.BOOKMARK.getId(),
+				getAction(editor, IDEActionFactory.BOOKMARK.getId()));
 			actionBars.updateActionBars();
 		}
 	}
@@ -88,7 +89,7 @@ public class $contributorClassName$ extends MultiPageEditorActionBarContributor 
 		sampleAction.setText("Sample Action");
 		sampleAction.setToolTipText("Sample Action tool tip");
 		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_TASK_TSK));
+				getImageDescriptor(IDE.SharedImages.IMG_OBJS_TASK_TSK));
 	}
 	public void contributeToMenu(IMenuManager manager) {
 		IMenuManager menu = new MenuManager("Editor &Menu");
