@@ -16,13 +16,13 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 public abstract class BaseEditorTemplate extends PDETemplateSection {
 	
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.editors";
+		return "org.eclipse.ui.editors"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"icons/"};
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 }

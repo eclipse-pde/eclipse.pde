@@ -15,7 +15,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PopupMenuNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "PopupMenuNewWizard.wtitle";
+	private static final String KEY_WTITLE = "PopupMenuNewWizard.wtitle"; //$NON-NLS-1$
 	/**
 	 * Constructor for PerspectiveExtensionsNewWizard.
 	 */

@@ -21,18 +21,18 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class EditorTemplate extends BaseEditorTemplate {
-	public static final String EDITOR_CLASS_NAME = "editorClass";
-	public static final String EDITOR_NAME = "editorName";
-	public static final String EXTENSIONS = "extensions";
-	private static final String KEY_TITLE = "EditorTemplate.title";
-	private static final String KEY_DESC = "EditorTemplate.desc";
-	private static final String KEY_PACKAGE_LABEL = "EditorTemplate.packageName";
-	private static final String KEY_CLASS_LABEL = "EditorTemplate.editorClass";
-	private static final String KEY_EDITOR_LABEL = "EditorTemplate.editorName";
+	public static final String EDITOR_CLASS_NAME = "editorClass"; //$NON-NLS-1$
+	public static final String EDITOR_NAME = "editorName"; //$NON-NLS-1$
+	public static final String EXTENSIONS = "extensions"; //$NON-NLS-1$
+	private static final String KEY_TITLE = "EditorTemplate.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "EditorTemplate.desc"; //$NON-NLS-1$
+	private static final String KEY_PACKAGE_LABEL = "EditorTemplate.packageName"; //$NON-NLS-1$
+	private static final String KEY_CLASS_LABEL = "EditorTemplate.editorClass"; //$NON-NLS-1$
+	private static final String KEY_EDITOR_LABEL = "EditorTemplate.editorName"; //$NON-NLS-1$
 	private static final String KEY_EXTENSION_LABEL =
-		"EditorTemplate.fileExtension";
+		"EditorTemplate.fileExtension"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT_EDITOR_NAME =
-		"EditorTemplate.defaultEditorName";
+		"EditorTemplate.defaultEditorName"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for EditorTemplate.
@@ -48,11 +48,11 @@ public class EditorTemplate extends BaseEditorTemplate {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion != null) {
 			IPluginReference[] dep = new IPluginReference[5];
-			dep[0] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0);
-			dep[1] = new PluginReference("org.eclipse.ui", null, 0);
-			dep[2] = new PluginReference("org.eclipse.jface.text", null, 0);
-			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0);
-			dep[4] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
+			dep[0] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0); //$NON-NLS-1$
+			dep[1] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
+			dep[2] = new PluginReference("org.eclipse.jface.text", null, 0); //$NON-NLS-1$
+			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0); //$NON-NLS-1$
+			dep[4] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0); //$NON-NLS-1$
 			return dep;
 		}
 		return super.getDependencies(schemaVersion);
@@ -76,7 +76,7 @@ public class EditorTemplate extends BaseEditorTemplate {
 		addOption(
 			EDITOR_CLASS_NAME,
 			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
-			"XMLEditor",
+			"XMLEditor", //$NON-NLS-1$
 			0);
 		addOption(
 			EDITOR_NAME,
@@ -86,12 +86,12 @@ public class EditorTemplate extends BaseEditorTemplate {
 		addOption(
 			EXTENSIONS,
 			PDEPlugin.getResourceString(KEY_EXTENSION_LABEL),
-			"xml",
+			"xml", //$NON-NLS-1$
 			0);
 	}
 
 	public String getSectionId() {
-		return "editor";
+		return "editor"; //$NON-NLS-1$
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -104,13 +104,13 @@ public class EditorTemplate extends BaseEditorTemplate {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".editors");
+		initializeOption(KEY_PACKAGE_NAME, id + ".editors"); //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors"); //$NON-NLS-1$
 	}
 
 	public boolean isDependentOnParentWizard() {
@@ -146,20 +146,20 @@ public class EditorTemplate extends BaseEditorTemplate {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement editorElement = factory.createElement(extension);
-		editorElement.setName("editor");
+		editorElement.setName("editor"); //$NON-NLS-1$
 		editorElement.setAttribute(
-			"id",
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME));
-		editorElement.setAttribute("name", getStringOption(EDITOR_NAME));
-		editorElement.setAttribute("icon", "icons/sample.gif");
-		editorElement.setAttribute("extensions", getStringOption(EXTENSIONS));
+			"id", //$NON-NLS-1$
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
+		editorElement.setAttribute("name", getStringOption(EDITOR_NAME)); //$NON-NLS-1$
+		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		editorElement.setAttribute("extensions", getStringOption(EXTENSIONS)); //$NON-NLS-1$
 
 		editorElement.setAttribute(
-			"class",
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME));
+			"class", //$NON-NLS-1$
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(EDITOR_CLASS_NAME)); //$NON-NLS-1$
 		editorElement.setAttribute(
-			"contributorClass",
-			"org.eclipse.ui.texteditor.BasicTextEditorActionContributor");
+			"contributorClass", //$NON-NLS-1$
+			"org.eclipse.ui.texteditor.BasicTextEditorActionContributor"); //$NON-NLS-1$
 		extension.add(editorElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);

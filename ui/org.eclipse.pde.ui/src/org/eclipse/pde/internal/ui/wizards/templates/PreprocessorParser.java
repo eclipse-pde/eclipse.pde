@@ -56,9 +56,9 @@ public class PreprocessorParser {
 		}
 		public String toString() {
 			if (value != null)
-				return "leaf[" + value.toString() + "]";
+				return "leaf[" + value.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			else
-				return "leaf[null]";
+				return "leaf[null]"; //$NON-NLS-1$
 		}
 	}
 
@@ -115,9 +115,9 @@ public class PreprocessorParser {
 			return result ? Boolean.TRUE : Boolean.FALSE;
 		}
 		public String toString() {
-			String lstring = left != null ? left.toString() : "*";
-			String rstring = right != null ? right.toString() : "*";
-			return "(" + lstring + "<" + opcode + ">" + rstring + ")";
+			String lstring = left != null ? left.toString() : "*"; //$NON-NLS-1$
+			String rstring = right != null ? right.toString() : "*"; //$NON-NLS-1$
+			return "(" + lstring + "<" + opcode + ">" + rstring + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
@@ -140,17 +140,17 @@ public class PreprocessorParser {
 
 	public static void main(String[] args) {
 		final Hashtable vars = new Hashtable();
-		vars.put("a", Boolean.FALSE);
-		vars.put("b", "3");
-		vars.put("c", Boolean.TRUE);
+		vars.put("a", Boolean.FALSE); //$NON-NLS-1$
+		vars.put("b", "3"); //$NON-NLS-1$ //$NON-NLS-2$
+		vars.put("c", Boolean.TRUE); //$NON-NLS-1$
 		PreprocessorParser parser = new PreprocessorParser(new IVariableProvider() {
 			public Object getValue(String variable) {
 				return vars.get(variable);
 			}
 		});
 		try {
-			boolean value = parser.parseAndEvaluate("!a || (b==\"2\" && c)");
-			System.out.println("Result: "+value);
+			boolean value = parser.parseAndEvaluate("!a || (b==\"2\" && c)"); //$NON-NLS-1$
+			System.out.println("Result: "+value); //$NON-NLS-1$
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -242,7 +242,7 @@ public class PreprocessorParser {
 			}
 			if (token == T_RBR) {
 				if (exprStack.isEmpty())
-					throwUnexpectedToken("not )", token);
+					throwUnexpectedToken("not )", token); //$NON-NLS-1$
 				popRoot();
 				continue;
 			}
@@ -298,7 +298,7 @@ public class PreprocessorParser {
 
 	private void throwUnexpectedToken(String expected, int token)
 		throws Exception {
-		String message = "Expected " + expected + ", found " + token;
+		String message = "Expected " + expected + ", found " + token; //$NON-NLS-1$ //$NON-NLS-2$
 		throw new Exception(message);
 	}
 
@@ -322,7 +322,7 @@ public class PreprocessorParser {
 					return T_ERROR;
 				}
 				// regular end of line
-				tvalue = "EOF";
+				tvalue = "EOF"; //$NON-NLS-1$
 				return T_EOF;
 			}
 			char c = line.charAt(loc++);
@@ -350,22 +350,22 @@ public class PreprocessorParser {
 					loc--;
 					tvalue = line.substring(vloc, loc);
 					variable = false;
-					if (tvalue.equalsIgnoreCase("false"))
+					if (tvalue.equalsIgnoreCase("false")) //$NON-NLS-1$
 						return T_FALSE;
-					if (tvalue.equalsIgnoreCase("true"))
+					if (tvalue.equalsIgnoreCase("true")) //$NON-NLS-1$
 						return T_TRUE;
 					return T_VAR;
 				} else
 					continue;
 			}
 
-			if (testDoubleToken(c, "!="))
+			if (testDoubleToken(c, "!=")) //$NON-NLS-1$
 				return T_NEQ;
-			if (testDoubleToken(c, "=="))
+			if (testDoubleToken(c, "==")) //$NON-NLS-1$
 				return T_EQ;
-			if (testDoubleToken(c, "&&"))
+			if (testDoubleToken(c, "&&")) //$NON-NLS-1$
 				return T_AND;
-			if (testDoubleToken(c, "||"))
+			if (testDoubleToken(c, "||")) //$NON-NLS-1$
 				return T_OR;
 			if (testSingleToken(c, '!'))
 				return T_NOT;
@@ -375,13 +375,13 @@ public class PreprocessorParser {
 				return T_RBR;
 			if (c == ' ' || c == '\t' || c == '\n')
 				continue;
-			tvalue = "" + c;
+			tvalue = "" + c; //$NON-NLS-1$
 			return T_ERROR;
 		}
 	}
 	private boolean testSingleToken(char c, char expected) {
 		if (c == expected) {
-			tvalue = "" + expected;
+			tvalue = "" + expected; //$NON-NLS-1$
 			return true;
 		}
 		return false;

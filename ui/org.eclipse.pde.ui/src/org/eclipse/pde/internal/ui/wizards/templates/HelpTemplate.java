@@ -27,26 +27,26 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class HelpTemplate extends PDETemplateSection {
 	
-	public static final String KEY_TOC_LABEL   = "tocLabel";
-	public static final String KEY_IS_PRIMARY  = "isPrimary";
-	public static final String KEY_GEN_TEST    = "generateTest";
-	public static final String KEY_GET_STARTED = "gettingStarted";
-	public static final String KEY_CONCEPTS    = "concepts";
-	public static final String KEY_TASKS       = "tasks";
-	public static final String KEY_REFERENCE   = "reference";
-	public static final String KEY_SAMPLES     = "samples";
+	public static final String KEY_TOC_LABEL   = "tocLabel"; //$NON-NLS-1$
+	public static final String KEY_IS_PRIMARY  = "isPrimary"; //$NON-NLS-1$
+	public static final String KEY_GEN_TEST    = "generateTest"; //$NON-NLS-1$
+	public static final String KEY_GET_STARTED = "gettingStarted"; //$NON-NLS-1$
+	public static final String KEY_CONCEPTS    = "concepts"; //$NON-NLS-1$
+	public static final String KEY_TASKS       = "tasks"; //$NON-NLS-1$
+	public static final String KEY_REFERENCE   = "reference"; //$NON-NLS-1$
+	public static final String KEY_SAMPLES     = "samples"; //$NON-NLS-1$
 	
-	private static final String NL_TOC_LABEL   = "HelpTemplate.tocLabel";
-	private static final String NL_IS_PRIMARY  = "HelpTemplate.isPrimary";
-	private static final String NL_GEN_TEST    = "HelpTemplate.generateTest";
-	private static final String NL_GET_STARTED = "HelpTemplate.gettingStarted";
-	private static final String NL_CONCEPTS    = "HelpTemplate.concepts";
-	private static final String NL_TASKS       = "HelpTemplate.tasks";
-	private static final String NL_REFERENCE   = "HelpTemplate.reference";
-	private static final String NL_SAMPLES     = "HelpTemplate.samples";
+	private static final String NL_TOC_LABEL   = "HelpTemplate.tocLabel"; //$NON-NLS-1$
+	private static final String NL_IS_PRIMARY  = "HelpTemplate.isPrimary"; //$NON-NLS-1$
+	private static final String NL_GEN_TEST    = "HelpTemplate.generateTest"; //$NON-NLS-1$
+	private static final String NL_GET_STARTED = "HelpTemplate.gettingStarted"; //$NON-NLS-1$
+	private static final String NL_CONCEPTS    = "HelpTemplate.concepts"; //$NON-NLS-1$
+	private static final String NL_TASKS       = "HelpTemplate.tasks"; //$NON-NLS-1$
+	private static final String NL_REFERENCE   = "HelpTemplate.reference"; //$NON-NLS-1$
+	private static final String NL_SAMPLES     = "HelpTemplate.samples"; //$NON-NLS-1$
 	
-	private static final String NL_DESC        = "HelpTemplate.desc";
-	private static final String NL_TITLE       = "HelpTemplate.title";
+	private static final String NL_DESC        = "HelpTemplate.desc"; //$NON-NLS-1$
+	private static final String NL_TITLE       = "HelpTemplate.title"; //$NON-NLS-1$
 	
 	private TemplateOption tocLabelOption;
 	private BooleanOption primaryOption;
@@ -84,7 +84,7 @@ public class HelpTemplate extends PDETemplateSection {
 		tocLabelOption = addOption(
 			KEY_TOC_LABEL,
 			PDEPlugin.getResourceString(NL_TOC_LABEL),
-			"Sample Table of Contents",
+			"Sample Table of Contents", //$NON-NLS-1$
 			0);
 			
 		primaryOption = (BooleanOption)addOption(
@@ -134,21 +134,21 @@ public class HelpTemplate extends PDETemplateSection {
 	 * @see OptionTemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
-		return "help";
+		return "help"; //$NON-NLS-1$
 	}
 
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		boolean isOk = true;
 		String folderName = sourceFolder.getName();
-		if (folderName.equals("concepts")) {
+		if (folderName.equals("concepts")) { //$NON-NLS-1$
 			isOk = conceptsOption.isEnabled() && conceptsOption.isSelected();
-		} else if (folderName.equals("gettingstarted")) {
+		} else if (folderName.equals("gettingstarted")) { //$NON-NLS-1$
 			isOk = gettingStartedOption.isEnabled() && gettingStartedOption.isSelected();
-		} else if (folderName.equals("reference")) {
+		} else if (folderName.equals("reference")) { //$NON-NLS-1$
 			isOk = referenceOption.isEnabled() && referenceOption.isSelected();
-		} else if (folderName.equals("samples")) {
+		} else if (folderName.equals("samples")) { //$NON-NLS-1$
 			isOk = samplesOption.isEnabled() && samplesOption.isSelected();
-		} else if (folderName.equals("tasks")) {
+		} else if (folderName.equals("tasks")) { //$NON-NLS-1$
 			isOk = tasksOption.isEnabled() && tasksOption.isSelected();
 		}
 		return isOk;
@@ -159,21 +159,21 @@ public class HelpTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFile(File sourceFile) {
 		boolean isOk = true;
 		String fileName = sourceFile.getName();
-		if (fileName.equals("testToc.xml")) {
+		if (fileName.equals("testToc.xml")) { //$NON-NLS-1$
 			isOk = genTestOption.isEnabled() && genTestOption.isSelected();
-		} else if (fileName.equals("tocconcepts.xml")) {
+		} else if (fileName.equals("tocconcepts.xml")) { //$NON-NLS-1$
 			isOk = conceptsOption.isEnabled() && conceptsOption.isSelected();
-		} else if (fileName.equals("tocgettingstarted.xml")) {
+		} else if (fileName.equals("tocgettingstarted.xml")) { //$NON-NLS-1$
 			isOk = gettingStartedOption.isEnabled() && gettingStartedOption.isSelected();
-		} else if (fileName.equals("tocreference.xml")) {
+		} else if (fileName.equals("tocreference.xml")) { //$NON-NLS-1$
 			isOk = referenceOption.isEnabled() && referenceOption.isSelected();
-		} else if (fileName.equals("tocsamples.xml")) {
+		} else if (fileName.equals("tocsamples.xml")) { //$NON-NLS-1$
 			isOk = samplesOption.isEnabled() && samplesOption.isSelected();
-		} else if (fileName.equals("toctasks.xml")) {
+		} else if (fileName.equals("toctasks.xml")) { //$NON-NLS-1$
 			isOk = tasksOption.isEnabled() && tasksOption.isSelected();
 		} else if (
-			(fileName.equals("maintopic.html") || fileName.equals("subtopic.html"))
-				&& sourceFile.getParentFile().getName().equals("html")) {
+			(fileName.equals("maintopic.html") || fileName.equals("subtopic.html")) //$NON-NLS-1$ //$NON-NLS-2$
+				&& sourceFile.getParentFile().getName().equals("html")) { //$NON-NLS-1$
 			isOk =
 				!primaryOption.isSelected()
 					|| (primaryOption.isSelected()
@@ -209,23 +209,23 @@ public class HelpTemplate extends PDETemplateSection {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement tocElement = factory.createElement(extension);
-		tocElement.setName("toc");
-		tocElement.setAttribute("file","toc.xml");
-		if (primaryOption.isSelected()) tocElement.setAttribute("primary","true");
+		tocElement.setName("toc"); //$NON-NLS-1$
+		tocElement.setAttribute("file","toc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (primaryOption.isSelected()) tocElement.setAttribute("primary","true"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(tocElement);
 		
 		if (genTestOption.isSelected() && genTestOption.isEnabled()) {
 			IPluginElement testTocElement = factory.createElement(extension);
-			testTocElement.setName("toc");
-			testTocElement.setAttribute("file","testToc.xml");
-			testTocElement.setAttribute("primary","true");
+			testTocElement.setName("toc"); //$NON-NLS-1$
+			testTocElement.setAttribute("file","testToc.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			testTocElement.setAttribute("primary","true"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(testTocElement);
 		}
-		addNonPrimaryTopic(conceptsOption, "tocconcepts.xml", extension);
-		addNonPrimaryTopic(gettingStartedOption, "tocgettingstarted.xml", extension);
-		addNonPrimaryTopic(referenceOption, "tocreference.xml", extension);
-		addNonPrimaryTopic(samplesOption, "tocsamples.xml", extension);
-		addNonPrimaryTopic(tasksOption, "toctasks.xml", extension);
+		addNonPrimaryTopic(conceptsOption, "tocconcepts.xml", extension); //$NON-NLS-1$
+		addNonPrimaryTopic(gettingStartedOption, "tocgettingstarted.xml", extension); //$NON-NLS-1$
+		addNonPrimaryTopic(referenceOption, "tocreference.xml", extension); //$NON-NLS-1$
+		addNonPrimaryTopic(samplesOption, "tocsamples.xml", extension); //$NON-NLS-1$
+		addNonPrimaryTopic(tasksOption, "toctasks.xml", extension); //$NON-NLS-1$
 		
 		if (!extension.isInTheModel())
 			plugin.add(extension);
@@ -234,8 +234,8 @@ public class HelpTemplate extends PDETemplateSection {
 	private void addNonPrimaryTopic(BooleanOption option, String file, IPluginExtension extension) throws CoreException {
 		if (option.isEnabled() && option.isSelected()) {
 			IPluginElement tocElement = extension.getPluginModel().getPluginFactory().createElement(extension);
-			tocElement.setName("toc");
-			tocElement.setAttribute("file", file);
+			tocElement.setName("toc"); //$NON-NLS-1$
+			tocElement.setAttribute("file", file); //$NON-NLS-1$
 			extension.add(tocElement);
 		}
 	}
@@ -244,21 +244,21 @@ public class HelpTemplate extends PDETemplateSection {
 	 * @see ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.help.toc";
+		return "org.eclipse.help.toc"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[] {new PluginReference("org.eclipse.help", null, 0)};
+		return new IPluginReference[] {new PluginReference("org.eclipse.help", null, 0)}; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"html/", "*.xml"};
+		return new String[] {"html/", "*.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

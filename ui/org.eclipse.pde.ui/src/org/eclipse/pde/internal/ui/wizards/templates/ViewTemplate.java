@@ -24,27 +24,27 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class ViewTemplate extends PDETemplateSection {
-	private static final String NL_TITLE0 = "ViewTemplate.title0";
-	private static final String NL_DESC0 = "ViewTemplate.desc0";
-	private static final String NL_TITLE1 = "ViewTemplate.title1";
-	private static final String NL_DESC1 = "ViewTemplate.desc1";
-	private static final String NL_PACKAGE_NAME = "ViewTemplate.packageName";
-	private static final String NL_CLASS_NAME = "ViewTemplate.className";
-	private static final String NL_NAME = "ViewTemplate.name";
-	private static final String NL_DEFAULT_NAME = "ViewTemplate.defaultName";
-	private static final String NL_CATEGORY_ID = "ViewTemplate.categoryId";
-	private static final String NL_CATEGORY_NAME = "ViewTemplate.categoryName";
-	private static final String NL_DEFAULT_CATEGORY_NAME = "ViewTemplate.defaultCategoryName";
-	private static final String NL_SELECT = "ViewTemplate.select";
-	private static final String NL_TABLE = "ViewTemplate.table";
-	private static final String NL_TREE = "ViewTemplate.tree";
-	private static final String NL_DOUBLE_CLICK = "ViewTemplate.doubleClick";
-	private static final String NL_POPUP = "ViewTemplate.popup";
-	private static final String NL_TOOLBAR = "ViewTemplate.toolbar";
-	private static final String NL_PULLDOWN = "ViewTemplate.pulldown";
-	private static final String NL_SORTING = "ViewTemplate.sorting";
-	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown";
-	private static final String NL_ADD_TO_PERSPECTIVE = "ViewTemplate.addToPerspective";
+	private static final String NL_TITLE0 = "ViewTemplate.title0"; //$NON-NLS-1$
+	private static final String NL_DESC0 = "ViewTemplate.desc0"; //$NON-NLS-1$
+	private static final String NL_TITLE1 = "ViewTemplate.title1"; //$NON-NLS-1$
+	private static final String NL_DESC1 = "ViewTemplate.desc1"; //$NON-NLS-1$
+	private static final String NL_PACKAGE_NAME = "ViewTemplate.packageName"; //$NON-NLS-1$
+	private static final String NL_CLASS_NAME = "ViewTemplate.className"; //$NON-NLS-1$
+	private static final String NL_NAME = "ViewTemplate.name"; //$NON-NLS-1$
+	private static final String NL_DEFAULT_NAME = "ViewTemplate.defaultName"; //$NON-NLS-1$
+	private static final String NL_CATEGORY_ID = "ViewTemplate.categoryId"; //$NON-NLS-1$
+	private static final String NL_CATEGORY_NAME = "ViewTemplate.categoryName"; //$NON-NLS-1$
+	private static final String NL_DEFAULT_CATEGORY_NAME = "ViewTemplate.defaultCategoryName"; //$NON-NLS-1$
+	private static final String NL_SELECT = "ViewTemplate.select"; //$NON-NLS-1$
+	private static final String NL_TABLE = "ViewTemplate.table"; //$NON-NLS-1$
+	private static final String NL_TREE = "ViewTemplate.tree"; //$NON-NLS-1$
+	private static final String NL_DOUBLE_CLICK = "ViewTemplate.doubleClick"; //$NON-NLS-1$
+	private static final String NL_POPUP = "ViewTemplate.popup"; //$NON-NLS-1$
+	private static final String NL_TOOLBAR = "ViewTemplate.toolbar"; //$NON-NLS-1$
+	private static final String NL_PULLDOWN = "ViewTemplate.pulldown"; //$NON-NLS-1$
+	private static final String NL_SORTING = "ViewTemplate.sorting"; //$NON-NLS-1$
+	private static final String NL_DRILLDOWN = "ViewTemplate.drilldown"; //$NON-NLS-1$
+	private static final String NL_ADD_TO_PERSPECTIVE = "ViewTemplate.addToPerspective"; //$NON-NLS-1$
 	
 	private BooleanOption addToPerspective;
 	/**
@@ -56,7 +56,7 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public String getSectionId() {
-		return "view";
+		return "view"; //$NON-NLS-1$
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -68,40 +68,40 @@ public class ViewTemplate extends PDETemplateSection {
 	private void createOptions() {
 		// first page	
 		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(NL_PACKAGE_NAME), (String)null, 0);
-		addOption("className", PDEPlugin.getResourceString(NL_CLASS_NAME), "SampleView", 0);
-		addOption("viewName", PDEPlugin.getResourceString(NL_NAME), PDEPlugin.getResourceString(NL_DEFAULT_NAME), 0);
-		addOption("viewCategoryId", PDEPlugin.getResourceString(NL_CATEGORY_ID), (String)null, 0);
-		addOption("viewCategoryName", PDEPlugin.getResourceString(NL_CATEGORY_NAME), PDEPlugin.getResourceString(NL_DEFAULT_CATEGORY_NAME), 0);
-		addOption("viewType", PDEPlugin.getResourceString(NL_SELECT), 
+		addOption("className", PDEPlugin.getResourceString(NL_CLASS_NAME), "SampleView", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("viewName", PDEPlugin.getResourceString(NL_NAME), PDEPlugin.getResourceString(NL_DEFAULT_NAME), 0); //$NON-NLS-1$
+		addOption("viewCategoryId", PDEPlugin.getResourceString(NL_CATEGORY_ID), (String)null, 0); //$NON-NLS-1$
+		addOption("viewCategoryName", PDEPlugin.getResourceString(NL_CATEGORY_NAME), PDEPlugin.getResourceString(NL_DEFAULT_CATEGORY_NAME), 0); //$NON-NLS-1$
+		addOption("viewType", PDEPlugin.getResourceString(NL_SELECT),  //$NON-NLS-1$
 					new String [][] {
-						{"tableViewer", PDEPlugin.getResourceString(NL_TABLE)},
-						{"treeViewer", PDEPlugin.getResourceString(NL_TREE)}},
-						"tableViewer", 0);
-		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),true,0);
+						{"tableViewer", PDEPlugin.getResourceString(NL_TABLE)}, //$NON-NLS-1$
+						{"treeViewer", PDEPlugin.getResourceString(NL_TREE)}}, //$NON-NLS-1$
+						"tableViewer", 0); //$NON-NLS-1$
+		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),true,0); //$NON-NLS-1$
 		// second page
-		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1);
-		addOption("popup", PDEPlugin.getResourceString(NL_POPUP), true, 1);
-		addOption("localToolbar", PDEPlugin.getResourceString(NL_TOOLBAR), true, 1);
-		addOption("localPulldown", PDEPlugin.getResourceString(NL_PULLDOWN), true, 1);
-		addOption("sorter", PDEPlugin.getResourceString(NL_SORTING), true, 1);
+		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1); //$NON-NLS-1$
+		addOption("popup", PDEPlugin.getResourceString(NL_POPUP), true, 1); //$NON-NLS-1$
+		addOption("localToolbar", PDEPlugin.getResourceString(NL_TOOLBAR), true, 1); //$NON-NLS-1$
+		addOption("localPulldown", PDEPlugin.getResourceString(NL_PULLDOWN), true, 1); //$NON-NLS-1$
+		addOption("sorter", PDEPlugin.getResourceString(NL_SORTING), true, 1); //$NON-NLS-1$
 		//addOption("filter", PDEPlugin.getResourceString(NL_FILTER), true, lists[1]);
-		addOption("drillDown", PDEPlugin.getResourceString(NL_DRILLDOWN), true, 1);
-		setOptionEnabled("drillDown", false);
+		addOption("drillDown", PDEPlugin.getResourceString(NL_DRILLDOWN), true, 1); //$NON-NLS-1$
+		setOptionEnabled("drillDown", false); //$NON-NLS-1$
 	}
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id+".views");
-		initializeOption("viewCategoryId", id);
+		initializeOption(KEY_PACKAGE_NAME, id+".views"); //$NON-NLS-1$
+		initializeOption("viewCategoryId", id); //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".views");
-		initializeOption("viewCategoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".views"); //$NON-NLS-1$
+		initializeOption("viewCategoryId", pluginId); //$NON-NLS-1$
 	}
 	
 	public boolean isDependentOnParentWizard() {
@@ -122,8 +122,8 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 
 	public void validateOptions(TemplateOption source) {
-		String viewType = getValue("viewType").toString();
-		setOptionEnabled("drillDown", viewType.equals("treeViewer"));
+		String viewType = getValue("viewType").toString(); //$NON-NLS-1$
+		setOptionEnabled("drillDown", viewType.equals("treeViewer")); //$NON-NLS-1$ //$NON-NLS-2$
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
 		} else {
@@ -144,47 +144,47 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.views";
+		return "org.eclipse.ui.views"; //$NON-NLS-1$
 	}
 	
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.views", true);
+		IPluginExtension extension = createExtension("org.eclipse.ui.views", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 		
-		String cid = getStringOption("viewCategoryId");
+		String cid = getStringOption("viewCategoryId"); //$NON-NLS-1$
 
 		createCategory(extension, cid);
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("className");
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("className"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		IPluginElement viewElement = factory.createElement(extension);
-		viewElement.setName("view");
-		viewElement.setAttribute("id", fullClassName);
-		viewElement.setAttribute("name", getStringOption("viewName"));
-		viewElement.setAttribute("icon", "icons/sample.gif");
+		viewElement.setName("view"); //$NON-NLS-1$
+		viewElement.setAttribute("id", fullClassName); //$NON-NLS-1$
+		viewElement.setAttribute("name", getStringOption("viewName")); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		viewElement.setAttribute("class", fullClassName);
-		viewElement.setAttribute("category", cid);
+		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
+		viewElement.setAttribute("category", cid); //$NON-NLS-1$
 		extension.add(viewElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 			
 		if (addToPerspective.isSelected()) {
 			IPluginExtension perspectiveExtension =
-				createExtension("org.eclipse.ui.perspectiveExtensions", true);
+				createExtension("org.eclipse.ui.perspectiveExtensions", true); //$NON-NLS-1$
 
 			IPluginElement perspectiveElement = factory.createElement(perspectiveExtension);
-			perspectiveElement.setName("perspectiveExtension");
+			perspectiveElement.setName("perspectiveExtension"); //$NON-NLS-1$
 			perspectiveElement.setAttribute(
-				"targetID",
-				"org.eclipse.ui.resourcePerspective");
+				"targetID", //$NON-NLS-1$
+				"org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
 
 			IPluginElement view = factory.createElement(perspectiveElement);
-			view.setName("view");
-			view.setAttribute("id", fullClassName);
-			view.setAttribute("relative", "org.eclipse.ui.views.TaskList");
-			view.setAttribute("relationship","right");
-			view.setAttribute("ratio", "0.5");
+			view.setName("view"); //$NON-NLS-1$
+			view.setAttribute("id", fullClassName); //$NON-NLS-1$
+			view.setAttribute("relative", "org.eclipse.ui.views.TaskList"); //$NON-NLS-1$ //$NON-NLS-2$
+			view.setAttribute("relationship","right"); //$NON-NLS-1$ //$NON-NLS-2$
+			view.setAttribute("ratio", "0.5"); //$NON-NLS-1$ //$NON-NLS-2$
 			perspectiveElement.add(view);
 
 			perspectiveExtension.add(perspectiveElement);
@@ -197,8 +197,8 @@ public class ViewTemplate extends PDETemplateSection {
 		IPluginObject [] elements = extension.getChildren();
 		for (int i=0; i<elements.length; i++) {
 			IPluginElement element = (IPluginElement)elements[i];
-			if (element.getName().equalsIgnoreCase("category")) {
-				IPluginAttribute att = element.getAttribute("id");
+			if (element.getName().equalsIgnoreCase("category")) { //$NON-NLS-1$
+				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
 				if (att!=null) {
 					String cid = att.getValue();
 					if (cid!=null && cid.equals(id))
@@ -207,9 +207,9 @@ public class ViewTemplate extends PDETemplateSection {
 			}
 		}
 		IPluginElement categoryElement = model.getFactory().createElement(extension);
-		categoryElement.setName("category");
-		categoryElement.setAttribute("name", getStringOption("viewCategoryName"));
-		categoryElement.setAttribute("id", id);
+		categoryElement.setName("category"); //$NON-NLS-1$
+		categoryElement.setAttribute("name", getStringOption("viewCategoryName")); //$NON-NLS-1$ //$NON-NLS-2$
+		categoryElement.setAttribute("id", id); //$NON-NLS-1$
 		extension.add(categoryElement);
 	}
 	
@@ -217,7 +217,7 @@ public class ViewTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"icons/"};
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -226,8 +226,8 @@ public class ViewTemplate extends PDETemplateSection {
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		if (schemaVersion != null)
-			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
-		result.add(new PluginReference("org.eclipse.ui", null, 0));	
+			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui", null, 0));	 //$NON-NLS-1$
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 }

@@ -15,7 +15,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PerspectiveExtensionsNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "PerspectiveExtensionsNewWizard.wtitle";
+	private static final String KEY_WTITLE = "PerspectiveExtensionsNewWizard.wtitle"; //$NON-NLS-1$
 	/**
 	 * Constructor for PerspectiveExtensionsNewWizard.
 	 */

@@ -15,7 +15,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "PropertyPageNewWizard.wtitle";
+	private static final String KEY_WTITLE = "PropertyPageNewWizard.wtitle"; //$NON-NLS-1$
 	/**
 	 * Constructor for PropertyPageNewWizard.
 	 */

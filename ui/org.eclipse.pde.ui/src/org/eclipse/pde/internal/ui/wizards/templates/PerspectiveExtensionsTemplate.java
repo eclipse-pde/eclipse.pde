@@ -18,42 +18,42 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 
-	public static final String KEY_TARGET_PERSPECTIVE = "targetPerspective";
-	public static final String KEY_PERSPECTIVE_SHORTCUT = "perspectiveShortcut";
-	public static final String KEY_VIEW_SHORTCUT = "viewShortcut";
-	public static final String KEY_WIZARD_SHORTCUT = "wizardShortcut";
-	public static final String KEY_VIEW = "view";
-	public static final String KEY_VIEW_RELATIVE = "viewRelative";
-	public static final String KEY_VIEW_RELATIONSHIP = "viewRelationship";
-	public static final String KEY_ACTION_SET = "actionSet";
+	public static final String KEY_TARGET_PERSPECTIVE = "targetPerspective"; //$NON-NLS-1$
+	public static final String KEY_PERSPECTIVE_SHORTCUT = "perspectiveShortcut"; //$NON-NLS-1$
+	public static final String KEY_VIEW_SHORTCUT = "viewShortcut"; //$NON-NLS-1$
+	public static final String KEY_WIZARD_SHORTCUT = "wizardShortcut"; //$NON-NLS-1$
+	public static final String KEY_VIEW = "view"; //$NON-NLS-1$
+	public static final String KEY_VIEW_RELATIVE = "viewRelative"; //$NON-NLS-1$
+	public static final String KEY_VIEW_RELATIONSHIP = "viewRelationship"; //$NON-NLS-1$
+	public static final String KEY_ACTION_SET = "actionSet"; //$NON-NLS-1$
 
-	private static final String NL_TITLE0 = "PerspectiveExtensionsTemplate.title0";
-	private static final String NL_DESC0 = "PerspectiveExtensionsTemplate.desc0";
-	private static final String NL_TITLE1 = "PerspectiveExtensionsTemplate.title1";
-	private static final String NL_DESC1 = "PerspectiveExtensionsTemplate.desc1";
+	private static final String NL_TITLE0 = "PerspectiveExtensionsTemplate.title0"; //$NON-NLS-1$
+	private static final String NL_DESC0 = "PerspectiveExtensionsTemplate.desc0"; //$NON-NLS-1$
+	private static final String NL_TITLE1 = "PerspectiveExtensionsTemplate.title1"; //$NON-NLS-1$
+	private static final String NL_DESC1 = "PerspectiveExtensionsTemplate.desc1"; //$NON-NLS-1$
 
 	private static final String NL_PERSPECTIVE_ID =
-		"PerspectiveExtensionsTemplate.perspectiveId";
+		"PerspectiveExtensionsTemplate.perspectiveId"; //$NON-NLS-1$
 	private static final String NL_ACTION_SET =
-		"PerspectiveExtensionsTemplate.actionSet";
+		"PerspectiveExtensionsTemplate.actionSet"; //$NON-NLS-1$
 	private static final String NL_SHORTCUT_ID =
-		"PerspectiveExtensionsTemplate.shortcutId";
+		"PerspectiveExtensionsTemplate.shortcutId"; //$NON-NLS-1$
 	private static final String NL_VIEW_SHORTCUT_ID =
-		"PerspectiveExtensionsTemplate.viewShortcutId";
+		"PerspectiveExtensionsTemplate.viewShortcutId"; //$NON-NLS-1$
 	private static final String NL_WIZARD_SHORTCUT_ID =
-		"PerspectiveExtensionsTemplate.wizardShortcutId";
+		"PerspectiveExtensionsTemplate.wizardShortcutId"; //$NON-NLS-1$
 
-	private static final String NL_VIEW_ID = "PerspectiveExtensionsTemplate.viewId";
+	private static final String NL_VIEW_ID = "PerspectiveExtensionsTemplate.viewId"; //$NON-NLS-1$
 	private static final String NL_RELATIVE_VIEW =
-		"PerspectiveExtensionsTemplate.relativeView";
+		"PerspectiveExtensionsTemplate.relativeView"; //$NON-NLS-1$
 	private static final String NL_RELATIVE_LOCATION =
-		"PerspectiveExtensionsTemplate.relativePosition";
-	private static final String NL_STACK = "PerspectiveExtensionsTemplate.stack";
-	private static final String NL_FAST = "PerspectiveExtensionsTemplate.fast";
-	private static final String NL_LEFT = "PerspectiveExtensionsTemplate.left";
-	private static final String NL_RIGHT = "PerspectiveExtensionsTemplate.right";
-	private static final String NL_TOP = "PerspectiveExtensionsTemplate.top";
-	private static final String NL_BOTTOM = "PerspectiveExtensionsTemplate.buttom";
+		"PerspectiveExtensionsTemplate.relativePosition"; //$NON-NLS-1$
+	private static final String NL_STACK = "PerspectiveExtensionsTemplate.stack"; //$NON-NLS-1$
+	private static final String NL_FAST = "PerspectiveExtensionsTemplate.fast"; //$NON-NLS-1$
+	private static final String NL_LEFT = "PerspectiveExtensionsTemplate.left"; //$NON-NLS-1$
+	private static final String NL_RIGHT = "PerspectiveExtensionsTemplate.right"; //$NON-NLS-1$
+	private static final String NL_TOP = "PerspectiveExtensionsTemplate.top"; //$NON-NLS-1$
+	private static final String NL_BOTTOM = "PerspectiveExtensionsTemplate.buttom"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for PerspectiveExtensionsTemplate.
@@ -81,51 +81,51 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		addOption(
 			KEY_TARGET_PERSPECTIVE,
 			PDEPlugin.getResourceString(NL_PERSPECTIVE_ID),
-			"org.eclipse.ui.resourcePerspective",
+			"org.eclipse.ui.resourcePerspective", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_ACTION_SET,
 			PDEPlugin.getResourceString(NL_ACTION_SET),
-			"org.eclipse.jdt.ui.JavaActionSet",
+			"org.eclipse.jdt.ui.JavaActionSet", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_PERSPECTIVE_SHORTCUT,
 			PDEPlugin.getResourceString(NL_SHORTCUT_ID),
-			"org.eclipse.debug.ui.DebugPerspective",
+			"org.eclipse.debug.ui.DebugPerspective", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_VIEW_SHORTCUT,
 			PDEPlugin.getResourceString(NL_VIEW_SHORTCUT_ID),
-			"org.eclipse.jdt.ui.TypeHierarchy",
+			"org.eclipse.jdt.ui.TypeHierarchy", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_WIZARD_SHORTCUT,
 			PDEPlugin.getResourceString(NL_WIZARD_SHORTCUT_ID),
-			"org.eclipse.jdt.ui.wizards.NewProjectCreationWizard",
+			"org.eclipse.jdt.ui.wizards.NewProjectCreationWizard", //$NON-NLS-1$
 			0);
 
 		// add options to second page 
 		addOption(
 			KEY_VIEW,
 			PDEPlugin.getResourceString(NL_VIEW_ID),
-			"org.eclipse.jdt.ui.PackageExplorer",
+			"org.eclipse.jdt.ui.PackageExplorer", //$NON-NLS-1$
 			1);
 		addOption(
 			KEY_VIEW_RELATIVE,
 			PDEPlugin.getResourceString(NL_RELATIVE_VIEW),
-			"org.eclipse.ui.views.ResourceNavigator",
+			"org.eclipse.ui.views.ResourceNavigator", //$NON-NLS-1$
 			1);
 		addOption(
 			KEY_VIEW_RELATIONSHIP,
 			PDEPlugin.getResourceString(NL_RELATIVE_LOCATION),
 			new String[][] {
-				{"stack", PDEPlugin.getResourceString(NL_STACK)},
-				{"fast", PDEPlugin.getResourceString(NL_FAST)},
-				{"left", PDEPlugin.getResourceString(NL_LEFT)},
-				{"right", PDEPlugin.getResourceString(NL_RIGHT)}, 
-				{"top", PDEPlugin.getResourceString(NL_TOP)}, 
-				{"bottom", PDEPlugin.getResourceString(NL_BOTTOM)}}, 
-			"stack", 
+				{"stack", PDEPlugin.getResourceString(NL_STACK)}, //$NON-NLS-1$
+				{"fast", PDEPlugin.getResourceString(NL_FAST)}, //$NON-NLS-1$
+				{"left", PDEPlugin.getResourceString(NL_LEFT)}, //$NON-NLS-1$
+				{"right", PDEPlugin.getResourceString(NL_RIGHT)},  //$NON-NLS-1$
+				{"top", PDEPlugin.getResourceString(NL_TOP)},  //$NON-NLS-1$
+				{"bottom", PDEPlugin.getResourceString(NL_BOTTOM)}},  //$NON-NLS-1$
+			"stack",  //$NON-NLS-1$
 			1);
 	}
 
@@ -140,7 +140,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	 * @see PDETemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
-		return "perspectiveExtensions";
+		return "perspectiveExtensions"; //$NON-NLS-1$
 	}
 
 	/**
@@ -175,43 +175,43 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement perspectiveElement = factory.createElement(extension);
-		perspectiveElement.setName("perspectiveExtension");
+		perspectiveElement.setName("perspectiveExtension"); //$NON-NLS-1$
 		perspectiveElement.setAttribute(
-			"targetID",
+			"targetID", //$NON-NLS-1$
 			getStringOption(KEY_TARGET_PERSPECTIVE));
 
 		IPluginElement wizardShortcutElement =
 			factory.createElement(perspectiveElement);
-		wizardShortcutElement.setName("newWizardShortcut");
-		wizardShortcutElement.setAttribute("id", getStringOption(KEY_WIZARD_SHORTCUT));
+		wizardShortcutElement.setName("newWizardShortcut"); //$NON-NLS-1$
+		wizardShortcutElement.setAttribute("id", getStringOption(KEY_WIZARD_SHORTCUT)); //$NON-NLS-1$
 		perspectiveElement.add(wizardShortcutElement);
 
 		IPluginElement viewShortcutElement = factory.createElement(perspectiveElement);
-		viewShortcutElement.setName("viewShortcut");
-		viewShortcutElement.setAttribute("id", getStringOption(KEY_VIEW_SHORTCUT));
+		viewShortcutElement.setName("viewShortcut"); //$NON-NLS-1$
+		viewShortcutElement.setAttribute("id", getStringOption(KEY_VIEW_SHORTCUT)); //$NON-NLS-1$
 		perspectiveElement.add(viewShortcutElement);
 
 		IPluginElement perspectiveShortcutElement =
 			factory.createElement(perspectiveElement);
-		perspectiveShortcutElement.setName("perspectiveShortcut");
+		perspectiveShortcutElement.setName("perspectiveShortcut"); //$NON-NLS-1$
 		perspectiveShortcutElement.setAttribute(
-			"id",
+			"id", //$NON-NLS-1$
 			getStringOption(KEY_PERSPECTIVE_SHORTCUT));
 		perspectiveElement.add(perspectiveShortcutElement);
 
 		IPluginElement actionSetElement = factory.createElement(perspectiveElement);
-		actionSetElement.setName("actionSet");
-		actionSetElement.setAttribute("id", getStringOption(KEY_ACTION_SET));
+		actionSetElement.setName("actionSet"); //$NON-NLS-1$
+		actionSetElement.setAttribute("id", getStringOption(KEY_ACTION_SET)); //$NON-NLS-1$
 		perspectiveElement.add(actionSetElement);
 
 		IPluginElement viewElement = factory.createElement(perspectiveElement);
-		viewElement.setName("view");
-		viewElement.setAttribute("id", getStringOption(KEY_VIEW));
-		viewElement.setAttribute("relative", getStringOption(KEY_VIEW_RELATIVE));
+		viewElement.setName("view"); //$NON-NLS-1$
+		viewElement.setAttribute("id", getStringOption(KEY_VIEW)); //$NON-NLS-1$
+		viewElement.setAttribute("relative", getStringOption(KEY_VIEW_RELATIVE)); //$NON-NLS-1$
 		String relationship = getValue(KEY_VIEW_RELATIONSHIP).toString();
-		viewElement.setAttribute("relationship", relationship);
-		if (!relationship.equals("stack") && !relationship.equals("fast")) {
-			viewElement.setAttribute("ratio", "0.5");
+		viewElement.setAttribute("relationship", relationship); //$NON-NLS-1$
+		if (!relationship.equals("stack") && !relationship.equals("fast")) { //$NON-NLS-1$ //$NON-NLS-2$
+			viewElement.setAttribute("ratio", "0.5"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		perspectiveElement.add(viewElement);
 
@@ -224,7 +224,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	 * @see ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.perspectiveExtensions";
+		return "org.eclipse.ui.perspectiveExtensions"; //$NON-NLS-1$
 	}
 
 }

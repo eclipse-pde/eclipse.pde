@@ -20,20 +20,20 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class MultiPageEditorTemplate extends BaseEditorTemplate {
-	private static final String KEY_TITLE = "MultiPageEditorTemplate.title";
-	private static final String KEY_DESC = "MultiPageEditorTemplate.desc";
+	private static final String KEY_TITLE = "MultiPageEditorTemplate.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "MultiPageEditorTemplate.desc"; //$NON-NLS-1$
 	private static final String KEY_PACKAGE_LABEL =
-		"MultiPageEditorTemplate.packageName";
+		"MultiPageEditorTemplate.packageName"; //$NON-NLS-1$
 	private static final String KEY_CLASS_LABEL =
-		"MultiPageEditorTemplate.className";
+		"MultiPageEditorTemplate.className"; //$NON-NLS-1$
 	private static final String KEY_CONTRIBUTOR_LABEL =
-		"MultiPageEditorTemplate.contributor";
+		"MultiPageEditorTemplate.contributor"; //$NON-NLS-1$
 	private static final String KEY_EDITOR_LABEL =
-		"MultiPageEditorTemplate.editorName";
+		"MultiPageEditorTemplate.editorName"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT_EDITOR_NAME =
-		"MultiPageEditorTemplate.defaultEditorName";
+		"MultiPageEditorTemplate.defaultEditorName"; //$NON-NLS-1$
 	private static final String KEY_EXTENSIONS_LABEL =
-		"MultiPageEditorTemplate.extensions";
+		"MultiPageEditorTemplate.extensions"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for MultiPageEditorTemplate.
@@ -44,19 +44,19 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	}
 
 	public String getSectionId() {
-		return "multiPageEditor";
+		return "multiPageEditor"; //$NON-NLS-1$
 	}
 	
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion != null) {
 			IPluginReference[] dep = new IPluginReference[7];
-			dep[0] = new PluginReference("org.eclipse.jface.text", null, 0);
-			dep[1] = new PluginReference("org.eclipse.core.resources", null, 0);
-			dep[2] = new PluginReference("org.eclipse.ui", null, 0);
-			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0);
-			dep[4] = new PluginReference("org.eclipse.ui.ide", null, 0);
-			dep[5] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0);
-			dep[6] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0);
+			dep[0] = new PluginReference("org.eclipse.jface.text", null, 0); //$NON-NLS-1$
+			dep[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+			dep[2] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
+			dep[3] = new PluginReference("org.eclipse.ui.editors", null, 0); //$NON-NLS-1$
+			dep[4] = new PluginReference("org.eclipse.ui.ide", null, 0); //$NON-NLS-1$
+			dep[5] = new PluginReference("org.eclipse.ui.workbench.texteditor", null, 0); //$NON-NLS-1$
+			dep[6] = new PluginReference("org.eclipse.core.runtime.compatibility", null, 0); //$NON-NLS-1$
 			return dep;
 		}
 		return super.getDependencies(schemaVersion);
@@ -77,24 +77,24 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 			(String) null,
 			0);
 		addOption(
-			"editorClassName",
+			"editorClassName", //$NON-NLS-1$
 			PDEPlugin.getResourceString(KEY_CLASS_LABEL),
-			"MultiPageEditor",
+			"MultiPageEditor", //$NON-NLS-1$
 			0);
 		addOption(
-			"contributorClassName",
+			"contributorClassName", //$NON-NLS-1$
 			PDEPlugin.getResourceString(KEY_CONTRIBUTOR_LABEL),
-			"MultiPageEditorContributor",
+			"MultiPageEditorContributor", //$NON-NLS-1$
 			0);
 		addOption(
-			"editorName",
+			"editorName", //$NON-NLS-1$
 			PDEPlugin.getResourceString(KEY_EDITOR_LABEL),
 			PDEPlugin.getResourceString(KEY_DEFAULT_EDITOR_NAME),
 			0);
 		addOption(
-			"extensions",
+			"extensions", //$NON-NLS-1$
 			PDEPlugin.getResourceString(KEY_EXTENSIONS_LABEL),
-			"mpe",
+			"mpe", //$NON-NLS-1$
 			0);
 	}
 
@@ -102,13 +102,13 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".editors");
+		initializeOption(KEY_PACKAGE_NAME, id + ".editors"); //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors"); //$NON-NLS-1$
 	}
 
 	public boolean isDependentOnParentWizard() {
@@ -145,25 +145,25 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true);
+		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		String editorClassName =
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName");
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("editorClassName"); //$NON-NLS-1$ //$NON-NLS-2$
 		String contributorClassName =
 			getStringOption(KEY_PACKAGE_NAME)
-				+ "."
-				+ getStringOption("contributorClassName");
+				+ "." //$NON-NLS-1$
+				+ getStringOption("contributorClassName"); //$NON-NLS-1$
 
 		IPluginElement editorElement = factory.createElement(extension);
-		editorElement.setName("editor");
-		editorElement.setAttribute("id", editorClassName);
-		editorElement.setAttribute("name", getStringOption("editorName"));
-		editorElement.setAttribute("icon", "icons/sample.gif");
-		editorElement.setAttribute("extensions", getStringOption("extensions"));
+		editorElement.setName("editor"); //$NON-NLS-1$
+		editorElement.setAttribute("id", editorClassName); //$NON-NLS-1$
+		editorElement.setAttribute("name", getStringOption("editorName")); //$NON-NLS-1$ //$NON-NLS-2$
+		editorElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		editorElement.setAttribute("extensions", getStringOption("extensions")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		editorElement.setAttribute("class", editorClassName);
-		editorElement.setAttribute("contributorClass", contributorClassName);
+		editorElement.setAttribute("class", editorClassName); //$NON-NLS-1$
+		editorElement.setAttribute("contributorClass", contributorClassName); //$NON-NLS-1$
 		extension.add(editorElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);

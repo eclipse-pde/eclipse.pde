@@ -16,7 +16,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class ViewNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "ViewNewWizard.wtitle";
+	private static final String KEY_WTITLE = "ViewNewWizard.wtitle"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for ViewNewWizard.

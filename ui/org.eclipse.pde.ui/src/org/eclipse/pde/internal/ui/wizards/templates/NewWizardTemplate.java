@@ -23,17 +23,17 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class NewWizardTemplate extends PDETemplateSection {
-	private static final String KEY_TITLE = "NewWizardTemplate.title";
-	private static final String KEY_DESC = "NewWizardTemplate.desc";
-	private static final String KEY_PACKAGE_LABEL = "NewWizardTemplate.packageName";	
-	private static final String KEY_CATEGORY_ID_LABEL = "NewWizardTemplate.categoryId";
-	private static final String KEY_CATEGORY_NAME_LABEL = "NewWizardTemplate.categoryName";
-	private static final String KEY_CLASS_LABEL = "NewWizardTemplate.className";
-	private static final String KEY_PAGE_CLASS_LABEL = "NewWizardTemplate.pageClassName";
-	private static final String KEY_WIZARD_LABEL = "NewWizardTemplate.wizardName";
-	private static final String KEY_DEFAULT_NAME = "NewWizardTemplate.defaultName";
-	private static final String KEY_EXTENSION_LABEL = "NewWizardTemplate.extension";
-	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName";
+	private static final String KEY_TITLE = "NewWizardTemplate.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "NewWizardTemplate.desc"; //$NON-NLS-1$
+	private static final String KEY_PACKAGE_LABEL = "NewWizardTemplate.packageName";	 //$NON-NLS-1$
+	private static final String KEY_CATEGORY_ID_LABEL = "NewWizardTemplate.categoryId"; //$NON-NLS-1$
+	private static final String KEY_CATEGORY_NAME_LABEL = "NewWizardTemplate.categoryName"; //$NON-NLS-1$
+	private static final String KEY_CLASS_LABEL = "NewWizardTemplate.className"; //$NON-NLS-1$
+	private static final String KEY_PAGE_CLASS_LABEL = "NewWizardTemplate.pageClassName"; //$NON-NLS-1$
+	private static final String KEY_WIZARD_LABEL = "NewWizardTemplate.wizardName"; //$NON-NLS-1$
+	private static final String KEY_DEFAULT_NAME = "NewWizardTemplate.defaultName"; //$NON-NLS-1$
+	private static final String KEY_EXTENSION_LABEL = "NewWizardTemplate.extension"; //$NON-NLS-1$
+	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName"; //$NON-NLS-1$
 
 	public NewWizardTemplate() {
 		setPageCount(1);
@@ -41,7 +41,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 	}
 	
 	public String getSectionId() {
-		return "newWizard";
+		return "newWizard"; //$NON-NLS-1$
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -53,28 +53,28 @@ public class NewWizardTemplate extends PDETemplateSection {
 	private void createOptions() {
 		// first page
 		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(KEY_PACKAGE_LABEL), (String)null, 0);
-		addOption("categoryId", PDEPlugin.getResourceString(KEY_CATEGORY_ID_LABEL), (String)null, 0);
-		addOption("categoryName", PDEPlugin.getResourceString(KEY_CATEGORY_NAME_LABEL), "Sample Wizards", 0);
-		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0);
-		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0);
-		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0);
-		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0);
-		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL), "new_file.mpe", 0);
+		addOption("categoryId", PDEPlugin.getResourceString(KEY_CATEGORY_ID_LABEL), (String)null, 0); //$NON-NLS-1$
+		addOption("categoryName", PDEPlugin.getResourceString(KEY_CATEGORY_NAME_LABEL), "Sample Wizards", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0); //$NON-NLS-1$
+		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL), "new_file.mpe", 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id+".wizards");
-		initializeOption("categoryId", id);
+		initializeOption(KEY_PACKAGE_NAME, id+".wizards"); //$NON-NLS-1$
+		initializeOption("categoryId", id); //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards");
-		initializeOption("categoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards"); //$NON-NLS-1$
+		initializeOption("categoryId", pluginId); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -82,11 +82,11 @@ public class NewWizardTemplate extends PDETemplateSection {
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
-		result.add(new PluginReference("org.eclipse.core.resources", null, 0));
-		result.add(new PluginReference("org.eclipse.ui", null, 0));
+		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$
+		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (schemaVersion != null) {
-			result.add(new PluginReference("org.eclipse.ui.ide", null, 0));
-			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
+			result.add(new PluginReference("org.eclipse.ui.ide", null, 0)); //$NON-NLS-1$
+			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0)); //$NON-NLS-1$
 		}
 		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}
@@ -124,26 +124,26 @@ public class NewWizardTemplate extends PDETemplateSection {
 	}
 	
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.newWizards";
+		return "org.eclipse.ui.newWizards"; //$NON-NLS-1$
 	}
 	
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.newWizards", true);
+		IPluginExtension extension = createExtension("org.eclipse.ui.newWizards", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 		
-		String cid = getStringOption("categoryId");
+		String cid = getStringOption("categoryId"); //$NON-NLS-1$
 
 		createCategory(extension, cid);
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("wizardClassName");
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("wizardClassName"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		IPluginElement viewElement = factory.createElement(extension);
-		viewElement.setName("wizard");
-		viewElement.setAttribute("id", fullClassName);
-		viewElement.setAttribute("name", getStringOption("wizardName"));
-		viewElement.setAttribute("icon", "icons/sample.gif");
-		viewElement.setAttribute("class", fullClassName);
-		viewElement.setAttribute("category", cid);
+		viewElement.setName("wizard"); //$NON-NLS-1$
+		viewElement.setAttribute("id", fullClassName); //$NON-NLS-1$
+		viewElement.setAttribute("name", getStringOption("wizardName")); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		viewElement.setAttribute("class", fullClassName); //$NON-NLS-1$
+		viewElement.setAttribute("category", cid); //$NON-NLS-1$
 		extension.add(viewElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
@@ -153,8 +153,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 		IPluginObject [] elements = extension.getChildren();
 		for (int i=0; i<elements.length; i++) {
 			IPluginElement element = (IPluginElement)elements[i];
-			if (element.getName().equalsIgnoreCase("category")) {
-				IPluginAttribute att = element.getAttribute("id");
+			if (element.getName().equalsIgnoreCase("category")) { //$NON-NLS-1$
+				IPluginAttribute att = element.getAttribute("id"); //$NON-NLS-1$
 				if (att!=null) {
 					String cid = att.getValue();
 					if (cid!=null && cid.equals(id))
@@ -163,9 +163,9 @@ public class NewWizardTemplate extends PDETemplateSection {
 			}
 		}
 		IPluginElement categoryElement = model.getFactory().createElement(extension);
-		categoryElement.setName("category");
-		categoryElement.setAttribute("name", getStringOption("categoryName"));
-		categoryElement.setAttribute("id", id);
+		categoryElement.setName("category"); //$NON-NLS-1$
+		categoryElement.setAttribute("name", getStringOption("categoryName")); //$NON-NLS-1$ //$NON-NLS-2$
+		categoryElement.setAttribute("id", id); //$NON-NLS-1$
 		extension.add(categoryElement);
 	}
 	
@@ -173,6 +173,6 @@ public class NewWizardTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"icons/"};
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 }

@@ -20,22 +20,22 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.wizard.*;
 
 public class HelloWorldTemplate extends PDETemplateSection {
-	public static final String KEY_CLASS_NAME = "className";
-	public static final String KEY_MESSAGE = "message";
-	public static final String KEY_ADD_TO_PERSPECTIVE = "addToPerspective";
-	public static final String CLASS_NAME = "SampleAction";
+	public static final String KEY_CLASS_NAME = "className"; //$NON-NLS-1$
+	public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
+	public static final String KEY_ADD_TO_PERSPECTIVE = "addToPerspective"; //$NON-NLS-1$
+	public static final String CLASS_NAME = "SampleAction"; //$NON-NLS-1$
 
-	private static final String KEY_TITLE = "HelloWorldTemplate.title";
-	private static final String KEY_DESC = "HelloWorldTemplate.desc";
+	private static final String KEY_TITLE = "HelloWorldTemplate.title"; //$NON-NLS-1$
+	private static final String KEY_DESC = "HelloWorldTemplate.desc"; //$NON-NLS-1$
 	private static final String KEY_PACKAGE_LABEL =
-		"HelloWorldTemplate.packageName";
-	private static final String KEY_CLASS_LABEL = "HelloWorldTemplate.className";
-	private static final String KEY_TEXT_LABEL = "HelloWorldTemplate.messageText";
+		"HelloWorldTemplate.packageName"; //$NON-NLS-1$
+	private static final String KEY_CLASS_LABEL = "HelloWorldTemplate.className"; //$NON-NLS-1$
+	private static final String KEY_TEXT_LABEL = "HelloWorldTemplate.messageText"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT_MESSAGE =
-		"HelloWorldTemplate.defaultMessage";
-	private static final String KEY_SAMPLE_ACTION_SET = "HelloWorldTemplate.sampleActionSet";		
-	private static final String KEY_SAMPLE_MENU = "HelloWorldTemplate.sampleMenu";
-	private static final String KEY_SAMPLE_ACTION = "HelloWorldTemplate.sampleAction";
+		"HelloWorldTemplate.defaultMessage"; //$NON-NLS-1$
+	private static final String KEY_SAMPLE_ACTION_SET = "HelloWorldTemplate.sampleActionSet";		 //$NON-NLS-1$
+	private static final String KEY_SAMPLE_MENU = "HelloWorldTemplate.sampleMenu"; //$NON-NLS-1$
+	private static final String KEY_SAMPLE_ACTION = "HelloWorldTemplate.sampleAction"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor for HelloWorldTemplate.
@@ -46,7 +46,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	}
 
 	public String getSectionId() {
-		return "helloWorld";
+		return "helloWorld"; //$NON-NLS-1$
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -110,53 +110,53 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".actions");
+		initializeOption(KEY_PACKAGE_NAME, id + ".actions"); //$NON-NLS-1$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".actions");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".actions"); //$NON-NLS-1$
 	}
 
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.actionSets";
+		return "org.eclipse.ui.actionSets"; //$NON-NLS-1$
 	}
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.actionSets", true);
+		IPluginExtension extension = createExtension("org.eclipse.ui.actionSets", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement setElement = factory.createElement(extension);
-		setElement.setName("actionSet");
-		setElement.setAttribute("id", plugin.getId() + ".actionSet");
-		setElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION_SET));
-		setElement.setAttribute("visible", "true");
+		setElement.setName("actionSet"); //$NON-NLS-1$
+		setElement.setAttribute("id", plugin.getId() + ".actionSet"); //$NON-NLS-1$ //$NON-NLS-2$
+		setElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION_SET)); //$NON-NLS-1$
+		setElement.setAttribute("visible", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement menuElement = factory.createElement(setElement);
-		menuElement.setName("menu");
-		menuElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_MENU));
-		menuElement.setAttribute("id", "sampleMenu");
+		menuElement.setName("menu"); //$NON-NLS-1$
+		menuElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_MENU)); //$NON-NLS-1$
+		menuElement.setAttribute("id", "sampleMenu"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement groupElement = factory.createElement(menuElement);
-		groupElement.setName("separator");
-		groupElement.setAttribute("name", "sampleGroup");
+		groupElement.setName("separator"); //$NON-NLS-1$
+		groupElement.setAttribute("name", "sampleGroup"); //$NON-NLS-1$ //$NON-NLS-2$
 		menuElement.add(groupElement);
 		setElement.add(menuElement);
 
 		String fullClassName =
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASS_NAME);
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASS_NAME); //$NON-NLS-1$
 
 		IPluginElement actionElement = factory.createElement(setElement);
-		actionElement.setName("action");
-		actionElement.setAttribute("id", fullClassName);
-		actionElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION));
-		actionElement.setAttribute("menubarPath", "sampleMenu/sampleGroup");
-		actionElement.setAttribute("toolbarPath", "sampleGroup");
-		actionElement.setAttribute("icon", "icons/sample.gif");
-		actionElement.setAttribute("tooltip", PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE));
-		actionElement.setAttribute("class", fullClassName);
+		actionElement.setName("action"); //$NON-NLS-1$
+		actionElement.setAttribute("id", fullClassName); //$NON-NLS-1$
+		actionElement.setAttribute("label", PDEPlugin.getResourceString(KEY_SAMPLE_ACTION)); //$NON-NLS-1$
+		actionElement.setAttribute("menubarPath", "sampleMenu/sampleGroup"); //$NON-NLS-1$ //$NON-NLS-2$
+		actionElement.setAttribute("toolbarPath", "sampleGroup"); //$NON-NLS-1$ //$NON-NLS-2$
+		actionElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		actionElement.setAttribute("tooltip", PDEPlugin.getResourceString(KEY_DEFAULT_MESSAGE)); //$NON-NLS-1$
+		actionElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		setElement.add(actionElement);
 		extension.add(setElement);
 		if (!extension.isInTheModel())
@@ -167,6 +167,6 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"icons/"};
+		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 }

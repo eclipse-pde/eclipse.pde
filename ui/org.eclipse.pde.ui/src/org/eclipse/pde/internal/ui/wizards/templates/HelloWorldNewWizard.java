@@ -16,7 +16,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class HelloWorldNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "HelloWorldNewWizard.wtitle";
+	private static final String KEY_WTITLE = "HelloWorldNewWizard.wtitle"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for HelloWorldNewWizard.

@@ -32,11 +32,11 @@ public class TemplateSelectionPage extends WizardPage {
 	private ArrayList visiblePages;
 	private WizardCheckboxTablePart tablePart;
 	private FormBrowser descriptionBrowser;
-	private static final String NL_TITLE = "TemplateSelectionPage.title";
-	private static final String NL_DESC = "TemplateSelectionPage.desc";
-	private static final String NL_TABLE = "TemplateSelectionPage.table";
-	private static final String NL_CNAME = "TemplateSelectionPage.column.name";
-	private static final String NL_CPOINT = "TemplateSelectionPage.column.point";
+	private static final String NL_TITLE = "TemplateSelectionPage.title"; //$NON-NLS-1$
+	private static final String NL_DESC = "TemplateSelectionPage.desc"; //$NON-NLS-1$
+	private static final String NL_TABLE = "TemplateSelectionPage.table"; //$NON-NLS-1$
+	private static final String NL_CNAME = "TemplateSelectionPage.column.name"; //$NON-NLS-1$
+	private static final String NL_CPOINT = "TemplateSelectionPage.column.point"; //$NON-NLS-1$
 
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel) {
@@ -89,7 +89,7 @@ public class TemplateSelectionPage extends WizardPage {
 	 * @param pageName
 	 */
 	public TemplateSelectionPage() {
-		super("templateSelection");
+		super("templateSelection"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		setDescription(PDEPlugin.getResourceString(NL_DESC));
 		initializeTemplates();
@@ -99,7 +99,7 @@ public class TemplateSelectionPage extends WizardPage {
 		createCandidates();
 		tablePart = new TablePart(PDEPlugin.getResourceString(NL_TABLE));
 		descriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
-		descriptionBrowser.setText("");
+		descriptionBrowser.setText(""); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		visiblePages = new ArrayList();
 	}
@@ -113,7 +113,7 @@ public class TemplateSelectionPage extends WizardPage {
 		candidates = new ArrayList();
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements =
-			registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates");
+			registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			addTemplate(element, candidates);
@@ -121,11 +121,11 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	private void addTemplate(IConfigurationElement config, ArrayList result) {
-		if (config.getName().equalsIgnoreCase("template") == false)
+		if (config.getName().equalsIgnoreCase("template") == false) //$NON-NLS-1$
 			return;
 
 		try {
-			Object template = config.createExecutableExtension("class");
+			Object template = config.createExecutableExtension("class"); //$NON-NLS-1$
 			if (template instanceof ITemplateSection) {
 				result.add(template);
 			}
@@ -191,9 +191,9 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	private void handleSelectionChanged(ITemplateSection section) {
-		String text = section != null ? section.getDescription() : "";
+		String text = section != null ? section.getDescription() : ""; //$NON-NLS-1$
 		if (text.length() > 0)
-			text = "<p>" + text + "</p>";
+			text = "<p>" + text + "</p>"; //$NON-NLS-1$ //$NON-NLS-2$
 		descriptionBrowser.setText(text);
 	}
 

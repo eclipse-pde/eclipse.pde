@@ -19,30 +19,30 @@ import org.eclipse.pde.ui.templates.*;
 
 public class PopupMenuTemplate extends PDETemplateSection {
 
-	public static final String KEY_TARGET_OBJECT = "objectClass";
-	public static final String KEY_NAME_FILTER = "nameFilter";
-	public static final String KEY_SUBMENU_LABEL = "subMenuLabel";
-	public static final String KEY_ACTION_LABEL = "actionLabel";
-	public static final String KEY_ACTION_CLASS = "actionClass";
-	public static final String KEY_SELECTION = "selection";
+	public static final String KEY_TARGET_OBJECT = "objectClass"; //$NON-NLS-1$
+	public static final String KEY_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
+	public static final String KEY_SUBMENU_LABEL = "subMenuLabel"; //$NON-NLS-1$
+	public static final String KEY_ACTION_LABEL = "actionLabel"; //$NON-NLS-1$
+	public static final String KEY_ACTION_CLASS = "actionClass"; //$NON-NLS-1$
+	public static final String KEY_SELECTION = "selection"; //$NON-NLS-1$
 
-	private static final String NL_TITLE = "PopupMenuTemplate.title";
-	private static final String NL_DESC = "PopupMenuTemplate.desc";
-	private static final String NL_TARGET_CLASS = "PopupMenuTemplate.targetClass";
-	private static final String NL_NAME_FILTER = "PopupMenuTemplate.nameFilter";
-	private static final String NL_SUBMENU_NAME = "PopupMenuTemplate.submenuName";
+	private static final String NL_TITLE = "PopupMenuTemplate.title"; //$NON-NLS-1$
+	private static final String NL_DESC = "PopupMenuTemplate.desc"; //$NON-NLS-1$
+	private static final String NL_TARGET_CLASS = "PopupMenuTemplate.targetClass"; //$NON-NLS-1$
+	private static final String NL_NAME_FILTER = "PopupMenuTemplate.nameFilter"; //$NON-NLS-1$
+	private static final String NL_SUBMENU_NAME = "PopupMenuTemplate.submenuName"; //$NON-NLS-1$
 	private static final String NL_DEFAULT_SUBMENU_NAME =
-		"PopupMenuTemplate.defaultSubmenuName";
-	private static final String NL_ACTION_LABEL = "PopupMenuTemplate.actionLabel";
+		"PopupMenuTemplate.defaultSubmenuName"; //$NON-NLS-1$
+	private static final String NL_ACTION_LABEL = "PopupMenuTemplate.actionLabel"; //$NON-NLS-1$
 	private static final String NL_DEFAULT_ACTION_NAME =
-		"PopupMenuTemplate.defaultActionName";
-	private static final String NL_PACKAGE_NAME = "PopupMenuTemplate.packageName";
-	private static final String NL_ACTION_CLASS = "PopupMenuTemplate.actionClass";
-	private static final String NL_ENABLED_FOR = "PopupMenuTemplate.enabledFor";
+		"PopupMenuTemplate.defaultActionName"; //$NON-NLS-1$
+	private static final String NL_PACKAGE_NAME = "PopupMenuTemplate.packageName"; //$NON-NLS-1$
+	private static final String NL_ACTION_CLASS = "PopupMenuTemplate.actionClass"; //$NON-NLS-1$
+	private static final String NL_ENABLED_FOR = "PopupMenuTemplate.enabledFor"; //$NON-NLS-1$
 	private static final String NL_SINGLE_SELECTION =
-		"PopupMenuTemplate.singleSelection";
+		"PopupMenuTemplate.singleSelection"; //$NON-NLS-1$
 	private static final String NL_MULTIPLE_SELECTION =
-		"PopupMenuTemplate.multipleSelection";
+		"PopupMenuTemplate.multipleSelection"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for PropertyPageTemplate.
@@ -64,12 +64,12 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		addOption(
 			KEY_TARGET_OBJECT,
 			PDEPlugin.getResourceString(NL_TARGET_CLASS),
-			"org.eclipse.core.resources.IFile",
+			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_NAME_FILTER,
 			PDEPlugin.getResourceString(NL_NAME_FILTER),
-			"plugin.xml",
+			"plugin.xml", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_SUBMENU_LABEL,
@@ -89,23 +89,23 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		addOption(
 			KEY_ACTION_CLASS,
 			PDEPlugin.getResourceString(NL_ACTION_CLASS),
-			"NewAction",
+			PDEPlugin.getResourceString("PopupMenuTemplate.newAction"), //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_SELECTION,
 			PDEPlugin.getResourceString(NL_ENABLED_FOR),
 			new String[][] {
-				{ "singleSelection", PDEPlugin.getResourceString(NL_SINGLE_SELECTION)},
+				{ "singleSelection", PDEPlugin.getResourceString(NL_SINGLE_SELECTION)}, //$NON-NLS-1$
 				{
-				"multipleSelection", PDEPlugin.getResourceString(NL_MULTIPLE_SELECTION)
+				"multipleSelection", PDEPlugin.getResourceString(NL_MULTIPLE_SELECTION) //$NON-NLS-1$
 				}
-		}, "singleSelection", 0);
+		}, "singleSelection", 0); //$NON-NLS-1$
 	}
 	/**
 	 * @see PDETemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
-		return "popupMenus";
+		return "popupMenus"; //$NON-NLS-1$
 	}
 
 	public boolean isDependentOnParentWizard() {
@@ -116,14 +116,14 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String id = data.getId();
-		initializeOption(KEY_PACKAGE_NAME, id + ".popup.actions");
+		initializeOption(KEY_PACKAGE_NAME, id + ".popup.actions"); //$NON-NLS-1$
 	}
 
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId + ".popup.actions");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".popup.actions"); //$NON-NLS-1$
 	}
 
 	/**
@@ -158,44 +158,44 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		IPluginElement objectContributionElement = factory.createElement(extension);
-		objectContributionElement.setName("objectContribution");
+		objectContributionElement.setName("objectContribution"); //$NON-NLS-1$
 		objectContributionElement.setAttribute(
-			"objectClass",
+			"objectClass", //$NON-NLS-1$
 			getStringOption(KEY_TARGET_OBJECT));
 		objectContributionElement.setAttribute(
-			"nameFilter",
+			"nameFilter", //$NON-NLS-1$
 			getStringOption(KEY_NAME_FILTER));
 		objectContributionElement.setAttribute(
-			"id",
-			model.getPluginBase().getId() + ".contribution1");
+			"id", //$NON-NLS-1$
+			model.getPluginBase().getId() + ".contribution1"); //$NON-NLS-1$
 
 		IPluginElement menuElement = factory.createElement(objectContributionElement);
-		menuElement.setName("menu");
-		menuElement.setAttribute("label", getStringOption(KEY_SUBMENU_LABEL));
-		menuElement.setAttribute("path", "additions");
-		menuElement.setAttribute("id", model.getPluginBase().getId() + ".menu1");
+		menuElement.setName("menu"); //$NON-NLS-1$
+		menuElement.setAttribute("label", getStringOption(KEY_SUBMENU_LABEL)); //$NON-NLS-1$
+		menuElement.setAttribute("path", "additions"); //$NON-NLS-1$ //$NON-NLS-2$
+		menuElement.setAttribute("id", model.getPluginBase().getId() + ".menu1"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement separatorElement = factory.createElement(menuElement);
-		separatorElement.setName("separator");
-		separatorElement.setAttribute("name", "group1");
+		separatorElement.setName("separator"); //$NON-NLS-1$
+		separatorElement.setAttribute("name", "group1"); //$NON-NLS-1$ //$NON-NLS-2$
 		menuElement.add(separatorElement);
 		objectContributionElement.add(menuElement);
 
 		IPluginElement actionElement = factory.createElement(objectContributionElement);
-		actionElement.setName("action");
-		actionElement.setAttribute("label", getStringOption(KEY_ACTION_LABEL));
+		actionElement.setName("action"); //$NON-NLS-1$
+		actionElement.setAttribute("label", getStringOption(KEY_ACTION_LABEL)); //$NON-NLS-1$
 		actionElement.setAttribute(
-			"class",
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_ACTION_CLASS));
+			"class", //$NON-NLS-1$
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_ACTION_CLASS)); //$NON-NLS-1$
 		actionElement.setAttribute(
-			"menubarPath",
-			model.getPluginBase().getId() + ".menu1/group1");
+			"menubarPath", //$NON-NLS-1$
+			model.getPluginBase().getId() + ".menu1/group1"); //$NON-NLS-1$
 		actionElement.setAttribute(
-			"enablesFor",
-			getValue(KEY_SELECTION).toString().equals("singleSelection")
-				? "1"
-				: "multiple");
-		actionElement.setAttribute("id", model.getPluginBase().getId() + ".newAction");
+			"enablesFor", //$NON-NLS-1$
+			getValue(KEY_SELECTION).toString().equals("singleSelection") //$NON-NLS-1$
+				? "1" //$NON-NLS-1$
+				: "multiple"); //$NON-NLS-1$
+		actionElement.setAttribute("id", model.getPluginBase().getId() + ".newAction"); //$NON-NLS-1$ //$NON-NLS-2$
 		objectContributionElement.add(actionElement);
 
 		extension.add(objectContributionElement);
@@ -207,7 +207,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	 * @see ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.popupMenus";
+		return "org.eclipse.ui.popupMenus"; //$NON-NLS-1$
 	}
 
 }

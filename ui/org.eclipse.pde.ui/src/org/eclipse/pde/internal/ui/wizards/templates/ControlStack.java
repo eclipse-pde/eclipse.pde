@@ -32,7 +32,7 @@ public class ControlStack {
 	}
 	
 	public void processLine(String line) {
-		if (line.startsWith("if")) {
+		if (line.startsWith("if")) { //$NON-NLS-1$
 			String expression = line.substring(2).trim();
 			boolean result = false;
 			try {
@@ -44,13 +44,13 @@ public class ControlStack {
 			entry.value = result;
 			stack.push(entry);
 		}
-		else if (line.startsWith("else")) {
+		else if (line.startsWith("else")) { //$NON-NLS-1$
 			if (stack.isEmpty()==false) {
 				Entry entry = (Entry)stack.peek();
 				entry.value = !entry.value;
 			}
 		}
-		else if (line.startsWith("endif")) {
+		else if (line.startsWith("endif")) { //$NON-NLS-1$
 			// pop the stack
 			if (!stack.isEmpty())
 				stack.pop();

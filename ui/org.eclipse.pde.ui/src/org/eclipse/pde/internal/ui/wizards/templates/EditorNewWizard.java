@@ -15,7 +15,7 @@ import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class EditorNewWizard extends NewPluginTemplateWizard {
-	private static final String KEY_WTITLE = "EditorNewWizard.wtitle";
+	private static final String KEY_WTITLE = "EditorNewWizard.wtitle"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for EditorNewWizard.
