@@ -15,14 +15,12 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IAlternativeRuntimeSupport;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
  * @version 	1.0
