@@ -69,26 +69,23 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
 		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$
 			fragment = true;
-		if (id!=null && version!=null) hookWithWorkspace();
-	}
-
-	public void hookWithWorkspace() {
-		if (fragment) {
-			IFragmentModel[] fragments =
-				PDECore.getDefault().getWorkspaceModelManager().getFragmentModels();
-			for (int i = 0; i < fragments.length; i++) {
-				IFragment fragment = fragments[i].getFragment();
-				if (fragment.getId().equals(id)) {
-					if (version == null || fragment.getVersion().equals(version)) {
-						pluginBase = fragment;
-						break;
-					}
-				}
-			}
-		} else {
-			pluginBase = PDECore.getDefault().findPlugin(id, version, 0);
+		if (id!=null && version!=null) {
+			hookWithWorkspace();
 		}
 	}
+	
+	public void hookWithWorkspace() {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginModelBase model = entry.getActiveModel();
+			if (fragment && model instanceof IFragmentModel)
+				pluginBase = model.getPluginBase();
+			else if (!fragment && model instanceof IPluginModel)
+				pluginBase = model.getPluginBase();
+		}		
+	}
+
 
 	public void loadFrom(IPluginBase plugin) {
 		id = plugin.getId();
