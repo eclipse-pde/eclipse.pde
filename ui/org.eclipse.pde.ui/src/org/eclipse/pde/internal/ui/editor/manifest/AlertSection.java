@@ -133,7 +133,9 @@ private boolean checkReferences(Composite parent, FormWidgetFactory factory) {
 	boolean cycles = false;
 
 	for (int i = 0; i < imports.length; i++) {
-		IPlugin refPlugin = PDECore.getDefault().findPlugin(imports[i].getId());
+		IPluginImport iimport = imports[i];
+		if (iimport.getId()==null) continue;
+		IPlugin refPlugin = PDECore.getDefault().findPlugin(iimport.getId());
 		if (refPlugin == null) {
 			unresolvedReferences = true;
 			break;

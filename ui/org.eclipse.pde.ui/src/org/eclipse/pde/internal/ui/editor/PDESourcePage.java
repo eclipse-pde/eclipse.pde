@@ -56,6 +56,8 @@ public abstract class PDESourcePage
 	public boolean becomesInvisible(IFormPage newPage) {
 	if (errorMode || isModelNeedsUpdating()) {
 			boolean cleanModel = getEditor().updateModel();
+			if (cleanModel)
+				cleanModel = validateModelSemantics();
 			if (cleanModel == false) {
 				warnErrorsInSource();
 				errorMode = true;
@@ -65,6 +67,10 @@ public abstract class PDESourcePage
 			errorMode = false;
 		}
 		//getSite().setSelectionProvider(getEditor());
+		return true;
+	}
+	
+	protected boolean validateModelSemantics() {
 		return true;
 	}
 

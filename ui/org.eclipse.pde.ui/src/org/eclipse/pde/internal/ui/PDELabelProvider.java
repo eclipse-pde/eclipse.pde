@@ -95,6 +95,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			isFullNameModeEnabled()
 				? pluginBase.getTranslatedName()
 				: pluginBase.getId();
+		name = preventNull(name);
 		String version = pluginBase.getVersion();
 
 		String text;
@@ -107,33 +108,37 @@ public class PDELabelProvider extends SharedLabelProvider {
 			text += " " + PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
 		return text;
 	}
+	
+	private String preventNull(String text) {
+		return text!=null?text:"";
+	}
 
 	public String getObjectText(IPluginExtension extension) {
-		return isFullNameModeEnabled()
+		return preventNull(isFullNameModeEnabled()
 			? extension.getTranslatedName()
-			: extension.getId();
+			: extension.getId());
 	}
 
 	public String getObjectText(IPluginExtensionPoint point) {
-		return isFullNameModeEnabled()
+		return preventNull(isFullNameModeEnabled()
 			? point.getTranslatedName()
-			: point.getId();
+			: point.getId());
 	}
 
 	public String getObjectText(ImportObject obj) {
 		if (isFullNameModeEnabled())
 			return obj.toString();
-		return obj.getId();
+		return preventNull(obj.getId());
 	}
 	
 	public String getObjectText(IPluginImport obj) {
 		if (isFullNameModeEnabled())
 			return obj.toString();
-		return obj.getId();
+		return preventNull(obj.getId());
 	}
 
 	public String getObjectText(IPluginLibrary obj) {
-		return obj.getName();
+		return preventNull(obj.getName());
 	}
 
 	public String getObjectText(ISchemaObject obj) {
@@ -169,7 +174,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			text = name + " (" + version + ")";
 		else
 			text = name;
-		return text;
+		return preventNull(text);
 	}
 
 	public String getObjectText(FeatureImport obj) {
@@ -177,45 +182,45 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (type == IFeatureImport.PLUGIN) {
 			IPlugin plugin = obj.getPlugin();
 			if (plugin != null && isFullNameModeEnabled()) {
-				return plugin.getTranslatedName();
+				return preventNull(plugin.getTranslatedName());
 			}
 		} else if (type == IFeatureImport.FEATURE) {
 			IFeature feature = obj.getFeature();
 			if (feature != null && isFullNameModeEnabled()) {
-				return feature.getLabel();
+				return preventNull(feature.getLabel());
 			}
 		}
-		return obj.getId();
+		return preventNull(obj.getId());
 	}
 
 	public String getObjectText(IFeatureModel obj) {
 		IFeature feature = obj.getFeature();
-		return feature.getId() + " (" + feature.getVersion() + ")";
+		return preventNull(feature.getId()) + " (" + preventNull(feature.getVersion()) + ")";
 
 	}
 
 	public String getObjectText(FeatureChild obj) {
-		return obj.getId() + " (" + obj.getVersion() + ")";
+		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")";
 	}
 
 	public String getObjectText(ISiteFeature obj) {
-		return obj.getURL();
+		return preventNull(obj.getURL());
 	}
 
 	public String getObjectText(ISiteArchive obj) {
-		return obj.getPath();
+		return preventNull(obj.getPath());
 	}
 	public String getObjectText(ISiteCategoryDefinition obj) {
-		return obj.getLabel();
+		return preventNull(obj.getLabel());
 	}
 	public String getObjectText(ISiteCategory obj) {
 		ISiteCategoryDefinition def = obj.getDefinition();
 		if (def != null)
-			return def.getLabel();
-		return obj.getName();
+			return preventNull(def.getLabel());
+		return preventNull(obj.getName());
 	}
 	public String getObjectText(ISiteBuildFeature obj) {
-		return obj.getId() + " (" + obj.getVersion() + ")";
+		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")";
 	}
 
 	public Image getImage(Object obj) {

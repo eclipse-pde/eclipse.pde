@@ -6,6 +6,10 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.builders.ManifestConsistencyChecker;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 
@@ -34,5 +38,12 @@ public class ManifestSourcePage extends PDESourcePage {
 		getEditor().editorContextMenuAboutToShow(menu);
 		menu.add(new Separator());
 		super.editorContextMenuAboutToShow(menu);
+	}
+	protected boolean validateModelSemantics() {
+		IPluginModelBase model = (IPluginModelBase)getEditor().getModel();
+		IPluginBase pluginBase = model.getPluginBase();
+		PluginErrorReporter reporter = new PluginErrorReporter(null);
+		ManifestConsistencyChecker.validateRequiredAttributes(pluginBase, reporter);
+		return reporter.getErrorCount()==0;
 	}
 }

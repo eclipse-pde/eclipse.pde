@@ -72,7 +72,9 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	}
 	
 	public boolean containsError() {
-		return !((AbstractPluginModelBase)getEditor().getModel()).isLoaded(); //updated with syncExec() by the reconciler
+		boolean loaded = ((AbstractPluginModelBase)getEditor().getModel()).isLoaded(); //updated with syncExec() by the reconciler
+		if (!loaded) return false;
+		return !validateModelSemantics();
 	}
 	
 	protected void setModelNeedsUpdating(boolean modelNeedsUpdating) {

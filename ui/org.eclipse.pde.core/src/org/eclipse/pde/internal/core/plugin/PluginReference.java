@@ -12,7 +12,8 @@ public class PluginReference extends PlatformObject {
 	
 	public PluginReference(String id) {
 		this.id = id;
-		plugin = PDECore.getDefault().findPlugin(id);
+		if (id!=null)
+			plugin = PDECore.getDefault().findPlugin(id);
 	}
 	public PluginReference(IPlugin plugin) {
 		this.id = plugin.getId();
@@ -22,7 +23,7 @@ public class PluginReference extends PlatformObject {
 		return id;
 	}
 	public IPlugin getPlugin() {
-		if (plugin == null)
+		if (plugin == null && id!=null)
 			plugin = PDECore.getDefault().findPlugin(id);		
 		return plugin;
 	}
@@ -30,7 +31,7 @@ public class PluginReference extends PlatformObject {
 		if (plugin!=null) {
 			return plugin.getTranslatedName();
 		}
-		return id;
+		return id!=null?id:"?";
 	}
 	public boolean isResolved() {
 		return plugin!=null;

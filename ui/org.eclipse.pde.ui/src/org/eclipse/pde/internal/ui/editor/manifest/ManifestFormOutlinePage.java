@@ -133,21 +133,21 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 		boolean fullNames = MainPreferencePage.isFullNameModeEnabled();
 		if (obj instanceof IPluginImport) {
 			String pluginId = ((IPluginImport) obj).getId();
-			if (!fullNames)
-				return pluginId;
+			if (!fullNames || pluginId==null)
+				return preventNull(pluginId);
 			IPlugin plugin = PDECore.getDefault().findPlugin(pluginId);
 			if (plugin != null)
 				return plugin.getResourceString(plugin.getName());
 			return pluginId;
 		}
 		if (obj instanceof IPluginLibrary) {
-			return ((IPluginLibrary) obj).getName();
+			return preventNull(((IPluginLibrary) obj).getName());
 		}
 
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;
-			if (!fullNames)
-				return extension.getPoint();
+			if (!fullNames || extension.getPoint()==null)
+				return preventNull(extension.getPoint());
 			ISchema schema =
 				PDECore.getDefault().getSchemaRegistry().getSchema(extension.getPoint());
 
@@ -166,12 +166,16 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 		}
 		if (obj instanceof IPluginExtensionPoint) {
 			IPluginExtensionPoint point = (IPluginExtensionPoint) obj;
-			if (!fullNames)
-				return point.getId();
+			if (!fullNames || point.getId()==null)
+				return preventNull(point.getId());
 			return point.getTranslatedName();
 		}
 		return null;
 	}
+	private String preventNull(String name) {
+		return name!=null?name:"";
+	}
+	
 	private Image getPageImage(PDEFormPage page) {
 		if (page instanceof ManifestFormPage) {
 			return overviewPageImage;
