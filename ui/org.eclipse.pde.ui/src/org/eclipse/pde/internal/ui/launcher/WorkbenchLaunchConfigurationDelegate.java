@@ -304,7 +304,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private String getBuildOutputFolders() {
 		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
 		HashSet set = new HashSet();
-		set.add("bin");
+		set.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
 			IProject project = wsmodels[i].getUnderlyingResource().getProject();
 			try {
