@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.*;
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
 	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
+	private static final String KEY_JRE_PATH_NOT_FOUND = "WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
 	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
 	private static final String KEY_BROKEN_PLUGINS = "WorkbenchLauncherConfigurationDelegate.brokenPlugins";
@@ -84,7 +85,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		if (!launcher.getInstallLocation().exists()) {
 			monitor.setCanceled(true);
-			throw new CoreException(createErrorStatus("The installation path to the specified JRE could not be found.  Launch aborted."));
+			throw new CoreException(createErrorStatus(PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
 		}
 		
 		validatePlugins(plugins, monitor);

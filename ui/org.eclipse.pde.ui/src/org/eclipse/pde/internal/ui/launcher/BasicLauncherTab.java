@@ -216,9 +216,16 @@ public class BasicLauncherTab
 		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
-		workspaceChanged=true;
+		jreCombo.select(
+			jreCombo.indexOf(
+				JavaRuntime.getDefaultVMInstall().getName()
+					+ " - "
+					+ JavaRuntime
+						.getDefaultVMInstall()
+						.getVMInstallType()
+						.getName()));
+		workspaceChanged = true;
 	}
-
 	static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
