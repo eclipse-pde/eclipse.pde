@@ -2,9 +2,12 @@
 <project-description>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
+	<reference project-name="org.apache.ant"/>
+	<reference project-name="org.apache.xerces"/>
+	<reference project-name="org.eclipse.ant.core"/>
 	<reference project-name="org.eclipse.core.boot"/>
 	<reference project-name="org.eclipse.core.runtime"/>
-	<reference project-name="org.eclipse.ant.core"/>
+	<reference project-name="org.eclipse.jdt.core"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">
