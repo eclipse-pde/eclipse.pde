@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.editor.feature;
 
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -17,11 +18,11 @@ public class PortabilityChoiceCellEditor extends DialogCellEditor {
 	private static final String KEY_TITLE =
 		"FeatureEditor.PortabilityChoicesDialog.title";
 	private Label label;
-	private PortabilityChoice[] choices;
+	private Choice[] choices;
 
 	public PortabilityChoiceCellEditor(
 		Composite parent,
-		PortabilityChoice[] choices) {
+		Choice[] choices) {
 		super(parent);
 		this.choices = choices;
 	}

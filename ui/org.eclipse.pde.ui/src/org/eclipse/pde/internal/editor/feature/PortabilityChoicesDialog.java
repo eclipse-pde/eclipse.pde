@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.editor.feature;
 import java.util.Iterator;
 import java.util.Vector;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.layout.*;
@@ -34,7 +35,7 @@ public class PortabilityChoicesDialog extends Dialog {
 		"FeatureEditor.PortabilityChoicesDialog.deselectAll";
 	private Button okButton;
 	private String value;
-	private PortabilityChoice[] choices;
+	private Choice[] choices;
 	private CheckboxTableViewer choiceViewer;
 	private WizardCheckboxTablePart checkboxTablePart;
 
@@ -48,7 +49,7 @@ public class PortabilityChoicesDialog extends Dialog {
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			return ((PortabilityChoice) obj).getLabel();
+			return ((Choice) obj).getLabel();
 		}
 
 		public Image getColumnImage(Object obj, int index) {
@@ -58,7 +59,7 @@ public class PortabilityChoicesDialog extends Dialog {
 
 	public PortabilityChoicesDialog(
 		Shell shell,
-		PortabilityChoice[] choices,
+		Choice[] choices,
 		String value) {
 		super(shell);
 		this.value = value;
@@ -111,7 +112,7 @@ public class PortabilityChoicesDialog extends Dialog {
 			StringTokenizer stok = new StringTokenizer(value, ",");
 			while (stok.hasMoreElements()) {
 				String tok = stok.nextToken();
-				PortabilityChoice choice = findChoice(tok);
+				Choice choice = findChoice(tok);
 				if (choice != null)
 					selected.add(choice);
 			}
@@ -121,9 +122,9 @@ public class PortabilityChoicesDialog extends Dialog {
 			checkboxTablePart.selectAll(false);
 	}
 
-	private PortabilityChoice findChoice(String value) {
+	private Choice findChoice(String value) {
 		for (int i = 0; i < choices.length; i++) {
-			PortabilityChoice choice = choices[i];
+			Choice choice = choices[i];
 			if (choice.getValue().equalsIgnoreCase(value))
 				return choice;
 		}
@@ -141,7 +142,7 @@ public class PortabilityChoicesDialog extends Dialog {
 			return "";
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < checked.length; i++) {
-			PortabilityChoice choice = (PortabilityChoice) checked[i];
+			Choice choice = (Choice) checked[i];
 			if (i > 0)
 				buf.append(",");
 			buf.append(choice.getValue());

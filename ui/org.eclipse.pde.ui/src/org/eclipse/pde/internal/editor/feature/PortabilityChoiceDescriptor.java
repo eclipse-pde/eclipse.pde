@@ -5,14 +5,15 @@ package org.eclipse.pde.internal.editor.feature;
  */
 
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.*;
 
 public class PortabilityChoiceDescriptor extends PropertyDescriptor {
 	private boolean readOnly=false;
-	private PortabilityChoice [] choices;
+	private Choice [] choices;
 
-public PortabilityChoiceDescriptor(String name, String displayName, PortabilityChoice[] choices, boolean readOnly) {
+public PortabilityChoiceDescriptor(String name, String displayName, Choice[] choices, boolean readOnly) {
 	super(name, displayName);
 	this.readOnly = readOnly;
 	this.choices = choices;

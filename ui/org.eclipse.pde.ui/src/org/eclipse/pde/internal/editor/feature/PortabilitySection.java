@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.*;
@@ -88,7 +89,7 @@ public class PortabilitySection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(osText.getControl().getDisplay(), new Runnable() {
 					public void run() {
-						PortabilityChoice[] choices = ReferencePropertySource.getOSChoices();
+						Choice[] choices = ReferencePropertySource.getOSChoices();
 						openPortabilityChoiceDialog(osText, choices);
 					}
 				});
@@ -115,7 +116,7 @@ public class PortabilitySection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(wsText.getControl().getDisplay(), new Runnable() {
 					public void run() {
-						PortabilityChoice[] choices = ReferencePropertySource.getWSChoices();
+						Choice[] choices = ReferencePropertySource.getWSChoices();
 						openPortabilityChoiceDialog(wsText, choices);
 					}
 				});
@@ -141,7 +142,7 @@ public class PortabilitySection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(nlText.getControl().getDisplay(), new Runnable() {
 					public void run() {
-						PortabilityChoice[] choices = ReferencePropertySource.getNLChoices();
+						Choice[] choices = ReferencePropertySource.getNLChoices();
 						openPortabilityChoiceDialog(nlText, choices);
 					}
 				});
@@ -154,7 +155,7 @@ public class PortabilitySection extends PDEFormSection {
 
 	private void openPortabilityChoiceDialog(
 		FormEntry text,
-		PortabilityChoice[] choices) {
+		Choice[] choices) {
 		String value = text.getValue();
 
 		PortabilityChoicesDialog dialog =

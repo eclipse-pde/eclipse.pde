@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.core.boot.BootLoader;
 
@@ -110,7 +111,7 @@ public class ReferencePropertySource extends FeaturePropertySource {
 	private PropertyDescriptor createChoicePropertyDescriptor(
 		String name,
 		String displayName,
-		PortabilityChoice[] choices) {
+		Choice[] choices) {
 		return new PortabilityChoiceDescriptor(
 			name,
 			displayName,
@@ -165,30 +166,30 @@ public class ReferencePropertySource extends FeaturePropertySource {
 		}
 	}
 
-	public static PortabilityChoice[] getOSChoices() {
-		return new PortabilityChoice[] {
-			new PortabilityChoice(BootLoader.OS_WIN32, BootLoader.OS_WIN32),
-			new PortabilityChoice(BootLoader.OS_LINUX, BootLoader.OS_LINUX),
-			new PortabilityChoice(BootLoader.OS_AIX, BootLoader.OS_AIX),
-			new PortabilityChoice(BootLoader.OS_HPUX, BootLoader.OS_HPUX),
-			new PortabilityChoice(BootLoader.OS_QNX, BootLoader.OS_QNX),
-			new PortabilityChoice(BootLoader.OS_SOLARIS, BootLoader.OS_SOLARIS)};
+	public static Choice[] getOSChoices() {
+		return new Choice[] {
+			new Choice(BootLoader.OS_WIN32, BootLoader.OS_WIN32),
+			new Choice(BootLoader.OS_LINUX, BootLoader.OS_LINUX),
+			new Choice(BootLoader.OS_AIX, BootLoader.OS_AIX),
+			new Choice(BootLoader.OS_HPUX, BootLoader.OS_HPUX),
+			new Choice(BootLoader.OS_QNX, BootLoader.OS_QNX),
+			new Choice(BootLoader.OS_SOLARIS, BootLoader.OS_SOLARIS)};
 	}
 
-	public static PortabilityChoice[] getWSChoices() {
-		return new PortabilityChoice[] {
-			new PortabilityChoice(BootLoader.WS_WIN32, BootLoader.WS_WIN32),
-			new PortabilityChoice(BootLoader.WS_MOTIF, BootLoader.WS_MOTIF),
-			new PortabilityChoice(BootLoader.WS_GTK, BootLoader.WS_GTK),
-			new PortabilityChoice(BootLoader.WS_PHOTON, BootLoader.WS_PHOTON)};
+	public static Choice[] getWSChoices() {
+		return new Choice[] {
+			new Choice(BootLoader.WS_WIN32, BootLoader.WS_WIN32),
+			new Choice(BootLoader.WS_MOTIF, BootLoader.WS_MOTIF),
+			new Choice(BootLoader.WS_GTK, BootLoader.WS_GTK),
+			new Choice(BootLoader.WS_PHOTON, BootLoader.WS_PHOTON)};
 	}
 
-	public static PortabilityChoice[] getNLChoices() {
+	public static Choice[] getNLChoices() {
 		Locale[] locales = Locale.getAvailableLocales();
-		PortabilityChoice[] choices = new PortabilityChoice[locales.length];
+		Choice[] choices = new Choice[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			choices[i] = new PortabilityChoice(locale.toString(), locale.getDisplayName());
+			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
 		}
 		return choices;
 	}

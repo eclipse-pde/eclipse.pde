@@ -20,7 +20,7 @@ import java.util.*;
 import org.eclipse.jdt.core.*;
 import java.net.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.TargetPlatformManager;
+import org.eclipse.pde.internal.TargetPlatform;
 import org.eclipse.swt.SWT;
 import org.eclipse.pde.internal.TracingOptionsManager;
 import java.lang.reflect.InvocationTargetException;
@@ -182,7 +182,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		monitor.beginTask("Starting Eclipse Workbench...", 2);
 		try {
-			File propertiesFile = TargetPlatformManager.createPropertiesFile(plugins);
+			File propertiesFile = TargetPlatform.createPropertiesFile(plugins);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 

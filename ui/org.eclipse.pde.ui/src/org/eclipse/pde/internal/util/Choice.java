@@ -2,15 +2,15 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.pde.internal.editor.feature;
+package org.eclipse.pde.internal.util;
 /**
  * @version 	1.0
  * @author
  */
-public class PortabilityChoice {
+public class Choice {
 	private String label;
 	private String value;
-	public PortabilityChoice(String value, String label) {
+	public Choice(String value, String label) {
 		this.value = value;
 		this.label = label;
 	}

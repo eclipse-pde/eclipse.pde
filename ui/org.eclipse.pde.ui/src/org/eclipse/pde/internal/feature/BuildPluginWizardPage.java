@@ -232,7 +232,7 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 	generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
 
 // RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
-//		File pluginFile = TargetPlatformManager.createPropertiesFile();
+//		File pluginFile = TargetPlatform.createPropertiesFile();
 //		String pluginPath = pluginFile.getPath();
 //		args.add("-plugins");
 //		args.add(pluginPath);
