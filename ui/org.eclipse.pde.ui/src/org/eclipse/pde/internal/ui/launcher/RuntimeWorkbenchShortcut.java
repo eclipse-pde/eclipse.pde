@@ -41,19 +41,11 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  */
 public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	
-	private static final String CLASSPATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
-	private static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
+	public static final String CLASSPATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
+	public static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
 
 	private IPluginModelBase fModel = null;
 	
-	public void run() {
-		launch(ILaunchManager.RUN_MODE, null);
-	}
-	
-	public void debug() {
-		launch(ILaunchManager.DEBUG_MODE, null);
-	}
-
 	public void run(IPluginModelBase model) {
 		launch(model, ILaunchManager.RUN_MODE);
 	}
@@ -61,7 +53,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	public void debug(IPluginModelBase model) {
 		launch(model, ILaunchManager.DEBUG_MODE);
 	}
-
 	
 	/*
 	 * @see ILaunchShortcut#launch(IEditorPart, String)
@@ -304,7 +295,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		return PDEPlugin.getActiveWorkbenchShell();
 	}
 	
-	private String getDefaultWorkspaceLocation(String uniqueName) {
+	public static String getDefaultWorkspaceLocation(String uniqueName) {
 		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toOSString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	

@@ -1,7 +1,10 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.io.*;
 import java.lang.reflect.*;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -12,6 +15,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
@@ -111,10 +115,22 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		if (href.equals("action.debug")) { //$NON-NLS-1$
+			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.DEBUG_MODE).run();
 		} else if (href.equals("action.run")) {
+			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.RUN_MODE).run();
 		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
 			handleSynchronize();
 		}
+	}
+	
+	private String getFilePath() {
+		Object file = getEditorInput().getAdapter(IFile.class);
+		if (file != null)
+			return ((IFile)file).getFullPath().toString();
+		file = getEditorInput().getAdapter(File.class);
+		if (file != null)
+			return ((File)file).getAbsolutePath();
+		return getProduct().getId();
 	}
 	
 	private void handleSynchronize() {

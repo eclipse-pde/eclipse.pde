@@ -51,5 +51,8 @@ public interface ILauncherSettings {
 	
 	String CONFIG_GENERATE_DEFAULT = "useDefaultConfig"; //$NON-NLS-1$
 	String CONFIG_TEMPLATE_LOCATION = "templateConfig";	 //$NON-NLS-1$
+	
+	// .product-specific marker
+	String PRODUCT_FILE = "productFile";
 			
 }
