@@ -93,14 +93,15 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 	
 	protected void reportExtraneousElements(NodeList elements, int maximum) {
-		if (elements.getLength() > maximum) {
+		//TODO disable for now
+		/*if (elements.getLength() > maximum) {
 			for (int i = maximum; i < elements.getLength(); i++) {
 				Element element = (Element) elements.item(i);
 				report(PDE.getFormattedMessage("Builders.Feature.multiplicity", //$NON-NLS-1$
 						element.getNodeName()), getLine(element),
 						CompilerFlags.ERROR);
 			}
-		}
+		}*/
 	}
 
 	protected void validateURL(Element element, String attName) {
