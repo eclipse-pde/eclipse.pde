@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
@@ -69,7 +70,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (!fIsLoaded && createIfMissing) {
 			createPluginBase();
-			load();
+			try {
+				load();
+			} catch (CoreException e) {
+			}
 		}
 		return fPluginBase;
 	}

@@ -4,8 +4,6 @@ import java.io.*;
 
 import javax.xml.parsers.*;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.xml.sax.*;
@@ -21,29 +19,6 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 
 	public XMLEditingModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#getCharSetName()
-	 */
-	protected String getCharSetName() {
-		IResource  resource = getUnderlyingResource();
-		try {
-			if (resource != null) {
-				String charset = ((IFile)resource).getCharset();
-				if (charset != null)
-					return charset;
-			}
-		} catch (CoreException e) {
-		} 
-		return "UTF-8";
-	}
-	
-	public void load() {
-		try {
-			load(getInputStream(getDocument()), false);
-		} catch (UnsupportedEncodingException e) {
-		}
 	}
 	
 	/* (non-Javadoc)

@@ -38,7 +38,7 @@ public class BuildInputContext extends InputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getCharSet()
 	 */
 	protected String getDefaultCharset() {
-		return "8859_1";
+		return "ISO-8859-1";
 	}
 
 	protected IBaseModel createModel(IEditorInput input) {

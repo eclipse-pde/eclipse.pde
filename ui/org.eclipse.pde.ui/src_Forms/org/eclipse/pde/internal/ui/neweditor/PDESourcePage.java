@@ -6,7 +6,6 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
@@ -20,12 +19,10 @@ import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
-	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
 	private PDEFormEditor editor;
 	private Control control;
 	private int index;
 	private String id;
-	private String title;
 	private InputContext inputContext;
 	private IContentOutlinePage outlinePage;
 	
@@ -34,7 +31,6 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	 */
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
 		this.id = id;
-		this.title = title;
 		initialize(editor);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setRangeIndicator(new DefaultRangeIndicator());
@@ -107,16 +103,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	}
 
 	public boolean canLeaveThePage() {
-		boolean cleanModel = inputContext.isModelCorrect();
-		if (!cleanModel) {
-			Display.getCurrent().beep();
-			String title = editor.getSite().getRegisteredName();
-			MessageDialog.openError(
-				PDEPlugin.getActiveWorkbenchShell(),
-				title,
-				PDEPlugin.getResourceString(ERROR_MESSAGE));
-		}
-		return cleanModel;
+		return true;
 	}
 
 	/* (non-Javadoc)

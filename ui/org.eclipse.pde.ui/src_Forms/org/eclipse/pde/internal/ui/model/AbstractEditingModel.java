@@ -94,6 +94,15 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		return fTimestamp;
 	}
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#load()
+	 */
+	public void load() throws CoreException {
+		try {
+			load(getInputStream(getDocument()), false);
+		} catch (UnsupportedEncodingException e) {
+		}
+	}
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
 	public void reload(InputStream source, boolean outOfSync)

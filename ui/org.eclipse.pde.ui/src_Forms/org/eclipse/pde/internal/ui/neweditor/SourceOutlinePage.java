@@ -21,7 +21,7 @@ import org.eclipse.ui.views.contentoutline.*;
 /**
  * Content outline page for the XML editor.
  */
-public class XMLOutlinePage extends ContentOutlinePage implements IModelChangedListener {
+public class SourceOutlinePage extends ContentOutlinePage implements IModelChangedListener {
 	
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
@@ -30,7 +30,7 @@ public class XMLOutlinePage extends ContentOutlinePage implements IModelChangedL
 	/**
 	 * Creates a new XMLContentOutlinePage.
 	 */
-	public XMLOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider) {
+	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider) {
 		super();
 		fModel = model;
 		fLabelProvider = lProvider;

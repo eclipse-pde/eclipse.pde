@@ -161,7 +161,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	}
 	
 	protected IContentOutlinePage createOutlinePage() {
-		XMLOutlinePage outline = new XMLOutlinePage(
+		SourceOutlinePage outline = new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
 				new OutlineLabelProvider(), new ContentProvider());
 		outline.addSelectionChangedListener(new ISelectionChangedListener() {

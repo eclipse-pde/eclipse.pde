@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -23,8 +24,11 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		PDESourcePage sourcePage;
 		if (context instanceof XMLInputContext)
 			sourcePage = createXMLSourcePage(this, contextId, context.getInput().getName());
-		else
+		else if (context instanceof BuildInputContext) {
+			sourcePage = new BuildSourcePage(this, contextId, context.getInput().getName());
+		} else {
 			sourcePage = new PDESourcePage(this, contextId, context.getInput().getName());
+		}
 		sourcePage.setInputContext(context);
 		try {
 			addPage(sourcePage, context.getInput());

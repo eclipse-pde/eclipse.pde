@@ -6,8 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.ui.neweditor.text.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -18,6 +21,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class XMLSourcePage extends PDESourcePage {
+	public static final String ERROR_MESSAGE = "SourcePage.errorMessage";
 	protected IColorManager colorManager;
 	/**
 	 * @param editor
@@ -45,4 +49,17 @@ public class XMLSourcePage extends PDESourcePage {
 		colorManager.dispose();
 		super.dispose();
 	}
+	public boolean canLeaveThePage() {
+		boolean cleanModel = getInputContext().isModelCorrect();
+		if (!cleanModel) {
+			Display.getCurrent().beep();
+			String title = getEditor().getSite().getRegisteredName();
+			MessageDialog.openError(
+				PDEPlugin.getActiveWorkbenchShell(),
+				title,
+				PDEPlugin.getResourceString(ERROR_MESSAGE));
+		}
+		return cleanModel;
+	}
+
 }
