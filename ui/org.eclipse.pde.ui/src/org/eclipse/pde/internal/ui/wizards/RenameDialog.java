@@ -29,6 +29,11 @@ public class RenameDialog extends SelectionStatusDialog {
 	private IStatus status;
 	private boolean isCaseSensitive;
 	
+    /**
+     * Create a new rename dialog instance for the given window.
+     * @param shell The parent of the dialog
+     * @param oldName Current name of the item being renamed
+     */
 	public RenameDialog(Shell shell, String oldName) {
 		super(shell);
 		this.isCaseSensitive = false;
@@ -36,6 +41,13 @@ public class RenameDialog extends SelectionStatusDialog {
 		setOldName(oldName);
 	}
 	
+    /**
+     * Create a new rename dialog instance for the given window.
+     * @param shell The parent of the dialog
+     * @param isCaseSensitive Flags whether dialog will perform case sensitive checks against old names
+     * @param names Set of names which the user should not be allowed to rename to
+     * @param oldName Current name of the item being renamed
+     */
 	public RenameDialog(Shell shell, boolean isCaseSensitive, String[] names, String oldName){
 		super(shell);
 		this.isCaseSensitive = isCaseSensitive;
@@ -68,6 +80,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+        layout.marginHeight = layout.marginWidth = 9;
 		container.setLayout(layout);
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -148,4 +161,8 @@ public class RenameDialog extends SelectionStatusDialog {
 	 */
 	protected void computeResult() {
 	}
+    
+    public void setTitle(String title) {
+        getShell().setText(title);
+    }
 }

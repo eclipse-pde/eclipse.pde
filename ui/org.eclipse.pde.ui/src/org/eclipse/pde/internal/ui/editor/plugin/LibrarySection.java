@@ -444,7 +444,7 @@ public class LibrarySection
 			
 			RenameDialog dialog = new RenameDialog(getTablePart().getControl().getShell(), false, libNames, oldName);
 			dialog.create();
-			dialog.getShell().setText(PDEPlugin.getResourceString("EditableTablePart.renameTitle")); //$NON-NLS-1$
+			dialog.getShell().setText(PDEPlugin.getResourceString("LibrarySection.rename")); //$NON-NLS-1$
 			SWTUtil.setDialogSize(dialog, 300,150);
 			
 			if (dialog.open()==Dialog.OK) {

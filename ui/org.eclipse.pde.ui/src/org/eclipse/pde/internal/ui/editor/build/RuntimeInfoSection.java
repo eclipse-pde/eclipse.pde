@@ -585,11 +585,7 @@ IModelChangedListener {
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl()
 					.getShell(), oldName);
 			dialog.create();
-			dialog
-			.getShell()
-			.setText(
-					PDEPlugin
-					.getResourceString("EditableTablePart.renameTitle")); //$NON-NLS-1$
+            dialog.setTitle(PDEPlugin.getResourceString("RuntimeInfoSection.rename")); //$NON-NLS-1$
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open() == Dialog.OK) {
 				entryModified(entry, dialog.getNewName());
