@@ -41,7 +41,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		sc.marginHeight = 5;
 	}
 	protected void createToolBarActions(ManagedForm managedForm) {
-		final Form form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 	
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
 			public void run() {

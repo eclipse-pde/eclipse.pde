@@ -28,7 +28,7 @@ public class ExtensionPointDetails implements IDetailsPage {
 	private Text id;
 	private Text name;
 	private Text schema;
-	private RichText rtext;
+	private FormText rtext;
 	private String rtextData;
 	
 	private static final String SCHEMA_RTEXT_DATA =
@@ -120,7 +120,7 @@ public class ExtensionPointDetails implements IDetailsPage {
 		
 		createSpacer(toolkit, client, 2);
 		
-		rtext = toolkit.createRichText(parent, true);
+		rtext = toolkit.createFormText(parent, true);
 		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		td.indent = 10;

@@ -9,7 +9,7 @@ package org.eclipse.pde.internal.ui.neweditor;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * @author dejan
@@ -28,7 +28,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	
 	protected void createFormContent(ManagedForm managedForm) {
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FORM_BANNER));
 	}
 	public PDEFormEditor getPDEEditor() {

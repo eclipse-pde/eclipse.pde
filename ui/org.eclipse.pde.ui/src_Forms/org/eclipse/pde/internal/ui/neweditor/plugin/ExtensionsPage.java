@@ -54,7 +54,7 @@ public class ExtensionsPage extends PDEFormPage {
 			return null;
 		}
 		protected void createToolBarActions(ManagedForm managedForm) {
-			final Form form = managedForm.getForm();
+			final ScrolledForm form = managedForm.getForm();
 			Action collapseAction = new Action("col") {
 				public void run() {
 					section.collapseAll();
@@ -78,7 +78,7 @@ public class ExtensionsPage extends PDEFormPage {
 	}
 	protected void createFormContent(ManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Extensions");
 		block.createContent(managedForm);

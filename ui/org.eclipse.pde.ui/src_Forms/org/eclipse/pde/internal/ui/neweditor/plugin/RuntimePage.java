@@ -29,7 +29,7 @@ public class RuntimePage extends PDEFormPage {
 	
 	protected void createFormContent(ManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Runtime");
 	}

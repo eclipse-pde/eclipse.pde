@@ -7,9 +7,9 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.io.File;
 import java.util.Dictionary;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.ui.*;
@@ -127,31 +127,41 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 	}
-	
 	protected void addPages() {
-		if (findContext(PluginInputContext.CONTEXT_ID)!=null ||
-				findContext(BundleInputContext.CONTEXT_ID)!=null) {
-			addPage(new OverviewPage(this));
-			addPage(new DependenciesPage(this));
-			addPage(new RuntimePage(this));
+		if (findContext(PluginInputContext.CONTEXT_ID) != null
+				|| findContext(BundleInputContext.CONTEXT_ID) != null) {
+			try {
+				addPage(new OverviewPage(this));
+				addPage(new DependenciesPage(this));
+				addPage(new RuntimePage(this));
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
 		}
 		if (findContext(PluginInputContext.CONTEXT_ID) != null) {
-			addPage(new ExtensionsPage(this));
-			addPage(new ExtensionPointsPage(this));
+			try {
+				addPage(new ExtensionsPage(this));
+				addPage(new ExtensionPointsPage(this));
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
 		}
-		if (findContext(BuildInputContext.CONTEXT_ID) != null)
-			addPage(new BuildPage(this));
+		if (findContext(BuildInputContext.CONTEXT_ID) != null) {
+			try {
+				addPage(new BuildPage(this));
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
+		}
 		addSourcePage(BundleInputContext.CONTEXT_ID);
 		addSourcePage(PluginInputContext.CONTEXT_ID);
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
-
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
-		
 		if (firstPageId == null) {
 			InputContext primary = getPrimaryContext();
-			boolean isBundle = findContext(BundleInputContext.CONTEXT_ID)!=null;
+			boolean isBundle = findContext(BundleInputContext.CONTEXT_ID) != null;
 			if (primary.getId().equals(BuildInputContext.CONTEXT_ID))
 				firstPageId = BuildPage.PAGE_ID;
 			else if (primary.getId().equals(PluginInputContext.CONTEXT_ID)) {
@@ -160,8 +170,8 @@ public class ManifestEditor extends MultiSourceEditor {
 				else
 					firstPageId = OverviewPage.PAGE_ID;
 			}
-			if (firstPageId==null)
-				firstPageId=OverviewPage.PAGE_ID;
+			if (firstPageId == null)
+				firstPageId = OverviewPage.PAGE_ID;
 		}
 		return firstPageId;
 	}
