@@ -63,6 +63,7 @@ public class PluginSpecSection extends PDEFormSection {
 	private FormEntry classText;
 	private FormEntry pluginIdText;
 	private FormEntry pluginVersionText;
+	private Button fCompatibilityButton;
 	private CCombo matchCombo;
 
 public PluginSpecSection(ManifestFormPage page) {
@@ -269,6 +270,38 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		GridData gd = (GridData) classText.getControl().getLayoutData();
 		gd.widthHint = 150;
 	}
+	
+	fCompatibilityButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getFormattedMessage(
+					"ManifestEditor.PluginSpecSection.isCompatible",
+					isFragment()
+						? PDEPlugin.getResourceString(
+							"ManifestEditor.PluginSpecSection.fragment")
+						: PDEPlugin.getResourceString(
+							"ManifestEditor.PluginSpecSection.plugin")),
+				SWT.CHECK);
+		String version = model.getPluginBase().getVersion();
+		fCompatibilityButton.setSelection(version != null && version.equals("3.0"));
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		fCompatibilityButton.setLayoutData(gd);
+		fCompatibilityButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+					if (fCompatibilityButton.getSelection()) {
+						model.getPluginBase().setSchemaVersion("3.0");
+					} else {
+						model.getPluginBase().setSchemaVersion(null);
+					}
+					forceDirty();
+				} catch (CoreException e1) {
+				}
+			}
+		});
+		
 	factory.paintBordersFor(container);
 	return container;
 }
@@ -399,6 +432,8 @@ public void update(Object input) {
 	} else {
 		setIfDefined(classText, ((IPlugin) pluginBase).getClassName());
 	}
+	String version = pluginBase.getSchemaVersion();
+	fCompatibilityButton.setSelection(version != null && version.equals("3.0"));
 	updateNeeded = false;
 }
 /**
