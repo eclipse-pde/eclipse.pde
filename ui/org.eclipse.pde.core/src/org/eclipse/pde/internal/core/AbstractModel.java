@@ -24,7 +24,7 @@ public abstract class AbstractModel
 	extends PlatformObject
 	implements IModel, IModelChangeProviderExtension, Serializable {
 	private static final String KEY_ERROR = "Errors.modelError";
-	private transient Vector listeners = new Vector();
+	private transient List listeners;
 	protected boolean loaded;
 	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
@@ -32,6 +32,7 @@ public abstract class AbstractModel
 
 	public AbstractModel() {
 		super();
+		listeners = Collections.synchronizedList(new ArrayList());
 	}
 	public void addModelChangedListener(IModelChangedListener listener) {
 		listeners.add(listener);
