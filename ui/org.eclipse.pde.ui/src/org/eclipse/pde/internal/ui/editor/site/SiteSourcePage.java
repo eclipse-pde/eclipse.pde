@@ -32,7 +32,6 @@ public class SiteSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
 	protected ViewerSorter createOutlineSorter() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {

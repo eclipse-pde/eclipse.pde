@@ -28,15 +28,19 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
+	private ViewerSorter fDefaultSorter;
 	private ViewerSorter fViewerSorter;
 	private boolean sorted;
 	TreeViewer viewer;
 	
-	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerSorter sorter) {
+	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider,
+			IContentProvider cProvider, ViewerSorter defaultSorter,
+			ViewerSorter sorter) {
 		super();
 		fModel = model;
 		fLabelProvider = lProvider;
 		fContentProvider = cProvider;
+		fDefaultSorter = defaultSorter;
 		fViewerSorter = sorter;
 	}
 		
@@ -51,7 +55,7 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 		if(sorted)
 			viewer.setSorter(fViewerSorter);
 		else
-			viewer.setSorter(null);
+			viewer.setSorter(fDefaultSorter);
 		viewer.setInput(fModel);
 		viewer.expandAll();
 	}
@@ -92,6 +96,6 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 			if(sorting)
 				viewer.setSorter(fViewerSorter);
 			else
-				viewer.setSorter(null);
+				viewer.setSorter(fDefaultSorter);
 	}
 }

@@ -38,7 +38,7 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
 	 */
-	protected ViewerSorter createViewerSorter() {
+	protected ViewerSorter createDefaultOutlineSorter() {
 		return new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				IDocumentKey key1 = (IDocumentKey)e1;
@@ -80,7 +80,6 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
 	protected ViewerSorter createOutlineSorter() {
-		// TODO Auto-generated method stub
 		return new ViewerSorter();
 	}
 
