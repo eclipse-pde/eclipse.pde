@@ -77,12 +77,12 @@ represent the wizard.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
                   a fully qualified name of a class which implements 
 &lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt; 
-interface.
+interface. This attribute is mutually exclusive with the &lt;code&gt;template&lt;/code&gt; attribute.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.IExtensionWizard"/>
@@ -107,18 +107,10 @@ using &apos;/&apos; as a delimiter.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="template" type="boolean">
+         <attribute name="template" type="string">
             <annotation>
                <documentation>
-                  If true, value of the &lt;samp&gt;class&lt;/samp&gt; attribute need to
-implement &lt;samp&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/samp&gt; class.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="contributingId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
+                  an identifier of a template declared elsewhere using the extension point &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt;. If defined, the template with the specified id will be located and the extension wizard will be created using the template. This attribute is mutually exclusive with the &lt;code&gt;class&lt;/code&gt; attribute.
                </documentation>
             </annotation>
          </attribute>

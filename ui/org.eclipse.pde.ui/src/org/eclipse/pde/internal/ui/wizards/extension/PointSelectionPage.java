@@ -70,7 +70,7 @@ public class PointSelectionPage
 				if (wizardCollection.getWizards() != null) {
 					Object[] wizards = wizardCollection.getWizards().getChildren();
 					for (int i = 0; i<wizards.length; i++){
-						String wizardContributorId = ((WizardElement)wizards[i]).getConfigurationElement().getAttribute("contributingId");
+						String wizardContributorId = ((WizardElement)wizards[i]).getContributingId();
 						if (wizardContributorId == null || point == null || point.getFullId() == null)
 							continue;
 						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(point.getFullId()))
@@ -421,8 +421,10 @@ public class PointSelectionPage
 			protected IExtensionWizard createWizard(WizardElement element)
 				throws CoreException {
 				if (element.isTemplate()) {
+					IConfigurationElement template = element.getTemplateElement();
+					if (template==null) return null;
 					ITemplateSection section =
-						(ITemplateSection) element.createExecutableExtension();
+						(ITemplateSection) template.createExecutableExtension("class");
 					return new NewExtensionTemplateWizard(section);
 				} else {
 					return (IExtensionWizard) element.createExecutableExtension();

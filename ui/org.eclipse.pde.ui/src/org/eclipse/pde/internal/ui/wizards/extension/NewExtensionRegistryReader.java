@@ -44,7 +44,9 @@ protected WizardElement createWizardElement(IConfigurationElement config) {
 	String name = config.getAttribute(WizardElement.ATT_NAME);
 	String id = config.getAttribute(WizardElement.ATT_ID);
 	String className = config.getAttribute(WizardElement.ATT_CLASS);
-	if (name==null || id == null || className==null) return null;
+	String template = config.getAttribute(WizardElement.ATT_TEMPLATE);
+	if (name==null || id == null) return null;
+	if (className==null && template==null) return null;
 	WizardElement element = new WizardElement(config);
 	String imageName = config.getAttribute(WizardElement.ATT_ICON);
 	if (imageName!=null) {

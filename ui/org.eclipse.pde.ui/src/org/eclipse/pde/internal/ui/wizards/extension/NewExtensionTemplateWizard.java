@@ -102,6 +102,7 @@ public class NewExtensionTemplateWizard
 
 	protected void doFinish(IProgressMonitor monitor) throws CoreException {
 		int totalWork = section.getNumberOfWorkUnits();
+		//TODO string to translate
 		monitor.beginTask("Generating content...", totalWork);
 		updateDependencies();
 		section.execute(project, model, monitor); // nsteps
