@@ -110,6 +110,7 @@ protected void generateBuildScript() throws CoreException {
 	generateGatherLogTarget();
 	generateZipLogsTarget();
 	generateCleanTarget();
+	generateRefreshTarget(script, getPropertyFormat(PROPERTY_FEATURE));
 	generateEpilogue();
 }
 

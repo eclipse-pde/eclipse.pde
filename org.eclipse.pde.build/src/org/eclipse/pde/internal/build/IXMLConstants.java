@@ -44,6 +44,7 @@ public interface IXMLConstants {
 	public static final String TARGET_INSTALL = "install";
 	public static final String TARGET_JAR = "jar";
 	public static final String TARGET_MAIN = "main";
+	public static final String TARGET_REFRESH = "refresh";
 	public static final String TARGET_SRC = "src";
 	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole";
 	public static final String TARGET_TARGET = "target";
@@ -63,6 +64,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BUILD_TYPE = "build.type";
 	public static final String PROPERTY_CUSTOM = "custom";
 	public static final String PROPERTY_DESTINATION = "destination";
+	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
 	public static final String PROPERTY_INCLUDE_CHILDREN = "includeChildren";

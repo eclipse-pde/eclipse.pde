@@ -62,6 +62,7 @@ protected void generateBuildScript() throws CoreException {
 	generateGatherSourcesTarget();
 	generateGatherLogTarget();
 	generateCleanTarget();
+	generateRefreshTarget(script, getPropertyFormat(getModelTypeName()));
 	generateEpilogue();
 }
 

@@ -386,4 +386,11 @@ public void setBuildScriptName(String buildScriptName) {
 		this.buildScriptName = buildScriptName;
 }
 
+protected void generateRefreshTarget(AntScript script, String resource) {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
+	script.printRefreshLocalTask(tab, resource, "infinite");
+	script.printString(--tab, "</target>");
+}
 }

@@ -291,4 +291,13 @@ public void printTargetDeclaration(int tab, String name, String depends, String 
 	printAttribute("description", description, false);
 	output.println(">");
 }
+
+public void printRefreshLocalTask(int tab, String resource, String depth) {
+	printTab(tab);
+	output.print("<eclipse.refreshLocal");
+	printAttribute("resource", resource, true);
+	printAttribute("depth", depth, false);
+	output.println("/>");
+}
+
 }
