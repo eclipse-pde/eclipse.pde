@@ -105,4 +105,11 @@ boolean isDisposed();
  * @return true if this schema can be modified 
  */
 boolean isEditable();
+/**
+ * Returns whether the schema file used to load this
+ * model contained extension point schema or a generic
+ * XSD schema file. 
+ * @return true if the schema is valid and can be used
+ */
+boolean isValid();
 }

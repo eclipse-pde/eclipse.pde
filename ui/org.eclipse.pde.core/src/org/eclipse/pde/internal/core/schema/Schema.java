@@ -31,6 +31,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public final static java.lang.String INDENT = "   ";
 	private boolean disposed=false;
 	private Hashtable lineTable;
+	private boolean valid;
 
 
 public Schema(String pluginId, String pointId, String name) {
@@ -122,8 +123,11 @@ public ISchemaElement[] getCandidateChildren(ISchemaElement element) {
 	candidates.copyInto(result);
 	return result;
 }
-public java.lang.String getDescription() {
+public String getDescription() {
 	return description;
+}
+public boolean isValid() {
+	return valid;
 }
 public IDocumentSection[] getDocumentSections() {
 	IDocumentSection[] result = new IDocumentSection[docSections.size()];
@@ -563,6 +567,7 @@ private void processSchemaAnnotation(Node node) {
 								setName(getAttribute(meta, "name"));
 								pluginId = getAttribute(meta, "plugin");
 								pointId = getAttribute(meta, "id");
+								valid = true;
 							} else
 								if (meta.getNodeName().equals("meta.section")) {
 									section = getAttribute(meta, "type");
@@ -619,6 +624,7 @@ private void reset() {
 	references = null;
 	description = null;
 	name = null;
+	valid=false;
 }
 private void resolveElementReference(ISchemaObjectReference reference) {
 	for (int i = 0; i < elements.size(); i++) {
