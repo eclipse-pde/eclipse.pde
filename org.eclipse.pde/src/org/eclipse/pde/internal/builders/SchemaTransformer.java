@@ -117,6 +117,7 @@ public void transform(InputStream is, StringBuffer out, PluginErrorReporter repo
 
 private boolean verifySchema(Schema schema, PluginErrorReporter reporter) {
 	if (schema.isLoaded()==false) return false;
+	if (schema.isValid()==false) return false;
 	ISchemaElement [] elements = schema.getElements();
 	int errors = 0;
 	for (int i=0; i<elements.length; i++) {
