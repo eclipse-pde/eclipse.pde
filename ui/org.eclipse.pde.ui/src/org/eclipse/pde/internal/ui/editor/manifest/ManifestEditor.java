@@ -19,6 +19,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -376,8 +377,13 @@ public class ManifestEditor
 		Object object,
 		IMarker marker) {
 		IEditorPart editor = null;
-		IResource underlyingResource =
-			plugin.getModel().getUnderlyingResource();
+		ISharedPluginModel model = plugin.getModel();
+		IResource underlyingResource = null;
+		if (model instanceof IBundlePluginModelBase) {
+			underlyingResource = ((IBundlePluginModelBase)model).getExtensionsModel().getUnderlyingResource();
+		} else {
+			underlyingResource = plugin.getModel().getUnderlyingResource();
+		}
 		if (underlyingResource == null) {
 			editor = openExternalPlugin(plugin);
 		} else {
