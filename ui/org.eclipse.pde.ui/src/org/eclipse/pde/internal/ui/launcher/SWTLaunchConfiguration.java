@@ -99,10 +99,17 @@ public class SWTLaunchConfiguration extends
 		if (fragment == null)
 			return execArgs.getVMArgumentsArray();
 		
-		String[] vmArgs = execArgs.getVMArgumentsArray();		
+		String location = getNativeLibrariesLocation(fragment);
+		String[] vmArgs = execArgs.getVMArgumentsArray();
+		for (int i = vmArgs.length - 1; i >= 0; i--) {
+			if (vmArgs[i].startsWith("-Djava.library.path")) {
+				vmArgs[i] += ";\"" + location + "\"";
+				return vmArgs;
+			}
+		}
 		String[] all = new String[vmArgs.length + 1];
-		System.arraycopy(vmArgs, 0, all, 0, vmArgs.length);
-		all[vmArgs.length] = "-Djava.library.path=\"" + getNativeLibrariesLocation(fragment) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		all[0] = "-Djava.library.path=\"" + location + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		System.arraycopy(vmArgs, 0, all, 1, vmArgs.length);
 		return all;
 	}
 	
