@@ -77,12 +77,6 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 		//getSite().setSelectionProvider(getSelectionProvider());
 	}
 	
-	public boolean containsError() {
-		boolean loaded = ((AbstractPluginModelBase)getEditor().getModel()).isLoaded(); //updated with syncExec() by the reconciler
-		if (!loaded) return false;
-		return !validateModelSemantics();
-	}
-	
 	protected void setModelNeedsUpdating(boolean modelNeedsUpdating) {
 		synchronized (modelNeedsUpdatingLock) {
 			super.setModelNeedsUpdating(modelNeedsUpdating);
@@ -186,6 +180,10 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	public void createPartControl(Composite parent) {
 		setModelNeedsUpdating(true);
 		super.createPartControl(parent);
+	}
+	
+	public boolean containsError() {
+		return getEditor().containsError();
 	}
 
 }

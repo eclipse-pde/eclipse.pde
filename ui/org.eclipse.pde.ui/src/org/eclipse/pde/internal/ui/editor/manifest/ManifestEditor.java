@@ -438,6 +438,7 @@ public class ManifestEditor
 				model.reload(stream, false);
 				if (model instanceof IEditable && model.isEditable())
 					((IEditable)model).setDirty(false);
+				cleanModel = containsError();
 			} catch (CoreException e) {
 				cleanModel = false;
 			}

@@ -193,6 +193,10 @@ public abstract class PDEMultiPageEditor
 			firstPageId = storedFirstPageId;
 		else if (EditorPreferencePage.getUseSourcePage())
 			firstPageId = getSourcePageId();
+		// Regardless what is the stored value,
+		// use source page if model is not valid
+		if (isModelCorrect(getModel())==false)
+			firstPageId = getSourcePageId();
 		if (firstPageId != null) {
 			IPDEEditorPage firstPage = getPage(firstPageId);
 			if (firstPage == null)
@@ -647,6 +651,17 @@ public abstract class PDEMultiPageEditor
 	}
 
 	protected abstract boolean updateModel();
+
+	public boolean validateModelSemantics() {
+		IModel model = (IModel)getModel();
+		return model!=null && model.isValid();
+	}
+	
+	public boolean containsError() {
+		boolean loaded = ((IModel)getModel()).isLoaded(); //updated with syncExec() by the reconciler
+		if (!loaded) return true;
+		return !validateModelSemantics();
+	}
 
 	void updateSynchronizedViews(IPDEEditorPage page) {
 		updateContentOutline(page);
