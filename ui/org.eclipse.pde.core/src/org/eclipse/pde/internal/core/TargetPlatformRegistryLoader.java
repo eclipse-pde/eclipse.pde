@@ -78,10 +78,14 @@ public class TargetPlatformRegistryLoader {
 			BundleDescription[] all = state.getState().getBundles();
 			for (int i = 0; i < all.length; i++) {
 				if (!all[i].isResolved()) {
-					VersionConstraint[] unsatisfiedConstraint = helper.getUnsatisfiedConstraints(all[i]);
-	                for (int j = 0; j < unsatisfiedConstraint.length; j++) {
-                        String message = unsatisfiedConstraint[j].toString();
-    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
+					if (unsatisfiedConstraints.length == 0) {
+	   	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, PDECore.getResourceString("ECLIPSE_LOW_VERSION"), null));
+					} else {
+						for (int j = 0; j < unsatisfiedConstraints.length; j++) {
+	                        String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
+	    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+						}
 	                }
 				}
 			}
@@ -98,6 +102,27 @@ public class TargetPlatformRegistryLoader {
 		monitor.done();
 		return models;
 	}
+	
+	public static String getResolutionFailureMessage(VersionConstraint unsatisfied) {
+		if (unsatisfied.isResolved())
+			throw new IllegalArgumentException();
+		if (unsatisfied instanceof PackageSpecification)
+			return PDECore.getFormattedMessage("ECLIPSE_MISSING_IMPORTED_PACKAGE", toString(unsatisfied));
+		if (unsatisfied instanceof BundleSpecification) {
+			if (((BundleSpecification) unsatisfied).isOptional())
+				return PDECore.getFormattedMessage("ECLIPSE_MISSING_OPTIONAL_REQUIRED_BUNDLE", toString(unsatisfied));
+			return PDECore.getFormattedMessage("ECLIPSE_MISSING_REQUIRED_BUNDLE", toString(unsatisfied));
+		}
+		return PDECore.getFormattedMessage("ECLIPSE_MISSING_HOST", toString(unsatisfied));
+	}
+	
+	private static String toString(VersionConstraint constraint) {
+		Version versionSpec = constraint.getVersionSpecification();
+		if (versionSpec == null)
+			return constraint.getName();
+		return constraint.getName() + '_' + versionSpec;
+	}
+
 	
 	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, IProgressMonitor monitor) {
 		PDEState state = new PDEState();
