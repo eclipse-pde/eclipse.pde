@@ -287,11 +287,17 @@ public class PDECore extends Plugin {
 	}
 	
 	private void initializeModels() {
-		workspaceModelManager = new WorkspaceModelManager();
-		externalModelManager = new ExternalModelManager();
-		workspaceModelManager.reset();
-		modelManager = new PluginModelManager();
-		modelManager.connect(workspaceModelManager,externalModelManager);
+		if (externalModelManager == null)
+			externalModelManager = new ExternalModelManager();
+
+		if (workspaceModelManager == null) {
+			workspaceModelManager = new WorkspaceModelManager();
+			workspaceModelManager.reset();
+		}
+		if (modelManager == null) {
+			modelManager = new PluginModelManager();
+			modelManager.connect(workspaceModelManager, externalModelManager);
+		}
 	}
 		
 	public static void log(IStatus status) {
