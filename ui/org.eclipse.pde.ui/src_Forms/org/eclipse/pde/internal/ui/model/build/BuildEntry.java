@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.util.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class BuildEntry implements IBuildEntry, IDocumentKey {
@@ -75,8 +76,17 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	public void setName(String name) {
 		String oldName = fName;
 		fName = name;
-		if (getModel() != null)
+		if (getModel() != null){
+			try {
+				IBuild build = getModel().getBuild();
+				IBuildEntry entry = build.getEntry(oldName);
+				build.remove(entry);
+				build.add(entry);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
 			getModel().fireModelObjectChanged(this, getName(), oldName, name);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
