@@ -70,7 +70,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Button binaryWithLinksButton;
 	private Button sourceButton;
 	
-	private String currentLocation;
+	//private String currentLocation;
+	public static String TARGET_PLATFORM = "targetPlatform";
 	private IPluginModelBase[] models = new IPluginModelBase[0];
 	
 	public PluginImportWizardFirstPage(String name) {
@@ -347,7 +348,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 	
 	public String getDropLocation() {
-		return dropLocation.getText().trim();
+		return runtimeLocationButton.getSelection()
+			? TARGET_PLATFORM
+			: dropLocation.getText().trim();
 	}
 	
 	public void storeSettings() {
@@ -396,18 +399,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		setPageComplete(true);
 	}
 	
-	private void resolveModels() {
-		if (currentLocation == null || !currentLocation.equals(dropLocation.getText())) {
-			currentLocation = dropLocation.getText();
-
-			if (new Path(currentLocation).equals(ExternalModelManager.getEclipseHome(null))) {
-				resolveTargetPlatform();
-			} else {
-				resolveArbitraryLocation();
-			}
-		}
-	}
-	
 	private void resolveTargetPlatform() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -422,7 +413,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 	}
 	
-	private void resolveArbitraryLocation() {
+	private void resolveArbitraryLocation(final String location) {
 		final Vector result = new Vector();
 		final Vector fresult = new Vector();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -431,7 +422,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					RegistryLoader.loadFromDirectories(
 						result,
 						fresult,
-						createPaths(new Path(currentLocation)),
+						createPaths(new Path(location)),
 						false,
 						false,
 						monitor);
@@ -472,9 +463,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	public IPluginModelBase[] getModels() {
-		resolveModels();
+		String dropLocation = getDropLocation();
+		if (dropLocation.equals(TARGET_PLATFORM)) {
+			resolveTargetPlatform();
+		} else {
+			resolveArbitraryLocation(dropLocation);
+		}
 		return models;
 	}
-	
-
 }
