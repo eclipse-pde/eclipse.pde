@@ -353,8 +353,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 	
 	private void validateDropLocation() {
-		setErrorMessage(null);
-		setPageComplete(true);
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
@@ -374,10 +372,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				return;
 			}
 			if (!curr.equals(new Path(getTargetHome()))) {
+				setErrorMessage(null);
 				setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.warning"), DialogPage.WARNING); //$NON-NLS-1$
+				setPageComplete(true);
 				return;
 			}
 		}
+		setErrorMessage(null);
+		setPageComplete(true);
 		setMessage(PDEPlugin.getResourceString("ImportWizard.FirstPage.desc")); //$NON-NLS-1$
 	}
 	
