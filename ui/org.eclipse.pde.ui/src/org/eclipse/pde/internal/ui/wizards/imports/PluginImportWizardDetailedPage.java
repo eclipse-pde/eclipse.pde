@@ -126,17 +126,42 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	
 	private Composite createButtonArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		
 		Composite container = new Composite(comp, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 30;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Button button = new Button(container, SWT.PUSH);
+		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing"));
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleExistingProjects();
+			}
+		});
+		SWTUtil.setButtonDimensionHint(button);
+		
+		button = new Button(container, SWT.PUSH);
+		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingUnshared"));
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleExistingUnshared();
+			}
+		});
+		SWTUtil.setButtonDimensionHint(button);
+		
+		new Label(container, SWT.NONE);
+		//new Label(container, SWT.NONE);
+		
+		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.add"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -182,26 +207,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSwap();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(button);
-		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing"));
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleExistingProjects();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(button);
-		
-		button = new Button(container, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingUnshared"));
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleExistingUnshared();
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
