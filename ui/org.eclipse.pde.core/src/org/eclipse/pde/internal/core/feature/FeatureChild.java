@@ -20,41 +20,41 @@ import org.w3c.dom.*;
 
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private static final long serialVersionUID = 1L;
-	private String version;
-	private IFeature feature;
-	private String name;
-	private boolean optional;
-	private int searchLocation = ROOT;
-	private int match = NONE;
-	private String os;
-	private String ws;
-	private String arch;
+	private String fVersion;
+	private IFeature fFeature;
+	private String fName;
+	private boolean fOptional;
+	private int fSearchLocation = ROOT;
+	private int fMatch = NONE;
+	private String fOs;
+	private String fWs;
+	private String fArch;
 
 	protected void reset() {
 		super.reset();
-		version = null;
-		optional = false;
-		name = null;
-		searchLocation = ROOT;
-		match = NONE;
-		os = null;
-		ws = null;
-		arch = null;
+		fVersion = null;
+		fOptional = false;
+		fName = null;
+		fSearchLocation = ROOT;
+		fMatch = NONE;
+		fOs = null;
+		fWs = null;
+		fArch = null;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
 		bindSourceLocation(node, lineTable);
-		version = getNodeAttribute(node, "version"); //$NON-NLS-1$
-		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
-		optional = getBooleanAttribute(node, "optional"); //$NON-NLS-1$
-		os = getNodeAttribute(node, "os"); //$NON-NLS-1$
-		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
-		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		fOptional = getBooleanAttribute(node, "optional"); //$NON-NLS-1$
+		fOs = getNodeAttribute(node, "os"); //$NON-NLS-1$
+		fWs = getNodeAttribute(node, "ws"); //$NON-NLS-1$
+		fArch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
 		String matchName = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (matchName != null) {
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
 				if (matchName.equals(RULE_NAME_TABLE[i])) {
-					match = i;
+					fMatch = i;
 					break;
 				}
 			}
@@ -64,61 +64,61 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			searchLocationName = getNodeAttribute(node, "search-location"); //$NON-NLS-1$
 		if (searchLocationName != null) {
 			if (searchLocationName.equals("root")) //$NON-NLS-1$
-				searchLocation = ROOT;
+				fSearchLocation = ROOT;
 			else if (searchLocationName.equals("self")) //$NON-NLS-1$
-				searchLocation = SELF;
+				fSearchLocation = SELF;
 			else if (searchLocationName.equals("both")) //$NON-NLS-1$
-				searchLocation = BOTH;
+				fSearchLocation = BOTH;
 		}
 		hookWithWorkspace();
 	}
 
 	public void loadFrom(IFeature feature) {
 		id = feature.getId();
-		version = feature.getVersion();
-		optional = false;
-		name = feature.getLabel();
-		this.feature = feature;
+		fVersion = feature.getVersion();
+		fOptional = false;
+		fName = feature.getLabel();
+		this.fFeature = feature;
 	}
 	/**
 	 * @see IFeatureChild#getVersion()
 	 */
 	public String getVersion() {
-		return version;
+		return fVersion;
 	}
 
 	public boolean isOptional() {
-		return optional;
+		return fOptional;
 	}
 
 	public String getName() {
-		return name;
+		return fName;
 	}
 
 	public int getSearchLocation() {
-		return searchLocation;
+		return fSearchLocation;
 	}
 
 	public int getMatch() {
-		return match;
+		return fMatch;
 	}
 	
 	public String getOS() {
-		return os;
+		return fOs;
 	}
 	
 	public String getWS() {
-		return ws;
+		return fWs;
 	}
 	
 	public String getArch() {
-		return arch;
+		return fArch;
 	}
 
 	public IFeature getReferencedFeature() {
-		if (feature == null)
+		if (fFeature == null)
 			hookWithWorkspace();
-		return feature;
+		return fFeature;
 	}
 
 	public void hookWithWorkspace() {
@@ -131,8 +131,8 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			IFeature feature = models[i].getFeature();
 
 			if (feature != null && feature.getId().equals(getId())) {
-				if (version == null || feature.getVersion().equals(version)) {
-					this.feature = feature;
+				if (fVersion == null || feature.getVersion().equals(fVersion)) {
+					this.fFeature = feature;
 					break;
 				}
 			}
@@ -144,30 +144,30 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	 */
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.version;
-		this.version = version;
+		Object oldValue = this.fVersion;
+		this.fVersion = version;
 		firePropertyChanged(P_VERSION, oldValue, version);
 		hookWithWorkspace();
 	}
 
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.name;
-		this.name = name;
+		Object oldValue = this.fName;
+		this.fName = name;
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.match);
-		this.match = match;
+		Integer oldValue = new Integer(this.fMatch);
+		this.fMatch = match;
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
 	public void setSearchLocation(int searchLocation) throws CoreException {
 		ensureModelEditable();
-		Integer oldValue = new Integer(this.searchLocation);
-		this.searchLocation = searchLocation;
+		Integer oldValue = new Integer(this.fSearchLocation);
+		this.fSearchLocation = searchLocation;
 		firePropertyChanged(
 			P_SEARCH_LOCATION,
 			oldValue,
@@ -176,29 +176,29 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	public void setOptional(boolean optional) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = new Boolean(this.optional);
-		this.optional = optional;
+		Object oldValue = new Boolean(this.fOptional);
+		this.fOptional = optional;
 		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
 	}
 	
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.os;
-		this.os = os;
+		Object oldValue = this.fOs;
+		this.fOs = os;
 		firePropertyChanged(P_OS, oldValue, os);
 	}
 	
 	public void setWS(String ws) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.ws;
-		this.ws = ws;
+		Object oldValue = this.fWs;
+		this.fWs = ws;
 		firePropertyChanged(P_WS, oldValue, ws);
 	}
 	
 	public void setArch(String arch) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.arch;
-		this.arch = arch;
+		Object oldValue = this.fArch;
+		this.fArch = arch;
 		firePropertyChanged(P_ARCH, oldValue, arch);
 	}
 
@@ -252,9 +252,9 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			writer.println();
 			writer.print(indent2 + "optional=\"true\""); //$NON-NLS-1$
 		}
-		if (match!=NONE) {
+		if (fMatch!=NONE) {
 			writer.println();
-			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[match]+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[fMatch]+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getOS() != null) {
 			writer.println();
@@ -268,10 +268,10 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			writer.println();
 			writer.print(indent2 + "arch=\""+getArch() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (searchLocation!=ROOT) {
+		if (fSearchLocation!=ROOT) {
 			writer.println();
-			String value=searchLocation==SELF?"self":"both"; //$NON-NLS-1$ //$NON-NLS-2$
-			writer.print(indent2 + "search_location=\""+value+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			String value=fSearchLocation==SELF?"self":"both"; //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(indent2 + "search-location=\""+value+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
