@@ -347,11 +347,14 @@ public class BasicLauncherTab
 
 	private IStatus validateWorkspaceSelection() {
 		IPath curr = getWorkspaceLocation();
+		/* This restriction is not present in the
+		 * platform - why are we having it?
 		if (curr.segmentCount() == 0) {
 			return createStatus(
 				IStatus.ERROR,
 				PDEPlugin.getResourceString(KEY_ENTER_WORKSPACE));
 		}
+		*/
 		if (!Path.ROOT.isValidPath(workspaceCombo.getText())) {
 			return createStatus(
 				IStatus.ERROR,
