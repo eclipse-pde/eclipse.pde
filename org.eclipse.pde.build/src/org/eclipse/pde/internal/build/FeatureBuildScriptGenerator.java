@@ -124,7 +124,7 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateZipSourcesTarget(script);
 	generateZipLogsTarget(script);
 	generateCleanTarget(script);
-	generateRefreshTarget(script, getPropertyFormat(PROPERTY_FEATURE));
+	generateRefreshTarget(script);
 	generateEpilogue(script);
 }
 
@@ -440,4 +440,14 @@ protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	script.printEndTag(--tab, "target");
 }
 
+protected void generateRefreshTarget(AntScript script) {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
+	script.printRefreshLocalTask(tab, getPropertyFormat(PROPERTY_FEATURE), "infinite");
+	Map params = new HashMap(2);
+	params.put(PROPERTY_TARGET, TARGET_REFRESH);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
+	script.printString(--tab, "</target>");
+}
 }

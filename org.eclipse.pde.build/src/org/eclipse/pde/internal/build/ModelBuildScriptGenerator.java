@@ -75,7 +75,7 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateGatherSourcesTarget(script);
 	generateGatherLogTarget(script);
 	generateCleanTarget(script);
-	generateRefreshTarget(script, getPropertyFormat(getModelTypeName()));
+	generateRefreshTarget(script);
 	generateZipPluginTarget(script, model);
 	generateEpilogue(script);
 }
@@ -224,6 +224,14 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
 	script.printZipTask(tab, destination.append(FULL_NAME + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + FULL_NAME, false, null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	script.printString(--tab, "</target>");
+}
+
+protected void generateRefreshTarget(AntScript script) {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, null);
+	script.printRefreshLocalTask(tab, getPropertyFormat(getModelTypeName()), "infinite");
 	script.printString(--tab, "</target>");
 }
 
