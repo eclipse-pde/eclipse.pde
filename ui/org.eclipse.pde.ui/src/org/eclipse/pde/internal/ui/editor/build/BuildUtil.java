@@ -10,21 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
+import java.util.Vector;
 
-public class BuildPage extends PDEFormPage {
+import org.eclipse.pde.core.build.IBuildEntry;
 
-	public BuildPage(PDEMultiPageEditor editor, String title) {
-		super(editor, title);
-	}
-	public IContentOutlinePage createContentOutlinePage() {
-		return null;
-	}
-	protected AbstractSectionForm createForm() {
-		return new BuildForm(this);
+public class BuildUtil {
+
+	public static IBuildEntry[] getBuildLibraries(IBuildEntry[] entries) {
+		Vector temp = new Vector();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getName().startsWith(IBuildEntry.JAR_PREFIX))
+				temp.add(entries[i]);
+		}
+		IBuildEntry[] result = new IBuildEntry[temp.size()];
+		temp.copyInto(result);
+		return result;
 	}
 
 }

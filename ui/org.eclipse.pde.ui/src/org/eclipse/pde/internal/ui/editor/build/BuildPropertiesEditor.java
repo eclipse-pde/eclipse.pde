@@ -11,23 +11,30 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
+import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
+import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 
 public class BuildPropertiesEditor extends PDEMultiPageEditor {
-	public static final String BUILD_PAGE_TITLE = "BuildEditor.BuildPage.title";
+	public static final String BUILD_PAGE_TITLE = "BuildPropertiesEditor.BuildPage.title";
 	public static final String BUILD_PAGE = "BuildPage";
 	public static final String SOURCE_PAGE = "SourcePage";
-	private boolean storageModel=false;
+	public static final String OUTPUT_PREFIX = "output.";
 
 	public BuildPropertiesEditor() {
 		super();
@@ -41,22 +48,13 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	}
 
 	protected void createPages() {
-		firstPageId = BUILD_PAGE;
-		formWorkbook.setFirstPageSelected(false);
-		BuildPage buildPage =
-			new BuildPage(this, PDEPlugin.getResourceString(BUILD_PAGE_TITLE));
-		addPage(BUILD_PAGE, buildPage);
 		addPage(SOURCE_PAGE, new BuildSourcePage(this));
 	}
+	
 	private IBuildModel createResourceModel(IFile file) throws CoreException {
-		InputStream stream = null;
+		InputStream stream = file.getContents(false);
 
-		stream = file.getContents(false);
-
-		IModelProvider provider =
-			PDECore.getDefault().getWorkspaceModelManager();
-		provider.connect(file, this);
-		IBuildModel model = (IBuildModel) provider.getModel(file, this);
+		IBuildModel model = new WorkspaceBuildModel(file);
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {
@@ -82,26 +80,54 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-		storageModel = true;
 		return model;
 	}
 
 	public void dispose() {
 		super.dispose();
-		IModelProvider provider =
-			PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
-		if (storageModel)
-			model.dispose();
-		else
-			provider.disconnect(model.getUnderlyingResource(), this);
+		model.dispose();		
 	}
+	
 	public IPDEEditorPage getHomePage() {
+		if (model instanceof ExternalBuildModel)
+			return getPage(SOURCE_PAGE);
 		return getPage(BUILD_PAGE);
 	}
 	protected String getSourcePageId() {
 		return SOURCE_PAGE;
 	}
+	
+	public void createPartControl(Composite parent) {
+		if (model instanceof WorkspaceBuildModel) {
+			firstPageId = BUILD_PAGE;
+			formWorkbook.setFirstPageSelected(false);
+			BuildPage buildPage =
+				new BuildPage(this, PDEPlugin.getResourceString(BUILD_PAGE_TITLE));
+			addPage(BUILD_PAGE, buildPage, 0);
+		}
+		super.createPartControl(parent);
+		if (model instanceof ExternalBuildModel) {
+			firstPageId = SOURCE_PAGE;
+			showPage(SOURCE_PAGE);
+		}
+	}
+
+	public void openTo(Object obj, IMarker marker) {
+		if (EditorPreferencePage.getUseSourcePage() || model instanceof ExternalBuildModel) {
+			PDESourcePage sourcePage =
+				(PDESourcePage) showPage(getSourcePageId());
+			if (marker != null)
+				sourcePage.openTo(marker);
+		} else {
+			IPDEEditorPage page = getPageFor(obj);
+			if (page != null) {
+				showPage(page);
+				page.openTo(obj);
+			}
+		}
+	}
+
 	public String getTitle() {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IStorageEditorInput
@@ -110,11 +136,11 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		}
 		return super.getTitle();
 	}
+	
 	protected boolean isModelDirty(Object model) {
 		return model != null
 			&& model instanceof IEditable
 			&& model instanceof IModel
-			&& ((IModel) model).isEditable()
 			&& ((IEditable) model).isDirty();
 	}
 	protected boolean isValidContentType(IEditorInput input) {
@@ -156,5 +182,182 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 			PDEPlugin.logException(e);
 		}
 		return cleanModel;
+	}
+	
+	public void doSave(IProgressMonitor monitor) {
+		validateSourceFolders(monitor);
+		super.doSave(monitor);
+	}
+	
+	private void validateSourceFolders(IProgressMonitor monitor) {
+		String[] folders = getFolderNames();
+		if (folders.length > 0) {
+			IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
+			if (sourceFolders.length == 0)
+				return;
+			ArrayList list = new ArrayList();
+			for (int i = 0; i < folders.length; i++) {
+				if (getSourceFolder(folders[i], sourceFolders) == null)
+					list.add(folders[i]);
+			}
+			if (list.size() > 0)
+				convertToSourceFolders(list, monitor);
+			refreshOutputKeys(sourceFolders);		
+		}
+	}
+	
+	private String[] getFolderNames() {
+		ArrayList folderNames = new ArrayList();
+		IBuildModel buildModel = (IBuildModel)getModel();
+		IBuildEntry[] entries =
+			BuildUtil.getBuildLibraries(buildModel.getBuild().getBuildEntries());
+		for (int i = 0; i < entries.length; i++) {
+			String[] tokens = entries[i].getTokens();
+			for (int j = 0; j < tokens.length; j++) {
+				if (!folderNames.contains(tokens[j]))
+					folderNames.add(tokens[j]);
+			}
+		}
+		return (String[]) folderNames.toArray(new String[folderNames.size()]);
+	}
+	
+	private void refreshOutputKeys(IPackageFragmentRoot[] sourceFolders) {
+		IBuildModel buildModel = (IBuildModel) getModel();
+		IBuild build = buildModel.getBuild();
+		IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
+
+		String[] jarFolders;
+		IPackageFragmentRoot sourceFolder;
+		IClasspathEntry entry;
+		IPath outputPath;
+		Set outputFolders;
+		try {
+			for (int i = 0; i < libraries.length; i++) {
+				jarFolders = libraries[i].getTokens();
+				outputFolders = new HashSet();
+				for (int j = 0; j < jarFolders.length; j++) {
+					sourceFolder = getSourceFolder(jarFolders[j], sourceFolders);
+					if (sourceFolder != null) {
+						entry = sourceFolder.getRawClasspathEntry();
+						outputPath = entry.getOutputLocation();
+						if (outputPath == null) {
+							outputFolders.add("bin");
+						} else {
+							outputPath = outputPath.removeFirstSegments(1);
+							outputFolders.add(outputPath.toString());
+						}
+					}
+				}
+
+				createOutputKey(
+					libraries[i].getName().replaceFirst(IBuildEntry.JAR_PREFIX, ""),
+					outputFolders);
+			}
+		} catch (JavaModelException e) {
+			PDEPlugin.logException(e);
+		}
+
+	}
+	
+	private void createOutputKey(String libName, Set outputFolders){
+		if (outputFolders.size()==0)
+			return;
+		IBuildModel buildModel = (IBuildModel)getModel();
+		IBuild build = buildModel.getBuild();
+		String outputName = OUTPUT_PREFIX + libName;
+		IBuildEntry outputEntry = build.getEntry(outputName);
+		Iterator iter = outputFolders.iterator();
+		try {
+			if (outputEntry == null){		
+				outputEntry = buildModel.getFactory().createEntry(outputName);
+				build.add(outputEntry);
+			} else {
+				String[] tokens = outputEntry.getTokens();
+				for (int i = 0 ; i<tokens.length; i++ ){
+					outputEntry.removeToken(tokens[i]);
+				}
+			}
+			
+			
+			while(iter.hasNext()){
+				String outputFolder = iter.next().toString();
+				if (!outputFolder.endsWith(""+ Path.SEPARATOR))
+					outputFolder = outputFolder.concat(""+Path.SEPARATOR);
+				outputEntry.addToken(outputFolder.toString());
+			}
+			
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		
+	}	
+	
+	private void convertToSourceFolders(
+		ArrayList folders,
+		IProgressMonitor monitor) {
+		IBuildModel buildModel = (IBuildModel) getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IJavaProject javaProject = JavaCore.create(project);
+
+		Vector newSrcEntries = new Vector();
+		for (int i = 0; i < folders.size(); i++) {
+			String folderName = folders.get(i).toString();
+			IPath path = project.getFullPath().append(folderName);
+			IFolder folder = project.getWorkspace().getRoot().getFolder(path);
+			newSrcEntries.add(JavaCore.newSourceEntry(folder.getFullPath()));
+		}
+
+		try {
+			IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
+			IClasspathEntry[] newEntries =
+				new IClasspathEntry[oldEntries.length + newSrcEntries.size()];
+			System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
+			for (int i = 0; i < newSrcEntries.size(); i++)
+				newEntries[oldEntries.length + i] =
+					(IClasspathEntry) newSrcEntries.elementAt(i);
+
+			javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor, 1));
+		} catch (JavaModelException e) {
+			PDEPlugin.logException(e);
+		}
+
+	}
+	
+	private IPackageFragmentRoot[] computeSourceFolders() {
+		ArrayList folders = new ArrayList();
+		IBuildModel buildModel = (IBuildModel)getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				IPackageFragmentRoot[] roots =
+					jProject.getPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+						folders.add(roots[i]);
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			PDEPlugin.logException(e);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		return (IPackageFragmentRoot[]) folders.toArray(
+			new IPackageFragmentRoot[folders.size()]);
+	}
+
+	private IPackageFragmentRoot getSourceFolder(
+		String folderName,
+		IPackageFragmentRoot[] sourceFolders) {
+		for (int i = 0; i < sourceFolders.length; i++) {
+			if (sourceFolders[i]
+				.getPath()
+				.removeFirstSegments(1)
+				.equals(new Path(folderName))) {
+				return sourceFolders[i];
+			}
+		}
+		return null;
 	}
 }

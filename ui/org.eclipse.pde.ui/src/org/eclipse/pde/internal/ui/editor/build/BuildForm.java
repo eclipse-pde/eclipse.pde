@@ -10,74 +10,175 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 
 public class BuildForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "BuildEditor.Form.title";
-	public static final String FORM_RTITLE = "BuildEditor.Form.rtitle";
-	private BuildPage page;
-	private VariableSection variableSection;
-	private TokenSection tokenSection;
+	public static final String CUSTOM_DESC =
+		"BuildPropertiesEditor.Custom.desc";
 
+	private BuildPage page;
+	private BuildClasspathSection classpathSection;
+	private BuildContentsSection srcSection;
+	private BuildContentsSection binSection;
+	private RuntimeInfoSection runtimeSection;
+	private Button customButton;
 	public BuildForm(BuildPage page) {
 		this.page = page;
-		setScrollable(false);
-		//setVerticalFit(true);
+		setScrollable(true);
+		setVerticalFit(true);
 	}
-	
+
 	protected void createFormClient(Composite parent) {
 		FormWidgetFactory factory = getFactory();
 		GridLayout layout = new GridLayout();
-		parent.setLayout(layout);
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 15;
+		layout.verticalSpacing = 10;
 		layout.makeColumnsEqualWidth = true;
+		parent.setLayout(layout);
 
-		variableSection = new VariableSection(page);
-		Control control = variableSection.createControl(parent, factory);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
 
-		tokenSection = new TokenSection(page);
-		control = tokenSection.createControl(parent, factory);
+		boolean isCustom = getCustomSelection();
+		customButton =
+			factory.createButton(
+				parent,
+				PDEPlugin.getResourceString(CUSTOM_DESC),
+				SWT.CHECK);
+		customButton.setAlignment(SWT.LEFT);
+		GridData gd = new GridData (GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan =2;
+		customButton.setLayoutData(gd);
+		customButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean isCustom = customButton.getSelection();
+				IBuildModel buildModel = (IBuildModel) page.getModel();
+				IBuildEntry customEntry =
+					buildModel.getBuild().getEntry(
+						IXMLConstants.PROPERTY_CUSTOM);
+				try {
+					if (customEntry == null) {
+						customEntry =
+							buildModel.getFactory().createEntry(
+								IXMLConstants.PROPERTY_CUSTOM);
+						buildModel.getBuild().add(customEntry);
+					}
+					String[] tokens = customEntry.getTokens();
+					if (tokens.length != 0) {
+						for (int i = 0; i < tokens.length; i++)
+							customEntry.removeToken(tokens[i]);
+					}
+					customEntry.addToken(isCustom ? "true" : "false");
+					if (isCustom) {
+						disableAllSections();
+					} else {
+						enableAllSections();
+					}
+				} catch (CoreException e1) {
+					PDEPlugin.logException(e1);
+				}
+			}
+		});
+		runtimeSection = new RuntimeInfoSection(page);
+		Control control = runtimeSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
 		control.setLayoutData(gd);
-
-		// Link
-		SectionChangeManager manager = new SectionChangeManager();
-		manager.linkSections(variableSection, tokenSection);
-
-		registerSection(variableSection);
-		registerSection(tokenSection);
+		runtimeSection.setSectionControl(control);
 		
+		binSection = new BinSection(page);
+		control = binSection.createControl(parent, factory);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		control.setLayoutData(gd);
+		binSection.setSectionControl(control);
+
+		srcSection = new SrcSection(page);
+		control = srcSection.createControl(parent, factory);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		control.setLayoutData(gd);
+		srcSection.setSectionControl(control);
+
+		classpathSection = new BuildClasspathSection(page);
+		control = classpathSection.createControl(parent, factory);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		control.setLayoutData(gd);
+		classpathSection.setSectionControl(control);
+
+		registerSection(runtimeSection);
+		registerSection(srcSection);
+		registerSection(binSection);
+		registerSection(classpathSection);
+
+		if (isCustom)
+			disableAllSections();
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.BUILD_PAGE);
 	}
-	
-	public void expandTo(Object object) {
-		variableSection.expandTo(object);
+
+	public void dispose() {
+		unregisterSection(runtimeSection);
+		unregisterSection(srcSection);
+		unregisterSection(binSection);
+		unregisterSection(classpathSection);
+		binSection.dispose();
+		srcSection.dispose();
+		runtimeSection.dispose();
+		classpathSection.dispose();
 	}
-	
+
+
+	private boolean getCustomSelection(){
+		IBuildModel model = (IBuildModel)page.getModel();
+		IBuild build = model.getBuild();
+		IBuildEntry customEntry = build.getEntry(IXMLConstants.PROPERTY_CUSTOM);
+		if (customEntry ==null || customEntry.getTokens().length ==0)
+			return false;
+		return customEntry.getTokens()[0].equals("true"); 
+	}
 	public void initialize(Object modelObject) {
 		IBuildModel model = (IBuildModel) modelObject;
 
 		super.initialize(model);
-		String title = "";
-		if (model instanceof IEditable && model.isEditable() == false) {
-			title = PDEPlugin.getResourceString(FORM_RTITLE);
-		} else
-			title = PDEPlugin.getResourceString(FORM_TITLE);
+		String pluginID = model.getUnderlyingResource().getProject().getName();
+		String title = 
+			PDECore.getDefault().findPlugin(pluginID).getTranslatedName();
 		setHeadingText(title);
 		((Composite) getControl()).layout(true);
 	}
 	
+	public void disableAllSections(){
+		customButton.setSelection(true);
+		runtimeSection.disableSection();
+		binSection.disableSection();
+		srcSection.disableSection();
+		classpathSection.disableSection();
+	}
+	
+	public void enableAllSections(){
+		customButton.setSelection(false);
+		runtimeSection.enableSection();
+		binSection.enableSection();
+		srcSection.enableSection();
+		classpathSection.enableSection();
+	}
+
 	public void setFocus() {
 	}
 

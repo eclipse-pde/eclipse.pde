@@ -19,6 +19,6 @@ public BuildSourcePage(PDEMultiPageEditor editor) {
 	super(editor);
 }
 public IContentOutlinePage createContentOutlinePage() {
-	return new BuildSourceOutlinePage(getEditor().getEditorInput(), getDocumentProvider(), this);
+	return null;
 }
 }
