@@ -77,21 +77,17 @@ public abstract class AbstractPluginModelBase
 
 	protected URL[] getNLLookupLocations() {
 		URL thisLocation = getNLLookupLocation();
-		if (isFragmentModel()) {
-			if (thisLocation!=null)
-				return new URL[] { thisLocation };
-			else
-				return new URL[0];
-		} else {
-			URL[] fragmentLocations = getFragmentLocations();
-			URL[] locations = new URL[(thisLocation!=null?1:0) + fragmentLocations.length];
-			if (thisLocation!=null)
-				locations[0] = thisLocation;
-			for (int i = 1; i < locations.length; i++) {
-				locations[i] = fragmentLocations[i - 1];
-			}
-			return locations;
+		if (isFragmentModel())
+			return (thisLocation!=null) ? new URL[] {thisLocation} : new URL[0];
+		
+		URL[] fragmentLocations = getFragmentLocations();
+		URL[] locations = new URL[(thisLocation!=null ? 1 :0) + fragmentLocations.length];
+		if (thisLocation != null)
+			locations[0] = thisLocation;
+		for (int i = 1; i < locations.length; i++) {
+			locations[i] = fragmentLocations[i - 1];
 		}
+		return locations;	
 	}
 
 	protected URL[] getFragmentLocations() {

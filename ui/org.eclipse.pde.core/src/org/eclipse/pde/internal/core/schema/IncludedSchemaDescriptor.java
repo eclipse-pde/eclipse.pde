@@ -16,14 +16,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 	private URL url;
 	private String schemaLocation;
@@ -68,15 +60,12 @@ public class IncludedSchemaDescriptor extends AbstractSchemaDescriptor {
 				if (includedLocation==null) return null;
 				return new URL(parentURL.getProtocol(), parentURL.getHost(), includedLocation.toString());
 			}
-			else
-				return null;
+			return null;
 		}
-		else {
-			// parent-relative location
-			IPath path = new Path(parentURL.getPath());
-			path = path.removeLastSegments(1).append(schemaLocation);
-			return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());
-		}
+		// parent-relative location
+		IPath path = new Path(parentURL.getPath());
+		path = path.removeLastSegments(1).append(schemaLocation);
+		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
 	}
 
 	/**

@@ -41,12 +41,7 @@ public class ChoiceRestriction
 		return baseType;
 	}
 	public Object[] getChildren() {
-		if (children != null) {
-			Object[] result = new Object[children.size()];
-			children.copyInto(result);
-			return result;
-		} else
-			return new Object[0];
+		return (children != null) ? children.toArray() : new Object[0];
 	}
 	public String[] getChoicesAsStrings() {
 		if (children == null)
