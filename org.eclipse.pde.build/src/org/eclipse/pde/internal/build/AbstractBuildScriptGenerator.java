@@ -357,7 +357,9 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 		fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null); //$NON-NLS-1$
 	}
 	script.printCopyTask(tab, null, destdir, fileSets);
-	script.printJarTask(tab, getJARLocation(name), destdir);
+	String jarLocation = getJARLocation(name);
+	script.printMkdirTask(tab, new Path(jarLocation).removeLastSegments(1).toString());
+	script.printJarTask(tab, jarLocation, destdir);
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
@@ -374,7 +376,9 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
 	}
-	script.printZipTask(tab, getSRCLocation(name), null, false, fileSets);
+	String srcLocation = getSRCLocation(name);
+	script.printMkdirTask(tab, new Path(srcLocation).removeLastSegments(1).toString());
+	script.printZipTask(tab, srcLocation, null, false, fileSets);
 	script.printEndTag(--tab, "target"); //$NON-NLS-1$
 }
 
