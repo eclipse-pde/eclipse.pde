@@ -22,7 +22,6 @@ import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.build.*;
@@ -185,10 +184,9 @@ public abstract class BaseBuildAction
 			properties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL()); 
 			properties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, store.getString(PROP_JAVAC_FAIL_ON_ERROR));
-			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
+			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false");
+			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true");
 			
 			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				Preferences pref = JavaCore.getPlugin().getPluginPreferences();

@@ -96,12 +96,6 @@
             class="org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage"
             id="org.eclipse.pde.ui.CompilersPreferencePage">
       </page>
-      <page
-            name="%preferences.buildOptions.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.BuildOptionsPreferencePage"
-            id="org.eclipse.pde.ui.buildOptionsPreferencePage">
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

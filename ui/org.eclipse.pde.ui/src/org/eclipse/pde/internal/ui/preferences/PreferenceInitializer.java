@@ -15,9 +15,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
 		ColorManager.initializeDefaults(store);
 		store.setDefault(P_USE_SOURCE_PAGE, false);
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
-		store.setDefault(PROP_JAVAC_DEBUG_INFO, true);
-		store.setDefault(PROP_JAVAC_FAIL_ON_ERROR, false);
-		store.setDefault(PROP_JAVAC_VERBOSE, true);
 	}
 
 }

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
@@ -211,10 +210,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BaseBuildAction.getBootClasspath());
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true");
 
 			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 

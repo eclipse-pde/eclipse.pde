@@ -219,7 +219,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 						
 		Composite bottom = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.marginHeight = layout.marginWidth = 0;
 		bottom.setLayout(layout);
 		bottom.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -227,20 +227,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		fIncludeSource = new Button(bottom, SWT.CHECK);
 		fIncludeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource")); //$NON-NLS-1$
 		fIncludeSource.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
+						
 		Button button = new Button(bottom, SWT.PUSH);
-		button.setText(PDEPlugin.getResourceString("ExportWizard.buildOptions.button")); //$NON-NLS-1$
-		button.setLayoutData(new GridData());
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showPreferencePage(new BuildOptionsPreferenceNode());
-			}
-		});
-		SWTUtil.setButtonDimensionHint(button);	
-		
-		button = new Button(bottom, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ExportWizard.targetEnv.button")); //$NON-NLS-1$
-		button.setLayoutData(new GridData());
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showPreferencePage(new TargetEnvironmentPreferenceNode());
