@@ -67,6 +67,7 @@ public class PluginsView extends ViewPart {
 	private Action selectInJavaSearchAction;
 	private Action addToJavaSearchAction;
 	private Action removeFromJavaSearchAction;
+    private CollapseAllAction collapseAllAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
 	private ShowInWorkspaceAction showInPackagesAction;
 	private DisabledFilter disabledFilter = new DisabledFilter();
@@ -113,6 +114,29 @@ public class PluginsView extends ViewPart {
 		}
 	}
 
+    class CollapseAllAction extends Action {
+        public CollapseAllAction() {
+            super();
+            setText(PDEPlugin
+                    .getResourceString("PluginsView.CollapseAllAction.label")); //$NON-NLS-1$
+            setDescription(PDEPlugin
+                    .getResourceString("PluginsView.CollapseAllAction.description")); //$NON-NLS-1$
+            setToolTipText(PDEPlugin
+                    .getResourceString("PluginsView.CollapseAllAction.tooltip")); //$NON-NLS-1$
+            setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.action.Action#run()
+         */
+        public void run() {
+            super.run();
+            treeViewer.collapseAll();
+        }
+    }
+    
 	/**
 	 * Constructor for PluginsView.
 	 */
@@ -187,7 +211,9 @@ public class PluginsView extends ViewPart {
 	}
 
 	private void contributeToLocalToolBar(IToolBarManager manager) {
-		drillDownAdapter.addNavigationActions(manager);
+ 		drillDownAdapter.addNavigationActions(manager);
+        manager.add(new Separator());
+        manager.add(collapseAllAction);
 	}
 	private void makeActions() {
 		clipboard = new Clipboard(treeViewer.getTree().getDisplay());
@@ -315,6 +341,8 @@ public class PluginsView extends ViewPart {
 		showInPackagesAction =
 			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
 		showInPackagesAction.setText(PDEPlugin.getResourceString("PluginsView.showInPackageExplorer")); //$NON-NLS-1$
+        
+        collapseAllAction = new CollapseAllAction();
 
 		openClassFileAction = new OpenAction(getViewSite());
 	}
