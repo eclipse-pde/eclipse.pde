@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
-import org.xml.sax.*;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * @author dejan
@@ -19,7 +22,7 @@ public class ValidatingSAXParser {
 	private SAXParser parser;
 	public ValidatingSAXParser() {
 		parser = new SAXParser();
-/*
+
 		try {
 			parser.setFeature("http://xml.org/sax/features/validation", true);
 			parser.setFeature(
@@ -28,7 +31,6 @@ public class ValidatingSAXParser {
 		} catch (SAXException e) {
 			PDE.log(e);
 		}
-*/
 	}
 	
 	public SAXParser getParser() {
