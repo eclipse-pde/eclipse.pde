@@ -27,9 +27,9 @@ public abstract class WorkspacePluginModelBase
 
 	protected NLResourceHelper createNLResourceHelper() {
 		String name = isFragmentModel() ? "fragment" : "plugin";
-		WorkspaceResourceHelper helper =
-			new WorkspaceResourceHelper(name, getNLLookupLocations());
-		helper.setFile(file);
+		NLResourceHelper helper =
+			new NLResourceHelper(name, getNLLookupLocations());
+		//helper.setFile(file);
 		return helper;
 	}
 	
