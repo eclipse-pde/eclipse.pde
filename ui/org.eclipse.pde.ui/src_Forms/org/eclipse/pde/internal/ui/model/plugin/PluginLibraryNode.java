@@ -192,7 +192,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
 		for (int i = 0; i < attrs.length; i++) {
-			buffer.append(" " + attrs[i].write());
+			appendAttribute(buffer, attrs[i].getAttributeName());
 		}
 		if (terminate)
 			buffer.append("/");

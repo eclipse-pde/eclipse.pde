@@ -81,13 +81,13 @@ public class PluginExtensionNode extends PluginParentNode
 		String attrIndent = "      ";
 		StringBuffer buffer = new StringBuffer("<extension");
 		IDocumentAttribute attr = getDocumentAttribute(P_ID);
-		if (attr != null)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		attr = getDocumentAttribute(P_NAME);
-		if (attr != null)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		attr = getDocumentAttribute(P_POINT);
-		if (attr != null)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0)
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
 		if (terminate)
 			buffer.append("/");

@@ -26,7 +26,7 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 	 */
 	protected String[] getSpecificAttributes() {
 		String classname = getClassName();
-		if (classname != null && classname.length() > 0)
+		if (classname != null && classname.trim().length() > 0)
 			return new String[] {"   " + P_CLASS_NAME + "=\"" + classname + "\""};
 		return new String[0];
 	}

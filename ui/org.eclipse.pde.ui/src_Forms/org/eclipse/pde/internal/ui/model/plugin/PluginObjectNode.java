@@ -138,16 +138,15 @@ public class PluginObjectNode extends PluginDocumentNode
 		String oldValue = getXMLAttributeValue(name);
 		PluginAttribute attr = (PluginAttribute) fAttributes.get(name);
 		try {
-			if (value != null) {
+			if (value == null)
+				value = "";
 				if (attr == null) {
 					attr = new PluginAttribute();
 					attr.setName(name);
 					attr.setEnclosingElement(this);
 					fAttributes.put(name, attr);
 				}
-				attr.setValue(value);
-			} else
-				fAttributes.remove(name);
+				attr.setValue(value == null ? "" : value);
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)
@@ -253,6 +252,18 @@ public class PluginObjectNode extends PluginDocumentNode
 		}
 
 		return true;
+	}
+	protected void appendAttribute(StringBuffer buffer, String attrName) {
+		appendAttribute(buffer, attrName, "");
+	}
+	
+	protected void appendAttribute(StringBuffer buffer, String attrName, String defaultValue) {
+		IDocumentAttribute attr = getDocumentAttribute(attrName);
+		if (attr != null) {
+			String value = attr.getAttributeValue();
+			if (value != null && value.trim().length() > 0 && !value.equals(defaultValue))
+				buffer.append(" " + attr.write());
+		}
 	}
 
 }

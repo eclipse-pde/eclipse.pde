@@ -192,7 +192,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 		else if (element instanceof PluginObjectNode) {
 			PluginObjectNode node = (PluginObjectNode)element;
-			String newString = newValue!=null?newValue.toString():null;
+			String newString = newValue!=null?newValue.toString():"";
 			node.setXMLAttribute(propertyName, newString);
 		}
 	}

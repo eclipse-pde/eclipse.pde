@@ -366,19 +366,19 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		buffer.append(newLine);
 		
 		String id = getId();
-		if (id != null && id.length() > 0)
+		if (id != null && id.trim().length() > 0)
 			buffer.append("   " + P_ID + "=\"" + getWritableString(id) + "\"" + newLine);
 		
 		String name = getName();
-		if (name != null && name.length() > 0)
+		if (name != null && name.trim().length() > 0)
 			buffer.append("   " + P_NAME + "=\"" + getWritableString(name) + "\"" + newLine);
 		
 		String version = getVersion();
-		if (version != null && version.length() > 0)
+		if (version != null && version.trim().length() > 0)
 			buffer.append("   " + P_VERSION + "=\"" + getWritableString(version) + "\"" + newLine);
 		
 		String provider = getProviderName();
-		if (provider != null && provider.length() > 0) {
+		if (provider != null && provider.trim().length() > 0) {
 			buffer.append("   " + P_PROVIDER + "=\"" + getWritableString(provider) + "\"");
 		}
 		

@@ -75,15 +75,15 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		ArrayList result = new ArrayList();
 		
 		String pluginID = getPluginId();
-		if (pluginID != null && pluginID.length() > 0)
+		if (pluginID != null && pluginID.trim().length() > 0)
 			result.add("   " + P_PLUGIN_ID + "=\"" + pluginID + "\"");
 		
 		String pluginVersion = getPluginVersion();
-		if (pluginVersion != null && pluginVersion.length() > 0) 
+		if (pluginVersion != null && pluginVersion.trim().length() > 0) 
 			result.add("   " + P_PLUGIN_VERSION + "=\"" + pluginVersion + "\"");
 		
 		String match = getXMLAttributeValue(P_RULE);
-		if (match != null && match.length() > 0)
+		if (match != null && match.trim().length() > 0)
 			result.add("   " + P_RULE + "=\"" + match + "\"");
 			
 		return (String[]) result.toArray(new String[result.size()]);

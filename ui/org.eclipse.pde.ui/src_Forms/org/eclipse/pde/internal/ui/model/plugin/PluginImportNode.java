@@ -2,12 +2,7 @@ package org.eclipse.pde.internal.ui.model.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginImportNode extends PluginObjectNode implements IPluginImport {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isReexported()
@@ -108,22 +103,12 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	 */
 	public String writeShallow(boolean terminate) {
 		StringBuffer buffer = new StringBuffer("<import");
-		IDocumentAttribute attr = getDocumentAttribute("plugin");
-		if (attr != null && attr.getAttributeValue().trim().length() > 0)
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_VERSION);
-		if (attr != null && attr.getAttributeValue().trim().length() > 0)
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_MATCH);
-		if (attr != null && attr.getAttributeValue() != null)
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_REEXPORTED);
-		if (attr != null && "true".equals(attr.getAttributeValue()))
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_OPTIONAL);
-		if (attr != null && "true".equals(attr.getAttributeValue()))
-			buffer.append(" " + attr.write()); 
-		
+		appendAttribute(buffer, "plugin");
+		appendAttribute(buffer, P_VERSION);
+		appendAttribute(buffer, P_MATCH);
+		appendAttribute(buffer, P_REEXPORTED, "false");
+		appendAttribute(buffer, P_OPTIONAL, "false");
+
 		if (terminate)
 			buffer.append("/");
 		buffer.append(">");

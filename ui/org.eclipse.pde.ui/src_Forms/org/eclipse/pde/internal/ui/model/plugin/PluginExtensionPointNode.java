@@ -2,7 +2,6 @@ package org.eclipse.pde.internal.ui.model.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.model.*;
 
 /**
  * @author melhem
@@ -68,16 +67,10 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	 */
 	public String writeShallow(boolean terminate) {
 		StringBuffer buffer = new StringBuffer("<extension-point");
-		IDocumentAttribute attr = getDocumentAttribute(P_ID);
-		if (attr != null)
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_NAME);
-		if (attr != null)
-			buffer.append(" " + attr.write());
-		attr = getDocumentAttribute(P_SCHEMA);
-		if (attr != null)
-			buffer.append(" " + attr.write());
-		
+		appendAttribute(buffer, P_ID);
+		appendAttribute(buffer, P_NAME);
+		appendAttribute(buffer, P_SCHEMA);
+
 		if (terminate)
 			buffer.append("/");
 		buffer.append(">");

@@ -101,10 +101,12 @@ public class PluginElementNode extends PluginParentNode
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
 		if (attrs.length == 1) {
-			buffer.append(" " + attrs[0].write());
+			if (attrs[0].getAttributeValue().length() > 0)
+				buffer.append(" " + attrs[0].write());
 		} else {
 			for (int i = 0; i < attrs.length; i++) {
-				buffer.append(sep + getIndent() + "      " + attrs[i].write());
+				if (attrs[i].getAttributeValue().length() > 0)
+					buffer.append(sep + getIndent() + "      " + attrs[i].write());
 			}
 		}
 		if (terminate)
