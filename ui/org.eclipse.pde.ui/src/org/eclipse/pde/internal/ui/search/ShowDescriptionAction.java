@@ -111,21 +111,9 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showURL(String url) {
-/*
-		if (SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
-			Program.launch(url);
-		} else {
-			try {
-				IBrowser browser = BrowserManager.getInstance().createBrowser();
-				browser.displayURL("file://" + url); //$NON-NLS-1$
-			} catch (Exception e) {
-			}
-		}
-*/
 		try {
-			URL theURL = new URL("file:"+url);
 			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-			support.getExternalBrowser().openURL(theURL);
+			support.getExternalBrowser().openURL(new URL("file:" + url));
 		}
 		catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
