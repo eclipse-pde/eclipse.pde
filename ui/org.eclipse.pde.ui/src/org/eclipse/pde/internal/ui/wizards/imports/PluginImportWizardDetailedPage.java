@@ -199,8 +199,9 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					for (int i=0; i<registry.getPluginCount(); i++) {
 						models[i] = registry.getPlugin(i).getModel();
 					}
-					for (int i=registry.getPluginCount(); i<size; i++) {
-						models[i] = registry.getFragment(i).getModel();
+					int offset = registry.getPluginCount();
+					for (int i=0; i<registry.getFragmentCount(); i++) {
+						models[i+offset] = registry.getFragment(i).getModel();
 					}
 					monitor.done();
 				}
