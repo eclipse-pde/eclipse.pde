@@ -190,10 +190,8 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 					searchEngine.search(
 						PDEPlugin.getWorkspace(),
 						SearchEngine.createSearchPattern(
-							type.getElementName(),
-							IJavaSearchConstants.TYPE,
-							IJavaSearchConstants.REFERENCES,
-							true),
+							type,
+							IJavaSearchConstants.REFERENCES),
 						SearchEngine.createJavaSearchScope(enclosingElements),
 						collector2);
 					if (collector2.getResult().length > 0) {
