@@ -843,85 +843,85 @@ public class SchemaTransformer implements ISchemaTransformer {
 					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
-			} else {
-				if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
-						((SchemaObject) container).getStartLine() + linenum,
-						CompilerFlags.getFlag(
-							CompilerFlags.S_FORBIDDEN_END_TAGS));
-					return CompilerFlags.getFlag(
-						CompilerFlags.S_FORBIDDEN_END_TAGS)
-						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
-						((SchemaObject) container).getStartLine() + linenum,
-						CompilerFlags.getFlag(
-							CompilerFlags.S_OPTIONAL_END_TAGS));
-					return CompilerFlags.getFlag(
-						CompilerFlags.S_OPTIONAL_END_TAGS)
-						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getResourceString(REPORT_OPEN),
-						((SchemaObject) container).getStartLine() + linenum,
-						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
-						== CompilerFlags.ERROR;
-				} else {
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_GENERAL, errTag),
-						((SchemaObject) container).getStartLine() + linenum,
-						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
-						== CompilerFlags.ERROR;
-				}
 			}
-		} else { //i.e. if (container instanceof Schema)
-			if (errTag.equals("")) { //$NON-NLS-1$
+			if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
 				reporter.report(
-					PDE.getResourceString(REPORT_UNMATCHED),
-					((Schema) container).getOverviewStartLine() + linenum,
+					PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
+					((SchemaObject) container).getStartLine() + linenum,
+					CompilerFlags.getFlag(
+						CompilerFlags.S_FORBIDDEN_END_TAGS));
+				return CompilerFlags.getFlag(
+					CompilerFlags.S_FORBIDDEN_END_TAGS)
+					== CompilerFlags.ERROR;
+			} 
+			if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
+				reporter.report(
+					PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
+					((SchemaObject) container).getStartLine() + linenum,
+					CompilerFlags.getFlag(
+						CompilerFlags.S_OPTIONAL_END_TAGS));
+				return CompilerFlags.getFlag(
+					CompilerFlags.S_OPTIONAL_END_TAGS)
+					== CompilerFlags.ERROR;
+			} 
+			if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
+				reporter.report(
+					PDE.getResourceString(REPORT_OPEN),
+					((SchemaObject) container).getStartLine() + linenum,
 					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
-			} else {
-				if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
-						((Schema) container).getOverviewStartLine() + linenum,
-						CompilerFlags.getFlag(
-							CompilerFlags.S_FORBIDDEN_END_TAGS));
-					return CompilerFlags.getFlag(
-						CompilerFlags.S_FORBIDDEN_END_TAGS)
-						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
-						((Schema) container).getOverviewStartLine() + linenum,
-						CompilerFlags.getFlag(
-							CompilerFlags.S_OPTIONAL_END_TAGS));
-					return CompilerFlags.getFlag(
-						CompilerFlags.S_OPTIONAL_END_TAGS)
-						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
-					reporter.report(
-						PDE.getResourceString(REPORT_OPEN),
-						((Schema) container).getOverviewStartLine() + linenum,
-						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
-						== CompilerFlags.ERROR;
-				} else {
-					reporter.report(
-						PDE.getFormattedMessage(REPORT_GENERAL, errTag),
-						((Schema) container).getOverviewStartLine() + linenum,
-						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
-					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
-						== CompilerFlags.ERROR;
-				}
-			}
-		}
+			} 
+			reporter.report(
+				PDE.getFormattedMessage(REPORT_GENERAL, errTag),
+				((SchemaObject) container).getStartLine() + linenum,
+				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				== CompilerFlags.ERROR;		
+		} 
+		
+		if (errTag.equals("")) { //$NON-NLS-1$
+			reporter.report(
+				PDE.getResourceString(REPORT_UNMATCHED),
+				((Schema) container).getOverviewStartLine() + linenum,
+				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				== CompilerFlags.ERROR;
+		} 
+		if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
+			reporter.report(
+				PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
+				((Schema) container).getOverviewStartLine() + linenum,
+				CompilerFlags.getFlag(
+					CompilerFlags.S_FORBIDDEN_END_TAGS));
+			return CompilerFlags.getFlag(
+				CompilerFlags.S_FORBIDDEN_END_TAGS)
+				== CompilerFlags.ERROR;
+		} 
+		if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
+			reporter.report(
+				PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
+				((Schema) container).getOverviewStartLine() + linenum,
+				CompilerFlags.getFlag(
+					CompilerFlags.S_OPTIONAL_END_TAGS));
+			return CompilerFlags.getFlag(
+				CompilerFlags.S_OPTIONAL_END_TAGS)
+				== CompilerFlags.ERROR;
+		} 
+		if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
+			reporter.report(
+				PDE.getResourceString(REPORT_OPEN),
+				((Schema) container).getOverviewStartLine() + linenum,
+				CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+			return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+				== CompilerFlags.ERROR;
+		} 
+		reporter.report(
+			PDE.getFormattedMessage(REPORT_GENERAL, errTag),
+			((Schema) container).getOverviewStartLine() + linenum,
+			CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+		return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
+			== CompilerFlags.ERROR;
 	}
 
 	private boolean verifySections(

@@ -60,9 +60,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					if (delta.getKind() != IResourceDelta.REMOVED) {
 						compileFile(candidate, monitor);
 						return true;
-					} else {
-						removeOutputFile(candidate, monitor);
 					}
+					removeOutputFile(candidate, monitor);
 				}
 			}
 			return false;

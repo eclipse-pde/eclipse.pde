@@ -586,11 +586,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				validateJava(element.getAttribute("class"), parentSchema //$NON-NLS-1$
 						.getAttribute(element.getName()), reporter);
 				return;
-			} else {
-				IPluginAttribute[] atts = element.getAttributes();
-				validateExistingAttributes(atts, schemaElement, reporter);
-				validateRequiredAttributes(element, schemaElement, reporter);
-			}
+			} 
+			IPluginAttribute[] atts = element.getAttributes();
+			validateExistingAttributes(atts, schemaElement, reporter);
+			validateRequiredAttributes(element, schemaElement, reporter);
 		}
 
 		if (schemaElement != null)
