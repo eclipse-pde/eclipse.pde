@@ -475,6 +475,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				getLine(expoint),
 				expoint.getId(),
 				reporter);
+			assertNotNull(
+					"name",
+					"extension-point",
+					getLine(expoint),
+					expoint.getName(),
+					reporter);
 		}
 	}
 
