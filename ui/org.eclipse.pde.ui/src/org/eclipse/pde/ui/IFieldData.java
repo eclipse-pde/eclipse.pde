@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.templates;
+package org.eclipse.pde.ui;
 
 /**
  * TODO decide where this interface should go. Ad javadoc.

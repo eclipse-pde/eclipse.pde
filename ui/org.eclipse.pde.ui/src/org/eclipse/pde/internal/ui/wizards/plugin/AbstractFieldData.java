@@ -1,6 +1,6 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.ui.IFieldData;
 
 /**
  * @author melhem

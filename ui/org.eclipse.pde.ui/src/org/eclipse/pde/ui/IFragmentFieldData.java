@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui;
 
-import org.eclipse.pde.ui.templates.*;
 
 /**
  * TODO add javadoc

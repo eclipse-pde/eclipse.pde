@@ -13,8 +13,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 /**
  * An interface for extension wizards. Clients should implement this interface
- * if they are plugging into PDE using <samp>org.eclipse.pde.ui.newExtension
- * </samp> extension point.
+ * if they are plugging into PDE using <samp>org.eclipse.pde.ui.newExtension</samp> 
+ * extension point.
  */
 public interface IExtensionWizard extends IBasePluginWizard {
 	/**
