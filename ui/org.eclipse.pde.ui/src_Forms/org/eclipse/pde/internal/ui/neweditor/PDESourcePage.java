@@ -51,6 +51,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		}
 		super.dispose();
 	}
+
+	protected void editorSaved() {
+		super.editorSaved();
+	}
 	
 	protected abstract ILabelProvider createOutlineLabelProvider();
 	protected abstract ITreeContentProvider createOutlineContentProvider();

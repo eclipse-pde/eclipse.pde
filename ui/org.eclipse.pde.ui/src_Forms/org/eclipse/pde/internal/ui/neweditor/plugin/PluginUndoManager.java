@@ -168,10 +168,13 @@ public class PluginUndoManager extends ModelUndoManager {
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			IPluginObject obj = (IPluginObject) event.getChangedObjects()[0];
-			//Ignore events from objects that are not yet in the model.
-			if (!(obj instanceof IPluginBase) && obj.isInTheModel() == false)
-				return;
+			Object changedObject = event.getChangedObjects()[0];
+			if (changedObject instanceof IPluginObject) {
+				IPluginObject obj = (IPluginObject) event.getChangedObjects()[0];
+				//Ignore events from objects that are not yet in the model.
+				if (!(obj instanceof IPluginBase) && obj.isInTheModel() == false)
+					return;
+			}
 		}
 		super.modelChanged(event);
 	}
