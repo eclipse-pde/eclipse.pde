@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.osgi;
 
+import java.io.File;
 import java.net.*;
 import java.util.Vector;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.pde.internal.core.TargetPlatformRegistryLoader;
+import org.eclipse.core.runtime.model.PluginModel;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.*;
 
 
 public class BundleLoader {
-
 	public static MultiStatus loadFromDirectories(
 		Vector result,
 		Vector fresult,
@@ -29,21 +30,60 @@ public class BundleLoader {
 		boolean resolve,
 		boolean useCache,
 		IProgressMonitor monitor) {
-		try {
-			URL[] urls = new URL[pluginPaths.length];
-			for (int i = 0; i < pluginPaths.length; i++) {
-				urls[i] = new URL("file:" + pluginPaths[i].replace('\\', '/') + "/");
-			}
-			TargetPlatformRegistryLoader loader = new TargetPlatformRegistryLoader();
-			monitor.beginTask("",6);
-			MultiStatus errors = loader.load(urls, resolve, useCache, new SubProgressMonitor(monitor,4));
-			PluginRegistryModel registryModel = loader.getRegistry();
-			processPluginModels(result, registryModel.getPlugins(), false, new SubProgressMonitor(monitor,1));
-			processPluginModels(fresult, registryModel.getFragments(), true, new SubProgressMonitor(monitor,1));
-			return errors;
-		} catch (MalformedURLException e) {
-			return null;
+		
+		PlatformAdmin admin = PDECore.getDefault().acquirePlatform();
+		StateObjectFactory factory = admin.getFactory();
+		State state = factory.createState();
+		long id[]= {0};
+		for (int i = 0; i < pluginPaths.length; i++) {
+			String pluginPath = pluginPaths[i];
+			parseDirectory(pluginPath, id);
 		}
+		/*
+		monitor.beginTask("",6);
+		MultiStatus errors = loader.load(urls, resolve, useCache, new SubProgressMonitor(monitor,4));
+		PluginRegistryModel registryModel = loader.getRegistry();
+		processPluginModels(result, registryModel.getPlugins(), false, new SubProgressMonitor(monitor,1));
+		processPluginModels(fresult, registryModel.getFragments(), true, new SubProgressMonitor(monitor,1));
+		*/
+		return null;
+	}
+
+	private static void parseDirectory(String path, long []id) {
+		File dir = new File(path);
+		File [] pdirs = dir.listFiles();
+		for (int i=0; i<pdirs.length; i++) {
+			File pdir = pdirs[i];
+			if (pdir.isDirectory()) {
+				// test for manifest first
+				File file = new File(pdir, "META-INF/MANIFEST.MF");
+				if (file.exists()) {
+					// manifest present
+					parseBundleManifest(file, id[0]++);
+				} else {
+					// try plugin.xml
+					file = new File(dir, "plugin.xml");
+					if (file.exists()) {
+						parsePluginManifest(file, false);
+					}
+					else {
+						// try fragment.xml
+						file = new File(dir, "fragment.xml");
+						if (file.exists()) {
+							parsePluginManifest(file, true);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static void parseBundleManifest(File file, long id) {
+		System.out.println("Bundle: "+file.getPath());
+	}
+	
+	private static void parsePluginManifest(File file, boolean fragment) {
+		System.out.println((fragment?"Plugin: ":"Fragment: ")+file.getPath());
 	}
 
 	private static void processPluginModels(

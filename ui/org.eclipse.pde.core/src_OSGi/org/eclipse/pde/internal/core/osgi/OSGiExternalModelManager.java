@@ -234,10 +234,11 @@ public class OSGiExternalModelManager implements IExternalModelManager {
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
-
+/*
 		if (isTargetOSGi())
 			BundleLoader.reload(pluginPaths, models, fmodels, monitor);
 		else
+*/
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initialized=true;
 		initializeAllModels();

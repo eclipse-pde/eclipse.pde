@@ -16,10 +16,13 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
@@ -202,6 +205,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private TempFileManager tempFileManager;
 	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
+	private BundleContext context;
+	private ServiceTracker tracker;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -434,6 +439,36 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private boolean isLaunchedInstance() {
 		return launchedInstance;
 	}
+	
+	public void releasePlatform() {
+		if (tracker == null)
+			return;
+		tracker.close();
+		tracker = null;
+	}
+	
+	public PlatformAdmin acquirePlatform() {
+		if (tracker==null) {
+			tracker = new ServiceTracker(context, PlatformAdmin.class.getName(), null);
+			tracker.open();
+		}
+		PlatformAdmin result = (PlatformAdmin)tracker.getService();
+		while (result == null) {
+			try {
+				tracker.waitForService(1000);
+				result = (PlatformAdmin) tracker.getService();
+			} catch (InterruptedException ie) {
+			}
+		}
+		return result;
+	}		
+/*	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.context = context;
+	}
+*/
+	
 
 	public void shutdown() throws CoreException {
 		PDECore.getDefault().savePluginPreferences();
