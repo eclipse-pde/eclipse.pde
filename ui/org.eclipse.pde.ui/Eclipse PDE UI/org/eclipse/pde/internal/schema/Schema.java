@@ -232,8 +232,9 @@ private ISchemaAttribute processAttribute(
 	if (atype != null) {
 		type = (ISchemaSimpleType)resolveTypeReference(atype);
 	}
-
+	
 	SchemaAttribute attribute = new SchemaAttribute(element, aname);
+	attribute.addComments(elementNode);
 	if (ause != null) {
 		int use = ISchemaAttribute.OPTIONAL;
 		if (ause.equals("required"))
@@ -363,6 +364,7 @@ private SchemaComplexType processComplexType(
 }
 private ISchemaCompositor processCompositor(ISchemaObject parent, Node node, int type) {
 	SchemaCompositor compositor = new SchemaCompositor(parent, type);
+	compositor.addComments(node);
 	NodeList children = node.getChildNodes();
 
 	int minOccurs = 1;
@@ -437,6 +439,7 @@ private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 	if (aref != null) {
 		// Reference!!
 		SchemaElementReference reference = new SchemaElementReference((ISchemaCompositor)parent, aref);
+		reference.addComments(elementNode);
 		reference.setMinOccurs(minOccurs);
 		reference.setMaxOccurs(maxOccurs);
 		references.addElement(reference);
@@ -450,6 +453,7 @@ private ISchemaElement processElement(ISchemaObject parent, Node elementNode) {
 	}
 
 	SchemaElement element = new SchemaElement(parent, aname);
+	element.addComments(elementNode);
 	element.setMinOccurs(minOccurs);
 	element.setMaxOccurs(maxOccurs);
 
@@ -501,6 +505,7 @@ private void processElementAnnotation(SchemaElement element, Node node) {
 private ISchemaEnumeration processEnumeration(ISchema schema, Node node) {
 	String name = getAttribute(node, "value");
 	SchemaEnumeration enum = new SchemaEnumeration(schema, name);
+	enum.addComments(node);
 	return enum;
 }
 private int processKind(String name) {

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-description>
-	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
 	<reference project-name="org.eclipse.pde.core"/>
+	<reference project-name="org.eclipse.ant.core"/>
+	<reference project-name="org.eclipse.ant.ui"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">

@@ -12,6 +12,8 @@ import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.preferences.*;
 import java.io.*;
+import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.base.model.build.*;
 /**
  * A utility class that can be used by plug-in project
  * wizards to set up the Java build path. The actual
@@ -47,6 +49,7 @@ private static void ensureFolderExists(IProject project, IPath folderPath) throw
  * @param project the plug-in project handle
  * @param data structure data passed in by the master wizard
  * @param libraries an array of the library entries to be set
+ * @param monitor for reporting progress
  */
 public static void setBuildPath(
 	IProject project,
@@ -58,19 +61,87 @@ public static void setBuildPath(
 	// Set output folder
 	IJavaProject javaProject = JavaCore.create(project);
 	IPath path = project.getFullPath().append(data.getJavaBuildFolderName());
-	ensureFolderExists(project, path);
 	javaProject.setOutputLocation(path, monitor);
 
 	// Set classpath
 	Vector result = new Vector();
 	// Source folder first
-	path = project.getFullPath().append(data.getSourceFolderName());
-	ensureFolderExists(project, path);
-	result.add(JavaCore.newSourceEntry(path));
+	addSourceFolder(data.getSourceFolderName(), project, result);
 	// Then the libraries
 	for (int i=0; i<libraries.length; i++) {
 	    result.add(libraries[i]);
 	}
+	// add implicit libraries
+	PluginPathUpdater.addImplicitLibraries(result);
+	// JDK the last
+	addJDK(result);
+	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
+	result.copyInto(entries);
+	javaProject.setRawClasspath(entries, monitor);
+}
+/**
+ * Sets the Java build path of the provided plug-in model.
+ * The model is expected to come from the workspace
+ * and should have an underlying resource.
+ * <p>This method will
+ * @param model the plug-in project handle
+ */
+
+public static void setBuildPath(IPluginModel model, IProgressMonitor monitor)
+	throws JavaModelException, CoreException {
+
+	IProject project = model.getUnderlyingResource().getProject();		
+	IJavaProject javaProject = JavaCore.create(project);
+	// Set classpath
+	Vector result = new Vector();
+	addSourceFolders(model.getBuildModel(), result);
+	addDependencies(project, model.getPlugin().getImports(), result);
+	// add implicit libraries
+	PluginPathUpdater.addImplicitLibraries(result);
+	addJDK(result);
+	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
+	result.copyInto(entries);
+	javaProject.setRawClasspath(entries, monitor);
+}
+
+private static void addSourceFolders(IBuildModel model, Vector result)throws CoreException {
+	IBuild build = model.getBuild();
+	IBuildEntry [] entries = build.getBuildEntries();
+	for (int i=0; i<entries.length; i++) {
+		IBuildEntry entry = entries[i];
+		if (entry.getName().startsWith("source.")) {
+			String [] folders = entry.getTokens();
+			for (int j=0; j<folders.length; j++) {
+				addSourceFolder(folders[i], 
+				       model.getUnderlyingResource().getProject(), 
+				       result);
+			}
+		}
+	}
+}
+
+private static void addSourceFolder(String name, IProject project, Vector result) throws CoreException {
+	IPath path = project.getFullPath().append(name);
+	ensureFolderExists(project, path);
+	IClasspathEntry entry = JavaCore.newSourceEntry(path);
+	result.add(entry);
+}
+
+private static void addDependencies(IProject project, IPluginImport[] imports, Vector result) {
+	Vector checkedPlugins = new Vector();
+	for (int i=0; i<imports.length; i++) {
+		IPluginImport iimport = imports[i];
+		String id = iimport.getId();
+		IPlugin ref = PDEPlugin.getDefault().findPlugin(id);
+		if (ref!=null) {
+			checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
+		}
+	}
+	PluginPathUpdater ppu = new PluginPathUpdater(project, checkedPlugins.iterator());
+	ppu.addClasspathEntries(result);
+}
+
+private static void addJDK(Vector result) {
 	// JDK the last
 	IPath jdkPath = new Path("JRE_LIB");
 	IPath[] annot= new IPath[2];
@@ -78,8 +149,6 @@ public static void setBuildPath(
 	annot[1] = new Path("JRE_SRCROOT");
 	if (jdkPath!=null)
 	   result.add(JavaCore.newVariableEntry(jdkPath, annot[0], annot[1]));
-	IClasspathEntry [] entries = new IClasspathEntry [ result.size() ];
-	result.copyInto(entries);
-	javaProject.setRawClasspath(entries, monitor);
 }
+
 }

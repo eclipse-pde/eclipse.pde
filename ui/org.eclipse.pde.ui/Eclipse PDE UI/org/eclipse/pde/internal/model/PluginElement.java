@@ -178,7 +178,7 @@ public void write(String indent, PrintWriter writer) {
 		element.write(newIndent, writer);
 	}
 	if (getText()!=null) {
-		writer.println(newIndent+getText());
+		writer.println(newIndent+getWritableString(getText()));
 	}
 	writer.println(indent + "</" + getName() + ">");
 }

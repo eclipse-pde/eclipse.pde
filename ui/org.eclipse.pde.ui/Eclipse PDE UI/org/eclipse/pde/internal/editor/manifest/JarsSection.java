@@ -185,6 +185,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.verticalAlignment = GridData.BEGINNING;
 	newButton.setLayoutData(gd);
+	newButton.setEnabled(false);
 	newButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleNew();
@@ -281,7 +282,6 @@ public void initialize(Object input) {
 	IBuildModel buildModel = model.getBuildModel();
 	boolean editable = model.isEditable() && buildModel.isEditable();
 	setReadOnly(!editable);
-	newButton.setEnabled(editable);
 	model.addModelChangedListener(this);
 	if (buildModel.isEditable()==false) {
 		String header = getHeaderText();
@@ -308,6 +308,7 @@ public void setFocus() {
 private void update(IPluginLibrary library) {
 	currentLibrary = library;
 	entryTable.setInput(currentLibrary);
+	newButton.setEnabled(!isReadOnly() && library!=null);
 }
 private void verifyFolderExists(IProject project, String folderName) {
 	IPath path = project.getFullPath().append(folderName);

@@ -94,6 +94,7 @@ public String toString() {
 	return buffer.toString();
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.println(indent+"<restriction base=\""+baseType.getName()+"\">");
 	for (int i=0; i<children.size(); i++) {
 		Object child = children.get(i);

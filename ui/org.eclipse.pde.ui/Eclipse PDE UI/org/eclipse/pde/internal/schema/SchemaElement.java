@@ -141,6 +141,7 @@ public void setType(ISchemaType newType) {
 	getSchema().fireModelObjectChanged(this, P_TYPE);
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent + "<element name=\"" + getName() + "\"");
 	ISchemaType type = getType();
 	if (type instanceof SchemaSimpleType) {

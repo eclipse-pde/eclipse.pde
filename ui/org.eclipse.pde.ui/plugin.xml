@@ -6,9 +6,7 @@
    version="0.9.0"
    provider-name="%provider-name"
    class="org.eclipse.pde.internal.PDEPlugin">
-
 <!-- Required plugins -->
-
 <requires>
    <import plugin="org.eclipse.ui"/>
    <import plugin="org.eclipse.core.resources"/>
@@ -25,7 +23,6 @@
 </requires>
 
 <!-- Runtime -->
-
 <runtime>
    <library name="pde.jar">
       <export name="*"/>
@@ -33,7 +30,6 @@
 </runtime>
 
 <!-- Extension points -->
-
 <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
 <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
 <extension-point id="schemaMap" name="%expoint.schemaMap.name" schema="schema/schemaMap.xsd"/>
@@ -298,6 +294,7 @@
       <action
             label="%popupMenus.convert.label"
             class="org.eclipse.pde.internal.wizards.project.ConvertJavaToPDEProjectAction"
+            menubarPath="additions"
             id="org.eclipse.pde.ConvertJavaToPDEProject">
       </action>
    </objectContribution>

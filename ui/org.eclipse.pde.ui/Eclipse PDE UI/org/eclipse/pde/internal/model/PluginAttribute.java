@@ -66,19 +66,6 @@ public void setValue(String newValue) throws CoreException {
 public void write(String indent, PrintWriter writer) {
 	if (value==null) return;
 	writer.print(indent);
-	StringBuffer output = new StringBuffer();
-	for (int i=0; i<value.length(); i++) {
-		switch (value.charAt(i)) {
-			case '&': output.append("&amp;");
-					  break;
-			case '<': output.append("&lt;");
-					  break;
-			case '>': output.append("&gt;");
-					  break;
-			default:
-					  output.append(value.charAt(i));
-		}
-	}
-	writer.print(getName()+"=\""+output.toString()+"\"");
+	writer.print(getName()+"=\""+getWritableString(value)+"\"");
 }
 }

@@ -171,6 +171,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(BASIC_WIZBAN, "newexp_wiz.gif");
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(BASIC_WIZBAN, "newexprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWPCOMP_WIZ   = create(BASIC_WIZBAN, "newpcomp_wiz.gif");
+	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(BASIC_WIZBAN, "convjpprj_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(BASIC_WIZBAN, "form_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(BASIC_WIZBAN, "form_banner.gif");
 	private static ImageDescriptor create(String prefix, String name) {

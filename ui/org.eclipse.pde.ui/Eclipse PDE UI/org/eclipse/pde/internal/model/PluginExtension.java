@@ -90,7 +90,7 @@ public void write(String indent, PrintWriter writer) {
 	}
 	if (getName() != null) {
 		writer.println();
-		writer.print(attIndent + "name=\"" + getName() + "\"");
+		writer.print(attIndent + "name=\"" + getWritableString(getName()) + "\"");
 	}
 	if (getPoint() != null) {
 		writer.println();

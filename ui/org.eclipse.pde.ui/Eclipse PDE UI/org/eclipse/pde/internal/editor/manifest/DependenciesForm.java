@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.forms.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.jface.action.*;
 
 public class DependenciesForm extends ScrollableForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";
@@ -66,5 +67,9 @@ public void initialize(Object input) {
 	super.initialize(model);
 	reqGraphSection.sectionChanged(pluginListSection, pluginListSection.SELECTION, null);
 	getControl().layout(true);
+}
+
+public boolean fillContextMenu(IMenuManager manager) {
+	return pluginListSection.fillContextMenu(manager);
 }
 }

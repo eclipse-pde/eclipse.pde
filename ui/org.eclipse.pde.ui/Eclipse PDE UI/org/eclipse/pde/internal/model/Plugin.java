@@ -112,7 +112,7 @@ public void write(String indent, PrintWriter writer) {
 	}
 	if (getName() != null) {
 		writer.println();
-		writer.print("   name=\"" + getName() + "\"");
+		writer.print("   name=\"" + getWritableString(getName()) + "\"");
 	}
 	if (getVersion() != null) {
 		writer.println();

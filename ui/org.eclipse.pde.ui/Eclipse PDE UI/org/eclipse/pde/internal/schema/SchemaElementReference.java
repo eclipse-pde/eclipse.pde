@@ -7,6 +7,9 @@ package org.eclipse.pde.internal.schema;
 import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
+import java.util.Vector;
+import org.w3c.dom.Node;
+import org.w3c.dom.Comment;
 
 public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference {
 	private ISchemaElement element;
@@ -17,6 +20,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	public static final String P_REFERENCE_NAME="reference_name";
 	private int minOccurs=1;
 	private int maxOccurs=1;
+	private Vector comments;
 
 public SchemaElementReference(ISchemaCompositor compositor, String ref) {
 	referenceName = ref;
@@ -110,6 +114,7 @@ public void setReferenceName(String name) {
 		schema.fireModelObjectChanged(this, P_REFERENCE_NAME);
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.print(indent+"<element");
 	writer.print(" ref=\""+getReferenceName()+"\"");
 	if (getMinOccurs() != 1 || getMaxOccurs() != 1) {
@@ -119,5 +124,35 @@ public void write(String indent, PrintWriter writer) {
 		writer.print(" minOccurs=\""+min+"\" maxOccurs=\""+max+"\"");
 	}
 	writer.println("/>");
+}
+
+public void addComments(Node node) {
+	comments = addComments(node, comments);
+}
+
+public Vector addComments(Node node, Vector result) {
+	for (Node prev=node.getPreviousSibling(); 
+				prev!=null; prev=prev.getPreviousSibling()) {
+		if (prev.getNodeType()==Node.TEXT_NODE) continue;
+		if (prev instanceof Comment) {
+			String comment = prev.getNodeValue();
+			if (result==null) result = new Vector();
+			result.add(comment);
+		}
+		else break;
+	}
+	return result;
+}
+
+void writeComments(PrintWriter writer) {
+	writeComments(writer, comments);
+}
+
+void writeComments(PrintWriter writer, Vector source) {
+	if (source==null) return;
+	for (int i=0; i<source.size(); i++) {
+		String comment = (String)source.elementAt(i);
+		writer.println("<!--"+comment+"-->");
+	}
 }
 }

@@ -13,7 +13,7 @@ public class ConvertedProjectWizard extends NewWizard {
 
 public ConvertedProjectWizard() {
 	super();
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 }

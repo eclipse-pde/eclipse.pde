@@ -22,6 +22,7 @@ public class PDEMultiPageContentOutline implements IContentOutlinePage, ISelecti
 	private SelectionProvider selectionProvider;
 	private PDEMultiPageEditor editor;
 	private IContentOutlinePage currentPage;
+	private boolean disposed;
 
 
 public PDEMultiPageContentOutline(PDEMultiPageEditor editor) {
@@ -37,10 +38,16 @@ public void createControl(Composite parent) {
 	if (currentPage!=null) setPageActive(currentPage);
 }
 public void dispose() {
-	Control ctrl = getControl();
-	if (ctrl != null && !ctrl.isDisposed())
-		ctrl.dispose();
+	if (pagebook != null && !pagebook.isDisposed())
+		pagebook.dispose();
+	pagebook = null;
+	disposed = true;
 }
+
+public boolean isDisposed() {
+	return disposed;
+}
+
 public Control getControl() {
 	return pagebook;
 }
@@ -78,7 +85,7 @@ public void setPageActive(IContentOutlinePage page) {
 		return;
 	}
 	Control control = page.getControl();
-	if (control == null) {
+	if (control == null || control.isDisposed()) {
 		// first time
 		page.createControl(pagebook);
 		control = page.getControl();

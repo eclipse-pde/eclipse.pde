@@ -24,6 +24,8 @@ public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 public void run(IAction action) {
 	if (project == null)
 		return;
+	if (project.isOpen()==false) 
+	    return;
 	ProgressMonitorDialog dialog =
 		new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 	IRunnableWithProgress operation = new WorkspaceModifyOperation() {
@@ -56,7 +58,8 @@ public void selectionChanged(IAction action, ISelection selection) {
 		if (object instanceof IProject) {
 			IProject project = (IProject) object;
 			try {
-				if (project.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
+				if (project.isOpen() && 
+				      project.hasNature(PDEPlugin.PLUGIN_NATURE) == false) {
 					this.project = project;
 					enable = true;
 				}

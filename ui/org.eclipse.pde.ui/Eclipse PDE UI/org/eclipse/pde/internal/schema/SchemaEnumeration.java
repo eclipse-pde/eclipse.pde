@@ -13,6 +13,7 @@ public SchemaEnumeration(ISchemaObject parent, String name) {
 	super(parent, name);
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	writer.println(indent+"<enumeration value=\""+getName()+"\">");
 	String description = getDescription();
 	if (description!=null) description.trim();

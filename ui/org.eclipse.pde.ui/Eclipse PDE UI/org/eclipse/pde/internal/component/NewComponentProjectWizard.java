@@ -36,7 +36,7 @@ public class NewComponentProjectWizard extends NewWizard {
 	private FragmentListPage fragmentListPage;
 	public NewComponentProjectWizard() {
 		super();
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPCOMP_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 	}

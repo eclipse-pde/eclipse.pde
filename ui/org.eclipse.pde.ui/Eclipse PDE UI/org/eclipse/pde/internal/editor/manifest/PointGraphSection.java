@@ -324,7 +324,7 @@ private void updateGraph(
 		graph.setRoot(null);
 		return;
 	}
-	RootNode rootNode = new RootNode(id, extensionPoint.getName());
+	RootNode rootNode = new RootNode(id, extensionPoint.getResourceString(extensionPoint.getName()));
 	rootNode.setChildren(
 		createReferencingNodes(rootNode, extensionPoint.getFullId()));
 	graph.setRoot(rootNode);

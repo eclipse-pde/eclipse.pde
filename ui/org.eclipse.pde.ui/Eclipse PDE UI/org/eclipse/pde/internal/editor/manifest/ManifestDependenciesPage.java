@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.forms.*;
 import org.eclipse.pde.internal.editor.*;
 import org.w3c.dom.Document;
 import org.eclipse.pde.internal.PDEPluginImages;
+import org.eclipse.jface.action.*;
 
 
 public class ManifestDependenciesPage extends PDEChildFormPage {
@@ -38,5 +39,9 @@ public IContentOutlinePage createContentOutlinePage() {
 }
 protected Form createForm() {
 	return new DependenciesForm(this);
+}
+
+public boolean contextMenuAboutToShow(IMenuManager manager) {
+	return ((DependenciesForm)getForm()).fillContextMenu(manager);
 }
 }

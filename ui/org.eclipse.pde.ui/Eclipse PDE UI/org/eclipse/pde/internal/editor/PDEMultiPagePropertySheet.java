@@ -22,6 +22,7 @@ public class PDEMultiPagePropertySheet implements IPropertySheetPage {
 	private PropertySheetPage defaultPage;
 	private IActionBars actionBars;
 	private IPropertySheetPage currentPage;
+	private boolean disposed=false;
 
 	class PageRec {
 		IPropertySheetPage page;
@@ -59,22 +60,24 @@ private PageRec createPageRec(IPropertySheetPage page) {
 	return rec;
 }
 public void dispose() {
-/*
-	if (!((ToolBarManager) toolBarManager).getControl().isDisposed()) {
-		toolBarManager.update(true);
-	}
-*/
+	updateActionBars();
 
-	Control ctrl = getControl();
-	if (ctrl != null && !ctrl.isDisposed())
-		ctrl.dispose();
+	if (pagebook != null && !pagebook.isDisposed())
+		pagebook.dispose();
+	pagebook = null;
+	disposed=true;
 }
+
+public boolean isDisposed() {
+	return disposed;
+}
+
 public Control getControl() {
 	return pagebook;
 }
 private Control getPageControl(IPropertySheetPage page) {
 	Control control = page.getControl();
-	if (control == null) {
+	if (control == null || control.isDisposed()) {
 		// first time
 		page.createControl(pagebook);
 		control = page.getControl();

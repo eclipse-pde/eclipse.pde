@@ -26,6 +26,11 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.wizards.PluginPathUpdater;
+import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.internal.base.BuildPathUtil;
+import org.eclipse.jdt.core.JavaModelException;
 
 public class PluginListSection extends PDEFormSection implements IModelProviderListener {
 	private FormWidgetFactory factory;
@@ -38,6 +43,8 @@ public class PluginListSection extends PDEFormSection implements IModelProviderL
 	public static final String KEY_WORKSPACE_PLUGINS = "ManifestEditor.PluginListSection.workspacePlugins";
 	public static final String KEY_UNRESOLVED_PLUGINS = "ManifestEditor.PluginListSection.unresolvedPlugins";
 	public static final String KEY_UNRESOLVED_PLUGINS_TOOLTIP = "ManifestEditor.PluginListSection.unresolvedPlugins.tooltip";
+	public static final String KEY_COMPUTE_BUILD_PATH = "ManifestEditor.PluginListSection.updateBuildPath";
+	public static final String KEY_UPDATING_BUILD_PATH = "ManifestEditor.PluginListSection.updatingBuildPath";
 	private boolean needsUpdate;
 
 public PluginListSection(ManifestDependenciesPage page) {
@@ -339,34 +346,7 @@ public void update(Object input) {
 	needsUpdate = false;
 }
 private void updateBuildPath() {
-	Vector elements = new Vector();
-
-	Control[] controls = pluginListParent.getChildren();
-	for (int i = 0; i < controls.length; i++) {
-		if (controls[i] instanceof Button) {
-			Button b = (Button) controls[i];
-			Object data = b.getData();
-			if (data instanceof IPlugin) {
-				IPlugin info = (IPlugin) data;
-				elements.addElement(
-					new PluginPathUpdater.CheckedPlugin(info, b.getSelection()));
-			}
-		}
-	}
-
-	IFile file =
-		((IFileEditorInput) getFormPage().getEditor().getEditorInput()).getFile();
-	IProject project = file.getProject();
-	PluginPathUpdater updater = new PluginPathUpdater(project, elements.iterator());
-	IRunnableWithProgress op = updater.getOperation();
-	Shell shell = PDEPlugin.getActiveWorkbenchShell();
-	try {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-		dialog.run(true, true, op);
-	} catch (InterruptedException e) {
-	} catch (InvocationTargetException e) {
-		PDEPlugin.logException(e);
-	}
+	computeBuildPath((IPluginModel)getFormPage().getModel(), false);
 }
 private void updateModel(IPlugin info, boolean add) {
 	IPluginModel model = (IPluginModel) getFormPage().getModel();
@@ -412,6 +392,51 @@ private void updateModel(IPluginImport unresolved, boolean add) {
 			plugin.remove(unresolved);
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
+	}
+}
+
+public boolean fillContextMenu(IMenuManager manager) {
+	Action action = new Action() {
+		public void run() {
+			IPluginModel model = (IPluginModel) getFormPage().getModel();
+			computeBuildPath(model, true);
+		}
+	};
+	action.setText(PDEPlugin.getResourceString(KEY_COMPUTE_BUILD_PATH));
+	manager.add(action);
+	manager.add(new Separator());
+	return true;
+}
+
+private void computeBuildPath(final IPluginModel model, final boolean save) {
+	IRunnableWithProgress op = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) {
+			monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATING_BUILD_PATH), 1);
+			try {
+			   if (save && getFormPage().getEditor().isDirty()) {
+			      getFormPage().getEditor().doSave(monitor);
+			   }
+			   BuildPathUtil.setBuildPath(model, monitor);
+			   monitor.worked(1);
+			}
+			catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+			finally {
+			   monitor.done();
+			}
+		}
+	};
+	
+	ProgressMonitorDialog pm = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
+	try {
+	   pm.run(false, false, op);
+	}
+	catch (InterruptedException e) {
+		PDEPlugin.logException(e);
+	}
+	catch (InvocationTargetException e) {
+		PDEPlugin.logException(e.getTargetException());
 	}
 }
 }

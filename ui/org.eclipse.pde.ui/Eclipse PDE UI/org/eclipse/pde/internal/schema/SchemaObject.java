@@ -6,11 +6,15 @@ package org.eclipse.pde.internal.schema;
 
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
+import java.util.*;
+import org.w3c.dom.*;
+import java.io.PrintWriter;
 
 public abstract class SchemaObject extends PlatformObject implements ISchemaObject {
 	protected String name;
 	private String description;
 	private ISchemaObject parent;
+	private Vector comments;
 
 public SchemaObject(ISchemaObject parent, String name) {
 	this.parent = parent;
@@ -72,5 +76,35 @@ public void setName(String newName) {
 public String toString() {
 	if (name!=null) return name;
 	return super.toString();
+}
+
+public void addComments(Node node) {
+	comments = addComments(node, comments);
+}
+
+public Vector addComments(Node node, Vector result) {
+	for (Node prev=node.getPreviousSibling(); 
+				prev!=null; prev=prev.getPreviousSibling()) {
+		if (prev.getNodeType()==Node.TEXT_NODE) continue;
+		if (prev instanceof Comment) {
+			String comment = prev.getNodeValue();
+			if (result==null) result = new Vector();
+			result.add(comment);
+		}
+		else break;
+	}
+	return result;
+}
+
+void writeComments(PrintWriter writer) {
+	writeComments(writer, comments);
+}
+
+void writeComments(PrintWriter writer, Vector source) {
+	if (source==null) return;
+	for (int i=0; i<source.size(); i++) {
+		String comment = (String)source.elementAt(i);
+		writer.println("<!--"+comment+"-->");
+	}
 }
 }

@@ -84,6 +84,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.numColumns = 2;
 	layout.marginWidth = factory.BORDER_STYLE==SWT.NULL? 2 : 0;
 	layout.marginHeight = factory.BORDER_STYLE==SWT.NULL? 2 : 0;
+	layout.verticalSpacing = 6;
 	container.setLayout(layout);
 	GridData gd;
 

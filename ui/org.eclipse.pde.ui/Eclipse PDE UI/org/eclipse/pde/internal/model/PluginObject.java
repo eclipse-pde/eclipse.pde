@@ -127,4 +127,33 @@ void writeComments(PrintWriter writer, Vector source) {
 		writer.println("<!--"+comment+"-->");
 	}
 }
+
+public String getWritableString(String source) {
+	StringBuffer buf = new StringBuffer();
+	for (int i=0; i<source.length(); i++) {
+		char c = source.charAt(i);
+		switch (c) {
+			case '&': 
+				buf.append("&amp;");
+				break;
+			case '<':
+				buf.append("&lt;");
+				break;
+			case '>':
+				buf.append("&gt;");
+				break;
+			case '\'':
+				buf.append("&apos;");
+				break;
+			case '\"':
+				buf.append("&quot;");
+				break;
+			default:
+			buf.append(c);
+			break;
+		}
+	}
+	return buf.toString();
+}
+
 }

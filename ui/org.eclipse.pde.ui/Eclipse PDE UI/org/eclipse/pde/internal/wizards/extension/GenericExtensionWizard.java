@@ -17,7 +17,7 @@ public class GenericExtensionWizard extends Wizard implements IExtensionWizard {
 	private PointSelectionPage pointSelectionPage;
 
 public GenericExtensionWizard() {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
 }
 public void addPages() {
 	pointSelectionPage = new PointSelectionPage(model.getPluginBase());

@@ -60,10 +60,12 @@ public class ComponentJarWizardPage extends WizardPage {
 		public void messageLogged(BuildEvent event) {
 			if (monitor.isCanceled())
 				throw new BuildCanceledException();
-			if (event.getPriority() <= Project.MSG_INFO) {
-				asyncLogMessage(event.getMessage());
+				int priority = event.getPriority();
+				if (priority == Project.MSG_ERR ||
+					priority == Project.MSG_WARN ||
+					priority == Project.MSG_INFO)
+					asyncLogMessage(event.getMessage());
 			}
-		}
 	}
 
 public ComponentJarWizardPage(IFile componentFile) {

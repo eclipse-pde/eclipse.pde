@@ -18,6 +18,7 @@ public String getSectionId() {
 	return sectionId;
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	String indent2 = indent+Schema.INDENT;
 	String indent3 = indent2+Schema.INDENT;
 	writer.println(indent+"<annotation>");

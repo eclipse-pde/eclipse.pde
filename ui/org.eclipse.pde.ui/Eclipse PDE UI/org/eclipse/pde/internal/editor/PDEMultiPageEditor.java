@@ -199,10 +199,10 @@ public Object getAdapter(Class key) {
 	return super.getAdapter(key);
 }
 public PDEMultiPageContentOutline getContentOutline() {
-	if (contentOutline == null
-		|| (contentOutline.getControl() != null
-			&& contentOutline.getControl().isDisposed())) {
+	if (contentOutline == null ||
+		contentOutline.isDisposed()) {
 		contentOutline = new PDEMultiPageContentOutline(this);
+		updateContentOutline(getCurrentPage());
 	}
 	return contentOutline;
 }
@@ -229,13 +229,13 @@ public Iterator getPages() {
 	return pages.iterator();
 }
 public PDEMultiPagePropertySheet getPropertySheet() {
-	if (propertySheet == null
-		|| (propertySheet.getControl() != null
-			&& propertySheet.getControl().isDisposed())) {
+	if (propertySheet == null || propertySheet.isDisposed()) {
 		propertySheet = new PDEMultiPagePropertySheet();
+		updatePropertySheet(getCurrentPage());
 	}
 	return propertySheet;
 }
+
 public ISelection getSelection() {
 	return selectionProvider.getSelection();
 }
@@ -393,13 +393,23 @@ void updateDocument() {
 		PDEPlugin.logException(e);
 	}
 }
+
 protected abstract boolean updateModel();
-public void updateSynchronizedViews(IPDEEditorPage page) {
+
+void updateSynchronizedViews(IPDEEditorPage page) {
+	updateContentOutline(page);
+	updatePropertySheet(page);
+}
+
+void updateContentOutline(IPDEEditorPage page) {
 	IContentOutlinePage outlinePage = page.getContentOutlinePage();
 	if (outlinePage != null) {
 		contentOutline.setPageActive(outlinePage);
 	}
-	IPropertySheetPage propertySheetPage = page.getPropertySheetPage();
+}
+
+void updatePropertySheet(IPDEEditorPage page) {
+		IPropertySheetPage propertySheetPage = page.getPropertySheetPage();
 	if (propertySheetPage != null) {
 		propertySheet.setPageActive(propertySheetPage);
 	}
@@ -407,4 +417,5 @@ public void updateSynchronizedViews(IPDEEditorPage page) {
 		propertySheet.setDefaultPageActive();
 	}
 }
+
 }

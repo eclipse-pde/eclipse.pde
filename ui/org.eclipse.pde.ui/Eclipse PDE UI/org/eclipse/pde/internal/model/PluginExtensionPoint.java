@@ -47,8 +47,8 @@ public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
 	writer.print(indent);
 	writer.print("<extension-point");
-	if (getId()!=null) writer.print(" id=\""+getId()+"\"");
-	if (getName()!=null) writer.print(" name=\""+getName()+"\"");
+	if (getId()!=null) writer.print(" id=\""+getWritableString(getId())+"\"");
+	if (getName()!=null) writer.print(" name=\""+getWritableString(getName())+"\"");
 	if (getSchema()!=null) writer.print(" schema=\""+getSchema()+"\"");
 	writer.println("/>");
 }

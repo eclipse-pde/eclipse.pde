@@ -92,6 +92,7 @@ public void updateReferencesFor(ISchemaElement element) {
 	}
 }
 public void write(String indent, PrintWriter writer) {
+	writeComments(writer);
 	String tag = null;
 
 	switch (kind) {

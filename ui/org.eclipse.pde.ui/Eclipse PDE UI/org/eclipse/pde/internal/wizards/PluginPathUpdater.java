@@ -83,15 +83,17 @@ private void addFoldersToClasspathEntries(IPluginModelBase model, Vector result)
 	}
 	manager.disconnect(buildFile, null);
 }
-private void addToClasspathEntries(CheckedPlugin element, Vector result) {
+private static void addToClasspathEntries(CheckedPlugin element, Vector result) {
 	IPlugin plugin = element.getPluginInfo();
 	IPluginModelBase model = plugin.getModel();
 	boolean internal = model.getUnderlyingResource() != null;
-
+	
 	if (internal) {
 		IPath projectPath = model.getUnderlyingResource().getProject().getFullPath();
-		IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath);
-		result.addElement(projectEntry);
+		if (!isEntryAdded(projectPath, IClasspathEntry.CPE_PROJECT, result)) {
+		   IClasspathEntry projectEntry = JavaCore.newProjectEntry(projectPath);
+		   result.addElement(projectEntry);
+		}
 		return;
 	}
 	IPath modelPath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE);
@@ -103,20 +105,46 @@ private void addToClasspathEntries(CheckedPlugin element, Vector result) {
 		IPluginLibrary library = libraries[i];
 		IPath libraryPath = modelPath.append(library.getName());
 		IPath [] sourceAnnot = getSourceAnnotation(libraryPath, library);
-
-		IClasspathEntry libraryEntry = JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
-		result.addElement(libraryEntry);
+		if (!isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) {
+		   IClasspathEntry libraryEntry = JavaCore.newVariableEntry(libraryPath, sourceAnnot[0], sourceAnnot[1]);
+		   result.addElement(libraryEntry);
+		}
+	}
+	// Recursively add
+	IPluginImport [] imports = plugin.getImports();
+	for (int i=0; i<imports.length; i++) {
+		IPluginImport iimport = imports[i];
+		String id = iimport.getId();
+		IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
+		if (reference!=null) {
+			CheckedPlugin ref = new CheckedPlugin(reference, true);
+			addToClasspathEntries(ref, result);
+		}
 	}
 }
-public IClasspathEntry [] getClasspathEntries() {
-	Vector result = new Vector();
 
+private static boolean isEntryAdded(IPath path, int kind, Vector entries) {
+	for (int i=0; i<entries.size(); i++) {
+		IClasspathEntry entry = (IClasspathEntry)entries.elementAt(i);
+		if (entry.getEntryKind()==kind) {
+			if (entry.getPath().equals(path)) return true;
+		}
+	}
+	return false;
+}
+
+public void addClasspathEntries(Vector result) {
 	for (Iterator iter=checkedPlugins; iter.hasNext();) {
 		CheckedPlugin element = (CheckedPlugin) iter.next();
 		if (element.isChecked()) {
 		   addToClasspathEntries(element, result);
 		}
 	}
+}
+
+public IClasspathEntry [] getClasspathEntries() {
+	Vector result = new Vector();
+	addClasspathEntries(result);
 	IClasspathEntry[] finalEntries = new IClasspathEntry[result.size()];
 	result.copyInto(finalEntries);
 	return finalEntries;
@@ -139,7 +167,7 @@ public IRunnableWithProgress getOperation() {
 		}
 	};
 }
-private IPath[] getSourceAnnotation(IPath libraryPath, IPluginLibrary library) {
+private static IPath[] getSourceAnnotation(IPath libraryPath, IPluginLibrary library) {
 	IPath [] annot = new IPath[2];
 	annot[0] = new Path(libraryPath.removeFileExtension().toString()+"src.zip");
 	return annot;
@@ -152,6 +180,7 @@ public IClasspathEntry [] getSourceClasspathEntries(IPluginModel model) {
 	result.copyInto(finalEntries);
 	return finalEntries;
 }
+
 public static boolean isAlreadyPresent(
 	IClasspathEntry[] oldEntries,
 	IClasspathEntry entry) {
@@ -194,6 +223,20 @@ public void updateClasspath(IProgressMonitor monitor) {
 		PDEPlugin.logException(e);
 	}
 }
+
+public static void addImplicitLibraries(Vector result) {
+	String bootId = "org.eclipse.core.boot";
+	String runtimeId = "org.eclipse.core.runtime";
+	IPlugin bootPlugin = PDEPlugin.getDefault().findPlugin(bootId);
+	IPlugin runtimePlugin = PDEPlugin.getDefault().findPlugin(runtimeId);
+	if (runtimePlugin!=null) {
+		addToClasspathEntries(new CheckedPlugin(runtimePlugin, true), result);
+	}
+	if (bootPlugin!=null) {
+		addToClasspathEntries(new CheckedPlugin(bootPlugin, true), result);
+	}
+}
+
 private void updateLibrariesFor(
 	CheckedPlugin element,
 	IClasspathEntry[] entries,
@@ -216,7 +259,19 @@ private void updateLibrariesFor(
 				result);
 		}
 	}
+	// Recursively add
+	IPluginImport [] imports = element.getPluginInfo().getImports();
+	for (int i=0; i<imports.length; i++) {
+		IPluginImport iimport = imports[i];
+		String id = iimport.getId();
+		IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
+		if (reference!=null) {
+			CheckedPlugin ref = new CheckedPlugin(reference, true);
+			updateLibrariesFor(ref, entries, result);
+		}
+	}
 }
+
 private void updateLibrary(
 	IPath relativePath,
 	String name,
@@ -227,6 +282,8 @@ private void updateLibrary(
 	IPath libraryPath = basePath.append(name);
 	// Search for this entry
 	IClasspathEntry libraryEntry = null;
+	
+	if (add && isEntryAdded(libraryPath, IClasspathEntry.CPE_VARIABLE, result)) return;
 
 	for (int i = 0; i < entries.length; i++) {
 		IClasspathEntry entry = entries[i];

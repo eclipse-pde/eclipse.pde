@@ -2,9 +2,9 @@
 <classpath>
     <classpathentry kind="src" path="/org.eclipse.pde.core"/>
     <classpathentry kind="src" path="Eclipse PDE UI"/>
-    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ant.core/antsupport.jar"/>
+    <classpathentry kind="src" path="/org.eclipse.ant.core"/>
+    <classpathentry kind="src" path="/org.eclipse.ant.ui"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ant.core/ant.jar"/>
-    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ant.ui/antui.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.boot/boot.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar"/>
@@ -16,6 +16,7 @@
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.apache.xerces/xerces.jar"/>
-    <classpathentry kind="lib" path="C:/eclipse/jre/lib/rt.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/jre/lib/rt.jar"
+        rootpath="src" sourcepath="D:/jdk1.2.2/src.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
