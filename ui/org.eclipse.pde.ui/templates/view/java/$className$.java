@@ -313,7 +313,7 @@ public class $className$ extends ViewPart {
 		drillDownAdapter.addNavigationActions(manager);
 %   endif
 		// Other plug-ins can contribute there actions here
-		manager.add(new Separator("Additions"));
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 %endif
 	

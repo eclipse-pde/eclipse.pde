@@ -16,19 +16,16 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
-import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
+import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.project.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
@@ -168,7 +165,7 @@ public class DependenciesView extends ViewPart {
 		}
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator("Additions")); //$NON-NLS-1$
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void hookContextMenu() {

@@ -14,7 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
@@ -28,10 +28,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.imports.*;
@@ -427,7 +426,7 @@ public class PluginsView extends ViewPart {
 		selectionMenu.add(selectInJavaSearchAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator("Additions")); //$NON-NLS-1$
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	private void fillOpenWithMenu(IMenuManager manager, Object obj) {
 		FileAdapter adapter = (FileAdapter) obj;
