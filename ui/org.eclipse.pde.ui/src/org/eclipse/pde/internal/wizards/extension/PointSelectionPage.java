@@ -245,7 +245,8 @@ private IPlugin getTargetPlugin(IPluginBase base) {
 		IFragment fragment = (IFragment)base;
 		String targetId = fragment.getPluginId();
 		String targetVersion = fragment.getPluginVersion();
-		return PDEPlugin.getDefault().findPlugin(targetId, targetVersion);
+		int match = fragment.getRule();
+		return PDEPlugin.getDefault().findPlugin(targetId, targetVersion, match);
 	}
 }
 

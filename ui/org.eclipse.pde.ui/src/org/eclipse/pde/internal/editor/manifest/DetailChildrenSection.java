@@ -334,7 +334,7 @@ private void updateInput() {
   deleteButton.setEnabled(false);
   applyButton.setEnabled(false);
   resetButton.setEnabled(false);
-  updateText(null);
+  updateText(currentElement);
   text.setEditable(!isReadOnly() && currentElement != null);
 }
 private void updateText(IPluginElement element) {

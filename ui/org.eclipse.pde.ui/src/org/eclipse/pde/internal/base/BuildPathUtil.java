@@ -194,7 +194,7 @@ public class BuildPathUtil {
 			String id = iimport.getId();
 			String version = iimport.getVersion();
 			int match = iimport.getMatch();
-			IPlugin ref = PDEPlugin.getDefault().findPlugin(id, version);//, match);
+			IPlugin ref = PDEPlugin.getDefault().findPlugin(id, version, match);
 			if (ref != null) {
 				checkedPlugins.add(new PluginPathUpdater.CheckedPlugin(ref, true));
 			}
@@ -210,7 +210,7 @@ public class BuildPathUtil {
 		String version = fragment.getPluginVersion();
 		int match = fragment.getRule();
 
-		IPlugin plugin = PDEPlugin.getDefault().findPlugin(id, version);
+		IPlugin plugin = PDEPlugin.getDefault().findPlugin(id, version, match);
 		if (plugin!=null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
 			Vector checkedPlugins=new Vector();

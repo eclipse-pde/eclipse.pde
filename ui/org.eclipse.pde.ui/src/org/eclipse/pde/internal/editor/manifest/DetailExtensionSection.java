@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import java.net.URL;
 import java.net.MalformedURLException;
+import org.eclipse.swt.custom.BusyIndicator;
 
 public class DetailExtensionSection
 	extends PDEFormSection
@@ -41,11 +42,14 @@ public class DetailExtensionSection
 		"ManifestEditor.DetailExtensionSection.title";
 	public static final String SECTION_NEW =
 		"ManifestEditor.DetailExtensionSection.new";
+	public static final String SECTION_SHOW_CHILDREN =
+		"ManifestEditor.DetailExtensionSection.showAllChildren";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private Image genericElementImage;
 	private Button newButton;
 	private Button newElementButton;
+	private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
 
@@ -59,6 +63,9 @@ public class DetailExtensionSection
 				children = ((IPluginBase) parent).getExtensions();
 			else if (parent instanceof IPluginExtension) {
 				children = ((IPluginExtension) parent).getChildren();
+			} else if (
+				showAllChildrenButton.getSelection() && parent instanceof IPluginElement) {
+				children = ((IPluginElement) parent).getChildren();
 			}
 			if (children == null)
 				children = new Object[0];
@@ -138,26 +145,6 @@ public class DetailExtensionSection
 		layout.numColumns = 2;
 
 		container.setLayout(layout);
-		/*
-			TableTree tree = new TableTree(container, SWT.FULL_SELECTION | factory.BORDER_STYLE);
-			TableLayout tlayout = new TableLayout();
-		
-			Table table =tree.getTable();
-			factory.hookDeleteListener(table);
-			table.setBackground(factory.getBackgroundColor());
-			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-			tableColumn.setText("");
-			tableColumn = new TableColumn(table, SWT.NULL);
-			tableColumn.setText("Name");
-			ColumnLayoutData cLayout = new ColumnPixelData(21);
-			tlayout.addColumnData(cLayout);
-			cLayout = new ColumnWeightData(100, true);
-			tlayout.addColumnData(cLayout);
-		
-			//table.setLinesVisible(true);
-			//table.setHeaderVisible(true);
-			table.setLayout(tlayout);
-		*/
 		Tree tree = new Tree(container, factory.BORDER_STYLE);
 		factory.hookDeleteListener(tree);
 
@@ -169,12 +156,9 @@ public class DetailExtensionSection
 		};
 		popupMenuManager.setRemoveAllWhenShown(true);
 		popupMenuManager.addMenuListener(listener);
-		//Menu menu=popupMenuManager.createContextMenu(table);
-		//table.setMenu(menu);
 		Menu menu = popupMenuManager.createContextMenu(tree);
 		tree.setMenu(menu);
 
-		//extensionTree = new TableTreeViewer(tree);
 		extensionTree = new TreeViewer(tree);
 		extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		extensionTree.setContentProvider(new ExtensionContentProvider());
@@ -211,6 +195,24 @@ public class DetailExtensionSection
 			public void widgetSelected(SelectionEvent e) {
 				handleNew();
 				newButton.getShell().setDefaultButton(null);
+			}
+		});
+
+		showAllChildrenButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN),
+				SWT.CHECK);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		showAllChildrenButton.setLayoutData(gd);
+		showAllChildrenButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
+					public void run() {
+						extensionTree.refresh();
+					}
+				});
 			}
 		});
 		return container;

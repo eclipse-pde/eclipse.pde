@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.editor.schema.*;
 import org.eclipse.pde.internal.editor.manifest.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.internal.base.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.schema.*;
 import java.util.*;
 import org.eclipse.ui.*;
@@ -26,6 +27,7 @@ import org.eclipse.jface.dialogs.*;
 import java.net.URL;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.pde.internal.base.model.plugin.IMatchRules;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -54,10 +56,11 @@ public class PDEPlugin extends AbstractUIPlugin {
 		PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
-	
+
 	private static final String KEY_RUNNING = "RunningEclipse.message";
 
-	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY = new QualifiedName(PLUGIN_ID, "imported");
+	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =
+		new QualifiedName(PLUGIN_ID, "imported");
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
 
@@ -123,36 +126,67 @@ public class PDEPlugin extends AbstractUIPlugin {
 				continue;
 			IPlugin plugin = model.getPlugin();
 			String pid = plugin.getId();
-			if (pid!=null && pid.equals(id))
+			if (pid != null && pid.equals(id))
 				return plugin;
 		}
 		return null;
 	}
-	private IPlugin findPlugin(IPluginModel[] models, String id, String version) {
+	private IPlugin findPlugin(
+		IPluginModel[] models,
+		String id,
+		String version,
+		int match) {
+		PluginVersionIdentifier vid = null;
+
+		if (version != null)
+			vid = new PluginVersionIdentifier(version);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModel model = models[i];
 			if (model.isEnabled() == false)
 				continue;
 			IPlugin plugin = model.getPlugin();
 			String pid = plugin.getId();
-			if (pid!=null && pid.equals(id)) {
-				if (version == null || plugin.getVersion().equals(version))
+			String pversion = plugin.getVersion();
+			if (pid != null && pid.equals(id)) {
+				if (version == null)
 					return plugin;
+				PluginVersionIdentifier pvid = new PluginVersionIdentifier(pversion);
+
+				switch (match) {
+					case IMatchRules.NONE :
+					case IMatchRules.COMPATIBLE :
+						if (pvid.isCompatibleWith(vid))
+							return plugin;
+						break;
+					case IMatchRules.EQUIVALENT :
+						if (pvid.isEquivalentTo(vid))
+							return plugin;
+						break;
+					case IMatchRules.PERFECT :
+						if (pvid.isPerfect(vid))
+							return plugin;
+						break;
+					case IMatchRules.GREATER_OR_EQUAL :
+						if (pvid.isGreaterOrEqualTo(vid))
+							return plugin;
+						break;
+				}
 			}
 		}
 		return null;
 	}
 	public IPlugin findPlugin(String id) {
-		return findPlugin(id, null);
+		return findPlugin(id, null, 0);
 	}
-	public IPlugin findPlugin(String id, String version) {
+	public IPlugin findPlugin(String id, String version, int match) {
 		WorkspaceModelManager manager = getWorkspaceModelManager();
-		IPlugin plugin = findPlugin(manager.getWorkspacePluginModels(), id, version);
+		IPlugin plugin =
+			findPlugin(manager.getWorkspacePluginModels(), id, version, match);
 		if (plugin != null)
 			return plugin;
 		ExternalModelManager exmanager = getExternalModelManager();
 		if (exmanager.hasEnabledModels()) {
-			return findPlugin(exmanager.getModels(), id, version);
+			return findPlugin(exmanager.getModels(), id, version, match);
 		}
 		return null;
 	}
@@ -160,7 +194,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		return getDefault().internalGetActivePage();
 	}
 	public static Shell getActiveWorkbenchShell() {
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getShell();
 		}
@@ -253,14 +287,13 @@ public class PDEPlugin extends AbstractUIPlugin {
 		}
 		IStatus status = null;
 		if (e instanceof CoreException)
-		   status = ((CoreException)e).getStatus();
+			status = ((CoreException) e).getStatus();
 		else {
 			if (message == null)
 				message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status =
-				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		}
 		ErrorDialog.openError(getActiveWorkbenchShell(), title, null, status);
 		ResourcesPlugin.getPlugin().getLog().log(status);
@@ -275,8 +308,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 			e = ((InvocationTargetException) e).getTargetException();
 		IStatus status = null;
 		if (e instanceof CoreException)
-			status = ((CoreException)e).getStatus();
-		else 
+			status = ((CoreException) e).getStatus();
+		else
 			status =
 				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
@@ -310,7 +343,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (isVAJ() == false)
 			initializePlatformPath();
 
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				JavaRuntime.initializeJREVariables(monitor);
 				getExternalModelManager().getEclipseHome(monitor);
@@ -332,25 +365,27 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 	public static File getFileInPlugin(IPath path) {
 		try {
-			URL installURL = new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+			URL installURL =
+				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
 			URL localURL = Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
+
 	public void registerLaunch(ILaunch launch) {
 		this.currentLaunch = launch;
 	}
-	
+
 	public IStatus getCurrentLaunchStatus() {
-		if (currentLaunch==null) return null;
-		IProcess [] processes = currentLaunch.getProcesses();
+		if (currentLaunch == null)
+			return null;
+		IProcess[] processes = currentLaunch.getProcesses();
 		boolean terminated = true;
-		for (int i=0; i<processes.length; i++) {
+		for (int i = 0; i < processes.length; i++) {
 			IProcess process = processes[i];
-			if (process.isTerminated()==false) {
+			if (process.isTerminated() == false) {
 				terminated = false;
 				break;
 			}

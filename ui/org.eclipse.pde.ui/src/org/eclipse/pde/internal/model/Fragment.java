@@ -56,11 +56,10 @@ public class Fragment extends PluginBase implements IFragment {
 		this.pluginVersion = getNodeAttribute(node, "plugin-version");
 		String match = getNodeAttribute(node, "match");
 		if (match != null) {
-			String value = match.toLowerCase();
 			String[] table = IMatchRules.RULE_NAME_TABLE;
 			for (int i = 0; i < table.length; i++) {
-				if (value.equals(table[i])) {
-					rule = i;
+				if (match.equalsIgnoreCase(table[i])) {
+					this.rule = i;
 					break;
 				}
 			}

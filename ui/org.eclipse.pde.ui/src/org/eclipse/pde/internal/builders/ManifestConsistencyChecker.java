@@ -149,7 +149,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateVersion(fragment, reporter);
 			String pluginId = fragment.getPluginId();
 			String pluginVersion = fragment.getPluginVersion();
-			IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion);
+			int match = fragment.getRule();
+			IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion, match);
 			if (plugin == null) {
 				// broken fragment link
 				String[] args = { pluginId, pluginVersion };
