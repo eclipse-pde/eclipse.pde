@@ -59,7 +59,7 @@ public class TargetEnvironmentPreferencePage
 		os = new Combo(container, SWT.NULL);
 		os.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		os.setItems(BootLoader.knownOSValues());
-		os.select(os.indexOf(preferences.getString(OS)));
+		os.setText(preferences.getString(OS));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WS));
@@ -67,7 +67,7 @@ public class TargetEnvironmentPreferencePage
 		ws = new Combo(container, SWT.NULL);
 		ws.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		ws.setItems(BootLoader.knownWSValues());
-		ws.select(ws.indexOf(preferences.getString(WS)));
+		ws.setText(preferences.getString(WS));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NL));
@@ -75,7 +75,7 @@ public class TargetEnvironmentPreferencePage
 		nl = new Combo(container, SWT.NULL);
 		nl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		nl.setItems(getLocales());
-		nl.select(nl.indexOf(expandLocaleName(preferences.getString(NL))));
+		nl.setText(preferences.getString(NL));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
@@ -83,7 +83,7 @@ public class TargetEnvironmentPreferencePage
 		arch = new Combo(container, SWT.NULL);
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		arch.setItems(BootLoader.knownOSArchValues());
-		arch.select(arch.indexOf(preferences.getString(ARCH)));
+		arch.setText(preferences.getString(ARCH));
 		
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
@@ -103,11 +103,19 @@ public class TargetEnvironmentPreferencePage
 
 
 	public boolean performOk() {
+		/*
 	    preferences.setValue(OS,os.getItem(os.getSelectionIndex()));
 	    preferences.setValue(WS,ws.getItem(ws.getSelectionIndex()));
 	    String locale = nl.getItem(nl.getSelectionIndex());
 	    preferences.setValue(NL,locale.substring(0,locale.indexOf("-")).trim());
 	    preferences.setValue(ARCH, arch.getItem(arch.getSelectionIndex()));
+	    */
+		preferences.setValue(OS,os.getText());
+		preferences.setValue(WS,ws.getText());
+		String locale = nl.getText();
+		preferences.setValue(NL,locale.substring(0,locale.indexOf("-")).trim());
+		preferences.setValue(ARCH, arch.getText());
+	    
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
