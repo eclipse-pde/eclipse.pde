@@ -182,7 +182,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	handler.setBackground(factory.getBackgroundColor());
 	handler.setForeground(factory.getForegroundColor());
 	handler.setActiveForeground(factory.getHyperlinkColor());
-	handler.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
+	handler.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ALWAYS);
 	
 	container = factory.createComposite(parent);
 	container.setLayout(layout);
