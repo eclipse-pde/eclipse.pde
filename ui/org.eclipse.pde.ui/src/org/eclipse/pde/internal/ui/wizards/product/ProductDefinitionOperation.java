@@ -218,7 +218,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
 		if (status.getSeverity() != IStatus.OK)
-			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, "The operation cannot proceed because plug-in '" + fPluginId + "' has a read-only manifest file.", null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEPlugin.getFormattedMessage("ProductDefinitionOperation.readOnly", fPluginId), null)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -230,7 +230,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			try {
 				model.load();
 				if (!model.isLoaded())
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, "The operation cannot proceed because plug-in '" + fPluginId + "' has a malformed manifest file.", null)); //$NON-NLS-1$
+					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEPlugin.getFormattedMessage("ProductDefinitionOperation.malformed", fPluginId), null)); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (CoreException e) {
 				throw e;
 			}
