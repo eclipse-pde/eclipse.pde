@@ -23,10 +23,7 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionElementDetails extends AbstractFormPart
-		implements
-			IDetailsPage,
-			IContextPart {
+public class ExtensionElementDetails extends PDEDetails {
 	private IPluginElement input;
 	private ISchemaElement schemaElement;
 	private ArrayList rows;
@@ -118,6 +115,7 @@ public class ExtensionElementDetails extends AbstractFormPart
 		}
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		markDetailsPart(section);
 	}
 	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att,
 			Composite parent, FormToolkit toolkit, int span) {
@@ -150,12 +148,6 @@ public class ExtensionElementDetails extends AbstractFormPart
 		return row;
 	}
 	
-	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {
-		Label spacer = toolkit.createLabel(parent, "");
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		spacer.setLayoutData(gd);
-	}
 	/*
 	 * (non-Javadoc)
 	 * 

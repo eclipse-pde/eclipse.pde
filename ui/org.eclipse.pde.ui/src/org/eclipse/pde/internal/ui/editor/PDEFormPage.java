@@ -12,6 +12,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -86,35 +87,44 @@ public abstract class PDEFormPage extends FormPage {
 
 		if (canPerformDirectly(actionId, focusControl))
 			return true;
-		PDESection targetSection = getFocusSection();
-		if (targetSection!=null)
-			return targetSection.doGlobalAction(actionId);
+		AbstractFormPart focusPart = getFocusSection();
+		if (focusPart!=null) {
+			if (focusPart instanceof PDESection)
+				return ((PDESection)focusPart).doGlobalAction(actionId);
+			if (focusPart instanceof PDEDetails)
+				return ((PDEDetails)focusPart).doGlobalAction(actionId);
+		}
 		return false;
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		PDESection targetSection = getFocusSection();
-		if (targetSection != null) {
-			return targetSection.canPaste(clipboard);
+		AbstractFormPart focusPart = getFocusSection();
+		if (focusPart != null) {
+			if (focusPart instanceof PDESection) {
+				return ((PDESection)focusPart).canPaste(clipboard);
+			}
+			if (focusPart instanceof PDEDetails) {
+				return ((PDEDetails)focusPart).canPaste(clipboard);
+			}
 		}
 		return false;
 	}
 	
-	private PDESection getFocusSection() {
+	private AbstractFormPart getFocusSection() {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)
 			return null;
 		Composite parent = focusControl.getParent();
-		PDESection targetSection = null;
+		AbstractFormPart targetPart = null;
 		while (parent != null) {
 			Object data = parent.getData("part");
-			if (data != null && data instanceof PDESection) {
-				targetSection = (PDESection) data;
+			if (data != null && data instanceof AbstractFormPart) {
+				targetPart = (AbstractFormPart) data;
 				break;
 			}
 			parent = parent.getParent();
 		}
-		return targetSection;
+		return targetPart;
 	}
 	public IPropertySheetPage getPropertySheetPage() {
 		return null;

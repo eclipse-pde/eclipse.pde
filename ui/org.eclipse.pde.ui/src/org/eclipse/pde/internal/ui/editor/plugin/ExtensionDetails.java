@@ -29,7 +29,7 @@ import org.eclipse.ui.forms.widgets.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
+public class ExtensionDetails extends PDEDetails {
 	private IPluginExtension input;
 	private FormEntry id;
 	private FormEntry name;
@@ -152,15 +152,9 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		section.setClient(client);
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		model.addModelChangedListener(this);
+		markDetailsPart(section);
 	}
 	
-	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {
-		Label spacer = toolkit.createLabel(parent, "");
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		spacer.setLayoutData(gd);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

@@ -32,7 +32,7 @@ import org.eclipse.ui.model.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.navigator.*;
 
-public class ExtensionPointDetails extends AbstractFormPart implements IDetailsPage, IContextPart {
+public class ExtensionPointDetails extends PDEDetails {
 	private IPluginExtensionPoint fInput;
 	private FormEntry fIdEntry;
 	private FormEntry fNameEntry;
@@ -256,13 +256,9 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		section.setClient(client);
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		model.addModelChangedListener(this);
+		markDetailsPart(section);
 	}
-	private void createSpacer(FormToolkit toolkit, Composite parent, int span) {
-		Label spacer = toolkit.createLabel(parent, "");
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		spacer.setLayoutData(gd);
-	}
+
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		model.removeModelChangedListener(this);
