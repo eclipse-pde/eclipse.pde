@@ -17,7 +17,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JAR_SUFFIX = ".jar";
 	public static final String PROPERTY_SOURCE_PREFIX = "source.";
 	public static final String PROPERTY_ZIP_SUFFIX = ".zip";
-	public static final String JDT_COMPILER_ADAPTER = "org.eclipse.jdt.internal.core.JDTCompilerAdapter";
+	public static final String JDT_COMPILER_ADAPTER = "org.eclipse.jdt.core.JDTCompilerAdapter";
 
 
 	// element description variables (used in files like plugin.xml, e.g. $ws$)
