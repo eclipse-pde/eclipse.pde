@@ -29,28 +29,22 @@ public void createInitialLayout(IPageLayout factory) {
 			IPageLayout.LEFT,
 			(float) 0.25,
 			factory.getEditorArea());
-	//topLeft.addView(IPageLayout.ID_RES_NAV);
 	topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 	topLeft.addView(JavaUI.ID_PACKAGES);
 	topLeft.addView(JavaUI.ID_TYPE_HIERARCHY);
 	topLeft.addView(PDEPlugin.PLUGINS_VIEW_ID);
 
-	IFolderLayout bottomRight =
+	IFolderLayout bottom =
 		factory.createFolder(
 			"bottomRight",
 			IPageLayout.BOTTOM,
-			(float) 0.72,
+			0.75f,
 			factory.getEditorArea());
 
-	bottomRight.addView(IPageLayout.ID_TASK_LIST);
-	bottomRight.addView("org.eclipse.pde.runtime.LogView");
-	bottomRight.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
-
-	factory.addView(
-		IPageLayout.ID_PROP_SHEET, 
-		IPageLayout.LEFT, 
-		(float) 0.35,
-		"bottomRight");
+	bottom.addView(IPageLayout.ID_TASK_LIST);
+	bottom.addView("org.eclipse.pde.runtime.LogView");
+	bottom.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
+	bottom.addView(IPageLayout.ID_PROP_SHEET);
 
 	factory.addView(
 		IPageLayout.ID_OUTLINE,
