@@ -135,6 +135,7 @@ public class Plugin extends PluginBase implements IPlugin {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
 		writer.println();
+		writeComments(writer, endComments);
 		writer.println("</plugin>");
 	}
 }

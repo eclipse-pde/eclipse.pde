@@ -190,6 +190,7 @@ public class Fragment extends PluginBase implements IFragment {
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
+		writeComments(writer, endComments);
 		writer.println("</fragment>");
 	}
 }

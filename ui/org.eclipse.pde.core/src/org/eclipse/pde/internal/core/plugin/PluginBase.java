@@ -158,9 +158,28 @@ public abstract class PluginBase
 				processChild(child, lineTable);
 			}
 		}
+		addEndComments(node);
 		valid = hasRequiredAttributes();
 	}
 
+	/**
+	 * 
+	 */
+	private void addEndComments(Node node) {
+		for (Node prev = node.getLastChild();
+				prev != null;
+				prev = prev.getPreviousSibling()) {
+			if (prev.getNodeType() == Node.TEXT_NODE)
+				continue;
+			if (prev instanceof Comment) {
+				String comment = prev.getNodeValue();
+				if (endComments == null)
+					endComments = new Vector();
+				endComments.add(0,comment);
+			} else
+				break;
+		}
+	}
 	void loadRuntime(LibraryModel[] libraryModels) {
 		if (libraryModels == null)
 			return;
@@ -303,6 +322,7 @@ public abstract class PluginBase
 			writeComments(writer);
 		super.writeChildren(indent, tag, children, writer);
 	}
+	
 	public boolean isValid() {
 		return valid;
 	}
