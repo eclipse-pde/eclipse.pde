@@ -111,6 +111,7 @@ public class WorkspaceSiteBuildModel
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
+				createFolder(file, null);
 				file.create(stream, false, null);
 			}
 			stream.close();
@@ -125,6 +126,17 @@ public class WorkspaceSiteBuildModel
 			siteBuild.write("", writer);
 		}
 		dirty = false;
+	}
+	private void createFolder(IFile file, IProgressMonitor monitor) throws CoreException {
+		if (file.exists())
+			return;
+		IProject project = file.getProject();
+		IPath path = file.getProjectRelativePath();
+		for (int i = path.segmentCount()-1; i>0; i--){
+			IFolder folder = project.getFolder(path.removeLastSegments(i));
+			if (!folder.exists())
+				folder.create(true, true, monitor);
+		}
 	}
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
