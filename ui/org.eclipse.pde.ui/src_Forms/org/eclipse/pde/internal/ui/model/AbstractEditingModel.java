@@ -17,8 +17,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private ArrayList fListeners = new ArrayList();
 	protected boolean fIsReconciling;
 	protected boolean fIsInSync = true;
-	protected boolean fIsValid;
-	protected boolean fIsLoaded;
+	protected boolean fIsLoaded = false;
 	protected boolean fIsDisposed;
 	protected long fTimestamp;
 	private transient NLResourceHelper fNLResourceHelper;
