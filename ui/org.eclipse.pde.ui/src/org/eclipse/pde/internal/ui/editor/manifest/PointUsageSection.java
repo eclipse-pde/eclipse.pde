@@ -128,8 +128,10 @@ public class PointUsageSection extends TableSection {
 					handleOpen(sel);
 				}
 			});
+			manager.add(new Separator());
 		}
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		// defect 19558
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager,false);
 	}
 	private void handleOpen(IStructuredSelection selection) {
 		IPluginBase pluginToOpen = (IPluginBase) selection.getFirstElement();

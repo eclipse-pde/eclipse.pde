@@ -51,6 +51,7 @@ public class SystemFileDocumentProvider extends StreamDocumentProvider {
 		try {
 			InputStream contentStream = new FileInputStream(file);
 			setDocumentContent(document, contentStream);
+			contentStream.close();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}

@@ -80,47 +80,52 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 					stream =
 						new ByteArrayInputStream(
 							document.get().getBytes("UTF8"));
-				} catch (UnsupportedEncodingException e) {
-				}
 
-				IFile file = input.getFile();
+					IFile file = input.getFile();
 
-				if (file.exists()) {
+					if (file.exists()) {
 
-					FileInfo info = (FileInfo) getElementInfo(element);
+						FileInfo info = (FileInfo) getElementInfo(element);
 
-					if (info != null && !overwrite)
-						checkSynchronizationState(
-							info.fModificationStamp,
-							file);
+						if (info != null && !overwrite)
+							checkSynchronizationState(
+								info.fModificationStamp,
+								file);
 
-					file.setContents(stream, overwrite, true, monitor);
+						file.setContents(stream, overwrite, true, monitor);
 
-					if (info != null) {
+						if (info != null) {
 
-						ResourceMarkerAnnotationModel model =
-							(ResourceMarkerAnnotationModel) info.fModel;
-						model.updateMarkers(info.fDocument);
+							ResourceMarkerAnnotationModel model =
+								(ResourceMarkerAnnotationModel) info.fModel;
+							model.updateMarkers(info.fDocument);
 
-						info.fModificationStamp =
-							computeModificationStamp(file);
+							info.fModificationStamp =
+								computeModificationStamp(file);
+						}
+
+					} else {
+						try {
+							//monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
+							monitor.beginTask("Saving", 2000);
+							ContainerGenerator generator =
+								new ContainerGenerator(
+									file.getParent().getFullPath());
+							generator.generateContainer(
+								new SubProgressMonitor(monitor, 1000));
+							file.create(
+								stream,
+								false,
+								new SubProgressMonitor(monitor, 1000));
+						} finally {
+							monitor.done();
+						}
 					}
-
-				} else {
+				} catch (UnsupportedEncodingException e) {
+				} finally {
 					try {
-						//monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
-						monitor.beginTask("Saving", 2000);
-						ContainerGenerator generator =
-							new ContainerGenerator(
-								file.getParent().getFullPath());
-						generator.generateContainer(
-							new SubProgressMonitor(monitor, 1000));
-						file.create(
-							stream,
-							false,
-							new SubProgressMonitor(monitor, 1000));
-					} finally {
-						monitor.done();
+						stream.close();
+					} catch (IOException e) {
 					}
 				}
 			} else {

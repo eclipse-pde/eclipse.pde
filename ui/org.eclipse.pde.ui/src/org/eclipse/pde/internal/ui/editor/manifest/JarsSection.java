@@ -21,6 +21,8 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -96,6 +98,13 @@ public class JarsSection
 		factory.paintBordersFor(container);
 		return container;
 	}
+	
+	// defect 19550
+	protected StructuredViewerPart createViewerPart(String [] buttonLabels) {
+		EditableTablePart tablePart = (EditableTablePart)super.createViewerPart(buttonLabels);
+		tablePart.setEditable(false);
+		return tablePart;
+	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
@@ -148,7 +157,8 @@ public class JarsSection
 			manager.add(deleteAction);
 		}
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+		// defect 19550
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager,false);
 	}
 	private void handleDelete() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();

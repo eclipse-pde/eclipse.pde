@@ -42,6 +42,7 @@ public class StorageDocumentProvider extends StreamDocumentProvider {
 		try {
 			InputStream contentStream = storage.getContents();
 			setDocumentContent(document, contentStream);
+			contentStream.close();
 		} catch (Exception e) {
 			PDEPlugin.logException(e);
 		}
