@@ -197,7 +197,7 @@ private void setJavaSettings(
 
 private void createBlankManifest(IProject project, IPluginStructureData structureData, IProgressMonitor monitor)
           							        throws CoreException {
-   String id = project.getName();
+   String id = structureData.getPluginId();
    IPath path;
    if (fragment) 
       path = project.getFullPath().append("fragment.xml");

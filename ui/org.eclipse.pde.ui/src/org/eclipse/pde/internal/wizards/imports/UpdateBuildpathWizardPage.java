@@ -119,7 +119,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		pluginListViewer = new CheckboxTableViewer(container, SWT.BORDER);
+		pluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		pluginListViewer.setContentProvider(new BuildpathContentProvider());
 		pluginListViewer.setLabelProvider(new BuildpathLabelProvider());
 		pluginListViewer.addCheckStateListener(new ICheckStateListener() {

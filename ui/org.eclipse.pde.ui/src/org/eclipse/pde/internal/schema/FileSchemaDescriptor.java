@@ -62,4 +62,8 @@ public URL getSchemaURL() {
 	}
 	return null;
 }
+
+public boolean isEnabled() {
+	return true;
+}
 }

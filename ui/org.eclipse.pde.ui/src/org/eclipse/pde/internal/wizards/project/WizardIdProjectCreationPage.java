@@ -17,19 +17,23 @@ public class WizardIdProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 	
 	public void setPageComplete(boolean complete) {
+		/*
 		if (complete) {
 			// Check ID rules
 			String problemText = verifyIdRules();
 			if (problemText!=null)
 			   complete = false;
 		}
+		*/
 		super.setPageComplete(complete);
 	}
 	
 	public void setErrorMessage(String message) {
+		/*
 		if (message==null) {
 			message = verifyIdRules();
 		}
+		*/
 		super.setErrorMessage(message);
 	}
 	

@@ -109,7 +109,7 @@ public Control createContents(Composite parent) {
 	layout.marginWidth = 5;
 	container.setLayout(layout);
 
-	pluginListViewer = new CheckboxTableViewer(container, SWT.BORDER);
+	pluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 	pluginListViewer.setContentProvider(new PluginContentProvider());
 	pluginListViewer.setLabelProvider(new PluginLabelProvider());
 

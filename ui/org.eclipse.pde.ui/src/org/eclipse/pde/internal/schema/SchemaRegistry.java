@@ -21,29 +21,44 @@ import org.eclipse.core.runtime.Platform;
 public class SchemaRegistry implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {
 	public static final String PLUGIN_POINT = "schemaMap";
 	public static final String TAG_MAP = "map";
-	private Hashtable descriptors;
+	private Hashtable workspaceDescriptors;
+	private Hashtable externalDescriptors;
 	private Vector dirtyWorkspaceModels;
 
 public SchemaRegistry() {
 }
 private void addExtensionPoint(IFile file) {
 	FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
-	descriptors.put(sd.getPointId(), sd);
+	workspaceDescriptors.put(sd.getPointId(), sd);
 }
-public ISchema getSchema(String extensionPointId) {
-	if (descriptors == null) {
+
+private AbstractSchemaDescriptor getSchemaDescriptor(String extensionPointId) {
+	if (workspaceDescriptors == null) {
 		initializeDescriptors();
 	}
 	if (dirtyWorkspaceModels!=null && dirtyWorkspaceModels.size()>0) {
 		updateWorkspaceDescriptors();
 	}
 	AbstractSchemaDescriptor descriptor =
-		(AbstractSchemaDescriptor) descriptors.get(extensionPointId);
+		(AbstractSchemaDescriptor) workspaceDescriptors.get(extensionPointId);
+	if (descriptor==null) {
+		// try external
+		descriptor = (AbstractSchemaDescriptor)
+					externalDescriptors.get(extensionPointId);
+	}
+	if (descriptor!=null && descriptor.isEnabled()) return descriptor;
+	return null;
+}
+
+public ISchema getSchema(String extensionPointId) {
+	AbstractSchemaDescriptor descriptor = getSchemaDescriptor(extensionPointId);
 	if (descriptor==null) return null;
 	return descriptor.getSchema();
 }
+
 private void initializeDescriptors() {
-	descriptors = new Hashtable();
+	workspaceDescriptors = new Hashtable();
+	externalDescriptors = new Hashtable();
 	// Check workspace plug-ins
 	loadWorkspaceDescriptors();
 	// Check external plug-ins
@@ -62,8 +77,8 @@ private void loadExternalDescriptors() {
 		for (int j = 0; j < points.length; j++) {
 			IPluginExtensionPoint point = points[j];
 			if (point.getSchema() != null) {
-				ExtensionPointSchemaDescriptor desc = new ExtensionPointSchemaDescriptor(point);
-				descriptors.put(point.getFullId(), desc);
+				ExternalSchemaDescriptor desc = new ExternalSchemaDescriptor(point);
+				externalDescriptors.put(point.getFullId(), desc);
 			}
 		}
 
@@ -98,7 +113,7 @@ private void loadWorkspaceDescriptor(IPluginModelBase model) {
 			IFile schemaFile = pluginFile.getWorkspace().getRoot().getFile(path);
 			if (schemaFile.exists()) {
 				FileSchemaDescriptor desc = new FileSchemaDescriptor(schemaFile);
-				descriptors.put(point.getFullId(), desc);
+				workspaceDescriptors.put(point.getFullId(), desc);
 			}
 		}
 	}
@@ -129,7 +144,7 @@ private void loadWorkspaceDescriptors(IPluginModelBase model) {
 			IFile schemaFile = pluginFile.getWorkspace().getRoot().getFile(path);
 			if (schemaFile.exists()) {
 				FileSchemaDescriptor desc = new FileSchemaDescriptor(schemaFile);
-				descriptors.put(point.getFullId(), desc);
+				workspaceDescriptors.put(point.getFullId(), desc);
 			}
 		}
 	}
@@ -169,20 +184,21 @@ private void processMapElement(IConfigurationElement element) {
 			System.out.println("Schema map: point or schema null");
 			return;
 		}
-		if (descriptors.get(point) == null) {
+		if (getSchemaDescriptor(point)==null) {
 			MappedSchemaDescriptor desc = new MappedSchemaDescriptor(element);
-			descriptors.put(point, desc);
+			externalDescriptors.put(point, desc);
 		}
 	}
 }
+
 private void removeExtensionPoint(IFile file) {
-	for (Enumeration enum=descriptors.keys(); enum.hasMoreElements();) {
+	for (Enumeration enum=workspaceDescriptors.keys(); enum.hasMoreElements();) {
 		String pointId = (String)enum.nextElement();
-		Object desc = descriptors.get(pointId);
+		Object desc = workspaceDescriptors.get(pointId);
 		if (desc instanceof FileSchemaDescriptor) {
 			FileSchemaDescriptor fd = (FileSchemaDescriptor)desc;
 			if (fd.getFile().equals(file)) {
-				descriptors.remove(pointId);
+				workspaceDescriptors.remove(pointId);
 				fd.getSchema().dispose();
 			}
 		}
@@ -193,13 +209,13 @@ private void removeWorkspaceDescriptors(IPluginModelBase model) {
 	IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
 	for (int i = 0; i < points.length; i++) {
 		IPluginExtensionPoint point = points[i];
-		Object descObj = descriptors.get(point.getFullId());
+		Object descObj = workspaceDescriptors.get(point.getFullId());
 		if (descObj != null && descObj instanceof FileSchemaDescriptor) {
 			FileSchemaDescriptor desc = (FileSchemaDescriptor)descObj;
 			IFile schemaFile = desc.getFile();
 			if (model.getUnderlyingResource().getProject().equals(schemaFile.getProject())) {
 				// same project - remove
-				descriptors.remove(point.getFullId());
+				workspaceDescriptors.remove(point.getFullId());
 			}
 		}
 	}
@@ -217,19 +233,27 @@ public void resourceChanged(IResourceChangeEvent event) {
 	}
 }
 public void shutdown() {
-	if (descriptors==null) return;
+	if (workspaceDescriptors==null) return;
+	disposeDescriptors(workspaceDescriptors);
+	disposeDescriptors(externalDescriptors);
+	workspaceDescriptors = null;
+	externalDescriptors = null;
+	dirtyWorkspaceModels = null;
+	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
+	PDEPlugin.getWorkspace().removeResourceChangeListener(this);
+}
+
+private void disposeDescriptors(Hashtable descriptors) {
 	for (Iterator iter=descriptors.values().iterator(); iter.hasNext();) {
 		AbstractSchemaDescriptor desc = (AbstractSchemaDescriptor)iter.next();
 		desc.dispose();
 	}
 	descriptors.clear();
-	descriptors = null;
-	dirtyWorkspaceModels = null;
-	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
-	PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 }
+
+
 private void updateExtensionPoint(IFile file) {
-	for (Iterator iter = descriptors.values().iterator(); iter.hasNext();) {
+	for (Iterator iter = workspaceDescriptors.values().iterator(); iter.hasNext();) {
 		AbstractSchemaDescriptor sd = (AbstractSchemaDescriptor)iter.next();
 		if (sd instanceof FileSchemaDescriptor) {
 			IFile schemaFile = ((FileSchemaDescriptor)sd).getFile();

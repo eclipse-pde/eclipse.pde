@@ -260,8 +260,12 @@ private void handleNew() {
 		Object[] result = dialog.getResult();
 		if (result.length == 1) {
 			IPath path = (IPath) result[0];
-			String folder = path.lastSegment();
-			verifyFolderExists(project, folder);
+			IPath projectPath = project.getFullPath();
+			if (!projectPath.isPrefixOf(path)) return;
+			int matching = path.matchingFirstSegments(projectPath);
+			path = path.removeFirstSegments(matching);
+			String folder = path.toString();
+			if (!verifyFolderExists(project, folder)) return;
 			try {
 				IBuildModel buildModel = model.getBuildModel();
 				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
@@ -270,6 +274,7 @@ private void handleNew() {
 					entry = buildModel.getFactory().createEntry(libKey);
 					buildModel.getBuild().add(entry);
 				}
+				if (!folder.endsWith("/")) folder = folder + "/";
 				entry.addToken(folder);
 				entryTable.add(folder);
 				((WorkspaceBuildModel) buildModel).save();
@@ -312,7 +317,7 @@ private void update(IPluginLibrary library) {
 	entryTable.setInput(currentLibrary);
 	newButton.setEnabled(!isReadOnly() && library!=null);
 }
-private void verifyFolderExists(IProject project, String folderName) {
+private boolean verifyFolderExists(IProject project, String folderName) {
 	IPath path = project.getFullPath().append(folderName);
 	IFolder folder = project.getWorkspace().getRoot().getFolder(path);
 	if (folder.exists() == false) {
@@ -326,10 +331,13 @@ private void verifyFolderExists(IProject project, String folderName) {
 				folder.create(false, true, null);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
+				return false;
 			}
 		}
+		else return false;
 	}
 	verifyFolderIsOnBuildPath(project, folder);
+	return true;
 }
 private void verifyFolderIsOnBuildPath(IProject project, IFolder folder) {
 	IJavaProject javaProject = JavaCore.create(project);

@@ -94,7 +94,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.verticalSpacing = 9;
 	container.setLayout(layout);
 
-	pluginViewer = new CheckboxTableViewer(container, SWT.NULL);
+	pluginViewer = CheckboxTableViewer.newCheckList(container, SWT.NULL);
 	pluginViewer.setContentProvider(new PluginContentProvider());
 	pluginViewer.setLabelProvider(new PluginLabelProvider());
 	pluginViewer.setSorter(ListUtil.NAME_SORTER);

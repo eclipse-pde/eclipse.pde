@@ -62,7 +62,7 @@ public void createControl(Composite parent) {
 	layout.verticalSpacing = 9;
 	container.setLayout(layout);
 
-	fragmentViewer = new CheckboxTableViewer(container, SWT.BORDER);
+	fragmentViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 	fragmentViewer.setContentProvider(new FragmentContentProvider());
 	fragmentViewer.setLabelProvider(new FragmentLabelProvider());
 	fragmentViewer.setSorter(ListUtil.NAME_SORTER);

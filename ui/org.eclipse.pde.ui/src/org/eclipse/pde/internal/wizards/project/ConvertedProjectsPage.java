@@ -158,7 +158,7 @@ public void createControl(Composite parent) {
 	layout.marginWidth = 5;
 	container.setLayout(layout);
 
-	projectViewer = new CheckboxTableViewer(container, SWT.BORDER);
+	projectViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 	projectViewer.setContentProvider(new ProjectContentProvider());
 	projectViewer.setLabelProvider(new ProjectLabelProvider());
 	projectViewer.setSorter(ListUtil.NAME_SORTER);

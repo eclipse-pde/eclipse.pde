@@ -14,6 +14,14 @@ import org.eclipse.core.runtime.*;
  */
 public interface IPluginStructureData {
 /**
+ * Returns the plug-in id as defined in the dialog
+ * 
+ * @return plug-in id
+ */
+
+public String getPluginId();
+  
+/**
  * Returns the folder name for the Java build output.
  *
  * @return Java build output folder name

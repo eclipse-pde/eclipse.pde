@@ -53,4 +53,6 @@ public void reload() {
 		schema.reload();
 	}
 }
+
+public abstract boolean isEnabled();
 }

@@ -222,7 +222,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		pluginListViewer = new CheckboxTableViewer(container, SWT.BORDER);
+		pluginListViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 		pluginListViewer.setContentProvider(new PluginContentProvider());
 		pluginListViewer.setLabelProvider(new PluginLabelProvider());
 		pluginListViewer.addCheckStateListener(new ICheckStateListener() {

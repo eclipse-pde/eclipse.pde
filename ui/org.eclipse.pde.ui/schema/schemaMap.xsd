@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.ecliipse.pde">
+<schema targetNamespace="org.eclipse.pde">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.ecliipse.pde" id="schemaMap" name="Schema Mappings"/>
+      <meta.schema plugin="org.eclipse.pde" id="schemaMap" name="Schema Mappings"/>
    </appInfo>
    <documentation>
       This extension point allows to associate extension

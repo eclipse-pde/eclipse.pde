@@ -397,7 +397,7 @@ private IFile generatePluginFile(
 	writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	writer.println(fragment ? "<fragment" : "<plugin");
 	appendAttribute(writer, indent, "name", data.name);
-	appendAttribute(writer, indent, "id", project.getName());
+	appendAttribute(writer, indent, "id", data.structureData.getPluginId());
 	appendAttribute(writer, indent, "version", data.version);
 	appendAttribute(writer, indent, "provider-name", data.provider);
 	if (!fragment)

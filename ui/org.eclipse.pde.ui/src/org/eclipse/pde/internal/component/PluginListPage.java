@@ -68,7 +68,7 @@ public void createControl(Composite parent) {
 	layout.verticalSpacing = 9;
 	container.setLayout(layout);
 
-	pluginViewer = new CheckboxTableViewer(container, SWT.BORDER);
+	pluginViewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER);
 	pluginViewer.setContentProvider(new PluginContentProvider());
 	pluginViewer.setLabelProvider(new PluginLabelProvider());
 	pluginViewer.setSorter(ListUtil.NAME_SORTER);
