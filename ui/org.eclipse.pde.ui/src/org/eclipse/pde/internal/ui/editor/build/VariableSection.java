@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
@@ -157,7 +158,7 @@ public class VariableSection
 					new VariableSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), model);
 				dialog.create();
 				dialog.getShell().setText(PDEPlugin.getResourceString(DIALOG_TITLE));
-				dialog.getShell().setSize(300, 350);
+				SWTUtil.setDialogSize(dialog, 300, 350);
 				if (dialog.open() == VariableSelectionDialog.OK) {
 					IBuildEntry entry =
 						model.getFactory().createEntry(dialog.getSelectedVariable());

@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -474,7 +475,7 @@ public class DetailExtensionSection
 				WizardDialog dialog =
 					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
-				dialog.getShell().setSize(500, 500);
+				SWTUtil.setDialogSize(dialog, 500, 500);
 				dialog.open();
 			}
 		});

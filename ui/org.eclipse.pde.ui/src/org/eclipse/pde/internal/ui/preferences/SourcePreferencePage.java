@@ -26,14 +26,14 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public class SourcePreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
-	private static final String KEY_LABEL = "SourcePreferencePage.label";
+	private static final String KEY_LABEL = "SourcePreferencePage.label"; //$NON-NLS-1$
 	public static final String KEY_SELECT_ALL =
-		"WizardCheckboxTablePart.selectAll";
+		"WizardCheckboxTablePart.selectAll"; //$NON-NLS-1$
 	public static final String KEY_DESELECT_ALL =
-		"WizardCheckboxTablePart.deselectAll";
-	private static final String KEY_ADD = "SourcePreferencePage.add";
-	private static final String KEY_DELETE = "SourcePreferencePage.delete";
-	private static final String KEY_DESC = "SourcePreferencePage.desc";
+		"WizardCheckboxTablePart.deselectAll"; //$NON-NLS-1$
+	private static final String KEY_ADD = "SourcePreferencePage.add"; //$NON-NLS-1$
+	private static final String KEY_DELETE = "SourcePreferencePage.delete"; //$NON-NLS-1$
+	private static final String KEY_DESC = "SourcePreferencePage.desc"; //$NON-NLS-1$
 	private CheckboxTablePart tablePart;
 	private CheckboxTableViewer tableViewer;
 	private ArrayList userLocations;
@@ -57,7 +57,7 @@ public class SourcePreferencePage
 				return location.getName();
 			if (index == 1)
 				return location.getPath().toOSString();
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 		public Image getColumnImage(Object obj, int index) {
@@ -219,8 +219,8 @@ public class SourcePreferencePage
 		SourceLocationDialog dialog =
 			new SourceLocationDialog(getShell(), null);
 		dialog.create();
-		dialog.getShell().setText("New Source Location");
-		dialog.getShell().setSize(400, 200);
+		dialog.getShell().setText(PDEPlugin.getResourceString("SourcePreferencePage.new.title")); //$NON-NLS-1$
+		SWTUtil.setDialogSize(dialog, 400, 200);
 		if (dialog.open() == SourceLocationDialog.OK) {
 			SourceLocation location =
 				new SourceLocation(dialog.getName(), dialog.getPath(), true);
@@ -267,10 +267,10 @@ public class SourcePreferencePage
 	private void configureColumns(Table table) {
 		table.setHeaderVisible(true);
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText("Name");
+		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.name")); //$NON-NLS-1$
 		
 		column = new TableColumn(table, SWT.NULL);
-		column.setText("Path");
+		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.path")); //$NON-NLS-1$
 		
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(50, 100, true));

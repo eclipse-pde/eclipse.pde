@@ -13,6 +13,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.project.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
@@ -124,7 +125,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 				PluginSelectionDialog dialog =
 					new PluginSelectionDialog(pluginIdField.getShell());
 				dialog.create();
-				dialog.getShell().setSize(350, 400);
+				SWTUtil.setDialogSize(dialog, 350, 400);
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					Object[] result = dialog.getResult();
 					if (result != null && result.length == 1) {

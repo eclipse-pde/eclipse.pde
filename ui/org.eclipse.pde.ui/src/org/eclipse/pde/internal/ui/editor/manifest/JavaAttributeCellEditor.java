@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -36,7 +37,7 @@ protected Object openDialogBox(Control cellEditorWindow) {
 	WizardDialog dialog =
 		new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 	dialog.create();
-	dialog.getShell().setSize(400, 500);
+	SWTUtil.setDialogSize(dialog, 400, 500);
 	int result = dialog.open();
 	if (result == WizardDialog.OK) {
 		return wizard.getValue();

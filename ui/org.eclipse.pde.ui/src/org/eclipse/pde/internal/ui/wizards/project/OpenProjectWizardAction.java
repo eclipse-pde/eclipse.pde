@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class OpenProjectWizardAction extends Action {
 	/**
@@ -27,7 +28,7 @@ public class OpenProjectWizardAction extends Action {
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
-		dialog.getShell().setSize(500, 500);
+		SWTUtil.setDialogSize(dialog, 500, 500);
 		dialog.getShell().setText(wizard.getWindowTitle());
 		dialog.open();
 	}

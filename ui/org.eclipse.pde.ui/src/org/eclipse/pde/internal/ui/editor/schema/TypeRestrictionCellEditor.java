@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 
 public class TypeRestrictionCellEditor extends DialogCellEditor {
 	private Label label;
@@ -30,7 +31,7 @@ protected Object openDialogBox(Control cellEditorWindow) {
 			cellEditorWindow.getShell(),
 			(ISchemaRestriction) value);
 	dialog.create();
-	dialog.getShell().setSize(300, 350);
+	SWTUtil.setDialogSize(dialog, 300, 350);
 	dialog.getShell().setText(PDEPlugin.getResourceString(KEY_TYPE_RESTRICTION_TITLE));
 	int result = dialog.open();
 	if (result == TypeRestrictionDialog.OK) {

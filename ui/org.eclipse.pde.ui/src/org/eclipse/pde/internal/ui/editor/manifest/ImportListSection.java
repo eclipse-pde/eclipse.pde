@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -189,7 +190,7 @@ public class ImportListSection
 				WizardDialog dialog =
 					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
-				dialog.getShell().setSize(500, 500);
+				SWTUtil.setDialogSize(dialog, 500, 500);
 				dialog.open();
 			}
 		});

@@ -583,7 +583,7 @@ public class AdvancedLauncherTab
 			dialog.create();
 			dialog.getShell().setText(
 				PDEPlugin.getResourceString(KEY_PLUGIN_PATH_TITLE));
-			dialog.getShell().setSize(500, 400);
+			SWTUtil.setDialogSize(dialog, 500, 400);
 			dialog.open();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

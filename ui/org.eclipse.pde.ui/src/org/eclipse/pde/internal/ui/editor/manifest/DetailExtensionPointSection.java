@@ -10,6 +10,7 @@ import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.extension.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.jface.action.*;
@@ -173,7 +174,7 @@ public class DetailExtensionPointSection
 				WizardDialog dialog =
 					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
-				dialog.getShell().setSize(400, 450);
+				SWTUtil.setDialogSize(dialog, 400, 450);
 				dialog.open();
 			}
 		});
