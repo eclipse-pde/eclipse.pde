@@ -74,7 +74,6 @@ public abstract class PDETestCase extends TestCase {
 				projects[i].delete(true, new NullProgressMonitor());
 			}
 		} catch (CoreException e) {
-			System.out.print(e.getStackTrace());
 		}
 	}
 	
