@@ -119,30 +119,6 @@ protected void generate(PluginModel model) throws CoreException {
 }
 
 
-/**
- * Transfers all available bytes from the given input stream to the given output stream. 
- * Regardless of failure, this method closes both streams.
- */
-protected void transferStreams(InputStream source, OutputStream destination)	throws IOException {
-	try {
-		byte[] buffer = new byte[8192];
-		while (true) {
-			int bytesRead = -1;
-			if ((bytesRead = source.read(buffer)) == -1)
-				break;
-			destination.write(buffer, 0, bytesRead);
-		}
-	} finally {
-		try {
-			source.close();
-		} catch (IOException e) {
-		}
-		try {
-			destination.close();
-		} catch (IOException e) {
-		}
-	}
-}
 
 /**
  * Main call for generating the script.
