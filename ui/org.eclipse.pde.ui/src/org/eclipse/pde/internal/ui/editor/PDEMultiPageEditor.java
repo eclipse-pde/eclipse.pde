@@ -163,8 +163,12 @@ public abstract class PDEMultiPageEditor
 			firstPageId = storedFirstPageId;
 		else if (EditorPreferencePage.getUseSourcePage())
 			firstPageId = getSourcePageId();
-		if (firstPageId != null)
-			showPage(firstPageId);
+		if (firstPageId != null) {
+			IPDEEditorPage firstPage = getPage(firstPageId);
+			if (firstPage==null)
+				firstPage = (IPDEEditorPage)pages.get(0);
+			showPage(firstPage);
+		}
 	}
 	public void dispose() {
 		storeDefaultPage();
