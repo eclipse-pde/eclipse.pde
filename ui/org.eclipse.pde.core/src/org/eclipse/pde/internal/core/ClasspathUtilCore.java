@@ -135,18 +135,15 @@ public class ClasspathUtilCore {
 					IProject project = resource.getProject();
 					if (project.hasNature(JavaCore.NATURE_ID)) {
 						IJavaProject jProject = JavaCore.create(project);
-						IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-						for (int j = 0; j < roots.length; j++) {
-							if (roots[j].getResource() != null
-								&& roots[j].getResource().equals(resource)) {
-								IPath attPath = roots[j].getSourceAttachmentPath();
-								if (attPath != null) {
-									newEntry =
-										JavaCore.newLibraryEntry(
-											resource.getFullPath(),
-											attPath,
-											roots[j].getSourceAttachmentRootPath());
-								}
+						IClasspathEntry[] entries = jProject.getRawClasspath();
+						for (int j = 0; j < entries.length; j++) {
+							if (entries[j].getEntryKind() == IClasspathEntry.CPE_LIBRARY
+									&& entries[j].getContentKind() == IPackageFragmentRoot.K_BINARY
+									&& entries[j].getPath().equals(resource.getFullPath())) {
+								newEntry = JavaCore.newLibraryEntry(
+										entries[j].getPath(), 
+										entries[j].getSourceAttachmentPath(), 
+										entries[j].getSourceAttachmentRootPath());
 								break;
 							}
 						}
