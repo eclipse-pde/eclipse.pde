@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public abstract class ExtensionAttributeRow {
 	protected IContextPart part;
-	protected ISchemaAttribute att;
+	protected Object att;
 	protected IPluginElement input;
 	protected boolean blockNotification;
 	protected boolean dirty;
@@ -33,22 +33,46 @@ public abstract class ExtensionAttributeRow {
 		this.att = att;
 	}
 	
+	public ExtensionAttributeRow(IContextPart part, IPluginAttribute att) {
+		this.part = part;
+		this.att = att;
+	}
+	
 	public ISchemaAttribute getAttribute() {
-		return att;
+		return (att instanceof ISchemaAttribute) ? (ISchemaAttribute)att:null;
+	}
+	
+	public String getName() {
+		if (att instanceof ISchemaAttribute)
+			return ((ISchemaAttribute)att).getName();
+		else
+			return ((IPluginAttribute)att).getName();
+	}
+	
+	protected int getUse() {
+		if (att instanceof ISchemaAttribute)
+			return ((ISchemaAttribute)att).getUse();
+		return ISchemaAttribute.OPTIONAL;
+	}
+	
+	protected String getDescription() {
+		if (att instanceof ISchemaAttribute)
+			return ((ISchemaAttribute)att).getDescription();
+		return "";
 	}
 	
 	protected String getValue() {
 		String value=null;
 		if (input!=null) {
-			IPluginAttribute patt = input.getAttribute(att.getName());
+			IPluginAttribute patt = input.getAttribute(getName());
 			if (patt!=null)
 				value = patt.getValue();
 		}
 		return value;
 	}
 	protected String getPropertyLabel() {
-		String label=att.getName();
-		if (att.getUse()==ISchemaAttribute.REQUIRED)
+		String label=getName();
+		if (getUse()==ISchemaAttribute.REQUIRED)
 			label+= "*:";
 		else
 			label+=":";
@@ -61,7 +85,7 @@ public abstract class ExtensionAttributeRow {
 	}
 	
 	protected String getToolTipText() {
-		String text = att.getDescription();
+		String text = getDescription();
 		if (text==null) return null;
 		int dot = text.indexOf('.');
 		if (dot != -1) {

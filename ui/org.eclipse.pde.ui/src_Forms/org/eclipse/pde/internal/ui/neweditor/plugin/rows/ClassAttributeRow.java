@@ -8,26 +8,15 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 import java.util.ArrayList;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
+import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.manifest.JavaAttributeValue;
@@ -35,10 +24,8 @@ import org.eclipse.pde.internal.ui.neweditor.IContextPart;
 import org.eclipse.pde.internal.ui.neweditor.manifest.JavaAttributeWizard;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.ide.IDE;
 public class ClassAttributeRow extends ReferenceAttributeRow {
@@ -128,7 +115,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = (IPluginModelBase) part.getPage().getModel();
 		String value = text.getText();
-		return new JavaAttributeValue(project, model, att, value);
+		return new JavaAttributeValue(project, model, getAttribute(), value);
 	}
 	private void doOpenSelectionDialog() {
 		try {

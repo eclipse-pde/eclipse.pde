@@ -71,7 +71,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	public void commit() {
 		if (dirty && input != null) {
 			try {
-				input.setAttribute(att.getName(), button.getSelection()
+				input.setAttribute(getName(), button.getSelection()
 						? "true"
 						: "false");
 				dirty = false;

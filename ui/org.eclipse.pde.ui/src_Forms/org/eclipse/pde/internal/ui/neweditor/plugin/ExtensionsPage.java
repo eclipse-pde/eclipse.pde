@@ -45,13 +45,21 @@ public class ExtensionsPage extends PDEFormPage {
 			if (object instanceof IPluginExtension)
 				return IPluginExtension.class;
 			if (object instanceof IPluginElement) {
-				return ExtensionsSection.getSchemaElement((IPluginElement)object);
+				ISchemaElement element = ExtensionsSection.getSchemaElement((IPluginElement)object);
+				if (element!=null) return element;
+				// no element - construct one
+				IPluginElement pelement = (IPluginElement)object;
+				String ename = pelement.getName();
+				IPluginExtension extension = ExtensionsSection.getExtension((IPluginParent)pelement.getParent());
+				return extension.getPoint()+"/"+ename;
 			}
 			return object.getClass();
 		}
 		public IDetailsPage getPage(Object object) {
 			if (object instanceof ISchemaElement)
 				return new ExtensionElementDetails((ISchemaElement)object);
+			if (object instanceof String)
+				return new ExtensionElementDetails(null);
 			return null;
 		}
 		protected void createToolBarActions(IManagedForm managedForm) {

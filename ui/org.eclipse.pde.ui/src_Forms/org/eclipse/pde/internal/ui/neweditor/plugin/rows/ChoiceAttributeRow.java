@@ -53,11 +53,11 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		createLabel(parent, toolkit);
 		combo = new ComboPart();
 		combo.createControl(parent, toolkit, SWT.READ_ONLY);
-		ISchemaSimpleType type = att.getType();
+		ISchemaSimpleType type = getAttribute().getType();
 		ISchemaRestriction restriction = type.getRestriction();
 		if (restriction!=null) {
 			Object rchildren[] = restriction.getChildren();
-			if (att.getUse()!=ISchemaAttribute.REQUIRED)
+			if (getUse()!=ISchemaAttribute.REQUIRED)
 				combo.add("");
 			for (int i=0; i<rchildren.length; i++) {
 				Object rchild = rchildren[i];
@@ -91,7 +91,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 			try {
 				String selection = combo.getSelection();
 				if (selection.length()==0) selection = null;
-				input.setAttribute(att.getName(), selection);
+				input.setAttribute(getName(), selection);
 				dirty = false;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);

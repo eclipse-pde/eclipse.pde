@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin.rows;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.neweditor.IContextPart;
@@ -28,6 +29,10 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	 * @param att
 	 */
 	public TextAttributeRow(IContextPart part, ISchemaAttribute att) {
+		super(part, att);
+	}
+	
+	public TextAttributeRow(IContextPart part, IPluginAttribute att) {
 		super(part, att);
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
@@ -65,7 +70,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 			String value = text.getText();
 			if (value.length()==0) value=null;
 			try {
-				input.setAttribute(att.getName(), value);
+				input.setAttribute(getName(), value);
 				dirty = false;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
