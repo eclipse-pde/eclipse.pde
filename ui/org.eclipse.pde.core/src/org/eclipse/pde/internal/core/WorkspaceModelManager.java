@@ -283,10 +283,15 @@ public class WorkspaceModelManager
 		workspaceFeatureModels.copyInto(result);
 		return result;
 	}
+	
 	private IModel getWorkspaceModel(IFile file) {
+		return getWorkspaceModel(file, true);
+	}
+	
+	private IModel getWorkspaceModel(IFile file, boolean validate) {
 		String name = file.getName().toLowerCase();
 		Vector models = null;
-		validate();
+		if (validate) validate();
 
 		if (name.equals("plugin.xml"))
 			models = workspaceModels;
@@ -372,11 +377,13 @@ public class WorkspaceModelManager
 			else
 				reloadWorkspaceModel((IPluginModelBase) model);
 		} else {
-			IModel model = getWorkspaceModel(file);
+
 			if (delta.getKind() == IResourceDelta.REMOVED) {
+				IModel model = getWorkspaceModel(file, false);
 				// manifest has been removed - ditch the model
 				removeWorkspaceModel(model);
 			} else if (delta.getKind() == IResourceDelta.CHANGED) {
+				IModel model = getWorkspaceModel(file);
 				if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 					// file content modified - sync up
 					if (model instanceof IFeatureModel)
@@ -397,8 +404,9 @@ public class WorkspaceModelManager
 		IProject project = (IProject) delta.getResource();
 		int kind = delta.getKind();
 
-		if (project.isOpen() == false)
+		if (project.isOpen() == false) {
 			return;
+		}
 
 		if (kind == IResourceDelta.CHANGED
 			&& (delta.getFlags() | IResourceDelta.DESCRIPTION) != 0) {
@@ -719,6 +727,7 @@ public class WorkspaceModelManager
 				handleProjectClosing((IProject) event.getResource());
 				processModelChanges();
 				break;
+			/*
 			case IResourceChangeEvent.PRE_DELETE :
 				// project about to be deleted
 				if (modelChanges == null)
@@ -726,6 +735,7 @@ public class WorkspaceModelManager
 				handleProjectToBeDeleted((IProject) event.getResource());
 				processModelChanges();
 				break;
+			*/
 		}
 	}
 
@@ -804,6 +814,9 @@ public class WorkspaceModelManager
 			if (resource instanceof IProject) {
 				handleProjectDelta(delta);
 				IProject project = (IProject)resource;
+				// If the project is removed, recurse into files
+				// to pick up manifest removal
+				if (delta.getKind()==IResourceDelta.REMOVED) return true;
 				return (isPluginProject(project) || isFeatureProject(project));
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
