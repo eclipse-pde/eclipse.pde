@@ -37,7 +37,7 @@ public abstract class PluginObject
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException("Illegal attempt to change read-only plug-in manifest model");
+			throwCoreException(PDECore.getResourceString("PluginObject.readOnlyChange")); //$NON-NLS-1$
 		}
 	}
 
@@ -158,7 +158,9 @@ public abstract class PluginObject
 				IStatus.OK,
 				message,
 				null);
-		throw new CoreException(status);
+		CoreException ce = new CoreException(status);
+		ce.fillInStackTrace();
+		throw ce;
 	}
 	public String toString() {
 		if (name != null)
@@ -196,7 +198,7 @@ public abstract class PluginObject
 			return;
 		for (int i = 0; i < source.size(); i++) {
 			String comment = (String) source.elementAt(i);
-			writer.println("<!--" + comment + "-->");
+			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -210,19 +212,19 @@ public abstract class PluginObject
 			char c = source.charAt(i);
 			switch (c) {
 				case '&' :
-					buf.append("&amp;");
+					buf.append("&amp;"); //$NON-NLS-1$
 					break;
 				case '<' :
-					buf.append("&lt;");
+					buf.append("&lt;"); //$NON-NLS-1$
 					break;
 				case '>' :
-					buf.append("&gt;");
+					buf.append("&gt;"); //$NON-NLS-1$
 					break;
 				case '\'' :
-					buf.append("&apos;");
+					buf.append("&apos;"); //$NON-NLS-1$
 					break;
 				case '\"' :
-					buf.append("&quot;");
+					buf.append("&quot;"); //$NON-NLS-1$
 					break;
 				default :
 					buf.append(c);
