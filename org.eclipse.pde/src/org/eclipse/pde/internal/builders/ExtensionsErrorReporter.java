@@ -32,13 +32,13 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
-			/*int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+			int severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 			if (severity != CompilerFlags.IGNORE) {
 				NamedNodeMap attrs = element.getAttributes();
 				for (int i = 0; i < attrs.getLength(); i++) {
 					reportUnknownAttribute(element, attrs.item(i).getNodeName(), severity);
 				}
-			}*/
+			}
 			
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
@@ -50,11 +50,11 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 					validateExtension(child);
 				} else if (name.equals("extension-point")) { //$NON-NLS-1$
 					validateExtensionPoint(child);
-				} /*else {
+				} else {
 					severity = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT);
 					if (severity != CompilerFlags.IGNORE)
 						reportIllegalElement(child, severity);
-				}*/
+				}
 			}
 		}
 	}
