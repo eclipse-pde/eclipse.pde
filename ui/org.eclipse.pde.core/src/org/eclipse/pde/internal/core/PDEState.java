@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.jar.*;
+import java.util.zip.*;
 
 import javax.xml.parsers.*;
 
@@ -531,15 +532,20 @@ public class PDEState {
 	}
 	
 	private Dictionary loadManifest(File bundleLocation) {
+		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		try {
-			URL manifestLocation = null;
 			String extension = new Path(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME); //$NON-NLS-1$ //$NON-NLS-2$
-				manifestStream = manifestLocation.openStream();
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+				if (manifestEntry != null) {
+					manifestStream = jarFile.getInputStream(manifestEntry);
+				}
 			} else {
-				manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME));
+				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
+				if (file.exists())
+					manifestStream = new FileInputStream(file);
 			}
 		} catch (IOException e) {
 		}
@@ -555,6 +561,11 @@ public class PDEState {
 			try {
 				manifestStream.close();
 			} catch (IOException e1) {
+			}
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
 			}
 		}
 	}

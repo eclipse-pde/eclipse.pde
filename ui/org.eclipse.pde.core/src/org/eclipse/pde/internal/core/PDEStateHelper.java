@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
+import java.util.zip.*;
 
 import javax.xml.parsers.*;
 
@@ -122,6 +122,7 @@ public class PDEStateHelper {
 		}
 	
 	public static void parseExtensions(BundleDescription desc, Element parent) {
+		ZipFile jarFile = null;
 		InputStream stream = null;
 		try {
 			String filename = desc.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -129,8 +130,10 @@ public class PDEStateHelper {
 
 			File file = new File(path);
 			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
-				URL url = new URL("jar:file:" + path + "!/" + filename); //$NON-NLS-1$ //$NON-NLS-2$
-				stream = url.openStream();			
+				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(filename); //$NON-NLS-1$
+				if (manifestEntry != null) 
+					stream = jarFile.getInputStream(manifestEntry);				
 			} else if (file.isDirectory()) {
 				File manifest = new File(file, filename);
 				if (manifest.exists() && manifest.isFile()) {
@@ -149,6 +152,11 @@ public class PDEStateHelper {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e1) {
+			}
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
 			}
 		}
 	}
