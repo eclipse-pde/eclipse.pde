@@ -45,7 +45,7 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	 */
 	public int getMatch() {
 		String match = getXMLAttributeValue(P_MATCH);
-		if (match == null)
+		if (match == null || match.length() == 0)
 			return IMatchRules.NONE;
 		if (match.equals("compatible"))			 //$NON-NLS-1$
 			return IMatchRules.COMPATIBLE;		

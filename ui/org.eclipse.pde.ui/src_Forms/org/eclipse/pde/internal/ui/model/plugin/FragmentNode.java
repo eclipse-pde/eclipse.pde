@@ -36,7 +36,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 */
 	public int getRule() {
 		String match = getXMLAttributeValue("match"); //$NON-NLS-1$
-		if (match == null)
+		if (match == null || match.length() == 0)
 			return IMatchRules.NONE;
 		if (match.equals("compatible"))			 //$NON-NLS-1$
 			return IMatchRules.COMPATIBLE;		
