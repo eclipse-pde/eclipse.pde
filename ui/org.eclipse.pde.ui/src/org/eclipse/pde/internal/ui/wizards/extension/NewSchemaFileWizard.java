@@ -25,7 +25,7 @@ public class NewSchemaFileWizard extends Wizard implements INewWizard {
 
 	public NewSchemaFileWizard() {
 		setDialogSettings(getSettingsSection());
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_EXT_POINT_SCHEMA_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 	}

@@ -191,6 +191,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ   = create(PATH_WIZBAN, "newftrprj_wiz.gif");
 	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ   = create(PATH_WIZBAN, "newsiteprj_wiz.gif");
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif");
+	public static final ImageDescriptor DESC_EXT_POINT_SCHEMA_WIZ = create(PATH_WIZBAN, "schema_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(PATH_WIZBAN, "form_wiz.gif");
 	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif");
 	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif");

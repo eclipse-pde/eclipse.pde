@@ -104,7 +104,12 @@ public class ModelEntry extends PlatformObject {
 			IClasspathContainer[] containers =
 				new IClasspathContainer[] { getClasspathContainer()};
 			IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
-			JavaCore.setClasspathContainer(path, javaProjects, containers, null);
+			try {
+				getClasspathContainer().reset();
+				JavaCore.setClasspathContainer(path, javaProjects, containers, null);
+			} catch (OperationCanceledException e) {
+				getClasspathContainer().reset();
+			}
 		}
 	}
 	

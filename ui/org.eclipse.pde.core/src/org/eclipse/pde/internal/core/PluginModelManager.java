@@ -277,6 +277,7 @@ public class PluginModelManager implements IAdaptable {
 				try {
 					if (entry.shouldUpdateClasspathContainer(true, true)) {
 						IProject proj = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+						entry.getClasspathContainer().reset();
 						map.put(JavaCore.create(proj), entry.getClasspathContainer());
 					}
 				}
