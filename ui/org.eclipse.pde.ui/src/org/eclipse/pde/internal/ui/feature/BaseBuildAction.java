@@ -7,6 +7,7 @@ import org.eclipse.ant.internal.ui.launchConfigurations.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -162,6 +163,10 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			properties.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
 			properties.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
 			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
+			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, 
+					(String)null);
+			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, 
+					(String)null);
 			launchCopy.doSave();
 		} catch (CoreException e) {
 		}
