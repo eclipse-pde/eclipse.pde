@@ -10,34 +10,31 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.jface.action.*;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
 
 public class ManifestTemplatePage extends PDEChildFormPage {
 	private IFile templateFile;
 
-public ManifestTemplatePage(ManifestFormPage parentPage, String title, IFile templateFile) {
-	super(parentPage, title);
-	this.templateFile = templateFile;
-}
+	public ManifestTemplatePage(
+		ManifestFormPage parentPage,
+		String title,
+		IFile templateFile) {
+		super(parentPage, title);
+		this.templateFile = templateFile;
+	}
 
-public IContentOutlinePage createContentOutlinePage() {
-	return null;
-}
+	public IContentOutlinePage createContentOutlinePage() {
+		return null;
+	}
 
-public IFile getTemplateFile() {
-	return templateFile;
-}
+	public IFile getTemplateFile() {
+		return templateFile;
+	}
 
-protected AbstractSectionForm createForm() {
-	return new TemplateForm(this);
-}
-
-public boolean contextMenuAboutToShow(IMenuManager manager) {
-	return ((DependenciesForm)getForm()).fillContextMenu(manager);
-}
+	protected AbstractSectionForm createForm() {
+		return new TemplateForm(this);
+	}
 }
