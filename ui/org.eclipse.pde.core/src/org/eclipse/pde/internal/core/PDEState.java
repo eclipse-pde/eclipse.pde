@@ -234,9 +234,11 @@ public class PDEState {
 	private void savePluginInfo(long timestamp) {
 		long start = System.currentTimeMillis();
 		File file = createFile(timestamp, "pluginInfo"); //$NON-NLS-1$
-		FileWriter writer = null;
+		OutputStream out = null;
+		Writer writer = null;
 		try {
-			writer = new FileWriter(file);
+			out = new FileOutputStream(file);
+			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement("map"); //$NON-NLS-1$
@@ -274,6 +276,11 @@ public class PDEState {
 					writer.close();
 			} catch (IOException e1) {
 			}
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e1) {
+			}
 		}
 		long end = System.currentTimeMillis();
 		if (DEBUG)
@@ -284,9 +291,11 @@ public class PDEState {
 		fExtensions = new HashMap();
 		long start = System.currentTimeMillis();
 		File file = createFile(timestamp, "extensions"); //$NON-NLS-1$
-		FileWriter writer = null;
+		OutputStream out = null;
+		Writer writer = null;
 		try {
-			writer = new FileWriter(file);
+			out = new FileOutputStream(file);
+			writer = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement("extensions"); //$NON-NLS-1$
@@ -310,6 +319,11 @@ public class PDEState {
 			try {
 				if (writer != null)
 					writer.close();
+			} catch (IOException e1) {
+			}
+			try {
+				if (out != null)
+					out.close();
 			} catch (IOException e1) {
 			}
 		}
