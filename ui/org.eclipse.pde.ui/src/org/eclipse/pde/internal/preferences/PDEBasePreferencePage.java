@@ -23,10 +23,12 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 	public static final String KEY_PLATFORM_HOME ="Preferences.MainPage.PlatformHome";
 	public static final String KEY_PLATFORM_HOME_BUTTON ="Preferences.MainPage.PlatformHome.Button";
 	public static final String KEY_ARGUMENTS ="Preferences.MainPage.Arguments";
+	public static final String KEY_VM_ARGUMENTS ="Preferences.MainPage.VMArguments";
 	public static final String KEY_DESCRIPTION ="Preferences.MainPage.Description";
 	public static final String KEY_LOCATION ="Preferences.MainPage.Location";
 	public static final String KEY_LOCATION_BUTTON ="Preferences.MainPage.Location.Button";
 	public static final String PROP_PLATFORM_ARGS="org.eclipse.pde.platformArgs";
+	public static final String PROP_VM_ARGS="org.eclipse.pde.vmArgs";
 	
 	public static final String RT_WORKSPACE = "runtime-workspace";
 	private DirectoryFieldEditor editor;
@@ -83,11 +85,17 @@ protected void createFieldEditors() {
 			PROP_PLATFORM_ARGS,
 			PDEPlugin.getResourceString(KEY_ARGUMENTS),
 			getFieldEditorParent());
+	StringFieldEditor vmargs =
+		new StringFieldEditorWithSpace(
+			PROP_VM_ARGS,
+			PDEPlugin.getResourceString(KEY_VM_ARGUMENTS),
+			getFieldEditorParent());
 
 	ExternalPluginsEditor plugins = new ExternalPluginsEditor(getFieldEditorParent());
 	addField(editor);
 	addField(platform);
 	addField(args);
+	addField(vmargs);
 	addField(plugins);
 }
 /**

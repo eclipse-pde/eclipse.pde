@@ -335,6 +335,10 @@ protected IVMRunner getJavaLauncher(IJavaProject p, String mode)
 protected void initializeSettings() {
 	IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 	vmArgs = "-verify";
+	String userVMArgs = 
+		pstore.getString(PDEBasePreferencePage.PROP_VM_ARGS);
+	if (userVMArgs!=null)
+		vmArgs += " "+userVMArgs.trim();
 	platformLocation =
 		pstore.getString(PDEBasePreferencePage.PROP_PLATFORM_LOCATION);
 	if (platformLocation != null)
