@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  *
@@ -38,11 +37,17 @@ public class GenericSourcePage extends PDESourcePage {
 		return null;
 	}
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
+	 */
+	protected ViewerSorter createOutlineSorter() {
+		return null;
+	}
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#outlineSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {
 	}
-	protected IContentOutlinePage createOutlinePage() {
+	protected ISortableContentOutlinePage createOutlinePage() {
 		return null;
 	}
 }

@@ -49,7 +49,7 @@ public abstract class PDEFormEditor extends FormEditor
 	private Clipboard clipboard;
 	private Menu contextMenu;
 	protected InputContextManager inputContextManager;
-	private IContentOutlinePage formOutline;
+	private ISortableContentOutlinePage formOutline;
 	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
 	private String lastActivePageId;
@@ -468,19 +468,18 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		return propertySheet;
 	}
-	protected IContentOutlinePage getFormOutline() {
+	protected ISortableContentOutlinePage getFormOutline() {
 		if (formOutline == null) {
 			formOutline = createContentOutline();
 		}
 		return formOutline;
 	}
-	protected IContentOutlinePage createContentOutline() {
-		return new FormOutlinePage(this);
-	}
+	abstract protected ISortableContentOutlinePage createContentOutline();
+	
 	private void updateContentOutline(IFormPage page) {
 		if (contentOutline == null)
 			return;
-		IContentOutlinePage outline = null;
+		ISortableContentOutlinePage outline = null;
 		if (page instanceof PDESourcePage) {
 			outline = ((PDESourcePage) page).getContentOutline();
 		} else {

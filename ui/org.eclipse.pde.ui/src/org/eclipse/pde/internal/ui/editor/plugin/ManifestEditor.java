@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.ui.views.properties.*;
 
 public class ManifestEditor extends MultiSourceEditor {
@@ -312,7 +311,7 @@ public class ManifestEditor extends MultiSourceEditor {
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 	
-	protected IContentOutlinePage createContentOutline() {
+	protected ISortableContentOutlinePage createContentOutline() {
 		return new ManifestOutlinePage(this);
 	}
 	public Object getAdapter(Class key) {

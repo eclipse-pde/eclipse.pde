@@ -30,7 +30,6 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * @author dejan
@@ -162,7 +161,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		return new SchemaSourcePage(editor, title, name);
 	}
 	
-	protected IContentOutlinePage createContentOutline() {
+	protected ISortableContentOutlinePage createContentOutline() {
 		return new SchemaFormOutlinePage(this);
 	}
 }

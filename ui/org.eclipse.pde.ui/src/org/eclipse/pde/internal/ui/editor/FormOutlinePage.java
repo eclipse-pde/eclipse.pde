@@ -23,8 +23,10 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class FormOutlinePage extends ContentOutlinePage
 		implements
-			IModelChangedListener {
+			IModelChangedListener, ISortableContentOutlinePage {
 	private boolean stale;
+	private ViewerSorter fViewerSorter;
+	private boolean sorted;
 	public class BasicContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
@@ -53,6 +55,20 @@ public class FormOutlinePage extends ContentOutlinePage
 			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 		}
 	}
+	public class BasicSorter extends ViewerSorter {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+		 */
+		public int category(Object element) {
+			Object[] pages = getPages();
+			for(int i=0; i<pages.length; i++){
+				if(pages[i]==element){
+					return i;
+				}
+			}
+			return Integer.MAX_VALUE;
+		}
+	}
 	protected TreeViewer treeViewer;
 	protected PDEFormEditor editor;
 	
@@ -62,12 +78,21 @@ public class FormOutlinePage extends ContentOutlinePage
 	protected ITreeContentProvider createContentProvider() {
 		return new BasicContentProvider();
 	}
+	protected ViewerSorter createOutlineSorter(){
+		fViewerSorter = new BasicSorter();
+		return fViewerSorter;
+	}
 	public void createControl(Composite parent) {
 		Tree widget = new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer = new TreeViewer(widget);
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setContentProvider(createContentProvider());
 		treeViewer.setLabelProvider(createLabelProvider());
+		createOutlineSorter();
+		if(sorted)
+			treeViewer.setSorter(fViewerSorter);
+		else
+			treeViewer.setSorter(null);
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(editor);
@@ -152,5 +177,13 @@ public class FormOutlinePage extends ContentOutlinePage
 		if (treeViewer == null)
 			return StructuredSelection.EMPTY;
 		return treeViewer.getSelection();
+	}
+	public void sort (boolean sorting){
+		sorted = sorting;
+		if(treeViewer!=null)
+			if(sorting)
+				treeViewer.setSorter(fViewerSorter);
+			else
+				treeViewer.setSorter(null);
 	}
 }

@@ -23,12 +23,14 @@ import org.eclipse.ui.views.contentoutline.*;
 /**
  * Content outline page for the XML editor.
  */
-public class SourceOutlinePage extends ContentOutlinePage implements IReconcilingParticipant{
+public class SourceOutlinePage extends ContentOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage{
 	
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
 	private ViewerSorter fViewerSorter;
+	private boolean sorted;
+	TreeViewer viewer;
 	
 	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerSorter sorter) {
 		super();
@@ -43,10 +45,13 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		TreeViewer viewer= getTreeViewer();
+		viewer= getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
-		viewer.setSorter(fViewerSorter);
+		if(sorted)
+			viewer.setSorter(fViewerSorter);
+		else
+			viewer.setSorter(null);
 		viewer.setInput(fModel);
 		viewer.expandAll();
 	}
@@ -80,5 +85,13 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 				control.setRedraw(true);
 			}
 		});
+	}
+	public void sort (boolean sorting){
+		sorted = sorting;
+		if(viewer!=null)
+			if(sorting)
+				viewer.setSorter(fViewerSorter);
+			else
+				viewer.setSorter(null);
 	}
 }

@@ -25,7 +25,6 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor {
@@ -203,7 +202,7 @@ public class FeatureEditor extends MultiSourceEditor {
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 	
-	protected IContentOutlinePage createContentOutline() {
+	protected ISortableContentOutlinePage createContentOutline() {
 		return new FeatureOutlinePage(this);
 	}
 	

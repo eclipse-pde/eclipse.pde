@@ -25,5 +25,8 @@ public interface IPreferenceConstants {
 	public static final String PROP_JAVAC_FAIL_ON_ERROR = "javacFailOnError"; //$NON-NLS-1$
 	public static final String PROP_JAVAC_DEBUG_INFO = "javacDebugInfo"; //$NON-NLS-1$
 	public static final String PROP_JAVAC_VERBOSE = "javacVerbose"; //$NON-NLS-1$
+	
+	// Editor Outline
+	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$
 
 }

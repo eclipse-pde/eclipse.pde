@@ -139,6 +139,23 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 		
+	class OutlineSorter extends ViewerSorter{
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+		 */
+		public int category(Object element) {
+			if (element == fLibraries)
+				return 0;
+			if (element == fImports)
+				return 1;
+			if (element == fExtensionPoints)
+				return 2;
+			if (element == fExtensions)
+				return 3;
+			return 4;
+		}
+	}
+	
 	public ManifestSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		
@@ -177,6 +194,13 @@ public class ManifestSourcePage extends XMLSourcePage {
 		int length = node.getLength();
 		setHighlightRange(offset, length == -1 ? 1 : length, true);
 		sourceViewer.setSelectedRange(offset + 1, node.getXMLTagName().length());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
+	 */
+	protected ViewerSorter createOutlineSorter() {
+		return new OutlineSorter();
 	}
 	
 

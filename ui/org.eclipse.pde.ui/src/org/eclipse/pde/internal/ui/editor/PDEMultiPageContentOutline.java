@@ -14,24 +14,32 @@ import java.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.contentoutline.*;
 
-public class PDEMultiPageContentOutline
-	implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener {
+public class PDEMultiPageContentOutline extends Page 
+	implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, IPreferenceConstants {
 	private PageBook pagebook;
 	private ISelection selection;
 	private ArrayList listeners;
-	private IContentOutlinePage currentPage;
-	private IContentOutlinePage emptyPage;
+	private ISortableContentOutlinePage currentPage;
+	private ISortableContentOutlinePage emptyPage;
 	private IActionBars actionBars;
+	private boolean sortingOn;
 
 	public PDEMultiPageContentOutline() {
 		listeners = new ArrayList();
+		sortingOn= PDEPlugin.getDefault().getPreferenceStore().getBoolean("PDEMultiPageContentOutline.SortingAction.isChecked"); //$NON-NLS-1$
+		
 	}
 	
 	public void addFocusListener(FocusListener listener) {
@@ -83,8 +91,10 @@ public class PDEMultiPageContentOutline
 
 	public void setActionBars(IActionBars actionBars) {
 		this.actionBars = actionBars;
+		registerToolbarActions(actionBars);
 		if (currentPage != null)
 			setPageActive(currentPage);
+
 	}
 	public IActionBars getActionBars() {
 		return actionBars;
@@ -93,18 +103,20 @@ public class PDEMultiPageContentOutline
 		if (currentPage != null)
 			currentPage.setFocus();
 	}
-	private IContentOutlinePage getEmptyPage() {
+	private ISortableContentOutlinePage getEmptyPage() {
 		if (emptyPage==null)
 			emptyPage = new EmptyOutlinePage();
 		return emptyPage;
 	}
-	public void setPageActive(IContentOutlinePage page) {
+	public void setPageActive(ISortableContentOutlinePage page) {
 		if (page==null) {
 			page = getEmptyPage();
 		}
 		if (currentPage != null) {
 			currentPage.removeSelectionChangedListener(this);
 		}
+		//page.init(getSite());
+		page.sort(sortingOn);
 		page.addSelectionChangedListener(this);
 		this.currentPage = page;
 		if (pagebook == null) {
@@ -133,5 +145,36 @@ public class PDEMultiPageContentOutline
 			((ISelectionChangedListener)listeners.get(i)).selectionChanged(e);
 		}	
 	}
-
+	private void registerToolbarActions(IActionBars actionBars) {
+		
+		IToolBarManager toolBarManager= actionBars.getToolBarManager();
+		if (toolBarManager != null) {	
+			toolBarManager.add(new SortingAction());
+		}
+	}
+	class SortingAction extends Action {
+		
+		public SortingAction() {
+			super();
+			WorkbenchHelp.setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
+			setText(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.label")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_DISABLED);
+			setToolTipText(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.tooltip")); //$NON-NLS-1$
+			setDescription(PDEPlugin.getResourceString("PDEMultiPageContentOutline.SortingAction.description")); //$NON-NLS-1$
+			setChecked(sortingOn);
+		}
+		
+		public void run() {
+			setChecked(isChecked());
+			valueChanged(isChecked());
+		}
+		private void valueChanged(final boolean on) {
+			sortingOn=on;
+			if(currentPage!=null)
+				currentPage.sort(on);
+			PDEPlugin.getDefault().getPreferenceStore().setValue("PDEMultiPageContentOutline.SortingAction.isChecked", on); //$NON-NLS-1$
+		}
+		
+	}
 }

@@ -38,9 +38,16 @@ public class SchemaSourcePage extends XMLSourcePage {
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
+	 */
+	protected ViewerSorter createOutlineSorter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {
 	}
-	protected IContentOutlinePage createOutlinePage() {
+	protected ISortableContentOutlinePage createOutlinePage() {
 		//TODO remove this method when the above three stubs
 		// are implemented
 		return null;

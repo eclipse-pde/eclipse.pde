@@ -75,5 +75,13 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 		setHighlightRange(offset, length, true);
 		sourceViewer.setSelectedRange(offset, key.getName().length());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
+	 */
+	protected ViewerSorter createOutlineSorter() {
+		// TODO Auto-generated method stub
+		return new ViewerSorter();
+	}
 
 }

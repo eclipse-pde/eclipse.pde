@@ -27,7 +27,6 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.contentoutline.*;
 
 /**
  * @author dejan
@@ -165,7 +164,7 @@ public class SiteEditor extends MultiSourceEditor {
 		return new SiteSourcePage(editor, title, name);
 	}
 	
-	protected IContentOutlinePage createContentOutline() {
+	protected ISortableContentOutlinePage createContentOutline() {
 		return null;//return new SiteOutlinePage(this);
 	}
 	

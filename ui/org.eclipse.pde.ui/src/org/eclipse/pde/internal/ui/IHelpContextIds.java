@@ -138,4 +138,7 @@ public interface IHelpContextIds {
 	public static final String NEW_FEATURE_DIALOG = PREFIX + "new_feature_dialog";	 //$NON-NLS-1$
 	public static final String NEW_ARCHIVE_DIALOG = PREFIX + "new_archive_dialog";	 //$NON-NLS-1$
 	
+	// Editor Outline
+	public static final String OUTLINE_SORT_ACTION = PREFIX + "outline_sort_action";	 //$NON-NLS-1$
+	
 }

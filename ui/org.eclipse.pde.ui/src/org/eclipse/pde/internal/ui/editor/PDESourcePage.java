@@ -28,7 +28,6 @@ import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
 	private PDEFormEditor editor;
@@ -36,7 +35,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private int index;
 	private String id;
 	private InputContext inputContext;
-	private IContentOutlinePage outlinePage;
+	private ISortableContentOutlinePage outlinePage;
 	
 	/**
 	 * 
@@ -67,15 +66,13 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	
 	protected abstract ILabelProvider createOutlineLabelProvider();
 	protected abstract ITreeContentProvider createOutlineContentProvider();
+	protected abstract ViewerSorter createOutlineSorter();
 	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
-	protected ViewerSorter createViewerSorter() {
-		return null;
-	}
-	protected IContentOutlinePage createOutlinePage() {
+	protected ISortableContentOutlinePage createOutlinePage() {
 		SourceOutlinePage outline = new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
 				createOutlineLabelProvider(), createOutlineContentProvider(),
-				createViewerSorter());
+				createOutlineSorter());
 		outline.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				outlineSelectionChanged(event);
@@ -85,7 +82,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return outline;
 	}
 
-	public IContentOutlinePage getContentOutline() {
+	public ISortableContentOutlinePage getContentOutline() {
 		if (outlinePage==null)
 			outlinePage = createOutlinePage();
 		return outlinePage;

@@ -147,6 +147,7 @@ public class PDEPluginImages {
 	 * LCL
 	 */
 	public static final ImageDescriptor DESC_ADD_ATT = create(PATH_LCL, "add_att.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ALPHAB_SORT_CO = create(PATH_LCL, "alphab_sort_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_ATT = create(PATH_LCL, "clone_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_EL = create(PATH_LCL, "clone_el.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERATE_CLASS = create(PATH_LCL, "generate_class.gif"); //$NON-NLS-1$
@@ -163,6 +164,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HELP = create(PATH_LCL, "help.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_EL_DISABLED = create(PATH_LCL_DISABLED, "clone_el.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERATE_CLASS_DISABLED = create(PATH_LCL_DISABLED, "generate_class.gif"); //$NON-NLS-1$

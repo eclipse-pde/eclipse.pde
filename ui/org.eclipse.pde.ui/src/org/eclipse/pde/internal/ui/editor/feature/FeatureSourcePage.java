@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.views.contentoutline.*;
 
 public class FeatureSourcePage extends XMLSourcePage {
 
@@ -25,9 +24,16 @@ public class FeatureSourcePage extends XMLSourcePage {
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
+	 */
+	protected ViewerSorter createOutlineSorter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {
 	}
-	protected IContentOutlinePage createOutlinePage() {
+	protected ISortableContentOutlinePage createOutlinePage() {
 		//TODO remove this method when the above three stubs
 		// are implemented
 		return null;
