@@ -221,7 +221,7 @@ public class ProductExportJob extends FeatureExportJob {
 		
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName())));
+			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName() + ".ini"))); //$NON-NLS-1$
 			if (programArgs.length() > 0) {
 				StringTokenizer tokenizer = new StringTokenizer(programArgs);
 				while (tokenizer.hasMoreTokens())
