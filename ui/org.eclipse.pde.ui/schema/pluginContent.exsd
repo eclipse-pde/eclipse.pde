@@ -101,6 +101,20 @@ represent the wizard.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="ui-content" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  a flag that indicates if the wizard will contribute code with user interface content. This flag will affect which plug-in class will be picked since (UI plug-ins extend &lt;code&gt;AbstractUIPlugin&lt;/code&gt; class, while non-UI plug-ins extends &lt;code&gt;Plugin&lt;/code&gt; base class). Since many contributions to Eclipse have UI content, this attribute is &lt;code&gt;true&lt;/code&gt; by default.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="java" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  a flag that indicates that the wizard will contribute Java content. Since most of the Eclipse plug-ins have Java code, the attribute is &lt;code&gt;true&lt;/code&gt; by default. Set it to &lt;code&gt;false&lt;/code&gt; if the plug-in will not have Java code (for example, documentation files only).
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

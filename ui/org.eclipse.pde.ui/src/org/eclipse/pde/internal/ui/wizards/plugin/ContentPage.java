@@ -408,10 +408,12 @@ public class ContentPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
+/*
 	public boolean canFlipToNextPage() {
 		if (fIsFragment)
 			return super.canFlipToNextPage();
 		return (fGenerateClass.getSelection() && fUIPlugin.getSelection()) || !fGenerateClass.getSelection();
 	}
+*/
 	
 }

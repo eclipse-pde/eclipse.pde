@@ -29,6 +29,31 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	private Button fUseTemplate;
 	private String fInitialTemplateId;
 	
+	class WizardFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			IFieldData data = fContentPage.getData();
+			boolean simple = data.isSimple();
+			boolean ui = false;
+			if (data instanceof PluginFieldData)
+				ui = ((PluginFieldData)data).isUIPlugin();
+			WizardElement welement = (WizardElement)element;
+			IConfigurationElement config = welement.getConfigurationElement();
+			boolean uiFlag = getFlag(config, "ui-content");
+			boolean javaFlag = getFlag(config, "java");
+			//filter out java wizards for simple projects
+			if (simple && javaFlag) return false;
+			//filter out ui wizards for non-ui plug-ins
+			if (uiFlag && (simple || !ui)) return false;
+			return true;
+		}
+		private boolean getFlag(IConfigurationElement config, String name) {
+			String value = config.getAttribute(name);
+			if (value==null) return true;
+			return value.equalsIgnoreCase("true");
+		}
+}
+	
 	public TemplateListSelectionPage(ElementList wizardElements, ContentPage page, String message) {
 		super(wizardElements, message);
 		fContentPage = page;
@@ -56,6 +81,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	}
 	
 	protected void initializeViewer() {
+		wizardSelectionViewer.addFilter(new WizardFilter());
 		if (getInitialTemplateId()==null) {
 			wizardSelectionViewer.getControl().setEnabled(false);
 			setDescriptionEnabled(false);
@@ -117,5 +143,10 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 	 */
 	public void setInitialTemplateId(String initialTemplateId) {
 		fInitialTemplateId = initialTemplateId;
+	}
+	public void setVisible(boolean visible) {
+		if (visible)
+			wizardSelectionViewer.refresh();
+		super.setVisible(visible);
 	}
 }

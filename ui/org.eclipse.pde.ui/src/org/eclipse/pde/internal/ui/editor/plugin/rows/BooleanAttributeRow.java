@@ -8,11 +8,13 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 /**
  * @author dejan
@@ -59,14 +61,27 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 		blockNotification = true;
 		String value = getValue();
 		boolean state = value != null && value.toLowerCase().equals("true"); //$NON-NLS-1$
+		if (value==null) {
+			//check the default
+			ISchemaAttribute att = getAttribute();
+			if (att.getUse()==ISchemaAttribute.DEFAULT) {
+				Object dvalue = att.getValue();
+				if (dvalue!=null && dvalue.equals("true"))
+					state = true;
+			}
+		}
 		button.setSelection(state);
 		updateText();
 		blockNotification=false;
 	}
 	
 	private void updateText() {
+		String value = getValue();
 		boolean state = button.getSelection();
-		button.setText(state?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (value!=null)
+			button.setText(state?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			button.setText("");
 	}
 	public void commit() {
 		if (dirty && input != null) {
