@@ -22,7 +22,7 @@ public PDERuntimePlugin(IPluginDescriptor descriptor) {
 	inst = this;
 	try {
 		resourceBundle =
-			ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.PDERuntimeResources");
+			ResourceBundle.getBundle("org.eclipse.pde.internal.runtime.pderuntimeresources");
 	} catch (MissingResourceException x) {
 		resourceBundle = null;
 	}
