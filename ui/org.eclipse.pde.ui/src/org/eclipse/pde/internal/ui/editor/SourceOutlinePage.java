@@ -43,8 +43,7 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 	 * Creates the control for this outline page.
 	 */
 	public void createControl(Composite parent) {
-		super.createControl(parent);
-		fModel.addModelChangedListener(this);
+		super.createControl(parent);	
 		TreeViewer viewer= getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
@@ -57,16 +56,14 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getControl().setRedraw(false);
-					getTreeViewer().refresh();
-					getTreeViewer().expandAll();
-					getControl().setRedraw(true);
-				}
-			});
-		}
+		getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				getControl().setRedraw(false);
+				getTreeViewer().refresh();
+				getTreeViewer().expandAll();
+				getControl().setRedraw(true);
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
