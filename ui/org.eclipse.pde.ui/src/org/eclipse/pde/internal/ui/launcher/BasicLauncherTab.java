@@ -165,7 +165,7 @@ public class BasicLauncherTab
 			blockChanges = true;
 			vmArgsText.setText(config.getAttribute(VMARGS, ""));
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
-			applicationNameText.setText(config.getAttribute(APPLICATION, "org.eclipse.ui.workbench"));
+			applicationNameText.setText(config.getAttribute(APPLICATION, ""));
 			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
 			showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));
 			
@@ -217,7 +217,7 @@ public class BasicLauncherTab
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(LOCATION + "0", getDefaultWorkspace());
-		config.setAttribute(APPLICATION,"org.eclipse.ui.workbench");
+		config.setAttribute(APPLICATION,"");
 		config.setAttribute(DOCLEAR, false);
 		config.setAttribute(PROGARGS, getDefaultProgramArguments());
 		config.setAttribute(SHOW_SPLASH,true);
@@ -227,7 +227,7 @@ public class BasicLauncherTab
 	private void doRestoreDefaults() {
 		progArgsText.setText(getDefaultProgramArguments());
 		vmArgsText.setText("");
-		applicationNameText.setText("org.eclipse.ui.workbench");
+		applicationNameText.setText("");
 		workspaceCombo.setText(getDefaultWorkspace());
 		clearWorkspaceCheck.setSelection(false);
 		showSplashCheck.setSelection(true);
