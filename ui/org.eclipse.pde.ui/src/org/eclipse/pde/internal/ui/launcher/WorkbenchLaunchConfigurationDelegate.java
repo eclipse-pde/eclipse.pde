@@ -617,13 +617,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (resource != null) {
 				IProject project = resource.getProject();
 				if (project.hasNature(JavaCore.NATURE_ID)) {
-					IPath path = JavaCore.create(project).getOutputLocation();
-					if (path.toFile().exists()) {
-						return path.toOSString();
-					}
 					resource = project.findMember("boot.jar");
 					if (resource != null)
 						return "file:" + resource.getLocation().toOSString();
+					IPath path = JavaCore.create(project).getOutputLocation();
+					if (path != null) {
+						return path.toOSString();
+					}
 				}
 			} else {
 				File binDir = new File(bootModel.getInstallLocation(), "bin/");
