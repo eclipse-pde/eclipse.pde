@@ -21,11 +21,13 @@ public class MainPreferencePage extends FieldEditorPreferencePage implements IWo
 	private static final String KEY_SHOW_OBJECTS = "Preferences.MainPage.showObjects";
 	private static final String KEY_USE_IDS = "Preferences.MainPage.useIds";
 	private static final String KEY_USE_FULL_NAMES = "Preferences.MainPage.useFullNames";
+	private static final String KEY_BUILD_SCRIPT_NAME = "Preferences.MainPage.buildScriptName";
 
 	public static final String PROP_NO_PDE_NATURE ="Preferences.MainPage.noPDENature";
 	public static final String PROP_SHOW_OBJECTS = "Preferences.MainPage.showObjects";
 	public static final String VALUE_USE_IDS ="useIds";
 	public static final String VALUE_USE_NAMES = "useNames";
+	public static final String PROP_BUILD_SCRIPT_NAME = "Preferences.MainPage.buildScriptName";
 
 public MainPreferencePage() {
 	super(GRID);
@@ -38,6 +40,7 @@ private static void initializeDefaults() {
 	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	store.setDefault(PROP_NO_PDE_NATURE, true);
 	store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
+	store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
 }
 
 protected void createFieldEditors() {
@@ -62,6 +65,12 @@ protected void createFieldEditors() {
 				VALUE_USE_NAMES }},
 				getFieldEditorParent());
 	addField(reditor);
+	StringFieldEditor textEditor = 
+		new StringFieldEditor(
+			PROP_BUILD_SCRIPT_NAME,
+			PDEPlugin.getResourceString(KEY_BUILD_SCRIPT_NAME),
+			getFieldEditorParent());
+	addField(textEditor);
 }
 
 public static boolean isNoPDENature() {
@@ -75,6 +84,13 @@ public static boolean isFullNameModeEnabled() {
 	initializeDefaults();
 	return store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_NAMES);
 }
+
+public static String getBuildScriptName() {
+	IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+	initializeDefaults();
+	return store.getString(PROP_BUILD_SCRIPT_NAME);
+}
+
 
 /**
  * Initializes this preference page using the passed desktop.

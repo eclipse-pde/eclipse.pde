@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import java.net.URL;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
 
 public class BuildFeatureAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GenerateFeatureJars.errorsTitle";
@@ -151,6 +152,8 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 
 		FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 
+		String scriptName = MainPreferencePage.getBuildScriptName();
+
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());
 		generator.setInstallLocation(platform.toOSString());
@@ -162,11 +165,6 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 
 		URL [] pluginPath = TargetPlatform.createPluginPath();
 		generator.setPluginPath(pluginPath);
-
-		generator.setBuildVariableOS(TargetPlatform.getOS());
-		generator.setBuildVariableWS(TargetPlatform.getWS());
-		generator.setBuildVariableNL(TargetPlatform.getNL());
-		generator.setBuildVariableARCH(TargetPlatform.getOSArch());
 
 		try {
 			monitor.subTask(PDEPlugin.getResourceString(KEY_GENERATING));

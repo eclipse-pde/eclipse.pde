@@ -14,6 +14,8 @@ public class PluginCodeGeneratorWizard extends Wizard implements IPluginContentW
 	private IProjectProvider projectProvider;
 	private boolean fragment;
 	private IPluginStructureData structureData;
+	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
+	private static final String KEY_WFTITLE = "PluginCodeGeneratorWizard.ftitle";
 
 public PluginCodeGeneratorWizard() {
 	super();
@@ -30,6 +32,7 @@ public void init(IProjectProvider  projectProvider, IPluginStructureData structu
 	this.projectProvider = projectProvider;
 	this.structureData = structureData;
 	this.fragment = fragment;
+	setWindowTitle(PDEPlugin.getResourceString(fragment?KEY_WFTITLE:KEY_WTITLE));
 }
 public boolean performFinish() {
 	return defaultPage.finish();

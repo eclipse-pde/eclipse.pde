@@ -11,14 +11,17 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.pde.internal.PDEPlugin;
 
 
 public class NewWizard extends Wizard implements INewWizard {
 	private org.eclipse.ui.IWorkbench workbench;
 	private org.eclipse.jface.viewers.IStructuredSelection selection;
+	private static final String KEY_WTITLE = "NewWizard.wtitle";
 
 public NewWizard() {
 	super();
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 }
 public org.eclipse.jface.viewers.IStructuredSelection getSelection() {
 	return selection;

@@ -35,17 +35,16 @@ public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_OUTPUT = "ProjectStructurePage.output";
 	private static final String KEY_FID = "ProjectStructurePage.fid";
 	private static final String KEY_ID = "ProjectStructurePage.id";
-	private static final String KEY_INVALID_ID = "WizardIdProjectCreationPage.invalidId";
+	private static final String KEY_INVALID_ID =
+		"WizardIdProjectCreationPage.invalidId";
 
 	private static final String KEY_FLIBRARY = "ProjectStructurePage.flibrary";
 	private static final String KEY_LIBRARY = "ProjectStructurePage.library";
 	private static final String KEY_CREATING = "ProjectStructurePage.creating";
 	private static final String KEY_SOURCE = "ProjectStructurePage.source";
 	private static final String KEY_SOURCE_NAME = "ProjectStructurePage.sourceName";
-	//private static final String KEY_SOURCE_NAME = "ProjectStructurePage.sourceName.nl";
 	private static final String KEY_FSOURCE_NAME =
 		"ProjectStructurePage.fsourceName";
-	//private static final String KEY_FSOURCE_NAME = "ProjectStructurePage.fsourceName.nl";
 
 	private static final String KEY_FTITLE = "ProjectStructurePage.ftitle";
 	private static final String KEY_DESC = "ProjectStructurePage.desc";
@@ -276,14 +275,14 @@ public class ProjectStructurePage extends WizardPage {
 		}
 		buildOutputText.setText("bin");
 		libraryText.setText(lastSegment + ".jar");
-
-		//sourceText.setText(createSourceFolderName(lastSegment));
 		sourceText.setText("src");
+
 	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			initialize();
+			idText.setFocus();
 		}
 	}
 }

@@ -91,8 +91,11 @@ private void initialize() {
 }
 
 public void setVisible(boolean visible) {
-	initialize();
 	super.setVisible(visible);
+	if (visible) {
+		initialize();
+		idText.setFocus();
+	}
 }
 
 public boolean finish() {

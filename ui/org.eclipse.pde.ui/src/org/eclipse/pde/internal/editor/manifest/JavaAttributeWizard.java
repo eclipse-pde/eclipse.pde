@@ -27,6 +27,7 @@ public class JavaAttributeWizard extends Wizard {
 	private IProject project;
 	private ISchemaAttribute attInfo;
 	private IPluginModelBase model;
+	private static final String KEY_WTITLE = "JavaAttributeWizard.wtitle";
 
 public JavaAttributeWizard(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 	this.className = className;
@@ -35,6 +36,7 @@ public JavaAttributeWizard(IProject project, IPluginModelBase model, ISchemaAttr
 	this.attInfo = attInfo;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	setNeedsProgressMonitor(true);
 }
 

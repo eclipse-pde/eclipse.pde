@@ -11,11 +11,13 @@ import org.eclipse.pde.internal.*;
 public class SynchronizeVersionsWizard extends Wizard {
 	private FeatureEditor featureEditor;
 	private SynchronizeVersionsWizardPage mainPage;
+	private static final String KEY_WTITLE = "VersionSyncWizard.wtitle";
 
 public SynchronizeVersionsWizard(FeatureEditor featureEditor) {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	this.featureEditor = featureEditor;
 }
 public void addPages() {

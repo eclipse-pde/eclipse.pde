@@ -15,9 +15,11 @@ public class GenericExtensionWizard extends Wizard implements IExtensionWizard {
 	private IPluginModelBase model;
 	private IProject project;
 	private PointSelectionPage pointSelectionPage;
+	private static final String KEY_WTITLE = "GenericExtensionWizard.wtitle";
 
 public GenericExtensionWizard() {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 }
 public void addPages() {
 	pointSelectionPage = new PointSelectionPage(model.getPluginBase());

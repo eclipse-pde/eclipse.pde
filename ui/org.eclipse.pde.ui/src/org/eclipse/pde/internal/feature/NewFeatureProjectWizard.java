@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 public class NewFeatureProjectWizard extends NewWizard 
 	implements IExecutableExtension {
+	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle";
 	public static final String MAIN_PAGE_TITLE = "NewFeatureWizard.MainPage.title";
 	public static final String CREATING_PROJECT = "NewFeatureWizard.creatingProject";
 	public static final String CREATING_FOLDERS = "NewFeatureWizard.creatingFolders";
@@ -47,6 +48,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 public void addPages() {
 	mainPage = new WizardNewProjectCreationPage("main");

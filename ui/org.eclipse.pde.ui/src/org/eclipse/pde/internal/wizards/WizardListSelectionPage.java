@@ -75,7 +75,7 @@ public void createControl(Composite parent) {
 
 	createDescriptionIn(outerContainer);
 	wizardSelectionViewer.setInput(wizardElements);
-	wizardSelectionViewer.getTable().setFocus();
+	//wizardSelectionViewer.getTable().setFocus();
 
 	setControl(outerContainer);
 }

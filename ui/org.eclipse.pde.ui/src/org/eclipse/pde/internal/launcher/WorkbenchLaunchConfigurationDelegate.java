@@ -199,7 +199,6 @@ public class WorkbenchLaunchConfigurationDelegate
 						sourceLocator,
 						result.getProcesses(),
 						result.getDebugTarget());
-				registerLaunch(launch);
 			} else {
 				String message = "Launch was not successful.";
 				showErrorDialog(message, null);
@@ -247,16 +246,6 @@ public class WorkbenchLaunchConfigurationDelegate
 			display = Display.getDefault();
 		}
 		return display;
-	}
-
-	private void registerLaunch(final ILaunch launch) {
-		Display display = getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
-			}
-		});
-		PDEPlugin.getDefault().registerLaunch(launch);
 	}
 
 	private void showErrorDialog(final String message, final IStatus status) {

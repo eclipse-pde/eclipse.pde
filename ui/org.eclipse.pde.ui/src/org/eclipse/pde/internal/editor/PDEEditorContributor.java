@@ -51,6 +51,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		public void selectionChanged(ISelection selection) {
 		}
 		public boolean isEditable() {
+			if (editor==null) return false;
 			IModel model = (IModel) editor.getModel();
 			return model == null || model.isEditable();
 		}

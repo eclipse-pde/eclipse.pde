@@ -24,6 +24,7 @@ import org.eclipse.ant.internal.ui.AntAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import java.net.URL;
+import org.eclipse.pde.internal.preferences.MainPreferencePage;
 
 public class BuildPluginAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GeneratePluginJars.errorsTitle";
@@ -159,6 +160,8 @@ public class BuildPluginAction implements IObjectActionDelegate {
 			generator = new FragmentBuildScriptGenerator();
 		else
 			generator = new PluginBuildScriptGenerator();
+		
+		String scriptName = MainPreferencePage.getBuildScriptName();
 
 		IProject project = pluginBaseFile.getProject();
 		IPluginModelBase model =
@@ -171,11 +174,6 @@ public class BuildPluginAction implements IObjectActionDelegate {
 
 		URL [] pluginPath = TargetPlatform.createPluginPath();
 		generator.setPluginPath(pluginPath);
-
-		generator.setBuildVariableOS(TargetPlatform.getOS());
-		generator.setBuildVariableWS(TargetPlatform.getWS());
-		generator.setBuildVariableNL(TargetPlatform.getNL());
-		generator.setBuildVariableARCH(TargetPlatform.getOSArch());
 
 		try {
 			generator.setModelId(model.getPluginBase().getId());

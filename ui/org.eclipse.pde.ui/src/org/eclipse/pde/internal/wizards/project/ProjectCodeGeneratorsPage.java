@@ -108,11 +108,7 @@ public void createControl(Composite parent) {
 	};
 	blankPageRadio.addSelectionListener(listener);
 
-	gd = new GridData();
-	gd.horizontalAlignment = GridData.FILL;
-	gd.grabExcessHorizontalSpace = true;
-	gd.verticalAlignment = GridData.FILL;
-	gd.grabExcessVerticalSpace = true;
+	gd = new GridData(GridData.FILL_BOTH);
 	super.createControl(outerContainer);
 	wizardList = super.wizardSelectionViewer.getControl();
 	Control control = getControl();
@@ -120,6 +116,14 @@ public void createControl(Composite parent) {
 	setWizardListEnabled(false);
 	setControl(outerContainer);
 }
+
+public void setVisible(boolean visible) {
+	super.setVisible(visible);
+	if (visible) {
+		blankPageRadio.setFocus();
+	}
+}
+
 protected IWizardNode createWizardNode(WizardElement element) {
 	return new WizardNode(this, element) {
 		public IBasePluginWizard createWizard() throws CoreException {

@@ -35,16 +35,19 @@ public class NewProjectWizard extends NewWizard
 	public static final String TAG_WIZARD = "wizard";
 	public static final String ATT_FRAGMENT = "fragmentWizard";
 	public static final String KEY_CODEGEN_MESSAGE = "NewProjectWizard.ProjectCodeGeneratorsPage.message";
+	private static final String KEY_WTITLE = "NewProjectWizard.title";
 
 	public NewProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		
 	}
 public void addPages() {
 	super.addPages();
-	mainPage = new WizardIdProjectCreationPage("main");
+	mainPage = new WizardNewProjectCreationPage("main");
 	if (isFragmentWizard()) {
 		mainPage.setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(KEY_FDESC));

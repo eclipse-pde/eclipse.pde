@@ -58,7 +58,6 @@ public class PluginListPage extends WizardPage {
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
 		pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());
-		pluginViewer.getTable().setFocus();
 		tablePart.setSelection(new Object[0]);
 		setControl(container);
 	}
@@ -85,5 +84,12 @@ public class PluginListPage extends WizardPage {
 			plugins[i] = model.getPluginBase();
 		}
 		return plugins;
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			tablePart.getControl().setFocus();
+		}
 	}
 }

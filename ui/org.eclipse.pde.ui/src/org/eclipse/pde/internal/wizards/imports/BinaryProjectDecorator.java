@@ -67,8 +67,10 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 			project = (IProject) element;
 		else if (element instanceof IJavaProject)
 			project = ((IJavaProject) element).getProject();
+		/*
 		else if (element instanceof IResource)
 			project = ((IResource)element).getProject();
+		*/
 		if (project != null) {
 			try {
 				return project.getPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY);

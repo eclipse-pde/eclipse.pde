@@ -303,6 +303,13 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		presetFields();
 		setControl(container);
 	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			nameField.setFocus();
+		}
+	}
 	private Text createField(Composite parent, String label) {
 		return createField(parent, label, true);
 	}

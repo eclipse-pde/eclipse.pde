@@ -35,6 +35,7 @@ import org
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "PluginImportWizard";
+	private static final String KEY_WTITLE = "ImportWizard.title";
 	private static final String KEY_MESSAGES_TITLE = "ImportWizard.messages.title";
 	private static final String KEY_MESSAGES_NO_PLUGINS =
 		"ImportWizard.messages.noPlugins";
@@ -42,6 +43,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		"ImportWizard.messages.doNotAsk";
 	private static final String KEY_MESSAGES_EXISTS =
 		"ImportWizard.messages.exists";
+		
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
@@ -50,6 +52,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
 	/*

@@ -12,6 +12,7 @@ import org.eclipse.pde.internal.*;
 public class NewExtensionWizard extends NewWizard {
 	public static final String PLUGIN_POINT = "newExtension";
 	public static final String STATUS_MESSAGE = "NewExtensionWizard.statusMessage";
+	private static final String KEY_WTITLE = "NewExtensionWizard.wtitle";
 
 	private NewExtensionMainPage mainPage;
 	private IPluginModelBase model;
@@ -22,6 +23,7 @@ public class NewExtensionWizard extends NewWizard {
 		this.model = model;
 		this.project = project;
 		setForcePreviousAndNextButtons(true);
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	public void addPages() {

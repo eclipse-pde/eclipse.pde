@@ -15,11 +15,13 @@ public class UpdateBuildpathWizard extends Wizard {
 	private UpdateBuildpathWizardPage page1;
 	private IPluginModelBase [] selected;
 	private static final String STORE_SECTION = "UpdateBuildpathWizard";
+	private static final String KEY_WTITLE = "UpdateBuildpathWizard.wtitle";
 
 	public UpdateBuildpathWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 		this.selected = selected;
 	}

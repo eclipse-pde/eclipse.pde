@@ -13,9 +13,11 @@ import org.eclipse.pde.internal.*;
 public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private NewSchemaFileMainPage mainPage;
 	private IContainer container;
+	public static final String KEY_WTITLE = "NewSchemaFileWizard.wtitle";
 
 public NewSchemaFileWizard() {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXP_WIZ);
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	setNeedsProgressMonitor(true);
 }
 public void addPages() {

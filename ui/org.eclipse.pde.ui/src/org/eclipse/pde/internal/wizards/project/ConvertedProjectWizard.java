@@ -13,6 +13,7 @@ import java.util.Vector;
 public class ConvertedProjectWizard extends NewWizard {
 	private ConvertedProjectsPage mainPage;
 	private Vector selected;
+	private static final String KEY_WTITLE = "ConvertedProjectWizard.title";
 
 public ConvertedProjectWizard() {
 	this(null);
@@ -21,6 +22,7 @@ public ConvertedProjectWizard() {
 public ConvertedProjectWizard(Vector selected) {
 	this.selected = selected;
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
+	setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
 }

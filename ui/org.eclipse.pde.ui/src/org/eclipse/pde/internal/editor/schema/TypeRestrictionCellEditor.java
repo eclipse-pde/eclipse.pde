@@ -8,9 +8,11 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
+import org.eclipse.pde.internal.PDEPlugin;
 
 public class TypeRestrictionCellEditor extends DialogCellEditor {
 	private Label label;
+	private static final String KEY_TYPE_RESTRICTION_TITLE = "SchemaEditor.RestrictionDialog.wtitle";
 
 protected TypeRestrictionCellEditor(Composite parent) {
 	super(parent);
@@ -29,6 +31,7 @@ protected Object openDialogBox(Control cellEditorWindow) {
 			(ISchemaRestriction) value);
 	dialog.create();
 	dialog.getShell().setSize(300, 350);
+	dialog.getShell().setText(PDEPlugin.getResourceString(KEY_TYPE_RESTRICTION_TITLE));
 	int result = dialog.open();
 	if (result == TypeRestrictionDialog.OK) {
 		value = dialog.getValue();
