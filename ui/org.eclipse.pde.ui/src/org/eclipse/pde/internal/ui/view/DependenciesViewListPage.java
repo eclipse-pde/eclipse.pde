@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -40,7 +40,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(fContentProvider);
-		fViewer.setLabelProvider(new DependenciesLabelProvider());
+		fViewer.setLabelProvider(new DependenciesLabelProvider(false));
 		fViewer.setSorter(new ViewerSorter());
 
 		return fViewer;

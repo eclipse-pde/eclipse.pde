@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -190,7 +191,8 @@ public class DependenciesView extends PageBookView implements
 
 	private Object fInput;
 
-	private Preferences fPreferences = PDEPlugin.getDefault().getPluginPreferences();
+	private Preferences fPreferences = PDEPlugin.getDefault()
+			.getPluginPreferences();
 
 	private ShowCalleesAction fShowCallees;
 
@@ -242,7 +244,6 @@ public class DependenciesView extends PageBookView implements
 
 		}
 		return createPage(PART_CALLEES_TREE);
-
 	}
 
 	/**
@@ -279,9 +280,11 @@ public class DependenciesView extends PageBookView implements
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		fShowCallees = new ShowCalleesAction();
-		fShowCallees.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
+		fShowCallees.setChecked(!fPreferences
+				.getBoolean(DEPS_VIEW_SHOW_CALLERS));
 		fShowCallers = new ShowCallersAction();
-		fShowCallers.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
+		fShowCallers
+				.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
 
 		fShowTree = new ShowTreeAction();
 		fShowTree.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
@@ -330,16 +333,28 @@ public class DependenciesView extends PageBookView implements
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
 	protected IWorkbenchPart getBootstrapPart() {
+		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS)) {
+			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
+				return PART_CALLERS_LIST;
+
+			}
+			return PART_CALLERS_TREE;
+		}
+		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
+			return PART_CALLEES_LIST;
+
+		}
 		return PART_CALLEES_TREE;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.part.PageBookView#init(org.eclipse.ui.IViewSite)
+	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
+	 *      org.eclipse.ui.IMemento)
 	 */
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
 	}
 
 	/*
@@ -354,6 +369,15 @@ public class DependenciesView extends PageBookView implements
 	public void openTo(Object object) {
 		fInput = object;
 		((DependenciesViewPage) getCurrentPage()).setInput(object);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
 	}
 
 	void setPresentation(boolean listNotTree) {
@@ -418,13 +442,18 @@ public class DependenciesView extends PageBookView implements
 			String name = PDEPlugin.getDefault().getLabelProvider().getText(
 					newInput);
 			String title;
-			if (getCurrentContributingPart() == PART_CALLEES_TREE
-					|| getCurrentContributingPart() == PART_CALLEES_LIST) {
+			if (getCurrentContributingPart() == PART_CALLEES_TREE) {
 				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callees.title", name); //$NON-NLS-1$
+						"DependenciesView.callees.tree.title", name); //$NON-NLS-1$
+			} else if (getCurrentContributingPart() == PART_CALLEES_LIST) {
+				title = PDEPlugin.getFormattedMessage(
+						"DependenciesView.callees.list.title", name); //$NON-NLS-1$
+			} else if (getCurrentContributingPart() == PART_CALLERS_TREE) {
+				title = PDEPlugin.getFormattedMessage(
+						"DependenciesView.callers.tree.title", name); //$NON-NLS-1$
 			} else {
 				title = PDEPlugin.getFormattedMessage(
-						"DependenciesView.callers.title", name); //$NON-NLS-1$
+						"DependenciesView.callers.list.title", name); //$NON-NLS-1$
 			}
 			setContentDescription(title); //$NON-NLS-1$
 		}

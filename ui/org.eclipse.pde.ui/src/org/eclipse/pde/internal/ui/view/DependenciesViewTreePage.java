@@ -67,7 +67,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL
 				| SWT.H_SCROLL);
 		fTreeViewer.setContentProvider(fContentProvider);
-		fTreeViewer.setLabelProvider(new DependenciesLabelProvider());
+		fTreeViewer.setLabelProvider(new DependenciesLabelProvider(true));
 		fTreeViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		fTreeViewer.setAutoExpandLevel(2);
 

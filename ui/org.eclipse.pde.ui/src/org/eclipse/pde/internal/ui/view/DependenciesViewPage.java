@@ -32,6 +32,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.plugin.PluginReference;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
@@ -215,11 +216,14 @@ public abstract class DependenciesViewPage extends Page {
 		if (newFocus instanceof IPluginBase) {
 			fView.openTo(((IPluginBase) newFocus).getModel());
 		}
-		if (newFocus instanceof ImportObject) {
-			ImportObject iimport = (ImportObject) newFocus;
-			IPlugin plugin = iimport.getPlugin();
-			if (plugin != null) {
-				fView.openTo(plugin.getModel());
+		if (newFocus instanceof IPluginImport) {
+			IPluginImport pluginImport = ((IPluginImport) newFocus);
+			String id = pluginImport.getId();
+			IPlugin importedPlugin = PDECore.getDefault().findPlugin(id);
+			if (importedPlugin != null) {
+				fView.openTo(importedPlugin.getModel());
+			} else {
+				fView.openTo(null);
 			}
 		}
 	}
@@ -235,7 +239,8 @@ public abstract class DependenciesViewPage extends Page {
 		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 
-		getSite().registerContextMenu(fView.getSite().getId(), menuMgr, fViewer);
+		getSite()
+				.registerContextMenu(fView.getSite().getId(), menuMgr, fViewer);
 	}
 
 	private void hookDoubleClickAction() {
@@ -255,8 +260,8 @@ public abstract class DependenciesViewPage extends Page {
 			public void update(Object object) {
 			}
 		};
-		fOpenAction
-				.setText(PDEPlugin.getResourceString("DependenciesView.open")); //$NON-NLS-1$
+		fOpenAction.setText(PDEPlugin
+				.getResourceString("DependenciesView.open")); //$NON-NLS-1$
 
 		fFocusOnSelectionAction = new FocusOnSelectionAction();
 

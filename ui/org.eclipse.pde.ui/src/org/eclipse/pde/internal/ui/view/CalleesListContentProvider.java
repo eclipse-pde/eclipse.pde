@@ -17,12 +17,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.PDECore;
 
-public class CalleesListContentProvider extends CalleesTreeContentProvider {
+public class CalleesListContentProvider extends
+		DependenciesViewPageContentProvider implements
+		IStructuredContentProvider {
 
 	public CalleesListContentProvider(DependenciesView view) {
 		super(view);
@@ -38,18 +42,22 @@ public class CalleesListContentProvider extends CalleesTreeContentProvider {
 					.getPluginBase();
 			Map elements = new Hashtable();
 			Set candidates = new HashSet();
-			candidates.addAll(Arrays.asList(getChildren(pluginBase)));
+			candidates.addAll(Arrays.asList(pluginBase.getImports()));
 
 			while (!candidates.isEmpty()) {
 				Set newCandidates = new HashSet();
 				for (Iterator it = candidates.iterator(); it.hasNext();) {
-					Object o = it.next();
+					IPluginImport pluginImport = (IPluginImport) it.next();
+					String id = pluginImport.getId();
+					IPlugin importedPlugin = PDECore.getDefault()
+							.findPlugin(id);
 					it.remove();
-					ImportObject importObj = (ImportObject) o;
-					IPlugin plugin = importObj.getPlugin();
-					if (!elements.containsKey(plugin)) {
-						elements.put(plugin, o);
-						newCandidates.addAll(Arrays.asList(getChildren(o)));
+					if (!elements.containsKey(id)) {
+						elements.put(id, pluginImport);
+						if (importedPlugin != null) {
+							newCandidates.addAll(Arrays.asList(importedPlugin
+									.getImports()));
+						}
 					}
 				}
 				candidates = newCandidates;
