@@ -218,7 +218,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
+			wc.setAttribute(ILauncherSettings.PROGARGS, "");
 			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);

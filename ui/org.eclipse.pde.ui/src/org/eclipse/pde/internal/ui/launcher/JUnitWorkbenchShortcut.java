@@ -30,7 +30,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation()); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
+			wc.setAttribute(ILauncherSettings.PROGARGS, "");
 			wc.setAttribute(ILauncherSettings.USE_DEFAULT, true);
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);

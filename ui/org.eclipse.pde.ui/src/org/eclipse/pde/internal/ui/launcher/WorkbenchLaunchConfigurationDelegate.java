@@ -203,6 +203,22 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add(0, "-showsplash"); //$NON-NLS-1$
 			programArgs.add(1, computeShowsplashArgument());
 		}
+		if (!programArgs.contains("-os")) {
+			programArgs.add("-os");
+			programArgs.add(TargetPlatform.getOS());
+		}
+		if (!programArgs.contains("-ws")) {
+			programArgs.add("-ws");
+			programArgs.add(TargetPlatform.getWS());
+		}
+		if (!programArgs.contains("-arch")) {
+			programArgs.add("-arch");
+			programArgs.add(TargetPlatform.getOSArch());
+		}
+		if (!programArgs.contains("-nl")) {
+			programArgs.add("-nl");
+			programArgs.add(TargetPlatform.getNL());
+		}
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
 	}
 	

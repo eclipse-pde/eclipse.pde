@@ -98,17 +98,6 @@ public class LauncherUtils {
 		return map;
 	}
 
-	public static String getDefaultProgramArguments() {
-		String os = TargetPlatform.getOS();
-		String ws = TargetPlatform.getWS();
-		String arch = TargetPlatform.getOSArch();
-		String nl = TargetPlatform.getNL();
-		String args = "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			return args + " -clean"; //$NON-NLS-1$
-		return args;
-	}
-	
 	public static String getDefaultWorkspace() {
 		return getDefaultPath().append("runtime-workspace").toOSString(); //$NON-NLS-1$
 	}

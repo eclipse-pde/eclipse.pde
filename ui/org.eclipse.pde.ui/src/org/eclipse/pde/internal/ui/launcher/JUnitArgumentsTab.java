@@ -30,7 +30,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 			LauncherUtils.getDefaultPath().append("runtime-test-workspace").toOSString()); //$NON-NLS-1$
 		config.setAttribute(DOCLEAR, true);
 		config.setAttribute(ASKCLEAR, false);
-		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
+		config.setAttribute(PROGARGS, "");
 		config.setAttribute(VMARGS, ""); //$NON-NLS-1$
 		config.setAttribute(BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 		if (!JUnitLaunchConfiguration.requiresUI(config))
