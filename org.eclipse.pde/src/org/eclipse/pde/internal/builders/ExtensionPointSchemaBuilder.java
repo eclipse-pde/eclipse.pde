@@ -9,8 +9,10 @@ import java.util.Map;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -177,11 +179,29 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		String fileName = file.getName();
 		int dot = fileName.lastIndexOf('.');
 		String pageName = fileName.substring(0, dot) + ".html";
+		String mangledPluginId = getMangledPluginId(file);
+		if (mangledPluginId!=null)
+		   pageName = mangledPluginId + "_"+pageName;
 		IPath path =
 			file.getProject().getFullPath().append(getDocLocation()).append(
 				pageName);
 		return path.toString();
 	}
+	
+	private String getMangledPluginId(IFile file) {
+		IProject project = file.getProject();
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IModel model = manager.getWorkspaceModel(project);
+		if (model instanceof IPluginModelBase) {
+			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();
+			if (plugin!=null) {
+				String id = plugin.getId();
+				return id.replace('.', '_');
+			}
+		}
+		return null;
+	}
+	
 	public String getSchemaLocation() {
 		return "schema";
 	}
