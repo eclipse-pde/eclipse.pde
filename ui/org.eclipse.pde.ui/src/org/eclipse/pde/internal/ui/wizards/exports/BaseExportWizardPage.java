@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
@@ -48,7 +47,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
 	private Button fSaveAsAntButton;
-	private String fZipExtension = TargetPlatform.getOS().equals("win32") ? ".zip" : ".tar.gz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private String fZipExtension = ".zip"; //$NON-NLS-1$
 	private Button fJarButton;
 
 	

@@ -314,7 +314,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		if (fExportToDirectory)
 			format = "folder"; //$NON-NLS-1$
 		else
-			format = Platform.getOS().equals("win32") ? "antZip" : "tarGz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			format = "antZip"; //$NON-NLS-1$
 			
 		AbstractScriptGenerator.setOutputFormat(format);
 		AbstractScriptGenerator.setForceUpdateJar(false);
