@@ -312,6 +312,19 @@ public class BundlePluginBase
 		return null;
 	}
 
+	protected String getParameters(String header) {
+		IBundle bundle = getBundle();
+		if (bundle == null)
+			return null;
+		String value = bundle.getHeader(header);
+		if (value == null)
+			return null;
+		int semiColon = value.indexOf(';');
+		if (semiColon < 0)
+			return null;
+		return value.substring(semiColon);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -512,9 +525,9 @@ public class BundlePluginBase
 		if (bundle != null) {
 			String old = getId();
 			StringBuffer buffer = new StringBuffer(id);
-			String singleton = getAttribute(Constants.BUNDLE_SYMBOLICNAME, Constants.SINGLETON_DIRECTIVE);
-			if (singleton != null && singleton.trim().length() > 0) 
-				buffer.append(";" + Constants.SINGLETON_DIRECTIVE + "=" + singleton.trim()); //$NON-NLS-1$ //$NON-NLS-2$
+			String params = getParameters(Constants.BUNDLE_SYMBOLICNAME);
+			if (params != null && params.trim().length() > 0) 
+				buffer.append(params);
 			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}
