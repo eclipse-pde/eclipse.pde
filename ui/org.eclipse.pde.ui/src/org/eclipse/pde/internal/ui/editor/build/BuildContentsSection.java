@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation
- ******************************************************************************/
-
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,18 +32,14 @@ public abstract class BuildContentsSection extends TableSection
 			IModelChangedListener,
 			IResourceChangeListener,
 			IResourceDeltaVisitor {
-
 	protected CheckboxTreeViewer fTreeViewer;
 	private boolean fDoRefresh = false;
 	protected IProject fProject;
 	protected IBuildModel fBuildModel;
-	protected IResource fOriginalResource, fParentResource;
-	protected boolean isChecked;
-
+	
 	public class TreeContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
-
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IProject) {
 				try {
@@ -54,7 +50,6 @@ public abstract class BuildContentsSection extends TableSection
 			}
 			return new Object[0];
 		}
-
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
@@ -67,7 +62,6 @@ public abstract class BuildContentsSection extends TableSection
 			}
 			return new Object[0];
 		}
-
 		public Object[] getFolderChildren(Object parent) {
 			IResource[] members = null;
 			try {
@@ -86,7 +80,6 @@ public abstract class BuildContentsSection extends TableSection
 			}
 			return new Object[0];
 		}
-
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
@@ -96,7 +89,6 @@ public abstract class BuildContentsSection extends TableSection
 			}
 			return null;
 		}
-
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
@@ -106,18 +98,15 @@ public abstract class BuildContentsSection extends TableSection
 			return false;
 		}
 	}
-
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 				.findContext(BuildInputContext.CONTEXT_ID);
 		return (IBuildModel) context.getModel();
 	}
-
 	public BuildContentsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[0]);
 		PDEPlugin.getWorkspace().addResourceChangeListener(this);
 	}
-
 	public void createClient(final Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		fBuildModel = getBuildModel();
@@ -132,11 +121,9 @@ public abstract class BuildContentsSection extends TableSection
 		fTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		fTreeViewer.setAutoExpandLevel(0);
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
-
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				final Object element = event.getElement();
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
-
 					public void run() {
 						if (element instanceof IFile) {
 							IFile file = (IFile) event.getElement();
@@ -158,24 +145,30 @@ public abstract class BuildContentsSection extends TableSection
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
-
 	public void enableSection(boolean enable) {
 		fTreeViewer.getTree().setEnabled(enable);
 	}
-
 	protected void handleCheckStateChanged(IResource resource, boolean checked) {
-		fOriginalResource = resource;
-		isChecked = checked;
-		boolean wasTopParentChecked = fTreeViewer.getChecked(fOriginalResource
+		fTreeViewer.setChecked(resource, checked);
+		fTreeViewer.setParentsGrayed(resource, true);
+		fTreeViewer.setGrayed(resource, false);
+		boolean wasTopParentChecked = fTreeViewer.getChecked(resource
 				.getParent());
-		if (!isChecked) {
-			resource = handleAllUnselected(resource, resource.getName());
+		if (checked) {
+			setParentsChecked(resource);
+		} else {
+			resource = handleAllUnselected(resource);
 		}
-		fParentResource = resource;
-		handleBuildCheckStateChange(wasTopParentChecked);
+		if (resource instanceof IFolder) {
+			IFolder folder = (IFolder) resource;
+			fTreeViewer.setSubtreeChecked(folder, checked);
+			setChildrenGrayed(folder, false);
+			handleBuildCheckStateChange(folder, checked, wasTopParentChecked);
+		} else {
+			handleBuildCheckStateChange(resource, checked, wasTopParentChecked);
+		}
 	}
-
-	protected IResource handleAllUnselected(IResource resource, String name) {
+	protected IResource handleAllUnselected(IResource resource) {
 		IResource parent = resource.getParent();
 		if (parent == resource.getProject()) {
 			return resource;
@@ -184,12 +177,12 @@ public abstract class BuildContentsSection extends TableSection
 			boolean uncheck = true;
 			IResource[] members = ((IFolder) parent).members();
 			for (int i = 0; i < members.length; i++) {
-				if (fTreeViewer.getChecked(members[i])
-						&& !members[i].getName().equals(name))
+				if (fTreeViewer.getChecked(members[i]))
 					uncheck = false;
 			}
 			if (uncheck) {
-				return handleAllUnselected(parent, parent.getName());
+				fTreeViewer.setChecked(parent, false);
+				return handleAllUnselected(parent);
 			}
 			return resource;
 		} catch (CoreException e) {
@@ -197,7 +190,6 @@ public abstract class BuildContentsSection extends TableSection
 			return null;
 		}
 	}
-
 	protected void setChildrenGrayed(IResource folder, boolean isGray) {
 		fTreeViewer.setGrayed(folder, isGray);
 		if (((TreeContentProvider) fTreeViewer.getContentProvider())
@@ -209,14 +201,12 @@ public abstract class BuildContentsSection extends TableSection
 			}
 		}
 	}
-
 	protected void setParentsChecked(IResource resource) {
 		if (resource.getParent() != resource.getProject()) {
 			fTreeViewer.setChecked(resource.getParent(), true);
 			setParentsChecked(resource.getParent());
 		}
 	}
-
 	/**
 	 * removes all child resources of the specified folder from build entries
 	 * 
@@ -226,81 +216,68 @@ public abstract class BuildContentsSection extends TableSection
 	 * note: does not remove folder itself
 	 */
 	protected abstract void deleteFolderChildrenFromEntries(IFolder folder);
-
 	protected void initializeCheckState() {
 		uncheckAll();
 	}
-
-	protected void initializeCheckState(final IBuildEntry includes,
-			final IBuildEntry excludes) {
-		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
-
-			public void run() {
-				Vector fileExt = new Vector();
-				String[] inclTokens, exclTokens = new String[0];
-				if (fProject == null || includes == null)
-					return;
-				inclTokens = includes.getTokens();
-				if (excludes != null)
-					exclTokens = excludes.getTokens();
-				Set temp = new TreeSet();
-				for (int i = 0; i < inclTokens.length; i++)
-					temp.add(inclTokens[i]);
-				for (int i = 0; i < exclTokens.length; i++)
-					temp.add(exclTokens[i]);
-				Iterator iter = temp.iterator();
-				while (iter.hasNext()) {
-					String resource = iter.next().toString();
-					boolean isIncluded = includes.contains(resource);
-					if (resource.lastIndexOf(Path.SEPARATOR) == resource
-							.length() - 1) {
-						IFolder folder = fProject.getFolder(resource);
-						fTreeViewer.setSubtreeChecked(folder, isIncluded);
-						fTreeViewer.setParentsGrayed(folder, true);
-						if (isIncluded && folder.exists()) {
-							setParentsChecked(folder);
-							fTreeViewer.setGrayed(folder, false);
-						}
-					} else if (resource.startsWith("*.")) {
-						if (isIncluded)
-							fileExt.add(resource.substring(2));
-					} else {
-						IFile file = fProject.getFile(resource);
-						fTreeViewer.setChecked(file, isIncluded);
-						fTreeViewer.setParentsGrayed(file, true);
-						if (isIncluded && file.exists()) {
-							fTreeViewer.setGrayed(file, false);
-							setParentsChecked(file);
-						}
-					}
+	protected void initializeCheckState(IBuildEntry includes,
+			IBuildEntry excludes) {
+		Vector fileExt = new Vector();
+		String[] inclTokens, exclTokens = new String[0];
+		if (fProject == null || includes == null)
+			return;
+		inclTokens = includes.getTokens();
+		if (excludes != null)
+			exclTokens = excludes.getTokens();
+		Set temp = new TreeSet();
+		for (int i = 0; i < inclTokens.length; i++)
+			temp.add(inclTokens[i]);
+		for (int i = 0; i < exclTokens.length; i++)
+			temp.add(exclTokens[i]);
+		Iterator iter = temp.iterator();
+		while (iter.hasNext()) {
+			String resource = iter.next().toString();
+			boolean isIncluded = includes.contains(resource);
+			if (resource.lastIndexOf(Path.SEPARATOR) == resource.length() - 1) {
+				IFolder folder = fProject.getFolder(resource);
+				fTreeViewer.setSubtreeChecked(folder, isIncluded);
+				fTreeViewer.setParentsGrayed(folder, true);
+				if (isIncluded && folder.exists()) {
+					setParentsChecked(folder);
+					fTreeViewer.setGrayed(folder, false);
 				}
-				if (fileExt.size() == 0)
-					return;
-				try {
-					IResource[] members = fProject.members();
-					for (int i = 0; i < members.length; i++) {
-						if (!(members[i] instanceof IFolder)
-								&& (fileExt.contains(members[i]
-										.getFileExtension()))) {
-							fTreeViewer.setChecked((IFile) members[i], includes
-									.contains("*."
-											+ members[i].getFileExtension()));
-						}
-					}
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+			} else if (resource.startsWith("*.")) {
+				if (isIncluded)
+					fileExt.add(resource.substring(2));
+			} else {
+				IFile file = fProject.getFile(resource);
+				fTreeViewer.setChecked(file, isIncluded);
+				fTreeViewer.setParentsGrayed(file, true);
+				if (isIncluded && file.exists()) {
+					fTreeViewer.setGrayed(file, false);
+					setParentsChecked(file);
 				}
 			}
-		});
+		}
+		if (fileExt.size() == 0)
+			return;
+		try {
+			IResource[] members = fProject.members();
+			for (int i = 0; i < members.length; i++) {
+				if (!(members[i] instanceof IFolder)
+						&& (fileExt.contains(members[i].getFileExtension()))) {
+					fTreeViewer.setChecked((IFile) members[i], includes
+							.contains("*." + members[i].getFileExtension()));
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
-
-	protected abstract void handleBuildCheckStateChange(
-			boolean wasTopParentChecked);
-
+	protected abstract void handleBuildCheckStateChange(IResource resource,
+			boolean checked, boolean wasTopParentChecked);
 	protected void handleCheck(IBuildEntry includes, IBuildEntry excludes,
 			String resourceName, IResource resource,
 			boolean wasTopParentChecked, String PROPERTY_INCLUDES) {
-
 		try {
 			if (includes == null) {
 				includes = fBuildModel.getFactory().createEntry(
@@ -319,7 +296,6 @@ public abstract class BuildContentsSection extends TableSection
 			PDEPlugin.logException(e);
 		}
 	}
-
 	protected boolean isValidIncludeEntry(IBuildEntry includes,
 			IBuildEntry excludes, IResource resource, String resourceName) {
 		if (excludes == null)
@@ -335,10 +311,8 @@ public abstract class BuildContentsSection extends TableSection
 		}
 		return !excludes.contains(resourceName);
 	}
-
 	protected void handleUncheck(IBuildEntry includes, IBuildEntry excludes,
 			String resourceName, IResource resource, String PROPERTY_EXCLUDES) {
-
 		try {
 			if (fTreeViewer.getChecked(resource.getParent())) {
 				if (excludes == null) {
@@ -390,11 +364,9 @@ public abstract class BuildContentsSection extends TableSection
 			PDEPlugin.logException(e);
 		}
 	}
-
 	protected String getResourceFolderName(String resourceName) {
 		return resourceName + Path.SEPARATOR;
 	}
-
 	/**
 	 * @param resource -
 	 *            file/folder being modified in tree
@@ -411,7 +383,6 @@ public abstract class BuildContentsSection extends TableSection
 		}
 		return resourceName;
 	}
-
 	public void initialize() {
 		if (fTreeViewer.getInput() == null) {
 			fTreeViewer.setUseHashlookup(true);
@@ -419,13 +390,11 @@ public abstract class BuildContentsSection extends TableSection
 		}
 		fBuildModel.addModelChangedListener(this);
 	}
-
 	public void dispose() {
 		fBuildModel.removeModelChangedListener(this);
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
-
 	protected void deleteEmptyEntries() {
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry[] entries = {
@@ -442,24 +411,19 @@ public abstract class BuildContentsSection extends TableSection
 			PDEPlugin.logException(e);
 		}
 	}
-
 	public CheckboxTreeViewer getTreeViewer() {
 		return fTreeViewer;
 	}
-
 	protected ISelection getViewerSelection() {
 		return getTreeViewer().getSelection();
 	}
-
 	public void refresh() {
 		initializeCheckState();
-		super.refresh();
 	}
-
+	
 	public void uncheckAll() {
 		fTreeViewer.setCheckedElements(new Object[0]);
 	}
-
 	protected void removeChildren(IBuildEntry entry, String parentFolder) {
 		try {
 			if (entry != null) {
@@ -476,7 +440,6 @@ public abstract class BuildContentsSection extends TableSection
 			PDEPlugin.logException(e);
 		}
 	}
-
 	public void resourceChanged(IResourceChangeEvent event) {
 		fDoRefresh = false;
 		IResourceDelta delta = event.getDelta();
@@ -490,7 +453,6 @@ public abstract class BuildContentsSection extends TableSection
 		} catch (CoreException e) {
 		}
 	}
-
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource resource = delta.getResource();
 		if ((resource instanceof IFile || resource instanceof IFolder)
@@ -504,12 +466,10 @@ public abstract class BuildContentsSection extends TableSection
 		}
 		return true;
 	}
-
 	private void asyncRefresh() {
 		Control control = fTreeViewer.getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(new Runnable() {
-
 				public void run() {
 					if (!fTreeViewer.getControl().isDisposed()) {
 						fTreeViewer.refresh(true);
@@ -518,63 +478,5 @@ public abstract class BuildContentsSection extends TableSection
 				}
 			});
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	protected void selectionChanged(IStructuredSelection selection) {
-		getPage().getPDEEditor().setSelection(selection);
-
-	}
-
-	public void modelChanged(IModelChangedEvent event) {
-
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
-		}
-		Object changeObject = event.getChangedObjects()[0];
-
-		if (!(changeObject instanceof IBuildEntry && (((IBuildEntry) changeObject)
-				.getName().equals(
-						IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES)
-				|| ((IBuildEntry) changeObject).getName().equals(
-						IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)
-				|| ((IBuildEntry) changeObject).getName().equals(
-						IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES) || ((IBuildEntry) changeObject)
-				.getName().equals(
-						IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES))))
-			return;
-
-		if ((fParentResource == null && fOriginalResource != null)
-				|| (fOriginalResource == null && fParentResource != null)) {
-			initializeCheckState();
-			return;
-		}
-		if ((fParentResource == null && fOriginalResource == null)
-				|| (event.getChangedProperty() != null && event
-						.getChangedProperty()
-						.equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES))) {
-
-			return;
-		}
-
-		fTreeViewer.setChecked(fParentResource, isChecked);
-		fTreeViewer.setGrayed(fOriginalResource, false);
-		fTreeViewer.setParentsGrayed(fParentResource, true);
-		setParentsChecked(fParentResource);
-		fTreeViewer.setGrayed(fParentResource, false);
-		if (fParentResource instanceof IFolder) {
-			fTreeViewer.setSubtreeChecked(fParentResource, isChecked);
-			setChildrenGrayed(fParentResource, false);
-		}
-		while (!fOriginalResource.equals(fParentResource)) {
-			fTreeViewer.setChecked(fOriginalResource, isChecked);
-			fOriginalResource = fOriginalResource.getParent();
-		}
-		fParentResource = null;
-		fOriginalResource = null;
 	}
 }

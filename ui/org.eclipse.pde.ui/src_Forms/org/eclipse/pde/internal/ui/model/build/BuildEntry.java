@@ -2,8 +2,8 @@ package org.eclipse.pde.internal.ui.model.build;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.model.*;
@@ -21,7 +21,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 */
 	public void addToken(String token) throws CoreException {
 		fTokens.add(token);
-		getModel().fireModelObjectChanged(this, getName(), null, token);
+		getModel().fireModelChanged(
+			new ModelChangedEvent(getModel(), 
+				IModelChangedEvent.CHANGE,
+				new Object[] { this },
+				null));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
@@ -46,7 +50,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 */
 	public void removeToken(String token) throws CoreException {
 		fTokens.remove(token);
-		getModel().fireModelObjectChanged(this, getName(), token, null);
+		getModel().fireModelChanged(
+			new ModelChangedEvent(getModel(),
+				IModelChangedEvent.CHANGE,
+				new Object[] { this },
+				null));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#renameToken(java.lang.String, java.lang.String)
@@ -56,17 +64,18 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		int index = fTokens.indexOf(oldToken);
 		if (index != -1) {
 			fTokens.set(index, newToken);
-			getModel().fireModelObjectChanged(this, getName(), oldToken, newToken);
+			getModel().fireModelChanged(
+				new ModelChangedEvent(getModel(),
+					IModelChangedEvent.CHANGE,
+					new Object[] { this },
+					null));
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#setName(java.lang.String)
 	 */
 	public void setName(String name) {
-		String oldName = fName;
 		fName = name;
-		if (getModel() != null)
-			getModel().fireModelObjectChanged(this, getName(), oldName, name);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
