@@ -85,7 +85,7 @@ public class WorkspaceModelManager
 				String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
 				if (binary != null) {
 					RepositoryProvider provider = RepositoryProvider.getProvider(project);
-					return provider instanceof BinaryRepositoryProvider;
+					return provider==null || provider instanceof BinaryRepositoryProvider;
 				}
 			} catch (CoreException e) {
 				PDECore.logException(e);
