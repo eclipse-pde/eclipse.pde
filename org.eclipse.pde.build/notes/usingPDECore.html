@@ -257,12 +257,6 @@ users should define their own compiler</li>
 users should define their own runtime libraries (rt.jar)</li>
 
 <li>
-some build.properties values should be inherited by elements when building
-a feature (need to be careful about which ones could be overwritten and
-which ones not). Maybe the safest assumptions is to behave like Ant (properties
-cannot be set twice - first value set stays)</li>
-
-<li>
 add variable that points out the base install dir for plugins, fragments
 and features. This variable should be available for the build.xml script.
 Basically, SWT wants to build plugin and fragments from one plugin using
