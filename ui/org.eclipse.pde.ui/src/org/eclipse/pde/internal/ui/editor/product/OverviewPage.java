@@ -68,7 +68,7 @@ public class OverviewPage extends PDEFormPage {
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText(PDEPlugin.getResourceString("OverviewPage.testing")); //$NON-NLS-1$
+		section.setText(PDEPlugin.getResourceString("Product.OverviewPage.testing")); //$NON-NLS-1$
 		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.testing"), toolkit); //$NON-NLS-1$
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
