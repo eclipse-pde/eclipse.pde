@@ -68,6 +68,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_NL = "nl";
 	public static final String PROPERTY_OS = "os";
 	public static final String PROPERTY_QUIET = "quiet";
+	public static final String PROPERTY_PLUGIN_PATH = "plugin.path";
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
@@ -77,8 +78,8 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ZIP_EXTERNAL = "zip.external";
 	public static final String PROPERTY_ZIP_FILE = "${zip.file}";
 	public static final String PROPERTY_ZIP_PROGRAM = "zip.program";
-	
-	
+
+
 	/**
 	 * Persistent properties. Properties that should not have its
 	 * value changed during a generate script batch.

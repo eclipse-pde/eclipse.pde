@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.*;
  * Sets a property with the location of a given plugin.
  */
 public class PluginLocationTask extends Task implements IPDECoreConstants, IXMLConstants {
-	
+
 	protected String pluginId;
 	protected String fragmentId;
 	protected String propertyName;
@@ -55,11 +55,11 @@ public void execute() throws BuildException {
 		if (pluginId != null) {
 			descriptor = getRegistry().getPlugin(pluginId);
 			if (descriptor == null)
-				throw new BuildException("Could not find plugin: " + pluginId); // FIXME: externalize string
+				throw new BuildException(Policy.bind("exception.missingPlugin", pluginId));
 		} else {
 			descriptor = getRegistry().getFragment(fragmentId);
 			if (descriptor == null)
-				throw new BuildException("Could not find fragment: " + fragmentId); // FIXME: externalize string
+				throw new BuildException(Policy.bind("exception.missingFragment", fragmentId));
 		}
 		String location = new File(new URL(descriptor.getLocation()).getFile()).getAbsolutePath();
 		getProject().setProperty(propertyName, location);
@@ -97,8 +97,12 @@ protected URL[] guessPluginPath() throws MalformedURLException {
  * Gets the pluginPath.
  */
 protected URL[] getPluginPath() throws CoreException, MalformedURLException {
-	if (pluginPath == null)
-		return guessPluginPath();
+	if (pluginPath == null) {
+		String path = getProject().getProperty(PROPERTY_PLUGIN_PATH);
+		if (path == null)
+			return guessPluginPath();
+		return Utils.asURL(Utils.getArrayFromString(path));
+	}
 	return Utils.asURL(pluginPath);
 }
 
@@ -106,7 +110,6 @@ protected URL[] getPluginPath() throws CoreException, MalformedURLException {
  * Sets the pluginPath.
  */
 public void setPluginPath(String pluginPath) {
-	// FIXME: this should be a script property and not set as a parameter of this task
 	this.pluginPath = Utils.getArrayFromString(pluginPath);
 }
 
