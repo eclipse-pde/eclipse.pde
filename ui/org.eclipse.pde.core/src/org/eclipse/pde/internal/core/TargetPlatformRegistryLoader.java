@@ -67,30 +67,7 @@ public class TargetPlatformRegistryLoader {
 		monitor.worked(1);
 		
 		if (resolve) {
-			MultiStatus errors =
-				new MultiStatus(
-					PDECore.getPluginId(),
-					1,
-					PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
-					null);
-			
-			StateHelper helper = acquireStateHelper();
-			BundleDescription[] all = state.getState().getBundles();
-			for (int i = 0; i < all.length; i++) {
-				if (!all[i].isResolved()) {
-					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
-					if (unsatisfiedConstraints.length == 0) {
-	   	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, PDECore.getResourceString("ECLIPSE_IGNORE"), null));
-					} else {
-						for (int j = 0; j < unsatisfiedConstraints.length; j++) {
-	                        String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-	    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
-						}
-	                }
-				}
-			}
-			if (errors.getChildren().length > 0)
-				PDECore.log(errors);
+			logResolutionErrors(state.getState());
 		}
 		
 		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
@@ -101,6 +78,50 @@ public class TargetPlatformRegistryLoader {
 		}	
 		monitor.done();
 		return models;
+	}
+	
+	private static void logResolutionErrors(State state) {
+		MultiStatus errors =
+			new MultiStatus(
+				PDECore.getPluginId(),
+				1,
+				PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
+				null);
+		
+		StateHelper helper = acquireStateHelper();
+		BundleDescription[] all = state.getBundles();
+		for (int i = 0; i < all.length; i++) {
+			if (!all[i].isResolved()) {
+				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
+				if (unsatisfiedConstraints.length == 0) {
+					BundleDescription activeBundle = findActiveBundle(state, all[i].getUniqueId());
+					if (activeBundle == null) {
+						String message = PDECore.getFormattedMessage("ECLIPSE_IGNORE", all[i].getLocation());
+						errors.add(new Status(IStatus.ERROR, all[i].getUniqueId(), IStatus.WARNING, message, null));
+					} else {
+						String message = PDECore.getFormattedMessage("ECLIPSE_OTHER_VERSION", new String[] {all[i].getLocation(), activeBundle.getLocation()});
+						errors.add(new Status(IStatus.INFO, all[i].getUniqueId(), IStatus.INFO, message, null));
+					}
+				} else {
+					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
+                        String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
+    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+					}
+                }
+			}
+		}
+		if (errors.getChildren().length > 0)
+			PDECore.log(errors);
+		
+	}
+	
+	private static BundleDescription findActiveBundle(State state, String symbolicName) {
+		BundleDescription[] bundles = state.getBundles(symbolicName);
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundles[i].isResolved())
+				return bundles[i];
+		}
+		return null;
 	}
 	
 	public static String getResolutionFailureMessage(VersionConstraint unsatisfied) {
