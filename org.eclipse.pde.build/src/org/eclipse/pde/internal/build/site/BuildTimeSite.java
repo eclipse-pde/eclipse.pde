@@ -32,7 +32,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			BuildTimeSiteContentProvider contentProvider = (BuildTimeSiteContentProvider) getSiteContentProvider();
 			MultiStatus problems = new MultiStatus(PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
-			pluginRegistry = CompatibilityPlatform.parsePlugins(contentProvider.getPluginPaths(), factory);
+			pluginRegistry = PluginRegistryModel.parsePlugins(contentProvider.getPluginPaths(), factory);
 			setFragments();
 			if (AbstractScriptGenerator.isBuildingOSGi())
 				setExtraPrerequisites();
