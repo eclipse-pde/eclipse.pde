@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
  * 
  */
@@ -28,6 +29,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	private ElementSection elementSection;
 	private DescriptionSection descriptionSection;
 	private GrammarSection grammarSection;
+	private SchemaPropertySheet propertySheetPage;
 	private IColorManager colorManager=new ColorManager();	
 
 	public SchemaFormPage(PDEFormEditor editor) {
@@ -84,11 +86,12 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		if (schema!=null) schema.removeModelChangedListener(this);
 		super.dispose();
 	}
-/*
-	public void expandTo(Object object) {
-	   elementSection.expandTo(object);
+
+	public IPropertySheetPage getPropertySheetPage() {
+		if (propertySheetPage==null)
+			propertySheetPage = new SchemaPropertySheet();
+		return propertySheetPage;
 	}
-*/
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			ISchema schema = (ISchema) getModel();

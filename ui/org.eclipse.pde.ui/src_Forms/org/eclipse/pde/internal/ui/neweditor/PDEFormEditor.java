@@ -29,17 +29,21 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.ide.*;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
  * A simple multi-page form editor that uses Eclipse Forms support.
  * Example plug-in is configured to create one instance of
  * form colors that is shared between multiple editor instances.
  */
-public abstract class PDEFormEditor extends FormEditor implements IInputContextListener {
+public abstract class PDEFormEditor extends FormEditor implements IInputContextListener, IGotoMarker {
 	private Clipboard clipboard;
 	private Menu contextMenu;
 	protected InputContextManager inputContextManager;
 	private IContentOutlinePage formOutline;
+	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
 	/**
 	 *  
@@ -126,7 +130,9 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
-		updateContentOutline(getActivePageInstance());
+		IFormPage page = getActivePageInstance();
+		updateContentOutline(page);
+		updatePropertySheet(page);
 	}
 	
 	public Clipboard getClipboard() {
@@ -312,6 +318,15 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			section = root.addNewSection("multi-page-editor");
 		return section;
 	}
+	
+	public void gotoMarker(IMarker marker) {
+		IResource resource = marker.getResource();
+		InputContext context = inputContextManager.findContext(resource);
+		if (context==null) return;
+		IFormPage page = setActivePage(context.getId());
+		IDE.gotoMarker(page, marker);
+	}
+	
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);
 		getContributor().updateSelectableActions(selection);
@@ -324,14 +339,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (key.equals(IContentOutlinePage.class)) {
 			return getContentOutline();
 		}
-		/*
 		if (key.equals(IPropertySheetPage.class)) {
 			return getPropertySheet();
 		}
 		if (key.equals(IGotoMarker.class)) {
 			return this;
 		}
-		*/
 		return super.getAdapter(key);
 	}
 	
@@ -345,6 +358,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			updateContentOutline(getActivePageInstance());
 		}
 		return contentOutline;
+	}
+	public PDEMultiPagePropertySheet getPropertySheet() {
+		if (propertySheet == null || propertySheet.isDisposed()) {
+			propertySheet = new PDEMultiPagePropertySheet();
+			updatePropertySheet(getActivePageInstance());
+		}
+		return propertySheet;
 	}
 
 	protected IContentOutlinePage getFormOutline() {
@@ -368,6 +388,18 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			outline = getFormOutline();
 		contentOutline.setPageActive(outline);
 	}
+	
+	void updatePropertySheet(IFormPage page) {
+		if (propertySheet==null) return;
+		if (page instanceof PDEFormPage) {
+			IPropertySheetPage propertySheetPage = ((PDEFormPage)page).getPropertySheetPage();
+			if (propertySheetPage != null) {
+				propertySheet.setPageActive(propertySheetPage);
+			}
+		} else
+			propertySheet.setDefaultPageActive();
+	}
+	
 	/* package */ IFormPage [] getPages() {
 		return (IFormPage[])pages.toArray(new IFormPage[pages.size()]);
 	}

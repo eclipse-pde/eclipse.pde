@@ -141,21 +141,31 @@ public class NewTracingLauncherTab extends AbstractLauncherTab
 	private void createPropertySheetClient(Composite sashForm) {
 		Composite tableChild = new Composite(sashForm, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
 		tableChild.setLayout(layout);
 		fPropertyLabel = new Label(tableChild, SWT.NULL);
 		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		updatePropertyLabel(null);
-		createPropertySheet(tableChild);
+		int margin = createPropertySheet(tableChild);
+		layout.marginWidth = layout.marginHeight = margin;
 	}
-	protected void createPropertySheet(Composite parent) {
+	protected int createPropertySheet(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		pageBook = new ScrolledPageBook(parent, toolkit.getBorderStyle()|SWT.V_SCROLL|SWT.H_SCROLL);
+		int toolkitBorderStyle = toolkit.getBorderStyle();
+		int style = toolkitBorderStyle==SWT.BORDER?SWT.NULL:SWT.BORDER;
+		pageBook = new ScrolledPageBook(parent, style|SWT.V_SCROLL|SWT.H_SCROLL);
 		toolkit.adapt(pageBook, false, false);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 125;
 		pageBook.setLayoutData(gd);
+		if (style==SWT.NULL) {
+			pageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+			toolkit.paintBordersFor(parent);
+		}
+		return style==SWT.NULL?2:0;
+	}
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		pageBook.getParent().getParent().layout(true);
 	}
 	public void dispose() {
 		if (toolkit != null)

@@ -88,7 +88,10 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	}
 	public void commit(boolean onSave) {
 		handleApply();
-		commit(onSave);
+		if (onSave) {
+			resetButton.setEnabled(false);
+		}
+		super.commit(onSave);
 	}
 	public void createClient(
 		Section section,

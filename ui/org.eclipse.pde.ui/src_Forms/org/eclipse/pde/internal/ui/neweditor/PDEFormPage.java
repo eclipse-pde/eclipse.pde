@@ -15,6 +15,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 /**
  * @author dejan
  * 
@@ -107,5 +108,8 @@ public abstract class PDEFormPage extends FormPage {
 			parent = parent.getParent();
 		}
 		return targetSection;
+	}
+	public IPropertySheetPage getPropertySheetPage() {
+		return null;
 	}
 }

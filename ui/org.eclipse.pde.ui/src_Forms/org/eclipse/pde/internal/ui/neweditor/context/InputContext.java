@@ -8,6 +8,7 @@ package org.eclipse.pde.internal.ui.neweditor.context;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -229,5 +230,14 @@ public abstract class InputContext {
 	
 	protected boolean synchronizeModel(IDocument doc) {
 		return true;
+	}
+	public boolean matches(IResource resource) {
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput finput = (IFileEditorInput)input;
+			IFile file = finput.getFile();
+			if (file.equals(resource))
+				return true;
+		}
+		return false;
 	}
 }

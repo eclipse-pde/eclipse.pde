@@ -505,7 +505,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		String text = sobj.getDescription();
 		if (text != null)
 			text = text.trim();
-		if (text != null && text.length() > 0) {
+		if (text != null && text.length() > 0 && text.charAt(0)!='[') {
 			// complete
 			flags = F_EDIT;
 		}

@@ -85,6 +85,15 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		}
 		return null;
 	}
+	public InputContext findContext(IResource resource) {
+		for (Enumeration enum = inputContexts.elements(); enum
+		.hasMoreElements();) {
+			InputContext context = (InputContext) enum.nextElement();
+			if (context.matches(resource))
+				return context;
+		}
+		return null;
+	}
 	public IBaseModel getAggregateModel() {
 		return null;
 	}

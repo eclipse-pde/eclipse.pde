@@ -151,7 +151,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	}
 	
 	protected IContentOutlinePage createContentOutline() {
-		return null;//return new SiteOutlinePage(this);
+		return new SchemaFormOutlinePage(this);
 	}
 	public void doRevert() {
 		/*

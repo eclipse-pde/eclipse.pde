@@ -156,6 +156,7 @@ public class NewTracingPropertySource {
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
+		boolean bordersNeeded=false;
 		Object[] sortedKeys = getSortedKeys(fTemplate.size(), fTemplate.keys());
 		for (int i = 0; i < sortedKeys.length; i++) {
 			String key = (String) sortedKeys[i];
@@ -185,10 +186,13 @@ public class NewTracingPropertySource {
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}
+				bordersNeeded=true;
 			}
 			editor.create(parent);
 			editor.initialize();
 			fDescriptors.add(editor);
+			if (bordersNeeded)
+				fTab.getToolkit().paintBordersFor(parent);
 		}
 	}
 

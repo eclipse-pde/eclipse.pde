@@ -16,14 +16,13 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.PDESection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
@@ -31,10 +30,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.Section;
 
 public class DocSection extends PDESection {
 	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title";
@@ -84,6 +82,7 @@ public class DocSection extends PDESection {
 		if (onSave) {
 			resetButton.setEnabled(false);
 		}
+		super.commit(onSave);
 	}
 	public void createClient(
 		Section section,
@@ -111,7 +110,7 @@ public class DocSection extends PDESection {
 		gd.horizontalSpan = 2;
 		gd.heightHint = tabFolder.getTabHeight();
 		tabFolder.setLayoutData(gd);
-		toolkit.allocateSectionTitleBarColors();
+		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
 		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
 		tabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
@@ -274,12 +273,14 @@ public class DocSection extends PDESection {
 				 ((Schema) element).setDescription(document.get());
 			else
 				 ((SchemaObject) element).setDescription(document.get());
+			updateTabImage(tabFolder.getSelection());
 		}
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 	}
 	private void handleReset() {
 		updateEditorInput(element);
+		updateTabImage(tabFolder.getSelection());		
 	}
 	public void initialize() {
 		sourceViewer.setEditable(schema.isEditable());
@@ -305,16 +306,26 @@ public class DocSection extends PDESection {
 
 	private void createTabs() {
 		IDocumentSection[] sections = schema.getDocumentSections();
-		addTab(getTopicName(schema));
+		addTab(schema);
 		for (int i = 0; i < sections.length; i++) {
 			IDocumentSection section = sections[i];
-			addTab(getTopicName(section));
+			addTab(section);
 		}
 	}
 	
-	private void addTab(String label) {
+	private void addTab(ISchemaObject section) {
+		String label = getTopicName(section);
 		CTabItem item = new CTabItem(tabFolder, SWT.NULL);
-		item.setText(" "+label+" ");
+		item.setText(label);
+		item.setData(section);
+		updateTabImage(item);
+	}
+
+	private void updateTabImage(CTabItem item) {
+		if (item==null) return;
+		ISchemaObject section = (ISchemaObject)item.getData();
+		if (section==null) return;
+		item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(section));
 	}
 
 	private void updateTabSelection() {

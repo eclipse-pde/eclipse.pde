@@ -51,7 +51,7 @@ public class ElementSection extends TreeSection {
 		"SchemaEditor.ElementSection.newAttribute";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	//private PropertiesAction propertiesAction;
+	private PropertiesAction propertiesAction;
 
 	class ContentProvider
 		extends DefaultContentProvider
@@ -94,7 +94,7 @@ public class ElementSection extends TreeSection {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createTree(container, toolkit);
 		toolkit.paintBordersFor(container);
-		//propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		propertiesAction = new PropertiesAction(getPage().getPDEEditor());
 		section.setClient(container);
 		initialize();
 	}
@@ -169,12 +169,15 @@ public class ElementSection extends TreeSection {
 		}
 		return false;
 	}
-	public void expandTo(Object object) {
+	public boolean setFormInput(Object object) {
 		if (object instanceof ISchemaElement
 			|| object instanceof ISchemaAttribute) {
 			treeViewer.setSelection(new StructuredSelection(object), true);
+			return true;
 		}
+		return false;
 	}
+	
 	protected void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = treeViewer.getSelection();
 		final Object object =
@@ -219,7 +222,7 @@ public class ElementSection extends TreeSection {
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
-		//manager.add(propertiesAction);
+		manager.add(propertiesAction);
 	}
 
 	private void handleDelete(IStructuredSelection selection) {
@@ -407,6 +410,6 @@ public class ElementSection extends TreeSection {
 		return true;
 	}
 	protected void handleDoubleClick(IStructuredSelection selection) {
-		//propertiesAction.run();
+		propertiesAction.run();
 	}
 }
