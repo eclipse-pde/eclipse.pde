@@ -187,7 +187,7 @@ public class JarManifestErrorReporter {
 					report(
 							PDE
 									.getResourceString("BundleErrorReporter.lineTooLong"), //$NON-NLS-1$
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.WARNING);
 					return;
 				}
 				// parse
