@@ -40,14 +40,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginPathUpdater;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-/**
- * @author wassimm
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
+
+
 public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 	
 	private static final String KEY_DEPENDENCY = "DependencyExtent.singular";
@@ -77,8 +71,9 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 			IJavaElement enclosingElement,
 			int accuracy)
 			throws CoreException {
-			if (accuracy == IJavaSearchConstants.EXACT_MATCH)	
-				result.add(enclosingElement);
+			if (accuracy == IJavaSearchConstants.EXACT_MATCH) {
+				result.add(enclosingElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT));
+			}
 		}
 	
 		public void aboutToStart() {
@@ -134,17 +129,21 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 	}
 
 	private void findExtensionPoints(IProgressMonitor monitor) {
+		HashSet ids = new HashSet();
 		IPluginExtension[] extensions = object.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
-			IPluginExtensionPoint point = getExtensionPoint(extensions[i].getPoint());
-			if (point != null) {
-				resultCollector.accept(point);
+			if (ids.add(extensions[i].getPoint())) {
+				IPluginExtensionPoint point =
+					getExtensionPoint(extensions[i].getPoint());
+				if (point != null) {
+					resultCollector.accept(point);
+				}
 			}
 		}
 		monitor.worked(1);
 	}
 	
-	private IPluginExtensionPoint getExtensionPoint(String targetId) {				
+	private IPluginExtensionPoint getExtensionPoint(String targetId) {
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtensionPoint[] extPoints = models[i].getExtensionPoints();
 			for (int j = 0; j < extPoints.length; j++) {
@@ -160,49 +159,69 @@ public class DependencyExtentSearchOperation extends WorkspaceModifyOperation {
 	private void doJavaSearch(IProgressMonitor monitor)
 		throws JavaModelException {
 		SearchEngine searchEngine = new SearchEngine();
-		
+		IJavaSearchScope scope = getSearchScope();
+
 		for (int i = 0; i < packageFragments.length; i++) {
 			IPackageFragment packageFragment = packageFragments[i];
-			SearchResultCollector collector = new SearchResultCollector(monitor);
-			searchEngine.search(
-				PDEPlugin.getWorkspace(),
-				SearchEngine.createSearchPattern(
-					packageFragment.getElementName() + ".*",
-					IJavaSearchConstants.TYPE,
-					IJavaSearchConstants.REFERENCES,
-					true),
-				getSearchScope(),
-				collector);
-			IJavaElement[] enclosingElements = collector.getResult();
-			if (enclosingElements.length > 0) {
-				IJavaElement[] children = packageFragment.getChildren();
-				for (int j = 0; j < children.length; j++) {
-					IType type = null;
-					if (children[j] instanceof IClassFile) 
-						type = ((IClassFile)children[j]).getType();
-					else if (children[j] instanceof ICompilationUnit) 
-						type = ((ICompilationUnit)children[j]).getTypes()[0];
-					
-					if (type == null)
-						continue;
-					SearchResultCollector collector2 =
-						new SearchResultCollector(monitor);
-					searchEngine.search(
-						PDEPlugin.getWorkspace(),
-						SearchEngine.createSearchPattern(
-							type,
-							IJavaSearchConstants.REFERENCES),
+			if (!packageFragment.hasSubpackages()) {
+				SearchResultCollector collector =
+					new SearchResultCollector(monitor);
+				searchEngine.search(
+					PDEPlugin.getWorkspace(),
+					SearchEngine.createSearchPattern(
+						packageFragment.getElementName() + ".*",
+						IJavaSearchConstants.TYPE,
+						IJavaSearchConstants.REFERENCES,
+						true),
+					scope,
+					collector);
+				IJavaElement[] enclosingElements = collector.getResult();
+				if (enclosingElements.length > 0) {
+					searchForTypes(
+						packageFragment,
+						searchEngine,
 						SearchEngine.createJavaSearchScope(enclosingElements),
-						collector2);
-					if (collector2.getResult().length > 0) {
-						resultCollector.accept(type);
-					}
+						monitor);
 				}
+			} else {
+				searchForTypes(packageFragment, searchEngine, scope, monitor);
 			}
 			monitor.worked(1);
 		}
 	}
 	
+
+	private void searchForTypes(
+		IPackageFragment fragment,
+		SearchEngine searchEngine,
+		IJavaSearchScope scope,
+		IProgressMonitor monitor)
+		throws JavaModelException {
+		IJavaElement[] children = fragment.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			IJavaElement child = children[i];
+			IType[] types = new IType[0];
+			if (child instanceof IClassFile)
+				types = new IType[] {((IClassFile) child).getType()};
+			else if (child instanceof ICompilationUnit)
+				types = ((ICompilationUnit) child).getAllTypes();
+
+			for (int j = 0; j < types.length; j++) {
+				SearchResultCollector collector =
+					new SearchResultCollector(monitor);
+				searchEngine.search(
+					PDEPlugin.getWorkspace(),
+					SearchEngine.createSearchPattern(
+						types[j],
+						IJavaSearchConstants.REFERENCES),
+					scope,
+					collector);
+				if (collector.getResult().length > 0) {
+					resultCollector.accept(types[j]);
+				}
+			}
+		}
+	}
 
 	private void collectPackageFragments() throws JavaModelException {
 		ArrayList result = new ArrayList();
