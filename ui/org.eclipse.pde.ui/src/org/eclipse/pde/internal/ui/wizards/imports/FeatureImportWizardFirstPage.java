@@ -159,6 +159,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 	private void updateStatus() {
 		validateDropLocation();
 		updateStatus(dropLocationStatus);
+		/*
 		if (dropLocationStatus.getSeverity() == IStatus.OK
 			&& !runtimeLocationButton.getSelection()
 			&& !new Path(dropLocation.getText()).equals(
@@ -168,6 +169,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 					IStatus.INFO,
 					PDEPlugin.getResourceString(KEY_SOURCE_REMINDER)));
 		}
+		*/
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {
@@ -285,7 +287,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 			}
 
 			File file = curr.toFile();
-			if (!file.isDirectory()) {
+			if (!file.exists() || !file.isDirectory()) {
 				dropLocationStatus =
 					createStatus(
 						IStatus.ERROR,

@@ -13,13 +13,12 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -51,7 +50,6 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_NO_SELECTED =
 		"FeatureImportWizard.errors.noFeatureSelected";
 	private IFeatureModel[] models;
-	private boolean loadFromRegistry;
 	private boolean block;
 
 	public class FeatureContentProvider
@@ -140,7 +138,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	public FeatureImportWizardDetailedPage(FeatureImportWizardFirstPage firstPage) {
-		super("PluginImportWizardDetailedPage", false);
+		super("FeatureImportWizardDetailedPage", false);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 
@@ -161,21 +159,10 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		boolean oldLoadFromRegistry = loadFromRegistry;
-
-		loadFromRegistry = !firstPage.isOtherLocation();
-
-		if (loadFromRegistry) {
-			if (!oldLoadFromRegistry)
-				models = null;
-			this.dropLocation = null;
+		if (!dropLocation.equals(this.dropLocation)) {
 			updateStatus(createStatus(IStatus.OK, ""));
-		} else {
-			if (!dropLocation.equals(this.dropLocation)) {
-				updateStatus(createStatus(IStatus.OK, ""));
-				this.dropLocation = dropLocation;
-				models = null;
-			}
+			this.dropLocation = dropLocation;
+			models = null;
 		}
 		if (models == null) {
 			getModels(); // force loading
@@ -190,8 +177,8 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 						.asyncExec(new Runnable() {
 						public void run() {
 							featureTreeViewer.setInput(PDEPlugin.getDefault());
-							featureTreeViewer.setCheckedElements(getModels());
-
+							if (getModels()!=null)
+								featureTreeViewer.setCheckedElements(getModels());
 						}
 					});
 					monitor.done();
@@ -202,6 +189,9 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
+			}
+			finally {
+				dialogChanged();
 			}
 			//treePart.updateCounter(0);
 		}
@@ -258,11 +248,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 			return models;
 
 		final ArrayList result = new ArrayList();
-		final IPath home;
-		if (loadFromRegistry) {
-			home = ExternalModelManager.getEclipseHome(null);
-		} else
-			home = dropLocation;
+		final IPath home = dropLocation;
 		if (home != null) {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
@@ -316,6 +302,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		File path,
 		IProgressMonitor monitor)
 		throws CoreException {
+		if (path==null) return null;
 		File[] dirs = path.listFiles();
 		monitor.beginTask("Loading...", dirs.length);
 		ArrayList resultStatus = new ArrayList();
