@@ -43,7 +43,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		String location = generator.getLocation(model);
 
 		//PARENT
-		if (! generator.isBuildingOSGi() || (generator.isBuildingOSGi() && !generator.hasManifest()) )
+		if (! AbstractScriptGenerator.isBuildingOSGi() || (AbstractScriptGenerator.isBuildingOSGi() && !generator.hasManifest()) )
 			addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
@@ -303,7 +303,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 	private void addPrerequisites(PluginModel target, List classpath, String baseLocation, List pluginChain) throws CoreException {
 
 		if (pluginChain.contains(target)) {
-			if (generator.isBuildingOSGi()) {
+			if (AbstractScriptGenerator.isBuildingOSGi()) {
 				if (target == getPlugin(PI_RUNTIME, null) || target == getPlugin("org.eclipse.osgi", null) || target == getPlugin("org.eclipse.core.runtime.osgi", null)) //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 			} else {
@@ -316,7 +316,7 @@ public class ClasspathComputer implements IPDEBuildConstants, IXMLConstants {
 		}
 
 		//	The first prerequisite is ALWAYS runtime unless we are building pure osgi bundle (osgi flag but no manifest)
-		if ( (!generator.isBuildingOSGi() || (generator.isBuildingOSGi() && !generator.hasManifest() )) && (target != getPlugin(PI_RUNTIME, null) && target != getPlugin("org.eclipse.core.runtime.osgi", null) && target != getPlugin("org.eclipse.osgi", null) && target != getPlugin("org.eclipse.core.runtime.compatibility", null)) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if ( (!AbstractScriptGenerator.isBuildingOSGi() || (AbstractScriptGenerator.isBuildingOSGi() && !generator.hasManifest() )) && (target != getPlugin(PI_RUNTIME, null) && target != getPlugin("org.eclipse.core.runtime.osgi", null) && target != getPlugin("org.eclipse.osgi", null) && target != getPlugin("org.eclipse.core.runtime.compatibility", null)) ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain);
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
