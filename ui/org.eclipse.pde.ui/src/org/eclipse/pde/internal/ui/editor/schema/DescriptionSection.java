@@ -13,6 +13,7 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -195,8 +196,14 @@ public class DescriptionSection extends PDEFormSection {
 			manager);
 	}
 	private void handleApply() {
-		if (element != null)
+		if (element != null) {
+			if (element == schema) {
+				((Schema)schema).setDescription(document.get());
+			}
+			else {
 			 ((SchemaObject) element).setDescription(document.get());
+			}
+		}
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
 	}
@@ -205,6 +212,8 @@ public class DescriptionSection extends PDEFormSection {
 	}
 	public void initialize(Object input) {
 		schema = (ISchema) input;
+		element = schema;
+		updateDocument();
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
 				if (!ignoreChange && schema instanceof IEditable) {
