@@ -497,7 +497,7 @@ public class ClasspathUtilCore {
 				}
 			}
 			if (list.size() == 0)
-				return new IPath[] {new Path("**/*")};
+				return new IPath[] {new Path("**/*")}; //$NON-NLS-1$
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {

@@ -31,6 +31,7 @@ public class PluginJavaSearchUtil {
 		collectAllPrerequisites(PDECore.getDefault().findPlugin(pluginImportID), set);
 		return (IPlugin[]) set.toArray(new IPlugin[set.size()]);
 	}
+	
 	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {
 		if (plugin == null || !set.add(plugin))
 			return;
@@ -67,13 +68,14 @@ public class PluginJavaSearchUtil {
 		IPackageFragmentRoot[] roots = parentProject.getAllPackageFragmentRoots();
 
 		for (int i = 0; i < plugins.length; i++) {
-			IPluginBase preReq = plugins[i];
-			IResource resource = preReq.getModel().getUnderlyingResource();
+			IPluginModelBase model = (IPluginModelBase)plugins[i].getModel();
+			IResource resource = model.getUnderlyingResource();
 			if (resource == null) {
-				ArrayList libraryPaths = getLibraryPaths(preReq);
+				ArrayList libraryPaths = new ArrayList();
+				addLibraryPaths(model, libraryPaths);
 				for (int j = 0; j < roots.length; j++) {
 					if (libraryPaths.contains(roots[j].getPath())) {
-						extractFragments(roots[j], result);
+						extractPackageFragments(roots[j], result);
 					}
 				}
 			} else {
@@ -81,16 +83,15 @@ public class PluginJavaSearchUtil {
 				for (int j = 0; j < roots.length; j++) {
 					IJavaProject jProject = (IJavaProject) roots[j].getParent();
 					if (jProject.getProject().equals(project)) {
-						extractFragments(roots[j], result);
+						extractPackageFragments(roots[j], result);
 					}
 				}
 			}
 		}
 		return (IPackageFragment[]) result.toArray(new IPackageFragment[result.size()]);
-
 	}
 
-	private static void extractFragments(IPackageFragmentRoot root, ArrayList result) {
+	private static void extractPackageFragments(IPackageFragmentRoot root, ArrayList result) {
 		try {
 			IJavaElement[] children = root.getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -102,24 +103,35 @@ public class PluginJavaSearchUtil {
 		}
 	}
 
-	private static ArrayList getLibraryPaths(IPluginBase plugin) {
-		ArrayList libraryPaths = new ArrayList();
-		IFragment[] fragments =
-			PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
+	private static void addLibraryPaths(IPluginModelBase model, ArrayList libraryPaths) {
+		IPluginBase plugin = model.getPluginBase();
+		
+		IFragment[] fragments = new IFragment[0];
+		if (plugin instanceof IPlugin)
+			fragments = PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
 
-		IPluginLibrary[] libraries = plugin.getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			String libraryName =
-				ClasspathUtilCore.expandLibraryName(libraries[i].getName());
-			String path =
-				plugin.getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
-			if (new File(path).exists()) {
-				libraryPaths.add(new Path(path));
-			} else {
-				findLibraryInFragments(fragments, libraryName, libraryPaths);
+		File file = new File(model.getInstallLocation());
+		if (file.isFile()) {
+			libraryPaths.add(new Path(file.getAbsolutePath()));
+		} else {
+			IPluginLibrary[] libraries = plugin.getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				String libraryName =
+					ClasspathUtilCore.expandLibraryName(libraries[i].getName());
+				String path =
+					plugin.getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
+				if (new File(path).exists()) {
+					libraryPaths.add(new Path(path));
+				} else if (model instanceof IPluginModelBase){
+					findLibraryInFragments(fragments, libraryName, libraryPaths);
+				}
 			}
 		}
-		return libraryPaths;
+		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
+			for (int i = 0; i < fragments.length; i++) {
+				addLibraryPaths((IPluginModelBase)fragments[i].getModel(), libraryPaths);
+			}
+		}
 	}
 
 	private static void findLibraryInFragments(

@@ -125,7 +125,7 @@ public class DependencyExtentSearchResultPage extends
 					public void run() {
 						DependencyExtentQuery query = (DependencyExtentQuery)getInput().getQuery();
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-						IWorkingSet set = manager.createWorkingSet("temp", query.getDirectRoots());
+						IWorkingSet set = manager.createWorkingSet("temp", query.getDirectRoots()); //$NON-NLS-1$
 						new FindReferencesInWorkingSetAction(getViewPart().getSite(), new IWorkingSet[] {set}).run((IType)object);
 						manager.removeWorkingSet(set);
 					}
