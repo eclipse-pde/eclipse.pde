@@ -11,8 +11,13 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
+import java.util.*;
 
+import org.eclipse.ant.internal.ui.launchConfigurations.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -103,11 +108,41 @@ public abstract class BaseExportWizard
 			dir.mkdirs();
 		
 		try {
-			PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, buildFilename)));
+			File buildFile = new File(dir, buildFilename);
+			PrintWriter writer = new PrintWriter(new FileWriter(buildFile));
 			generateAntTask(writer);
 			writer.close();
+			setDefaultValues(dir, buildFilename);				
 		} catch (IOException e) {
 		}
+	}
+	
+	private void setDefaultValues(File dir, String buildFilename) {
+		try {
+			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(dir.toString()));
+			if (container != null && container.exists()) {
+				container.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+				IFile file = container.getFile(new Path(buildFilename));
+				List configs = AntLaunchShortcut.findExistingLaunchConfigurations(file);
+				ILaunchConfigurationWorkingCopy launchCopy;
+				if (configs.size() == 0) {
+					ILaunchConfiguration config = AntLaunchShortcut.createDefaultLaunchConfiguration(file);
+					launchCopy = config.getWorkingCopy();
+				} else {
+					launchCopy = ((ILaunchConfiguration) configs.get(0)).getWorkingCopy();
+				}
+				if (launchCopy != null) {
+					launchCopy.setAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME,
+							(String) null);
+					launchCopy.setAttribute(
+							IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE,
+							(String) null);
+					launchCopy.doSave();				
+				}
+			}
+		} catch (CoreException e) {
+		}		
 	}
 		
 	protected abstract void generateAntTask(PrintWriter writer);
