@@ -10,14 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.core.resources.*;
 
 public class ResourceAttributeCellEditor extends DialogCellEditor {
+	class ContentProvider extends WorkbenchContentProvider {
+		public boolean hasChildren(Object element) {
+			Object[] children = getChildren(element);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof IFolder) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+	}
 	public static final String TITLE = "ManifestEditor.ResourceAttributeCellEditor.title";
 	private Label label;
 
@@ -33,17 +47,35 @@ protected Control createContents(Composite cell) {
 }
 protected Object openDialogBox(Control cellEditorWindow) {
 	ResourceAttributeValue value = (ResourceAttributeValue) getValue();
-	IProject project = value.getProject();
+	final IProject project = value.getProject();
 
-	ResourceSelectionDialog dialog =
-		new ResourceSelectionDialog(
+	ElementTreeSelectionDialog dialog =
+		new ElementTreeSelectionDialog(
 			PDEPlugin.getActiveWorkbenchShell(),
-			project,
-			PDEPlugin.getResourceString(TITLE));
-	int result = dialog.open();
-	if (result == ResourceSelectionDialog.OK) {
-		Object[] resources = dialog.getResult();
-		IResource resource = (IResource) resources[0];
+			new WorkbenchLabelProvider(),
+			new ContentProvider());
+	dialog.setInput(project.getWorkspace());
+	
+	dialog.addFilter(new ViewerFilter() {
+		
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof IFile) {
+				String extension = ((IFile) element).getFileExtension();
+				if (extension == null)
+					return false;
+				return (extension.equals("bmp") || extension.equals("gif") || extension.equals("ico") || extension.equals("jpeg") || extension.equals("png"));
+			} 
+			if (element instanceof IProject)
+				return ((IProject)element).equals(project);
+			return true;
+		}
+	});
+	dialog.setAllowMultiple(false);
+	dialog.setTitle(PDEPlugin.getResourceString(TITLE));
+	dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ResourceAttributeCellEditor.message"));
+
+	if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		IResource resource = (IResource) dialog.getResult()[0];
 		if (resource instanceof IFile) {
 			String stringValue = resource.getProjectRelativePath().toString();
 			return new ResourceAttributeValue(project, stringValue);

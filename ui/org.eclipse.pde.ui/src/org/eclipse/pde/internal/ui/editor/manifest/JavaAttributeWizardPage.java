@@ -519,11 +519,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 				return;
 			IFolder folder = (IFolder) result[0];
 			containerText.setText(
-				folder
-					.getFullPath()
-					.removeFirstSegments(1)
-					.addTrailingSeparator()
-					.toString());
+				folder.getProjectRelativePath().addTrailingSeparator().toString());
 			containerBrowse.setFocus();
 
 		}

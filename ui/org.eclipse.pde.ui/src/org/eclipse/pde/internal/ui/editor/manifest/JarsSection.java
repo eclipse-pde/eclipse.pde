@@ -236,11 +236,7 @@ public class JarsSection
 				return;
 			IFolder folder = (IFolder) result;
 			String folderPath =
-				folder
-					.getFullPath()
-					.removeFirstSegments(1)
-					.addTrailingSeparator()
-					.toString();
+				folder.getProjectRelativePath().addTrailingSeparator().toString();
 			try {
 				IBuildModel buildModel = model.getBuildModel();
 				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
