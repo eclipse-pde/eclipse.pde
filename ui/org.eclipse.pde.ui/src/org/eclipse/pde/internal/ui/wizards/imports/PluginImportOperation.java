@@ -115,10 +115,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			
 			File file = new File(model.getInstallLocation());
 			if (file.isFile()) {
-				//if (fImportType != IMPORT_WITH_SOURCE)
+				if (fImportType != IMPORT_WITH_SOURCE)
 					importJARdPlugin(file, project, model, new SubProgressMonitor(monitor, 4));
-				//else
-					//importJARdPluginWithSource(file, project, model, new SubProgressMonitor(monitor, 4));
+				else
+					importJARdPluginWithSource(file, project, model, new SubProgressMonitor(monitor, 4));
 			} else {
 				switch (fImportType) {
 					case IMPORT_BINARY :
@@ -181,9 +181,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 1));
 			IPath srcPath = getJARdPluginSrcPath(project);
 			if (srcPath == null) {
-				IPath path = ClasspathUtilCore.getSourceAnnotation(model, ".");
-				if (path != null) {
-					importArchive(project, path.toFile(), new Path("src.zip"));
+				srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".");
+				if (srcPath != null) {
+					importArchive(project, srcPath.toFile(), new Path("src.zip"));
 					monitor.worked(1);
 				}
 			}
@@ -195,7 +195,26 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private void importJARdPluginWithSource(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) {
+	private void importJARdPluginWithSource(File file, IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2);
+		fBuildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
+		IBuild build = fBuildModel.getBuild(true);
+		IBuildEntry entry = fBuildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+		entry.addToken("*");
+		
+		IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".");
+		if (srcPath != null) {
+			extractZipFile(srcPath.toFile(), project.getFullPath(), new SubProgressMonitor(monitor, 1));
+		}
+		extractResources(file, project, false, new SubProgressMonitor(monitor, 1));
+		
+		if (srcPath != null) {
+			entry = fBuildModel.getFactory().createEntry("source.."); //$NON-NLS-1$
+			entry.addToken("*");
+			build.add(entry);
+		}
+		fBuildModel.save();		
+	
 	}
 
 	private IPath getJARdPluginSrcPath(IProject project) {
@@ -294,7 +313,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						dest.create(true, true, null);
 					}
 					extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), monitor);
-					extractResources(jarFile, dest, monitor);
+					extractResources(jarFile.getLocation().toFile(), dest, true, monitor);
 					srcZip.delete(true, null);
 					jarFile.delete(true, null);
 				}
@@ -477,14 +496,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void extractResources(IResource res, IFolder dest, IProgressMonitor monitor)
+	private void extractResources(File file, IResource dest, boolean excludeMetaFolder, IProgressMonitor monitor)
 		throws CoreException {
 		ZipFile zipFile = null;
 		try {
-			zipFile = new ZipFile(res.getLocation().toFile());
+			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList collected = new ArrayList();
-			collectResources(provider, provider.getRoot(), collected);
+			collectResources(provider, provider.getRoot(), excludeMetaFolder, collected);
 
 			importContent(
 				provider.getRoot(),
@@ -514,14 +533,15 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	private void collectResources(
 		ZipFileStructureProvider provider,
 		Object element,
+		boolean excludeMetaFolder,
 		ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
-					if (!provider.getLabel(curr).equals("META-INF")) { //$NON-NLS-1$
-						collectResources(provider, curr, collected);
+					if (!excludeMetaFolder || !provider.getLabel(curr).equals("META-INF")) { //$NON-NLS-1$
+						collectResources(provider, curr, excludeMetaFolder, collected);
 					}					
 				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
 					collected.add(curr);
@@ -559,9 +579,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IJavaProject jProject = JavaCore.create(project);
 		Vector entries = new Vector();
 		if (new File(model.getInstallLocation()).isFile()) {
-			IClasspathEntry entry = JavaCore.newLibraryEntry(project.getFullPath(), getJARdPluginSrcPath(project), null, true);
-			if (!entries.contains(entry))
-				entries.add(entry);
+			if (fBuildModel != null && fBuildModel.getBuild().getEntry("source..") != null)
+				entries.add(JavaCore.newSourceEntry(project.getFullPath()));
+			else
+				entries.add(JavaCore.newLibraryEntry(project.getFullPath(), getJARdPluginSrcPath(project), null, true));
 		} else if (fImportType == IMPORT_BINARY_WITH_LINKS) {
 			getLinkedLibraries(project, model, entries);
 		} else {
