@@ -28,6 +28,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		"Builders.versionFormat";
 
 	private boolean javaDelta = false;
+	private IProject [] interestingProjects;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -65,6 +66,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
+			
+		interestingProjects = null;
 
 		IProject project = getProject();
 
@@ -92,9 +95,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		} else {
 			processDelta(delta, monitor);
 		}
-		return null;
+		return interestingProjects;
 	}
-
+	
 	private void processDelta(IResourceDelta delta, IProgressMonitor monitor)
 		throws CoreException {
 		javaDelta = false;
@@ -121,6 +124,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		ManifestParser parser = new ManifestParser(reporter);
 		parser.parse(file);
+
 		if (reporter.getErrorCount() == 0) {
 			if (isFragment(file)) {
 				validateFragment(file, reporter);
@@ -131,6 +135,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
+	
 	private boolean isFragment(IFile file) {
 		String name = file.getName().toLowerCase();
 		return name.equals("fragment.xml");
@@ -161,11 +166,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validatePlugin(IFile file, PluginErrorReporter reporter) {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
+		
 		if (model.isLoaded()) {
 			// Test the version
 			IPlugin plugin = model.getPlugin();
 			validateVersion(plugin, reporter);
 			validateValues(plugin, reporter);
+			computeInterestingProjects(model);
 		}
 		model.dispose();
 	}
@@ -173,6 +180,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateFragment(IFile file, PluginErrorReporter reporter) {
 		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
 		model.load();
+
 		if (model.isLoaded()) {
 			// Test the version
 			// Test if plugin exists
@@ -196,8 +204,35 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				reporter.reportError(message, line);
 			}
 			validateValues(fragment, reporter);
+			computeInterestingProjects(model);
 		}
 		model.dispose();
+	}
+	
+	private void computeInterestingProjects(IPluginModelBase model) {
+		IPluginBase plugin = model.getPluginBase();
+		if (plugin==null) return;
+		PluginModelManager modelManager = PDECore.getDefault().getModelManager();
+		ArrayList projects = new ArrayList();
+		// Add all projects for imported plug-ins that
+		// are in the workspace
+		IPluginImport [] iimports = plugin.getImports();
+		for (int i=0; i<iimports.length; i++) {
+			IPluginImport iimport = iimports[i];
+			IPluginModelBase importModel = modelManager.findPlugin(iimport.getId(), iimport.getVersion(), iimport.getMatch());
+			if (importModel!=null && importModel.getUnderlyingResource()!=null)
+				projects.add(importModel.getUnderlyingResource().getProject());
+		}
+		// If fragment, also add the referenced plug-in
+		// if in the workspace 
+		if (model.isFragmentModel()) {
+			IFragment fragment = (IFragment)plugin;
+			IPluginModelBase refPlugin = modelManager.findPlugin(fragment.getPluginId(),
+			fragment.getPluginVersion(), fragment.getRule());
+			if (refPlugin!=null && refPlugin.getUnderlyingResource()!=null)
+				projects.add(refPlugin.getUnderlyingResource().getProject());
+		}
+		interestingProjects = (IProject[])projects.toArray(new IProject[projects.size()]);
 	}
 
 	private void validateVersion(
