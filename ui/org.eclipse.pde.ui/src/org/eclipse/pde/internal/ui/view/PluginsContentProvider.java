@@ -103,6 +103,12 @@ public class PluginsContentProvider
 				int kind = delta.getKind();
 				if (viewer.getTree().isDisposed())
 					return;
+				if ((kind & PluginModelDelta.CHANGED) !=0) {
+					// Don't know exactly what change - 
+					// the safest way out is to refresh
+					viewer.refresh();
+					return;
+				}
 				if ((kind & PluginModelDelta.ADDED) != 0) {
 					ModelEntry[] added = delta.getAddedEntries();
 					for (int i = 0; i < added.length; i++) {
@@ -113,15 +119,6 @@ public class PluginsContentProvider
 				if ((kind & PluginModelDelta.REMOVED) != 0) {
 					ModelEntry[] removed = delta.getRemovedEntries();
 					viewer.remove(removed);
-				}
-				if ((kind & PluginModelDelta.CHANGED) != 0) {
-					ModelEntry[] changed = delta.getChangedEntries();
-					for (int i = 0; i < changed.length; i++) {
-						if (isVisible(changed[i]))
-							viewer.refresh(changed[i]);
-						else
-							viewer.remove(changed[i]);
-					}
 				}
 			}
 		});

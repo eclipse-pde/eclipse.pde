@@ -281,9 +281,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IFragment fragment) {
+		return getObjectImage(fragment, false);
+	}
+	
+	public Image getObjectImage(IFragment fragment, boolean checkEnabled) {
 		IPluginModelBase model = fragment.getModel();
 		int flags = getModelFlags(model);
-		return get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
+		ImageDescriptor desc = PDEPluginImages.DESC_FRAGMENT_OBJ;
+		if (checkEnabled && model.isEnabled() == false)
+			desc = PDEPluginImages.DESC_EXT_FRAGMENT_OBJ;
+		return get(desc, flags);
 	}
 
 	private Image getObjectImage(ImportObject iobj) {

@@ -72,6 +72,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif");
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif");
 	public static final ImageDescriptor DESC_EXT_PLUGIN_OBJ   = create(PATH_OBJ, "ext_plugin_obj.gif");
+	public static final ImageDescriptor DESC_EXT_FRAGMENT_OBJ   = create(PATH_OBJ, "external_frgmt_obj.gif");
 	public static final ImageDescriptor DESC_EXT_POINTS_OBJ   = create(PATH_OBJ, "ext_points_obj.gif");
 	public static final ImageDescriptor DESC_EXT_POINT_OBJ   = create(PATH_OBJ, "ext_point_obj.gif");
 	public static final ImageDescriptor DESC_GEL_SC_OBJ    = create(PATH_OBJ, "gel_sc_obj.gif");
