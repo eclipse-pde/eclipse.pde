@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.*;
-import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -29,7 +29,7 @@ import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.pde.ui.IExtensionEditorWizard;
+import org.eclipse.pde.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
@@ -594,8 +594,14 @@ public class ExtensionsSection extends TreeSection
 		}
 		return elementImage;
 	}
+	
+	private static boolean isStorageModel(IPluginObject object) {
+		IPluginModelBase modelBase = object.getPluginModel();
+		return modelBase.getInstallLocation()==null;
+	}
+	
 	static Image getCustomImage(IPluginElement element) {
-		if (isStorageModel(element)) return null;
+		if (isStorageModel(element))return null;
 		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
@@ -611,34 +617,21 @@ public class ExtensionsSection extends TreeSection
 		}
 		return null;
 	}
-	private static boolean isStorageModel(IPluginObject object) {
-		IPluginModelBase modelBase = object.getPluginModel();
-		return modelBase.getInstallLocation()==null;
-	}
 	
 	private static Image getImageFromPlugin(IPluginElement element,
 			String iconPathName) {
-		IPluginModelBase model = element.getPluginModel();
-		if (model == null)
-			return null;
 		// 39283 - ignore icon paths that
 		// point at plugin.properties
 		if (iconPathName.startsWith("%")) //$NON-NLS-1$
 			return null;
-		URL modelURL = null;
-		String path = model.getInstallLocation();
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			IPath realPath = resource.getLocation().removeLastSegments(1);
-			path = realPath.toOSString();
-		}
+
+		IPluginModelBase model = element.getPluginModel();
+		if (model == null)
+			return null;
 		try {
-			if (!path.startsWith("file:")) //$NON-NLS-1$
-				path = "file:" + path; //$NON-NLS-1$
-			modelURL = new URL(path + File.separator);
 			return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(
-					modelURL, iconPathName);
-		} catch (MalformedURLException e) {
+					model.getResourceURL(iconPathName));
+		} catch (IOException e) {
 			return null;
 		}
 	}

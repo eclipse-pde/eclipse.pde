@@ -9,33 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.io.File;
+import java.io.*;
+import java.util.zip.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.ui.views.properties.*;
+
 public class ManifestEditor extends MultiSourceEditor {
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
@@ -205,14 +200,21 @@ public class ManifestEditor extends MultiSourceEditor {
 			pluginFile = new File(dir, "fragment.xml"); //$NON-NLS-1$
 		return pluginFile;
 	}
+	
 	private IFile createPluginFile(IProject project) {
 		IFile pluginFile = project.getFile("plugin.xml"); //$NON-NLS-1$
 		if (!pluginFile.exists())
 			pluginFile = project.getFile("fragment.xml"); //$NON-NLS-1$
 		return pluginFile;
 	}
+	
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
+		if (input instanceof JarEntryEditorInput) {
+			createJarEntryContexts(manager, (JarEntryEditorInput)input);
+			return;
+		}
+		
 		String name = input.getName().toLowerCase();
 		if (name.startsWith("manifest.mf")) { //$NON-NLS-1$
 			manager
@@ -228,8 +230,31 @@ public class ManifestEditor extends MultiSourceEditor {
 					true));
 		}
 	}
-	protected void contextMenuAboutToShow(IMenuManager manager) {
-		super.contextMenuAboutToShow(manager);
+	
+	protected void createJarEntryContexts(InputContextManager manager,
+			JarEntryEditorInput input) {
+		IStorage storage = input.getStorage();
+		ZipFile zip = (ZipFile)storage.getAdapter(ZipFile.class);
+		if (zip == null)
+			return;
+		
+		if (zip.getEntry("META-INF/MANIFEST.MF") != null) {
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "META-INF/MANIFEST.MF"));
+			manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF")));
+		}
+		
+		if (zip.getEntry("plugin.xml") != null) { //$NON-NLS-1$
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "plugin.xml"));
+			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false));
+		} else if (zip.getEntry("fragment.xml") != null) { //$NON-NLS-1$
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "fragment.xml"));
+			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true));
+		}
+		
+		if (zip.getEntry("build.properties") != null) { //$NON-NLS-1$
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "build.properties"));
+			manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties")));
+		}
 	}
 	
 	public boolean canCopy(ISelection selection) {
@@ -358,24 +383,36 @@ public class ManifestEditor extends MultiSourceEditor {
 	}
 	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
 		boolean isFragment = pluginInfo.getPluginModel().isFragmentModel();
-		String manifest =
-			isFragment
-				? "fragment.xml" //$NON-NLS-1$
-				: "plugin.xml"; //$NON-NLS-1$
-		String fileName =
-			pluginInfo.getModel().getInstallLocation()
-				+ File.separator
-				+ manifest;
-		File file = new File(fileName);
-		if (file.exists()) {
+		String manifest = null;
+		
+		IStorageEditorInput input = null;
+		File pluginLocation = new File(pluginInfo.getModel().getInstallLocation());
+		if (pluginLocation.isFile() && pluginLocation.getName().endsWith(".jar")) {
 			try {
-				SystemFileEditorInput input = new SystemFileEditorInput(file);
+				ZipFile zipFile = new ZipFile(pluginLocation);
+				if (zipFile.getEntry("META-INF/MANIFEST.MF") != null)
+					manifest = "META-INF/MANIFEST.MF";
+				else 
+					manifest = isFragment ? "fragment.xml" : "plugin.xml";
+				input = new JarEntryEditorInput(new JarEntryFile(zipFile, manifest));
+			} catch (Exception e) {
+			}			
+		}
+		
+		if (input == null) {
+			File file = new File(pluginLocation, "META-INF/MANIFEST.MF");
+			if (!file.exists())
+				file = new File(pluginLocation, isFragment ? "fragment.xml" : "plugin.xml");
+			if (file.exists())
+				input = new SystemFileEditorInput(file);
+		}
+		try {
+			if (input != null)
 				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
 					input,
 					IPDEUIConstants.MANIFEST_EDITOR_ID);
-			} catch (PartInitException e) {
-				PDEPlugin.logException(e);
-			}
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
 		}
 		return null;
 	}

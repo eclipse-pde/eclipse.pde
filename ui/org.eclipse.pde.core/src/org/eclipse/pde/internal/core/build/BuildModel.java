@@ -18,37 +18,33 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.*;
 
 public abstract class BuildModel extends AbstractModel implements IBuildModel {
-	protected Build build;
-	private BuildModelFactory factory;
-	public boolean fragment;
+	protected Build fBuild;
+
+	private BuildModelFactory fFactory;
 
 	public IBuild getBuild() {
 		if (isLoaded() == false)
 			load();
-		return build;
+		return fBuild;
 	}
 
 	public IBuild getBuild(boolean createIfMissing) {
-		if (build == null && createIfMissing) {
-			build = new Build();
-			build.setModel(this);
+		if (fBuild == null && createIfMissing) {
+			fBuild = new Build();
+			fBuild.setModel(this);
 			loaded = true;
 		}
 		return getBuild();
 	}
 
 	public IBuildModelFactory getFactory() {
-		if (factory == null)
-			factory = new BuildModelFactory(this);
-		return factory;
+		if (fFactory == null)
+			fFactory = new BuildModelFactory(this);
+		return fFactory;
 	}
-	public String getInstallLocation() {
-		return null;
-	}
-	public boolean isFragment() {
-		return fragment;
-	}
+
 	public abstract void load();
+
 	public void load(InputStream source, boolean outOfSync) {
 		Properties properties = new Properties();
 		try {
@@ -59,33 +55,27 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 			PDECore.logException(e);
 			return;
 		}
-		build = new Build();
-		build.setModel(this);
-		for (Enumeration names = properties.propertyNames();
-			names.hasMoreElements();
-			) {
+		fBuild = new Build();
+		fBuild.setModel(this);
+		for (Enumeration names = properties.propertyNames(); names.hasMoreElements();) {
 			String name = names.nextElement().toString();
-			build.processEntry(name, (String) properties.get(name));
+			fBuild.processEntry(name, (String) properties.get(name));
 		}
 		loaded = true;
 	}
+
 	public void reload(InputStream source, boolean outOfSync) {
-		if (build != null)
-			build.reset();
+		if (fBuild != null)
+			fBuild.reset();
 		else {
-			build = new Build();
-			build.setModel(this);
+			fBuild = new Build();
+			fBuild.setModel(this);
 		}
 		load(source, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this,
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[0],
-				null));
+		fireModelChanged(new ModelChangedEvent(this,
+				IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
 	}
-	public void setFragment(boolean value) {
-		fragment = value;
-	}
+
 	public boolean isReconcilingModel() {
 		return false;
 	}

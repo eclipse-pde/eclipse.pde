@@ -9,38 +9,45 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
+
 public class BuildObject implements IBuildObject {
-	private IBuildModel model;
-	private boolean inTheModel;
-	
-	public BuildObject() {
-	}
-	
+	private IBuildModel fModel;
+
+	private boolean fInTheModel;
+
 	public boolean isInTheModel() {
-		return inTheModel;
+		return fInTheModel;
 	}
+
 	public void setInTheModel(boolean inTheModel) {
-		this.inTheModel = inTheModel;
+		fInTheModel = inTheModel;
 	}
+
 	protected void ensureModelEditable() throws CoreException {
-		if (!model.isEditable()) {
-			throwCoreException(PDECore.getResourceString("BuildObject.readOnlyException")); //$NON-NLS-1$
+		if (!fModel.isEditable()) {
+			throwCoreException(PDECore
+					.getResourceString("BuildObject.readOnlyException")); //$NON-NLS-1$
 		}
 	}
+
 	public IBuildModel getModel() {
-		return model;
+		return fModel;
 	}
-	void setModel(IBuildModel newModel) {
-		model = newModel;
+
+	void setModel(IBuildModel model) {
+		fModel = model;
 	}
+
 	protected void throwCoreException(String message) throws CoreException {
 		Status status = new Status(IStatus.ERROR, PDECore.getPluginId(),
 				IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
+
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 			throws CoreException {
 	}

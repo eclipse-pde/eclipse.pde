@@ -35,7 +35,27 @@ public abstract class AbstractPluginModelBase
 		super();
 	}
 	
+	public abstract String getInstallLocation();
+	
 	public abstract IPluginBase createPluginBase();
+	
+	public URL getResourceURL(String relativePath) throws MalformedURLException {
+		String location = getInstallLocation();
+		if (location == null)
+			return null;
+		
+		File file = new File(location);
+		URL url = null;
+		try {
+			if (file.isFile() && file.getName().endsWith(".jar")) {
+				url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath);
+			}
+		} catch (MalformedURLException e) {
+		}
+		return url;
+	}
 	
 	public IExtensions createExtensions() {
 		return createPluginBase();

@@ -13,48 +13,52 @@ package org.eclipse.pde.internal.core.build;
 import java.io.*;
 import java.net.*;
 
+import org.eclipse.core.runtime.*;
+
 public class ExternalBuildModel extends BuildModel {
-	private String installLocation;
+	private String fInstallLocation;
 
-public ExternalBuildModel(String installLocation) {
-	this.installLocation = installLocation;
-}
-public String getInstallLocation() {
-	return installLocation;
-}
-public boolean isEditable() {
-	return false;
-}
-public void load() {
-	String location = getFullPath();
-	try {
-		URL url = new URL(location);
-		InputStream stream = url.openStream();
-		load(stream, false);
-		stream.close();
-	} catch (IOException e) {
-		build = new Build();
-		build.setModel(this);
-		loaded = true;
+	public ExternalBuildModel(String installLocation) {
+		fInstallLocation = installLocation;
 	}
-}
 
-protected void updateTimeStamp() {
-	File file = new File(getFullPath());
-	updateTimeStamp(file);
-}
+	public String getInstallLocation() {
+		return fInstallLocation;
+	}
 
-private String getFullPath() {
-	String fileName = "build.properties"; //$NON-NLS-1$
-	return getInstallLocation() + File.separator + fileName;
-}
+	public boolean isEditable() {
+		return false;
+	}
 
-public boolean isInSync() {
-	File file = new File(getFullPath());
-	return isInSync(file);
-}
+	public void load() {
+		try {
+			URL url = null;
+			File file = new File(getInstallLocation());
+			if (file.isFile() && file.getName().endsWith(".jar")) {
+				url = new URL("jar:file:" + file.getAbsolutePath() + "!/build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + "build.properties");
+			}
+			InputStream stream = url.openStream();
+			load(stream, false);
+			stream.close();
+		} catch (IOException e) {
+			fBuild = new Build();
+			fBuild.setModel(this);
+			loaded = true;
+		}
+	}
 
-public void setInstallLocation(String newInstallLocation) {
-	installLocation = newInstallLocation;
-}
+	protected void updateTimeStamp() {
+		updateTimeStamp(getLocalFile());
+	}
+
+	private File getLocalFile() {
+		File file = new File(getInstallLocation());
+		return (file.isFile()) ? file : new File(file, "build.properties");		
+	}
+
+	public boolean isInSync() {
+		return true;
+	}
 }

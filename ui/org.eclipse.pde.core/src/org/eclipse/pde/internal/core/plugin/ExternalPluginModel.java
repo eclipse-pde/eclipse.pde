@@ -10,25 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-
 import org.eclipse.pde.core.plugin.*;
 
-public class ExternalPluginModel extends ExternalPluginModelBase implements IPluginModel {
+public class ExternalPluginModel extends ExternalPluginModelBase implements
+		IPluginModel {
 
-public ExternalPluginModel() {
-	super();
-}
-public IPluginBase createPluginBase() {
-	PluginBase base = new Plugin();
-	base.setModel(this);
-	return base;
-}
-public IPlugin getPlugin() {
-	return (IPlugin)getPluginBase();
-}
+	public IPluginBase createPluginBase() {
+		PluginBase base = new Plugin();
+		base.setModel(this);
+		return base;
+	}
 
-protected File getFile() {
-	return new File(getInstallLocation() + File.separator + "plugin.xml"); //$NON-NLS-1$
-}
+	public IPlugin getPlugin() {
+		return (IPlugin) getPluginBase();
+	}
+
 }

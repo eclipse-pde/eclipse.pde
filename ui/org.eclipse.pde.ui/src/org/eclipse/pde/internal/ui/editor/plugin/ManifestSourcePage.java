@@ -143,13 +143,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		super(editor, id, title);
 		
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.XMLSourcePage#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-	}
-	
+
 	protected ILabelProvider createOutlineLabelProvider() {
 		return new OutlineLabelProvider();
 	}

@@ -25,16 +25,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public abstract class ReferenceAttributeRow extends TextAttributeRow {
-	/**
-	 * @param att
-	 */
+
 	public ReferenceAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
@@ -57,7 +50,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	}
 	protected boolean isReferenceModel() {
 		return ((IPluginModelBase) part.getPage().getModel())
-				.getInstallLocation() == null;
+				.getUnderlyingResource() != null;
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);

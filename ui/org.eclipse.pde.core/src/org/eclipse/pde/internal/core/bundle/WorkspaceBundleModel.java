@@ -16,20 +16,23 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ibundle.*;
 
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
-	private IFile file;
-	private boolean dirty;
-	private boolean editable = true;
+	private IFile fUnderlyingResource;
+
+	private boolean fDirty;
+
+	private boolean fEditable = true;
 
 	public WorkspaceBundleModel(IFile file) {
-		setFile(file);
+		fUnderlyingResource = file;
 	}
+
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
 	}
+
 	public String getContents() {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
@@ -41,69 +44,56 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		}
 		return swriter.toString();
 	}
-	public IFile getFile() {
-		return file;
-	}
+
 	public IResource getUnderlyingResource() {
-		return file;
+		return fUnderlyingResource;
 	}
-	
+
 	public String getInstallLocation() {
-		return file.getProject().getLocation().toOSString();
+		return fUnderlyingResource.getLocation().removeLastSegments(2).addTrailingSeparator().toOSString();
 	}
-	
+
 	public boolean isDirty() {
-		return dirty;
+		return fDirty;
 	}
+
 	public boolean isEditable() {
-		return editable;
+		return fEditable;
 	}
-	
+
 	public void load() {
-		if (file == null)
+		if (fUnderlyingResource == null)
 			return;
-		if (file.exists()) {
-			InputStream stream = null;
-			boolean outOfSync = false;
+		if (fUnderlyingResource.exists()) {
 			try {
-				stream = file.getContents(false);
-			} catch (CoreException e) {
-				outOfSync = true;
-			}
-			if (outOfSync) {
-				try {
-					stream = file.getContents(true);
-				} catch (CoreException e) {
-					return;
-				}
-			}
-			try {
-				load(stream, outOfSync);
+				InputStream stream = fUnderlyingResource.getContents(true);
+				load(stream, false);
 				stream.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				PDECore.logException(e);
 			}
 		}
 	}
 
 	public boolean isInSync() {
-		return isInSync(file.getLocation().toFile());
+		return isInSync(fUnderlyingResource.getLocation().toFile());
 	}
 
 	protected void updateTimeStamp() {
-		updateTimeStamp(file.getLocation().toFile());
+		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
+
 	public void save() {
-		if (file == null)
+		if (fUnderlyingResource == null)
 			return;
 		try {
 			String contents = getContents();
-			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
-			if (file.exists()) {
-				file.setContents(stream, false, false, null);
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents
+					.getBytes("8859_1")); //$NON-NLS-1$
+			if (fUnderlyingResource.exists()) {
+				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
-				file.create(stream, false, null);
+				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
 		} catch (CoreException e) {
@@ -111,24 +101,16 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public void save(PrintWriter writer) {
-		dirty = false;
+		fDirty = false;
 	}
-	public void setDirty(boolean newDirty) {
-		dirty = newDirty;
+
+	public void setDirty(boolean dirty) {
+		fDirty = dirty;
 	}
-	public void setEditable(boolean newEditable) {
-		editable = newEditable;
-	}
-	public void setFile(IFile newFile) {
-		file = newFile;
-		//setEditable(file.isReadOnly()==false);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getFactory()
-	 */
-	public IBundleModelFactory getFactory() {
-		return null;
+
+	public void setEditable(boolean editable) {
+		fEditable = editable;
 	}
 }

@@ -22,39 +22,31 @@ import org.eclipse.pde.internal.core.ibundle.*;
 public class WorkspaceExtensionsModel
 	extends AbstractExtensionsModel
 	implements IEditableModel, IBundlePluginModelProvider {
-	private IFile file;
-	private boolean dirty;
-	private boolean editable = true;
+	private IFile fUnderlyingResource;
+	private boolean fDirty;
+	private boolean fEditable = true;
 	private transient IBundlePluginModelBase fBundleModel;
 
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = file.getName().equals("plugin.xml") ? "plugin" : "fragment"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		NLResourceHelper helper =
-			new NLResourceHelper(name, getNLLookupLocations());
-		//helper.setFile(file);
-		return helper;
+		String name = fUnderlyingResource.getName().equals("plugin.xml") ? "plugin" : "fragment"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new NLResourceHelper(name, getNLLookupLocations());
 	}
 	
 	public URL getNLLookupLocation() {
-		IPath path = file.getLocation().removeLastSegments(1);
-		String installLocation = path.toOSString();
-		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
-			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
-			return url;
+			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
 
 	public WorkspaceExtensionsModel(IFile file) {
-		setFile(file);
+		fUnderlyingResource = file;
 	}
 	
 	public void fireModelChanged(IModelChangedEvent event) {
-		dirty = true;
+		fDirty = true;
 		super.fireModelChanged(event);
 	}
 
@@ -69,64 +61,58 @@ public class WorkspaceExtensionsModel
 		}
 		return swriter.toString();
 	}
-	public IFile getFile() {
-		return file;
-	}
-
+	
 	public String getInstallLocation() {
-		return file.getParent().getLocation().toOSString();
+		return fUnderlyingResource.getLocation().removeLastSegments(1).addTrailingSeparator().toOSString();
+	}
+	
+	public URL getResourceURL(String relativePath) throws MalformedURLException {
+		String location = getInstallLocation();
+		if (location == null)
+			return null;
+		
+		File file = new File(location);
+		URL url = null;
+		try {
+			if (file.isFile() && file.getName().endsWith(".jar")) {
+				url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath);
+			}
+		} catch (MalformedURLException e) {
+		}
+		return url;
 	}
 
 	public IResource getUnderlyingResource() {
-		return file;
+		return fUnderlyingResource;
 	}
 
 	public boolean isInSync() {
-		if (file == null)
+		if (fUnderlyingResource == null)
 			return true;
-		IPath path = file.getLocation();
+		IPath path = fUnderlyingResource.getLocation();
 		if (path == null)
 			return false;
 		return super.isInSync(path.toFile());
 	}
 
 	public boolean isDirty() {
-		return dirty;
+		return fDirty;
 	}
 	public boolean isEditable() {
-		return editable;
-	}
-
-	public void dispose() {
-		super.dispose();
+		return fEditable;
 	}
 
 	public void load() {
-		if (file == null)
+		if (fUnderlyingResource == null)
 			return;
-		if (file.exists()) {
-			InputStream stream = null;
-
-			boolean outOfSync = false;
-
+		if (fUnderlyingResource.exists()) {
 			try {
-				stream = file.getContents(false);
-			} catch (CoreException e) {
-				outOfSync = true;
-			}
-			if (outOfSync) {
-				try {
-					stream = file.getContents(true);
-				} catch (CoreException e) {
-					return;
-				}
-			}
-			try {
-				load(stream, outOfSync);
+				InputStream stream = fUnderlyingResource.getContents(true);
+				load(stream, false);
 				stream.close();
-
-			} catch (CoreException e) {
-			} catch (IOException e) {
+			} catch (Exception e) {
 				PDECore.logException(e);
 			}
 		} else {
@@ -136,20 +122,20 @@ public class WorkspaceExtensionsModel
 	}
 
 	protected void updateTimeStamp() {
-		updateTimeStamp(file.getLocation().toFile());
+		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
 	public void save() {
-		if (file == null)
+		if (fUnderlyingResource == null)
 			return;
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
 				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
-			if (file.exists()) {
-				file.setContents(stream, false, false, null);
+			if (fUnderlyingResource.exists()) {
+				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
-				file.create(stream, false, null);
+				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
 		} catch (CoreException e) {
@@ -161,24 +147,20 @@ public class WorkspaceExtensionsModel
 		if (isLoaded()) {
 			extensions.write("", writer); //$NON-NLS-1$
 		}
-		dirty = false;
+		fDirty = false;
 	}
 	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
+		fDirty = dirty;
 	}
-	public void setEditable(boolean newEditable) {
-		editable = newEditable;
-	}
-	public void setFile(IFile newFile) {
-		file = newFile;
-		//setEditable(newFile.isReadOnly()==false);
+	public void setEditable(boolean editable) {
+		fEditable = editable;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractExtensionsModel#createExtensions()
 	 */
 	protected Extensions createExtensions() {
 		Extensions extensions = super.createExtensions();
-		extensions.setIsFragment(file.getName().equals("fragment.xml")); //$NON-NLS-1$
+		extensions.setIsFragment(fUnderlyingResource.getName().equals("fragment.xml")); //$NON-NLS-1$
 		return extensions;
 	}
 	
@@ -186,7 +168,7 @@ public class WorkspaceExtensionsModel
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return file.getName();
+		return fUnderlyingResource.getName();
 	}
 	
 	public void setBundleModel(IBundlePluginModelBase model) {

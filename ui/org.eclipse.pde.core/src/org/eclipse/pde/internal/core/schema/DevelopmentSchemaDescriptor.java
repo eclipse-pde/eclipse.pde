@@ -28,12 +28,10 @@ public abstract class DevelopmentSchemaDescriptor extends AbstractSchemaDescript
 	public IPath getPluginRelativePath(String pluginId, IPath path) {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ModelEntry entry = manager.findEntry(pluginId);
-		if (entry==null) return null;
-		IPluginModelBase model = entry.getActiveModel();
-		if (model==null) return null;
+		if (entry == null) return null;
 		
-		String location = model.getInstallLocation();
-		IPath schemaPath = new Path(location).append(path);
+		IPluginModelBase model = entry.getActiveModel();		
+		IPath schemaPath = new Path(model.getInstallLocation()).append(path);
 		if (schemaPath.toFile().exists())
 			return schemaPath;
 		

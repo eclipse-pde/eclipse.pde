@@ -18,47 +18,53 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 
 public class Build extends BuildObject implements IBuild {
-	protected Vector entries = new Vector();
+	protected ArrayList fEntries = new ArrayList();
 
-public Build() {
-}
-public void add(IBuildEntry entry) throws CoreException {
-	ensureModelEditable();
-	entries.add(entry);
-	((BuildEntry)entry).setInTheModel(true);
-	getModel().fireModelChanged(
-		new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] { entry }, null));
-}
-public IBuildEntry[] getBuildEntries() {
-	IBuildEntry [] result = new IBuildEntry[entries.size()];
-	entries.copyInto(result);
-	return result;
-}
-public IBuildEntry getEntry(String name) {
-	for (int i=0; i<entries.size(); i++) {
-		IBuildEntry entry = (IBuildEntry)entries.elementAt(i);
-		if (entry.getName().equals(name)) return entry;
+	public void add(IBuildEntry entry) throws CoreException {
+		ensureModelEditable();
+		fEntries.add(entry);
+		((BuildEntry) entry).setInTheModel(true);
+		getModel().fireModelChanged(
+				new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT,
+						new Object[] { entry }, null));
 	}
-	return null;
-}
-public void processEntry(String name, String value) {
-	BuildEntry entry = (BuildEntry)getModel().getFactory().createEntry(name);
-	entries.add(entry);
-	entry.processEntry(value);
-}
-public void remove(IBuildEntry entry) throws CoreException {
-	ensureModelEditable();
-	entries.remove(entry);
-	getModel().fireModelChanged(
-		new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE, new Object[] { entry }, null));
-}
-public void reset() {
-	entries.clear();
-}
-public void write(String indent, PrintWriter writer) {
-	for (int i=0; i<entries.size(); i++) {
-		IBuildEntry entry = (IBuildEntry)entries.elementAt(i);
-		entry.write("", writer); //$NON-NLS-1$
+
+	public IBuildEntry[] getBuildEntries() {
+		return (IBuildEntry[])fEntries.toArray(new IBuildEntry[fEntries.size()]);
 	}
-}
+
+	public IBuildEntry getEntry(String name) {
+		for (int i = 0; i < fEntries.size(); i++) {
+			IBuildEntry entry = (IBuildEntry) fEntries.get(i);
+			if (entry.getName().equals(name))
+				return entry;
+		}
+		return null;
+	}
+
+	public void processEntry(String name, String value) {
+		BuildEntry entry = (BuildEntry) getModel().getFactory().createEntry(
+				name);
+		fEntries.add(entry);
+		entry.processEntry(value);
+	}
+
+	public void remove(IBuildEntry entry) throws CoreException {
+		ensureModelEditable();
+		fEntries.remove(entry);
+		getModel().fireModelChanged(
+				new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE,
+						new Object[] { entry }, null));
+	}
+
+	public void reset() {
+		fEntries.clear();
+	}
+
+	public void write(String indent, PrintWriter writer) {
+		for (int i = 0; i < fEntries.size(); i++) {
+			IBuildEntry entry = (IBuildEntry) fEntries.get(i);
+			entry.write("", writer); //$NON-NLS-1$
+		}
+	}
 }

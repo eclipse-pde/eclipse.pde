@@ -288,11 +288,8 @@ public class ExtensionPointsSection extends TableSection {
 			IFile file = project.getFile(schema);
 			input = new FileEditorInput(file);
 		} else {
-			IPluginModelBase pmodel = (IPluginModelBase) model;
-			String location = pmodel.getInstallLocation();
-			if (location.startsWith("file:")) //$NON-NLS-1$
-				location = location.substring(5);
-			File file = new File(location + File.separator + schema);
+			String location = ((IPluginModelBase) model).getInstallLocation();
+			File file = new File(location, schema);
 			if (!file.exists()) {
 				// try source location
 				SourceLocationManager manager = PDECore.getDefault()

@@ -32,12 +32,8 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 	
 	public URL getNLLookupLocation() {
-		String installLocation = getInstallLocation();
-		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
-			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
-			return url;
+			return new URL("file:" + getInstallLocation());
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -51,48 +47,24 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return buildModel;
 	}
 	
-	protected abstract File getFile();
-
 	public String getInstallLocation() {
 		return installLocation;
 	}
 	public boolean isEditable() {
 		return false;
 	}
+	
 	public void load() {
-		File file = getFile();
-		if (file == null)
-			return;
-		if (file.exists()) {
-			try {
-				InputStream stream = new FileInputStream(file); 
-				load(stream, false);
-				stream.close();
-			} catch (CoreException e) {
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
-		} else {
-			pluginBase = (PluginBase) createPluginBase();
-			pluginBase.setModel(this);
-			loaded = true;
-		}
 	}
+	
 	public void load(BundleDescription description, PDEState state) {
-		PluginBase pluginBase = (PluginBase) getPluginBase();
-		if (pluginBase == null) {
-			pluginBase = (PluginBase) createPluginBase();
-			this.pluginBase = pluginBase;
-		} else {
-			pluginBase.reset();
-		}
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
-		setInstallLocation(path.toOSString());
+		setInstallLocation(path.addTrailingSeparator().toOSString());
 		setBundleDescription(description);
-		pluginBase.load(description, state);
+		((PluginBase)getPluginBase()).load(description, state);
 		updateTimeStamp();
 		loaded = true;
 		
@@ -103,7 +75,11 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	private File getLocalFile() {
-		File file = new File(getInstallLocation(), "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		File file = new File(getInstallLocation());
+		if (file.isFile() && new Path(file.getAbsolutePath()).getFileExtension().equals("jar"))
+			return file;
+
+		file = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (!file.exists()) {
 			String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 			file = new File(getInstallLocation(), manifest);

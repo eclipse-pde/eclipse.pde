@@ -190,8 +190,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
 		for (int i = 0; i < fModels.length; i++) {
-			BundleDescription desc = fState.addBundle(
-					new File(TargetPlatform.createURL(fModels[i])), false);
+			BundleDescription desc = fState.addBundle(new File(fModels[i].getInstallLocation()), false);
 			if (desc == null)
 				fInvalidModels.add(fModels[i]);
 		}

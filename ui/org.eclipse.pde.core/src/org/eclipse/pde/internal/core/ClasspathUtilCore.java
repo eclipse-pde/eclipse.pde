@@ -184,15 +184,30 @@ public class ClasspathUtilCore {
 			return;
 		}
 
-		IPluginLibrary[] libraries = plugin.getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			if (IPluginLibrary.RESOURCE.equals(libraries[i].getType())
-				|| !libraries[i].isExported())
-				continue;
+		String location = plugin.getModel().getInstallLocation();
+		
+		// handle Plugin-in-a-JAR
+		if (new File(location).isFile() && location.endsWith(".jar")) {
 			IClasspathEntry entry =
-				createLibraryEntry(libraries[i], isExported);
+				JavaCore.newLibraryEntry(
+						new Path(location),
+						new Path(location),
+						null,
+						isExported);
 			if (entry != null && !result.contains(entry)) {
 				result.add(entry);
+			}			
+		} else {
+			IPluginLibrary[] libraries = plugin.getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType())
+					|| !libraries[i].isExported())
+					continue;
+				IClasspathEntry entry =
+					createLibraryEntry(libraries[i], isExported);
+				if (entry != null && !result.contains(entry)) {
+					result.add(entry);
+				}
 			}
 		}
 

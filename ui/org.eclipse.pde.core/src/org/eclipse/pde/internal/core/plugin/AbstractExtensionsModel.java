@@ -27,10 +27,6 @@ public abstract class AbstractExtensionsModel
 	implements IExtensionsModel, IExtensionsModelFactory {
 	protected Extensions extensions;
 
-	public AbstractExtensionsModel() {
-		super();
-	}
-	
 	public IExtensionsModelFactory getFactory() {
 		return this;
 	}

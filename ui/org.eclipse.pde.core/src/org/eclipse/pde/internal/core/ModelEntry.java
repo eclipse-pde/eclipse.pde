@@ -51,14 +51,15 @@ public class ModelEntry extends PlatformObject {
 
 	public Object[] getChildren() {
 		if (workspaceModel == null && externalModel != null) {
-			String location = externalModel.getInstallLocation();
-			File file = new File(location);
-			FileAdapter adapter =
-				new EntryFileAdapter(
-					this,
-					file,
-					manager.getFileAdapterFactory());
-			return adapter.getChildren();
+			File file = new File(externalModel.getInstallLocation());
+			if (!file.isFile()) {
+				FileAdapter adapter =
+					new EntryFileAdapter(
+						this,
+						file,
+						manager.getFileAdapterFactory());
+				return adapter.getChildren();
+			}
 		}
 		return new Object[0];
 	}

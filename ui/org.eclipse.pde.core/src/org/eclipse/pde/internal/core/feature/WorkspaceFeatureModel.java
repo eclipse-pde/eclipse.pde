@@ -95,20 +95,9 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		if (file == null)
 			return;
 		if (file.exists()) {
-			boolean outOfSync = false;
-			InputStream stream = null;
 			try {
-				stream = file.getContents(false);
-			} catch (CoreException e) {
-				outOfSync = true;
-				try {
-					stream = file.getContents(true);
-				} catch (CoreException ex) {
-					return;
-				}
-			}
-			try {
-				load(stream, outOfSync);
+				InputStream stream = file.getContents(true);
+				load(stream, false);
 				stream.close();
 			} catch (CoreException e) {
 			} catch (IOException e) {

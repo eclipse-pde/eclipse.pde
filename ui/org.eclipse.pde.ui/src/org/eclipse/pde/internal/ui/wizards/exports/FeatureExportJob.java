@@ -292,13 +292,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	public void deleteBuildFiles(IModel model) throws CoreException {
 		if (model == null)
 			return;
-		
-		String directory =
-			(model instanceof IFeatureModel)
-				? ((IFeatureModel) model).getInstallLocation()
-				: ((IPluginModelBase) model).getInstallLocation();
-				
+						
 		if (model.getUnderlyingResource() != null && !isCustomBuild(model)) {
+			String directory =
+				(model instanceof IFeatureModel)
+					? ((IFeatureModel) model).getInstallLocation()
+					: ((IPluginModelBase) model).getInstallLocation();
 			File dir = new File(directory);
 			File[] children = dir.listFiles();
 			if (children != null) {

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -200,14 +199,9 @@ public class SourceLocationManager implements ICoreConstants {
 		for (int j = 0; j < children.length; j++) {
 			if (children[j].getName().equals("location")) { //$NON-NLS-1$
 				IPluginElement element = (IPluginElement) children[j];
-				String pathValue = element.getAttribute("path").getValue(); //$NON-NLS-1$
-				IResource resource = extension.getModel().getUnderlyingResource();
-				IPath path;
-				if (resource != null && resource.isLinked()) {
-					path = resource.getLocation().removeLastSegments(1).append(pathValue);
-				} else {
-					path = new Path(extension.getModel().getInstallLocation()).append(pathValue);
-				}
+				String pathValue = element.getAttribute("path").getValue(); //$NON-NLS-1$b	
+				ISharedPluginModel model = extension.getModel();
+				IPath path = new Path(model.getInstallLocation()).append(pathValue);
 				if (path.toFile().exists()) {
 					SourceLocation location = new SourceLocation(path, true);
 					location.setUserDefined(false);

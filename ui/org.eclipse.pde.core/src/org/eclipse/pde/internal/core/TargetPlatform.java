@@ -14,12 +14,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.update.configurator.*;
 
@@ -52,7 +49,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			String[] list = new String[plugins.size()];
 			for (int i = 0; i < plugins.size(); i++) {
 				IPluginModelBase model = (IPluginModelBase) plugins.get(i);
-				IPath location = getPluginLocation(model);
+				IPath location = new Path(model.getInstallLocation());
 				// defect 37319
 				if (location.segmentCount() > 2)
 					location = location.removeFirstSegments(location.segmentCount() - 2);
@@ -76,8 +73,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		throws CoreException {
 		String paths[] = new String[models.length];
 		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			paths[i] = createURL(model);
+			paths[i] = models[i].getInstallLocation();
 		}
 		return paths;
 	}
@@ -137,16 +133,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		if (model == null)
 			return null;
 		
-		String location = model.getInstallLocation();
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			if (model instanceof IBundlePluginModelBase) {
-				location = resource.getLocation().removeLastSegments(2).toString();
-			} else {
-				location = resource.getLocation().removeLastSegments(1).toString();
-			}
-		}
-		return "file:" + new Path(location).addTrailingSeparator().toString(); //$NON-NLS-1$
+		return "file:" + new Path(model.getInstallLocation()).addTrailingSeparator().toString(); //$NON-NLS-1$
 	}
 	
 	private static void savePlatformConfiguration(
@@ -188,15 +175,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static IPath getTransientSitePath(IPluginModelBase model) {
-		boolean bundle=false;
-		if (model instanceof BundlePluginModelBase) {
-			bundle=true;
-		}
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			IPath realPath = resource.getLocation();
-			return realPath.removeLastSegments(bundle?4:3);
-		} 
 		return new Path(model.getInstallLocation()).removeLastSegments(2);		
 	}
 	
@@ -251,25 +229,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			// Set boot location
-			IPath bootPath = getPluginLocation(bootModel);
-			URL bootURL = new URL("file:" + bootPath.toOSString()); //$NON-NLS-1$
+			URL bootURL = new URL("file:" + bootModel.getInstallLocation()); //$NON-NLS-1$
 			config.setBootstrapPluginLocation(BOOT_ID, bootURL);
 		}
 		config.isTransient(true);
 	}
 
-	private static IPath getPluginLocation(IPluginModelBase model) {
-		String location = model.getInstallLocation();
-		IResource resource = model.getUnderlyingResource();
-		if (resource != null) {
-			if (model instanceof IBundlePluginModelBase) {
-				location = resource.getLocation().removeLastSegments(2).toOSString();
-			} else {
-				location = resource.getLocation().removeLastSegments(1).toOSString();
-			}
-		}
-		return new Path(location).addTrailingSeparator();
-	}
 
 	private static void createFeatureEntries(
 		IPlatformConfiguration config,
@@ -291,8 +256,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPluginModelBase primaryPlugin = (IPluginModelBase)pluginMap.get(pluginId);
 		if (primaryPlugin == null)
 			return;
-		IPath pluginPath = getPluginLocation(primaryPlugin);
-		URL pluginURL = new URL("file:" + pluginPath.toString()); //$NON-NLS-1$
+		URL pluginURL = new URL("file:" + primaryPlugin.getInstallLocation()); //$NON-NLS-1$
 		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =
 			config.createFeatureEntry(
@@ -360,9 +324,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return model;
 	}
 
-	public static String createURL(IPluginModelBase model) {
-		return getPluginLocation(model).addTrailingSeparator().toString();
-	}
 
 	public static String getOS() {
 		return getProperty(OS);

@@ -176,33 +176,32 @@ public class SharedLabelProvider
 	public Image getImageFromPlugin(String bundleID, String subdirectoryAndFilename) {
 		try {
 			Bundle bundle = Platform.getBundle(bundleID);
-			return getImageFromURL(Platform.resolve(bundle.getEntry("/")), subdirectoryAndFilename); //$NON-NLS-1$
+			return getImageFromURL(Platform.resolve(bundle.getEntry(subdirectoryAndFilename)));
 		} catch (IOException e) {
 			return null;
 		}
 	}
 
-	public Image getImageFromURL(
-		URL installURL,
-		String subdirectoryAndFilename) {
+	public Image getImageFromURL(URL url) {
 		Image image = null;
 		try {
-			URL newURL = new URL(installURL, subdirectoryAndFilename);
-			File file = new File(newURL.getFile());
-			if (!file.exists()) {
+			InputStream stream = null;
+			try {
+				stream = url.openStream();
+				stream.close();
+			} catch (IOException e1) {			
 				if (fBlankImage == null)
-					fBlankImage = ImageDescriptor.createFromURL(null).createImage();
+					fBlankImage = ImageDescriptor.getMissingImageDescriptor().createImage();
 				return fBlankImage;	
 			}
 			
-			String key = newURL.toString();
+			String key = url.toString();
 			image = (Image)images.get(key);
 			if (image == null) {
-				ImageDescriptor desc = ImageDescriptor.createFromURL(newURL);
+				ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 				image = desc.createImage();
 				images.put(key, image);
 			}
-		} catch (MalformedURLException e) {
 		} catch (SWTException e) {
 		}
 		return image;

@@ -22,12 +22,7 @@ import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.ui.forms.IFormPart;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+
 public class PluginInputContextManager extends InputContextManager {
 	private BundlePluginModelBase bmodel;
 	/**

@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
@@ -32,20 +26,16 @@ import org.eclipse.ui.*;
 public class PluginInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "plugin-context"; //$NON-NLS-1$
 	private boolean fIsFragment;
-	/**
-	 * @param editor
-	 * @param input
-	 */
+
 	public PluginInputContext(PDEFormEditor editor, IEditorInput input, boolean primary, boolean isFragment) {
 		super(editor, input, primary);
 		fIsFragment = isFragment;
 		create();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.pde.internal.ui.editor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		//boolean hasBundle = getEditor().getContextManager().hasContext(BundleInputContext.CONTEXT_ID);
 		PluginModelBase model = null;
 		if (input instanceof IStorageEditorInput) {
 			boolean isReconciling = input instanceof IFileEditorInput;
@@ -72,7 +62,7 @@ public class PluginInputContext extends XMLInputContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
+	 * @see org.eclipse.pde.internal.ui.editor.InputContext#getId()
 	 */
 	public String getId() {
 		return CONTEXT_ID;
@@ -130,6 +120,7 @@ public class PluginInputContext extends XMLInputContext {
 			ops.add(0, runtimeInsert);
 		}		
 	}
+	
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();

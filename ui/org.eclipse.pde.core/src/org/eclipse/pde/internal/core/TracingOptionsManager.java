@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 
@@ -45,15 +44,13 @@ public class TracingOptionsManager {
 	}
 	
 	private Properties getOptions(IPluginModelBase model) {
-		InputStream stream = openInputStream(model);
-		if (stream != null) {
+		try {
+			InputStream stream = model.getResourceURL(".options").openStream();
 			Properties modelOptions = new Properties();
-			try {
-				modelOptions.load(stream);
-				stream.close();
-				return modelOptions;
-			} catch (IOException e) {
-			}
+			modelOptions.load(stream);
+			stream.close();
+			return modelOptions;
+		} catch (IOException e1) {
 		}
 		return null;
 	}
@@ -100,35 +97,13 @@ public class TracingOptionsManager {
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
-		if (model.getUnderlyingResource() != null) {
-			IProject project = model.getUnderlyingResource().getProject();
-			IPath path = project.getFullPath().append(".options"); //$NON-NLS-1$
-			IFile file = project.getWorkspace().getRoot().getFile(path);
-			return file.exists();
-		} 
-		return new File(model.getInstallLocation(), ".options").exists();	 //$NON-NLS-1$
-	}
-	
-	private InputStream openInputStream(IPluginModelBase model) {
-		if (model.getUnderlyingResource() != null) {
-			IProject project = model.getUnderlyingResource().getProject();
-			IPath path = project.getFullPath().append(".options"); //$NON-NLS-1$
-			IFile file = project.getWorkspace().getRoot().getFile(path);
-			if (file.exists()) {
-				try {
-					return file.getContents();
-				} catch (CoreException e) {
-				}
-			}
-		} else {
-			String fileName = model.getInstallLocation() + File.separator + ".options"; //$NON-NLS-1$
-			File file = new File(fileName);
-			try {
-				return new FileInputStream(file);
-			} catch (FileNotFoundException e) {
-			}
+		try {
+			InputStream stream = model.getResourceURL(".options").openStream();
+			stream.close();
+		} catch (IOException e) {
+			return false;
 		}
-		return null;
+		return true;
 	}
 	
 	public void reset() {

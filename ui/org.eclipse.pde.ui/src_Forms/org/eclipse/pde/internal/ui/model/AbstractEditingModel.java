@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.model;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -164,7 +165,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	}
 	
 	public String getCharset() {
-		return fCharset;
+		return fCharset != null ? fCharset : "UTF-8";
 	}
 	
 	public void setCharset(String charset) {
@@ -259,8 +260,19 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 */
 	public String getInstallLocation() {
 		if (fUnderlyingResource != null)
-			return fUnderlyingResource.getProject().getLocation().toString();
+			return fUnderlyingResource.getProject().getLocation().addTrailingSeparator().toString();
 		return fInstallLocation;
+	}
+	
+	public URL getResourceURL(String relativePath) throws MalformedURLException {
+		File file = new File(getInstallLocation());
+		URL url = null;
+		if (file.isFile() && file.getName().endsWith(".jar")) {
+			url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath);
+		}
+		return url;
 	}
 	
 	public void setInstallLocation(String location) {

@@ -99,7 +99,7 @@ public class PDEState {
 		InputStream manifestStream = null;
 		try {
 			URL manifestLocation = null;
-			if (bundleLocation.getName().endsWith("jar")) { //$NON-NLS-1$
+			if (bundleLocation.isFile() && new Path(bundleLocation.getName()).getFileExtension().equals("jar")) { //$NON-NLS-1$
 				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME); //$NON-NLS-1$ //$NON-NLS-2$
 				manifestStream = manifestLocation.openStream();
 			} else {

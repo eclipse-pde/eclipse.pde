@@ -554,27 +554,17 @@ public class WorkspaceModelManager
 	
 	private void loadModel(IModel model, boolean reload) {
 		IFile file = (IFile) model.getUnderlyingResource();
-		InputStream stream = null;
-		boolean outOfSync = false;
 		try {
-			stream = file.getContents(false);
-		} catch (CoreException e) {
-			outOfSync = true;
-			try {
-				stream = file.getContents(true);
-			} catch (CoreException e2) {
-				PDECore.logException(e);
-				return;
-			}
-		}
-		try {
+			InputStream stream = file.getContents(true);
 			if (reload)
-				model.reload(stream, outOfSync);
+				model.reload(stream, false);
 			else
-				model.load(stream, outOfSync);
+				model.load(stream, false);
 			stream.close();
-		} catch (Exception e) {
+		} catch (CoreException e) {
 			PDECore.logException(e);
+			return;
+		} catch (IOException e) {
 		}
 	}
 

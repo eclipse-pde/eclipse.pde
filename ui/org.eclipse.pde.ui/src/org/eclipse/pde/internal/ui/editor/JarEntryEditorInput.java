@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.view;
+package org.eclipse.pde.internal.ui.editor;
 
 
 import org.eclipse.core.resources.IStorage;

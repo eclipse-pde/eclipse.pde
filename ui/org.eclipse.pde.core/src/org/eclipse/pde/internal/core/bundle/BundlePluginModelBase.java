@@ -15,10 +15,13 @@
  * Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.core.bundle;
+import java.io.*;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.*;
 import java.net.URL;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
@@ -116,30 +119,19 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		if (extensionsModel != null && fBundlePluginBase != null)
 			extensionsModel.addModelChangedListener(fBundlePluginBase);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
-	 */
+
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
 	}
+	
 	public void setBuildModel(IBuildModel buildModel) {
 		fBuildModel = buildModel;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase()
-	 */
+	
 	public IPluginBase getPluginBase() {
 		return getPluginBase(true);
 	}
+	
 	public IExtensions getExtensions() {
 		return getPluginBase();
 	}
@@ -204,6 +196,25 @@ public abstract class BundlePluginModelBase extends AbstractModel
 			return fBundleModel.getInstallLocation();
 		return null;
 	}
+	
+	public URL getResourceURL(String relativePath) throws MalformedURLException {
+		String location = getInstallLocation();
+		if (location == null)
+			return null;
+		
+		File file = new File(location);
+		URL url = null;
+		try {
+			if (file.isFile() && file.getName().endsWith(".jar")) {
+				url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath);
+			}
+		} catch (MalformedURLException e) {
+		}
+		return url;
+	}
+
 	public URL getNLLookupLocation() {
 		return null;
 	}

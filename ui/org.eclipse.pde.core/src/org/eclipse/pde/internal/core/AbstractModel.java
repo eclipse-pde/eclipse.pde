@@ -91,14 +91,7 @@ public abstract class AbstractModel
 	}
 
 	protected boolean isInSync(File localFile) {
-		if (!localFile.exists()) {
-			return false;
-		}
-		if (localFile.lastModified() != getTimeStamp()) {
-			return false;
-		}
-		return true;
-		//	return  (localFile.lastModified()==getTimeStamp());
+		return localFile.exists() && localFile.lastModified() == getTimeStamp();
 	}
 	
 	public boolean isValid() {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
@@ -92,19 +91,16 @@ public abstract class PluginBase
 		loadRuntime(bundleDescription, state);
 		loadImports(bundleDescription);
 		
-		String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-		File file = new File(getModel().getInstallLocation(), filename);
-		if (file.exists()) {
-			try {
-				SAXParser parser = getSaxParser();
-				ExtensionsParser handler = new ExtensionsParser(getModel());
-				parser.parse(new FileInputStream(file), handler);
-				loadExtensions(handler.getExtensions());
-				loadExtensionPoints(handler.getExtensionPoints());
-				schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
-			} catch (Exception e) {
-			}
-		}	
+		try {
+			String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+			SAXParser parser = getSaxParser();
+			ExtensionsParser handler = new ExtensionsParser(getModel());
+			parser.parse(getModel().getResourceURL(filename).openStream(), handler);
+			loadExtensions(handler.getExtensions());
+			loadExtensionPoints(handler.getExtensionPoints());
+			schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
+		} catch (Exception e) {
+		}
 	}
 	
 	private void loadExtensions(Vector collected) {

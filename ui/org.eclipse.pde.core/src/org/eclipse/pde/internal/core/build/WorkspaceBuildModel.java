@@ -18,112 +18,104 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
 public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
-	private IFile file;
-	private boolean dirty;
-	private boolean editable = true;
+	private IFile fUnderlyingResource;
+	private boolean fDirty;
+	private boolean fEditable = true;
 
-public WorkspaceBuildModel(IFile file) {
-	setFile(file);
-}
-public void fireModelChanged(IModelChangedEvent event) {
-	setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
-	super.fireModelChanged(event);
-}
-public String getContents() {
-	StringWriter swriter = new StringWriter();
-	PrintWriter writer = new PrintWriter(swriter);
-	save(writer);
-	writer.flush();
-	try {
-		swriter.close();
-	} catch (IOException e) {
+	public WorkspaceBuildModel(IFile file) {
+		fUnderlyingResource = file;
 	}
-	return swriter.toString();
-}
-public IFile getFile() {
-	return file;
-}
-public IResource getUnderlyingResource() {
-	return file;
-}
-public boolean isDirty() {
-	return dirty;
-}
-public boolean isEditable() {
-	return editable;
-}
 
-public void load() {
-	if (file == null)
-		return;
-	if (file.exists()) {
-		InputStream stream = null;
-		boolean outOfSync=false;
+	public void fireModelChanged(IModelChangedEvent event) {
+		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
+		super.fireModelChanged(event);
+	}
+
+	public String getContents() {
+		StringWriter swriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(swriter);
+		save(writer);
+		writer.flush();
 		try {
-			stream = file.getContents(false);
+			swriter.close();
+			writer.close();
+		} catch (IOException e) {
 		}
-		catch (CoreException e) {
-			outOfSync = true;
-		}
-		if (outOfSync) {
+		return swriter.toString();
+	}
+
+	public IResource getUnderlyingResource() {
+		return fUnderlyingResource;
+	}
+
+	public boolean isDirty() {
+		return fDirty;
+	}
+
+	public boolean isEditable() {
+		return fEditable;
+	}
+
+	public void load() {
+		if (fUnderlyingResource.exists()) {
 			try {
-				stream = file.getContents(true);
+				InputStream stream = fUnderlyingResource.getContents(true);
+				load(stream, false);
+				stream.close();
+			} catch (Exception e) {
+				PDECore.logException(e);
 			}
-			catch (CoreException e) {
-				return;
-			}
-		}
-		try {			
-			load(stream, outOfSync);
-			stream.close();
-		}
-		catch (IOException e) {
-			PDECore.logException(e);
-		}
-	}
-	else {
-		build = new Build();
-		build.setModel(this);
-		loaded=true;
-	}
-}
-
-public boolean isInSync() {
-	return isInSync(file.getLocation().toFile());
-}
-
-protected void updateTimeStamp() {
-	updateTimeStamp(file.getLocation().toFile());
-}
-public void save() {
-	if (file == null)
-		return;
-	try {
-		String contents = getContents();
-		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
-		if (file.exists()) {
-			file.setContents(stream, false, false, null);
 		} else {
-			file.create(stream, false, null);
+			fBuild = new Build();
+			fBuild.setModel(this);
+			loaded = true;
 		}
-		stream.close();
-	} catch (CoreException e) {
-		PDECore.logException(e);
-	} catch (IOException e) {
 	}
-}
-public void save(PrintWriter writer) {
-	getBuild().write("", writer); //$NON-NLS-1$
-	dirty = false;
-}
-public void setDirty(boolean newDirty) {
-	dirty = newDirty;
-}
-public void setEditable(boolean newEditable) {
-	editable = newEditable;
-}
-public void setFile(IFile newFile) {
-	file = newFile;
-	//setEditable(file.isReadOnly()==false);
-}
+
+	public boolean isInSync() {
+		return true;
+	}
+
+	protected void updateTimeStamp() {
+		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
+	}
+
+	public void save() {
+		if (fUnderlyingResource == null)
+			return;
+		try {
+			String contents = getContents();
+			ByteArrayInputStream stream = new ByteArrayInputStream(contents
+					.getBytes("8859_1")); //$NON-NLS-1$
+			if (fUnderlyingResource.exists()) {
+				fUnderlyingResource.setContents(stream, false, false, null);
+			} else {
+				fUnderlyingResource.create(stream, false, null);
+			}
+			stream.close();
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		} catch (IOException e) {
+		}
+	}
+
+	public void save(PrintWriter writer) {
+		getBuild().write("", writer); //$NON-NLS-1$
+		fDirty = false;
+	}
+
+	public void setDirty(boolean dirty) {
+		fDirty = dirty;
+	}
+
+	public void setEditable(boolean editable) {
+		fEditable = editable;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.build.IBuildModel#getInstallLocation()
+	 */
+	public String getInstallLocation() {
+		return fUnderlyingResource.getLocation().toOSString();
+	}
 }
