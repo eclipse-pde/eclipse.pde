@@ -52,9 +52,9 @@ implements IResourceChangeListener {
 	}
 	
 	private boolean visit(IResourceDelta delta) {
-		IResource resource = delta.getResource();
-		if (resource.equals(file)) {
-			bundle = null;
+		//IResource resource = delta.getResource();
+		//if (resource.equals(file)) {
+			//bundle = null;
 			/*
 			if (changeProvider!=null) {
 				// fire 'world changed' in the model
@@ -64,7 +64,7 @@ implements IResourceChangeListener {
 				changeProvider.fireModelChanged(e);
 			}
 			*/
-		}
+		//}
 		return true;
 	}
 	
