@@ -94,6 +94,9 @@ public class FeatureMatchSection extends MatchSection {
 			update((IFeatureImport) null);
 			return;
 		}
+		if (!(selection.getFirstElement() instanceof IFeatureImport))
+			return;
+		
 		if (selection.size() == 1) {
 			update((IFeatureImport) selection.getFirstElement());
 			return;
