@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.model.*;
 public abstract class KeyValueSourcePage extends PDESourcePage {
 
 	class KeyValueSourceViewerConfiguration extends SourceViewerConfiguration {
+		private AnnotationHover fAnnotationHover;
 		public IReconciler getReconciler(ISourceViewer sourceViewer) {
 			ReconcilingStrategy strategy = new ReconcilingStrategy();
 			strategy.addParticipant((IReconcilingParticipant) getInputContext()
@@ -28,6 +29,11 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 			MonoReconciler reconciler = new MonoReconciler(strategy, false);
 			reconciler.setDelay(500);
 			return reconciler;
+		}
+		public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+			if (fAnnotationHover == null)
+				fAnnotationHover = new AnnotationHover();
+			return fAnnotationHover;
 		}
 	}
 	public KeyValueSourcePage(PDEFormEditor editor, String id, String title) {
