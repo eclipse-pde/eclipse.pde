@@ -16,8 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
@@ -33,7 +31,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.text.edits.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -251,7 +248,6 @@ public class PluginActivationSection extends TableSection
 						PDEPlugin.getResourceString("PluginActivationSection.createManifest"), SWT.NULL); //$NON-NLS-1$
 				manifestLink.addHyperlinkListener(new IHyperlinkListener() {
 					public void linkActivated(HyperlinkEvent e) {
-						handleConvert();
 					}
 					public void linkExited(HyperlinkEvent e) {
 					}
@@ -361,73 +357,6 @@ public class PluginActivationSection extends TableSection
 		if (contextManager!=null)
 			contextManager.addInputContextListener(this);
 		update();
-	}
-	
-	private void handleConvert() {
-		try {
-			getPage().getEditor().doSave(null);
-			IPluginModelBase model = (IPluginModelBase) getPage()
-					.getPDEEditor().getAggregateModel();
-			IProject project = model.getUnderlyingResource().getProject();
-			String target = PDECore.getDefault().getModelManager().getTargetVersion();
-			PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(model), new NullProgressMonitor()); //$NON-NLS-1$
-
-			InputContextManager mgr = getPage().getPDEEditor().getContextManager();
-			InputContext context = mgr.findContext(PluginInputContext.CONTEXT_ID);
-			IDocument doc = context.getDocumentProvider().getDocument(context.getInput());
-			FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(doc);
-			MultiTextEdit multiEdit = new MultiTextEdit();
-			TextEdit edit = editRootElement(model.isFragmentModel() ? "fragment" : "plugin", adapter, doc, 0); //$NON-NLS-1$ //$NON-NLS-2$
-			if (edit != null)
-				multiEdit.addChild(edit);
-			edit = removeElement("requires", adapter, doc, 0); //$NON-NLS-1$
-			if (edit != null)
-				multiEdit.addChild(edit);
-			edit = removeElement("runtime", adapter, doc, 0); //$NON-NLS-1$
-			if (edit != null)
-				multiEdit.addChild(edit);
-			
-			if (multiEdit.hasChildren()) {
-				multiEdit.apply(doc);
-				getPage().getEditor().doSave(null);
-			}
-		} catch (Exception e1) {
-		}
-		
-	}
-	
-	private TextEdit editRootElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
-		try {
-			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-			if (region != null) {
-				String replacementString = "<" + elementName; //$NON-NLS-1$
-				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
-					replacementString += "/"; //$NON-NLS-1$
-				return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString);
-			}
-		} catch (BadLocationException e) {
-		}
-		return null;
-	}
-	private TextEdit removeElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {
-		try {
-			IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-			if (region != null) {
-				if (doc.getChar(region.getOffset() + region.getLength()) == '/')
-					return new DeleteEdit(region.getOffset(), region.getLength() + 1);
-				IRegion endRegion = adapter.find(0, "</" + elementName +">", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-				if (endRegion != null) {
-					int lastPos = endRegion.getOffset() + endRegion.getLength() + 1;
-					while (Character.isWhitespace(doc.getChar(lastPos))) {
-						lastPos += 1;
-					}
-					lastPos -= 1;
-					return new DeleteEdit(region.getOffset(), lastPos - region.getOffset());
-				}
-			}
-		} catch (BadLocationException e) {
-		}
-		return null;
 	}
 	
 	protected void enableButtons() {
