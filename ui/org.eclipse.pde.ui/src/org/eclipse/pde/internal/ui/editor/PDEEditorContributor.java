@@ -208,8 +208,13 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		if (editor != null)
 			editor.updateUndo(null, null);
 		if (targetEditor instanceof PDESourcePage) {
+			// Fixing the 'goto line' problem -
+			// the action is thinking that source page
+			// is a standalone editor and tries to activate it
+			// #19361
 			PDESourcePage page = (PDESourcePage)targetEditor;
-			targetEditor = page.getEditor();
+			PDEPlugin.getActivePage().activate(page.getEditor());
+			return;
 		}
 	    this.editor = (PDEMultiPageEditor) targetEditor;
 		editor.updateUndo(
