@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.base.model.plugin;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.pde.internal.base.model.build.*;
 import java.io.*;
@@ -26,8 +30,6 @@ import org.eclipse.core.resources.IResource;
  */
 public interface IPluginModelBase extends IModel, IModelChangeProvider {
 /**
- * Insert the method's description here.
- * Creation date: (5/8/2001 7:50:18 PM)
  * @return org.eclipse.pde.internal.base.model.plugin.IPluginBase
  */
 IPluginBase createPluginBase();
@@ -54,8 +56,6 @@ IPluginModelFactory getFactory();
  */
 public String getInstallLocation();
 /**
- * Insert the method's description here.
- * Creation date: (5/8/2001 7:50:02 PM)
  * @return org.eclipse.pde.internal.base.model.plugin.IPluginBase
  */
 IPluginBase getPluginBase();
@@ -66,8 +66,6 @@ IPluginBase getPluginBase();
  */
 public boolean isEnabled();
 /**
- * Insert the method's description here.
- * Creation date: (5/8/2001 7:57:38 PM)
  * @return boolean
  */
 boolean isFragmentModel();

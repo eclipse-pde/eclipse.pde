@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.runtime;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.net.*;
 import org.eclipse.swt.graphics.Image;

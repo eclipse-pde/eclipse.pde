@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.preferences;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -8,9 +12,6 @@ import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 /**
- * Insert the type's description here.
- * Creation date: (5/14/2001 8:26:24 PM)
- * @author: Dejan Glozic
  */
 public class RuntimeTracingPreferencePage
 	extends PreferencePage
@@ -104,15 +105,11 @@ protected Control createContents(Composite parent) {
  */
 public void init(IWorkbench workbench) {}
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 8:52:49 PM)
  */
 private void initializeCheck(String key, String label) {
 	checks.add(new CheckOption(key, label));
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 8:52:49 PM)
  */
 private void initializeOptions() {
 	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
@@ -136,15 +133,11 @@ private void initializeOptions() {
 	initializeText(prefix + "native", PDEPlugin.getResourceString(KEY_NATIVE));
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 8:52:49 PM)
  */
 private void initializeText(String key, String label) {
 	filters.add(new TextOption(key, label));
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 9:09:59 PM)
  */
 private void initializeValues(Properties store) {
 	master.load(store);
@@ -181,16 +174,12 @@ public boolean performOk() {
 	return true;
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 9:21:10 PM)
  * @param option org.eclipse.pde.internal.preferences.RuntimeOption
  */
 private void resetValue(RuntimeOption option, Hashtable template) {
 	option.setValue(template.get(option.getKey()));
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 9:09:59 PM)
  */
 private void resetValues() {
 	Hashtable template =
@@ -221,8 +210,6 @@ public void setVisible(boolean visible) {
 	super.setVisible(visible);
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 9:09:59 PM)
  */
 private void storeValues(Properties store) {
 	syncUpMasters(store);
@@ -236,8 +223,6 @@ private void storeValues(Properties store) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 10:14:16 PM)
  */
 private void syncUpMasters(Properties store) {
 	master.store(store);
@@ -248,8 +233,6 @@ private void syncUpMasters(Properties store) {
 	}
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/14/2001 9:39:50 PM)
  */
 private void updateValues() {
 	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();

@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.runtime.registry;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;

@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.runtime.registry;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 public abstract class ParentAdapter extends PluginObjectAdapter {
 	Object [] children;

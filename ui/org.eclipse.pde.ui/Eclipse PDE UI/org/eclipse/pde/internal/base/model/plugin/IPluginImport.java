@@ -1,11 +1,12 @@
 package org.eclipse.pde.internal.base.model.plugin;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.base.model.IIdentifiable;
 /**
- * Insert the type's description here.
- * Creation date: (03/02/2001 5:03:59 PM)
- * @author: Dejan Glozic
  */
 public interface IPluginImport extends IPluginObject, IIdentifiable {
 /**

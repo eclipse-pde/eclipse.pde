@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.codegen;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.io.*;
 import java.util.*;

@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.base.model;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 /**
  * Model change events are fired by the model

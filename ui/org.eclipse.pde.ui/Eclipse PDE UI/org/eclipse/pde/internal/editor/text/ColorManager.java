@@ -1,4 +1,8 @@
 package org.eclipse.pde.internal.editor.text;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.util.HashMap;
 import java.util.Iterator;
