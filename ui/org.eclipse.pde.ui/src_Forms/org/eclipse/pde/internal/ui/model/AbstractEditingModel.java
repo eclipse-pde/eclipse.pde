@@ -23,6 +23,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	protected long fTimestamp;
 	private transient NLResourceHelper fNLResourceHelper;
 	private IDocument fDocument;
+	private boolean fDirty;
 	
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;
@@ -150,5 +151,22 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 */
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		fListeners.remove(listener);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IEditable#isDirty()
+	 */
+	public boolean isDirty() {
+		return fDirty;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
+	 */
+	public void save(PrintWriter writer) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IEditable#setDirty(boolean)
+	 */
+	public void setDirty(boolean dirty) {
+		this.fDirty = dirty;
 	}
 }

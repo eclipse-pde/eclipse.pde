@@ -93,7 +93,6 @@ public class LibrarySection
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		getForm().fireSelectionChanged(this, selection);
 		//getFormPage().setSelection(selection);
 		updateDirectionalButtons();
 	}
@@ -241,15 +240,18 @@ public class LibrarySection
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		libraryTable.setInput(model.getPluginBase());
-		//setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		getTablePart().setButtonEnabled(2, false);
 		getTablePart().setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
 	}
+	public void refresh() {
+		libraryTable.refresh();
+		super.refresh();
+	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			libraryTable.refresh();
+			markStale();
 			return;
 		}
 		Object changeObject = event.getChangedObjects()[0];
@@ -265,7 +267,7 @@ public class LibrarySection
 				}
 			}
 		} else if (changeObject.equals(libraryTable.getInput())) {
-			libraryTable.refresh();
+			markStale();
 		}
 	}
 	public void setFocus() {

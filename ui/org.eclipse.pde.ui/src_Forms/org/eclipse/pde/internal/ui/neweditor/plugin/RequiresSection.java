@@ -87,7 +87,6 @@ public class RequiresSection
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
-		getForm().fireSelectionChanged(this, sel);
 	}
 	
 	protected void handleDoubleClick(IStructuredSelection sel) {
@@ -275,11 +274,16 @@ public class RequiresSection
 			}
 		};
 	}
+	
+	public void refresh() {
+		imports = null;
+		importTable.refresh();
+		super.refresh();
+	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		/*if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			imports = null;
-			importTable.refresh();
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
 			return;
 		}
 
@@ -303,8 +307,7 @@ public class RequiresSection
 					}
 				}
 			}
-			//setDirty(true);
-		}*/
+		}
 	}
 
 	public void modelsChanged(IModelProviderEvent e) {

@@ -131,6 +131,7 @@ public class BundlePluginBase
 
 		if (imports != null) {
 			imports.add(pluginImport);
+			fireStructureChanged(pluginImport, true);			
 		}
 		String rname = pluginImport.getId();
 		String header = bundle.getHeader(IBundle.KEY_REQUIRE_BUNDLE);
@@ -148,6 +149,7 @@ public class BundlePluginBase
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
 		throwException("Cannot remove import from BundlePlugin");
+		fireStructureChanged(pluginImport, false);		
 	}
 
 	/*
@@ -383,8 +385,10 @@ public class BundlePluginBase
 	 */
 	public void setProviderName(String providerName) throws CoreException {
 		IBundle bundle = getBundle();
+		Object oldValue = getProviderName();
 		if (bundle != null) {
 			bundle.setHeader(IBundle.KEY_VENDOR, providerName);
+			model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, oldValue, providerName);			
 		}
 	}
 
@@ -395,8 +399,10 @@ public class BundlePluginBase
 	 */
 	public void setVersion(String version) throws CoreException {
 		IBundle bundle = getBundle();
+		Object oldValue = getVersion();
 		if (bundle != null) {
 			bundle.setHeader(IBundle.KEY_VERSION, version);
+			model.fireModelObjectChanged(this, IPluginBase.P_VERSION, oldValue, version);
 		}
 	}
 
@@ -410,6 +416,11 @@ public class BundlePluginBase
 		throws CoreException {
 		throwException("Cannot swap libraries in BundlePlugin");
 	}
+	
+	private void fireStructureChanged(Object object, boolean added) {
+		int type = (added)?IModelChangedEvent.INSERT:IModelChangedEvent.REMOVE;
+		model.fireModelChanged(new ModelChangedEvent(type, new Object[]{object}, null ));
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -421,6 +432,7 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(extension);
+		fireStructureChanged(extension, true);
 	}
 
 	/*
@@ -433,6 +445,7 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(point);
+		fireStructureChanged(point, true);
 	}
 
 	/*
@@ -466,8 +479,10 @@ public class BundlePluginBase
 	 */
 	public void remove(IPluginExtension extension) throws CoreException {
 		IExtensions extensions = getExtensionsRoot();
-		if (extensions != null)
+		if (extensions != null) {
 			extensions.remove(extension);
+			fireStructureChanged(extension, false);
+		}
 	}
 
 	/*
@@ -478,8 +493,10 @@ public class BundlePluginBase
 	public void remove(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
 		IExtensions extensions = getExtensionsRoot();
-		if (extensions != null)
+		if (extensions != null) {
 			extensions.remove(extensionPoint);
+			fireStructureChanged(extensionPoint, false);
+		}
 	}
 
 	/*
@@ -491,8 +508,10 @@ public class BundlePluginBase
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 		throws CoreException {
 		IExtensions extensions = getExtensionsRoot();
-		if (extensions != null)
+		if (extensions != null) {
 			extensions.swap(e1, e2);
+			model.fireModelObjectChanged(this, P_EXTENSION_ORDER, e1, e2);
+		}
 	}
 
 	/*
@@ -517,9 +536,11 @@ public class BundlePluginBase
 	 */
 	public void setId(String id) throws CoreException {
 		IBundle bundle = getBundle();
+		Object oldValue = getId();
 		if (bundle != null) {
 			bundle.setHeader(IBundle.KEY_NAME, id);
 			bundle.setHeader(IBundle.KEY_SYMBOLIC_NAME, id);
+			model.fireModelObjectChanged(this, IPluginBase.P_ID, oldValue, id);
 		}
 	}
 
@@ -596,8 +617,10 @@ public class BundlePluginBase
 	 */
 	public void setName(String name) throws CoreException {
 		IBundle bundle = getBundle();
+		Object oldValue = getName();
 		if (bundle != null)
 			bundle.setHeader(IBundle.KEY_DESC, name);
+		model.fireModelObjectChanged(this, IPluginBase.P_NAME, oldValue, name);
 	}
 
 	/*

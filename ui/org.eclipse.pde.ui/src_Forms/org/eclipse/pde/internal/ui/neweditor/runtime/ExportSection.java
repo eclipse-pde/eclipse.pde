@@ -299,6 +299,7 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 			return !((IEditable)model).isEditable();
 		return true;
 	}
+	
 	private void update(IPluginLibrary library) {
 		if (library == null) {
 			nameFilterContainer.setVisible(false);
@@ -310,7 +311,8 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 			selectedExportButton.setSelection(false);
 			currentLibrary = null;
 			return;
-		} else if (currentLibrary == null && !isReadOnly()) {
+		} 
+		if (currentLibrary == null && !isReadOnly()) {
 			fullExportButton.setEnabled(true);
 			noExportButton.setEnabled(true);
 			selectedExportButton.setEnabled(true);

@@ -33,6 +33,12 @@ public class PluginInputContextManager extends InputContextManager {
 		return findPluginModel();
 	}
 	
+	public IModel getPluginModel() {
+		if (bmodel!=null)
+			return bmodel.getExtensionsModel();
+		return findPluginModel();
+	}
+	
 	protected void fireContextChange(InputContext context, boolean added) {
 		super.fireContextChange(context, added);
 		if (context.getId().equals(BundleInputContext.CONTEXT_ID)) {

@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.ui.neweditor.text.*;
  * @author melhem
  *
  */
-public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilingParticipant {
+public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilingParticipant, IEditable {
 
 public IDocument getDocument();
 }

@@ -159,7 +159,6 @@ public class ExtensionsSection extends TreeSection
 		initialize((IPluginModelBase) getPage().getModel());
 	}
 	protected void selectionChanged(IStructuredSelection selection) {
-		getForm().fireSelectionChanged(this, selection);
 		//getFormPage().setSelection(selection);
 		updateUpDownButtons(selection.getFirstElement());
 	}

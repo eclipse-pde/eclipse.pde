@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.osgi.bundle.IBundlePluginBase;
 import org.eclipse.pde.core.plugin.*;
@@ -89,6 +90,9 @@ public class GeneralInfoSection extends PDESection {
 			createClassEntry(client, toolkit, actionBars);
 		}
 		toolkit.paintBordersFor(client);
+		IModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
 	public String getContextId() {
 		if (getPluginBase() instanceof IBundlePluginBase)
@@ -281,6 +285,13 @@ public class GeneralInfoSection extends PDESection {
 		}
 		super.refresh();
 	}
+	public void dispose() {
+		IModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).removeModelChangedListener(this);
+		super.dispose();
+	}
+	
 	private void doOpenClass() {
 		String name = fClassEntry.getText().getText();
 		IProject project = getPage().getPDEEditor().getCommonProject();
