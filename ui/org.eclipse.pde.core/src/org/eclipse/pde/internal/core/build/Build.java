@@ -25,6 +25,7 @@ public Build() {
 public void add(IBuildEntry entry) throws CoreException {
 	ensureModelEditable();
 	entries.add(entry);
+	((BuildEntry)entry).setInTheModel(true);
 	getModel().fireModelChanged(
 		new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT, new Object[] { entry }, null));
 }

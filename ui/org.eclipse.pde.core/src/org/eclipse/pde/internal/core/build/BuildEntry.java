@@ -1,27 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.core.build;
-
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.util.*;
-
 public class BuildEntry extends BuildObject implements IBuildEntry {
 	private Vector tokens = new Vector();
 	private String name;
-
 	public BuildEntry(String name) {
 		this.name = name;
 	}
@@ -29,10 +23,8 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		ensureModelEditable();
 		tokens.add(token);
 		getModel().fireModelChanged(
-			new ModelChangedEvent(getModel(), 
-				IModelChangedEvent.INSERT,
-				new Object[] { token },
-				null));
+				new ModelChangedEvent(getModel(), IModelChangedEvent.INSERT,
+						new Object[]{token}, null));
 	}
 	public String getName() {
 		return name;
@@ -42,7 +34,6 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		tokens.copyInto(result);
 		return result;
 	}
-
 	public boolean contains(String token) {
 		return tokens.contains(token);
 	}
@@ -58,13 +49,11 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		ensureModelEditable();
 		tokens.remove(token);
 		getModel().fireModelChanged(
-			new ModelChangedEvent(getModel(),
-				IModelChangedEvent.REMOVE,
-				new Object[] { token },
-				null));
+				new ModelChangedEvent(getModel(), IModelChangedEvent.REMOVE,
+						new Object[]{token}, null));
 	}
 	public void renameToken(String oldName, String newName)
-		throws CoreException {
+			throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < tokens.size(); i++) {
 			if (tokens.elementAt(i).toString().equals(oldName)) {
@@ -73,10 +62,8 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 			}
 		}
 		getModel().fireModelChanged(
-			new ModelChangedEvent(getModel(),
-				IModelChangedEvent.CHANGE,
-				new Object[] { oldName },
-				null));
+				new ModelChangedEvent(getModel(), IModelChangedEvent.CHANGE,
+						new Object[]{oldName}, null));
 	}
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
@@ -87,8 +74,14 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	public String toString() {
 		return name;
 	}
-
 	public void write(String indent, PrintWriter writer) {
-		PropertiesUtil.writeKeyValuePair(indent, name, tokens.elements(), writer);
+		PropertiesUtil.writeKeyValuePair(indent, name, tokens.elements(),
+				writer);
+	}
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+			throws CoreException {
+		if (name.equals(P_NAME)) {
+			setName(newValue != null ? newValue.toString() : null);
+		}
 	}
 }

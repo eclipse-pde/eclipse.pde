@@ -464,7 +464,7 @@
       <editor
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
-            filenames="plugin.xml,fragment.xml,build.properties,MANIFEST.MF"
+            filenames="plugin.xml,fragment.xml,MANIFEST.MF"
             contributorClass="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditorContributor"
             class="org.eclipse.pde.internal.ui.neweditor.plugin.ManifestEditor"
             id="org.eclipse.pde.ui.newManifestEditor">
@@ -508,6 +508,17 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
             id="org.eclipse.pde.ui.buildEditor">
       </editor>
+<!--
+      <editor
+            default="false"
+            name="%editors.buildProperties.name"
+            icon="icons/obj16/build_exec.gif"
+            filenames="build.properties, delta.properties"
+            class="org.eclipse.pde.internal.ui.neweditor.build.BuildEditor"
+            contributorClass="org.eclipse.pde.internal.ui.neweditor.build.BuildEditorContributor"
+            id="org.eclipse.pde.ui.newBuildEditor">
+      </editor>
+-->
       <editor
             default="true"
             name="%editors.featureManifest.name"
