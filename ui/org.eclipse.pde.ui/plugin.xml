@@ -467,7 +467,7 @@
    <launchConfigurationTab
          name="%launchConfigurationTab.tracingTab.name"
          type="org.eclipse.pde.RuntimeWorkbench"
-         class="org.eclipse.pde.internal.launcher.AdvancedTracingLauncherTab"
+         class="org.eclipse.pde.internal.launcher.TracingLauncherTab"
          id="org.eclipse.pde.launchConfigurationTab.TracingTab">
    </launchConfigurationTab>
    <launchConfigurationTab
