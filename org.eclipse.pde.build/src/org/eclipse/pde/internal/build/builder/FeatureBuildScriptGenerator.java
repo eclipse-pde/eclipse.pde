@@ -53,7 +53,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected String sourceFeatureFullNameVersionned;
 	protected SourceFeatureInformation sourceToGather;
 	protected boolean sourcePluginOnly = false;
-
+	
 	private String[] extraPlugins = new String[0];
 
 	public FeatureBuildScriptGenerator() {
@@ -512,10 +512,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (fileList.equals("")) //$NON-NLS-1$
 			return;
 
+		assemblyData.setCopyRootFile(aConfig);
 		configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 
 		script.printMkdirTask(getPropertyFormat(PROPERTY_FEATURE_BASE) + "/" + configName + "/" + getPropertyFormat(PROPERTY_COLLECTING_PLACE)); //$NON-NLS-1$ //$NON-NLS-2$
-
 		String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
 		FileSet[] fileSet = new FileSet[files.length];
 		for (int i = 0; i < files.length; i++) {
@@ -1281,5 +1281,4 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}
-
 }

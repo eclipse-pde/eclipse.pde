@@ -31,15 +31,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected PluginModel[] plugins;
 	protected PluginFragmentModel[] fragments;
 	protected String filename;
-
+	protected boolean copyRootFile;
+	
 	public AssembleConfigScriptGenerator() {
 	}
 
-	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection pluginList, Collection fragmentList, Collection featureList) throws CoreException {
+	public void initialize(String directoryName, String scriptName, String feature, Config configurationInformation, Collection pluginList, Collection fragmentList, Collection featureList, boolean rootFileCopy) throws CoreException {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-
+		this.copyRootFile = rootFileCopy;
+		
 		this.features = new IFeature[featureList.size()];
 		featureList.toArray(this.features);
 
@@ -194,12 +196,21 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			parameters.clear();
 		}
 
-		// Zip the root files
-		parameters.clear();
+		createZipRootFileCommand();
+}
+
+	/**
+	 *  Zip the root files
+	 */
+	private void createZipRootFileCommand() {
+		if (! copyRootFile)
+			return;
+			
+		List parameters = new ArrayList(1);
 		parameters.add("-r -q ${zipargs} " + " ../../" + getPropertyFormat(PROPERTY_ARCHIVE_NAME) + " . "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		script.printExecTask("zip", getPropertyFormat(PROPERTY_FEATURE_BASE) + "/" + configInfo.toStringReplacingAny(".", ANY_STRING) + "/" + getPropertyFormat(PROPERTY_COLLECTING_BASE), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	
 	}
-
 	private void createZipExecCommand(List parameters) {
 		parameters.add(0, "-r -q " + getPropertyFormat(PROPERTY_ZIP_ARGS) + " " + getPropertyFormat(PROPERTY_ARCHIVE_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("zip", getPropertyFormat(PROPERTY_BASEDIR) + "/" + getPropertyFormat(PROPERTY_BUILD_LABEL) + "/" + getPropertyFormat(PROPERTY_COLLECTING_BASE), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

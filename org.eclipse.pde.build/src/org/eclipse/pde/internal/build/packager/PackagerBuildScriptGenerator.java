@@ -50,7 +50,7 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 
 		PackagingConfigScriptGenerator configAssembler = new PackagingConfigScriptGenerator();
 		Config config = (Config) getConfigInfos().get(0);
-		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFragments(config), assemblageInformation.getFeatures(config)); //$NON-NLS-1$
+		configAssembler.initialize(workingDirectory, DEFAULT_ASSEMBLE_FILENAME, "", config, assemblageInformation.getPlugins(config), assemblageInformation.getFragments(config), assemblageInformation.getFeatures(config), true); //$NON-NLS-1$ //Here the last arg is true because we do not have the root info while packaging
 		configAssembler.setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configAssembler.generate();
 
