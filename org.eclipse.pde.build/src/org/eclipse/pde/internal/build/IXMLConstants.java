@@ -37,7 +37,7 @@ public interface IXMLConstants {
 	public static final String TARGET_CLEAN = "clean";
 	public static final String TARGET_FETCH = "fetch";
 	public static final String TARGET_GATHER_BIN_PARTS = "gather.bin.parts";
-	public static final String TARGET_GATHER_LOG = "gather.log";
+	public static final String TARGET_GATHER_LOGS = "gather.logs";
 	public static final String TARGET_GATHER_SOURCES = "gather.sources";
 	public static final String TARGET_INIT = "init";
 	public static final String TARGET_JAR = "jar";

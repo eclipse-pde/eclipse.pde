@@ -125,7 +125,7 @@ protected void generateCleanTarget() {
 protected void generateGatherLogTarget() {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);

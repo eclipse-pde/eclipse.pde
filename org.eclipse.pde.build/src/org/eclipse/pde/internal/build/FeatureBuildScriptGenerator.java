@@ -268,10 +268,10 @@ protected void generateZipLogsTarget() {
 	base = base.append("_temp_");
 	script.printProperty(tab, PROPERTY_BASE, base.toString());
 	Map params = new HashMap(1);
-	params.put(PROPERTY_TARGET, TARGET_GATHER_LOG);
+	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE));
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
-	script.printAntCallTask(tab, TARGET_GATHER_LOG, "false", params);
+	script.printAntCallTask(tab, TARGET_GATHER_LOGS, "false", params);
 	IPath destination = getRelativeInstallLocation().append("${feature}.log.zip");
 	script.printZipTask(tab, destination.toString(), getPropertyFormat(PROPERTY_BASE));
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
@@ -282,7 +282,7 @@ protected void generateZipLogsTarget() {
 protected void generateGatherLogTarget() {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
 	tab++;
 	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	base = base.append(DEFAULT_FEATURE_LOCATION);
