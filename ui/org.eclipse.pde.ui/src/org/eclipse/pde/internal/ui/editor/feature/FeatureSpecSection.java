@@ -62,25 +62,11 @@ public class FeatureSpecSection extends PDEFormSection {
 	public void commitChanges(boolean onSave) {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
-		String oldId = feature.getId();
-		String oldVersion = feature.getVersion();
 		titleText.commit();
 		providerText.commit();
 		idText.commit();
 		versionText.commit();
-		String newId = feature.getId();
-		String newVersion = feature.getVersion();
-		if (!oldId.equals(newId) || !oldVersion.equals(newVersion)) {
-			// feature folder must be renamed
-			String newName = newId + "_" + newVersion;
-			IFolder folder = (IFolder) model.getUnderlyingResource().getParent();
-			IPath newPath = folder.getFullPath().removeLastSegments(1).append(newName);
-			try {
-				folder.move(newPath, false, null);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
+		imageText.commit();
 		try {
 			feature.setPrimary(primaryButton.getSelection());
 		} catch (CoreException e) {
