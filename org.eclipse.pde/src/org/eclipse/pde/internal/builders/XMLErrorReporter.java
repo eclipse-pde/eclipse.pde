@@ -279,6 +279,18 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 		return -1;
 	}
+	
+	protected String getTextContent(Element element) {
+		ElementData data = (ElementData)fOffsetTable.get(element);
+		try {
+			IRegion nameRegion = fFindReplaceAdapter.find(data.offset, "</"+element.getNodeName()+">", true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
+			int offset = data.offset + element.getNodeName().length() + 2;
+			if (nameRegion != null)
+				return fTextDocument.get(offset, nameRegion.getOffset() - offset).trim();
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
 
 	
 	protected int getLine(Element element) {

@@ -126,6 +126,8 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			
 			if (schemaElement.isDeprecated())
 				reportDeprecatedElement(element);
+			if (schemaElement.hasTranslatableContent())
+				validateTranslatableElementContent(element);
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				validateElement((Element)children.item(i), schema);
@@ -283,6 +285,23 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
 				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	protected void validateTranslatableElementContent(Element element) {
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_EXTERNALIZED);
+		if (severity == CompilerFlags.IGNORE)
+			return;
+		String value = getTextContent(element);
+		if (value == null)
+			return;
+		if (!value.startsWith("%")) { //$NON-NLS-1$
+			report(PDE.getFormattedMessage("Builders.Manifest.non-ext-element", element.getNodeName()), getLine(element), severity); //$NON-NLS-1$
+		} else if (fModel != null && fModel instanceof AbstractModel) {
+			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+			if (helper == null || !helper.resourceExists(value)) {
+				report(PDE.getFormattedMessage("Builders.Manifest.key-not-found", value.substring(1)), getLine(element), severity); //$NON-NLS-1$
 			}
 		}
 	}
