@@ -24,7 +24,8 @@ public class PluginExtensionPointNode extends PluginObjectNode
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getFullId()
 	 */
 	public String getFullId() {
-		return getPluginBase().getId() + "." + getId(); //$NON-NLS-1$
+		String pluginID = getPluginBase().getId();
+		return (pluginID != null) ? pluginID + "." + getId() : getId(); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getSchema()
