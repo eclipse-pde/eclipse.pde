@@ -25,13 +25,12 @@ import org.eclipse.ui.help.*;
 public class PluginListPage extends BasePluginListPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title"; //$NON-NLS-1$
 	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc"; //$NON-NLS-1$
-	private IPluginModelBase [] models;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getPluginModels();
+			return PDECore.getDefault().getModelManager().getPlugins();
 		}
 	}
 
@@ -60,20 +59,6 @@ public class PluginListPage extends BasePluginListPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
-	}
-
-	private Object[] getPluginModels() {
-		if (models == null) {
-			WorkspaceModelManager manager =
-				PDECore.getDefault().getWorkspaceModelManager();
-			IPluginModel[] workspaceModels = manager.getPluginModels();
-			IFragmentModel[] fragmentModels = manager.getFragmentModels();
-			models =
-				new IPluginModelBase[workspaceModels.length + fragmentModels.length];
-			System.arraycopy(workspaceModels, 0, models, 0, workspaceModels.length);
-			System.arraycopy(fragmentModels, 0, models, workspaceModels.length, fragmentModels.length);
-		}
-		return models;
 	}
 
 	public IPluginBase[] getSelectedPlugins() {
