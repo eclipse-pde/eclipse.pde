@@ -320,12 +320,11 @@ public class ManifestEditor extends MultiSourceEditor {
 				+ manifest;
 		File file = new File(fileName);
 		if (file.exists()) {
-			String editorId = PDEPlugin.getPluginId() + (isFragment ? ".newFragmentEditor" :".newManifestEditor");
 			try {
 				SystemFileEditorInput input = new SystemFileEditorInput(file);
 				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
 					input,
-					editorId);
+					IPDEUIConstants.MANIFEST_EDITOR_ID);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			}
