@@ -68,7 +68,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		SashForm sashForm = new SashForm(container, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		wizardSelectionViewer = new TableViewer(createTable(sashForm, SWT.BORDER));
+		wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setSorter(ListUtil.NAME_SORTER);
@@ -92,15 +92,6 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 	}
 	
 	protected void initializeViewer() {
-	}
-	
-	private Table createTable(Composite parent, int style) {
-		Table table = new Table(parent, style);
-		new TableColumn(table, SWT.NONE);
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnPixelData(200));
-		table.setLayout(layout);
-		return table;
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
