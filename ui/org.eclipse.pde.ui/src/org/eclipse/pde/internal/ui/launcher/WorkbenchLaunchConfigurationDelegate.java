@@ -225,6 +225,9 @@ public class WorkbenchLaunchConfigurationDelegate
 		String tracingArg;
 		if (SWT.getPlatform().equals("motif"))
 			tracingArg = "file:" + optionsFileName;
+		// defect 17661
+		else if (SWT.getPlatform().equals("gtk"))
+			tracingArg = "file://localhost" + optionsFileName;
 		else
 			tracingArg = "\"file:" + optionsFileName + "\"";
 		return tracingArg;
