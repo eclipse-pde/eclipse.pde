@@ -171,7 +171,7 @@ protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
 		output.println("    </ant>");
 	}
 
-	output.println("    <delete file=\"${plugin}" + SEPARATOR_VERSION + "${version}.zip\"/>");
+	output.println("    <delete file=\"${" + getModelTypeName() + "}" + SEPARATOR_VERSION + "${version}.zip\"/>");
 	output.println("  </target>");
 }
 protected void generateCopyReference(PrintWriter output, PluginModel descriptor) {
@@ -325,7 +325,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    <mkdir dir=\"${destroot}\"/>");
 	output.println("    <antcall target=\"jar\"/>");
 	output.println("    <antcall target=\"bin\"/>");
-	output.println("    <zip zipfile=\"${plugin}" + SEPARATOR_VERSION + "${version}.zip\" basedir=\"${destroot}\"/>");
+	output.println("    <zip zipfile=\"${" + getModelTypeName() + "}" + SEPARATOR_VERSION + "${version}.zip\" basedir=\"${destroot}\"/>");
 	output.println("    <delete dir=\"${destroot}\"/>");
 	output.println("  </target>");
 }
