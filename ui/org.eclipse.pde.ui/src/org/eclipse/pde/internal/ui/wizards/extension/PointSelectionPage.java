@@ -46,12 +46,12 @@ public class PointSelectionPage
 	private HashSet fAvailableImports;
 	private Action showDetailsAction;
 	private IProject project;
-
+	private Label templateLabel;
+	
 	private IPluginExtension fNewExtension;
 	private ShowDescriptionAction fShowDescriptionAction;
 	private WizardCollectionElement wizardCollection;
 	private NewExtensionWizard wizard;
-	private SashForm sashForm;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -148,26 +148,23 @@ public class PointSelectionPage
 		// top level group
 		Composite outerContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.makeColumnsEqualWidth = false;
 		outerContainer.setLayout(layout);
-		outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		outerContainer.setLayoutData(gd);
 
-		fFilterCheck = new Button(outerContainer, SWT.CHECK);
-		fFilterCheck.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.filterCheck"));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
-		fFilterCheck.setLayoutData(gd);
-		fFilterCheck.setSelection(true);
-		fFilterCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fPointListViewer.refresh();
-			}
-		});
+		Composite pointContainer = new Composite(outerContainer, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		pointContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
+		pointContainer.setLayoutData(gd);
 
+		Label pointLabel = new Label(pointContainer, SWT.NONE);
+		pointLabel.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.availExtPoints.label"));
+		
 		fPointListViewer =
 			new TableViewer(
-				outerContainer,
+				pointContainer,
 				SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fPointListViewer.setContentProvider(new PointContentProvider());
 		fPointListViewer.setLabelProvider(new PointLabelProvider());
@@ -184,53 +181,46 @@ public class PointSelectionPage
 		});
 
 		fPointListViewer.setSorter(ListUtil.NAME_SORTER);
-		gd =
-			new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 300;
-		gd.horizontalSpan = 3;
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
 		fPointListViewer.getTable().setLayoutData(gd);
 
 		Composite templateComposite =
 			new Composite(outerContainer, SWT.NONE);
 		layout = new GridLayout();
-		layout.marginHeight = 0;
+		layout.marginHeight = 9;
 		layout.marginWidth = 0;
-		layout.numColumns = 1;
 		templateComposite.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan=3;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateComposite.setLayoutData(gd);
 		
-		Label templateLabel = new Label(templateComposite, SWT.NONE);
+		templateLabel = new Label(templateComposite, SWT.NONE);
 		templateLabel.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.contributedTemplates.title"));
-		gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateLabel.setLayoutData(gd);
 		
-		
-		sashForm = new SashForm(templateComposite, SWT.HORIZONTAL);
-		sashForm.setLayout(new GridLayout());
+		SashForm templateSashForm = new SashForm(templateComposite, SWT.HORIZONTAL);
+		templateSashForm.setLayout(new GridLayout());
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 100;
-		sashForm.setLayoutData(gd);
+		gd.heightHint = 80;
+		templateSashForm.setLayoutData(gd);
 		
 		Composite wizardComposite =
-			new Composite(sashForm, SWT.NONE);
+			new Composite(templateSashForm, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		wizardComposite.setLayout(layout);
 		gd =
 			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+				GridData.FILL_BOTH | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		wizardComposite.setLayoutData(gd);
 		fTemplateViewer = new TableViewer(wizardComposite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fTemplateViewer.setContentProvider(new TemplateContentProvider());
 		fTemplateViewer.setLabelProvider(ElementLabelProvider.INSTANCE);
 		fTemplateViewer.setSorter(ListUtil.NAME_SORTER);
 		fTemplateViewer.addSelectionChangedListener(this);
-		gd =
-			new GridData(
-				GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 
 		fTemplateViewer.getTable().setLayoutData(gd);  
 		TableItem[] selection = fPointListViewer.getTable().getSelection();
@@ -243,17 +233,30 @@ public class PointSelectionPage
 				}
 			}
 		});
+		
 		Composite descriptionComposite =
-			new Composite(sashForm, SWT.NONE);
+			new Composite(templateSashForm, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		descriptionComposite.setLayout(layout);
-		gd =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		descriptionComposite.setLayoutData(gd);
 		createDescriptionIn(descriptionComposite);
+
+		
+		fFilterCheck = new Button(outerContainer, SWT.CHECK);
+		fFilterCheck.setText(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.filterCheck"));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fFilterCheck.setLayoutData(gd);
+		fFilterCheck.setSelection(true);
+		fFilterCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPointListViewer.refresh();
+			}
+		});
+		
+		getContainer().getShell().setSize(500, 500);
 		createMenuManager();
 		initialize();
 		setControl(outerContainer);
@@ -354,11 +357,7 @@ public class PointSelectionPage
 	public IPluginExtension getNewExtension() {
 		return fNewExtension;
 	}
-	
-	public SashForm getSashForm(){
-		return sashForm;
-	}
-	
+		
 	protected void initialize() {
 		fPointListViewer.addFilter(new PointFilter());
 		fPointListViewer.setInput(PDECore.getDefault().getModelManager());
@@ -392,6 +391,7 @@ public class PointSelectionPage
 							INFORMATION);
 					setDescription(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.pluginDescription",fCurrentPoint.getFullId()));
 					setDescriptionText("");
+					templateLabel.setText(PDEPlugin.getFormattedMessage("NewExtensionWizard.PointSelectionPage.contributedTemplates.label", fCurrentPoint.getFullId()));
 					setSelectedNode(null);
 					setPageComplete(true);
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
