@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
-import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -199,7 +198,6 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 		IPropertySheetEntry entry = getSelectedEntry();
 		if (entry == null)
 			return;
-		PDEProblemFinder.fixMe("Should not be using display name as an id");
 		String attName = entry.getDisplayName();
 		((UnknownElementPropertySource) source).removeAttribute(attName);
 		refreshInput();

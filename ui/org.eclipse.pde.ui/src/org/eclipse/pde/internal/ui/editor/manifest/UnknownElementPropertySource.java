@@ -15,7 +15,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 import org.eclipse.ui.views.properties.*;
 
 public class UnknownElementPropertySource extends ManifestPropertySource {
@@ -37,7 +36,6 @@ public void createPropertyDescriptors() {
 	descriptors = new Vector();
 	IPluginElement element = (IPluginElement)object;
 
-	PDEProblemFinder.fixMe("Need 1G9NVYL to separate id and name");
 	PropertyDescriptor nameDesc = createTextPropertyDescriptor(TAG_NAME, TAG_NAME);
 	descriptors.addElement(nameDesc);
 
