@@ -4,8 +4,6 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.ui.texteditor.*;
-
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer implements IPreferenceConstants {
 
@@ -20,7 +18,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
 		store.setDefault(PROP_JAVAC_DEBUG_INFO, true);
 		store.setDefault(PROP_JAVAC_FAIL_ON_ERROR, false);
 		store.setDefault(PROP_JAVAC_VERBOSE, true);
-		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 
 }
