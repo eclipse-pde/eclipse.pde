@@ -269,7 +269,7 @@ public class ProductExportJob extends FeatureExportJob {
 				buffer.append(",");
 			buffer.append(id);
 			if ("org.eclipse.core.runtime".equals(id))
-				buffer.append("@2");
+				buffer.append("@2:start");
 		}
 		return buffer.toString();
 	}

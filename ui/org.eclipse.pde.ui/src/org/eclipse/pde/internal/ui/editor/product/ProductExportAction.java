@@ -33,6 +33,7 @@ public class ProductExportAction extends Action {
 			return;
 		
 		ProductExportJob job = new ProductExportJob(PDEPlugin.getResourceString("ProductExportAction.jobName"), model); //$NON-NLS-1$
+		job.setUser(true);
 		job.schedule();
 	}
 	
