@@ -267,7 +267,8 @@ public class PortabilitySection extends PDEFormSection {
 
 	private void limitTextWidth(FormEntry entry) {
 		GridData gd = (GridData) entry.getControl().getLayoutData();
-		gd.widthHint = 150;
+		if (reactToSelections) gd.widthHint = 30;
+		else gd.widthHint = 150;
 	}
 
 	private void openPortabilityChoiceDialog(

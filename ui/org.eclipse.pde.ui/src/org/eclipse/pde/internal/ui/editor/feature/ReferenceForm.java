@@ -30,7 +30,7 @@ protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
 	parent.setLayout(layout);
 	layout.numColumns = 2;
-	layout.makeColumnsEqualWidth=true;
+	//layout.makeColumnsEqualWidth=true;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
 	layout.verticalSpacing=15;
