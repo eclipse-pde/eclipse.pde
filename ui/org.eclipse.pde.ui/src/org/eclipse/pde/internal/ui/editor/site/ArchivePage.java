@@ -25,7 +25,7 @@ public class ArchivePage extends PDEFormPage {
 	private ArchiveSection fArchiveSection;
 	
 	public ArchivePage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, "Site Layout");
+		super(editor, PAGE_ID, "Archives");
 		//TODO translate page title
 	}
 	protected void createFormContent(IManagedForm mform) {
@@ -46,6 +46,6 @@ public class ArchivePage extends PDEFormPage {
 		//WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
 		//TODO translate page header
-		form.setText("Description and Layout");
+		form.setText("Description and Archives");
 	}
 }
