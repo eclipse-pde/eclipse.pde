@@ -266,6 +266,24 @@ public class NewFeatureProjectWizard extends NewWizard
 		StructureData structureData = structurePage.getStructureData();
 		handler.setLibrary(structureData.getRuntimeLibraryName());
 
+		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
+		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
+		
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightDesc")); //$NON-NLS-1$
+		
+		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
+		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
+		
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseDesc")); //$NON-NLS-1$
+
+		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
+		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
+		
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionDesc")); //$NON-NLS-1$
+
 		// Save the model
 		model.save();
 		model.dispose();

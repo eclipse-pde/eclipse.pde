@@ -57,9 +57,6 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		"NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
 	public static final String CREATING_MANIFEST =
 		"NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
-	
-	public static final int COPYRIGHT_INDEX = 1;
-	public static final int LICENSE_INDEX = 2;
 
 	private WizardNewProjectCreationPage mainPage;
 	private PatchSpecPage specPage;
@@ -326,18 +323,25 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		StructureData structureData = structurePage.getStructureData();
 		handler.setLibrary(structureData.getRuntimeLibraryName());
 			
-		IFeatureInfo info = model.getFactory().createInfo(COPYRIGHT_INDEX);
-		feature.setFeatureInfo(info, COPYRIGHT_INDEX);
+		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
+		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
 		
-		info.setURL(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleCopyrightURL")); //$NON-NLS-1$
-		info.setDescription(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleCopyrightDesc")); //$NON-NLS-1$
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleCopyrightDesc")); //$NON-NLS-1$
 		
-		info = model.getFactory().createInfo(LICENSE_INDEX);
-		feature.setFeatureInfo(info, LICENSE_INDEX);
+		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
+		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
 		
-		info.setURL(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleLicenseURL")); //$NON-NLS-1$
-		info.setDescription(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleLicenseDesc")); //$NON-NLS-1$
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleLicenseDesc")); //$NON-NLS-1$
 
+		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
+		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
+		
+		info.setURL(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionURL")); //$NON-NLS-1$
+		info.setDescription(PDEPlugin.getResourceString("NewFeatureWizard.sampleDescriptionDesc")); //$NON-NLS-1$
+
+		
 		
 		// Save the model
 		model.save();
