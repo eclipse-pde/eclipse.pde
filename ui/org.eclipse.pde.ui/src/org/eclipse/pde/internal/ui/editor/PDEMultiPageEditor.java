@@ -499,21 +499,8 @@ public abstract class PDEMultiPageEditor
 
 	void updateContentOutline(IPDEEditorPage page) {
 		IContentOutlinePage outlinePage = page.getContentOutlinePage();
-		
 		if (outlinePage != null) {
 			contentOutline.setPageActive(outlinePage);
-			//defect
-			try {
-				IViewReference [] views = PDEPlugin.getActivePage().getViewReferences();
-				for (int i = 0; i < views.length; i++) {
-					if (views[i].getId().equals("org.eclipse.ui.views.ContentOutline")) {
-						PDEPlugin.getActivePage().showView("org.eclipse.ui.views.ContentOutline");
-						break;
-					}
-				}
-					
-			} catch (PartInitException e) {
-			}
 		}
 	}
 
