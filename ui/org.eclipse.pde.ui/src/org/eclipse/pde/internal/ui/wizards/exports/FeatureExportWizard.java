@@ -39,7 +39,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 	 */
 	protected void doExport(
 		boolean exportZip,
-		boolean addSourceZips,
 		String destination,
 		IModel model,
 		IProgressMonitor monitor)

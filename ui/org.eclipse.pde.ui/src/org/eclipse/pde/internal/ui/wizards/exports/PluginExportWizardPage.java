@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
  * @author dejan
@@ -14,9 +15,9 @@ import org.eclipse.pde.internal.core.PDECore;
  */
 public class PluginExportWizardPage extends BaseExportWizardPage {
 	public PluginExportWizardPage(IStructuredSelection selection) {
-		super(selection, "pluginExport", "Available &Plug-ins and Fragments", false);
-		setTitle("Deployable plug-ins");
-		setDescription("Export the selected projects into a form suitable for deploying in an Eclipse product");
+		super(selection, "pluginExport", PDEPlugin.getResourceString("ExportWizard.Plugin.pageBlock"), false);
+		setTitle(PDEPlugin.getResourceString("ExportWizard.Plugin.pageTitle"));
+		setDescription(PDEPlugin.getResourceString("ExportWizard.Plugin.description"));
 	}
 	
 	public Object [] getListElements() {
