@@ -1,9 +1,3 @@
-/*
- * Created on Oct 1, 2003
- * 
- * To change the template for this generated file go to Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.core.bundle;
 
 import java.io.PrintWriter;
@@ -20,22 +14,24 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.osgi.framework.*;
 import org.osgi.framework.Constants;
 
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class BundlePluginBase
 	extends PlatformObject
 	implements IBundlePluginBase {
 	private IBundlePluginModelBase model;
 	private ArrayList libraries;
 	private ArrayList imports;
+	private String fId;
+	private String fName;
+	private String fProvider;
+	private String fVersion;
 
 	public void reset() {
 		libraries = null;
 		imports = null;
+		fId = null;
+		fName = null;
+		fProvider = null;
+		fVersion = null;
 	}
 	
 	public String getSchemaVersion() {
@@ -98,18 +94,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
-
 		if (libraries != null) {
 			libraries.add(library);
+			fireStructureChanged(library, true);
 		}
-		
-		String libName = library.getName();
-		String cp = (String)manifest.get(Constants.BUNDLE_CLASSPATH);
-		cp = (cp == null) ? libName : cp + ", " + libName;
-		manifest.put(Constants.BUNDLE_CLASSPATH, cp);
 	}
 
 	/*
@@ -118,7 +106,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void remove(IPluginLibrary library) throws CoreException {
-		throwException("Cannot remove library from BundlePlugin");
+		if (libraries != null) {
+			libraries.remove(library);
+			fireStructureChanged(library, false);
+		}
 	}
 
 	/*
@@ -127,18 +118,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport pluginImport) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
-
 		if (imports != null) {
 			imports.add(pluginImport);
 			fireStructureChanged(pluginImport, true);			
 		}
-		String rname = pluginImport.getId();
-		String header = (String)manifest.get(Constants.REQUIRE_BUNDLE);
-		header = (header == null) ? rname : header + ", " + rname;
-		manifest.put(Constants.REQUIRE_BUNDLE, header);
 	}
 
 	/*
@@ -147,8 +130,10 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void remove(IPluginImport pluginImport) throws CoreException {
-		throwException("Cannot remove import from BundlePlugin");
-		fireStructureChanged(pluginImport, false);		
+		if (imports != null) {
+			imports.remove(pluginImport);
+			fireStructureChanged(pluginImport, false);	
+		}
 	}
 
 	/*
@@ -227,37 +212,13 @@ public class BundlePluginBase
 		return (IPluginImport[])imports.toArray(new IPluginImport[imports.size()]);
 	}
 
-		
-	public void setImportAttributes(IPluginImport iimport, String key, String value) throws CoreException{
-		if (value == null || value.length() == 0)
-			return;
-		
-		if (key.equals(Constants.BUNDLE_VERSION_ATTRIBUTE )) {
-			iimport.setVersion(value);
-		} else if (key.equals(Constants.REPROVIDE_ATTRIBUTE) || key.equals("provide-packages")) {
-			iimport.setReexported(value.equals("true"));
-		} else if (key.equals(Constants.VERSION_MATCH_ATTRIBUTE)) {
-			if (value.equalsIgnoreCase(Constants.VERSION_MATCH_QUALIFIER) || 
-					value.equalsIgnoreCase(Constants.VERSION_MATCH_MICRO)) {
-				iimport.setMatch(IMatchRules.PERFECT);
-			} else if (value.equalsIgnoreCase(Constants.VERSION_MATCH_GREATERTHANOREQUAL)) {
-				iimport.setMatch(IMatchRules.GREATER_OR_EQUAL);
-			} else if (value.equalsIgnoreCase(Constants.VERSION_MATCH_MINOR)) {
-				iimport.setMatch(IMatchRules.EQUIVALENT);
-			}
-		} else if (key.equals(Constants.OPTIONAL_ATTRIBUTE)) {
-			iimport.setOptional(value.equals("true"));
-		}
-	}
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
-		return parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
+		return fProvider != null ? fProvider : parseSingleValuedHeader(Constants.BUNDLE_VENDOR);
 	}
 	
 	protected String parseSingleValuedHeader(String header) {
@@ -288,11 +249,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setProviderName(java.lang.String)
 	 */
 	public void setProviderName(String providerName) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
 		Object oldValue = getProviderName();
-		manifest.put(Constants.BUNDLE_VENDOR, providerName);
 		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, oldValue, providerName);			
 	}
 
@@ -307,8 +264,10 @@ public class BundlePluginBase
 			Version version = desc.getVersion();
 			if (version != null)
 				return version.toString();
+			else
+				return null;
 		} 
-		return parseSingleValuedHeader(Constants.BUNDLE_VERSION);
+		return fVersion != null ? fVersion : parseSingleValuedHeader(Constants.BUNDLE_VERSION);
 	}
 	
 
@@ -318,11 +277,8 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#setVersion(java.lang.String)
 	 */
 	public void setVersion(String version) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
 		Object oldValue = getVersion();
-		manifest.put(Constants.BUNDLE_VERSION, version);
+		fVersion = version;
 		model.fireModelObjectChanged(this, IPluginBase.P_VERSION, oldValue, version);
 	}
 
@@ -334,7 +290,13 @@ public class BundlePluginBase
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2)
 		throws CoreException {
-		throwException("Cannot swap libraries in BundlePlugin");
+		if (imports != null) {
+			int index1 = imports.indexOf(l1);
+			int index2 = imports.indexOf(l2);
+			imports.set(index1, l2);
+			imports.set(index2, l1);
+			model.fireModelObjectChanged(this, P_IMPORT_ORDER, l1, l2);
+		}		
 	}
 	
 	private void fireStructureChanged(Object object, boolean added) {
@@ -445,7 +407,14 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginImport, org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void swap(IPluginImport import1, IPluginImport import2)
-			throws CoreException {	
+			throws CoreException {
+		if (imports != null) {
+			int index1 = imports.indexOf(import1);
+			int index2 = imports.indexOf(import2);
+			imports.set(index1, import2);
+			imports.set(index2, import1);
+			model.fireModelObjectChanged(this, P_IMPORT_ORDER, import1, import2);
+		}
 	}
 
 	/*
@@ -455,7 +424,9 @@ public class BundlePluginBase
 	 */
 	public String getId() {
 		BundleDescription desc = model.getBundleDescription();
-		return (desc != null) ? desc.getSymbolicName() : parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
+		if (desc != null) 
+			return desc.getSymbolicName();
+		return fId != null ? fId : parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
 	}
 	
 	/*
@@ -464,11 +435,8 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.IIdentifiable#setId(java.lang.String)
 	 */
 	public void setId(String id) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
 		Object oldValue = getId();
-		manifest.put(Constants.BUNDLE_SYMBOLICNAME, id);
+		fId = id;
 		model.fireModelObjectChanged(this, IPluginBase.P_ID, oldValue, id);
 	}
 
@@ -487,7 +455,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		return parseSingleValuedHeader(Constants.BUNDLE_NAME);
+		return fName != null ? fName : parseSingleValuedHeader(Constants.BUNDLE_NAME);
 	}
 
 	/*
@@ -496,11 +464,8 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
-		Object oldValue = getProviderName();
-		manifest.put(Constants.BUNDLE_NAME, name);
+		Object oldValue = getName();
+		fName = name;
 		model.fireModelObjectChanged(this, IPluginBase.P_NAME, oldValue, name);
 	}
 	/*
@@ -568,17 +533,6 @@ public class BundlePluginBase
 	 *      java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-	}
-
-	private void throwException(String message) throws CoreException {
-		IStatus status =
-			new Status(
-				IStatus.ERROR,
-				PDECore.PLUGIN_ID,
-				IStatus.OK,
-				message,
-				null);
-		throw new CoreException(status);
 	}
 
 	/* (non-Javadoc)

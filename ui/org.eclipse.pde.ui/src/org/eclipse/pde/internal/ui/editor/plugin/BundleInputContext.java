@@ -14,12 +14,15 @@ import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 
 public class BundleInputContext extends UTF8InputContext {
-	public static final String CONTEXT_ID="bundle-context";
+	public static final String CONTEXT_ID = "bundle-context";
+	
+	private HashMap fOperationTable = new HashMap();
 	/**
 	 * @param editor
 	 * @param input
@@ -61,12 +64,62 @@ public class BundleInputContext extends UTF8InputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+		Object[] objects = event.getChangedObjects();
+		if (objects != null) {
+			for (int i = 0; i < objects.length; i++) {
+				Object object = objects[i];
+				/*IDocumentKey key = (IDocumentKey)object;
+				TextEdit op = (TextEdit)fOperationTable.get(key);
+				if (op != null) {
+					fOperationTable.remove(key);
+					ops.remove(op);
+				}
+				switch (event.getChangeType()) {
+					case IModelChangedEvent.REMOVE :
+						deleteKey(key, ops);
+						break;
+					case IModelChangedEvent.INSERT :
+						insertKey(key, ops);
+						break;
+					case IModelChangedEvent.CHANGE :
+						modifyKey(key, ops);
+					default:
+						break;
+				}*/
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
 	 */
 	protected TextEdit[] getMoveOperations() {
-		return null;
+		return new TextEdit[0];
 	}
+	
+	private void insertKey(IDocumentKey key, ArrayList ops) {
+		IDocument doc = getDocumentProvider().getDocument(getInput());
+		InsertEdit op = new InsertEdit(doc.getLength(), key.write());
+		fOperationTable.put(key, op);
+		ops.add(op);
+	}
+	
+	private void deleteKey(IDocumentKey key, ArrayList ops) {
+		if (key.getOffset() > 0) {
+			TextEdit op = new DeleteEdit(key.getOffset(), key.getLength());
+			fOperationTable.put(key, op);
+			ops.add(op);
+		}
+	}
+	
+	private void modifyKey(IDocumentKey key, ArrayList ops) {		
+		if (key.getOffset() == -1) {
+			insertKey(key, ops);
+		} else {
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
+			fOperationTable.put(key, op);
+			ops.add(op);
+		}	
+	}
+
 }
