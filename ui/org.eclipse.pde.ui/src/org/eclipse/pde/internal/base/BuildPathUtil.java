@@ -73,13 +73,14 @@ public class BuildPathUtil {
 			result.add(libraries[i]);
 		}
 		// add implicit libraries
-		PluginPathUpdater.addImplicitLibraries(result);
+		addImplicitLibraries(result, data.getPluginId());
 		// JRE the last
 		addJRE(result);
 		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
 		result.copyInto(entries);
 		javaProject.setRawClasspath(entries, monitor);
 	}
+	
 	/**
 	 * Sets the Java build path of the provided plug-in model.
 	 * The model is expected to come from the workspace
@@ -115,17 +116,21 @@ public class BuildPathUtil {
 		if (model instanceof IFragmentModel) {
 			addFragmentPlugin((IFragmentModel)model, result);
 		}
-		
 			// add implicit libraries
-		String id = model.getPluginBase().getId();
-		if (id.equals("org.eclipse.core.boot") == false
-			&& id.equals("org.eclipse.core.runtime") == false) {
-			PluginPathUpdater.addImplicitLibraries(result);
-		}
+		addImplicitLibraries(result, model.getPluginBase().getId());
 		addJRE(result);
 		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
 		result.copyInto(entries);
+				
 		javaProject.setRawClasspath(entries, monitor);
+	}
+	
+	private static void addImplicitLibraries(Vector result, String id) {
+		boolean addRuntime = true;
+		if (id.equals("org.eclipse.core.boot")) return;
+		if (id.equals("org.eclipse.core.runtime") ||
+			id.equals("org.apache.xerces")) addRuntime = false;
+		PluginPathUpdater.addImplicitLibraries(result, addRuntime);
 	}
 
 	private static void addSourceFolders(IBuildModel model, Vector result)

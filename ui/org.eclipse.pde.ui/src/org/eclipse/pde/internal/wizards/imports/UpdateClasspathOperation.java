@@ -60,7 +60,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 			
 			// add JRE
 			entries.add(JavaRuntime.getJREVariableEntry());
-
+			
 			IClasspathEntry[] newClasspath= (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
 			
 			IStatus validation= JavaConventions.validateClasspath(javaProject, newClasspath, outputLocation);

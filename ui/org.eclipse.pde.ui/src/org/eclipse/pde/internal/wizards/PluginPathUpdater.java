@@ -259,13 +259,16 @@ public class PluginPathUpdater {
 		}
 	}
 
-	public static void addImplicitLibraries(Vector result) {
+	public static void addImplicitLibraries(Vector result, boolean addRuntime) {
 		String bootId = "org.eclipse.core.boot";
 		String runtimeId = "org.eclipse.core.runtime";
 		IPlugin bootPlugin = PDEPlugin.getDefault().findPlugin(bootId);
-		IPlugin runtimePlugin = PDEPlugin.getDefault().findPlugin(runtimeId);
-		if (runtimePlugin != null) {
-			addToClasspathEntries(new CheckedPlugin(runtimePlugin, true), result);
+
+		if (addRuntime) {
+			IPlugin runtimePlugin = PDEPlugin.getDefault().findPlugin(runtimeId);
+			if (runtimePlugin != null) {
+				addToClasspathEntries(new CheckedPlugin(runtimePlugin, true), result);
+			}
 		}
 		if (bootPlugin != null) {
 			addToClasspathEntries(new CheckedPlugin(bootPlugin, true), result);

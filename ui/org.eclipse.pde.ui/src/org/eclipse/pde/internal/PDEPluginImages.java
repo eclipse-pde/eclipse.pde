@@ -36,7 +36,8 @@ public class PDEPluginImages {
 		}
 		else {
 			if(display.getIconDepth() > 4)
-				ICONS_PATH = "icons/full/";//$NON-NLS-1$
+				//ICONS_PATH = "icons/full/";//$NON-NLS-1$
+				ICONS_PATH = "icons/full/";
 			else
 				ICONS_PATH = "icons/basic/";//$NON-NLS-1$
 		}

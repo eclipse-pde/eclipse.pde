@@ -642,7 +642,7 @@
 <extension
       point="org.eclipse.ui.decorators">
    <decorator
-         objectClass="org.eclipse.core.resources.IProject"
+         objectClass="org.eclipse.core.resources.IResource"
          adaptable="true"
          label="%decorator.label"
          state="true"
@@ -650,4 +650,5 @@
          id="org.eclipse.pde.binaryProjectDecorator">
    </decorator>
 </extension>
+
 </plugin>
