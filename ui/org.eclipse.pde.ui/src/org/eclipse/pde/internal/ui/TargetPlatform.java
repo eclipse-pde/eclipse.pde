@@ -28,8 +28,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static URL[] createPluginPath() throws CoreException {
 		return createPluginPath(getVisibleModels());
 	}
-	
-	public static URL[] createPluginPath(IPluginModelBase[] models) throws CoreException {
+
+	public static URL[] createPluginPath(IPluginModelBase[] models)
+		throws CoreException {
 		URL urls[] = new URL[models.length];
 		for (int i = 0; i < urls.length; i++) {
 			IPluginModelBase model = models[i];
@@ -46,18 +47,27 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static IPluginModelBase[] getVisibleModels() {
 		Vector result = new Vector();
+		/*
 		WorkspaceModelManager wmanager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wplugins = wmanager.getWorkspacePluginModels();
 		IPluginModelBase[] wfragments = wmanager.getWorkspaceFragmentModels();
 		IPluginModelBase[] eplugins =
 			PDECore.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] efragments =
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(
+				null);
 
 		addFromList(result, wplugins);
 		addFromList(result, wfragments);
 		addFromList(result, eplugins);
+		addFromList(result, efragments);
+		*/
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		addFromList(result, manager.getPlugins());
 		IPluginModelBase[] array =
-			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+			(IPluginModelBase[]) result.toArray(
+				new IPluginModelBase[result.size()]);
 		return array;
 	}
 
@@ -69,7 +79,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 
-	public static File createPropertiesFile(IPluginModelBase[] plugins, IPath data)
+	public static File createPropertiesFile(
+		IPluginModelBase[] plugins,
+		IPath data)
 		throws CoreException {
 		try {
 			String dataSuffix = createDataSuffix(data);
@@ -77,8 +89,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 			IPath pluginPath;
 			String fileName = "plugin_path.properties";
 			File dir = new File(statePath.toOSString());
-			
-			if (dataSuffix.length()>0) {
+
+			if (dataSuffix.length() > 0) {
 				dir = new File(dir, dataSuffix);
 				if (!dir.exists()) {
 					dir.mkdir();
@@ -105,12 +117,18 @@ public class TargetPlatform implements IEnvironmentVariables {
 			return pluginFile;
 		} catch (IOException e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.ERROR, e.getMessage(), e));
+				new Status(
+					IStatus.ERROR,
+					PDECore.getPluginId(),
+					IStatus.ERROR,
+					e.getMessage(),
+					e));
 		}
 	}
-	
+
 	private static String createDataSuffix(IPath data) {
-		if (data==null) return "";
+		if (data == null)
+			return "";
 		String suffix = data.toOSString();
 		// replace file and device separators with underscores
 		suffix = suffix.replace(File.separatorChar, '_');
@@ -159,15 +177,15 @@ public class TargetPlatform implements IEnvironmentVariables {
 		store.setDefault(NL, BootLoader.getNL());
 		store.setDefault(ARCH, BootLoader.getOSArch());
 	}
-	
-	private static Choice[] getKnownChoices(String [] values) {
-		Choice [] choices = new Choice[values.length];
-		for (int i=0; i<choices.length; i++) {
+
+	private static Choice[] getKnownChoices(String[] values) {
+		Choice[] choices = new Choice[values.length];
+		for (int i = 0; i < choices.length; i++) {
 			choices[i] = new Choice(values[i], values[i]);
 		}
 		return choices;
 	}
-	
+
 	public static Choice[] getOSChoices() {
 		return getKnownChoices(BootLoader.knownOSValues());
 	}
