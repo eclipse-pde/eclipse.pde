@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.util.CompilerFlags;
 import org.w3c.dom.Node;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {

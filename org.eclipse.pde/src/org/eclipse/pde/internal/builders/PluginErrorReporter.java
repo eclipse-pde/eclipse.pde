@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.builders;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.CompilerFlags;
 import org.xml.sax.*;
 
 public class PluginErrorReporter implements ErrorHandler {

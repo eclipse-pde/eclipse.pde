@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.builders.CompilerFlags;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -132,6 +133,10 @@ public class PDE extends Plugin {
 			status =
 				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
+	}
+	public void startup() throws CoreException {
+		super.startup();
+		CompilerFlags.initializeDefaults();
 	}
 
 }
