@@ -32,7 +32,7 @@ public class ArgumentsSection extends PDESection {
 		Label label = toolkit.createLabel(client, PDEPlugin.getResourceString("ArgumentsSection.program")); //$NON-NLS-1$
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
-		fProgramArgs = toolkit.createText(client, "", SWT.MULTI|SWT.BORDER); //$NON-NLS-1$
+		fProgramArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$
 		fProgramArgs.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -44,7 +44,7 @@ public class ArgumentsSection extends PDESection {
 		label = toolkit.createLabel(client, PDEPlugin.getResourceString("ArgumentsSection.vm")); //$NON-NLS-1$
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
-		fVMArgs = toolkit.createText(client, "", SWT.MULTI|SWT.BORDER); //$NON-NLS-1$
+		fVMArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$
 		fVMArgs.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		fVMArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

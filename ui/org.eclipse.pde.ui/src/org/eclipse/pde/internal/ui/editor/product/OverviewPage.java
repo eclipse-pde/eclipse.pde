@@ -60,6 +60,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.marginLeft = 10;
 		layout.marginRight = 10;
 		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth =true;
 		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);

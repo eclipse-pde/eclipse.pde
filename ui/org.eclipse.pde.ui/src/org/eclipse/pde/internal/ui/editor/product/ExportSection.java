@@ -74,7 +74,6 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 			}
 		});
 		fArchiveEntry.setEditable(isEditable());
-		fArchiveEntry.getText().setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		fIncludeSource = toolkit.createButton(comp, PDEPlugin.getResourceString("Product.ExportSection.includeSource"), SWT.CHECK); //$NON-NLS-1$
 		gd = new TableWrapData();

@@ -13,10 +13,13 @@ import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.ide.*;
@@ -136,6 +139,25 @@ public class LauncherSection extends PDESection {
 		gd.horizontalSpan = 3;
 		fBmpButton.setLayoutData(gd);
 		fBmpButton.setEnabled(isEditable());
+		
+		final Label label = toolkit.createLabel(comp, PDEPlugin.getResourceString("LauncherSection.bmpImagesText"), SWT.WRAP);
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		label.setLayoutData(gd);
+		comp.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				// A hack to make the label wrap inside GridLayout
+				// This illustrates why TableWrapLayout is used
+				Composite c = (Composite)e.widget;
+				GridLayout layout = (GridLayout)c.getLayout();
+				Rectangle carea = c.getClientArea();
+				GridData gd = (GridData)label.getLayoutData();
+				gd.widthHint = carea.width - layout.marginWidth-layout.marginWidth;
+				Point lsize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				if (lsize.x< gd.widthHint)
+					gd.widthHint = SWT.DEFAULT;
+			}
+		});
 
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.Low16"), ILauncherInfo.WIN32_16_LOW)); //$NON-NLS-1$
 		fIcons.add(new IconEntry(comp, toolkit, PDEPlugin.getResourceString("LauncherSection.High16"), ILauncherInfo.WIN32_16_HIGH)); //$NON-NLS-1$
@@ -191,6 +213,8 @@ public class LauncherSection extends PDESection {
 	private Composite createComposite(Composite parent, FormToolkit toolkit, String text) {
 		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
 		ec.setText(text);
+		ec.setToggleColor(toolkit.getColors().getColor(FormColors.TB_TOGGLE));
+		ec.setActiveToggleColor(toolkit.getHyperlinkGroup().getActiveForeground());
 		
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL_GRAB);
 		gd.colspan = 2;

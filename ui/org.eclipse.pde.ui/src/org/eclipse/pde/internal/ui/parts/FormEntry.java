@@ -123,6 +123,7 @@ public class FormEntry {
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
 			td.grabHorizontal = (tspan == 1);
+			td.valign = TableWrapData.MIDDLE;
 			text.setLayoutData(td);
 			if (browse != null) {
 				td = new TableWrapData();
