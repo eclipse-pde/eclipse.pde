@@ -1,15 +1,12 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
 
 public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
-
+	private static final String KEY_WTITLE = "MultiPageEditorNewWizard.wtitle";
 	/**
 	 * Constructor for HelloWorldNewWizard.
 	 */
@@ -21,7 +18,7 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 		IPluginStructureData structureData,
 		boolean fragment) {
 		super.init(provider, structureData, fragment);
-		setWindowTitle("New plug-in project with a multi-page editor");
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
 	/*

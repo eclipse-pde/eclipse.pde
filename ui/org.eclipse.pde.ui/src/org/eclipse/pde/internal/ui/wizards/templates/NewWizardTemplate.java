@@ -18,6 +18,17 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.IPluginStructureData;
 
 public class NewWizardTemplate extends PDETemplateSection {
+	private static final String KEY_TITLE = "NewWizardTemplate.title";
+	private static final String KEY_DESC = "NewWizardTemplate.desc";
+	private static final String KEY_PACKAGE_LABEL = "NewWizardTemplate.packageName";	
+	private static final String KEY_CATEGORY_ID_LABEL = "NewWizardTemplate.categoryId";
+	private static final String KEY_CATEGORY_NAME_LABEL = "NewWizardTemplate.categoryName";
+	private static final String KEY_CLASS_LABEL = "NewWizardTemplate.className";
+	private static final String KEY_PAGE_CLASS_LABEL = "NewWizardTemplate.pageClassName";
+	private static final String KEY_WIZARD_LABEL = "NewWizardTemplate.wizardName";
+	private static final String KEY_DEFAULT_NAME = "NewWizardTemplate.defaultName";
+	private static final String KEY_EXTENSION_LABEL = "NewWizardTemplate.extension";
+	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName";
 
 	public NewWizardTemplate() {
 	}
@@ -34,14 +45,14 @@ public class NewWizardTemplate extends PDETemplateSection {
 	
 	private void createOptions() {
 		// first page
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
-		addOption("categoryId", "&Wizard Category Id:", (String)null, 0);
-		addOption("categoryName", "Wi&zard Category Name:", "Sample Wizards", 0);
-		addOption("wizardClassName", "Wizard &Class Name:", "SampleNewWizard", 0);
-		addOption("wizardPageClassName", "Wizard &Page Class Name:", "SampleNewWizardPage", 0);
-		addOption("wizardName", "Wizard &Name:", "Multi-page Editor file", 0);
-		addOption("extension", "&File Extension:", "mpe", 0);
-		addOption("initialFileName", "&Initial File Name:", "new_file.mpe", 0);
+		addOption(KEY_PACKAGE_NAME, PDEPlugin.getResourceString(KEY_PACKAGE_LABEL), (String)null, 0);
+		addOption("categoryId", PDEPlugin.getResourceString(KEY_CATEGORY_ID_LABEL), (String)null, 0);
+		addOption("categoryName", PDEPlugin.getResourceString(KEY_CATEGORY_NAME_LABEL), "Sample Wizards", 0);
+		addOption("wizardClassName", PDEPlugin.getResourceString(KEY_CLASS_LABEL), "SampleNewWizard", 0);
+		addOption("wizardPageClassName", PDEPlugin.getResourceString(KEY_PAGE_CLASS_LABEL), "SampleNewWizardPage", 0);
+		addOption("wizardName", PDEPlugin.getResourceString(KEY_WIZARD_LABEL), PDEPlugin.getResourceString(KEY_DEFAULT_NAME), 0);
+		addOption("extension", PDEPlugin.getResourceString(KEY_EXTENSION_LABEL), "mpe", 0);
+		addOption("initialFileName", PDEPlugin.getResourceString(KEY_FILE_LABEL), "new_file.mpe", 0);
 	}
 
 	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
@@ -67,8 +78,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 		setPageCount(1);
 		createOptions();
 		WizardPage page = createPage(0);
-		page.setTitle("New Wizard Options");
-		page.setDescription("The provided options allow you to control the new wizard will be created.");
+		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
+		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		wizard.addPage(page);
 	}
 

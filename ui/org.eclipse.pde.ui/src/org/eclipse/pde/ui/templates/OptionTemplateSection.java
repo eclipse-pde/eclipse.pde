@@ -8,8 +8,10 @@ import java.net.*;
 import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
+	private static final String KEY_MUST_BE_SET = "OptionTemplateSection.mustBeSet";
 	private ArrayList pages = new ArrayList();
 
 	class TemplatePage {
@@ -74,9 +76,11 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		}
 	}
 /**
- * Returns the wizard page at the specified index.
+ * Returns the wizard page at the specified index. Pages must
+ * be created prior to calling this method.
  * @return the wizard page at the specified index or <samp>null</samp>
  * if invalid index.
+ * @see #createPage(int)
  */	
 	public WizardPage getPage(int pageIndex) {
 		if (pageIndex<0 || pageIndex>=pages.size()) return null;
@@ -84,6 +88,19 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		return tpage.page;
 	}
 	
+/**
+ * Creates the wizard page for the specified page index. This method
+ * cannot be called before setPageCount(int). The page will be
+ * created with all the options registered for that page index.
+ * Therefore, make all the calls to addOption() before calling
+ * this method.
+ * @param pageIndex a zero-based index of the page relative to
+ * this template. For example, if a template need to have two
+ * pages, you have to call this method twice (once with index 0
+ * and again with index 1). 
+ * @see #setPageCount(int)
+ * @see BaseOptionTemplateSection#addOption
+ */	
 	public WizardPage createPage(int pageIndex) {
 		if (pageIndex<0 || pageIndex>=pages.size()) return null;
 		TemplatePage tpage = (TemplatePage)pages.get(pageIndex);
@@ -93,8 +110,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 /**
  * Returns a number of pages that this template contributes
  * to the wizard.
+ * @return the number of pages
+ * @see #setPageCount(int)
  */
-	
 	public int getPageCount() {
 		return pages.size();
 	}
@@ -102,7 +120,11 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 /**
  * Sets the number of pages this template will manage. This 
  * method must be called prior to adding pages and options in order
- * to initialize the template.
+ * to initialize the template. Once the method has been called,
+ * you can call methods that accept page index in the range
+ * [0..count-1].
+ * @param count number of pages that this template will contribute
+ * to the template wizard
  */
 	public void setPageCount(int count) {
 		pages.clear();
@@ -114,6 +136,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 /**
  * Returns options that belong to the page with the given index.
  * @param pageIndex 0-based index of the template page
+ * @see #setPageCount(int)
  */
 	
 	public TemplateOption [] getOptions(int pageIndex) {
@@ -121,6 +144,12 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		TemplatePage page = (TemplatePage)pages.get(pageIndex);
 		return (TemplateOption[])page.options.toArray(new TemplateOption[page.options.size()]);
 	}
+	
+/**
+ * Returns options that are added to the provided wizard page.
+ * @param page wizard page that hosts required options
+ * @return array of options added to the provided wizard page
+ */
 	
 	public TemplateOption [] getOptions(WizardPage page) {
 		for (int i=0; i<pages.size(); i++) {
@@ -130,7 +159,15 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		}
 		return new TemplateOption [0];
 	}
-	
+
+/**
+ * Returns the zero-based index of a page that hosts the
+ * the given option.
+ * @param option template option for which a page index is
+ * being requested
+ * @return zero-based index of a page that hosts the option or -1
+ * if none of the pages contain the option.
+ */	
 	public int getPageIndex(TemplateOption option) {
 		for (int i=0; i<pages.size(); i++) {
 			TemplatePage tpage = (TemplatePage)pages.get(i);
@@ -182,7 +219,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		}
 		if (page!=null) {
 			page.setPageComplete(false);
-			String message = "Template option \""+option.getMessageLabel()+"\" must be set.";
+			String message = PDEPlugin.getFormattedMessage(KEY_MUST_BE_SET, option.getMessageLabel());
 			page.setErrorMessage(message);
 		}
 	}

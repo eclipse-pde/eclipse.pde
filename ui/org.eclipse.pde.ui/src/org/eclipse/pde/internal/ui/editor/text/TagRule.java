@@ -27,7 +27,10 @@ protected boolean sequenceDetected(
 			// comment - abort
 			return false;
 		}
+	} else if (sequence[0] == '>') {
+		scanner.unread();
 	}
+
 	return super.sequenceDetected(scanner, sequence, eofAllowed);
 }
 }

@@ -33,7 +33,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	public OptionTemplateWizardPage(
 		BaseOptionTemplateSection section,
 		ArrayList options) {
-		super("something");
+		super("");
 		this.section = section;
 		this.options = options;
 	}

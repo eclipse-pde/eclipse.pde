@@ -4,12 +4,12 @@ package org.eclipse.pde.internal.ui.wizards.templates;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.ui.IPluginStructureData;
-import org.eclipse.pde.ui.IProjectProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class PerspectiveExtensionsNewWizard extends NewPluginTemplateWizard {
-
+	private static final String KEY_WTITLE = "PerspectiveExtensionsNewWizard.wtitle";
 	/**
 	 * Constructor for PerspectiveExtensionsNewWizard.
 	 */
@@ -22,7 +22,7 @@ public class PerspectiveExtensionsNewWizard extends NewPluginTemplateWizard {
 		IPluginStructureData structureData,
 		boolean fragment) {
 		super.init(provider, structureData, fragment);
-		setWindowTitle("New plug-in project with a perspective extension");
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()

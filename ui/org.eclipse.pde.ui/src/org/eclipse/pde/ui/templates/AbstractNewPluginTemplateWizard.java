@@ -31,6 +31,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	private static final String KEY_WFTITLE = "PluginCodeGeneratorWizard.ftitle";
 	private static final String KEY_MISSING = "PluginCodeGeneratorWizard.missing";
 	private static final String KEY_FMISSING = "PluginCoreGeneratorWizard.fmissing";
+	private static final String KEY_GENERATING = "PluginCoreGeneratorWizard.generating";
 
 	private IProjectProvider provider;
 	private IPluginStructureData structureData;
@@ -129,7 +130,7 @@ public abstract class AbstractNewPluginTemplateWizard
 	private void doFinish(FieldData data, IProgressMonitor monitor)
 		throws CoreException {
 		int totalWork = computeTotalWork();
-		monitor.beginTask("Generating content...", totalWork);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_GENERATING), totalWork);
 		IProject project = provider.getProject();
 		ProjectStructurePage.createProject(project, provider, monitor); // one step
 		monitor.worked(1);

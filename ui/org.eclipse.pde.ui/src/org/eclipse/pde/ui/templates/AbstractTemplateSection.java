@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
 /**
@@ -52,6 +53,7 @@ public abstract class AbstractTemplateSection
 	 */
 	public static final String KEY_PACKAGE_NAME = "packageName";
 
+	private static final String KEY_GENERATING = "AbstractTemplateSection.generating";
 	/**
 	 * The default implementation of this method provides
 	 * values of the following keys: <samp>pluginClass</samp>,
@@ -192,7 +194,7 @@ public abstract class AbstractTemplateSection
 	 * @param monitor progress monitor to use to indicate generation progress
 	 */
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
-		monitor.setTaskName("Generating: ");
+		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
 
 		File templateDirectory = getTemplateDirectory();
 		if (!templateDirectory.exists())

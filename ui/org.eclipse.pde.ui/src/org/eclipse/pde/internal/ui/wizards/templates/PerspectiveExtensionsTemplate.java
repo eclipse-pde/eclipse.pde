@@ -4,15 +4,14 @@ package org.eclipse.pde.internal.ui.wizards.templates;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class PerspectiveExtensionsTemplate extends PDETemplateSection {
-	
+
 	public static final String KEY_TARGET_PERSPECTIVE = "targetPerspective";
 	public static final String KEY_PERSPECTIVE_SHORTCUT = "perspectiveShortcut";
 	public static final String KEY_VIEW_SHORTCUT = "viewShortcut";
@@ -21,6 +20,33 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	public static final String KEY_VIEW_RELATIVE = "viewRelative";
 	public static final String KEY_VIEW_RELATIONSHIP = "viewRelationship";
 	public static final String KEY_ACTION_SET = "actionSet";
+
+	private static final String NL_TITLE0 = "PerspectiveExtensionsTemplate.title0";
+	private static final String NL_DESC0 = "PerspectiveExtensionsTemplate.desc0";
+	private static final String NL_TITLE1 = "PerspectiveExtensionsTemplate.title1";
+	private static final String NL_DESC1 = "PerspectiveExtensionsTemplate.desc1";
+
+	private static final String NL_PERSPECTIVE_ID =
+		"PerspectiveExtensionsTemplate.perspectiveId";
+	private static final String NL_ACTION_SET =
+		"PerspectiveExtensionsTemplate.actionSet";
+	private static final String NL_SHORTCUT_ID =
+		"PerspectiveExtensionsTemplate.shortcutId";
+	private static final String NL_VIEW_SHORTCUT_ID =
+		"PerspectiveExtensionsTemplate.viewShortcutId";
+	private static final String NL_WIZARD_SHORTCUT_ID =
+		"PerspectiveExtensionsTemplate.wizardShortcutId";
+
+	private static final String NL_VIEW_ID = "PerspectiveExtensionsTemplate.viewId";
+	private static final String NL_RELATIVE_VIEW =
+		"PerspectiveExtensionsTemplate.relativeView";
+	private static final String NL_RELATIVE_LOCATION =
+		"PerspectiveExtensionsTemplate.relativePosition";
+	private static final String NL_STACK = "PerspectiveExtensionsTemplate.stack";
+	private static final String NL_LEFT = "PerspectiveExtensionsTemplate.left";
+	private static final String NL_RIGHT = "PerspectiveExtensionsTemplate.right";
+	private static final String NL_TOP = "PerspectiveExtensionsTemplate.top";
+	private static final String NL_BOTTOM = "PerspectiveExtensionsTemplate.buttom";
 
 	/**
 	 * Constructor for PerspectiveExtensionsTemplate.
@@ -32,39 +58,79 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	public void addPages(Wizard wizard) {
 		setPageCount(2);
 		createOptions();
-		
+
 		WizardPage page0 = createPage(0);
-		page0.setTitle("Target Perspective and Shortcuts");
-		page0.setDescription("Add an action set and shortcuts to the target perspective");
+		page0.setTitle(PDEPlugin.getResourceString(NL_TITLE0));
+		page0.setDescription(PDEPlugin.getResourceString(NL_DESC0));
 		wizard.addPage(page0);
-		
+
 		WizardPage page1 = createPage(1);
-		page1.setTitle("View");
-		page1.setDescription("Add a view to the Show submenu of the target perspective");
+		page1.setTitle(PDEPlugin.getResourceString(NL_TITLE1));
+		page1.setDescription(PDEPlugin.getResourceString(NL_DESC1));
 		wizard.addPage(page1);
 	}
 
 	private void createOptions() {
 		// add options to first page
-		addOption(KEY_TARGET_PERSPECTIVE, "&Target Perspective ID:", "org.eclipse.ui.resourcePerspective", 0);
-		addOption(KEY_ACTION_SET,"&Action Set:", "org.eclipse.jdt.ui.JavaActionSet", 0);
-		addOption(KEY_PERSPECTIVE_SHORTCUT, "&Perspective Shortcut ID:", "org.eclipse.debug.ui.DebugPerspective", 0);
-		addOption(KEY_VIEW_SHORTCUT, "&View Shortcut ID:","org.eclipse.jdt.ui.wizards.NewProjectCreationWizard", 0);
-		addOption(KEY_WIZARD_SHORTCUT,"&Wizard Shortcut ID:","org.eclipse.jdt.ui.TypeHierarchy", 0);
+		addOption(
+			KEY_TARGET_PERSPECTIVE,
+			PDEPlugin.getResourceString(NL_PERSPECTIVE_ID),
+			"org.eclipse.ui.resourcePerspective",
+			0);
+		addOption(
+			KEY_ACTION_SET,
+			PDEPlugin.getResourceString(NL_ACTION_SET),
+			"org.eclipse.jdt.ui.JavaActionSet",
+			0);
+		addOption(
+			KEY_PERSPECTIVE_SHORTCUT,
+			PDEPlugin.getResourceString(NL_SHORTCUT_ID),
+			"org.eclipse.debug.ui.DebugPerspective",
+			0);
+		addOption(
+			KEY_VIEW_SHORTCUT,
+			PDEPlugin.getResourceString(NL_VIEW_SHORTCUT_ID),
+			"org.eclipse.jdt.ui.wizards.NewProjectCreationWizard",
+			0);
+		addOption(
+			KEY_WIZARD_SHORTCUT,
+			PDEPlugin.getResourceString(NL_WIZARD_SHORTCUT_ID),
+			"org.eclipse.jdt.ui.TypeHierarchy",
+			0);
 
 		// add options to second page 
-		addOption(KEY_VIEW,"&View ID:","org.eclipse.jdt.ui.PackageExplorer", 1);
-		addOption(KEY_VIEW_RELATIVE,"&Relative View:","org.eclipse.ui.views.ResourceNavigator", 1);
-		addOption(KEY_VIEW_RELATIONSHIP,"Relative Position: ", new String[][] {
-						{"stack","stack"},{"left","left"},{"right","right"},{"top","top"},{"bottom","bottom"}},"stack", 1);
+		addOption(
+			KEY_VIEW,
+			PDEPlugin.getResourceString(NL_VIEW_ID),
+			"org.eclipse.jdt.ui.PackageExplorer",
+			1);
+		addOption(
+			KEY_VIEW_RELATIVE,
+			PDEPlugin.getResourceString(NL_RELATIVE_VIEW),
+			"org.eclipse.ui.views.ResourceNavigator",
+			1);
+		addOption(
+			KEY_VIEW_RELATIONSHIP,
+			PDEPlugin.getResourceString(NL_RELATIVE_LOCATION),
+			new String[][] { { "stack", PDEPlugin.getResourceString(NL_STACK)}, {
+				"left", PDEPlugin.getResourceString(NL_LEFT)
+				}, {
+				"right", PDEPlugin.getResourceString(NL_RIGHT)
+				}, {
+				"top", PDEPlugin.getResourceString(NL_TOP)
+				}, {
+				"bottom", PDEPlugin.getResourceString(NL_BOTTOM)
+				}
+		}, "stack", 1);
 	}
-	
-	private TemplateOption [] getAllPageOptions(TemplateOption source) {
+
+	private TemplateOption[] getAllPageOptions(TemplateOption source) {
 		int pageIndex = getPageIndex(source);
-		if (pageIndex!= -1) return getOptions(pageIndex);
+		if (pageIndex != -1)
+			return getOptions(pageIndex);
 		return new TemplateOption[0];
 	}
-			
+
 	/**
 	 * @see PDETemplateSection#getSectionId()
 	 */
@@ -84,7 +150,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		TemplateOption [] siblings = getAllPageOptions(source);
+		TemplateOption[] siblings = getAllPageOptions(source);
 		for (int i = 0; i < siblings.length; i++) {
 			TemplateOption nextOption = siblings[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
@@ -94,7 +160,7 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 		}
 		resetPageState();
 	}
-		
+
 	/**
 	 * @see AbstractTemplateSection#updateModel(IProgressMonitor)
 	 */
@@ -105,39 +171,45 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 
 		IPluginElement perspectiveElement = factory.createElement(extension);
 		perspectiveElement.setName("perspectiveExtension");
-		perspectiveElement.setAttribute("targetID", getStringOption(KEY_TARGET_PERSPECTIVE));
-		
-		IPluginElement wizardShortcutElement = factory.createElement(perspectiveElement);
+		perspectiveElement.setAttribute(
+			"targetID",
+			getStringOption(KEY_TARGET_PERSPECTIVE));
+
+		IPluginElement wizardShortcutElement =
+			factory.createElement(perspectiveElement);
 		wizardShortcutElement.setName("wizardShorcut");
 		wizardShortcutElement.setAttribute("id", getStringOption(KEY_WIZARD_SHORTCUT));
 		perspectiveElement.add(wizardShortcutElement);
-		
+
 		IPluginElement viewShortcutElement = factory.createElement(perspectiveElement);
 		viewShortcutElement.setName("viewShortcut");
 		viewShortcutElement.setAttribute("id", getStringOption(KEY_VIEW_SHORTCUT));
 		perspectiveElement.add(viewShortcutElement);
-		
-		IPluginElement perspectiveShortcutElement = factory.createElement(perspectiveElement);
+
+		IPluginElement perspectiveShortcutElement =
+			factory.createElement(perspectiveElement);
 		perspectiveShortcutElement.setName("perspectiveShortcut");
-		perspectiveShortcutElement.setAttribute("id", getStringOption(KEY_PERSPECTIVE_SHORTCUT));
+		perspectiveShortcutElement.setAttribute(
+			"id",
+			getStringOption(KEY_PERSPECTIVE_SHORTCUT));
 		perspectiveElement.add(perspectiveShortcutElement);
-		
+
 		IPluginElement actionSetElement = factory.createElement(perspectiveElement);
 		actionSetElement.setName("actionSet");
 		actionSetElement.setAttribute("id", getStringOption(KEY_ACTION_SET));
 		perspectiveElement.add(actionSetElement);
-		
+
 		IPluginElement viewElement = factory.createElement(perspectiveElement);
 		viewElement.setName("view");
 		viewElement.setAttribute("id", getStringOption(KEY_VIEW));
 		viewElement.setAttribute("relative", getStringOption(KEY_VIEW_RELATIVE));
 		String relationship = getValue(KEY_VIEW_RELATIONSHIP).toString();
-		viewElement.setAttribute("relationship",relationship);
+		viewElement.setAttribute("relationship", relationship);
 		if (!relationship.equals("stack")) {
-			viewElement.setAttribute("ratio","0.5");
+			viewElement.setAttribute("ratio", "0.5");
 		}
 		perspectiveElement.add(viewElement);
-		
+
 		extension.add(perspectiveElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
@@ -149,6 +221,5 @@ public class PerspectiveExtensionsTemplate extends PDETemplateSection {
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.perspectiveExtensions";
 	}
-	
 
 }

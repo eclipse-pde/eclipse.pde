@@ -24,7 +24,8 @@ import org.eclipse.pde.ui.IPluginStructureData;
  * thus simplifying new template section creation.
  */
 
-public abstract class BaseOptionTemplateSection extends AbstractTemplateSection {
+public abstract class BaseOptionTemplateSection
+	extends AbstractTemplateSection {
 	private Hashtable options = new Hashtable();
 
 	/**
@@ -39,7 +40,8 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	protected TemplateOption addOption(
 		String name,
 		String label,
-		boolean value, int pageIndex) {
+		boolean value,
+		int pageIndex) {
 		BooleanOption option = new BooleanOption(this, name, label);
 		registerOption(option, value ? Boolean.TRUE : Boolean.FALSE, pageIndex);
 		return option;
@@ -159,7 +161,22 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 			return option.getValue();
 		return super.getValue(name);
 	}
-
+/**
+ * Returns true if this template depends on values set on the
+ * first (mandatory) wizard page. Values set on this page include
+ * plug-in name, plug-in class name, plug-in provider etc.
+ * If the template does depend on these values, <samp>initializeFields</samp>
+ * will be called when the page is made visible in the forward direction
+ * (going from the first page to the pages owned by this template).
+ * If the page is never shown (Finish is pressed before the page is
+ * made visible at least once), <samp>initializeFields</samp> will be
+ * called with the model object instead during template execution.
+ * The same method will also be called when the template is created
+ * within the context of the plug-in manifest editor, because plug-in
+ * model already exists at that time.
+ * @return true if this template depends on the data set in 
+ * the first wizard page, false otherwise.
+ */
 	public boolean isDependentOnFirstPage() {
 		return false;
 	}
@@ -211,7 +228,8 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	public String getReplacementString(String fileName, String key) {
 		String value = getStringOption(key);
-		if (value!=null) return value;
+		if (value != null)
+			return value;
 		return super.getReplacementString(fileName, key);
 	}
 	/**
@@ -229,7 +247,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		initializeFields(model);
 		super.execute(project, model, monitor);
 	}
- 
+
 	void registerOption(TemplateOption option, Object value, int pageIndex) {
 		option.setValue(value);
 		options.put(option.getName(), option);

@@ -1,14 +1,12 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
 
 public class ViewNewWizard extends NewPluginTemplateWizard {
+	private static final String KEY_WTITLE = "ViewNewWizard.wtitle";
 
 	/**
 	 * Constructor for HelloWorldNewWizard.
@@ -21,7 +19,7 @@ public class ViewNewWizard extends NewPluginTemplateWizard {
 		IPluginStructureData structureData,
 		boolean fragment) {
 		super.init(provider, structureData, fragment);
-		setWindowTitle("New plug-in project with a sample view");
+		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
 	/*

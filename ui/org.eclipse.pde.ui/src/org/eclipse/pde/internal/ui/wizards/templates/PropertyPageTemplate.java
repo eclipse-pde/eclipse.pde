@@ -4,27 +4,31 @@ package org.eclipse.pde.internal.ui.wizards.templates;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.IPluginStructureData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PropertyPageTemplate extends PDETemplateSection {
-
 	public static final String KEY_CLASSNAME = "className";
 	public static final String KEY_PAGE_NAME = "pageName";
 	public static final String KEY_TARGET_CLASS = "targetClass";
 	public static final String KEY_NAME_FILTER = "nameFilter";
-	
+
+	private static final String NL_TITLE = "PropertyPageTemplate.title";
+	private static final String NL_DESC = "PropertyPageTemplate.desc";
+	private static final String NL_PACKAGE_NAME =
+		"PropertyPageTemplate.packageName";
+	private static final String NL_PAGE_CLASS = "PropertyPageTemplate.pageClass";
+	private static final String NL_PAGE_NAME = "PropertyPageTemplate.pageName";
+	private static final String NL_DEFAULT_PAGE_NAME =
+		"PropertyPageTemplate.defaultPageName";
+	private static final String NL_TARGET_CLASS =
+		"PropertyPageTemplate.targetClass";
+	private static final String NL_NAME_FILTER = "PropertyPageTemplate.nameFilter";
+
 	/**
 	 * Constructor for PropertyPageTemplate.
 	 */
@@ -37,17 +41,37 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		createOptions();
 
 		WizardPage page = createPage(0);
-		page.setTitle("Sample Property Page");
-		page.setDescription("This template adds a property page to a resource and will appear in the Properties Dialog for that resource.");
+		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
+		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
 		wizard.addPage(page);
 	}
-	
+
 	private void createOptions() {
-		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, 0);
-		addOption(KEY_CLASSNAME, "&Property Page Class:", "SamplePropertyPage", 0);
-		addOption(KEY_PAGE_NAME, "P&roperty Page Name:", "Sample Page", 0);
-		addOption(KEY_TARGET_CLASS, "&Target Class:","org.eclipse.core.resources.IFile", 0);
-		addOption(KEY_NAME_FILTER, "&Name Filter:", "*.*", 0);
+		addOption(
+			KEY_PACKAGE_NAME,
+			PDEPlugin.getResourceString(NL_PACKAGE_NAME),
+			(String) null,
+			0);
+		addOption(
+			KEY_CLASSNAME,
+			PDEPlugin.getResourceString(NL_PAGE_CLASS),
+			"SamplePropertyPage",
+			0);
+		addOption(
+			KEY_PAGE_NAME,
+			PDEPlugin.getResourceString(NL_PAGE_NAME),
+			PDEPlugin.getResourceString(NL_DEFAULT_PAGE_NAME),
+			0);
+		addOption(
+			KEY_TARGET_CLASS,
+			PDEPlugin.getResourceString(NL_TARGET_CLASS),
+			"org.eclipse.core.resources.IFile",
+			0);
+		addOption(
+			KEY_NAME_FILTER,
+			PDEPlugin.getResourceString(NL_NAME_FILTER),
+			"*.*",
+			0);
 	}
 	/**
 	 * @see PDETemplateSection#getSectionId()
@@ -59,21 +83,21 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public boolean isDependentOnFirstPage() {
 		return true;
 	}
-	
+
 	protected void initializeFields(IPluginStructureData sdata, IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".properties");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".properties");
 	}
-	
+
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".properties");
+		initializeOption(KEY_PACKAGE_NAME, pluginId + ".properties");
 	}
-	
+
 	/**
 	 * @see GenericTemplateSection#validateOptions(TemplateOption)
 	 */
@@ -86,7 +110,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	}
 
 	private void validateContainerPage(TemplateOption source) {
-		TemplateOption [] allPageOptions = getOptions(0);
+		TemplateOption[] allPageOptions = getOptions(0);
 		for (int i = 0; i < allPageOptions.length; i++) {
 			TemplateOption nextOption = allPageOptions[i];
 			if (nextOption.isRequired() && nextOption.isEmpty()) {
@@ -107,15 +131,19 @@ public class PropertyPageTemplate extends PDETemplateSection {
 
 		IPluginElement pageElement = factory.createElement(extension);
 		pageElement.setName("page");
-		pageElement.setAttribute("id", getStringOption(KEY_PACKAGE_NAME) + ".samplePropertyPage");
+		pageElement.setAttribute(
+			"id",
+			getStringOption(KEY_PACKAGE_NAME) + ".samplePropertyPage");
 		pageElement.setAttribute("name", getStringOption(KEY_PAGE_NAME));
 		pageElement.setAttribute("objectClass", getStringOption(KEY_TARGET_CLASS));
-		pageElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASSNAME));
+		pageElement.setAttribute(
+			"class",
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_CLASSNAME));
 		pageElement.setAttribute("nameFilter", getStringOption(KEY_NAME_FILTER));
-		
+
 		extension.add(pageElement);
 		if (!extension.isInTheModel())
-			plugin.add(extension);		
+			plugin.add(extension);
 	}
 
 	/**
