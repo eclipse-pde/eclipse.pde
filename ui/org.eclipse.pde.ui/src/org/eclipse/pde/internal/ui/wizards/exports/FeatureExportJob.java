@@ -117,7 +117,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			for (int i = 0; i < fItems.length; i++) {
 				IFeatureModel model = (IFeatureModel)fItems[i];
 				try {
-					doExport(model.getFeature().getId(), model.getInstallLocation(), new SubProgressMonitor(monitor, 1));
+					doExport(model.getFeature().getId(), model.getFeature().getVersion(), model.getInstallLocation(), new SubProgressMonitor(monitor, 1));
 				} finally {
 					deleteBuildFiles(model);
 				}
@@ -136,13 +136,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 	
-	protected void doExport(String featureID, String featureLocation, IProgressMonitor monitor)
+	protected void doExport(String featureID, String version, String featureLocation, IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
 		monitor.beginTask("", 5);
 		monitor.setTaskName("Building Plug-ins...");
 		try {
 			HashMap properties = createBuildProperties();
-			makeScript(featureID, featureLocation);
+			makeScript(featureID, version, featureLocation);
 			monitor.worked(1);
 			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(),
 					properties, new SubProgressMonitor(monitor, 2));
@@ -185,13 +185,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return fBuildProperties;
 	}
 	
-	private void makeScript(String featureID, String featureLocation) throws CoreException {
+	private void makeScript(String featureID, String versionId, String featureLocation) throws CoreException {
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
 		generator.setDevEntries(getDevProperties());
-		generator.setElements(new String[] {"feature@" + featureID});
+		generator.setElements(new String[] {"feature@" + featureID + (versionId == null ? "" : ":" + versionId)});
 		generator.setPluginPath(getPaths());
 		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder");
 		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);

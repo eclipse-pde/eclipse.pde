@@ -40,7 +40,7 @@ public class PluginExportJob extends FeatureExportJob {
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
-			doExport(featureID, fFeatureLocation, monitor);
+			doExport(featureID, null, fFeatureLocation, monitor);
 		} catch (IOException e) {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
