@@ -121,7 +121,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEPlugin.getResourceString(KEY_TITLE),
+					PDEPlugin.getResourceString(KEY_PROBLEM),
 					null);
 			for (int i = 0; i < models.length; i++) {
 				try {
@@ -137,7 +137,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							new String[] {
 								models[i].getPluginBase().getId(),
 								status.getMessage()});
-					IStatus newStatus =
+					Status newStatus =
 						new Status(
 							status.getSeverity(),
 							PDEPlugin.getPluginId(),
