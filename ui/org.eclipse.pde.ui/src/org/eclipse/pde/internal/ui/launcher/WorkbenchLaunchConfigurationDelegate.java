@@ -56,9 +56,8 @@ public class WorkbenchLaunchConfigurationDelegate
 				ILauncherSettings.CONFIG_LOCATION,
 				(configFile == null) ? null : configFile.getParent());
 				
-			String workspace = configuration.getAttribute(LOCATION + "0", (String)null);
-			if (workspace != null)
-				LauncherUtils.clearWorkspace(configuration, workspace);
+			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
+			LauncherUtils.clearWorkspace(configuration, workspace);
 				
 			LauncherUtils.setDefaultSourceLocator(configuration, launch);
 			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
@@ -101,11 +100,9 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		
 		String targetWorkspace =
-			configuration.getAttribute(LOCATION + "0", (String) null);
-		if (targetWorkspace != null) {
-			programArgs.add("-data");
-			programArgs.add(targetWorkspace);
-		}
+			configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
+		programArgs.add("-data");
+		programArgs.add(targetWorkspace);
 		
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
 		if (configuration.getAttribute(USEFEATURES, false)) {
