@@ -106,6 +106,8 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 
 	public IFeature findFeature(String featureId, String versionId, boolean throwsException) throws CoreException {
 		ISiteFeatureReference[] features = getFeatureReferences();
+		if (GENERIC_VERSION_NUMBER.equals(versionId))
+			versionId = null;
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId))
 				if (versionId == null || features[i].getVersionedIdentifier().getVersion().toString().equals(versionId))
