@@ -111,6 +111,8 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 			IPluginImport dep = fSelectedDependency.getImport();
 			IResource resource = dep.getModel().getUnderlyingResource();
 			new DependencyExtentAction(resource.getProject(), dep.getId()).run();
+		} else {
+			MessageDialog.openInformation(getPage().getSite().getShell(), PDEPlugin.getResourceString("DependencyAnalysisSection.dialogtitle"), PDEPlugin.getResourceString("DependencyAnalysisSection.message")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
