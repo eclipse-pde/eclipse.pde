@@ -293,7 +293,8 @@ the consequences - multiple simultaneous builds?</li>
 remove all strings and replace by contants when possible</li>
 
 <li>
-review scripts to see if relative folders are correct</li>
+review scripts to see if relative folders are correct - take special care
+about considering plug-ins relative to the ${install}locations</li>
 
 <li>
 review scripts to see if the clean target offers risk of removing more
@@ -305,11 +306,8 @@ We should try to clean every entry by name and not use masks.</li>
 remove fragments folder if it is obsolete</li>
 
 <li>
-if a plugin does not have jar entries, it should not gather.log or gather.sources</li>
-
-<li>
 remove build variables from the script generation step. It can break Dejan's
-code, so we need to warn him.</li>
+code, so we need to warn him. -- ONLY AFTER 0311 BUILD CONTRIBUTION</li>
 </ul>
 
 </body>
