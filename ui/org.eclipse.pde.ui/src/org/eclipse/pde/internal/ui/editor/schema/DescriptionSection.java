@@ -266,6 +266,11 @@ public class DescriptionSection extends PDEFormSection {
 		resetButton.setEnabled(false);
 		applyButton.setEnabled(false);
 		ignoreChange = false;
+		ISchemaObject eobj = element;
+		if (element instanceof ISchemaAttribute) {
+			eobj = element.getParent();
+		}
+		sourceViewer.setEditable(eobj.getName().equals("extension")==false);
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
