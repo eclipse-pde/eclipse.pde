@@ -169,7 +169,16 @@ public class CompilersPreferencePage
 			Text text = new Text(page, SWT.SINGLE | SWT.BORDER);
 			text.setText(CompilerFlags.getString(flagId));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = 50;
 			text.setLayoutData(gd);
+			
+			new Label(page, SWT.NULL).setLayoutData(new GridData());
+			GridData sgd = new GridData();
+			Label slabel = new Label(page, SWT.NULL);
+			slabel.setText(PDEPlugin.getResourceString("CompilersPreferencePage.label"));
+			sgd.horizontalSpan = 2;
+			slabel.setLayoutData(sgd);
+			
 			control = text;
 		}
 		control.setData(flagId);
