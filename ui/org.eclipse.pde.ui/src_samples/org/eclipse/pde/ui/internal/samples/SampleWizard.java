@@ -36,10 +36,10 @@ public class SampleWizard extends Wizard
 	private ProjectNamesPage namesPage;
 	private ReviewPage lastPage;
 	
-	private boolean sampleEditorNeeded;
-	private boolean switchPerspective;
-	private boolean selectRevealEnabled;
-	private boolean activitiesEnabled;
+	private boolean sampleEditorNeeded=true;
+	private boolean switchPerspective=true;
+	private boolean selectRevealEnabled=true;
+	private boolean activitiesEnabled=true;
 	
 	private IProject [] createdProjects;
 	private class ImportOverwriteQuery implements IOverwriteQuery {
