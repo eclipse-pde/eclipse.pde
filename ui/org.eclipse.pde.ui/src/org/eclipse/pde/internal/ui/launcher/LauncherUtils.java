@@ -371,6 +371,22 @@ public class LauncherUtils {
 		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 	
+	public static IProject[] getAffectedProjects(ILaunchConfiguration config) throws CoreException {
+		ArrayList projects = new ArrayList();
+		IPluginModelBase[] models = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		Set ignored = parseDeselectedWSIds(config);
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (id == null || id.length() == 0 || ignored.contains(id))
+				continue;
+			IProject project = models[i].getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID))
+				projects.add(project);
+		}
+		
+		return (IProject[])projects.toArray(new IProject[projects.size()]);
+	}
+	
 	private static TreeMap validatePlugins(IPluginModelBase[] models, ArrayList statusEntries) {
 		TreeMap map = new TreeMap();
 		for (int i = 0; i < models.length; i++) {

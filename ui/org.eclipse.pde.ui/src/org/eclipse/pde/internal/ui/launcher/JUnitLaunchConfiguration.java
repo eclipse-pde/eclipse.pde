@@ -371,5 +371,23 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		}
 		return fConfigDir;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
+			String mode) throws CoreException {
+		return computeBuildOrder(LauncherUtils.getAffectedProjects(configuration));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getProjectsForProblemSearch(
+			ILaunchConfiguration configuration, String mode)
+			throws CoreException {
+		return LauncherUtils.getAffectedProjects(configuration);
+	}
+
 
 }

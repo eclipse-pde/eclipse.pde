@@ -275,7 +275,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
-		return super.getBuildOrder(configuration, mode);
+		return computeBuildOrder(LauncherUtils.getAffectedProjects(configuration));
 	}
 	
 	/* (non-Javadoc)
@@ -284,7 +284,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
-		return super.getProjectsForProblemSearch(configuration, mode);
+		return LauncherUtils.getAffectedProjects(configuration);
 	}
 	
 	private File getConfigDir(ILaunchConfiguration config) {
