@@ -199,8 +199,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 						IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL},
 					1);
-			if (dialog.open() == 1)
+			if (dialog.open() == 1) {
+				getContainer().updateButtons();
 				return false;
+			}
 			fPluginsBlock.handleReload();
 		} 
 		fSourceBlock.performOk();

@@ -79,6 +79,7 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public boolean performOk() {
 		if (!configurationBlock.performOk(true)) {
+			getContainer().updateButtons();
 			return false;
 		}
 		return super.performOk();
