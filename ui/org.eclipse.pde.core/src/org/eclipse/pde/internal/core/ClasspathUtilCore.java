@@ -144,7 +144,8 @@ public class ClasspathUtilCore {
 		IProject project = PDECore.getWorkspace().getRoot().getProject(name);
 		IClasspathEntry entry =
 			JavaCore.newProjectEntry(project.getFullPath(), isExported);
-		result.add(entry);
+		if (!result.contains(entry))
+			result.add(entry);
 	}
 
 	private static void addDependency(
@@ -165,7 +166,8 @@ public class ClasspathUtilCore {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IClasspathEntry entry =
 					JavaCore.newProjectEntry(project.getFullPath(), isExported);
-				result.add(entry);
+				if (!result.contains(entry))
+					result.add(entry);
 			}
 			if (doAddWorkspaceFragments)
 				addFragmentsWithSource(plugin, isExported, result);
@@ -176,7 +178,7 @@ public class ClasspathUtilCore {
 		for (int i = 0; i < libraries.length; i++) {
 			IClasspathEntry entry =
 				createLibraryEntry(libraries[i], isExported, relative);
-			if (entry != null) {
+			if (entry != null && !result.contains(entry)) {
 				result.add(entry);
 			}
 		}
@@ -298,7 +300,7 @@ public class ClasspathUtilCore {
 					libraries[i],
 					unconditionallyExport,
 					relative);
-			if (entry != null)
+			if (entry != null && !result.contains(entry))
 				result.add(entry);
 		}
 	}
@@ -354,7 +356,9 @@ public class ClasspathUtilCore {
 			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
 				if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-					result.add(JavaCore.newSourceEntry(root.getPath()));
+					IClasspathEntry entry = JavaCore.newSourceEntry(root.getPath());
+					if (!result.contains(entry))
+						result.add(entry);
 				}
 			}
 		}
@@ -374,7 +378,9 @@ public class ClasspathUtilCore {
 					for (int k = 0; k < folders.length; k++) {
 						IPath path = project.getFullPath().append(folders[k]);
 						if (path.toFile().exists()) {
-							result.add(JavaCore.newSourceEntry(path));
+							IClasspathEntry entry = JavaCore.newSourceEntry(path);
+							if (!result.contains(entry))
+								result.add(entry);
 						} else {
 							addSourceFolder(folders[k], project, result);
 						}
@@ -387,7 +393,7 @@ public class ClasspathUtilCore {
 			if (!found) {
 				IClasspathEntry entry =
 					createLibraryEntry(library, library.isExported(), true);
-				if (entry != null)
+				if (entry != null && !result.contains(entry))
 					result.add(entry);
 
 			}
@@ -402,7 +408,8 @@ public class ClasspathUtilCore {
 		IPath path = project.getFullPath().append(name);
 		ensureFolderExists(project, path);
 		IClasspathEntry entry = JavaCore.newSourceEntry(path);
-		result.add(entry);
+		if (!result.contains(entry))
+			result.add(entry);
 	}
 
 	private static void ensureFolderExists(IProject project, IPath folderPath)
