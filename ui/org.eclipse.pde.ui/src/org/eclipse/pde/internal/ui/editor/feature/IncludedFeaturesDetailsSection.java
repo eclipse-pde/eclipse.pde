@@ -251,7 +251,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 		fBlockNotification = true;
 
 		if (fInput != null) {
-			fNameText.setValue(fInput.getName());
+			fNameText.setValue(fInput.getName(), true);
 			fOptionalButton.setSelection(fInput.isOptional());
 			int searchLocation = fInput.getSearchLocation();
 			fSearchRootButton
