@@ -740,8 +740,6 @@ public class LogView extends ViewPart implements ILogListener {
 				onTextShellDispose(e);
 			} 
 		});
-
-		textShell.setSize(column2.getWidth() + column3.getWidth(), 125);
 	}
 
 	void onTextShellDispose(DisposeEvent e){
@@ -775,6 +773,7 @@ public class LogView extends ViewPart implements ILogListener {
 		int x = point.x + 5;
 		int y = point.y - (table.getItemHeight()*2) - 20;
 		textShell.setLocation(table.toDisplay(x,y));
+		textShell.setSize(tableTreeViewer.getTableTree().getSize().x - x, 125);
 		textShell.open();
 		setFocus();
 	}
