@@ -44,6 +44,17 @@ public class BuildPathUtilCore {
 		super();
 	}
 
+	/**
+	 * Creates a new instance of the classpath container entry for
+	 * the given project.
+	 * @param project
+	 */
+
+	public static IClasspathEntry createContainerEntry() {
+		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
+		return JavaCore.newContainerEntry(path);
+	}
+
 	private static void ensureFolderExists(IProject project, IPath folderPath)
 		throws CoreException {
 		IWorkspace workspace = project.getWorkspace();
@@ -94,17 +105,15 @@ public class BuildPathUtilCore {
 			// just keep the source folders
 			keepExistingSourceFolders(javaProject, result);
 		}
+
+		// add own libraries, if present
+		addLibraries(model, false, result);
 		if (useClasspathContainer) {
 			// Do not set dependent plug-ins explicitly,
 			// delegate computation to the classpath
 			// container.
-			String projectName = project.getName();
-			IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID).append(projectName);
-			result.add(JavaCore.newContainerEntry(path));
+			result.add(createContainerEntry());
 		} else {
-			// add own libraries, if present
-			addLibraries(model, false, result);
-
 			// add dependencies
 			addDependencies(model.getPluginBase().getImports(), true, result);
 
@@ -163,7 +172,10 @@ public class BuildPathUtilCore {
 			new IClasspathEntry[result.size()]);
 	}
 
-	protected static void addImplicitLibraries(Vector result, boolean relative, String id) {
+	protected static void addImplicitLibraries(
+		Vector result,
+		boolean relative,
+		String id) {
 		boolean addRuntime = true;
 		if (id.equals("org.eclipse.core.boot"))
 			return;
@@ -222,7 +234,7 @@ public class BuildPathUtilCore {
 		Vector result) {
 		addLibraries(model, unconditionallyExport, true, result);
 	}
-	
+
 	public static void addLibraries(
 		IPluginModelBase model,
 		boolean unconditionallyExport,
@@ -231,8 +243,9 @@ public class BuildPathUtilCore {
 		IPluginBase pluginBase = model.getPluginBase();
 		IPluginLibrary[] libraries = pluginBase.getLibraries();
 		IPath rootPath;
-		
-		if (relative) rootPath = getRootPath(model);
+
+		if (relative)
+			rootPath = getRootPath(model);
 		else
 			rootPath = new Path(model.getInstallLocation());
 
@@ -294,10 +307,11 @@ public class BuildPathUtilCore {
 					plugin.getId(),
 					plugin.getVersion(),
 					fragment.getRule())) {
-			IPath rootPath;
-			if (relative) rootPath = getRootPath(fmodel);
-			else
-				rootPath = new Path(fmodel.getInstallLocation());
+				IPath rootPath;
+				if (relative)
+					rootPath = getRootPath(fmodel);
+				else
+					rootPath = new Path(fmodel.getInstallLocation());
 				IClasspathEntry entry =
 					PluginPathUpdater.createLibraryEntryFromFragment(
 						fmodel,
@@ -321,7 +335,8 @@ public class BuildPathUtilCore {
 		if (project != null)
 			return project.getFullPath();
 		else
-			return ((ExternalPluginModelBase)model).getEclipseHomeRelativePath();
+			return ((ExternalPluginModelBase) model)
+				.getEclipseHomeRelativePath();
 	}
 
 	private static boolean exists(

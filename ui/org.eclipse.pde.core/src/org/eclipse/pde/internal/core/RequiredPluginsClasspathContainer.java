@@ -15,6 +15,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  */
 public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	private IPluginModelBase model;
+	private IClasspathEntry[] entries;
 
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
@@ -23,26 +24,40 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 		this.model = model;
 	}
 
+	public void reset() {
+		entries = null;
+	}
+
 	/**
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		IClasspathEntry [] entries = BuildPathUtilCore.computePluginEntries(model);
-		return verifyWithAttachmentManager(entries);
+		if (entries == null) {
+			entries = BuildPathUtilCore.computePluginEntries(model);
+			entries = verifyWithAttachmentManager(entries);
+		}
+		return entries;
 	}
-	
-	private IClasspathEntry[] verifyWithAttachmentManager(IClasspathEntry [] entries) {
-		SourceAttachmentManager manager = PDECore.getDefault().getSourceAttachmentManager();
+
+	private IClasspathEntry[] verifyWithAttachmentManager(IClasspathEntry[] entries) {
+		SourceAttachmentManager manager =
+			PDECore.getDefault().getSourceAttachmentManager();
 		if (manager.isEmpty())
 			return entries;
-		IClasspathEntry [] newEntries = new IClasspathEntry[entries.length]; 
-		for (int i=0; i<entries.length; i++) {
+		IClasspathEntry[] newEntries = new IClasspathEntry[entries.length];
+		for (int i = 0; i < entries.length; i++) {
 			IClasspathEntry entry = entries[i];
 			newEntries[i] = entry;
-			if (entry.getEntryKind()==IClasspathEntry.CPE_LIBRARY) {
-				SourceAttachmentManager.SourceAttachmentEntry saentry = manager.findEntry(entry.getPath());
-				if (saentry!=null) {
-					IClasspathEntry newEntry = JavaCore.newLibraryEntry(entry.getPath(), saentry.getAttachmentPath(), saentry.getAttachmentRootPath(), entry.isExported());
+			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+				SourceAttachmentManager.SourceAttachmentEntry saentry =
+					manager.findEntry(entry.getPath());
+				if (saentry != null) {
+					IClasspathEntry newEntry =
+						JavaCore.newLibraryEntry(
+							entry.getPath(),
+							saentry.getAttachmentPath(),
+							saentry.getAttachmentRootPath(),
+							entry.isExported());
 					newEntries[i] = newEntry;
 				}
 			}
@@ -54,7 +69,7 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return "Required plug-in entries";
+		return PDECore.getResourceString("RequiredPluginsClasspathContainer.description"); //$NON-NLS-1$
 	}
 
 	/**
@@ -68,8 +83,7 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
 	 */
 	public IPath getPath() {
-		String projectName = model.getUnderlyingResource().getProject().getName();
-		return new Path(PDECore.CLASSPATH_CONTAINER_ID).append(projectName);
+		return new Path(PDECore.CLASSPATH_CONTAINER_ID);
 	}
 
 }

@@ -2,7 +2,9 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.ui.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
@@ -61,8 +63,11 @@ public class RequiredPluginsContainerPage
 			int kind = entry.getEntryKind();
 			if (kind == IClasspathEntry.CPE_PROJECT)
 				return entry.getPath().segment(0);
-			else
-				return entry.getPath().toOSString();
+			else {
+				IPath path = entry.getPath();
+				String name = path.lastSegment();
+				return name + " - " + path.uptoSegment(path.segmentCount()-1).toOSString();
+			}
 		}
 
 		public Image getImage(Object obj) {
@@ -90,14 +95,15 @@ public class RequiredPluginsContainerPage
 		setDescription(PDEPlugin.getResourceString("RequiredPluginsContainerPage.desc")); //$NON-NLS-1$
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJ_PROJECT);
-		libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
+			org.eclipse.ui.ISharedImages.IMG_OBJ_PROJECT);
+		//libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
+		libraryImage = JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
 		setImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		replacedEntries = new Hashtable();
 	}
 
 	public void dispose() {
-		libraryImage.dispose();
+		//libraryImage.dispose();
 		super.dispose();
 	}
 
@@ -148,7 +154,9 @@ public class RequiredPluginsContainerPage
 			}
 		});
 		attachSourceButton.setEnabled(false);
-		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGINS_CONTAINER_PAGE);
+		WorkbenchHelp.setHelp(
+			container,
+			IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);
 		if (realEntries != null)
 			initializeView();
@@ -193,7 +201,7 @@ public class RequiredPluginsContainerPage
 	 * @see WizardPage#finish
 	 */
 	public boolean finish() {
-		if (replacedEntries.size()>0) {
+		if (replacedEntries.size() > 0) {
 			// must handle edited entries
 			processReplacedEntries();
 		}
@@ -201,13 +209,21 @@ public class RequiredPluginsContainerPage
 	}
 
 	private void processReplacedEntries() {
-		SourceAttachmentManager manager = PDECore.getDefault().getSourceAttachmentManager();
-		for (Enumeration enum=replacedEntries.keys(); enum.hasMoreElements();) {
-			IClasspathEntry entry = (IClasspathEntry)enum.nextElement();
-			IClasspathEntry newEntry = (IClasspathEntry)replacedEntries.get(entry);
-			manager.addEntry(newEntry.getPath(), newEntry.getSourceAttachmentPath(), newEntry.getSourceAttachmentRootPath());
+		SourceAttachmentManager manager =
+			PDECore.getDefault().getSourceAttachmentManager();
+		for (Enumeration enum = replacedEntries.keys();
+			enum.hasMoreElements();
+			) {
+			IClasspathEntry entry = (IClasspathEntry) enum.nextElement();
+			IClasspathEntry newEntry =
+				(IClasspathEntry) replacedEntries.get(entry);
+			manager.addEntry(
+				newEntry.getPath(),
+				newEntry.getSourceAttachmentPath(),
+				newEntry.getSourceAttachmentRootPath());
 		}
 		manager.save();
+		resetContainer();
 	}
 
 	/**
@@ -235,7 +251,7 @@ public class RequiredPluginsContainerPage
 			initializeView();
 	}
 
-	private void createRealEntries() {
+	private void resetContainer() {
 		IJavaProject javaProject = getJavaProject();
 		if (javaProject != null) {
 			try {
@@ -243,10 +259,35 @@ public class RequiredPluginsContainerPage
 					JavaCore.getClasspathContainer(
 						entry.getPath(),
 						javaProject);
-				realEntries = container.getClasspathEntries();
+				if (container instanceof RequiredPluginsClasspathContainer) {
+					((RequiredPluginsClasspathContainer) container).reset();
+				}
 			} catch (JavaModelException e) {
 			}
 		}
+	}
+
+	private void createRealEntries() {
+		IJavaProject javaProject = getJavaProject();
+		
+		if (entry == null) {
+			entry =
+				BuildPathUtilCore.createContainerEntry();
+		}		
+
+		if (javaProject != null) {
+			try {
+				IClasspathContainer container =
+					JavaCore.getClasspathContainer(
+						entry.getPath(),
+						javaProject);
+				if (container!=null) 
+					realEntries = container.getClasspathEntries();
+			} catch (JavaModelException e) {
+			}
+		}
+		if (realEntries==null)
+			realEntries = new IClasspathEntry[0];
 	}
 
 	private IJavaProject getJavaProject() {

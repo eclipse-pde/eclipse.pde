@@ -18,7 +18,7 @@ public class ModelEntry extends PlatformObject {
 	private IPluginModelBase workspaceModel;
 	private IPluginModelBase externalModel;
 	private int mode = AUTOMATIC;
-	private IClasspathContainer classpathContainer;
+	private RequiredPluginsClasspathContainer classpathContainer;
 	private boolean inJavaSearch = false;
 	private PluginModelManager manager;
 
@@ -81,7 +81,7 @@ public class ModelEntry extends PlatformObject {
 	public boolean isEmpty() {
 		return workspaceModel == null && externalModel == null;
 	}
-	public IClasspathContainer getClasspathContainer() {
+	public RequiredPluginsClasspathContainer getClasspathContainer() {
 		if (classpathContainer == null)
 			classpathContainer =
 				new RequiredPluginsClasspathContainer(workspaceModel);
@@ -92,14 +92,15 @@ public class ModelEntry extends PlatformObject {
 			return;
 		if (force)
 			classpathContainer = null;
-		IClasspathContainer container = getClasspathContainer();
+		RequiredPluginsClasspathContainer container = getClasspathContainer();
+		container.reset();
 		IProject project = workspaceModel.getUnderlyingResource().getProject();
 		IJavaProject[] javaProjects =
 			new IJavaProject[] { JavaCore.create(project)};
 		IClasspathContainer[] containers =
 			new IClasspathContainer[] { container };
 		IPath path =
-			new Path(PDECore.CLASSPATH_CONTAINER_ID).append(project.getName());
+			new Path(PDECore.CLASSPATH_CONTAINER_ID);
 		try {
 			JavaCore.setClasspathContainer(
 				path,
@@ -125,7 +126,7 @@ public class ModelEntry extends PlatformObject {
 			IPluginBase changedPlugin = changedPlugins[i];
 			String id = changedPlugin.getId();
 			if (plugin.getId().equals(id))
-				continue;
+				return true;
 			if (isRequired(plugin, changedPlugin))
 				return true;
 		}
