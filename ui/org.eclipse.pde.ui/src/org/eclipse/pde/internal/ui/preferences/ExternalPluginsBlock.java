@@ -302,10 +302,12 @@ public class ExternalPluginsBlock {
 	
 	private void savePreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		IPath newPath = new Path(page.getPlatformPath());
+		IPath defaultPath = new Path(ExternalModelManager.computeDefaultPlatformPath());
 		String mode =
-			page.getUseOther()
-				? ICoreConstants.VALUE_USE_OTHER
-				: ICoreConstants.VALUE_USE_THIS;
+			newPath.equals(defaultPath)
+				? ICoreConstants.VALUE_USE_THIS
+				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
 		preferences.setValue(ICoreConstants.PLATFORM_PATH, page.getPlatformPath());
 		String[] locations = page.getPlatformLocations();

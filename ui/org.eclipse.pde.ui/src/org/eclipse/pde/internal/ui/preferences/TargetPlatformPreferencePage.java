@@ -34,7 +34,6 @@ public class TargetPlatformPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 
-	private Button fUseThisPlatform;
 	private Label fHomeLabel;
 	private Combo fHomeText;
 	private Button fBrowseButton;
@@ -63,32 +62,6 @@ public class TargetPlatformPreferencePage
 		layout.numColumns = 3;
 		layout.marginHeight = layout.marginWidth = 0;
 		container.setLayout(layout);
-
-		fUseThisPlatform = new Button(container, SWT.CHECK);
-		fUseThisPlatform.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.useThis"));
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		fUseThisPlatform.setLayoutData(gd);
-
-		if (PDECore.inLaunchedInstance())
-			fUseThisPlatform.setEnabled(false);
-		
-		fUseThisPlatform.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = fUseThisPlatform.getSelection();
-				updateEnableState(!selected);
-				if (selected) {
-					String newPath = ExternalModelManager.computeDefaultPlatformPath();
-					if (!newPath.equals(fHomeText.getText())) {
-						if (fHomeText.indexOf(newPath) == -1)
-							fHomeText.add(newPath, 0);
-						fHomeText.setText(newPath);
-						fPluginsBlock.handleReload();
-						fNeedsReload = false;
-					}
-				}
-			}
-		});
 
 		fHomeLabel = new Label(container, SWT.NULL);
 		fHomeLabel.setText(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.PlatformHome"));
@@ -131,10 +104,10 @@ public class TargetPlatformPreferencePage
 		});
 
 		Control block = fPluginsBlock.createContents(container);
-		gd = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);	
-		load();
+		fPluginsBlock.initialize();
 		
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
@@ -143,24 +116,6 @@ public class TargetPlatformPreferencePage
 
 	String getPlatformPath() {
 		return fHomeText.getText();
-	}
-
-	boolean getUseOther() {
-		return !fUseThisPlatform.getSelection();
-	}
-
-	private void load() {		
-		String mode = fPreferences.getString(ICoreConstants.TARGET_MODE);
-		boolean useOther = mode.equals(ICoreConstants.VALUE_USE_OTHER);
-		fUseThisPlatform.setSelection(!useOther);
-		updateEnableState(useOther);
-		fPluginsBlock.initialize();
-	}
-
-	private void updateEnableState(boolean useOther) {
-		fHomeLabel.setEnabled(useOther);
-		fHomeText.setEnabled(useOther);
-		fBrowseButton.setEnabled(useOther);
 	}
 
 	private void handleBrowse() {
@@ -186,7 +141,7 @@ public class TargetPlatformPreferencePage
 	}
 
 	public boolean performOk() {
-		if (fNeedsReload && getUseOther() && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
+		if (fNeedsReload && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),
@@ -212,5 +167,8 @@ public class TargetPlatformPreferencePage
 	 
 	public void resetNeedsReload() {
 		fNeedsReload = false;
+		String location = fHomeText.getText();
+		if (fHomeText.indexOf(location) == -1)
+			fHomeText.add(location, 0);
 	}
 }
