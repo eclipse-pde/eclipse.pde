@@ -221,6 +221,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
 		else
 			programArgs.add(ClasspathHelper.getDevEntries(true));
+		
+		// necessary for PDE to know how to load plugins when target platform = host platform
+		// see PluginPathFinder.getPluginPaths()
+		programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(TRACING, false)

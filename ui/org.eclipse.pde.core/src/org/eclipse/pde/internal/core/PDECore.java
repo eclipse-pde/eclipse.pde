@@ -48,6 +48,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String SITEBUILD_LOG = "build.log"; //$NON-NLS-1$
 	public static final String SITEBUILD_SCRIPTS = "scripts"; //$NON-NLS-1$
 	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$
+	
+	private static boolean isDevLaunchMode = false;
 
 	public static boolean compare(
 		String id1,
@@ -184,6 +186,15 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 					e);
 		}
 		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+	
+	public static boolean isDevLaunchMode() {
+		String[] args = Platform.getApplicationArgs();
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-pdelaunch")) //$NON-NLS-1$
+				isDevLaunchMode = true;			
+		}
+		return isDevLaunchMode;
 	}
 	// External model manager
 	private PluginModelManager modelManager;
