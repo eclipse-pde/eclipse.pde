@@ -117,19 +117,17 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				throws InvocationTargetException, InterruptedException {
 				boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
 				try {
-					int numUnits = 2;
 					if (isAutoBuilding) {
 						IWorkspace workspace = PDEPlugin.getWorkspace();
 						IWorkspaceDescription description = workspace.getDescription();
 						description.setAutoBuilding(false);
 						workspace.setDescription(description);
-						numUnits += 1;
 					}
-					monitor.beginTask("", numUnits);
+					monitor.beginTask("", 10);
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
 						new PluginImportOperation(models, modelIds, importType, query);
-					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 1));
+					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 9));
 					Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -143,7 +141,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 						if (isAutoBuilding) {
 							PDEPlugin.getWorkspace().run(
 								getActivateAutoBuildOperation(),
-								new SubProgressMonitor(monitor, 1));
+								new NullProgressMonitor());
 						}
 					} catch (CoreException e) {
 					}
