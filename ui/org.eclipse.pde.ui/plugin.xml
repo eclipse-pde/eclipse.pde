@@ -455,13 +455,13 @@
    <launchConfigurationTab
          name="%launchConfigurationTab.firstTab.name"
          type="org.eclipse.pde.RuntimeWorkbench"
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherBasicTab"
+         class="org.eclipse.pde.internal.launcher.BasicLauncherTab"
          id="org.eclipse.pde.launchConfigurationTab.FirstTab">
    </launchConfigurationTab>
    <launchConfigurationTab
          name="%launchConfigurationTab.advancedTab.name"
          type="org.eclipse.pde.RuntimeWorkbench"
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherAdvancedTab"
+         class="org.eclipse.pde.internal.launcher.AdvancedLauncherTab"
          id="org.eclipse.pde.launchConfigurationTab.AdvancedTab">
    </launchConfigurationTab>
 </extension>

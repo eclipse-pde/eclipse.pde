@@ -18,13 +18,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
+import org.eclipse.pde.internal.util.SWTUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.pde.internal.PDEPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
+import org.eclipse.debug.core.*;
 
-public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILauncherSettings {
+public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings, ICurrentLaunchListener {
 	private static final String KEY_DESC = "";
 
 	private static final String KEY_WORKSPACE =
@@ -60,9 +61,6 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 		"WorkbenchLauncherWizardBasicPage.workspaceExisting";
 
 	public static final String RT_WORKSPACE = "runtime-workspace";
-	private Composite control;
-	private ILaunchConfigurationWorkingCopy config;
-	private ILaunchConfigurationDialog launchDialog;
 	private Combo workspaceCombo;
 	private Button browseButton;
 	private Button clearWorkspaceCheck;
@@ -78,18 +76,15 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 
 	private IVMInstall[] vmInstallations;
 
-	public WorkbenchLauncherBasicTab() {
-		//jreSelectionStatus = createStatus(IStatus.OK, "");
-		//workspaceSelectionStatus = createStatus(IStatus.OK, "");
+	public BasicLauncherTab() {
+		jreSelectionStatus = createStatus(IStatus.OK, "");
+		workspaceSelectionStatus = createStatus(IStatus.OK, "");
 
 		vmInstallations = getAllVMInstances();
 	}
 
-	public Control createTabControl(
-		ILaunchConfigurationDialog dialog,
-		TabItem tab) {
-		this.launchDialog = dialog;
-		Composite composite = new Composite(tab.getParent(), SWT.NONE);
+	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -145,36 +140,11 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText(PDEPlugin.getResourceString(KEY_RESTORE));
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		/*
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint =
-			Math.max(
-				widthHint,
-				defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		*/
 		defaultsButton.setLayoutData(data);
-/*
-		label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_RESTORE_TEXT));
-		data = fillIntoGrid(label, 2, false);
-		//data.verticalAlignment = GridData.BEGINNING;
-*/
+		SWTUtil.setButtonDimensionHint(defaultsButton);
 
 		hookListeners();
-
-		control = composite;
-		return composite;
-	}
-
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy config) {
-		if (config.equals(this.config))
-			return;
-		this.config = config;
-		initializeFields();
-	}
-
-	public void dispose() {
+		setControl(composite);
 	}
 
 	private GridData fillIntoGrid(
@@ -188,7 +158,7 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 		return gd;
 	}
 
-	private void initializeFields() {
+	public void initializeFrom(ILaunchConfiguration config) {
 		int jreSelectionIndex = 0;
 		String vmArgs = "";
 		String progArgs = "";
@@ -255,15 +225,31 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 		return runtimeWorkspace.toOSString();
 	}
 
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		String vmArgs = "";
+		String progArgs = "";
+		String appName = "org.eclipse.ui.workbench";
+		boolean tracing = false;
+
+		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
+		String defaultWorkspace = getDefaultWorkspace(pstore);
+		config.setAttribute(VMARGS, vmArgs);
+		config.setAttribute(PROGARGS, progArgs);
+		config.setAttribute(APPLICATION, appName);
+		config.setAttribute(TRACING, tracing);
+		config.setAttribute(VMINSTALL, JavaRuntime.getDefaultVMInstall().getName());
+		config.setAttribute(LOCATION + "0", defaultWorkspace);
+	}
+
 	private void doRestoreDefaults() {
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
 		String defaultWorkspace = getDefaultWorkspace(pstore);
 		progArgsText.setText("");
 		vmArgsText.setText("");
+		applicationNameText.setText("org.eclipse.ui.workbench");
 		workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(false);
 		tracingCheck.setSelection(false);
-		storeSettings();
 	}
 
 	private void hookListeners() {
@@ -273,7 +259,6 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
 					updateStatus();
-					storeSettings();
 				}
 			}
 		});
@@ -287,14 +272,12 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
 				updateStatus();
-				storeSettings();
 			}
 		});
 		jreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jreSelectionStatus = validateJRESelection();
 				updateStatus();
-				storeSettings();
 			}
 		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
@@ -303,12 +286,24 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 			}
 		});
 	}
-
+	
 	private void updateStatus() {
-		//launchDialog.refreshStatus();
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		if (running != null)
+			updateStatus(running);
+		else
+			updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+	}
+	
+	public void currentLaunchChanged() {
+		getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				updateStatus();
+			}
+		});
 	}
 
-	public void storeSettings() {
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
 		config.setAttribute(VMINSTALL, getVMInstall().getName());
@@ -329,7 +324,7 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 	 * Browses for a workbench location.
 	 */
 	private IPath chooseWorkspaceLocation() {
-		DirectoryDialog dialog = new DirectoryDialog(control.getShell());
+		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(workspaceCombo.getText());
 		dialog.setText(PDEPlugin.getResourceString(KEY_WTITLE));
 		dialog.setMessage(PDEPlugin.getResourceString(KEY_WMESSAGE));
@@ -342,17 +337,13 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 
 	private IStatus validateJRESelection() {
 		IVMInstall curr = getVMInstall();
-		/*
 		if (curr == null) {
 			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_NO_JRE));
 		}
-		*/
-		//return createStatus(IStatus.OK, "");
-		return null;
+		return createStatus(IStatus.OK, "");
 	}
 
 	private IStatus validateWorkspaceSelection() {
-		/*
 		IPath curr = getWorkspaceLocation();
 		if (curr.segmentCount() == 0) {
 			return createStatus(
@@ -372,8 +363,6 @@ public class WorkbenchLauncherBasicTab implements ILaunchConfigurationTab, ILaun
 				PDEPlugin.getResourceString(KEY_EXISTING_WORKSPACE));
 		}
 		return createStatus(IStatus.OK, "");
-		*/
-		return null;
 	}
 
 	// ----- public API -------

@@ -60,7 +60,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
-		IVMInstall[] vmInstallations = WorkbenchLauncherBasicTab.getAllVMInstances();
+		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
 		IVMInstall launcher = null;
 
 		if (vmInstallName != null) {
@@ -104,11 +104,9 @@ public class WorkbenchLaunchConfigurationDelegate
 					}
 				}
 			});
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			return null;
-		}
-		catch (InvocationTargetException e) {
+		} catch (InvocationTargetException e) {
 			String title = "Launch Eclipse Workbench";
 			String message = "Launch failed. See log for details.";
 			PDEPlugin.logException(e, title, message);
@@ -117,314 +115,287 @@ public class WorkbenchLaunchConfigurationDelegate
 		return launch[0];
 	}
 
-/*
- * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
- */
-public void initializeDefaults(
-	ILaunchConfigurationWorkingCopy config,
-	Object object) {
-	int jreSelectionIndex = 0;
-	String vmArgs = "";
-	String progArgs = "";
-	String appName = "org.eclipse.ui.workbench";
-	String[] workspaceSelectionItems = new String[0];
-	boolean doClear = false;
-	boolean tracing = false;
-	IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-	String defaultWorkspace = WorkbenchLauncherBasicTab.getDefaultWorkspace(pstore);
+	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
+		throws CoreException {
+		boolean useDefault = !config.getAttribute(USECUSTOM, false);
+		ArrayList res = new ArrayList();
 
-	config.setAttribute(VMARGS, vmArgs);
-	config.setAttribute(PROGARGS, progArgs);
-	config.setAttribute(APPLICATION, appName);
-	config.setAttribute(TRACING, tracing);
-	config.setAttribute(LOCATION + "0", defaultWorkspace);
+		ArrayList deselectedWSPlugins = new ArrayList();
 
-	config.setAttribute(USECUSTOM, false);
-}
+		String wstring = config.getAttribute(WSPROJECT, (String) null);
+		String exstring = config.getAttribute(EXTPLUGINS, (String) null);
 
-private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
-	throws CoreException {
-	boolean useDefault = !config.getAttribute(USECUSTOM, false);
-	ArrayList res = new ArrayList();
-
-	ArrayList deselectedWSPlugins = new ArrayList();
-
-	String wstring = config.getAttribute(WSPROJECT, (String) null);
-	String exstring = config.getAttribute(EXTPLUGINS, (String) null);
-
-	if (wstring != null) {
-		StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
-		while (tok.hasMoreTokens()) {
-			deselectedWSPlugins.add(tok.nextToken());
-		}
-	}
-	WorkbenchLauncherAdvancedTab.ExternalStates exstates =
-		new WorkbenchLauncherAdvancedTab.ExternalStates();
-	if (exstring != null) {
-		exstates.parseStates(exstring);
-	}
-
-	IPluginModelBase[] models = WorkbenchLauncherAdvancedTab.getWorkspacePlugins();
-	for (int i = 0; i < models.length; i++) {
-		IPluginModelBase model = models[i];
-		if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
-			res.add(model);
-	}
-	models = WorkbenchLauncherAdvancedTab.getExternalPlugins();
-	for (int i = 0; i < models.length; i++) {
-		IPluginModelBase model = models[i];
-		if (useDefault) {
-			if (model.isEnabled())
-				res.add(model);
-		} else {
-			WorkbenchLauncherAdvancedTab.ExternalState es =
-				exstates.getState(model.getPluginBase().getId());
-			if (es != null && es.state) {
-				res.add(model);
-			} else if (model.isEnabled())
-				res.add(model);
-		}
-	}
-	IPluginModelBase[] plugins =
-		(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
-	return plugins;
-}
-
-private ILaunch doLaunch(
-	ILaunchConfiguration config,
-	String mode,
-	IVMRunner runner,
-	IPath targetWorkbenchLocation,
-	boolean clearWorkspace,
-	ExecutionArguments args,
-	IPluginModelBase[] plugins,
-	String appname,
-	boolean tracing,
-	IProgressMonitor monitor)
-	throws CoreException {
-
-	ILaunch launch = null;
-	if (monitor == null) {
-		monitor = new NullProgressMonitor();
-	}
-	monitor.beginTask("Starting Eclipse Workbench...", 2);
-	try {
-		IWorkspace workspace = PDEPlugin.getWorkspace();
-
-		File propertiesFile = TargetPlatformManager.createPropertiesFile(plugins);
-		String[] vmArgs = args.getVMArgumentsArray();
-		String[] progArgs = args.getProgramArgumentsArray();
-
-		int exCount = tracing ? 8 : 6;
-		String[] fullProgArgs = new String[progArgs.length + exCount];
-		fullProgArgs[0] = appname;
-		fullProgArgs[1] = propertiesFile.getPath();
-		fullProgArgs[2] = "-dev";
-		fullProgArgs[3] = "bin";
-		fullProgArgs[4] = "-data";
-		fullProgArgs[5] = targetWorkbenchLocation.toOSString();
-		if (tracing) {
-			fullProgArgs[6] = "-debug";
-			fullProgArgs[7] = getTracingFileArgument();
-		}
-		System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
-
-		String[] classpath = constructClasspath(plugins);
-		if (classpath == null) {
-			String message =
-				"Launching failed.\nPlugin 'org.eclipse.core.boot' is missing or does not contain 'boot.jar'\n(If in workspace, check that boot.jar is on its classpath)";
-			showErrorDialog(message, null);
-			return null;
-		}
-
-		VMRunnerConfiguration runnerConfig =
-			new VMRunnerConfiguration("SlimLauncher", classpath);
-		runnerConfig.setVMArguments(vmArgs);
-		runnerConfig.setProgramArguments(fullProgArgs);
-
-		if (clearWorkspace && targetWorkbenchLocation.toFile().exists()) {
-			try {
-				deleteContent(targetWorkbenchLocation.toFile());
-			} catch (IOException e) {
-				String message =
-					"Problems while deleting files in workspace. Launch will continue";
-				showWarningDialog(message);
+		if (wstring != null) {
+			StringTokenizer tok = new StringTokenizer(wstring, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				deselectedWSPlugins.add(tok.nextToken());
 			}
 		}
-		monitor.worked(1);
-		if (monitor.isCanceled()) {
-			return null;
+		AdvancedLauncherTab.ExternalStates exstates =
+			new AdvancedLauncherTab.ExternalStates();
+		if (exstring != null) {
+			exstates.parseStates(exstring);
 		}
-		VMRunnerResult result = runner.run(runnerConfig);
-		monitor.worked(1);
-		if (result != null) {
-			ISourceLocator sourceLocator = constructSourceLocator(plugins);
-			launch =
-				new Launch(
-					config,
-					mode,
-					sourceLocator,
-					result.getProcesses(),
-					result.getDebugTarget());
-			registerLaunch(launch);
-		} else {
-			String message = "Launch was not successful.";
-			showErrorDialog(message, null);
+
+		IPluginModelBase[] models = AdvancedLauncherTab.getWorkspacePlugins();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
+				res.add(model);
 		}
-	} finally {
-		monitor.done();
-	}
-	return launch;
-}
-
-private String getTracingFileArgument() {
-	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
-	mng.ensureTracingFileExists();
-	String optionsFileName = mng.getTracingFileName();
-	String tracingArg;
-	if (SWT.getPlatform().equals("motif"))
-		tracingArg = "file:" + optionsFileName;
-	else
-		tracingArg = "\"file:" + optionsFileName + "\"";
-	return tracingArg;
-}
-
-private void deleteContent(File curr) throws IOException {
-	if (curr.isDirectory()) {
-		File[] children = curr.listFiles();
-		for (int i = 0; i < children.length; i++) {
-			deleteContent(children[i]);
-		}
-	}
-	curr.delete();
-}
-
-private Display getDisplay() {
-	Display display = Display.getCurrent();
-	if (display == null) {
-		display = Display.getDefault();
-	}
-	return display;
-}
-
-private void registerLaunch(final ILaunch launch) {
-	Display display = getDisplay();
-	display.syncExec(new Runnable() {
-		public void run() {
-			DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
-		}
-	});
-	PDEPlugin.getDefault().registerLaunch(launch);
-}
-
-private void showErrorDialog(final String message, final IStatus status) {
-	Display display = getDisplay();
-	display.syncExec(new Runnable() {
-		public void run() {
-			String title = "Eclipse Workbench Launcher";
-			if (status == null) {
-				MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, message);
+		models = AdvancedLauncherTab.getExternalPlugins();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (useDefault) {
+				if (model.isEnabled())
+					res.add(model);
 			} else {
-				ErrorDialog.openError(
-					PDEPlugin.getActiveWorkbenchShell(),
-					title,
-					message,
-					status);
+				AdvancedLauncherTab.ExternalState es =
+					exstates.getState(model.getPluginBase().getId());
+				if (es != null && es.state) {
+					res.add(model);
+				} else if (model.isEnabled())
+					res.add(model);
 			}
 		}
-	});
-}
-
-private void showWarningDialog(final String message) {
-	Display display = getDisplay();
-	display.syncExec(new Runnable() {
-		public void run() {
-			String title = "Eclipse Workbench Launcher";
-			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
-		}
-	});
-}
-
-/**
- * Constructs a classpath with the slimlauncher and the boot plugin (org.eclipse.core.boot)
- * If the boot project is in the workspace, the classpath used in the workspace is used.
- */
-private String[] constructClasspath(IPluginModelBase[] plugins)
-	throws CoreException {
-	File slimLauncher =
-		PDEPlugin.getFileInPlugin(new Path("launcher/slimlauncher.jar"));
-	if (slimLauncher == null || !slimLauncher.exists()) {
-		PDEPlugin.logErrorMessage(
-			"PluginLauncherDelegate: slimlauncher.jar not existing");
-		return null;
+		IPluginModelBase[] plugins =
+			(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
+		return plugins;
 	}
-	IPluginModelBase model = findModel("org.eclipse.core.boot", plugins);
-	if (model != null) {
-		try {
-			File pluginDir =
-				new File(new URL("file:" + model.getInstallLocation()).getFile());
-			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 
-			IContainer bootProject =
-				root.getContainerForLocation(new Path(pluginDir.getPath()));
-			if (bootProject instanceof IProject) {
-				// if we find the boot project in the workspace use its class path. This allows
-				// to develop the boot project itselve
-				String[] bootClassPath =
-					JavaRuntime.computeDefaultRuntimeClassPath(
-						JavaCore.create((IProject) bootProject));
-				if (bootClassPath != null) {
-					String[] resClassPath = new String[bootClassPath.length + 1];
-					resClassPath[0] = slimLauncher.getPath();
-					System.arraycopy(bootClassPath, 0, resClassPath, 1, bootClassPath.length);
-					return resClassPath;
+	private ILaunch doLaunch(
+		ILaunchConfiguration config,
+		String mode,
+		IVMRunner runner,
+		IPath targetWorkbenchLocation,
+		boolean clearWorkspace,
+		ExecutionArguments args,
+		IPluginModelBase[] plugins,
+		String appname,
+		boolean tracing,
+		IProgressMonitor monitor)
+		throws CoreException {
+
+		ILaunch launch = null;
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		monitor.beginTask("Starting Eclipse Workbench...", 2);
+		try {
+			File propertiesFile = TargetPlatformManager.createPropertiesFile(plugins);
+			String[] vmArgs = args.getVMArgumentsArray();
+			String[] progArgs = args.getProgramArgumentsArray();
+
+			int exCount = tracing ? 8 : 6;
+			String[] fullProgArgs = new String[progArgs.length + exCount];
+			fullProgArgs[0] = appname;
+			fullProgArgs[1] = propertiesFile.getPath();
+			fullProgArgs[2] = "-dev";
+			fullProgArgs[3] = "bin";
+			fullProgArgs[4] = "-data";
+			fullProgArgs[5] = targetWorkbenchLocation.toOSString();
+			if (tracing) {
+				fullProgArgs[6] = "-debug";
+				fullProgArgs[7] = getTracingFileArgument();
+			}
+			System.arraycopy(progArgs, 0, fullProgArgs, exCount, progArgs.length);
+
+			String[] classpath = constructClasspath(plugins);
+			if (classpath == null) {
+				String message =
+					"Launching failed.\nPlugin 'org.eclipse.core.boot' is missing or does not contain 'boot.jar'\n(If in workspace, check that boot.jar is on its classpath)";
+				showErrorDialog(message, null);
+				return null;
+			}
+
+			VMRunnerConfiguration runnerConfig =
+				new VMRunnerConfiguration("SlimLauncher", classpath);
+			runnerConfig.setVMArguments(vmArgs);
+			runnerConfig.setProgramArguments(fullProgArgs);
+
+			if (clearWorkspace && targetWorkbenchLocation.toFile().exists()) {
+				try {
+					deleteContent(targetWorkbenchLocation.toFile());
+				} catch (IOException e) {
+					String message =
+						"Problems while deleting files in workspace. Launch will continue";
+					showWarningDialog(message);
 				}
 			}
-			// use boot.jar next to the boot plugins plugin.xml
-			File bootJar = new File(pluginDir, "boot.jar");
-			if (bootJar.exists()) {
-				return new String[] { slimLauncher.getPath(), bootJar.getPath()};
+			monitor.worked(1);
+			if (monitor.isCanceled()) {
+				return null;
 			}
-		} catch (IOException e) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
-		}
-	}
-	// failed to construct the class path: boot plugin not existing or boot.jar not found
-	return null;
-}
-
-private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
-	for (int i = 0; i < models.length; i++) {
-		IPluginModelBase model = (IPluginModelBase) models[i];
-		if (model.getPluginBase().getId().equals(id))
-			return model;
-	}
-	return null;
-}
-
-/**
- * Constructs a source locator containg all projects selected as plugins.
- */
-private ISourceLocator constructSourceLocator(IPluginModelBase[] plugins)
-	throws CoreException {
-	ArrayList javaProjects = new ArrayList(plugins.length);
-	IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-	for (int i = 0; i < plugins.length; i++) {
-		try {
-			File pluginDir =
-				new File(new URL("file:" + plugins[i].getInstallLocation()).getFile());
-			IContainer project =
-				root.getContainerForLocation(new Path(pluginDir.getPath()));
-			if (project instanceof IProject) {
-				javaProjects.add(JavaCore.create((IProject) project));
+			VMRunnerResult result = runner.run(runnerConfig);
+			monitor.worked(1);
+			if (result != null) {
+				ISourceLocator sourceLocator = constructSourceLocator(plugins);
+				launch =
+					new Launch(
+						config,
+						mode,
+						sourceLocator,
+						result.getProcesses(),
+						result.getDebugTarget());
+				registerLaunch(launch);
+			} else {
+				String message = "Launch was not successful.";
+				showErrorDialog(message, null);
 			}
-		} catch (MalformedURLException e) {
-			PDEPlugin.log(e);
+		} finally {
+			monitor.done();
 		}
+		return launch;
 	}
-	IJavaProject[] projs =
-		(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
-	return new ProjectSourceLocator(projs, false);
-}
+
+	private String getTracingFileArgument() {
+		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+		mng.ensureTracingFileExists();
+		String optionsFileName = mng.getTracingFileName();
+		String tracingArg;
+		if (SWT.getPlatform().equals("motif"))
+			tracingArg = "file:" + optionsFileName;
+		else
+			tracingArg = "\"file:" + optionsFileName + "\"";
+		return tracingArg;
+	}
+
+	private void deleteContent(File curr) throws IOException {
+		if (curr.isDirectory()) {
+			File[] children = curr.listFiles();
+			for (int i = 0; i < children.length; i++) {
+				deleteContent(children[i]);
+			}
+		}
+		curr.delete();
+	}
+
+	private Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
+
+	private void registerLaunch(final ILaunch launch) {
+		Display display = getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
+			}
+		});
+		PDEPlugin.getDefault().registerLaunch(launch);
+	}
+
+	private void showErrorDialog(final String message, final IStatus status) {
+		Display display = getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				String title = "Eclipse Workbench Launcher";
+				if (status == null) {
+					MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, message);
+				} else {
+					ErrorDialog.openError(
+						PDEPlugin.getActiveWorkbenchShell(),
+						title,
+						message,
+						status);
+				}
+			}
+		});
+	}
+
+	private void showWarningDialog(final String message) {
+		Display display = getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				String title = "Eclipse Workbench Launcher";
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
+			}
+		});
+	}
+
+	/**
+	 * Constructs a classpath with the slimlauncher and the boot plugin (org.eclipse.core.boot)
+	 * If the boot project is in the workspace, the classpath used in the workspace is used.
+	 */
+	private String[] constructClasspath(IPluginModelBase[] plugins)
+		throws CoreException {
+		File slimLauncher =
+			PDEPlugin.getFileInPlugin(new Path("launcher/slimlauncher.jar"));
+		if (slimLauncher == null || !slimLauncher.exists()) {
+			PDEPlugin.logErrorMessage(
+				"PluginLauncherDelegate: slimlauncher.jar not existing");
+			return null;
+		}
+		IPluginModelBase model = findModel("org.eclipse.core.boot", plugins);
+		if (model != null) {
+			try {
+				File pluginDir =
+					new File(new URL("file:" + model.getInstallLocation()).getFile());
+				IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+
+				IContainer bootProject =
+					root.getContainerForLocation(new Path(pluginDir.getPath()));
+				if (bootProject instanceof IProject) {
+					// if we find the boot project in the workspace use its class path. This allows
+					// to develop the boot project itselve
+					String[] bootClassPath =
+						JavaRuntime.computeDefaultRuntimeClassPath(
+							JavaCore.create((IProject) bootProject));
+					if (bootClassPath != null) {
+						String[] resClassPath = new String[bootClassPath.length + 1];
+						resClassPath[0] = slimLauncher.getPath();
+						System.arraycopy(bootClassPath, 0, resClassPath, 1, bootClassPath.length);
+						return resClassPath;
+					}
+				}
+				// use boot.jar next to the boot plugins plugin.xml
+				File bootJar = new File(pluginDir, "boot.jar");
+				if (bootJar.exists()) {
+					return new String[] { slimLauncher.getPath(), bootJar.getPath()};
+				}
+			} catch (IOException e) {
+				throw new CoreException(
+					new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
+			}
+		}
+		// failed to construct the class path: boot plugin not existing or boot.jar not found
+		return null;
+	}
+
+	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = (IPluginModelBase) models[i];
+			if (model.getPluginBase().getId().equals(id))
+				return model;
+		}
+		return null;
+	}
+
+	/**
+	 * Constructs a source locator containg all projects selected as plugins.
+	 */
+	private ISourceLocator constructSourceLocator(IPluginModelBase[] plugins)
+		throws CoreException {
+		ArrayList javaProjects = new ArrayList(plugins.length);
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		for (int i = 0; i < plugins.length; i++) {
+			try {
+				File pluginDir =
+					new File(new URL("file:" + plugins[i].getInstallLocation()).getFile());
+				IContainer project =
+					root.getContainerForLocation(new Path(pluginDir.getPath()));
+				if (project instanceof IProject) {
+					javaProjects.add(JavaCore.create((IProject) project));
+				}
+			} catch (MalformedURLException e) {
+				PDEPlugin.log(e);
+			}
+		}
+		IJavaProject[] projs =
+			(IJavaProject[]) javaProjects.toArray(new IJavaProject[javaProjects.size()]);
+		return new ProjectSourceLocator(projs, false);
+	}
 }
