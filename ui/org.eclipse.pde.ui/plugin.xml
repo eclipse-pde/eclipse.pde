@@ -858,6 +858,11 @@
             modes="run, debug"
             class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
+         <enablement>
+           <with variable="selection">
+             <count value="*"/>
+           </with>
+         </enablement>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
