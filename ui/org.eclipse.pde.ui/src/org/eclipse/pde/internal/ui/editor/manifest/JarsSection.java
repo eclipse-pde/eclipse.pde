@@ -35,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.update.ui.forms.internal.*;
@@ -54,8 +55,6 @@ public class JarsSection
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	public static final String SECTION_NEW = "ManifestEditor.JarsSection.new";
 	public static final String SECTION_DESC = "ManifestEditor.JarsSection.desc";
-	public static final String DUPLICATE_FOLDER_MESSAGE =
-		"ManifestEditor.JarsSection.missingSource.duplicateFolder";
 		
 		class ContentProvider extends WorkbenchContentProvider {
 			public boolean hasChildren(Object element) {
@@ -224,42 +223,65 @@ public class JarsSection
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEPlugin.getResourceString("ManifestEditor.JarsSection.dialogTitle"));
 		dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.JarsSection.dialogMessage"));
-
-		if (dialog.open() == FolderSelectionDialog.OK) {
-			Object result = dialog.getResult()[0];
-			if (result instanceof IProject)
-				return;
-			IFolder folder = (IFolder) result;
-			String folderPath =
-				folder.getProjectRelativePath().addTrailingSeparator().toString();
-			try {
-				IBuildModel buildModel = model.getBuildModel();
+		
+		
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection == null
+					|| selection.length != 1
+					|| !(selection[0] instanceof IFolder))
+					return new Status(
+						IStatus.ERROR,
+						PDEPlugin.getPluginId(),
+						IStatus.ERROR,
+						"",
+						null);
+						
+				IBuildModel buildModel = getBuildModel();
 				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
 				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
-				if (entry == null) {
-					entry = buildModel.getFactory().createEntry(libKey);
-					buildModel.getBuild().add(entry);
-				} else {
-					if (entry.contains(folderPath)) {
-						String message =
-							PDEPlugin.getFormattedMessage(
-								DUPLICATE_FOLDER_MESSAGE,
-								folderPath);
-						MessageDialog.openError(
-							PDEPlugin.getActiveWorkbenchShell(),
-							"",
-							message);
-						return;
-					}
-				}
+				
+				String folderPath =
+					((IFolder)selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
+				
+				if (entry != null && entry.contains(folderPath))
+					return new Status(
+						IStatus.ERROR,
+						PDEPlugin.getPluginId(),
+						IStatus.ERROR,
+						PDEPlugin.getResourceString("ManifestEditor.JarsSection.missingSource.duplicateFolder"),
+						null);
+						
+				return new Status(
+					IStatus.OK,
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					"",
+					null);
+			}
+		});
+		
+		if (dialog.open() == FolderSelectionDialog.OK) {
+			try {
+				IFolder folder = (IFolder) dialog.getFirstResult();
+				String folderPath =
+					folder.getProjectRelativePath().addTrailingSeparator().toString();
+				IBuildModel buildModel = getBuildModel();
+				String libKey = IBuildEntry.JAR_PREFIX + currentLibrary.getName();
+				IBuildEntry entry = buildModel.getFactory().createEntry(libKey);
+				buildModel.getBuild().add(entry);
 				entry.addToken(folderPath);
 				entryTable.add(folderPath);
 				((WorkspaceBuildModel) buildModel).save();
-				addIfNotOnBuildPath(project,folder);
+				addIfNotOnBuildPath(project, folder);
 			} catch (CoreException e) {
-				PDEPlugin.logException(e);
 			}
 		}
+	}
+	
+	private IBuildModel getBuildModel() {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		return model.getBuildModel();
 	}
 	public void initialize(Object input) {
 		IPluginModelBase model = (IPluginModelBase) input;
