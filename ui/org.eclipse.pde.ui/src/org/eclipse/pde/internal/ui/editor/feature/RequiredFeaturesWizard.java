@@ -28,6 +28,7 @@ public RequiredFeaturesWizard(IFeatureModel model) {
 public void addPages() {
 	mainPage = new RequiredFeaturesWizardPage(model);
 	addPage(mainPage);
+	setWindowTitle(mainPage.getTitle());
 }
 
 public boolean performFinish() {

@@ -55,7 +55,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_SECTIONS_COPYRIGHT = "BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
-	public static final String KEY_BROWSE = "BaseExtensionPointMainPage.browse"; //$NON-NLS-1$
+
 	private IContainer container;
 	private IProject project;
 	protected Text idText;
@@ -102,7 +102,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.horizontalSpan =1;
 			gd.widthHint = 50;
 			pluginBrowseButton.setLayoutData(gd);
-			pluginBrowseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+			pluginBrowseButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginBrowse")); //$NON-NLS-1$
 			pluginBrowseButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.pluginId.tooltip")); //$NON-NLS-1$
 			pluginBrowseButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
@@ -151,7 +151,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
 			findLocationButton.setLayoutData(gd);
-			findLocationButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+			findLocationButton.setText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.findBrowse")); //$NON-NLS-1$
 			findLocationButton.setToolTipText(PDEPlugin.getResourceString("BaseExtensionPointMainPage.schemaLocation.tooltip")); //$NON-NLS-1$
 			findLocationButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {

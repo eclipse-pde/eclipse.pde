@@ -23,6 +23,7 @@ public BuiltFeaturesWizard(ISiteBuildModel model) {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
+	setWindowTitle(PDEPlugin.getResourceString("BuiltFeaturesWizard.title")); //$NON-NLS-1$
 }
 
 public void addPages() {

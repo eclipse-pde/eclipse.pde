@@ -28,6 +28,7 @@ public IncludeFeaturesWizard(IFeatureModel model) {
 public void addPages() {
 	mainPage = new IncludeFeaturesWizardPage(model);
 	addPage(mainPage);
+	setWindowTitle(mainPage.getTitle());
 }
 
 public boolean performFinish() {

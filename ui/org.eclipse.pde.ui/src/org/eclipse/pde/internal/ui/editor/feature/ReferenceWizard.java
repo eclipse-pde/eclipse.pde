@@ -23,6 +23,7 @@ public class ReferenceWizard extends Wizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
+		setWindowTitle(page.getTitle());
 		this.page = page;
 	}
 
