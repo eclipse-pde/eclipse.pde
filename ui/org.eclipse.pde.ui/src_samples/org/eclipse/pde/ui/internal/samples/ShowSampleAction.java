@@ -1,14 +1,17 @@
-/*
- * Created on Mar 14, 2004
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * To change the template for this generated file go to Window - Preferences -
- * Java - Code Generation - Code and Comments
- */
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.ui.internal.samples;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -18,6 +21,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.*;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.standalone.InstallCommand;
 /**
  * @author dejan
@@ -107,7 +112,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		return false;
 	}
 	private boolean checkFeature() {
-		IPlatformConfiguration config = BootLoader
+		IPlatformConfiguration config = ConfiguratorUtils
 				.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.IFeatureEntry [] features = config
 				.getConfiguredFeatureEntries();

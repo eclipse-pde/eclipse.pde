@@ -164,11 +164,15 @@ public class FeatureSection extends TableSection {
 	}
 	
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(ActionFactory.CUT.getId())) 
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			handleRemoveFeature();
+			return false;
+		}
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			handleRemoveFeature();
 			return true;
-		return (actionId.equals(ActionFactory.DELETE.getId()))
-				? handleRemoveFeature()
-				: false;
+		}
+		return false;
 	}
 	public void handleNewFeature() {
 		final Control control = fFeaturesViewer.getTable();
@@ -280,13 +284,4 @@ public class FeatureSection extends TableSection {
 		}	
 		return (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);			
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#isDirty()
-	 */
-	public boolean isDirty() {
-		if (fBuildModel != null && ((WorkspaceSiteBuildModel)fBuildModel).isDirty())
-			return true;
-		return super.isDirty();
-	}
-	
 }
