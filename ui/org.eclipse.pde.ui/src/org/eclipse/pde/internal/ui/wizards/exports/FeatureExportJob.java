@@ -175,7 +175,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
 			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, "."); //$NON-NLS-1$
 			fBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
-			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, "."); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, ""); //$NON-NLS-1$
 			if (fExportType == EXPORT_AS_ZIP)
 				fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
 			else 
