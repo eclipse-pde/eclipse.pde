@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import java.util.*;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.dialogs.*;
@@ -68,10 +69,13 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 				if (feature.getId().equals(featureIdText.getText())
 						&& feature.getVersion().equals(featureVersionText.getText())) {
 					fFeatureToPatch = feature.getModel();
+					setMessage(null);
 					return;
 				}
 			}
 			fFeatureToPatch = null;
+			setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), DialogPage.WARNING); //$NON-NLS-1$
+			return;
 		}
 
 		setPageComplete(true);
