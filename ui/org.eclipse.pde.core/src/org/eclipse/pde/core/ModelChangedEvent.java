@@ -7,6 +7,12 @@ package org.eclipse.pde.core;
 
 /**
  * @see IModelChangedEvent
+ * <p>
+ * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public class ModelChangedEvent implements IModelChangedEvent {
 	private int type;
@@ -18,6 +24,12 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * @param event type
 	 * @param changed objects
 	 * @param changedProperty or <samp>null</samp> if not applicable
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public ModelChangedEvent(int type, Object[] objects, String changedProperty) {
 		this.type = type;
@@ -31,6 +43,12 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * @param changedProperty changed property of the affected object
 	 * @param oldValue the value before the change
 	 * @param newValue the value after the change
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 
 	public ModelChangedEvent(
@@ -46,12 +64,24 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	}
 	/**
 	 * @see IModelChangedEvent#getChangedObjects
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Object[] getChangedObjects() {
 		return changedObjects;
 	}
 	/**
 	 * @see IModelChangedEvent#getChangedProperty
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getChangedProperty() {
 		return changedProperty;
@@ -60,6 +90,12 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/**
 	 * The old property value.
 	 * @return the value before the change
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Object getOldValue() {
 		return oldValue;
@@ -68,12 +104,24 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	/**
 	 * The new property value.
 	 * @return the value after the change
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public Object getNewValue() {
 		return newValue;
 	}
 	/**
 	 * @see IModelChangedEvent#getChangedType
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public int getChangeType() {
 		return type;

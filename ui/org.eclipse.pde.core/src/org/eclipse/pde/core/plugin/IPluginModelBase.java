@@ -27,10 +27,22 @@ import org.eclipse.pde.core.build.IBuildModel;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
+ * <p>
+ * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	/**
 	 * @return org.eclipse.pde.ui.model.plugin.IPluginBase
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPluginBase createPluginBase();
 	/**
@@ -38,11 +50,23 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	 * that works in conjunction with this model.
 	 *
 	 * @return the matching plugin.jars model
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IBuildModel getBuildModel();
 	/**
 	 * Returns a factory object that should be used
 	 * to create new instances of the model objects.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPluginModelFactory getFactory();
 	/**
@@ -53,12 +77,24 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	 * @return a location of the external model, or
 	 * <samp>null</samp> if the model is created
 	 * from a resource.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public String getInstallLocation();
 	/**
 	 * Returns a top-level model object. Equivalent to
 	 * calling <pre>getPluginBase(false)</pre>.
 	 * @return a top-level model object representing a plug-in or a fragment.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPluginBase getPluginBase();
 	/**
@@ -66,22 +102,46 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	 * @param createIfMissing if true, root model object will
 	 * be created if not defined.
 	 * @return a top-level model object
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPluginBase getPluginBase(boolean createIfMissing);
 	/**
 	 * Returns </samp>true</samp> if this model is currently enabled.
 	 *
 	 *@return true if the model is enabled
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isEnabled();
 	/**
 	 * @return boolean
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	boolean isFragmentModel();
 	/**
 	 * Sets the enable state of the model.
 	 *
 	 * @param enabled the new enable state
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void setEnabled(boolean enabled);
 }

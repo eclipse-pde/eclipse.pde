@@ -14,6 +14,12 @@ import java.io.PrintWriter;
  * Models that implement this interface are expected
  * to be able to save in ASCII file format
  * (e.g. XML).
+ * <p>
+ * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public interface IEditable {
 	/**
@@ -25,12 +31,24 @@ public interface IEditable {
 	 * read-only models can never be changed, editable
 	 * models can go in and out editable state during
 	 * their life cycle.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isEditable();
 	/**
 	 * Tests whether the model has been changed from the last clean
 	 * state.
 	 * @return true if the model has been changed and need saving
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public boolean isDirty();
 	/**
@@ -42,6 +60,12 @@ public interface IEditable {
 	 *
 	 * @param writer an object that should be used to
 	 * write ASCII representation of the model
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public void save(PrintWriter writer);
 	/**
@@ -50,6 +74,12 @@ public interface IEditable {
 	 * Most often, a dirty model should be saved to clear the flag.
 	 *
 	 * @param dirty a new value for the 'dirty' flag
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	void setDirty(boolean dirty);
 }

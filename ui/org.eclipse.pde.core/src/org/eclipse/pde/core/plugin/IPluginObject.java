@@ -8,21 +8,45 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IWritable;
 /**
  * A base interface for all the objects in the plug-in model.
+ * <p>
+ * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public interface IPluginObject extends IWritable, IAdaptable {
 	/**
 	 * A property name that will be used to notify
 	 * that the "name" field has changed.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	String P_NAME = "name";
 	/**
 	 * Returns the model that owns this object.
 	 * @return the model instance
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	IPluginModelBase getModel();
 	/**
 	 * Returns the name of this model object
 	 *@return the object name
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	String getName();
 
@@ -31,6 +55,12 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * It is useful to ignore modification events of objects
 	 * that have not yet being added to the model or if they
 	 * have been removed.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	boolean isInTheModel();
 
@@ -38,6 +68,12 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * Returns the translated name of this model object using
 	 * the result of 'getName()' call as a resource key.
 	 * @return the translated name or the original name if not found
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	String getTranslatedName();
 
@@ -45,12 +81,24 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * Returns the parent of this model object.
 	 *
 	 * @return the object's parent
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IPluginObject getParent();
 	/**
 	 * Returns the top-level model object.
 	 *
 	 * @return the top-level model object
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	public IPluginBase getPluginBase();
 	/**
@@ -62,6 +110,12 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * @return value in the resource bundle for
 	 * the provided key, or the key itself if
 	 * not found.
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	String getResourceString(String key);
 	/**
@@ -70,6 +124,12 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * if the model is not editable.
 	 *
 	 * @param name the new object name
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	void setName(String name) throws CoreException;
 }

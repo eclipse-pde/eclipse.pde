@@ -9,6 +9,12 @@ import java.io.PrintWriter;
  * Classes that implement this interface can participate
  * in saving the model to the ASCII output stream using
  * the provided writer.
+ * <p>
+ * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 public interface IWritable {
 	/**
@@ -23,6 +29,12 @@ public interface IWritable {
 	 * to maintain desired horizontal alignment
 	 * @param writer a writer to be used to write
 	 * this object's textual representation
+	 * <p>
+	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
 	 */
 	void write(String indent, PrintWriter writer);
 }
