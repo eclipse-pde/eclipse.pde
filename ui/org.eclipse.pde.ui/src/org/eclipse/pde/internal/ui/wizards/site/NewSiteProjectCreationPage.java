@@ -101,14 +101,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		setControl(webGroup);
 		Dialog.applyDialogFont(webGroup);
 	}
-	
-	public String getErrorMessage(){
-		String errMsg = super.getErrorMessage();
-		if (errMsg == null || errMsg.length()==0)
-			if (createSite && getWebLocation().equals("")) //$NON-NLS-1$
-				return PDEPlugin.getResourceString(WEB_ERR);
-		return errMsg;
-	}
+
 	public boolean isCreateUpdateSiteHTML(){
 		return createSite;
 	}
@@ -123,6 +116,12 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected boolean validatePage() {
-		return super.validatePage() && !(createSite && getWebLocation().equals("")); //$NON-NLS-1$
+		if (!super.validatePage())
+			return false;
+		if (createSite && getWebLocation().equals("")){ //$NON-NLS-1$
+			setErrorMessage(PDEPlugin.getResourceString(WEB_ERR));
+			return false;
+		}
+		return true;
 	}
 }
