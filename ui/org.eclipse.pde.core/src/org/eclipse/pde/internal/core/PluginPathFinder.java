@@ -100,7 +100,7 @@ public class PluginPathFinder {
 			} catch (IOException e) {
 			}
 		}		
-		return scanLocations(getSites(platformHome, false));
+		return scanLocations(getSites(platformHome, true));
 	}
 	
 	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
