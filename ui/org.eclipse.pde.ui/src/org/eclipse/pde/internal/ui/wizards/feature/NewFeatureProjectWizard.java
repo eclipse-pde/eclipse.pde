@@ -25,6 +25,9 @@ public class NewFeatureProjectWizard
 	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle";
 	public static final String MAIN_PAGE_TITLE = "NewFeatureWizard.MainPage.title";
 	public static final String MAIN_PAGE_DESC = "NewFeatureWizard.MainPage.desc";
+	public static final String DEF_PROJECT_NAME="project-name";
+	public static final String DEF_FEATURE_ID="feature-id";
+	public static final String DEF_FEATURE_NAME="feature-name";
 
 	private WizardNewProjectCreationPage mainPage;
 	private FeatureSpecPage specPage;
@@ -68,9 +71,14 @@ public class NewFeatureProjectWizard
 		mainPage = new WizardNewProjectCreationPage("main");
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
+		String pname = getDefaultValue(DEF_PROJECT_NAME);
+		if (pname!=null)
+			mainPage.setInitialProjectName(pname);
 		addPage(mainPage);
 		IProjectProvider provider = new FeatureProjectProvider();
 		specPage = new FeatureSpecPage(mainPage);
+		specPage.setInitialId(getDefaultValue(DEF_FEATURE_ID));
+		specPage.setInitialName(getDefaultValue(DEF_FEATURE_NAME));
 		addPage(specPage);
 		structurePage = new FeatureCustomHandlerPage(provider);
 		addPage(structurePage);

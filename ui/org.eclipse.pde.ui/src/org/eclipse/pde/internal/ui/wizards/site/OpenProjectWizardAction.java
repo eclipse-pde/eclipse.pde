@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.wizards.plugin;
+package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.util.Hashtable;
 import org.eclipse.jface.action.*;
@@ -34,10 +34,8 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	public void run(String[] params, ICheatSheetManager manager) {
 		Hashtable defValues = new Hashtable();
 		if (params.length>0)
-			defValues.put(NewPluginProjectWizard.DEF_PROJECT_NAME, params[0]);
-		if (params.length>1)
-			defValues.put(NewPluginProjectWizard.DEF_TEMPLATE_ID, params[1]);
-		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
+			defValues.put(NewSiteProjectWizard.DEF_PROJECT_NAME, params[0]);
+		NewSiteProjectWizard wizard = new NewSiteProjectWizard();
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
 		wizard.init(defValues);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);

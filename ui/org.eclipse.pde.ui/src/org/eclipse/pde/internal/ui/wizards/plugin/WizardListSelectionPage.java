@@ -33,6 +33,7 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	private WizardSelectedAction doubleClickAction = new WizardSelectedAction();
 	private ContentPage fContentPage;
 	private Button fUseTemplate;
+	private String fInitialTemplateId;
 	
 	private class WizardSelectedAction extends Action {
 		public WizardSelectedAction() {
@@ -78,6 +79,8 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 				getContainer().updateButtons();
 			}
 		});
+		if (getInitialTemplateId()!=null)
+			fUseTemplate.setSelection(true);
 		
 		Label label = new Label(container, SWT.NONE);
 		label.setText(getLabel());
@@ -94,14 +97,31 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 				doubleClickAction.run();
 			}
 		});
-		wizardSelectionViewer.addSelectionChangedListener(this);
 		wizardSelectionViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		wizardSelectionViewer.getControl().setEnabled(false);
+		if (getInitialTemplateId()==null)
+			wizardSelectionViewer.getControl().setEnabled(false);
 		
 		createDescriptionIn(container);
 		wizardSelectionViewer.setInput(wizardElements);
+		selectInitialTemplate();
+		wizardSelectionViewer.addSelectionChangedListener(this);		
 		Dialog.applyDialogFont(container);
 		setControl(container);
+	}
+	
+	private void selectInitialTemplate() {
+		if (getInitialTemplateId()!=null) {
+			Object [] children = wizardElements.getChildren();
+			for (int i=0; i<children.length; i++) {
+				WizardElement welement = (WizardElement)children[i];
+				if (welement.getID().equals(getInitialTemplateId())) {
+					wizardSelectionViewer.setSelection(new StructuredSelection(welement), true);
+					setSelectedNode(createWizardNode(welement));
+					setDescriptionText(welement.getDescription());	
+					break;
+				}
+			}
+		}
 	}
 	
 	private Table createTable(Composite parent, int style) {
@@ -194,5 +214,17 @@ public class WizardListSelectionPage extends BaseWizardSelectionPage
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection)wizardSelectionViewer.getSelection();
 		return fUseTemplate.getSelection() && ssel != null && !ssel.isEmpty();
+	}
+	/**
+	 * @return Returns the fInitialTemplateId.
+	 */
+	public String getInitialTemplateId() {
+		return fInitialTemplateId;
+	}
+	/**
+	 * @param initialTemplateId The fInitialTemplateId to set.
+	 */
+	public void setInitialTemplateId(String initialTemplateId) {
+		fInitialTemplateId = initialTemplateId;
 	}
 }

@@ -93,7 +93,7 @@ public class InfoSection extends PDESection {
 		layout.numColumns = 3;
 		layout.marginWidth = 2;
 		layout.marginHeight =2;
-		layout.verticalSpacing = 6;
+		//layout.verticalSpacing = 6;
 		container.setLayout(layout);
 		GridData gd;
 		
@@ -365,6 +365,11 @@ public class InfoSection extends PDESection {
 		item.setText(label);
 		item.setData(info);
 		updateTabImage(item);
+		updateTabHeight();
+	}
+	private void updateTabHeight() {
+		GridData gd = (GridData)tabFolder.getLayoutData();
+		gd.heightHint = tabFolder.getTabHeight();		
 	}
 	private void updateTabImage(CTabItem item) {
 		if (item==null) return;

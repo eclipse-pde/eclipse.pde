@@ -38,6 +38,8 @@ public class FeatureSpecPage extends WizardPage {
 	private Text nameText;
 	private Text versionText;
 	private Text providerText;
+	private String initialId;
+	private String initialName;
 	private boolean isInitialized = false;
 
 protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
@@ -65,6 +67,8 @@ public void createControl(Composite parent) {
 	idText = new Text(container, SWT.BORDER);
 	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	idText.setLayoutData(gd);
+	if (initialId!=null)
+		idText.setText(initialId);	
 	idText.addModifyListener(listener);
 
 	label = new Label(container, SWT.NULL);
@@ -72,6 +76,8 @@ public void createControl(Composite parent) {
 	nameText = new Text(container, SWT.BORDER);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	nameText.setLayoutData(gd);
+	if (initialName!=null)
+		nameText.setText(initialName);	
 	nameText.addModifyListener(listener);
 
 	label = new Label(container, SWT.NULL);
@@ -98,12 +104,13 @@ private void initialize() {
 	if (isInitialized)
 		return;
 	String projectName = mainPage.getProjectName();
-	idText.setText(setInitialId(projectName));
+	if (initialId==null)
+		idText.setText(computeInitialId(projectName));
 	nameText.setText(projectName);
 	versionText.setText("1.0.0");	
 }
 
-private String setInitialId(String projectName) {
+private String computeInitialId(String projectName) {
 	StringBuffer buffer = new StringBuffer();
 	StringTokenizer stok = new StringTokenizer(projectName,".");
 	while (stok.hasMoreTokens()) {
@@ -190,4 +197,29 @@ private String verifyIdRules() {
 	}
 	return null;
 }
+	/**
+	 * @return Returns the initialName.
+	 */
+	public String getInitialName() {
+		return initialName;
+	}
+	/**
+	 * @param initialName The initialName to set.
+	 */
+	public void setInitialName(String initialName) {
+		this.initialName = initialName;
+	}
+	/**
+	 * 
+	 * @param initialId
+	 */
+	public void setInitialId(String initialId) {
+		this.initialId = initialId;
+	}
+	/**
+	 * @return Returns the initialId.
+	 */
+	public String getInitialId() {
+		return initialId;
+	}
 }

@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Dictionary;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
@@ -18,6 +19,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 public class NewPluginProjectWizard extends NewWizard implements IExecutableExtension {
 	public static final String PLUGIN_POINT = "pluginContent";
 	public static final String TAG_WIZARD = "wizard";
+	public static final String DEF_PROJECT_NAME = "project_name";
+	public static final String DEF_TEMPLATE_ID = "template-id";
 
 	private IConfigurationElement fConfig;
 	private PluginFieldData fPluginData;
@@ -26,6 +29,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private ProjectStructurePage fStructurePage;
 	private ContentPage fContentPage;
 	private WizardListSelectionPage fWizardListPage;
+	private Dictionary defaultValues;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
@@ -43,6 +47,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fMainPage = new WizardNewProjectCreationPage("main");
 		fMainPage.setTitle(PDEPlugin.getResourceString("NewProjectWizard.MainPage.title"));
 		fMainPage.setDescription(PDEPlugin.getResourceString("NewProjectWizard.MainPage.desc"));
+		String pname = getDefaultValue(DEF_PROJECT_NAME);
+		if (pname!=null)
+			fMainPage.setInitialProjectName(pname);
 		addPage(fMainPage);
 		
 		fProjectProvider = new IProjectProvider() {
@@ -60,6 +67,9 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fStructurePage = new ProjectStructurePage("page1", fProjectProvider, fPluginData, false);
 		fContentPage = new ContentPage("page2", fProjectProvider, fStructurePage, fPluginData, false);
 		fWizardListPage = new WizardListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEPlugin.getResourceString("WizardListSelectionPage.templates"));
+		String tid = getDefaultValue(DEF_TEMPLATE_ID);
+		if (tid!=null)
+			fWizardListPage.setInitialTemplateId(tid);
 		addPage(fStructurePage);
 		addPage(fContentPage);
 		addPage(fWizardListPage);
@@ -144,5 +154,4 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		}
 		return wizards;
 	}
-
 }

@@ -43,6 +43,7 @@ public class NewSiteProjectWizard
 		"NewSiteWizard.creatingManifest";
 	public static final String MAIN_PAGE_DESC = "NewSiteWizard.MainPage.desc";
 	public static final String OVERWRITE_SITE = "NewFeatureWizard.overwriteSite";
+	public static final String DEF_PROJECT_NAME ="project-name";
 
 	private WizardNewProjectCreationPage mainPage;
 	private SiteHTMLPage htmlPage;
@@ -62,6 +63,9 @@ public class NewSiteProjectWizard
 		mainPage = new WizardNewProjectCreationPage("main");
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
+		String pname = getDefaultValue(DEF_PROJECT_NAME);
+		if (pname!=null)
+			mainPage.setInitialProjectName(pname);
 		addPage(mainPage);
 		htmlPage = new SiteHTMLPage(mainPage);
 		addPage(htmlPage);
