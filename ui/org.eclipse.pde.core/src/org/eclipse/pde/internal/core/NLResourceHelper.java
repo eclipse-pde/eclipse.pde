@@ -6,8 +6,14 @@ package org.eclipse.pde.internal.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.boot.BootLoader;
+
 
 public class NLResourceHelper {
 	public static final String KEY_PREFIX = "%";
@@ -31,10 +37,15 @@ public class NLResourceHelper {
 
 	private InputStream getResourceStream(String name, URL[] locations) {
 		URLClassLoader resourceLoader = new URLClassLoader(locations);
-		Locale locale = Locale.getDefault();
-		String suffix1 = "_" + locale.getLanguage() + "_" + locale.getCountry() + "_" + locale.getVariant();
-		String suffix2 = "_" + locale.getLanguage() + "_" + locale.getCountry();
-		String suffix3 = "_" + locale.getLanguage();
+		
+		StringTokenizer tokenizer = new StringTokenizer(BootLoader.getNL(), "_");
+		String language = tokenizer.nextToken();
+		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
+		String variant = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : "");
+		
+		String suffix1 = "_" + language + "_" + country + "_" + variant;
+		String suffix2 = "_" + language + "_" + country;
+		String suffix3 = "_" + language;
 		String suffix4 = "";
 
 		String[] suffices = new String[] { suffix1, suffix2, suffix3, suffix4 };
