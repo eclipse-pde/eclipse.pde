@@ -71,7 +71,6 @@
 	<!-- Run custom tasks before processing, i.e. creating source build zip files -->
 	<ant antfile="${customTargets}" target="preProcess" />
 
-	<echo message="RUNNING THE BUILD !!!!!!!!!!!!!!!!!!!!!!!!!!!11"/>
 	<!-- Process all of the build elements-->
 	<ant antfile="${customTargets}" target="allElements">
 		<property name="target" value="processElement" />
