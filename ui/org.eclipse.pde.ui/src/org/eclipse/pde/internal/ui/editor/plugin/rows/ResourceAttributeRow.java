@@ -26,12 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class ResourceAttributeRow extends ReferenceAttributeRow {
 	public ResourceAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
@@ -98,9 +93,9 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 						&& selection[0] instanceof IFile)
 					return new Status(IStatus.OK, PDEPlugin.getPluginId(),
 							IStatus.OK, "", null); //$NON-NLS-1$
-				else
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
-							IStatus.ERROR, "", null); //$NON-NLS-1$
+				
+				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+						IStatus.ERROR, "", null); //$NON-NLS-1$
 			}
 		});
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {

@@ -8,12 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 30, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import org.eclipse.core.resources.IProject;
@@ -25,12 +20,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public abstract class ExtensionAttributeRow {
 	protected IContextPart part;
 	protected Object att;
@@ -55,8 +44,8 @@ public abstract class ExtensionAttributeRow {
 	public String getName() {
 		if (att instanceof ISchemaAttribute)
 			return ((ISchemaAttribute)att).getName();
-		else
-			return ((IPluginAttribute)att).getName();
+
+		return ((IPluginAttribute)att).getName();
 	}
 	
 	protected int getUse() {
@@ -125,8 +114,7 @@ public abstract class ExtensionAttributeRow {
 			}
 			return buf.toString();
 		}
-		else
-			return text;
+		return text;
 	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
