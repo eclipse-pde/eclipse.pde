@@ -57,6 +57,7 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 
 
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR|Section.DESCRIPTION);
+		section.clientVerticalSpacing = 8;
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
 		section.setText("Extension Details");

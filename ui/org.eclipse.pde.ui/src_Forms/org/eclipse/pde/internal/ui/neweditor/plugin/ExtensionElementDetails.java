@@ -62,6 +62,7 @@ public class ExtensionElementDetails extends AbstractFormPart implements IDetail
 		parent.setLayout(layout);
 		FormToolkit toolkit = managedForm.getToolkit();
 		section = toolkit.createSection(parent, Section.TITLE_BAR|Section.DESCRIPTION);
+		section.clientVerticalSpacing = 8;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		section.setText("Extension Details");

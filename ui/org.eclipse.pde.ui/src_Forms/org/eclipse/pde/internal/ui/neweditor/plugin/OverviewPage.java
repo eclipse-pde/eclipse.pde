@@ -146,7 +146,8 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 		createClient(section, deployingText, toolkit);
 	}
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);		
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR);	
+		section.clientVerticalSpacing = 8;
 		//toolkit.createCompositeSeparator(section);
 		return section;
 	}

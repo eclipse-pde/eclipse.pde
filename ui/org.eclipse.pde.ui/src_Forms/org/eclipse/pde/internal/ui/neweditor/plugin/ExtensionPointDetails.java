@@ -68,6 +68,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		parent.setLayout(layout);
 		FormToolkit toolkit = getForm().getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
+		section.clientVerticalSpacing = 8;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		section.setText("Extension Point Details");

@@ -27,6 +27,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		super(parent, page.getManagedForm().getToolkit(), Section.TITLE_BAR | style);
 		this.page = page;
 		initialize(page.getManagedForm());
+		getSection().clientVerticalSpacing = 8;
 		//createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	

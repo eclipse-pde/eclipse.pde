@@ -73,6 +73,7 @@ public class GeneralInfoSection extends PDESection {
 
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = toolkit.getBorderStyle()!=SWT.NULL?0:2;
 		layout.numColumns = 3;
 		client.setLayout(layout);
 		section.setClient(client);
