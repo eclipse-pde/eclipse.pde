@@ -15,9 +15,15 @@ import org.eclipse.pde.internal.PDEPlugin;
 
 public class SystemFileDocumentProvider extends AbstractDocumentProvider {
 	private IDocumentPartitioner partitioner;
+	private String enc;
 
 public SystemFileDocumentProvider(IDocumentPartitioner partitioner) {
+	this(partitioner, null);
+}
+
+public SystemFileDocumentProvider(IDocumentPartitioner partitioner, String encoding) {
 	this.partitioner = partitioner;
+	this.enc = encoding;
 }
 protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 	return null;
@@ -39,7 +45,11 @@ protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocumen
 protected void setDocumentContent(IDocument document, File file) {
 	try {
 		InputStream contentStream = new FileInputStream(file);
-		Reader in = new InputStreamReader(contentStream);
+		Reader in;
+		if (enc==null)
+		   in = new InputStreamReader(contentStream);
+		else
+		   in = new InputStreamReader(contentStream, enc);
 		int chunkSize = contentStream.available();
 		StringBuffer buffer = new StringBuffer(chunkSize);
 		char[] readBuffer = new char[chunkSize];

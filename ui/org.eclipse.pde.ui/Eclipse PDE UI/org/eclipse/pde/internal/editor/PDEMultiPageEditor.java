@@ -52,6 +52,9 @@ public abstract class PDEMultiPageEditor extends EditorPart implements ISelectio
 	private Menu contextMenu;
 	private IDocumentProvider documentProvider;
 	private boolean disposed;
+	
+	
+
 
 public PDEMultiPageEditor() {
 	formWorkbook = new CustomWorkbook();
@@ -78,7 +81,7 @@ public void commitFormPages(boolean onSave) {
 protected IDocumentPartitioner createDocumentPartitioner() {
 	return null;
 }
-private IDocumentProvider createDocumentProvider(Object input) {
+protected IDocumentProvider createDocumentProvider(Object input) {
 	IDocumentProvider documentProvider = null;
 	if (input instanceof IFile)
 		documentProvider = new FileDocumentProvider() {
