@@ -47,9 +47,11 @@ public class PointSelectionPage
 	private Action showDetailsAction;
 	private IProject project;
 	private Label templateLabel;
+	private ExtensionTreeSelectionPage wizardsPage;
 	
 	private IPluginExtension fNewExtension;
 	private ShowDescriptionAction fShowDescriptionAction;
+	private WizardCollectionElement templateCollection;
 	private WizardCollectionElement wizardCollection;
 	private NewExtensionWizard wizard;
 	
@@ -67,8 +69,8 @@ public class PointSelectionPage
 			if (inputElement instanceof IPluginExtensionPoint){
 				PluginExtensionPoint point = (PluginExtensionPoint)inputElement;
 				ArrayList result = new ArrayList();
-				if (wizardCollection.getWizards() != null) {
-					Object[] wizards = wizardCollection.getWizards().getChildren();
+				if (templateCollection.getWizards() != null) {
+					Object[] wizards = templateCollection.getWizards().getChildren();
 					for (int i = 0; i<wizards.length; i++){
 						String wizardContributorId = ((WizardElement)wizards[i]).getContributingId();
 						if (wizardContributorId == null || point == null || point.getFullId() == null)
@@ -133,10 +135,11 @@ public class PointSelectionPage
 		}
 	}
 
-	public PointSelectionPage(IProject project, IPluginBase model, WizardCollectionElement element, NewExtensionWizard wizard) {
+	public PointSelectionPage(IProject project, IPluginBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
 		super("pointSelectionPage", PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.title"));
 		this.fPluginBase = model;
 		this.wizardCollection = element;
+		this.templateCollection = templates;
 		this.wizard= wizard;
 		this.project=project;
 		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
@@ -147,8 +150,21 @@ public class PointSelectionPage
 	}
 	
 	public void createControl(Composite parent) {
+		// tab folder
+		final TabFolder tabFolder = new TabFolder(parent, SWT.FLAT);
+		TabItem firstTab = new TabItem(tabFolder, SWT.NULL);
+		firstTab.setText("Extension Points");
+		TabItem secondTab = new TabItem(tabFolder, SWT.NULL);
+		secondTab.setText("Extension Wizards");
+		secondTab.setControl(createWizardsPage(tabFolder));
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTabSelection(tabFolder.getSelectionIndex());
+			}
+		});
 		// top level group
-		Composite outerContainer = new Composite(parent, SWT.NONE);
+		Composite outerContainer = new Composite(tabFolder, SWT.NONE);
+		firstTab.setControl(outerContainer);
 		GridLayout layout = new GridLayout();
 		outerContainer.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -261,11 +277,18 @@ public class PointSelectionPage
 		getContainer().getShell().setSize(500, 500);
 		createMenuManager();
 		initialize();
-		setControl(outerContainer);
+		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
 		WorkbenchHelp.setHelp(
 			outerContainer,
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
+	}
+	private Control createWizardsPage(Composite parent) {
+		wizardsPage = new ExtensionTreeSelectionPage(wizardCollection, null, "Wizard Categories:");
+		wizardsPage.createControl(parent);
+		wizardsPage.setWizard(wizard);
+		wizardsPage.getSelectionProvider().addSelectionChangedListener(this);
+		return wizardsPage.getControl();
 	}
 	private void createMenuManager(){
 		MenuManager mgr = new MenuManager();
@@ -319,6 +342,7 @@ public class PointSelectionPage
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		wizardsPage.dispose();
 		super.dispose();
 	}
 
@@ -404,8 +428,27 @@ public class PointSelectionPage
 					setPageComplete(false);
 				}
 			}
+			else {
+				setPageComplete(false);
+			}
 		}
 		getContainer().updateButtons();
+	}
+	
+	private void updateTabSelection(int index) {
+		if (index==0) {
+			// extension point page
+			ISelection selection = fTemplateViewer.getSelection();
+			if (selection.isEmpty()==false)
+				selectionChanged(new SelectionChangedEvent(fTemplateViewer, selection));
+			else
+				selectionChanged(new SelectionChangedEvent(fPointListViewer, fPointListViewer.getSelection()));
+		}
+		else {
+			// wizard page
+			ISelectionProvider provider = wizardsPage.getSelectionProvider();
+			selectionChanged(new SelectionChangedEvent(provider, provider.getSelection()));
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -23,6 +23,8 @@ public class NewExtensionWizard extends NewWizard {
 	private PointSelectionPage pointPage;
 	private IPluginModelBase model;
 	private IProject project;
+	private WizardCollectionElement wizardCollection;
+	
 	public NewExtensionWizard(IProject project, IPluginModelBase model) {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
@@ -31,28 +33,40 @@ public class NewExtensionWizard extends NewWizard {
 		setForcePreviousAndNextButtons(true);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		loadWizardCollection();
 	}
 	public void addPages() {
 		pointPage =
-			new PointSelectionPage(project, model.getPluginBase(), getAvailableExtensionWizards(), this);
+			new PointSelectionPage(project, model.getPluginBase(), wizardCollection, getTemplates(), this);
 		addPage(pointPage);
 	}
-	public WizardCollectionElement getAvailableExtensionWizards() {
+	private void loadWizardCollection() {
 		NewExtensionRegistryReader reader = new NewExtensionRegistryReader();
-		WizardCollectionElement element = (WizardCollectionElement) reader.readRegistry(
-			PDEPlugin.getPluginId(),
-			PLUGIN_POINT,
-			false);
-		Object[] children = element.getChildren();  
+		wizardCollection = (WizardCollectionElement) reader.readRegistry(
+				PDEPlugin.getPluginId(),
+				PLUGIN_POINT,
+				false);
+	}
+	
+	public WizardCollectionElement getTemplates() {
+		WizardCollectionElement templateCollection = new WizardCollectionElement("", "", null);
+		collectTemplates(wizardCollection.getChildren(), templateCollection);
+		return templateCollection;
+	}
+	
+	private void collectTemplates(Object [] children, WizardCollectionElement list) {
 		for  (int i = 0; i<children.length; i++){
-			if (children[i] instanceof WizardCollectionElement)
-				if (((WizardCollectionElement)children[i]).getId().equals("templates")) 
-					return (WizardCollectionElement)children[i]; 
-			
+			if (children[i] instanceof WizardCollectionElement) {
+				WizardCollectionElement element = (WizardCollectionElement)children[i];
+				collectTemplates(element.getChildren(), list);
+				collectTemplates(element.getWizards().getChildren(), list);
+			}
+			else if (children[i] instanceof WizardElement) {
+				WizardElement wizard = (WizardElement)children[i];
+				if (wizard.isTemplate())
+					list.getWizards().add(wizard);
+			}
 		}
-		
-		return element;
-		
 	}
 	public boolean performFinish() {
 		if (pointPage.canFinish())
