@@ -54,7 +54,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
 						String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-						errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+						errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
 					}
 				}
 			}
@@ -111,7 +111,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
 				addFeatureReferenceModel(featureRef);
 			} catch (MalformedURLException e) {
-				Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
 			}
 		}
 	}

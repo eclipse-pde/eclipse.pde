@@ -210,7 +210,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		String cvsInfo = getCVSInfo(entry);
 		if (cvsInfo == null) {
 			String message = Policy.bind("error.missingDirectoryEntry", entry); //$NON-NLS-1$
-			Platform.getPlugin(PI_PDEBUILD).getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
+			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 			return null;
 		}
 
