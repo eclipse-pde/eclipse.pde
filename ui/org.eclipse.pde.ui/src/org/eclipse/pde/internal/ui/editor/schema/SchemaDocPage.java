@@ -23,7 +23,7 @@ public class SchemaDocPage extends PDEFormPage {
 	
 	public static final String PAGE_ID = "doc"; //$NON-NLS-1$
 	public static final String PAGE_TITLE = "SchemaEditor.DocPage.title"; //$NON-NLS-1$
-	private IColorManager colorManager = new ColorManager();
+	private IColorManager colorManager = ColorManager.getDefault();
 	private DocSection docSection;
 	public static final String FORM_TITLE = "SchemaEditor.DocForm.title"; //$NON-NLS-1$
 	public static final String KEY_PENDING_TITLE =

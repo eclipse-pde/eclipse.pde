@@ -138,4 +138,12 @@ public class NonRuleBasedDamagerRepairer
 					attr.getBackground(),
 					attr.getStyle()));
 	}
+	
+	/**
+	 * Configures the scanner's default return token. This is the text attribute
+	 * which is returned when none is returned by the current token.
+	 */
+	public void setDefaultTextAttribute(TextAttribute defaultTextAttribute) {
+		fDefaultTextAttribute= defaultTextAttribute;
+	}
 }

@@ -8,15 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.widgets.Display;
@@ -24,9 +20,6 @@ import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 /**
  * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public abstract class XMLSourcePage extends PDESourcePage {
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage"; //$NON-NLS-1$
@@ -45,7 +38,7 @@ public abstract class XMLSourcePage extends PDESourcePage {
 	protected XMLSourceViewerConfiguration createXMLConfiguration() {
 		if (colorManager != null)
 			colorManager.dispose();
-		colorManager = new ColorManager();
+		colorManager = ColorManager.getDefault();
 		return new XMLSourceViewerConfiguration(this, colorManager);
 	}
 	
@@ -64,6 +57,28 @@ public abstract class XMLSourcePage extends PDESourcePage {
 				PDEPlugin.getResourceString(ERROR_MESSAGE));
 		}
 		return cleanModel;
+	}
+
+	protected boolean affectsTextPresentation(PropertyChangeEvent event){
+		String property = event.getProperty();
+		return property.equals(IPDEColorConstants.P_DEFAULT) 
+		|| property.equals(IPDEColorConstants.P_PROC_INSTR) 
+		|| property.equals(IPDEColorConstants.P_STRING) 
+		|| property.equals(IPDEColorConstants.P_TAG) 
+		|| property.equals(IPDEColorConstants.P_XML_COMMENT);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		XMLSourceViewerConfiguration sourceViewerConfiguration= (XMLSourceViewerConfiguration)getSourceViewerConfiguration();
+		if (affectsTextPresentation(event)) {
+			sourceViewerConfiguration.adaptToPreferenceChange(event);
+			setSourceViewerConfiguration(sourceViewerConfiguration);
+		}
+							
+		super.handlePreferenceStoreChanged(event);
 	}
 
 }
