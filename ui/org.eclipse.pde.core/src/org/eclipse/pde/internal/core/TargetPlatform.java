@@ -174,7 +174,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			}
 			if (!isOSGI) {
 				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
-			} else if (!pluginMap.containsKey("org.eclipse.update.configurator")) {
+			} else if (pluginMap.containsKey("org.eclipse.update.configurator")) {
 				savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
 			}			
 			return configDir;
