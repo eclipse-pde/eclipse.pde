@@ -247,7 +247,7 @@ protected ComponentModel[] readComponentsFromConfigurationModel() {
 				IStatus.ERROR,
 				PluginTool.PI_PDECORE,
 				ScriptGeneratorConstants.EXCEPTION_COMPONENT_MISSING,
-				Policy.bind(Policy.bind("exception.missingComponent",currentReadComponent.getId())),
+				Policy.bind("exception.missingComponent",currentReadComponent.getId()),
 				null));
 			continue;
 		}
@@ -274,7 +274,7 @@ protected boolean readConfigurationModel() {
 			IStatus.ERROR,
 			PluginTool.PI_PDECORE,
 			ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_MISSING,
-			Policy.bind(Policy.bind("error.missingConfigurationId")),
+			Policy.bind("error.missingConfigurationId"),
 			null));
 
 		return false;

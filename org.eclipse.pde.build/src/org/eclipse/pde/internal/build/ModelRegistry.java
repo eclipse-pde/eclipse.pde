@@ -53,7 +53,7 @@ protected void readComponent(File componentFile) {
 				IStatus.ERROR,
 				PluginTool.PI_PDECORE,
 				ScriptGeneratorConstants.EXCEPTION_COMPONENT_INPUT,
-				"Component input exception",
+				Policy.bind("exception.componentRead"),
 				e));
 		return;
 	} finally {
@@ -82,7 +82,7 @@ protected void readConfiguration(File configurationFile) {
 				IStatus.ERROR,
 				PluginTool.PI_PDECORE,
 				ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_INPUT,
-				"Configuration input exception",
+				Policy.bind("exception.configurationRead"),
 				e));
 		return;
 	} finally {

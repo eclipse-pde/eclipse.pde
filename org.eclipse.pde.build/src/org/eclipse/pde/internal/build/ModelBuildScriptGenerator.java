@@ -102,6 +102,8 @@ public IStatus execute() {
 public void generateBuildScript(PrintWriter output,PluginModel descriptor) {
 	initializeFor(descriptor);
 	generatePrologue(output, descriptor);
+	
+	generateModelTarget(output, descriptor);
 
 	generateJarsTarget(output, descriptor);
 
@@ -162,6 +164,7 @@ protected void generateCleanTarget(PrintWriter output, PluginModel descriptor) {
 		output.println("    </ant>");
 	}
 
+	output.println("    <delete file=\"${plugin}" + SEPARATOR_VERSION + "${version}.zip\"/>");
 	output.println("  </target>");
 }
 protected void generateCopyReference(PrintWriter output, PluginModel descriptor) {
@@ -303,6 +306,18 @@ protected void generateLogsTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    <ant antfile=\"${template}\" target=\"" + TARGET_LOG + "\">");
 	output.println("      <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </ant>");
+	output.println("  </target>");
+}
+protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
+	output.println();
+	output.println("  <target name=\"" + getModelTypeName() + ".zip" + "\" depends=\"init\">");
+	output.println("    <property name=\"destroot\" value=\"${basedir}/_temp___\"/>");
+	output.println("    <delete dir=\"${destroot}\"/>");
+	output.println("    <mkdir dir=\"${destroot}\"/>");
+	output.println("    <antcall target=\"jar\"/>");
+	output.println("    <antcall target=\"bin\"/>");
+	output.println("    <zip zipfile=\"${plugin}" + SEPARATOR_VERSION + "${version}.zip\" basedir=\"${destroot}\"/>");
+	output.println("    <delete dir=\"${destroot}\"/>");
 	output.println("  </target>");
 }
 protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
