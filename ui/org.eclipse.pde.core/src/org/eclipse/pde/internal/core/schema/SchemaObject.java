@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 
 public abstract class SchemaObject extends PlatformObject implements
@@ -54,37 +55,7 @@ public abstract class SchemaObject extends PlatformObject implements
 	}
 
 	public String getWritableDescription() {
-		return getWritableDescription(getDescription());
-	}
-
-	public static String getWritableDescription(String input) {
-		if (input == null)
-			return ""; //$NON-NLS-1$
-		String result = input.trim();
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < result.length(); i++) {
-			char c = result.charAt(i);
-			switch (c) {
-			case '<':
-				buf.append("&lt;"); //$NON-NLS-1$
-				break;
-			case '>':
-				buf.append("&gt;"); //$NON-NLS-1$
-				break;
-			case '&':
-				buf.append("&amp;"); //$NON-NLS-1$
-				break;
-			case '\'':
-				buf.append("&apos;"); //$NON-NLS-1$
-				break;
-			case '\"':
-				buf.append("&quot;"); //$NON-NLS-1$
-				break;
-			default:
-				buf.append(c);
-			}
-		}
-		return buf.toString();
+		return CoreUtility.getWritableString(getDescription());
 	}
 
 	public void setDescription(String newDescription) {

@@ -186,7 +186,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		IPluginAttribute[] attrs = element.getAttributes();
 		for (int i = 0; i < attrs.length; i++) {
 			buffer.append(separator);
-			buffer.append(indent + "      " + attrs[i].getName() + "=\"" + getWritableString(attrs[i].getValue()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buffer.append(indent + "      " + attrs[i].getName() + "=\"" + CoreUtility.getWritableString(attrs[i].getValue()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		buffer.append(">"); //$NON-NLS-1$
 		buffer.append(separator);
@@ -205,34 +205,5 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			return region.getOffset();
 		return -1;
 	}
-	
-	private String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
-	}
-
 	
 }

@@ -15,6 +15,7 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class PluginObjectNode extends PluginDocumentNode
@@ -188,31 +189,7 @@ public class PluginObjectNode extends PluginDocumentNode
 	}
 
 	public String getWritableString(String source) {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
+		return CoreUtility.getWritableString(source);
 	}
 	/*
 	 * (non-Javadoc)

@@ -898,7 +898,7 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
 		writer.println(indent3
-				+ SchemaObject.getWritableDescription(getDescription()));
+				+ CoreUtility.getWritableString(getDescription()));
 		writer.println(indent2 + "</documentation>"); //$NON-NLS-1$
 		writer.println(INDENT + "</annotation>"); //$NON-NLS-1$
 		writer.println();

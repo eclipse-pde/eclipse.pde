@@ -161,36 +161,6 @@ public abstract class FeatureObject
 		throw ce;
 	}
 
-	public static String getWritableString(String source) {
-		if (source == null)
-			return ""; //$NON-NLS-1$
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
-	}
-
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
 		if (name.equals(P_LABEL)) {
@@ -226,5 +196,9 @@ public abstract class FeatureObject
 		if (range == null)
 			return -1;
 		return range[1];
+	}
+	
+	protected String getWritableString(String source) {
+		return CoreUtility.getWritableString(source);
 	}
 }
