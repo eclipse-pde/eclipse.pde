@@ -12,6 +12,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.StringMatcher;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
@@ -50,6 +51,7 @@ public class NewDependencyWizardPage extends WizardPage {
 	private Vector externalList;
 	private Vector workspaceList;
 	private Vector candidates = new Vector();
+	private StringMatcher stringMatcher;
 
 	class PluginLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
@@ -116,6 +118,7 @@ public class NewDependencyWizardPage extends WizardPage {
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		setPageComplete(false);
+		stringMatcher = new StringMatcher("", true, false);
 	}
 
 	public void createControl(Composite parent) {
@@ -130,6 +133,7 @@ public class NewDependencyWizardPage extends WizardPage {
 		filterText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		filterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				stringMatcher.setPattern(filterText.getText());
 				pluginTreeViewer.refresh();
 			}
 		});
@@ -178,7 +182,8 @@ public class NewDependencyWizardPage extends WizardPage {
 								name = model.getPlugin().getName();
 							else
 								name = model.getPlugin().getId();
-							include = name.startsWith(prefix);
+							//include = name.startsWith(prefix);
+							include = stringMatcher.match(name);
 						}
 					}
 					return include;

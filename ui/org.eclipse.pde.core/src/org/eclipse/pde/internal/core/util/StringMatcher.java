@@ -66,6 +66,10 @@ public class StringMatcher {
 
 		fPattern= pattern;
 		fLength= pattern.length();
+		fHasLeadingStar = false;
+		fHasTrailingStar = false;
+		fBound= 0;
+		fSegments = null;
 		
 		if (fIgnoreWildCards) {
 			parseNoWildCards();
