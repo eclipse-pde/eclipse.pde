@@ -71,6 +71,8 @@ public class PointSelectionPage
 					Object[] wizards = wizardCollection.getWizards().getChildren();
 					for (int i = 0; i<wizards.length; i++){
 						String wizardContributorId = ((WizardElement)wizards[i]).getConfigurationElement().getAttribute("contributingId");
+						if (wizardContributorId == null || point == null || point.getFullId() == null)
+							continue;
 						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(point.getFullId()))
 							result.add((WizardElement)wizards[i]);
 					}
