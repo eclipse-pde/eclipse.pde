@@ -177,7 +177,7 @@ public class ModelEntry extends PlatformObject {
 	private HashSet getRequiredIds(IPluginBase plugin) {
 		HashSet set = new HashSet();
 		if (plugin instanceof IFragment) {
-			addDependency(((IFragment)plugin).getPluginId(), set);
+			addParentPlugin(((IFragment)plugin).getPluginId(), set);
 		}
 		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
@@ -227,6 +227,20 @@ public class ModelEntry extends PlatformObject {
 				if (imports[i].isReexported()) {
 					addDependency(imports[i].getId(), set);
 				}
+			}
+		}
+	}
+	
+	private void addParentPlugin(String id, HashSet set) {
+		if (id == null || !set.add(id))
+			return;
+		
+		ModelEntry entry = manager.findEntry(id);
+		if (entry != null) {
+			IPluginBase plugin = entry.getActiveModel().getPluginBase();
+			IPluginImport[] imports = plugin.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				addDependency(imports[i].getId(), set);
 			}
 		}
 	}
