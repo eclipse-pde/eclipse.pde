@@ -19,7 +19,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -30,10 +29,9 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.ClasspathUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.*;
@@ -102,6 +100,7 @@ public class ImportListSection
 
 		importTable.setContentProvider(new ImportContentProvider());
 		importTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		importTable.setSorter(ListUtil.PLUGIN_SORTER);
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
@@ -199,17 +198,37 @@ public class ImportListSection
 	}
 
 	private void handleNew() {
-		final IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
-		BusyIndicator.showWhile(importTable.getTable().getDisplay(), new Runnable() {
-			public void run() {
-				NewDependencyWizard wizard = new NewDependencyWizard(model);
-				WizardDialog dialog =
-					new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 500, 500);
-				dialog.open();
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		PluginSelectionDialog dialog =
+			new PluginSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(),
+				getAvailablePlugins(model),
+				true);
+		dialog.create();
+		if (dialog.open() == PluginSelectionDialog.OK) {
+			Object[] models = dialog.getResult();
+			for (int i = 0; i < models.length; i++) {
+				try {
+					IPluginModel candidate = (IPluginModel) models[i];
+					IPluginImport importNode = model.getPluginFactory().createImport();
+					importNode.setId(candidate.getPlugin().getId());
+					model.getPluginBase().add(importNode);
+				} catch (CoreException e) {
+				}
 			}
-		});
+		}
+	}
+	
+	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
+		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPluginsOnly();
+		HashSet existingImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < plugins.length; i++) {
+			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
+				result.add(plugins[i]);
+			}
+		}
+		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	private void handleOpen(ISelection sel) {

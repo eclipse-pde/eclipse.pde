@@ -82,18 +82,36 @@ public class PluginModelManager implements IAdaptable {
 		return (ModelEntry[]) values.toArray(new ModelEntry[values.size()]);
 	}
 
-	public IPluginModelBase [] getPlugins() {
+	public IPluginModelBase[] getPlugins() {
 		if (entries == null)
 			initializeTable();
-		if (entries==null) return new IPluginModelBase[0];
+		if (entries == null)
+			return new IPluginModelBase[0];
 		Collection values = entries.values();
-		IPluginModelBase [] plugins = new IPluginModelBase[values.size()];
-		int i=0;
-		for (Iterator iter=values.iterator(); iter.hasNext();) {
-			ModelEntry entry = (ModelEntry)iter.next();
-			plugins[i++] = entry.getActiveModel();
+		ArrayList result = new ArrayList();
+		for (Iterator iter = values.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			IPluginModelBase model = entry.getActiveModel();
+			if (model.isEnabled())
+				result.add(model);
 		}
-		return plugins;
+		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+	}
+	
+	public IPluginModelBase [] getPluginsOnly() {
+		if (entries == null)
+			initializeTable();
+		if (entries == null)
+			return new IPluginModelBase[0];
+		Collection values = entries.values();
+		ArrayList result = new ArrayList();
+		for (Iterator iter = values.iterator(); iter.hasNext();) {
+			ModelEntry entry = (ModelEntry) iter.next();
+			IPluginModelBase model = entry.getActiveModel();
+			if (model.isEnabled() && model instanceof IPluginModel)
+				result.add(model);
+		}
+		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
 	}
 	
 	public ModelEntry findEntry(IProject project) {

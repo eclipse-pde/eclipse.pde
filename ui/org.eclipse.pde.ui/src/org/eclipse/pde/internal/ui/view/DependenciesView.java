@@ -21,8 +21,8 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.project.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -210,10 +210,8 @@ public class DependenciesView extends ViewPart {
 	}
 	
 	private void handleFocusOn() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(treeViewer.getControl().getShell());
+		PluginSelectionDialog dialog = new PluginSelectionDialog(treeViewer.getControl().getShell(), true, false);
 		dialog.create();
-		dialog.getShell().setText(PDEPlugin.getResourceString("DependenciesView.pluginSelection.title"));
-		dialog.getShell().setSize(300, 400);
 		if (dialog.open()==PluginSelectionDialog.OK) {
 			handleFocusOn(dialog.getFirstResult());
 		}

@@ -13,6 +13,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 /**

@@ -37,8 +37,8 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.codegen.*;
-import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class JavaAttributeWizardPage extends WizardPage {

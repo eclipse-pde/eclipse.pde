@@ -17,13 +17,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -44,11 +44,10 @@ public class PointSelectionPage
 	private Button fDescriptionButton;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
+	private HashSet fAvailableImports;
 
 	private IPluginExtension fNewExtension;
 	private ShowDescriptionAction fShowDescriptionAction;
-	
-	private HashSet fAvailableImports = new HashSet();
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -107,58 +106,12 @@ public class PointSelectionPage
 	public PointSelectionPage(IPluginBase model) {
 		super("pointSelectionPage");
 		this.fPluginBase = model;
-		setAvailableImports();
+		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
 		setTitle(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.title"));
 		setDescription(PDEPlugin.getResourceString("NewExtensionWizard.PointSelectionPage.desc"));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
-	private void setAvailableImports() {
-		fAvailableImports.clear();
-		fAvailableImports.add("org.eclipse.core.boot");
-		fAvailableImports.add("org.eclipse.core.runtime");
-		addSelfAndDirectImports(fPluginBase);
-		if (fPluginBase instanceof IFragment) {
-			IPlugin parent = getParentPlugin((IFragment)fPluginBase);
-			if (parent != null) {
-				addSelfAndDirectImports(parent);				
-			}
-		}
-	}
-	
-	
-	private IPlugin getParentPlugin(IFragment fragment) {
-		String targetId = fragment.getPluginId();
-		String targetVersion = fragment.getPluginVersion();
-		int match = fragment.getRule();
-		return PDECore.getDefault().findPlugin(targetId, targetVersion, match);
-	}
-
-	private void addSelfAndDirectImports(IPluginBase pluginBase) {
-		fAvailableImports.add(pluginBase.getId());
-		IPluginImport[] imports = fPluginBase.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			String id = imports[i].getId();
-			if (fAvailableImports.add(id)) {
-				addReexportedImport(id);
-			}
-		}
-	}
-	
-	private void addReexportedImport(String id) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
-			IPluginImport[] imports = model.getPluginBase().getImports();
-			for (int i = 0; i < imports.length; i++) {
-				if (imports[i].isReexported() && fAvailableImports.add(imports[i].getId())) {
-					addReexportedImport(imports[i].getId());
-				}
-			}
-		}
-	}
-
 	public void createControl(Composite parent) {
 		// top level group
 		Composite outerContainer = new Composite(parent, SWT.NONE);

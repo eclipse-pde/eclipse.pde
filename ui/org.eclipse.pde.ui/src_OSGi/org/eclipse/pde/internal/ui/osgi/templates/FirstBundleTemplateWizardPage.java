@@ -23,8 +23,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.project.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.*;
@@ -84,7 +83,6 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 		"DefaultBundleCodeGenerationPage.options.bundle";
 	private static final String KEY_OPTIONS_WORKSPACE =
 		"DefaultBundleCodeGenerationPage.options.workspace";
-	private static final String KEY_BROWSE_TITLE = "DefaultBundleCodeGenerationPage.pluginId.browse.title";
 		
 	private IProjectProvider projectProvider;
 	private IPluginStructureData structureData;
@@ -136,10 +134,8 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 		BusyIndicator.showWhile(pluginIdField.getDisplay(), new Runnable() {
 			public void run() {
 				PluginSelectionDialog dialog =
-					new PluginSelectionDialog(pluginIdField.getShell());
+					new PluginSelectionDialog(pluginIdField.getShell(), false, false);
 				dialog.create();
-				SWTUtil.setDialogSize(dialog, 300, 400);
-				dialog.getShell().setText(PDEPlugin.getResourceString(KEY_BROWSE_TITLE));
 				if (dialog.open() == PluginSelectionDialog.OK) {
 					IPluginModel model = (IPluginModel) dialog.getFirstResult();
 					IPlugin plugin = model.getPlugin();
