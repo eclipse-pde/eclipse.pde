@@ -164,9 +164,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		return false;
 	}
-	
+
 	private void specialDotProcessing(String[] classpathInfo) throws CoreException {
-		if (findAndReplaceDot(classpathInfo)) {			
+		if (findAndReplaceDot(classpathInfo)) {
 			String sourceFolder = getBuildProperties().getProperty(PROPERTY_SOURCE_PREFIX + DOT);
 			if (sourceFolder != null) {
 				getBuildProperties().setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
@@ -187,10 +187,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 
 			String extraEntries = getBuildProperties().getProperty(PROPERTY_EXTRAPATH_PREFIX + '.');
-			if(extraEntries != null) {
+			if (extraEntries != null) {
 				getBuildProperties().setProperty(PROPERTY_EXTRAPATH_PREFIX + EXPANDED_DOT, extraEntries);
 			}
-			
+
 			String includeString = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
 			if (includeString != null) {
 				String[] includes = Utils.getArrayFromString(includeString);

@@ -115,7 +115,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (symbolicHeader != null && ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicHeader)[0].getValue().equals("org.eclipse.osgi")) { //$NON-NLS-1$
 				manifest.put(Constants.BUNDLE_CLASSPATH, findOSGiJars(bundleLocation));
 			}
-			
+
 			hasQualifier(bundleLocation, manifest);
 		} catch (BundleException e) {
 			//should not happen since we know the header
@@ -213,10 +213,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			Properties properties = manifestToProperties(m.getMainAttributes());
 			//Add dot on the classpath if none has been specified
 			String classpath = (String) properties.get(Constants.BUNDLE_CLASSPATH);
-			if (classpath==null)
-			    properties.put(Constants.BUNDLE_CLASSPATH, ".");	//$NON-NLS-1$
+			if (classpath == null)
+				properties.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
 			return properties;
-			
+
 		} catch (IOException e) {
 			return null;
 		} finally {
@@ -305,9 +305,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		BundleDescription description = getState().getBundle(bundleId, new Version(version));
 		if (description != null && description.isResolved())
 			return description;
-		
+
 		int qualifierIdx = -1;
-		if ((qualifierIdx = version.indexOf(".qualifier"))!= -1) {
+		if ((qualifierIdx = version.indexOf(".qualifier")) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
 			Version versionToMatch = new Version(version.substring(0, qualifierIdx));
 			for (int i = 0; i < bundles.length; i++) {

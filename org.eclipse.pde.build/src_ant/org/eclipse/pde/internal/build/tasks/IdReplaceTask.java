@@ -38,7 +38,7 @@ public class IdReplaceTask extends Task {
 	private Map featureIds = new HashMap(4);
 	//The new version number for this feature
 	private String selfVersion;
-	
+
 	private final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
 	private final static String DOT_QUALIFIER = ".qualifier"; //$NON-NLS-1$
 
@@ -57,7 +57,7 @@ public class IdReplaceTask extends Task {
 	public void setSelfVersion(String version) {
 		selfVersion = version;
 	}
-	
+
 	/**
 	 * Set the values to use when replacing a generic value used in a plugin reference.
 	 * Note all the pluginIds that have a generic number into the feature.xml must be
@@ -113,9 +113,9 @@ public class IdReplaceTask extends Task {
 
 		//Skip feature declaration because it contains the word "plugin"
 		int startFeature = scan(buffer, 0, FEATURE);
-		if (startFeature==-1)
+		if (startFeature == -1)
 			return;
-		
+
 		int endFeature = scan(buffer, startFeature + 1, ">"); //$NON-NLS-1$
 
 		if (selfVersion != null) {
@@ -126,7 +126,7 @@ public class IdReplaceTask extends Task {
 				buffer.replace(startVersionId + 1, endVersionId, selfVersion);
 			}
 		}
-		
+
 		int startElement = endFeature;
 		int startId = 0;
 		while (true) {
