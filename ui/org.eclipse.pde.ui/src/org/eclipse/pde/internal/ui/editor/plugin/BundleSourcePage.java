@@ -35,8 +35,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 				Dictionary manifest = ((Bundle)model.getBundle()).getHeaders();
 				Object[] keys = new Object[manifest.size()];
 				int i = 0;
-				for (Enumeration enum = manifest.keys(); enum.hasMoreElements();) {
-					keys[i++] = manifest.get(enum.nextElement());
+				for (Enumeration elements = manifest.keys(); elements.hasMoreElements();) {
+					keys[i++] = manifest.get(elements.nextElement());
 				}
 				return keys;
 			}
