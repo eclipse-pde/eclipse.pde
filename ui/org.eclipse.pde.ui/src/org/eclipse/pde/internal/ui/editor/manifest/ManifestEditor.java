@@ -322,8 +322,9 @@ public class ManifestEditor
 		return false;
 	}
 	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
+		boolean isFragment = pluginInfo.getModel().isFragmentModel();
 		String manifest =
-			pluginInfo.getModel().isFragmentModel()
+			isFragment
 				? "fragment.xml"
 				: "plugin.xml";
 		String fileName =
@@ -332,7 +333,7 @@ public class ManifestEditor
 				+ manifest;
 		File file = new File(fileName);
 		if (file.exists()) {
-			String editorId = PDEPlugin.getPluginId() + ".manifestEditor";
+			String editorId = PDEPlugin.getPluginId() + (isFragment ? ".fragmentEditor" :".manifestEditor");
 			try {
 				SystemFileEditorInput input = new SystemFileEditorInput(file);
 				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
