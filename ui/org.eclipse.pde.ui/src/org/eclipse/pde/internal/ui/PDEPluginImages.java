@@ -165,6 +165,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_LINK_WITH_EDITOR = create(PATH_LCL, "synced.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLEES = create(PATH_LCL, "ch_callees.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLERS = create(PATH_LCL, "ch_callers.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEP_LOOP = create(PATH_LCL, "dep_loop.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FLAT_LAYOUT = create(PATH_LCL, "flatLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HIERARCHICAL_LAYOUT = create(PATH_LCL, "hierarchicalLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HISTORY_LIST = create(PATH_LCL, "history_list.gif"); //$NON-NLS-1$
@@ -184,6 +185,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_LINK_WITH_EDITOR_DISABLED = create(PATH_LCL_DISABLED, "synced.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLEES_DISABLED = create(PATH_LCL_DISABLED, "ch_callees.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLERS_DISABLED = create(PATH_LCL_DISABLED, "ch_callers.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEP_LOOP_DISABLED = create(PATH_LCL_DISABLED, "dep_loop.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FLAT_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "flatLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HIERARCHICAL_LAYOUT_DISABLED = create(PATH_LCL_DISABLED, "hierarchicalLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HISTORY_LIST_DISABLED = create(PATH_LCL_DISABLED, "history_list.gif"); //$NON-NLS-1$

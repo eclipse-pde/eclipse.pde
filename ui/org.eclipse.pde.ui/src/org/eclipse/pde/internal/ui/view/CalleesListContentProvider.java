@@ -24,9 +24,8 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 
-public class CalleesListContentProvider extends
-		DependenciesViewPageContentProvider implements
-		IStructuredContentProvider {
+public class CalleesListContentProvider extends CalleesContentProvider
+		implements IStructuredContentProvider {
 
 	public CalleesListContentProvider(DependenciesView view) {
 		super(view);
@@ -42,21 +41,26 @@ public class CalleesListContentProvider extends
 					.getPluginBase();
 			Map elements = new Hashtable();
 			Set candidates = new HashSet();
-			candidates.addAll(Arrays.asList(pluginBase.getImports()));
+			candidates.addAll(Arrays.asList(findCallees(pluginBase)));
 
 			while (!candidates.isEmpty()) {
 				Set newCandidates = new HashSet();
 				for (Iterator it = candidates.iterator(); it.hasNext();) {
-					IPluginImport pluginImport = (IPluginImport) it.next();
-					String id = pluginImport.getId();
-					IPlugin importedPlugin = PDECore.getDefault()
+					Object candidate = it.next();
+					String id;
+					if(candidate instanceof IPluginImport){
+						id = ((IPluginImport)candidate).getId();
+					}else /*if (candidate instanceof IPluginBase)*/{
+						id = ((IPluginBase)candidate).getId();
+					}
+					IPlugin callee = PDECore.getDefault()
 							.findPlugin(id);
 					it.remove();
 					if (!elements.containsKey(id)) {
-						elements.put(id, pluginImport);
-						if (importedPlugin != null) {
-							newCandidates.addAll(Arrays.asList(importedPlugin
-									.getImports()));
+						elements.put(id, candidate);
+						if (callee != null) {
+							newCandidates.addAll(Arrays
+									.asList(findCallees(callee)));
 						}
 					}
 				}

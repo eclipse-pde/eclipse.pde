@@ -19,12 +19,18 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.builders.DependencyLoop;
+import org.eclipse.pde.internal.builders.DependencyLoopFinder;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.plugin.LoopDialog;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -77,6 +83,31 @@ public class DependenciesView extends PageBookView implements
 		}
 
 		public void setFocus() {/* dummy */
+		}
+	}
+
+	class ShowLoopsAction extends Action {
+
+		public ShowLoopsAction() {
+			super("", AS_PUSH_BUTTON); //$NON-NLS-1$
+			setText(PDEPlugin
+					.getResourceString("DependenciesView.ShowLoopsAction.label")); //$NON-NLS-1$
+			setDescription(PDEPlugin
+					.getResourceString("DependenciesView.ShowLoopsAction.description")); //$NON-NLS-1$
+			setToolTipText(PDEPlugin
+					.getResourceString("DependenciesView.ShowLoopsAction.tooltip")); //$NON-NLS-1$
+			setImageDescriptor(PDEPluginImages.DESC_DEP_LOOP);
+			setDisabledImageDescriptor(PDEPluginImages.DESC_DEP_LOOP_DISABLED);
+			setEnabled(false);
+		}
+
+		/*
+		 * @see Action#actionPerformed
+		 */
+		public void run() {
+			LoopDialog dialog = new LoopDialog(PDEPlugin
+					.getActiveWorkbenchShell(), fLoops);
+			dialog.open();
 		}
 	}
 
@@ -190,6 +221,8 @@ public class DependenciesView extends PageBookView implements
 	
 	protected static final String MEMENTO_KEY_INPUT = "inputPluginId"; //$NON-NLS-1$
 
+	private static final DependencyLoop[] NO_LOOPS = new DependencyLoop[0];
+	
 	private Map fPagesToParts;
 
 	private Map fPartsToPages;
@@ -206,9 +239,13 @@ public class DependenciesView extends PageBookView implements
 	private ShowListAction fShowList;
 
 	private ShowTreeAction fShowTree;
+	
+	private ShowLoopsAction fShowLoops;
 
 	// history of input elements (as Strings). No duplicates
 	private ArrayList fInputHistory;
+	
+	private DependencyLoop[] fLoops;
 	
 	private HistoryDropDownAction fHistoryDropDownAction;
 	/**
@@ -219,6 +256,7 @@ public class DependenciesView extends PageBookView implements
 		fPartsToPages = new HashMap(4);
 		fPagesToParts = new HashMap(4);
 		fInputHistory= new ArrayList();
+		fLoops = NO_LOOPS;
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {
@@ -235,6 +273,7 @@ public class DependenciesView extends PageBookView implements
 		manager.appendToGroup("presentation", fShowTree); //$NON-NLS-1$
 		manager.appendToGroup("presentation", fShowList); //$NON-NLS-1$
 		manager.add(new Separator("history")); //$NON-NLS-1$
+		manager.add(fShowLoops);
 		manager.add(fHistoryDropDownAction);
 	}
 
@@ -303,8 +342,11 @@ public class DependenciesView extends PageBookView implements
 		fShowList = new ShowListAction();
 		fShowList.setChecked(fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST));
 		
+		fShowLoops = new ShowLoopsAction();
+		fShowLoops.setEnabled(fLoops != NO_LOOPS);
+		
 		fHistoryDropDownAction= new HistoryDropDownAction(this);
-		fHistoryDropDownAction.setEnabled(false);
+		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
 		
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
@@ -375,9 +417,11 @@ public class DependenciesView extends PageBookView implements
 			return;
 		String id = memento.getString(MEMENTO_KEY_INPUT);
 		if (id != null) {
-			IPlugin plugin = PDECore.getDefault().findPlugin(id);
+			IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(id);
 			if (plugin != null) {
-				fInput = plugin.getModel();
+				fInput = plugin;
+				addHistoryEntry(id);
+				findLoops();
 			}
 		}
 	}
@@ -403,7 +447,35 @@ public class DependenciesView extends PageBookView implements
 
 	private void updateInput(Object object) {
 		fInput = object;
+		findLoops();
 		((DependenciesViewPage) getCurrentPage()).setInput(object);
+	}
+
+	/**
+	 * 
+	 */
+	private void findLoops() {
+		fLoops = NO_LOOPS;
+		if (fInput != null && fInput instanceof IPluginModel) {
+			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
+					.getDisplay(), new Runnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					IPlugin plugin = ((IPluginModel) fInput).getPlugin();
+					DependencyLoop[] loops = DependencyLoopFinder
+							.findLoops(plugin);
+					if (loops.length > 0) {
+						fLoops = loops;
+					}
+				}
+			});
+		}
+		if(fShowLoops != null)
+			fShowLoops.setEnabled(fLoops != NO_LOOPS);
 	}
 
 	/*
@@ -495,6 +567,10 @@ public class DependenciesView extends PageBookView implements
 				title = PDEPlugin.getFormattedMessage(
 						"DependenciesView.callers.list.title", name); //$NON-NLS-1$
 			}
+			if(fLoops != NO_LOOPS){
+				title = title + " " + PDEPlugin.getResourceString(
+						"DependenciesView.cycles.title");
+			}
 			setContentDescription(title); //$NON-NLS-1$
 		}
 		setTitleToolTip(getTitle());
@@ -509,7 +585,8 @@ public class DependenciesView extends PageBookView implements
 			fInputHistory.remove(entry);
 		}
 		fInputHistory.add(0, entry);
-		fHistoryDropDownAction.setEnabled(true);
+		if (fHistoryDropDownAction != null)
+			fHistoryDropDownAction.setEnabled(true);
 	}
 	
 	private void updateHistoryEntries() {
@@ -519,7 +596,8 @@ public class DependenciesView extends PageBookView implements
 				fInputHistory.remove(i);
 			}
 		}
-		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
+		if (fHistoryDropDownAction != null)
+			fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
 	}
 	
 	/**

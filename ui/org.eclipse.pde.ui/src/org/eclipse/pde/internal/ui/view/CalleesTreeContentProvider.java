@@ -17,8 +17,8 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 
-public class CalleesTreeContentProvider extends
-		DependenciesViewPageContentProvider implements ITreeContentProvider {
+public class CalleesTreeContentProvider extends CalleesContentProvider
+		implements ITreeContentProvider {
 
 	/**
 	 * Constructor.
@@ -33,13 +33,13 @@ public class CalleesTreeContentProvider extends
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IPluginBase) {
 			IPluginBase plugin = (IPluginBase) parentElement;
-			return plugin.getImports();
+			return findCallees(plugin);
 		} else if (parentElement instanceof IPluginImport) {
 			IPluginImport pluginImport = (IPluginImport) parentElement;
 			String id = pluginImport.getId();
 			IPlugin importedPlugin = PDECore.getDefault().findPlugin(id);
 			if (importedPlugin != null)
-				return importedPlugin.getImports();
+				return findCallees(importedPlugin);
 
 		}
 		return new Object[0];

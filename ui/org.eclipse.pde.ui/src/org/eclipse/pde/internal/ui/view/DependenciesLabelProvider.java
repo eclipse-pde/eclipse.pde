@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -68,25 +69,31 @@ public class DependenciesLabelProvider extends LabelProvider {
 			id = (String) obj;
 		}
 		if (id != null) {
-			IPlugin plugin = PDECore.getDefault().findPlugin(id);
-			if (plugin != null) {
-				IPluginModelBase model = plugin.getPluginModel();
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+			if (model != null) {
 				if (model.getUnderlyingResource() == null)
 					flags |= SharedLabelProvider.F_EXTERNAL;
 			}
-			if (plugin == null)
+		
+			if (model == null)
 				flags = SharedLabelProvider.F_ERROR;
 
+			if(model != null && model instanceof IFragmentModel)
+				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		if (obj instanceof IPluginModelBase) {
 			if (((IPluginModelBase) obj).getUnderlyingResource() == null)
 				flags |= SharedLabelProvider.F_EXTERNAL;
+			if(obj instanceof IFragmentModel)
+				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		if (obj instanceof IPluginBase) {
 			if (((IPluginBase) obj).getPluginModel().getUnderlyingResource() == null)
 				flags |= SharedLabelProvider.F_EXTERNAL;
+			if(obj instanceof IFragment)
+				return fSharedProvider.get(PDEPluginImages.DESC_FRAGMENT_OBJ, flags);
 			return fSharedProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ, flags);
 		}
 		return fSharedProvider.getImage(obj);
