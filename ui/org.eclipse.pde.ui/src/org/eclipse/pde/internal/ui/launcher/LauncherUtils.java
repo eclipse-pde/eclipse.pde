@@ -76,7 +76,7 @@ public class LauncherUtils {
 		String nl = TargetPlatform.getNL();
 		String args = "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			return args + " -clean";
+			return args + " -clean"; //$NON-NLS-1$
 		return args;
 	}
 	

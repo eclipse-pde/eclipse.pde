@@ -98,8 +98,8 @@ public class MigratePluginWizard extends Wizard {
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();
 			files.add(models[i].getUnderlyingResource());
-			files.add(project.getFile(".project"));
-			files.add(project.getFile(".classpath"));
+			files.add(project.getFile(".project")); //$NON-NLS-1$
+			files.add(project.getFile(".classpath")); //$NON-NLS-1$
 		}
 		return (IFile[])files.toArray(new IFile[files.size()]);
 	}

@@ -70,7 +70,7 @@ public class PluginPathFinder {
 	}
 	
 	private static URL[] getConfiguredSites(String platformHome, IPlatformConfiguration configuration) {
-		URL[] installPlugins = scanLocations(new File[]{new File(platformHome, "plugins")});
+		URL[] installPlugins = scanLocations(new File[]{new File(platformHome, "plugins")}); //$NON-NLS-1$
 		URL[] extensionPlugins = getExtensionURLs(configuration);
 		
 		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
@@ -84,7 +84,7 @@ public class PluginPathFinder {
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			URL url = sites[i].getURL();
-			if ("file".equalsIgnoreCase(url.getProtocol())) {
+			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
 				String[] plugins = sites[i].getPlugins();
 				for (int j = 0; j < plugins.length; j++) {
 					try {
