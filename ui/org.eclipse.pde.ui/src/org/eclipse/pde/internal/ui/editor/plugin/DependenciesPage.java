@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
+import java.util.*;
+
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.*;
@@ -38,7 +40,7 @@ public class DependenciesPage extends PDEFormPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		
-		managedForm.addPart(new RequiresSection(this, body));		
+		managedForm.addPart(new RequiresSection(this, body, getRequiredSectionLabels()));		
 		boolean isBundle = isBundle();
 		if (isBundle)
 			managedForm.addPart(new ImportPackageSection(this, body));
@@ -56,5 +58,17 @@ public class DependenciesPage extends PDEFormPage {
 	private boolean isBundle() {
 		return getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
 	}
+    
+    private String[] getRequiredSectionLabels() {
+        ArrayList labels = new ArrayList();
+        labels.add(PDEPlugin.getResourceString("RequiresSection.add"));
+        labels.add(PDEPlugin.getResourceString("RequiresSection.delete"));
+        labels.add("Remove All");
+        labels.add(PDEPlugin.getResourceString("RequiresSection.up"));
+        labels.add(PDEPlugin.getResourceString("RequiresSection.down"));
+        if (isBundle())
+            labels.add("Properties...");
+        return (String[])labels.toArray(new String[labels.size()]);
+    }
 
 }

@@ -135,10 +135,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ImportObject obj) {
-		if (isFullNameModeEnabled())
-			return obj.toString();
-		return preventNull(obj.getId());
-	}
+        String version = obj.getImport().getVersion();
+        if (version != null && version.length() > 0 && Character.isDigit(version.charAt(0)))
+            version = "(" + version + ")";
+       
+        String text = isFullNameModeEnabled() ? obj.toString() : preventNull(obj.getId());
+        return version == null || version.length() > 0 ? text : text + " " + version;
+    }
 	
 	public String getObjectText(IProductPlugin obj) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(obj.getId());	
