@@ -316,7 +316,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isSchemaFile(IFile file) {
-		return ".exsd".equals(file.getFileExtension());
+		return "exsd".equals(file.getFileExtension());
 	}
 	
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {
