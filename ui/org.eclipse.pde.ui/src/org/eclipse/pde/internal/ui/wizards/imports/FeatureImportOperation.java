@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.team.core.*;
@@ -141,6 +142,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 					PDECore.BINARY_PROJECT_VALUE);
 			
 				setProjectNatures(project, model, monitor);
+				if (project.hasNature(JavaCore.NATURE_ID))
+					setClasspath(project, model, monitor);
 
 		} finally {
 			monitor.done();
@@ -201,18 +204,41 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		IProgressMonitor monitor)
 		throws CoreException {
 		IProjectDescription desc = project.getDescription();
-		if (model.getFeature().getInstallHandler() != null) {
-			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDE.FEATURE_NATURE });
-			IJavaProject jProject = JavaCore.create(project);
-			jProject.setRawClasspath(
-				new IClasspathEntry[] {
-					JavaCore.newContainerEntry(
-						new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))}, //$NON-NLS-1$
-				monitor);
+		if (needsJavaNature(model)) {
+			desc.setNatureIds(new String[] { JavaCore.NATURE_ID,
+					PDE.FEATURE_NATURE });
 		} else {
 			desc.setNatureIds(new String[] { PDE.FEATURE_NATURE });
 		}
 		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
+	}
+
+	private void setClasspath(IProject project, IFeatureModel model,
+			IProgressMonitor monitor) throws JavaModelException {
+		IJavaProject jProject = JavaCore.create(project);
+
+		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(new Path(
+				"org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
+
+		String libName = model.getFeature().getInstallHandler().getLibrary();
+		IClasspathEntry handlerCPEntry = JavaCore.newLibraryEntry(project
+				.getFullPath().append(libName), null, null);
+
+		jProject.setRawClasspath(new IClasspathEntry[] { jreCPEntry,
+				handlerCPEntry }, monitor);
+	}
+
+	private boolean needsJavaNature(IFeatureModel model) {
+		IFeatureInstallHandler handler = model.getFeature().getInstallHandler();
+		if (handler == null) {
+			return false;
+		}
+		String libName = handler.getLibrary();
+		if (libName == null || libName.length() <= 0) {
+			return false;
+		}
+		File lib = new File(model.getInstallLocation(), libName);
+		return lib.exists();
 	}
 
 }
