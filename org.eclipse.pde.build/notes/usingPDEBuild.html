@@ -6,90 +6,95 @@
 </head>
 <body>
 
-<h2>
-What is PDE Build?</h2>
-&nbsp;&nbsp;&nbsp; PDE Build is a plug-in that helps users build their own 
-plug-ins. The term build here is related to deployment and not development.
-Basically, PDE Build takes an Eclipse Plug-in Project, its plugin.xml and
-build.properties files and generate a build.xml script to be run by Ant.
-Building plug-ins, fragments or features consists of the 3 stages: fetch,
-generate scripts and build that are described bellow.
-<p><b>Fetch</b>
-<br>&nbsp;&nbsp;&nbsp; Consists of taking the interesting elements from a 
-repository to the build machine. These elements can be plug-ins, fragments or 
-features. &quot;Directory files&quot; or &quot;map files&quot; are responsible for identifying
-where, how and which plug-ins should go to the build machine. These files are basically Java properties files where the entries have the following
-format: <i>&nbsp;&nbsp;&nbsp;  </i>
-<p> <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; element@element_id=tag,:connection_type:user@host:repository</i>
-<br>&nbsp;<p>&nbsp;&nbsp;&nbsp;
-The current implementation of fetch only works against CVS repositories
-and there are no plans for supporting different kinds. Skipping or substituting
-this step should not be hard for users of other VCM systems or other kind
-of storage. <p>Examples:
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.pde.build=v20020717, 
-:pserver:anonymous@dev.eclipse.org:/home/eclipse,</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-fragment@org.eclipse.core.resources.win32=v20020627, 
-:pserver:anonymous@dev.eclipse.org:/home/eclipse, </p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.platform=v20020820, 
-:pserver:anonymous@dev.eclipse.org:/home/eclipse, </p>
-<p>&nbsp;</p>
-<p><b>Generate Ant buildfiles</b>
-<br>&nbsp;&nbsp;&nbsp; Once the plug-ins, fragments and features are in
+<h2>What is PDE Build?</h2>
+
+PDE Build is a plug-in that helps users build their own plug-ins. The term build here is related to deployment 
+and not development. PDE Build takes an Eclipse Plug-in Project, its plugin.xml and build.properties
+files and generates a build.xml script to be run by Ant. Building plug-ins, fragments or features consists of the 
+3 stages: <em>fetch</em>, <em>generate scripts</em> and <em>build</em> that are described bellow.
+<p>
+
+<b>Fetch</b><br>
+Consists of taking the interesting elements from a repository to the build machine. These elements can be 
+plug-ins, fragments or features. &quot;Directory files&quot; or &quot;map files&quot; are responsible for identifying
+where, how and which plug-ins should go to the build machine. These files are basically Java properties files 
+where the entries have the following format: 
+<p>
+
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; element@element_id=tag,:connection_type:user@host:repository</tt>
+<p>
+
+The current implementation of fetch only works against CVS repositories and there are no plans for supporting 
+different kinds. Skipping or substituting this step should not be hard for users of other VCM systems or other kind
+of storage. 
+<p>
+
+Examples:
+<p>
+<tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.pde.build=v20020717, :pserver:anonymous@dev.eclipse.org:/home/eclipse,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fragment@org.eclipse.core.resources.win32=v20020627, :pserver:anonymous@dev.eclipse.org:/home/eclipse, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin@org.eclipse.platform=v20020820, :pserver:anonymous@dev.eclipse.org:/home/eclipse, <br>
+</tt>
+<p>
+
+<b>Generate Ant buildfiles</b><br>
+Once the plug-ins, fragments and features are in
 place, we need to generate the build.xml scripts. These Ant buildfiles drive
 the build process. In order to generate them, PDE Build takes as input the plugin.xml, fragment.xml, feature.xml and build.properties files. The complete
 description of the first three files are elsewhere in the Eclipse documentation. Here we will only fully
 describe the build.properties file and relevant parts of the others.
-<p><b>Build</b>
-<br>&nbsp;&nbsp;&nbsp; This step is basically executed by Ant. One important thing here is
-to know exactly what targets to call in order to get the desired result.<p>&nbsp;<h2>
-How do I use PDE Build?</h2>
+<p>
 
-<h2>
-<b>Fetch</b></h2>
-&nbsp;&nbsp;&nbsp; This step is done by the <font face="Fixedsys">eclipse.fetch</font> 
-Ant task provided by PDE Build. Here is an example:<font SIZE="2"><p style="margin-top: 0; margin-bottom: 0"></font>
-</p>
-<p style="margin-top: 0; margin-bottom: 0"><font size="2" color="#000080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;eclipse.fetch
-</font></p>
-<p style="margin-top: 0; margin-bottom: 0"><font SIZE="2" COLOR="#000080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scriptName=</font><font SIZE="2" COLOR="#008000">&quot;fetch.xml&quot;</font></p>
-<p style="margin-top: 0; margin-bottom: 0"><font SIZE="2" COLOR="#000080">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; directory=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/test.map&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /&gt;</p>
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-</font>
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp; The above task 
-generates an Ant buildfile called fetch.xml. It consists basically of some Ant 
+<b>Build</b><br>
+This step is basically executed by Ant. One important thing here is
+to know exactly what targets to call in order to get the desired result.
+<p>
+
+<h2>How do I use PDE Build?</h2>
+
+<h3>Fetch</h3>
+This step is done by the <code>eclipse.fetch</code> 
+Ant task provided by PDE Build. Here is an example:
+
+<pre>
+&lt;eclipse.fetch
+&nbsp;&nbsp;&nbsp;&nbsp;scriptName=<font COLOR="#008000">&quot;fetch.xml&quot;</font>
+&nbsp;&nbsp;&nbsp;&nbsp;elements=<font COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</font>
+&nbsp;&nbsp;&nbsp;&nbsp;directory=<font COLOR="#008000">&quot;${basedir}/test.map&quot;</font>
+&nbsp;&nbsp;&nbsp;&nbsp;install=<font COLOR="#008000">&quot;${basedir}/source&quot;</font>
+&nbsp;&nbsp;&nbsp; children=<font COLOR="#008000">&quot;true&quot;</font>
+/&gt;
+</pre>
+
+The above task generates an Ant buildfile called <em>fetch.xml</em>. It consists of Ant 
 CVS tasks that retrieve the Eclipse Platform feature and all its plug-ins and 
-fragments.</p>
-<h2><b>Generate Scripts</b></h2>
-<p>&nbsp;&nbsp;&nbsp; Once features, plug-ins and fragments are downloaded you 
-need to generate their Ant buildfiles. This step is done by the <font face="Fixedsys">
-eclipse.buildScripts</font> 
-Ant task provided by PDE Build. Here is an example:<font SIZE="2"></p>
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font>
-<font SIZE="2" COLOR="#000080">&lt;eclipse.buildScript</p>
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-elements=</font><font SIZE="2" COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-install=</font><font SIZE="2" COLOR="#008000">&quot;${basedir}/source&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-children=</font><font SIZE="2" COLOR="#008000">&quot;true&quot;</p>
-</font><font SIZE="2" COLOR="#000080">
-<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-/&gt;</p>
-</font>
-<p>&nbsp;&nbsp;&nbsp; The above task will generate Ant buildfiles for the 
-Eclipse Platform feature and all its plug-ins and fragments.<p><b>build.properties</b><br>&nbsp;&nbsp;&nbsp; The build mechanism is driven by a build specification.
+fragments.
+<p>
+
+<h2>Generate Scripts</h2>
+<p>
+
+Once features, plug-ins and fragments are downloaded you 
+need to generate their Ant buildfiles. This step is done by the <code>eclipse.buildScripts</code> 
+Ant task provided by PDE Build. Here is an example:
+
+<pre>
+&lt;eclipse.buildScript
+&nbsp;&nbsp;&nbsp;&nbsp;elements=<font COLOR="#008000">&quot;feature@org.eclipse.platform-feature&quot;</font>
+&nbsp;&nbsp;&nbsp;&nbsp;install=<font COLOR="#008000">&quot;${basedir}/source&quot;</font>
+&nbsp;&nbsp;&nbsp;&nbsp;children=<font COLOR="#008000">&quot;true&quot;</font>
+/&gt;
+</pre>
+
+The above task will generate Ant buildfiles for the 
+Eclipse Platform feature and all its plug-ins and fragments.
+<p>
+
+<b>build.properties</b>
+<br>
+
+The build mechanism is driven by a build specification.
 The specification for an individual plug-in, fragment, or feature is found
 in a build.properties file in the corresponding element (feature, plug-in or 
 fragment). It is a simple
@@ -97,8 +102,10 @@ properties file that describes, for example, where to find the source code for t
 Other entries describe which files should be included/excluded in/from
 various forms of distribution (e.g., binary, source). The possible entries
 are described bellow:
-<p><b><tt>custom = yes</tt></b>
-<br>&nbsp;&nbsp;&nbsp; Tells the script generator that no script is necessary
+<p>
+
+<b><code>custom = yes</code></b><br>
+Tells the script generator that no script is necessary
 for the current element. It is usually used when a custom build.xml script
 is provided. The build.xml script has to be in the root folder of the element.
 <p><b>bin.includes =</b>
@@ -115,12 +122,13 @@ compilation must define this entry.
 JARs should be compiled. Should be used to solve build dependencies within the 
 same plug-in/fragment.<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp; 
 Example:<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-jars.compile.order=resources.jar,lib/resources-ant.jar<br>
-&nbsp;<p>&nbsp;<h2>
-<b>Build</b></h2>
-&nbsp;&nbsp;&nbsp; The generated build.xml scripts from the previous step
-have many targets. They public ones described bellow. These are the targets
-that a custom build.xml script has to implement.
+jars.compile.order=resources.jar,lib/resources-ant.jar
+<p>
+
+<h2>Build</h2>
+The generated build.xml scripts from the previous step have many targets. The 
+public ones described bellow. These are the targets that a custom build.xml script 
+<em>must</em> implement. 
 <p><b><font size=+2>Feature targets:</font></b>
 <p><b>all.children</b>
 <br>&nbsp;&nbsp;&nbsp; Calls plugin-template and fragment-template.
@@ -173,14 +181,16 @@ fragments)/(${plugin} | ${fragment}). E.g., ${destination}/plugins/${plugin}.
 <br>&nbsp;&nbsp;&nbsp; Copies files generated by <b>build.sources</b> (*src.zip)
 to ${destination}/(plugins | fragments)/(${plugin} | ${fragment}). E.g.,
 ${destination}/plugins/${plugin}.
-<br>&nbsp;
-<br>&nbsp;
-<h2><b>General notes on PDE Build</b></h2>
-<p>&nbsp;&nbsp;&nbsp; This section is not organized in any way. It just contains 
+<p>
+
+<h2>General notes on PDE Build</h2>
+
+This section is not organized in any way. It just contains 
 general knowledge on the use and implementation of the PDE Build plug-in. 
 Although it should be up to date there is no guarantee about it. Check with your 
-favorite pde build developer before making any assumptions based on it.</p>
-<p>&nbsp;</p>
+favorite pde build developer before making any assumptions based on it.
+<p>
+
 <ul>
   <li>units are features, plug-ins and fragments</li>
   <li>Ant is the base technology</li>
