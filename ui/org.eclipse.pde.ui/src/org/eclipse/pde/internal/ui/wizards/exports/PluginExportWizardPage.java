@@ -37,11 +37,10 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	public Object[] getListElements() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList result = new ArrayList();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		for (int i = 0; i < projects.length; i++) {
 			if (!WorkspaceModelManager.isBinaryPluginProject(projects[i])
 				&& WorkspaceModelManager.isPluginProject(projects[i])) {
-				IModel model = manager.getWorkspaceModel(projects[i]);
+				IModel model = PDECore.getDefault().getModelManager().findModel(projects[i]);
 				if (model != null && isValidModel(model) && hasBuildProperties((IPluginModelBase)model)) {
 					result.add(model);
 				}
@@ -63,7 +62,14 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
 	 */
 	protected boolean isValidModel(IModel model) {
-		return model instanceof IPluginModelBase;
+		return model != null && model instanceof IPluginModelBase;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.resources.IProject)
+	 */
+	protected IModel findModelFor(IProject project) {
+		return PDECore.getDefault().getModelManager().findModel(project);
 	}
 				
 }

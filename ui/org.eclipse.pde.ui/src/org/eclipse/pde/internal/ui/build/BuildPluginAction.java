@@ -39,8 +39,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		try {
-			WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-			IPluginModelBase model = (IPluginModelBase) manager.getWorkspaceModel(project);
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
 			if (model != null) {
 				generator.setModelId(model.getPluginBase().getId());
 				generator.generate();

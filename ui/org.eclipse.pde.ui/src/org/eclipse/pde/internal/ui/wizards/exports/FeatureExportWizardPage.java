@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
@@ -45,6 +46,13 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	 */
 	protected boolean isValidModel(IModel model) {
 		return model instanceof IFeatureModel;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.resources.IProject)
+	 */
+	protected IModel findModelFor(IProject project) {
+		return PDECore.getDefault().getWorkspaceModelManager().getFeatureModel(project);
 	}
 
 }

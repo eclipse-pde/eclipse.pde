@@ -125,7 +125,7 @@ public class WorkspaceModelManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
 	 */
-	public IModel getWorkspaceModel(IProject project) {
+	private IModel getWorkspaceModel(IProject project) {
 		initializeWorkspaceModels();
 		
 		if (hasFeatureManifest(project))
@@ -143,6 +143,16 @@ public class WorkspaceModelManager
 				return (IModel)fFragmentModels.get(project);
 		
 		return null;
+	}
+	
+	public IPluginModelBase getWorkspacePluginModel(IProject project) {
+		IModel model = getWorkspaceModel(project);
+		return (model instanceof IPluginModelBase) ? (IPluginModelBase)model : null;
+	}
+	
+	public IFeatureModel getFeatureModel(IProject project) {
+		IModel model = getWorkspaceModel(project);
+		return (model instanceof IFeatureModel) ? (IFeatureModel)model : null;
 	}
 	
 	private void handleFileDelta(IResourceDelta delta) {

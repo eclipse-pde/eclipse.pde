@@ -103,14 +103,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
-		if (active) {
-			// page becomes visible; notify the context
-			inputContext.setSourceEditingMode(true);
-		}
-		else {
-			// page becomes invisible; notify the context
-			inputContext.setSourceEditingMode(false);
-		}
+		inputContext.setSourceEditingMode(active);
 	}
 
 	public boolean canLeaveThePage() {
@@ -129,14 +122,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		control = children[children.length - 1];
 		
 		WorkbenchHelp.setHelp(control, IHelpContextIds.MANIFEST_SOURCE_PAGE);
-		
-		//IDocument document =
-		//	getDocumentProvider().getDocument(getEditorInput());
-		//unregisterGlobalActions();
-		// Important - must reset the provider to the multi-page
-		// editor.
-		// See 32622
-		//getSite().setSelectionProvider(getEditor());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()

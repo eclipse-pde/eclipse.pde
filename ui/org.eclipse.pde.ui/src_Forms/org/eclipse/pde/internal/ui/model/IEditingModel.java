@@ -21,4 +21,6 @@ import org.eclipse.pde.internal.ui.editor.text.*;
 public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilingParticipant, IEditable {
 
 public IDocument getDocument();
+public void setStale(boolean stale);
+public boolean isStale();
 }

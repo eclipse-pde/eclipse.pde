@@ -11,28 +11,27 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -426,10 +425,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			fExportPart.getTableViewer().reveal(checked.get(0));
 	}
 
-	private IModel findModelFor(IProject project) {
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getWorkspaceModel(project);
-	}
+	protected abstract IModel findModelFor(IProject project);
 
 	private void pageChanged() {
 		String message = null;
@@ -592,7 +588,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			ArrayList models = new ArrayList();
-			WorkspaceModelManager wManager = PDECore.getDefault().getWorkspaceModelManager();
 			IWorkingSet[] workingSets = dialog.getSelection();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
@@ -601,7 +596,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IModel model = wManager.getWorkspaceModel((IProject)element);
+						IModel model = findModelFor((IProject)element);
 						if (isValidModel(model))
 							models.add(model);						
 					}

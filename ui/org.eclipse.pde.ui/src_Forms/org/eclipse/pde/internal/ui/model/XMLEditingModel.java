@@ -41,10 +41,21 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		} catch (SAXException e) {
 			fLoaded = false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
+	 */
+	protected void adjustOffsets(IDocument document) {
+		try {
+			getParser().parse(getInputStream(document), createNodeOffsetHandler(this));
+		} catch (SAXException e) {
+		} catch (IOException e) {
+		}
+	}
+	
+	protected abstract DefaultHandler createNodeOffsetHandler(IModel model);
 		
 	protected abstract DefaultHandler createDocumentHandler(IModel model);
 	

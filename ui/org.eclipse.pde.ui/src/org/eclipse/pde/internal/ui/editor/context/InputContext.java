@@ -187,12 +187,12 @@ public abstract class InputContext {
 				for (int i = 0; i < fEditOperations.size(); i++) {
 					insert(edit, (TextEdit)fEditOperations.get(i));
 				}
+				if (model instanceof IEditingModel)
+					((IEditingModel)model).setStale(true);				
 				edit.apply(doc);
 				fEditOperations.clear();
 				if (model instanceof IEditable)
 					((IEditable)model).setDirty(false);
-				if (model instanceof IEditingModel && !isInSourceMode())
-					((IEditingModel)model).reconciled(doc);
 			} catch (MalformedTreeException e) {
 				PDEPlugin.logException(e);
 			} catch (BadLocationException e) {

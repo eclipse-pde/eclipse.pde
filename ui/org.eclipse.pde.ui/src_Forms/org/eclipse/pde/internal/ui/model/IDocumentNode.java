@@ -24,6 +24,7 @@ public interface IDocumentNode extends Serializable {
 	
 	void addTextNode(IDocumentTextNode textNode);
 	IDocumentTextNode getTextNode();
+	void removeTextNode();
 	
 	int indexOf(IDocumentNode child);
 	IDocumentNode getChildAt(int index);
@@ -42,6 +43,7 @@ public interface IDocumentNode extends Serializable {
 	
 	IDocumentAttribute getDocumentAttribute(String name);
 	IDocumentAttribute[] getNodeAttributes();
+	void removeDocumentAttribute(IDocumentAttribute attr);
 	
 	boolean isErrorNode();	
 	void setIsErrorNode(boolean isErrorNode);

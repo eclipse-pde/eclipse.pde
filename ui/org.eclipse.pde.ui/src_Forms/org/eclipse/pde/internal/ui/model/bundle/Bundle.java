@@ -20,13 +20,14 @@ public class Bundle implements IBundle {
 	
 	private BundleModel fModel;
 	private Hashtable fDocumentHeaders = new Hashtable();
-	private Hashtable fHeaders = new Hashtable();
 	
 	public Bundle(BundleModel model) {
 		fModel = model;
 	}
 	
 	public void load(Manifest manifest) {
+		fDocumentHeaders.clear();
+		//fHeaders.clear();
 		Map attributes = manifest.getMainAttributes();
 		Iterator iter = attributes.keySet().iterator();
 		while (iter.hasNext()) {
@@ -35,18 +36,30 @@ public class Bundle implements IBundle {
 			header.setName(key.toString());
 			header.setValue((String)attributes.get(key));
 			fDocumentHeaders.put(key.toString(), header);
-			fHeaders.put(key.toString(), attributes.get(key));
 		}
-		addOffsets();		
+		adjustOffsets(fModel.getDocument());		
 	}
 	
-	public void clear() {
-		fDocumentHeaders.clear();
-		fHeaders.clear();
+	public void clearOffsets() {
+		Iterator iter = fDocumentHeaders.values().iterator();
+		while (iter.hasNext()) {
+			ManifestHeader header = (ManifestHeader)iter.next();
+			header.setOffset(-1);
+			header.setLength(-1);
+		}
 	}
-
-	private void addOffsets() {
-		IDocument document = fModel.getDocument();
+	
+	public void trim() {
+		Iterator iter = fDocumentHeaders.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next().toString();
+			ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
+			if (header.getOffset() == -1)
+				fDocumentHeaders.remove(key);
+		}
+	}
+	
+	protected void adjustOffsets(IDocument document) {
 		int lines = document.getNumberOfLines();
 		try {
 			IDocumentKey currentKey = null;
@@ -56,13 +69,16 @@ public class Bundle implements IBundle {
 				String line = document.get(offset, length);
 				
 				if (currentKey != null) {
+					int lineNumber = line.startsWith(" ") ? i : i - 1;
+					IRegion region = document.getLineInformation(lineNumber);
+					String delimiter = document.getLineDelimiter(lineNumber);
+					int keyLength = region.getOffset() + region.getLength() - currentKey.getOffset();
+					currentKey.setLength(delimiter != null ? keyLength + delimiter.length() : keyLength);
 					if (!line.startsWith(" ")) {
-						IRegion region = document.getLineInformation(i-1);
-						currentKey.setLength(region.getOffset() + region.getLength() - currentKey.getOffset());
 						currentKey = null;
-					}
-				} 
-
+					} 
+				}  
+				
 				if (currentKey == null) {
 					int index = line.indexOf(':');				
 					String name = (index != -1) ? line.substring(0, index) : line;
@@ -70,7 +86,8 @@ public class Bundle implements IBundle {
 					if (currentKey != null) {
 						IRegion region = document.getLineInformation(i);
 						currentKey.setOffset(region.getOffset());
-						currentKey.setLength(region.getLength());
+						String delimiter = document.getLineDelimiter(i);
+						currentKey.setLength(delimiter != null ? region.getLength() + delimiter.length() : region.getLength());
 					}
 				}
 			}
@@ -89,18 +106,17 @@ public class Bundle implements IBundle {
 		header.setValue(value);
 		fDocumentHeaders.put(key, header);
 		
-		fHeaders.put(key, value);
-		
 		fModel.fireModelObjectChanged(header, key, null, value);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getHeader(java.lang.String)
 	 */
 	public String getHeader(String key) {
-		return (String)fHeaders.get(key);
+		ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
+		return (header != null) ? header.getValue() : null;
 	}
 	
-	public Dictionary getDocumentHeaders() {
+	public Dictionary getHeaders() {
 		return fDocumentHeaders;
 	}
 }

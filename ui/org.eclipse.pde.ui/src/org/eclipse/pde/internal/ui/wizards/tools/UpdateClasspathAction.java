@@ -39,7 +39,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
-
+			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -54,7 +54,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				}
 				if (project != null
 				 && WorkspaceModelManager.isJavaPluginProject(project)) {
-					IPluginModelBase model = findModelFor(project);
+					IPluginModelBase model = manager.findModel(project);
 					if (model != null) {
 						models.add(model);
 					}
@@ -112,12 +112,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		}
 	}
 
-	private IPluginModelBase findModelFor(IProject project) {
-		WorkspaceModelManager manager =
-			PDECore.getDefault().getWorkspaceModelManager();
-		return (IPluginModelBase) manager.getWorkspaceModel(project);
-	}
-	
 	public static void doUpdateClasspath(
 		IProgressMonitor monitor,
 		IPluginModelBase[] models)

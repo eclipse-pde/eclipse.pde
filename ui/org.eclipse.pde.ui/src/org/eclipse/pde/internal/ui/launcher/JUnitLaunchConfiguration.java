@@ -15,7 +15,6 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
@@ -119,9 +118,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected String getTestPluginId(ILaunchConfiguration configuration)
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase model =
-			(IPluginModelBase) manager.getWorkspaceModel(javaProject.getProject());
+			PDECore.getDefault().getModelManager().findModel(javaProject.getProject());
 		if (model == null)
 			throw new CoreException(
 				new Status(
@@ -340,9 +338,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			if (projectID.length() > 0) {
 				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project != null && project instanceof IProject) {
-					IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel((IProject)project);
-					if (model != null && model instanceof IPluginModelBase) {
-						return ((IPluginModelBase)model).getPluginBase().getId();
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)project);
+					if (model != null) {
+						return model.getPluginBase().getId();
 					}
 				}
 			}

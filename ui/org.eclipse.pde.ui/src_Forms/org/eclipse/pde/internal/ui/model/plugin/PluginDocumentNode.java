@@ -250,5 +250,18 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	public IDocumentTextNode getTextNode() {
 		return fTextNode;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeTextNode()
+	 */
+	public void removeTextNode() {
+		fTextNode = null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#removeDocumentAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
+	 */
+	public void removeDocumentAttribute(IDocumentAttribute attr) {
+		fAttributes.remove(attr.getAttributeName());
+	}
 	
 }

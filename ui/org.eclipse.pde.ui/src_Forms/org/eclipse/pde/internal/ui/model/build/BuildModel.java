@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.model.build;
 
 import java.io.*;
-import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.build.*;
@@ -21,7 +20,7 @@ import org.eclipse.pde.internal.ui.model.*;
 
 public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	
-	private Properties fProperties;
+	//private Properties fProperties;
 	private BuildModelFactory fFactory;
 	private Build fBuild;
 
@@ -45,21 +44,19 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
 			fLoaded = true;
-			Properties prop = getProperties();
-			prop.clear();
-			prop.load(source);
-			((Build)getBuild()).load(prop);
+			((Build)getBuild()).load(source);
 		} catch (IOException e) {
 			fLoaded = false;
 		}
 	}
 	
-	private  Properties getProperties() {
-		if (fProperties == null) {
-			fProperties = new Properties();
-		}
-		return fProperties;
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
+	 */
+	protected void adjustOffsets(IDocument document) {
+		((Build)getBuild()).adjustOffsets(document);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildModel#getBuild()
 	 */

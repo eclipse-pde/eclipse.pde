@@ -19,11 +19,8 @@ import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.osgi.framework.*;
 
-/**
- * @author melhem
- *
- */
 public class BundleModel extends AbstractEditingModel implements IBundleModel {
+
 	private IBundle fBundle;
 	/**
 	 * @param document
@@ -52,12 +49,19 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 	public void load(InputStream source, boolean outOfSync) throws CoreException {
 		try {
 			fLoaded = true;
-			((Bundle)getBundle()).clear();
-			Manifest manifest = new Manifest(source);
-			((Bundle)getBundle()).load(manifest);
+			((Bundle)getBundle()).load(new Manifest(source));
 		} catch (IOException e) {
 			fLoaded = false;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
+	 */
+	protected void adjustOffsets(IDocument document) {
+		((Bundle)getBundle()).clearOffsets();
+		((Bundle)getBundle()).adjustOffsets(document);
+		((Bundle)getBundle()).trim();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundleModel#getBundle()

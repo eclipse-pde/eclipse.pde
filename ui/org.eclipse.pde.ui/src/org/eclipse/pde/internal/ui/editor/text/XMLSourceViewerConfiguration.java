@@ -93,6 +93,8 @@ public class XMLSourceViewerConfiguration extends SourceViewerConfiguration {
 			if (model instanceof IReconcilingParticipant) {
 				ReconcilingStrategy strategy = new ReconcilingStrategy();
 				strategy.addParticipant((IReconcilingParticipant)model);
+				if (fSourcePage.getContentOutline() instanceof IReconcilingParticipant)
+					strategy.addParticipant((IReconcilingParticipant)fSourcePage.getContentOutline());
 				fReconciler = new MonoReconciler(strategy, false);
 				fReconciler.setDelay(500);
 			}

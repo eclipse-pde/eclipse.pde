@@ -64,8 +64,10 @@ public class Build implements IBuild {
 	public void write(String indent, PrintWriter writer) {
 	}
 	
-	public void load(Properties properties) {
+	public void load(InputStream source) throws IOException {
 		fEntries.clear();
+		Properties properties = new Properties();
+		properties.load(source);
 		Enumeration enum = properties.keys();
 		while (enum.hasMoreElements()) {
 			String name = enum.nextElement().toString();
@@ -73,11 +75,10 @@ public class Build implements IBuild {
 			entry.processEntry(properties.get(name).toString());
 			fEntries.put(name, entry);
 		}
-		addOffsets();
+		adjustOffsets(fModel.getDocument());
 	}
 	
-	private void addOffsets() {
-		IDocument document = fModel.getDocument();
+	public void adjustOffsets(IDocument document) {	
 		int lines = document.getNumberOfLines();
 		try {
 			IDocumentKey currentKey = null;

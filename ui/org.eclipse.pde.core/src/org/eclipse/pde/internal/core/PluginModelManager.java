@@ -133,14 +133,18 @@ public class PluginModelManager implements IAdaptable {
 	
 	public ModelEntry findEntry(IProject project) {
 		Map map = getEntryTable();
-		IModel model = workspaceManager.getWorkspaceModel(project);
-		if (model==null || !(model instanceof IPluginModelBase))
+		IPluginModelBase model = workspaceManager.getWorkspacePluginModel(project);
+		if (model==null)
 			return null;
-		IPluginModelBase modelBase = (IPluginModelBase)model;
-		String id = modelBase.getPluginBase().getId();
+		String id = model.getPluginBase().getId();
 		if (id == null || id.length() == 0)
 			return null;
 		return (ModelEntry)map.get(id);
+	}
+	
+	public IPluginModelBase findModel(IProject project) {
+		ModelEntry entry = findEntry(project);
+		return (entry != null) ? entry.getActiveModel() : null;
 	}
 	
 	public ModelEntry findEntry(String id) {

@@ -12,8 +12,9 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.*;
@@ -22,16 +23,13 @@ import org.eclipse.ui.views.contentoutline.*;
 /**
  * Content outline page for the XML editor.
  */
-public class SourceOutlinePage extends ContentOutlinePage implements IModelChangedListener {
+public class SourceOutlinePage extends ContentOutlinePage implements IReconcilingParticipant{
 	
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
 	private ViewerSorter fViewerSorter;
 	
-	/**
-	 * Creates a new XMLContentOutlinePage.
-	 */
 	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerSorter sorter) {
 		super();
 		fModel = model;
@@ -45,7 +43,6 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		fModel.addModelChangedListener(this);
 		TreeViewer viewer= getTreeViewer();
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
@@ -54,22 +51,6 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 		viewer.expandAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
-	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getControl().setRedraw(false);
-					getTreeViewer().refresh();
-					getTreeViewer().expandAll();
-					getControl().setRedraw(true);
-				}
-			});
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#init(org.eclipse.ui.part.IPageSite)
 	 */
@@ -82,5 +63,22 @@ public class SourceOutlinePage extends ContentOutlinePage implements IModelChang
 			IToolBarManager toolBarManager, 
 			IStatusLineManager statusLineManager) {
 		//Create actions and contribute into the provided managers
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
+	 */
+	public void reconciled(IDocument document) {
+		final Control control = getControl();
+		if (control == null)
+			return;
+		control.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				control.setRedraw(false);
+				getTreeViewer().refresh();
+				getTreeViewer().expandAll();
+				control.setRedraw(true);
+			}
+		});
 	}
 }

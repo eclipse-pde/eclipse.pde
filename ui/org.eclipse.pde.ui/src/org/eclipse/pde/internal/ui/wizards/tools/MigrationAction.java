@@ -34,6 +34,7 @@ public class MigrationAction implements IObjectActionDelegate {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
 
+			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -47,7 +48,7 @@ public class MigrationAction implements IObjectActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null) {
-					IPluginModelBase model = findModelFor(project);
+					IPluginModelBase model = manager.findModel(project);
 					if (model != null) {
 						models.add(model);
 					}
@@ -70,12 +71,6 @@ public class MigrationAction implements IObjectActionDelegate {
 		}
 	}
 	
-	private IPluginModelBase findModelFor(IProject project) {
-		WorkspaceModelManager manager =
-		PDECore.getDefault().getWorkspaceModelManager();
-		return (IPluginModelBase) manager.getWorkspaceModel(project);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

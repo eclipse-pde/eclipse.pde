@@ -14,7 +14,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -40,14 +39,7 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 			el = ((IJavaProject)el).getProject();
 		}
 		if (el instanceof IProject) {
-			IModel model =
-				PDECore
-					.getDefault()
-					.getWorkspaceModelManager()
-					.getWorkspaceModel(
-					(IProject) el);
-			if (model instanceof IPluginModelBase)
-				el = model;
+			el = PDECore.getDefault().getModelManager().findModel((IProject) el);
 		}
 		if (el instanceof IPluginObject) {
 			el = ((IPluginObject)el).getModel();

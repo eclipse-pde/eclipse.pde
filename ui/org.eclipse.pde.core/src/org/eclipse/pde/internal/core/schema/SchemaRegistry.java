@@ -34,11 +34,9 @@ public class SchemaRegistry
 	
 	private void addExtensionPoint(IFile file) {
 		IProject project = file.getProject();
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
 		if (model==null) return;
-		if (!(model instanceof IPluginModelBase)) return;
-		IPluginModelBase modelBase = (IPluginModelBase)model;
-		IPluginExtensionPoint [] points = modelBase.getPluginBase().getExtensionPoints();
+		IPluginExtensionPoint [] points = model.getPluginBase().getExtensionPoints();
 		if (points.length==0) return;
 
 		for (int i=0; i<points.length; i++) {

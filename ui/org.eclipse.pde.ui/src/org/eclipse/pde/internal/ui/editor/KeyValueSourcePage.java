@@ -14,6 +14,7 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 			ReconcilingStrategy strategy = new ReconcilingStrategy();
 			strategy.addParticipant((IReconcilingParticipant) getInputContext()
 					.getModel());
+			strategy.addParticipant((SourceOutlinePage)getContentOutline());
 			MonoReconciler reconciler = new MonoReconciler(strategy, false);
 			reconciler.setDelay(500);
 			return reconciler;

@@ -121,8 +121,7 @@ public class BundleInputContext extends UTF8InputContext {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
-			//((AbstractEditingModel)getModel()).getDocument().get(key.getOffset(), key.getLength())
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write() + System.getProperty("line.separator"));
 			fOperationTable.put(key, op);
 			ops.add(op);
 		}	

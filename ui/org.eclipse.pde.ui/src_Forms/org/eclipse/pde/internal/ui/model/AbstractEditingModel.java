@@ -36,6 +36,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private String fCharset;
 	private IResource fUnderlyingResource;
 	private String fInstallLocation;
+	private boolean fStale;
 	
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;
@@ -108,7 +109,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#load()
 	 */
-	public void load() throws CoreException {
+	public final void load() throws CoreException {
 		try {
 			load(getInputStream(getDocument()), false);
 		} catch (UnsupportedEncodingException e) {
@@ -117,7 +118,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
 	 */
-	public void reload(InputStream source, boolean outOfSync)
+	public final void reload(InputStream source, boolean outOfSync)
 			throws CoreException {
 		load(source, outOfSync);
 		fireModelChanged(
@@ -143,11 +144,18 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public final void reconciled(IDocument document) {
 		if (isReconcilingModel()) {
 			try {
-				reload(getInputStream(document), false);
+				if (isStale()) {
+					adjustOffsets(document);
+					setStale(false);
+				} else {
+					reload(getInputStream(document), false);
+				}
 			} catch (Exception e) {
 			} 	
 		}
 	}
+	
+	protected abstract void adjustOffsets(IDocument document);
 	
 	protected InputStream getInputStream(IDocument document) throws UnsupportedEncodingException {
 		return new ByteArrayInputStream(document.get().getBytes(getCharset()));
@@ -218,6 +226,20 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 */
 	public void setDirty(boolean dirty) {
 		this.fDirty = dirty;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#isStale()
+	 */
+	public boolean isStale() {
+		return fStale;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IEditingModel#setStale(boolean)
+	 */
+	public void setStale(boolean stale) {
+		fStale = stale;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
