@@ -154,7 +154,33 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
             PDEPlugin.logException(e);
         }
     }
-        
+ 
+    private void createPerspectiveExtension() {
+        IPluginBase plugin = fModel.getPluginBase();
+        IPluginModelFactory factory = fModel.getPluginFactory();
+        try {
+            IPluginExtension extension = fModel.getFactory().createExtension();
+            extension.setPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
+            
+            IPluginElement appElement = factory.createElement(extension);
+            appElement.setName("perspective"); //$NON-NLS-1$          
+            appElement.setAttribute("name", "Sample Perspective"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+        	String qualifiedName = ((IPluginFieldData)fData).getApplicationClassname();
+            int nameloc = qualifiedName.lastIndexOf('.');
+            String packageName = (nameloc == -1) ? "" : qualifiedName.substring(0, nameloc); //$NON-NLS-1$
+            appElement.setAttribute("class", packageName + ".SamplePerspective"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            appElement.setAttribute("id", fData.getId() + ".samplePerspective"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            extension.add(appElement);
+            if (!extension.isInTheModel())
+                plugin.add(extension);
+        } catch (CoreException e) {
+            PDEPlugin.logException(e);
+        }
+    }
+
      private void generateApplicationClass(IProgressMonitor monitor) {
         try {
             ApplicationClassCodeGenerator generator = new ApplicationClassCodeGenerator(fProjectProvider.getProject(),(IPluginFieldData) fData);
@@ -280,6 +306,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			// generate an applications section and Java class if the RCP option is selected
 			if (data.isRCPApplicationPlugin()) {
 				createApplicationExtension(data.getApplicationID(), data.getApplicationClassname());
+				createPerspectiveExtension();
 			}
 		}
 
