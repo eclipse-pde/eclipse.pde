@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -32,8 +33,6 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 
 public class BuildForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "BuildEditor.Form.title";
-	public static final String CUSTOM_DESC =
-		"BuildPropertiesEditor.Custom.desc";
 
 	private BuildPage page;
 	private BuildClasspathSection classpathSection;
@@ -62,7 +61,7 @@ public class BuildForm extends ScrollableSectionForm {
 		customButton =
 			factory.createButton(
 				parent,
-				PDEPlugin.getResourceString(CUSTOM_DESC),
+				getCustomText(),
 				SWT.CHECK);
 		customButton.setAlignment(SWT.LEFT);
 		GridData gd = new GridData (GridData.FILL_HORIZONTAL);
@@ -186,7 +185,7 @@ public class BuildForm extends ScrollableSectionForm {
 		IBuildModel buildModel = (IBuildModel)page.getModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		String label = null;
+		String label = "";
 		if (model instanceof IFeatureModel) {
 			label = ((IFeatureModel)model).getFeature().getLabel();
 			if (label == null || label.trim().length() == 0)
@@ -198,6 +197,17 @@ public class BuildForm extends ScrollableSectionForm {
 		}
 		
 		return label;
+	}
+	
+	private String getCustomText() {
+		IBuildModel buildModel = (IBuildModel)page.getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		if (model instanceof IFeatureModel)
+			return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.feature");
+		if (model instanceof IPluginModel)
+			return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.plugin");
+		return PDEPlugin.getResourceString("BuildPropertiesEditor.Custom.fragment");
 	}
 
 }
