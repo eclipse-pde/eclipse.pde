@@ -105,4 +105,18 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	public String getXMLTagName() {
 		return fTag;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getRecommendedOffset(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
+	 */
+	public int getRecommendedOffset(IDocumentAttribute attribute) {
+		return getOffset() + getXMLTagName().length() + 1;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getDocumentAttribute(java.lang.String)
+	 */
+	public IDocumentAttribute getDocumentAttribute(String name) {
+		return (IDocumentAttribute)fAttributes.get(name);
+	}
 }

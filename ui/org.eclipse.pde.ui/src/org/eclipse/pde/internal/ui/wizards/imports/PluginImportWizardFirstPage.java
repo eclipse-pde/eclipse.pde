@@ -395,34 +395,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 	
 	private void resolveArbitraryLocation(final String location) {
-		final Vector result = new Vector();
-		final Vector fresult = new Vector();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				MultiStatus errors =
-					RegistryLoader.loadFromDirectories(
-						result,
-						fresult,
-						createPaths(new Path(location)),
-						false,
-						false,
-						monitor);
-				if (errors != null && errors.getChildren().length > 0) {
-					PDEPlugin.log(errors);
-				}
-				models = new IPluginModelBase[result.size() + fresult.size()];
-				System.arraycopy(
-					result.toArray(new IPluginModel[result.size()]),
-					0,
-					models,
-					0,
-					result.size());
-				System.arraycopy(
-					fresult.toArray(new IFragmentModel[fresult.size()]),
-					0,
-					models,
-					result.size(),
-					fresult.size());
+				models=TargetPlatformRegistryLoader.loadModels(createPaths(new Path(location)), false, monitor);
 				monitor.done();
 			}
 		};

@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -70,9 +69,10 @@ public ISchemaAttribute getAttributeInfo() {
 public String getValue() {
 	return value;
 }
-void load(ConfigurationPropertyModel attributeModel) {
-	this.name = attributeModel.getName();
-	this.value = attributeModel.getValue();
+
+void load (String name, String value) {
+	this.name = name;
+	this.value = value;
 }
 void load(Node node, Hashtable lineTable) {
 	this.name = node.getNodeName();

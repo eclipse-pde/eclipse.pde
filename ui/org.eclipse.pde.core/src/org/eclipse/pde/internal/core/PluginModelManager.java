@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi";
 	private IModelProviderListener providerListener;
-	private IExternalModelManager externalManager;
+	private ExternalModelManager externalManager;
 	private WorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
@@ -206,6 +209,7 @@ public class PluginModelManager implements IAdaptable {
 					ModelEntry entry = (ModelEntry)entries.get(plugin.getId());
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
 					changedPlugins.add(plugin);
+					updateBundleDescription(model, entry);
 				}
 			}
 		}
@@ -247,6 +251,15 @@ public class PluginModelManager implements IAdaptable {
 				kind = PluginModelDelta.REMOVED;
 			}
 		}
+		if (workspace) {
+			PDEState state = externalManager.getState();
+			if (added) {
+				addWorkspaceBundleToState(model, state);
+			} else {
+				removeWorkspaceBundleFromState(model, state);
+			}
+			state.resolveState(true);
+		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
 		delta.addEntry(entry, kind);
 	}
@@ -286,13 +299,75 @@ public class PluginModelManager implements IAdaptable {
 	private void initializeTable() {
 		if (workspaceManager == null || workspaceManager.isLocked()) return;
 		entries = new TreeMap();
-		IPluginModelBase[] models = workspaceManager.getAllModels();
-		addToTable(models, true);
-		models = externalManager.getAllModels();
+		IPluginModelBase[] models = externalManager.getAllModels();
 		addToTable(models, false);
+		models = workspaceManager.getAllModels();
+		addToTable(models, true);
+		addWorkspaceBundlesToState();
 		searchablePluginsManager.initialize();
 	}
-
+	
+	public void addWorkspaceBundlesToState() {
+		IPluginModelBase[] models = workspaceManager.getAllModels();
+		PDEState state = externalManager.getState();
+		for (int i = 0; i < models.length; i++) {
+			addWorkspaceBundleToState(models[i], state);
+		}
+		state.resolveState(true);
+	}
+	
+	private void addWorkspaceBundleToState(IPluginModelBase model, PDEState state) {
+		if (!(model instanceof IBundlePluginModelBase))
+			return;
+		String id = model.getPluginBase().getId();
+		if (id == null)
+			return;
+		ModelEntry entry = findEntry(id);
+		if (entry == null)
+			return;
+		IPluginModelBase external = entry.getExternalModel();
+		if (external != null) {
+			BundleDescription desc = external.getBundleDescription();
+			state.removeBundleDescription(desc);
+		}
+		if (model.getBundleDescription() == null)
+			state.addBundle(new File(model.getInstallLocation()));		
+	}
+	
+	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
+		BundleDescription description = model.getBundleDescription();
+		if (description == null)
+			return;
+		
+		state.removeBundleDescription(description);
+		
+		String id = model.getPluginBase().getId();
+		if (id == null) {
+			return;
+		}
+		
+		ModelEntry entry = findEntry(id);
+		if (entry == null) {
+			return;
+		}
+		
+		IPluginModelBase external = entry.getExternalModel();
+		if (external != null) {
+			BundleDescription desc = external.getBundleDescription();
+			state.addBundleDescription(desc);
+		}
+	}
+	
+	private void updateBundleDescription(IPluginModelBase model, ModelEntry entry) {
+		BundleDescription description = model.getBundleDescription();
+		if (description == null)
+			return;
+		PDEState state = externalManager.getState();
+		state.removeBundleDescription(description);
+		state.addBundle(new File(model.getInstallLocation()));
+		state.resolveState(true);
+	}
+	
 	private void addToTable(
 		IPluginModelBase[] pmodels,
 		boolean workspace) {
@@ -323,7 +398,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 
-	public void connect(WorkspaceModelManager wm, IExternalModelManager em) {
+	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
 		externalManager = em;
 		workspaceManager = wm;
 		externalManager.addModelProviderListener(providerListener);

@@ -14,12 +14,12 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
 	private String point;
@@ -44,26 +44,18 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		}
 		return schema;
 	}
-	void load(ExtensionModel extensionModel) {
-		this.id = extensionModel.getId();
-		this.name = extensionModel.getName();
-		this.point = extensionModel.getExtensionPoint();
-
-		ConfigurationElementModel[] childModels =
-			extensionModel.getSubElements();
-		if (childModels != null) {
-			for (int i = 0; i < childModels.length; i++) {
-				ConfigurationElementModel childModel = childModels[i];
-				PluginElement childElement = new PluginElement();
-				childElement.setModel(getModel());
-				childElement.setParent(this);
-				this.children.add(childElement);
-				childElement.load(childModel);
-			}
-		}
-		int line = extensionModel.getStartLine();
-		range = new int[] { line, line };
+	
+	boolean load(Attributes attributes, int line) {
+		String point = attributes.getValue("point");
+		if (point == null || point.length() == 0)
+			return false;
+		this.point = point;
+		this.id = attributes.getValue("id");
+		this.name = attributes.getValue("name");
+		range = new int[] {line, line};
+		return true;
 	}
+
 	void load(Node node, Hashtable lineTable) {
 		this.id = getNodeAttribute(node, "id");
 		this.name = getNodeAttribute(node, "name");

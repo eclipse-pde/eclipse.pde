@@ -14,10 +14,10 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private transient ISchemaElement elementInfo;
@@ -100,32 +100,15 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	public String getText() {
 		return text;
 	}
-	void load(ConfigurationElementModel elementModel) {
-		this.name = elementModel.getName();
-		ConfigurationPropertyModel[] attributes = elementModel.getProperties();
-		if (attributes != null) {
-			for (int i = 0; i < attributes.length; i++) {
-				ConfigurationPropertyModel attribute = attributes[i];
-				IPluginAttribute att = getModel().getFactory().createAttribute(this);
-				((PluginAttribute) att).load(attribute);
-				this.attributes.put(attribute.getName(), att);
-			}
-		}
-		this.text = elementModel.getValue();
-		ConfigurationElementModel[] children = elementModel.getSubElements();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				ConfigurationElementModel child = children[i];
-				PluginElement childElement = new PluginElement();
-				childElement.setModel(getModel());
-				this.children.add(childElement);
-				childElement.setParent(this);
-				childElement.load(child);
-			}
-		}
-		int line = elementModel.getStartLine();
-		range = new int [] { line, line };
+	void load(String tagName, Attributes attributes) {
+		this.name = tagName;
+		for (int i = 0; i < attributes.getLength(); i++) {
+			IPluginAttribute att = getModel().getFactory().createAttribute(this);
+			((PluginAttribute) att).load(attributes.getQName(i), attributes.getValue(i));
+			this.attributes.put(attributes.getQName(i), att);
+		}		
 	}
+	
 	public void reconnect() {
 		super.reconnect();
 		reconnectAttributes();

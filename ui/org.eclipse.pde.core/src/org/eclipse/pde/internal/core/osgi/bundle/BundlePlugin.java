@@ -6,8 +6,11 @@
  */
 package org.eclipse.pde.internal.core.osgi.bundle;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.osgi.bundle.*;
+import org.osgi.framework.*;
 
 /**
  * @author dejan
@@ -21,9 +24,9 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	public String getClassName() {
-		IBundle bundle = getBundle();
-		if (bundle != null) {
-			return bundle.getHeader(IBundle.KEY_ACTIVATOR);
+		Dictionary manifest = getManifest();
+		if (manifest != null) {
+			return (String)manifest.get(Constants.BUNDLE_ACTIVATOR);
 		}
 		return null;
 	}
@@ -32,16 +35,9 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#setClassName(java.lang.String)
 	 */
 	public void setClassName(String className) throws CoreException {
-		IBundle bundle = getBundle();
-		if (bundle != null) {
-			if (className!=null) {
-				bundle.setHeader(IBundle.KEY_ACTIVATOR, className);
-			}
-			else {
-				bundle.setHeader(
-						IBundle.KEY_ACTIVATOR,
-						null);
-			}
+		Dictionary manifest = getManifest();
+		if (manifest != null) {
+			manifest.put(Constants.BUNDLE_ACTIVATOR, className);
 		}
 	}
 }

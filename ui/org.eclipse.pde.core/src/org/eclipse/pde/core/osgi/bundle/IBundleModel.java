@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.osgi.bundle;
 
+import java.util.*;
+
 import org.eclipse.pde.core.*;
 /**
  * This model is created from the "plugin.jars" file
@@ -31,7 +33,7 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns the top-level model object of this model.
 	 *
-	 * @return a build.properties top-level model object
+	 * @return a dictionary containing the manifest headers
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
 	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
@@ -39,7 +41,7 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 * (repeatedly) as the API evolves.
 	 * </p>
 	 */
-	IBundle getBundle();
+	Dictionary getManifest();
 	/**
 	 * Returns the location of the file
 	 * used to create the model.

@@ -11,6 +11,7 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.osgi.bundle.*;
@@ -31,6 +32,7 @@ public abstract class BundlePluginModelBase
 	private IExtensionsModel extensionsModel;
 	private IBundlePluginBase bundlePluginBase;
 	private IBuildModel buildModel;
+	private BundleDescription fBundleDescription;
 	private boolean enabled;
 
 	public BundlePluginModelBase() {
@@ -314,5 +316,19 @@ public abstract class BundlePluginModelBase
 	}
 	public boolean isBundleModel() {
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
+	 */
+	public BundleDescription getBundleDescription() {
+		return fBundleDescription;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
+	 */
+	public void setBundleDescription(BundleDescription description) {
+		fBundleDescription = description;
 	}
 }

@@ -82,10 +82,6 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			} catch (IOException e) {
 				PDECore.logException(e);
 			}
-		} else {
-			bundle = new Bundle();
-			bundle.setModel(this);
-			loaded = true;
 		}
 	}
 
@@ -116,7 +112,6 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	}
 	
 	public void save(PrintWriter writer) {
-		getBundle().write("", writer);
 		dirty = false;
 	}
 	public void setDirty(boolean newDirty) {

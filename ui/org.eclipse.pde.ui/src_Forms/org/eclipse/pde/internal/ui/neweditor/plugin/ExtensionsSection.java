@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -58,7 +59,7 @@ public class ExtensionsSection extends TreeSection
 	private Image genericElementImage;
 	//private Button showAllChildrenButton;
 	private SchemaRegistry schemaRegistry;
-	private IExternalModelManager pluginInfoRegistry;
+	private ExternalModelManager pluginInfoRegistry;
 	private DrillDownAdapter drillDownAdapter;
 	private Action newExtensionAction;
 	private Action collapseAllAction;
@@ -551,7 +552,7 @@ public class ExtensionsSection extends TreeSection
 		return resolveObjectName(schemaRegistry, pluginInfoRegistry, obj);
 	}
 	public static String resolveObjectName(SchemaRegistry schemaRegistry,
-			IExternalModelManager pluginInfoRegistry, Object obj) {
+			ExternalModelManager pluginInfoRegistry, Object obj) {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;

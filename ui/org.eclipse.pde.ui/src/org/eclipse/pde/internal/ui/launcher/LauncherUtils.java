@@ -201,11 +201,7 @@ public class LauncherUtils {
 		TreeMap map = null;
 		ArrayList statusEntries = new ArrayList();
 		
-		if (config.getAttribute(ILauncherSettings.USE_ONE_PLUGIN, false)) {
-			String id = config.getAttribute(ILauncherSettings.ONE_PLUGIN_ID, "");
-			if (id.length() > 0)
-				map = validatePlugins(getPluginAndPrereqs(id), statusEntries);
-		} else if (!config.getAttribute(ILauncherSettings.USECUSTOM, true)) {
+		if (!config.getAttribute(ILauncherSettings.USECUSTOM, true)) {
 			map = validatePlugins(getSelectedPlugins(config), statusEntries);
 		}
 		

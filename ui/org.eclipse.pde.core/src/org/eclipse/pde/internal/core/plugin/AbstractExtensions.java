@@ -22,8 +22,8 @@ import org.w3c.dom.*;
 public abstract class AbstractExtensions
 	extends PluginObject
 	implements IExtensions {
-	private Vector extensions = new Vector();
-	private Vector extensionPoints = new Vector();
+	protected Vector extensions = new Vector();
+	protected Vector extensionPoints = new Vector();
 
 	public AbstractExtensions() {
 	}
@@ -55,12 +55,12 @@ public abstract class AbstractExtensions
 		return result;
 	}
 
-	void load(PluginModel pd) {
+	/*void load(PluginModel pd) {
 		// add extensions
 		loadExtensions(pd.getDeclaredExtensions());
 		// add extension points
 		loadExtensionPoints(pd.getDeclaredExtensionPoints());
-	}
+	}*/
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
@@ -103,25 +103,6 @@ public abstract class AbstractExtensions
 			extensionPoint.load(extensionPointModel);
 		}
 	}
-	void loadExtensions(ExtensionModel[] extensionModels) {
-		if (extensionModels == null)
-			return;
-		for (int i = 0; i < extensionModels.length; i++) {
-			ExtensionModel extensionModel = extensionModels[i];
-			PluginModel parent = extensionModel.getParent();
-			if (parent instanceof PluginFragmentModel) {
-				// Do not accept merged entries
-				continue;
-			}
-			PluginExtension extension = new PluginExtension();
-			extension.setModel(getModel());
-			extension.setInTheModel(true);
-			extension.setParent(this);
-			extensions.add(extension);
-			extension.load(extensionModel);
-		}
-	}
-
 	protected void processChild(Node child, Hashtable lineTable) {
 		String name = child.getNodeName().toLowerCase();
 		if (name.equals("extension")) {

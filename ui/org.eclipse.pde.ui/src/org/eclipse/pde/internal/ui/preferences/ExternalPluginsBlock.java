@@ -37,19 +37,17 @@ public class ExternalPluginsBlock {
 	private TargetPlatformPreferencePage page;
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
-	private Vector models;
-	private Vector fmodels;
+
 	private boolean reloaded;
 	private TablePart tablePart;
 	private HashSet changed = new HashSet();
 	private IPluginModelBase[] initialModels;
-
+	private IPluginModelBase[] fModels;
+	private PDEState fCurrentState;
 
 	private final static boolean DEFAULT_STATE = true;
 	
 	class ReloadOperation implements IRunnableWithProgress {
-		private Vector models = new Vector();
-		private Vector fmodels = new Vector();
 		private String[] pluginPaths;
 		
 		public ReloadOperation(String[] pluginPaths) {
@@ -57,18 +55,11 @@ public class ExternalPluginsBlock {
 		}
 			
 		public void run(IProgressMonitor monitor)
-			throws InvocationTargetException, InterruptedException {
-			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+			throws InvocationTargetException, InterruptedException {	
+			fCurrentState = new PDEState();
+			fModels = TargetPlatformRegistryLoader.loadModels(pluginPaths, true, fCurrentState, monitor);		
 		}
 		
-		public Vector getPluginModels() {
-			return models;
-		}
-		
-		public Vector getFragmentModels() {
-			return fmodels;
-		}
-
 	}
 	
 	class SaveOperation implements IWorkspaceRunnable {
@@ -179,7 +170,7 @@ public class ExternalPluginsBlock {
 			changed.clear();
 		}
 		if (type != 0) {
-			IExternalModelManager registry =
+			ExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
 			ModelProviderEvent event =
 				new ModelProviderEvent(
@@ -222,28 +213,12 @@ public class ExternalPluginsBlock {
 	}
 
 	private IPluginModelBase[] getAllModels() {
-		if (models == null && fmodels == null) {
+		if (fModels == null) {
 			initialModels =
 				PDECore.getDefault().getExternalModelManager().getAllModels();
 			return initialModels;
 		}
-
-		IPluginModelBase[] allModels =
-			new IPluginModelBase[models.size() + fmodels.size()];
-		System.arraycopy(
-			models.toArray(new IPluginModel[models.size()]),
-			0,
-			allModels,
-			0,
-			models.size());
-		System.arraycopy(
-			fmodels.toArray(new IFragmentModel[fmodels.size()]),
-			0,
-			allModels,
-			models.size(),
-			fmodels.size());
-
-		return allModels;
+		return fModels;
 	}
 
 	protected void handleReload() {
@@ -257,8 +232,6 @@ public class ExternalPluginsBlock {
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}
-			models = op.getPluginModels();
-			fmodels = op.getFragmentModels();
 			pluginListViewer.refresh();
 			
 			tablePart.selectAll(DEFAULT_STATE);
@@ -321,7 +294,7 @@ public class ExternalPluginsBlock {
 		}
 
 		if (reloaded) {
-			PDECore.getDefault().getExternalModelManager().resetModels(models, fmodels);
+			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
 		}
 	}
 

@@ -20,10 +20,11 @@ import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
  */
-public class ExternalModelManager implements IExternalModelManager {
+public class ExternalModelManager {
 	private Vector models = new Vector();
 	private Vector fmodels = new Vector();
 	private Vector listeners = new Vector();
+	private PDEState fState = new PDEState();
 	private boolean initialized;
 
 	public static String computeDefaultPlatformPath() {
@@ -237,8 +238,14 @@ public class ExternalModelManager implements IExternalModelManager {
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
-
-		RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+		IPluginModelBase[] resolved = TargetPlatformRegistryLoader.loadModels(pluginPaths, true, fState, monitor);
+		for (int i = 0; i < resolved.length; i++) {
+			if (resolved[i] instanceof IPluginModel) {
+				models.add(resolved[i]);
+			} else {
+				fmodels.add(resolved[i]);
+			}
+		}		
 		initializeAllModels();
 		initialized=true;
 	}
@@ -247,9 +254,17 @@ public class ExternalModelManager implements IExternalModelManager {
 		listeners.remove(listener);
 	}
 			
-	public void resetModels(Vector models, Vector fmodels) {
-		this.models = models;
-		this.fmodels = fmodels;
+	public void reset(PDEState state, IPluginModelBase[] newModels) {
+		fState = state;
+		PDECore.getDefault().getModelManager().addWorkspaceBundlesToState();
+		models.clear();
+		fmodels.clear();
+		for (int i = 0; i < newModels.length; i++) {
+			if (newModels[i] instanceof IPluginModel)
+				models.add(newModels[i]);
+			else
+				fmodels.add(newModels[i]);
+		}
 	}
 	
 	public void shutdown() {
@@ -285,5 +300,9 @@ public class ExternalModelManager implements IExternalModelManager {
 		
 		PDECore.getDefault().savePluginPreferences();
 		initialized=false;
+	}
+	
+	public PDEState getState() {
+		return fState;
 	}
 }

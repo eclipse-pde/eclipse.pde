@@ -381,8 +381,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				return;
 			}
 		}
-				
-		
+						
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, addFragmentsButton.getSelection());

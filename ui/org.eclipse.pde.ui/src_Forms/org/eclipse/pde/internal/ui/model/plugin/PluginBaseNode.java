@@ -11,6 +11,8 @@ import org.eclipse.pde.internal.ui.model.*;
  *
  */
 public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
+	
+	
 	private String fSchemaVersion;
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
@@ -198,4 +200,5 @@ public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 	public void setName(String name) throws CoreException {
 		setXMLAttribute(P_NAME, name);
 	}
+	
 }

@@ -17,6 +17,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -29,6 +30,7 @@ public abstract class AbstractPluginModelBase
 	private boolean enabled;
 	private DocumentModel documentModel;
 	private boolean reconcilingModel=false;
+	private BundleDescription fBundleDescription;
 	
 	public AbstractPluginModelBase() {
 		super();
@@ -95,7 +97,7 @@ public abstract class AbstractPluginModelBase
 			String id = pluginBase.getId();
 			String version = pluginBase.getVersion();
 			// Add matching external fragments
-			IExternalModelManager emng =
+			ExternalModelManager emng =
 				PDECore.getDefault().getExternalModelManager();
 			if (emng.hasEnabledModels()) {
 				IFragmentModel[] models = emng.getFragmentModels();
@@ -298,7 +300,22 @@ public abstract class AbstractPluginModelBase
 	 */
 	public void dispose() {
 		documentModel = null;
+		fBundleDescription = null;
 		super.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBundleDescription()
+	 */
+	public BundleDescription getBundleDescription() {
+		return fBundleDescription;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#setBundleDescription(org.eclipse.osgi.service.resolver.BundleDescription)
+	 */
+	public void setBundleDescription(BundleDescription description) {
+		fBundleDescription = description;
 	}
 
 }

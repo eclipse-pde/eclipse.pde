@@ -8,9 +8,9 @@ package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IMatchRules;
+import org.osgi.framework.*;
 
 /**
  * @author dejan
@@ -90,15 +90,14 @@ public class FragmentUtil {
 	}
 	private int getEquivalentRule(String name) {
 		if (name != null) {
-			String mname = name.toLowerCase();
-			if (mname.equals(IBundle.PERFECT_MATCH))
+			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_QUALIFIER) || 
+					name.equalsIgnoreCase(Constants.VERSION_MATCH_MICRO))
 				return IMatchRules.PERFECT;
-			if (mname.equals(IBundle.EQUIVALENT_MATCH))
+			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_MINOR))
 				return IMatchRules.EQUIVALENT;
-			if (mname.equals(IBundle.COMPATIBLE_MATCH))
-				return IMatchRules.COMPATIBLE;
-			if (mname.equals(IBundle.GREATERTHANOREQUAL_MATCH))
+			if (name.equalsIgnoreCase(Constants.VERSION_MATCH_GREATERTHANOREQUAL))
 				return IMatchRules.GREATER_OR_EQUAL;
+			return IMatchRules.COMPATIBLE;
 		}
 		return IMatchRules.NONE;
 	}
@@ -107,16 +106,13 @@ public class FragmentUtil {
 		String ruleName;
 		switch (rule) {
 			case IMatchRules.PERFECT:
-				ruleName = IBundle.PERFECT_MATCH;
+				ruleName = Constants.VERSION_MATCH_QUALIFIER;
 				break;
 			case IMatchRules.EQUIVALENT:
-				ruleName = IBundle.EQUIVALENT_MATCH;
-				break;
-			case IMatchRules.COMPATIBLE:
-				ruleName = IBundle.COMPATIBLE_MATCH;
+				ruleName = Constants.VERSION_MATCH_MINOR;
 				break;
 			case IMatchRules.GREATER_OR_EQUAL:
-				ruleName = IBundle.GREATERTHANOREQUAL_MATCH;
+				ruleName = Constants.VERSION_MATCH_GREATERTHANOREQUAL;
 				break;
 			case IMatchRules.NONE:
 			default:

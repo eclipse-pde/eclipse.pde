@@ -504,6 +504,8 @@ public class WorkspaceModelManager
 			bmodel = new BundlePluginModel();
 		bmodel.setEnabled(true);
 		bmodel.setBundleModel(model);
+		PDEState state = PDECore.getDefault().getExternalModelManager().getState();
+		bmodel.setBundleDescription(state.addBundle(new File(file.getLocation().removeLastSegments(2).toString())));
 		
 		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml");
 		if (efile.exists()) {
@@ -549,7 +551,7 @@ public class WorkspaceModelManager
 		IModel model = null;
 		if (isPluginProject(project)) {
 			model = createPluginModel(project);
-			if (model != null && ((IPluginModelBase)model).getPluginBase().getId() != null) {			
+			if (model != null) {			
 				if (model instanceof IFragmentModel)
 					fFragmentModels.add(model);
 				else

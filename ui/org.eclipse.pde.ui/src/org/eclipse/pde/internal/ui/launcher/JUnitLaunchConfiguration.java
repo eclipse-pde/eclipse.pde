@@ -271,16 +271,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (registryPlugins == null) {
 			String[] pluginPaths =
 				PluginPathFinder.getPluginPaths(BootLoader.getInstallURL().getFile());
-			Vector models = new Vector();
-			RegistryLoader.loadFromDirectories(
-				models,
-				new Vector(),
-				pluginPaths,
-				false,
-				false,
-				new NullProgressMonitor());
-			registryPlugins =
-				(IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
+			registryPlugins = TargetPlatformRegistryLoader.loadModels(pluginPaths, false, new NullProgressMonitor());
 		}
 
 		for (int i = 0; i < registryPlugins.length; i++) {

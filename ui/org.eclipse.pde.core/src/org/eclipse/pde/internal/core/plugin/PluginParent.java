@@ -33,6 +33,11 @@ public void add(IPluginObject child) throws CoreException {
 	postAdd(child);
 }
 
+void appendChild(IPluginElement child) {
+	children.add(child);
+}
+
+
 protected void postAdd(IPluginObject child) {
 	((PluginObject)child).setInTheModel(true);
 	((PluginObject)child).setParent(this);

@@ -14,162 +14,96 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.*;
 
 /**
  *
  */
 public class TargetPlatformRegistryLoader {
-	private static final String CACHE_FILE = ".registry";
-	private static final String KEY_SCANNING_PROBLEMS =
-		"ExternalModelManager.scanningProblems";
-	private PluginRegistryModel registryModel;
-	private static boolean DEBUG=false;
-	
-	static {
-		String value = Platform.getDebugOption("org.eclipse.pde.core/cache");
-		if (value!=null && value.equalsIgnoreCase("true"))
-			DEBUG = true;
-	}
-	private long code;
-	
-	public MultiStatus load(
-		URL[] urls,
-		boolean resolve,
-		boolean useCache,
-		IProgressMonitor monitor) {
-		MultiStatus errors =
-			new MultiStatus(
-				PDECore.getPluginId(),
-				1,
-				PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
-				null);
-		Factory factory = new Factory(errors);
 
-		long start = System.currentTimeMillis();
-
-		try {
-			monitor.beginTask("", 5);
-			if (resolve && useCache) {
-				code = computePluginsTimestamp(urls);
-				monitor.worked(1);
-				loadFromCache(urls, factory, errors);
-				monitor.worked(1);
-				if (registryModel != null) {
-					return errors;
-				}
-			}
-
-			registryModel = PluginRegistryModel.parsePlugins(urls, factory);
-			monitor.worked(1);
-			IStatus resolveStatus = null;
-			if (resolve) {
-				resolveStatus = registryModel.resolve(true, false);
-				monitor.worked(1);
-				if (resolveStatus != null)
-					errors.merge(resolveStatus);
-				if (useCache) {
-					saveCache(errors);
-					monitor.worked(1);
-				}
-			}
-			if (DEBUG) {
-				System.out.println(
-					"Total time elapsed: " + (System.currentTimeMillis() - start) + "ms");
-			}
-			return errors;
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	public PluginRegistryModel getRegistry() {
-		return registryModel;
-	}
-	
-	private void loadFromCache(URL [] urls, Factory factory, MultiStatus errors) {
-		File cacheFile = getCacheFile();
-		if (!cacheFile.exists()) return;
-		try {
-			DataInputStream input = new DataInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
-			try {
-				long start = System.currentTimeMillis();
-				PDERegistryCacheReader cacheReader = new PDERegistryCacheReader(factory, code);
-				registryModel = cacheReader.readPluginRegistry(input, urls, DEBUG);
-				if (DEBUG)
-					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
-			} finally {
-				input.close();
-			}
-		} catch (IOException ioe) {
-			IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Unable to read plug-in cache", ioe);
-			errors.merge(status);
-		}
-		if (registryModel==null) {
-			// Cache existed but we could not load from it
-			// Remove it so that a fresh one can be written.
-			cacheFile.delete();
-		}
-	}
-	
-	private void saveCache(MultiStatus errors) {
-		try {
-			File file = getCacheFile();
-			if (file.exists()) {
-				// The registry cache file exists.  Assume it is fine and
-				// we don't need to re-write it.
-				return;
-			}
-			DataOutputStream output = null;
-			try {
-				output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-			} catch (IOException ioe) {
-				String message = "Unable to create cache.";
-				IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, ioe);
-				errors.merge(status);
-				return;
-			}
-			try {
-				long start = System.currentTimeMillis();
-				PDERegistryCacheWriter cacheWriter = new PDERegistryCacheWriter(code);
-				cacheWriter.writePluginRegistry(registryModel, output);
-				if (DEBUG)
-					System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			} finally {
-				output.close();
-			}
-		} catch (IOException e) {
-			String message = "Unable to write registry."; //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e);
-			errors.merge(status);
-			if (DEBUG)
-				System.out.println(status.getMessage());
-		}
-		
-	}
-
-	private File getCacheFile() {
-		IPath location = PDECore.getDefault().getStateLocation();
-		IPath filePath = location.append(CACHE_FILE);
-		return new File(filePath.toOSString());
-	}
-
-	private long computePluginsTimestamp(URL[] urls) {
-		long result = 0;
+	public static void load(URL[] urls, PDEState state, IProgressMonitor monitor) {
 		for (int i = 0; i < urls.length; i++) {
-			File directory = new File(urls[i].getFile().toString().replace('/',File.separatorChar));
+			File directory = new File(urls[i].getFile());
 			if (directory.exists() && directory.isDirectory()) {
 				File[] files = directory.listFiles();
-				for (int j = 0; j < files.length; j++) {
-					File manifest = new File(files[j].getAbsolutePath() + File.separatorChar + "plugin.xml");
-					if (!manifest.exists())
-						manifest = new File(files[j].getAbsolutePath() + File.separatorChar + "fragment.xml");
-					if (manifest.exists())
-						result ^= manifest.getAbsolutePath().hashCode() ^ manifest.lastModified() ^ manifest.length();
+				if (files != null) {
+					for (int j = 0; j < files.length; j++) {
+						if (files[j].isDirectory())
+							state.addBundle(files[j]);
+					}
 				}
 			}
-		}
-		return result;
+		}	
 	}
 	
+	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, PDEState state, IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		monitor.beginTask("Parsing Plugins...", 3);
+		
+		load(urls, state, monitor);
+		monitor.worked(1);
+		
+		state.resolveState();	
+		monitor.worked(1);
+		
+		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
+		/*BundleDescription[] all = state.getState().getBundles();
+		for (int i = 0; i < all.length; i++) {
+			if (!all[i].isResolved()) {
+				String message = "Bundle: " + all[i].getUniqueId() + '\n';
+				VersionConstraint[] unsatisfiedConstraint = all[i].getUnsatisfiedConstraints();
+                for (int j = 0; j < unsatisfiedConstraint.length; j++) {
+                        message += '\t' + unsatisfiedConstraint[j].toString() + '\n';
+                }
+                System.out.print(message);
+
+			}
+		}*/
+		IPluginModelBase[] models = new IPluginModelBase[bundleDescriptions.length];
+		for (int i = 0; i < bundleDescriptions.length; i++) {
+			monitor.subTask(bundleDescriptions[i].getUniqueId());
+			models[i] = createModelFromDescription(bundleDescriptions[i], state);
+		}	
+		monitor.done();
+		return models;
+	}
+	
+	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, IProgressMonitor monitor) {
+		PDEState state = new PDEState();
+		return loadModels(urls, resolve, state, monitor);
+	}
+	
+	public static IPluginModelBase[] loadModels(String[] paths, boolean resolve, PDEState state, IProgressMonitor monitor) {
+		URL[] urls = new URL[paths.length];
+		try {
+			for (int i = 0; i < paths.length; i++) {
+				urls[i] = new URL("file:" + paths[i].replace('\\', '/') + "/");
+			}
+		} catch (MalformedURLException e) {
+		}
+		return loadModels(urls, resolve, state, monitor);
+	}
+	
+	public static IPluginModelBase[] loadModels(String[] paths, boolean resolve, IProgressMonitor monitor) {
+		PDEState state = new PDEState();
+		return loadModels(paths, resolve, state, monitor);
+	}
+
+	/**
+	 * @param description
+	 * @return
+	 */
+	private static IPluginModelBase createModelFromDescription(BundleDescription description, PDEState state) {
+		ExternalPluginModelBase model = null;
+		if (description.getHosts().length == 0)
+			model = new ExternalPluginModel();
+		else
+			model = new ExternalFragmentModel();
+		model.load(description, state);
+		return model;
+	}
+
 }

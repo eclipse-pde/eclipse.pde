@@ -138,7 +138,7 @@ public class SchemaRegistry
 		PDECore.getWorkspace().addResourceChangeListener(this);
 	}
 	private void loadExternalDescriptors() {
-		IExternalModelManager registry =
+		ExternalModelManager registry =
 			PDECore.getDefault().getExternalModelManager();
 		IPluginModel[] models = registry.getPluginModels();
 		for (int i = 0; i < models.length; i++) {

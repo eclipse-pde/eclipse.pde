@@ -91,7 +91,7 @@ public class PluginInputContext extends XMLInputContext {
 			}
 		} else {
 			IDocumentNode node = attr.getEnclosingElement();
-			offset = node.getOffset() + node.getXMLTagName().length() + 1;
+			offset = node.getRecommendedOffset(attr);
 			op = new InsertEdit(offset, " " + attr.getAttributeName() + "=\"" + getWritableString(attr.getAttributeValue()) + "\"");			
 		}
 		if (op != null) {

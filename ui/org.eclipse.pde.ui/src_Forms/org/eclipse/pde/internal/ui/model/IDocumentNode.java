@@ -24,6 +24,8 @@ public interface IDocumentNode {
 	
 	String getXMLAttributeValue(String name);
 	
+	IDocumentAttribute getDocumentAttribute(String name);
+	
 	boolean isErrorNode();
 	
 	void setIsErrorNode(boolean isErrorNode);
@@ -33,5 +35,7 @@ public interface IDocumentNode {
 	
 	int getOffset();
 	int getLength();
+	
+	int getRecommendedOffset(IDocumentAttribute attribute);
 	
 }

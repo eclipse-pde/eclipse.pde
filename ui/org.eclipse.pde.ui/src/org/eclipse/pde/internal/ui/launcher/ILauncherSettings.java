@@ -28,8 +28,6 @@ public interface ILauncherSettings {
 	// Plug-ins and Fragments settings
 	String USECUSTOM = "default";
 	String USEFEATURES = "usefeatures";
-	String USE_ONE_PLUGIN = "onePlugin";
-	String ONE_PLUGIN_ID = "onePluginID";
 	String WSPROJECT = "wsproject";
 	String EXTPLUGINS = "extplugins";
 	

@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 
@@ -69,6 +70,37 @@ public class PluginImport
 		}
 		this.optional = importModel.getOptional();
 		range = new int [] { importModel.getStartLine(), importModel.getStartLine() };
+	}
+	
+	public void load(BundleDescription description) {
+		this.id = description.getUniqueId();
+	}
+	
+	public void load(BundleSpecification importModel) {
+		this.id = importModel.getName();
+		this.reexported = importModel.isExported();
+		this.version = importModel.getVersionSpecification() != null ? importModel.getVersionSpecification().toString() : null;
+		this.optional = importModel.isOptional();
+		range = new int[] {0,0};
+		switch (importModel.getMatchingRule()) {
+			case VersionConstraint.GREATER_EQUAL_MATCH:
+				match = IMatchRules.GREATER_OR_EQUAL;
+				break;
+			case VersionConstraint.NO_MATCH:
+				match = IMatchRules.NONE;
+				break;
+			case VersionConstraint.MINOR_MATCH:
+				match = IMatchRules.EQUIVALENT;
+				break;
+			case VersionConstraint.MICRO_MATCH:
+				match = IMatchRules.PERFECT;
+				break;
+			case VersionConstraint.QUALIFIER_MATCH:
+				match = IMatchRules.PERFECT;
+				break;
+			default:
+				match = IMatchRules.COMPATIBLE;			
+		}
 	}
 
 	public boolean equals(Object obj) {

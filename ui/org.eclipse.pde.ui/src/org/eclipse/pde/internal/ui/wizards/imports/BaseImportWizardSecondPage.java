@@ -14,6 +14,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -150,20 +151,19 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		ArrayList selected,
 		boolean addFragments) {
 			
+		boolean containsVariable = false;
 		if (!selected.contains(model)) {
 			selected.add(model);
-			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				String point = extensions[i].getPoint();
-				if (point.equals("org.eclipse.ant.core.extraClasspathEntries")
-					|| point.equals("org.eclipse.ant.core.antTasks")) {
-					IPluginModelBase antModel = findModel("org.apache.ant");
-					if (antModel != null && !selected.contains(antModel))
-						selected.add(antModel);
-					break;
+			if (!addFragments && model instanceof IPluginModel) {
+				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+				for (int i = 0; i < libraries.length; i++) {
+					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
+						containsVariable = true;
+						break;
+					}
 				}
 			}
-			addDependencies(model, selected, addFragments);
+			addDependencies(model, selected, addFragments || containsVariable);
 		}
 	}
 	
@@ -171,32 +171,31 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		IPluginModelBase model,
 		ArrayList selected,
 		boolean addFragments) {
-		if (model instanceof IPluginModel) {
-			IPlugin plugin = ((IPluginModel) model).getPlugin();
-			IPluginImport[] required = plugin.getImports();
-			if (required.length > 0) {
-				for (int i = 0; i < required.length; i++) {
-					IPluginModelBase found = findModel(required[i].getId());
-					if (found != null) {
-						addPluginAndDependencies(found, selected, addFragments);
-					}
+		
+		IPluginImport[] required = model.getPluginBase().getImports();
+		if (required.length > 0) {
+			for (int i = 0; i < required.length; i++) {
+				IPluginModelBase found = findModel(required[i].getId());
+				if (found != null) {
+					addPluginAndDependencies(found, selected, addFragments);
 				}
 			}
-			if (addFragments) {
-				IFragmentModel[] fragments = findFragments(plugin);
+		}
+		
+		if (addFragments) {
+			if (model instanceof IPluginModel) {	
+				IFragmentModel[] fragments = findFragments(((IPluginModel)model).getPlugin());
 				for (int i = 0; i < fragments.length; i++) {
 					addPluginAndDependencies(fragments[i], selected, addFragments);
 				}
+			} else {
+				IFragment fragment = ((IFragmentModel) model).getFragment();
+				IPluginModelBase found = findModel(fragment.getPluginId());
+				if (found != null) {
+					addPluginAndDependencies(found, selected, addFragments);
+				}
 			}
 		}
-		if (addFragments && model instanceof IFragmentModel) {
-			IFragment fragment = ((IFragmentModel) model).getFragment();
-			IPluginModelBase found = findModel(fragment.getPluginId());
-			if (found != null) {
-				addPluginAndDependencies(found, selected, addFragments);
-			}
-		}
-
 	}
 	
 	public IPluginModelBase[] getModelsToImport() {

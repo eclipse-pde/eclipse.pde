@@ -12,6 +12,7 @@ package org.eclipse.pde.core.plugin;
 
 import java.net.*;
 
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 /**
@@ -128,4 +129,8 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	
 	IPluginModelFactory getPluginFactory();
 	URL getNLLookupLocation();
+	
+	BundleDescription getBundleDescription();
+	
+	void setBundleDescription(BundleDescription description);
 }

@@ -310,7 +310,7 @@ private Object[] getReferences() {
 		IPluginBase plugin = model.getPluginBase();
 		String referenceId = plugin.getId();
 
-		IExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
+		ExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
 		WorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		

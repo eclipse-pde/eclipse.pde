@@ -114,7 +114,7 @@ public class PointUsageSection extends TableSection {
 			manager.getPluginModels(),
 			result);
 
-		IExternalModelManager registry =
+		ExternalModelManager registry =
 			PDECore.getDefault().getExternalModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),

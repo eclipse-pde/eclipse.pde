@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
@@ -78,7 +78,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 			loaded = true;
 		}
 	}
-	public void load(PluginModel descriptorModel) {
+	public void load(BundleDescription description, PDEState state) {
 		PluginBase pluginBase = (PluginBase) getPluginBase();
 		if (pluginBase == null) {
 			pluginBase = (PluginBase) createPluginBase();
@@ -86,9 +86,12 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		} else {
 			pluginBase.reset();
 		}
-		pluginBase.load(descriptorModel);
+		setInstallLocation(description.getLocation());
+		setBundleDescription(description);
+		pluginBase.load(description, state);
 		updateTimeStamp();
 		loaded = true;
+		
 	}
 
 	public boolean isInSync() {

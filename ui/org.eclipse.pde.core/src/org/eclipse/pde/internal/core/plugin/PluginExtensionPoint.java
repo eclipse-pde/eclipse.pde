@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public class PluginExtensionPoint
 	extends IdentifiablePluginObject
@@ -40,6 +41,22 @@ public class PluginExtensionPoint
 	}
 	public String getSchema() {
 		return schema;
+	}
+	
+	boolean load(Attributes attributes, int line) {
+		String id = attributes.getValue("id");
+		if (id == null || id.length() == 0)
+			return false;
+		this.id = id;
+		
+		String name = attributes.getValue("name");
+		if (name == null || name.length() == 0)
+			return false;
+		this.name = name;
+		
+		this.schema = attributes.getValue("schema");
+		this.range = new int[] {line, line};
+		return true;
 	}
 	void load(ExtensionPointModel extensionPointModel) {
 		this.id = extensionPointModel.getId();

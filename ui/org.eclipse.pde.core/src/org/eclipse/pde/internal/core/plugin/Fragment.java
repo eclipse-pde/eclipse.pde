@@ -14,8 +14,9 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Fragment extends PluginBase implements IFragment {
@@ -39,25 +40,31 @@ public class Fragment extends PluginBase implements IFragment {
 		if (pluginId==null || pluginVersion==null) return false;
 		return super.hasRequiredAttributes();
 	}
-	void load(PluginModel pm) {
-		PluginFragmentModel pfm = (PluginFragmentModel) pm;
-		this.pluginId = pfm.getPluginId();
-		this.pluginVersion = pfm.getPluginVersion();
-		switch (pfm.getMatch()) {
-			case PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE :
-				rule = IMatchRules.COMPATIBLE;
-				break;
-			case PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT :
-				rule = IMatchRules.EQUIVALENT;
-				break;
-			case PluginFragmentModel.FRAGMENT_MATCH_PERFECT :
-				rule = IMatchRules.PERFECT;
-				break;
-			case PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL :
+
+	void load(BundleDescription bundleDescription, PDEState state) {
+		HostSpecification host = bundleDescription.getHosts()[0];
+		this.pluginId = host.getName();
+		this.pluginVersion = host.getVersionSpecification().toString();
+		switch (host.getMatchingRule()) {
+			case VersionConstraint.GREATER_EQUAL_MATCH:
 				rule = IMatchRules.GREATER_OR_EQUAL;
 				break;
+			case VersionConstraint.NO_MATCH:
+				rule = IMatchRules.NONE;
+				break;
+			case VersionConstraint.MINOR_MATCH:
+				rule = IMatchRules.EQUIVALENT;
+				break;
+			case VersionConstraint.MICRO_MATCH:
+				rule = IMatchRules.PERFECT;
+				break;
+			case VersionConstraint.QUALIFIER_MATCH:
+				rule = IMatchRules.PERFECT;
+				break;
+			default:
+				rule = IMatchRules.COMPATIBLE;			
 		}
-		super.load(pm);
+		super.load(bundleDescription, state);
 	}
 	
 	public void load(IPluginBase srcPluginBase) {

@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 
@@ -49,17 +48,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		return type;
 	}
 
-	void load(LibraryModel libraryModel) {
-		this.name = libraryModel.getName();
-		this.contentFilters = libraryModel.getExports();
-		this.exported = libraryModel.isExported();
-		this.packages = libraryModel.getPackagePrefixes();
-		this.type = libraryModel.getType();
-		range =
-			new int[] {
-				libraryModel.getStartLine(),
-				libraryModel.getStartLine()};
+	
+	public void load(String name) {
+		this.name = name;
+		this.exported = true;
 	}
+	
 	void load(Node node, Hashtable lineTable) {
 		this.name = getNodeAttribute(node, "name");
 		this.type = getNodeAttribute(node, "type");

@@ -14,8 +14,10 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 public class Plugin extends PluginBase implements IPlugin {
@@ -31,10 +33,11 @@ public class Plugin extends PluginBase implements IPlugin {
 	public IPlugin getPlugin() {
 		return this;
 	}
-	void load(PluginModel pm) {
-		PluginDescriptorModel pd = (PluginDescriptorModel) pm;
-		this.className = pd.getPluginClass();
-		super.load(pm);
+
+	void load(BundleDescription bundleDescription, PDEState state) {
+		Dictionary manifest = state.getManifest(bundleDescription.getBundleId());
+		this.className = (String)manifest.get(Constants.BUNDLE_ACTIVATOR);
+		super.load(bundleDescription, state);
 	}
 	
 	public void load(IPluginBase srcPluginBase) {

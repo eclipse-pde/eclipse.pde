@@ -1,15 +1,11 @@
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.debug.ui.*;
 import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 
 /*
@@ -36,8 +32,6 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(ILauncherSettings.VMARGS, "");
 			wc.setAttribute(ILauncherSettings.PROGARGS, LauncherUtils.getDefaultProgramArguments());
 			wc.setAttribute(ILauncherSettings.USECUSTOM, true);
-			wc.setAttribute(ILauncherSettings.USE_ONE_PLUGIN, false);
-			wc.setAttribute(ILauncherSettings.ONE_PLUGIN_ID, getPluginId(project));
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
 			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
@@ -61,13 +55,4 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();				
 	}
 	
-	private String getPluginId(IJavaProject jProject) {
-		IProject project = jProject.getProject();
-		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-		if (model != null && model instanceof IPluginModelBase) {
-			return ((IPluginModelBase)model).getPluginBase().getId();
-		}
-		return project.getName();
-	}
-
 }

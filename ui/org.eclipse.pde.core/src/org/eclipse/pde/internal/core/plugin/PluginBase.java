@@ -13,12 +13,16 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public abstract class PluginBase
 	extends AbstractExtensions
@@ -80,7 +84,7 @@ public abstract class PluginBase
 	public String getId() {
 		return id;
 	}
-	void load(PluginModel pd) {
+	/*void load(PluginModel pd) {
 		this.id = pd.getId();
 		this.name = pd.getName();
 		this.providerName = pd.getProviderName();
@@ -94,7 +98,46 @@ public abstract class PluginBase
 		loadExtensionPoints(pd.getDeclaredExtensionPoints());
 		// add imports
 		loadImports(pd.getRequires());
+	}*/
+	
+	void load(BundleDescription bundleDescription, PDEState state) {
+		this.id = bundleDescription.getUniqueId();
+		this.version = bundleDescription.getVersion().toString();
+		
+		loadRuntime(bundleDescription, state);
+		loadImports(bundleDescription);
+		
+		String filename = bundleDescription.getHosts().length == 0 ? "plugin.xml" : "fragment.xml";
+		File file = new File(getModel().getInstallLocation(), filename);
+		if (file.exists()) {
+			try {
+				SAXParser parser = getSaxParser();
+				ExtensionsParser handler = new ExtensionsParser(getModel());
+				parser.parse(new FileInputStream(file), handler);
+				loadExtensions(handler.getExtensions());
+				loadExtensionPoints(handler.getExtensionPoints());
+				schemaVersion = handler.isLegacy() ? null : "3.0";
+			} catch (Exception e) {
+			}
+		}	
 	}
+	
+	private void loadExtensions(Vector collected) {
+		for (int i = 0; i < collected.size(); i++) {
+			PluginExtension extension = (PluginExtension)collected.get(i);
+			extension.setParent(this);
+			this.extensions.add(extension);
+		}
+	}
+	
+	private void loadExtensionPoints(Vector collected) {
+		for (int i = 0; i < collected.size(); i++) {
+			PluginExtensionPoint extPoint = (PluginExtensionPoint)collected.get(i);
+			extPoint.setParent(this);
+			this.extensionPoints.add(extPoint);
+		}		
+	}
+	
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
@@ -180,18 +223,22 @@ public abstract class PluginBase
 				break;
 		}
 	}
-	void loadRuntime(LibraryModel[] libraryModels) {
-		if (libraryModels == null)
-			return;
-		for (int i = 0; i < libraryModels.length; i++) {
-			PluginLibrary library = new PluginLibrary();
-			library.setModel(getModel());
-			library.setInTheModel(true);
-			library.setParent(this);
-			libraries.add(library);
-			library.load(libraryModels[i]);
-		}
+	
+	void loadRuntime(BundleDescription description, PDEState state) {
+		Dictionary dictionary = state.getManifest(description.getBundleId());
+		if (dictionary != null) {
+			String[] libraryNames = PDEStateHelper.getClasspath(dictionary);
+			for (int i = 0; i < libraryNames.length; i++) {
+				PluginLibrary library = new PluginLibrary();
+				library.setModel(getModel());
+				library.setInTheModel(true);
+				library.setParent(this);
+				library.load(libraryNames[i]);
+				libraries.add(library);
+			}
+		}		
 	}
+
 	void loadRuntime(Node node, Hashtable lineTable) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -221,6 +268,28 @@ public abstract class PluginBase
 			importElement.load(importModel);
 		}
 	}
+	
+	void loadImports(BundleDescription description) {
+		BundleSpecification[] required = description.getRequiredBundles();
+		for (int i = 0; i < required.length; i++) {
+			PluginImport importElement = new PluginImport();
+			importElement.setModel(getModel());
+			importElement.setInTheModel(true);
+			importElement.setParent(this);
+			imports.add(importElement);
+			importElement.load(required[i]);
+		}
+		BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
+		for (int i = 0; i < imported.length; i++) {
+			PluginImport importElement = new PluginImport();
+			importElement.setModel(getModel());
+			importElement.setInTheModel(true);
+			importElement.setParent(this);
+			imports.add(importElement);
+			importElement.load(imported[i]);
+		}		
+	}
+	
 	void loadImports(Node node, Hashtable lineTable) {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -343,8 +412,8 @@ public abstract class PluginBase
 		}
 		return super.hasRequiredAttributes();
 	}
-	public void load(IBundle bundle, IExtensions extensions) {
-		load(extensions);
-		valid = hasRequiredAttributes();
+	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
+		return SAXParserFactory.newInstance().newSAXParser();
 	}
+
 }
