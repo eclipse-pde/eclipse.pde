@@ -200,5 +200,13 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 	private boolean isColorProperty(String property) {
 		return property.equals(P_DEFAULT) || property.equals(P_PROC_INSTR) || property.equals(P_STRING) || property.equals(P_TAG) || property.equals(XML_COMMENT);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.XMLSourcePage#createXMLConfiguration()
+	 */
+	protected XMLConfiguration createXMLConfiguration() {
+		colorManager = new ColorManager();
+		return new XMLViewerConfiguration(this, colorManager);
+	}
 
 }
