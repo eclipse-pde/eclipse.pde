@@ -75,6 +75,7 @@ public class OverviewPage extends PDEFormPage {
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		section.setClient(text);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private FormText createClient(Section section, String content,

@@ -47,6 +47,7 @@ public class ExportSection extends PDESection {
 			}
 		});
 		fArchiveEntry.setEditable(isEditable());
+		fArchiveEntry.getText().setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false);
