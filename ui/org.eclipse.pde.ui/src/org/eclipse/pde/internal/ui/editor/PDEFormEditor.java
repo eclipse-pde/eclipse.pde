@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.search.ui.text.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -716,5 +717,9 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	
 	protected abstract InputContext getInputContext(Object object);
+	
+	public int getOrientation() {
+		return SWT.LEFT_TO_RIGHT;
+	}
 
 }
