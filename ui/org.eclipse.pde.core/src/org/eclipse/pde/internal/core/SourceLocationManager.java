@@ -42,6 +42,10 @@ public class SourceLocationManager implements ICoreConstants {
 		File file;
 	}
 
+	public SourceLocationManager() {
+		initializeClasspathVariables(null);
+	}
+
 	public ArrayList getUserLocationArray() {
 		initializeUserLocations();
 		return userLocations;
