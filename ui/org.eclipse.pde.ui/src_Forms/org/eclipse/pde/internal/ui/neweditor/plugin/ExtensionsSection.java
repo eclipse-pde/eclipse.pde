@@ -207,8 +207,9 @@ public class ExtensionsSection extends TreeSection
 		}
 		return false;
 	}
-	public void setFormInput(Object object) {
+	public boolean setFormInput(Object object) {
 		extensionTree.setSelection(new StructuredSelection(object), true);
+		return true;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = extensionTree.getSelection();

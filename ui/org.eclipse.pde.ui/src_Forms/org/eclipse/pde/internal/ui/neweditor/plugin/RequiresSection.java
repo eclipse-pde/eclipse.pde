@@ -166,11 +166,13 @@ public class RequiresSection
 		return false;
 	}
 
-	public void setFormInput(Object object) {
+	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginImport) {
 			ImportObject iobj = new ImportObject((IPluginImport) object);
 			importTable.setSelection(new StructuredSelection(iobj), true);
+			return true;
 		}
+		return false;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {

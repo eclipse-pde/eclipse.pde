@@ -41,7 +41,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 			// need to ask the user about this
 		} else {
 			removePage(page.getIndex());
-			if (!page.isSource())
+			if (!page.isEditor())
 				page.dispose();
 		}
 	}

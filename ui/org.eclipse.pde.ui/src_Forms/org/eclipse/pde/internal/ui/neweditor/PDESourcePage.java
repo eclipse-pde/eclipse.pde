@@ -139,7 +139,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isSource()
 	 */
-	public boolean isSource() {
+	public boolean isEditor() {
 		return true;
 	}
 	/**
@@ -158,8 +158,7 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
-	public void focusOn(Object object) {
-		// TODO Auto-generated method stub
+	public boolean selectReveal(Object object) {
+		return false;
 	}
-	
 }

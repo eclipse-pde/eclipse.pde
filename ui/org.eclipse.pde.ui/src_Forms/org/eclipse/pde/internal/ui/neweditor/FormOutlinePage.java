@@ -93,7 +93,7 @@ public class FormOutlinePage extends ContentOutlinePage
 		ArrayList formPages = new ArrayList();
 		IFormPage [] pages = editor.getPages();
 		for (int i=0; i<pages.length; i++) {
-			if (pages[i].isSource()==false)
+			if (pages[i].isEditor()==false)
 				formPages.add(pages[i]);
 		}
 		return formPages.toArray(); 
@@ -117,7 +117,7 @@ public class FormOutlinePage extends ContentOutlinePage
 		if (newPage != page)
 			editor.setActivePage(newPage.getId());
 		if (newPage != item)
-			newPage.focusOn(item);
+			newPage.selectReveal(item);
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {

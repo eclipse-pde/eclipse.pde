@@ -260,8 +260,8 @@ public class PDEFormEditorContributor
 		if (newPage==null) return;
 		updateActions();
 		if (oldPage != null
-			&& oldPage.isSource() == false
-			&& newPage.isSource() == false)
+			&& oldPage.isEditor() == false
+			&& newPage.isEditor() == false)
 			return;
 
 		IActionBars bars = getActionBars();
