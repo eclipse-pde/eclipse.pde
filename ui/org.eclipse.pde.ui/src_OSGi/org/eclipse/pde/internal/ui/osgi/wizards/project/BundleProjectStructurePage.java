@@ -32,9 +32,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 
 public class BundleProjectStructurePage extends WizardPage {
 	private static final String KEY_TITLE = "BundleProjectStructurePage.title";
@@ -181,9 +181,7 @@ public class BundleProjectStructurePage extends WizardPage {
 			model.getBuild().add(ientry);
 			model.save();
 		}
-		PlatformUI.getWorkbench().getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.BUILD_EDITOR_ID);
+		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}
 
 	private void addTopSection(Composite container) {

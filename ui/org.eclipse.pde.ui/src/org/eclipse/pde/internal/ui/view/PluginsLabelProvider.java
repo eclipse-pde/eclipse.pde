@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.*;
 
 public class PluginsLabelProvider extends LabelProvider {
 	private PDELabelProvider sharedProvider;
@@ -38,7 +39,7 @@ public class PluginsLabelProvider extends LabelProvider {
 				ISharedImages.IMG_OBJ_FOLDER);
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJ_PROJECT);
+				IDE.SharedImages.IMG_OBJ_PROJECT);
 		sharedProvider.connect(this);
 	}
 

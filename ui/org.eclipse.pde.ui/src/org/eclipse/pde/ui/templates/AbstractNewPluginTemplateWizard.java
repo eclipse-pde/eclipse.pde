@@ -32,6 +32,7 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
@@ -232,10 +233,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		monitor.worked(1);
 
 		IFile file = (IFile) model.getUnderlyingResource();
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.MANIFEST_EDITOR_ID);
+		IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		openPluginFile(file);
 	}
 

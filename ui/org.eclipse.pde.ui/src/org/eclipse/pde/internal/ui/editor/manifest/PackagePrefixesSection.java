@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.update.ui.forms.internal.*;
 
@@ -165,7 +166,7 @@ public class PackagePrefixesSection extends TableSection {
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}

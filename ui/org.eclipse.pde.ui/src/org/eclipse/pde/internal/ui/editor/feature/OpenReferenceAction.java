@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.ide.*;
 
 public class OpenReferenceAction extends SelectionProviderAction {
 	public static final String LABEL = "Actions.open.label";
@@ -56,7 +57,7 @@ public void run() {
 	if (file!=null && file.exists()) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
-			page.openEditor(file);
+			IDE.openEditor(page, file, true);
 		} catch (PartInitException e) {
 		}
 	}

@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.IOpenablePropertySource;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.views.properties.*;
 
 public class ExtensionPointPropertySource extends ManifestPropertySource implements IOpenablePropertySource {
@@ -102,7 +103,7 @@ public void openInEditor(IPropertySheetEntry entry) {
 			return;
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
-			page.openEditor(file);
+			IDE.openEditor(page, file, true);
 			return;
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);

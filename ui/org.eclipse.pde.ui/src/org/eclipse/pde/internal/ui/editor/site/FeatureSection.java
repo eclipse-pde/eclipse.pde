@@ -23,7 +23,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 /**
@@ -403,7 +403,7 @@ public class FeatureSection extends PDEFormSection {
 			public void menuAboutToShow(IMenuManager mng) {
 				mng.add(new Action(PDEPlugin.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
 					public void run() {
-						doGlobalAction(IWorkbenchActionConstants.DELETE);
+						doGlobalAction(ActionFactory.DELETE.getId());
 					}
 				});
 				mng.add(new Separator());
@@ -597,7 +597,7 @@ public class FeatureSection extends PDEFormSection {
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			if (fFeaturesTablePart.getControl().isFocusControl()) {
 				return handleRemoveFeature();
 			}

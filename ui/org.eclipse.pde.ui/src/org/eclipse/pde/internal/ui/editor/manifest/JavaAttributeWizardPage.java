@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.core.resources.*;
@@ -449,7 +450,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 			//createTask(file);
 			if (openFile) {
 				IWorkbenchPage page = PDEPlugin.getActivePage();
-				page.openEditor(file);
+				IDE.openEditor(page, file, true);
 			}
 			monitor.worked(2);
 		}

@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.wizards.newresource.*;
 
@@ -95,10 +96,7 @@ public class NewSiteProjectWizard
 		buildModel.dispose();
 		
 		// Set the default editor
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.SITE_EDITOR_ID);
+		IDE.setDefaultEditor(file, PDEPlugin.SITE_EDITOR_ID);
 		return file;
 	}
 	

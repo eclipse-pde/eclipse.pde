@@ -24,6 +24,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.*;
 
 /**
  * @author W Melhem
@@ -52,7 +53,7 @@ public class SearchGoToAction extends Action {
 				if (element instanceof IJavaElement) {
 					IEditorPart editor =
 						JavaUI.openInEditor((IJavaElement) element);
-					editor.gotoMarker(entry.getSelectedMarker());
+					IDE.gotoMarker(editor, entry.getSelectedMarker());
 				} else if (element instanceof IPluginObject) {
 					IPluginObject object = (IPluginObject) element;
 					if (object instanceof IPluginBase) {

@@ -23,7 +23,9 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -116,15 +118,15 @@ public abstract class PDESourcePage
 		// global actions to handle accelerators 
 		// properly
 		IKeyBindingService service = getEditor().getSite().getKeyBindingService();
-		service.unregisterAction(getAction(ITextEditorActionConstants.DELETE));
-		service.unregisterAction(getAction(ITextEditorActionConstants.UNDO));
-		service.unregisterAction(getAction(ITextEditorActionConstants.REDO));
-		service.unregisterAction(getAction(ITextEditorActionConstants.CUT));
-		service.unregisterAction(getAction(ITextEditorActionConstants.COPY));
-		service.unregisterAction(getAction(ITextEditorActionConstants.PASTE));
-		service.unregisterAction(getAction(ITextEditorActionConstants.SELECT_ALL));
-		service.unregisterAction(getAction(ITextEditorActionConstants.FIND));
-		service.unregisterAction(getAction(ITextEditorActionConstants.BOOKMARK));
+		service.unregisterAction(getAction(ActionFactory.DELETE.getId()));
+		service.unregisterAction(getAction(ActionFactory.UNDO.getId()));
+		service.unregisterAction(getAction(ActionFactory.REDO.getId()));
+		service.unregisterAction(getAction(ActionFactory.CUT.getId()));
+		service.unregisterAction(getAction(ActionFactory.COPY.getId()));
+		service.unregisterAction(getAction(ActionFactory.PASTE.getId()));
+		service.unregisterAction(getAction(ActionFactory.SELECT_ALL.getId()));
+		service.unregisterAction(getAction(ActionFactory.FIND.getId()));
+		service.unregisterAction(getAction(IDEActionFactory.BOOKMARK.getId()));
 	}
 
 	public void dispose() {
@@ -253,7 +255,7 @@ protected void selectObjectRange(ISelection selection) {
 	protected void createActions() {
 		PDEEditorContributor contributor = getEditor().getContributor();
 		super.createActions();
-		setAction(ITextEditorActionConstants.SAVE, contributor.getSaveAction());
+		setAction(ActionFactory.SAVE.getId(), contributor.getSaveAction());
 	}
 
 	public void close(boolean save) {

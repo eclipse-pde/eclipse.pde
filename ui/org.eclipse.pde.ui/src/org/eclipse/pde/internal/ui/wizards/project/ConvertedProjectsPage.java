@@ -17,6 +17,7 @@ import org.eclipse.ui.*;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
@@ -69,7 +70,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			return "";
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_PROJECT);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		}
 	}
 
@@ -215,20 +216,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 		IPath manifestPath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (file.exists()) {
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			workbench.getEditorRegistry().setDefaultEditor(
-				file,
-				PDEPlugin.MANIFEST_EDITOR_ID);
+			IDE.setDefaultEditor(file, PDEPlugin.MANIFEST_EDITOR_ID);
 		} else {
 			createManifestFile(file, monitor);
 		}
 		IPath buildPath = project.getFullPath().append("build.properties");
 		IFile buildFile = project.getWorkspace().getRoot().getFile(buildPath);
 		if (buildFile.exists()) {
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			workbench.getEditorRegistry().setDefaultEditor(
-				buildFile,
-				PDEPlugin.BUILD_EDITOR_ID);
+			IDE.setDefaultEditor(buildFile, PDEPlugin.BUILD_EDITOR_ID);
 		}
 	}
 	

@@ -28,6 +28,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class DescriptionSection extends PDEFormSection {
@@ -170,31 +171,31 @@ public class DescriptionSection extends PDEFormSection {
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
 			sourceViewer.doOperation(SourceViewer.CUT);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
+			actionId.equals(ActionFactory.COPY.getId())) {
 			sourceViewer.doOperation(SourceViewer.COPY);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+			actionId.equals(ActionFactory.PASTE.getId())) {
 			sourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.SELECT_ALL)) {
+			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			sourceViewer.doOperation(SourceViewer.SELECT_ALL);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			actionId.equals(ActionFactory.DELETE.getId())) {
 			sourceViewer.doOperation(SourceViewer.DELETE);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
+			actionId.equals(ActionFactory.UNDO.getId())) {
 			sourceViewer.doOperation(SourceViewer.UNDO);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
+			actionId.equals(ActionFactory.REDO.getId())) {
 			sourceViewer.doOperation(SourceViewer.REDO);
 			return true;
 		}

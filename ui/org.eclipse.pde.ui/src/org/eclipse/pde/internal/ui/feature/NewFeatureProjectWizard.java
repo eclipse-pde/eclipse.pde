@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
@@ -88,9 +89,7 @@ public class NewFeatureProjectWizard
 			model.getBuild().add(entry);
 			model.save();
 		}
-		PlatformUI.getWorkbench().getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.BUILD_EDITOR_ID);
+		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}
 	
 	private IFile createFeatureManifest(
@@ -121,10 +120,7 @@ public class NewFeatureProjectWizard
 		// Save the model
 		model.save();
 		model.dispose();
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
-			file,
-			PDEPlugin.FEATURE_EDITOR_ID);
+		IDE.setDefaultEditor(file, PDEPlugin.FEATURE_EDITOR_ID);
 		return file;
 	}
 	private void createFeatureProject(

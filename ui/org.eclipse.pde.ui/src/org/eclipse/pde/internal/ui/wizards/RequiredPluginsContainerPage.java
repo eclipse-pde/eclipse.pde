@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 
 /**
  * Insert the type's description here.
@@ -112,7 +113,7 @@ public class RequiredPluginsContainerPage
 		setDescription(PDEPlugin.getResourceString("RequiredPluginsContainerPage.desc")); //$NON-NLS-1$
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
-				org.eclipse.ui.ISharedImages.IMG_OBJ_PROJECT);
+				IDE.SharedImages.IMG_OBJ_PROJECT);
 		//libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
 		libraryImage =
 			JavaUI.getSharedImages().getImage(

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -236,10 +237,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			schemaFile.setContents(source, true, false, monitor);
 		}
 		monitor.done();
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getEditorRegistry().setDefaultEditor(
-			schemaFile,
-			PDEPlugin.SCHEMA_EDITOR_ID);
+		IDE.setDefaultEditor(schemaFile, PDEPlugin.SCHEMA_EDITOR_ID);
 		return schemaFile;
 	}
 	public IRunnableWithProgress getOperation() {

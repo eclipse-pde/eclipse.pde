@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.*;
 
@@ -72,7 +74,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 
 	class CutAction extends ClipboardAction {
 		public CutAction() {
-			super(ITextEditorActionConstants.CUT);
+			super(ActionFactory.CUT.getId());
 			setText(PDEPlugin.getResourceString(ACTIONS_CUT));
 		}
 		public void selectionChanged(ISelection selection) {
@@ -82,7 +84,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 
 	class CopyAction extends ClipboardAction {
 		public CopyAction() {
-			super(ITextEditorActionConstants.COPY);
+			super(ActionFactory.COPY.getId());
 			setText(PDEPlugin.getResourceString(ACTIONS_COPY));
 		}
 		public void selectionChanged(ISelection selection) {
@@ -92,7 +94,7 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 
 	class PasteAction extends ClipboardAction {
 		public PasteAction() {
-			super(ITextEditorActionConstants.PASTE);
+			super(ActionFactory.PASTE.getId());
 			setText(PDEPlugin.getResourceString(ACTIONS_PASTE));
 			//selectionChanged(null);
 		}
@@ -200,16 +202,16 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		cutAction = new CutAction();
 		copyAction = new CopyAction();
 		pasteAction = new PasteAction();
-		addGlobalAction(ITextEditorActionConstants.CUT, cutAction);
-		addGlobalAction(ITextEditorActionConstants.COPY, copyAction);
-		addGlobalAction(ITextEditorActionConstants.PASTE, pasteAction);
+		addGlobalAction(ActionFactory.CUT.getId(), cutAction);
+		addGlobalAction(ActionFactory.COPY.getId(), copyAction);
+		addGlobalAction(ActionFactory.PASTE.getId(), pasteAction);
 
-		addGlobalAction(ITextEditorActionConstants.DELETE);
-		addGlobalAction(ITextEditorActionConstants.UNDO);
-		addGlobalAction(ITextEditorActionConstants.REDO);
-		addGlobalAction(ITextEditorActionConstants.SELECT_ALL);
-		addGlobalAction(ITextEditorActionConstants.FIND);
-		addGlobalAction(ITextEditorActionConstants.BOOKMARK);
+		addGlobalAction(ActionFactory.DELETE.getId());
+		addGlobalAction(ActionFactory.UNDO.getId());
+		addGlobalAction(ActionFactory.REDO.getId());
+		addGlobalAction(ActionFactory.SELECT_ALL.getId());
+		addGlobalAction(ActionFactory.FIND.getId());
+		addGlobalAction(IDEActionFactory.BOOKMARK.getId());
 
 		saveAction = new SaveAction();
 		saveAction.setText(PDEPlugin.getResourceString(ACTIONS_SAVE));
@@ -232,8 +234,8 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		}
 	    this.editor = (PDEMultiPageEditor) targetEditor;
 		editor.updateUndo(
-			getGlobalAction(ITextEditorActionConstants.UNDO),
-			getGlobalAction(ITextEditorActionConstants.REDO));
+			getGlobalAction(ActionFactory.UNDO.getId()),
+			getGlobalAction(ActionFactory.REDO.getId()));
 		IPDEEditorPage page = editor.getCurrentPage();
 		setActivePage(page);
 		updateSelectableActions(editor.getSelection());
@@ -262,32 +264,32 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 		sourceContributor.setActiveEditor(sourcePage);
 		// update global actions
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.DELETE,
-			page.getAction(ITextEditorActionConstants.DELETE));
+			ActionFactory.DELETE.getId(),
+			page.getAction(ActionFactory.DELETE.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.UNDO,
-			page.getAction(ITextEditorActionConstants.UNDO));
+			ActionFactory.UNDO.getId(),
+			page.getAction(ActionFactory.UNDO.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.REDO,
-			page.getAction(ITextEditorActionConstants.REDO));
+			ActionFactory.REDO.getId(),
+			page.getAction(ActionFactory.REDO.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.CUT,
-			page.getAction(ITextEditorActionConstants.CUT));
+			ActionFactory.CUT.getId(),
+			page.getAction(ActionFactory.CUT.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.COPY,
-			page.getAction(ITextEditorActionConstants.COPY));
+			ActionFactory.COPY.getId(),
+			page.getAction(ActionFactory.COPY.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.PASTE,
-			page.getAction(ITextEditorActionConstants.PASTE));
+			ActionFactory.PASTE.getId(),
+			page.getAction(ActionFactory.PASTE.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.SELECT_ALL,
-			page.getAction(ITextEditorActionConstants.SELECT_ALL));
+			ActionFactory.SELECT_ALL.getId(),
+			page.getAction(ActionFactory.SELECT_ALL.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.FIND,
-			page.getAction(ITextEditorActionConstants.FIND));
+			ActionFactory.FIND.getId(),
+			page.getAction(ActionFactory.FIND.getId()));
 		bars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BOOKMARK,
-			page.getAction(ITextEditorActionConstants.BOOKMARK));
+			IDEActionFactory.BOOKMARK.getId(),
+			page.getAction(IDEActionFactory.BOOKMARK.getId()));
 		bars.updateActionBars();
 	}
 	public void updateActions() {

@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -621,7 +622,7 @@ public class RuntimeInfoSection
 	public boolean doGlobalAction(String actionId) {
 		IStructuredSelection currentSelection = (IStructuredSelection)getFormPage().getSelection();
 		
-		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			if (currentSelection.getFirstElement().toString().startsWith(IBuildEntry.JAR_PREFIX))
 				handleDelete();
 			else

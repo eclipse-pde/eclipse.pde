@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class GrammarSection extends PDEFormSection {
@@ -165,7 +166,7 @@ public class GrammarSection extends PDEFormSection {
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			ISelection sel = treeViewer.getSelection();
 			Object obj = ((IStructuredSelection) sel).getFirstElement();
 			if (obj != null)

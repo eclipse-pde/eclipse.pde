@@ -30,7 +30,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class IncludedFeaturesSection
@@ -160,7 +160,7 @@ public class IncludedFeaturesSection
 		}
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(includesViewer.getTable().getDisplay(), new Runnable() {
 				public void run() {
 					handleDelete();
@@ -168,7 +168,7 @@ public class IncludedFeaturesSection
 			});
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			BusyIndicator.showWhile(includesViewer.getTable().getDisplay(), new Runnable() {
 				public void run() {
 					handleSelectAll();
@@ -176,13 +176,13 @@ public class IncludedFeaturesSection
 			});
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
 			handleDelete();
 			return false;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
 			doPaste();
 			return true;
 		}

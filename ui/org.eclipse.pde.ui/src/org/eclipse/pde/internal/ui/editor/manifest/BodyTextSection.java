@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class BodyTextSection
@@ -135,25 +135,25 @@ public class BodyTextSection
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
 			handleDelete();
 			return false;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			text.selectAll();
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.COPY)) {
+		if (actionId.equals(ActionFactory.COPY.getId())) {
 			text.copy();
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
 			text.paste();
 			return true;
 		}

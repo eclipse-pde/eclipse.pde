@@ -27,8 +27,10 @@ import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -434,7 +436,8 @@ public abstract class PDEMultiPageEditor
 		return null;
 	}
 	public void gotoMarker(IMarker marker) {
-		showPage(getPage(getSourcePageId()), false).gotoMarker(marker);
+		IPDEEditorPage page = showPage(getPage(getSourcePageId()), false);
+		IDE.gotoMarker(page, marker);
 	}
 	public void init(IEditorSite site, IEditorInput input)
 		throws PartInitException {
@@ -556,16 +559,16 @@ public abstract class PDEMultiPageEditor
 		if (!handled) {
 			IPDEEditorPage page = getCurrentPage();
 			if (page instanceof PDEFormPage) {
-				if (id.equals(ITextEditorActionConstants.UNDO)) {
+				if (id.equals(ActionFactory.UNDO.getId())) {
 					undoManager.undo();
 					return;
 				}
-				if (id.equals(ITextEditorActionConstants.REDO)) {
+				if (id.equals(ActionFactory.REDO.getId())) {
 					undoManager.redo();
 					return;
 				}
-				if (id.equals(ITextEditorActionConstants.CUT)
-					|| id.equals(ITextEditorActionConstants.COPY)) {
+				if (id.equals(ActionFactory.CUT.getId())
+					|| id.equals(ActionFactory.COPY.getId())) {
 					copyToClipboard(selection);
 					return;
 				}

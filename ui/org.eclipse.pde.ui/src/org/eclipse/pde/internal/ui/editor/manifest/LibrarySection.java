@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
@@ -135,17 +135,17 @@ public class LibrarySection
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
 			handleDelete();
 			return false;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
 			doPaste();
 			return true;
 		}

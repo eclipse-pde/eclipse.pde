@@ -15,6 +15,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -232,7 +233,7 @@ public class ExportSection extends TableSection {
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}

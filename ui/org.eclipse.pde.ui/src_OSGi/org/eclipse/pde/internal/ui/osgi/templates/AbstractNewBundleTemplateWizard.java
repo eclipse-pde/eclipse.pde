@@ -36,6 +36,7 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
@@ -243,10 +244,10 @@ public abstract class AbstractNewBundleTemplateWizard
 		IFile manifestFile = (IFile)model.getBundleModel().getUnderlyingResource();
 		IFile extensionsFile = (IFile)model.getExtensionsModel().getUnderlyingResource();
 		IEditorRegistry ereg = workbench.getEditorRegistry();
-		IEditorDescriptor meditorId = ereg.getDefaultEditor(manifestFile);
-		if (meditorId==null) meditorId = ereg.getDefaultEditor();
-		IEditorDescriptor exeditorId = ereg.getDefaultEditor(extensionsFile);
-		if (exeditorId==null) exeditorId = ereg.getDefaultEditor();
+		IEditorDescriptor meditorId = IDE.getDefaultEditor(manifestFile);
+		if (meditorId==null) meditorId = ereg.getDefaultEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+		IEditorDescriptor exeditorId = IDE.getDefaultEditor(extensionsFile);
+		if (exeditorId==null) exeditorId = ereg.getDefaultEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		if (extensionsFile.exists())
 			openFile(extensionsFile, exeditorId.getId(), false);
 		openFile(manifestFile, meditorId.getId(), true);

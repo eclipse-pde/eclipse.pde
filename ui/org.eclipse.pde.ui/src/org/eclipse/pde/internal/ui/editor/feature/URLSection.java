@@ -29,7 +29,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class URLSection extends PDEFormSection {
@@ -194,17 +194,17 @@ public class URLSection extends PDEFormSection {
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
 		}
-			if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
 			handleDelete();
 			return false;
 		}
-		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
 			doPaste();
 			return true;
 		}

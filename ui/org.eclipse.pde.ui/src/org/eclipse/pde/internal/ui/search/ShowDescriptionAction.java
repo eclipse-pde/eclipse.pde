@@ -18,8 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;

@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ElementSection extends TreeSection {
@@ -135,14 +136,14 @@ public class ElementSection extends TreeSection {
 	}
 
 	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			ISelection sel = treeViewer.getSelection();
 			Object obj = ((IStructuredSelection) sel).getFirstElement();
 			if (obj != null)
 				handleDelete(obj);
 			return true;
 		}
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
 			ISelection sel = treeViewer.getSelection();
@@ -151,7 +152,7 @@ public class ElementSection extends TreeSection {
 				handleDelete(obj);
 			return false;
 		}
-		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
 			doPaste();
 			return true;
 		}

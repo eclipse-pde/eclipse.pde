@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import java.util.*;
+
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
@@ -338,7 +340,7 @@ private void openResourceFile(String name) {
 	IFile file = getProject().getWorkspace().getRoot().getFile(path);
 	if (file.exists()) {
 		try {
-			PDEPlugin.getActivePage().openEditor(file);
+			IDE.openEditor(PDEPlugin.getActivePage(), file, true);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
