@@ -206,7 +206,7 @@ public class FormOutlinePage extends ContentOutlinePage
 		try {
 			if (treeViewer == null)
 				return;
-			if (!selection.isEmpty()
+			if (selection != null && !selection.isEmpty()
 					&& selection instanceof IStructuredSelection) {
 				Object item = ((IStructuredSelection) selection)
 						.getFirstElement();

@@ -384,4 +384,16 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		return null;
 	}
 	
+	protected void selectionChanged(IStructuredSelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
+	}
+	
+	public boolean setFormInput(Object input) {
+		if (input instanceof IProductPlugin) {
+			fPluginTable.setSelection(new StructuredSelection(input), true);
+			return true;
+		}
+		return super.setFormInput(input);
+	}
+	
 }

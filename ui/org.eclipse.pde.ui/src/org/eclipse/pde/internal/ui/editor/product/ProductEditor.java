@@ -77,7 +77,7 @@ public class ProductEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
-		return null;
+		return new ProductOutlinePage(this);
 	}
 
 	/* (non-Javadoc)

@@ -226,5 +226,17 @@ public class FeatureSection extends TableSection {
 		fFeatureTable.refresh();
 		super.refresh();
 	}
+	
+	protected void selectionChanged(IStructuredSelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
+	}
+
+	public boolean setFormInput(Object input) {
+		if (input instanceof IProductFeature) {
+			fFeatureTable.setSelection(new StructuredSelection(input), true);
+			return true;
+		}
+		return super.setFormInput(input);
+	}
 
 }
