@@ -215,7 +215,7 @@ public class MigratePluginWizard extends Wizard {
 		ArrayList result = new ArrayList();
 		//TODO do no just add.  If core.runtime exists, replace it.
 		//if (findImport(model, "org.eclipse.core.runtime") == null)
-		result.add("org.eclipse.core.runtime.compatibility");
+		result.add("<import plugin=\"org.eclipse.core.runtime.compatibility\"/>");
 		IPluginImport uiImport = findImport(model, "org.eclipse.ui");
 		if (uiImport != null) {
 			ArrayList list = new ArrayList();
