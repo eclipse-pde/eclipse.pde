@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.bundle;
+package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -17,7 +17,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.bundle.IBundle;
+import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 

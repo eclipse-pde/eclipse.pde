@@ -131,7 +131,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			PDECore
 				.getDefault()
 				.getWorkspaceModelManager()
-				.getWorkspaceFeatureModels();
+				.getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			IFeature feature = models[i].getFeature();
 

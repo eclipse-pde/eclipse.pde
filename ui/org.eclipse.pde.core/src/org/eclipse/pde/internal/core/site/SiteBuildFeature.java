@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.isite.ISiteBuild;
-import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
+import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.Node;
 
 /**
@@ -73,9 +72,9 @@ public class SiteBuildFeature
 
 	public IFeature getReferencedFeature() {
 		if (feature == null) {
-			WorkspaceModelManager manager =
+			IWorkspaceModelManager manager =
 				PDECore.getDefault().getWorkspaceModelManager();
-			IFeatureModel[] models = manager.getWorkspaceFeatureModels();
+			IFeatureModel[] models = manager.getFeatureModels();
 			for (int i = 0; i < models.length; i++) {
 				IFeatureModel model = models[i];
 				IFeature feature = model.getFeature();

@@ -16,7 +16,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -138,9 +138,9 @@ public class SchemaRegistry
 		PDECore.getWorkspace().addResourceChangeListener(this);
 	}
 	private void loadExternalDescriptors() {
-		ExternalModelManager registry =
+		IExternalModelManager registry =
 			PDECore.getDefault().getExternalModelManager();
-		IPluginModel[] models = registry.getModels();
+		IPluginModel[] models = registry.getPluginModels();
 		for (int i = 0; i < models.length; i++) {
 			IPlugin pluginInfo = models[i].getPlugin();
 			IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
@@ -180,14 +180,14 @@ public class SchemaRegistry
 		}
 	}
 	private void loadWorkspaceDescriptors() {
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModel[] models = manager.getWorkspacePluginModels();
+		IPluginModel[] models = manager.getPluginModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModel model = models[i];
 			loadWorkspaceDescriptor(model);
 		}
-		IFragmentModel[] fmodels = manager.getWorkspaceFragmentModels();
+		IFragmentModel[] fmodels = manager.getFragmentModels();
 		for (int i = 0; i < fmodels.length; i++) {
 			IFragmentModel fmodel = fmodels[i];
 			loadWorkspaceDescriptor(fmodel);

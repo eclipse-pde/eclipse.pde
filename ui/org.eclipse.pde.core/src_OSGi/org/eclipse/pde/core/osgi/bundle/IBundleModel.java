@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.bundle;
+package org.eclipse.pde.core.osgi.bundle;
 
 import org.eclipse.pde.core.*;
 /**

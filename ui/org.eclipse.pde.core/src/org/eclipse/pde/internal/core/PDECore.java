@@ -16,9 +16,11 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core";
@@ -186,7 +188,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	// External model manager
-	private ExternalModelManager externalModelManager;
+	private IAlternativeRuntimeSupport runtimeSupport;
 	private boolean launchedInstance = false;
 	private PluginModelManager modelManager;
 	private boolean modelsLocked = false;
@@ -201,7 +203,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private TempFileManager tempFileManager;
 	// Tracing options manager
 	private TracingOptionsManager tracingOptionsManager;
-	private WorkspaceModelManager workspaceModelManager;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -265,9 +266,9 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public IFeature findFeature(String id, String version, int match) {
 		if (modelsLocked)
 			return null;
-		WorkspaceModelManager manager = getWorkspaceModelManager();
+		IWorkspaceModelManager manager = getWorkspaceModelManager();
 		return findFeature(
-			manager.getWorkspaceFeatureModels(),
+			manager.getFeatureModels(),
 			id,
 			version,
 			match);
@@ -309,10 +310,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return null;
 	}
 
-	public ExternalModelManager getExternalModelManager() {
-		if (externalModelManager == null)
+	public IExternalModelManager getExternalModelManager() {
+		if (runtimeSupport == null)
 			initializeModels();
-		return externalModelManager;
+		return runtimeSupport.getExternalModelManager();
 	}
 	public PluginModelManager getModelManager() {
 		if (modelManager == null)
@@ -349,10 +350,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			tracingOptionsManager = new TracingOptionsManager();
 		return tracingOptionsManager;
 	}
-	public WorkspaceModelManager getWorkspaceModelManager() {
-		if (workspaceModelManager == null)
+	public IWorkspaceModelManager getWorkspaceModelManager() {
+		if (runtimeSupport == null)
 			initializeModels();
-		return workspaceModelManager;
+		return runtimeSupport.getWorkspaceModelManager();
 	}
 
 	/**
@@ -398,16 +399,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	private void initializeModels() {
 		modelsLocked = true;
-		if (externalModelManager == null)
-			externalModelManager = new ExternalModelManager();
-
-		if (workspaceModelManager == null) {
-			workspaceModelManager = new WorkspaceModelManager();
-			workspaceModelManager.reset();
-		}
+		if (runtimeSupport == null)
+			loadRuntimeSupport();
 		if (modelManager == null) {
 			modelManager = new PluginModelManager();
-			modelManager.connect(workspaceModelManager, externalModelManager);
+			modelManager.connect(runtimeSupport.getWorkspaceModelManager(), 
+					runtimeSupport.getExternalModelManager());
 		}
 		modelsLocked = false;
 	}
@@ -422,12 +419,38 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			schemaRegistry.shutdown();
 		if (modelManager != null)
 			modelManager.shutdown();
-		if (workspaceModelManager != null)
-			workspaceModelManager.shutdown();
-		if (externalModelManager != null)
-			externalModelManager.shutdown();
+		if (runtimeSupport != null)
+			runtimeSupport.shutdown();
 		if (tempFileManager != null)
 			tempFileManager.shutdown();
 		super.shutdown();
+	}
+	
+	private void loadRuntimeSupport() {
+		IConfigurationElement[] runtimes = Platform.getPluginRegistry().getConfigurationElementsFor(PDECore.PLUGIN_ID, "alternativeRuntimeSupport");
+		
+		if (runtimes.length==0) return;
+		IConfigurationElement runtime = runtimes[0];
+		if (runtimes.length>1) {
+			// pick the first runtime support that is
+			// not the default
+			runtime = null;
+			for (int i=0; i<runtimes.length; i++) {
+				String def = runtimes[i].getAttribute("default");
+				if (def!=null && def.equalsIgnoreCase("true"))
+					continue;
+				if (runtime==null) {
+					runtime = runtimes[i];
+					break;
+				}
+			}
+		}
+		if (runtime==null) return;
+		try {
+			runtimeSupport = (IAlternativeRuntimeSupport)runtime.createExecutableExtension("class");
+		}
+		catch (CoreException e) {
+			logException(e);
+		}
 	}
 }

@@ -15,13 +15,14 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IAdaptable {
 	private IModelProviderListener providerListener;
-	private ExternalModelManager externalManager;
-	private WorkspaceModelManager workspaceManager;
+	private IExternalModelManager externalManager;
+	private IWorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
 
@@ -201,10 +202,10 @@ public class PluginModelManager implements IAdaptable {
 	
 	private void initializeTable() {
 		entries = new Hashtable();
-		IPluginModel[] models = workspaceManager.getWorkspacePluginModels();
-		IFragmentModel[] fmodels = workspaceManager.getWorkspaceFragmentModels();
+		IPluginModel[] models = workspaceManager.getPluginModels();
+		IFragmentModel[] fmodels = workspaceManager.getFragmentModels();
 		addToTable(models, fmodels, true);
-		models = externalManager.getModels();
+		models = externalManager.getPluginModels();
 		fmodels = externalManager.getFragmentModels();
 		addToTable(models, fmodels, false);
 		searchablePluginsManager.initialize();
@@ -244,7 +245,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 	}
 
-	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
+	public void connect(IWorkspaceModelManager wm, IExternalModelManager em) {
 		externalManager = em;
 		workspaceManager = wm;
 		externalManager.addModelProviderListener(providerListener);

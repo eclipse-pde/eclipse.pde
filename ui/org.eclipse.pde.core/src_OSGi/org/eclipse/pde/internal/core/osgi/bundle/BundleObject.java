@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.bundle;
+package org.eclipse.pde.internal.core.osgi.bundle;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.bundle.IBundleModel;
+import org.eclipse.pde.core.osgi.bundle.IBundleModel;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class BundleObject {

@@ -23,6 +23,7 @@
 
 
    <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
+   <extension-point id="alternativeRuntimeSupport" name="Alternative Runtime Support" schema="schema/alternativeRuntimeSupport.exsd"/>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
@@ -50,6 +51,21 @@
       <extraClasspathEntry
             library="pdecore.jar">
       </extraClasspathEntry>
+   </extension>
+   <extension
+         point="org.eclipse.pde.core.alternativeRuntimeSupport">
+      <runtime
+            name="Default Eclipse Runtime"
+            default="true"
+            class="org.eclipse.pde.internal.core.DefaultRuntimeSupport"
+            id="org.eclipse.pde.core.defaultRuntime">
+      </runtime>
+      <runtime
+            class="org.eclipse.pde.internal.core.osgi.OSGiRuntimeSupport"
+            name="OSGi Eclipse Runtime"
+            id="org.eclipse.pde.core.osgi.osgiRuntime"
+            default="false">
+      </runtime>
    </extension>
 
 </plugin>

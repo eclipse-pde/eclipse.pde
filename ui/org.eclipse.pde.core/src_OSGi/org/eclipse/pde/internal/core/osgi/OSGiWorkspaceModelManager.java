@@ -8,19 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
-
+package org.eclipse.pde.internal.core.osgi;
 import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.jdt.core.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -28,8 +25,8 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.team.core.RepositoryProvider;
 
-public class WorkspaceModelManager
-	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {
+public class OSGiWorkspaceModelManager
+	implements IWorkspaceModelManager, IResourceChangeListener, IResourceDeltaVisitor {
 
 	private Hashtable models = new Hashtable();
 	private Vector listeners = new Vector();
@@ -59,7 +56,7 @@ public class WorkspaceModelManager
 	}
 	private boolean initialized;
 
-	public WorkspaceModelManager() {
+	public OSGiWorkspaceModelManager() {
 		super();
 	}
 	public void addModelProviderListener(IModelProviderListener listener) {
@@ -265,7 +262,7 @@ public class WorkspaceModelManager
 		}
 		return null;
 	}
-	public IFragmentModel[] getWorkspaceFragmentModels() {
+	public IFragmentModel[] getFragmentModels() {
 		if (workspaceFragmentModels == null) {
 			initializeWorkspacePluginModels();
 		}
@@ -275,7 +272,7 @@ public class WorkspaceModelManager
 		workspaceFragmentModels.copyInto(result);
 		return result;
 	}
-	public IFeatureModel[] getWorkspaceFeatureModels() {
+	public IFeatureModel[] getFeatureModels() {
 		if (workspaceFeatureModels == null) {
 			initializeWorkspacePluginModels();
 		}
@@ -333,7 +330,7 @@ public class WorkspaceModelManager
 		}
 		return null;
 	}
-	public IPluginModel[] getWorkspacePluginModels() {
+	public IPluginModel[] getPluginModels() {
 		if (workspaceModels == null) {
 			initializeWorkspacePluginModels();
 		}

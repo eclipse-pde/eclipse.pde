@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.bundle.IBundle;
+import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 

@@ -8,18 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
-
+package org.eclipse.pde.internal.core.osgi;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
  */
-public class ExternalModelManager {
+public class OSGiExternalModelManager implements IExternalModelManager {
 	private Vector models = new Vector();
 	private Vector fmodels = new Vector();
 	private Vector listeners = new Vector();
@@ -58,7 +60,7 @@ public class ExternalModelManager {
 		return new Path(preferences.getString(ICoreConstants.PLATFORM_PATH));
 	}
 
-	public ExternalModelManager() {
+	public OSGiExternalModelManager() {
 		loadModels(new NullProgressMonitor());
 	}
 
@@ -124,6 +126,10 @@ public class ExternalModelManager {
 		return (IFragmentModel[]) fmodels.toArray(
 			new IFragmentModel[fmodels.size()]);
 	}
+	
+	public IFeatureModel[] getFeatureModels() {
+		return new IFeatureModel[0];
+	}
 
 	public IFragment[] getFragmentsFor(String pluginID, String pluginVersion) {
 		ArrayList result = new ArrayList();
@@ -146,7 +152,7 @@ public class ExternalModelManager {
 	public IPluginModelBase[] getAllModels() {
 		IPluginModelBase[] allModels =
 			new IPluginModelBase[models.size() + fmodels.size()];
-		System.arraycopy(getModels(), 0, allModels, 0, models.size());
+		System.arraycopy(getPluginModels(), 0, allModels, 0, models.size());
 		System.arraycopy(
 			getFragmentModels(),
 			0,
@@ -173,7 +179,7 @@ public class ExternalModelManager {
 	}
 	
 
-	public IPluginModel[] getModels() {
+	public IPluginModel[] getPluginModels() {
 		return (IPluginModel[]) models.toArray(new IPluginModel[models.size()]);
 	}
 

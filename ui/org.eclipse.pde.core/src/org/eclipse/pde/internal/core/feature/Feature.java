@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.*;
 
@@ -111,12 +110,12 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models = null;
 		if (reference.isFragment())
-			models = mng.getWorkspaceFragmentModels();
+			models = mng.getFragmentModels();
 		else
-			models = mng.getWorkspacePluginModels();
+			models = mng.getPluginModels();
 
 		for (int i = 0; i < models.length; i++) {
 			IPluginBase base = models[i].getPluginBase();

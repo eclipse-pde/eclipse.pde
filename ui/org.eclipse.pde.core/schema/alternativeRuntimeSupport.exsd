@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="alternativeRuntimeSupport" name="Alternative Runtime Support"/>
+      </appInfo>
+      <documentation>
+         This extension point is used by PDE Core to plug in support for alternative run-times like OSGi. PDE Core model of the world is plug-in-centric. Alternative model managers and other supporting classes provided by the support allow PDE Core to change its behaviour depending on the run-time used by Eclipse.
+
+&lt;b&gt;This extension point is private to PDE and is not supposed to be used by other plug-ins.&lt;/b&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="runtime" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="runtime">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique identifier of this runtime
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a user-friendly name of this runtime
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  &lt;samp&gt;true&lt;/samp&gt; if this is the default runtime, false otherwise.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.pde.core.IAlternativeRuntimeSupport&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.core.IAlternativeRuntimeSupport"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;samp&gt;class&lt;/samp&gt;should be the fully qualified name of a Java class that implements &lt;samp&gt;org.eclipse.pde.core.IAlternativeRuntimeSupport&lt;/samp&gt; interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         PDE Core provides the default runtime support. This support handles the regular Eclipse runtime (plug-ins only). PDE OSGi plug-ins provide OSGi alternative.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

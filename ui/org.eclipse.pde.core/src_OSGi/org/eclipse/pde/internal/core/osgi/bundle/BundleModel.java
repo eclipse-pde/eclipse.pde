@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.bundle;
+package org.eclipse.pde.internal.core.osgi.bundle;
 
 import java.io.*;
 import java.util.*;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.bundle.*;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.internal.core.*;
 
 public abstract class BundleModel

@@ -96,16 +96,16 @@ public abstract class AbstractPluginModelBase
 			String id = pluginBase.getId();
 			String version = pluginBase.getVersion();
 			// Add matching external fragments
-			ExternalModelManager emng =
+			IExternalModelManager emng =
 				PDECore.getDefault().getExternalModelManager();
 			if (emng.hasEnabledModels()) {
 				IFragmentModel[] models = emng.getFragmentModels();
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments
-			WorkspaceModelManager wmng =
+			IWorkspaceModelManager wmng =
 				PDECore.getDefault().getWorkspaceModelManager();
-			IFragmentModel[] models = wmng.getWorkspaceFragmentModels();
+			IFragmentModel[] models = wmng.getFragmentModels();
 			addMatchingFragments(id, version, models, result);
 		}
 		URL[] locations = new URL[result.size()];
