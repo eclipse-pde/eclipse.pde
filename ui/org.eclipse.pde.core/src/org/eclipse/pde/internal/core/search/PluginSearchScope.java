@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -43,7 +43,8 @@ public class PluginSearchScope {
 	 * SCOPE_WORKING_SETS
 	 * @param externalScope  one of EXTERNAL_SCOPE_NONE, EXTERNAL_SCOPE_ENABLED,
 	 * EXTERNAL_SCOPE_ALL
-	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null	 */
+	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null
+	 */
 	public PluginSearchScope(
 		int workspaceScope,
 		int externalScope,
