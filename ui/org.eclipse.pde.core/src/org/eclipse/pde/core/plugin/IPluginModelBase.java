@@ -87,7 +87,7 @@ public interface IPluginModelBase extends IModel, IModelChangeProvider {
 	public String getInstallLocation();
 	/**
 	 * Returns a top-level model object. Equivalent to
-	 * calling <pre>getPluginBase(false)</pre>.
+	 * calling <pre>getPluginBase(true)</pre>.
 	 * @return a top-level model object representing a plug-in or a fragment.
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to

@@ -281,8 +281,7 @@ public class BuildPathUtilCore {
 				.getWorkspaceModelManager()
 				.getWorkspaceFragmentModels();
 		IFragmentModel[] extfmodels =
-			PDECore.getDefault().getExternalModelManager().getFragmentModels(
-				null);
+			PDECore.getDefault().getExternalModelManager().getFragmentModels();
 		IFragmentModel[] fmodels =
 			new IFragmentModel[wfmodels.length + extfmodels.length];
 
@@ -427,8 +426,7 @@ public class BuildPathUtilCore {
 			fragments);
 		addFragments(
 			model,
-			PDECore.getDefault().getExternalModelManager().getFragmentModels(
-				monitor),
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(),
 			fragments);
 
 	}

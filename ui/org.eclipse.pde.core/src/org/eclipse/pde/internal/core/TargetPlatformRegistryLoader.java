@@ -26,7 +26,11 @@ public class TargetPlatformRegistryLoader {
 	}
 	private long code;
 	
-	public MultiStatus load(URL[] urls, boolean resolve, boolean useCache) {
+	public MultiStatus load(
+		URL[] urls,
+		boolean resolve,
+		boolean useCache,
+		IProgressMonitor monitor) {
 		MultiStatus errors =
 			new MultiStatus(
 				PDECore.getPluginId(),
@@ -34,31 +38,42 @@ public class TargetPlatformRegistryLoader {
 				PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
 				null);
 		Factory factory = new Factory(errors);
-		
+
 		long start = System.currentTimeMillis();
 
-		if (resolve && useCache) {
-			code = computePluginsTimestamp(urls);
-			loadFromCache(urls, factory, errors);
-			if (registryModel != null) {
-				return errors;
+		try {
+			monitor.beginTask("", 5);
+			if (resolve && useCache) {
+				code = computePluginsTimestamp(urls);
+				monitor.worked(1);
+				loadFromCache(urls, factory, errors);
+				monitor.worked(1);
+				if (registryModel != null) {
+					return errors;
+				}
 			}
-		}
 
-		registryModel = Platform.parsePlugins(urls, factory);
-		IStatus resolveStatus = null;
-		if (resolve) {
-			resolveStatus = registryModel.resolve(true, false);
-			if (resolveStatus != null)
-				errors.merge(resolveStatus);
-			if (useCache) {
-				saveCache(errors);
+			registryModel = Platform.parsePlugins(urls, factory);
+			monitor.worked(1);
+			IStatus resolveStatus = null;
+			if (resolve) {
+				resolveStatus = registryModel.resolve(true, false);
+				monitor.worked(1);
+				if (resolveStatus != null)
+					errors.merge(resolveStatus);
+				if (useCache) {
+					saveCache(errors);
+					monitor.worked(1);
+				}
 			}
+			if (DEBUG) {
+				System.out.println(
+					"Total time elapsed: " + (System.currentTimeMillis() - start) + "ms");
+			}
+			return errors;
+		} finally {
+			monitor.done();
 		}
-		if (DEBUG) {
-			System.out.println("Total time elapsed: " + (System.currentTimeMillis() - start) + "ms");
-		}
-		return errors;
 	}
 	
 	public PluginRegistryModel getRegistry() {

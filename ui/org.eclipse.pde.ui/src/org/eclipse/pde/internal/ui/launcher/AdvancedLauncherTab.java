@@ -321,8 +321,7 @@ public class AdvancedLauncherTab
 		IPluginModelBase[] plugins =
 			PDECore.getDefault().getExternalModelManager().getModels();
 		IPluginModelBase[] fragments =
-			PDECore.getDefault().getExternalModelManager().getFragmentModels(
-				null);
+			PDECore.getDefault().getExternalModelManager().getFragmentModels();
 		return getAllPlugins(plugins, fragments);
 	}
 

@@ -207,7 +207,6 @@ public class BasicLauncherTab
 	}
 
 	static String getDefaultWorkspace() {
-		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
 			new Path(
 				PDECore.getDefault().getPluginPreferences().getString(

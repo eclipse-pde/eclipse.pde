@@ -226,16 +226,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					monitor.beginTask(
 						PDEPlugin.getResourceString(KEY_LOADING_RUNTIME),
 						IProgressMonitor.UNKNOWN);
-					int size =
-						registry.getPluginCount() + registry.getFragmentCount();
-					models = new IPluginModelBase[size];
-					for (int i = 0; i < registry.getPluginCount(); i++) {
-						models[i] = registry.getPlugin(i).getModel();
-					}
-					int offset = registry.getPluginCount();
-					for (int i = 0; i < registry.getFragmentCount(); i++) {
-						models[i + offset] = registry.getFragment(i).getModel();
-					}
+					models = registry.getAllModels();
 					monitor.done();
 				}
 			};
@@ -253,13 +244,12 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						monitor.beginTask(
 							PDEPlugin.getResourceString(KEY_LOADING_FILE),
 							IProgressMonitor.UNKNOWN);
-						String[] paths = createPaths(dropLocation);
 
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectories(
+							RegistryLoader.loadFromDirectories(
 								result,
 								fresult,
-								paths,
+								createPath(dropLocation),
 								false,
 								false,
 								monitor);
@@ -267,6 +257,19 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 							&& errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
+						models = new IPluginModelBase[result.size() + fresult.size()];
+						System.arraycopy(
+							result.toArray(new IPluginModel[result.size()]),
+							0,
+							models,
+							0,
+							result.size());
+						System.arraycopy(
+							fresult.toArray(new IFragmentModel[fresult.size()]),
+							0,
+							models,
+							result.size(),
+							fresult.size());
 						monitor.done();
 					}
 				};
@@ -276,33 +279,15 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					PDEPlugin.logException(e);
 				}
 			}
-			int size = result.size() + fresult.size();
-			models = new IPluginModelBase[size];
-			for (int i = 0; i < result.size(); i++) {
-				models[i] = (IPluginModelBase) result.get(i);
-			}
-			int offset = result.size();
-			for (int i = 0; i < fresult.size(); i++) {
-				models[offset + i] = (IPluginModelBase) fresult.get(i);
-			}
 		}
 		return models;
 	}
 
-	private String[] createPaths(IPath dropLocation) {
-		File dropDir = dropLocation.toFile();
-		Vector result = new Vector();
-
-		File pluginsDir = new File(dropDir, "plugins");
-		if (pluginsDir.exists()) {
-			result.add(pluginsDir.getAbsolutePath());
-		}
-		File fragmentDir = new File(dropDir, "fragments");
-		if (fragmentDir.exists()) {
-			result.add(fragmentDir.getAbsolutePath());
-		}
-		result.add(dropDir.getAbsolutePath());
-		return (String[]) result.toArray(new String[result.size()]);
+	private String[] createPath(IPath dropLocation) {
+		File pluginsDir = new File(dropLocation.toFile(), "plugins");
+		if (pluginsDir.exists()) 
+			return new String[] {pluginsDir.getAbsolutePath()};
+		return new String[0];
 	}
 
 	public IPluginModelBase[] getSelectedModels() {

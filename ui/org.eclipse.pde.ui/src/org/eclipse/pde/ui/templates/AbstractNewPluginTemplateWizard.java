@@ -295,7 +295,7 @@ public abstract class AbstractNewPluginTemplateWizard
 					if (askToEnable()) {
 						ExternalModelManager mng =
 							PDECore.getDefault().getExternalModelManager();
-						mng.initializeAndStore(true);
+						mng.enableAll();
 						result[0] = true;
 					} else
 						result[0] = false;

@@ -188,7 +188,7 @@ public class PluginModelManager implements IAdaptable {
 		IFragmentModel[] fmodels = workspaceManager.getWorkspaceFragmentModels();
 		addToTable(models, fmodels, true);
 		models = externalManager.getModels();
-		fmodels = externalManager.getFragmentModels(null);
+		fmodels = externalManager.getFragmentModels();
 		addToTable(models, fmodels, false);
 		searchablePluginsManager.initialize();
 	}

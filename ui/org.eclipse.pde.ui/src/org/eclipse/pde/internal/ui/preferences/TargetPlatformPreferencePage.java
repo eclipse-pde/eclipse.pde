@@ -4,11 +4,10 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -47,6 +46,8 @@ public class TargetPlatformPreferencePage
 	private ExternalPluginsBlock pluginsBlock;
 	private boolean useOther = false;
 	private Preferences preferences = null;
+	private boolean needsReload = false;
+	private String originalText;
 	
 	/**
 	 * MainPreferencePage constructor comment.
@@ -102,6 +103,7 @@ public class TargetPlatformPreferencePage
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		homeText.setLayoutData(gd);
 
+
 		browseButton = new Button(container, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 		browseButton.setLayoutData(new GridData());
@@ -117,6 +119,12 @@ public class TargetPlatformPreferencePage
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
 		load();
+		homeText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				needsReload = true;
+			}
+		});
+		originalText = homeText.getText();
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
@@ -166,8 +174,10 @@ public class TargetPlatformPreferencePage
 			reloadNeeded = true;
 		if (oldPath.equals(newPath) == false)
 			reloadNeeded = true;
-		if (reloadNeeded)
+		if (reloadNeeded) {
 			pluginsBlock.handleReload();
+			needsReload = false;
+		}
 	}
 	
 	private void handleBrowse() {
@@ -185,11 +195,6 @@ public class TargetPlatformPreferencePage
 		load(mode.equals(ICoreConstants.VALUE_USE_OTHER), path);
 	}
 
-	/**
-	 * Initializes this preference page using the passed desktop.
-	 *
-	 * @param desktop the current desktop
-	 */
 	public void init(IWorkbench workbench) {
 	}
 	
@@ -198,36 +203,29 @@ public class TargetPlatformPreferencePage
 		super.performDefaults();
 	}
 
-	/** 
-	 *
-	 */
 	public boolean performOk() {
-		String oldEclipseHome = preferences.getString(ICoreConstants.PLATFORM_PATH);
-		final String newEclipseHome = getPlatformPath();
-		if (!oldEclipseHome.equals(newEclipseHome)) {
-			// home changed -update Java variable
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					ExternalModelManager.setEclipseHome(newEclipseHome, monitor);
-				}
-			};
-			ProgressMonitorDialog pm = new ProgressMonitorDialog(getControl().getShell());
-			try {
-				pm.run(true, false, op);
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-		
-		String mode =
-			useOther ? ICoreConstants.VALUE_USE_OTHER : ICoreConstants.VALUE_USE_THIS;
-
-		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
-		preferences.setValue(ICoreConstants.PLATFORM_PATH, homeText.getText());
+		if (needsReload && getUseOther() && !originalText.equals(homeText.getText())) {
+			MessageDialog dialog =
+				new MessageDialog(
+					getShell(),
+					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.title"),
+					null,
+					PDEPlugin.getResourceString("Preferences.TargetPlatformPage.question"),
+					MessageDialog.QUESTION,
+					new String[] {
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.NO_LABEL},
+					1);
+			if (dialog.open() == 1)
+				return false;
+			pluginsBlock.handleReload();
+		} 
 		pluginsBlock.save();
-		PDECore.getDefault().savePluginPreferences();
 		PDECore.getDefault().getSourceLocationManager().reinitializeClasspathVariables(null);
 		return super.performOk();
+	}
+	 
+	public void resetNeedsReload() {
+		needsReload = false;
 	}
 }

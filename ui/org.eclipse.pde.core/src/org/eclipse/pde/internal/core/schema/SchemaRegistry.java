@@ -67,8 +67,9 @@ private void initializeDescriptors() {
 }
 private void loadExternalDescriptors() {
 	ExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
-	for (int i = 0; i < registry.getPluginCount(); i++) {
-		IPlugin pluginInfo = registry.getPlugin(i);
+	IPluginModel[] models = registry.getModels();
+	for (int i = 0; i < models.length; i++) {
+		IPlugin pluginInfo = models[i].getPlugin();
 		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
 		for (int j = 0; j < points.length; j++) {
 			IPluginExtensionPoint point = points[j];

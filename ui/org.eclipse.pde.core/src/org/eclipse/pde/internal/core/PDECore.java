@@ -375,6 +375,8 @@ public class PDECore extends Plugin {
 			modelManager.shutdown();
 		if (workspaceModelManager != null)
 			workspaceModelManager.shutdown();
+		if (externalModelManager != null)
+			externalModelManager.shutdown();
 		if (tempFileManager!=null)
 			tempFileManager.shutdown();
 		super.shutdown();

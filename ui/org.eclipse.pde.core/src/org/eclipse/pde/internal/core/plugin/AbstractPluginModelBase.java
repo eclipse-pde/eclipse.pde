@@ -38,10 +38,10 @@ public abstract class AbstractPluginModelBase
 	}
 
 	public IPluginBase getPluginBase() {
-		return pluginBase;
+		return getPluginBase(true);
 	}
 	public IPluginBase getPluginBase(boolean createIfMissing) {
-		if (pluginBase == null) {
+		if (pluginBase == null && createIfMissing) {
 			pluginBase = (PluginBase) createPluginBase();
 			loaded = true;
 		}
@@ -79,7 +79,7 @@ public abstract class AbstractPluginModelBase
 			ExternalModelManager emng =
 				PDECore.getDefault().getExternalModelManager();
 			if (emng.hasEnabledModels()) {
-				IFragmentModel[] models = emng.getFragmentModels(null);
+				IFragmentModel[] models = emng.getFragmentModels();
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments

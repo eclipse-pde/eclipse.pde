@@ -4,23 +4,25 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.jface.operation.*;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.swt.custom.*;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -31,12 +33,54 @@ public class ExternalPluginsBlock {
 	private TargetPlatformPreferencePage page;
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload";
 	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace";
-	private ExternalModelManager registry;
-	private IModel[] initialModels;
+	private Vector models;
+	private Vector fmodels;
 	private boolean reloaded;
-	private Vector changed;
 	private TablePart tablePart;
+	private HashSet changed = new HashSet();
+	private IPluginModelBase[] initialModels;
+	private HashMap eclipseHomeVariables = new HashMap();
+
+
 	private final static boolean DEFAULT_STATE = false;
+	
+	class ReloadOperation implements IRunnableWithProgress {
+		private Vector models = new Vector();
+		private Vector fmodels = new Vector();
+		private String[] pluginPaths;
+		private boolean useOther;
+		
+		public ReloadOperation(String[] pluginPaths, boolean useOther) {
+			 this.useOther = useOther;
+			 this.pluginPaths = pluginPaths;
+		}
+			
+		public void run(IProgressMonitor monitor)
+			throws InvocationTargetException, InterruptedException {
+			if (useOther)
+				RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
+			else
+				RegistryLoader.reloadFromLive(models, fmodels, monitor);
+		}
+		public Vector getPluginModels() {
+			return models;
+		}
+		public Vector getFragmentModels() {
+			return fmodels;
+		}
+
+	}
+	
+	class SaveOperation implements Runnable {
+		public void run() {
+			if (reloaded)
+				EclipseHomeInitializer.resetEclipseHomeVariables(eclipseHomeVariables);
+			savePreferences();
+			updateModels();
+			computeDelta();
+		}
+
+	}
 
 	public class PluginContentProvider
 		extends DefaultContentProvider
@@ -50,28 +94,20 @@ public class ExternalPluginsBlock {
 		public TablePart(String[] buttonLabels) {
 			super(null, buttonLabels);
 		}
-		protected void elementChecked(Object element, boolean checked) {
-			IPluginModelBase model = (IPluginModelBase) element;
-			model.setEnabled(checked);
-			if (changed == null)
-				changed = new Vector();
-			if (!changed.contains(model))
-				changed.add(model);
-			super.elementChecked(element, checked);
-		}
-		protected void handleSelectAll(boolean select) {
-			super.handleSelectAll(select);
-			IPluginModelBase[] models = getAllModels();
-			globalSelect(models, select);
-		}
+
 		protected void buttonSelected(Button button, int index) {
-			if (index == 0)
-				handleReload();
-			else if (index == 5)
-				selectNotInWorkspace();
-			else
-				super.buttonSelected(button, index);
+			switch (index) {
+				case 0 :
+					handleReload();
+					break;
+				case 5 :
+					selectNotInWorkspace();
+					break;
+				default :
+					super.buttonSelected(button, index);
+			}
 		}
+
 		protected StructuredViewer createStructuredViewer(
 			Composite parent,
 			int style,
@@ -81,23 +117,79 @@ public class ExternalPluginsBlock {
 			viewer.setSorter(ListUtil.PLUGIN_SORTER);
 			return viewer;
 		}
+
+		protected void elementChecked(Object element, boolean checked) {
+			IPluginModelBase model = (IPluginModelBase) element;
+			if (changed.contains(model) && model.isEnabled() == checked) {
+				changed.remove(model);
+			} else if (model.isEnabled() != checked) {
+				changed.add(model);
+			}
+			super.elementChecked(element, checked);
+		}
+		
+		protected void handleSelectAll(boolean select) {
+			super.handleSelectAll(select);
+			IPluginModelBase[] allModels = getAllModels();
+			for (int i = 0; i < allModels.length; i++) {
+				IPluginModelBase model = allModels[i];
+				if (model.isEnabled() != select) {
+					changed.add(model);
+				} else if (changed.contains(model) && model.isEnabled() == select) {
+					changed.remove(model);
+				}
+			}
+		}
+
+
 	}
 
 	public ExternalPluginsBlock(TargetPlatformPreferencePage page) {
-		registry = PDECore.getDefault().getExternalModelManager();
 		this.page = page;
 		String[] buttonLabels =
 			{
 				PDEPlugin.getResourceString(KEY_RELOAD),
 				null,
 				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_SELECT_ALL),
-				PDEPlugin.getResourceString(WizardCheckboxTablePart.KEY_DESELECT_ALL),
+				PDEPlugin.getResourceString(
+					WizardCheckboxTablePart.KEY_DESELECT_ALL),
 				null,
 				PDEPlugin.getResourceString(KEY_WORKSPACE)};
 		tablePart = new TablePart(buttonLabels);
 		tablePart.setSelectAllIndex(2);
 		tablePart.setDeselectAllIndex(3);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+
+	void computeDelta() {
+		int type = 0;
+		IModel[] addedArray = null;
+		IModel[] removedArray = null;
+		IModel[] changedArray = null;
+		if (reloaded) {
+			type =
+				IModelProviderEvent.MODELS_REMOVED
+					| IModelProviderEvent.MODELS_ADDED;
+			removedArray = initialModels;
+			addedArray = getAllModels();
+		}
+		if (changed != null && changed.size() > 0) {
+			type |= IModelProviderEvent.MODELS_CHANGED;
+			changedArray = (IModel[]) changed.toArray(new IModel[changed.size()]);
+			changed = null;
+		}
+		if (type != 0) {
+			ExternalModelManager registry =
+				PDECore.getDefault().getExternalModelManager();
+			ModelProviderEvent event =
+				new ModelProviderEvent(
+					registry,
+					type,
+					addedArray,
+					removedArray,
+					changedArray);
+			registry.fireModelProviderEvent(event);
+		}
 	}
 
 	public Control createContents(Composite parent) {
@@ -120,88 +212,55 @@ public class ExternalPluginsBlock {
 		return container;
 	}
 
-	private void selectNotInWorkspace() {
-		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
-		IPluginModelBase[] wsModels = wm.getAllModels();
-		IPluginModelBase[] exModels = getAllModels();
-		changed = new Vector();
-		Vector selected = new Vector();
-		for (int i = 0; i < exModels.length; i++) {
-			IPluginModelBase exModel = exModels[i];
-			boolean inWorkspace = false;
-			for (int j = 0; j < wsModels.length; j++) {
-				IPluginModelBase wsModel = wsModels[j];
-				if (exModel.getPluginBase().getId().equals(wsModel.getPluginBase().getId())) {
-					inWorkspace = true;
-					break;
-				}
-			}
-			if (exModel.isEnabled() == inWorkspace)
-				changed.add(exModel);
-			exModel.setEnabled(!inWorkspace);
-			if (!inWorkspace)
-				selected.add(exModel);
-		}
-		tablePart.setSelection(selected.toArray());
-	}
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
-	public Control getControl() {
-		return control;
-	}
-	private void globalSelect(IPluginModelBase[] models, boolean selected) {
-		if (changed == null)
-			changed = new Vector();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			model.setEnabled(selected);
-			if (!changed.contains(model))
-				changed.add(model);
+
+	private IPluginModelBase[] getAllModels() {
+		if (models == null && fmodels == null) {
+			initialModels =
+				PDECore.getDefault().getExternalModelManager().getAllModels();
+			return initialModels;
 		}
+
+		IPluginModelBase[] allModels =
+			new IPluginModelBase[models.size() + fmodels.size()];
+		System.arraycopy(
+			models.toArray(new IPluginModel[models.size()]),
+			0,
+			allModels,
+			0,
+			models.size());
+		System.arraycopy(
+			fmodels.toArray(new IFragmentModel[fmodels.size()]),
+			0,
+			allModels,
+			models.size(),
+			fmodels.size());
+
+		return allModels;
 	}
 
 	void handleReload() {
-		final String platformPath = page.getPlatformPath();
-		final boolean useOther = page.getUseOther();
+		String platformPath = page.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
-			IRunnableWithProgress op = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-						//monitor.beginTask("Reloading", IProgressMonitor.UNKNOWN);
-	if (useOther)
-						registry.reload(platformPath, monitor);
-					else
-						registry.reloadFromLive(monitor);
-					monitor.done();
-				}
-			};
-			ProgressMonitorDialog pm = new ProgressMonitorDialog(control.getShell());
+			String[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath, eclipseHomeVariables);
+			ReloadOperation op = new ReloadOperation(pluginPaths, page.getUseOther());
+			ProgressMonitorDialog pmd = new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 			try {
-				pm.run(false, false, op);
-			} catch (InterruptedException e) {
+				pmd.run(true, false, op);
 			} catch (InvocationTargetException e) {
-				PDEPlugin.logException(e);
+			} catch (InterruptedException e) {
 			}
+			models = op.getPluginModels();
+			fmodels = op.getFragmentModels();
+			pluginListViewer.refresh();
+			tablePart.selectAll(DEFAULT_STATE);
 
-		} else {
-			registry.clear();
-		}
-		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (!control.isDisposed()) {
-						BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
-							public void run() {
-								pluginListViewer.refresh();
-								initializeDefault(DEFAULT_STATE);
-							}
-						});
-					}
-				}
-			});
 			reloaded = true;
 		}
+		page.resetNeedsReload();
 	}
 
 	public void initialize() {
@@ -209,123 +268,97 @@ public class ExternalPluginsBlock {
 		if (platformPath != null && platformPath.length() == 0)
 			return;
 
-		pluginListViewer.setInput(registry);
+		pluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 		String saved =
 			PDECore.getDefault().getPluginPreferences().getString(
 				ICoreConstants.CHECKED_PLUGINS);
 		IPluginModelBase[] allModels = getAllModels();
-		
-		if (saved.length() == 0
-			|| saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-			initializeDefault(false);
-		} else if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-			initializeDefault(true);
-		} else {
-			Vector savedList = createSavedList(saved);
 
-			Vector selection = new Vector();
-			changed = new Vector();
-			for (int i = 0; i < allModels.length; i++) {
-				IPluginModelBase model = allModels[i];
-				if (!savedList.contains(model.getPluginBase().getId())) {
-					selection.add(model);
-					if (!model.isEnabled()) {
-						changed.add(model);
-						model.setEnabled(true);
-					}
-				} else {
-					if (model.isEnabled()) {
-						changed.add(model);
-						model.setEnabled(false);
-					}
-				}
+		Vector selection = new Vector();
+		for (int i = 0; i < allModels.length; i++) {
+			IPluginModelBase model = allModels[i];
+			if (model.isEnabled()) {
+				selection.add(model);
 			}
-			tablePart.setSelection(selection.toArray());
 		}
-		initialModels = allModels;
-		computeDelta();
-	}
-	private static void initializeDefault(
-		ExternalModelManager registry,
-		boolean enabled) {
-		IPluginModelBase[] models = getAllModels();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
-			model.setEnabled(enabled);
-		}
-	}
-	public void initializeDefault(boolean enabled) {
-		initializeDefault(registry, enabled);
-		tablePart.selectAll(enabled);
+		tablePart.setSelection(selection.toArray());
 	}
 
-	private static boolean isChecked(String name, Vector list) {
-		for (int i = 0; i < list.size(); i++) {
-			if (name.equals(list.elementAt(i)))
-				return false;
+	private boolean isChecked(IPluginModelBase model) {
+		Object[] selected = tablePart.getSelection();
+		for (int i = 0; i < selected.length; i++) {
+			if (model == selected[i])
+				return true;
 		}
-		return true;
+		return false;
 	}
-	private static IPluginModelBase[] getAllModels() {
-		ExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
-		IPluginModel[] models = registry.getModels();
-		IFragmentModel[] fmodels = registry.getFragmentModels(null);
-		IPluginModelBase[] all = new IPluginModelBase[models.length + fmodels.length];
-		System.arraycopy(models, 0, all, 0, models.length);
-		System.arraycopy(fmodels, 0, all, models.length, fmodels.length);
-		return all;
-	}
+
 	public void save() {
-		String saved = "";
-		IPluginModelBase[] models = getAllModels();
-		if (tablePart.getSelectionCount() == models.length) {
-			saved = ICoreConstants.VALUE_SAVED_ALL;
-		} else if (tablePart.getSelectionCount() == 0) {
-			saved = ICoreConstants.VALUE_SAVED_NONE;
-		} else {
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = models[i];
-				if (!model.isEnabled()) {
-					if (i > 0)
-						saved += " ";
-					saved += model.getPluginBase().getId();
-				}
-			}
-		}
-		PDECore.getDefault().getPluginPreferences().setValue(
-			ICoreConstants.CHECKED_PLUGINS,
-			saved);
-		computeDelta();
+		BusyIndicator.showWhile(
+			page.getShell().getDisplay(),
+			new SaveOperation());
 	}
-	private Vector createSavedList(String saved) {
-		Vector result = new Vector();
-		StringTokenizer stok = new StringTokenizer(saved);
-		while (stok.hasMoreTokens()) {
-			result.add(stok.nextToken());
+	
+	private void savePreferences() {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String mode =
+			page.getUseOther()
+				? ICoreConstants.VALUE_USE_OTHER
+				: ICoreConstants.VALUE_USE_THIS;
+		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
+		preferences.setValue(ICoreConstants.PLATFORM_PATH, page.getPlatformPath());
+		PDECore.getDefault().savePluginPreferences();
+	}
+	
+	private void updateModels() {
+		if (reloaded) {
+			IPluginModelBase[] allModels = getAllModels();
+			for (int i = 0; i < allModels.length; i++) {
+				ExternalPluginModelBase model = (ExternalPluginModelBase) allModels[i];
+				model.setEnabled(isChecked(model));
+				model.setEclipseHomeRelativePath(
+					PluginPathFinder.createEclipseRelativeHome(
+						model.getInstallLocation(),
+						eclipseHomeVariables));
+			}
+			PDECore.getDefault().getExternalModelManager().resetModels(models, fmodels);
+		} else {
+			Iterator iter = changed.iterator();
+			while (iter.hasNext()) {
+				IPluginModelBase model = (IPluginModelBase)iter.next();
+				model.setEnabled(isChecked(model));
+			}			
 		}
-		return result;
 	}
 
-	void computeDelta() {
-		int type = 0;
-		IModel[] addedArray = null;
-		IModel[] removedArray = null;
-		IModel[] changedArray = null;
-		if (reloaded) {
-			type = IModelProviderEvent.MODELS_REMOVED | IModelProviderEvent.MODELS_ADDED;
-			removedArray = initialModels;
-			addedArray = getAllModels();
+
+	private void selectNotInWorkspace() {
+		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
+		IPluginModelBase[] wsModels = wm.getAllModels();
+		IPluginModelBase[] exModels = getAllModels();
+		Vector selected = new Vector();
+		for (int i = 0; i < exModels.length; i++) {
+			IPluginModelBase exModel = exModels[i];
+			boolean inWorkspace = false;
+			for (int j = 0; j < wsModels.length; j++) {
+				IPluginModelBase wsModel = wsModels[j];
+				if (exModel
+					.getPluginBase()
+					.getId()
+					.equals(wsModel.getPluginBase().getId())) {
+					inWorkspace = true;
+					break;
+				}
+			}
+			if (!inWorkspace) {
+				selected.add(exModel);
+			}
+			if (exModel.isEnabled() == inWorkspace)
+				changed.add(exModel);
+			else if (changed.contains(exModel))
+				changed.remove(exModel);
 		}
-		if (changed != null && changed.size() > 0) {
-			type |= IModelProviderEvent.MODELS_CHANGED;
-			changedArray = (IModel[]) changed.toArray(new IModel[changed.size()]);
-			changed = null;
-		}
-		if (type != 0) {
-			ModelProviderEvent event =
-				new ModelProviderEvent(registry, type, addedArray, removedArray, changedArray);
-			registry.fireModelProviderEvent(event);
-		}
+		tablePart.setSelection(selected.toArray());
 	}
 
 }
