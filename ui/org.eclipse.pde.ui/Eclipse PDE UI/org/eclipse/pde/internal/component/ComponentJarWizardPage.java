@@ -53,8 +53,8 @@ public class ComponentJarWizardPage extends WizardPage {
 
 	class JarsBuildListener extends UIBuildListener {
 		IProgressMonitor monitor;
-		public JarsBuildListener(IProgressMonitor monitor, IFile file) {
-			super(monitor, file);
+		public JarsBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
+			super(runner, monitor, file);
 			this.monitor = monitor;
 		}
 		public void messageLogged(BuildEvent event) {
@@ -196,7 +196,8 @@ private void makeJars(IProgressMonitor monitor)
 
 	try {
 		//TBD: should remove the build listener somehow
-		new AntRunner().run(args, new JarsBuildListener(monitor, file));
+		AntRunner runner = new AntRunner();
+		runner.run(args, new JarsBuildListener(runner, monitor, file));
 	} catch (BuildCanceledException e) {
 		// build was canceled don't propagate exception
 		return;
