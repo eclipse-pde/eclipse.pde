@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
@@ -61,6 +63,8 @@ public class AdvancedLauncherTab
 	private Button fWorkingSetButton;
 	private Button fIncludeFragmentsButton;
 	private Button fAddWorkspaceButton;
+	private String fProductID;
+	private String fApplicationID;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -120,14 +124,18 @@ public class AdvancedLauncherTab
 
 		createPluginList(composite);
 		
-		/*createSeparator(composite, 1);
+		createSeparator(composite, 1);
 		
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.validatePlugins")); //$NON-NLS-1$
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(button);*/
+		button.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleValidatePlugins();
+		}});
 		
-
+		SWTUtil.setButtonDimensionHint(button);
+		
 		hookListeners();
 		setControl(composite);
 
@@ -632,6 +640,40 @@ public class AdvancedLauncherTab
 			fNumExternalChecked = checked ? fExternalModels.length : 0;
 
 	}
+	
+	private void handleValidatePlugins() {
+		PluginValidationOperation op = new PluginValidationOperation(
+				getPluginsToValidate(), fProductID, fApplicationID);
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		} finally {
+			if (op.hasErrors())
+				new PluginStatusDialog(getControl().getShell(), op).open();
+			else
+				MessageDialog.openInformation(getControl().getShell(), PDEPlugin.getResourceString("AdvancedLauncherTab.pluginValidation"), PDEPlugin.getResourceString("AdvancedLauncherTab.noProblems")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	private IPluginModelBase[] getPluginsToValidate() {
+		if (!fUseListRadio.getSelection())
+			return PDECore.getDefault().getModelManager().getPlugins();
+		
+		Map map = new HashMap();
+		Object[] objects = fPluginTreeViewer.getCheckedElements();
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase)objects[i];
+				String id = model.getPluginBase().getId();
+				if (id == null)
+					continue;
+				if (!map.containsKey(id) || model.getUnderlyingResource() != null)
+					map.put(id, model);
+			}
+		}
+		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		if (fShowFeatures) {
@@ -703,4 +745,25 @@ public class AdvancedLauncherTab
 	public Image getImage() {
 		return fImage;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy config) {
+		try {
+			if (config.getAttribute(USE_PRODUCT, false)) {
+				fProductID = config.getAttribute(PRODUCT, (String)null);
+				fApplicationID = null;
+			} else {
+				if (fUseFeaturesRadio != null)
+					fApplicationID = config.getAttribute(APPLICATION, LauncherUtils.getDefaultApplicationName());
+				else
+					fApplicationID = config.getAttribute(APP_TO_TEST, LauncherUtils.getDefaultApplicationName());					
+				fProductID = null;
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
+	
 }
