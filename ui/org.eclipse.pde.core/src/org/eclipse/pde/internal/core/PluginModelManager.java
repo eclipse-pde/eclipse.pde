@@ -267,7 +267,7 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void initializeTable() {
-		if (workspaceManager.isLocked()) return;
+		if (workspaceManager == null || workspaceManager.isLocked()) return;
 		entries = new TreeMap();
 		IPluginModelBase[] models = workspaceManager.getAllModels();
 		addToTable(models, true);
