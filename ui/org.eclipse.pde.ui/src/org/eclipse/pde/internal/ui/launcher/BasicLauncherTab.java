@@ -291,9 +291,10 @@ public class BasicLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		IVMInstall install = getVMInstall();
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
-		config.setAttribute(VMINSTALL, getVMInstall().getName());
+		config.setAttribute(VMINSTALL, install!=null?install.getName():null);
 		config.setAttribute(APPLICATION, getApplicationName());
 		config.setAttribute(DOCLEAR, doClearWorkspace());
 
