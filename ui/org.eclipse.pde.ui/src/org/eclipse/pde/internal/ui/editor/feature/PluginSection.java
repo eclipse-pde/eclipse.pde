@@ -258,11 +258,14 @@ public class PluginSection
 
 	public void modelsChanged(IModelProviderEvent event) {
 		updateNeeded = true;
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				update();
-			}
-		});
+		Display display = Display.getCurrent();
+		if (display != null && !display.isDisposed()) {
+			display.asyncExec(new Runnable() {
+				public void run() {
+					update();
+				}
+			});
+		}
 	}
 
 	public void setFocus() {
