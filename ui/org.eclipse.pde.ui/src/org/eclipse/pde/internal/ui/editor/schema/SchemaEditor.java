@@ -158,7 +158,10 @@ public class SchemaEditor extends PDEMultiPageXMLEditor {
      * a class cast exception on getModel() (bug 35691)
 	 */
 	public boolean validateModelSemantics() {
-		ISchema schema = (ISchema)getModel();
-		return schema!=null && schema.isValid();
+		if (getModel() instanceof ISchema) {
+			ISchema schema = (ISchema)getModel();
+			return schema!=null && schema.isValid();
+		}
+		return super.validateModelSemantics();
 	}
 }
