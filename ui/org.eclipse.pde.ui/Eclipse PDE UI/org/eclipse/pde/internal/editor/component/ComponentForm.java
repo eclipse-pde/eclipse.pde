@@ -20,7 +20,7 @@ public class ComponentForm extends ScrollableForm {
 public ComponentForm(ComponentFormPage page) {
 	this.page = page;
 	//setScrollable(false);
-	//setVerticalFit(true);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();

@@ -31,7 +31,8 @@ import org.eclipse.swt.custom.*;
 public class DetailExtensionSection
 	extends PDEFormSection
 	implements IModelChangedListener {
-	private TableTreeViewer extensionTree;
+	//private TableTreeViewer extensionTree;
+	private TreeViewer extensionTree;
 	private FormWidgetFactory factory;
 	private Image extensionImage;
 	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionSection.title";
@@ -79,6 +80,12 @@ public class DetailExtensionSection
 		public String getColumnText(Viewer v, Object obj, int index) {
 			return getColumnText(obj, index);
 		}
+		public String getText(Object obj) {
+			return getColumnText(obj, 1);
+		}
+		public Image getImage(Object obj) {
+			return getColumnImage(obj, 1);
+		}
 		public String getColumnText(Object obj, int index) {
 			if (index == 1) {
 				return resolveObjectName(obj);
@@ -124,6 +131,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.numColumns = 2;
 
 	container.setLayout(layout);
+/*
 	TableTree tree = new TableTree(container, SWT.FULL_SELECTION | factory.BORDER_STYLE);
 	TableLayout tlayout = new TableLayout();
 
@@ -142,6 +150,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	//table.setLinesVisible(true);
 	//table.setHeaderVisible(true);
 	table.setLayout(tlayout);
+*/
+	Tree tree = new Tree(container, factory.BORDER_STYLE);
+	factory.hookDeleteListener(tree);
 
 	MenuManager popupMenuManager = new MenuManager();
 	IMenuListener listener = new IMenuListener () {
@@ -151,10 +162,13 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	};
 	popupMenuManager.setRemoveAllWhenShown(true);
 	popupMenuManager.addMenuListener(listener);
-	Menu menu=popupMenuManager.createContextMenu(table);
-	table.setMenu(menu);
+	//Menu menu=popupMenuManager.createContextMenu(table);
+	//table.setMenu(menu);
+	Menu menu = popupMenuManager.createContextMenu(tree);
+	tree.setMenu(menu);
 
-	extensionTree = new TableTreeViewer(tree);
+	//extensionTree = new TableTreeViewer(tree);
+	extensionTree = new TreeViewer(tree);
 	extensionTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 	extensionTree.setContentProvider(new ExtensionContentProvider());
 	extensionTree.setLabelProvider(new ExtensionLabelProvider());
@@ -308,7 +322,7 @@ private void handleDelete() {
 private void handleNew() {
 	IFile file = ((IFileEditorInput)getFormPage().getEditor().getEditorInput()).getFile();
 	final IProject project = file.getProject();
-	BusyIndicator.showWhile(extensionTree.getTableTree().getDisplay(), new Runnable() {
+	BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
 		public void run() {
 			NewExtensionWizard wizard =
 				new NewExtensionWizard(project, (IPluginModelBase) getFormPage().getModel());
@@ -347,7 +361,7 @@ public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == event.INSERT) {
 			extensionTree.refresh();
 			extensionTree.setSelection(new StructuredSelection(changeObject), true);
-			extensionTree.getTableTree().setFocus();
+			extensionTree.getTree().setFocus();
 		} else
 			if (event.getChangeType() == event.REMOVE) {
 				extensionTree.refresh();
@@ -406,7 +420,7 @@ public static String resolveObjectName(SchemaRegistry schemaRegistry, ExternalMo
 }
 public void setFocus() {
 	if (extensionTree != null)
-		extensionTree.getTableTree().getTable().setFocus();
+		extensionTree.getTree().setFocus();
 }
 public static String stripShortcuts(String input) {
 	StringBuffer output = new StringBuffer();

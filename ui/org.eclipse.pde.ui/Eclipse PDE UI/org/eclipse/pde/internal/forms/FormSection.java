@@ -5,8 +5,10 @@ package org.eclipse.pde.internal.forms;
  */
 
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.*;
 
 
@@ -14,6 +16,7 @@ public abstract class FormSection {
 	public static final int SELECTION = 1;
 	private String headerColorKey = FormWidgetFactory.DEFAULT_HEADER_COLOR;
 	private String headerText;
+	private Control client;
 	protected Label header;
 	protected Control separator;
 	private SectionChangeManager sectionManager;
@@ -27,7 +30,82 @@ public abstract class FormSection {
 	private boolean headerPainted=true;
 	private int widthHint = SWT.DEFAULT;
 	private int heightHint=SWT.DEFAULT;
+	
+	
+/*
+ * This is a special layout for the section. Both the
+ * header and the description labels will wrap and
+ * they will use client's size to calculate needed
+ * height. This kind of behaviour is not possible
+ * with stock grid layout.
+ */
+class SectionLayout extends Layout {
+	int vspacing = 3;
+	int sepHeight = 2;
 
+	protected Point computeSize(Composite parent, int wHint, int hHint, boolean flush) {
+		int width = 0;
+		int height = 0;
+		int cwidth = 0;
+	
+		if (wHint != SWT.DEFAULT)
+		   width = wHint;
+		if (hHint != SWT.DEFAULT)
+			height = hHint;
+
+		cwidth = width;
+				
+		if (client != null) {
+			Point csize = client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+			if (width == 0) {
+				width = csize.x;
+				cwidth = width;
+			}
+			if (height==0) height = csize.y;
+		}
+		
+		if (hHint== SWT.DEFAULT && headerPainted && header!=null) {
+			Point hsize = header.computeSize(cwidth, SWT.DEFAULT, flush);
+			height += hsize.y;
+			height += vspacing;
+		}
+		
+		if (hHint==SWT.DEFAULT && addSeparator) {
+			height += sepHeight;
+			height += vspacing;
+		}
+		if (hHint == SWT.DEFAULT && descriptionPainted && descriptionLabel!=null) {
+			Point dsize = descriptionLabel.computeSize(cwidth, SWT.DEFAULT, flush);
+			height += dsize.y;
+			height += vspacing;
+		}
+		return new Point(width, height);
+	}
+	protected void layout(Composite parent, boolean flush) {
+		int width = parent.getClientArea().width;
+		int height = parent.getClientArea().height;
+		int y = 0;
+		if (headerPainted && header!=null) {
+			Point hsize = header.computeSize(width, SWT.DEFAULT, flush);
+			header.setBounds(0, y, width, hsize.y);
+			y += hsize.y + vspacing;
+		}
+		if (addSeparator && separator!=null) {
+			separator.setBounds(0, y, width, 2);
+			y += sepHeight + vspacing;
+		}
+		if (descriptionPainted && descriptionLabel!=null) {
+			Point dsize = descriptionLabel.computeSize(width, SWT.DEFAULT, flush);
+			descriptionLabel.setBounds(0, y, width, dsize.y);
+			y += dsize.y + vspacing;
+		}
+		if (client!=null) {
+			client.setBounds(0, y, width, height - y);
+		}
+	}
+}
+	
+	
 public FormSection() {
 	// Description causes problems re word wrapping
 	// and causes bad layout in schema and
@@ -43,17 +121,14 @@ public final Control createControl(
 	Composite parent,
 	FormWidgetFactory factory) {
 	Composite section = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	section.setLayout(layout);
+	SectionLayout slayout = new SectionLayout();
+	section.setLayout(slayout);
 	section.setData(this);
-	layout.marginHeight = 0;
-	layout.marginWidth = 0;
-	layout.verticalSpacing = 3;
-	layout.horizontalSpacing = 0;
+
 	GridData gd;
 	if (headerPainted) {
 		Color headerColor = factory.getColor(getHeaderColorKey());
-		header = factory.createHeadingLabel(section, getHeaderText(), headerColor);
+		header = factory.createHeadingLabel(section, getHeaderText(), headerColor, SWT.WRAP);
 		if (titleAsHyperlink) {
 			factory.turnIntoHyperlink(header, new HyperlinkAdapter() {
 				public void linkActivated(Control label) {
@@ -61,35 +136,17 @@ public final Control createControl(
 				}
 			});
 		}
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.verticalAlignment = GridData.BEGINNING;
-		header.setLayoutData(gd);
 	}
 
 	if (addSeparator) {
         //separator = factory.createSeparator(section, SWT.HORIZONTAL);
 		separator = factory.createCompositeSeparator(section);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 2;
-		//gd.heightHint = 1;
-		separator.setLayoutData(gd);
 	}
-
+	
 	if (descriptionPainted && description != null) {
 		descriptionLabel = factory.createLabel(section, description, SWT.WRAP);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		gd.verticalAlignment = GridData.BEGINNING;
-		//gd.widthHint = 20;
-		//gd.widthHint = widthHint;
-		descriptionLabel.setLayoutData(gd);
 	}
-	Control client = createClient(section, factory);
-	gd =
-		new GridData(
-			GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-	client.setLayoutData(gd);
-
+	client = createClient(section, factory);
 	section.setData(this);
 	return section;
 }
@@ -162,8 +219,25 @@ public void sectionChanged(FormSection source, int changeType, Object changeObje
 public void setAddSeparator(boolean newAddSeparator) {
 	addSeparator = newAddSeparator;
 }
+
+private String trimNewLines(String text) {
+	StringBuffer buff = new StringBuffer();
+	for (int i=0; i<text.length(); i++) {
+		char c = text.charAt(i);
+		if (c=='\n')
+		   buff.append(' ');
+		else
+		   buff.append(c);
+	}
+	return buff.toString();
+}
+	
 public void setDescription(java.lang.String newDescription) {
-	description = newDescription;
+	// we will trim the new lines so that we can
+	// use layout-based word wrapping instead
+	// of hard-coded one
+	description = trimNewLines(newDescription);
+	//description = newDescription;
 	if (descriptionLabel!=null) descriptionLabel.setText(newDescription);
 }
 public void setDescriptionPainted(boolean newDescriptionPainted) {

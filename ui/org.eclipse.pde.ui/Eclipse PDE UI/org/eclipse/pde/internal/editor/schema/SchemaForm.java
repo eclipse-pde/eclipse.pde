@@ -27,6 +27,7 @@ public SchemaForm(SchemaFormPage page) {
 	this.page = page;
 	//setWidthHint(600);
 	colorManager = new ColorManager();
+	setVerticalFit(true);
     //setScrollable(false);
 }
 protected void createFormClient(Composite parent) {

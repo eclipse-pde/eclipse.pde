@@ -22,7 +22,7 @@ public class ReferenceForm extends ScrollableForm {
 public ReferenceForm(ComponentReferencePage page) {
 	this.page = page;
 	//setScrollable(false);
-	//setVerticalFit(true);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();

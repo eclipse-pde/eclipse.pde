@@ -22,6 +22,7 @@ public class BuildForm extends ScrollableForm {
 public BuildForm(BuildPage page) {
 	this.page = page;
 	//setScrollable(false);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	FormWidgetFactory factory = getFactory();
@@ -30,6 +31,7 @@ protected void createFormClient(Composite parent) {
 	layout.numColumns = 2;
 	layout.marginWidth = 10;
 	layout.horizontalSpacing=15;
+	layout.makeColumnsEqualWidth = true;
 	
 	variableSection = new VariableSection(page);
 	Control control = variableSection.createControl(parent, getFactory());

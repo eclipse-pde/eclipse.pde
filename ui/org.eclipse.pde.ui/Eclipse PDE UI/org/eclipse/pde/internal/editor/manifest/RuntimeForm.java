@@ -24,6 +24,7 @@ public class RuntimeForm extends ScrollableForm {
 public RuntimeForm(ManifestRuntimePage page) {
 	this.page = page;
 	//setScrollable(false);
+	setVerticalFit(true);
 }
 protected void createFormClient(Composite parent) {
 	GridLayout layout = new GridLayout();
