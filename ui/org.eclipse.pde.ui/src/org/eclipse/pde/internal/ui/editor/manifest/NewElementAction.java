@@ -56,6 +56,9 @@ public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 	return packageName + "." + className;
 }
 public String createDefaultName(ISchemaAttribute attInfo, int counter) {
+	if (attInfo.getType().getName().equals("boolean"))
+		return "true";
+	
 	String tag = attInfo.getParent().getName();
 	return project.getName() + "." + tag + counter;
 }
