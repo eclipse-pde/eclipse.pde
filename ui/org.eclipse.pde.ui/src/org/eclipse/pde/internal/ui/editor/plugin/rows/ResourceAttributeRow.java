@@ -78,19 +78,19 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 		dialog.setAllowMultiple(false);
 		dialog
 				.setTitle(PDEPlugin
-						.getResourceString("ManifestEditor.ResourceAttributeCellEditor.title"));
+						.getResourceString("ResourceAttributeCellEditor.title")); //$NON-NLS-1$
 		dialog
 				.setMessage(PDEPlugin
-						.getResourceString("ManifestEditor.ResourceAttributeCellEditor.message"));
+						.getResourceString("ResourceAttributeCellEditor.message")); //$NON-NLS-1$
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0
 						&& selection[0] instanceof IFile)
 					return new Status(IStatus.OK, PDEPlugin.getPluginId(),
-							IStatus.OK, "", null);
+							IStatus.OK, "", null); //$NON-NLS-1$
 				else
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
-							IStatus.ERROR, "", null);
+							IStatus.ERROR, "", null); //$NON-NLS-1$
 			}
 		});
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {

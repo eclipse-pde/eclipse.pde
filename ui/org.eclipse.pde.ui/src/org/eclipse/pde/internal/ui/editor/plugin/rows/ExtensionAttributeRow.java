@@ -58,11 +58,11 @@ public abstract class ExtensionAttributeRow {
 	protected String getDescription() {
 		if (att instanceof ISchemaAttribute)
 			return ((ISchemaAttribute)att).getDescription();
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	protected String getValue() {
-		String value= "";
+		String value= ""; //$NON-NLS-1$
 		if (input!=null) {
 			IPluginAttribute patt = input.getAttribute(getName());
 			if (patt!=null)
@@ -73,9 +73,9 @@ public abstract class ExtensionAttributeRow {
 	protected String getPropertyLabel() {
 		String label=getName();
 		if (getUse()==ISchemaAttribute.REQUIRED)
-			label+= "*:";
+			label+= "*:"; //$NON-NLS-1$
 		else
-			label+=":";
+			label+=":"; //$NON-NLS-1$
 		return label;
 	}
 	protected void createLabel(Composite parent, FormToolkit toolkit) {

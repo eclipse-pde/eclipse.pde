@@ -36,7 +36,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	 */
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		createLabel(parent, toolkit);
-		button = toolkit.createButton(parent, "", SWT.CHECK);
+		button = toolkit.createButton(parent, "", SWT.CHECK); //$NON-NLS-1$
 		GridData gd = new GridData();
 		//gd.horizontalIndent = 10;
 		gd.horizontalSpan = span - 1;
@@ -58,7 +58,7 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	protected void update() {
 		blockNotification = true;
 		String value = getValue();
-		boolean state = value != null && value.toLowerCase().equals("true");
+		boolean state = value != null && value.toLowerCase().equals("true"); //$NON-NLS-1$
 		button.setSelection(state);
 		updateText();
 		blockNotification=false;
@@ -66,14 +66,14 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	
 	private void updateText() {
 		boolean state = button.getSelection();
-		button.setText(state?"true":"false");
+		button.setText(state?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	public void commit() {
 		if (dirty && input != null) {
 			try {
 				input.setAttribute(getName(), button.getSelection()
-						? "true"
-						: "false");
+						? "true" //$NON-NLS-1$
+						: "false"); //$NON-NLS-1$
 				dirty = false;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);

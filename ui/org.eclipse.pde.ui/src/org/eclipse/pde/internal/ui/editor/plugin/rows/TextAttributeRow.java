@@ -37,7 +37,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		createLabel(parent, toolkit);
-		text = toolkit.createText(parent, "", SWT.SINGLE);
+		text = toolkit.createText(parent, "", SWT.SINGLE); //$NON-NLS-1$
 		text.setLayoutData(createGridData(span));
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -51,7 +52,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 		//TODO translate 'Browse...'
-		Button button = toolkit.createButton(parent, "Browse...", SWT.PUSH);
+		Button button = toolkit.createButton(parent, PDEPlugin.getResourceString("ReferenceAttributeRow.browse"), SWT.PUSH); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!isReferenceModel())

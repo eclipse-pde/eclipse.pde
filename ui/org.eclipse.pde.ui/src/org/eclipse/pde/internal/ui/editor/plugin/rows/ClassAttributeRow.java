@@ -42,7 +42,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 	protected void openReference() {
 		String name = text.getText();
 		name = trimNonAlphaChars(name);
-		String path = name.replace('.', '/') + ".java";
+		String path = name.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -60,7 +60,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					int dResult = dialog.open();
 					if (dResult == WizardDialog.OK) {
 						path = wizard.getClassName().replace('.', '/')
-								+ ".java";
+								+ ".java"; //$NON-NLS-1$
 						text.setText(wizard.getClassNameWithArgs());
 						result = javaProject.findElement(new Path(path));
 						if (result != null)
@@ -82,7 +82,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					int dResult = dialog.open();
 					if (dResult == WizardDialog.OK) {
 						String newValue = wizard.getClassName();
-						path = newValue.replace('.', '/') + ".java";
+						path = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
 						text.setText(newValue);
 						resource = project.findMember(new Path(path));
 						if (resource != null && resource instanceof IFile) {
@@ -131,9 +131,9 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 						PlatformUI.getWorkbench().getProgressService(),
 						getSearchScope(project),
 						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
-						"*");
+						"*"); //$NON-NLS-1$
 				//TODO translate title
-				dialog.setTitle("Select Type");
+				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					text.setText(type.getFullyQualifiedName());
@@ -169,11 +169,11 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 		value = value.trim();
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
-		int loc = value.indexOf(":");
+		int loc = value.indexOf(":"); //$NON-NLS-1$
 		if (loc != -1 && loc > 0)
 			value = value.substring(0, loc);
 		else if (loc == 0)
-			value = "";
+			value = ""; //$NON-NLS-1$
 		return value;
 	}
 }

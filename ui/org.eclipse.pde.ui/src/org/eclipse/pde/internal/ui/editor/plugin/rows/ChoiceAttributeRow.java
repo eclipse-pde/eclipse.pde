@@ -36,7 +36,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		if (restriction!=null) {
 			Object rchildren[] = restriction.getChildren();
 			if (getUse()!=ISchemaAttribute.REQUIRED)
-				combo.add("");
+				combo.add(""); //$NON-NLS-1$
 			for (int i=0; i<rchildren.length; i++) {
 				Object rchild = rchildren[i];
 				if (rchild instanceof ISchemaEnumeration)
@@ -60,7 +60,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	protected void update() {
 		blockNotification=true;
 		String value = getValue();
-		combo.setText(value!=null?value:"");
+		combo.setText(value!=null?value:""); //$NON-NLS-1$
 		blockNotification = false;
 		dirty=false;
 	}
