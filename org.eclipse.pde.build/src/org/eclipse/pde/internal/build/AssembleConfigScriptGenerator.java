@@ -103,7 +103,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	 * 
 	 */
 	private void generateBrandingCalls() {
-		String install = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String install = getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 		script.printBrandTask(install, getPropertyFormat(PROPERTY_LAUNCHER_ICONS), getPropertyFormat(PROPERTY_LAUNCHER_NAME));
 	}
 
