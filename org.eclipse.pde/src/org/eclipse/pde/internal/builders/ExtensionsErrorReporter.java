@@ -198,7 +198,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 
 	private void validateExtensionAttribute(Element element, Attr attr, ISchemaAttribute attInfo) {
 		if (attInfo.getUse() == ISchemaAttribute.DEPRECATED) {
-			report("Attribute '\'" + attr.getName() + "\' is deprecated.",
+			report(PDE.getFormattedMessage("Builders.Manifest.deprecated-attribute", attr.getName()), //$NON-NLS-1$
 					getLine(element, attr.getName()), CompilerFlags.WARNING);
 		}
 		
@@ -261,7 +261,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 			return;
 		String value = attr.getValue();
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report("Attribute \'" + attr.getName() + "\' is not externalized", getLine(element, attr.getName()), severity);
+			report(PDE.getFormattedMessage("Builders.Manifest.non-ext-attribute", attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
 		}	
 	}
 
@@ -370,7 +370,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 		if (parent instanceof Document) {
-			report("Illegal root element", getLine(element), severity);
+			report(PDE.getResourceString("Builders.Manifest.illegalRoot"), getLine(element), severity); //$NON-NLS-1$
 		} else {
 			report(PDE.getFormattedMessage(
 					"Builders.Manifest.child", new String[] { //$NON-NLS-1$
