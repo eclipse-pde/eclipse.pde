@@ -32,7 +32,6 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
 
 /**
@@ -201,12 +200,11 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 
 			
 		if (logFile != null && logFile.exists() && logFile.length() > 0) {
-			if (MessageDialog
-				.openQuestion(
+			MessageDialog
+				.openError(
 					getContainer().getShell(),
 					getWindowTitle(),
-					PDEPlugin.getResourceString("ExportWizard.error.message")))
-				Program.launch(logFile.getAbsolutePath());
+					PDEPlugin.getFormattedMessage("ExportWizard.error.message", destination));
 			return false;
 		}
 
@@ -270,10 +268,16 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 			writer.println("</target>");
 			if (filename != null) {
 				writer.println("<target name=\"zip.folder\">");
-				writer.println("<delete dir=\""+ buildTempLocation + "/build_result" + "\"/>");
-				writer.println("<delete dir=\"" + buildTempLocation + "/eclipse/build_result"+ "\"/>");
 				writer.println("<zip zipfile=\"" + destination+ "/"+ filename + "\" basedir=\""
-						+ buildTempLocation + "\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+						+ buildTempLocation + "/destination\"/>");
+				writer.println("</target>");
+			}
+			boolean errors = false;
+			if (logFile != null && logFile.exists() && logFile.length() > 0) {
+				errors = true;
+				writer.println("<target name=\"zip.logs\">");
+				writer.println("<zip zipfile=\"" + destination+ "/logs.zip\" basedir=\""
+						+ buildTempLocation + "/temp.folder\"/>");
 				writer.println("</target>");
 			}
 			writer.println("</project>");
@@ -281,9 +285,15 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(zip.getAbsolutePath());
-			if (filename != null) {
-				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
-			}
+			
+			ArrayList targets = new ArrayList();
+			if (errors)
+				targets.add("zip.logs");
+			if (filename != null)
+				targets.add("zip.folder");
+			targets.add("clean");
+				
+			runner.setExecutionTargets((String[])targets.toArray(new String[targets.size()]));
 			runner.run(monitor);
 			zip.delete();
 		} catch (IOException e) {

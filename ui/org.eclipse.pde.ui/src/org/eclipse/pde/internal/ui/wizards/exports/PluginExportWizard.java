@@ -49,11 +49,14 @@ public class PluginExportWizard extends BaseExportWizard {
 		return new PluginExportWizardPage(getSelection());
 	}
 
-	protected HashMap createProperties(String destination, IPluginBase model) {
+	protected HashMap createProperties(String destination, IPluginBase model, boolean doZip) {
 		HashMap map = new HashMap(4);
 		map.put("build.result.folder", buildTempLocation + "/build_result/" + model.getId());
-		map.put("temp.folder", buildTempLocation + "/plugins");
-		map.put("destination.temp.folder", buildTempLocation + "/plugins");
+		map.put("temp.folder", buildTempLocation + "/temp.folder/" + model.getId());
+		if (doZip)
+			map.put("destination.temp.folder", buildTempLocation + "/destination/plugins");
+		else
+			map.put("destination.temp.folder", buildTempLocation + "/temp.folder/" + model.getId());
 		map.put("plugin.destination", destination);
 		map.put("baseos", TargetPlatform.getOS());
 		map.put("basews", TargetPlatform.getWS());
@@ -92,7 +95,7 @@ public class PluginExportWizard extends BaseExportWizard {
 				destination,
 				exportZip,
 				exportSource,
-				createProperties(destination, modelBase.getPluginBase()),
+				createProperties(destination, modelBase.getPluginBase(), zipFileName != null),
 				new SubProgressMonitor(monitor, 9));
 		} finally {
 			deleteBuildFile(modelBase);
