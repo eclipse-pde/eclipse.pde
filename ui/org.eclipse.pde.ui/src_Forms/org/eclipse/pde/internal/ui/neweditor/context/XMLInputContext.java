@@ -166,8 +166,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			for (;;) {
 				char ch = doc.get(offset + length, 1).toCharArray()[0];
-				if (!Character.isWhitespace(ch))
+				if (!Character.isSpace(ch)) {
 					break;
+				}
 				
 				length += 1;
 			}
@@ -180,19 +181,31 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	private DeleteEdit getNodeDeleteEditOperation(IDocumentNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
+		int indent = 0;
 		try {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			int line = doc.getLineOfOffset(offset + length);
 			for (;;) {
 				char ch = doc.get(offset + length, 1).toCharArray()[0];
-				if (!Character.isWhitespace(ch) || doc.getLineOfOffset(offset + length) > line)
+				if (doc.getLineOfOffset(offset + length) > line || !Character.isSpace(ch)) {
+					length -= 1;
 					break;
-				
+				}
 				length += 1;
 			}
+			
+			for (indent = 1; indent <= node.getLineIndent(); indent++) {
+				char ch = doc.get(offset - indent, 1).toCharArray()[0];
+				if (!Character.isSpace(ch)) {
+					indent -= 1;
+					break;
+				}
+					
+			}
+			//System.out.println("\"" + getDocumentProvider().getDocument(getInput()).get(offset-indent, length + indent) + "\"");
 		} catch (BadLocationException e) {
 		}
-		return new DeleteEdit(offset - node.getLineIndent(), length + node.getLineIndent());		
+		return new DeleteEdit(offset - indent, length + indent);		
 	}
 /**
 	 * @param node

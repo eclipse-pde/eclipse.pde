@@ -108,6 +108,6 @@ public class PluginAttribute extends PluginObjectNode
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentAttribute#write()
 	 */
 	public String write() {
-		return getName() + "=\"" + getValue() + "\"";
+		return getName() + "=\"" + getWritableString(getValue()) + "\"";
 	}
 }

@@ -136,6 +136,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void fireModelChanged(IModelChangedEvent event) {
+		setDirty(true);
 		for (int i = 0; i < fListeners.size(); i++) {
 			((IModelChangedListener)fListeners.get(i)).modelChanged(event);
 		}

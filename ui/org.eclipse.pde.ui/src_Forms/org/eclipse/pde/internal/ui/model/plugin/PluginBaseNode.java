@@ -252,7 +252,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			buffer.append("<?eclipse version=\"3.0\"?>" + newLine);
 		}
-		buffer.append(writeShallow(false));
+		buffer.append(writeShallow(false) + newLine);
 		
 		IDocumentNode runtime = getEnclosingElement("runtime", false);
 		if (runtime != null) {
@@ -315,7 +315,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			buffer.append(newLine + specific);
 		if (terminate)
 			buffer.append("/");
-		buffer.append(">" + newLine);
+		buffer.append(">");
 
 		return buffer.toString();
 	}
