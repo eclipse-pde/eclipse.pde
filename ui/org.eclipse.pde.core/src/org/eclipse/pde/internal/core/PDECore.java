@@ -128,10 +128,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	public static boolean inLaunchedInstance() {
-		return getDefault().isLaunchedInstance();
-	}
-
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -190,7 +186,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	// External model manager
-	private boolean launchedInstance = false;
 	private PluginModelManager modelManager;
 	//private boolean modelsLocked = false;
 	// Resource bundle
@@ -343,9 +338,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		Preferences preferences = getPluginPreferences();
 		preferences.setDefault(
 			ICoreConstants.TARGET_MODE,
-			inLaunchedInstance()
-				? ICoreConstants.VALUE_USE_OTHER
-				: ICoreConstants.VALUE_USE_THIS);
+			ICoreConstants.VALUE_USE_THIS);
 		preferences.setDefault(
 			ICoreConstants.CHECKED_PLUGINS,
 			ICoreConstants.VALUE_SAVED_ALL);
@@ -376,10 +369,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		modelManager.connect(workspaceModelManager, externalModelManager);
 	}
 
-	private boolean isLaunchedInstance() {
-		return launchedInstance;
-	}
-	
 	public void releasePlatform() {
 		if (tracker == null)
 			return;

@@ -151,6 +151,11 @@ public class LauncherUtils {
 		File startupJar =
 			ExternalModelManager.getEclipseHome().append("startup.jar").toFile(); //$NON-NLS-1$
 		
+		// if something goes wrong with the preferences, fall back on the startup.jar 
+		// in the running eclipse.  
+		if (!startupJar.exists())
+			startupJar = new Path(ExternalModelManager.computeDefaultPlatformPath()).append("startup.jar").toFile();
+		
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
 			
