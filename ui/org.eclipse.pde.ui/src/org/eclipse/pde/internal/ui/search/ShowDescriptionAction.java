@@ -55,7 +55,7 @@ public class ShowDescriptionAction extends Action {
 		if (fSchema == null) {
 			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(fPointID);
 			URL url = null;
-			if (point == null) {
+			if (point != null) {
 				url = SchemaRegistry.getSchemaURL(point);
 				if (url != null) {
 					ISchemaDescriptor desc = new SchemaDescriptor(fPointID, url);
