@@ -313,6 +313,9 @@ protected void generatePrologue(AntScript script) {
 	script.printProperty(tab, PROPERTY_WS, BootLoader.getWS());
 	script.printProperty(tab, PROPERTY_OS, BootLoader.getOS());
 	script.printProperty(tab, PROPERTY_ARCH, BootLoader.getOSArch());
+	script.printProperty(tab, PROPERTY_JAVAC_FAIL_ON_ERROR, "false");	//$NON-NLS-1$
+	script.printProperty(tab, PROPERTY_JAVAC_DEBUG_INFO, "on");	//$NON-NLS-1$
+	script.printProperty(tab, PROPERTY_JAVAC_VERBOSE, "true");	//$NON-NLS-1$
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 	script.printProperty(tab, getModelTypeName(), model.getId());

@@ -608,9 +608,9 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 	javac.setClasspath(classpath);
 	javac.setBootClasspath(getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 	javac.setDestdir(destdir);
-	javac.setFailOnError("false"); //$NON-NLS-1$
-	javac.setDebug("on"); //$NON-NLS-1$
-	javac.setVerbose("true"); //$NON-NLS-1$
+	javac.setFailOnError(getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
+	javac.setDebug(getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
+	javac.setVerbose(getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
 	javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
 	String[] sources = jar.getSource();
 	javac.setSrcdir(sources);
