@@ -16,9 +16,11 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.ui.forms.IFormPart;
 
 /**
  * @author dejan
@@ -118,6 +120,9 @@ public class PluginInputContextManager extends InputContextManager {
 			// now pass the listener to the target model
 			smodel.transferListenersTo(tmodel, new IModelChangedListenerFilter() {
 				public boolean accept(IModelChangedListener listener) {
+					if (listener instanceof IFormPart ||
+							listener instanceof FormOutlinePage)
+						return true;
 					return false;
 				}
 			});
