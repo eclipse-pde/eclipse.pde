@@ -380,7 +380,7 @@ public class PDEState {
 	private String getResolutionFailureMessage(VersionConstraint unsatisfied) {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
-		if (unsatisfied instanceof PackageSpecification)
+		if (unsatisfied instanceof ImportPackageSpecification)
 			return PDECore.getFormattedMessage("ECLIPSE_MISSING_IMPORTED_PACKAGE", toString(unsatisfied)); //$NON-NLS-1$
 		if (unsatisfied instanceof BundleSpecification) {
 			if (((BundleSpecification) unsatisfied).isOptional())

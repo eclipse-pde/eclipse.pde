@@ -154,9 +154,9 @@ public class BundlePluginBase
 				IPluginImport iimport = (IPluginImport)imports.get(i);
 				buffer.append(iimport.getId());
 				if (iimport.isOptional())
-					buffer.append(";" + Constants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (iimport.isReexported())
-					buffer.append(";" + Constants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				String version = iimport.getVersion();
 				if (version != null && version.trim().length() > 0)
 					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

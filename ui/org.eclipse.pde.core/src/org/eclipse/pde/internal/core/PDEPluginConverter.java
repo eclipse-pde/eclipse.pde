@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.*;
-import org.osgi.framework.*;
 import org.osgi.util.tracker.*;
 
 public class PDEPluginConverter {
@@ -41,6 +40,7 @@ public class PDEPluginConverter {
 	}
 
 	public static void convertToOSGIFormat(IProject project, String filename, String[] packageNames, IProgressMonitor monitor) throws CoreException {
+		// TODO is this method ever used?
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -52,7 +52,7 @@ public class PDEPluginConverter {
 			Dictionary dictionary = converter.convertManifest(inputFile, false, null, true);
 			String value = getPackageProvideValue(packageNames);
 			if (value.length() > 0)
-				dictionary.put(Constants.PROVIDE_PACKAGE,value);
+				dictionary.put(ICoreConstants.PROVIDE_PACKAGE,value);
 			converter.writeManifest(outputFile, dictionary, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();

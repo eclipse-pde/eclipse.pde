@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
@@ -59,8 +60,8 @@ public class PluginImport
 	
 	public void load(ManifestElement element) {
 		this.id = element.getValue();
-		this.optional = "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
-		this.reexported ="true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
+		this.optional = "true".equals(element.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+		this.reexported ="true".equals(element.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
 		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (bundleVersion != null) {
 			VersionRange versionRange = new VersionRange(bundleVersion);

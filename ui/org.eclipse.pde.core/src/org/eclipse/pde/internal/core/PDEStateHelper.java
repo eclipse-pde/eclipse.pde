@@ -100,15 +100,13 @@ public class PDEStateHelper {
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
 		if (root == null)
 			return new BundleDescription[0];
-		PackageSpecification[] packages = root.getPackages();
-		ArrayList resolvedImported = new ArrayList(packages.length);
-		for (int i = 0; i < packages.length; i++) {
-			if (!packages[i].isExported() && packages[i].isResolved() && !resolvedImported.contains(packages[i].getSupplier()))
-				resolvedImported.add(packages[i].getSupplier());
+		ExportPackageDescription[] packages = root.getResolvedImports();
+		ArrayList resolvedImports = new ArrayList(packages.length);
+		for (int i = 0; i < packages.length; i++)
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
+				resolvedImports.add(packages[i].getExporter());
+		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 		}
-		BundleDescription[] result = new BundleDescription[resolvedImported.size()];
-		return (BundleDescription[]) resolvedImported.toArray(result);
-	}
 	/**
 	 * This methods return the bundleDescriptions to which required bundles
 	 * have been bound to.
@@ -120,15 +118,8 @@ public class PDEStateHelper {
 	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
 		if (root == null)
 			return new BundleDescription[0];
-		BundleSpecification[] required = root.getRequiredBundles();
-		ArrayList resolvedRequired = new ArrayList(required.length);
-		for (int i = 0; i < required.length; i++) {
-			if (required[i].isResolved() && !resolvedRequired.contains(required[i].getSupplier()))
-				resolvedRequired.add(required[i].getSupplier());
+		return root.getResolvedRequires();
 		}
-		BundleDescription[] result = new BundleDescription[resolvedRequired.size()];
-		return (BundleDescription[]) resolvedRequired.toArray(result);
-	}
 	
 	public static void parseExtensions(BundleDescription desc, Element parent) {
 		InputStream stream = null;

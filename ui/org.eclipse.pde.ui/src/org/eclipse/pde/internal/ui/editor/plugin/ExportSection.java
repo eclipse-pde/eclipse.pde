@@ -56,6 +56,8 @@ public class ExportSection extends TableSection
 	private IPluginLibrary fCurrentLibrary;
 	private Composite fPackageExportContainer;
 	private TableViewer fPackageExportViewer;
+	
+	public static final String PROVIDE_PACKAGE = "Provide-Package";
 
 	class TableContentProvider extends DefaultContentProvider
 			implements
@@ -301,11 +303,11 @@ public class ExportSection extends TableSection
 		IBundle bundle = model.getBundle();
 		if (bundle == null)
 			return new String[0];
-		String value = bundle.getHeader(Constants.PROVIDE_PACKAGE);
+		String value = bundle.getHeader(PROVIDE_PACKAGE);
 		if (value == null)
 			return new String[0];
 		try {
-			ManifestElement [] result = ManifestElement.parseHeader(Constants.PROVIDE_PACKAGE, value);
+			ManifestElement [] result = ManifestElement.parseHeader(PROVIDE_PACKAGE, value);
 			String [] names = new String[result.length];
 			for (int i=0; i<result.length; i++) {
 				names[i] = result[i].getValue();
@@ -369,7 +371,7 @@ public class ExportSection extends TableSection
 		IBundleModel model = getBundleModel();
 		IBundle bundle = model.getBundle();
 		if (bundle == null) return;
-		bundle.setHeader(Constants.PROVIDE_PACKAGE, buf.toString());
+		bundle.setHeader(PROVIDE_PACKAGE, buf.toString());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)

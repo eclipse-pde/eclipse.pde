@@ -130,7 +130,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 					return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingRequired", name); //$NON-NLS-1$
 				return PDEPlugin.getFormattedMessage("PluginValidationOperation.disabledRequired", name); //$NON-NLS-1$
 			}
-			if (constraint instanceof PackageSpecification)
+			if (constraint instanceof ImportPackageSpecification)
 				return PDEPlugin.getFormattedMessage("PluginValidationOperation.missingImport", name); //$NON-NLS-1$
 			if (constraint instanceof HostSpecification)  {
 				if (state.getBundles(name).length == 0)
