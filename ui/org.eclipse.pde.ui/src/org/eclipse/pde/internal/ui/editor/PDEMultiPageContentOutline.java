@@ -35,8 +35,10 @@ public class PDEMultiPageContentOutline extends Page
 	private ISortableContentOutlinePage emptyPage;
 	private IActionBars actionBars;
 	private boolean sortingOn;
+	private PDEFormEditor editor;
 
-	public PDEMultiPageContentOutline() {
+	public PDEMultiPageContentOutline(PDEFormEditor editor) {
+		this.editor=editor;
 		listeners = new ArrayList();
 		sortingOn= PDEPlugin.getDefault().getPreferenceStore().getBoolean("PDEMultiPageContentOutline.SortingAction.isChecked"); //$NON-NLS-1$
 		
@@ -149,9 +151,11 @@ public class PDEMultiPageContentOutline extends Page
 		
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();
 		if (toolBarManager != null) {	
+			toolBarManager.add(new ToggleLinkWithEditorAction(editor));
 			toolBarManager.add(new SortingAction());
 		}
 	}
+	
 	class SortingAction extends Action {
 		
 		public SortingAction() {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
@@ -71,7 +72,8 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 	protected TreeViewer treeViewer;
 	protected PDEFormEditor editor;
-	
+	protected boolean editorSelection = false;
+	protected boolean outlineSelection = false;
 	public FormOutlinePage(PDEFormEditor editor) {
 		this.editor = editor;
 	}
@@ -160,14 +162,21 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection selection = event.getSelection();
-		if (selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			Object item = ssel.getFirstElement();
-			selectionChanged(item);
+		if (editorSelection)
+			return;
+		outlineSelection = true;
+		try {
+			ISelection selection = event.getSelection();
+			if (selection.isEmpty() == false
+					&& selection instanceof IStructuredSelection) {
+				IStructuredSelection ssel = (IStructuredSelection) selection;
+				Object item = ssel.getFirstElement();
+				selectionChanged(item);
+			}
+			fireSelectionChanged(selection);
+		} finally {
+			outlineSelection = false;
 		}
-		fireSelectionChanged(selection);
 	}
 	public void setFocus() {
 		if (treeViewer != null)
@@ -185,5 +194,28 @@ public class FormOutlinePage extends ContentOutlinePage
 				treeViewer.setSorter(fViewerSorter);
 			else
 				treeViewer.setSorter(null);
+	}
+	/*
+	 * (non-Javadoc) Method declared on ISelectionProvider.
+	 */
+	public void setSelection(ISelection selection) {
+		if (outlineSelection)
+			return;
+		editorSelection = true;
+		try {
+			if (!selection.isEmpty()
+					&& selection instanceof IStructuredSelection) {
+				Object item = ((IStructuredSelection) selection)
+						.getFirstElement();
+				if (item instanceof ImportObject) {
+					selection = new StructuredSelection(((ImportObject) item)
+							.getImport());
+				}
+			}
+			if (treeViewer != null)
+				treeViewer.setSelection(selection);
+		} finally {
+			editorSelection = false;
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model;
 
-import org.eclipse.pde.core.*;
-
-public interface IDocumentKey extends IWritable, IDocumentRange {
-	void setName(String name);
-	String getName();
-	
-	void setOffset(int offset);	
-	void setLength(int length);
-	
-	String write();
-	
+public interface IDocumentRange {
+	int getOffset();
+	int getLength();
 }

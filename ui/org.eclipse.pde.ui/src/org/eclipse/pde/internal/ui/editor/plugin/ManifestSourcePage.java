@@ -174,14 +174,15 @@ public class ManifestSourcePage extends XMLSourcePage {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
 			Object first= structuredSelection.getFirstElement();
 			if (first instanceof IDocumentNode && !(first instanceof IPluginBase)) {
-				setHighlightRange((IDocumentNode)first);				
+				setHighlightRange((IDocumentNode)first, true);
+				setSelectedRange((IDocumentNode)first);				
 			} else {
 				resetHighlightRange();
 			}
 		}
 	}
 	
-	public void setHighlightRange(IDocumentNode node) {
+	public void setSelectedRange(IDocumentNode node) {
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
 			return;
@@ -191,8 +192,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return;
 
 		int offset = node.getOffset();
-		int length = node.getLength();
-		setHighlightRange(offset, length == -1 ? 1 : length, true);
 		sourceViewer.setSelectedRange(offset + 1, node.getXMLTagName().length());
 	}
 
@@ -203,5 +202,30 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return new OutlineSorter();
 	}
 	
+	protected IDocumentRange getRangeElement(ITextSelection selection) {
+		if (selection.isEmpty())
+			return null;
+		PluginModelBase model = (PluginModelBase) getInputContext().getModel();
+		int offset = selection.getOffset();
+		IDocumentRange node = findNode(model.getPluginBase().getLibraries(),
+				offset);
+		if (node == null)
+			node = findNode(model.getPluginBase().getImports(), offset);
+		if (node == null)
+			node = findNode(model.getPluginBase().getExtensionPoints(), offset);
+		if (node == null)
+			node = findNode(model.getPluginBase().getExtensions(), offset);
+		return node;
+	}
 
+	private IDocumentNode findNode(IPluginObject[] nodes, int offset) {
+		for (int i = 0; i < nodes.length; i++) {
+			IDocumentNode node = (IDocumentNode) nodes[i];
+			if (offset >= node.getOffset()
+					&& offset < node.getOffset() + node.getLength()) {
+				return node;
+			}
+		}
+		return null;
+	}
 }

@@ -46,6 +46,71 @@ public abstract class PDEFormEditor extends FormEditor
 		implements
 			IInputContextListener,
 			IGotoMarker {
+	/**
+	 * Updates the OutlinePage selection.
+	 * 
+	 * @since 3.0
+	 */
+	private class PDEFormEditorChangeListener implements
+			ISelectionChangedListener {
+
+		/**
+		 * Installs this selection changed listener with the given selection
+		 * provider. If the selection provider is a post selection provider,
+		 * post selection changed events are the preferred choice, otherwise
+		 * normal selection changed events are requested.
+		 * 
+		 * @param selectionProvider
+		 */
+		public void install(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null) {
+				return;
+			}
+
+			if (selectionProvider instanceof IPostSelectionProvider) {
+				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+				provider.addPostSelectionChangedListener(this);
+			} else {
+				selectionProvider.addSelectionChangedListener(this);
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			if (PDEPlugin.getDefault().getPreferenceStore().getBoolean(
+					"ToggleLinkWithEditorAction.isChecked")) //$NON-NLS-1$
+				getFormOutline().setSelection(event.getSelection());
+		}
+
+		/**
+		 * Removes this selection changed listener from the given selection
+		 * provider.
+		 * 
+		 * @param selectionProviderstyle
+		 */
+		public void uninstall(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null) {
+				return;
+			}
+
+			if (selectionProvider instanceof IPostSelectionProvider) {
+				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+				provider.removePostSelectionChangedListener(this);
+			} else {
+				selectionProvider.removeSelectionChangedListener(this);
+			}
+		}
+
+	}
+
+	/**
+	 * The editor selection changed listener.
+	 * 
+	 * @since 3.0
+	 */
+	private PDEFormEditorChangeListener fEditorSelectionChangedListener;
 	private Clipboard clipboard;
 	private Menu contextMenu;
 	protected InputContextManager inputContextManager;
@@ -342,6 +407,10 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	public void dispose() {
 		storeDefaultPage();
+		if (fEditorSelectionChangedListener != null)  {
+			fEditorSelectionChangedListener.uninstall(getSite().getSelectionProvider());
+			fEditorSelectionChangedListener= null;
+		}
 		//setSelection(new StructuredSelection());
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		if (clipboard != null) {
@@ -456,7 +525,7 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	public PDEMultiPageContentOutline getContentOutline() {
 		if (contentOutline == null || contentOutline.isDisposed()) {
-			contentOutline = new PDEMultiPageContentOutline();
+			contentOutline = new PDEMultiPageContentOutline(this);
 			updateContentOutline(getActivePageInstance());
 		}
 		return contentOutline;
@@ -471,6 +540,8 @@ public abstract class PDEFormEditor extends FormEditor
 	protected ISortableContentOutlinePage getFormOutline() {
 		if (formOutline == null) {
 			formOutline = createContentOutline();
+			fEditorSelectionChangedListener= new PDEFormEditorChangeListener();
+			fEditorSelectionChangedListener.install(getSite().getSelectionProvider());
 		}
 		return formOutline;
 	}
@@ -616,5 +687,8 @@ public abstract class PDEFormEditor extends FormEditor
 		IModelUndoManager undoManager = inputContextManager.getUndoManager();
 		if (undoManager != null)
 			undoManager.setActions(undoAction, redoAction);
+	}
+	void synchronizeOutlinePage(){
+		getFormOutline().setSelection(getSelection());
 	}
 }

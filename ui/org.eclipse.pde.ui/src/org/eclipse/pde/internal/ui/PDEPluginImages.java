@@ -162,7 +162,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HELP = create(PATH_LCL, "help.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_LINK_WITH_EDITOR = create(PATH_LCL, "synced.gif"); //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_ATT_DISABLED = create(PATH_LCL_DISABLED, "clone_att.gif"); //$NON-NLS-1$
@@ -174,6 +175,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_REMOVE_ATT_DISABLED = create(PATH_LCL_DISABLED, "remove_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HORIZONTAL_DISABLED = create(PATH_LCL_DISABLED, "th_horizontal.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VERTICAL_DISABLED = create(PATH_LCL_DISABLED, "th_vertical.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_LINK_WITH_EDITOR_DISABLED = create(PATH_LCL_DISABLED, "synced.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif"); //$NON-NLS-1$

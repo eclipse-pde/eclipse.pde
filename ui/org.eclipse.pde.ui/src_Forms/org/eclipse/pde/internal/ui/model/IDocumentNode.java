@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.model;
 
 import java.io.*;
 
-public interface IDocumentNode extends Serializable {
+public interface IDocumentNode extends Serializable, IDocumentRange {
 		
 	IDocumentNode getParentNode();	
 	void setParentNode(IDocumentNode node);
@@ -50,10 +50,7 @@ public interface IDocumentNode extends Serializable {
 	
 	void setOffset(int offset);
 	void setLength(int length);
-	
-	int getOffset();
-	int getLength();
-	
+		
 	void setLineIndent(int indent);
 	int getLineIndent();
 	

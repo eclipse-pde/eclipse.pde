@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.pde.internal.ui.model.build.*;
 import org.eclipse.swt.graphics.*;
 /**
  * @author melhem
@@ -67,5 +70,25 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BuildOutlineContentProvider();
+	}
+	protected IDocumentRange getRangeElement(ITextSelection selection) {
+		if (selection.isEmpty())
+			return null;
+		BuildModel model = (BuildModel) getInputContext().getModel();
+		int offset = selection.getOffset();
+		BuildEntry node = findBuildNode(model.getBuild().getBuildEntries(),
+				offset);
+		return node;
+	}
+
+	private BuildEntry findBuildNode(IBuildEntry[] nodes, int offset) {
+		for (int i = 0; i < nodes.length; i++) {
+			BuildEntry node = (BuildEntry) nodes[i];
+			if (offset >= node.getOffset()
+					&& offset < node.getOffset() + node.getLength()) {
+				return node;
+			}
+		}
+		return null;
 	}
 }
