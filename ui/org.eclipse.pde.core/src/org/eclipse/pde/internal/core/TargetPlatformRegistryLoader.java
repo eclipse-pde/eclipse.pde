@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.core.plugin.*;
  */
 public class TargetPlatformRegistryLoader {
 	
+	private static final String KEY_SCANNING_PROBLEMS =
+		"ExternalModelManager.scanningProblems";
 	private static String getFilesAndMode(URL[] urls, ArrayList fileList) {
 		String targetMode = "2.1";
 		for (int i = 0; i < urls.length; i++) {
@@ -63,6 +65,29 @@ public class TargetPlatformRegistryLoader {
 		
 		state.resolveState();	
 		monitor.worked(1);
+		
+		if (resolve) {
+			MultiStatus errors =
+				new MultiStatus(
+					PDECore.getPluginId(),
+					1,
+					PDECore.getResourceString(KEY_SCANNING_PROBLEMS),
+					null);
+			
+			StateHelper helper = acquireStateHelper();
+			BundleDescription[] all = state.getState().getBundles();
+			for (int i = 0; i < all.length; i++) {
+				if (!all[i].isResolved()) {
+					VersionConstraint[] unsatisfiedConstraint = helper.getUnsatisfiedConstraints(all[i]);
+	                for (int j = 0; j < unsatisfiedConstraint.length; j++) {
+                        String message = unsatisfiedConstraint[j].toString();
+    	                errors.add(new Status(IStatus.WARNING, all[i].getUniqueId(), IStatus.WARNING, message, null));
+	                }
+				}
+			}
+			if (errors.getChildren().length > 0)
+				PDECore.log(errors);
+		}
 		
 		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
 		IPluginModelBase[] models = new IPluginModelBase[bundleDescriptions.length];
@@ -108,5 +133,10 @@ public class TargetPlatformRegistryLoader {
 		model.load(description, state);
 		return model;
 	}
+	
+	private static StateHelper acquireStateHelper(){
+		return PDECore.getDefault().acquirePlatform().getStateHelper();
+	}
+
 
 }

@@ -125,8 +125,8 @@ public class PDEState {
 		}
 	}
 	
-	public void resolveState() {
-		fState.resolve(false);
+	public StateDelta resolveState() {
+		return fState.resolve(false);
 	}
 	
 	public void resolveState(boolean incremental) {
