@@ -69,9 +69,11 @@ public class CategorySection extends TreeSection {
 
 	private static final int BUTTON_ADD_FEATURE = 1;
 
-	private static final int BUTTON_BUILD_FEATURE = 3;
+	private static final int BUTTON_IMPORT_ENVIRONMENT = 3;
+	
+	private static final int BUTTON_BUILD_FEATURE = 5;
 
-	private static final int BUTTON_BUILD_ALL = 4;
+	private static final int BUTTON_BUILD_ALL = 6;
 	
 	private static int newCategoryCounter;
 
@@ -147,7 +149,8 @@ public class CategorySection extends TreeSection {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				PDEPlugin.getResourceString("CategorySection.new"), //$NON-NLS-1$
 				PDEPlugin.getResourceString("CategorySection.add"), //$NON-NLS-1$
-				null, PDEPlugin.getResourceString("CategorySection.build"), //$NON-NLS-1$
+				null, PDEPlugin.getResourceString("CategorySection.environment"), //$NON-NLS-1$
+					null, PDEPlugin.getResourceString("CategorySection.build"), //$NON-NLS-1$
 				PDEPlugin.getResourceString("CategorySection.buildAll") }); //$NON-NLS-1$
 		getSection().setText(
 				PDEPlugin.getResourceString("CategorySection.title")); //$NON-NLS-1$
@@ -371,6 +374,9 @@ public class CategorySection extends TreeSection {
 			break;
 		case BUTTON_BUILD_ALL:
 			handleBuild(fModel.getSite().getFeatures());
+			break;
+		case BUTTON_IMPORT_ENVIRONMENT:
+			handleImportEnvironment();
 		}
 	}
 
@@ -523,18 +529,24 @@ public class CategorySection extends TreeSection {
 
 		ISelection selection = fCategoryViewer.getSelection();
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			final Object o = ((IStructuredSelection) selection)
+			Object o = ((IStructuredSelection) selection)
 					.getFirstElement();
 			if (o instanceof SiteFeatureAdapter) {
+				final SiteFeatureAdapter adapter = (SiteFeatureAdapter)o;
 				manager.add(new Separator());
+				
+				Action synchronizeAction = new SynchronizePropertiesAction(adapter.feature, fModel);
+				manager.add(synchronizeAction);
+				synchronizeAction.setEnabled(isEditable());
+
 				Action buildAction = new Action(PDEPlugin
 						.getResourceString("CategorySection.build")) { //$NON-NLS-1$
 							public void run() {
-								handleBuild(new ISiteFeature[] { ((SiteFeatureAdapter) o).feature });
+								handleBuild(new ISiteFeature[] { adapter.feature });
 							}
 						};
 				manager.add(buildAction);
-				buildAction.setEnabled(isEditable());
+				buildAction.setEnabled(isEditable()&& getFeature(adapter.feature) != null);
 
 			}
 		}
@@ -575,6 +587,7 @@ public class CategorySection extends TreeSection {
 								.getFirstElement()).feature) != null);
 		int featureCount = fModel.getSite().getFeatures().length;
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_ALL, featureCount > 0);
+		fCategoryTreePart.setButtonEnabled(BUTTON_IMPORT_ENVIRONMENT, featureCount > 0);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -690,6 +703,24 @@ public class CategorySection extends TreeSection {
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 
+	private void handleImportEnvironment() {
+		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer
+				.getSelection();
+		ISiteFeature feature = null;
+		if (!sel.isEmpty()
+				&& sel.getFirstElement() instanceof SiteFeatureAdapter) {
+			feature = ((SiteFeatureAdapter) sel.getFirstElement()).feature;
+		}
+		final ISiteFeature selectedFeature = feature;
+		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(),
+				new Runnable() {
+					public void run() {
+						new SynchronizePropertiesAction(selectedFeature,
+								getModel()).run();
+					}
+				});
+	}
+	
 	private void handleNewFeature() {
 		final Control control = fCategoryViewer.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {

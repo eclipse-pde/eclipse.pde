@@ -196,7 +196,8 @@ public class PortabilitySection extends PDESection implements IFormPart,
 						new Runnable() {
 							public void run() {
 								Choice[] choices = getOSChoices();
-								openPortabilityChoiceDialog(osText, choices);
+								openPortabilityChoiceDialog(IEnvironment.P_OS,
+										osText, choices);
 							}
 						});
 			}
@@ -221,7 +222,8 @@ public class PortabilitySection extends PDESection implements IFormPart,
 						new Runnable() {
 							public void run() {
 								Choice[] choices = getWSChoices();
-								openPortabilityChoiceDialog(wsText, choices);
+								openPortabilityChoiceDialog(IEnvironment.P_WS,
+										wsText, choices);
 							}
 						});
 			}
@@ -247,7 +249,8 @@ public class PortabilitySection extends PDESection implements IFormPart,
 						new Runnable() {
 							public void run() {
 								Choice[] choices = getNLChoices();
-								openPortabilityChoiceDialog(nlText, choices);
+								openPortabilityChoiceDialog(IFeature.P_NL,
+										nlText, choices);
 							}
 						});
 			}
@@ -272,7 +275,8 @@ public class PortabilitySection extends PDESection implements IFormPart,
 						new Runnable() {
 							public void run() {
 								Choice[] choices = getArchChoices();
-								openPortabilityChoiceDialog(archText, choices);
+								openPortabilityChoiceDialog(IEnvironment.P_ARCH,
+										archText, choices);
 							}
 						});
 			}
@@ -318,18 +322,23 @@ public class PortabilitySection extends PDESection implements IFormPart,
 		markStale();
 	}
 
-	private void openPortabilityChoiceDialog(FormEntry text, Choice[] choices) {
+	private void openPortabilityChoiceDialog(String property, FormEntry text, Choice[] choices) {
 		String value = text.getValue();
 
 		PortabilityChoicesDialog dialog = new PortabilityChoicesDialog(
 				PDEPlugin.getActiveWorkbenchShell(), choices, value);
 		dialog.create();
 		dialog.getShell().setText(PDEPlugin.getResourceString(DIALOG_TITLE));
-		// dialog.getShell().setSize(300, 400);
+
 		int result = dialog.open();
 		if (result == Window.OK) {
 			value = dialog.getValue();
 			text.setValue(value);
+			try {
+				applyValue(property, value);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
 		}
 	}
 

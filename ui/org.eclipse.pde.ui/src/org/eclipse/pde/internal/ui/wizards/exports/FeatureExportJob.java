@@ -133,6 +133,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		monitor.beginTask("", fItems.length + 1); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < fItems.length; i++) {
+				if(monitor.isCanceled())
+					throw new OperationCanceledException();
 				IFeatureModel model = (IFeatureModel)fItems[i];
 				try {
 					IFeature feature = model.getFeature();
@@ -245,10 +247,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			format = Platform.getOS().equals("macosx") ? "tarGz" : "antZip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else
 			format = "folder"; //$NON-NLS-1$
-		BuildScriptGenerator.setOutputFormat(format);
-		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
-		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
-		BuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
+		AbstractScriptGenerator.setOutputFormat(format);
+		AbstractScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
+		AbstractScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
+		AbstractScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();	
 	}
 	
@@ -271,11 +273,11 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	private String getBuildScriptName(String featureLocation) {
-		return featureLocation + Path.SEPARATOR + "build.xml"; //$NON-NLS-1$
+		return featureLocation + IPath.SEPARATOR + "build.xml"; //$NON-NLS-1$
 	}
 	
 	protected String getAssemblyScriptName(String featureID, String os, String ws, String arch, String featureLocation) {
-		return featureLocation + Path.SEPARATOR + "assemble." //$NON-NLS-1$
+		return featureLocation + IPath.SEPARATOR + "assemble." //$NON-NLS-1$
 				+ featureID + "." + os + "." //$NON-NLS-1$ //$NON-NLS-2$
 				+ ws + "." + arch //$NON-NLS-1$
 				+ ".xml"; //$NON-NLS-1$
@@ -357,7 +359,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		ArrayList paths = new ArrayList();
 		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
-			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"); //$NON-NLS-1$
+			paths.add(models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
 		}
 		
 		String[] plugins = TargetPlatform.createPluginPath();
