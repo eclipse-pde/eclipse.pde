@@ -48,44 +48,49 @@ public class RegistryLoader {
 			monitor.beginTask("",6);
 			MultiStatus errors = loader.load(urls, resolve, useCache, new SubProgressMonitor(monitor,4));
 			PluginRegistryModel registryModel = loader.getRegistry();
-			processPluginModel(result, registryModel.getPlugins(), false, new SubProgressMonitor(monitor,1));
-			processPluginModel(fresult, registryModel.getFragments(), true, new SubProgressMonitor(monitor,1));
+			processPluginModels(result, registryModel.getPlugins(), false, new SubProgressMonitor(monitor,1));
+			processPluginModels(fresult, registryModel.getFragments(), true, new SubProgressMonitor(monitor,1));
 			return errors;
 		} catch (MalformedURLException e) {
 			return null;
 		}
 	}
 
-	private static void processPluginModel(
+	private static void processPluginModels(
 		Vector result,
 		PluginModel[] models,
 		boolean isFragment,
 		IProgressMonitor monitor) {
-		monitor.beginTask("",models.length);
+		monitor.beginTask("", models.length);
 		for (int i = 0; i < models.length; i++) {
-			ExternalPluginModelBase model = null;
-			if (isFragment) {
-				model = new ExternalFragmentModel();
-			} else {
-				model = new ExternalPluginModel();
-			}
-			String location = models[i].getLocation();
-			try {
-				String localLocation = new URL(location).getFile();
-				IPath path = new Path(localLocation).removeTrailingSeparator();
-				model.setInstallLocation(path.toOSString());
-				model.getPluginBase();
-			} catch (MalformedURLException e) {
-				model.setInstallLocation(location);
-			}
-			model.load(models[i]);
+			ExternalPluginModelBase model = processPluginModel(models[i], isFragment);
 			if (model.isLoaded()) {
 				result.add(model);
-				model.getPluginBase();
 			}
 			monitor.worked(1);
 		}
-		monitor.done();
+	}
+	
+	public static ExternalPluginModelBase processPluginModel(PluginModel registryModel, boolean isFragment) {
+		ExternalPluginModelBase model = null;
+		if (isFragment) {
+			model = new ExternalFragmentModel();
+		} else {
+			model = new ExternalPluginModel();
+		}
+		String location = registryModel.getLocation();
+		try {
+			String localLocation = new URL(location).getFile();
+			IPath path = new Path(localLocation).removeTrailingSeparator();
+			model.setInstallLocation(path.toOSString());
+			model.getPluginBase();
+		} catch (MalformedURLException e) {
+			model.setInstallLocation(location);
+		}
+		model.load(registryModel);
+		if (model.isLoaded())
+			model.getPluginBase();
+		return model;
 	}
 
 	public static void reloadFromLive(
@@ -97,8 +102,8 @@ public class RegistryLoader {
 		PluginDescriptorModel[] plugins = registryModel.getPlugins();
 		PluginFragmentModel[] fragments = registryModel.getFragments();
 		monitor.beginTask("", plugins.length + fragments.length);
-		processPluginModel(result, plugins, false, monitor);
-		processPluginModel(fresult, fragments, true, monitor);
+		processPluginModels(result, plugins, false, monitor);
+		processPluginModels(fresult, fragments, true, monitor);
 	}
 
 	public static void reload(
