@@ -34,7 +34,7 @@ public class MigratePluginWizard extends Wizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
-		setWindowTitle("Migrate Plug-ins and Fragments");
+		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
 		setNeedsProgressMonitor(true);
 		this.selected = selected;
 	}
@@ -48,7 +48,7 @@ public class MigratePluginWizard extends Wizard {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				int numUnits = doUpdateClasspath ? models.length * 2 : models.length;
-				monitor.beginTask("Migrating...", numUnits);
+				monitor.beginTask(PDEPlugin.getResourceString("MigrationWizard.progress"), numUnits);
 				try {
 					for (int i = 0; i < models.length; i++) {
 						monitor.subTask(models[i].getPluginBase().getId());

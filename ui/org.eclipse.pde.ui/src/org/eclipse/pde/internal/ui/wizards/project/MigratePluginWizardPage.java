@@ -63,11 +63,11 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 
 	public MigratePluginWizardPage(IPluginModelBase[] selected) {
 		super("MigrateWizardPage", true);
-		setTitle("Migrate Plug-ins and Fragments");
-		setDescription("Migrate the plug-ins and fragments that are not compliant with Eclipse 3.0 guidelines");
+		setTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
+		setDescription(PDEPlugin.getResourceString("MigrationWizardPage.desc"));
 
 		this.fSelected = selected;
-		fTablePart = new TablePart("&Plug-ins and fragments that are not 3.0-compliant:");
+		fTablePart = new TablePart(PDEPlugin.getResourceString("MigrationWizardPage.label"));
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
@@ -99,7 +99,7 @@ public class MigratePluginWizardPage extends StatusWizardPage {
 		fTablePart.setSelection(fSelected);
 		
 		fUpdateClasspathButton = new Button(container, SWT.CHECK);
-		fUpdateClasspathButton.setText("Update the Java build path");
+		fUpdateClasspathButton.setText(PDEPlugin.getResourceString("MigrationWizard.update"));
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fUpdateClasspathButton.setLayoutData(gd);
