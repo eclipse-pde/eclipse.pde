@@ -31,7 +31,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
 		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		
-		IProject project = file.getProject();
+		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(new DevClassPathHelper(url));

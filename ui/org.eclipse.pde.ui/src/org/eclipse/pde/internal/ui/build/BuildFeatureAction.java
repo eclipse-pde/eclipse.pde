@@ -31,7 +31,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"); //$NON-NLS-1$
-			if (models[i].getUnderlyingResource().equals(file))
+			if (models[i].getUnderlyingResource().equals(fManifestFile))
 				model = models[i];
 		}
 		
@@ -46,9 +46,9 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setChildren(true);
 		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 
-		String url = ClasspathHelper.getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
+		String url = ClasspathHelper.getDevEntriesProperties(fManifestFile.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);
-		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
+		generator.setWorkingDirectory(fManifestFile.getProject().getLocation().toOSString());
 		BuildScriptGenerator.setOutputFormat(AbstractScriptGenerator.getDefaultOutputFormat());
 		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		generator.setElements(new String[] {"feature@" + model.getFeature().getId()});	 //$NON-NLS-1$

@@ -22,13 +22,13 @@ public abstract class BaseBuildAction
 			IObjectActionDelegate,
 			IPreferenceConstants {
 
-	protected IFile file;
+	protected IFile fManifestFile;
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	public void run(IAction action) {
-		if (!file.exists())
+		if (!fManifestFile.exists())
 			return;
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -65,7 +65,7 @@ public abstract class BaseBuildAction
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null && obj instanceof IFile) {
-				this.file = (IFile) obj;
+				this.fManifestFile = (IFile) obj;
 			}
 		}
 
@@ -75,7 +75,7 @@ public abstract class BaseBuildAction
 			InvocationTargetException {
 		monitor.beginTask(
 				PDEPlugin.getResourceString("BuildAction.Validate"), 4); //$NON-NLS-1$
-		if (!ensureValid(file, monitor)) {
+		if (!ensureValid(fManifestFile, monitor)) {
 			monitor.done();
 			return;
 		}
@@ -132,11 +132,16 @@ public abstract class BaseBuildAction
 	}
 
 	protected void refreshLocal(IProgressMonitor monitor) throws CoreException {
-		file.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
+		IProject project = fManifestFile.getProject();
+		project.refreshLocal(IResource.DEPTH_ONE, monitor);
+		IFile file = project.getFile("dev.properties");
+		if (file.exists())
+			file.delete(true, false, monitor);
+		project.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 
 	private void setDefaultValues() {
-		IProject project = file.getProject();
+		IProject project = fManifestFile.getProject();
 		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
 		if (generatedFile == null)
 			return;
