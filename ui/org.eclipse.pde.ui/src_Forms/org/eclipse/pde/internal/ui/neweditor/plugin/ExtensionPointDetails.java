@@ -29,10 +29,17 @@ public class ExtensionPointDetails implements IDetailsPage {
 	private Text name;
 	private Text schema;
 	private RichText rtext;
+	private String rtextData;
 	
-	private static final String RTEXT_DATA =
-		"<form><p><img href=\"schema\"/> <a href=\"schema\">Open extension point schema file</a></p>"+
+	private static final String SCHEMA_RTEXT_DATA =
+		"<form>"+
+		"<p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"+		
+		"<p><img href=\"schema\"/> <a href=\"schema\">Open extension point schema file</a></p>"+
 		"<p><img href=\"desc\"/> <a href=\"desc\">Open extension point description</a></p>"+
+		"</form>";
+	
+	private static final String NO_SCHEMA_RTEXT_DATA =
+		"<form><p><img href=\"search\"/> <a href=\"search\">Find references</a></p>"+
 		"</form>";
 	
 	public ExtensionPointDetails() {
@@ -104,7 +111,7 @@ public class ExtensionPointDetails implements IDetailsPage {
 			public void modifyText(ModifyEvent e) {
 				if (input!=null) {
 					input.setSchema(schema.getText());
-					updateRichTextVisibility();
+					updateRichText();
 				}
 			}
 		});
@@ -115,13 +122,12 @@ public class ExtensionPointDetails implements IDetailsPage {
 		createSpacer(toolkit, client, 2);
 		
 		rtext = toolkit.createRichText(parent, true);
-		rtext.setText(RTEXT_DATA, true, false);
-		rtext.setVisible(false);
 		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		rtext.setLayoutData(td);
 		rtext.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SCHEMA_OBJ));
 		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ));
+		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				System.out.println("Link active: "+e.getHref());
@@ -141,10 +147,18 @@ public class ExtensionPointDetails implements IDetailsPage {
 		id.setText(input!=null && input.getId()!=null?input.getId():"");
 		name.setText(input!=null && input.getName()!=null?input.getName():"");
 		schema.setText(input!=null && input.getSchema()!=null?input.getSchema():"");
-		updateRichTextVisibility();
+		updateRichText();
 	}
-	private void updateRichTextVisibility() {
-		rtext.setVisible(schema.getText().length()>0);		
+	private void updateRichText() {
+		boolean hasSchema = schema.getText().length()>0;
+		
+		if (hasSchema && rtextData==SCHEMA_RTEXT_DATA)
+			return;
+		if (!hasSchema && rtextData==NO_SCHEMA_RTEXT_DATA)
+			return;
+		rtextData = hasSchema?SCHEMA_RTEXT_DATA:NO_SCHEMA_RTEXT_DATA;
+		rtext.setText(rtextData, true, false);
+		mform.getForm().reflow(true);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
