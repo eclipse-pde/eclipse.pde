@@ -76,17 +76,35 @@ public class PluginVersionReplaceTask extends Task {
 		int endPlugin = scan(buffer, startPlugin + 1, ">"); //$NON-NLS-1$
 
 		//Find the version tag in the plugin header
-		int versionAttr = scan(buffer, startPlugin, VERSION);
-		if (versionAttr == -1 || versionAttr > endPlugin)
-			return;
+		boolean versionFound = false;
+		while (!versionFound) {
+			int versionAttr = scan(buffer, startPlugin, VERSION);
+			if (versionAttr == -1 || versionAttr > endPlugin)
+				return;
+			if (!Character.isWhitespace(buffer.charAt(versionAttr - 1))) {
+				startPlugin = versionAttr + VERSION.length();
+				continue;
+			}
+			//Verify that the word version found is the actual attribute
+			int endVersionWord = versionAttr + VERSION.length();
+			while (Character.isWhitespace(buffer.charAt(endVersionWord)) && endVersionWord < endPlugin) {
+				endVersionWord++;
+			}
+			if (endVersionWord > endPlugin) //version has not been found 
+				return;
 
-		//Extract the version id and replace it
-		int startVersionId = scan(buffer, versionAttr + 1, BACKSLASH);
-		int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
+			if (buffer.charAt(endVersionWord) != '=') {
+				startPlugin = endVersionWord;
+				continue;
+			}
 
-		startVersionId++;
-		buffer.replace(startVersionId, endVersionId, newVersion);
+			//Version has been found, extract the version id and replace it
+			int startVersionId = scan(buffer, versionAttr + 1, BACKSLASH);
+			int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 
+			buffer.replace(startVersionId + 1, endVersionId, newVersion);
+			versionFound = true;
+		}
 		try {
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(pluginFilePath));
 		} catch (FileNotFoundException e) {
@@ -105,7 +123,7 @@ public class PluginVersionReplaceTask extends Task {
 			for (int j = 0; j < targets.length; j++) {
 				if (i < buf.length() - targets[j].length()) {
 					String match = buf.substring(i, i + targets[j].length());
-					if (targets[j].equals(match))
+					if (targets[j].equalsIgnoreCase(match))
 						return i;
 				}
 			}

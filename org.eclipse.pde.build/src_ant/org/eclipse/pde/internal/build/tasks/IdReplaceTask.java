@@ -116,14 +116,37 @@ public class IdReplaceTask extends Task {
 		if (startFeature == -1)
 			return;
 
-		int endFeature = scan(buffer, startFeature + 1, ">"); //$NON-NLS-1$
+		int endFeature = scan(buffer, startFeature, ">"); //$NON-NLS-1$
 
 		if (selfVersion != null) {
-			int startVersionWord = scan(buffer, startFeature + 1, VERSION);
-			if (startVersionWord < endFeature) {
+			boolean versionFound = false;
+			while (!versionFound) {
+				int startVersionWord = scan(buffer, startFeature, VERSION);
+				if (startVersionWord == -1 || startVersionWord > endFeature)
+					return;
+				if (!Character.isWhitespace(buffer.charAt(startVersionWord - 1))) {
+					startFeature = startVersionWord + VERSION.length();
+					continue;
+				}
+				//Verify that the word version found is the actual attribute
+				int endVersionWord = startVersionWord + VERSION.length();
+				while (Character.isWhitespace(buffer.charAt(endVersionWord)) && endVersionWord < endFeature) {
+					endVersionWord++;
+				}
+				if (endVersionWord > endFeature) { //version has not been found
+					System.err.println("Could not find the tag 'version' in the feature header, file: " + featureFilePath); //$NON-NLS-1$
+					return;
+				}
+
+				if (buffer.charAt(endVersionWord) != '=') {
+					startFeature = endVersionWord;
+					continue;
+				}
+
 				int startVersionId = scan(buffer, startVersionWord + 1, BACKSLASH);
 				int endVersionId = scan(buffer, startVersionId + 1, BACKSLASH);
 				buffer.replace(startVersionId + 1, endVersionId, selfVersion);
+				versionFound = true;
 			}
 		}
 
@@ -206,7 +229,7 @@ public class IdReplaceTask extends Task {
 			for (int j = 0; j < targets.length; j++) {
 				if (i < buf.length() - targets[j].length()) {
 					String match = buf.substring(i, i + targets[j].length());
-					if (targets[j].equals(match))
+					if (targets[j].equalsIgnoreCase(match))
 						return i;
 				}
 			}
