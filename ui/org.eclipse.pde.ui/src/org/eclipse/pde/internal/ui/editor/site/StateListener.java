@@ -76,9 +76,10 @@ public class StateListener
 	}
 
 	private void handleDirtyProject(IProject project) {
-		if (isRelatedProject(project)) {
-			if (!dirtyProjects.contains(project))
-				dirtyProjects.add(project);
+		IProject relatedProject = getRelatedProject(project);
+		if (relatedProject!=null) {
+			if (!dirtyProjects.contains(relatedProject))
+				dirtyProjects.add(relatedProject);
 		}
 	}
 
@@ -89,7 +90,7 @@ public class StateListener
 		else
 			return false;
 	}
-	private boolean isRelatedProject(IProject project) {
+	private IProject getRelatedProject(IProject project) {
 		ISiteBuildModel buildModel = model.getBuildModel();
 		ISiteBuild siteBuild = buildModel.getSiteBuild();
 		ISiteBuildFeature[] features = siteBuild.getFeatures();
@@ -97,11 +98,11 @@ public class StateListener
 			ISiteBuildFeature sbfeature = features[i];
 			IProject sbproject = getProject(sbfeature);
 			if (sbproject != null && sbproject.equals(project))
-				return true;
+				return sbproject;
 			if (isReferencedPluginProject(sbfeature, project))
-				return true;
+				return sbproject;
 		}
-		return false;
+		return null;
 	}
 
 	private boolean isReferencedPluginProject(

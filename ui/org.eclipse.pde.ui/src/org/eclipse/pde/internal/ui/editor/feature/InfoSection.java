@@ -140,7 +140,7 @@ public class InfoSection extends PDEFormSection {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 
-		int styles = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL /*| SWT.WRAP */
+		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL
 		| FormWidgetFactory.BORDER_STYLE;
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);

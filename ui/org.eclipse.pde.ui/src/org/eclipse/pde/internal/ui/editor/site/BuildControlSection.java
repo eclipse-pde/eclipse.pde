@@ -176,7 +176,7 @@ public class BuildControlSection extends PDEFormSection {
 		gd.horizontalSpan = 3;
 		buttonContainer.setLayoutData(gd);
 		GridLayout blayout = new GridLayout();
-		blayout.numColumns = 2;
+		blayout.numColumns = 3;
 		buttonContainer.setLayout(blayout);
 		//blayout.makeColumnsEqualWidth = true;
 		//blayout.numColumns = 2;
