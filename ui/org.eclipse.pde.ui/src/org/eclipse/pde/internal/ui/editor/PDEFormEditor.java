@@ -81,7 +81,9 @@ public abstract class PDEFormEditor extends FormEditor
 		public void selectionChanged(SelectionChangedEvent event) {
 			if (PDEPlugin.getDefault().getPreferenceStore().getBoolean(
 					"ToggleLinkWithEditorAction.isChecked")) //$NON-NLS-1$
-				getFormOutline().setSelection(event.getSelection());
+				if (getFormOutline() != null) {
+					getFormOutline().setSelection(event.getSelection());
+				}
 		}
 
 		/**
@@ -488,7 +490,7 @@ public abstract class PDEFormEditor extends FormEditor
 	public void openTo(Object obj, IMarker marker) {
 		//TODO hack until the move to the new search
 		PDESourcePage sourcePage = (PDESourcePage) setActivePage(PluginInputContext.CONTEXT_ID);
-		if (sourcePage != null)
+		if (sourcePage != null && marker != null)
 			IDE.gotoMarker(sourcePage, marker);
 
 		/*
@@ -537,11 +539,18 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		return propertySheet;
 	}
+	/**
+	 * 
+	 * @return outline page or null
+	 */
 	protected ISortableContentOutlinePage getFormOutline() {
 		if (formOutline == null) {
 			formOutline = createContentOutline();
-			fEditorSelectionChangedListener= new PDEFormEditorChangeListener();
-			fEditorSelectionChangedListener.install(getSite().getSelectionProvider());
+			if (formOutline != null) {
+				fEditorSelectionChangedListener = new PDEFormEditorChangeListener();
+				fEditorSelectionChangedListener.install(getSite()
+						.getSelectionProvider());
+			}
 		}
 		return formOutline;
 	}
@@ -555,7 +564,7 @@ public abstract class PDEFormEditor extends FormEditor
 			outline = ((PDESourcePage) page).getContentOutline();
 		} else {
 			outline = getFormOutline();
-			if (outline instanceof FormOutlinePage)
+			if (outline != null && outline instanceof FormOutlinePage)
 				((FormOutlinePage) outline).refresh();
 		}
 		contentOutline.setPageActive(outline);
@@ -688,7 +697,9 @@ public abstract class PDEFormEditor extends FormEditor
 		if (undoManager != null)
 			undoManager.setActions(undoAction, redoAction);
 	}
-	void synchronizeOutlinePage(){
-		getFormOutline().setSelection(getSelection());
+	void synchronizeOutlinePage() {
+		if (getFormOutline() != null) {
+			getFormOutline().setSelection(getSelection());
+		}
 	}
 }
