@@ -52,6 +52,14 @@ public class PluginExtensionNode extends PluginParentNode
 	public String getName() {
 		return getXMLAttributeValue(P_NAME);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
+	 */
+	public String getTranslatedName() {
+		String name = getName();
+		return (name == null || name.trim().length() == 0) ? getPoint() : getResourceString(name);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */

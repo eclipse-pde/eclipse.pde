@@ -142,8 +142,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public String getObjectText(IPluginImport obj) {
-		if (isFullNameModeEnabled())
-			return obj.toString();
+		if (isFullNameModeEnabled()) {
+			String id = obj.getId();
+			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
+			if (plugin != null) {
+				return plugin.getTranslatedName();
+			}
+			return id != null ? id : "?"; //$NON-NLS-1$
+		}
 		return preventNull(obj.getId());
 	}
 	public String getObjectText(IBuildEntry obj) {

@@ -60,7 +60,7 @@ public class ExtensionsSection extends TreeSection
 	public static final String POPUP_GO_TO = "Menus.goTo.label"; //$NON-NLS-1$
 	public static final String POPUP_DELETE = "Actions.delete.label"; //$NON-NLS-1$
 	private Image genericElementImage;
-	//private Button showAllChildrenButton;
+
 	private SchemaRegistry schemaRegistry;
 	private ExternalModelManager pluginInfoRegistry;
 	private DrillDownAdapter drillDownAdapter;
@@ -116,7 +116,6 @@ public class ExtensionsSection extends TreeSection
 				PDEPlugin.getResourceString(SECTION_UP),
 				PDEPlugin.getResourceString(SECTION_DOWN)});
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
-		schemaRegistry = PDECore.getDefault().getSchemaRegistry();
 		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		handleDefaultButton = false;
 	}
@@ -659,8 +658,15 @@ public class ExtensionsSection extends TreeSection
 		}
 	}
 	private String resolveObjectName(Object obj) {
-		return resolveObjectName(schemaRegistry, pluginInfoRegistry, obj);
+		return resolveObjectName(getSchemaRegistry(), pluginInfoRegistry, obj);
 	}
+	
+	private SchemaRegistry getSchemaRegistry() {
+		if (schemaRegistry == null)
+			schemaRegistry = PDECore.getDefault().getSchemaRegistry();
+		return schemaRegistry;
+	}
+	
 	public static String resolveObjectName(SchemaRegistry schemaRegistry,
 			ExternalModelManager pluginInfoRegistry, Object obj) {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
