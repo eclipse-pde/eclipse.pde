@@ -51,34 +51,40 @@ public Object getValue() {
 public String getValueFilter() {
 	return valueFilter;
 }
-public void setBasedOn(java.lang.String newBasedOn) {
+public void setBasedOn(String newBasedOn) {
+	String oldValue = basedOn;
 	basedOn = newBasedOn;
-	getSchema().fireModelObjectChanged(this, P_BASED_ON);
+	getSchema().fireModelObjectChanged(this, P_BASED_ON, oldValue, basedOn);
 	verifyProperties();
 }
 public void setKind(int newKind) {
+	Integer oldValue= new Integer(kind);
 	kind = newKind;
-	getSchema().fireModelObjectChanged(this, P_KIND);
+	getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
 	verifyProperties();
 }
 public void setType(ISchemaSimpleType newType) {
+	Object oldValue = type;
 	type = newType;
-	getSchema().fireModelObjectChanged(this, P_TYPE);
+	getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
 	verifyProperties();
 }
 public void setUse(int newUse) {
+	Integer oldValue = new Integer(use);
 	use = newUse;
-	getSchema().fireModelObjectChanged(this, P_USE);
+	getSchema().fireModelObjectChanged(this, P_USE, oldValue, new Integer(use));
 	verifyProperties();
 }
 public void setValue(String value) {
+	String oldValue = value;
 	this.value = value;
-	getSchema().fireModelObjectChanged(this, P_VALUE);
+	getSchema().fireModelObjectChanged(this, P_VALUE, oldValue, value);
 	verifyProperties();
 }
 public void setValueFilter(String valueFilter) {
+	String oldValue = this.valueFilter;
 	this.valueFilter = valueFilter;
-	getSchema().fireModelObjectChanged(this, P_VALUE_FILTER);
+	getSchema().fireModelObjectChanged(this, P_VALUE_FILTER, oldValue, valueFilter);
 }
 
 private void verifyProperties() {

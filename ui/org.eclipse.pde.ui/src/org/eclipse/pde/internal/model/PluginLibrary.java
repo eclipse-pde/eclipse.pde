@@ -69,19 +69,52 @@ void load(Node node, Hashtable lineTable) {
 }
 public void setContentFilters(String[] filters) throws CoreException {
 	ensureModelEditable();
+	ArrayList oldValue = createArrayList(contentFilters);
 	contentFilters = filters;
-	firePropertyChanged(P_CONTENT_FILTERS);
+	firePropertyChanged(P_CONTENT_FILTERS, oldValue, createArrayList(filters));
 }
+
 public void setExported(boolean value) throws CoreException {
 	ensureModelEditable();
+	Boolean oldValue = new Boolean(this.exported);
 	this.exported = value;
-	firePropertyChanged(P_EXPORTED);
+	firePropertyChanged(P_EXPORTED, oldValue, new Boolean(value));
 }
 
 public void setType(String type) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.type;
 	this.type = type;
-	firePropertyChanged(P_TYPE);
+	firePropertyChanged(P_TYPE, oldValue, type);
+}
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	if (name.equals(P_CONTENT_FILTERS)) {
+		ArrayList list = (ArrayList)newValue;
+		if (list!=null)
+			setContentFilters((String[])list.toArray(new String[list.size()]));
+		else
+			setContentFilters(null);
+		return;
+	}
+	if (name.equals(P_EXPORTED)) {
+		setExported(((Boolean)newValue).booleanValue());
+		return;
+	}
+	if (name.equals(P_TYPE)) {
+		setType(newValue!=null ? newValue.toString():null);
+		return;
+	}
+	super.restoreProperty(name, oldValue, newValue);
+}
+
+private ArrayList createArrayList(String [] array) {
+	if (array==null) return null;
+	ArrayList list = new ArrayList();
+	for (int i=0; i<array.length; i++) {
+		list.add(array[i]);
+	}
+	return list;
 }
 
 public void write(String indent, PrintWriter writer) {

@@ -73,9 +73,10 @@ public void setBaseType(ISchemaSimpleType baseType) {
 	this.baseType = baseType;
 }
 public void setChildren(Vector children) {
+	Vector oldValue = this.children;
 	this.children = children;
 	if (getParent() != null)
-		getSchema().fireModelObjectChanged(this, P_CHOICES);
+		getSchema().fireModelObjectChanged(this, P_CHOICES, oldValue, children);
 }
 public String toString() {
 	if (children == null)

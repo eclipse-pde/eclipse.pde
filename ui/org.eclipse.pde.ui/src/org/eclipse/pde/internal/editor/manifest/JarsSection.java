@@ -197,10 +197,12 @@ public void dispose() {
 	model.removeModelChangedListener(this);
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		handleDelete();
+		return true;
 	}
+	return false;
 }
 private void fillContextMenu(IMenuManager manager) {
 	if (!(getFormPage().getModel() instanceof IEditable)) return;

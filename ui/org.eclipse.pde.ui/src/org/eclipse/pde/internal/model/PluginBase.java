@@ -31,20 +31,24 @@ public abstract class PluginBase
 	public void add(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		extensions.addElement(extension);
+		((PluginExtension)extension).setInTheModel(true);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		extensionPoints.addElement(extensionPoint);
+		((PluginExtensionPoint)extensionPoint).setInTheModel(true);
 		fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		libraries.addElement(library);
+		((PluginLibrary)library).setInTheModel(true);
 		fireStructureChanged(library, IModelChangedEvent.INSERT);
 	}
 	public void add(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
+		((PluginImport)iimport).setInTheModel(true);
 		imports.addElement(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
@@ -93,6 +97,23 @@ public abstract class PluginBase
 		// add imports
 		loadImports(pd.getRequires());
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_VERSION)) {
+			setVersion(newValue!=null ? newValue.toString():null);
+			return;
+		}
+		if (name.equals(P_PROVIDER)) {
+			setProviderName(newValue!=null ? newValue.toString():null);
+			return;
+		}
+		if (name.equals(P_LIBRARY_ORDER)) {
+			swap((IPluginLibrary)oldValue, (IPluginLibrary)newValue);
+			return;
+		}
+		super.restoreProperty(name, oldValue, newValue);
+	}
+	
 	void load(Node node, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.id = getNodeAttribute(node, "id");
@@ -117,6 +138,7 @@ public abstract class PluginBase
 			ExtensionPointModel extensionPointModel = extensionPointModels[i];
 			PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
 			extensionPoint.setModel(getModel());
+			extensionPoint.setInTheModel(true);
 			extensionPoint.setParent(this);
 			extensionPoints.add(extensionPoint);
 			extensionPoint.load(extensionPointModel);
@@ -129,6 +151,7 @@ public abstract class PluginBase
 			ExtensionModel extensionModel = extensionModels[i];
 			PluginExtension extension = new PluginExtension();
 			extension.setModel(getModel());
+			extension.setInTheModel(true);
 			extension.setParent(this);
 			extensions.add(extension);
 			extension.load(extensionModel);
@@ -140,6 +163,7 @@ public abstract class PluginBase
 		for (int i = 0; i < libraryModels.length; i++) {
 			PluginLibrary library = new PluginLibrary();
 			library.setModel(getModel());
+			library.setInTheModel(true);
 			library.setParent(this);
 			libraries.add(library);
 			library.load(libraryModels[i]);
@@ -153,6 +177,7 @@ public abstract class PluginBase
 				&& child.getNodeName().toLowerCase().equals("library")) {
 				PluginLibrary library = new PluginLibrary();
 				library.setModel(getModel());
+				library.setInTheModel(true);
 				library.setParent(this);
 				libraries.add(library);
 				library.load(child, lineTable);
@@ -167,6 +192,7 @@ public abstract class PluginBase
 			PluginPrerequisiteModel importModel = importModels[i];
 			PluginImport importElement = new PluginImport();
 			importElement.setModel(getModel());
+			importElement.setInTheModel(true);
 			importElement.setParent(this);
 			imports.add(importElement);
 			importElement.load(importModel);
@@ -180,6 +206,7 @@ public abstract class PluginBase
 				&& child.getNodeName().toLowerCase().equals("import")) {
 				PluginImport importElement = new PluginImport();
 				importElement.setModel(getModel());
+				importElement.setInTheModel(true);
 				importElement.setParent(this);
 				imports.add(importElement);
 				importElement.load(child, lineTable);
@@ -193,11 +220,13 @@ public abstract class PluginBase
 			extension.setModel(getModel());
 			extension.setParent(this);
 			extensions.add(extension);
+			extension.setInTheModel(true);
 			extension.load(child, lineTable);
 		} else if (name.equals("extension-point")) {
 			PluginExtensionPoint point = new PluginExtensionPoint();
 			point.setModel(getModel());
 			point.setParent(this);
+			point.setInTheModel(true);
 			extensionPoints.add(point);
 			point.load(child, lineTable);
 		} else if (name.equals("runtime")) {
@@ -211,21 +240,25 @@ public abstract class PluginBase
 	public void remove(IPluginExtension extension) throws CoreException {
 		ensureModelEditable();
 		extensions.removeElement(extension);
+		((PluginExtension)extension).setInTheModel(false);
 		fireStructureChanged(extension, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginExtensionPoint extensionPoint) throws CoreException {
 		ensureModelEditable();
 		extensionPoints.removeElement(extensionPoint);
+		((PluginExtensionPoint)extensionPoint).setInTheModel(false);
 		fireStructureChanged(extensionPoint, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		libraries.removeElement(library);
+		((PluginLibrary)library).setInTheModel(false);
 		fireStructureChanged(library, ModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.removeElement(iimport);
+		((PluginImport)iimport).setInTheModel(false);
 		fireStructureChanged(iimport, ModelChangedEvent.REMOVE);
 	}
 	public void reset() {
@@ -246,13 +279,15 @@ public abstract class PluginBase
 	}
 	public void setProviderName(String providerName) throws CoreException {
 		ensureModelEditable();
+		String oldValue = this.providerName;
 		this.providerName = providerName;
-		firePropertyChanged(P_PROVIDER);
+		firePropertyChanged(P_PROVIDER, oldValue, providerName);
 	}
 	public void setVersion(String newVersion) throws CoreException {
 		ensureModelEditable();
+		String oldValue = version;
 		version = newVersion;
-		firePropertyChanged(P_VERSION);
+		firePropertyChanged(P_VERSION, oldValue, version);
 	}
 
 	public void internalSetVersion(String newVersion) {
@@ -267,7 +302,7 @@ public abstract class PluginBase
 			throwCoreException("Libraries not in the model");
 		libraries.setElementAt(l1, index2);
 		libraries.setElementAt(l2, index1);
-		firePropertyChanged(this, P_LIBRARY_ORDER);
+		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
 	}
 	void writeChildren(String tag, Object[] children, PrintWriter writer) {
 		if (tag.equals("runtime"))

@@ -42,6 +42,7 @@ public class ExportSection extends PDEFormSection {
 	public static final String KEY_ADD = "ManifestEditor.ExportSection.add";
 	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove";
 	private Vector filters;
+	private boolean ignoreModelEvents;
 
 	class NameFilter {
 		private String name;
@@ -106,21 +107,25 @@ public ExportSection(ManifestRuntimePage formPage) {
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 }
 private void buttonChanged(Button selectedButton) {
+	ignoreModelEvents = true;
 	nameFilterContainer.setVisible(
 		selectedButton == selectedExportButton && selectedButton.getSelection());
 	try {
 		currentLibrary.setExported(
 			selectedButton == selectedExportButton || selectedButton == fullExportButton);
 		if (selectedExportButton.getSelection()==false) {
-			currentLibrary.setContentFilters(null);
+			if (currentLibrary.getContentFilters()!=null)
+			   currentLibrary.setContentFilters(null);
 		}
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
+	ignoreModelEvents = false;
 }
 public void commitChanges(boolean onSave) {
 	if (isDirty() == false)
 		return;
+	ignoreModelEvents = true;
 	if (filters != null && currentLibrary != null) {
 		try {
 			if (filters.size() == 0) {
@@ -137,6 +142,7 @@ public void commitChanges(boolean onSave) {
 		}
 	}
 	setDirty(false);
+	ignoreModelEvents = false;
 }
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	Composite container = factory.createComposite(parent);
@@ -149,7 +155,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	noExportButton.setLayoutData(gd);
 	noExportButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			buttonChanged(noExportButton);
+			if (noExportButton.getSelection())
+				buttonChanged(noExportButton);
 		}
 	});
 	fullExportButton = factory.createButton(container, PDEPlugin.getResourceString(KEY_FULL_EXPORT), SWT.RADIO);
@@ -157,7 +164,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	fullExportButton.setLayoutData(gd);
 	fullExportButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			buttonChanged(fullExportButton);
+			if (fullExportButton.getSelection())
+				buttonChanged(fullExportButton);
 		}
 	});
 	selectedExportButton =
@@ -166,7 +174,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	selectedExportButton.setLayoutData(gd);
 	selectedExportButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			buttonChanged(selectedExportButton);
+			if (selectedExportButton.getSelection())
+				buttonChanged(selectedExportButton);
 		}
 	});
 
@@ -298,13 +307,17 @@ public void initialize(Object input) {
 	setReadOnly(!model.isEditable());
 	model.addModelChangedListener(this);
 }
+
 public void modelChanged(IModelChangedEvent e) {
-/*
+	if (ignoreModelEvents) return;
 	if (e.getChangeType()==IModelChangedEvent.CHANGE) {
-		Object object = e.getChangedObjects()[0]
+		Object object = e.getChangedObjects()[0];
+		if (object.equals(currentLibrary)) {
+			update(currentLibrary);
+		}
 	}
-*/
 }
+
 public void sectionChanged(
 	FormSection source,
 	int changeType,

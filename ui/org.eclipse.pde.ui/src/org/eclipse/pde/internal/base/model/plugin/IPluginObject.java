@@ -29,6 +29,14 @@ IPluginModelBase getModel();
 String getName();
 
 /**
+ * Returns true if this object is currently part of a model.
+ * It is useful to ignore modification events of objects
+ * that have not yet being added to the model or if they
+ * have been removed.
+ */
+boolean isInTheModel();
+
+/**
  * Returns the translated name of this model object using
  * the result of 'getName()' call as a resource key.
  * @return the translated name or the original name if not found

@@ -60,8 +60,9 @@ public void removeAttribute(ISchemaAttribute attribute) {
 			null));
 }
 public void setCompositor(ISchemaCompositor newCompositor) {
+	Object oldValue = compositor;
 	compositor = newCompositor;
-	getSchema().fireModelObjectChanged(this, P_COMPOSITOR);
+	getSchema().fireModelObjectChanged(this, P_COMPOSITOR, oldValue, compositor);
 }
 public void setMixed(boolean newMixed) {
 	mixed = newMixed;

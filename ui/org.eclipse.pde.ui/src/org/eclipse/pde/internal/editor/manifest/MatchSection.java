@@ -31,6 +31,7 @@ public class MatchSection extends PDEFormSection {
 	private Button greaterButton;
 	private IPluginImport currentImport;
 	private boolean blockChanges=false;
+	private boolean ignoreModelEvents =false;
 	public static final String SECTION_TITLE = "ManifestEditor.MatchSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.MatchSection.desc";
 	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport";
@@ -52,12 +53,14 @@ public MatchSection(ManifestDependenciesPage formPage) {
 public void commitChanges(boolean onSave) {
 	if (isDirty() == false)
 		return;
+	ignoreModelEvents=true;
 	if (currentImport != null && versionText.getControl().isEnabled()) {
 		versionText.commit();
 		String value = versionText.getValue();
 		int match = IPluginImport.NONE;
 		try {
 			if (value!=null && value.length()>0) {
+
 				currentImport.setVersion(value);
 				match = getMatch();
 			}
@@ -68,6 +71,7 @@ public void commitChanges(boolean onSave) {
 		}
 	}
 	setDirty(false);
+	ignoreModelEvents=false;
 }
 
 public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -84,7 +88,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			if (blockChanges) return;
 			if (currentImport!=null) {
 				try {
+					ignoreModelEvents=true;
 					currentImport.setReexported(reexportButton.getSelection());
+					ignoreModelEvents=false;
 				}
 				catch (CoreException ex) {
 					PDEPlugin.logException(ex);
@@ -96,7 +102,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	gd.horizontalSpan = 2;
 	reexportButton.setLayoutData(gd);	
 
-	
 	versionText =
 		new FormEntry(
 			createText(container, PDEPlugin.getResourceString(KEY_VERSION), factory));
@@ -104,6 +109,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		public void textValueChanged(FormEntry text) {
 			try {
 				String value = text.getValue();
+				ignoreModelEvents = true;
 				if (value!=null && value.length()>0) {
 					PluginVersionIdentifier pvi = new PluginVersionIdentifier(text.getValue());
 					String formatted = pvi.toString();
@@ -113,6 +119,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				else {
 					currentImport.setVersion(null);
 				}
+				ignoreModelEvents = false;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			} catch (Throwable e) {
@@ -222,12 +229,21 @@ public void initialize(Object input) {
 	model.addModelChangedListener(this);
 }
 public void modelChanged(IModelChangedEvent e) {
-/*
-	if (e.getChangeType()==IModelChangedEvent.CHANGE) {
-		Object object = e.getChangedObjects()[0]
+	if (ignoreModelEvents) return;
+	if (e.getChangeType()==IModelChangedEvent.REMOVE) {
+		Object obj = e.getChangedObjects()[0];
+		if (obj.equals(currentImport)) {
+			update(null);
+		}
 	}
-*/
+	else if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+		Object object = e.getChangedObjects()[0];
+		if (object.equals(currentImport)) {
+			update(currentImport);
+		}
+	}
 }
+
 public void sectionChanged(
 	FormSection source,
 	int changeType,
@@ -275,7 +291,7 @@ private void update(IPluginImport iimport) {
 		blockChanges= false;
 		return;
 	}
-	if (currentImport != null && !isReadOnly()) {
+	if (currentImport != null && !iimport.equals(currentImport) && !isReadOnly()) {
 		commitChanges(false);
 	}
 	currentImport = iimport;

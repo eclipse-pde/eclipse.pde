@@ -27,7 +27,7 @@ protected void firePropertyChanged(String property) {
 protected void firePropertyChanged(IComponentObject object, String property) {
 	if (model.isEditable() && model instanceof IModelChangeProvider) {
 		IModelChangeProvider provider = (IModelChangeProvider) model;
-		provider.fireModelObjectChanged(object, property);
+		provider.fireModelObjectChanged(object, property, null, null);
 	}
 }
 protected void fireStructureChanged(IComponentObject child, int changeType) {

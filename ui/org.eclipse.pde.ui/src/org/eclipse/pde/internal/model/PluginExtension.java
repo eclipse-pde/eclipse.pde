@@ -63,6 +63,7 @@ void load(Node node, Hashtable lineTable) {
 		if (child.getNodeType() == Node.ELEMENT_NODE) {
 			PluginElement childElement = new PluginElement();
 			childElement.setModel(getModel());
+			childElement.setInTheModel(true);
 			childElement.setParent(this);
 			this.children.add(childElement);
 			childElement.load(child, lineTable);
@@ -73,9 +74,19 @@ void load(Node node, Hashtable lineTable) {
 }
 public void setPoint(String point) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.point;
 	this.point = point;
-	firePropertyChanged(P_POINT);
+	firePropertyChanged(P_POINT, oldValue, point);
 }
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	if (name.equals(P_POINT)) {
+		setPoint(newValue!=null ? newValue.toString():null);
+		return;
+	}
+	super.restoreProperty(name, oldValue, newValue);
+}
+
 public String toString() {
 	if (getName()!=null) return getName();
 	return getPoint();

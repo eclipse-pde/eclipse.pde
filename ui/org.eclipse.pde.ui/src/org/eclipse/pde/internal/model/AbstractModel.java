@@ -9,6 +9,11 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.base.model.IModel;
+import org.eclipse.pde.internal.base.model.IModelChangeProvider;
+import org.eclipse.pde.internal.base.model.IModelChangedEvent;
+import org.eclipse.pde.internal.base.model.IModelChangedListener;
+import org.eclipse.pde.internal.base.model.ModelChangedEvent;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import java.util.*;
 import org.eclipse.core.runtime.PlatformObject;
@@ -41,13 +46,12 @@ public void fireModelChanged(IModelChangedEvent event) {
 		listener.modelChanged(event);
 	}
 }
-public void fireModelObjectChanged(Object object, String property) {
+
+public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 	fireModelChanged(
-		new ModelChangedEvent(
-			IModelChangedEvent.CHANGE,
-			new Object[] { object },
-			property));
+		new ModelChangedEvent(object, property, oldValue, newValue));
 }
+
 public String getResourceString(String key) {
 	if (nlHelper==null) {
 		nlHelper = createNLResourceHelper();

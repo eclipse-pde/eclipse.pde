@@ -18,12 +18,14 @@ public PluginParent() {
 public void add(int index, IPluginObject child) throws CoreException {
 	ensureModelEditable();
 	children.add(index, child);
+	((PluginObject)child).setInTheModel(true);
 	((PluginObject)child).setParent(this);
 	fireStructureChanged(child, IModelChangedEvent.INSERT);
 }
 public void add(IPluginObject child) throws CoreException {
 	ensureModelEditable();
 	children.add(child);
+	((PluginObject)child).setInTheModel(true);
 	fireStructureChanged(child, IModelChangedEvent.INSERT);
 }
 public int getChildCount() {
@@ -37,6 +39,7 @@ public IPluginObject[] getChildren() {
 public void remove(IPluginObject child) throws CoreException {
 	ensureModelEditable();
 	children.removeElement(child);
+	((PluginObject)child).setInTheModel(false);
 	fireStructureChanged(child, ModelChangedEvent.REMOVE);
 }
 }

@@ -22,6 +22,7 @@ public abstract class PluginObject
 	private IPluginModelBase model;
 	private Vector comments;
 	protected int lineNumber;
+	private boolean inTheModel;
 
 	public PluginObject() {
 	}
@@ -30,21 +31,37 @@ public abstract class PluginObject
 			throwCoreException("Illegal attempt to change read-only plug-in manifest model");
 		}
 	}
-	protected void firePropertyChanged(String property) {
-		firePropertyChanged(this, property);
+	
+	void setInTheModel(boolean value) {
+		inTheModel = value;
 	}
-	protected void firePropertyChanged(IPluginObject object, String property) {
+	
+	public boolean isInTheModel() {
+		return inTheModel;
+	}
+	
+	protected void firePropertyChanged(String property, Object oldValue, Object newValue) {
+		firePropertyChanged(this, property, oldValue, newValue);
+	}
+	protected void firePropertyChanged(IPluginObject object, String property, Object oldValue, Object newValue) {
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelObjectChanged(object, property);
+			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
 		IPluginModelBase model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
+			IModelChangedEvent e =
+				new ModelChangedEvent(changeType, new Object[] { child }, null);
+			fireModelChanged(e);
+		}
+	}
+	protected void fireModelChanged(IModelChangedEvent e) {
+		IPluginModelBase model = getModel();
+		if (model.isEditable() && model instanceof IModelChangeProvider) {
 			IModelChangeProvider provider = (IModelChangeProvider) model;
-			provider.fireModelChanged(
-				new ModelChangedEvent(changeType, new Object[] { child }, null));
+			provider.fireModelChanged(e);
 		}
 	}
 	private String getAttribute(Node node, String name) {
@@ -93,13 +110,21 @@ public abstract class PluginObject
 	}
 	abstract void load(Node node, Hashtable lineTable);
 
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_NAME)) {
+			setName(newValue!=null ? newValue.toString() : null);
+		}
+	}
+
+
 	void setModel(IPluginModelBase model) {
 		this.model = model;
 	}
 	public void setName(String name) throws CoreException {
 		ensureModelEditable();
+		String oldValue = this.name;
 		this.name = name;
-		firePropertyChanged(P_NAME);
+		firePropertyChanged(P_NAME, oldValue, name);
 	}
 	void setParent(IPluginObject parent) {
 		this.parent = parent;

@@ -67,8 +67,9 @@ public void renameToken(String oldName, String newName) throws CoreException {
 }
 public void setName(String name) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.name;
 	this.name = name;
-	getModel().fireModelObjectChanged(this, P_NAME);
+	getModel().fireModelObjectChanged(this, P_NAME, oldValue, name);
 }
 public String toString() {
 	return name;

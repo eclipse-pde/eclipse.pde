@@ -22,13 +22,16 @@ public abstract class PDEEditorContributor extends EditorActionBarContributor {
 	private Hashtable globalActions = new Hashtable();
 	private String menuName;
 
-	class GlobalAction extends Action {
+	class GlobalAction extends Action implements IUpdate {
 		private String id;
 		public GlobalAction(String id) {
 			this.id = id;
 		}
 		public void run() {
 			editor.performGlobalAction(id);
+		}
+		public void update() {
+			getActionBars().updateActionBars();
 		}
 	}
 
@@ -77,6 +80,7 @@ public IAction getSaveAction() {
 public IStatusLineManager getStatusLineManager() {
 	return getActionBars().getStatusLineManager();
 }
+
 protected void makeActions() {
 	addGlobalAction(ITextEditorActionConstants.DELETE);
 	addGlobalAction(ITextEditorActionConstants.UNDO);
@@ -93,7 +97,11 @@ protected void makeActions() {
 
 }
 public void setActiveEditor(IEditorPart targetEditor) {
+	if (editor!=null)
+	   editor.updateUndo(null, null);
 	this.editor = (PDEMultiPageEditor) targetEditor;
+	editor.updateUndo(getGlobalAction(ITextEditorActionConstants.UNDO),
+					getGlobalAction(ITextEditorActionConstants.REDO));
 	IPDEEditorPage page = editor.getCurrentPage();
 	setActivePage(page);
 }

@@ -70,12 +70,14 @@ public abstract class SchemaObject
 		return buf.toString();
 	}
 	public void setDescription(String newDescription) {
+		String oldValue = description;
 		description = newDescription;
-		getSchema().fireModelObjectChanged(this, P_DESCRIPTION);
+		getSchema().fireModelObjectChanged(this, P_DESCRIPTION, oldValue, description);
 	}
 	public void setName(String newName) {
+		String oldValue = name;
 		name = newName;
-		getSchema().fireModelObjectChanged(this, P_NAME);
+		getSchema().fireModelObjectChanged(this, P_NAME, oldValue, name);
 	}
 	public String toString() {
 		if (name != null)

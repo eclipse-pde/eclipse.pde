@@ -60,6 +60,7 @@ public void removeChild(ISchemaObject child) {
 }
 public void setKind(int kind) {
 	if (this.kind != kind) {
+		Integer oldValue = new Integer(this.kind);
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
@@ -75,7 +76,7 @@ public void setKind(int kind) {
 				name = "Sequence";
 				break;
 		}
-		getSchema().fireModelObjectChanged(this, P_KIND);
+		getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
 	}
 }
 public void updateReferencesFor(ISchemaElement element) {

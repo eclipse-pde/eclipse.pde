@@ -13,13 +13,13 @@ import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.*;
 
 
@@ -77,6 +77,7 @@ public void dispose() {
 public void doSave(IProgressMonitor monitor) {
 }
 public void doSaveAs() {}
+
 public IAction getAction(String id) {
 	return editor.getAction(id);
 }
@@ -143,8 +144,8 @@ public boolean isVisible() {
 public void openTo(Object object) {
 	getForm().expandTo(object);
 }
-public void performGlobalAction(String id) {
-	getForm().doGlobalAction(id);
+public boolean performGlobalAction(String id) {
+	return getForm().doGlobalAction(id);
 }
 public void setFocus() {
 	getForm().setFocus();

@@ -173,10 +173,12 @@ public void dispose() {
 	urlFolderImage.dispose();
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		handleDelete();
+		return true;
 	}
+	return false;
 }
 public void expandTo(Object object) {
 	urlTree.setSelection(new StructuredSelection(object), true);

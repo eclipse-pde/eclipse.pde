@@ -96,12 +96,9 @@ public void fireModelChanged(IModelChangedEvent event) {
 		listener.modelChanged(event);
 	}
 }
-public void fireModelObjectChanged(Object object, String property) {
+public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
 	fireModelChanged(
-		new ModelChangedEvent(
-			ModelChangedEvent.CHANGE,
-			new Object[] { object },
-			property));
+		new ModelChangedEvent(object, property, oldValue, newValue));
 }
 private String getAttribute(Node node, String name) {
 	NamedNodeMap map = node.getAttributes();
@@ -634,12 +631,14 @@ private SchemaType resolveTypeReference(String typeName) {
 	return new SchemaSimpleType(this, typeName);
 }
 public void setDescription(String newDescription) {
+	String oldValue = description;
 	description = newDescription;
-	fireModelObjectChanged(this, P_DESCRIPTION);
+	fireModelObjectChanged(this, P_DESCRIPTION, oldValue, description);
 }
 public void setName(String newName) {
+	String oldValue = name;
 	name = newName;
-	fireModelObjectChanged(this, P_NAME);
+	fireModelObjectChanged(this, P_NAME, oldValue, name);
 }
 public void setNotificationEnabled(boolean newNotificationEnabled) {
 	notificationEnabled = newNotificationEnabled;

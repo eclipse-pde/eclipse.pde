@@ -171,13 +171,15 @@ public void dispose() {
 	globalElementImage.dispose();
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		ISelection sel = treeViewer.getSelection();
 		Object obj = ((IStructuredSelection) sel).getFirstElement();
 		if (obj != null)
 			handleDelete(obj);
+		return true;
 	}
+	return false;
 }
 public void expandTo(Object object) {
 	if (object instanceof ISchemaElement || object instanceof ISchemaAttribute) {

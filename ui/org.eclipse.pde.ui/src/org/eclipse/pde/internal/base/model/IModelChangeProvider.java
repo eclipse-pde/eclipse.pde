@@ -29,9 +29,11 @@ public void fireModelChanged(IModelChangedEvent event);
  * event and fire it.
  *
  * @param object an affected model object
- * @property name of the property that has changed
+ * @param property name of the property that has changed
+ * @param oldValue the old value of the property
+ * @param newValue the new value of the property
  */
-public void fireModelObjectChanged(Object object, String property);
+public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue);
 /**
  * Takes the listener off the list of registered change listeners.
  *

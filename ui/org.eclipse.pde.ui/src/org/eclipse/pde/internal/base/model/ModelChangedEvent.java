@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.base.model.*;
 public class ModelChangedEvent implements IModelChangedEvent {
 	private int type;
 	private Object [] changedObjects;
+	private Object oldValue, newValue;
 	private String changedProperty;
 /**
  * The constructor of the event.
@@ -23,6 +24,19 @@ public ModelChangedEvent(int type, Object [] objects, String changedProperty) {
 	this.changedObjects = objects;
 	this.changedProperty = changedProperty;
 }
+
+/**
+ * A costructor that should be used for changes of object properties.
+ * 
+ */
+
+public ModelChangedEvent(Object object, String changedProperty, Object oldValue, Object newValue) {
+	this.type = CHANGE;
+	this.changedObjects = new Object[] { object };
+	this.changedProperty = changedProperty;
+	this.oldValue = oldValue;
+	this.newValue = newValue;
+}
 /**
  * @see IModelChangedEvent#getChangedObjects
  */
@@ -34,6 +48,14 @@ public Object[] getChangedObjects() {
  */
 public String getChangedProperty() {
 	return changedProperty;
+}
+
+public Object getOldValue() {
+	return oldValue;
+}
+
+public Object getNewValue() {
+	return newValue;
 }
 /**
  * @see IModelChangedEvent#getChangedType

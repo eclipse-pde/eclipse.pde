@@ -95,26 +95,29 @@ public void setCompositor(org.eclipse.pde.internal.base.schema.ISchemaCompositor
 	compositor = newCompositor;
 }
 public void setMaxOccurs(int newMaxOccurs) {
+	Integer oldValue = new Integer(maxOccurs);
 	maxOccurs = newMaxOccurs;
 	ISchema schema = getSchema();
 	if (schema != null)
-		schema.fireModelObjectChanged(this, P_MAX_OCCURS);
+		schema.fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, new Integer(maxOccurs));
 }
 public void setMinOccurs(int newMinOccurs) {
+	Integer oldValue = new Integer(minOccurs);
 	minOccurs = newMinOccurs;
 	ISchema schema = getSchema();
 	if (schema != null)
-		schema.fireModelObjectChanged(this, P_MIN_OCCURS);
+		schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, new Integer(minOccurs));
 }
 public void setReferencedObject(ISchemaObject referencedObject) {
 	if (referencedObject instanceof ISchemaElement)
 		this.element = (ISchemaElement) referencedObject;
 }
 public void setReferenceName(String name) {
+	String oldValue = this.referenceName;
 	this.referenceName = name;
 	ISchema schema = getSchema();
 	if (schema != null)
-		schema.fireModelObjectChanged(this, P_REFERENCE_NAME);
+		schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue, name);
 }
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);

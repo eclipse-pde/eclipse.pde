@@ -42,9 +42,19 @@ void load(Node node, Hashtable lineTable) {
 }
 public void setSchema(String newSchema) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.schema;
 	schema = newSchema;
-	firePropertyChanged(P_SCHEMA);
+	firePropertyChanged(P_SCHEMA, oldValue, schema);
 }
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	if (name.equals(P_SCHEMA)) {
+		setSchema(newValue!=null ? newValue.toString():null);
+		return;
+	}
+	super.restoreProperty(name, oldValue, newValue);
+}
+
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
 	writer.print(indent);

@@ -45,6 +45,19 @@ public Object [] getChangedObjects();
  * one property has been changed.
  */
 public String getChangedProperty();
+
+/**
+ * When model change is of type CHANGE, this method is used
+ * to obtain the old value of the property (before the change).
+ * @return the old value of the changed property
+ */
+public Object getOldValue();
+/**
+ * When model change is of type CHANGE, this method is used
+ * to obtain the new value of the property (after the change).
+ * @return the new value of the changed property.
+ */
+public Object getNewValue();
 /**
  * Returns the type of change that occured in the model
  * (one of INSERT, REMOVE, CHANGE or WORLD_CHANGED).

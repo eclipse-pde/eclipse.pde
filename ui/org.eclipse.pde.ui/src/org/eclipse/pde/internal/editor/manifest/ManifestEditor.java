@@ -88,6 +88,11 @@ protected Object createModel(Object input) {
 	if (input instanceof File) return createFileSystemModel((File)input);
 	return null;
 }
+
+protected IModelUndoManager createModelUndoManager() {
+	return new PluginUndoManager(this);
+}
+
 protected void createPages() {
 	firstPageId = OVERVIEW_PAGE;
 	formWorkbook.setFirstPageSelected(false);

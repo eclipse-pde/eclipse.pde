@@ -17,7 +17,17 @@ public String getId() {
 }
 public void setId(String id) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.id;
 	this.id = id;
-	firePropertyChanged(P_ID);
+	firePropertyChanged(P_ID, oldValue, id);
 }
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	if (name.equals(P_ID)) {
+		setId(newValue!=null ? newValue.toString():null);
+		return;
+	}
+	super.restoreProperty(name, oldValue, newValue);
+}
+
 }

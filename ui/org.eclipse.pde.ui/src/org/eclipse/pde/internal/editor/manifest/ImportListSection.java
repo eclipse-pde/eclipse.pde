@@ -183,10 +183,12 @@ public void dispose() {
 	PDEPlugin.getDefault().getExternalModelManager().removeModelProviderListener(this);
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		handleDelete();
+		return true;
 	}
+	return false;
 }
 
 public void expandTo(Object object) {

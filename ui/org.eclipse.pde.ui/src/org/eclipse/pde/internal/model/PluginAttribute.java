@@ -65,9 +65,12 @@ public void setAttributeInfo(ISchemaAttribute newAttributeInfo) {
 }
 public void setValue(String newValue) throws CoreException {
 	ensureModelEditable();
+	String oldValue = this.value;
 	this.value = newValue;
-	firePropertyChanged(getParent(), P_VALUE);
+	AttributeChangedEvent e = new AttributeChangedEvent(getParent(), this, oldValue, newValue);
+	fireModelChanged(e);
 }
+
 public void write(String indent, PrintWriter writer) {
 	if (value==null) return;
 	writer.print(indent);

@@ -172,13 +172,15 @@ public void dispose() {
 	allImage.dispose();
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		ISelection sel = treeViewer.getSelection();
 		Object obj = ((IStructuredSelection) sel).getFirstElement();
 		if (obj != null)
 			handleDelete(obj);
+		return true;
 	}
+	return false;
 }
 protected void fillContextMenu(IMenuManager manager) {
 	ISelection selection = treeViewer.getSelection();

@@ -103,6 +103,7 @@ void load(Node node, Hashtable lineTable) {
 		Node attribute = attributes.item(i);
 		IPluginAttribute att = getModel().getFactory().createAttribute(this);
 		((PluginAttribute)att).load(attribute, lineTable);
+		((PluginAttribute)att).setInTheModel(true);
 		this.attributes.put(attribute.getNodeName(), att);
 	}
 	NodeList children = node.getChildNodes();
@@ -111,6 +112,7 @@ void load(Node node, Hashtable lineTable) {
 		if (child.getNodeType() == Node.ELEMENT_NODE) {
 			PluginElement childElement = new PluginElement();
 			childElement.setModel(getModel());
+			childElement.setInTheModel(true);
 			this.children.add(childElement);
 			childElement.setParent(this);
 			childElement.load(child, lineTable);
@@ -126,14 +128,31 @@ void load(Node node, Hashtable lineTable) {
 }
 public void removeAttribute(String name) throws CoreException {
 	ensureModelEditable();
-	attributes.remove(name);
-	firePropertyChanged(P_ATTRIBUTES);
+	PluginAttribute att = (PluginAttribute)attributes.remove(name);
+	String oldValue = att.getValue();
+	if (att!=null) {
+		att.setInTheModel(false);
+	}
+	firePropertyChanged(P_ATTRIBUTE, oldValue, null);
 }
 public void replaceAttributes(Hashtable newAttributes) throws CoreException {
 	ensureModelEditable();
+	Object oldValue = attributes;
+	setAttributesInTheModel(attributes, false);
 	attributes = newAttributes;
-	firePropertyChanged(P_ATTRIBUTES);
+	setAttributesInTheModel(newAttributes, true);
+	firePropertyChanged(P_ATTRIBUTES, oldValue, attributes);
 }
+
+private void setAttributesInTheModel(Hashtable table, boolean value) {
+	if (table!=null) {
+		for (Enumeration enum = table.elements(); enum.hasMoreElements();) {
+			PluginAttribute att = (PluginAttribute)enum.nextElement();
+			att.setInTheModel(value);
+		}
+	}
+}
+
 public void setAttribute(String name, String value) throws CoreException {
 	ensureModelEditable();
 	if (value == null) {
@@ -145,16 +164,23 @@ public void setAttribute(String name, String value) throws CoreException {
 		attribute = getModel().getFactory().createAttribute(this);
 		attribute.setName(name);
 		attributes.put(name, attribute);
+		((PluginAttribute)attribute).setInTheModel(true);
 	}
 	attribute.setValue(value);
 }
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	super.restoreProperty(name, oldValue, newValue);
+}
+
 public void setElementInfo(ISchemaElement newElementInfo) {
 	elementInfo = newElementInfo;
 }
 public void setText(String newText) throws CoreException {
 	ensureModelEditable();
+	String oldValue = text;
 	text = newText;
-	firePropertyChanged(P_TEXT);
+	firePropertyChanged(P_TEXT, oldValue, text);
 
 }
 public void write(String indent, PrintWriter writer) {

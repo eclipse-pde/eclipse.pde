@@ -28,11 +28,13 @@ public boolean isUnbounded() {
 	return maxOccurs ==Integer.MAX_VALUE;
 }
 public void setMaxOccurs(int newMaxOccurs) {
+	Integer oldValue = new Integer(maxOccurs);
 	maxOccurs = newMaxOccurs;
-	getSchema().fireModelObjectChanged(this, P_MAX_OCCURS);
+	getSchema().fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, new Integer(maxOccurs));
 }
 public void setMinOccurs(int newMinOccurs) {
+	Integer oldValue = new Integer(minOccurs);
 	minOccurs = newMinOccurs;
-	getSchema().fireModelObjectChanged(this, P_MIN_OCCURS);
+	getSchema().fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, new Integer(minOccurs));
 }
 }

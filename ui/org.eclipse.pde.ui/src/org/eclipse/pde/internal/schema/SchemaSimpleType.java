@@ -29,10 +29,11 @@ public ISchemaRestriction getRestriction() {
 	return restriction;
 }
 public void setRestriction(ISchemaRestriction restriction) {
+	Object oldValue = this.restriction;
 	this.restriction = restriction;
 	if (restriction != null)
 		restriction.setBaseType(this);
-	getSchema().fireModelObjectChanged(this, P_RESTRICTION);
+	getSchema().fireModelObjectChanged(this, P_RESTRICTION, oldValue, restriction);
 }
 public void write(String indent, PrintWriter writer) {
 	writer.println(indent+"<simpleType>");

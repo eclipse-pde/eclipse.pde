@@ -144,26 +144,33 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	});
 	return container;
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	PDEProblemFinder.fixMe("Global operation mapping must be done better");
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 		sourceViewer.doOperation(sourceViewer.CUT);
+		return true;
 	}
 	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
 		sourceViewer.doOperation(sourceViewer.COPY);
+		return true;
 	}
 	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
 		sourceViewer.doOperation(sourceViewer.PASTE);
+		return true;
 	}
 	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		sourceViewer.doOperation(sourceViewer.DELETE);
+		return true;
 	}
 	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
 		sourceViewer.doOperation(sourceViewer.UNDO);
+		return true;
 	}
 	else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
 		sourceViewer.doOperation(sourceViewer.REDO);
+		return true;
 	}
+	return false;
 }
 public void expandTo(Object input) {
 	int index = -1;

@@ -347,6 +347,13 @@ public void modelChanged(IModelChangedEvent e) {
 	if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED) {
 		updateNeeded=true;
 	}
+	else if (e.getChangeType()==IModelChangedEvent.CHANGE) {
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof IPluginBase) {
+			updateNeeded=true;
+			update();
+		}
+	}
 }
 public void setFocus() {
 	if (titleText != null)

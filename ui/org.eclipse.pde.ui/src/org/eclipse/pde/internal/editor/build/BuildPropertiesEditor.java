@@ -36,6 +36,7 @@ protected Object createModel(Object input) {
 	if (input instanceof IFile) return createResourceModel((IFile)input);
 	return null;
 }
+
 protected void createPages() {
 	firstPageId = BUILD_PAGE;
 	formWorkbook.setFirstPageSelected(false);

@@ -89,24 +89,49 @@ public class PluginImport
 	}
 	public void setMatch(int match) throws CoreException {
 		ensureModelEditable();
+		Integer oldValue = new Integer(this.match);
 		this.match = match;
-		firePropertyChanged(P_MATCH);
+		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 	public void setReexported(boolean value) throws CoreException {
 		ensureModelEditable();
+		Boolean oldValue = new Boolean(reexported);
 		this.reexported = value;
-		firePropertyChanged(P_REEXPORTED);
+		firePropertyChanged(P_REEXPORTED, oldValue, new Boolean(value));
 	}
 	public void setOptional(boolean value) throws CoreException {
 		ensureModelEditable();
+		Boolean oldValue = new Boolean(this.optional);
 		this.optional = value;
-		firePropertyChanged(P_OPTIONAL);
+		firePropertyChanged(P_OPTIONAL, oldValue, new Boolean(value));
 	}
 	public void setVersion(String version) throws CoreException {
 		ensureModelEditable();
+		String oldValue = this.version;
 		this.version = version;
-		firePropertyChanged(P_VERSION);
+		firePropertyChanged(P_VERSION, oldValue, version);
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_MATCH)) {
+			setMatch(((Integer)newValue).intValue());
+			return;
+		}
+		if (name.equals(P_REEXPORTED)) {
+			setReexported(((Boolean)newValue).booleanValue());
+			return;
+		}
+		if (name.equals(P_OPTIONAL)) {
+			setOptional(((Boolean)newValue).booleanValue());
+			return;
+		}
+		if (name.equals(P_VERSION)) {
+			setVersion(newValue!=null ? newValue.toString():null);
+			return;
+		}
+		super.restoreProperty(name, oldValue, newValue);
+	}	
+	
 	public void write(String indent, PrintWriter writer) {
 		writeComments(writer);
 		writer.print(indent);

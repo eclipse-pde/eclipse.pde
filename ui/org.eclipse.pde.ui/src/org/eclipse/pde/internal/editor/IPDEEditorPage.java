@@ -18,6 +18,6 @@ IAction getAction(String id);
 	public IContentOutlinePage getContentOutlinePage();
 	public IPropertySheetPage getPropertySheetPage();
 void openTo(Object object);
-void performGlobalAction(String id);
+boolean performGlobalAction(String id);
 void update();
 }

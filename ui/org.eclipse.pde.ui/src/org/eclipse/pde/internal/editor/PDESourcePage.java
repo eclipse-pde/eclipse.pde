@@ -131,7 +131,7 @@ public boolean isVisible() {
 }
 public void openTo(Object object) {
 }
-public void performGlobalAction(String id) {}
+public boolean performGlobalAction(String id) { return true; }
 public String toString() {
 	return getTitle();
 }

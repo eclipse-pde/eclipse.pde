@@ -75,19 +75,39 @@ public class Fragment extends PluginBase implements IFragment {
 	}
 	public void setPluginId(String newPluginId) throws CoreException {
 		ensureModelEditable();
+		String oldValue = this.pluginId;
 		pluginId = newPluginId;
-		firePropertyChanged(P_PLUGIN_ID);
+		firePropertyChanged(P_PLUGIN_ID, oldValue, pluginId);
 	}
 	public void setPluginVersion(String newPluginVersion) throws CoreException {
 		ensureModelEditable();
+		String oldValue = this.pluginVersion;
 		pluginVersion = newPluginVersion;
-		firePropertyChanged(P_PLUGIN_VERSION);
+		firePropertyChanged(P_PLUGIN_VERSION, oldValue, pluginVersion);
 	}
 	public void setRule(int rule) throws CoreException {
 		ensureModelEditable();
+		Integer oldValue = new Integer(this.rule);
 		this.rule = rule;
-		firePropertyChanged(P_RULE);
+		firePropertyChanged(P_RULE, oldValue, new Integer(rule));
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_PLUGIN_ID)) {
+			setPluginId(newValue!=null ? newValue.toString():null);
+			return;
+		}
+		if (name.equals(P_PLUGIN_VERSION)) {
+			setPluginVersion(newValue!=null ? newValue.toString():null);
+			return;
+		}
+		if (name.equals(P_RULE)) {
+			setRule(((Integer)newValue).intValue());
+			return;
+		}
+		super.restoreProperty(name, oldValue, newValue);
+	}
+	
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		//writer.println("<!-- File written by PDE 1.0 -->");

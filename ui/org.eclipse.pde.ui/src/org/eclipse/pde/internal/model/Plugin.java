@@ -48,9 +48,19 @@ public void reset() {
 }
 public void setClassName(String newClassName) throws CoreException {
 	ensureModelEditable();
+	String oldValue = className;
 	className = newClassName;
-	firePropertyChanged(P_CLASS_NAME);
+	firePropertyChanged(P_CLASS_NAME, oldValue, className);
 }
+
+public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+	if (name.equals(P_CLASS_NAME)) {
+		setClassName(newValue!=null ? newValue.toString():null);
+		return;
+	}
+	super.restoreProperty(name, oldValue, newValue);
+}
+
 public void write(String indent, PrintWriter writer) {
 	writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	//writer.println("<!-- File written by PDE 1.0 -->");

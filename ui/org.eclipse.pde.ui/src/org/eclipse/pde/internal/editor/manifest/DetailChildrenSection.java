@@ -199,10 +199,12 @@ public void dispose() {
 	model.removeModelChangedListener(this);
 	super.dispose();
 }
-public void doGlobalAction(String actionId) {
+public boolean doGlobalAction(String actionId) {
 	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 		handleDelete();
+		return true;
 	}
+	return false;
 }
 public void fillContextMenu(IMenuManager manager) {
 	ISelection selection = treeViewer.getSelection();
@@ -279,6 +281,16 @@ public void modelChanged(IModelChangedEvent event) {
 		}
 		else if (event.getChangeType() == event.CHANGE) {
 			treeViewer.update(changeObject, null);
+			if (treeViewer.getTree().isFocusControl()) {
+				ISelection sel = getFormPage().getSelection();
+				if (sel!=null && sel instanceof IStructuredSelection) {
+					IStructuredSelection ssel = (IStructuredSelection)sel;
+					if (!ssel.isEmpty() && ssel.getFirstElement().equals(changeObject)) {
+						// update property sheet
+			 			getFormPage().setSelection(sel);
+					}
+				}
+			}
 		}
 	}
 }

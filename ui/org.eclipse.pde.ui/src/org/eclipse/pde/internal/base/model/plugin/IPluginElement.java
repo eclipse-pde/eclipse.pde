@@ -19,9 +19,15 @@ public interface IPluginElement extends IPluginParent {
 	public static final String P_TEXT = "text";
 /**
  * A property name that will be used to notify
- * about changes in element's attributes.
+ * about global replacement of the element's attributes.
  */ 
 	public static final String P_ATTRIBUTES = "attributes";
+
+/**
+ * A property name that will be used to notify individual
+ * change in an element's attribute.
+ */
+	public static final String P_ATTRIBUTE = "attribute";
 /**
  * Creates an identical copy of this XML element.
  * The new element will share the same model and

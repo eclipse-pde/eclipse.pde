@@ -129,16 +129,19 @@ public ISchemaType getType() {
 	return type;
 }
 public void setIconName(String newIconName) {
+	String oldValue = iconName;
 	iconName = newIconName;
-	getSchema().fireModelObjectChanged(this, P_ICON_NAME);
+	getSchema().fireModelObjectChanged(this, P_ICON_NAME, oldValue, iconName);
 }
 public void setLabelProperty(String labelProperty) {
+	String oldValue = this.labelProperty;
 	this.labelProperty = labelProperty;
-	getSchema().fireModelObjectChanged(this, P_LABEL_PROPERTY);
+	getSchema().fireModelObjectChanged(this, P_LABEL_PROPERTY, oldValue, labelProperty);
 }
 public void setType(ISchemaType newType) {
+	Object oldValue = type;
 	type = newType;
-	getSchema().fireModelObjectChanged(this, P_TYPE);
+	getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
 }
 public void write(String indent, PrintWriter writer) {
 	writeComments(writer);
