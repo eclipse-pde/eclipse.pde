@@ -47,7 +47,7 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return PDECore.getDefault().getModelManager().getAllFeatures();
+			return PDECore.getDefault().getFeatureModelManager().getAllFeatures();
 		}
 	}
 	

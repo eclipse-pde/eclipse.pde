@@ -20,7 +20,6 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi"; //$NON-NLS-1$
@@ -126,32 +125,6 @@ public class PluginModelManager implements IAdaptable {
 			result.add(entry.getActiveModel());
 		}
 		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
-	}
-	
-	/*
-	 * @return all features (workspace and external)
-	 */
-	public IFeatureModel[] getAllFeatures() {
-		IFeatureModel[] eModels = fExternalManager.getAllFeatureModels();
-		ArrayList allModels = new ArrayList();
-		allModels.addAll(Arrays.asList(eModels));
-		IFeatureModel[] wModels = fWorkspaceManager.getFeatureModels();
-		for (int i = 0; i<wModels.length; i++){
-		if (!isFeatureIncluded(allModels, wModels[i]))
-			allModels.add(wModels[i]);
-		}
-		return (IFeatureModel[])allModels.toArray(new IFeatureModel[allModels.size()]);
-	}
-	private boolean isFeatureIncluded(ArrayList models, IFeatureModel workspaceModel){
-		for (int i = 0; i<models.size(); i++){
-			if (!(models.get(i) instanceof IFeatureModel))
-				continue;
-			IFeatureModel model = (IFeatureModel)models.get(i);
-			if (model.getFeature().getId().equals(workspaceModel.getFeature().getId()) 
-					&& model.getFeature().getVersion().equals(workspaceModel.getFeature().getVersion()))
-				return true;	
-		}
-		return false;
 	}
 	
 	public IPluginModel[] getPluginsOnly() {

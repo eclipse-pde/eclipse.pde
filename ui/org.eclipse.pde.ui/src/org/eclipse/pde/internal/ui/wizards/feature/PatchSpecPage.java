@@ -68,7 +68,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
 			return;
 		}
-		IFeatureModel[] featureModels = PDECore.getDefault().getModelManager().getAllFeatures();
+		IFeatureModel[] featureModels = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
 		
 		for (int i = 0; i < featureModels.length; i++) {
 		    IFeature feature = featureModels[i].getFeature();

@@ -208,6 +208,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private ExternalModelManager externalModelManager;
 	private WorkspaceModelManager workspaceModelManager;
 	private JavaElementChangeListener fJavaElementChangeListener;
+	private FeatureModelManager fFeatureModelManager;
 
 	public PDECore() {
 		inst = this;
@@ -306,6 +307,11 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return modelManager;
 	}
 	
+	public FeatureModelManager getFeatureModelManager() {
+		initializeModels();
+		return fFeatureModelManager;
+	}
+	
 	public JavaElementChangeListener getJavaElementChangeListener() {
 		if (fJavaElementChangeListener == null)
 			fJavaElementChangeListener = new JavaElementChangeListener();
@@ -388,6 +394,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		workspaceModelManager = new WorkspaceModelManager();
 		modelManager = new PluginModelManager();
 		modelManager.connect(workspaceModelManager, externalModelManager);
+		fFeatureModelManager = new FeatureModelManager();
+		fFeatureModelManager.connect(workspaceModelManager, externalModelManager);
 	}
 
 	public void releasePlatform() {
@@ -440,6 +448,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (modelManager != null) {
 			modelManager.shutdown();
 			modelManager = null;
+		}
+		if (fFeatureModelManager!=null) {
+			fFeatureModelManager.shutdown();
+			fFeatureModelManager = null;
 		}
 		if (externalModelManager!=null) {
 			externalModelManager.shutdown();
