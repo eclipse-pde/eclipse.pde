@@ -120,8 +120,7 @@ public class SchemaRegistry
 		loadWorkspaceDescriptors();
 		// Check external plug-ins
 		loadExternalDescriptors();
-		// Now read the registry and accept schema maps
-		//loadMappedDescriptors();
+
 		// Register for further changes
 		PDECore
 			.getDefault()
@@ -148,23 +147,7 @@ public class SchemaRegistry
 
 		}
 	}
-	private void loadMappedDescriptors() {
-		IPluginRegistry registry = Platform.getPluginRegistry();
-		org.eclipse.core.runtime.IExtensionPoint point =
-			registry.getExtensionPoint(PDECore.getPluginId(), PLUGIN_POINT);
-		if (point == null)
-			return;
 
-		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] elements =
-				extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				IConfigurationElement config = elements[j];
-				processMapElement(config);
-			}
-		}
-	}
 	private void loadWorkspaceDescriptor(IPluginModelBase model) {
 		IPluginBase pluginInfo = model.getPluginBase();
 		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
@@ -274,25 +257,6 @@ public class SchemaRegistry
 				if (!(model instanceof IPluginModelBase))
 					continue;
 				dirtyWorkspaceModels.add((IPluginModelBase) model);
-			}
-		}
-	}
-
-	private void processMapElement(IConfigurationElement element) {
-		String tag = element.getName();
-		if (tag.equals(TAG_MAP)) {
-			String point =
-				element.getAttribute(MappedSchemaDescriptor.ATT_POINT);
-			String schema =
-				element.getAttribute(MappedSchemaDescriptor.ATT_SCHEMA);
-			if (point == null || schema == null) {
-				//System.out.println("Schema map: point or schema null");
-				return;
-			}
-			if (getSchemaDescriptor(point) == null) {
-				MappedSchemaDescriptor desc =
-					new MappedSchemaDescriptor(element);
-				externalDescriptors.put(point, desc);
 			}
 		}
 	}

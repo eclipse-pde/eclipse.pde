@@ -2,17 +2,18 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.pde.ui" id="newExtension" name="Extension Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point should be used to contribute wizards
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.ui" id="newExtension" name="Extension Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point should be used to contribute wizards
 that will be used to create new extensions in 
 PDE plug-in manifest editor. Wizards can create on
 or more extensions at the same time, as well
 as the code needed to implement those extensions.
-   </documentation>
-</annotation>
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -103,7 +104,7 @@ short cut menu on the menu bar and the tool bar.
                   an optional id that makes this wizard a member of the
 previously defined category. If category is hierarchical,
 full path to the parent category should be specified
-using '/' as a delimiter.
+using &apos;/&apos; as a delimiter.
                </documentation>
             </annotation>
          </attribute>
@@ -111,7 +112,7 @@ using '/' as a delimiter.
             <annotation>
                <documentation>
                   If true, value of the &lt;samp&gt;class&lt;/samp&gt; attribute need to
-implement ITemplateSection class.
+implement &lt;samp&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/samp&gt; class.
                </documentation>
             </annotation>
          </attribute>
@@ -143,8 +144,7 @@ of this category
          <attribute name="parentCategory" type="string">
             <annotation>
                <documentation>
-                  an optional attribute that can be used to create
-category hierarchy
+                  an optional attribute that can be used to create category hierarchy
                </documentation>
             </annotation>
          </attribute>
@@ -154,7 +154,7 @@ category hierarchy
    <element name="description" type="string">
       <annotation>
          <documentation>
-            A short description of this wizard
+            A short description of this wizard.
          </documentation>
       </annotation>
    </element>
@@ -169,18 +169,18 @@ category hierarchy
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
-      point="org.eclipse.pde.ui.newExtension"&gt;
+      point=&quot;org.eclipse.pde.ui.newExtension&quot;&gt;
    &lt;category
-         name="Custom Extensions"
-         id="custom"&gt;
+         name=&quot;Custom Extensions&quot;
+         id=&quot;custom&quot;&gt;
    &lt;/category&gt;
    &lt;wizard
-         availableAsShortcut="true"
-         name="Simple Java Editor Extension"
-         icon="icons/java_edit.gif"
-         category="generic"
-         class="com.example.xyz.SimpleJavaEditorExtension"
-         id="com.example.xyz.simple"&gt;
+         availableAsShortcut=&quot;true&quot;
+         name=&quot;Simple Java Editor Extension&quot;
+         icon=&quot;icons/java_edit.gif&quot;
+         category=&quot;generic&quot;
+         class=&quot;com.example.xyz.SimpleJavaEditorExtension&quot;
+         id=&quot;com.example.xyz.simple&quot;&gt;
       &lt;description&gt;
          This wizard creates a simple Java editor with
          all the required classes and manifest markup.
@@ -219,11 +219,7 @@ points based on the extension point schema information.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
-&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
-All Rights Reserved."
-BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 

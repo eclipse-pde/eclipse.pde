@@ -2,17 +2,18 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.pde.ui" id="projectGenerators" name="Plug-in Content Wizards"/>
-   </appInfo>
-   <documentation>
-      This extension point provides for plugging in 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.ui" id="projectGenerators" name="Plug-in Content Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point provides for plugging in 
 wizards that create initial content of the PDE plug-in
 projects. These wizards can create plug-in manifest,
 key classes, initial folder structure and even
 generate some extensions and the required code for them.
-   </documentation>
-</annotation>
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -115,12 +116,12 @@ represent the wizard.
       <documentation>
          The following is an example of this extension point:
 &lt;pre&gt;   
-   &lt;extension point="org.eclipse.pde.ui.projectGenerators"&gt;
+   &lt;extension point=&quot;org.eclipse.pde.ui.projectGenerators&quot;&gt;
       &lt;wizard
-         name="Default Plug-in Content Generator"
-         icon="icons/content_wizard.gif"
-         class="com.example.xyz.ContentGeneratorWizard"
-         id="com.example.xyz.DefaultContentGenerator"&gt;
+         name=&quot;Default Plug-in Content Generator&quot;
+         icon=&quot;icons/content_wizard.gif&quot;
+         class=&quot;com.example.xyz.ContentGeneratorWizard&quot;
+         id=&quot;com.example.xyz.DefaultContentGenerator&quot;&gt;
          &lt;description&gt;
             Generates plugin.xml and plugin top-level class
          &lt;/description&gt;
@@ -157,11 +158,7 @@ plug-in class.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
-&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
-All Rights Reserved."
-BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 

@@ -2,20 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.pde.ui" id="templates" name="%expoint.templates.name"/>
-   </appInfo>
-   <documentation>
-      [Enter description of this extension point]
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.ui" id="templates" name="Extension Templates"/>
+      </appInfo>
+      <documentation>
+         This extension point registers plug-in project content templates that are used to generate code for the new extensions.
+&lt;p&gt;&lt;b&gt;Note: this extension point is experimental and can be used by the PDE plug-ins only.&lt;/b&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="" icon=""/>
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="template" minOccurs="1" maxOccurs="unbounded"/>
@@ -23,21 +19,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -54,21 +50,23 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a unique name that will be used to identify this template.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a translatable name that will be used in UI representation
+of this template.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  a relative path of an icon that will be used to visually 
+represent the template.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -93,7 +91,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         
       </documentation>
    </annotation>
 
@@ -102,7 +100,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -111,7 +109,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
@@ -120,7 +118,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 
