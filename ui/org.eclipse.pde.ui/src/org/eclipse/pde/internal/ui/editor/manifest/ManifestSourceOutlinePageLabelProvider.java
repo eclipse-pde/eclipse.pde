@@ -12,19 +12,11 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.plugin.PluginDocumentNode;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Node;
 
@@ -65,7 +57,7 @@ public class ManifestSourceOutlinePageLabelProvider extends LabelProvider {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (pluginObject instanceof IPluginBase) {
 			IPluginBase pluginBase = (IPluginBase) pluginObject;
-			String pluginBaseName = pluginBase.getName();
+			String pluginBaseName = pluginBase.getResourceString(pluginBase.getName());
 			if (!fullNames)
 				return pluginBaseName;
 			return pluginBase.getResourceString(pluginBaseName);
