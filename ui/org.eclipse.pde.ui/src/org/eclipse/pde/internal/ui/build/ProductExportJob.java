@@ -21,6 +21,8 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 public class ProductExportJob extends FeatureExportJob {
+	
+	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 
 	private IProduct fProduct;
 
@@ -109,7 +111,7 @@ public class ProductExportJob extends FeatureExportJob {
 	
 	private File getCustomIniFile() {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		if (info != null  && info.getUse().equals("custom")) {
+		if (info != null  && info.getUse().equals("custom")) { //$NON-NLS-1$
 			String path = getExpandedPath(info.getPath());
 			if (path != null) {
 				File file = new File(path);
@@ -137,7 +139,7 @@ public class ProductExportJob extends FeatureExportJob {
 				writer.println("<plugin id=\"" + plugin.getId() + "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (fItems[i] instanceof IFeatureModel) {
 				IFeature feature = ((IFeatureModel)fItems[i]).getFeature();
-				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>");
+				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		writer.println("</feature>"); //$NON-NLS-1$
@@ -164,7 +166,7 @@ public class ProductExportJob extends FeatureExportJob {
 
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations()); //To copy a folder
-		save(new File(file, "build.properties"), properties, "Build Configuration");
+		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private String getRootFileLocations() {
@@ -178,32 +180,32 @@ public class ProductExportJob extends FeatureExportJob {
 				// Once the branded executable is generated, we should not copy
 				// eclipse.exe nor icon.xpm
 				if (files[i].isFile() 
-						&& !".eclipseproduct".equals(files[i].getName()) 
-						&& !files[i].getName().endsWith(".html")) {
-					buffer.append("absolute:file:");
+						&& !".eclipseproduct".equals(files[i].getName())  //$NON-NLS-1$
+						&& !files[i].getName().endsWith(".html")) { //$NON-NLS-1$
+					buffer.append("absolute:file:"); //$NON-NLS-1$
 					buffer.append(files[i].getAbsolutePath());
-					buffer.append(",");
+					buffer.append(","); //$NON-NLS-1$
 				}	
 			}		
 		}
 		// add content of temp folder (.eclipseproduct, configuration/config.ini)
-		buffer.append("/temp/");
-		buffer.append(",");
+		buffer.append("/temp/"); //$NON-NLS-1$
+		buffer.append(","); //$NON-NLS-1$
 
 		return buffer.toString();
 	}
 	
 	private void createEclipseProductFile() {
-		File dir = new File(fFeatureLocation, "temp");
+		File dir = new File(fFeatureLocation, "temp"); //$NON-NLS-1$
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 		Properties properties = new Properties();
-		properties.put("name", fProduct.getName());
-		properties.put("id", fProduct.getId());		
+		properties.put("name", fProduct.getName()); //$NON-NLS-1$
+		properties.put("id", fProduct.getId());		 //$NON-NLS-1$
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
 		if (model != null)
-			properties.put("version", model.getPluginBase().getVersion());
-		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File");
+			properties.put("version", model.getPluginBase().getVersion()); //$NON-NLS-1$
+		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void createLauncherIniFile() {
@@ -213,7 +215,7 @@ public class ProductExportJob extends FeatureExportJob {
 		if (programArgs.length() == 0 && vmArgs.length() == 0)
 			return;
 		
-		File dir = new File(fFeatureLocation, "temp");
+		File dir = new File(fFeatureLocation, "temp"); //$NON-NLS-1$
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 		
@@ -226,7 +228,7 @@ public class ProductExportJob extends FeatureExportJob {
 					writer.println(tokenizer.nextToken());
 			}
 			if (vmArgs.length() > 0) {
-				writer.println("-vmargs");
+				writer.println("-vmargs"); //$NON-NLS-1$
 				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
 				while (tokenizer.hasMoreTokens())
 					writer.println(tokenizer.nextToken());
@@ -241,17 +243,17 @@ public class ProductExportJob extends FeatureExportJob {
 
 	private String getProgramArguments() {
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getProgramArguments()) : "";
+		return (info != null) ? CoreUtility.normalize(info.getProgramArguments()) : ""; //$NON-NLS-1$
 	}
 	
 	private String getVMArguments() {
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getVMArguments()) : "";
+		return (info != null) ? CoreUtility.normalize(info.getVMArguments()) : ""; //$NON-NLS-1$
 	}	
 	
 	
 	private void createConfigIniFile() {
-		File dir = new File(fFeatureLocation, "temp/configuration");
+		File dir = new File(fFeatureLocation, "temp/configuration"); //$NON-NLS-1$
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 
@@ -275,16 +277,16 @@ public class ProductExportJob extends FeatureExportJob {
 			//properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
 			String location = getSplashLocation();
 			if (location != null)
-				properties.put("osgi.splashPath", location);
-			properties.put("eclipse.product", fProduct.getId());
+				properties.put("osgi.splashPath", location); //$NON-NLS-1$
+			properties.put("eclipse.product", fProduct.getId()); //$NON-NLS-1$
 			if (fProduct.useFeatures()) {
-				properties.put("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start");
+				properties.put("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				properties.put("osgi.bundles", getPluginList());
+				properties.put("osgi.bundles", getPluginList()); //$NON-NLS-1$
 			}
-			properties.setProperty("osgi.bundles.defaultStartLevel", "4");
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		save(new File(dir, "config.ini"), properties, "Eclipse Runtime Configuration File");
+		save(new File(dir, "config.ini"), properties, "Eclipse Runtime Configuration File"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private String getSplashLocation() {
@@ -296,7 +298,7 @@ public class ProductExportJob extends FeatureExportJob {
 		if (location == null)
 			location = getBrandingPlugin();
 		
-		return location == null ? null : "platform:/base/plugins/" + location;
+		return location == null ? null : "platform:/base/plugins/" + location; //$NON-NLS-1$
 	}
 	
 	private String getBrandingPlugin() {
@@ -309,13 +311,13 @@ public class ProductExportJob extends FeatureExportJob {
 		IProductPlugin[] plugins = fProduct.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
-			if ("org.eclipse.osgi".equals(id))
+			if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
 				continue;
 			if (buffer.length() > 0)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			buffer.append(id);
-			if ("org.eclipse.core.runtime".equals(id))
-				buffer.append("@2:start");
+			if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
+				buffer.append("@2:start"); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
@@ -331,27 +333,27 @@ public class ProductExportJob extends FeatureExportJob {
 		ILauncherInfo info = fProduct.getLauncherInfo();	
 		if (info != null) {
 			String images = null;
-			if (os.equals("win32")) {
+			if (os.equals("win32")) { //$NON-NLS-1$
 				images = getWin32Images(info);
-			} else if (os.equals("solaris")) {
+			} else if (os.equals("solaris")) { //$NON-NLS-1$
 				images = getSolarisImages(info);
-			} else if (os.equals("linux")) {
+			} else if (os.equals("linux")) { //$NON-NLS-1$
 				images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
-			} else if (os.equals("macosx")) {
+			} else if (os.equals("macosx")) { //$NON-NLS-1$
 				images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
 			}
 			if (images != null && images.length() > 0)
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
 		}
 		
-		String root = "eclipse";
+		String root = ECLIPSE;
 		if (info != null) {
 			root = info.getRootDirectory();
 			if (root == null || root.trim().length() == 0)
-				root = "eclipse";
+				root = ECLIPSE;
 		}
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, root); //$NON-NLS-1$  This value and the next one can be set to the product name if the user desires it
-		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, root);	// or it can be more than one segment ( like bar/eclipse ) 
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, root); 
+		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, root); 
 		return properties;
 	}
 	
@@ -362,7 +364,7 @@ public class ProductExportJob extends FeatureExportJob {
 			if (name != null && name.length() > 0)
 				return name.trim();
 		}
-		return "eclipse";	
+		return ECLIPSE;	
 	}
 	
 	private String getWin32Images(ILauncherInfo info) {
@@ -393,7 +395,7 @@ public class ProductExportJob extends FeatureExportJob {
 		path = getExpandedPath(path);
 		if (path != null) {
 			if (buffer.length() > 0)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			buffer.append(path);
 		}
 	}
