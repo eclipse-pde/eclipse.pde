@@ -22,7 +22,8 @@ public class BrandingIron implements IXMLConstants {
 	private String root;
 	private String name;
 	private String os = "win32"; //$NON-NLS-1$
-
+	private boolean brandIcons = true;
+	
 	public void setName(String value) {
 		name = value;
 	}
@@ -39,6 +40,10 @@ public class BrandingIron implements IXMLConstants {
 		// if the name property is not set it will be ${launcher.name} so just bail.
 		if (name.equals("${" + PROPERTY_LAUNCHER_NAME + "}")) //$NON-NLS-1$//$NON-NLS-2$
 			return;
+		
+		if (("${" + PROPERTY_LAUNCHER_ICONS + "}").equals(icons[0]))
+			brandIcons = false;
+		
 		if ("win32".equals(os)) //$NON-NLS-1$
 			brandWindows();
 		if ("linux".equals(os)) //$NON-NLS-1$
@@ -63,12 +68,15 @@ public class BrandingIron implements IXMLConstants {
 
 	private void brandLinux() throws Exception {
 		renameLauncher();
-		if (icons.length > 0)
+		if (brandIcons)
 			copy(new File(icons[0]), new File(root, "icon.xpm"));
 	}
 
 	private void brandSolaris() throws Exception {
 		renameLauncher();
+		if (brandIcons == false)
+			return;
+		
 		for (int i = 0; i < icons.length; i++) {
 			String icon = icons[i];
 			if (icon.endsWith(".l.pm")) //$NON-NLS-1$
@@ -96,8 +104,7 @@ public class BrandingIron implements IXMLConstants {
 		String initialRoot = root + "/Eclipse.app/Contents"; //$NON-NLS-1$
 		copyMacLauncher(initialRoot, target);
 		File icon = new File(icons[0]);
-		if (!("${" + PROPERTY_LAUNCHER_ICONS + "}").equals(icons[0])) {
-
+		if (brandIcons) {
 			copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
 			new File(initialRoot + "/Resources/Eclipse.icns").delete();
 			new File(initialRoot + "/Resources/").delete();
