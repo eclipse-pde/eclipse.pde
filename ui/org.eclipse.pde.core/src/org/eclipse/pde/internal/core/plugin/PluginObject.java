@@ -182,7 +182,7 @@ public abstract class PluginObject
 				String comment = prev.getNodeValue();
 				if (result == null)
 					result = new Vector();
-				result.add(comment);
+				result.add(0,comment);
 			} else
 				break;
 		}
