@@ -200,11 +200,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
 		else if (href.equals("build")) //$NON-NLS-1$
 			getEditor().setActivePage(BuildPage.PAGE_ID);
-		else if (href.equals("action.run")) //$NON-NLS-1$
-			getLaunchShortcut().run();
-		else if (href.equals("action.debug")) //$NON-NLS-1$
-			getLaunchShortcut().debug();
-		else if (href.equals("export")) //$NON-NLS-1$
+		else if (href.equals("action.run")) { //$NON-NLS-1$ {
+			getEditor().doSave(null);
+			getLaunchShortcut().run((IPluginModelBase)getModel());
+		} else if (href.equals("action.debug")) { //$NON-NLS-1$
+			getEditor().doSave(null);
+			getLaunchShortcut().debug((IPluginModelBase)getModel());
+		} else if (href.equals("export")) //$NON-NLS-1$
 			getExportAction().run();
 	}
 	/*

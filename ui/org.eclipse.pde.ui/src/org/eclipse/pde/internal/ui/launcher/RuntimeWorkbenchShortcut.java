@@ -54,6 +54,15 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		launch(ILaunchManager.DEBUG_MODE, null);
 	}
 
+	public void run(IPluginModelBase model) {
+		launch(model, ILaunchManager.RUN_MODE);
+	}
+	
+	public void debug(IPluginModelBase model) {
+		launch(model, ILaunchManager.DEBUG_MODE);
+	}
+
+	
 	/*
 	 * @see ILaunchShortcut#launch(IEditorPart, String)
 	 */
@@ -65,7 +74,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	 * @see ILaunchShortcut#launch(ISelection, String)
 	 */
 	public void launch(ISelection selection, String mode) {
-		fModel = getSelectedModel(selection);
+		launch(getSelectedModel(selection), mode);
+	}
+	
+	private void launch(IPluginModelBase model, String mode) {
+		fModel = model;
 		if (fModel != null) {
 			String[] applicationNames = getAvailableApplications();
 			if (applicationNames.length == 0) {
@@ -80,7 +93,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 					launch(mode, dialog.getSelectedApplication());
 				}
 			}
-		}
+		}		
 	}
 	
 	private IPluginModelBase getSelectedModel(ISelection selection) {
