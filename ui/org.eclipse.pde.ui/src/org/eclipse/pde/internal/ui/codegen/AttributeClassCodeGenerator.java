@@ -478,8 +478,7 @@ public class AttributeClassCodeGenerator extends JavaCodeGenerator {
 			if (resolvedType != null)
 				name = resolvedType[0][0] + "." + resolvedType[0][1];
 		} catch (JavaModelException e) {
-		} finally {
-			return name;
 		}
+		return name;
 	}
 }
