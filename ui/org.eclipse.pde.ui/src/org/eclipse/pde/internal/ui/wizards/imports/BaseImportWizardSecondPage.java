@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -159,6 +160,15 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 			
 		if (!selected.contains(model)) {
 			selected.add(model);
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				if (extensions[i].getPoint().equals("org.eclipse.ant.core.extraClasspathEntries")) {
+					IPluginModelBase antModel = findModel("org.apache.ant");
+					if (antModel != null && !selected.contains(antModel))
+						selected.add(antModel);
+					break;
+				}
+			}
 			addDependencies(model, selected, addFragments);
 		}
 	}
