@@ -229,9 +229,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					PDECore.BINARY_PROJECT_VALUE);
 
 			if (isJavaProject) {
-				JavaCore.create(project).setRawClasspath(
-					new IClasspathEntry[0],
-					monitor);
+				IJavaProject jProject = JavaCore.create(project);
+				if (jProject.getRawClasspath() != null
+					&& jProject.getRawClasspath().length > 0)
+					jProject.setRawClasspath(new IClasspathEntry[0], monitor);
 				modelIds.add(model.getPluginBase().getId());
 			}
 		} finally {
