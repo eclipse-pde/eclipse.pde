@@ -21,6 +21,9 @@ public class FeatureImport
 	private IFeature feature;
 	private int type = PLUGIN;
 	private boolean patch = false;
+	private String os;
+	private String ws;
+	private String arch;
 
 	public FeatureImport() {
 	}
@@ -41,11 +44,26 @@ public class FeatureImport
 		this.feature = feature;
 	}
 	
+	public String getOS() {
+		return os;
+	}
+	
+	public String getWS() {
+		return ws;
+	}
+	
+	public String getArch() {
+		return arch;
+	}
+	
 	protected void reset() {
 		super.reset();
 		patch = false;
 		type = PLUGIN;
 		match = NONE;
+		arch = null;
+		os = null;
+		ws = null;
 	}
 
 	protected void parse(Node node) {
@@ -57,6 +75,9 @@ public class FeatureImport
 			this.id = getNodeAttribute(node, "feature");
 			type = FEATURE;
 		}
+		this.os = getNodeAttribute(node, "os");
+		this.ws = getNodeAttribute(node, "ws");
+		this.arch = getNodeAttribute(node, "arch");
 		String mvalue = getNodeAttribute(node, "match");
 		if (mvalue != null && mvalue.length() > 0) {
 			String[] choices = RULE_NAME_TABLE;
@@ -114,6 +135,27 @@ public class FeatureImport
 		this.patch = patch;
 		firePropertyChanged(P_PATCH, oldValue, new Boolean(patch));
 	}
+	
+	public void setOS(String os) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.os;
+		this.os = os;
+		firePropertyChanged(P_OS, oldValue, os);
+	}
+	
+	public void setWS(String ws) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.ws;
+		this.ws = ws;
+		firePropertyChanged(P_WS, oldValue, ws);
+	}
+	
+	public void setArch(String arch) throws CoreException {
+		ensureModelEditable();
+		String oldValue = this.arch;
+		this.arch = arch;
+		firePropertyChanged(P_ARCH, oldValue, arch);
+	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
@@ -125,6 +167,12 @@ public class FeatureImport
 		} else if (name.equals(P_PATCH)) {
 			setPatch(
 				newValue != null ? ((Boolean) newValue).booleanValue() : false);
+		} else if (name.equals(P_OS)) {
+			setOS((String)newValue);
+		} else if (name.equals(P_WS)) {
+			setWS((String)newValue);
+		} else if (name.equals(P_ARCH)) {
+			setArch((String)newValue);
 		} else
 			super.restoreProperty(name, oldValue, newValue);
 	}
@@ -138,8 +186,14 @@ public class FeatureImport
 		if (match != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
 		}
-		if (patch) {
-			writer.print(" patch=\"true\"");
+		if (os!=null) {
+			writer.print(" os=\""+getOS()+"\"");
+		}
+		if (ws!=null) {
+			writer.print(" ws=\""+getWS()+"\"");
+		}
+		if (arch!=null) {
+			writer.print(" arch=\""+getArch()+"\"");
 		}
 		writer.println("/>");
 	}

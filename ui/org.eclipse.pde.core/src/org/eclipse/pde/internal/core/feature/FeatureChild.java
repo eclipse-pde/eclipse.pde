@@ -20,6 +20,9 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private boolean optional;
 	private int searchLocation = ROOT;
 	private int match = NONE;
+	private String os;
+	private String ws;
+	private String arch;
 
 	protected void reset() {
 		super.reset();
@@ -28,12 +31,18 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		name = null;
 		searchLocation = ROOT;
 		match = NONE;
+		os = null;
+		ws = null;
+		arch = null;
 	}
 	protected void parse(Node node) {
 		super.parse(node);
 		version = getNodeAttribute(node, "version");
 		name = getNodeAttribute(node, "name");
 		optional = getBooleanAttribute(node, "optional");
+		os = getNodeAttribute(node, "os");
+		ws = getNodeAttribute(node, "ws");
+		arch = getNodeAttribute(node, "arch");
 		String matchName = getNodeAttribute(node, "match");
 		if (matchName != null) {
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
@@ -85,6 +94,18 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	public int getMatch() {
 		return match;
+	}
+	
+	public String getOS() {
+		return os;
+	}
+	
+	public String getWS() {
+		return ws;
+	}
+	
+	public String getArch() {
+		return arch;
 	}
 
 	public IFeature getReferencedFeature() {
@@ -152,6 +173,27 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		this.optional = optional;
 		firePropertyChanged(P_NAME, oldValue, new Boolean(optional));
 	}
+	
+	public void setOS(String os) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.os;
+		this.os = os;
+		firePropertyChanged(P_OS, oldValue, os);
+	}
+	
+	public void setWS(String ws) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.ws;
+		this.ws = ws;
+		firePropertyChanged(P_WS, oldValue, ws);
+	}
+	
+	public void setArch(String arch) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.arch;
+		this.arch = arch;
+		firePropertyChanged(P_ARCH, oldValue, arch);
+	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
@@ -163,6 +205,12 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			setName((String) newValue);
 		} else if (name.equals(P_MATCH)) {
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : NONE);
+		} else if (name.equals(P_OS)) {
+			setOS((String)newValue);
+		} else if (name.equals(P_WS)) {
+			setWS((String)newValue);
+		} else if (name.equals(P_ARCH)) {
+			setArch((String)newValue);
 		} else if (name.equals(P_SEARCH_LOCATION)) {
 			setSearchLocation(
 				newValue != null ? ((Integer) newValue).intValue() : ROOT);
@@ -200,6 +248,18 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		if (match!=NONE) {
 			writer.println();
 			writer.print(indent2 + "match=\""+RULE_NAME_TABLE[match]+"\"");
+		}
+		if (getOS() != null) {
+			writer.println();
+			writer.print(indent2 + "os=\""+getOS() + "\"");
+		}
+		if (getWS() != null) {
+			writer.println();
+			writer.print(indent2 + "ws=\""+getWS() + "\"");
+		}
+		if (getArch() != null) {
+			writer.println();
+			writer.print(indent2 + "arch=\""+getArch() + "\"");
 		}
 		if (searchLocation!=ROOT) {
 			writer.println();

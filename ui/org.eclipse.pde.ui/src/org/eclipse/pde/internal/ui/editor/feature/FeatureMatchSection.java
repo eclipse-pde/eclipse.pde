@@ -48,6 +48,7 @@ public class FeatureMatchSection extends MatchSection {
 				handlePatchChange(patchButton.getSelection());
 			}
 		});
+
 		return client;
 	}
 
@@ -63,12 +64,11 @@ public class FeatureMatchSection extends MatchSection {
 			}
 		}
 		if (multiSelection != null) {
-			for (Iterator iter=multiSelection.iterator(); iter.hasNext();) {
-				IFeatureImport iimport = (IFeatureImport)iter.next();
+			for (Iterator iter = multiSelection.iterator(); iter.hasNext();) {
+				IFeatureImport iimport = (IFeatureImport) iter.next();
 				try {
 					iimport.setPatch(patch);
-				}
-				catch (CoreException e) {
+				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 					break;
 				}
@@ -78,33 +78,35 @@ public class FeatureMatchSection extends MatchSection {
 
 	protected void update(IStructuredSelection selection) {
 		super.update(selection);
-		if (patchButton==null) return;
+		if (patchButton == null)
+			return;
 		if (selection.isEmpty()) {
-			update((IFeatureImport)null);
+			update((IFeatureImport) null);
 			return;
 		}
-		if (selection.size()==1) {
-			update((IFeatureImport)selection.getFirstElement());
+		if (selection.size() == 1) {
+			update((IFeatureImport) selection.getFirstElement());
 			return;
 		}
-		int ntrue=0, nfalse=0;
-		
-		for (Iterator iter=selection.iterator(); iter.hasNext();) {
-			IFeatureImport iimport = (IFeatureImport)iter.next();
-			if (iimport.getType()==IFeatureImport.FEATURE) {
+		int ntrue = 0, nfalse = 0;
+
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			IFeatureImport iimport = (IFeatureImport) iter.next();
+			if (iimport.getType() == IFeatureImport.FEATURE) {
 				if (iimport.isPatch())
 					ntrue++;
 				else
 					nfalse++;
 			}
 		}
-		patchButton.setEnabled(!isReadOnly() && (ntrue>0 || nfalse>0));
-		patchButton.setSelection(ntrue>0);
+		patchButton.setEnabled(!isReadOnly() && (ntrue > 0 || nfalse > 0));
+		patchButton.setSelection(ntrue > 0);
 	}
 
 	private void update(IFeatureImport iimport) {
 		super.update(iimport);
-		if (patchButton==null) return;
+		if (patchButton == null)
+			return;
 		IFeatureImport fimport = (IFeatureImport) iimport;
 		if (fimport == null || fimport.getType() == IFeatureImport.PLUGIN) {
 			patchButton.setSelection(false);

@@ -10,7 +10,7 @@ import org.eclipse.pde.core.plugin.IMatchRules;
 /**
  * The reference to a plug-in that is part of this feature.
  */
-public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRules {
+public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRules, IEnvironment {
 	String P_VERSION = "version";
 	String P_OPTIONAL = "optional";
 	String P_NAME = "name";
@@ -31,4 +31,5 @@ public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRule
 	void setSearchLocation(int location) throws CoreException;
 	int getMatch();
 	void setMatch(int match) throws CoreException;
+	
 }

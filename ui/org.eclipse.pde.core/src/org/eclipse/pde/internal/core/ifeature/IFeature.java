@@ -9,7 +9,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 /**
  * The top-level model object of the Eclipse feature model.
  */
-public interface IFeature extends IFeatureObject, IVersionable {
+public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 /**
  * The name of the property that will be used to notify
  * about changes in "description" field
@@ -43,13 +43,11 @@ public static final String P_URL = "url";
 
 public static final String P_INSTALL_HANDLER = "installHandler";
 
-public static final String P_OS = "os";
-public static final String P_WS = "ws";
 public static final String P_NL = "nl";
-public static final String P_ARCH = "arch";
 
 public static final String P_PRIMARY = "primary";
 public static final String P_EXCLUSIVE = "exclusive";
+public static final String P_PLUGIN = "plugin";
 
 public static final String P_COLLOCATION_AFFINITY = "colocation-affinity";
 public static final String P_APPLICATION = "application";
@@ -207,21 +205,18 @@ public void setURL(IFeatureURL url) throws CoreException;
 
 public void computeImports() throws CoreException;
 
-public String getOS();
-public String getWS();
 public String getNL();
-public String getArch();
 
-public void setOS(String os) throws CoreException;
-public void setWS(String ws) throws CoreException;
 public void setNL(String nl) throws CoreException;
-public void setArch(String arch) throws CoreException;
 
 boolean isPrimary();
 public void setPrimary(boolean value) throws CoreException;
 
 boolean isExclusive();
 public void setExclusive(boolean value) throws CoreException;
+
+String getPlugin();
+void setPlugin(String value) throws CoreException;
 
 String getColocationAffinity();
 void setColocationAffinity(String value) throws CoreException;

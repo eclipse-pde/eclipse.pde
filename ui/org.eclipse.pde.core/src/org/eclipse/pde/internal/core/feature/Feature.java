@@ -33,7 +33,8 @@ public class Feature extends VersionableObject implements IFeature {
 	private boolean exclusive;
 	private String colocationAffinity;
 	private String application;
-
+	private String plugin;
+	
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newPlugins.length; i++) {
@@ -96,6 +97,10 @@ public class Feature extends VersionableObject implements IFeature {
 	public String getProviderName() {
 		return providerName;
 	}
+	
+	public String getPlugin() {
+		return plugin;
+	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
@@ -134,6 +139,7 @@ public class Feature extends VersionableObject implements IFeature {
 	protected void parse(Node node) {
 		super.parse(node);
 		providerName = getNodeAttribute(node, "provider-name");
+		plugin = getNodeAttribute(node, "plugin");
 		os = getNodeAttribute(node, "os");
 		ws = getNodeAttribute(node, "ws");
 		nl = getNodeAttribute(node, "nl");
@@ -431,6 +437,13 @@ public class Feature extends VersionableObject implements IFeature {
 		this.providerName = providerName;
 		firePropertyChanged(P_PROVIDER, oldValue, providerName);
 	}
+	
+	public void setPlugin(String plugin) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.plugin;
+		this.plugin = plugin;
+		firePropertyChanged(P_PLUGIN, oldValue, plugin);
+	}
 	public void setURL(IFeatureURL url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
@@ -506,6 +519,8 @@ public class Feature extends VersionableObject implements IFeature {
 			setExclusive(newValue != null ? ((Boolean) newValue).booleanValue() : false);
 		} else if (name.equals(P_PROVIDER)) {
 			setProviderName((String) newValue);
+		} else if (name.equals(P_PLUGIN)) {
+			setPlugin((String)newValue);
 		} else if (name.equals(P_URL)) {
 			setURL((IFeatureURL) newValue);
 		} else if (name.equals(P_INSTALL_HANDLER)) {
@@ -530,6 +545,7 @@ public class Feature extends VersionableObject implements IFeature {
 		children.clear();
 		url = null;
 		providerName = null;
+		plugin = null;
 		os = null;
 		ws = null;
 		nl = null;
@@ -555,6 +571,11 @@ public class Feature extends VersionableObject implements IFeature {
 			writer,
 			"provider-name",
 			getWritableString(providerName));
+		writeIfDefined(
+			indenta,
+			writer,
+			"plugin",
+			getWritableString(plugin));
 		writeIfDefined(indenta, writer, "os", os);
 		writeIfDefined(indenta, writer, "ws", ws);
 		writeIfDefined(indenta, writer, "nl", nl);

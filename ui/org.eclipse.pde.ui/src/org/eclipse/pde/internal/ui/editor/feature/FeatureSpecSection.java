@@ -30,6 +30,8 @@ public class FeatureSpecSection extends PDEFormSection {
 		"FeatureEditor.SpecSection.version";
 	public static final String SECTION_PROVIDER =
 		"FeatureEditor.SpecSection.provider";
+	public static final String SECTION_PLUGIN =
+		"FeatureEditor.SpecSection.plugin";
 	public static final String SECTION_IMAGE = "FeatureEditor.SpecSection.image";
 	public static final String SECTION_BROWSE = "FeatureEditor.SpecSection.browse";
 	public static final String SECTION_PRIMARY =
@@ -49,6 +51,7 @@ public class FeatureSpecSection extends PDEFormSection {
 	private FormEntry titleText;
 	private FormEntry versionText;
 	private FormEntry providerText;
+	private FormEntry pluginText;
 	private FormEntry imageText;
 	private Button browseImageButton;
 
@@ -69,6 +72,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		IFeature feature = model.getFeature();
 		titleText.commit();
 		providerText.commit();
+		pluginText.commit();
 		idText.commit();
 		versionText.commit();
 		imageText.commit();
@@ -147,6 +151,22 @@ public class FeatureSpecSection extends PDEFormSection {
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setProviderName(text.getValue());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+			public void textDirty(FormEntry text) {
+				forceDirty();
+			}
+		});
+		
+		pluginText =
+			new FormEntry(
+				createText(container, PDEPlugin.getResourceString(SECTION_PLUGIN), factory, 2));
+		pluginText.addFormTextListener(new IFormTextListener() {
+			public void textValueChanged(FormEntry text) {
+				try {
+					feature.setPlugin(text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -351,6 +371,7 @@ public class FeatureSpecSection extends PDEFormSection {
 			titleText.getControl().setEditable(false);
 			versionText.getControl().setEditable(false);
 			providerText.getControl().setEditable(false);
+			pluginText.getControl().setEditable(false);
 			imageText.getControl().setEditable(false);
 			primaryButton.setEnabled(false);
 			exclusiveButton.setEnabled(false);
@@ -364,6 +385,7 @@ public class FeatureSpecSection extends PDEFormSection {
 		return titleText.isDirty()
 			|| idText.isDirty()
 			|| providerText.isDirty()
+			|| pluginText.isDirty()
 			|| versionText.isDirty()
 			|| imageText.isDirty();
 	}
@@ -407,6 +429,7 @@ public class FeatureSpecSection extends PDEFormSection {
 			model.getResourceString(feature.getLabel()));
 		setIfDefined(versionText, feature.getVersion());
 		setIfDefined(providerText, feature.getProviderName());
+		setIfDefined(pluginText, feature.getPlugin());
 		setIfDefined(imageText, feature.getImageName());
 		primaryButton.setSelection(feature.isPrimary());
 		exclusiveButton.setSelection(feature.isExclusive());

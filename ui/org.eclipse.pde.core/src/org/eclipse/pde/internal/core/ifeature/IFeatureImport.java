@@ -12,7 +12,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
  * @version 	1.0
  * @author
  */
-public interface IFeatureImport extends IFeatureObject, IPluginReference {
+public interface IFeatureImport extends IFeatureObject, IPluginReference, IEnvironment {
 	String P_TYPE = "type";
 	String P_PATCH = "patch";
 	

@@ -8,6 +8,8 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.views.properties.*;
@@ -28,6 +30,9 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 	private final static String P_MATCH = "match";
 	private final static String P_NAME = "name";
 	private final static String P_SEARCH_LOCATION = "search-location";
+	private final static String P_OS = "os";
+	private final static String P_WS = "ws";
+	private final static String P_ARCH = "arch";
 
 	public FeatureChildPropertySource(IFeatureChild child) {
 		super(child);
@@ -70,6 +75,36 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 				PDEPlugin.getResourceString(KEY_SEARCH_LOCATION),
 				new String[] { "root", "self", "both" });
 		descriptors.addElement(desc);
+		desc =
+			createChoicePropertyDescriptor(
+				P_OS,
+				P_OS,
+				TargetPlatform.getOSChoices());
+		descriptors.addElement(desc);
+		desc =
+			createChoicePropertyDescriptor(
+				P_WS,
+				P_WS,
+				TargetPlatform.getWSChoices());
+		descriptors.addElement(desc);
+		desc =
+			createChoicePropertyDescriptor(
+				P_ARCH,
+				P_ARCH,
+				TargetPlatform.getArchChoices());
+		descriptors.addElement(desc);
+
+	}
+
+	private PropertyDescriptor createChoicePropertyDescriptor(
+		String name,
+		String displayName,
+		Choice[] choices) {
+		return new PortabilityChoiceDescriptor(
+			name,
+			displayName,
+			choices,
+			!isEditable());
 	}
 
 	public IFeatureChild getChild() {
@@ -93,7 +128,7 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 		}
 
 		if (name.equals(P_OPTIONAL)) {
-			return getChild().isOptional() ? new Integer(1):new Integer(0);
+			return getChild().isOptional() ? new Integer(1) : new Integer(0);
 		}
 		if (name.equals(P_NAME)) {
 			return getChild().getName();
@@ -105,17 +140,26 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 		if (name.equals(P_MATCH)) {
 			return new Integer(getChild().getMatch());
 		}
+		if (name.equals(P_OS)) {
+			return getChild().getOS();
+		}
+		if (name.equals(P_WS)) {
+			return getChild().getWS();
+		}
+		if (name.equals(P_ARCH)) {
+			return getChild().getArch();
+		}
 		return null;
 	}
 
 	private String getNonzeroValue(Object obj) {
 		return obj != null ? obj.toString() : "";
 	}
-	
+
 	public void setElement(IFeatureEntry entry) {
 		object = entry;
 	}
-	
+
 	public void setPropertyValue(Object name, Object value) {
 		String svalue = value.toString();
 		String realValue =
@@ -136,6 +180,12 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 			} else if (name.equals(P_SEARCH_LOCATION)) {
 				Integer index = (Integer) value;
 				getChild().setSearchLocation(index.intValue());
+			} else if (name.equals(P_OS)) {
+				getChild().setOS(realValue);
+			} else if (name.equals(P_WS)) {
+				getChild().setWS(realValue);
+			} else if (name.equals(P_ARCH)) {
+				getChild().setArch(realValue);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
