@@ -486,8 +486,10 @@ public class LauncherUtils {
 	private static void deleteContent(File curr) throws IOException {
 		if (curr.isDirectory()) {
 			File[] children = curr.listFiles();
-			for (int i = 0; i < children.length; i++) {
-				deleteContent(children[i]);
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					deleteContent(children[i]);
+				}
 			}
 		}
 		curr.delete();
