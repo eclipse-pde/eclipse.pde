@@ -116,9 +116,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (configuration.getAttribute(USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
-			File installDir = installPath.removeLastSegments(1).toFile();
 			programArgs.add("-install");
-			programArgs.add("file:" + installDir.getPath() + File.separator);
+			programArgs.add("file:" + installPath.removeLastSegments(1).addTrailingSeparator().toString());
 			programArgs.add("-update");
 		} else {
 			TreeMap pluginMap = LauncherUtils.getPluginsToRun(configuration);
@@ -189,8 +188,8 @@ public class WorkbenchLaunchConfigurationDelegate
 			}
 		}
 		if (showSplash && !programArgs.contains("-nosplash")) {
-			programArgs.add("-showsplash");
-			programArgs.add(computeShowsplashArgument());
+			programArgs.add(0, "-showsplash");
+			programArgs.add(1, computeShowsplashArgument());
 		}
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
 	}
