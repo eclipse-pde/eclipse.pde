@@ -19,5 +19,4 @@ public interface IAlternativeRuntimeSupport {
 	IPath getPluginLocation(IPluginModelBase model);
 	IPath getTransientSitePath(IPluginModelBase model);
 	void shutdown();
-	String [] getImplicitDependencies(boolean bundle);
 }
