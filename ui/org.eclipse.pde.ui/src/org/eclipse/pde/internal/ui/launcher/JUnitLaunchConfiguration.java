@@ -135,6 +135,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 					IStatus.ERROR,
 					PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.notaplugin"), //$NON-NLS-1$
 					null));
+		if (model instanceof IFragmentModel)
+			return ((IFragmentModel)model).getFragment().getPluginId();
+
 		return model.getPluginBase().getId();
 	}
 	
