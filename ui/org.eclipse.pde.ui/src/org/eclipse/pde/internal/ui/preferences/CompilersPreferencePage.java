@@ -5,23 +5,37 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.util.CompilerFlags;
+import org.eclipse.pde.internal.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.IEnvironmentVariables;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  */
@@ -114,11 +128,10 @@ public class CompilersPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		CompilerFlags.restoreDefaults();
 		for (int i = 0; i < flagCombos.size(); i++) {
 			Combo combo = (Combo) flagCombos.get(i);
 			String flagId = (String) combo.getData();
-			combo.select(CompilerFlags.getFlag(flagId));
+			combo.select(CompilerFlags.getDefaultFlag(flagId));
 		}
 		changedCombos = null;
 	}
@@ -153,7 +166,7 @@ public class CompilersPreferencePage
 				String flagId = (String) combo.getData();
 				CompilerFlags.setFlag(flagId, index);
 			}
-			PDECore.getDefault().savePluginPreferences();
+			CompilerFlags.save();
 
 			if (res == 0) {
 				doFullBuild();
