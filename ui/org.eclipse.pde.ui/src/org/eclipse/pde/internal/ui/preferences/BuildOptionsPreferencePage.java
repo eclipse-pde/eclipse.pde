@@ -102,7 +102,7 @@ public class BuildOptionsPreferencePage extends PreferencePage implements IWorkb
 	public boolean performOk() {
 		store.setValue(PROP_JAVAC_FAIL_ON_ERROR, failOnError.getSelection());
 		store.setValue(PROP_JAVAC_VERBOSE, verbose.getSelection());
-		store.setValue(PROP_JAVAC_DEBUG_INFO, debugInfo.getSelection() ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$
+		store.setValue(PROP_JAVAC_DEBUG_INFO, debugInfo.getSelection());
 		store.setValue(PROP_JAVAC_SOURCE, javacSource.getText());
 		store.setValue(PROP_JAVAC_TARGET, javacTarget.getText());
 		PDEPlugin.getDefault().savePluginPreferences();
