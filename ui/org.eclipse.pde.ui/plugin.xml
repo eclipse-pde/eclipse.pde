@@ -85,7 +85,7 @@
          finalPerspective="org.eclipse.pde.internal.PDEPerspective"
          id="org.eclipse.pde.internal.wizards.project.NewProjectWizard">
       <description>
-         Create a Plug-in Project
+         %new.pluginProject.description
       </description>
    </wizard>
    <wizard
@@ -97,7 +97,7 @@
          finalPerspective="org.eclipse.pde.internal.PDEPerspective"
          id="org.eclipse.pde.internal.wizards.project.NewFragmentWizard">
       <description>
-         Create a Plug-in Fragment Project
+         %new.fragmentProject.description
       </description>
    </wizard>
    <wizard
@@ -107,7 +107,7 @@
          class="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard"
          id="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard">
       <description>
-         Create an Extension Point Schema File
+         %new.schemaFile.description
       </description>
    </wizard>
    <wizard
@@ -118,7 +118,7 @@
          class="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard"
          id="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard">
       <description>
-         Create a Plug-in project by converting an existing Java project.
+         %new.convert.description
       </description>
    </wizard>
    <wizard
@@ -130,7 +130,7 @@
          finalPerspective="org.eclipse.pde.internal.PDEPerspective"
          id="org.eclipse.pde.internal.component.NewComponentProjectWizard">
       <description>
-         Create a Plug-in Component project
+         %new.component.description
       </description>
    </wizard>
 </extension>
@@ -142,7 +142,7 @@
          class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
          id="org.eclipse.pde.projectGenerators.default">
       <description>
-         Generates plugin.xml and plugin top-level class
+         %projectGenerators.defaultPlugin.description
       </description>
    </wizard>
    <wizard
@@ -152,7 +152,7 @@
          class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
          id="org.eclipse.pde.projectGenerators.defaultFragment">
       <description>
-         Generates fragment.xml and initial structure
+         %projectGenerators.defaultFragment.description
       </description>
    </wizard>
 </extension>
