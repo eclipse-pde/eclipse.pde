@@ -89,7 +89,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private boolean fHasFragment_Xml;
 
-	private boolean fHasPlugin_Xml;
+	private boolean fHasExtensions;
 
 	private String fHostBundleId;
 
@@ -774,13 +774,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		readBundleManifestVersion();
-		fHasPlugin_Xml = fProject.getFile("plugin.xml").exists(); //$NON-NLS-1$
 		fHasFragment_Xml = fProject.getFile("fragment.xml").exists(); //$NON-NLS-1$
 
 		// sets fPluginId
 		if (!validateBundleSymbolicName()) {
 			return;
 		}
+		IPluginModelBase modelBase = PDECore.getDefault().getModelManager()
+				.findModel(fProject);
+		if (modelBase != null) {
+			fHasExtensions = modelBase.getPluginBase().getExtensionPoints().length > 0
+					|| modelBase.getPluginBase().getExtensions().length > 0;
+		}
+		
 		validateBundleVersion();
 		// sets fHostBundleId
 		validateFragmentHost();
@@ -1550,7 +1556,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message;
 		String singletonAttr = element
 				.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
-		if (fHasPlugin_Xml || fHasFragment_Xml) {
+		if (fHasExtensions) {
 			if (!fEclipse3_1) {
 				if (!"true".equals(singletonAttr)) { //$NON-NLS-1$
 					message = PDE
@@ -1579,7 +1585,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			ManifestElement element) {
 		String singletonDir = element
 				.getDirective(Constants.SINGLETON_DIRECTIVE);
-		if (fHasPlugin_Xml || fHasFragment_Xml) {
+		if (fHasExtensions) {
 			if (fEclipse3_1) {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
 					String message = PDE
