@@ -110,7 +110,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				|| hasSuperClass, true);
 	}
 	private IType findTypeForName(String typeName) throws JavaModelException {
-		if (typeName == null)
+		if (typeName == null || typeName.length() == 0)
 			return null;
 		IType type = null;
 		String fileName = typeName.replace('.', '/') + ".java";
@@ -193,8 +193,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
 				return;
 			}
-			String schemaBasedOn = null;
-			schemaBasedOn = attInfo.getBasedOn();
+			String schemaBasedOn = attInfo.getBasedOn();
 			if (schemaBasedOn == null || schemaBasedOn.length() == 0) {
 				initialValues.superClassName = "java.lang.Object";
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);
@@ -203,23 +202,23 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			int del = schemaBasedOn.indexOf(':');
 			if (del != -1) {
 				initialValues.superClassName = schemaBasedOn.substring(0, del);
+				initialValues.superClassType = findTypeForName(initialValues.superClassName);
 				initialValues.interfaceName = schemaBasedOn.substring(del + 1);
+				initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 			} else {
 				int schemaLoc = schemaBasedOn.lastIndexOf(".");
 				if (schemaLoc != -1 && schemaLoc < schemaBasedOn.length()) {
-					String name = schemaBasedOn.substring(schemaLoc + 1,
-							schemaBasedOn.length());
-					if (name.length() > 0 && name.startsWith("I"))
+					IType type = findTypeForName(schemaBasedOn);
+					if (type!=null && type.isInterface()){
 						initialValues.interfaceName = schemaBasedOn;
-					else if (name.length() > 0)
+						initialValues.interfaceType = type;
+					} else if (type!=null && type.isClass()) {
 						initialValues.superClassName = schemaBasedOn;
+						initialValues.superClassType = type;
+					}
 				}
 			}
-			initialValues.superClassType = findTypeForName(initialValues.superClassName);
-			if (initialValues.superClassType != null
-					&& initialValues.superClassType.isClass()
-					&& initialValues.interfaceName != null)
-				initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
+
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
@@ -245,4 +244,5 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			return "";
 		return initialValues.classArgs;
 	}
+
 }
