@@ -68,7 +68,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
