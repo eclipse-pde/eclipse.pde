@@ -124,6 +124,6 @@ public class PluginInputContext extends XMLInputContext {
 		fOperationTable.clear();
 		fMoveOperations.clear();
 		AbstractEditingModel model = (AbstractEditingModel)getModel();
-		model.fireModelChanged(new ModelChangedEvent(model, IModelChangedEvent.WORLD_CHANGED, new Object[] {model}, null));
+		model.reconciled(model.getDocument());
 	}
 }

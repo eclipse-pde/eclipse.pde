@@ -45,8 +45,8 @@ public abstract class InputContext {
 		public void elementContentAboutToBeReplaced(Object element) {
 		}
 		public void elementContentReplaced(Object element) {
-			//updateModel();
-			//editor.fireSaveNeeded();
+			doRevert();
+			editor.fireSaveNeeded(input, true);
 		}
 		public void elementDeleted(Object element) {
 		}
