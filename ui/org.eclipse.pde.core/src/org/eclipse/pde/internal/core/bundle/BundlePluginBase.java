@@ -369,7 +369,6 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(extension);
-		fireStructureChanged(extension, true);
 	}
 
 	/*
@@ -382,7 +381,6 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(point);
-		fireStructureChanged(point, true);
 	}
 
 	/*
@@ -425,7 +423,6 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extension);
-			fireStructureChanged(extension, false);
 		}
 	}
 
@@ -439,7 +436,6 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extensionPoint);
-			fireStructureChanged(extensionPoint, false);
 		}
 	}
 
@@ -454,7 +450,6 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.swap(e1, e2);
-			model.fireModelObjectChanged(this, P_EXTENSION_ORDER, e1, e2);
 		}
 	}
 	
