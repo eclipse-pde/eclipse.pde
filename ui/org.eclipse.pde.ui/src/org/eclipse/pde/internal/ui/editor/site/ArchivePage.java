@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class ArchivePage extends PDEFormPage {
 	public static final String PAGE_ID = "archives"; //$NON-NLS-1$
 	private DescriptionSection fDescSection;
+	private MirrorsSection fMirrorsSection;
 	private ArchiveSection fArchiveSection;
 	
 	public ArchivePage(PDEFormEditor editor) {
@@ -40,7 +41,11 @@ public class ArchivePage extends PDEFormPage {
 		fArchiveSection = new ArchiveSection(this, form.getBody());
 		fArchiveSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		fMirrorsSection = new MirrorsSection(this, form.getBody());
+		fMirrorsSection.getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		mform.addPart(fDescSection);
+		mform.addPart(fMirrorsSection);
 		mform.addPart(fArchiveSection);
 		
 		//WorkbenchHelp.setHelp(form.getBody(),

@@ -26,6 +26,7 @@ public class Site extends SiteObject implements ISite {
 	private Vector categoryDefs = new Vector();
 	private String type;
 	private String url;
+	private String mirrorsUrl;
 	private ISiteDescription description;
 
 	/**
@@ -50,9 +51,9 @@ public class Site extends SiteObject implements ISite {
 	 */
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
-		Object oldValue = this.type;
+		Object oldValue = this.url;
 		this.url = url;
-		firePropertyChanged(P_TYPE, oldValue, url);
+		firePropertyChanged(P_URL, oldValue, url);
 	}
 
 	/**
@@ -62,6 +63,23 @@ public class Site extends SiteObject implements ISite {
 		return url;
 	}
 
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setMirrorsURL(String)
+	 */
+	public void setMirrorsURL(String url) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.mirrorsUrl;
+		this.mirrorsUrl = url;
+		firePropertyChanged(P_MIRRORS_URL, oldValue, url);
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getMirrorsURL()
+	 */
+	public String getMirrorsURL() {
+		return mirrorsUrl;
+	}
+	
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getDescription()
 	 */
@@ -77,7 +95,7 @@ public class Site extends SiteObject implements ISite {
 		ensureModelEditable();
 		Object oldValue = this.description;
 		this.description = description;
-		firePropertyChanged(P_TYPE, oldValue, description);
+		firePropertyChanged(P_DESCRIPTION, oldValue, description);
 	}
 
 	/**
@@ -191,10 +209,12 @@ public class Site extends SiteObject implements ISite {
 		description = null;
 		type = null;
 		url = null;
+		mirrorsUrl = null;
 	}
 	protected void parse(Node node, Hashtable lineTable) {
 		type = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
+		mirrorsUrl = getNodeAttribute(node, "mirrorsURL"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -237,6 +257,8 @@ public class Site extends SiteObject implements ISite {
 			setType(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
+		} else if (name.equals(P_MIRRORS_URL)) {
+			setMirrorsURL(newValue != null ? newValue.toString() : null);
 		} else if (
 			name.equals(P_DESCRIPTION)
 				&& newValue instanceof ISiteDescription) {
@@ -250,10 +272,10 @@ public class Site extends SiteObject implements ISite {
 		String indenta = indent + INDENT + INDENT;
 		writeIfDefined(indenta, writer, "type", getType()); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "url", getURL()); //$NON-NLS-1$
+		writeIfDefined(indenta, writer, "mirrorsURL", getMirrorsURL()); //$NON-NLS-1$
 		writer.println(">"); //$NON-NLS-1$
 
 		if (description != null) {
-			writer.println();
 			description.write(indent2, writer);
 		}
 		writeChildren(indent2, features, writer);
@@ -294,9 +316,10 @@ public class Site extends SiteObject implements ISite {
 		PrintWriter writer,
 		String attName,
 		String attValue) {
-		if (attValue == null)
+		if (attValue == null || attValue.length() <= 0)
 			return;
 		writer.println();
 		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
 }

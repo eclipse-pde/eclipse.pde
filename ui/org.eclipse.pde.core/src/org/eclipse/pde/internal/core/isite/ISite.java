@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.*;
 public interface ISite extends ISiteObject {
 	String P_URL = "URL"; //$NON-NLS-1$
 
+	String P_MIRRORS_URL = "mirrorsURL"; //$NON-NLS-1$
+
 	String P_TYPE = "type"; //$NON-NLS-1$
 
 	String P_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -28,7 +30,11 @@ public interface ISite extends ISiteObject {
 
 	void setURL(String url) throws CoreException;
 
+	void setMirrorsURL(String url) throws CoreException;
+
 	String getURL();
+
+	String getMirrorsURL();
 
 	ISiteDescription getDescription();
 

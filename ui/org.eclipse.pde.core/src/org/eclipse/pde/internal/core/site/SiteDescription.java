@@ -87,9 +87,12 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 	}
 	
 	public void write(String indent, PrintWriter writer) {
+		if ((url == null || url.length() <= 0)
+				&& (text == null || text.trim().length() <= 0))
+			return;
 		writer.print(indent);
 		writer.print("<description"); //$NON-NLS-1$
-		if (url!=null)
+		if (url != null && url.length() > 0)
 			writer.print(" url=\""+url+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(">"); //$NON-NLS-1$
 		if (text!=null) {
