@@ -426,9 +426,14 @@ public class LogView extends ViewPart implements ILogListener {
 				if (inputFile.exists()){
 					boolean canLaunch = Program.launch(inputFile.getAbsolutePath());
 					if (!canLaunch){
-						OpenLogDialog openDialog = new OpenLogDialog(tableTreeViewer.getControl().getShell(), inputFile);
-						openDialog.create();
-						openDialog.open();
+						Program p = Program.findProgram (".txt"); //$NON-NLS-1$
+						if (p != null) 
+							p.execute (inputFile.getAbsolutePath());
+						else {
+							OpenLogDialog openDialog = new OpenLogDialog(tableTreeViewer.getControl().getShell(), inputFile);
+							openDialog.create();
+							openDialog.open();
+						}
 					}
 				}
 			}
