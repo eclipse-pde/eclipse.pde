@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -54,6 +55,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -326,9 +328,14 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
                 switch (event.getChangeType()) {
                     case IModelChangedEvent.INSERT:
                         fPackageViewer.add(object);
+                        fPackageViewer.setSelection(new StructuredSelection(object));
+                        fPackageViewer.getTable().setFocus();
                         break;
                     case IModelChangedEvent.REMOVE:
+                        Table table = fPackageViewer.getTable();
+                        int index = table.getSelectionIndex();
                         fPackageViewer.remove(object);
+                        table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
                         break;
                     default:
                         fPackageViewer.refresh(object);
