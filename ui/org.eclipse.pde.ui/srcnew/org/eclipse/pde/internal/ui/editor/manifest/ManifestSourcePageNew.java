@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.manifest;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.update.ui.forms.internal.IFormPage;
 
-public class ManifestSourcePageNew extends ManifestSourcePage {
+public class ManifestSourcePageNew extends ManifestSourcePage implements IPDEColorConstants {
 	class SelectionChangedListener  implements ISelectionChangedListener {
 		public void selectionChanged(SelectionChangedEvent event) {
 			doSelectionChanged(event);
@@ -35,6 +40,7 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 
 	public ManifestSourcePageNew(ManifestEditor editor) {
 		super(editor);
+		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 	}
 	
 	protected void initializeViewerConfiguration() {
@@ -184,6 +190,24 @@ public class ManifestSourcePageNew extends ManifestSourcePage {
 	
 	public boolean containsError() {
 		return getEditor().containsError();
+	}
+	
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		if (isColorProperty(event.getProperty())) {
+			colorManager.dispose();
+			colorManager = new ColorManager();
+			setSourceViewerConfiguration(new XMLViewerConfiguration(this, colorManager));
+			getSourceViewer().configure(getSourceViewerConfiguration());
+			try {
+				doSetInput(getEditorInput());
+			} catch (CoreException e) {
+			}
+		}
+		super.handlePreferenceStoreChanged(event);
+	}
+	
+	private boolean isColorProperty(String property) {
+		return property.equals(P_DEFAULT) || property.equals(P_PROC_INSTR) || property.equals(P_STRING) || property.equals(P_TAG) || property.equals(XML_COMMENT);
 	}
 
 }
