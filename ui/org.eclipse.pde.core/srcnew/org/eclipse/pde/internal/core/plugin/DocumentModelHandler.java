@@ -161,7 +161,7 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 	private void createTextDocument(InputStream stream) {
 		try {
 			BufferedReader reader =
-			new BufferedReader(new InputStreamReader(stream));
+			new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 			StringBuffer buffer = new StringBuffer();
 			while (reader.ready()) {
 				buffer.append((char)reader.read());
