@@ -11,9 +11,10 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
@@ -22,8 +23,6 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.osgi.framework.*;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
@@ -149,11 +148,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion  
 	private Dictionary basicLoadManifest(File bundleLocation) {
 		InputStream manifestStream = null;
+		ZipFile jarFile = null;
 		try {
-			URL manifestLocation = null;
-			if (bundleLocation.getName().endsWith("jar")) { //$NON-NLS-1$
-				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + JarFile.MANIFEST_NAME); //$NON-NLS-1$//$NON-NLS-2$
-				manifestStream = manifestLocation.openStream();
+			if ("jar".equalsIgnoreCase(new Path(bundleLocation.getName()).getFileExtension()) && bundleLocation.isFile()) { //$NON-NLS-1$
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+				if (manifestEntry != null) {
+					manifestStream = jarFile.getInputStream(manifestEntry);
+				}
 			} else {
 				manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME));
 			}
@@ -179,6 +181,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				try {
 					manifestStream.close();
 				} catch (IOException e1) {
+					//Ignore
+				}
+				try {
+					if (jarFile != null)
+						jarFile.close();
+				} catch (IOException e2) {
 					//Ignore
 				}
 			}
