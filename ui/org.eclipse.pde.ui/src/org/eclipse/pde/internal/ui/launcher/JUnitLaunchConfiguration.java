@@ -43,7 +43,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throws CoreException {
 		try {
 			fConfigDir = null;
-			monitor.beginTask("", 4); //$NON-NLS-1$
+			monitor.beginTask("", 6); //$NON-NLS-1$
 			IJavaProject javaProject = getJavaProject(configuration);
 			if ((javaProject == null) || !javaProject.exists()) {
 				abort(PDEPlugin.getResourceString("JUnitLaunchConfiguration.error.invalidproject"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
@@ -54,13 +54,19 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			}
 			monitor.worked(1);
 			
+			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
+			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
+				monitor.setCanceled(true);
+				return;
+			}
+
+			if (configuration.getAttribute(CONFIG_CLEAR, false))
+				LauncherUtils.clearConfigArea(getConfigDir(configuration), new SubProgressMonitor(monitor, 1));
+			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
+			
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 
-			if (configuration.getAttribute(CONFIG_CLEAR, false))
-				LauncherUtils.clearConfigArea(getConfigDir(configuration));
-			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
-			
 			int port = SocketUtil.findFreePort();
 			VMRunnerConfiguration runnerConfig =
 				createVMRunner(configuration, testTypes, port, mode);
@@ -70,12 +76,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			} 
 			monitor.worked(1);
 			
-			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
-			if (!LauncherUtils.clearWorkspace(configuration, workspace)) {
-				monitor.setCanceled(true);
-				return;
-			}
-
 			setDefaultSourceLocator(launch, configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
 			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());

@@ -42,28 +42,32 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		throws CoreException {
 		try {
 			fConfigDir = null;
-			monitor.beginTask("", 3); //$NON-NLS-1$
+			monitor.beginTask("", 5); //$NON-NLS-1$
 			
+			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+			// Clear workspace and prompt, if necessary
+			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
+				monitor.setCanceled(true);
+				return;
+			}
+
+			// clear config area, if necessary
+			if (configuration.getAttribute(CONFIG_CLEAR, false))
+				LauncherUtils.clearConfigArea(getConfigDir(configuration), new SubProgressMonitor(monitor, 1));
+			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
+			
+			// create launcher
 			IVMInstall launcher = LauncherUtils.createLauncher(configuration);
 			monitor.worked(1);
 			
-			if (configuration.getAttribute(CONFIG_CLEAR, false))
-				LauncherUtils.clearConfigArea(getConfigDir(configuration));
-			launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, getConfigDir(configuration).toString());
-			
+			// load the arguments on the launcher
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration);
 			if (runnerConfig == null) {
 				monitor.setCanceled(true);
 				return;
 			} 
 			monitor.worked(1);
-			
-			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
-			if (!LauncherUtils.clearWorkspace(configuration, workspace)) {
-				monitor.setCanceled(true);
-				return;
-			}
-				
+						
 			LauncherUtils.setDefaultSourceLocator(configuration, launch);
 			PDEPlugin.getDefault().getLaunchesListener().manage(launch);
 			launcher.getVMRunner(mode).run(runnerConfig, launch, monitor);		

@@ -448,24 +448,27 @@ public class LauncherUtils {
 			wc.doSave();
 	}
 	
-	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace) throws CoreException {
+	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 		File workspaceFile = new Path(workspace).toFile();
 		if (configuration.getAttribute(ILauncherSettings.DOCLEAR, false) && workspaceFile.exists()) {
 			boolean doClear = !configuration.getAttribute(ILauncherSettings.ASKCLEAR, true);
 			if (!doClear) {
 				int result = confirmDeleteWorkspace(workspaceFile);
-				if (result == 2)
+				if (result == 2) {
+					monitor.done();
 					return false;
+				}
 				doClear = result == 0;
 			}
 			if (doClear) {
 				try {
-					deleteContent(workspaceFile);
+					deleteContent(workspaceFile, monitor);
 				} catch (IOException e) {
 					showWarningDialog(PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING));
 				}
 			}
 		}
+		monitor.done();
 		return true;
 	}
 	
@@ -511,29 +514,26 @@ public class LauncherUtils {
 		return dir;		
 	}
 
-	public static void clearConfigArea(File configDir) {
+	public static void clearConfigArea(File configDir, IProgressMonitor monitor) {
 		try {
-			File[] files = configDir.listFiles();
-			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					deleteContent(files[i]);		
-				}
-			}
+			deleteContent(configDir, monitor);
 		} catch (IOException e) {
 			showWarningDialog(PDEPlugin.getResourceString("LauncherUtils.problemsDeletingConfig")); //$NON-NLS-1$
 		}
 	}
 	
-	private static void deleteContent(File curr) throws IOException {
+	private static void deleteContent(File curr, IProgressMonitor monitor) throws IOException {
 		if (curr.isDirectory()) {
 			File[] children = curr.listFiles();
 			if (children != null) {
+				monitor.beginTask("", children.length); //$NON-NLS-1$
 				for (int i = 0; i < children.length; i++) {
-					deleteContent(children[i]);
+					deleteContent(children[i], new SubProgressMonitor(monitor, 1));
 				}
 			}
 		}
 		curr.delete();
+		monitor.done();
 	}
 	
 	public static String getTracingFileArgument(
