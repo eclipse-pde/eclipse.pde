@@ -108,6 +108,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 			}
 		};
 	}
+
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -367,7 +368,8 @@ public class JavaAttributeWizardPage extends WizardPage {
 		monitor.subTask(PDEPlugin.getFormattedMessage(KEY_GENERATING, className));
 		IFile file = generator.generate(monitor);
 		if (file != null) {
-			createTask(file);
+			//Using Java todo support instead 
+			//createTask(file);
 			if (openFile) {
 				IWorkbenchPage page = PDEPlugin.getActivePage();
 				page.openEditor(file);

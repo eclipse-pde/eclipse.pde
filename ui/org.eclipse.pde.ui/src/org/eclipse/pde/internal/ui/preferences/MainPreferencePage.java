@@ -33,6 +33,11 @@ public class MainPreferencePage
 		"Preferences.MainPage.useFullNames";
 	private static final String KEY_BUILD_SCRIPT_NAME =
 		"Preferences.MainPage.buildScriptName";
+	
+	private static final String KEY_CODE_GENERATION =
+		"Preferences.MainPage.codeGeneration";
+	private static final String KEY_ADD_TODO = 
+		"Preferences.MainPage.addTodo";
 
 	public static final String PROP_SHOW_OBJECTS =
 		"Preferences.MainPage.showObjects";
@@ -40,10 +45,13 @@ public class MainPreferencePage
 	public static final String VALUE_USE_NAMES = "useNames";
 	public static final String PROP_BUILD_SCRIPT_NAME =
 		"Preferences.MainPage.buildScriptName";
+	public static final String PROP_ADD_TODO = 
+		"Preferences.MainPage.addTodo";
 
 	private Button useID;
 	private Button useName;
 	private Text buildText;
+	private Button addTodo;
 	
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -55,6 +63,7 @@ public class MainPreferencePage
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
 		store.setDefault(PROP_BUILD_SCRIPT_NAME, "build.xml");
+		store.setDefault(PROP_ADD_TODO, "true");
 	}
 
 	protected Control createContents(Composite parent) {
@@ -94,6 +103,15 @@ public class MainPreferencePage
 		buildText.setText(store.getString(PROP_BUILD_SCRIPT_NAME));
 		buildText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		group = new Group(composite, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText(PDEPlugin.getResourceString(KEY_CODE_GENERATION));
+		group.setLayout(new GridLayout());
+		
+		addTodo = new Button(group, SWT.CHECK);
+		addTodo.setText(PDEPlugin.getResourceString(KEY_ADD_TODO));
+		addTodo.setSelection(store.getBoolean(PROP_ADD_TODO));
+
 		return composite;		
 	}
 	
@@ -114,6 +132,12 @@ public class MainPreferencePage
 		initializeDefaults();
 		return store.getString(PROP_BUILD_SCRIPT_NAME);
 	}
+	
+	public static boolean getAddTodo() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		initializeDefaults();
+		return store.getString(PROP_ADD_TODO).equals("true");
+	}	
 
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
@@ -123,6 +147,7 @@ public class MainPreferencePage
 			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
 		}
 		store.setValue(PROP_BUILD_SCRIPT_NAME, buildText.getText());
+		store.setValue(PROP_ADD_TODO, addTodo.getSelection()?"true":"false");
 		
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
@@ -138,6 +163,7 @@ public class MainPreferencePage
 			useName.setSelection(true);
 		}
 		buildText.setText(store.getDefaultString(PROP_BUILD_SCRIPT_NAME));
+		addTodo.setSelection(store.getDefaultBoolean(PROP_ADD_TODO));
 	}
 
 	/**
