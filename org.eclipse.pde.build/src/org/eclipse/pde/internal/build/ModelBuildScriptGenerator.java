@@ -32,6 +32,9 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	/** constants */
 	protected static final String FULL_NAME = getPropertyFormat(PROPERTY_FULL_NAME);
 	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
+	protected static final String PLUGIN_DESTINATION = getPropertyFormat(PROPERTY_PLUGIN_DESTINATION);
+	protected static final String PLUGIN_ZIP_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".zip";
+	protected static final String PLUGIN_UPDATE_JAR_DESTINATION = PLUGIN_DESTINATION + "/" + FULL_NAME + ".jar";
 
 /**
  * @see AbstractScriptGenerator#generate()
@@ -90,13 +93,12 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	for (int i = 0; i < availableJars.length; i++) {
 		String jarName = availableJars[i].getName();
-		String name = getJARLocation(jarName);
-		script.printDeleteTask(tab, null, name, null);
-		script.printDeleteTask(tab, null, getLogName(name), null);
-		script.printDeleteTask(tab, null, getSRCName(name), null);
+		script.printDeleteTask(tab, null, getJARLocation(jarName), null);
+		script.printDeleteTask(tab, null, getLogLocation(jarName), null);
+		script.printDeleteTask(tab, null, getSRCLocation(jarName), null);
 	}
-	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + ".jar").toString(), null);
-	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + ".zip").toString(), null);
+	script.printDeleteTask(tab, null, PLUGIN_UPDATE_JAR_DESTINATION, null);
+	script.printDeleteTask(tab, null, PLUGIN_ZIP_DESTINATION, null);
 	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_SRC).toString(), null);
 	script.printDeleteTask(tab, null, basedir.append(FULL_NAME + DEFAULT_FILENAME_LOG).toString(), null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
@@ -106,11 +108,10 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
@@ -120,7 +121,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 			script.printMkdirTask(tab, destination.toString());
 			destinations.add(destination);
 		}
-		script.printCopyTask(tab, baseSource.append(name + ".bin.log").toString(), destination.toString(), null);
+		script.printCopyTask(tab, name + ".bin.log", destination.toString(), null);
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 }
@@ -142,22 +143,20 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 protected void generateGatherSourcesTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
 		String jar = availableJars[i].getName();
-		String zip = getSRCName(jar);
 		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(destination)) {
 			script.printMkdirTask(tab, destination.toString());
 			destinations.add(destination);
 		}
-		script.printCopyTask(tab, baseSource.append(zip).toString(), destination.toString(), null);
+		script.printCopyTask(tab, getSRCLocation(jar), destination.toString(), null);
 	}
 	String include = (String) getBuildProperties(model).get(PROPERTY_SRC_INCLUDES);
 	String exclude = (String) getBuildProperties(model).get(PROPERTY_SRC_EXCLUDES);
@@ -172,11 +171,24 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 protected void generateGatherBinPartsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 	destination = destination.append(FULL_NAME);
 	String root = destination.toString();
 	script.printMkdirTask(tab, root);
+	List destinations = new ArrayList(5);
+	destinations.add(destination);
+	Properties properties = getBuildProperties(model);
+	JAR[] availableJars = extractJars(properties);
+	for (int i = 0; i < availableJars.length; i++) {
+		String jar = availableJars[i].getName();
+		IPath dest = destination.append(jar).removeLastSegments(1); // remove the jar name
+		if (!destinations.contains(dest)) {
+			script.printMkdirTask(tab, dest.toString());
+			destinations.add(dest);
+		}
+		script.printCopyTask(tab, getJARLocation(jar), dest.toString(), null);
+	}
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(model).get(PROPERTY_BIN_EXCLUDES);
 	if (include != null || exclude != null) {
@@ -190,18 +202,17 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, null);
-	IPath basedir = new Path(BASEDIR);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, TEMP_FOLDER);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	script.printAntCallTask(tab, TARGET_BUILD_SOURCES, null, null);
 	Map params = new HashMap(1);
-	params.put(PROPERTY_DESTINATION, TEMP_FOLDER + "/");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/");
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	FileSet fileSet = new FileSet(TEMP_FOLDER, null, "**/*.bin.log", null, null, null, null);
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
-	script.printZipTask(tab, basedir.append(FULL_NAME + ".zip").toString(), TEMP_FOLDER, false, null);
+	script.printZipTask(tab, PLUGIN_ZIP_DESTINATION, TEMP_FOLDER, false, null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printString(--tab, "</target>");
 }
@@ -215,9 +226,9 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printMkdirTask(tab, TEMP_FOLDER);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	Map params = new HashMap(1);
-	params.put(PROPERTY_DESTINATION, TEMP_FOLDER + "/");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, TEMP_FOLDER + "/");
 	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
-	script.printZipTask(tab, BASEDIR + "/" + FULL_NAME + ".jar", TEMP_FOLDER + "/" + FULL_NAME, false, null);
+	script.printZipTask(tab, PLUGIN_UPDATE_JAR_DESTINATION, TEMP_FOLDER + "/" + FULL_NAME, false, null);
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printString(--tab, "</target>");
 }
@@ -256,6 +267,8 @@ protected void generatePrologue(AntScript script) {
 	script.printProperty(tab, PROPERTY_VERSION_SUFFIX, "_" + model.getVersion());
 	script.printProperty(tab, PROPERTY_FULL_NAME, getPropertyFormat(getModelTypeName()) + getPropertyFormat(PROPERTY_VERSION_SUFFIX));
 	script.printProperty(tab, PROPERTY_TEMP_FOLDER, BASEDIR + "/" + PROPERTY_TEMP_FOLDER);
+	script.printProperty(tab, PROPERTY_PLUGIN_DESTINATION, BASEDIR);
+	script.printProperty(tab, PROPERTY_BUILD_RESULT_FOLDER, BASEDIR);
 	script.printString(--tab, "</target>");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);

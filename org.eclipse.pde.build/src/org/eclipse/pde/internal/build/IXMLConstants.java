@@ -66,9 +66,10 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BUILD_COMPILER = "build.compiler";
 	public static final String PROPERTY_BUILD_ID = "build.id";
 	public static final String PROPERTY_BUILD_QUALIFIER = "build.qualifier";
+	public static final String PROPERTY_BUILD_RESULT_FOLDER = "build.result.folder";
 	public static final String PROPERTY_BUILD_TYPE = "build.type";
 	public static final String PROPERTY_CUSTOM = "custom";
-	public static final String PROPERTY_DESTINATION = "destination";
+	public static final String PROPERTY_DESTINATION_TEMP_FOLDER = "destination.temp.folder";
 	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
@@ -87,6 +88,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_QUIET = "quiet";
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
+	public static final String PROPERTY_PLUGIN_DESTINATION = "plugin.destination";
 	public static final String PROPERTY_TARGET = "target";
 	public static final String PROPERTY_TEMP_FOLDER = "temp.folder";
 	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix";

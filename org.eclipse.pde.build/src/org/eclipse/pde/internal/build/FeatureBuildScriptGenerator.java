@@ -190,7 +190,7 @@ protected void generateZipLogsTarget(AntScript script) {
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-	params.put(PROPERTY_DESTINATION, new Path(FEATURE_TEMP_FOLDER).append("plugins").toString());
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(FEATURE_TEMP_FOLDER).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
 	IPath destination = new Path(FEATURE_DESTINATION).append(FEATURE_FULL_NAME + ".log.zip");
 	script.printZipTask(tab, destination.toString(), FEATURE_TEMP_FOLDER, true, null);
@@ -206,7 +206,7 @@ protected void generateZipSourcesTarget(AntScript script) {
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-	params.put(PROPERTY_DESTINATION, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src");
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src");
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printZipTask(tab, FEATURE_DESTINATION + "/" + FEATURE_FULL_NAME + ".src.zip", FEATURE_TEMP_FOLDER, true, null);
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
@@ -218,7 +218,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
-	params.put(PROPERTY_DESTINATION, new Path(getPropertyFormat(PROPERTY_FEATURE_BASE)).append("plugins").toString());
+	params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(getPropertyFormat(PROPERTY_FEATURE_BASE)).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String include = (String) getBuildProperties(feature).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(feature).get(PROPERTY_BIN_EXCLUDES);
@@ -330,7 +330,7 @@ protected void generateEpilogue(AntScript script) {
  */
 protected void generatePrologue(AntScript script) {
 	int tab = 1;
-	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_INIT, ".");
+	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, ".");
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());

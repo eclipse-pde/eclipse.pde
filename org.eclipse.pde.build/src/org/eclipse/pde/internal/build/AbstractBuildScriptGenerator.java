@@ -71,6 +71,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	
 	/** constants */
 	protected static final String BASEDIR = getPropertyFormat(PROPERTY_BASEDIR);
+	protected static final String BUILD_RESULT_FOLDER = getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER);
 
 public AbstractBuildScriptGenerator() {
 	buildProperties = new HashMap();
@@ -360,14 +361,13 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
-	String zip = getSRCName(name);
-	script.printTargetDeclaration(tab++, zip, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, getSRCName(name), TARGET_INIT, null, null, null);
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null);
 	}
-	script.printZipTask(tab, zip, null, false, fileSets);
+	script.printZipTask(tab, getSRCLocation(name), null, false, fileSets);
 	script.printEndTag(--tab, "target");
 }
 
@@ -375,14 +375,18 @@ protected String getSRCName(String jarName) {
 	return jarName.substring(0, jarName.length() - 4) + "src.zip";
 }
 
-protected String getLogName(String jarName) {
-	return jarName + ".bin.log";
+protected String getLogLocation(String jarName) {
+	return getJARLocation(jarName) + ".bin.log";
 }
 
 protected String getJARLocation(String jarName) {
-	IPath destination = new Path(BASEDIR);
+	IPath destination = new Path(BUILD_RESULT_FOLDER);
 	destination = destination.append(jarName);
 	return destination.toString();
+}
+
+protected String getSRCLocation(String jarName) {
+	return getSRCName(getJARLocation(jarName));
 }
 
 protected String getTempJARFolderLocation(String jarName) {
@@ -550,10 +554,4 @@ protected void updateVersion(File buildFile, String propertyName, String version
 	buffer.replace(begin, end, newVersion);
 	Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
 }
-
-
-
-
-
-
 }
