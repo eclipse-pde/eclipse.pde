@@ -95,7 +95,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (computedElements != null)
 			return computedElements;
 		
-		List result = new ArrayList(5);
+		computedElements = new ArrayList(5);
 		IPluginEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			IPluginEntry entry = pluginList[i];
@@ -117,11 +117,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			
 			associateModelAndEntry(model, entry);
 			
-			result.add(model);
+			computedElements.add(model);
 			collectElementToAssemble(pluginList[i]);
 			collectSourcePlugins(pluginList[i], model);
 		}
-		return result;
+		return computedElements;
 	}
 
 	private void associateModelAndEntry(BundleDescription model, IPluginEntry entry) {
