@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -295,8 +296,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
-		IPlatformConfiguration platformConfiguration =
-			new PlatformConfiguration(null);
+		IPlatformConfiguration platformConfiguration = null;
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+			platformConfiguration = BootLoader.getPlatformConfiguration(null);
+		else
+			platformConfiguration = new PlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
 		createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
