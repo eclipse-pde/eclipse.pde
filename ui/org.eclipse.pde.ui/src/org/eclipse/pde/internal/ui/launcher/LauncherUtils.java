@@ -265,10 +265,11 @@ public class LauncherUtils {
 		// Look for boot path.  Cancel launch, if not found.
 		bootPath = getBootPath(bootModel);
 		if (bootPath == null) {
-			getDisplay().syncExec(new Runnable() {
+			final Display display = getDisplay();
+			display.syncExec(new Runnable() {
 				public void run() {
 					MessageDialog.openError(
-						getDisplay().getActiveShell(),
+						display.getActiveShell(),
 						PDEPlugin.getResourceString(KEY_TITLE),
 						PDEPlugin.getResourceString(KEY_NO_BOOT));
 				}
