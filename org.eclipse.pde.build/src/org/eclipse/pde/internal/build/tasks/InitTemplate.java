@@ -10,12 +10,13 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.IPDECoreConstants;
 import org.eclipse.pde.internal.core.Policy;
 /**
  * Set's a property defining the location of the template.xml file.
  */
-public class InitTemplate extends Task implements IPDECoreConstants {
+public class InitTemplate extends Task implements IPDECoreConstants, IXMLConstants {
 
 public InitTemplate() {
 	super();
@@ -28,7 +29,7 @@ public void execute() throws BuildException {
 	try {
 		String location = Platform.resolve(plugin.getInstallURL()).getFile();
 		location = new File(location, "template.xml").getAbsolutePath();
-		project.setProperty("template", location);
+		project.setProperty(PROPERTY_TEMPLATE, location);
 	} catch (IOException e) {
 		throw new BuildException(Policy.bind("exception.missingTemplate"));
 	}

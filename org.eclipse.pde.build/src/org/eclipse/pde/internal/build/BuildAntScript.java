@@ -50,6 +50,14 @@ public void printZipTask(int tab, String zipFile, String basedir) {
 		super.printZipTask(tab, zipFile, basedir);
 }
 
+public void printPluginLocationDeclaration(int tab, String plugin, String property) {
+	printTab(tab);
+	output.print("<pluginLocation");
+	printAttribute("plugin", plugin, true);
+	printAttribute("property", property, true);
+	output.println("/>");
+}
+
 /**
  * Sets the jarExternal.
  */

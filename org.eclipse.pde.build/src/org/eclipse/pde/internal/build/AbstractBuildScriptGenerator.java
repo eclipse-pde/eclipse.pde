@@ -49,6 +49,12 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 */
 	private Properties buildProperties;
 	private Map conditionalProperties;
+
+	/**
+	 * Contains the entries of <pluginLocation /> tasks.
+	 */
+	protected Map pluginLocations;
+
 	
 protected void readProperties(String root) {
 	try {
@@ -175,23 +181,13 @@ protected PluginRegistryModel getRegistry() throws CoreException {
 		Factory factory = new Factory(problems);
 		registry = Platform.parsePlugins(pluginPath, factory);
 		IStatus status = factory.getStatus();
-		if (contains(status, IStatus.ERROR))
+		if (Utils.contains(status, IStatus.ERROR))
 			throw new CoreException(status);
 	}
 	return registry;
 }
 
-protected boolean contains(IStatus status, int severity) {
-	if (status.matches(severity))
-		return true;
-	if (status.isMultiStatus()) {
-		IStatus[] children = status.getChildren();
-		for (int i = 0; i < children.length; i++)
-			if (contains(children[i], severity))
-				return true;
-	}
-	return false;
-}
+
 protected URL[] getPluginPath() {
 	// Get the plugin path if one was spec'd.
 	if (pluginPath != null)
@@ -230,22 +226,6 @@ protected String getModelLocation(PluginModel descriptor) {
 }
 
 
-/**
- * Makes a full path relative to an Ant property. For example:
- * 	property = ${install}
- * 	fullPath = c:\temp\my\path
- * 	pathToTrim = c:\temp
- * The result will be ${install}/my/path
- */
-protected String makeRelative(String property, String fullPath, String pathToTrim) {
-	IPath prefix = new Path(pathToTrim);
-	IPath full = new Path(fullPath);
-	if (!prefix.isPrefixOf(full))
-		return fullPath;
-	IPath result = new Path(property);
-	result = result.append(full.removeFirstSegments(prefix.segmentCount()));
-	return result.toString();
-}
 
 	
 
@@ -258,5 +238,18 @@ protected String makeRelative(String property, String fullPath, String pathToTri
 public void setPluginPath(URL[] pluginPath) {
 	this.pluginPath = pluginPath;
 }
+
+protected String getPluginLocationProperty(String pluginId) {
+	String location = (String) pluginLocations.get(pluginId);
+	if (location != null)
+		return location;
+	StringBuffer sb = new StringBuffer();
+	sb.append("${location.");
+	sb.append(pluginId);
+	sb.append("}");
+	pluginLocations.put(pluginId, "location." + pluginId);
+	return sb.toString();
+}
+
 
 }

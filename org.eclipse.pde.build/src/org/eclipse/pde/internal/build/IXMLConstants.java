@@ -52,6 +52,7 @@ public interface IXMLConstants {
 	// properties
 	public static final String PROPERTY_ARCH = "arch";
 	public static final String PROPERTY_BASE = "base";
+	public static final String PROPERTY_BASEDIR = "basedir";
 	public static final String PROPERTY_BIN_EXCLUDES = "bin.excludes";
 	public static final String PROPERTY_BIN_INCLUDES = "bin.includes";
 	public static final String PROPERTY_BUILD_ID = "build.id";

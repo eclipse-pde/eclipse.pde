@@ -59,6 +59,8 @@ public void generate() throws CoreException {
 	if (custom != null && custom.equalsIgnoreCase("true"))
 		return;
 
+	pluginLocations = new HashMap(20);
+	computeJarDefinitions(); // FIXME: this is a hack. It should be transparent. 
 	try {
 		File root = new File(getModelLocation(model));
 		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
@@ -79,8 +81,7 @@ public void generate() throws CoreException {
  */
 protected void generateBuildScript() throws CoreException {
 	generatePrologue();
-	generatePropertiesTarget();
-	generateUpdateJarTarget();
+	generateBuildUpdateJarTarget();
 	generateGatherBinPartsTarget();
 	generateBuildJarsTarget();
 	generateBuildZipsTarget();
@@ -88,6 +89,7 @@ protected void generateBuildScript() throws CoreException {
 	generateBuildSourcesTarget();
 	generateGatherLogTarget();
 	generateCleanTarget();
+	generatePropertiesTarget();
 	generateEpilogue();
 }
 
@@ -105,7 +107,7 @@ protected void generateCleanTarget() {
 	}
 	String compiledJars = getStringFromCollection(jars, "", "", ",");
 	String sourceZips = getStringFromCollection(zips, "", "", ",");
-	String basedir = getRelativeInstallLocation().toString();
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
 	List fileSet = new ArrayList(5);
 	if (compiledJars.length() > 0) {
 		fileSet.add(new FileSet(basedir, null, "*.bin", null, null, null, null));
@@ -129,8 +131,7 @@ protected void generateGatherLogTarget() {
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	baseSource = baseSource.append(getDirectoryName());
+	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		String jar = (String) i.next();
 		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
@@ -160,10 +161,12 @@ protected void generateBuildSourcesTarget() throws CoreException {
 }
 
 protected void generateSourceIndividualTarget(String relativeJar, String target) throws CoreException {
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	destination = destination.append(target);
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, target, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, target, TARGET_INIT, null, null, null);
 	String fullJar = null;
 	try {
 		fullJar = new URL(model.getLocation() + relativeJar).getFile();
@@ -190,13 +193,11 @@ protected void generateSourceIndividualTarget(String relativeJar, String target)
 		if (exclusions == null)
 			exclusions = ""; // FIXME: why empty???
 		properties.put("excludes", exclusions);
-		IPath destination = getRelativeInstallLocation();
-		destination = destination.append(target);
 		properties.put("dest", destination.toString());
-		script.printAntTask(tab, "${template}", null, TARGET_SRC, null, null, properties);
+		properties.put("basedir", basedir);
+		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 /**
@@ -206,8 +207,7 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	IPath root = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	root = root.append(getDirectoryName());
+	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
 	script.printString(--tab, "</target>");
 }
@@ -231,8 +231,7 @@ protected void generateGatherSourcesTarget() {
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	baseSource = baseSource.append(getDirectoryName());
+	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		String jar = (String) i.next();
 		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
@@ -265,8 +264,7 @@ protected void generateBuildJarsTarget() throws CoreException {
 protected void generateJarIndividualTarget(String jarName) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, jarName, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, jarName, TARGET_INIT, null, null, null);
 	String fullJar = null;
 	try {
 		fullJar = new URL(model.getLocation() + jarName).getFile();
@@ -288,28 +286,21 @@ protected void generateJarIndividualTarget(String jarName) throws CoreException 
 		properties.put("mapping", mapping);
 		properties.put("includes", src);
 		properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-		IPath destination = getRelativeInstallLocation();
+		String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+		IPath destination = new Path(basedir);
 		destination = destination.append(jarName);
 		properties.put("dest", destination.toString());
 		properties.put("compilePath", compilePath);
-		script.printAntTask(tab, "${template}", null, TARGET_JAR, null, null, properties);
+		properties.put("basedir", basedir);
+		script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 
-protected IPath getRelativeInstallLocation() {
-	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	destination = destination.append(getDirectoryName());
-	return destination;
-}
 
 /**
- * FIXME: 
- *		+ add comments
- * 		+ figure out if this is the best way of using dev entries
- *			+ what if boot and runtime are not compiled?
+ * FIXME: add comments
  */
 protected String computeCompilePathClause(String fullJar) throws CoreException {
 	List jars = new ArrayList(9);
@@ -317,18 +308,16 @@ protected String computeCompilePathClause(String fullJar) throws CoreException {
 	if (runtime == null)
 		throw new CoreException(new Status(IStatus.WARNING, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null));
 	else {
-		String runtimeLocation = getModelLocation(runtime);
+		IPath runtimeLocation = new Path(getPluginLocationProperty(PI_RUNTIME));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, runtimeLocation + i.next());
-		addEntry(jars, runtimeLocation + PI_RUNTIME_JAR_NAME);
-		// The boot jar must be located relative to the runtime jar.
-		// This reflects the actual runtime requirements.
-		String pluginsLocation = new Path(runtimeLocation).removeLastSegments(1).toString();
+				addEntry(jars, runtimeLocation.append((String) i.next()).toString());
+		addEntry(jars, runtimeLocation.append(PI_RUNTIME_JAR_NAME).toString());
+		IPath bootLocation = new Path(getPluginLocationProperty(PI_BOOT));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(jars, pluginsLocation + PI_BOOT + "/" +  i.next());
-		addEntry(jars, pluginsLocation + PI_BOOT + "/" + PI_BOOT_JAR_NAME);
+				addEntry(jars, bootLocation.append((String) i.next()).toString());
+		addEntry(jars, bootLocation.append(PI_BOOT_JAR_NAME).toString());
 	}
 
 	for (Iterator i = getRequiredJars().iterator(); i.hasNext();) 
@@ -356,25 +345,20 @@ protected String computeCompilePathClause(String fullJar) throws CoreException {
 		resolvedFullJar += fullJar.substring(end + 1);
 		jars.remove(resolvedFullJar);
 	}
+	IPath pluginLocation = new Path(getPropertyFormat(getPluginLocationProperty(model.getId())));
 	if (devEntries != null)
 		for (Iterator i = devEntries.iterator(); i.hasNext();) 
-			jars.remove(getModelLocation(model) + i.next());
+			jars.remove(pluginLocation.append((String) i.next()).toString());
 	
-	List relativeJars = makeRelative(jars, installLocation);
-	String result = getStringFromCollection(relativeJars, "", "", ";");
+	String jar = pluginLocation.append(new Path(fullJar).lastSegment()).toString();
+	jars.remove(jar);
+	pluginLocations.remove(model.getId());
+	
+	String result = getStringFromCollection(jars, "", "", ";");
 	result = replaceVariables(result);
 	return result;
 }
 
-/**
- * Makes the list of jars relative to the base property.
- */
-protected List makeRelative(List jars, String baseLocation) {
-	List result = new ArrayList(jars.size());
-	for (Iterator i = jars.iterator(); i.hasNext();)
-		addEntry(result, makeRelative(getPropertyFormat(PROPERTY_INSTALL), (String) i.next(), baseLocation));
-	return result;
-}
 
 /**
  * Substitute the value of an element description variable (variables that
@@ -415,11 +399,12 @@ protected List getJars(PluginModel descriptor) throws CoreException {
 	LibraryModel[] libs = descriptor.getRuntime();
 	
 	if (libs != null) {
+		IPath location = new Path(getPluginLocationProperty(descriptor.getId()));
 		if (devEntries != null)
 			for (Iterator i = devEntries.iterator(); i.hasNext();) 
-				addEntry(result, getModelLocation(descriptor) + i.next());
+				addEntry(result, location.append((String) i.next()).toString());
 		for (int i = 0; i < libs.length; i++)
-			addEntry(result, getModelLocation(descriptor) + libs[i].getName());
+			addEntry(result, location.append(libs[i].getName()).toString());
 	}
 	
 	PluginPrerequisiteModel[] prereqs = descriptor.getRequires();
@@ -547,6 +532,12 @@ protected void generateConditionalProperties(int tab) {
  * 
  */
 protected void generateMandatoryProperties(int tab) {
+	script.printProperty(tab, getModelTypeName(), model.getId());
+	script.printProperty(tab, "version", model.getVersion());
+	for (Iterator iterator = pluginLocations.entrySet().iterator(); iterator.hasNext();) {
+		Map.Entry entry = (Map.Entry) iterator.next();
+		script.printPluginLocationDeclaration(tab, (String) entry.getKey(), (String) entry.getValue());
+	}
 	if (!getConditionalProperties().containsKey(PROPERTY_BIN_INCLUDES)) {
 		String value = getBuildProperty(PROPERTY_BIN_INCLUDES);
 		if (value == null)
@@ -608,12 +599,12 @@ protected String getStringFromCollection(Collection list, String prefix, String 
 }
 
 
-protected void generateUpdateJarTarget() {
+protected void generateBuildUpdateJarTarget() {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
 	tab++;
-	IPath destination = getRelativeInstallLocation();
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printProperty(tab, PROPERTY_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
@@ -654,18 +645,12 @@ protected void generatePrologue() {
 	int tab = 1;
 	script.printProjectDeclaration(model.getId(), TARGET_INIT, ".");
 	script.println();
-	script.printTargetDeclaration(tab, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
-	tab++;
+	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
 	script.printString(tab, "<initTemplate/>");
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
-	tab++;
-	script.printProperty(tab, getModelTypeName(), model.getId());
-	script.printProperty(tab, "version", model.getVersion());
-	tab--;
-	script.printString(tab, "</target>");
+	script.printTargetDeclaration(tab++, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
+	script.printString(--tab, "</target>");
 }
 
 protected abstract String getModelTypeName();

@@ -58,6 +58,12 @@
          class="org.eclipse.pde.internal.core.tasks.BuildManifestTask">
    </antTask>
 </extension>
+<extension point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="pluginLocation"
+         class="org.eclipse.pde.internal.core.tasks.PluginLocationTask">
+   </antTask>
+</extension>
 
 
 <!-- Types -->

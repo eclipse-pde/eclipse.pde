@@ -80,6 +80,7 @@ public void generate() throws CoreException {
 	if (custom != null && custom.equalsIgnoreCase("true"))
 		return;
 	readFeature();
+	pluginLocations = new HashMap(20);
 
 	if (generateChildrenScript)
 		generateChildrenScripts();
@@ -110,7 +111,7 @@ protected void generateBuildScript() throws CoreException {
 	generateChildrenTarget();
 	generateBuildJarsTarget();
 	generateBuildZipsTarget();
-	generateUpdateJarTarget();
+	generateBuildUpdateJarTarget();
 	generateGatherBinPartsTarget();
 	generateZipDistributionWholeTarget();
 	generateBuildSourcesTarget();
@@ -119,6 +120,7 @@ protected void generateBuildScript() throws CoreException {
 	generateGatherLogTarget();
 	generateZipLogsTarget();
 	generateCleanTarget();
+	generatePropertiesTarget();
 	generateEpilogue();
 }
 
@@ -181,9 +183,7 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	IPath root = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	root = root.append(DEFAULT_FEATURE_LOCATION);
-	root = root.append(getPropertyFormat(PROPERTY_FEATURE));
+	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
 	script.printString(--tab, "</target>");
 }
@@ -222,23 +222,21 @@ protected void generateBuildSourcesTarget() throws CoreException {
  * FIXME: add comments
  */
 protected void generateJarIndividualTarget(String jarName, String jarSource) throws CoreException {
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+	IPath destination = new Path(basedir);
+	destination = destination.append(jarName);
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, jarName, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, jarName, TARGET_INIT, null, null, null);
 	Map properties = new HashMap(1);
 	properties.put("mapping", jarSource);
 	properties.put("includes", jarSource);
 	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	destination = destination.append(DEFAULT_FEATURE_LOCATION);
-	destination = destination.append(getPropertyFormat(PROPERTY_FEATURE));
-	destination = destination.append(jarName);
 	properties.put("dest", destination.toString());
+	properties.put("basedir", basedir);
 	properties.put("compilePath", ""); // FIXME: why empty??? should we bother leaving it here??
-	script.printAntTask(tab, "${template}", null, TARGET_JAR, null, null, properties);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_JAR, null, null, properties);
+	script.printString(--tab, "</target>");
 }
 
 
@@ -260,50 +258,44 @@ protected void generateCleanTarget() {
 }
 
 protected void generateZipLogsTarget() {
+	IPath base = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	base = base.append("_temp_");
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
-	tab++;
-	IPath base = getRelativeInstallLocation();
-	base = base.append("_temp_");
+	script.printTargetDeclaration(tab++, TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
 	script.printProperty(tab, PROPERTY_BASE, base.toString());
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE));
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
 	script.printAntCallTask(tab, TARGET_GATHER_LOGS, "false", params);
-	IPath destination = getRelativeInstallLocation().append("${feature}.log.zip");
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append("${feature}.log.zip");
 	script.printZipTask(tab, destination.toString(), getPropertyFormat(PROPERTY_BASE));
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 protected void generateGatherLogTarget() {
+	String source = new Path(getPropertyFormat(PROPERTY_BASEDIR)).toString();
+	String destination = new Path(getPropertyFormat(PROPERTY_DESTINATION)).append(getDirectoryName()).toString();
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
-	tab++;
-	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
-	base = base.append(DEFAULT_FEATURE_LOCATION);
-	base = base.append(getPropertyFormat(PROPERTY_FEATURE));
-	script.printProperty(tab, PROPERTY_BASE, base.toString());
-	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
-	FileSet fileSet = new FileSet(getRelativeInstallLocation().toString(), null, "*.log", null, null, null, null);
-	script.printCopyTask(tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
-	tab--;
-	script.printString(tab, "</target>");
+	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
+	script.printMkdirTask(tab, destination);
+	FileSet fileSet = new FileSet(source, null, "*.log", null, null, null, null);
+	script.printCopyTask(tab, null, destination, new FileSet[] {fileSet});
+	script.printString(--tab, "</target>");
 }
 
 
 protected void generateGatherSourcesTarget() {
+	IPath source = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
+	destination = destination.append(getDirectoryName());
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
-	tab++;
-	IPath destination = getRelativeInstallLocation();
-	String dest = destination.toString();
-	script.printMkdirTask(tab, dest);
+	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	script.printMkdirTask(tab, destination.toString());
 	Properties props = getBuildProperties();
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
@@ -312,11 +304,17 @@ protected void generateGatherSourcesTarget() {
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			// zip name is jar name without the ".jar" but with "src.zip" appended
 			String zip = jarName.substring(0, jarName.length() - 4) + "src.zip";
-			script.printCopyTask(tab, destination.append(zip).toString(), dest, null);
+			script.printCopyTask(tab, source.append(zip).toString(), destination.toString(), null);
 		}
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
+}
+
+/**
+ * 
+ */
+protected String getDirectoryName() {
+	return "install/features/${feature}";
 }
 
 protected void generateZipSourcesTarget() {
@@ -325,7 +323,7 @@ protected void generateZipSourcesTarget() {
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
 	tab++;
-	IPath destination = getRelativeInstallLocation();
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("zip.sources.pdetemp").toString());
 	script.printDeleteTask(tab, featurebase, null, null);
 	script.printMkdirTask(tab, featurebase);
@@ -340,19 +338,12 @@ protected void generateZipSourcesTarget() {
 	script.printString(tab, "</target>");
 }
 
-protected IPath getRelativeInstallLocation() {
-	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	destination = destination.append(DEFAULT_FEATURE_LOCATION);
-	destination = destination.append(getPropertyFormat(PROPERTY_FEATURE));
-	return destination;
-}
 
 
 protected void generateGatherBinPartsTarget() {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_FEATURE_BASE));
@@ -367,13 +358,32 @@ protected void generateGatherBinPartsTarget() {
 	params.put("includes", inclusions);
 	params.put("excludes", exclusions);
 	params.put("dest", "${feature.base}/install/features/${feature}");
-	script.printAntTask(tab, "${template}", null, "includesExcludesCopy", null, null, params);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, "includesExcludesCopy", null, null, params);
+	script.printString(--tab, "</target>");
+}
+
+protected void generatePropertiesTarget() {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, TARGET_PROPERTIES, null, null, null, null);
+	generateMandatoryProperties(tab);
+	script.printEndTag(--tab, "target");
+}
+
+/**
+ * 
+ */
+protected void generateMandatoryProperties(int tab) {
+	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
+	script.printProperty(tab, "featureVersion", feature.getFeatureVersion());
+	for (Iterator iterator = pluginLocations.entrySet().iterator(); iterator.hasNext();) {
+		Map.Entry entry = (Map.Entry) iterator.next();
+		script.printPluginLocationDeclaration(tab, (String) entry.getKey(), (String) entry.getValue());
+	}
 }
 
 
-protected void generateUpdateJarTarget() {
+protected void generateBuildUpdateJarTarget() {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
@@ -382,7 +392,7 @@ protected void generateUpdateJarTarget() {
 	params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
-	IPath destination = getRelativeInstallLocation();
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
@@ -407,7 +417,7 @@ protected void generateZipDistributionWholeTarget() {
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
 	tab++;
-	IPath destination = getRelativeInstallLocation();
+	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
@@ -439,6 +449,9 @@ protected void generateAllChildrenTarget() {
 }
 
 protected void generateSourceIndividualTarget(String name, String source) throws CoreException {
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+	IPath destination = new Path(basedir);
+	destination = destination.append(name);
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab, name, TARGET_INIT, null, null, null);
@@ -447,12 +460,9 @@ protected void generateSourceIndividualTarget(String name, String source) throws
 	properties.put("mapping", source);
 	properties.put("includes", source);
 	properties.put("excludes", ""); // FIXME: why empty??? should we bother leaving it here??
-	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	destination = destination.append(DEFAULT_FEATURE_LOCATION);
-	destination = destination.append(getPropertyFormat(PROPERTY_FEATURE));
-	destination = destination.append(name);
 	properties.put("dest", destination.toString());
-	script.printAntTask(tab, "${template}", null, TARGET_SRC, null, null, properties);
+	properties.put("basedir", basedir);
+	script.printAntTask(tab, getPropertyFormat(PROPERTY_TEMPLATE), null, TARGET_SRC, null, null, properties);
 	tab--;
 	script.printString(tab, "</target>");
 }
@@ -469,12 +479,13 @@ protected void generateAllPluginsTarget() throws CoreException {
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
-			String location = makeRelative(getPropertyFormat(PROPERTY_INSTALL), getModelLocation(plugin), installLocation);
+			String location = getPluginLocationProperty(plugin.getId());
 			script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
 	script.printString(--tab, "</target>");
 }
+
 
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
@@ -483,15 +494,13 @@ protected void generateAllFragmentsTarget() throws CoreException {
 	int tab = 1;
 	List fragments = computeElements(true);
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
 	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
 		PluginModel fragment = (PluginModel) iterator.next();
-		String location = makeRelative(getPropertyFormat(PROPERTY_INSTALL), getModelLocation(fragment), installLocation);
+		String location = getPluginLocationProperty(fragment.getId());
 		script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 
@@ -633,13 +642,12 @@ protected void generatePrologue() {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_INIT, ".");
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_INIT, null, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
+	script.printString(--tab, "</target>");
+	script.println();
+	script.printTargetDeclaration(tab++, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
 	script.printString(tab, "<initTemplate/>");
-	script.printProperty(tab, "feature", feature.getFeatureIdentifier());
-	script.printProperty(tab, "featureVersion", feature.getFeatureVersion());
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 

@@ -141,7 +141,7 @@ protected void generateFeatures(List features) throws CoreException {
 	FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
-	generator.setPluginPath(asURL(pluginPath));
+	generator.setPluginPath(Utils.asURL(pluginPath));
 	generator.setGenerateChildrenScript(children);
 	for (int i = 0; i < features.size(); i++) {
 		generator.setFeature((String) features.get(i));
@@ -154,7 +154,7 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 		return;
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
-	generator.setPluginPath(asURL(pluginPath));
+	generator.setPluginPath(Utils.asURL(pluginPath));
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		String model = (String) iterator.next();
 		generator.setModelId(model);
@@ -162,18 +162,7 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 	}
 }
 
-protected URL[] asURL(String[] target) throws CoreException {
-	if (target == null)
-		return null;
-	try {
-		URL[] result = new URL[target.length];
-		for (int i = 0; i < target.length; i++)
-			result[i] = new URL(target[i]);
-		return result;
-	} catch (MalformedURLException e) {
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_MALFORMED_URL, e.getMessage(), e));
-	}
-}
+
 
 
 
