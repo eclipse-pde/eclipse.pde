@@ -452,14 +452,14 @@ public class ClasspathUtilCore {
 				return JavaCore.newVariableEntry(
 					EclipseHomeInitializer.createEclipseRelativeHome(
 						path.toOSString()),
-					getSourceAnnotation(model, expandedName, relative),
+					getSourceAnnotation(model, expandedName, true),
 					null,
 					isExported);
 			}
 
 			return JavaCore.newLibraryEntry(
 				path,
-				getSourceAnnotation(model, expandedName, relative),
+				getSourceAnnotation(model, expandedName, false),
 				null,
 				isExported);
 		} catch (CoreException e) {
