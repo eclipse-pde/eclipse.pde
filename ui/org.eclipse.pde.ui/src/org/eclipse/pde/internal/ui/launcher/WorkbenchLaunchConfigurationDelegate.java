@@ -158,17 +158,21 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		for (int i=0; i<exmodels.size(); i++) {
 			IPluginModelBase exmodel = (IPluginModelBase)exmodels.get(i);
+			boolean localDuplicate=false;
 			for (int j=0; j<wsmodels.size(); j++) {
 				IPluginModelBase wsmodel = (IPluginModelBase)wsmodels.get(j);
 				if (isDuplicate(wsmodel, exmodel)) {
-					duplicates=true;
+					localDuplicate=true;
+					break;
 				}
-				else
-					result.add(exmodel);
 			}
+			if (localDuplicate) duplicates=true;
+			else
+				result.add(exmodel);
 		}
 		if (duplicates) {
-			showWarningDialog("The list of plug-ins to run contains duplicates. Plug-ins from the workspace will be used. To fix the problem, uncheck offending external plug-ins in the Launch Configurations");
+			//FIXME NL
+			showWarningDialog("The list of plug-ins to run contains duplicates. Plug-ins from the workspace will be used. To fix the problem, uncheck the offending external plug-ins in the Preferences or Launch Configurations");
 		}
 	}
 	
