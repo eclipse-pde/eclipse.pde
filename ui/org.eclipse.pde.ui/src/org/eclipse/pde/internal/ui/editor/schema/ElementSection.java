@@ -9,13 +9,14 @@ import java.util.Iterator;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -25,6 +26,7 @@ public class ElementSection extends TreeSection {
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private ElementList elements;
+	private Clipboard clipboard;
 	public static final String SECTION_TITLE =
 		"SchemaEditor.ElementSection.title";
 	public static final String SECTION_DESC =
@@ -87,6 +89,28 @@ public class ElementSection extends TreeSection {
 		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
 		treeViewer.setContentProvider(new ContentProvider());
 		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		initDragAndDrop();
+	}
+	
+	private void initDragAndDrop() {
+		clipboard = new Clipboard(treeViewer.getControl().getDisplay());
+		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		Transfer[] transfers =
+			new Transfer[] {
+				ModelDataTransfer.getInstance(),
+				TextTransfer.getInstance()};
+		treeViewer.addDragSupport(
+			ops,
+			transfers,
+			new ElementSectionDragAdapter((ISelectionProvider) treeViewer, this));
+		treeViewer.addDropSupport(
+			ops | DND.DROP_DEFAULT,
+			transfers,
+			new ElementSectionDropAdapter(this));
+	}
+	
+	TreeViewer getTreeViewer() {
+		return treeViewer;
 	}
 
 	protected void buttonSelected(int index) {
@@ -98,6 +122,10 @@ public class ElementSection extends TreeSection {
 
 	public void dispose() {
 		schema.removeModelChangedListener(this);
+		if (clipboard!=null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
 		super.dispose();
 	}
 
@@ -183,7 +211,7 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
-	private void handleDelete(Object object) {
+	void handleDelete(Object object) {
 		ISchemaObject sobject = (ISchemaObject) object;
 		ISchemaObject parent = sobject.getParent();
 
@@ -291,14 +319,23 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
 
-	protected void doPaste(Object target, Object[] objects) {
+	public void doPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			Object realTarget = getRealTarget(target, object);
+			Object sibling = getSibling(target, object);
 			if (realTarget == null)
 				continue;
-			doPaste(realTarget, object);
+			doPaste(realTarget, sibling, object);
 		}
+	}
+	
+	private Object getSibling(Object target, Object object) {
+		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
+			return target;
+		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
+			return target;
+		return null;
 	}
 
 	private Object getRealTarget(Object target, Object object) {
@@ -316,11 +353,11 @@ public class ElementSection extends TreeSection {
 		return null;
 	}
 
-	private void doPaste(Object realTarget, Object object) {
+	private void doPaste(Object realTarget, Object sibling, Object object) {
 		if (object instanceof ISchemaElement) {
 			SchemaElement element = (SchemaElement) object;
 			element.setParent(schema);
-			schema.addElement(element);
+			schema.addElement(element, (ISchemaElement)sibling);
 			schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
 		} else if (object instanceof ISchemaAttribute) {
 			SchemaElement element = (SchemaElement) realTarget;
@@ -334,7 +371,7 @@ public class ElementSection extends TreeSection {
 			} else {
 				complexType = (SchemaComplexType) type;
 			}
-			complexType.addAttribute(attribute);
+			complexType.addAttribute(attribute, (ISchemaAttribute)sibling);
 		}
 	}
 

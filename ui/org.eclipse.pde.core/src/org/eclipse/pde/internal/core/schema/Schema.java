@@ -52,14 +52,25 @@ public class Schema extends PlatformObject implements ISchema {
 
 	}
 	public void addElement(ISchemaElement element) {
-		elements.addElement(element);
+		addElement(element, null);
+	}
+	
+	public void addElement(ISchemaElement element, ISchemaElement afterElement) {
+		int index = -1;
+		if (afterElement!=null) {
+			index = elements.indexOf(afterElement);
+		}
+		if (index != -1)
+			elements.add(index+1, element);
+		else
+			elements.add(element);
 		fireModelChanged(
 			new ModelChangedEvent(
 				ModelChangedEvent.INSERT,
 				new Object[] { element },
 				null));
-
 	}
+	
 	public void addModelChangedListener(IModelChangedListener listener) {
 		listeners.addElement(listener);
 	}

@@ -102,7 +102,7 @@ public class GrammarSection extends PDEFormSection {
 		tree.setLayoutData(gd);
 
 		dtdLabel = factory.createText(container, "", SWT.WRAP|SWT.V_SCROLL|SWT.MULTI);
-		dtdLabel.setData(FormWidgetFactory.KEY_DRAW_BORDER, "treeBorder");
+		dtdLabel.setData(FormWidgetFactory.KEY_DRAW_BORDER, FormWidgetFactory.TREE_BORDER);
 		dtdLabel.setEditable(false);
 		dtdLabel.setForeground(factory.getColor(FormWidgetFactory.DEFAULT_HEADER_COLOR));
 		gd = new GridData(GridData.FILL_BOTH);

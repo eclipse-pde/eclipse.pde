@@ -25,7 +25,19 @@ public class SchemaComplexType
 		super(schema, typeName != null ? typeName : "__anonymous__");
 	}
 	public void addAttribute(ISchemaAttribute attribute) {
-		attributes.addElement(attribute);
+		addAttribute(attribute, null);
+	}
+	public void addAttribute(
+		ISchemaAttribute attribute,
+		ISchemaAttribute afterSibling) {
+		int index = -1;
+		if (afterSibling != null) {
+			index = attributes.indexOf(afterSibling);
+		}
+		if (index != -1)
+			attributes.add(index + 1, attribute);
+		else
+			attributes.addElement(attribute);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(
 				ModelChangedEvent.INSERT,
