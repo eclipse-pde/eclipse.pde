@@ -9,6 +9,13 @@
       %description
    </description>
 
+   <url>
+      <update
+         url="http://update.eclipse.org/updates"
+         label="eclipse.org update site">
+      </update>
+   </url>
+
    <plugin id="org.eclipse.pde" version="2.0.0" />
    <plugin id="org.eclipse.pde.build" version="2.0.0" />
    <plugin id="org.eclipse.pde.core" version="2.0.0" />
