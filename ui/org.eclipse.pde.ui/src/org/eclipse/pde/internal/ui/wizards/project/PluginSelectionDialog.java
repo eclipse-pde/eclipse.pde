@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.*;
 
 public class PluginSelectionDialog extends SelectionDialog {
 	public static final String KEY_TITLE = "PluginSelectionDialog.title";
@@ -38,14 +39,14 @@ public class PluginSelectionDialog extends SelectionDialog {
 		}
 		public Object[] getChildren(Object parent) {
 			if (parent == externalPlugins) {
-				ExternalModelManager manager = PDEPlugin.getDefault().getExternalModelManager();
+				ExternalModelManager manager = PDECore.getDefault().getExternalModelManager();
 				IPluginModel[] models = manager.getModels();
 				ArraySorter.INSTANCE.sortInPlace(models);
 				return models;
 			}
 			if (parent == workspacePlugins) {
 				WorkspaceModelManager manager =
-					PDEPlugin.getDefault().getWorkspaceModelManager();
+					PDECore.getDefault().getWorkspaceModelManager();
 				IPluginModel[] models = manager.getWorkspacePluginModels();
 				ArraySorter.INSTANCE.sortInPlace(models);
 				return models;

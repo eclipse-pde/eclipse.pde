@@ -4,17 +4,17 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.apache.xerces.parsers.*;
-import org.eclipse.core.runtime.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
 import java.io.*;
+import java.util.Map;
+
+import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.xml.sax.*;
 
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
@@ -35,9 +35,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
 				try {
-					return (project.hasNature(PDEPlugin.FEATURE_NATURE));
+					return (project.hasNature(PDECore.FEATURE_NATURE));
 				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					PDECore.logException(e);
 					return false;
 				}
 			}
@@ -82,7 +82,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 }
 private void checkFile(IFile file, IProgressMonitor monitor) {
 	String message =
-		PDEPlugin.getFormattedMessage(
+		PDECore.getFormattedMessage(
 			BUILDERS_VERIFYING,
 			file.getFullPath().toString());
 	monitor.subTask(message);
@@ -98,10 +98,10 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 			testPluginReferences(file, reporter);
 		}
 	} catch (CoreException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	} catch (SAXException e) {
 	} catch (IOException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	} finally {
 		if (source != null) {
 			try {
@@ -110,7 +110,7 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 			}
 		}
 	}
-	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
+	monitor.subTask(PDECore.getResourceString(BUILDERS_UPDATING));
 	monitor.done();
 }
 private boolean isManifestFile(IFile file) {
@@ -118,7 +118,7 @@ private boolean isManifestFile(IFile file) {
 }
 private boolean isValidReference(IFeaturePlugin plugin) {
 	WorkspaceModelManager manager =
-		PDEPlugin.getDefault().getWorkspaceModelManager();
+		PDECore.getDefault().getWorkspaceModelManager();
 	IPluginModelBase [] models = plugin.isFragment() ? 
 		(IPluginModelBase[])manager.getWorkspaceFragmentModels() :
 		(IPluginModelBase[])manager.getWorkspacePluginModels();
@@ -144,7 +144,7 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 			IFeaturePlugin plugin = plugins[i];
 			if (isValidReference(plugin) == false) {
 				String message =
-					PDEPlugin.getFormattedMessage(
+					PDECore.getFormattedMessage(
 						BUILDERS_FEATURE_REFERENCE,
 						plugin.getLabel());
 				reporter.reportError(message);
@@ -157,7 +157,7 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 		String realName = folder.getName();
 		if (realName.equals(expectedFolderName)==false) {
 			String message =
-				PDEPlugin.getFormattedMessage(
+				PDECore.getFormattedMessage(
 					BUILDERS_FEATURE_FOLDER_SYNC,
 					realName);
 			reporter.reportError(message);

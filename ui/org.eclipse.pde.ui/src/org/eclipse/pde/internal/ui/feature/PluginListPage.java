@@ -4,18 +4,16 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.Composite;
 
 public class PluginListPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
@@ -57,7 +55,7 @@ public class PluginListPage extends WizardPage {
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
-		pluginViewer.setInput(PDEPlugin.getDefault().getWorkspaceModelManager());
+		pluginViewer.setInput(PDECore.getDefault().getWorkspaceModelManager());
 		tablePart.setSelection(new Object[0]);
 		setControl(container);
 	}
@@ -65,7 +63,7 @@ public class PluginListPage extends WizardPage {
 	private Object[] getPluginModels() {
 		if (models == null) {
 			WorkspaceModelManager manager =
-				PDEPlugin.getDefault().getWorkspaceModelManager();
+				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModel[] workspaceModels = manager.getWorkspacePluginModels();
 			IFragmentModel[] fragmentModels = manager.getWorkspaceFragmentModels();
 			models =

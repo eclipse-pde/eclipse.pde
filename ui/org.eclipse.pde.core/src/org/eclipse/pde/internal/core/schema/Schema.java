@@ -10,9 +10,9 @@ import java.util.*;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.SourceDOMParser;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -213,7 +213,7 @@ public void load() {
 		source.close();
 	}
 	catch (IOException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 }
 
@@ -226,7 +226,7 @@ public void load(InputStream source) {
 		traverseDocumentTree(root, p.getLineTable());
 	} catch (SAXException se) {
 	} catch (IOException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 }
 private ISchemaAttribute processAttribute(

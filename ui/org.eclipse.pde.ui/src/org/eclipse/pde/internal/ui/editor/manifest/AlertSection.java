@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.views.tasklist.TaskList;
 import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 
 public class AlertSection
@@ -132,7 +133,7 @@ private boolean checkReferences(Composite parent, FormWidgetFactory factory) {
 	boolean cycles = false;
 
 	for (int i = 0; i < imports.length; i++) {
-		IPlugin refPlugin = PDEPlugin.getDefault().findPlugin(imports[i].getId());
+		IPlugin refPlugin = PDECore.getDefault().findPlugin(imports[i].getId());
 		if (refPlugin == null) {
 			unresolvedReferences = true;
 			break;

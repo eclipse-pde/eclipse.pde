@@ -4,20 +4,17 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.*;
-import java.net.*;
-import org.eclipse.ui.*;
-import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.pde.internal.ui.util.Choice;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.*;
 
 public class ReferencePropertySource extends FeaturePropertySource {
 	private Vector descriptors;
@@ -60,7 +57,7 @@ public class ReferencePropertySource extends FeaturePropertySource {
 			IFeaturePlugin reference = getPluginReference();
 			String id = reference.getId();
 			WorkspaceModelManager manager =
-				PDEPlugin.getDefault().getWorkspaceModelManager();
+				PDECore.getDefault().getWorkspaceModelManager();
 			IPluginModelBase[] models = null;
 			if (reference.isFragment()) {
 				models = manager.getWorkspaceFragmentModels();

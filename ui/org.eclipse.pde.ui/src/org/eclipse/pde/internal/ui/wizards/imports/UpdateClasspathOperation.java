@@ -15,7 +15,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jdt.core.*;
 
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class UpdateClasspathOperation implements IWorkspaceRunnable {
 
@@ -130,7 +130,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 			if (fragment.getId().equals(project.getName())) {
 				String fid = fragment.getPluginId();
 				String fversion = fragment.getPluginVersion();
-				if (PDEPlugin
+				if (PDECore
 					.compare(
 						fid,
 						fversion,
@@ -207,7 +207,7 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		for (int i = 0; i < fragments.length; i++) {
 			IFragmentModel fmodel = fragments[i];
 			IFragment fragment = fmodel.getFragment();
-			if (PDEPlugin
+			if (PDECore
 				.compare(
 					fragment.getPluginId(),
 					fragment.getPluginVersion(),

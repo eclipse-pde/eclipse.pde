@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class ProjectStructurePage extends WizardPage {
 	private static final String KEY_TITLE = "ProjectStructurePage.title";
@@ -107,8 +108,8 @@ public class ProjectStructurePage extends WizardPage {
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		if (!project.hasNature(PDEPlugin.PLUGIN_NATURE))
-			CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+		if (!project.hasNature(PDECore.PLUGIN_NATURE))
+			CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
 
 		setDefaultVM(project);
 		PDEPlugin.registerPlatformLaunchers(project);

@@ -50,7 +50,7 @@ public class ExtensionSection
 	private void addExtensionLink(IPluginExtension extension) {
 		String point = extension.getPoint();
 		IPluginExtensionPoint pointInfo =
-			PDEPlugin.getDefault().findExtensionPoint(point);
+			PDECore.getDefault().findExtensionPoint(point);
 		Label imageLabel = factory.createLabel(extensionParent, "");
 
 		String name = point;

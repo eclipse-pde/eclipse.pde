@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public abstract class WorkspacePluginModelBase
 	extends AbstractPluginModelBase
@@ -122,7 +121,7 @@ public abstract class WorkspacePluginModelBase
 
 			} catch (CoreException e) {
 			} catch (IOException e) {
-				PDEPlugin.logException(e);
+				PDECore.logException(e);
 			}
 		} else {
 			pluginBase = (PluginBase) createPluginBase();
@@ -149,7 +148,7 @@ public abstract class WorkspacePluginModelBase
 			}
 			stream.close();
 		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+			PDECore.logException(e);
 		} catch (IOException e) {
 		}
 	}

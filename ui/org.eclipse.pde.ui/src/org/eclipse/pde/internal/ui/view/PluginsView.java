@@ -107,7 +107,7 @@ public class PluginsView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
-		PluginModelManager manager = PDEPlugin.getDefault().getModelManager();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		treeViewer.setContentProvider(new PluginsContentProvider(this, manager));
 		treeViewer.setLabelProvider(new PluginsLabelProvider());
 		treeViewer.setSorter(ListUtil.NAME_SORTER);
@@ -520,7 +520,7 @@ public class PluginsView extends ViewPart {
 		IConfigurationElement config = getConfigurationElement();
 		if (config==null) return;
 		String viewName = config.getAttribute("name");
-		if (newInput == null || newInput.equals(PDEPlugin.getDefault().getModelManager())) {
+		if (newInput == null || newInput.equals(PDECore.getDefault().getModelManager())) {
 			// restore old
 			setTitle(viewName);
 			setTitleToolTip(getTitle());

@@ -27,6 +27,10 @@ public class PDECore extends Plugin {
 		PLUGIN_ID + "." + "FeatureBuilder";
 
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
+	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =
+		new QualifiedName(PLUGIN_ID, "imported");
+	public static final String EXTERNAL_PROJECT_VALUE = "external";
+	public static final String BINARY_PROJECT_VALUE = "binary";
 
 	// Shared instance
 	private static PDECore inst;
@@ -40,6 +44,7 @@ public class PDECore extends Plugin {
 	private SchemaRegistry schemaRegistry;
 	private WorkspaceModelManager workspaceModelManager;
 	private PluginModelManager modelManager;
+	private CoreSettings settings;
 
 	public PDECore(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -155,6 +160,10 @@ public class PDECore extends Plugin {
 	public static PDECore getDefault() {
 		return inst;
 	}
+	
+	public CoreSettings getSettings() {
+		return settings;
+	}
 	public ExternalModelManager getExternalModelManager() {
 		if (externalModelManager == null)
 			externalModelManager = new ExternalModelManager();
@@ -260,6 +269,7 @@ public class PDECore extends Plugin {
 
 	public void startup() throws CoreException {
 		super.startup();
+		loadSettings();
 		workspaceModelManager = new WorkspaceModelManager();
 		externalModelManager = new ExternalModelManager();
 
@@ -282,6 +292,7 @@ public class PDECore extends Plugin {
 	}
 	
 	public void shutdown() throws CoreException {
+		storeSettings();
 		if (schemaRegistry != null)
 			schemaRegistry.shutdown();
 
@@ -299,6 +310,14 @@ public class PDECore extends Plugin {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	private void loadSettings() {
+		settings = new CoreSettings();
+		settings.load(getStateLocation());
+	}
+	
+	private void storeSettings() {
+		settings.store();
 	}
 
 }

@@ -4,14 +4,13 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.core.runtime.PlatformObject;
+import java.io.PrintWriter;
 import java.util.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.Comment;
+
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.w3c.dom.*;
 
 
 public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject {
@@ -39,7 +38,7 @@ public int getAttributeCount() {
 public ISchemaAttribute[] getAttributes() {
 	return getReferencedElement().getAttributes();
 }
-public org.eclipse.pde.internal.ui.ischema.ISchemaCompositor getCompositor() {
+public ISchemaCompositor getCompositor() {
 	return compositor;
 }
 public java.lang.String getDescription() {
@@ -48,9 +47,7 @@ public java.lang.String getDescription() {
 public String getDTDRepresentation() {
 	return  getReferencedElement().getDTDRepresentation();
 }
-public org.eclipse.jface.resource.ImageDescriptor getIconDescriptor() {
-   return getReferencedElement().getIconDescriptor();
-}
+
 public java.lang.String getIconProperty() {
    return getReferencedElement().getIconProperty();
 }
@@ -92,7 +89,7 @@ public ISchemaType getType() {
 public boolean isLinked() {
 	return getReferencedObject()!=null;
 }
-public void setCompositor(org.eclipse.pde.internal.ui.ischema.ISchemaCompositor newCompositor) {
+public void setCompositor(ISchemaCompositor newCompositor) {
 	compositor = newCompositor;
 }
 public void setMaxOccurs(int newMaxOccurs) {

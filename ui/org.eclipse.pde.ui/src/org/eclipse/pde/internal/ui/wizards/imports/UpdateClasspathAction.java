@@ -25,6 +25,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.pde.internal.core.*;
 
 import org.eclipse.jdt.core.*;
 
@@ -110,7 +111,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 
 	private IPluginModelBase findModelFor(IProject project) {
 		WorkspaceModelManager manager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		return manager.getWorkspaceModel(project);
 	}
 

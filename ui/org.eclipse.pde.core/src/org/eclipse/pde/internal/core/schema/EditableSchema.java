@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public class EditableSchema extends Schema implements IEditable {
 	private boolean dirty;

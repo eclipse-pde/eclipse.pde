@@ -4,20 +4,17 @@
  */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.Composite;
 
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
@@ -104,9 +101,9 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 
 	private Object[] getModels() {
 		IPluginModelBase[] plugins =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
 		IPluginModelBase[] all =
 			new IPluginModelBase[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, all, 0, plugins.length);

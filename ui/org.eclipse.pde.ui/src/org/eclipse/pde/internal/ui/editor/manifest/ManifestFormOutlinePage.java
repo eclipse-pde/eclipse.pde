@@ -103,7 +103,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 			String pluginId = ((IPluginImport) obj).getId();
 			if (!fullNames)
 				return pluginId;
-			IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId);
+			IPlugin plugin = PDECore.getDefault().findPlugin(pluginId);
 			if (plugin != null)
 				return plugin.getResourceString(plugin.getName());
 			return pluginId;
@@ -117,7 +117,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 			if (!fullNames)
 				return extension.getPoint();
 			ISchema schema =
-				PDEPlugin.getDefault().getSchemaRegistry().getSchema(extension.getPoint());
+				PDECore.getDefault().getSchemaRegistry().getSchema(extension.getPoint());
 
 			// try extension point schema definition
 			if (schema != null) {
@@ -126,7 +126,7 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 			}
 			// try extension point declaration
 			IPluginExtensionPoint pointInfo =
-				PDEPlugin.getDefault().getExternalModelManager().findExtensionPoint(
+				PDECore.getDefault().getExternalModelManager().findExtensionPoint(
 					extension.getPoint());
 			if (pointInfo != null) {
 				return pointInfo.getResourceString(pointInfo.getName());

@@ -4,28 +4,24 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.*;
-import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.core.builders.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbench;
 
 public class NewFeaturePluginWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.PluginSection.new.title";
@@ -149,7 +145,7 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getWorkspacePluginModels();
 		IFragmentModel[] fragments = mng.getWorkspaceFragmentModels();
 		Object[] choices = new Object[plugins.length + fragments.length];

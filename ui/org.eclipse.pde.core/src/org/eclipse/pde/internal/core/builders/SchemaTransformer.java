@@ -4,17 +4,14 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.apache.xerces.parsers.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
-
-import java.util.*;
-import org.xml.sax.*;
-import org.w3c.dom.*;
 import java.io.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
+import org.w3c.dom.Node;
+import org.xml.sax.*;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID="Builders.Schema.Verifier.booleanInvalid";
@@ -92,7 +89,7 @@ private SourceDOMParser createDOMTree(InputStream schema, PluginErrorReporter re
 	catch (SAXException e) {
 	}
 	catch (IOException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 	return null;
 }
@@ -146,7 +143,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 	if (attribute.getKind() != ISchemaAttribute.STRING) {
 		if (type!=null) {
 			if (type.getName().equals("boolean")) {
-				message=PDEPlugin.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
+				message=PDECore.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
 				// this kind cannot have boolean type
 				reporter.reportError(message, line);
 				errors++;
@@ -154,7 +151,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 			if (type instanceof SchemaSimpleType && 
 				((SchemaSimpleType)type).getRestriction()!=null) {
 				// should not have restriction
-				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+				message=PDECore.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
 				reporter.reportError(message, line);
 				errors++;
 			}
@@ -163,7 +160,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 	if (attribute.getKind() != ISchemaAttribute.JAVA) {
 		if (attribute.getBasedOn()!=null) {
 			// basedOn makes no sense
-			message=PDEPlugin.getFormattedMessage(KEY_BASED_ON_INVALID, args);
+			message=PDECore.getFormattedMessage(KEY_BASED_ON_INVALID, args);
 			reporter.reportError(message, line);
 			errors++;
 		}
@@ -172,7 +169,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 		if (type instanceof SchemaSimpleType && 
 			((SchemaSimpleType)type).getRestriction()!=null) {
 				// should not have restriction
-				message=PDEPlugin.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
+				message=PDECore.getFormattedMessage(KEY_RESTRICTION_INVALID, args);
 				reporter.reportError(message, line);
 				errors++;
 		}
@@ -180,7 +177,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 	if (attribute.getUse() != ISchemaAttribute.DEFAULT) {
 		if (attribute.getValue()!=null) {
 			// value makes no sense without 'default' use
-			message=PDEPlugin.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
+			message=PDECore.getFormattedMessage(KEY_VALUE_WITHOUT_DEFAULT, args);
 			reporter.reportError(message, line);
 			errors++;
 		}
@@ -188,7 +185,7 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 	else {
 		if (attribute.getValue()==null) {
 			// there must be a value set for this use
-			message=PDEPlugin.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
+			message=PDECore.getFormattedMessage(KEY_DEFAULT_WITHOUT_VALUE, args);
 			reporter.reportError(message, line);
 			errors++;
 		}

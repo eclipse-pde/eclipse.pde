@@ -4,20 +4,17 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
+import java.util.*;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
-import java.util.Iterator;
-import java.util.Vector;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.*;
 
 public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 	public static final String KEY_CONVERTING = "ConvertProjectAction.converting";
@@ -45,7 +42,7 @@ public class ConvertJavaToPDEProjectAction implements IObjectActionDelegate {
 				if (object instanceof IProject) {
 					IProject project = (IProject) object;
 					try {
-						if (!project.isOpen() || project.hasNature(PDEPlugin.PLUGIN_NATURE)) {
+						if (!project.isOpen() || project.hasNature(PDECore.PLUGIN_NATURE)) {
 							enable = false;
 							break;
 						}

@@ -4,13 +4,13 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.core.runtime.PlatformObject;
-import java.util.*;
-import org.w3c.dom.*;
 import java.io.PrintWriter;
+import java.util.*;
+
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.w3c.dom.*;
 
 public abstract class SchemaObject
 	extends PlatformObject

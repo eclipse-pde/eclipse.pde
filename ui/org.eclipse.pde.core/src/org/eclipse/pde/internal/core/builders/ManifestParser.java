@@ -4,13 +4,13 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.xml.sax.helpers.*;
-import org.apache.xerces.parsers.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+
+import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.PDECore;
+import org.xml.sax.*;
 
 public class ManifestParser {
 	private SAXParser parser;
@@ -31,7 +31,7 @@ public void parse(IFile file) {
 	} catch (CoreException e) {
 	} catch (SAXException e) {
 	} catch (IOException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	} finally {
 		if (source != null) {
 			try {

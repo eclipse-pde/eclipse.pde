@@ -21,6 +21,7 @@ import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import java.util.zip.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
 	private static final String KEY_TITLE = "ImportWizard.messages.title";
@@ -175,15 +176,15 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			}
 
 			desc = project.getDescription();
-			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDEPlugin.PLUGIN_NATURE });
+			desc.setNatureIds(new String[] { JavaCore.NATURE_ID, PDECore.PLUGIN_NATURE });
 			project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 			PDEPlugin.registerPlatformLaunchers(project);
 			//Mark this project so that we can show image overlay
 			// using the label decorator
 			if (!extractSource)
 				project.setPersistentProperty(
-					PDEPlugin.EXTERNAL_PROJECT_PROPERTY,
-					doImport ? PDEPlugin.EXTERNAL_PROJECT_VALUE : PDEPlugin.BINARY_PROJECT_VALUE);
+					PDECore.EXTERNAL_PROJECT_PROPERTY,
+					doImport ? PDECore.EXTERNAL_PROJECT_VALUE : PDECore.BINARY_PROJECT_VALUE);
 
 			IPath outputLocation = project.getFullPath();
 

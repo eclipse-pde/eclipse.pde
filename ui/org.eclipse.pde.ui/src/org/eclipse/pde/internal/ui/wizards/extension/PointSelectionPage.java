@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.internal.core.*;
 
 
 public class PointSelectionPage
@@ -47,7 +48,7 @@ public class PointSelectionPage
 			if (parent instanceof ExternalModelManager) {
 				if (points == null) {
 					points = new Vector();
-					WorkspaceModelManager manager = PDEPlugin.getDefault().getWorkspaceModelManager();
+					WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 					addPoints(manager.getWorkspacePluginModels());
 					ExternalModelManager registry = (ExternalModelManager) parent;
 					addPoints(registry.getModels());
@@ -107,7 +108,7 @@ void addPoints(IPluginBase pluginBase, Vector points) {
 		&& pluginBase.getModel().getUnderlyingResource() != null) {
 		// merge points from fragments
 		WorkspaceModelManager manager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		IFragment[] fragments =
 			manager.getFragmentsFor(pluginBase.getId(), pluginBase.getVersion());
 		for (int i = 0; i < fragments.length; i++) {
@@ -241,7 +242,7 @@ private IPlugin getTargetPlugin(IPluginBase base) {
 		String targetId = fragment.getPluginId();
 		String targetVersion = fragment.getPluginVersion();
 		int match = fragment.getRule();
-		return PDEPlugin.getDefault().findPlugin(targetId, targetVersion, match);
+		return PDECore.getDefault().findPlugin(targetId, targetVersion, match);
 	}
 }
 
@@ -250,7 +251,7 @@ public IPluginExtension getNewExtension() {
 	return newExtension;
 }
 protected void initialize() {
-	pointListViewer.setInput(PDEPlugin.getDefault().getExternalModelManager());
+	pointListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 	pointListViewer.getTable().setFocus();
 }
 public void selectionChanged(SelectionChangedEvent event) {

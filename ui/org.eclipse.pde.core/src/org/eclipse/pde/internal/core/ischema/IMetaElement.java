@@ -4,14 +4,11 @@ package org.eclipse.pde.internal.core.ischema;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.*;
-
 /**
  * Objects that implement this interface store metadata about extension point
  * schema elements. This metadata is stored as schema element annotation.
  */
 public interface IMetaElement {
-	public ImageDescriptor getIconDescriptor();
 /**
  * Returns a property (attribute) name whose value should
  * be used to load element icon in the UI. For example,

@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
@@ -183,7 +184,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		IPluginImport[] imports = targetPlugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
-			IPlugin importPlugin = PDEPlugin.getDefault().findPlugin(iimport.getId());
+			IPlugin importPlugin = PDECore.getDefault().findPlugin(iimport.getId());
 			if (importPlugin != null)
 				missing.addElement(new PluginPathUpdater.CheckedPlugin(importPlugin, true));
 		}
@@ -402,8 +403,8 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
-		if (!project.hasNature(PDEPlugin.PLUGIN_NATURE))
-			CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+		if (!project.hasNature(PDECore.PLUGIN_NATURE))
+			CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
 		PDEPlugin.registerPlatformLaunchers(project);
 	}
 	public boolean finish() {
@@ -621,21 +622,21 @@ public class DefaultCodeGenerationPage extends WizardPage {
 
 		if (fragment) {
 			if (data.pluginId != null) {
-				IPlugin plugin = PDEPlugin.getDefault().findPlugin(data.pluginId);
+				IPlugin plugin = PDECore.getDefault().findPlugin(data.pluginId);
 				copyTargetPluginImports(plugin, missing);
 			}
 		} else {
-			IPlugin plugin = PDEPlugin.getDefault().findPlugin(RUNTIME_ID);
+			IPlugin plugin = PDECore.getDefault().findPlugin(RUNTIME_ID);
 			if (plugin != null) {
 				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
 				result.addElement(RUNTIME_ID);
 			}
-			plugin = PDEPlugin.getDefault().findPlugin(RESOURCES_ID);
+			plugin = PDECore.getDefault().findPlugin(RESOURCES_ID);
 			if (plugin != null) {
 				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
 				result.addElement(RESOURCES_ID);
 			}
-			plugin = PDEPlugin.getDefault().findPlugin(WORKBENCH_ID);
+			plugin = PDECore.getDefault().findPlugin(WORKBENCH_ID);
 			if (plugin != null) {
 				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
 				result.addElement(WORKBENCH_ID);
@@ -689,7 +690,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		String pluginVersion,
 		int match) {
 		IPlugin plugin =
-			PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion, match);
+			PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
 		return plugin != null;
 	}
 }

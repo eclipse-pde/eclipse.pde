@@ -4,23 +4,21 @@
  */
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.jface.viewers.*;
-import java.util.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.ui.util.OverlayIcon;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.feature.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.ui.editor.IPDEEditorPage;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -227,11 +225,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 			IProject project = resource.getProject();
 			try {
 				String property =
-					project.getPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY);
+					project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
 				if (property != null) {
-					if (property.equals(PDEPlugin.EXTERNAL_PROJECT_VALUE))
+					if (property.equals(PDECore.EXTERNAL_PROJECT_VALUE))
 						flags |= F_EXTERNAL;
-					else if (property.equals(PDEPlugin.BINARY_PROJECT_VALUE))
+					else if (property.equals(PDECore.BINARY_PROJECT_VALUE))
 						flags |= F_BINARY;
 				}
 			} catch (CoreException e) {

@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.core.*;
 
 public class TracingLauncherTab
 	extends AbstractLauncherTab
@@ -295,7 +296,7 @@ public class TracingLauncherTab
 		if (adaptable == null) {
 			String id = model.getPlugin().getId();
 			Hashtable defaults =
-				PDEPlugin.getDefault().getTracingOptionsManager().getTemplateTable(id);
+				PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 			adaptable = new TracingPropertySource(model, masterOptions, defaults);
 			propertySources.put(model, adaptable);
 		}
@@ -305,7 +306,7 @@ public class TracingLauncherTab
 		if (externalList == null) {
 			externalList = new Vector();
 			IPluginModel[] models =
-				PDEPlugin.getDefault().getExternalModelManager().getModels();
+				PDECore.getDefault().getExternalModelManager().getModels();
 			fillTraceableModelList(models, externalList);
 		}
 		return externalList.toArray();
@@ -314,7 +315,7 @@ public class TracingLauncherTab
 		if (workspaceList == null) {
 			workspaceList = new Vector();
 			IPluginModel[] models =
-				PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+				PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 			fillTraceableModelList(models, workspaceList);
 		}
 		return workspaceList.toArray();
@@ -363,7 +364,7 @@ public class TracingLauncherTab
 	
 	private void doInitializeFrom(ILaunchConfiguration config) {
 		masterOptions =
-			PDEPlugin.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
+			PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
 		propertySources.clear();
 		try {
 			boolean tracing = false;

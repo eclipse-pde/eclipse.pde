@@ -4,18 +4,16 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.wizard.*;
-import java.lang.reflect.*;
-import org.eclipse.jface.operation.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.feature.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class SynchronizeVersionsAction extends Action {
 	public static final String LABEL = "Actions.synchronizeVersions.label";
@@ -46,7 +44,7 @@ private void ensureContentSaved() {
 private boolean ensureEditorsClosed() {
 	Class modelClass = IPluginModelBase.class;
 	boolean result =
-		PDEPlugin.getDefault().getWorkspaceModelManager().getAllEditableModelsUnused(
+		PDECore.getDefault().getWorkspaceModelManager().getAllEditableModelsUnused(
 			modelClass);
 	if (!result) {
 		MessageDialog.openError(

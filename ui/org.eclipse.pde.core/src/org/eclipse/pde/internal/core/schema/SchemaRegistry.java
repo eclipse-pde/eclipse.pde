@@ -11,9 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
-import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 
 
 public class SchemaRegistry implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {
@@ -64,11 +62,11 @@ private void initializeDescriptors() {
 	// Now read the registry and accept schema maps
 	loadMappedDescriptors();
 	// Register for further changes
-	PDEPlugin.getDefault().getWorkspaceModelManager().addModelProviderListener(this);
-	PDEPlugin.getWorkspace().addResourceChangeListener(this);
+	PDECore.getDefault().getWorkspaceModelManager().addModelProviderListener(this);
+	PDECore.getWorkspace().addResourceChangeListener(this);
 }
 private void loadExternalDescriptors() {
-	ExternalModelManager registry = PDEPlugin.getDefault().getExternalModelManager();
+	ExternalModelManager registry = PDECore.getDefault().getExternalModelManager();
 	for (int i = 0; i < registry.getPluginCount(); i++) {
 		IPlugin pluginInfo = registry.getPlugin(i);
 		IPluginExtensionPoint[] points = pluginInfo.getExtensionPoints();
@@ -85,7 +83,7 @@ private void loadExternalDescriptors() {
 private void loadMappedDescriptors() {
 	IPluginRegistry registry = Platform.getPluginRegistry();
 	org.eclipse.core.runtime.IExtensionPoint point =
-		registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);
+		registry.getExtensionPoint(PDECore.getPluginId(), PLUGIN_POINT);
 	if (point == null)
 		return;
 
@@ -117,7 +115,7 @@ private void loadWorkspaceDescriptor(IPluginModelBase model) {
 }
 private void loadWorkspaceDescriptors() {
 	WorkspaceModelManager manager =
-		PDEPlugin.getDefault().getWorkspaceModelManager();
+		PDECore.getDefault().getWorkspaceModelManager();
 	IPluginModel[] models = manager.getWorkspacePluginModels();
 	for (int i = 0; i < models.length; i++) {
 		IPluginModel model = models[i];
@@ -177,7 +175,6 @@ private void processMapElement(IConfigurationElement element) {
 		String point = element.getAttribute(MappedSchemaDescriptor.ATT_POINT);
 		String schema = element.getAttribute(MappedSchemaDescriptor.ATT_SCHEMA);
 		if (point == null || schema == null) {
-			PDEProblemFinder.fixMe("Hard-coded error message");
 			System.out.println("Schema map: point or schema null");
 			return;
 		}
@@ -224,7 +221,7 @@ public void resourceChanged(IResourceChangeEvent event) {
 			try {
 				delta.accept(this);
 			} catch (CoreException e) {
-				PDEPlugin.logException(e);
+				PDECore.logException(e);
 			}
 		}
 	}
@@ -236,8 +233,8 @@ public void shutdown() {
 	workspaceDescriptors = null;
 	externalDescriptors = null;
 	dirtyWorkspaceModels = null;
-	PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
-	PDEPlugin.getWorkspace().removeResourceChangeListener(this);
+	PDECore.getDefault().getWorkspaceModelManager().removeModelProviderListener(this);
+	PDECore.getWorkspace().removeResourceChangeListener(this);
 }
 
 private void disposeDescriptors(Hashtable descriptors) {

@@ -10,9 +10,9 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.ischema.ISchema;
 import org.w3c.dom.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
@@ -27,7 +27,7 @@ public String getPoint() {
 }
 public ISchema getSchema() {
 	if (schema == null) {
-		SchemaRegistry registry = PDEPlugin.getDefault().getSchemaRegistry();
+		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		schema = registry.getSchema(point);
 	} else
 		if (schema.isDisposed()) {

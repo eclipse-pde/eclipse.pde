@@ -4,16 +4,16 @@ package org.eclipse.pde.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.io.File;
+import java.util.Vector;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import java.io.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
 /**
  * A utility class that can be used by plug-in project
  * wizards to set up the Java build path. The actual
@@ -221,17 +221,17 @@ public class BuildPathUtil {
 
 		if (resource != null)
 			fmodels =
-				PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+				PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
 		else
 			fmodels =
-				PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+				PDECore.getDefault().getExternalModelManager().getFragmentModels(null);
 		for (int i = 0; i < fmodels.length; i++) {
 			IFragmentModel fmodel = fmodels[i];
 			if (fmodel.isEnabled() == false)
 				continue;
 
 			IFragment fragment = fmodel.getFragment();
-			if (PDEPlugin
+			if (PDECore
 				.compare(
 					fragment.getPluginId(),
 					fragment.getPluginVersion(),
@@ -284,7 +284,7 @@ public class BuildPathUtil {
 			String id = iimport.getId();
 			String version = iimport.getVersion();
 			int match = iimport.getMatch();
-			IPlugin ref = PDEPlugin.getDefault().findPlugin(id, version, match);
+			IPlugin ref = PDECore.getDefault().findPlugin(id, version, match);
 			if (ref != null) {
 				PluginPathUpdater.CheckedPlugin cplugin = new PluginPathUpdater.CheckedPlugin(ref, true);
 				cplugin.setExported(iimport.isReexported());
@@ -302,7 +302,7 @@ public class BuildPathUtil {
 		String version = fragment.getPluginVersion();
 		int match = fragment.getRule();
 
-		IPlugin plugin = PDEPlugin.getDefault().findPlugin(id, version, match);
+		IPlugin plugin = PDECore.getDefault().findPlugin(id, version, match);
 		if (plugin != null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
 			Vector checkedPlugins = new Vector();
@@ -320,11 +320,11 @@ public class BuildPathUtil {
 		IPlugin plugin = model.getPlugin();
 		addFragmentLibraries(
 			plugin,
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels(),
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels(),
 			result);
 		addFragmentLibraries(
 			plugin,
-			PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(monitor),
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(monitor),
 			result);
 	}
 	private static void addFragmentLibraries(
@@ -335,7 +335,7 @@ public class BuildPathUtil {
 			if (models[i].isEnabled() == false)
 				continue;
 			IFragment fragment = models[i].getFragment();
-			if (PDEPlugin
+			if (PDECore
 				.compare(
 					fragment.getPluginId(),
 					fragment.getPluginVersion(),

@@ -1,10 +1,9 @@
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.core.IWritable;
 import java.io.*;
+
+import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.plugin.*;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable {
 	private IPluginImport iimport;

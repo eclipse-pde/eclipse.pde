@@ -16,6 +16,7 @@ import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.pde.internal.core.*;
 
 public class DependenciesForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";

@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.*;
 /**
  */
 public class RuntimeTracingPreferencePage
@@ -112,7 +113,7 @@ private void initializeCheck(String key, String label) {
 /**
  */
 private void initializeOptions() {
-	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+	TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 	options = mng.getTracingOptions();
 	String prefix = PLUGIN_ID+"/loader/debug";
 
@@ -168,7 +169,7 @@ protected void performDefaults() {
  */
 public boolean performOk() {
 	storeValues(options);
-	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+	TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 	mng.setTracingOptions(options);
 	mng.save();
 	return true;
@@ -183,7 +184,7 @@ private void resetValue(RuntimeOption option, Hashtable template) {
  */
 private void resetValues() {
 	Hashtable template =
-		PDEPlugin.getDefault().getTracingOptionsManager().getTemplateTable(PLUGIN_ID);
+		PDECore.getDefault().getTracingOptionsManager().getTemplateTable(PLUGIN_ID);
 	resetValue(master, template);
 	for (int i = 0; i < checks.size(); i++) {
 		RuntimeOption option = (RuntimeOption) checks.elementAt(i);
@@ -235,7 +236,7 @@ private void syncUpMasters(Properties store) {
 /**
  */
 private void updateValues() {
-	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+	TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 	options = mng.getTracingOptions();
 	initializeValues(options);
 }

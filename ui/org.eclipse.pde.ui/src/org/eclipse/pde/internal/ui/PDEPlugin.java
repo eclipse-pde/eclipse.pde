@@ -39,46 +39,22 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
 	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView";
 
-	public static final String MANIFEST_BUILDER_ID =
-		PLUGIN_ID + "." + "ManifestBuilder";
-	public static final String SCHEMA_BUILDER_ID =
-		PLUGIN_ID + "." + "SchemaBuilder";
-	public static final String PLUGIN_NATURE = PLUGIN_ID + "." + "PluginNature";
-	public static final String FEATURE_NATURE = PLUGIN_ID + "." + "FeatureNature";
-	public static final String FEATURE_BUILDER_ID =
-		PLUGIN_ID + "." + "FeatureBuilder";
-
 	public static final String RUN_LAUNCHER_ID =
 		PLUGIN_ID + "." + "WorkbenchRunLauncher";
 	public static final String DEBUG_LAUNCHER_ID =
 		PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 
-	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
-
 	private static final String KEY_RUNNING = "RunningEclipse.message";
-
-	public static final QualifiedName EXTERNAL_PROJECT_PROPERTY =
-		new QualifiedName(PLUGIN_ID, "imported");
-	public static final String EXTERNAL_PROJECT_VALUE = "external";
-	public static final String BINARY_PROJECT_VALUE = "binary";
 
 	// Shared instance
 	private static PDEPlugin inst;
 	// Resource bundle
 	private ResourceBundle resourceBundle;
-	// External model manager
-	private ExternalModelManager externalModelManager;
-	// Tracing options manager
-	private TracingOptionsManager tracingOptionsManager;
-	// Schema registry
-	private SchemaRegistry schemaRegistry;
 	// Shared label labelProvider
 	private PDELabelProvider labelProvider;
 	// A flag that indicates if we are running inside VAJ or not.
 	private static boolean inVAJ;
 	private java.util.Hashtable counters;
-	private WorkspaceModelManager workspaceModelManager;
-	private PluginModelManager modelManager;
 	private Vector currentLaunchListeners = new Vector();
 	private RunningInstanceManager runningInstanceManager;
 
@@ -102,106 +78,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	public IPluginExtensionPoint findExtensionPoint(String fullID) {
-		if (fullID == null || fullID.length() == 0)
-			return null;
-		// separate plugin ID first
-		int lastDot = fullID.lastIndexOf('.');
-		if (lastDot == -1)
-			return null;
-		String pluginID = fullID.substring(0, lastDot);
-		IPlugin plugin = findPlugin(pluginID);
-		if (plugin == null)
-			return null;
-		String pointID = fullID.substring(lastDot + 1);
-		IPluginExtensionPoint[] points = plugin.getExtensionPoints();
-		for (int i = 0; i < points.length; i++) {
-			IPluginExtensionPoint point = points[i];
-			if (point.getId().equals(pointID))
-				return point;
-		}
-		return null;
-	}
-	private IPlugin findPlugin(IPluginModel[] models, String id) {
-		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
-			if (model.isEnabled() == false)
-				continue;
-			IPlugin plugin = model.getPlugin();
-			String pid = plugin.getId();
-			if (pid != null && pid.equals(id))
-				return plugin;
-		}
-		return null;
-	}
-	private IPlugin findPlugin(
-		IPluginModel[] models,
-		String id,
-		String version,
-		int match) {
-
-		for (int i = 0; i < models.length; i++) {
-			IPluginModel model = models[i];
-			if (model.isEnabled() == false)
-				continue;
-			IPlugin plugin = model.getPlugin();
-			String pid = plugin.getId();
-			String pversion = plugin.getVersion();
-			if (compare(id, version, pid, pversion, match))
-				return plugin;
-		}
-		return null;
-	}
-
-	public static boolean compare(
-		String id1,
-		String version1,
-		String id2,
-		String version2,
-		int match) {
-		if (!(id1.equals(id2)))
-			return false;
-		if (version1 == null)
-			return true;
-		if (version2 == null)
-			return false;
-		PluginVersionIdentifier pid1 = new PluginVersionIdentifier(version1);
-		PluginVersionIdentifier pid2 = new PluginVersionIdentifier(version2);
-
-		switch (match) {
-			case IMatchRules.NONE :
-			case IMatchRules.COMPATIBLE :
-				if (pid2.isCompatibleWith(pid1))
-					return true;
-				break;
-			case IMatchRules.EQUIVALENT :
-				if (pid2.isEquivalentTo(pid1))
-					return true;
-				break;
-			case IMatchRules.PERFECT :
-				if (pid2.isPerfect(pid1))
-					return true;
-				break;
-			case IMatchRules.GREATER_OR_EQUAL :
-				if (pid2.isGreaterOrEqualTo(pid1))
-					return true;
-				break;
-		}
-		return false;
-	}
-
-	public IPlugin findPlugin(String id) {
-		return findPlugin(id, null, IMatchRules.NONE);
-	}
-	public IPlugin findPlugin(String id, String version, int match) {
-		WorkspaceModelManager manager = getWorkspaceModelManager();
-		IPlugin plugin =
-			findPlugin(manager.getWorkspacePluginModels(), id, version, match);
-		if (plugin != null)
-			return plugin;
-		ExternalModelManager exmanager = getExternalModelManager();
-		return findPlugin(exmanager.getModels(), id, version, match);
-	}
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
@@ -222,11 +98,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (counters == null)
 			counters = new Hashtable();
 		return counters;
-	}
-	public ExternalModelManager getExternalModelManager() {
-		if (externalModelManager == null)
-			externalModelManager = new ExternalModelManager();
-		return externalModelManager;
 	}
 	public static String getFormattedMessage(String key, String[] args) {
 		String text = getResourceString(key);
@@ -258,29 +129,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 		}
 		return key;
 	}
-	public SchemaRegistry getSchemaRegistry() {
-		if (schemaRegistry == null)
-			schemaRegistry = new SchemaRegistry();
-		return schemaRegistry;
-	}
-	public TracingOptionsManager getTracingOptionsManager() {
-		if (tracingOptionsManager == null)
-			tracingOptionsManager = new TracingOptionsManager();
-		return tracingOptionsManager;
-	}
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-	public WorkspaceModelManager getWorkspaceModelManager() {
-		if (workspaceModelManager == null)
-			workspaceModelManager = new WorkspaceModelManager();
-		return workspaceModelManager;
-	}
-	public PluginModelManager getModelManager() {
-		return modelManager;
-	}
-	private void initializePlatformPath() {
-		TargetPlatformPreferencePage.initializePlatformPath();
 	}
 	private IWorkbenchPage internalGetActivePage() {
 		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -357,24 +207,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 
 	public void startup() throws CoreException {
 		super.startup();
-		workspaceModelManager = new WorkspaceModelManager();
-		externalModelManager = new ExternalModelManager();
 
-		if (isVAJ() == false)
-			initializePlatformPath();
-
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//This causes PDE to bomb - problem in Debug UI
-				//JavaRuntime.initializeJREVariables(monitor);
-				getExternalModelManager().getEclipseHome(monitor);
-			}
-		};
-		try {
-			getWorkspace().run(runnable, null);
-		} catch (CoreException e) {
-			log(e);
-		}
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
@@ -384,20 +217,11 @@ public class PDEPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(factory, FileAdapter.class);
 		// set eclipse home variable if not sets
 
-		getWorkspaceModelManager().reset();
-		
-		modelManager = new PluginModelManager();
-		modelManager.connect(workspaceModelManager, externalModelManager);
 		attachToLaunchManager();
 	}
 	
 	public void shutdown() throws CoreException {
-		if (schemaRegistry != null)
-			schemaRegistry.shutdown();
-
 		detachFromLaunchManager();
-		modelManager.shutdown();
-		workspaceModelManager.shutdown();
 		super.shutdown();
 	}
 

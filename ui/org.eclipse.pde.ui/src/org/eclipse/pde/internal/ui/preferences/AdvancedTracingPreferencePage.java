@@ -21,6 +21,7 @@ import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.ui.editor.manifest.NullMenuManager;
 import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
+import org.eclipse.pde.internal.core.*;
 
 public class AdvancedTracingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String KEY_DESC = "Preferences.AdvancedTracingPage.desc";
@@ -156,7 +157,7 @@ private IAdaptable getAdaptable(IPluginModel model) {
 	if (adaptable == null) {
 		String id = model.getPlugin().getId();
 		Hashtable defaults =
-			PDEPlugin.getDefault().getTracingOptionsManager().getTemplateTable(id);
+			PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 		adaptable = new TracingPropertySource(model, masterOptions, defaults);
 		propertySources.put(model, adaptable);
 	}
@@ -165,7 +166,7 @@ private IAdaptable getAdaptable(IPluginModel model) {
 private Object[] getExternalTraceablePlugins() {
 	if (externalList==null) {
 		externalList = new Vector();
-		IPluginModel [] models = PDEPlugin.getDefault().getExternalModelManager().getModels();
+		IPluginModel [] models = PDECore.getDefault().getExternalModelManager().getModels();
 		fillTraceableModelList(models, externalList);
 	}
 	return externalList.toArray();
@@ -173,14 +174,14 @@ private Object[] getExternalTraceablePlugins() {
 private Object[] getWorkspaceTraceablePlugins() {
 	if (workspaceList==null) {
 		workspaceList = new Vector();
-		IPluginModel [] models = PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+		IPluginModel [] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		fillTraceableModelList(models, workspaceList);
 	}
 	return workspaceList.toArray();
 }
 public void init(IWorkbench workbench) {}
 private void initialize() {
-	masterOptions = PDEPlugin.getDefault().getTracingOptionsManager().getTracingOptions();
+	masterOptions = PDECore.getDefault().getTracingOptionsManager().getTracingOptions();
 	pluginTreeViewer.setInput(PDEPlugin.getDefault());
 	pluginTreeViewer.reveal(workspacePlugins);
 }
@@ -196,7 +197,7 @@ public boolean performOk() {
 		TracingPropertySource source = (TracingPropertySource)enum.nextElement();
 		source.save();
 	}
-	TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+	TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 	mng.setTracingOptions(masterOptions);
 	mng.save();
 	return true;

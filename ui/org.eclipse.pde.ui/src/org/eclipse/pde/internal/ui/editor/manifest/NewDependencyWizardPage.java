@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.core.builders.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 
 public class NewDependencyWizardPage extends WizardPage {
@@ -190,11 +191,11 @@ private boolean isOnTheList(IPluginModel candidate) {
 }
 
 private Object[] getExternalPlugins() {
-	return PDEPlugin.getDefault().getExternalModelManager().getModels();
+	return PDECore.getDefault().getExternalModelManager().getModels();
 }
 
 private Object[] getWorkspacePlugins() {
-	return PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+	return PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 }
 
 public void init(IWorkbench workbench) {}

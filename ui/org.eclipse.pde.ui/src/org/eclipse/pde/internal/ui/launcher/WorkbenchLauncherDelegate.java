@@ -21,6 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLauncherDelegate
 	implements ILauncherDelegate, IExecutableExtension {
@@ -136,7 +137,7 @@ public class WorkbenchLauncherDelegate
 	}
 
 	private String getTracingFileArgument() {
-		TracingOptionsManager mng = PDEPlugin.getDefault().getTracingOptionsManager();
+		TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 		mng.ensureTracingFileExists();
 		String optionsFileName = mng.getTracingFileName();
 		String tracingArg;

@@ -13,11 +13,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -81,11 +81,11 @@ public void createControl(Composite parent) {
 }
 private WorkspacePluginModelBase findFragment(String id) {
 	IPluginModelBase[] models =
-		PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+		PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
 	return findWorkspaceModelBase(models, id);
 }
 private WorkspacePluginModelBase findModel(String id) {
-	IPluginModelBase [] models = PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+	IPluginModelBase [] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 	return findWorkspaceModelBase(models, id);
 }
 private IFeaturePlugin findPluginReference(String id) {
@@ -138,7 +138,7 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 	throws CoreException {
 	IFile file = (IFile) modelBase.getUnderlyingResource();
 	IModelProvider modelProvider =
-		PDEPlugin.getDefault().getWorkspaceModelManager();
+		PDECore.getDefault().getWorkspaceModelManager();
 	modelProvider.connect(file, featureEditor);
 	WorkspacePluginModelBase model =
 		(WorkspacePluginModelBase) modelProvider.getModel(file, featureEditor);
@@ -155,7 +155,7 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 		}
 		model.save();
 		if (base instanceof IPlugin) {
-		   IPlugin local = PDEPlugin.getDefault().findPlugin(base.getId());
+		   IPlugin local = PDECore.getDefault().findPlugin(base.getId());
 		   if (local!=null && 
 		       local.getModel().getUnderlyingResource()!=null &&
 		       local.getModel().getUnderlyingResource().equals(file)) {

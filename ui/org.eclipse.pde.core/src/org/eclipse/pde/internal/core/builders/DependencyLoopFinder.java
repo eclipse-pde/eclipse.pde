@@ -5,9 +5,10 @@ package org.eclipse.pde.internal.core.builders;
  * @author
  */
 
-import org.eclipse.pde.core.plugin.*;
 import java.util.Vector;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class DependencyLoopFinder {
 	private static final String KEY_LOOP_NAME = "Builders.DependencyLoopFinder.loopName";	
@@ -38,9 +39,9 @@ public class DependencyLoopFinder {
 				// our loop!!
 				DependencyLoop loop = new DependencyLoop();
 				loop.setMembers((IPlugin[])path.toArray(new IPlugin[path.size()]));
-				String pattern = PDEPlugin.getResourceString(KEY_LOOP_NAME);
+				String pattern = PDECore.getResourceString(KEY_LOOP_NAME);
 				int no = loops.size()+1;
-				loop.setName(PDEPlugin.getFormattedMessage(pattern,(""+no)));
+				loop.setName(PDECore.getFormattedMessage(pattern,(""+no)));
 				loops.add(loop);
 				return;
 			}
@@ -62,7 +63,7 @@ public class DependencyLoopFinder {
 			for (int i=0; i<iimports.length; i++) {
 				IPluginImport iimport = iimports[i];
 				String id = iimport.getId();
-				IPlugin child = PDEPlugin.getDefault().findPlugin(id);
+				IPlugin child = PDECore.getDefault().findPlugin(id);
 				if (child!=null) {
 					findLoops(loops, newPath, child, null, false);
 				}	

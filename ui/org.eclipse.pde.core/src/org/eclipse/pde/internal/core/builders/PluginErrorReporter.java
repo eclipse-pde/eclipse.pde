@@ -4,11 +4,10 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.PDECore;
+import org.xml.sax.*;
 
 public class PluginErrorReporter implements ErrorHandler {
 	private IFile file;
@@ -31,7 +30,7 @@ private void addMarker(
 		if (lineNumber != -1)
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 	} catch (CoreException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 }
 
@@ -54,7 +53,7 @@ private void removeFileMarkers() {
 	try {
 		file.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
 	} catch (CoreException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 }
 public void reportError(String message) {

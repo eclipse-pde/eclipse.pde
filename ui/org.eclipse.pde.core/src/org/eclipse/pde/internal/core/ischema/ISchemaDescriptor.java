@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.core.ischema;
  */
 
 import java.net.*;
-import org.eclipse.jface.resource.*;
 /**
  * Classes that implement this interface are responsible for
  * holding the schema object, loading it and disposing.
@@ -14,13 +13,6 @@ import org.eclipse.jface.resource.*;
  * loading and output streams for saving (if schema is editable).
  */
 public interface ISchemaDescriptor {
-/**
- * Creates an image descriptor for the provided image name.
- * Implementation of this method is descriptor-specific and
- * depends on where schema comes from (workspace or external).
- * @return new image descriptor for the provided relative image name
- */
-public ImageDescriptor createImageDescriptor(String imageName);
 /**
  * Returns identifier of the extension point defined in this schema.
  * @return id of the schema extension point

@@ -4,28 +4,21 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.part.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.*;
-import java.io.*;
+import java.util.Vector;
+
 import org.eclipse.jface.action.*;
-import java.util.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.*;
 
 public class PointUsageSection extends TableSection {
 	public static final String SECTION_TITLE =
@@ -109,7 +102,7 @@ public class PointUsageSection extends TableSection {
 		}
 
 		WorkspaceModelManager manager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),
 			fullPointId,
@@ -117,7 +110,7 @@ public class PointUsageSection extends TableSection {
 			result);
 
 		ExternalModelManager registry =
-			PDEPlugin.getDefault().getExternalModelManager();
+			PDECore.getDefault().getExternalModelManager();
 		addReferencingPlugins(
 			thisPluginBase.getId(),
 			fullPointId,

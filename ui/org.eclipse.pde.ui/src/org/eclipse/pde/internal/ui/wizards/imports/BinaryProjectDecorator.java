@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Shell;
 import java.util.*;
+import org.eclipse.pde.internal.core.*;
 
 /**
  * @version 	1.0
@@ -33,9 +34,9 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 	public Image decorateImage(Image image, Object element) {
 		String property = getExternalProjectProperty(element);
 		if (property != null) {
-			if (property.equalsIgnoreCase(PDEPlugin.EXTERNAL_PROJECT_VALUE)) {
+			if (property.equalsIgnoreCase(PDECore.EXTERNAL_PROJECT_VALUE)) {
 				return findImage(image, true);
-			} else if (property.equalsIgnoreCase(PDEPlugin.BINARY_PROJECT_VALUE)) {
+			} else if (property.equalsIgnoreCase(PDECore.BINARY_PROJECT_VALUE)) {
 				return findImage(image, false);
 			}
 		}
@@ -73,7 +74,7 @@ public class BinaryProjectDecorator extends LabelProvider implements ILabelDecor
 		*/
 		if (project != null) {
 			try {
-				return project.getPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY);
+				return project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
 			} catch (CoreException e) {
 			}
 		}

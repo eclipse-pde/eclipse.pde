@@ -20,6 +20,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class FirstTemplateWizardPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";
@@ -272,7 +273,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		String pluginVersion,
 		int match) {
 		IPlugin plugin =
-			PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion, match);
+			PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
 		return plugin != null;
 	}
 	

@@ -4,13 +4,12 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
 import java.io.*;
+import java.util.Map;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.PDECore;
 
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
@@ -87,20 +86,20 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 
 private boolean isInterestingProject(IProject project) {
 	try {
-		if (!project.hasNature(PDEPlugin.PLUGIN_NATURE)) 
+		if (!project.hasNature(PDECore.PLUGIN_NATURE)) 
 			return false;
-		if (project.getPersistentProperty(PDEPlugin.EXTERNAL_PROJECT_PROPERTY)!=null)
+		if (project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)!=null)
 			return false;
 		// This is it - a plug-in project that is not external or binary
 		return true;
 	} catch (CoreException e) {
-		PDEPlugin.log(e);
+		PDECore.log(e);
 		return false;
 	}
 }
 private void compileFile(IFile file, IProgressMonitor monitor) {
 	String message =
-		PDEPlugin.getFormattedMessage(
+		PDECore.getFormattedMessage(
 			BUILDERS_SCHEMA_COMPILING,
 			file.getFullPath().toString());
 	monitor.subTask(message);
@@ -133,17 +132,17 @@ private void compileFile(IFile file, IProgressMonitor monitor) {
 		}
 	} 
 	catch (UnsupportedEncodingException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
 	catch (CoreException e) {
-		PDEPlugin.logException(e);
+		PDECore.logException(e);
 	}
-	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
+	monitor.subTask(PDECore.getResourceString(BUILDERS_UPDATING));
 	monitor.done();
 }
 private void compileSchemasIn(IFolder folder, IProgressMonitor monitor)
 	throws CoreException {
-	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
+	monitor.subTask(PDECore.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
 
 	IResource[] members = folder.members();
 
@@ -177,7 +176,7 @@ private boolean isSchemaFile(IFile file) {
 private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 	String outputFileName = getOutputFileName(file);
 	String message =
-		PDEPlugin.getFormattedMessage(BUILDERS_SCHEMA_REMOVING, outputFileName);
+		PDECore.getFormattedMessage(BUILDERS_SCHEMA_REMOVING, outputFileName);
 
 	monitor.subTask(message);
 
@@ -189,7 +188,7 @@ private void removeOutputFile(IFile file, IProgressMonitor monitor) {
 			try {
 				outputFile.delete(true, true, monitor);
 			} catch (CoreException e) {
-				PDEPlugin.logException(e);
+				PDECore.logException(e);
 			}
 		}
 	}

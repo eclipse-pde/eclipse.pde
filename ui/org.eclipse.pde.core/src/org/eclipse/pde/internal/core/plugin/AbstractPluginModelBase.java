@@ -11,9 +11,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.SourceDOMParser;
-import org.eclipse.pde.internal.ui.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -73,13 +72,13 @@ public abstract class AbstractPluginModelBase
 			String id = pluginBase.getId();
 			String version = pluginBase.getVersion();
 			// Add matching external fragments
-			ExternalModelManager emng = PDEPlugin.getDefault().getExternalModelManager();
+			ExternalModelManager emng = PDECore.getDefault().getExternalModelManager();
 			if (emng.hasEnabledModels()) {
 				IFragmentModel[] models = emng.getFragmentModels(null);
 				addMatchingFragments(id, version, models, result);
 			}
 			// Add matching workspace fragments
-			WorkspaceModelManager wmng = PDEPlugin.getDefault().getWorkspaceModelManager();
+			WorkspaceModelManager wmng = PDECore.getDefault().getWorkspaceModelManager();
 			IFragmentModel[] models = wmng.getWorkspaceFragmentModels();
 			addMatchingFragments(id, version, models, result);
 		}
@@ -101,7 +100,7 @@ public abstract class AbstractPluginModelBase
 			String refid = fragment.getPluginId();
 			String refversion = fragment.getPluginVersion();
 			int refmatch = fragment.getRule();
-			if (PDEPlugin.compare(refid, refversion, id, version, refmatch)) {
+			if (PDECore.compare(refid, refversion, id, version, refmatch)) {
 				URL location = ((AbstractPluginModelBase)model).getNLLookupLocation();
 				result.add(location);
 				IPluginLibrary libraries[] = fragment.getLibraries();
@@ -164,9 +163,9 @@ public abstract class AbstractPluginModelBase
 		Status status =
 			new Status(
 				IStatus.ERROR,
-				PDEPlugin.getPluginId(),
+				PDECore.getPluginId(),
 				IStatus.OK,
-				PDEPlugin.getResourceString(KEY_ERROR),
+				PDECore.getResourceString(KEY_ERROR),
 				null);
 		throw new CoreException(status);
 	}

@@ -8,6 +8,7 @@ import java.io.File;
 import java.net.*;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
@@ -160,15 +161,15 @@ public class ExternalModelManager {
 
 	private String[] getPluginPaths(String platformHome) {
 		if (platformHome == null) {
-			IPreferenceStore store = PDECore.getDefault().getPreferenceStore();
-			platformHome = store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
+			CoreSettings settings = PDECore.getDefault().getSettings();
+			platformHome = settings.getString(ICoreConstants.PLATFORM_PATH);
 		}
 		if (platformHome == null || platformHome.length() == 0) {
-			Display.getCurrent().beep();
-			MessageDialog.openError(
-				PDECore.getActiveWorkbenchShell(),
-				PDECore.getResourceString(KEY_ERROR_TITLE),
-				PDECore.getResourceString(KEY_ERROR_NO_HOME));
+			//			Display.getCurrent().beep();
+			//			MessageDialog.openError(
+			//				PDECore.getActiveWorkbenchShell(),
+			//				PDECore.getResourceString(KEY_ERROR_TITLE),
+			//				PDECore.getResourceString(KEY_ERROR_NO_HOME));
 			return new String[0];
 		}
 		String[] paths = new String[2];
@@ -179,11 +180,12 @@ public class ExternalModelManager {
 
 	public boolean hasEnabledModels() {
 		if (models == null) {
-			if (ExternalPluginsBlock
-				.hasEnabledModels(PDECore.getDefault().getPreferenceStore()))
-				loadModels(new NullProgressMonitor());
-			else
+			CoreSettings settings = PDECore.getDefault().getSettings();
+			String saved = settings.getString(ICoreConstants.CHECKED_PLUGINS);
+			if (saved != null && saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 				return false;
+			}
+			loadModels(new NullProgressMonitor());
 		}
 		for (int i = 0; i < models.size(); i++) {
 			IPluginModel model = (IPluginModel) models.elementAt(i);
@@ -194,23 +196,21 @@ public class ExternalModelManager {
 	}
 
 	private boolean loadModels(IProgressMonitor monitor) {
-		TargetPlatformPreferencePage.initializePlatformPath();
-		boolean useOther = TargetPlatformPreferencePage.getUseOther();
+		initializePlatformPath();
+		boolean useOther = getUseOther();
 		boolean result;
 
 		if (useOther) {
 			result = reload(null, monitor);
-		}
-		else {
+		} else {
 			reloadFromLive(monitor);
 			result = true;
 		}
 		if (result) {
-			IPreferenceStore store = PDECore.getDefault().getPreferenceStore();
-			ExternalPluginsBlock.initialize(this, store);
+			initialize();
 		}
 		Object[] array = models.toArray();
-		ArraySorter.INSTANCE.sortInPlace(array);
+		CoreArraySorter.INSTANCE.sortInPlace(array);
 
 		for (int i = 0; i < array.length; i++) {
 			models.set(i, array[i]);
@@ -370,7 +370,11 @@ public class ExternalModelManager {
 			monitor = new NullProgressMonitor();
 
 		IPluginRegistry liveRegistry = Platform.getPluginRegistry();
-		processPluginRegistryModel((PluginRegistryModel)liveRegistry, models, fmodels, monitor);
+		processPluginRegistryModel(
+			(PluginRegistryModel) liveRegistry,
+			models,
+			fmodels,
+			monitor);
 	}
 
 	public void removeModelProviderListener(IModelProviderListener listener) {
@@ -380,10 +384,8 @@ public class ExternalModelManager {
 	public static IPath getEclipseHome(IProgressMonitor monitor) {
 		IPath eclipseHome =
 			JavaCore.getClasspathVariable(PDECore.ECLIPSE_HOME_VARIABLE);
-		TargetPlatformPreferencePage.initializePlatformPath();
-		IPreferenceStore store = PDECore.getDefault().getPreferenceStore();
-		String platformHome =
-			store.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
+		CoreSettings settings = PDECore.getDefault().getSettings();
+		String platformHome = settings.getString(ICoreConstants.PLATFORM_PATH);
 		IPath platformPath = new Path(platformHome);
 		if (eclipseHome == null || !eclipseHome.equals(platformPath)) {
 			setEclipseHome(platformHome, monitor);
@@ -402,10 +404,108 @@ public class ExternalModelManager {
 				PDECore.ECLIPSE_HOME_VARIABLE,
 				new Path(newValue),
 				monitor);
+			CoreSettings store = PDECore.getDefault().getSettings();
+			store.setValue(ICoreConstants.PLATFORM_PATH, newValue);
 		} catch (JavaModelException e) {
 			PDECore.logException(e);
 		} finally {
 			monitor.done();
 		}
+	}
+	public static void initializePlatformPath() {
+		CoreSettings store = PDECore.getDefault().getSettings();
+		boolean useThis = true;
+		String mode = store.getString(ICoreConstants.TARGET_MODE);
+
+		if (mode != null && mode.equals(ICoreConstants.VALUE_USE_OTHER))
+			useThis = false;
+		String path = store.getString(ICoreConstants.PLATFORM_PATH);
+		String currentPath = computeDefaultPlatformPath();
+
+		if (path == null
+			|| path.length() == 0
+			|| (useThis && !currentPath.equals(path))) {
+			path = currentPath;
+			store.setDefault(ICoreConstants.PLATFORM_PATH, path);
+			store.setValue(ICoreConstants.PLATFORM_PATH, path);
+		}
+	}
+
+	public static boolean getUseOther() {
+		CoreSettings store = PDECore.getDefault().getSettings();
+		boolean useOther = false;
+		String mode = store.getString(ICoreConstants.TARGET_MODE);
+		if (mode != null && mode.equals(ICoreConstants.VALUE_USE_OTHER))
+			useOther = true;
+		return useOther;
+	}
+	private static String computeDefaultPlatformPath() {
+		URL installURL = BootLoader.getInstallURL();
+		String file = installURL.getFile();
+		IPath ppath = new Path(file).removeTrailingSeparator();
+		return getCorrectPath(ppath.toOSString());
+	}
+
+	private static String getCorrectPath(String path) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < path.length(); i++) {
+			char c = path.charAt(i);
+			if (BootLoader.getOS().equals("win32")) {
+				if (i == 0 && c == '/')
+					continue;
+			}
+			// Some VMs may return %20 instead of a space
+			if (c == '%' && i + 2 < path.length()) {
+				char c1 = path.charAt(i + 1);
+				char c2 = path.charAt(i + 2);
+				if (c1 == '2' && c2 == '0') {
+					i += 2;
+					continue;
+				}
+			}
+			buf.append(c);
+		}
+		return buf.toString();
+	}
+	public void initialize() {
+		CoreSettings store = PDECore.getDefault().getSettings();
+		String saved = store.getString(ICoreConstants.CHECKED_PLUGINS);
+
+		if (saved.length() == 0 || saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+			initializeDefault(false);
+		} else if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
+			initializeDefault(true);
+		} else {
+			Vector savedList = createSavedList(saved);
+
+			IPluginModel[] models = getModels();
+			for (int i = 0; i < models.length; i++) {
+				IPluginModel model = models[i];
+				String id = model.getPlugin().getId();
+				model.setEnabled(isChecked(id, savedList));
+			}
+		}
+	}
+	private void initializeDefault(boolean enabled) {
+		IPluginModel[] models = getModels();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModel model = models[i];
+			model.setEnabled(enabled);
+		}
+	}
+	private boolean isChecked(String name, Vector list) {
+		for (int i = 0; i < list.size(); i++) {
+			if (name.equals(list.elementAt(i)))
+				return false;
+		}
+		return true;
+	}
+	private Vector createSavedList(String saved) {
+		Vector result = new Vector();
+		StringTokenizer stok = new StringTokenizer(saved);
+		while (stok.hasMoreTokens()) {
+			result.add(stok.nextToken());
+		}
+		return result;
 	}
 }

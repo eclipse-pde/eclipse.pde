@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaComplexType extends SchemaType implements ISchemaComplexType {
 	public static final String P_COMPOSITOR = "compositorProperty";

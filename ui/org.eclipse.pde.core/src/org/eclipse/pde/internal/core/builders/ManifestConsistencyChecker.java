@@ -4,18 +4,15 @@ package org.eclipse.pde.internal.core.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
-import org.apache.xerces.parsers.*;
-import org.eclipse.core.runtime.*;
-import java.util.*;
+import java.util.Map;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.ui.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import java.io.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.w3c.dom.Node;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
@@ -36,9 +33,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				// Only check projects with plugin nature
 				IProject project = (IProject) resource;
 				try {
-					return (project.hasNature(PDEPlugin.PLUGIN_NATURE));
+					return (project.hasNature(PDECore.PLUGIN_NATURE));
 				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+					PDECore.logException(e);
 					return false;
 				}
 			}
@@ -95,7 +92,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
 		String message =
-			PDEPlugin.getFormattedMessage(
+			PDECore.getFormattedMessage(
 				BUILDERS_VERIFYING,
 				file.getFullPath().toString());
 		monitor.subTask(message);
@@ -109,7 +106,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				validatePlugin(file, reporter);
 			}
 		}
-		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
+		monitor.subTask(PDECore.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
 	private boolean isFragment(IFile file) {
@@ -153,12 +150,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			String pluginId = fragment.getPluginId();
 			String pluginVersion = fragment.getPluginVersion();
 			int match = fragment.getRule();
-			IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion, match);
+			IPlugin plugin = PDECore.getDefault().findPlugin(pluginId, pluginVersion, match);
 			if (plugin == null) {
 				// broken fragment link
 				String[] args = { pluginId, pluginVersion };
 				String message =
-					PDEPlugin.getFormattedMessage(BUILDERS_FRAGMENT_BROKEN_LINK, args);
+					PDECore.getFormattedMessage(BUILDERS_FRAGMENT_BROKEN_LINK, args);
 				int line = 1;
 				if (fragment instanceof ISourceObject)
 					line = ((ISourceObject) fragment).getStartLine();
@@ -179,7 +176,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			pvi.toString();
 		} catch (Throwable e) {
 			String message =
-				PDEPlugin.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
+				PDECore.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
 			int line = 1;
 			if (pluginBase instanceof ISourceObject)
 				line = ((ISourceObject) pluginBase).getStartLine();

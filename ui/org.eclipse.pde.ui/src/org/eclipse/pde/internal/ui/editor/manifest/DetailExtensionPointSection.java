@@ -64,8 +64,8 @@ public class DetailExtensionPointSection
 		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
-		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
+		schemaRegistry = PDECore.getDefault().getSchemaRegistry();
+		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		getTablePart().setEditable(false);
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {

@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.pde.internal.core.*;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -204,8 +205,8 @@ public class DetailExtensionSection
 				PDEPlugin.getResourceString(SECTION_UP),
 				PDEPlugin.getResourceString(SECTION_DOWN)});
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-		schemaRegistry = PDEPlugin.getDefault().getSchemaRegistry();
-		pluginInfoRegistry = PDEPlugin.getDefault().getExternalModelManager();
+		schemaRegistry = PDECore.getDefault().getSchemaRegistry();
+		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		handleDefaultButton = false;
 	}
 	private static void addItemsForExtensionWithSchema(

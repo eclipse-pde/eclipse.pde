@@ -4,10 +4,10 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.*;
-import java.net.*;
-import org.eclipse.pde.core.plugin.*;
 import java.io.File;
+import java.net.*;
+
+import org.eclipse.pde.core.plugin.*;
 
 
 public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
@@ -16,10 +16,10 @@ public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {
 public ExternalSchemaDescriptor(IPluginExtensionPoint info) {
 	this.info = info;
 }
-public ImageDescriptor createImageDescriptor(String imageName) {
-	if (imageName.indexOf(':') != -1) return createAbsoluteImageDescriptor(imageName);
-	return null;
-}
+//public ImageDescriptor createImageDescriptor(String imageName) {
+//	if (imageName.indexOf(':') != -1) return createAbsoluteImageDescriptor(imageName);
+//	return null;
+//}
 public String getPointId() {
 	return info.getFullId();
 }

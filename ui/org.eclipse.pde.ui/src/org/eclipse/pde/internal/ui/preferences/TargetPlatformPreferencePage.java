@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.util.*;
+import org.eclipse.pde.internal.core.*;
 
 /**
  */
@@ -104,10 +105,9 @@ public class TargetPlatformPreferencePage
 	 */
 	public TargetPlatformPreferencePage() {
 		super(GRID);
-		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
+		//setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString(KEY_DESCRIPTION));
-		getPreferenceStore().setDefault(PROP_TARGET_MODE, VALUE_USE_THIS);
-		String value = getPreferenceStore().getString(PROP_TARGET_MODE);
+		String value = PDECore.getDefault().getSettings().getString(PROP_TARGET_MODE);
 		useOther = value.equals(VALUE_USE_OTHER);
 	}
 	/**
@@ -159,30 +159,9 @@ public class TargetPlatformPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	/**
-	 */
-
-	public static void initializePlatformPath() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		boolean useThis = true;
-		String mode = store.getString(PROP_TARGET_MODE);
-
-		if (mode != null && mode.equals(VALUE_USE_OTHER))
-			useThis = false;
-		String path = store.getString(PROP_PLATFORM_PATH);
-		String currentPath = computeDefaultPlatformPath();
-
-		if (path == null
-			|| path.length() == 0
-			|| (useThis && !currentPath.equals(path))) {
-			path = currentPath;
-			store.setDefault(PROP_PLATFORM_PATH, path);
-			store.setValue(PROP_PLATFORM_PATH, path);
-		}
-	}
-
+	
 	public static boolean getUseOther() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		CoreSettings store = PDECore.getDefault().getSettings();
 		boolean useOther = false;
 		String mode = store.getString(PROP_TARGET_MODE);
 		if (mode != null && mode.equals(VALUE_USE_OTHER))

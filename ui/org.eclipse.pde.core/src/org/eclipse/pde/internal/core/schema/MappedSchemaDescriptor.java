@@ -4,10 +4,9 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.*;
 import java.net.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class MappedSchemaDescriptor extends AbstractSchemaDescriptor {
 	public static final String ATT_SCHEMA = "schema";
@@ -18,23 +17,23 @@ public class MappedSchemaDescriptor extends AbstractSchemaDescriptor {
 public MappedSchemaDescriptor(IConfigurationElement config) {
 	this.config = config;
 }
-public ImageDescriptor createImageDescriptor(String imageName) {
-	if (imageName.indexOf(':') != -1)
-		return createAbsoluteImageDescriptor(imageName);
-	IPluginDescriptor pd =
-		config.getDeclaringExtension().getDeclaringPluginDescriptor();
-	URL url = null;
-	try {
-		url = pd.getInstallURL();
-		url = new URL(url, imageName);
-	} catch (MalformedURLException e) {
-		url = null;
-	}
-	if (url != null)
-		return ImageDescriptor.createFromURL(url);
-	else
-		return null;
-}
+//public ImageDescriptor createImageDescriptor(String imageName) {
+//	if (imageName.indexOf(':') != -1)
+//		return createAbsoluteImageDescriptor(imageName);
+//	IPluginDescriptor pd =
+//		config.getDeclaringExtension().getDeclaringPluginDescriptor();
+//	URL url = null;
+//	try {
+//		url = pd.getInstallURL();
+//		url = new URL(url, imageName);
+//	} catch (MalformedURLException e) {
+//		url = null;
+//	}
+//	if (url != null)
+//		return ImageDescriptor.createFromURL(url);
+//	else
+//		return null;
+//}
 public String getPointId() {
 	return config.getAttribute(ATT_POINT);
 }

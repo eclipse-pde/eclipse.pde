@@ -30,6 +30,7 @@ import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class AdvancedLauncherTab
 	extends AbstractLauncherTab
@@ -269,9 +270,9 @@ public class AdvancedLauncherTab
 
 	static IPluginModelBase[] getExternalPlugins() {
 		IPluginModelBase[] plugins =
-			PDEPlugin.getDefault().getExternalModelManager().getModels();
+			PDECore.getDefault().getExternalModelManager().getModels();
 		IPluginModelBase[] fragments =
-			PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+			PDECore.getDefault().getExternalModelManager().getFragmentModels(null);
 		return getAllPlugins(plugins, fragments);
 	}
 
@@ -287,9 +288,9 @@ public class AdvancedLauncherTab
 
 	static IPluginModelBase[] getWorkspacePlugins() {
 		IPluginModelBase[] plugins =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
 		return getAllPlugins(plugins, fragments);
 	}
 

@@ -14,6 +14,7 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.*;
 
 public class PluginPathUpdater {
 	public static final String KEY_UPDATING = "PluginPathUpdater.updating";
@@ -59,7 +60,7 @@ public class PluginPathUpdater {
 		if (!buildFile.exists())
 			return;
 		WorkspaceModelManager manager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		manager.connect(buildFile, null, false);
 		IBuildModel buildModel = (IBuildModel) manager.getModel(buildFile, null);
 		IBuild build = buildModel.getBuild();
@@ -120,7 +121,7 @@ public class PluginPathUpdater {
 			if (iimport.isReexported() == false)
 				continue;
 			String id = iimport.getId();
-			IPlugin reference = PDEPlugin.getDefault().findPlugin(id);
+			IPlugin reference = PDECore.getDefault().findPlugin(id);
 			if (reference != null) {
 				CheckedPlugin ref = new CheckedPlugin(reference, true);
 				addToClasspathEntries(ref, result);
@@ -129,7 +130,7 @@ public class PluginPathUpdater {
 	}
 	
 	public static IPath getExternalPath(IPluginModelBase model) {
-		IPath modelPath = new Path(PDEPlugin.ECLIPSE_HOME_VARIABLE);
+		IPath modelPath = new Path(PDECore.ECLIPSE_HOME_VARIABLE);
 		modelPath =
 			modelPath.append(
 				((ExternalPluginModelBase) model).getEclipseHomeRelativePath());
@@ -218,10 +219,10 @@ public class PluginPathUpdater {
 	public static void addImplicitLibraries(Vector result, boolean addRuntime) {
 		String bootId = "org.eclipse.core.boot";
 		String runtimeId = "org.eclipse.core.runtime";
-		IPlugin bootPlugin = PDEPlugin.getDefault().findPlugin(bootId);
+		IPlugin bootPlugin = PDECore.getDefault().findPlugin(bootId);
 
 		if (addRuntime) {
-			IPlugin runtimePlugin = PDEPlugin.getDefault().findPlugin(runtimeId);
+			IPlugin runtimePlugin = PDECore.getDefault().findPlugin(runtimeId);
 			if (runtimePlugin != null) {
 				addToClasspathEntries(new CheckedPlugin(runtimePlugin, true), result);
 			}

@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.pde.internal.core.*;
 
 public class ManifestEditor
 	extends PDEMultiPageXMLEditor
@@ -143,7 +144,7 @@ public class ManifestEditor
 		stream = file.getContents(false);
 
 		IModelProvider modelProvider =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		modelProvider.connect(file, this);
 		WorkspacePluginModelBase model =
 			(WorkspacePluginModelBase) modelProvider.getModel(file, this);
@@ -174,7 +175,7 @@ public class ManifestEditor
 		super.dispose();
 		IPluginModelBase model = (IPluginModelBase) getModel();
 		IModelProvider modelProvider =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		if (model instanceof WorkspacePluginModelBase) {
 			IBuildModel buildModel = model.getBuildModel();
 			modelProvider.disconnect(buildModel.getUnderlyingResource(), this);
@@ -256,7 +257,7 @@ public class ManifestEditor
 	}
 
 	public void openPluginEditor(String pluginId) {
-		IPlugin pluginToOpen = PDEPlugin.getDefault().findPlugin(pluginId);
+		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
 		if (pluginToOpen != null) {
 			openPluginEditor(pluginToOpen);
 		} else {

@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.preferences.ExternalPluginsBlock;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.pde.internal.core.PDECore;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 
@@ -267,8 +268,8 @@ public class WorkbenchLauncherWizardAdvancedPage
 	}
 
 	static IPluginModelBase[] getExternalPlugins() {
-		IPluginModelBase[] plugins = PDEPlugin.getDefault().getExternalModelManager().getModels();
-		IPluginModelBase[] fragments = PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+		IPluginModelBase[] plugins = PDECore.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] fragments = PDECore.getDefault().getExternalModelManager().getFragmentModels(null);
 		return getAllPlugins(plugins, fragments);
 	}
 	
@@ -282,9 +283,9 @@ public class WorkbenchLauncherWizardAdvancedPage
 
 	static IPluginModelBase[] getWorkspacePlugins() {
 		IPluginModelBase[] plugins =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
 		IPluginModelBase[] fragments =
-			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
+			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFragmentModels();
 		return getAllPlugins(plugins, fragments);
 	}
 

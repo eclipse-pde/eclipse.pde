@@ -10,7 +10,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.*;
 
 public abstract class PluginObject
@@ -132,7 +132,7 @@ public abstract class PluginObject
 	}
 	protected void throwCoreException(String message) throws CoreException {
 		Status status =
-			new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
+			new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 	public String toString() {

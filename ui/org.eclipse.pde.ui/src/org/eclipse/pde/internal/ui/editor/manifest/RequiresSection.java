@@ -10,6 +10,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
@@ -49,7 +50,7 @@ public class RequiresSection
 	private void addImportLink(IPluginImport importObject) {
 		Label imageLabel = factory.createLabel(requiresParent, "");
 		String pluginId = importObject.getId();
-		IPlugin refPlugin = PDEPlugin.getDefault().findPlugin(pluginId);
+		IPlugin refPlugin = PDECore.getDefault().findPlugin(pluginId);
 		String name = pluginId;
 
 		if (refPlugin != null && MainPreferencePage.isFullNameModeEnabled())

@@ -4,11 +4,10 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.resource.*;
 import java.net.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
 
 public class FileSchemaDescriptor extends AbstractSchemaDescriptor {
 	private IFile file;
@@ -16,21 +15,7 @@ public class FileSchemaDescriptor extends AbstractSchemaDescriptor {
 public FileSchemaDescriptor(IFile file) {
 	this.file = file;
 }
-public ImageDescriptor createImageDescriptor(String imageName) {
-	if (imageName.indexOf(':') != -1)
-		return createAbsoluteImageDescriptor(imageName);
-	URL url = null;
-	try {
-		url = getInstallURL();
-		url = new URL(url, imageName);
-	} catch (MalformedURLException e) {
-		url = null;
-	}
-	if (url != null)
-		return ImageDescriptor.createFromURL(url);
-	else
-		return null;
-}
+
 protected Schema createSchema() {
 	URL url = getSchemaURL();
 	if (url==null) return null;

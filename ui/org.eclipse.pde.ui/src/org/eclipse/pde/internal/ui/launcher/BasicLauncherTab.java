@@ -24,6 +24,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.debug.ui.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.pde.internal.core.ExternalModelManager;
 
 public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSettings {
 	private static final String KEY_DESC = "";
@@ -210,7 +211,7 @@ public class BasicLauncherTab extends AbstractLauncherTab implements ILauncherSe
 	}
 
 	static String getDefaultWorkspace(IPreferenceStore pstore) {
-		TargetPlatformPreferencePage.initializePlatformPath();
+		ExternalModelManager.initializePlatformPath();
 		IPath ppath =
 			new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);

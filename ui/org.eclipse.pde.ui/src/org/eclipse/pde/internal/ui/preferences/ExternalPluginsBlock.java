@@ -96,7 +96,7 @@ public class ExternalPluginsBlock {
 	}
 
 	public ExternalPluginsBlock(ExternalPluginsEditor editor) {
-		registry = PDEPlugin.getDefault().getExternalModelManager();
+		registry = PDECore.getDefault().getExternalModelManager();
 		this.editor = editor;
 		String[] buttonLabels =
 			{
@@ -137,7 +137,7 @@ public class ExternalPluginsBlock {
 	}
 
 	private void selectNotInWorkspace() {
-		WorkspaceModelManager wm = PDEPlugin.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager wm = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsModels = wm.getWorkspacePluginModels();
 		IPluginModelBase[] exModels = registry.getModels();
 		Vector selected = new Vector();

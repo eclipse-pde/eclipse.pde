@@ -4,10 +4,9 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import java.io.PrintWriter;
+
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaElement extends RepeatableSchemaObject implements ISchemaElement {
 	public static final String P_ICON_NAME = "iconName";
@@ -15,7 +14,6 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	public static final String P_TYPE = "type";
 	private String labelProperty;
 	private ISchemaType type;
-	private ImageDescriptor imageDescriptor;
 	private String iconName;
 
 public SchemaElement(ISchemaObject parent, String name) {
@@ -109,15 +107,6 @@ public String getDTDRepresentation() {
 			text = "(" + text + ")";
 	}
 	return text;
-}
-public ImageDescriptor getIconDescriptor() {
-	if (imageDescriptor == null) {
-		if (iconName != null) {
-			ISchemaDescriptor desc = getSchema().getSchemaDescriptor();
-			imageDescriptor = desc.createImageDescriptor(iconName);
-		}
-	}
-	return imageDescriptor;
 }
 public String getIconProperty() {
 	return iconName;

@@ -12,10 +12,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.ui.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {
@@ -88,7 +88,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
-		IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
+		IModelProvider provider = PDECore.getDefault().getWorkspaceModelManager();
 		provider.connect(file, this);
 		IFeatureModel model = (IFeatureModel) provider.getModel(file, this);
 		boolean cleanModel = true;
@@ -107,7 +107,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	}
 	public void dispose() {
 		super.dispose();
-		IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
+		IModelProvider provider = PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = (IModel) getModel();
 		provider.disconnect(model.getUnderlyingResource(), this);
 	}

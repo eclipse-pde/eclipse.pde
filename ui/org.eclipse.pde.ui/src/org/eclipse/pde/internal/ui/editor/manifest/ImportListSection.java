@@ -117,9 +117,9 @@ public class ImportListSection
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		PDEPlugin.getDefault().getWorkspaceModelManager().removeModelProviderListener(
+		PDECore.getDefault().getWorkspaceModelManager().removeModelProviderListener(
 			this);
-		PDEPlugin.getDefault().getExternalModelManager().removeModelProviderListener(
+		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(
 			this);
 		super.dispose();
 	}
@@ -216,9 +216,9 @@ public class ImportListSection
 		setReadOnly(!model.isEditable());
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		PDEPlugin.getDefault().getWorkspaceModelManager().addModelProviderListener(
+		PDECore.getDefault().getWorkspaceModelManager().addModelProviderListener(
 			this);
-		PDEPlugin.getDefault().getExternalModelManager().addModelProviderListener(this);
+		PDECore.getDefault().getExternalModelManager().addModelProviderListener(this);
 		newAction.setEnabled(model.isEditable());
 		deleteAction.setEnabled(model.isEditable());
 		buildpathAction.setEnabled(model.isEditable());

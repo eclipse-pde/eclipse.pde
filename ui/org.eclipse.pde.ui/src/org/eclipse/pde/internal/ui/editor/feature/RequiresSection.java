@@ -83,7 +83,7 @@ public class RequiresSection
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
@@ -116,7 +116,7 @@ public class RequiresSection
 			syncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
 	private void initializeOverlays() {

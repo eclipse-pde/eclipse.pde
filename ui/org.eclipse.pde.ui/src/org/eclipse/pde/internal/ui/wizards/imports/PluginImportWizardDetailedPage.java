@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.core.*;
 
 public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_TITLE = "ImportWizard.DetailedPage.title";
@@ -187,7 +188,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			return models;
 		if (loadFromRegistry) {
 			final ExternalModelManager registry =
-				PDEPlugin.getDefault().getExternalModelManager();
+				PDECore.getDefault().getExternalModelManager();
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.ui.IEditorInput;
@@ -43,7 +43,7 @@ private IBuildModel createResourceModel(IFile file) throws CoreException {
 
 	stream = file.getContents(false);
 
-	IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
+	IModelProvider provider = PDECore.getDefault().getWorkspaceModelManager();
 	provider.connect(file, this);
 	IBuildModel model = (IBuildModel) provider.getModel(file, this);
 	try {
@@ -59,7 +59,7 @@ private IBuildModel createResourceModel(IFile file) throws CoreException {
 }
 public void dispose() {
 	super.dispose();
-	IModelProvider provider = PDEPlugin.getDefault().getWorkspaceModelManager();
+	IModelProvider provider = PDECore.getDefault().getWorkspaceModelManager();
 	IModel model = (IModel)getModel();
 	provider.disconnect(model.getUnderlyingResource(), this);
 }

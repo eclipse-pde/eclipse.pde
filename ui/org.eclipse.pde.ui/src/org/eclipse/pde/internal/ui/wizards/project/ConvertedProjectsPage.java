@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.ui.preferences.*;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.core.*;
 
 public class ConvertedProjectsPage extends WizardPage {
 	private Button updateBuildPathButton;
@@ -123,7 +124,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		if (project.isOpen()) {
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)
-					&& !project.hasNature(PDEPlugin.PLUGIN_NATURE))
+					&& !project.hasNature(PDECore.PLUGIN_NATURE))
 					return true;
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -226,7 +227,7 @@ public class ConvertedProjectsPage extends WizardPage {
 
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
-			IPlugin plugin = PDEPlugin.getDefault().findPlugin(iimport.getId());
+			IPlugin plugin = PDECore.getDefault().findPlugin(iimport.getId());
 			if (plugin != null) {
 				required.add(new PluginPathUpdater.CheckedPlugin(plugin, true));
 			}
@@ -253,7 +254,7 @@ public class ConvertedProjectsPage extends WizardPage {
 
 	public static void convertProject(IProject project, IProgressMonitor monitor)
 		throws CoreException {
-		CoreUtility.addNatureToProject(project, PDEPlugin.PLUGIN_NATURE, monitor);
+		CoreUtility.addNatureToProject(project, PDECore.PLUGIN_NATURE, monitor);
 		IPath manifestPath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
 		if (file.exists()) {
@@ -287,7 +288,7 @@ public class ConvertedProjectsPage extends WizardPage {
 			monitor.worked(1);
 		}
 		WorkspaceModelManager manager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		manager.reset();
 
 		if (updateBuildPath) {

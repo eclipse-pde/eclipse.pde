@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
 import java.util.Properties;
 import java.net.*;
+import org.eclipse.pde.internal.core.*;
 
 /**
  * @version 	1.0
@@ -49,11 +50,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static IPluginModelBase[] getVisibleModels() {
 		Vector result = new Vector();
 		WorkspaceModelManager wmanager =
-			PDEPlugin.getDefault().getWorkspaceModelManager();
+			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wplugins = wmanager.getWorkspacePluginModels();
 		IPluginModelBase[] wfragments = wmanager.getWorkspaceFragmentModels();
 		IPluginModelBase[] eplugins =
-			PDEPlugin.getDefault().getExternalModelManager().getModels();
+			PDECore.getDefault().getExternalModelManager().getModels();
 
 		addFromList(result, wplugins);
 		addFromList(result, wfragments);
@@ -75,7 +76,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		throws CoreException {
 		try {
 			String dataSuffix = createDataSuffix(data);
-			IPath statePath = PDEPlugin.getDefault().getStateLocation();
+			IPath statePath = PDECore.getDefault().getStateLocation();
 			IPath pluginPath;
 			String fileName = "plugin_path.properties";
 			File dir = new File(statePath.toOSString());
@@ -107,7 +108,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			return pluginFile;
 		} catch (IOException e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e));
+				new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.ERROR, e.getMessage(), e));
 		}
 	}
 	
@@ -187,7 +188,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			Locale locale = locales[i];
 			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
 		}
-		ArraySorter.INSTANCE.sortInPlace(choices);
+		CoreArraySorter.INSTANCE.sortInPlace(choices);
 		return choices;
 	}
 	public static Choice[] getArchChoices() {
