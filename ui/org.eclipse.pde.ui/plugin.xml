@@ -199,6 +199,24 @@
             %projectGenerators.view.description
          </description>
       </wizard>
+      <wizard
+            name="%projectGenerators.multiPageEditor.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.MultiPageEditorNewWizard"
+            id="org.eclipse.pde.projectGenerators.multiPageEditor">
+         <description>
+            %projectGenerators.multiPageEditor.description
+         </description>
+      </wizard>
+      <wizard
+            name="%projectGenerators.choice.name"
+            icon="icons/full/ctool16/defcon_wiz.gif"
+            class="org.eclipse.pde.internal.wizards.templates.NewPluginTemplateChoiceWizard"
+            id="org.eclipse.pde.projectGenerators.choice">
+         <description>
+            %projectGenerators.choice.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.newExtension">
@@ -243,6 +261,42 @@
             id="org.eclipse.pde.newExtension.view">
          <description>
             %newExtension.templates.view.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.multiPageEditor.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
+            class="org.eclipse.pde.internal.wizards.templates.MultiPageEditorTemplate"
+            id="org.eclipse.pde.newExtension.multiPageEditor">
+         <description>
+            %newExtension.templates.multiPageEditor.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.newWizard.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
+            class="org.eclipse.pde.internal.wizards.templates.NewWizardTemplate"
+            id="org.eclipse.pde.newExtension.newWizard">
+         <description>
+            %newExtension.templates.newWizard.desc
+         </description>
+      </wizard>
+      <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.preferences.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
+            category="templates"
+            class="org.eclipse.pde.internal.wizards.templates.PreferencePageTemplate"
+            id="org.eclipse.pde.newExtension.preferences">
+         <description>
+            %newExtension.templates.preferences.desc
          </description>
       </wizard>
    </extension>

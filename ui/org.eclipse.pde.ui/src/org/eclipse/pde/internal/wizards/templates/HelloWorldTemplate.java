@@ -14,13 +14,13 @@ import org.eclipse.pde.internal.PDEPlugin;
 import java.net.*;
 import java.util.*;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.IPluginStructureData;
 
 public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className";
 	public static final String KEY_MESSAGE = "message";
 	public static final String CLASS_NAME = "SampleAction";
-	private WizardPage page;
-	private Hashtable options = new Hashtable();
+
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -39,35 +39,42 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		ArrayList list = new ArrayList();
-		TemplateOption option;
-		
-		option = new StringOption(this, "packageName", "Java Package Name:");
-		list.add(option);
-		registerOption(option);
+		lists = new ArrayList[1];
+		lists[0] = new ArrayList();
 
-		option = new StringOption(this, KEY_CLASS_NAME, "Action Class Name:");
-		option.setValue(CLASS_NAME);
-		list.add(option);
-		registerOption(option);
+		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
+		addOption(KEY_CLASS_NAME, "&Action Class Name:", CLASS_NAME, lists[0]);
+		addOption(KEY_MESSAGE, "&Message Box Text:", "Hello, Eclipse world", lists[0]);
 		
-		option = new StringOption(this, KEY_MESSAGE, "Message Box Text:");
-		option.setValue("Hello, Eclipse world");
-		list.add(option);
-		registerOption(option);
-		
-		page = new GenericTemplateWizardPage(this, list);
-		page.setTitle("Sample Action Set");
-		page.setDescription("This template will generate a sample action set extension with a menu, a menu item and a tool bar button. When selected, they will show a simple message dialog.");
-		wizard.addPage(page);
+		pages = new WizardPage[1];
+		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
+		pages[0].setTitle("Sample Action Set");
+		pages[0].setDescription("This template will generate a sample action set extension with a menu, a menu item and a tool bar button. When selected, they will show a simple message dialog.");
+		wizard.addPage(pages[0]);
 	}
 	
 	public void validateOptions(TemplateOption source) {
-		String message = null;
-		String name = source.getName();
-		if (source.equals(KEY_CLASS_NAME) || source.equals(KEY_MESSAGE)) {
-			page.setPageComplete(!source.isEmpty());
+		if (source.isRequired() && source.isEmpty()) {
+			flagMissingRequiredOption(source);
 		}
+		else resetPageState();
+	}
+	
+	public boolean isDependentOnFirstPage() {
+		return true;
+	}
+	
+	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+		// In a new project wizard, we don't know this yet - the
+		// model has not been created
+		String pluginId = sdata.getPluginId();
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".actions");
+	}
+	public void initializeFields(IPluginModelBase model) {
+		// In the new extension wizard, the model exists so 
+		// we can initialize directly from it
+		String pluginId = model.getPluginBase().getId();
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".actions");
 	}
 	
 	public String getUsedExtensionPoint() {
@@ -96,15 +103,17 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		menuElement.add(groupElement);
 		setElement.add(menuElement);
 		
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption(KEY_CLASS_NAME);
+		
 		IPluginElement actionElement = factory.createElement(setElement);
 		actionElement.setName("action");
-		actionElement.setAttribute("id", plugin.getId()+".sampleAction");
+		actionElement.setAttribute("id", fullClassName);
 		actionElement.setAttribute("label", "&Sample Action");
 		actionElement.setAttribute("menubarPath", "sampleMenu/sampleGroup");
 		actionElement.setAttribute("toolbarPath", "sampleGroup");
 		actionElement.setAttribute("icon", "icons/sample.gif");
 		actionElement.setAttribute("tooltip", "Hello Eclipse World");
-		actionElement.setAttribute("class", plugin.getId()+"."+CLASS_NAME);
+		actionElement.setAttribute("class", fullClassName);
 		setElement.add(actionElement);
 		extension.add(setElement);
 		plugin.add(extension);

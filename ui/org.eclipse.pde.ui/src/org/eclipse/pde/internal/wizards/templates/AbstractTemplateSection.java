@@ -250,15 +250,23 @@ public abstract class AbstractTemplateSection
 		StringBuffer outBuffer = new StringBuffer();
 		StringBuffer preBuffer = new StringBuffer();
 		boolean newLine = true;
-		TemplateControlStack preStack = new TemplateControlStack();
+		ControlStack preStack = new ControlStack();
 		preStack.setValueProvider(this);
 
 		boolean replacementMode = false;
 		boolean preprocessorMode = false;
+		boolean escape = false;
 		while (read != -1) {
 			read = reader.read(cbuffer);
 			for (int i = 0; i < read; i++) {
 				char c = cbuffer[i];
+				
+				if (escape) {
+					StringBuffer buf = preprocessorMode?preBuffer:outBuffer;
+					buf.append(c);
+					escape=false;
+					continue;
+				}
 
 				if (newLine && c == '%') {
 					// preprocessor line
@@ -268,8 +276,7 @@ public abstract class AbstractTemplateSection
 				}
 				if (preprocessorMode) {
 					if (c == '\\') {
-						char c2 = cbuffer[++i];
-						preBuffer.append(c2);
+						escape = true;
 						continue;
 					}
 					if (c == '\n') {
@@ -288,6 +295,13 @@ public abstract class AbstractTemplateSection
 				if (preStack.getCurrentState() == false) {
 					continue;
 				}
+				/*
+
+				if (c=='\\') {
+					escape=true;
+					continue;
+				}
+				*/
 
 				if (c == '$') {
 					if (replacementMode) {

@@ -1,4 +1,4 @@
-package $pluginId$;
+package $packageName$;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;

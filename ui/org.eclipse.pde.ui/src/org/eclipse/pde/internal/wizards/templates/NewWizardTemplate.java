@@ -16,15 +16,13 @@ import java.util.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.IPluginStructureData;
 
-public class ViewTemplate extends PDETemplateSection {
-	/**
-	 * Constructor for HelloWorldTemplate.
-	 */
-	public ViewTemplate() {
+public class NewWizardTemplate extends PDETemplateSection {
+
+	public NewWizardTemplate() {
 	}
 	
 	public String getSectionId() {
-		return "view";
+		return "newWizard";
 	}
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
@@ -34,31 +32,18 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	private ArrayList [] createOptions() {
-		lists = new ArrayList[2];
+		lists = new ArrayList[1];
 		lists[0] = new ArrayList();
-		lists[1] = new ArrayList();
 
-		// first page	
-		TemplateOption option;
+		// first page
 		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
-		addOption("className", "&View Class Name:", "SampleView", lists[0]);
-		addOption("viewName", "View &Name:", "Sample View", lists[0]);
-		addOption("viewCategoryId", "View &Category Id:", (String)null, lists[0]);
-		addOption("viewCategoryName", "V&iew Category Name:", "Sample Category", lists[0]);
-		addOption("viewType", "Select the viewer type that should be hosted in the view:", 
-					new String [][] {
-						{"tableViewer", "&Table viewer (can also be used for lists)"},
-						{"treeViewer", "T&ree viewer" }},
-						"tableViewer", lists[0]);
-		// second page
-		addOption("react", "&View should react to selections in the workbench", true, lists[1]);
-		addOption("doubleClick", "&Add a double-click support", true, lists[1]);
-		addOption("popup", "A&dd actions to the pop-up menu", true, lists[1]);
-		addOption("localToolbar", "Add a&ctions to the view's tool bar", true, lists[1]);
-		addOption("localPulldown", "Add ac&tions to the view's pull-down menu", true, lists[1]);
-		addOption("sorter", "Add &support for sorting", true, lists[1]);
-		//addOption("filter", "Add support for filtering", true, lists[1]);
-		addOption("drillDown", "Add d&rill-down capability", true, lists[1]);
+		addOption("categoryId", "&Wizard Category Id:", (String)null, lists[0]);
+		addOption("categoryName", "Wi&zard Category Name:", "Sample Wizards", lists[0]);
+		addOption("wizardClassName", "Wizard &Class Name:", "SampleNewWizard", lists[0]);
+		addOption("wizardPageClassName", "Wizard &Page Class Name:", "SampleNewWizardPage", lists[0]);
+		addOption("wizardName", "Wizard &Name:", "Multi-page Editor file", lists[0]);
+		addOption("extension", "&File Extension:", "mpe", lists[0]);
+		addOption("initialFileName", "&Initial File Name:", "new_file.mpe", lists[0]);
 		return lists;
 	}
 
@@ -66,15 +51,15 @@ public class ViewTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		String pluginId = sdata.getPluginId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".views");
-		initializeOption("viewCategoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards");
+		initializeOption("categoryId", pluginId);
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
-		initializeOption(KEY_PACKAGE_NAME, pluginId+".views");
-		initializeOption("viewCategoryId", pluginId);
+		initializeOption(KEY_PACKAGE_NAME, pluginId+".wizards");
+		initializeOption("categoryId", pluginId);
 	}
 	
 	public boolean isDependentOnFirstPage() {
@@ -82,22 +67,15 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		pages = new WizardPage[2];
+		pages = new WizardPage[1];
 		createOptions();
 		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
-		pages[0].setTitle("Main View Settings");
-		pages[0].setDescription("Choose the way the new view will be added to the plug-in.");
+		pages[0].setTitle("New Wizard Options");
+		pages[0].setDescription("The provided options allow you to control the new wizard will be created.");
 		wizard.addPage(pages[0]);
-		
-		pages[1] = new GenericTemplateWizardPage(this, lists[1]);
-		pages[1].setTitle("View Features");
-		pages[1].setDescription("Choose the features that the new view should have.");
-		wizard.addPage(pages[1]);
 	}
 
 	public void validateOptions(TemplateOption source) {
-		String viewType = getValue("viewType").toString();
-		setOptionEnabled("drillDown", viewType.equals("treeViewer"));
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
 		}
@@ -105,25 +83,24 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.views";
+		return "org.eclipse.ui.newWizards";
 	}
 	
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
-		IPluginExtension extension = createExtension("org.eclipse.ui.views", true);
+		IPluginExtension extension = createExtension("org.eclipse.ui.newWizards", true);
 		IPluginModelFactory factory = model.getFactory();
 		
-		String cid = getStringOption("viewCategoryId");
+		String cid = getStringOption("categoryId");
 
 		createCategory(extension, cid);
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("className");
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("wizardClassName");
 		
 		IPluginElement viewElement = factory.createElement(extension);
-		viewElement.setName("view");
+		viewElement.setName("wizard");
 		viewElement.setAttribute("id", fullClassName);
-		viewElement.setAttribute("name", getStringOption("viewName"));
+		viewElement.setAttribute("name", getStringOption("wizardName"));
 		viewElement.setAttribute("icon", "icons/sample.gif");
-
 		viewElement.setAttribute("class", fullClassName);
 		viewElement.setAttribute("category", cid);
 		extension.add(viewElement);
@@ -146,7 +123,7 @@ public class ViewTemplate extends PDETemplateSection {
 		}
 		IPluginElement categoryElement = model.getFactory().createElement(extension);
 		categoryElement.setName("category");
-		categoryElement.setAttribute("name", getStringOption("viewCategoryName"));
+		categoryElement.setAttribute("name", getStringOption("categoryName"));
 		categoryElement.setAttribute("id", id);
 		extension.add(categoryElement);
 	}

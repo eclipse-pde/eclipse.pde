@@ -43,6 +43,10 @@ public abstract class PDETemplateSection extends GenericTemplateSection {
 		}
 	}
 	
+	public WizardPage [] getPages() {
+		return pages;
+	}
+	
 	public String getReplacementString(String fileName, String key) {
 		String value = getStringOption(key);
 		if (value!=null) return value;

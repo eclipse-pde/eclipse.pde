@@ -5,7 +5,7 @@ import org.eclipse.pde.model.plugin.IPluginModelBase;
 import org.eclipse.pde.model.plugin.IPluginReference;
 import org.eclipse.core.runtime.*;
 import java.net.URL;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 
 /**
  * This interface represents a section of the template
@@ -69,7 +69,9 @@ public interface ITemplateSection {
 	 * @param wizard the host wizard to add pages into
 	 */
 	public void addPages(Wizard wizard);
-
+	
+	public WizardPage [] getPages();
+	
 	/**
 	 * Returns the number of work units that this template will
 	 * consume during the execution. This number is used to

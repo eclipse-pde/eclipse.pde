@@ -2,7 +2,7 @@ package org.eclipse.pde.internal.wizards.templates;
 
 import java.util.*;
 
-public class TemplateControlStack {
+public class ControlStack {
 	private Stack stack;
 	private PreprocessorParser parser;
 	
@@ -10,7 +10,7 @@ public class TemplateControlStack {
 		boolean value;
 	}
 	
-	public TemplateControlStack() {
+	public ControlStack() {
 		stack = new Stack();
 		parser = new PreprocessorParser();
 	}
