@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.pde.runtime"
-   name="%name"
-   version="3.1.0"
-   provider-name="%provider-name"
-   class="org.eclipse.pde.internal.runtime.PDERuntimePlugin">
+<plugin>
 
-   <runtime>
-      <library name="pdert.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.views"/>
-   </requires>
-
-
+    
 <!-- Extensions -->
    <extension
          point="org.eclipse.ui.views">

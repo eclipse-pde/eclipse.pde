@@ -1,48 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.pde.ui"
-   name="%name"
-   version="3.1.0"
-   provider-name="%provider-name"
-   class="org.eclipse.pde.internal.ui.PDEPlugin">
+<plugin>
 
-   <runtime>
-      <library name="pdeui.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ant.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.help.base"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
-      <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.pde"/>
-      <import plugin="org.eclipse.pde.build"/>
-      <import plugin="org.eclipse.search"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.update.core"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.ant.ui"/>
-      <import plugin="org.eclipse.jdt.junit"/>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.ui.cheatsheets"/>
-      <import plugin="org.eclipse.update.configurator"/>
-   </requires>
-
-
+    
 <!-- Extension points -->
    <extension-point id="pluginContent" name="%expoint.pluginContent.name" schema="schema/pluginContent.exsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>

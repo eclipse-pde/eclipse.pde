@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.pde.core"
-   name="%name"
-   version="3.1.0"
-   provider-name="%provider-name"
-   class="org.eclipse.pde.internal.core.PDECore">
+<plugin>
 
-   <runtime>
-      <library name="pdecore.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.update.configurator"/>
-   </requires>
-
-
-   <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
+     <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
    <!-- <extension-point id="javadoc" name="Javadoc Attachments" schema="schema/javadoc.exsd"/> -->
 
    <extension

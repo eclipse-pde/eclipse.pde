@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.pde.junit.runtime; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: pdejunit.jar
+Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.jdt.junit.runtime,
+ org.junit,
+ org.eclipse.core.runtime,
+ org.eclipse.core.runtime.compatibility;resolution:=optional,
+ org.eclipse.ui;resolution:=optional
+Eclipse-AutoStart: true
