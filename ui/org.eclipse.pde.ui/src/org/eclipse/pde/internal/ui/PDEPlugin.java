@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
 import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
@@ -166,7 +167,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		super.startup();
 
 		IAdapterManager manager = Platform.getAdapterManager();
-		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
+		SchemaAdapterFactory schemaFactory = new SchemaAdapterFactory();
+		manager.registerAdapters(schemaFactory, ISchemaObject.class);
+		manager.registerAdapters(schemaFactory, ISchemaObjectReference.class);
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
 		manager.registerAdapters(new FeatureAdapterFactory(), IFeatureObject.class);
 		PluginsViewAdapterFactory factory = new PluginsViewAdapterFactory();

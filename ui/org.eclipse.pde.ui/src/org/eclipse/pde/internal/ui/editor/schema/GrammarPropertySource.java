@@ -12,8 +12,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class GrammarPropertySource extends SchemaObjectPropertySource {
-	public static final String P_MIN_OCCURS = "minOccurs";
-	public static final String P_MAX_OCCURS = "maxOccurs";
+	public static final String P_MIN_OCCURS = "minOccurs"; //$NON-NLS-1$
+	public static final String P_MAX_OCCURS = "maxOccurs"; //$NON-NLS-1$
 	protected Vector descriptors;
 
 	class MinValidator implements ICellEditorValidator {
@@ -21,28 +21,36 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 			String svalue = value.toString();
 			try {
 				int ivalue = Integer.parseInt(svalue);
-				if (ivalue < 0)
-					return "minOccurs must be an integer that is greater or equal 0";
+				return isMinOccursValid(ivalue);
 			} catch (NumberFormatException e) {
-				return "minOccurs must be an integer that is greater or equal 0";
+				return PDEPlugin.getResourceString("GrammarPropertySource.minOccursFormat"); //$NON-NLS-1$
 			}
-			return null;
 		}
 	}
 	class MaxValidator implements ICellEditorValidator {
 		public String isValid(Object value) {
 			String svalue = value.toString();
-			if (svalue.equals("unbounded"))
-				return null;
+			if (svalue.equals("unbounded")) //$NON-NLS-1$
+				return isMaxOccursValid(Integer.MAX_VALUE);
 			try {
 				int ivalue = Integer.parseInt(svalue);
-				if (ivalue < 0)
-					return "maxOccurs must be either \"unbounded\" or an integer that is greater or equal 0";
+				return isMaxOccursValid(ivalue);
 			} catch (NumberFormatException e) {
-				return "maxOccurs must be either \"unbounded\" or an integer that is greater or equal 0";
+				return PDEPlugin.getResourceString("GrammarPropertySource.maxOccursFormat"); //$NON-NLS-1$
 			}
-			return null;
 		}
+	}
+	
+	protected String isMinOccursValid(int ivalue) {
+		if (ivalue < 0)
+			return PDEPlugin.getResourceString("GrammarPropertySource.minOccursValue"); //$NON-NLS-1$
+		return null;
+	}
+	
+	protected String isMaxOccursValid(int ivalue) {
+		if (ivalue < 0)
+			return PDEPlugin.getResourceString("GrammarPropertySource.maxOccursValue"); //$NON-NLS-1$
+		return null;
 	}
 
 	public GrammarPropertySource(ISchemaRepeatable obj) {
@@ -53,7 +61,7 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 	}
 	protected String getMaxOccurs(ISchemaRepeatable obj) {
 		if (obj.getMaxOccurs() == Integer.MAX_VALUE)
-			return "unbounded";
+			return "unbounded"; //$NON-NLS-1$
 		return Integer.toString(obj.getMaxOccurs());
 	}
 	protected String getMinOccurs(ISchemaRepeatable obj) {
@@ -68,10 +76,10 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 	protected Vector getPropertyDescriptorsVector() {
 		Vector result = new Vector();
 		PropertyDescriptor desc =
-			createTextPropertyDescriptor(P_MIN_OCCURS, "minOccurs");
+			createTextPropertyDescriptor(P_MIN_OCCURS, "minOccurs"); //$NON-NLS-1$
 		desc.setValidator(new MinValidator());
 		result.addElement(desc);
-		desc = createTextPropertyDescriptor(P_MAX_OCCURS, "maxOccurs");
+		desc = createTextPropertyDescriptor(P_MAX_OCCURS, "maxOccurs"); //$NON-NLS-1$
 		desc.setValidator(new MaxValidator());
 		result.addElement(desc);
 		return result;
@@ -89,7 +97,7 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 	}
 	public int parseValue(Object value) {
 		String svalue = (String) value;
-		if (svalue.equals("unbounded"))
+		if (svalue.equals("unbounded")) //$NON-NLS-1$
 			return Integer.MAX_VALUE;
 		try {
 			return Integer.parseInt(svalue.toString());

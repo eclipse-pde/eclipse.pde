@@ -49,7 +49,7 @@ public class SchemaAdapterFactory implements IAdapterFactory {
 		if (obj instanceof ISchemaCompositor)
 			return new CompositorPropertySource((ISchemaCompositor) obj);
 		if (obj instanceof SchemaElementReference)
-			return new GrammarPropertySource(obj);
+			return new ReferencePropertySource((SchemaElementReference)obj);
 		return null;
 	}
 }
