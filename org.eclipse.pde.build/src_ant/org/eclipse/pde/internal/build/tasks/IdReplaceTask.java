@@ -16,9 +16,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /** 
- * This task aims at replacing the generic ids used into a feature.xml 
- * by another value.
- * 
+ * Internal task.
+ * This task aims at replacing the generic ids used into a feature.xml by another value, and also replace the feature version number if necessary.  
  */
 public class IdReplaceTask extends Task {
 	private static final String FEATURE = "feature";//$NON-NLS-1$

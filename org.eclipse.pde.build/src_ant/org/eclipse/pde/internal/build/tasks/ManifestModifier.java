@@ -17,6 +17,10 @@ import java.util.jar.Manifest;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+/**
+ * Internal task. 
+ * Add, change or remove the keys from a manifest.mf. 
+ */
 public class ManifestModifier extends Task {
 	private String manifestLocation;
 	private Map newValues = new HashMap();
@@ -97,6 +101,10 @@ public class ManifestModifier extends Task {
 		manifest.getMainAttributes().remove(new Attributes.Name(key));
 	}
 
+	/**
+	 * 
+	 * @param path
+	 */
 	public void setManifestLocation(String path) {
 		manifestLocation = path;
 	}

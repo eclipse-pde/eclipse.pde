@@ -17,6 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.packager.UnzipperGenerator;
 
+/**
+ * Internal Task.
+ * This task generates an unzipper script that unzip a files  
+ */
 public class UnzipperGeneratorTask extends Task {
 	private UnzipperGenerator generator = new UnzipperGenerator();
 
@@ -28,14 +32,27 @@ public class UnzipperGeneratorTask extends Task {
 		}
 	}
 
+	/**
+	 * Set the name of the file listing all the files that must be unzipped.
+	 * @param fileName
+	 */
 	public void setZipsDirectory(String filename) {
 		generator.setDirectoryLocation(filename);
 	}
 
+	/**
+	 * Set the folder in which the scripts will be generated.
+	 * @param buildDirectory the location where the scripts will be generated and the files fetched.
+	 */
 	public void setWorkingDirectory(String installLocation) throws MalformedURLException {
 		generator.setWorkingDirectory(installLocation);
 	}
 
+	/** 
+	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
+	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
+	 * @throws CoreException
+	 */
 	public void setConfigInfo(String configInfo) throws BuildException {
 		try {
 			AbstractScriptGenerator.setConfigInfo(configInfo);

@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 /**
- * Wrapper class for an Ant task which generates the build scripts.
+ * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.
  */
 public class BuildScriptGeneratorTask extends Task {
 

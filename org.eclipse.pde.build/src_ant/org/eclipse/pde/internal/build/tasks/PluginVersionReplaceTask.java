@@ -15,6 +15,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /** 
+ * Internal task.
  * This task aims at replacing the generic ids used into a plugin.xml by another value.
  */
 public class PluginVersionReplaceTask extends Task {
@@ -29,17 +30,25 @@ public class PluginVersionReplaceTask extends Task {
 	private String newVersion;
 
 	/**
-	 * The location of a feature.xml file 
+	 * The location of a fragment.xml or plugin.xml file 
 	 * @param path
 	 */
 	public void setPluginFilePath(String path) {
 		pluginFilePath = path;
 	}
 
+	/**
+	 * Set the new version.
+	 * @param version the version that will be set in the manifest file.
+	 */
 	public void setVersionNumber(String qualifier) {
 		newVersion = qualifier;
 	}
 
+	/**
+	 * Set the type of the file.
+	 * @param input 
+	 */
 	public void setInput(String input) {
 		if (input.equalsIgnoreCase("fragment.xml")) //$NON-NLS-1$
 			plugin = false;

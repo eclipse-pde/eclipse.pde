@@ -13,6 +13,10 @@ package org.eclipse.pde.internal.build.tasks;
 import java.io.File;
 import org.apache.tools.ant.Task;
 
+/**
+ * Internal task.
+ * Replace the version numbers of plugin.xml, fragment.xml and manifest.mf.
+ */
 public class GenericVersionReplacer extends Task {
 	private static final String FRAGMENT = "fragment.xml"; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin.xml"; //$NON-NLS-1$
@@ -56,10 +60,18 @@ public class GenericVersionReplacer extends Task {
 		modifier.execute();
 	}
 
+	/**
+	 * Set the path where the file to be replaced is contained.
+	 * @param location path to the folder containing the file that needs to be replaced or the file path 
+	 */
 	public void setPath(String location) {
 		this.path = location;
 	}
 
+	/**
+	 * Set the new version.
+	 * @param version the version that will be set in the manifest file.
+	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}

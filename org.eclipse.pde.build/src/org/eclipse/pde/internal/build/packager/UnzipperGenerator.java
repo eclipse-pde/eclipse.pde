@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.internal.build.*;
 
 public class UnzipperGenerator extends AbstractScriptGenerator {
-	// The path to the file containing the list of zips
+	// The name the file containing the list of zips
 	private String directoryLocation = DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR;
 	// The list of zips. The key is the name of the zipfile, and the first property is the place to extract it
 	private Properties zipsList;

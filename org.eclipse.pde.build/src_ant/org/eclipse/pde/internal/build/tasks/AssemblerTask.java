@@ -18,6 +18,10 @@ import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.packager.PackagerBuildScriptGenerator;
 
+/** 
+ * Internal task.
+ * Generate assemble scripts to repackage binary distributions.
+ */
 public class AssemblerTask extends Task {
 
 	protected PackagerBuildScriptGenerator generator;

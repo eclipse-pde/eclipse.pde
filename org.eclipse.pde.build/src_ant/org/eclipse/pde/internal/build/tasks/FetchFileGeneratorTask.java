@@ -16,25 +16,51 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.packager.FetchFileGenerator;
 
+/**
+ * Internal Task.
+ * Generate fetch script to get files from a URL based on a packager map.
+ */
 public class FetchFileGeneratorTask extends Task {
 	protected FetchFileGenerator fileFetcher = new FetchFileGenerator();
 
+
+	/**
+	 * Set the folder in which the scripts will be generated.
+	 * @param workingDirectory the location where the scripts will be generated.
+	 */
 	public void setWorkingDirectory(String workingDirectory) {
 		fileFetcher.setWorkingDirectory(workingDirectory);
 	}
-
+	
+	/** 
+	 * Set the configuration for which the script should be generated. The default is set to be configuration independent. 
+	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
+	 * @throws CoreException
+	 */
 	public void setConfigInfo(String config) throws CoreException {
 		AbstractScriptGenerator.setConfigInfo(config);
 	}
 
+	/**
+	 * Set the filters used to select the content type of the components to be downloaded. The values are matched against values from the map.
+	 * @param filter a comma separated list of content.
+	 */
 	public void setContentFilter(String filter) {
 		fileFetcher.setContentFilter(filter);
 	}
 
+	/**
+	 * Set the filters used to select the components to be downloaded. The values are matched against values from the map.
+	 * @param components a comma separated list of components.
+	 */
 	public void setComponentFilter(String components) {
 		fileFetcher.setComponentFilter(components);
 	}
 
+	/**
+	 * Set the path the a packager map file. 
+	 * @param mapLocation path the a packager map file.
+	 */
 	public void setMap(String mapLocation) {
 		fileFetcher.setMapLocation(mapLocation);
 	}

@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.FetchScriptGenerator;
 
 /**
- * Wrapper class for the "eclipse.fetch" Ant task.
+ * Generate fetch scripts for the given elements. This is the implementation of the "eclipse.fetch" Ant task.
  */
 public class FetchTask extends Task {
 
