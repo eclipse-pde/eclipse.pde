@@ -23,7 +23,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	private String[] packages;
 	private boolean exported = false;
 	private String type;
-	private static final int GROUP_COUNT = 3;
+	private static final int GROUP_COUNT = Integer.MAX_VALUE;
 
 	public PluginLibrary() {
 	}
