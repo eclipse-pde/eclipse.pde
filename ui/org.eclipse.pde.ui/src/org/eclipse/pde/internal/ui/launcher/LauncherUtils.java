@@ -527,6 +527,9 @@ public class LauncherUtils {
 						String name = files[i].getName();
 						if (name.equals("config.ini") || name.equals("platform.xml") || name.equals("platform.cfg"))
 							continue;			
+					} else {
+						if (files[i].getName().equals("org.eclipse.update"))
+							continue;
 					}
 					deleteContent(files[i]);		
 				}
