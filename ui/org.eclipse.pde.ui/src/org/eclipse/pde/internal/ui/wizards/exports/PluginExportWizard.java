@@ -31,7 +31,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	 * The constructor.
 	 */
 	public PluginExportWizard() {
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_EXPORT_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 

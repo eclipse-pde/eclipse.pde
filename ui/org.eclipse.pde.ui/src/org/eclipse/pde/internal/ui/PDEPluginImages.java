@@ -185,6 +185,10 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FORM_WIZ     = create(PATH_WIZBAN, "form_wiz.gif");
 	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif");
 	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif");
+	public static final ImageDescriptor DESC_PLUGIN_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extplug_wiz.gif");
+	public static final ImageDescriptor DESC_PLUGIN_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployplug_wiz.gif");
+	public static final ImageDescriptor DESC_FEATURE_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extfeat_wiz.gif");
+	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployfeat_wiz.gif");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
 	
 	

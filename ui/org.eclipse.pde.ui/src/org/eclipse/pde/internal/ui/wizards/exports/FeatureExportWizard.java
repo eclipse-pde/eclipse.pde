@@ -33,7 +33,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	 * The constructor.
 	 */
 	public FeatureExportWizard() {
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_EXPORT_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 

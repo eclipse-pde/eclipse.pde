@@ -175,7 +175,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%PluginImportWizard.label"
-            icon="icons/full/ctool16/newexprj_wiz.gif"
+            icon="icons/full/ctool16/imp_extfeat.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
             id="org.eclipse.pde.ui.PluginImportWizard">
          <description>
@@ -184,7 +184,7 @@
       </wizard>
       <wizard
             name="%FeatureImportWizard.label"
-            icon="icons/full/ctool16/newexprj_wiz.gif"
+            icon="icons/full/ctool16/imp_extplug.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
             id="org.eclipse.pde.ui.FeatureImportWizard">
          <description>
@@ -196,7 +196,7 @@
          point="org.eclipse.ui.exportWizards">
       <wizard
             name="%PluginExportWizard.label"
-            icon="icons/full/ctool16/newexprj_wiz.gif"
+            icon="icons/full/ctool16/exp_deployplug.gif"
             class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
             id="org.eclipse.pde.ui.pluginExportWizard">
          <description>
@@ -213,7 +213,7 @@
       </wizard>
       <wizard
             name="%FeatureExportWizard.label"
-            icon="icons/full/ctool16/newexprj_wiz.gif"
+            icon="icons/full/ctool16/exp_deployfeat.gif"
             class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
             id="org.eclipse.pde.ui.featureExportWizard">
          <description>
@@ -498,7 +498,7 @@
       <editor
             name="%editors.featureManifest.name"
             default="true"
-            icon="icons/full/obj16/ftr_mf_obj.gif"
+            icon="icons/full/obj16/ftr_xml_obj.gif"
             filenames="feature.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.feature.FeatureEditor"
@@ -507,7 +507,7 @@
       <editor
             name="%editors.siteManifest.name"
             default="true"
-            icon="icons/full/obj16/ftr_mf_obj.gif"
+            icon="icons/full/obj16/site_xml_obj.gif"
             filenames="site.xml"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
@@ -522,7 +522,7 @@
       </category>
       <view
             name="%views.plugins.name"
-            icon="icons/full/view16/plugins.gif"
+            icon="icons/full/cview16/plugin_depend.gif"
             category="org.eclipse.pde.ui"
             class="org.eclipse.pde.internal.ui.view.PluginsView"
             id="org.eclipse.pde.ui.PluginsView">
@@ -558,7 +558,7 @@
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
             id="org.eclipse.pde.ui.pluginBuild">
-        <action
+         <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
@@ -571,7 +571,7 @@
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="fragment.xml"
             id="org.eclipse.pde.ui.fragmentBuild">
-        <action
+         <action
                label="%popupMenus.buildFragment.label"
                helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"

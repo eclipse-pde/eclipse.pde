@@ -57,7 +57,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	public PluginImportWizard() {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEXPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
 
