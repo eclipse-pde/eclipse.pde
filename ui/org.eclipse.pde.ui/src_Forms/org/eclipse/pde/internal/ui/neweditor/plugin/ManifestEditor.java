@@ -12,11 +12,16 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.io.File;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -239,5 +244,88 @@ public class ManifestEditor extends MultiSourceEditor {
 			return null;
 		}
 		return super.getAdapter(key);
+	}
+	public static void openPluginEditor(String pluginId) {
+		openPluginEditor(pluginId, null);
+	}
+
+	public static void openPluginEditor(
+		String pluginId,
+		Object object) {
+		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
+		if (pluginToOpen != null) {
+			openPluginEditor(pluginToOpen, object);
+		} else {
+			Display.getCurrent().beep();
+		}
+	}
+
+	public static void openPluginEditor(IPluginBase plugin) {
+		openPluginEditor(plugin, null);
+	}
+	
+	public static void openPluginEditor(
+		IPluginBase plugin,
+		Object object) {
+		openPluginEditor(plugin, object, null);
+	}
+
+	public static void openPluginEditor(
+		IPluginBase plugin,
+		Object object,
+		IMarker marker) {
+		IEditorPart editor = null;
+		ISharedPluginModel model = plugin.getModel();
+		IResource underlyingResource = null;
+		if (model instanceof IBundlePluginModelBase) {
+			underlyingResource = ((IBundlePluginModelBase)model).getExtensionsModel().getUnderlyingResource();
+		} else {
+			underlyingResource = plugin.getModel().getUnderlyingResource();
+		}
+		if (underlyingResource == null) {
+			editor = openExternalPlugin(plugin);
+		} else {
+			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
+		}
+		if (editor instanceof ManifestEditor && editor != null && object != null ) {
+			((ManifestEditor)editor).openTo(object, marker);
+		}
+	}
+
+	private static IEditorPart openWorkspacePlugin(IFile pluginFile, boolean fragment) {
+		String editorId = fragment ? PDEPlugin.NEW_FRAGMENT_EDITOR_ID:PDEPlugin.NEW_MANIFEST_EDITOR_ID;
+		try {
+			FileEditorInput input = new FileEditorInput(pluginFile);
+			return PDEPlugin.getActivePage().openEditor(
+				input,
+				editorId);
+		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
+		}
+		return null;
+	}
+	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
+		boolean isFragment = pluginInfo.getPluginModel().isFragmentModel();
+		String manifest =
+			isFragment
+				? "fragment.xml"
+				: "plugin.xml";
+		String fileName =
+			pluginInfo.getModel().getInstallLocation()
+				+ File.separator
+				+ manifest;
+		File file = new File(fileName);
+		if (file.exists()) {
+			String editorId = PDEPlugin.getPluginId() + (isFragment ? ".newFragmentEditor" :".newManifestEditor");
+			try {
+				SystemFileEditorInput input = new SystemFileEditorInput(file);
+				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
+					input,
+					editorId);
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+		return null;
 	}
 }

@@ -135,7 +135,6 @@ public class RequiresSection
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
-		/*
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
@@ -150,7 +149,6 @@ public class RequiresSection
 			doPaste();
 			return true;
 		}
-		*/
 		return false;
 	}
 
@@ -190,8 +188,16 @@ public class RequiresSection
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
-				// Open editor on the selected plug-in
+				handleOpen(ssel.getFirstElement());
 			}
+		}
+	}
+	
+	private void handleOpen(Object obj) {
+		if (obj instanceof ImportObject) {
+			IPlugin plugin = ((ImportObject) obj).getPlugin();
+			if (plugin != null)
+				 ManifestEditor.openPluginEditor(plugin);
 		}
 	}
 

@@ -364,6 +364,22 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		IFormPage page = setActivePage(context.getId());
 		IDE.gotoMarker(page, marker);
 	}
+
+	public void openTo(Object obj, IMarker marker) {
+		if (EditorPreferencePage.getUseSourcePage() || getEditorInput() instanceof SystemFileEditorInput) {
+			if (marker!=null) {
+				IResource resource = marker.getResource();
+				InputContext context = getContextManager().findContext(resource);
+				if (context!=null) {
+					PDESourcePage sourcePage =
+						(PDESourcePage) setActivePage(context.getId());
+					sourcePage.selectReveal(marker);
+				}
+			}
+		} else {
+			selectReveal(obj);
+		}
+	}
 	
 	public void setSelection(ISelection selection) {
 		getSite().getSelectionProvider().setSelection(selection);

@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
@@ -14,6 +15,7 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -174,6 +176,10 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
 	public boolean selectReveal(Object object) {
+		if (object instanceof IMarker) {
+			IDE.gotoMarker(this, (IMarker)object);
+			return true;
+		}
 		return false;
 	}
 }
