@@ -148,6 +148,7 @@ public class EnumerationRestrictionPage implements IRestrictionPage {
 		choiceList.add(item);
 		choiceList.setSelection(new String[] { item });
 		text.setText("");
+		deleteButton.setEnabled(true);
 	}
 
 	private void handleDelete() {
