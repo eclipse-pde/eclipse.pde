@@ -19,9 +19,6 @@ public interface IDocumentNode {
 	int indexOf(IDocumentNode child);
 	IDocumentNode getChildAt(int index);
 	
-	void setLengthDelta(int delta);
-	int getLengthDelta();
-
 	IDocumentNode getPreviousSibling();
 	void setPreviousSibling(IDocumentNode sibling);
 	

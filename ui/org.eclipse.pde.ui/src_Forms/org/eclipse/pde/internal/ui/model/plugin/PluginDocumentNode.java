@@ -19,8 +19,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	private String fTag;
 	private int fIndent = 0;
 	private IDocumentNode fPreviousSibling;
-	private int fLengthDelta;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.model.IDocumentNode#getChildNodes()
 	 */
@@ -122,7 +121,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLength()
 	 */
 	public int getLength() {
-		return fLength + fLengthDelta;
+		return fLength;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
@@ -226,17 +225,4 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setLengthDelta(int)
-	 */
-	public void setLengthDelta(int delta) {
-		fLengthDelta = delta;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLengthDelta()
-	 */
-	public int getLengthDelta() {
-		return fLengthDelta;
-	}
 }
