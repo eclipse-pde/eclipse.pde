@@ -61,6 +61,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	protected SourceFeatureInformation sourceToGather;
 	protected boolean sourcePluginOnly = false;
 	private String[] extraPlugins = new String[0];
+	private boolean generateJnlp = false;
+	private boolean signJars = false;
 
 	public FeatureBuildScriptGenerator() {
 		super();
@@ -578,8 +580,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// to clear all inherited values. Must remember to setup anything that
 		// is really expected.
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, "false", params); //$NON-NLS-1$
-		script.printJarTask(getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar", featureTempFolder + '/' + featureFolderName, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String jar = getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar"; //$NON-NLS-1$
+		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null); //$NON-NLS-1$ //$NON-NLS-2$ 
 		script.printDeleteTask(featureTempFolder, null, null);
+		if (generateJnlp)
+			script.println("<eclipse.jnlpGenerator feature=\"" + jar + "\"  codebase=\"" + getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+		if (signJars)
+			script.println("<signjar jar=\"" + jar + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		script.printTargetEnd();
 	}
 
@@ -735,6 +742,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.setDevEntries(devEntries);
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
+			generator.setSignJars(signJars);
 			generator.generate();
 		}
 	}
@@ -1131,6 +1139,24 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	public boolean isSourceFeatureGeneration() {
 		return sourceFeatureGeneration;
+	}
+
+	/**
+	 * Sets whether or not to generate JNLP manifests
+	 * 
+	 * @param value whether or not to generate JNLP manifests
+	 */
+	public void setGenerateJnlp(boolean value) {
+		generateJnlp = value;
+	}
+
+	/**
+	 * Sets whether or not to sign any constructed jars.
+	 * 
+	 * @param value whether or not to sign any constructed JARs
+	 */
+	public void setSignJars(boolean value) {
+		signJars = value;
 	}
 
 	protected void collectElementToAssemble(IPluginEntry entryToCollect) throws CoreException {

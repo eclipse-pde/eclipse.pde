@@ -41,13 +41,15 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected String[] pluginPath;
 
 	protected boolean recursiveGeneration = true;
+	protected boolean signJars = false;
+	protected boolean generateJnlp = false;
 
 	/**
 	 * flag indicating if the assemble script should be generated
 	 */
 	private boolean generateAssembleScript = true;
 
-	/** 
+	/**
 	 * flag indicating if the errors detected when the state is resolved must be reported or not.
 	 * For example in releng mode we are interested in reporting the errors. It is the default. 
 	 */
@@ -100,6 +102,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			// build for a plugin or a fragment
 			String model = (String) iterator.next();
 			generator.setModelId(model);
+			generator.setSignJars(signJars);
 			generator.generate();
 		}
 	}
@@ -136,10 +139,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.includePlatformIndependent(true);
 			generator.setReportResolutionErrors(reportResolutionErrors);
 			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
+			generator.setSignJars(signJars);
+			generator.setGenerateJnlp(generateJnlp);			
 			generator.generate();
-			
+
 			if (generateAssembleScript == true) {
 				AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
+				assembler.setSignJars(signJars);
+				assembler.setGenerateJnlp(generateJnlp);			
 				assembler.generate();
 			}
 		}
@@ -195,7 +202,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateAssembleScript(boolean generateAssembleScript) {
 		this.generateAssembleScript = generateAssembleScript;
 	}
-
 	/**
 	 * @param value The reportResolutionErrors to set.
 	 */
@@ -209,6 +215,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setIgnoreMissingPropertiesFile(boolean value) {
 		ignoreMissingPropertiesFile = value;
 	}
-	
-	
+
+	public void setSignJars(boolean value) {
+		signJars = value;
+	}
+
+	public void setGenerateJnlp(boolean value) {
+		generateJnlp = value;
+	}
 }

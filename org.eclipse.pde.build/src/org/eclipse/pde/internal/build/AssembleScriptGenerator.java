@@ -65,7 +65,11 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printAntTask(getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, configScriptGenerator.getTargetName(), null, null, params);
 	}
 
-	public void setConfigGenerator(AssembleConfigScriptGenerator generator) {
-		configScriptGenerator = generator;
+	public void setSignJars(boolean value) {
+		configScriptGenerator.setSignJars(value);
+	}
+
+	public void setGenerateJnlp(boolean value) {
+		configScriptGenerator.setGenerateJnlp(value);
 	}
 }

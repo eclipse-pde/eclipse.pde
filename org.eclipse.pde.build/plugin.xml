@@ -36,6 +36,11 @@
       </antTask>
       <antTask
             library="lib/pdebuild-ant.jar"
+            name="eclipse.jnlpGenerator"
+            class="org.eclipse.pde.internal.build.tasks.JNLPGeneratorTask">
+      </antTask>
+      <antTask
+            library="lib/pdebuild-ant.jar"
             name="eclipse.unzipperBuilder"
             class="org.eclipse.pde.internal.build.tasks.UnzipperGeneratorTask">
       </antTask>

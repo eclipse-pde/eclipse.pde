@@ -47,6 +47,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private static final String FILE = "file"; //$NON-NLS-1$
 	private String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	private String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
+	private boolean signJars;
+	private boolean generateJnlp;
 
 	public AssembleConfigScriptGenerator() {
 		super();
@@ -168,6 +170,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
 		script.printZipTask(fileName + ".jar", fileName, false, false, null); //$NON-NLS-1$
 		script.printDeleteTask(fileName, null, null);
+		if (signJars)
+			script.println("<signjar jar=\"" + fileName + ".jar" + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+
 		script.printTargetEnd();
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
@@ -282,11 +287,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generatePostProcessingSteps(String name, String version, byte type) {
 		String style = (String) getFinalShape(name, version, type)[1];
 
-		if (FOLDER.equalsIgnoreCase(style)) {
+		if (FOLDER.equalsIgnoreCase(style))
 			return;
-		}
 		if (FILE.equalsIgnoreCase(style)) {
 			generateJarUpCall(name, version, type);
+			String dir = type == BUNDLE ? getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
+			String location = dir + "/" + name + '_' + version + ".jar";
+			if (type == FEATURE) 
+				if (generateJnlp)
+					script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 			return;
 		}
 	}
@@ -464,5 +473,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		FileSet[] rootFiles = new FileSet[1];
 		rootFiles[0] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, null, null, getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null); //$NON-NLS-1$//$NON-NLS-2$
 		script.printTarTask(getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
+	}
+
+	public void setGenerateJnlp(boolean value) {
+		generateJnlp = value;
+	}
+
+	public void setSignJars(boolean value) {
+		signJars = value;
 	}
 }

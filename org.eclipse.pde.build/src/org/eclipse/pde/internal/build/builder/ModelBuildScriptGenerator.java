@@ -97,6 +97,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private ArrayList compiledJarNames;
 	private boolean dotOnTheClasspath = false;
 	private boolean binaryPlugin = false;
+	private boolean signJars = false;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -509,6 +510,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
 		script.printZipTask(pluginUpdateJarDestination, getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null); //$NON-NLS-1$
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
+		if (signJars)
+			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + getPropertyFormat("sign.alias") + "\" keystore=\"" + getPropertyFormat("sign.keystore") + "\" storepass=\"" + getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		script.printTargetEnd();
 	}
 
@@ -938,6 +941,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	public void setBuildScriptFileName(String buildScriptFileName) {
 		this.buildScriptFileName = buildScriptFileName;
+	}
+
+	/**
+	 * Sets whether or not to sign any constructed jars.
+	 * 
+	 * @param value whether or not to sign any constructed JARs
+	 */
+	public void setSignJars(boolean value) {
+		signJars  = value;
 	}
 
 	/**
