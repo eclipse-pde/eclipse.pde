@@ -113,20 +113,23 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(String id, String version) {
-		if (entries == null) initializeTable();
-		if (entries==null) return null;
-		return (ModelEntry)entries.get(id);
+		return findEntry(id, version, IMatchRules.PERFECT);
 	}
 	
 	public ModelEntry findEntry(String id, String version, int match) {
-		if (entries == null) initializeTable();
-		if (entries==null) return null;
-		return (ModelEntry)entries.get(id);
+		if (entries == null)
+			initializeTable();
+		if (entries == null)
+			return null;
+		return (ModelEntry) entries.get(id);
 	}
 	
 	public IPluginModelBase findPlugin(String id, String version, int match) {
+		if (entries == null)
+			initializeTable();
 		ModelEntry entry = findEntry(id, version, match);
-		if (entry==null) return null;
+		if (entry == null)
+			return null;
 		return entry.getActiveModel();
 	}
 

@@ -25,46 +25,6 @@ import org.eclipse.jdt.core.JavaModelException;
 
 public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 
-	static class SetEclipseVariablesOperation implements IWorkspaceRunnable {
-		public void run(IProgressMonitor monitor) throws CoreException {
-			String[] variables = JavaCore.getClasspathVariableNames();
-			for (int i = 0; i < variables.length; i++) {
-				if (variables[i].startsWith(PDECore.ECLIPSE_HOME_VARIABLE)
-					&& !variables[i].equals(PDECore.ECLIPSE_HOME_VARIABLE)) {
-					JavaCore.removeClasspathVariable(variables[i], null);
-				}
-			}
-			try {
-				Preferences pref = PDECore.getDefault().getPluginPreferences();
-				String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);
-				JavaCore.setClasspathVariable(
-					PDECore.ECLIPSE_HOME_VARIABLE,
-					new Path(platformHome),
-					null);
-
-				File[] linkFiles = PluginPathFinder.getLinkFiles(platformHome);
-				if (linkFiles != null) {
-					for (int i = 0; i < linkFiles.length; i++) {
-						String path =
-							PluginPathFinder.getPath(platformHome, linkFiles[i]);
-						if (path != null) {
-							String variable =
-								PDECore.ECLIPSE_HOME_VARIABLE
-									+ "_"
-									+ linkFiles[i]
-										.getName()
-										.replace('.', '_')
-										.toUpperCase();
-							JavaCore.setClasspathVariable(variable, new Path(path), null);
-						}
-					}
-				}
-			} catch (JavaModelException e) {
-			}
-
-		}
-
-	}
 	
 	/**
 	 * @see ClasspathVariableInitializer#initialize(String)
@@ -74,8 +34,34 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	}
 
 	public static void resetEclipseHomeVariables() {
+		String[] variables = JavaCore.getClasspathVariableNames();
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].startsWith(PDECore.ECLIPSE_HOME_VARIABLE)
+				&& !variables[i].equals(PDECore.ECLIPSE_HOME_VARIABLE)) {
+				JavaCore.removeClasspathVariable(variables[i], null);
+			}
+		}
 		try {
-			JavaCore.run(new EclipseHomeInitializer.SetEclipseVariablesOperation(), null);
+			Preferences pref = PDECore.getDefault().getPluginPreferences();
+			String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);
+			JavaCore.setClasspathVariable(
+				PDECore.ECLIPSE_HOME_VARIABLE,
+				new Path(platformHome),
+				null);
+
+			File[] linkFiles = PluginPathFinder.getLinkFiles(platformHome);
+			if (linkFiles != null) {
+				for (int i = 0; i < linkFiles.length; i++) {
+					String path = PluginPathFinder.getPath(platformHome, linkFiles[i]);
+					if (path != null) {
+						String variable =
+							PDECore.ECLIPSE_HOME_VARIABLE
+								+ "_"
+								+ linkFiles[i].getName().replace('.', '_').toUpperCase();
+						JavaCore.setClasspathVariable(variable, new Path(path), null);
+					}
+				}
+			}
 		} catch (CoreException e) {
 		}
 	}
