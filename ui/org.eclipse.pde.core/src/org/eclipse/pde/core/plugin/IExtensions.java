@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.io.*;
-
 import org.eclipse.core.runtime.*;
 
 /**
@@ -22,7 +20,7 @@ import org.eclipse.core.runtime.*;
  * 
  * @since 3.0
  */
-public interface IExtensions extends IPluginObject, Serializable {
+public interface IExtensions extends IPluginObject {
 	/**
 	 * A model property that will be used when order of extensions
 	 * changes in this object.

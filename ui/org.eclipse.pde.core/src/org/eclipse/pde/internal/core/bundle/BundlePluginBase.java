@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core.bundle;
 
+import java.io.*;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -16,7 +17,7 @@ import org.osgi.framework.Constants;
 
 public class BundlePluginBase
 	extends PlatformObject
-	implements IBundlePluginBase {
+	implements IBundlePluginBase, Serializable {
 	protected IBundlePluginModelBase model;
 	private ArrayList libraries;
 	private ArrayList imports;
