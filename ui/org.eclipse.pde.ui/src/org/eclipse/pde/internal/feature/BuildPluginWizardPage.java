@@ -190,6 +190,7 @@ private void logActivity() {
 }
 private void makeJars(IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
+	IFile buildFile = null;
 
 	IPath path =
 		pluginBaseFile.getFullPath().removeLastSegments(1).append(buildFileName);
@@ -214,40 +215,37 @@ private void makeJars(IProgressMonitor monitor)
 	}
 }
 private void makeScripts(IProgressMonitor monitor) throws CoreException {
-	Vector args = new Vector();
 
-	File pluginFile = TargetPlatformManager.createPropertiesFile();
-	String pluginPath = pluginFile.getPath();
+	ModelBuildScriptGenerator generator;
+	if (fragment)
+		generator = new FragmentBuildScriptGenerator();
+	else
+		generator = new PluginBuildScriptGenerator();
 
+	IProject project = pluginBaseFile.getProject();
+	IPluginModelBase model =
+		PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
 	IPath platform =
 		Platform.getLocation().append(
 			model.getUnderlyingResource().getProject().getName());
+	generator.setInstallLocation(platform.toOSString());
+	generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
 
-	args.add("-install");
-	args.add(platform.toOSString());
-	
-	args.add("-dev");
-	args.add("bin");
+// RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
+//		File pluginFile = TargetPlatformManager.createPropertiesFile();
+//		String pluginPath = pluginFile.getPath();
+//		args.add("-plugins");
+//		args.add(pluginPath);
 
-	args.add("-plugins");
-	args.add(pluginPath);
-	
-	if (fragment)
-	   args.add("-fragment");
-	else
-		args.add("-plugin");
-	args.add(model.getPluginBase().getId());
+// RTP: in order to pass in platform variables, use the following commands:
+//		generator.setBuildVariableOS( value );
+//		generator.setBuildVariableWS( value );
+//		generator.setBuildVariableNL( value );
+//		generator.setBuildVariableARCH( value );
+
 	try {
-		monitor.subTask(PDEPlugin.getResourceString(WIZARD_GENERATING));
-		if (fragment) {
-			FragmentBuildScriptGenerator generator = new FragmentBuildScriptGenerator();
-	   		generator = new FragmentBuildScriptGenerator();
-	   		generator.run(args.toArray(new String[args.size()]));
-		}
-		else {
-	   		PluginBuildScriptGenerator generator = new PluginBuildScriptGenerator();
-			generator.run(args.toArray(new String[args.size()]));
-		}
+		generator.setModelId(model.getPluginBase().getId());
+		generator.generate();
 		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
 	} catch (Exception e) {
 		PDEPlugin.logException(e);

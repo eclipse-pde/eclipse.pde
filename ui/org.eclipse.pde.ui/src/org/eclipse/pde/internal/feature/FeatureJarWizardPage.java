@@ -165,6 +165,7 @@ private void logActivity() {
 }
 private void makeJars(IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
+	IFile buildFile = null;
 
 	IPath path =
 		componentFile.getFullPath().removeLastSegments(1).append(buildFileName);
@@ -189,28 +190,29 @@ private void makeJars(IProgressMonitor monitor)
 	}
 }
 private void makeScripts(IProgressMonitor monitor) throws CoreException {
-	ComponentBuildScriptGenerator generator = new ComponentBuildScriptGenerator();
-	Vector args = new Vector();
 
-	File pluginFile = TargetPlatformManager.createPropertiesFile();
-	String pluginPath = pluginFile.getPath();
+	FeatureBuildScriptGenerator generator = new FeatureBuildScriptGenerator();
 
 	IPath platform =
 		Platform.getLocation().append(
 			model.getUnderlyingResource().getProject().getName());
+	generator.setInstallLocation(platform.toOSString());
+	generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
 
-	args.add("-install");
-	args.add(platform.toOSString());
+// RTP: set this to false when you do not want to generate scripts for this
+// feature's children. The default is true.
+//	generator.setGenerateChildrenScript(children);
 
-	args.add("-plugins");
-	args.add(pluginPath);
+// RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
+//		File pluginFile = TargetPlatformManager.createPropertiesFile();
+//		String pluginPath = pluginFile.getPath();
+//		args.add("-plugins");
+//		args.add(pluginPath);
 
-	args.add("-component");
-	//args.add(name);
-	args.add(model.getFeature().getId());
 	try {
 		monitor.subTask(PDEPlugin.getResourceString(WIZARD_GENERATING));
-		generator.run(args.toArray(new String[args.size()]));
+		generator.setFeature(model.getFeature().getId());
+		generator.generate();
 		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
 	} catch (Exception e) {
 		PDEPlugin.logException(e);

@@ -152,42 +152,37 @@ public class BuildPluginAction implements IObjectActionDelegate {
 
 	private void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
-		Vector args = new Vector();
+
+		ModelBuildScriptGenerator generator;
+		if (fragment)
+			generator = new FragmentBuildScriptGenerator();
+		else
+			generator = new PluginBuildScriptGenerator();
 
 		IProject project = pluginBaseFile.getProject();
 		IPluginModelBase model =
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
-
-		File pluginFile = TargetPlatformManager.createPropertiesFile();
-		String pluginPath = pluginFile.getPath();
-
 		IPath platform =
 			Platform.getLocation().append(
 				model.getUnderlyingResource().getProject().getName());
+		generator.setInstallLocation(platform.toOSString());
+		generator.setDevEntries(new String[] {"bin"}); // FIXME: look at bug #5747
 
-		args.add("-install");
-		args.add(platform.toOSString());
+// RTP: haven't fixed this yet. Could you provide a use case on when this is necessary?
+//		File pluginFile = TargetPlatformManager.createPropertiesFile();
+//		String pluginPath = pluginFile.getPath();
+//		args.add("-plugins");
+//		args.add(pluginPath);
 
-		args.add("-dev");
-		args.add("bin");
+// RTP: in order to pass in platform variables, use the following commands:
+//		generator.setBuildVariableOS( value );
+//		generator.setBuildVariableWS( value );
+//		generator.setBuildVariableNL( value );
+//		generator.setBuildVariableARCH( value );
 
-		args.add("-plugins");
-		args.add(pluginPath);
-
-		if (fragment)
-			args.add("-fragment");
-		else
-			args.add("-plugin");
-		args.add(model.getPluginBase().getId());
 		try {
-			if (fragment) {
-				FragmentBuildScriptGenerator generator = new FragmentBuildScriptGenerator();
-				generator = new FragmentBuildScriptGenerator();
-				generator.run(args.toArray(new String[args.size()]));
-			} else {
-				PluginBuildScriptGenerator generator = new PluginBuildScriptGenerator();
-				generator.run(args.toArray(new String[args.size()]));
-			}
+			generator.setModelId(model.getPluginBase().getId());
+			generator.generate();
 		} catch (Exception e) {
 			throw new InvocationTargetException(e);
 		}
