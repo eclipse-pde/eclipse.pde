@@ -135,7 +135,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
-					text.setText(type.getFullyQualifiedName());
+					text.setText(type.getFullyQualifiedName('.'));
 				}
 			}
 		} catch (CoreException e) {
