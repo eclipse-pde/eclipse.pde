@@ -26,13 +26,17 @@ public class NullToolBarManager implements IToolBarManager {
 	public org.eclipse.jface.action.IContributionItem[] getItems() {
 		return null;
 	}
-	public void insertAfter(String id, org.eclipse.jface.action.IAction action) {
+	public void insertAfter(
+		String id,
+		org.eclipse.jface.action.IAction action) {
 	}
 	public void insertAfter(
 		String iD,
 		org.eclipse.jface.action.IContributionItem item) {
 	}
-	public void insertBefore(String id, org.eclipse.jface.action.IAction action) {
+	public void insertBefore(
+		String id,
+		org.eclipse.jface.action.IAction action) {
 	}
 	public void insertBefore(
 		String iD,
@@ -45,7 +49,20 @@ public class NullToolBarManager implements IToolBarManager {
 		return false;
 	}
 	public IContributionManagerOverrides getOverrides() {
-		return null;
+		return new IContributionManagerOverrides() {
+			public Boolean getEnabled(IContributionItem item) {
+				return null;
+			}
+			public Integer getAccelerator(IContributionItem item) {
+				return null;
+			}
+			public String getAcceleratorText(IContributionItem item) {
+				return null;
+			}
+			public String getText(IContributionItem item) {
+				return null;
+			}
+		};
 	}
 	public void markDirty() {
 	}

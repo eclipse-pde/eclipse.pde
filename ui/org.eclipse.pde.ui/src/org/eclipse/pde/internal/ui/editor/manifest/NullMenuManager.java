@@ -15,13 +15,9 @@ public class NullMenuManager implements IMenuManager {
 	}
 	public void addMenuListener(IMenuListener listener) {
 	}
-	public void appendToGroup(
-		String groupName,
-		IAction action) {
+	public void appendToGroup(String groupName, IAction action) {
 	}
-	public void appendToGroup(
-		String groupName,
-		IContributionItem item) {
+	public void appendToGroup(String groupName, IContributionItem item) {
 	}
 	public void fill(org.eclipse.swt.widgets.Composite parent) {
 	}
@@ -51,15 +47,11 @@ public class NullMenuManager implements IMenuManager {
 	}
 	public void insertAfter(String id, IAction action) {
 	}
-	public void insertAfter(
-		String iD,
-		IContributionItem item) {
+	public void insertAfter(String iD, IContributionItem item) {
 	}
 	public void insertBefore(String id, IAction action) {
 	}
-	public void insertBefore(
-		String iD,
-		IContributionItem item) {
+	public void insertBefore(String iD, IContributionItem item) {
 	}
 	public boolean isDirty() {
 		return false;
@@ -84,23 +76,31 @@ public class NullMenuManager implements IMenuManager {
 	}
 	public void markDirty() {
 	}
-	public void prependToGroup(
-		String groupName,
-		IAction action) {
+	public void prependToGroup(String groupName, IAction action) {
 	}
-	public void prependToGroup(
-		String groupName,
-		IContributionItem item) {
+	public void prependToGroup(String groupName, IContributionItem item) {
 	}
 	public IContributionItem remove(String id) {
 		return null;
 	}
-	public IContributionItem remove(
-		IContributionItem item) {
+	public IContributionItem remove(IContributionItem item) {
 		return null;
 	}
 	public IContributionManagerOverrides getOverrides() {
-		return null;
+		return new IContributionManagerOverrides() {
+			public Boolean getEnabled(IContributionItem item) {
+				return null;
+			}
+			public Integer getAccelerator(IContributionItem item) {
+				return null;
+			}
+			public String getAcceleratorText(IContributionItem item) {
+				return null;
+			}
+			public String getText(IContributionItem item) {
+				return null;
+			}
+		};
 	}
 	public void removeAll() {
 	}
