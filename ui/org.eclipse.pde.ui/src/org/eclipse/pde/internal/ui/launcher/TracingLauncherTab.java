@@ -327,6 +327,7 @@ public class TracingLauncherTab
 		boolean enabled = tracingCheck.getSelection();
 		pluginTreeViewer.getTree().setEnabled(enabled);
 		propertySheet.getControl().setEnabled(enabled);
+		setChanged(true);
 	}
 
 	private void selectPlugin(String pluginId) {
@@ -385,6 +386,7 @@ public class TracingLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (!isTracingEnabled() && !isChanged()) return;
 		config.setAttribute(TRACING, isTracingEnabled());
 		boolean changes = false;
 		for (Enumeration enum = propertySources.elements(); enum.hasMoreElements();) {
@@ -409,6 +411,7 @@ public class TracingLauncherTab
 		}
 		if (changes)
 			config.setAttribute(TRACING_OPTIONS, masterOptions);
+		setChanged(false);
 	}
 
 	private void initializeFrom(Map options) {

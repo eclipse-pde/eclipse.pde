@@ -232,7 +232,6 @@ public class DocSection extends PDEFormSection {
 	public void initialize(Object model) {
 		schema = (ISchema) model;
 		sourceViewer.setEditable(schema.isEditable());
-		initializeSectionCombo();
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
 				if (!ignoreChange && schema.isEditable()) {

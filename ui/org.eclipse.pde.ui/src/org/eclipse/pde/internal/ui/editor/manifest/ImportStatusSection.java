@@ -168,6 +168,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	gd = new GridData(GridData.FILL_BOTH);
 	gd.horizontalSpan = 2;
 	tree.setLayoutData(gd);
+	combo.pack();//workaround for 13888
 	combo.select(0);
 	makeActions();
 	return container;

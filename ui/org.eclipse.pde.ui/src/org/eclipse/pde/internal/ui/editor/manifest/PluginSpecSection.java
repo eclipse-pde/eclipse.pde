@@ -213,6 +213,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				PDEPlugin.getResourceString(KEY_MATCH_GREATER) };
 				
 		matchCombo.setItems(items);
+		matchCombo.pack();
 		matchCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				int match = matchCombo.getSelectionIndex();

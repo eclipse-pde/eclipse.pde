@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
 	private IStatus currentStatus;
 	private boolean valid=true;
+	private boolean changed=false;
 
 	public AbstractLauncherTab() {
 		currentStatus= createStatus(IStatus.OK, "");
@@ -27,6 +28,14 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	protected void refreshStatus() {
 		getLaunchConfigurationDialog().updateButtons();
 		getLaunchConfigurationDialog().updateMessage();
+	}
+	
+	protected boolean isChanged() {
+		return changed;
+	}
+	
+	public void setChanged(boolean changed) {
+		this.changed = changed;
 	}
 	
 	protected void createStartingSpace(Composite parent, int span) {

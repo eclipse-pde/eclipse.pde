@@ -411,6 +411,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				file.setContents(fstream, true, false, null);
 			else
 				file.create(fstream, true, null);
+			fstream.close();
 
 		} catch (IOException e) {
 			IStatus status =

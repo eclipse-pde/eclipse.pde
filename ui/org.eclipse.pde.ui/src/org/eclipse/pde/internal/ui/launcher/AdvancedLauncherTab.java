@@ -206,14 +206,16 @@ public class AdvancedLauncherTab
 	private void hookListeners() {
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator.showWhile(pluginTreeViewer.getControl().getDisplay(), 
-					new Runnable() {
-						public void run() {
-				Vector checked = computeInitialCheckState();
-				pluginTreeViewer.setCheckedElements(checked.toArray());
-				updateStatus();
-						}
-					});
+				BusyIndicator
+					.showWhile(
+						pluginTreeViewer.getControl().getDisplay(),
+						new Runnable() {
+					public void run() {
+						Vector checked = computeInitialCheckState();
+						pluginTreeViewer.setCheckedElements(checked.toArray());
+						updateStatus();
+					}
+				});
 			}
 		});
 		pluginPathButton.addSelectionListener(new SelectionAdapter() {
@@ -237,23 +239,30 @@ public class AdvancedLauncherTab
 		return gd;
 	}
 
-	protected Control createPluginList(Composite parent) {
+	protected Control createPluginList(final Composite parent) {
 		pluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
 		pluginTreeViewer.setContentProvider(new PluginContentProvider());
 		pluginTreeViewer.setLabelProvider(
 			PDEPlugin.getDefault().getLabelProvider());
 		pluginTreeViewer.setAutoExpandLevel(2);
 		pluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof IPluginModelBase) {
-					IPluginModelBase model =
-						(IPluginModelBase) event.getElement();
-					handleCheckStateChanged(model, event.getChecked());
-				} else {
-					handleGroupStateChanged(element, event.getChecked());
-				}
-				updateStatus();
+			public void checkStateChanged(final CheckStateChangedEvent event) {
+				final Object element = event.getElement();
+				BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+					public void run() {
+						if (element instanceof IPluginModelBase) {
+							IPluginModelBase model =
+								(IPluginModelBase) event.getElement();
+							handleCheckStateChanged(model, event.getChecked());
+						} else {
+							handleGroupStateChanged(
+								element,
+								event.getChecked());
+						}
+						updateStatus();
+					}
+				});
+
 			}
 		});
 		pluginTreeViewer.setSorter(new ViewerSorter() {
@@ -318,7 +327,8 @@ public class AdvancedLauncherTab
 		// Need to set these before we refresh the viewer
 		//useDefaultRadio.setSelection(useDefault);
 		//useListRadio.setSelection(!useDefault);
-		pluginTreeViewer.setInput(PDEPlugin.getDefault());
+		if (pluginTreeViewer.getInput() == null)
+			pluginTreeViewer.setInput(PDEPlugin.getDefault());
 		boolean useDefault = true;
 		try {
 			useDefault = config.getAttribute(USECUSTOM, useDefault);
@@ -504,6 +514,7 @@ public class AdvancedLauncherTab
 				pluginTreeViewer.setGrayed(parent, true);
 				break;
 		}
+		setChanged(true);
 	}
 
 	private void handleGroupStateChanged(Object group, boolean checked) {
@@ -519,6 +530,7 @@ public class AdvancedLauncherTab
 		}
 		if (pluginTreeViewer.getGrayed(group))
 			pluginTreeViewer.setGrayed(group, false);
+		setChanged(true);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
@@ -526,6 +538,8 @@ public class AdvancedLauncherTab
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (!isChanged())
+			return;
 		config.setAttribute(USECUSTOM, false);
 
 		// store deselected projects
@@ -553,6 +567,7 @@ public class AdvancedLauncherTab
 		}
 		config.setAttribute(WSPROJECT, wbuf.toString());
 		config.setAttribute(EXTPLUGINS, exbuf.toString());
+		setChanged(false);
 	}
 
 	private void showPluginPaths() {
@@ -596,10 +611,10 @@ public class AdvancedLauncherTab
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) models[i];
 			IPluginBase pluginBase = model.getPluginBase();
-			if (pluginBase!=null) {
+			if (pluginBase != null) {
 				String pid = pluginBase.getId();
-				if (pid!=null && pid.equals(id))
-				return model;
+				if (pid != null && pid.equals(id))
+					return model;
 			}
 		}
 		return null;
@@ -642,6 +657,7 @@ public class AdvancedLauncherTab
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
 	public Image getImage() {
-		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+		return PDEPlugin.getDefault().getLabelProvider().get(
+			PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 	}
 }

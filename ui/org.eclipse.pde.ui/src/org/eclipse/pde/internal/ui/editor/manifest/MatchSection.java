@@ -167,6 +167,7 @@ public class MatchSection extends PDEFormSection {
 		matchCombo.add(PDEPlugin.getResourceString(KEY_COMPATIBLE));
 		matchCombo.add(PDEPlugin.getResourceString(KEY_PERFECT));
 		matchCombo.add(PDEPlugin.getResourceString(KEY_GREATER));
+		matchCombo.pack();
 		matchCombo.setBackground(factory.getBackgroundColor());
 		matchCombo.setForeground(factory.getForegroundColor());
 		matchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

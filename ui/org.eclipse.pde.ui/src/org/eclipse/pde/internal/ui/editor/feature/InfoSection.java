@@ -101,6 +101,7 @@ public class InfoSection extends PDEFormSection {
 		sectionCombo.setBackground(factory.getBackgroundColor());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		sectionCombo.setLayoutData(gd);
+		initializeSectionCombo();
 		factory.createLabel(container, null);
 
 		factory.createLabel(container, PDEPlugin.getResourceString(KEY_URL));
@@ -265,7 +266,6 @@ public class InfoSection extends PDEFormSection {
 
 	public void initialize(Object model) {
 		IFeatureModel featureModel = (IFeatureModel) model;
-		initializeSectionCombo();
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
 				infoModified();
@@ -323,6 +323,7 @@ public class InfoSection extends PDEFormSection {
 				updateEditorInput(info, true);
 			}
 		});
+		sectionCombo.pack();
 		sectionCombo.select(0);
 	}
 	private String resolveObjectName(Object object) {
