@@ -117,16 +117,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			if (file.isFile()) {
 				// Plugin-in-Jar format
 				extractZipFile(file, project.getFullPath(), new SubProgressMonitor(monitor, 4));
+				if (fImportType != IMPORT_WITH_SOURCE)
+					project.setPersistentProperty(
+							PDECore.EXTERNAL_PROJECT_PROPERTY,
+							PDECore.BINARY_PROJECT_VALUE);
 			} else {
 				switch (fImportType) {
 					case IMPORT_BINARY :
 						importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 						break;
 					case IMPORT_BINARY_WITH_LINKS :
-						if (new File(model.getInstallLocation()).isFile())
-							importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
-						else
-							importAsBinaryWithLinks(
+						importAsBinaryWithLinks(
 								project,
 								model,
 								new SubProgressMonitor(monitor, 4));
