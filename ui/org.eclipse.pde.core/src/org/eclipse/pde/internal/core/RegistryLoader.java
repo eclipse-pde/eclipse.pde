@@ -10,24 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Vector;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.model.PluginDescriptorModel;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.core.runtime.model.PluginModel;
-import org.eclipse.core.runtime.model.PluginRegistryModel;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.pde.internal.core.plugin.*;
 
 
 public class RegistryLoader {
@@ -93,19 +82,6 @@ public class RegistryLoader {
 		if (model.isLoaded())
 			model.getPluginBase();
 		return model;
-	}
-
-	public static void reloadFromLive(
-		Vector result,
-		Vector fresult,
-		IProgressMonitor monitor) {
-		PluginRegistryModel registryModel =
-			(PluginRegistryModel) Platform.getPluginRegistry();
-		PluginDescriptorModel[] plugins = registryModel.getPlugins();
-		PluginFragmentModel[] fragments = registryModel.getFragments();
-		monitor.beginTask("", plugins.length + fragments.length);
-		processPluginModels(result, plugins, false, monitor);
-		processPluginModels(fresult, fragments, true, monitor);
 	}
 
 	public static void reload(

@@ -104,6 +104,7 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 	}
 	
 	public org.w3c.dom.Document getDocument() {
+		fDocument.getDocumentElement().normalize();
 		return fDocument;
 	}
 	
