@@ -126,6 +126,7 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 	}
 	
 	public Node getDocumentElement() {
+		fDocument.getDocumentElement().normalize();
 		return fDocument.getDocumentElement();
 	}
 	

@@ -143,7 +143,11 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 	}
 	
 	public Node getDocumentElement() {
-		return (fDocument == null) ? null : fDocument.getDocumentElement();
+		if (fDocument != null) {
+			fDocument.getDocumentElement().normalize();
+			return fDocument.getDocumentElement();
+		}
+		return null;
 	}
 	
 	public org.w3c.dom.Document getDocument() {
