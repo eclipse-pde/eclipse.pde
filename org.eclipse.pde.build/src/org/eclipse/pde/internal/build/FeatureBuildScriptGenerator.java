@@ -465,8 +465,7 @@ protected void generateAllPluginsTarget() throws CoreException {
 	List plugins = computeElements(false);
 	String[][] sortedPlugins = computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]));
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
@@ -474,8 +473,7 @@ protected void generateAllPluginsTarget() throws CoreException {
 			script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 /**
@@ -656,10 +654,6 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
 	generator.setPluginPath(getPluginPath());
-	generator.setBuildVariableARCH(buildVariableARCH);
-	generator.setBuildVariableNL(buildVariableNL);
-	generator.setBuildVariableOS(buildVariableOS);
-	generator.setBuildVariableWS(buildVariableWS);
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		PluginModel model = (PluginModel) iterator.next();
 		// setModel has to be called before configurePersistentProperties

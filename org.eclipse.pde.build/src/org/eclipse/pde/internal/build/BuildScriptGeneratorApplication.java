@@ -50,18 +50,6 @@ protected void processCommandLine(List commands) {
 	task.internalSetPlugins(getArguments(commands, ARG_PLUGIN_PATH));
 	String[] arguments = getArguments(commands, ARG_INSTALL_LOCATION);
 	task.setInstall(arguments[0]); // only consider one location
-	arguments = getArguments(commands, ARG_OS);
-	if (arguments != null)
-		task.setOS(arguments[0]); // only consider one value
-	arguments = getArguments(commands, ARG_WS);
-	if (arguments != null)
-		task.setWS(arguments[0]); // only consider one value
-	arguments = getArguments(commands, ARG_NL);
-	if (arguments != null)
-		task.setNL(arguments[0]); // only consider one value
-	arguments = getArguments(commands, ARG_ARCH);
-	if (arguments != null)
-		task.setARCH(arguments[0]); // only consider one value
 }
 
 

@@ -22,19 +22,15 @@ public interface IPDECoreConstants {
 
 	// command line arguments
 
-	public static final String ARG_ARCH = "-buildARCH";
 	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile";
 	public static final String ARG_DEV_ENTRIES = "-dev";
 	public static final String ARG_DIRECTORY_LOCATION = "-directory";
 	public static final String ARG_ELEMENTS = "-elements";
 	public static final String ARG_INSTALL_LOCATION = "-install";
-	public static final String ARG_NL = "-buildNL";
 	public static final String ARG_NO_CHILDREN = "-nochildren";
-	public static final String ARG_OS = "-buildOS";
 	public static final String ARG_PLUGIN_PATH = "-pluginpath";
 	public static final String ARG_SCRIPT_NAME = "-scriptname";
 	public static final String ARG_USAGE = "-?";
-	public static final String ARG_WS = "-buildWS";
 	
 
 	// default values

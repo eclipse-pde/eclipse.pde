@@ -50,14 +50,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	private Properties buildProperties;
 	private Map conditionalProperties;
 	
-	/**
-	 * Build variables.
-	 */
-	protected String buildVariableARCH;
-	protected String buildVariableNL;
-	protected String buildVariableOS;
-	protected String buildVariableWS;
-	
 protected void readProperties(String root) {
 	try {
 		buildProperties = new Properties();
@@ -257,31 +249,27 @@ protected String makeRelative(String property, String fullPath, String pathToTri
 
 	
 /**
- * Sets the buildVariableARCH.
+ * @deprecated
  */
 public void setBuildVariableARCH(String buildVariableARCH) {
-	this.buildVariableARCH = buildVariableARCH;
 }
 
 /**
- * Sets the buildVariableNL.
+ * @deprecated
  */
 public void setBuildVariableNL(String buildVariableNL) {
-	this.buildVariableNL = buildVariableNL;
 }
 
 /**
- * Sets the buildVariableOS.
+ * @deprecated
  */
 public void setBuildVariableOS(String buildVariableOS) {
-	this.buildVariableOS = buildVariableOS;
 }
 
 /**
- * Sets the buildVariableWS.
+ * @deprecated
  */
 public void setBuildVariableWS(String buildVariableWS) {
-	this.buildVariableWS = buildVariableWS;
 }
 
 /**

@@ -144,10 +144,7 @@ protected void generateFeatures(List features) throws CoreException {
 	generator.setPluginPath(asURL(pluginPath));
 	generator.setGenerateChildrenScript(children);
 	for (int i = 0; i < features.size(); i++) {
-		// setFeature has to be called before configurePersistentProperties
-		// because it reads the model's properties
 		generator.setFeature((String) features.get(i));
-		setBuildVariables(generator);
 		generator.generate();
 	}
 }
@@ -158,7 +155,6 @@ protected void generateModels(ModelBuildScriptGenerator generator, List models) 
 	generator.setInstallLocation(installLocation);
 	generator.setDevEntries(devEntries);
 	generator.setPluginPath(asURL(pluginPath));
-	setBuildVariables(generator);
 	for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 		String model = (String) iterator.next();
 		generator.setModelId(model);
@@ -179,21 +175,6 @@ protected URL[] asURL(String[] target) throws CoreException {
 	}
 }
 
-protected void setBuildVariables(AbstractBuildScriptGenerator generator) {
-	boolean projectAvailable = getProject() != null;
-	if (buildVariableOS == null && projectAvailable)
-		buildVariableOS = getProject().getProperty(PROPERTY_OS);
-	generator.setBuildVariableOS(buildVariableOS);
-	if (buildVariableWS == null && projectAvailable)
-		buildVariableWS = getProject().getProperty(PROPERTY_WS);
-	generator.setBuildVariableWS(buildVariableWS);
-	if (buildVariableNL == null && projectAvailable)
-		buildVariableNL = getProject().getProperty(PROPERTY_NL);
-	generator.setBuildVariableNL(buildVariableNL);
-	if (buildVariableARCH == null && projectAvailable)
-		buildVariableARCH = getProject().getProperty(PROPERTY_ARCH);
-	generator.setBuildVariableARCH(buildVariableARCH);
-}
 
 
 /**
