@@ -168,7 +168,7 @@
          </description>
       </wizard>
       <wizard
-            icon="icons/etool16/defcon_wiz.gif"
+            icon="icons/etool16/prd_config_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.product.NewProductFileWizard"
             category="org.eclipse.pde.PDE"
             name="%new.product.config"
@@ -488,7 +488,7 @@
       <editor
             default="true"
             name="%product.editor"
-            icon="icons/obj16/bundle_mf_obj.gif"
+            icon="icons/obj16/product_xml_obj.gif"
             filenames="*.product"
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"

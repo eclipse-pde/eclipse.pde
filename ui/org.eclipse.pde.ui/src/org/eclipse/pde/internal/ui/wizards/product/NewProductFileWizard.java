@@ -61,7 +61,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#initializeDefaultPageImageDescriptor()
 	 */
 	protected void initializeDefaultPageImageDescriptor() {
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_WIZ);
 	}
 
 }

@@ -220,7 +220,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployfeat_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN2BUNDLE_WIZ  = create(PATH_WIZBAN, "plugin2bundle_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.gif"); //$NON-NLS-1$
-	
+	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.gif"); //$NON-NLS-1$
 	
 	/**
 	 * View
