@@ -35,33 +35,32 @@ public class BasicLauncherTab
 
 	private static final String KEY_NAME = "BasicLauncherTab.name";
 	
-	private Combo workspaceCombo;
-	private Button browseButton;
-	private Button clearWorkspaceCheck;
-	private Button askClearCheck;
-	private Combo jreCombo;
-	private Text classpathText;
-	private Text vmArgsText;
-	private Text progArgsText;
-	private Button defaultsButton;
-	private Image image;
-	private String currentClasspath;
+	private Combo fWorkspaceCombo;
+	private Button fBrowseButton;
+	private Button fClearWorkspaceCheck;
+	private Button fAskClearCheck;
+	private Combo fJreCombo;
+	private Text fClasspathText;
+	private Text fVmArgsText;
+	private Text fProgArgsText;
+	private Button fDefaultsButton;
+	private Image fImage;
+	private String fCurrentClasspath;
 
-	private IStatus jreSelectionStatus;
-	private IStatus workspaceSelectionStatus;
-
+	private IStatus fJreSelectionStatus;
+	private IStatus fWorkspaceSelectionStatus;
 	
-	private boolean blockChanges = false;
+	private boolean fBlockChanges = false;
 
 	public BasicLauncherTab() {
-		jreSelectionStatus = createStatus(IStatus.OK, "");
-		workspaceSelectionStatus = createStatus(IStatus.OK, "");
-		image = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
+		fJreSelectionStatus = createStatus(IStatus.OK, "");
+		fWorkspaceSelectionStatus = createStatus(IStatus.OK, "");
+		fImage = PDEPluginImages.DESC_ARGUMENT_TAB.createImage();
 	}
 
 	public void dispose() {
 		super.dispose();
-		image.dispose();
+		fImage.dispose();
 	}
 
 	public void createControl(Composite parent) {
@@ -80,11 +79,11 @@ public class BasicLauncherTab
 	}
 	
 	protected void createDefaultsButton(Composite parent) {
-		defaultsButton = new Button(parent, SWT.PUSH);
-		defaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore"));
-		defaultsButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(defaultsButton);
-		defaultsButton.addSelectionListener(new SelectionAdapter() {
+		fDefaultsButton = new Button(parent, SWT.PUSH);
+		fDefaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore"));
+		fDefaultsButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		SWTUtil.setButtonDimensionHint(fDefaultsButton);
+		fDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				doRestoreDefaults();
 				updateLaunchConfigurationDialog();
@@ -103,56 +102,56 @@ public class BasicLauncherTab
 		Label label = new Label(group, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.location"));
 
-		workspaceCombo = new Combo(group, SWT.DROP_DOWN);
+		fWorkspaceCombo = new Combo(group, SWT.DROP_DOWN);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		workspaceCombo.setLayoutData(gd);
-		workspaceCombo.addSelectionListener(new SelectionAdapter() {
+		fWorkspaceCombo.setLayoutData(gd);
+		fWorkspaceCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				workspaceSelectionStatus = validateWorkspaceSelection();
-				if (!blockChanges) 
+				fWorkspaceSelectionStatus = validateWorkspaceSelection();
+				if (!fBlockChanges) 
 					updateStatus();
 			}
 		});
-		workspaceCombo.addModifyListener(new ModifyListener() {
+		fWorkspaceCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				workspaceSelectionStatus = validateWorkspaceSelection();				
-				if (!blockChanges)
+				fWorkspaceSelectionStatus = validateWorkspaceSelection();				
+				if (!fBlockChanges)
 					updateStatus();
 			}
 		});
 
-		browseButton = new Button(group, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.browse"));
-		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		browseButton.addSelectionListener(new SelectionAdapter() {
+		fBrowseButton = new Button(group, SWT.PUSH);
+		fBrowseButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.browse"));
+		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
-					workspaceCombo.setText(chosen.toOSString());
+					fWorkspaceCombo.setText(chosen.toOSString());
 					updateStatus();
 				}
 			}
 		});
-		SWTUtil.setButtonDimensionHint(browseButton);
+		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
-		clearWorkspaceCheck = new Button(group, SWT.CHECK);
-		clearWorkspaceCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.clear"));
+		fClearWorkspaceCheck = new Button(group, SWT.CHECK);
+		fClearWorkspaceCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.clear"));
 		gd = new GridData();
 		gd.horizontalSpan = 3;
-		clearWorkspaceCheck.setLayoutData(gd);
-		clearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
+		fClearWorkspaceCheck.setLayoutData(gd);
+		fClearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				askClearCheck.setEnabled(clearWorkspaceCheck.getSelection());
+				fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
 				updateLaunchConfigurationDialog();
 			}
 		});
 		
-		askClearCheck = new Button(group, SWT.CHECK);
-		askClearCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.askClear"));
+		fAskClearCheck = new Button(group, SWT.CHECK);
+		fAskClearCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.askClear"));
 		gd = new GridData();
 		gd.horizontalSpan = 3;
-		askClearCheck.setLayoutData(gd);
-		askClearCheck.addSelectionListener(new SelectionAdapter() {
+		fAskClearCheck.setLayoutData(gd);
+		fAskClearCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -188,11 +187,11 @@ public class BasicLauncherTab
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		jreCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		jreCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		jreCombo.addSelectionListener(new SelectionAdapter() {
+		fJreCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		fJreCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fJreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				jreSelectionStatus = validateJRESelection();
+				fJreSelectionStatus = validateJRESelection();
 				updateStatus();
 			}
 		});
@@ -201,13 +200,13 @@ public class BasicLauncherTab
 		button.setText(PDEPlugin.getResourceString("BasicLauncherTab.installedJREs"));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				String currentVM = jreCombo.getText();
+				String currentVM = fJreCombo.getText();
 				IPreferenceNode node = new InstalledJREsPreferenceNode();
 				if (showPreferencePage(node)) {
-					jreCombo.setItems(LauncherUtils.getVMInstallNames());
-					jreCombo.setText(currentVM);
-					if (jreCombo.getSelectionIndex() == -1)
-						jreCombo.setText(LauncherUtils.getDefaultVMInstallName());
+					fJreCombo.setItems(LauncherUtils.getVMInstallNames());
+					fJreCombo.setText(currentVM);
+					if (fJreCombo.getSelectionIndex() == -1)
+						fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());
 				}
 			}
 			private boolean showPreferencePage(final IPreferenceNode targetNode) {
@@ -235,11 +234,11 @@ public class BasicLauncherTab
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.vmArgs"));
 		
-		vmArgsText = new Text(parent, SWT.BORDER);
-		vmArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		vmArgsText.addModifyListener(new ModifyListener() {
+		fVmArgsText = new Text(parent, SWT.BORDER);
+		fVmArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		fVmArgsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (!blockChanges)	
+				if (!fBlockChanges)	
 					updateLaunchConfigurationDialog();
 			}
 		});
@@ -249,11 +248,11 @@ public class BasicLauncherTab
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.programArgs"));
 
-		progArgsText = new Text(parent, SWT.BORDER);
-		progArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		progArgsText.addModifyListener(new ModifyListener() {
+		fProgArgsText = new Text(parent, SWT.BORDER);
+		fProgArgsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProgArgsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (!blockChanges)
+				if (!fBlockChanges)
 					updateLaunchConfigurationDialog();
 			}
 		});		
@@ -263,11 +262,11 @@ public class BasicLauncherTab
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath"));
 		
-		classpathText = new Text(parent, SWT.BORDER);
-		classpathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		classpathText.addModifyListener(new ModifyListener() {
+		fClasspathText = new Text(parent, SWT.BORDER);
+		fClasspathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fClasspathText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (!blockChanges)	
+				if (!fBlockChanges)	
 					updateLaunchConfigurationDialog();
 			}
 		});		
@@ -278,7 +277,7 @@ public class BasicLauncherTab
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			blockChanges = true;
+			fBlockChanges = true;
 			
 			initializeWorkspaceDataSection(config);
 			initializeJRESection(config);
@@ -288,13 +287,14 @@ public class BasicLauncherTab
 			initializeDevEntriesSection(config);
 			initializeShowSplashSection(config);
 				
-			workspaceSelectionStatus = validateWorkspaceSelection();
-			jreSelectionStatus = validateJRESelection();
+			fWorkspaceSelectionStatus = validateWorkspaceSelection();
+			fJreSelectionStatus = validateJRESelection();
 			updateStatus();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+		} finally {
+			fBlockChanges = false;
 		}
-		blockChanges = false;
 	}
 
 	protected void initializeApplicationSection(ILaunchConfiguration config)
@@ -312,34 +312,34 @@ public class BasicLauncherTab
 			}
 		}
 
-		workspaceCombo.setItems((String[]) items.toArray(new String[items.size()]));
-		if (workspaceCombo.getItemCount() > 0)
-			workspaceCombo.setText(items.get(0).toString());
+		fWorkspaceCombo.setItems((String[]) items.toArray(new String[items.size()]));
+		if (fWorkspaceCombo.getItemCount() > 0)
+			fWorkspaceCombo.setText(items.get(0).toString());
 
-		clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
-		askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
-		askClearCheck.setEnabled(clearWorkspaceCheck.getSelection());
+		fClearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
+		fAskClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
+		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
 	}
 	
 	protected void initializeJRESection(ILaunchConfiguration config) throws CoreException {
-		jreCombo.setItems(LauncherUtils.getVMInstallNames());
+		fJreCombo.setItems(LauncherUtils.getVMInstallNames());
 		String vmInstallName =
 			config.getAttribute(VMINSTALL, LauncherUtils.getDefaultVMInstallName());
-		jreCombo.setText(vmInstallName);
-		if (jreCombo.getSelectionIndex() == -1)
-			jreCombo.setText(LauncherUtils.getDefaultVMInstallName());
+		fJreCombo.setText(vmInstallName);
+		if (fJreCombo.getSelectionIndex() == -1)
+			fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());
 	}
 	
 	protected void initializeVMArgsSection(ILaunchConfiguration config) throws CoreException {
-		vmArgsText.setText(config.getAttribute(VMARGS, ""));		
+		fVmArgsText.setText(config.getAttribute(VMARGS, ""));		
 	}
 	
 	protected void initializeProgArgsSection(ILaunchConfiguration config) throws CoreException {
-		progArgsText.setText(config.getAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments()));		
+		fProgArgsText.setText(config.getAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments()));		
 	}
 	
 	protected void initializeDevEntriesSection(ILaunchConfiguration config) throws CoreException {
-		classpathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));		
+		fClasspathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));		
 	}
 
 	protected void initializeShowSplashSection(ILaunchConfiguration config) throws CoreException {
@@ -355,70 +355,65 @@ public class BasicLauncherTab
 	}
 	
 	private String getClasspathEntries() {
-		if (currentClasspath != null)
-			return currentClasspath;
+		if (fCurrentClasspath != null)
+			return fCurrentClasspath;
 		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] wsmodels = manager.getAllModels();
-		currentClasspath = LauncherUtils.getBuildOutputFolders(wsmodels);
-		return currentClasspath;
+		fCurrentClasspath = LauncherUtils.getBuildOutputFolders(wsmodels);
+		return fCurrentClasspath;
 	}
 
 	protected void doRestoreDefaults() {
-		progArgsText.setText(LauncherUtils.getDefaultProgramArguments());
-		vmArgsText.setText("");
-		workspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
-		classpathText.setText(getClasspathEntries());
-		clearWorkspaceCheck.setSelection(false);
-		askClearCheck.setSelection(true);
-		askClearCheck.setEnabled(false);
-		jreCombo.setText(LauncherUtils.getDefaultVMInstallName());		
+		fProgArgsText.setText(LauncherUtils.getDefaultProgramArguments());
+		fVmArgsText.setText("");
+		fWorkspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
+		fClasspathText.setText(getClasspathEntries());
+		fClearWorkspaceCheck.setSelection(false);
+		fAskClearCheck.setSelection(true);
+		fAskClearCheck.setEnabled(false);
+		fJreCombo.setText(LauncherUtils.getDefaultVMInstallName());		
 	}
 
 	private void updateStatus() {
 		updateStatus(
-			getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+			getMoreSevere(fWorkspaceSelectionStatus, fJreSelectionStatus));
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		try {
-			if (isChanged()) {
-				saveWorkspaceDataSection(config);
-				saveApplicationSection(config);
-				saveJRESection(config);
-				saveVMArgsSection(config);
-				saveProgArgsSection(config);
-				saveDevEntriesSection(config);
-				saveShowSplashSection(config);
-			}
+			saveWorkspaceDataSection(config);
+			saveApplicationSection(config);
+			saveJRESection(config);
+			saveVMArgsSection(config);
+			saveProgArgsSection(config);
+			saveDevEntriesSection(config);
+			saveShowSplashSection(config);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-		} finally {
-			if (isChanged())
-				setChanged(false);
 		}
 	}
 	
 	protected void saveWorkspaceDataSection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
-		config.setAttribute(LOCATION + String.valueOf(0), workspaceCombo.getText());
-		if (workspaceCombo.getItemCount() > 1) {
-			String[] items = workspaceCombo.getItems();
+		config.setAttribute(LOCATION + String.valueOf(0), fWorkspaceCombo.getText());
+		if (fWorkspaceCombo.getItemCount() > 1) {
+			String[] items = fWorkspaceCombo.getItems();
 			int nEntries = Math.min(items.length, 5);
 			for (int i = 0; i < nEntries; i++) {
 				config.setAttribute(LOCATION + String.valueOf(i + 1), items[i]);
 			}
 		}
 
-		config.setAttribute(DOCLEAR, clearWorkspaceCheck.getSelection());
-		config.setAttribute(ASKCLEAR, askClearCheck.getSelection());
+		config.setAttribute(DOCLEAR, fClearWorkspaceCheck.getSelection());
+		config.setAttribute(ASKCLEAR, fAskClearCheck.getSelection());
 	}
 	
 	protected void saveJRESection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
-		if (jreCombo.getSelectionIndex() == -1)
+		if (fJreCombo.getSelectionIndex() == -1)
 			return;
 
-		String jre = jreCombo.getText();
+		String jre = fJreCombo.getText();
 		if (config.getAttribute(VMINSTALL, (String) null) != null) {
 			config.setAttribute(VMINSTALL, jre);
 		} else {
@@ -429,16 +424,16 @@ public class BasicLauncherTab
 	}
 	
 	protected void saveVMArgsSection(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(VMARGS, vmArgsText.getText().trim());
+		config.setAttribute(VMARGS, fVmArgsText.getText().trim());
 	}
 	
 	protected void saveProgArgsSection(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(PROGARGS, progArgsText.getText().trim());		
+		config.setAttribute(PROGARGS, fProgArgsText.getText().trim());		
 	}
 	
 	protected void saveDevEntriesSection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
-		String classpath = classpathText.getText().trim();
+		String classpath = fClasspathText.getText().trim();
 		if (config.getAttribute(CLASSPATH_ENTRIES, (String) null) != null) {
 			config.setAttribute(CLASSPATH_ENTRIES, classpath);
 		} else {
@@ -456,7 +451,7 @@ public class BasicLauncherTab
 
 	private IPath chooseWorkspaceLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
-		dialog.setFilterPath(workspaceCombo.getText());
+		dialog.setFilterPath(fWorkspaceCombo.getText());
 		dialog.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace.title"));
 		dialog.setMessage(PDEPlugin.getResourceString("BasicLauncherTab.workspace.message"));
 		String res = dialog.open();
@@ -467,7 +462,7 @@ public class BasicLauncherTab
 	}
 
 	private IStatus validateJRESelection() {
-		if (jreCombo.getSelectionIndex() == -1) {
+		if (fJreCombo.getSelectionIndex() == -1) {
 			return createStatus(
 				IStatus.ERROR,
 				PDEPlugin.getResourceString("BasicLauncherTab.noJRE"));
@@ -476,7 +471,7 @@ public class BasicLauncherTab
 	}
 
 	private IStatus validateWorkspaceSelection() {
-		String location = workspaceCombo.getText().trim();
+		String location = fWorkspaceCombo.getText().trim();
 		if (!Path.ROOT.isValidPath(location)) {
 			return createStatus(
 				IStatus.ERROR,
@@ -498,7 +493,7 @@ public class BasicLauncherTab
 	}
 	
 	public Image getImage() {
-		return image;
+		return fImage;
 	}
 
 }

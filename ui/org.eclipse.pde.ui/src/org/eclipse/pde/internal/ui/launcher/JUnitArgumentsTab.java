@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 
 public class JUnitArgumentsTab extends BasicLauncherTab {
 	
-	private Combo applicationCombo;
+	private Combo fApplicationCombo;
 	private Label fApplicationLabel;
 	private Button fRequiresUI;
 	
@@ -41,7 +41,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		fRequiresUI.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fApplicationLabel.setEnabled(fRequiresUI.getSelection());
-				applicationCombo.setEnabled(fRequiresUI.getSelection());
+				fApplicationCombo.setEnabled(fRequiresUI.getSelection());
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -52,10 +52,10 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		gd.horizontalIndent = 25;
 		fApplicationLabel.setLayoutData(gd);
 		
-		applicationCombo = new Combo(group, SWT.READ_ONLY|SWT.DROP_DOWN);
-		applicationCombo.setItems(getApplicationNames());
-		applicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		applicationCombo.addSelectionListener(new SelectionAdapter() {
+		fApplicationCombo = new Combo(group, SWT.READ_ONLY|SWT.DROP_DOWN);
+		fApplicationCombo.setItems(getApplicationNames());
+		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fApplicationCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -70,22 +70,22 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 			junitApplication.equals(JUnitLaunchConfiguration.fgDefaultApp));
 
 		fApplicationLabel.setEnabled(fRequiresUI.getSelection());
-		applicationCombo.setEnabled(fRequiresUI.getSelection());
+		fApplicationCombo.setEnabled(fRequiresUI.getSelection());
 		String testApplication = config.getAttribute(APP_TO_TEST, (String) null);
 		if (testApplication == null
 			|| testApplication.equals("")
-			|| applicationCombo.indexOf(testApplication) == -1) {
-			int index = applicationCombo.indexOf("org.eclipse.ui.ide.workbench");
+			|| fApplicationCombo.indexOf(testApplication) == -1) {
+			int index = fApplicationCombo.indexOf("org.eclipse.ui.ide.workbench");
 			if (index == -1) {
-				index = applicationCombo.indexOf("org.eclipse.ui.workbench");
+				index = fApplicationCombo.indexOf("org.eclipse.ui.workbench");
 			}
 			if (index != -1) {
-				applicationCombo.setText(applicationCombo.getItem(index));
-			} else if (applicationCombo.getItemCount() > 0) {
-				applicationCombo.setText(applicationCombo.getItem(0));
+				fApplicationCombo.setText(fApplicationCombo.getItem(index));
+			} else if (fApplicationCombo.getItemCount() > 0) {
+				fApplicationCombo.setText(fApplicationCombo.getItem(0));
 			}
 		} else {
-			applicationCombo.setText(testApplication);
+			fApplicationCombo.setText(testApplication);
 		}
 	}
 	
@@ -93,18 +93,18 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		super.doRestoreDefaults();
 		fRequiresUI.setSelection(true);
 		fApplicationLabel.setEnabled(true);
-		applicationCombo.setEnabled(true);
+		fApplicationCombo.setEnabled(true);
 	}
 	
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		try {
 			if (fRequiresUI.getSelection()) {
 				config.setAttribute(APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
-				String text = applicationCombo.getText();
+				String text = fApplicationCombo.getText();
 				if ((config.getAttribute(APP_TO_TEST, (String) null) != null)
 					|| (!text.equals("org.eclipse.ui.workbench")
 						&& !text.equals("org.eclipse.ui.ide.workbench"))) {
-					config.setAttribute(APP_TO_TEST, applicationCombo.getText());
+					config.setAttribute(APP_TO_TEST, fApplicationCombo.getText());
 				}
 			} else {
 				config.setAttribute(

@@ -301,7 +301,6 @@ public class TracingLauncherTab
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginTreeViewer.getTree().setEnabled(enabled);
 		fPropertySheet.getControl().setEnabled(enabled);
-		setChanged(userChange);
 	}
 
 	public void initializeFrom(final ILaunchConfiguration config) {
@@ -336,7 +335,7 @@ public class TracingLauncherTab
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		boolean tracingEnabled = fTracingCheck.getSelection();
-		if (!tracingEnabled && !isChanged()) return;
+		if (!tracingEnabled) return;
 		
 		config.setAttribute(TRACING, tracingEnabled);
 		
@@ -352,7 +351,6 @@ public class TracingLauncherTab
 		}
 		if (changes)
 			config.setAttribute(TRACING_OPTIONS, fMasterOptions);
-		setChanged(false);
 	}
 
 

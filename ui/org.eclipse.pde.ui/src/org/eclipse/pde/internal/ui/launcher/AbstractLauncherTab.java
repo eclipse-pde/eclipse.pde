@@ -23,36 +23,16 @@ import org.eclipse.swt.SWT;
  * @author
  */
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
-	//private IStatus currentStatus;
-	private boolean valid=true;
-	private boolean changed=false;
-
-	public AbstractLauncherTab() {
-		//currentStatus= createStatus(IStatus.OK, "");
-	}
-
-	protected boolean isChanged() {
-		return changed;
-	}
-	
-	public void setChanged(boolean changed) {
-		this.changed = changed;
-	}
 
 	protected void createStartingSpace(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
 		GridData data = new GridData();
-		//data.heightHint = 15;
 		data.horizontalSpan = span;
 		label.setLayoutData(data);
 	}
 
 	public boolean isValid(ILaunchConfiguration config) {
-		return valid;
-	}
-	
-	public void setValid(boolean value) {
-		this.valid = value;
+		return getErrorMessage() == null;
 	}
 	
 	/* (non-Javadoc)
@@ -71,16 +51,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * Updates the status line and the ok button depending on the status
 	 */
 	protected void updateStatus(IStatus status) {
-		//IStatus oldStatus = currentStatus;
-		//currentStatus = status;
-		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
-		/*if (oldStatus.getSeverity() != currentStatus.getSeverity()
-			|| !oldStatus.getMessage().equals(currentStatus.getMessage())) {
-			applyToStatusLine(this, status);
-			return true;
-		}
-		return false;*/
 	}
 
 	/**
@@ -103,11 +74,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	}
 	
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {
-		if (s1.getSeverity() >= s2.getSeverity()) {
-			return s1;
-		} else {
-			return s2;
-		}
+		return (s1.getSeverity() >= s2.getSeverity()) ? s1 : s2;
 	}	
 	
 	public static IStatus createStatus(int severity, String message) {
@@ -117,7 +84,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
 	protected void updateLaunchConfigurationDialog() {
-		setChanged(true);
+		setDirty(true);
 		super.updateLaunchConfigurationDialog();
 	}
 		

@@ -64,11 +64,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 				} catch (CoreException e) {
 				}
 				for (int i = 0; i < tabs.length; i++) {
-					if (tabs[i] instanceof AdvancedLauncherTab) {
-						((AdvancedLauncherTab) tabs[i]).initialize(config);
-					} else {
-						tabs[i].initializeFrom(config);
-					}
+					tabs[i].initializeFrom(config);
 				}
 
 			}

@@ -541,7 +541,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				if (PDECore.compare(
 						model.getPluginBase().getId(),
 						model.getPluginBase().getVersion(),
-						fragment.getId(),
+						fragment.getPluginId(),
 						fragment.getVersion(),
 						fragment.getRule())
 					&& fragment.getLibraries().length == 0) {

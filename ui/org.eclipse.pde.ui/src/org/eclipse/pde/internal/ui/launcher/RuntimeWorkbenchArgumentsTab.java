@@ -13,15 +13,15 @@ import org.eclipse.swt.widgets.Composite;
 
 public class RuntimeWorkbenchArgumentsTab extends BasicLauncherTab {
 	
-	private Button showSplashCheck;
+	private Button fShowSplashCheck;
 	
 	protected void createShowSplashSection(Composite parent) {
-		showSplashCheck = new Button(parent, SWT.CHECK);
-		showSplashCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.showSplash"));
+		fShowSplashCheck = new Button(parent, SWT.CHECK);
+		fShowSplashCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.showSplash"));
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		showSplashCheck.setLayoutData(gd);
-		showSplashCheck.addSelectionListener(new SelectionAdapter() {
+		fShowSplashCheck.setLayoutData(gd);
+		fShowSplashCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -30,16 +30,16 @@ public class RuntimeWorkbenchArgumentsTab extends BasicLauncherTab {
 	
 	protected void initializeShowSplashSection(ILaunchConfiguration config)
 		throws CoreException {
-		showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));		
+		fShowSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));		
 	}
 	
 	public void doRestoreDefaults() {
 		super.doRestoreDefaults();
-		showSplashCheck.setSelection(true);
+		fShowSplashCheck.setSelection(true);
 	}
 	
 	protected void saveShowSplashSection(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(SHOW_SPLASH, showSplashCheck.getSelection());		
+		config.setAttribute(SHOW_SPLASH, fShowSplashCheck.getSelection());		
 	}
 
 }
