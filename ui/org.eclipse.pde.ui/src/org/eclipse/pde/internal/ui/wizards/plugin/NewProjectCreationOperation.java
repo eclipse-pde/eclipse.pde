@@ -225,7 +225,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				.getBundleContext(), PluginConverter.class.getName(), null);
 		tracker.open();
 		PluginConverter converter = (PluginConverter) tracker.getService();
-		converter.convertManifest(inputFile, outputFile);
+		converter.convertManifest(inputFile, outputFile, false);
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 	
