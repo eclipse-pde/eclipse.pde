@@ -44,11 +44,12 @@ public class ViewTemplate extends PDETemplateSection {
 		addOption(KEY_PACKAGE_NAME, "&Java Package Name:", (String)null, lists[0]);
 		addOption("className", "&View Class Name:", "SampleView", lists[0]);
 		addOption("viewName", "View &Name:", "Sample View", lists[0]);
-		addOption("viewCategory", "View &Category Name:", "Sample Category", lists[0]);
-		addOption("viewType", "Select the control the view should host:", 
+		addOption("viewCategoryId", "View &Category Id:", (String)null, lists[0]);
+		addOption("viewCategoryName", "V&iew Category Name:", "Sample Category", lists[0]);
+		addOption("viewType", "Select the viewer type that should be hosted in the view:", 
 					new String [][] {
-						{"tableViewer", "&Table (can also used for lists)"},
-						{"treeViewer", "T&ree" }},
+						{"tableViewer", "&Table viewer (can also be used for lists)"},
+						{"treeViewer", "T&ree viewer" }},
 						"tableViewer", lists[0]);
 		// second page
 		addOption("react", "&View should react to selections in the workbench", true, lists[1]);
@@ -65,12 +66,16 @@ public class ViewTemplate extends PDETemplateSection {
 	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
-		initializeOption(KEY_PACKAGE_NAME, sdata.getPluginId());
+		String pluginId = sdata.getPluginId();
+		initializeOption(KEY_PACKAGE_NAME, pluginId);
+		initializeOption("viewCategoryId", pluginId);
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
-		initializeOption(KEY_PACKAGE_NAME, model.getPluginBase().getId());
+		String pluginId = model.getPluginBase().getId();
+		initializeOption(KEY_PACKAGE_NAME, pluginId);
+		initializeOption("viewCategoryId", pluginId);
 	}
 	
 	public boolean isDependentOnFirstPage() {
@@ -82,12 +87,12 @@ public class ViewTemplate extends PDETemplateSection {
 		createOptions();
 		pages[0] = new GenericTemplateWizardPage(this, lists[0]);
 		pages[0].setTitle("Main View Settings");
-		pages[0].setDescription("Choose the way the new view will be added to the plug-in");
+		pages[0].setDescription("Choose the way the new view will be added to the plug-in.");
 		wizard.addPage(pages[0]);
 		
 		pages[1] = new GenericTemplateWizardPage(this, lists[1]);
 		pages[1].setTitle("View Features");
-		pages[1].setDescription("Choose the features that the new view should have");
+		pages[1].setDescription("Choose the features that the new view should have.");
 		wizard.addPage(pages[1]);
 	}
 
@@ -108,23 +113,42 @@ public class ViewTemplate extends PDETemplateSection {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true);
 		IPluginModelFactory factory = model.getFactory();
+		
+		String cid = getStringOption("viewCategoryId");
 
-		IPluginElement categoryElement = factory.createElement(extension);
-		categoryElement.setName("category");
-		categoryElement.setAttribute("name", getStringOption("viewCategory"));
-		String cid = plugin.getId();
-		categoryElement.setAttribute("id", cid);
-		extension.add(categoryElement);
+		createCategory(extension, cid);
+		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("className");
 		
 		IPluginElement viewElement = factory.createElement(extension);
 		viewElement.setName("view");
-		viewElement.setAttribute("id", cid+".sampleView");
+		viewElement.setAttribute("id", fullClassName);
 		viewElement.setAttribute("name", getStringOption("viewName"));
 		viewElement.setAttribute("icon", "icons/sample.gif");
-		String fullClassName = getStringOption(KEY_PACKAGE_NAME)+"."+getStringOption("className");
+
 		viewElement.setAttribute("class", fullClassName);
 		viewElement.setAttribute("category", cid);
 		extension.add(viewElement);
-		plugin.add(extension);
+		if (!extension.isInTheModel())
+			plugin.add(extension);
+	}
+
+	private void createCategory(IPluginExtension extension, String id) throws CoreException {
+		IPluginObject [] elements = extension.getChildren();
+		for (int i=0; i<elements.length; i++) {
+			IPluginElement element = (IPluginElement)elements[i];
+			if (element.getName().equalsIgnoreCase("category")) {
+				IPluginAttribute att = element.getAttribute("id");
+				if (att!=null) {
+					String cid = att.getValue();
+					if (cid!=null && cid.equals(id))
+						return;
+				}
+			}
+		}
+		IPluginElement categoryElement = model.getFactory().createElement(extension);
+		categoryElement.setName("category");
+		categoryElement.setAttribute("name", getStringOption("viewCategoryName"));
+		categoryElement.setAttribute("id", id);
+		extension.add(categoryElement);
 	}
 }

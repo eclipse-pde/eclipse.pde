@@ -49,11 +49,10 @@ public abstract class TemplateOption extends TemplateField {
 	}
 	public String getMessageLabel() {
 		String label = getLabel();
-		if (label.indexOf('&')== -1) return label;
 		StringBuffer buf = new StringBuffer();
 		for (int i=0; i<label.length(); i++) {
 			char c = label.charAt(i);
-			if (c!='&') buf.append(c);
+			if (c!='&' && c!=':') buf.append(c);
 		}
 		return buf.toString();
 	}

@@ -333,18 +333,18 @@ public abstract class AbstractTemplateSection
 		updateModel(monitor);
 	}
 	
-	protected IPluginExtension createExtension(String id, boolean reuse) throws CoreException {
+	protected IPluginExtension createExtension(String pointId, boolean reuse) throws CoreException {
 		if (reuse) {
 			IPluginExtension [] extensions = model.getPluginBase().getExtensions();
 			for (int i=0; i<extensions.length; i++) {
 				IPluginExtension extension = extensions[i];
-				if (extension.getId().equalsIgnoreCase(id)) {
+				if (extension.getPoint().equalsIgnoreCase(pointId)) {
 					return extension;
 				}
 			}
 		}
 		IPluginExtension extension = model.getFactory().createExtension();
-		extension.setId(id);
+		extension.setPoint(pointId);
 		return extension;
 	}
 }

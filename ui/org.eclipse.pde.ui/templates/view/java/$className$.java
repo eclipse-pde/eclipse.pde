@@ -18,17 +18,16 @@ import org.eclipse.core.runtime.IAdaptable;
  * workbench view. The view shows data obtained from the
  * model. The sample creates a dummy model on the fly,
  * but a real implementation would connect to the model
- * available either in the plug-in itself or in another 
- * plug-in. The view is connected to the model using
- * the content provider.
+ * available either in this or another plug-in (e.g. the workspace).
+ * The view is connected to the model using a content provider.
  * <p>
- * The view uses label provider to define how model
+ * The view uses a label provider to define how model
  * objects should be presented in the view. Each
  * view can present the same model objects using
- * different labels and icons, of needed. Alternatively,
+ * different labels and icons, if needed. Alternatively,
  * a single label provider can be shared between views
  * in order to ensure that objects of the same type are
- * presented the same way everywhere.
+ * presented in the same way everywhere.
  * <p>
  */
 % Options in the template:
@@ -36,7 +35,8 @@ import org.eclipse.core.runtime.IAdaptable;
 % packageName
 % className
 % viewName
-% viewCategory
+% viewCategoryId
+% viewCategoryName
 % viewType
 % react
 % doubleClick
