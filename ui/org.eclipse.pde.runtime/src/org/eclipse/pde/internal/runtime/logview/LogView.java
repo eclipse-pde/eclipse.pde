@@ -27,6 +27,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -70,6 +71,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action importAction;
 	private Action activateViewAction;
 	private Action propertiesAction;
+	private Action viewLogAction;
 	
 	private Action filterAction;
 	private Clipboard clipboard;
@@ -355,7 +357,16 @@ public class LogView extends ViewPart implements ILogListener {
 			public void run() {				
 			}
 		};
-		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));		
+		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));
+		
+		viewLogAction = new Action(PDERuntimePlugin.getResourceString("LogView.view.currentLog")){
+			public void run(){
+				if (inputFile.exists())
+					Program.launch(inputFile.getAbsolutePath());
+			}
+		};
+		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_PAGE_OBJ);
+		viewLogAction.setEnabled(inputFile.exists());
 	}
 	
 	public void dispose() {
@@ -470,6 +481,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(copyAction);
 		manager.add(new Separator());
+		manager.add(viewLogAction);
 		manager.add(clearAction);
 		manager.add(deleteLogAction);
 		manager.add(readLogAction);
@@ -567,6 +579,7 @@ public class LogView extends ViewPart implements ILogListener {
 						deleteLogAction.setEnabled(
 							inputFile.exists()
 								&& inputFile.equals(Platform.getLogFileLocation().toFile()));
+						viewLogAction.setEnabled(inputFile.exists());
 						if (activate && activateViewAction.isChecked()) {
 							IWorkbenchPage page = PDERuntimePlugin.getActivePage();
 							if (page != null)
