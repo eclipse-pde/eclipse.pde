@@ -11,12 +11,11 @@
 package org.eclipse.pde.internal.ui.search;
 
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.ui.*;
 
 public class DependencyExtentAction extends Action {
 	
@@ -33,12 +32,8 @@ public class DependencyExtentAction extends Action {
 	public void run() {
 		try {
 			SearchUI.activateSearchResultView();
-			PDEPlugin.getWorkspace().run(
-				op,
-				null,
-				IWorkspace.AVOID_UPDATE,
-				new NullProgressMonitor());
-		} catch (CoreException e) {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (Exception e) {
 		}
 	}
 	
