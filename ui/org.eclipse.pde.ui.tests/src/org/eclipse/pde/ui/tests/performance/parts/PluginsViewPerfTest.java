@@ -14,7 +14,7 @@ public class PluginsViewPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testOpen() throws Exception {
-		tagAsGlobalSummary("Open Plug-ins View", Dimension.CPU_TIME);
+		tagAsGlobalSummary("Open Plug-ins View", Dimension.CPU_TIME); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		startMeasuring();
 		page.showView(PDEPlugin.PLUGINS_VIEW_ID);
