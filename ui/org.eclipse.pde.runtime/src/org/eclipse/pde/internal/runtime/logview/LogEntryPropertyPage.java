@@ -4,13 +4,11 @@ package org.eclipse.pde.internal.runtime.logview;
  * All Rights Reserved.
  */
 
-import java.io.*;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 public class LogEntryPropertyPage extends PropertyPage {
 	public static final String KEY_DATE = "LogView.propertyPage.date";

@@ -5,11 +5,9 @@ package org.eclipse.pde.internal.runtime;
  */
 
 import java.net.*;
+
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.swt.widgets.Display;
 
 public class PDERuntimePluginImages {
 

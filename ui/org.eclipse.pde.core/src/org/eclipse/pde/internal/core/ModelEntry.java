@@ -19,9 +19,11 @@ public class ModelEntry extends PlatformObject {
 	private IPluginModelBase externalModel;
 	private int mode = AUTOMATIC;
 	private IClasspathContainer classpathContainer;
-	private boolean inJavaSearch=false;
+	private boolean inJavaSearch = false;
+	private PluginModelManager manager;
 
-	public ModelEntry(String id) {
+	public ModelEntry(PluginModelManager manager, String id) {
+		this.manager = manager;
 		this.id = id;
 	}
 
@@ -42,16 +44,20 @@ public class ModelEntry extends PlatformObject {
 		if (workspaceModel == null && externalModel != null) {
 			String location = externalModel.getInstallLocation();
 			File file = new File(location);
-			FileAdapter adapter = new EntryFileAdapter(this, file);
+			FileAdapter adapter =
+				new EntryFileAdapter(
+					this,
+					file,
+					manager.getFileAdapterFactory());
 			return adapter.getChildren();
 		}
 		return new Object[0];
 	}
-	
+
 	public boolean isInJavaSearch() {
 		return inJavaSearch;
 	}
-	
+
 	void setInJavaSearch(boolean value) {
 		this.inJavaSearch = value;
 	}
@@ -84,7 +90,8 @@ public class ModelEntry extends PlatformObject {
 	public void updateClasspathContainer(boolean force) throws CoreException {
 		if (workspaceModel == null)
 			return;
-		if (force) classpathContainer = null;
+		if (force)
+			classpathContainer = null;
 		IClasspathContainer container = getClasspathContainer();
 		IProject project = workspaceModel.getUnderlyingResource().getProject();
 		IJavaProject[] javaProjects =
@@ -110,10 +117,11 @@ public class ModelEntry extends PlatformObject {
 			throw new CoreException(status);
 		}
 	}
-	public boolean isAffected(IPluginBase [] changedPlugins) {
-		if (workspaceModel==null) return false;
+	public boolean isAffected(IPluginBase[] changedPlugins) {
+		if (workspaceModel == null)
+			return false;
 		IPluginBase plugin = workspaceModel.getPluginBase();
-		for (int i=0; i<changedPlugins.length; i++) {
+		for (int i = 0; i < changedPlugins.length; i++) {
 			IPluginBase changedPlugin = changedPlugins[i];
 			String id = changedPlugin.getId();
 			if (plugin.getId().equals(id))
@@ -126,11 +134,11 @@ public class ModelEntry extends PlatformObject {
 	private boolean isRequired(IPluginBase plugin, IPluginBase changedPlugin) {
 		String changedId = changedPlugin.getId();
 
-		if (changedId.equalsIgnoreCase("org.eclipse.core.boot") ||
-			changedId.equalsIgnoreCase("org.eclipse.core.runtime"))
-				return true;
-		IPluginImport [] imports = plugin.getImports();
-		for (int i=0; i<imports.length; i++) {
+		if (changedId.equalsIgnoreCase("org.eclipse.core.boot")
+			|| changedId.equalsIgnoreCase("org.eclipse.core.runtime"))
+			return true;
+		IPluginImport[] imports = plugin.getImports();
+		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			if (iimport.getId().equals(changedPlugin.getId()))
 				return true;

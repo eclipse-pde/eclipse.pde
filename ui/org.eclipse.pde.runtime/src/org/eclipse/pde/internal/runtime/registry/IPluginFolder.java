@@ -5,7 +5,6 @@ package org.eclipse.pde.internal.runtime.registry;
  */
 
 import org.eclipse.core.runtime.*;
-import java.util.*;
 
 
 public interface IPluginFolder extends IAdaptable {

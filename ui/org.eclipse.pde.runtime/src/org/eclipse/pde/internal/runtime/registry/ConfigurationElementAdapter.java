@@ -4,8 +4,7 @@ package org.eclipse.pde.internal.runtime.registry;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ConfigurationElementAdapter extends ParentAdapter {
 

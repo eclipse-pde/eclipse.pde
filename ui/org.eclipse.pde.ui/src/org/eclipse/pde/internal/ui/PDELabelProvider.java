@@ -304,6 +304,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags = F_ERROR;
 		else if (iobj.getImport().isReexported())
 			flags = F_EXPORT;
+		IPlugin plugin = iobj.getPlugin();
+		if (plugin!=null) {
+			IPluginModelBase model = plugin.getModel();
+			flags |= getModelFlags(model);
+		}
 		return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
 	}
 

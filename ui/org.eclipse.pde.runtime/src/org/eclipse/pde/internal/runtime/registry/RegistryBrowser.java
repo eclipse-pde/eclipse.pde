@@ -4,17 +4,15 @@ package org.eclipse.pde.internal.runtime.registry;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.ui.*;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.part.DrillDownAdapter;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.*;
 
 public class RegistryBrowser extends ViewPart implements ISelectionListener {
 	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label";

@@ -10,8 +10,8 @@ public class EntryFileAdapter extends FileAdapter {
 	 * @param parent
 	 * @param file
 	 */
-	public EntryFileAdapter(ModelEntry entry, File file) {
-		super(null, file);
+	public EntryFileAdapter(ModelEntry entry, File file, IFileAdapterFactory factory) {
+		super(null, file, factory);
 		this.entry = entry;
 	}
 	

@@ -138,7 +138,7 @@ public class PluginModelManager implements IAdaptable {
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		int kind = 0;
 		if (added && entry == null) {
-			entry = new ModelEntry(id);
+			entry = new ModelEntry(this, id);
 			entries.put(id, entry);
 			kind = PluginModelDelta.ADDED;
 			try {
@@ -210,7 +210,7 @@ public class PluginModelManager implements IAdaptable {
 			return;
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		if (entry == null) {
-			entry = new ModelEntry(id);
+			entry = new ModelEntry(this, id);
 			entries.put(id, entry);
 		}
 		if (workspace)
@@ -268,5 +268,9 @@ public class PluginModelManager implements IAdaptable {
 		}
 		if (delta.getKind()!=0)
 			fireDelta(delta);
+	}
+	
+	public IFileAdapterFactory getFileAdapterFactory() {
+		return searchablePluginsManager;
 	}
 }

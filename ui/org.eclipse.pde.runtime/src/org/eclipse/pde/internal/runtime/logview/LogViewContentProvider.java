@@ -4,8 +4,6 @@ package org.eclipse.pde.internal.runtime.logview;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
 import org.eclipse.jface.viewers.*;
 
 public class LogViewContentProvider

@@ -9,20 +9,22 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * This class manages the ability of external plug-ins
+ * in the model manager to take part in the Java search.
+ * It manages a proxy Java projects and for each 
+ * external plug-in added to Java search, it adds its
+ * Java libraries as external JARs to the proxy project.
+ * This makes the libraries visible to the Java model,
+ * and they can take part in various Java searches.
  */
-public class SearchablePluginsManager {
+public class SearchablePluginsManager implements IFileAdapterFactory {
 	private IJavaProject proxyProject;
 	private PluginModelManager manager;
 	private static final String PROXY_FILE_NAME = ".searchable";
-	private static final String PROXY_PROJECT_NAME = "Other Plug-ins";
+	private static final String PROXY_PROJECT_NAME =
+		"External Plug-in Libraries";
 	private static final String KEY = "searchablePlugins";
-	
+
 	private Listener elementListener;
 
 	class Listener implements IElementChangedListener {
@@ -51,7 +53,7 @@ public class SearchablePluginsManager {
 		initializeStates(proxyFile);
 		JavaCore.addElementChangedListener(elementListener);
 	}
-	
+
 	public void shutdown() {
 		JavaCore.removeElementChangedListener(elementListener);
 	}
@@ -94,13 +96,14 @@ public class SearchablePluginsManager {
 		}
 	}
 
-	public void persistStates(boolean useContainers, IProgressMonitor monitor) throws CoreException {
+	public void persistStates(boolean useContainers, IProgressMonitor monitor)
+		throws CoreException {
 		ModelEntry[] entries = manager.getEntries();
 		StringBuffer buffer = new StringBuffer();
-		
+
 		monitor.beginTask("Saving...", 3);
-		
-		int counter=0;
+
+		int counter = 0;
 
 		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
@@ -115,42 +118,65 @@ public class SearchablePluginsManager {
 			return;
 		monitor.worked(1);
 		IFile file = proxyProject.getProject().getFile(PROXY_FILE_NAME);
-		persistStates(file, buffer.toString(), monitor);
-		monitor.worked(2);
-		computeClasspath(entries, useContainers, monitor);
-		monitor.worked(3);
+		persistStates(
+			file,
+			buffer.toString(),
+			new SubProgressMonitor(monitor, 1));
+		monitor.worked(1);
+		computeClasspath(
+			entries,
+			useContainers,
+			new SubProgressMonitor(monitor, 1));
+		monitor.worked(1);
 	}
-	
-	private void computeClasspath(ModelEntry [] entries, boolean useContainers, IProgressMonitor monitor) throws CoreException {
+
+	private void computeClasspath(
+		ModelEntry[] entries,
+		boolean useContainers,
+		IProgressMonitor monitor)
+		throws CoreException {
 		Vector result = new Vector();
-		
-		for (int i=0; i<entries.length; i++) {
+
+		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
-			if (entry.isInJavaSearch()==false) continue;
-			if (entry.getWorkspaceModel()!=null) continue;
+			if (entry.isInJavaSearch() == false)
+				continue;
+			if (entry.getWorkspaceModel() != null)
+				continue;
 			IPluginModelBase model = entries[i].getExternalModel();
-			if (model==null) continue;
-			BuildPathUtilCore.addLibraries(model, false, !useContainers, result);
+			if (model == null)
+				continue;
+			BuildPathUtilCore.addLibraries(
+				model,
+				false,
+				!useContainers,
+				result);
 		}
-		IClasspathEntry [] classpathEntries = (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
+		IClasspathEntry[] classpathEntries =
+			(IClasspathEntry[]) result.toArray(
+				new IClasspathEntry[result.size()]);
 		try {
 			proxyProject.setRawClasspath(classpathEntries, monitor);
-		}
-		catch (JavaModelException e) {
+		} catch (JavaModelException e) {
 			throwCoreException(e);
 		}
 	}
 
-	private void persistStates(IFile file, String value, IProgressMonitor monitor) throws CoreException {
+	private void persistStates(
+		IFile file,
+		String value,
+		IProgressMonitor monitor)
+		throws CoreException {
 		Properties properties = new Properties();
 		properties.setProperty(KEY, value);
-		try {		
+		try {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.store(outStream, "");
+			properties.save(outStream, "");
 			outStream.flush();
 			outStream.close();
-			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-			if (file.exists()) 
+			ByteArrayInputStream inStream =
+				new ByteArrayInputStream(outStream.toByteArray());
+			if (file.exists())
 				file.setContents(inStream, true, false, monitor);
 			else
 				file.create(inStream, true, monitor);
@@ -159,9 +185,10 @@ public class SearchablePluginsManager {
 			throwCoreException(e);
 		}
 	}
-	
+
 	private void throwCoreException(Throwable e) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, null, e);
+		IStatus status =
+			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, null, e);
 		throw new CoreException(status);
 	}
 
@@ -188,8 +215,8 @@ public class SearchablePluginsManager {
 	private boolean handleDelta(IJavaElementDelta delta) {
 		Object element = delta.getElement();
 		if (element instanceof IJavaModel) {
-			IJavaElementDelta [] projectDeltas = delta.getAffectedChildren();
-			for (int i=0; i<projectDeltas.length; i++) {
+			IJavaElementDelta[] projectDeltas = delta.getAffectedChildren();
+			for (int i = 0; i < projectDeltas.length; i++) {
 				if (handleDelta(projectDeltas[i]))
 					break;
 			}
@@ -206,5 +233,37 @@ public class SearchablePluginsManager {
 			}
 		}
 		return false;
+	}
+
+	public Object createAdapterChild(FileAdapter parent, File file) {
+		if (file.isDirectory() == false) {
+			String name = file.getName().toLowerCase();
+			if (name.endsWith(".jar")) {
+				IPackageFragmentRoot root =
+					findPackageFragmentRoot(file.getAbsolutePath());
+				if (root != null)
+					return root;
+			}
+		}
+		return new FileAdapter(parent, file, this);
+	}
+
+	private IPackageFragmentRoot findPackageFragmentRoot(String absolutePath) {
+		if (proxyProject == null)
+			return null;
+		IPath jarPath = new Path(absolutePath);
+		try {
+			IPackageFragmentRoot[] roots =
+				proxyProject.getAllPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				IPackageFragmentRoot root = roots[i];
+				IPath path = root.getPath();
+				if (path.equals(jarPath))
+					return root;
+
+			}
+		} catch (JavaModelException e) {
+		}
+		return null;
 	}
 }

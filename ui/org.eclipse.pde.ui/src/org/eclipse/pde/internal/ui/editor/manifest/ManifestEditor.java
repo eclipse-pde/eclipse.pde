@@ -14,17 +14,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.templates.TemplateEditorInput;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.pde.internal.core.*;
 
 public class ManifestEditor
 	extends PDEMultiPageXMLEditor
@@ -305,7 +304,7 @@ public class ManifestEditor
 		}
 		return false;
 	}
-	private void openExternalPlugin(IPluginBase pluginInfo) {
+	private static void openExternalPlugin(IPluginBase pluginInfo) {
 		String manifest =
 			pluginInfo.getModel().isFragmentModel()
 				? "fragment.xml"
@@ -326,7 +325,7 @@ public class ManifestEditor
 		}
 	}
 
-	public void openPluginEditor(String pluginId) {
+	public static void openPluginEditor(String pluginId) {
 		IPlugin pluginToOpen = PDECore.getDefault().findPlugin(pluginId);
 		if (pluginToOpen != null) {
 			openPluginEditor(pluginToOpen);
@@ -335,7 +334,7 @@ public class ManifestEditor
 		}
 	}
 
-	public void openPluginEditor(IPluginBase plugin) {
+	public static void openPluginEditor(IPluginBase plugin) {
 		IResource underlyingResource =
 			plugin.getModel().getUnderlyingResource();
 		if (underlyingResource == null) {
@@ -345,7 +344,7 @@ public class ManifestEditor
 		}
 	}
 
-	private void openWorkspacePlugin(IFile pluginFile) {
+	private static void openWorkspacePlugin(IFile pluginFile) {
 		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 		try {
 			FileEditorInput input = new FileEditorInput(pluginFile);

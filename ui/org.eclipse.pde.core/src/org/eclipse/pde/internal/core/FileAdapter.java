@@ -9,13 +9,16 @@ public class FileAdapter extends PlatformObject {
 	private Object[] children;
 	private FileAdapter parent;
 	private String editorId;
+	private IFileAdapterFactory factory;
 
 	/**
 	 * Constructor for FileAdapter.
 	 */
-	public FileAdapter(FileAdapter parent, File file) {
+	public FileAdapter(FileAdapter parent, File file, IFileAdapterFactory factory) {
 		this.file = file;
+		String fileName = file.getName();
 		this.parent = parent;
+		this.factory = factory;
 	}
 
 	public boolean isManifest() {
@@ -60,7 +63,10 @@ public class FileAdapter extends PlatformObject {
 		File[] files = file.listFiles();
 		children = new Object[files.length];
 		for (int i = 0; i < files.length; i++) {
-			children[i] = new FileAdapter(this, files[i]);
+			if (factory==null)	
+				children[i] = new FileAdapter(this, files[i], null);
+			else
+				children[i] = factory.createAdapterChild(this, files[i]);
 		}
 	}
 }
