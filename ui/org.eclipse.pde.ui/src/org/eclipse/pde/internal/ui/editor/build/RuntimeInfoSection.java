@@ -10,76 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.FolderSelectionDialog;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.EditableTablePart;
-import org.eclipse.pde.internal.ui.parts.RenameDialog;
-import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
-import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -214,7 +171,7 @@ public class RuntimeInfoSection
 		}
 	}
 
-	class ContentProvider extends WorkbenchContentProvider {
+	class JarsNewContentProvider extends WorkbenchContentProvider {
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
 			for (int i = 0; i < children.length; i++) {
@@ -281,34 +238,41 @@ public class RuntimeInfoSection
 				model.getBuild().add(binIncl);
 			}
 			if (!isSelected && libPath.segmentCount() == 1 && binIncl.contains("*.jar")){
-				IResource[] members = project.members();
-				for (int i=0; i<members.length; i++){
-					if (!(members[i] instanceof IFolder) && members[i].getFileExtension().equals("jar")){
-						binIncl.addToken(members[i].getName());
-					}
-				}
-	
-				IBuildEntry[] libraries = BuildUtil.getBuildLibraries(model.getBuild().getBuildEntries());
-				if (libraries.length!=0){
-					for (int j=0; j<libraries.length; j++){
-						String libraryName = libraries[j].getName().substring(7);
-						IPath path = project.getFile(libraryName).getProjectRelativePath();
-						if (path.segmentCount()==1 && !binIncl.contains(libraryName))
-							binIncl.addToken(libraryName);
-					}
-				}
-				binIncl.removeToken("*.jar");
+				addAllJarsToBinIncludes(binIncl, project, model);
 			} 
 			if (isSelected && !binIncl.contains(libName)){
 				binIncl.addToken(libName);
 			} else if (!isSelected && binIncl.contains(libName)){
 				binIncl.removeToken(libName);
 			}
-			
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 		
+	}
+	
+	protected void addAllJarsToBinIncludes(IBuildEntry binIncl, IProject project, IBuildModel model){
+		try {
+			IResource[] members = project.members();
+			for (int i=0; i<members.length; i++){
+				if (!(members[i] instanceof IFolder) && members[i].getFileExtension().equals("jar")){
+					binIncl.addToken(members[i].getName());
+				}
+			}
+					
+			IBuildEntry[] libraries = BuildUtil.getBuildLibraries(model.getBuild().getBuildEntries());
+			if (libraries.length!=0){
+				for (int j=0; j<libraries.length; j++){
+					String libraryName = libraries[j].getName().substring(7);
+					IPath path = project.getFile(libraryName).getProjectRelativePath();
+					if (path.segmentCount()==1 && !binIncl.contains(libraryName))
+						binIncl.addToken(libraryName);
+				}
+			}
+			binIncl.removeToken("*.jar");
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 	public void initialize(Object input) {
 		IBuildModel model = (IBuildModel) input;
@@ -316,37 +280,40 @@ public class RuntimeInfoSection
 		model.addModelChangedListener(this);
 	}
 
-	private void createOutputKey(String libName, Set outputFolders){
-		if (outputFolders.size()==0)
-			return;
+	private IBuildEntry createOutputKey(String libName){
 		IBuildModel buildModel = (IBuildModel)getFormPage().getModel();
 		IBuild build = buildModel.getBuild();
 		String outputName = IXMLConstants.PROPERTY_OUTPUT_PREFIX + libName;
 		IBuildEntry outputEntry = build.getEntry(outputName);
+		
+		try {
+			if (outputEntry != null)
+				build.remove(outputEntry);	
+			
+			outputEntry = buildModel.getFactory().createEntry(outputName);
+			build.add(outputEntry);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		
+		return outputEntry;
+
+	}	
+	
+	private void setOutputEntryTokens(Set outputFolders, IBuildEntry outputEntry){
 		Iterator iter = outputFolders.iterator();
 		try {
-			if (outputEntry == null){		
-				outputEntry = buildModel.getFactory().createEntry(outputName);
-				build.add(outputEntry);
-			} else {
-				String[] tokens = outputEntry.getTokens();
-				for (int i = 0 ; i<tokens.length; i++ ){
-					outputEntry.removeToken(tokens[i]);
-				}
-			}
-
 			while(iter.hasNext()){
 				String outputFolder = iter.next().toString();
 				if (!outputFolder.endsWith(""+ Path.SEPARATOR))
 					outputFolder = outputFolder.concat(""+Path.SEPARATOR);
 				outputEntry.addToken(outputFolder.toString());
 			}
-			
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		
-	}	
+	}
+
 	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
 		EditableTablePart tablePart = new PartAdapter(buttonLabels);
 		tablePart.setEditable(true);
@@ -414,11 +381,9 @@ public class RuntimeInfoSection
 		jarIncludeButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				handleLibInBinBuild(jarIncludeButton.getSelection());
-
 			}
 		});
 
-		enableSection();
 		factory.paintBordersFor(container);
 
 		return container;
@@ -729,8 +694,10 @@ public class RuntimeInfoSection
 					}
 				}
 			}
-
-			createOutputKey(currentLibrary.getName().substring(7), outputFolders);
+			if (outputFolders.size()!=0){
+				IBuildEntry outputEntry = createOutputKey(currentLibrary.getName().substring(7));
+				setOutputEntryTokens(outputFolders, outputEntry);
+			}
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
@@ -751,13 +718,6 @@ public class RuntimeInfoSection
 	public void sectionChanged(Object changeObject) {
 		IBuildEntry variable = (IBuildEntry) changeObject;
 		update(variable);
-	}
-	public void setJarsFocus() {
-		foldersViewer.getTable().setFocus();
-	}
-
-	public void setLibFocus() {
-		libraryViewer.getTable().setFocus();
 	}
 
 	private void update(IBuildEntry variable) {
@@ -801,16 +761,32 @@ public class RuntimeInfoSection
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath = project.getFile(libName).getProjectRelativePath();
 		IBuildEntry binIncl = model.getBuild().getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-		
+		IBuildEntry binExcl = model.getBuild().getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
 		if (binIncl == null)
 			return false;
 			
-		if (libPath.segmentCount() ==1)
+		if (libPath.segmentCount() ==1){
 			return binIncl.contains(libName) || binIncl.contains("*.jar");
-		else 
-			return binIncl.contains(libName);
+		} else if (binIncl.contains(libName)){
+			return true;
+		} else if (binExcl!=null && binExcl.contains(libName)){
+			return false;
+		} else {
+			return isParentIncluded(libPath, binIncl, binExcl);
+		}
 	}
 
+	protected boolean isParentIncluded(IPath libPath, IBuildEntry binIncl, IBuildEntry binExcl){
+		while (libPath.segmentCount()>1){
+			libPath = libPath.removeLastSegments(1);
+			if (binIncl.contains(libPath.toString() + Path.SEPARATOR))
+				return true;
+			else if (binExcl!=null && binExcl.contains(libPath.toString() + Path.SEPARATOR))
+				return false;
+		}
+		return false;
+	}
+	
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			libraryViewer.refresh();
@@ -823,54 +799,61 @@ public class RuntimeInfoSection
 		}
 	}
 
+	protected String[] getLibraryNames(){
+		String[] libNames = new String[libraryViewer.getTable().getItemCount()];
+		for (int i =0 ; i<libNames.length; i++)
+			libNames[i] = libraryViewer.getTable().getItem(i).getText();
+		return libNames;
+	}
+
 	protected void handleNew() {
+		final String[] libNames = getLibraryNames();
+		final IPluginModelBase pluginModelBase;
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
-		IBuild build = model.getBuild();
-		
-		IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
-		final String[] libNames = new String[libraries.length];
-		for (int i =0 ; i<libraries.length; i++){
-			libNames[i] = libraries[i].getName().substring(7);
-		}
-		
-		try {
-			AddLibraryDialog dialog =
-				new AddLibraryDialog(
-					getFormPage().getControl().getShell(), libNames);
-			dialog.create();
-			dialog.getShell().setText("Add Entry"); //$NON-NLS-1$
-			dialog.getShell().setSize(300, 150);
-			if (dialog.open() == Dialog.OK) {
+		IProject project = model.getUnderlyingResource().getProject();
+		IModel pluginModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		if (pluginModel instanceof IPluginModelBase)
+			pluginModelBase = (IPluginModelBase)pluginModel;
+		else
+			pluginModelBase = null;
 
-				String name = dialog.getNewName();
-				if (!name.endsWith(".jar"))
-					name = name + ".jar";
-
-				if (!name.startsWith(IBuildEntry.JAR_PREFIX))
-					name = IBuildEntry.JAR_PREFIX + name;
-
-				IBuildEntry library = model.getFactory().createEntry(name);
-				build.add(library);
-				libraryViewer.refresh();
-				libraryViewer.setSelection(new StructuredSelection(library));
-				jarIncludeButton.setSelection(true);
-				handleLibInBinBuild(true);
+		BusyIndicator.showWhile(libraryViewer.getTable().getDisplay(), new Runnable() {
+			public void run(){
+				IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
+				IBuild build = buildModel.getBuild();
+				AddLibraryDialog dialog =
+					new AddLibraryDialog(
+						getFormPage().getControl().getShell(), libNames, pluginModelBase);
+				dialog.create();
+				dialog.getShell().setText("Add Entry"); //$NON-NLS-1$
+				dialog.getShell().setSize(300, 350);
 				
-				if (libNames.length>0){
-					Vector libElements = new Vector();
-					int i =0;
-					while (libraryViewer.getElementAt(i)!=null){
-						libElements.add(libraryViewer.getElementAt(i));
-						i++;
-					}
+				try {
+					if (dialog.open() == Dialog.OK) {
+						
+						String name = dialog.getNewName();
+						if (!name.endsWith(".jar"))
+							name = name + ".jar";
 
-					updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
+						if (!name.startsWith(IBuildEntry.JAR_PREFIX))
+							name = IBuildEntry.JAR_PREFIX + name;
+
+						IBuildEntry library = buildModel.getFactory().createEntry(name);
+						build.add(library);
+						libraryViewer.refresh();
+						libraryViewer.setSelection(new StructuredSelection(library));
+						jarIncludeButton.setSelection(true);
+						handleLibInBinBuild(true);
+
+						if (libraryViewer.getTable().getItemCount()>1)
+							updateJarsCompileOrder(libraryViewer.getTable().getItems());
+						
+					}
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
 				}
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-
+		});
 	}
 	
 	private IPackageFragmentRoot getSourceFolder(
@@ -887,13 +870,9 @@ public class RuntimeInfoSection
 		return null;
 	}
 	protected void handleDelete() {
-		String libName;
 		int index = libraryViewer.getTable().getSelectionIndex();
-		Object object =
-			((IStructuredSelection) libraryViewer.getSelection())
-				.getFirstElement();
-		if (object != null && object instanceof IBuildEntry) {
-			IBuildEntry library = (IBuildEntry) object;
+		if (index!=-1){
+			String libName = libraryViewer.getTable().getItem(index).getText();
 			IBuild build = ((IBuildModel)getFormPage().getModel()).getBuild();
 			
 			try {
@@ -901,29 +880,30 @@ public class RuntimeInfoSection
 				IBuildEntry entry =
 					build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
 				if (entry !=null)
-					entry.removeToken(library.getName().substring(7));
+					entry.removeToken(libName);
 				
 				// output.{source folder}.jar				
-				entry = build.getEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + library.getName().substring(7));
+				entry = build.getEntry(IXMLConstants.PROPERTY_OUTPUT_PREFIX + libName);
 				if (entry!=null)
 					build.remove(entry);
 					
 				// bin.includes
 				entry = build.getEntry(IXMLConstants.PROPERTY_BIN_INCLUDES);
-				if (entry!=null && entry.contains(library.getName().substring(7)))
-					entry.removeToken(library.getName().substring(7));
+				if (entry!=null && entry.contains(libName))
+					entry.removeToken(libName);
 				
 				// bin.excludes
 				entry = build.getEntry(IXMLConstants.PROPERTY_BIN_EXCLUDES);
-				if (entry!=null && entry.contains(library.getName().substring(7)))
-					entry.removeToken(library.getName().substring(7));
+				if (entry!=null && entry.contains(libName))
+					entry.removeToken(libName);
  
-				build.remove(library);
+				build.remove(build.getEntry(IBuildEntry.JAR_PREFIX + libName));
 				libraryViewer.refresh();
-				IBuildEntry[] libraries = BuildUtil.getBuildLibraries(build.getBuildEntries());
-				if (libraries.length > index) {
+				
+				int libCount = libraryViewer.getTable().getItemCount();
+				if (libCount > index) {
 					libName = libraryViewer.getElementAt(index).toString();
-				} else if (libraries.length==index && libraries.length != 0){
+				} else if (libCount==index && libCount != 0){
 					libName = libraryViewer.getElementAt(index-1).toString();
 				} else {
 					libName="";
@@ -945,7 +925,6 @@ public class RuntimeInfoSection
 	}
 
 	private void handleJarsDelete() {
-
 		IBuildModel buildModel = (IBuildModel) getFormPage().getModel();
 		int index = foldersViewer.getTable().getSelectionIndex();
 		Object object =
@@ -975,12 +954,13 @@ public class RuntimeInfoSection
 		IFile file = (IFile) model.getUnderlyingResource();
 		final IProject project = file.getProject();
 
-		FolderSelectionDialog dialog =
-			new FolderSelectionDialog(
+		SourceFolderSelectionDialog dialog =
+			new SourceFolderSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(),
 				new WorkbenchLabelProvider(),
-				new ContentProvider() {
+				new JarsNewContentProvider() {
 		});
+
 		dialog.setInput(project.getWorkspace());
 		dialog.addFilter(new ViewerFilter() {
 			public boolean select(
@@ -1042,7 +1022,7 @@ public class RuntimeInfoSection
 			}
 		});
 
-		if (dialog.open() == FolderSelectionDialog.OK) {
+		if (dialog.open() == SourceFolderSelectionDialog.OK) {
 			try {
 				IFolder folder = (IFolder) dialog.getFirstResult();
 				String folderPath =
@@ -1069,44 +1049,36 @@ public class RuntimeInfoSection
 
 	protected void handleDown() {
 		int index = libraryViewer.getTable().getSelectionIndex();
-		Vector libElements = new Vector();
-		int i =0;
-		while (libraryViewer.getElementAt(i)!=null){
-			libElements.add(libraryViewer.getElementAt(i));
-			i++;
-		}
-			
-		IBuildEntry tempLib_curr = (IBuildEntry)libElements.elementAt(index);
-		IBuildEntry tempLib_prev = (IBuildEntry)libElements.elementAt(index+1);
-		libElements.setElementAt(tempLib_prev, index);
-		libElements.setElementAt(tempLib_curr, index+1);	
-
+		Vector libElements = swapLibraries(index, index+1);
 		updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
 		libraryViewer.refresh();
-		libraryViewer.setSelection(new StructuredSelection(tempLib_curr));
+		libraryViewer.setSelection(new StructuredSelection(libElements.get(index+1)));
 		updateDirectionalButtons();
 	}
 	
 	protected void handleUp() {
 		int index = libraryViewer.getTable().getSelectionIndex();
-		Vector libElements = new Vector();
+		Vector libElements = swapLibraries(index, index-1);
+		updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
+		libraryViewer.refresh();
+		libraryViewer.setSelection(new StructuredSelection(libElements.get(index-1)));
+		updateDirectionalButtons();
+	}
+	
+	protected Vector swapLibraries(int index_old, int index_new){
 		int i =0;
+		Vector libElements = new Vector();
 		while (libraryViewer.getElementAt(i)!=null){
 			libElements.add(libraryViewer.getElementAt(i));
 			i++;
 		}
 			
-		IBuildEntry tempLib_curr = (IBuildEntry)libElements.elementAt(index);
-		IBuildEntry tempLib_prev = (IBuildEntry)libElements.elementAt(index-1);
-		libElements.setElementAt(tempLib_prev, index);
-		libElements.setElementAt(tempLib_curr, index-1);	
-	
-		updateJarsCompileOrder((IBuildEntry[])libElements.toArray(new IBuildEntry[libElements.size()]));
-		libraryViewer.refresh();
-		libraryViewer.setSelection(new StructuredSelection(tempLib_curr));
-		updateDirectionalButtons();
+		IBuildEntry tempLib_curr = (IBuildEntry)libElements.elementAt(index_old);
+		IBuildEntry tempLib_prev = (IBuildEntry)libElements.elementAt(index_new);
+		libElements.setElementAt(tempLib_prev, index_old);
+		libElements.setElementAt(tempLib_curr, index_new);	
+		return libElements;
 	}
-
 	public void updateJarsCompileOrder(IBuildEntry[] libraries) {
 		IBuildModel model = (IBuildModel) getFormPage().getModel();
 		IBuild build = model.getBuild();
@@ -1121,6 +1093,27 @@ public class RuntimeInfoSection
 
 			for (int i = 0; i < libraries.length; i++) {
 				jarOrderEntry.addToken(libraries[i].getName().substring(7));
+			}
+			build.add(jarOrderEntry);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	public void updateJarsCompileOrder(TableItem[] libraries) {
+		IBuildModel model = (IBuildModel) getFormPage().getModel();
+		IBuild build = model.getBuild();
+		IBuildEntry jarOrderEntry =
+			build.getEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+		try {
+			if (jarOrderEntry != null){
+				build.remove(jarOrderEntry);	
+			} 
+			jarOrderEntry =
+				model.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_ORDER);
+
+			for (int i = 0; i < libraries.length; i++) {
+				jarOrderEntry.addToken(libraries[i].getText());
 			}
 			build.add(jarOrderEntry);
 		} catch (CoreException e) {

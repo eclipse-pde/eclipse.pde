@@ -21,9 +21,11 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JARFileFilter extends ViewerFilter{
 	private final static String jarExt = "jar";
+	
 	public JARFileFilter(){
 		super();
 	}
+	
 	public boolean select(Viewer viewer, Object parent, Object element){
 		if (element instanceof IFile){
 			return isJarPath(((IFile)element).getFullPath());

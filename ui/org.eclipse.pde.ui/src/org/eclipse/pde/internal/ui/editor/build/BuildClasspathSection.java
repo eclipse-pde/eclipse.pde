@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
@@ -27,7 +30,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.*;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -54,6 +59,78 @@ public class BuildClasspathSection
 	private static RGB LIGHT_GRAY =  new RGB(172, 168, 153);
 	private static RGB BLACK = new RGB(0, 0, 0);
 	
+
+	/**
+	 * Implementation of a <code>ISelectionValidator</code> to validate the
+	 * type of an element.
+	 * Empty selections are not accepted.
+	 */
+	class ElementSelectionValidator implements ISelectionStatusValidator {
+
+		private Class[] fAcceptedTypes;
+		private boolean fAllowMultipleSelection;
+
+	
+		/**
+		 * @param acceptedTypes The types accepted by the validator
+		 * @param allowMultipleSelection If set to <code>true</code>, the validator
+		 * allows multiple selection.
+		 */
+		public ElementSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+			Assert.isNotNull(acceptedTypes);
+			fAcceptedTypes= acceptedTypes;
+			fAllowMultipleSelection= allowMultipleSelection;
+		}
+	
+
+		/*
+		 * @see org.eclipse.ui.dialogs.ISelectionValidator#isValid(java.lang.Object)
+		 */
+		public IStatus validate(Object[] elements) {
+			if (isValid(elements)) {
+				return new Status(
+					IStatus.OK,
+					PDEPlugin.getPluginId(),
+					IStatus.OK,
+					"",
+					null);
+			}
+			return new Status(
+				IStatus.ERROR,
+				PDEPlugin.getPluginId(),
+				IStatus.ERROR,
+				"",
+				null);
+		}	
+
+		private boolean isOfAcceptedType(Object o) {
+			for (int i= 0; i < fAcceptedTypes.length; i++) {
+				if (fAcceptedTypes[i].isInstance(o)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	
+		private boolean isValid(Object[] selection) {
+			if (selection.length == 0) {
+				return false;
+			}
+		
+			if (!fAllowMultipleSelection && selection.length != 1) {
+				return false;
+			}
+		
+			for (int i= 0; i < selection.length; i++) {
+				Object o= selection[i];	
+				if (!isOfAcceptedType(o)) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 	class TableContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -143,32 +220,30 @@ public class BuildClasspathSection
 	
 	
 	protected void fillContextMenu(IMenuManager manager) {
-
 		ISelection selection = entryTable.getSelection();
 
-		Action newAction =
+		// add NEW action
+		Action action =
 			new Action(PDEPlugin.getResourceString(POPUP_NEW)) {
-			public void run() {
-				handleNew();
-			}
-		};
+				public void run() {
+					handleNew();
+				}
+			};
+		action.setEnabled(true);
+		manager.add(action);
 
-		newAction.setEnabled(true);
-		manager.add(newAction);
+		manager.add(new Separator());
 
-		if (!selection.isEmpty()) {
-			manager.add(new Separator());
-
-			Action deleteAction =
-				new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+		// add DELETE action
+		action =
+			new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();
 				}
 			};
+		action.setEnabled(!selection.isEmpty());
+		manager.add(action);
 
-			deleteAction.setEnabled(true);
-			manager.add(deleteAction);
-		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager,false);
 	}
@@ -179,7 +254,6 @@ public class BuildClasspathSection
 	
 	public void dispose() {
 		buildModel.removeModelChangedListener(this);
-		entryImage.dispose();
 		super.dispose();
 	}
 	
@@ -201,6 +275,7 @@ public class BuildClasspathSection
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, true);
+		tablePart.getTableViewer().setSelection(null,false);
 		tablePart.getControl().setForeground(new Color(tablePart.getControl().getDisplay(), BLACK));
 		if (getSectionControl()!=null)
 			getSectionControl().setEnabled(true);
@@ -247,17 +322,9 @@ public class BuildClasspathSection
 
 	}
 
-	private void handleNew() {
+	private void initializeDialogSettings(ElementTreeSelectionDialog dialog){
 		Class[] acceptedClasses = new Class[] { IFile.class };
-		TypedElementSelectionValidator validator =
-			new TypedElementSelectionValidator(acceptedClasses, true);
-
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-				getFormPage().getControl().getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
-		dialog.setValidator(validator);
+		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.title"));
 		dialog.setMessage(PDEPlugin.getResourceString("BuildPropertiesEditor.BuildClasspathSection.JarsSelection.desc"));
 		dialog.addFilter(new JARFileFilter());
@@ -265,41 +332,56 @@ public class BuildClasspathSection
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		dialog.setInitialSelection(buildModel.getUnderlyingResource().getProject());
 
+	}
+	private void handleNew() {
+		ElementTreeSelectionDialog dialog =
+			new ElementTreeSelectionDialog(
+				getFormPage().getControl().getShell(),
+				new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
+				
+		initializeDialogSettings(dialog);
+
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
-			IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+			
 			Object[] elements = dialog.getResult();
 
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
-				try {
-					IPath path = elem.getFullPath();
-					IPath projectPath =
-						buildModel
-							.getUnderlyingResource()
-							.getProject()
-							.getFullPath();
-					String tokenName = path.toString();
-					int sameSegments = path.matchingFirstSegments(projectPath);
-					if (sameSegments > 0) {
-						tokenName = path.removeFirstSegments(sameSegments).toString();
-					} else {
-						tokenName = ".."+path.toString();
-					}
-					
-					if (entry==null){
-						entry = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-						buildModel.getBuild().add(entry);
-					}
-					if (!entry.contains(tokenName))
-						entry.addToken(tokenName);
-					entryTable.refresh();
-					entryTable.setSelection(new StructuredSelection(tokenName));
-
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+				String tokenName = getRelativePathTokenName(elem);
+				addClasspathToken(tokenName);
+				entryTable.refresh();
+				entryTable.setSelection(new StructuredSelection(tokenName));
 			}
 		}
+	}
+	
+	private void addClasspathToken(String tokenName){
+		IBuildEntry entry = buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		try {
+			if (entry==null){
+				entry = buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				buildModel.getBuild().add(entry);
+			}
+			if (!entry.contains(tokenName))
+				entry.addToken(tokenName);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	
+	private String getRelativePathTokenName(IResource elem){
+		IPath path = elem.getFullPath();
+		IPath projectPath =
+			buildModel
+				.getUnderlyingResource()
+				.getProject()
+				.getFullPath();
+		int sameSegments = path.matchingFirstSegments(projectPath);
+		if (sameSegments > 0)
+			return path.removeFirstSegments(sameSegments).toString();
+		else
+			return ".."+path.toString();
 	}
 
 	protected void buttonSelected(int index) {

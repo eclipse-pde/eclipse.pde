@@ -37,6 +37,8 @@ import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.ExternalBuildModel;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -57,6 +59,7 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public BuildPropertiesEditor() {
 		super();
 	}
+	
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
@@ -115,6 +118,8 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	protected String getSourcePageId() {
 		return SOURCE_PAGE;
 	}
+	
+
 	
 	public void createPartControl(Composite parent) {
 		if (model instanceof WorkspaceBuildModel) {
@@ -205,9 +210,17 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	}
 	
 	public void doSave(IProgressMonitor monitor) {
-		if (isJavaProject())
+		if (isJavaProject()&& PDEPlugin.isBuildPropertiesUpdate() && hasPluginModel())
+//		if (isJavaProject()&& PDEPlugin.isBuildPropertiesUpdate())
 			validateSourceFolders(monitor);
 		super.doSave(monitor);
+	}
+	
+	private boolean hasPluginModel(){
+		IBuildModel buildModel = (IBuildModel)getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		IModel pluginModel = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		return pluginModel instanceof IPluginModelBase;
 	}
 	
 	private void validateSourceFolders(IProgressMonitor monitor) {
@@ -245,24 +258,24 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	private void convertToSourceFolders(
 		ArrayList folders,
 		IProgressMonitor monitor) {
+
+		Vector newSrcEntries = getNewSourceFolderEntries(folders);
+		handleNewClasspathEntries(newSrcEntries, monitor);
+
+	}
+	
+	private void handleNewClasspathEntries(Vector newSrcEntries, IProgressMonitor monitor){
 		IBuildModel buildModel = (IBuildModel) getModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
-
-		Vector newSrcEntries = new Vector();
-		for (int i = 0; i < folders.size(); i++) {
-			String folderName = folders.get(i).toString();
-			IPath path = project.getFullPath().append(folderName);
-			IFolder folder = project.getWorkspace().getRoot().getFolder(path);
-			if (folder.exists())
-				newSrcEntries.add(JavaCore.newSourceEntry(folder.getFullPath()));
-		}
-
+		
+		if (newSrcEntries.size() == 0)
+			return; 
+			
 		try {
 			IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
-			IClasspathEntry[] newEntries =
-				new IClasspathEntry[oldEntries.length + newSrcEntries.size()];
-			
+			IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + newSrcEntries.size()];
+				
 			for (int i = 0; i < newSrcEntries.size(); i++)
 				newEntries[i] =
 					(IClasspathEntry) newSrcEntries.elementAt(i);
@@ -272,9 +285,21 @@ public class BuildPropertiesEditor extends PDEMultiPageEditor {
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
-
 	}
-	
+	private Vector getNewSourceFolderEntries(ArrayList folders){
+		Vector newSrcEntries = new Vector();
+		IBuildModel buildModel = (IBuildModel) getModel();
+		IProject project = buildModel.getUnderlyingResource().getProject();
+		
+		for (int i = 0; i < folders.size(); i++) {
+			String folderName = folders.get(i).toString();
+			IPath path = project.getFullPath().append(folderName);
+			IFolder folder = project.getWorkspace().getRoot().getFolder(path);
+			if (folder.exists())
+				newSrcEntries.add(JavaCore.newSourceEntry(folder.getFullPath()));
+		}
+		return newSrcEntries;
+	}
 	private IPackageFragmentRoot[] computeSourceFolders() {
 		ArrayList folders = new ArrayList();
 		IBuildModel buildModel = (IBuildModel)getModel();

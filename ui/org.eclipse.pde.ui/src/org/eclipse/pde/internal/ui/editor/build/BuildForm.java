@@ -14,8 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-//import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -58,7 +57,7 @@ public class BuildForm extends ScrollableSectionForm {
 		parent.setLayout(layout);
 
 
-		boolean isCustom = getCustomSelection();
+		
 		customButton =
 			factory.createButton(
 				parent,
@@ -71,33 +70,12 @@ public class BuildForm extends ScrollableSectionForm {
 		customButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isCustom = customButton.getSelection();
-				IBuildModel buildModel = (IBuildModel) page.getModel();
-				IBuildEntry customEntry =
-					buildModel.getBuild().getEntry(
-						IXMLConstants.PROPERTY_CUSTOM);
-				try {
-					if (customEntry == null) {
-						customEntry =
-							buildModel.getFactory().createEntry(
-								IXMLConstants.PROPERTY_CUSTOM);
-						buildModel.getBuild().add(customEntry);
-					}
-					String[] tokens = customEntry.getTokens();
-					if (tokens.length != 0) {
-						for (int i = 0; i < tokens.length; i++)
-							customEntry.removeToken(tokens[i]);
-					}
-					customEntry.addToken(isCustom ? "true" : "false");
-					if (isCustom) {
-						disableAllSections();
-					} else {
-						enableAllSections();
-					}
-				} catch (CoreException e1) {
-					PDEPlugin.logException(e1);
-				}
+				IBuildEntry customEntry = getCustomBuildEntry();
+				setCustomEntryValue(customEntry, isCustom);
+				handleCustomCheckState(isCustom);
 			}
 		});
+		
 		runtimeSection = new RuntimeInfoSection(page);
 		Control control = runtimeSection.createControl(parent, factory);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -131,11 +109,28 @@ public class BuildForm extends ScrollableSectionForm {
 		registerSection(binSection);
 		registerSection(classpathSection);
 
-		if (isCustom)
-			disableAllSections();
+		handleCustomCheckState(getCustomSelection());
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.BUILD_PAGE);
 	}
 
+	private IBuildEntry getCustomBuildEntry(){
+		IBuildModel buildModel = (IBuildModel) page.getModel();
+		IBuildEntry customEntry =
+			buildModel.getBuild().getEntry(IXMLConstants.PROPERTY_CUSTOM);
+			
+		if (customEntry!=null)
+			return customEntry;
+							
+		try {
+			customEntry =
+				buildModel.getFactory().createEntry(IXMLConstants.PROPERTY_CUSTOM);
+			buildModel.getBuild().add(customEntry);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+		return customEntry;
+	}
+	
 	public void dispose() {
 		if (runtimeSection!=null){
 			unregisterSection(runtimeSection);
@@ -164,6 +159,14 @@ public class BuildForm extends ScrollableSectionForm {
 			return false;
 		return customEntry.getTokens()[0].equals("true"); 
 	}
+	
+	private void handleCustomCheckState(boolean isCustom){
+		if (isCustom) 
+			disableAllSections();
+		else 
+			enableAllSections();
+	}
+	
 	public void initialize(Object modelObject) {
 		IBuildModel model = (IBuildModel) modelObject;
 		super.initialize(model);
@@ -187,6 +190,19 @@ public class BuildForm extends ScrollableSectionForm {
 		classpathSection.enableSection();
 	}
 
+	private void setCustomEntryValue(IBuildEntry customEntry, boolean isCustom){
+		String[] tokens = customEntry.getTokens();
+		try {
+			if (tokens.length != 0) {
+				for (int i = 0; i < tokens.length; i++)
+					customEntry.removeToken(tokens[i]);
+			}
+			customEntry.addToken(isCustom ? "true" : "false");
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}	
+	}
+	
 	public void setFocus() {
 	}
 	

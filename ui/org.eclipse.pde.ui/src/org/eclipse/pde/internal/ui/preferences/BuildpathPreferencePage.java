@@ -27,6 +27,8 @@ public class BuildpathPreferencePage
 		"Preferences.BuildpathPage.fragmentProjectUpdate";
 	private static final String KEY_MANIFEST_UPDATE =
 		"Preferences.BuildpathPage.manifestUpdate";
+	private static final String KEY_BUILD_PROPERTIES_UPDATE =
+		"Preferences.BuildpathPage.buildPropertiesUpdate";		
 	private static final String KEY_DESCRIPTION =
 		"Preferences.BuildpathPage.description";
 	private static final String KEY_CLASSPATH_CONTAINERS =
@@ -56,6 +58,12 @@ public class BuildpathPreferencePage
 			new BooleanFieldEditor(
 				PROP_MANIFEST_UPDATE,
 				PDEPlugin.getResourceString(KEY_MANIFEST_UPDATE),
+				getFieldEditorParent());
+		addField(editor);
+		editor =
+			new BooleanFieldEditor(
+				PROP_BUILD_PROPERTIES_UPDATE,
+				PDEPlugin.getResourceString(KEY_BUILD_PROPERTIES_UPDATE),
 				getFieldEditorParent());
 		addField(editor);
 		new Label(getFieldEditorParent(), SWT.NULL);

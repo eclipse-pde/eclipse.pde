@@ -247,6 +247,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		return store.getBoolean(PROP_MANIFEST_UPDATE);
 	}
 	
+	public static boolean isBuildPropertiesUpdate() {
+		IPreferenceStore store = getDefault().getPreferenceStore();
+		return store.getBoolean(PROP_BUILD_PROPERTIES_UPDATE);
+	}	
+	
 	public static boolean getUseClasspathContainers() {
 		IPreferenceStore store = getDefault().getPreferenceStore();
 		return store.getBoolean(PROP_CLASSPATH_CONTAINERS);
