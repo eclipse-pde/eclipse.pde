@@ -102,6 +102,7 @@ public class SchemaHandler extends PluginErrorReporter {
 	}
 	
 	public Node getDocumentElement() {
+		fDocument.getDocumentElement().normalize();
 		return fDocument.getDocumentElement();
 	}
 	
