@@ -85,7 +85,7 @@
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard"
             project="true"
-            finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.pde.ui.NewProjectWizard">
          <description>
             %new.pluginProject.description
@@ -97,7 +97,7 @@
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.project.NewFragmentProjectWizard"
             project="true"
-            finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.pde.ui.NewFragmentWizard">
          <description>
             %new.fragmentProject.description
@@ -108,6 +108,7 @@
             icon="icons/full/obj16/schema_obj.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.pde.ui.NewSchemaFileWizard">
          <description>
             %new.schemaFile.description
@@ -130,7 +131,7 @@
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard"
             project="true"
-            finalPerspective="org.eclipse.pde.internal.ui.PDEPerspective"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             id="org.eclipse.pde.ui.NewFeatureProjectWizard">
          <description>
             %new.feature.description

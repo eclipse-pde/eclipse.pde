@@ -90,7 +90,7 @@ text about the wizard.
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
@@ -137,6 +137,13 @@ added to the "Other" category.
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.INewWizard"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="finalPerspective" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
