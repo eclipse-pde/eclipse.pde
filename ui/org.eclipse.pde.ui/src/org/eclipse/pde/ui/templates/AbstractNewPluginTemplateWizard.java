@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
-import java.io.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
@@ -143,58 +142,5 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 			}
 		}
 		return (String[]) result.toArray(new String[result.size()]);
-	}
-	private void saveTemplateFile(IProject project, IProgressMonitor monitor) {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		writeTemplateFile(writer);
-		writer.flush();
-		try {
-			swriter.close();
-		} catch (IOException e) {
-		}
-		String contents = swriter.toString();
-		IFile file = project.getFile(".template"); //$NON-NLS-1$
-		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("UTF8")); //$NON-NLS-1$
-			if (file.exists()) {
-				file.setContents(stream, false, false, null);
-			} else {
-				file.create(stream, false, null);
-			}
-			stream.close();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		} catch (IOException e) {
-		}
-	}
-	private void writeTemplateFile(PrintWriter writer) {
-		String indent = "   "; //$NON-NLS-1$
-		// open
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.println("<form>"); //$NON-NLS-1$
-		ITemplateSection[] templateSections = getTemplateSections();
-		if (templateSections.length > 0) {
-			// add the standard prolog
-			writer
-					.println(indent
-							+ PDEPlugin
-									.getResourceString("ManifestEditor.TemplatePage.intro")); //$NON-NLS-1$
-			// add template section descriptions
-			for (int i = 0; i < templateSections.length; i++) {
-				ITemplateSection section = templateSections[i];
-				String list = "<li style=\"text\" value=\"" + (i + 1) + ".\">"; //$NON-NLS-1$ //$NON-NLS-2$
-				writer.println(indent + list + "<b>" + section.getLabel() //$NON-NLS-1$
-						+ ".</b>" + section.getDescription() + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		// add the standard epilogue
-		writer
-				.println(indent
-						+ PDEPlugin
-								.getResourceString("ManifestEditor.TemplatePage.common")); //$NON-NLS-1$
-		// close
-		writer.println("</form>"); //$NON-NLS-1$
 	}
 }
