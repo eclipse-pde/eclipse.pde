@@ -169,6 +169,9 @@ public class LibrarySection
 
 		if (!selection.isEmpty()) {
 			manager.add(new Separator());
+			IAction renameAction = getRenameAction();
+			renameAction.setEnabled(model.isEditable());
+			manager.add(renameAction);
 			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();

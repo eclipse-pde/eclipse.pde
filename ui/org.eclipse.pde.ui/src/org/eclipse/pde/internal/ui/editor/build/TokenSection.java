@@ -164,6 +164,9 @@ public class TokenSection
 
 		if (!selection.isEmpty()) {
 			manager.add(new Separator());
+			IAction renameAction = getRenameAction();
+			renameAction.setEnabled(model.isEditable());
+			manager.add(renameAction);
 			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();

@@ -257,6 +257,11 @@ public class ExportSection extends TableSection {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
+		IAction renameAction = getRenameAction();
+		renameAction.setEnabled(model.isEditable());
+		manager.add(renameAction);
+		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 

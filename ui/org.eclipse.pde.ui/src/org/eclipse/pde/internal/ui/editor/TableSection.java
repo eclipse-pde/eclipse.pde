@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.widgets.Button;
 
 /**
  * @version 	1.0
@@ -53,6 +54,10 @@ public abstract class TableSection extends StructuredViewerSection {
 		tablePart = new PartAdapter(buttonLabels);
 		tablePart.setEditable(model.isEditable());
 		return tablePart;
+	}
+	
+	protected IAction getRenameAction() {
+		return getTablePart().getRenameAction();
 	}
 	
 	protected EditableTablePart getTablePart() {
