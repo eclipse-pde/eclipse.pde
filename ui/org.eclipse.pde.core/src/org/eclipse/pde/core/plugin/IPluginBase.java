@@ -12,7 +12,6 @@ package org.eclipse.pde.core.plugin;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.osgi.bundle.*;
 /**
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common
@@ -221,13 +220,6 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 */
 	void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException;
 	
-	/**
-	 * Load the plug-in from bundle and extensions
-	 * (reverse-migrate from a bundle)
-	 * @param bundle
-	 * @param extensions
-	 */
-	void load(IBundle bundle, IExtensions extensions);
 	/**
 	 * Returns version of the manifest grammar
 	 * @return version of the manifest grammer, or <samp>null</samp>

@@ -187,11 +187,13 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getImports()
 	 */
 	public IPluginImport[] getImports() {
+		if (imports == null) {
 			imports = new ArrayList();
 			Set uniqueIds = new HashSet();
 			addImportsFromRequiredBundles(imports, uniqueIds);
 			if (imports.size() == 0)
 				addImportsFromImportedPackages(imports, uniqueIds);
+		}
 		return (IPluginImport[]) imports.toArray(
 			new IPluginImport[imports.size()]);
 	}
@@ -200,21 +202,52 @@ public class BundlePluginBase
 		StringTokenizer stok =
 			new StringTokenizer(getSafeHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
 		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken().trim();
-			try {
-				int semiColon = token.indexOf(";");
-				String id = (semiColon != -1) ? token.substring(0,semiColon) : token;
-				if (!uniqueIds.contains(token)) {
-					IPluginImport iimport = model.createImport();
-					iimport.setId(id);
-					iimport.setReexported(token.indexOf("provide-packages=true") != -1);
-					iimport.setOptional(token.indexOf("optional=true") != -1);
-					uniqueIds.add(token);
-					imports.add(iimport);
+			createImport(stok.nextToken(), imports, uniqueIds);
+		}
+	}
+	
+	private void createImport(String dependency, ArrayList imports,
+			Set uniqueIds) {
+		try {
+			StringTokenizer tok = new StringTokenizer(dependency, ";");
+			String id = tok.nextToken();
+			if (!uniqueIds.contains(id)) {
+				IPluginImport iimport = model.createImport();
+				iimport.setId(id);
+				while (tok.hasMoreTokens()) {
+					String next = tok.nextToken().trim();
+					int index = next.indexOf('=');
+					if (index != -1 && index < next.length() - 1) {
+						setImportAttributes(iimport, next.substring(0, index),
+								next.substring(index + 1));
+					}
 				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
+				uniqueIds.add(id);
+				imports.add(iimport);
 			}
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		}
+	}
+	
+	private void setImportAttributes(IPluginImport iimport, String key, String value) throws CoreException{
+		if (value == null || value.length() == 0)
+			return;
+		
+		if (key.equals("version")) {
+			iimport.setVersion(value);
+		} else if (key.equals("provide-packages")) {
+			iimport.setReexported(value.equals("true"));
+		} else if (key.equals("match")) {
+			if (value.equalsIgnoreCase("perfect")) {
+				iimport.setMatch(IMatchRules.PERFECT);
+			} else if (value.equalsIgnoreCase("greaterOrEquals")) {
+				iimport.setMatch(IMatchRules.GREATER_OR_EQUAL);
+			} else if (value.equalsIgnoreCase("equivalent")) {
+				iimport.setMatch(IMatchRules.EQUIVALENT);
+			}
+		} else if (key.equals("optional")) {
+			iimport.setOptional(value.equals("true"));
 		}
 	}
 
@@ -380,15 +413,6 @@ public class BundlePluginBase
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginBase#load(org.eclipse.pde.core.osgi.bundle.IBundle,
-	 *      org.eclipse.pde.core.plugin.IExtensions)
-	 */
-	public void load(IBundle bundle, IExtensions extensions) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.pde.core.plugin.IExtensions#add(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */
 	public void add(IPluginExtension extension) throws CoreException {
@@ -468,14 +492,6 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null)
 			extensions.swap(e1, e2);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IExtensions#load(org.eclipse.pde.core.plugin.IExtensions)
-	 */
-	public void load(IExtensions plugin) {
 	}
 
 	/*

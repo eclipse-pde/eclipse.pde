@@ -117,5 +117,4 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 */
 	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
 	
-	void load(IExtensions plugin);
 }

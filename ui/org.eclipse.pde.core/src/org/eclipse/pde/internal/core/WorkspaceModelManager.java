@@ -227,12 +227,12 @@ public class WorkspaceModelManager
 		if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
 				if (isBundleManifestFile(file)) {
-					loadModel(((IBundlePluginModelBase)model).getBundleModel());
+					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
 				} else {
-					loadModel(((IBundlePluginModelBase)model).getExtensionsModel());
+					loadModel(((IBundlePluginModelBase)model).getExtensionsModel(), true);
 				}
 			} else {
-				loadModel(model);
+				loadModel(model, true);
 			}
 			fireModelsChanged(new IModel[] { model });
 		}		
@@ -445,7 +445,7 @@ public class WorkspaceModelManager
 			return null;
 		
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
-		loadModel(model);
+		loadModel(model, false);
 		return model;
 	}
 
@@ -468,7 +468,7 @@ public class WorkspaceModelManager
 			return null;
 		
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
-		loadModel(model);
+		loadModel(model, false);
 		return model;
 	}
 	
@@ -481,7 +481,7 @@ public class WorkspaceModelManager
 			return null;
 		
 		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
-		loadModel(model);
+		loadModel(model, false);
 		return model;
 	}
 
@@ -494,7 +494,7 @@ public class WorkspaceModelManager
 			return null;
 		
 		WorkspaceBundleModel model = new WorkspaceBundleModel(file);
-		loadModel(model);
+		loadModel(model, false);
 		
 		IBundlePluginModelBase bmodel = null;
 		boolean fragment = model.isFragmentModel();
@@ -508,14 +508,14 @@ public class WorkspaceModelManager
 		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml");
 		if (efile.exists()) {
 			WorkspaceExtensionsModel extModel = new WorkspaceExtensionsModel(efile);
-			loadModel(extModel);
+			loadModel(extModel, false);
 			bmodel.setExtensionsModel(extModel);
 			extModel.setBundleModel(bmodel);
 		}
 		return bmodel;
 	}
 	
-	private void loadModel(IModel model) {
+	private void loadModel(IModel model, boolean reload) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		InputStream stream = null;
 		boolean outOfSync = false;
@@ -531,7 +531,10 @@ public class WorkspaceModelManager
 			}
 		}
 		try {
-			model.load(stream, outOfSync);
+			if (reload)
+				model.reload(stream, outOfSync);
+			else
+				model.load(stream, outOfSync);
 			stream.close();
 		} catch (Exception e) {
 			PDECore.logException(e);

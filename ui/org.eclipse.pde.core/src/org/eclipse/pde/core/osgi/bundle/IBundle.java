@@ -12,7 +12,6 @@ package org.eclipse.pde.core.osgi.bundle;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.core.plugin.IPluginBase;
 /**
  * A model object that represents the content of the fragment.xml file.
  * <p>
@@ -96,7 +95,5 @@ public interface IBundle extends IWritable {
 
 	String getHeader(String headerKey);
 	void setHeader(String headerKey, String headerValue) throws CoreException;
-	// load the bundle from the plug-in (migrate)
-	void load(IPluginBase plugin, IProgressMonitor monitor);
 	boolean isValid();
 }
