@@ -185,6 +185,15 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			boolean isJavaProject =
 				model.getPluginBase().getLibraries().length > 0;
+			if (!isJavaProject) {
+				IPluginImport[] imports = model.getPluginBase().getImports();
+				for (int i = 0; i < imports.length; i++) {
+					if (imports[i].isReexported()) {
+						isJavaProject = true;
+						break;
+					}
+				}
+			}
 
 			setProjectDescription(project, isJavaProject, monitor);
 			if (importType == IMPORT_BINARY_WITH_LINKS) {
