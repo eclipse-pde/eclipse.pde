@@ -10,6 +10,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -20,7 +21,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class ChoiceAttributeRow extends ExtensionAttributeRow {
-	private CCombo combo;
+	//private CCombo combo;
+	private Combo combo;
 	/**
 	 * @param att
 	 */
@@ -33,7 +35,8 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		createLabel(parent, toolkit);
-		combo = new CCombo(parent, SWT.READ_ONLY|SWT.FLAT);
+		//combo = new CCombo(parent, SWT.READ_ONLY|SWT.FLAT);
+		combo = new Combo(parent, SWT.READ_ONLY|SWT.BORDER);
 		toolkit.adapt(combo, true, true);
 		ISchemaSimpleType type = att.getType();
 		ISchemaRestriction restriction = type.getRestriction();
