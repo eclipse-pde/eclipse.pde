@@ -245,7 +245,6 @@ public class ExternalModelManager implements IExternalModelManager {
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initializeAllModels();
 		initialized=true;
-		EclipseHomeInitializer.resetEclipseHomeVariables();
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {
