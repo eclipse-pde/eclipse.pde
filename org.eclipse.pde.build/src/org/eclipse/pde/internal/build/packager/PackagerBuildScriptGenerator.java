@@ -70,7 +70,13 @@ public class PackagerBuildScriptGenerator extends FeatureBuildScriptGenerator {
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setDevEntries(devEntries);
 			generator.setCompiledElements(getCompiledElements());
-			generator.generate();
+			try {
+				generator.generate();
+			} catch(CoreException exception) {
+				//If the referenced feature is not optional, there is a real problem and the exception is re-thrown. 
+				if (exception.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && ! referencedFeatures[i].isOptional())
+					throw exception;
+			}
 		}
 	}
 
