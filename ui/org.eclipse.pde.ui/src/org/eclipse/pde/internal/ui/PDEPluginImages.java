@@ -189,6 +189,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif");
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif");
 	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL_HOVER, "eclipse_launcher_wiz.gif");
+	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL_HOVER, "newexp_wiz.gif");
 
 	/**
 	 * WIZ

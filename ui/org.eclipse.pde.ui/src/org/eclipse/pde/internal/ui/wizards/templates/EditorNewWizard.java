@@ -17,7 +17,7 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 	private static final String KEY_WTITLE = "EditorNewWizard.wtitle";
 
 	/**
-	 * Constructor for HelloWorldNewWizard.
+	 * Constructor for EditorNewWizard.
 	 */
 	public EditorNewWizard() {
 		super();

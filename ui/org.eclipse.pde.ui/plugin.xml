@@ -320,27 +320,14 @@
             name="%newExtension.templates"
             id="templates">
       </category>
-      <category
-            name="%newExtension.generic"
-            id="generic">
-      </category>
-      <wizard
-            name="%newExtension.generic.name"
-            icon="icons/ctool16/newex_wiz.gif"
-            category="generic"
-            class="org.eclipse.pde.internal.ui.wizards.extension.GenericExtensionWizard"
-            id="org.eclipse.pde.ui.newExtension.generic">
-         <description>
-            %newExtension.generic.desc
-         </description>
-      </wizard>
       <wizard
             name="%newExtension.templates.hello.name"
             icon="icons/ctool16/newex_wiz.gif"
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldTemplate"
-            id="org.eclipse.pde.ui.newExtension.hello">
+            id="org.eclipse.pde.ui.newExtension.hello"
+            contributingId="org.eclipse.ui.actionSets">
          <description>
             %newExtension.templates.hello.desc
          </description>
@@ -351,7 +338,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewTemplate"
-            id="org.eclipse.pde.ui.newExtension.view">
+            id="org.eclipse.pde.ui.newExtension.view"
+            contributingId="org.eclipse.ui.views">
          <description>
             %newExtension.templates.view.desc
          </description>
@@ -362,7 +350,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorTemplate"
-            id="org.eclipse.pde.ui.newExtension.multiPageEditor">
+            id="org.eclipse.pde.ui.newExtension.multiPageEditor"
+            contributingId="org.eclipse.ui.editors">
          <description>
             %newExtension.templates.multiPageEditor.desc
          </description>
@@ -374,7 +363,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewWizardTemplate"
-            id="org.eclipse.pde.ui.newExtension.newWizard">
+            id="org.eclipse.pde.ui.newExtension.newWizard"
+            contributingId="org.eclipse.ui.newWizards">
          <description>
             %newExtension.templates.newWizard.desc
          </description>
@@ -386,7 +376,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PreferencePageTemplate"
-            id="org.eclipse.pde.ui.newExtension.preferences">
+            id="org.eclipse.pde.ui.newExtension.preferences"
+            contributingId="org.eclipse.ui.preferencePages">
          <description>
             %newExtension.templates.preferences.desc
          </description>
@@ -398,7 +389,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsTemplate"
-            id="org.eclipse.pde.ui.newExtension.perspectiveExtensions">
+            id="org.eclipse.pde.ui.newExtension.perspectiveExtensions"
+            contributingId="org.eclipse.ui.perspectiveExtensions">
          <description>
             %newExtension.templates.perspectiveExtensions.desc
          </description>
@@ -410,7 +402,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageTemplate"
-            id="org.eclipse.pde.ui.newExtension.propertyPages">
+            id="org.eclipse.pde.ui.newExtension.propertyPages"
+            contributingId="org.eclipse.ui.propertyPages">
          <description>
             %newExtension.templates.propertyPages.desc
          </description>
@@ -422,7 +415,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuTemplate"
-            id="org.eclipse.pde.ui.newExtension.popupMenus">
+            id="org.eclipse.pde.ui.newExtension.popupMenus"
+            contributingId="org.eclipse.ui.popupMenus">
          <description>
             %newExtension.templates.popupMenus.desc
          </description>
@@ -434,7 +428,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorTemplate"
-            id="org.eclipse.pde.ui.newExtension.editor">
+            id="org.eclipse.pde.ui.newExtension.editor"
+            contributingId="org.eclipse.ui.editors">
          <description>
             %newExtension.templates.editor.desc
          </description>
@@ -446,7 +441,8 @@
             template="true"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
-            id="org.eclipse.pde.ui.newExtension.help">
+            id="org.eclipse.pde.ui.newExtension.help"
+            contributingId="org.eclipse.help.toc">
          <description>
             %newExtension.templates.help.desc
          </description>

@@ -17,7 +17,7 @@ import org.eclipse.pde.ui.templates.*;
 public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	private static final String KEY_WTITLE = "MultiPageEditorNewWizard.wtitle";
 	/**
-	 * Constructor for HelloWorldNewWizard.
+	 * Constructor for MultiPageEditorNewWizard.
 	 */
 	public MultiPageEditorNewWizard() {
 		super();

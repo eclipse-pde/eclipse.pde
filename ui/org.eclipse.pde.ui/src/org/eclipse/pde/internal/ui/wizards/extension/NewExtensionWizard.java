@@ -20,7 +20,7 @@ public class NewExtensionWizard extends NewWizard {
 	public static final String STATUS_MESSAGE = "NewExtensionWizard.statusMessage";
 	private static final String KEY_WTITLE = "NewExtensionWizard.wtitle";
 
-	private NewExtensionMainPage mainPage;
+	private PointSelectionPage pointPage;
 	private IPluginModelBase model;
 	private IProject project;
 	public NewExtensionWizard(IProject project, IPluginModelBase model) {
@@ -33,20 +33,26 @@ public class NewExtensionWizard extends NewWizard {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	public void addPages() {
-		mainPage =
-			new NewExtensionMainPage(
-				project,
-				model,
-				getAvailableExtensionCategories(),
-				PDEPlugin.getResourceString(STATUS_MESSAGE));
-		addPage(mainPage);
+		pointPage =
+			new PointSelectionPage(project, model.getPluginBase(), getAvailableExtensionWizards(), this);
+		addPage(pointPage);
 	}
-	public WizardCollectionElement getAvailableExtensionCategories() {
+	public WizardCollectionElement getAvailableExtensionWizards() {
 		NewExtensionRegistryReader reader = new NewExtensionRegistryReader();
-		return (WizardCollectionElement) reader.readRegistry(
+		WizardCollectionElement element = (WizardCollectionElement) reader.readRegistry(
 			PDEPlugin.getPluginId(),
 			PLUGIN_POINT,
 			false);
+		Object[] children = element.getChildren();  
+		for  (int i = 0; i<children.length; i++){
+			if (children[i] instanceof WizardCollectionElement)
+				if (((WizardCollectionElement)children[i]).getId().equals("templates")) 
+					return (WizardCollectionElement)children[i]; 
+			
+		}
+		
+		return element;
+		
 	}
 	public boolean performFinish() {
 		return true;

@@ -116,6 +116,13 @@ implement &lt;samp&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/samp&gt;
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="contributingId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
