@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -565,7 +566,12 @@ public class DetailExtensionSection
 			
 		URL modelURL = null;
 		String path = model.getInstallLocation();
-
+		IResource resource = model.getUnderlyingResource();
+		if (resource!=null) {
+			IPath realPath = resource.getLocation().removeLastSegments(1);
+			path = realPath.toOSString();
+		}
+		
 		try {
 			if (!path.startsWith("file:"))
 				path = "file:" + path;
