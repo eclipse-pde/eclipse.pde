@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -31,38 +32,21 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class BasicLauncherTab
 	extends AbstractLauncherTab
 	implements ILauncherSettings {
-	private static final String KEY_NAME = "BasicLauncherTab.name";
-	private static final String KEY_WORKSPACE = "BasicLauncherTab.workspace";
-	private static final String KEY_BROWSE = "BasicLauncherTab.browse";
-	private static final String KEY_CLEAR = "BasicLauncherTab.clear";
-	private static final String KEY_ASK_CLEAR = "BasicLauncherTab.askClear";
-	private static final String KEY_JRE = "BasicLauncherTab.jre";
-	private static final String KEY_VMARGS = "BasicLauncherTab.vmArgs";
-	private static final String KEY_PARGS = "BasicLauncherTab.programArgs";
-	private static final String KEY_SHOW_SPLASH = "BasicLauncherTab.showSplash";
-	private static final String KEY_RESTORE = "BasicLauncherTab.restore";
-	private static final String KEY_WTITLE = "BasicLauncherTab.workspace.title";
-	private static final String KEY_WMESSAGE =
-		"BasicLauncherTab.workspace.message";
-	private static final String KEY_NO_JRE = "BasicLauncherTab.noJRE";
-	private static final String KEY_ENTER_WORKSPACE =
-		"BasicLauncherTab.enterWorkspace";
-	private static final String KEY_INVALID_WORKSPACE =
-		"BasicLauncherTab.invalidWorkspace";
-	private static final String KEY_EXISTING_WORKSPACE =
-		"BasicLauncherTab.workspaceExisting";
 
-	public static final String RT_WORKSPACE = "runtime-workspace";
+	private static final String KEY_NAME = "BasicLauncherTab.name";
+	
 	private Combo workspaceCombo;
 	private Button browseButton;
 	private Button clearWorkspaceCheck;
 	private Button askClearCheck;
 	private Combo jreCombo;
+	private Text classpathText;
 	private Text vmArgsText;
 	private Text progArgsText;
 	private Button showSplashCheck;
 	private Button defaultsButton;
 	private Image image;
+	private String currentClasspath;
 
 	private IStatus jreSelectionStatus;
 	private IStatus workspaceSelectionStatus;
@@ -94,27 +78,27 @@ public class BasicLauncherTab
 		createStartingSpace(composite, 3);
 
 		Label label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_WORKSPACE));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace"));
 
 		workspaceCombo = new Combo(composite, SWT.DROP_DOWN);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		workspaceCombo.setLayoutData(gd);
 
 		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
+		browseButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.browse"));
 		browseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(browseButton);
 
 		clearWorkspaceCheck = new Button(composite, SWT.CHECK);
-		clearWorkspaceCheck.setText(PDEPlugin.getResourceString(KEY_CLEAR));
+		clearWorkspaceCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.clear"));
 		fillIntoGrid(clearWorkspaceCheck, 3, false);
 		
 		askClearCheck = new Button(composite, SWT.CHECK);
-		askClearCheck.setText(PDEPlugin.getResourceString(KEY_ASK_CLEAR));
+		askClearCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.askClear"));
 		fillIntoGrid(askClearCheck, 3, false);
 		
 		showSplashCheck = new Button(composite, SWT.CHECK);
-		showSplashCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_SPLASH));
+		showSplashCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.showSplash"));
 		fillIntoGrid(showSplashCheck, 3, false);
 
 
@@ -122,25 +106,31 @@ public class BasicLauncherTab
 		fillIntoGrid(label, 3, false);
 
 		label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_JRE));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.jre"));
 
 		jreCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fillIntoGrid(jreCombo, 2, false);
 
 		label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_VMARGS));
-
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.vmArgs"));
+		
 		vmArgsText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(vmArgsText, 2, false);
 
 		label = new Label(composite, SWT.NULL);
-		label.setText(PDEPlugin.getResourceString(KEY_PARGS));
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.classpath"));
+		
+		classpathText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		fillIntoGrid(classpathText, 2, false);
+
+		label = new Label(composite, SWT.NULL);
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.programArgs"));
 
 		progArgsText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(progArgsText, 2, false);
 
 		defaultsButton = new Button(composite, SWT.PUSH);
-		defaultsButton.setText(PDEPlugin.getResourceString(KEY_RESTORE));
+		defaultsButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.restore"));
 		gd =
 			new GridData(GridData.HORIZONTAL_ALIGN_END
 					| GridData.VERTICAL_ALIGN_END);
@@ -171,6 +161,7 @@ public class BasicLauncherTab
 			blockChanges = true;
 			vmArgsText.setText(config.getAttribute(VMARGS, ""));
 			progArgsText.setText(config.getAttribute(PROGARGS, getDefaultProgramArguments()));
+			classpathText.setText(config.getAttribute(CLASSPATH_ENTRIES, getClasspathEntries()));
 			clearWorkspaceCheck.setSelection(config.getAttribute(DOCLEAR, false));
 			askClearCheck.setSelection(config.getAttribute(ASKCLEAR, true));
 			showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));
@@ -216,7 +207,7 @@ public class BasicLauncherTab
 	static String getDefaultWorkspace() {
 		IPath path =
 			PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
-		path = path.append(RT_WORKSPACE);
+		path = path.append("runtime-workspace");
 		return path.toOSString();
 	}
 
@@ -228,11 +219,21 @@ public class BasicLauncherTab
 		config.setAttribute(ASKCLEAR, true);
 		config.setAttribute(VMARGS,"");
 	}
+	
+	private String getClasspathEntries() {
+		if (currentClasspath != null)
+			return currentClasspath;
+		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IPluginModelBase[] wsmodels = manager.getAllModels();
+		currentClasspath = WorkbenchLaunchConfigurationDelegate.getBuildOutputFolders(wsmodels);
+		return currentClasspath;
+	}
 
 	private void doRestoreDefaults() {
 		progArgsText.setText(getDefaultProgramArguments());
 		vmArgsText.setText("");
 		workspaceCombo.setText(getDefaultWorkspace());
+		classpathText.setText(getClasspathEntries());
 		clearWorkspaceCheck.setSelection(false);
 		showSplashCheck.setSelection(true);
 		askClearCheck.setSelection(true);
@@ -245,6 +246,7 @@ public class BasicLauncherTab
 						.getDefaultVMInstall()
 						.getVMInstallType()
 						.getName()));
+		
 	}
 	static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
@@ -315,6 +317,13 @@ public class BasicLauncherTab
 			}
 		});
 		
+		classpathText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!blockChanges)	
+					updateLaunchConfigurationDialog();
+			}
+		});
+		
 		progArgsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!blockChanges)
@@ -346,7 +355,18 @@ public class BasicLauncherTab
 			return;
 		config.setAttribute(VMARGS, getVMArguments());
 		config.setAttribute(PROGARGS, getProgramArguments());
+		
+			
 		try {
+			String classpath = classpathText.getText().trim();
+			if (config.getAttribute(CLASSPATH_ENTRIES, (String) null) != null) {
+				config.setAttribute(CLASSPATH_ENTRIES, classpath);
+			} else {
+				config.setAttribute(
+					CLASSPATH_ENTRIES,
+					classpath.equals(getClasspathEntries()) ? null : classpath);
+			}
+
 			IVMInstall vmInstall = getVMInstall();
 			if (vmInstall != null) {
 				if (config.getAttribute(VMINSTALL, (String) null) != null) {
@@ -354,8 +374,7 @@ public class BasicLauncherTab
 				} else {
 					config.setAttribute(
 						VMINSTALL,
-						vmInstall.getName().equals(
-							getDefaultVMInstallName())
+						vmInstall.getName().equals(getDefaultVMInstallName())
 							? null
 							: vmInstall.getName());
 				}
@@ -384,8 +403,8 @@ public class BasicLauncherTab
 	private IPath chooseWorkspaceLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(workspaceCombo.getText());
-		dialog.setText(PDEPlugin.getResourceString(KEY_WTITLE));
-		dialog.setMessage(PDEPlugin.getResourceString(KEY_WMESSAGE));
+		dialog.setText(PDEPlugin.getResourceString("BasicLauncherTab.workspace.title"));
+		dialog.setMessage(PDEPlugin.getResourceString("BasicLauncherTab.workspace.message"));
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -398,7 +417,7 @@ public class BasicLauncherTab
 		if (curr == null) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_NO_JRE));
+				PDEPlugin.getResourceString("BasicLauncherTab.noJRE"));
 		}
 		return createStatus(IStatus.OK, "");
 	}
@@ -408,19 +427,19 @@ public class BasicLauncherTab
 		if (curr.segmentCount() == 0) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_ENTER_WORKSPACE));
+				PDEPlugin.getResourceString("BasicLauncherTab.enterWorkspace"));
 		}
 		if (!Path.ROOT.isValidPath(workspaceCombo.getText())) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_INVALID_WORKSPACE));
+				PDEPlugin.getResourceString("BasicLauncherTab.invalidWorkspace"));
 		}
 
 		File file = curr.toFile();
 		if (file.isFile()) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_EXISTING_WORKSPACE));
+				PDEPlugin.getResourceString("BasicLauncherTab.workspaceExisting"));
 		}
 		return createStatus(IStatus.OK, "");
 	}

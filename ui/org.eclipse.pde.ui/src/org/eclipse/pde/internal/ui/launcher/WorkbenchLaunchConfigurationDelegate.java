@@ -201,9 +201,13 @@ public class WorkbenchLaunchConfigurationDelegate
 			programArgs.add("-boot");
 			programArgs.add("file:"+bootPath);
 		}
+				
 		programArgs.add("-dev");
-		programArgs.add(
-			getBuildOutputFolders(getWorkspacePluginsToRun(configuration, useDefault)));
+		String devEntry = getBuildOutputFolders(getWorkspacePluginsToRun(configuration, useDefault));
+		if (configuration != null)
+			devEntry = configuration.getAttribute(CLASSPATH_ENTRIES, devEntry);
+		programArgs.add(devEntry);
+			
 		if (useFeatures) {
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			File installDir = installPath.removeLastSegments(1).toFile();
@@ -510,7 +514,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 
 
-	private static String getBuildOutputFolders(IPluginModelBase[] wsmodels) {
+	public static String getBuildOutputFolders(IPluginModelBase[] wsmodels) {
 		HashSet set = new HashSet();
 		set.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
