@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.project;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.IProjectProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.pde.ui.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.dialogs.*;
 
 public class NewProjectWizard
 	extends NewWizard
@@ -27,6 +27,7 @@ public class NewProjectWizard
 	private WizardNewProjectCreationPage mainPage;
 	private ProjectStructurePage structurePage;
 	private ProjectCodeGeneratorsPage codegenPage;
+	private FragmentContentPage fragmentTemplatePage;
 	private IConfigurationElement config;
 
 	public static final String PLUGIN_POINT = "projectGenerators";
@@ -75,15 +76,19 @@ public class NewProjectWizard
 
 		structurePage = new ProjectStructurePage(provider, isFragmentWizard());
 		addPage(structurePage);
-		codegenPage =
-			new ProjectCodeGeneratorsPage(
-				provider,
-				structurePage,
-				getAvailableCodegenWizards(),
-				PDEPlugin.getResourceString(KEY_CODEGEN_MESSAGE),
-				isFragmentWizard(),
-				config);
-		addPage(codegenPage);
+		if (!isFragmentWizard()){
+			codegenPage =
+				new ProjectCodeGeneratorsPage(
+					provider,
+					structurePage,
+					getAvailableCodegenWizards(),
+					PDEPlugin.getResourceString(KEY_CODEGEN_MESSAGE),
+					config);
+			addPage(codegenPage);
+		} else {
+			fragmentTemplatePage = new FragmentContentPage(provider, structurePage);
+			addPage(fragmentTemplatePage);
+		}
 	}
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
@@ -154,7 +159,7 @@ public class NewProjectWizard
 		if (structurePage.finish()) {
 			boolean hasCodegen = structurePage.getNextPage()!=null;
 			
-			if (!hasCodegen || codegenPage.finish()) {
+			if (!hasCodegen || (codegenPage != null && codegenPage.finish()) || (fragmentTemplatePage !=null && fragmentTemplatePage.finish())) {
 				revealSelection(mainPage.getProjectHandle()); 
 				return true;
 			}

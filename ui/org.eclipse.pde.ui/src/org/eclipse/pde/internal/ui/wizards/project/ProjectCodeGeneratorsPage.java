@@ -42,49 +42,42 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private Button templateRadio;
 	private Control wizardList;
 	private ControlEnableState wizardListEnableState;
-	private boolean fragment;
 	private IProjectProvider provider;
 	private boolean firstTime = true;
 	private static final String KEY_TITLE =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.title";
 	private static final String KEY_BLANK_LABEL =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.blankLabel";
-	private static final String KEY_BLANK_FLABEL =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.blankFLabel";
 	private static final String KEY_TEMPLATE_LABEL =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.templateLabel";
-	private static final String KEY_TEMPLATE_FLABEL =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.templateFLabel";
-	private static final String KEY_NOUI_FLABEL = 
-		"NewProjectWizard.ProjectCodeGeneratorsPage.noUIFLabel";
 	private static final String KEY_NOUI_LABEL =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.noUILabel";
 	private static final String KEY_DESC =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.desc";
-	private static final String KEY_FTITLE =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.ftitle";
-	private static final String KEY_FDESC =
-		"NewProjectWizard.ProjectCodeGeneratorsPage.fdesc";
 	private ProjectStructurePage projectStructurePage;
 	private IConfigurationElement config;
+	private byte oldSelection;
+	private byte BLANK_SELECTION = 0x00;
+	private byte NO_UI_SELECTION = 0x01;
+	private byte TEMPLATE_SELECTION = 0x002;
+	private boolean hasSelectionChanged;
 
 	public ProjectCodeGeneratorsPage(
 		IProjectProvider provider,
 		ProjectStructurePage projectStructurePage,
 		ElementList wizardElements,
 		String message,
-		boolean fragment,
 		IConfigurationElement config) {
 		super(wizardElements, message);
-		this.fragment = fragment;
 		this.provider = provider;
 		this.projectStructurePage = projectStructurePage;
 		this.config = config;
 
 		setTitle(
-			PDEPlugin.getResourceString(fragment ? KEY_FTITLE : KEY_TITLE));
+			PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(
-			PDEPlugin.getResourceString(fragment ? KEY_FDESC : KEY_DESC));
+			PDEPlugin.getResourceString(KEY_DESC));
+		hasSelectionChanged = false;
 	}
 
 	public void createControl(Composite parent) {
@@ -95,8 +88,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 
 		blankPageRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
 		blankPageRadio.setText(
-			PDEPlugin.getResourceString(
-				fragment ? KEY_BLANK_FLABEL : KEY_BLANK_LABEL));
+			PDEPlugin.getResourceString(KEY_BLANK_LABEL));
 		blankPageRadio.setSelection(false);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
@@ -106,12 +98,14 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		blankPageRadio.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setWizardListEnabled(!blankPageRadio.getSelection());
+				if (blankPageRadio.getSelection() && oldSelection != BLANK_SELECTION)
+					hasSelectionChanged = true;
 				getContainer().updateButtons();
 			}
 		});
 
 		noUIRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
-		noUIRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_NOUI_FLABEL : KEY_NOUI_LABEL));
+		noUIRadio.setText(PDEPlugin.getResourceString(KEY_NOUI_LABEL));
 		noUIRadio.setSelection(false);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
@@ -121,20 +115,27 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		noUIRadio.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				setWizardListEnabled(!noUIRadio.getSelection());
+				if (noUIRadio.getSelection() && oldSelection != NO_UI_SELECTION)
+					hasSelectionChanged = true;
 				getContainer().updateButtons();
 			}
 		});
 		
 		templateRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
 		templateRadio.setText(
-			PDEPlugin.getResourceString(
-				fragment ? KEY_TEMPLATE_FLABEL : KEY_TEMPLATE_LABEL));
+			PDEPlugin.getResourceString(KEY_TEMPLATE_LABEL));
 		templateRadio.setSelection(true);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace = true;
 		templateRadio.setLayoutData(gd);
+		templateRadio.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				if (templateRadio.getSelection() && oldSelection != TEMPLATE_SELECTION)
+					hasSelectionChanged = true;
+			}
+		});
 
 		super.createControl(outerContainer);
 		wizardList = super.wizardSelectionViewer.getControl();
@@ -143,29 +144,36 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		getControl().setLayoutData(gd);
 		setControl(outerContainer);
 		Dialog.applyDialogFont(outerContainer);
-		if (fragment)
-			WorkbenchHelp.setHelp(
-				outerContainer,
-				IHelpContextIds.NEW_FRAGMENT_CODE_GEN_PAGE);
-		else
-			WorkbenchHelp.setHelp(
-				outerContainer,
-				IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
+		WorkbenchHelp.setHelp(
+			outerContainer,
+			IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 
-		if (visible && firstTime) {
-			if (blankPageRadio.getSelection())
-				blankPageRadio.setFocus();
-			else {
-				focusAndSelectFirst();
+		if (visible){
+			setOldSelection();
+			hasSelectionChanged = false;
+			if (firstTime) {
+				if (blankPageRadio.getSelection())
+					blankPageRadio.setFocus();
+				else {
+					focusAndSelectFirst();
+				}
+				firstTime = false;
 			}
-			firstTime = false;
 		}
 	}
 
+	public void setOldSelection(){
+		if (blankPageRadio.getSelection())
+			oldSelection = BLANK_SELECTION;
+		else if (templateRadio.getSelection())
+			oldSelection = TEMPLATE_SELECTION;
+		else
+			oldSelection = NO_UI_SELECTION;
+	}
 	protected IWizardNode createWizardNode(WizardElement element) {
 		return new WizardNode(this, element) {
 			public IBasePluginWizard createWizard() throws CoreException {
@@ -175,9 +183,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 				wizard.init(
 					provider,
 					projectStructurePage.getStructureData(),
-					fragment,
+					false,
 					config);
-				((AbstractNewPluginTemplateWizard)wizard).setShowTemplatePages(!noUIRadio.getSelection());
+				((AbstractNewPluginTemplateWizard)wizard).setShowTemplatePages(templateRadio.getSelection());
 				return wizard;
 			}
 		};
@@ -205,7 +213,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			blankPageRadio.getSelection()
 				? null
 				: super.getNextPage(
-					projectStructurePage.isStructureDataChanged()));
+					projectStructurePage.isStructureDataChanged() || hasSelectionChanged));
 	}
 
 	public boolean isPageComplete() {
@@ -225,7 +233,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 					ProjectStructurePage.createBuildProperties(
 						project,
 						structureData,
-						fragment,
+						false,
 						monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
@@ -295,15 +303,11 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		throws CoreException {
 
 		IPath path =
-			project.getFullPath().append(
-				fragment ? "fragment.xml" : "plugin.xml");
+			project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 
 		WorkspacePluginModelBase model = null;
-		if (fragment)
-			model = new WorkspaceFragmentModel(file);
-		else
-			model = new WorkspacePluginModel(file);
+		model = new WorkspacePluginModel(file);
 		model.load();
 
 		if (!file.exists()) {

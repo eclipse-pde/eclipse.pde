@@ -375,7 +375,7 @@ public class ProjectStructurePage extends WizardPage {
 					monitor.beginTask(message, 1);
 					createProject(project, provider, data, monitor);
 					createBuildProperties(project, data, fragment, monitor);
-					if (simpleChoice.getSelection())
+					if (simpleChoice.getSelection() && !fragment)
 						createBlankManifest(project, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
@@ -468,8 +468,14 @@ public class ProjectStructurePage extends WizardPage {
 	public boolean isStructureDataChanged() {
 		if (data == null || projectName == null)
 			return false;
+		if (simpleChoice.getSelection())
+			return false;
+		
 		StructureData oldData = data;
 		StructureData newData = (StructureData) getStructureData();
+		
+		if (oldData.buildOutput == null && newData.buildOutput !=null)
+			return true;
 		boolean structureChange =
 				!oldData.pluginId.equals(newData.pluginId)
 				|| !oldData.buildOutput.equals(newData.buildOutput)

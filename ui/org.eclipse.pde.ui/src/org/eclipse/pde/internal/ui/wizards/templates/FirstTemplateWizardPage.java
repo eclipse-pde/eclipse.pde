@@ -417,6 +417,9 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		return true;
 	}
 	
+	protected void initializeFields(){
+		presetFields();
+	}
 	private void presetFields() {
 		String name = projectProvider.getProjectName();
 		String noSpaceName = removeSpaces(name);
@@ -517,7 +520,7 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 	public WorkspacePluginModelBase createPluginManifest(IProject project, IFieldData data, ArrayList dependencies, IProgressMonitor monitor) throws CoreException {
 		WorkspacePluginModelBase model;
 		IFile file = project.getFile(fragment?"fragment.xml":"plugin.xml");
-		
+
 		if (fragment) model = new WorkspaceFragmentModel(file);
 		else model = new WorkspacePluginModel(file);
 		IPluginBase plugin = model.getPluginBase(true);
@@ -596,9 +599,15 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 	}
 	
 	public IPluginReference[] getDependencies() {
+		return getDependencies(true);
+	}
+	public IPluginReference[] getDependencies(boolean isUIPlugin) {
 		ArrayList dependencies = new ArrayList();
-		if (generateMainClass.getSelection() && workspaceCheck.getSelection())
-				dependencies.add(new PluginReference("org.eclipse.core.resources", null, 0));
+		if (isUIPlugin) {
+			dependencies.add(new PluginReference("org.eclipse.ui", null, 0));
+		}
+		if (!fragment && generateMainClass.getSelection() && workspaceCheck.getSelection())
+			dependencies.add(new PluginReference("org.eclipse.core.resources", null, 0));
 		if (structureData.isR3Compatible()) {
 			dependencies.add(
 					new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
@@ -607,6 +616,9 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 			new IPluginReference[dependencies.size()]);
 	}
 	
+	public void setStructureData(IPluginStructureData data){
+		this.structureData = data;
+	}
 	public IPluginStructureData getStructureData() {
 		return structureData;
 	}
