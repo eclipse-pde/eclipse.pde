@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;

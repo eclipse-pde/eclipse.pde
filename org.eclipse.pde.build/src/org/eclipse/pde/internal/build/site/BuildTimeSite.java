@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 import org.osgi.framework.Version;

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.URLEntryModel;

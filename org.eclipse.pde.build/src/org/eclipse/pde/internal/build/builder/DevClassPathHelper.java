@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 
 public class DevClassPathHelper {

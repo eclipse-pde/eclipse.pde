@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;

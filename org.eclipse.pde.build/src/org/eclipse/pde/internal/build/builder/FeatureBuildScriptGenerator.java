@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.update.core.*;

@@ -19,6 +19,7 @@ import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.osgi.framework.*;
 import org.osgi.framework.BundleException;

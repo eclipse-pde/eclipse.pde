@@ -20,6 +20,7 @@ import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.PDEState;
 

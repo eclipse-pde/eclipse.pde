@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import org.eclipse.core.runtime.NLS;
+import org.eclipse.osgi.util.NLS;
 
 public class TaskMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.build.tasks.messages";//$NON-NLS-1$
