@@ -9,114 +9,152 @@ import org.eclipse.pde.internal.ui.model.*;
 
 /**
  * @author melhem
- *
+ *  
  */
-public class PluginObjectNode extends PluginDocumentNode implements IPluginObject {
+public class PluginObjectNode extends PluginDocumentNode
+		implements
+			IPluginObject {
 	private String fName;
 	private boolean fInTheModel;
 	private ISharedPluginModel fModel;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getModel()
 	 */
 	public ISharedPluginModel getModel() {
 		return fModel;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginModel()
 	 */
 	public IPluginModelBase getPluginModel() {
-		return (IPluginModelBase)fModel;
+		return (IPluginModelBase) fModel;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
 		return fName;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isInTheModel()
 	 */
 	public boolean isInTheModel() {
 		return fInTheModel;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
 	public String getTranslatedName() {
 		return getResourceString(getName());
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getParent()
 	 */
 	public IPluginObject getParent() {
-		return (IPluginObject)getParentNode();
+		return (IPluginObject) getParentNode();
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getPluginBase()
 	 */
 	public IPluginBase getPluginBase() {
-		return fModel != null ? ((IPluginModelBase)fModel).getPluginBase() : null;
+		return fModel != null
+				? ((IPluginModelBase) fModel).getPluginBase()
+				: null;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getResourceString(java.lang.String)
 	 */
 	public String getResourceString(String key) {
 		return fModel != null ? fModel.getResourceString(key) : key;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
 		fName = name;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#isValid()
 	 */
 	public boolean isValid() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String,
+	 *      java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setInTheModel(boolean)
 	 */
 	public void setInTheModel(boolean inModel) {
 		fInTheModel = inModel;
 	}
-	
+
 	public void setModel(ISharedPluginModel model) {
 		fModel = model;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLAttribute(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setXMLAttribute(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public void setXMLAttribute(String name, String value) {
 		String oldValue = getXMLAttributeValue(name);
-		PluginAttribute attr = (PluginAttribute)fAttributes.get(name);
+		PluginAttribute attr = (PluginAttribute) fAttributes.get(name);
 		try {
-			if (attr == null) {
-				attr = new PluginAttribute();
-				attr.setName(name);
-				attr.setEnclosingElement(this);
-				fAttributes.put(name, attr);
-			}
-			attr.setValue(value);
+			if (value != null) {
+				if (attr == null) {
+					attr = new PluginAttribute();
+					attr.setName(name);
+					attr.setEnclosingElement(this);
+					fAttributes.put(name, attr);
+				}
+				attr.setValue(value);
+			} else
+				fAttributes.remove(name);
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)
-			firePropertyChanged(attr.getEnclosingElement(), attr.getAttributeName(), oldValue, value);
+			firePropertyChanged(attr.getEnclosingElement(), attr
+					.getAttributeName(), oldValue, value);
 	}
-		
+
 	protected void firePropertyChanged(IDocumentNode node, String property,
 			Object oldValue, Object newValue) {
 		if (fModel.isEditable() && fModel instanceof IModelChangeProvider) {
@@ -128,12 +166,12 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 	protected void fireStructureChanged(IPluginObject child, int changeType) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangedEvent e =
-				new ModelChangedEvent(fModel, changeType, new Object[] { child }, null);
+			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType,
+					new Object[]{child}, null);
 			fireModelChanged(e);
 		}
 	}
-	
+
 	protected void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {
@@ -169,38 +207,44 @@ public class PluginObjectNode extends PluginDocumentNode implements IPluginObjec
 		}
 		return buf.toString();
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#writeShallow()
 	 */
 	public String writeShallow(boolean terminate) {
 		return "";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#write()
 	 */
 	public String write(boolean indent) {
 		return "";
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PluginObjectNode)) 
-			return false;	
-		
-		PluginObjectNode node = (PluginObjectNode)obj;
+		if (!(obj instanceof PluginObjectNode))
+			return false;
+
+		PluginObjectNode node = (PluginObjectNode) obj;
 		if (!node.getXMLTagName().equals(getXMLTagName()))
 			return false;
-		
+
 		if (node.getChildNodes().length != getChildNodes().length)
 			return false;
-		
+
 		for (int i = 0; i < node.getChildNodes().length; i++) {
 			if (!node.getChildAt(i).equals(getChildAt(i)))
 				return false;
 		}
-		
+
 		if (node.getNodeAttributes().length != getNodeAttributes().length)
 			return false;
 		for (int i = 0; i < node.getNodeAttributes().length; i++) {

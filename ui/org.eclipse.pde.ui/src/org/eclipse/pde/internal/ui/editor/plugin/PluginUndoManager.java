@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode;
 
 /**
  * @version 	1.0
@@ -188,7 +189,11 @@ public class PluginUndoManager extends ModelUndoManager {
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-			
+		}
+		else if (element instanceof PluginObjectNode) {
+			PluginObjectNode node = (PluginObjectNode)element;
+			String newString = newValue!=null?newValue.toString():null;
+			node.setXMLAttribute(propertyName, newString);
 		}
 	}
 
