@@ -501,27 +501,15 @@
       <command
             name="%ViewCommand.pluginsView.name"
             description="%ViewCommand.pluginsView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.pde.ui.PluginsView">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.pde.ui.PluginsView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ViewCommand.dependenciesView.name"
             description="%ViewCommand.dependenciesView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.pde.ui.DependenciesView">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.pde.ui.DependenciesView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
