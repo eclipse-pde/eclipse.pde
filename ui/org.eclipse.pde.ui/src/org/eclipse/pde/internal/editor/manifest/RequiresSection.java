@@ -11,7 +11,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;
@@ -46,7 +46,7 @@ private void addImportLink(IPluginImport importObject) {
 	String name = pluginId;
 	if (pluginInfo != null)
 		name = pluginInfo.getResourceString(pluginInfo.getName());
-	Label hyperlink = factory.createLabel(requiresParent, name);
+	SelectableFormLabel hyperlink = factory.createSelectableLabel(requiresParent, name);
 	if (pluginInfo!=null) {
 		factory.turnIntoHyperlink(hyperlink, this);
 		hyperlink.setToolTipText(pluginId);

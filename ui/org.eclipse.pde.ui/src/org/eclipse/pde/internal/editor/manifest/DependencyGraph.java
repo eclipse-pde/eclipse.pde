@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 
-public class DependencyGraph extends Canvas implements IHyperlinkListener {
+public class DependencyGraph extends Composite implements IHyperlinkListener {
 	private IDependencyGraphNode rootNode;
 	private IDependencyGraphNode selectedNode;
 	private boolean borderPainted;
@@ -120,6 +120,25 @@ public DependencyGraph(Composite parent, int style) {
 	addPaintListener(new PaintListener() {
 		public void paintControl(PaintEvent e) {
 			paintGraph(e.gc);
+		}
+	});
+	addFocusListener(new FocusListener() {
+		public void focusGained(FocusEvent e) {
+			System.out.println("Focus gained.");
+		}
+		public void focusLost(FocusEvent e) {
+			System.out.println("Focus lost.");
+		}
+	});
+	addMouseListener(new MouseAdapter() {
+		public void mouseDown(MouseEvent e) {
+			setFocus();
+		}
+	});
+	addListener(SWT.Traverse, new Listener () {
+		public void handleEvent(Event e) {
+			if (e.detail != SWT.TRAVERSE_RETURN)
+				e.doit = true;
 		}
 	});
 	menuManager = new MenuManager("#PopupMenu");

@@ -10,13 +10,13 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.pde.internal.base.model.*;
 
-public class SchemaForm extends ScrollableForm implements IModelChangedListener {
+public class SchemaForm extends ScrollableSectionForm implements IModelChangedListener {
 	private ElementSection elementSection;
 	private DescriptionSection descriptionSection;
 	private GrammarSection grammarSection;
@@ -82,14 +82,14 @@ public void expandTo(Object object) {
 public void initialize(Object model) {
 	ISchema schema = (ISchema)model;
 	super.initialize(model);
-	setTitle(schema.getName());
-	getControl().layout(true);
+	setHeadingText(schema.getName());
+	((Composite)getControl()).layout(true);
 	schema.addModelChangedListener(this);
 }
 public void modelChanged(IModelChangedEvent event) {
 	if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 		ISchema schema = (ISchema) page.getModel();
-		setTitle(schema.getName());
+		setHeadingText(schema.getName());
 	}
 }
 }

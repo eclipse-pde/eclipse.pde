@@ -67,6 +67,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	}
 	private java.util.Hashtable counters;
 	private WorkspaceModelManager workspaceModelManager;
+	private Vector pluginListeners = new Vector();
 
 public PDEPlugin(IPluginDescriptor descriptor) {
 	super(descriptor);
@@ -257,5 +258,23 @@ public void startup() throws CoreException {
 	if (isVAJ()==false) initializePlatformPath();
 	getExternalModelManager().getEclipseHome();
 	getWorkspaceModelManager().reset();
+}
+
+public void addPluginListener(IPDEPluginListener listener) {
+	if (!pluginListeners.contains(listener))
+		pluginListeners.add(listener);
+}
+
+public void removePluginListener(IPDEPluginListener listener) {
+	if (pluginListeners.contains(listener))
+		pluginListeners.remove(listener);
+}
+
+public void firePluginEvent(PDEPluginEvent e) {
+	for (Iterator iter=pluginListeners.iterator();
+			iter.hasNext();) {
+		IPDEPluginListener listener = (IPDEPluginListener)iter.next();
+		listener.pluginChanged(e);
+	}
 }
 }

@@ -9,7 +9,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import java.util.*;

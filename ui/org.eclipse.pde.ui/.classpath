@@ -26,5 +26,6 @@
     <classpathentry kind="var" path="WS/swt.jar" sourcepath="WS/swtsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.apache.ant/ant.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.ant/antsrc.zip"/>
+    <classpathentry kind="src" path="/org.eclipse.update.ui.forms"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

@@ -169,11 +169,25 @@ public boolean hasEnabledModels() {
 }
 
 private boolean loadModels() {
+	long startTime = System.currentTimeMillis();
 	boolean result = reload(null);
 	if (result) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		ExternalPluginsBlock.initialize(this, store);
 	}
+	long stopTime = System.currentTimeMillis();
+	Object [] array = models.toArray();
+	ArraySorter.INSTANCE.sortInPlace(array);
+
+	for (int i=0; i<array.length; i++) {
+		models.set(i, array[i]);
+	}
+	long sortTime = System.currentTimeMillis();
+	/*
+	System.out.println("Load time: "+(stopTime - startTime));
+	System.out.println("Sort time: "+(sortTime - stopTime));
+	System.out.println("Total: "+(sortTime - startTime));
+	*/
 	return result;
 }
 

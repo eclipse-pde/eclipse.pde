@@ -13,7 +13,7 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.*;
 import org.eclipse.jface.resource.*;

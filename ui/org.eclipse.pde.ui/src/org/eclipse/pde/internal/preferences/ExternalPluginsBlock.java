@@ -54,7 +54,11 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			if (editor == null || editor.getPlatformPath().length() > 0) {
-				return registry.getModels();
+				long startTime = System.currentTimeMillis();
+				Object [] models = registry.getModels();
+				long stopTime = System.currentTimeMillis();
+				return models;
+				
 			} else
 				return new Object[0];
 		}
@@ -65,8 +69,8 @@ public class ExternalPluginsBlock implements ICheckStateListener {
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			if (index == 0) {
-				IPluginModel model = (IPluginModel) obj;
-				return model.getResourceString(model.getPlugin().getName());
+				IPluginModel model = (IPluginModel)obj;
+				return model.getPlugin().getTranslatedName();
 			}
 			return "";
 		}
@@ -102,7 +106,7 @@ public Control createContents(Composite parent) {
 	pluginListViewer = new CheckboxTableViewer(container, SWT.BORDER);
 	pluginListViewer.setContentProvider(new PluginContentProvider());
 	pluginListViewer.setLabelProvider(new PluginLabelProvider());
-	pluginListViewer.setSorter(ListUtil.NAME_SORTER);
+
 	GridData gd =
 		new GridData(
 			GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -202,6 +206,7 @@ public void initialize(IPreferenceStore store) {
 	if (editor!=null) platformPath = editor.getPlatformPath();
 	if (platformPath!=null && platformPath.length()==0) return;
 	int mode;
+
 
 	pluginListViewer.setInput(registry);
 	String saved = store.getString(CHECKED_PLUGINS);

@@ -11,12 +11,12 @@ import org.eclipse.jface.resource.*;
 import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.action.*;
 
-public class DependenciesForm extends ScrollableForm {
+public class DependenciesForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";
 	private ManifestDependenciesPage page;
 	private ReqGraphSection reqGraphSection;
@@ -63,10 +63,10 @@ protected void createFormClient(Composite parent) {
 }
 public void initialize(Object input) {
 	IPluginModel model = (IPluginModel)input;
-	setTitle(PDEPlugin.getResourceString(TITLE));
+	setHeadingText(PDEPlugin.getResourceString(TITLE));
 	super.initialize(model);
 	reqGraphSection.sectionChanged(pluginListSection, pluginListSection.SELECTION, null);
-	getControl().layout(true);
+	((Composite)getControl()).layout(true);
 }
 
 public boolean fillContextMenu(IMenuManager manager) {

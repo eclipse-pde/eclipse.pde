@@ -8,7 +8,7 @@ import org.eclipse.core.internal.plugins.*;
 import org.eclipse.ui.views.properties.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;

@@ -10,11 +10,11 @@ import org.eclipse.jface.resource.*;
 import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 
-public class ExtensionsForm extends ScrollableForm {
+public class ExtensionsForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "ManifestEditor.ExtensionForm.title";
 	private ManifestExtensionsPage page;
 	private DetailExtensionSection extensionSection;
@@ -56,8 +56,8 @@ public void expandTo(Object object) {
    extensionSection.expandTo(object);
 }
 public void initialize(Object model) {
-	setTitle(PDEPlugin.getResourceString(FORM_TITLE));
+	setHeadingText(PDEPlugin.getResourceString(FORM_TITLE));
 	super.initialize(model);
-	getControl().layout(true);
+	((Composite)getControl()).layout(true);
 }
 }

@@ -94,7 +94,7 @@ private void throwParseErrorsException() throws CoreException {
 }
 public String toString() {
 	IPluginBase pluginBase = getPluginBase();
-	if (pluginBase!=null) return getResourceString(pluginBase.getName());
+	if (pluginBase!=null) return pluginBase.getTranslatedName();
 	return super.toString();
 }
 }

@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.component;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.pde.internal.editor.*;
 
@@ -13,7 +13,7 @@ public class ComponentReferencePage extends PDEChildFormPage {
 public ComponentReferencePage(PDEFormPage parent, String title) {
 	super(parent, title);
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new ReferenceForm(this);
 }
 }

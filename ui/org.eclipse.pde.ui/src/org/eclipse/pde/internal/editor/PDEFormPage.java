@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.*;
 
 
 public abstract class PDEFormPage extends EditorPart implements IPDEEditorPage {
-	private Form form;
+	private SectionForm form;
 	private Control control;
 	private PDEMultiPageEditor editor;
 	private IContentOutlinePage contentOutlinePage;
@@ -59,7 +59,7 @@ public abstract IContentOutlinePage createContentOutlinePage();
 public void createControl(Composite parent) {
 	createPartControl(parent);
 }
-protected abstract Form createForm();
+protected abstract SectionForm createForm();
 public void createPartControl(Composite parent) {
 	control = form.createControl(parent);
 	control.setMenu(editor.getContextMenu());
@@ -92,7 +92,7 @@ public Control getControl() {
 public PDEMultiPageEditor getEditor() {
 	return editor;
 }
-public Form getForm() {
+public SectionForm getForm() {
 	return form;
 }
 public String getLabel() {

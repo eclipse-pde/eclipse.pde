@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.*;
@@ -45,14 +45,14 @@ public class PluginSpecSection extends PDEFormSection {
 	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
 	
 	private Text idText;
-	private FormText titleText;
+	private FormEntry titleText;
 	private boolean updateNeeded;
 	private boolean fragment;
-	private FormText providerText;
-	private FormText versionText;
-	private FormText classText;
-	private FormText pluginIdText;
-	private FormText pluginVersionText;
+	private FormEntry providerText;
+	private FormEntry versionText;
+	private FormEntry classText;
+	private FormEntry pluginIdText;
+	private FormEntry pluginVersionText;
 
 public PluginSpecSection(ManifestFormPage page) {
 	super(page);
@@ -96,9 +96,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		isFragment()
 			? PDEPlugin.getResourceString(KEY_FNAME)
 			: PDEPlugin.getResourceString(KEY_NAME);
-	titleText = new FormText(createText(container, labelName, factory));
+	titleText = new FormEntry(createText(container, labelName, factory));
 	titleText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				pluginBase.setName(text.getValue());
 			} catch (CoreException e) {
@@ -110,18 +110,18 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			if (pluginBase.getModel().isEditable()==false) {
 		       name = PDEPlugin.getFormattedMessage(ManifestEditor.KEY_READ_ONLY, name);
 			}
-			getFormPage().getForm().setTitle(name);
+			getFormPage().getForm().setHeadingText(name);
 			((ManifestEditor) getFormPage().getEditor()).updateTitle();
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
 	versionText =
-		new FormText(
+		new FormEntry(
 			createText(container, PDEPlugin.getResourceString(KEY_VERSION), factory));
 	versionText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				PluginVersionIdentifier pvi = new PluginVersionIdentifier(text.getValue());
 				String formatted = pvi.toString();
@@ -137,95 +137,95 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				text.setValue(pluginBase.getVersion(), true);
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
 
 	providerText =
-		new FormText(
+		new FormEntry(
 			createText(container, PDEPlugin.getResourceString(KEY_PROVIDER_NAME), factory));
 	providerText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				pluginBase.setProviderName(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
 	if (isFragment()) {
 		final IFragment fragment = (IFragment) pluginBase;
-		Label link =
-			factory
-				.createHyperlinkLabel(
+		SelectableFormLabel link =
+			factory.createSelectableLabel(
 					container,
-					PDEPlugin.getResourceString(KEY_PLUGIN_ID),
-					new HyperlinkAdapter() {
+					PDEPlugin.getResourceString(KEY_PLUGIN_ID));
+		factory.turnIntoHyperlink(link, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 				handleOpen();
 			}
 		});
 		link.setToolTipText(PDEPlugin.getResourceString(KEY_PLUGIN_ID_TOOLTIP));
-		pluginIdText = new FormText(createText(container, factory, 1));
+		pluginIdText = new FormEntry(createText(container, factory, 1));
 		pluginIdText.addFormTextListener(new IFormTextListener() {
-			public void textValueChanged(FormText text) {
+			public void textValueChanged(FormEntry text) {
 				try {
 					fragment.setPluginId(text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormText text) {
+			public void textDirty(FormEntry text) {
 				forceDirty();
 			}
 		});
 		Label label =
 			factory.createLabel(container, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
-		pluginVersionText = new FormText(createText(container, factory, 1));
+		pluginVersionText = new FormEntry(createText(container, factory, 1));
 		pluginVersionText.addFormTextListener(new IFormTextListener() {
-			public void textValueChanged(FormText text) {
+			public void textValueChanged(FormEntry text) {
 				try {
 					fragment.setPluginVersion(text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormText text) {
+			public void textDirty(FormEntry text) {
 				forceDirty();
 			}
 		});
 	} else {
 		final IPlugin plugin = (IPlugin) pluginBase;
 		if (model.isEditable()) {
-			Label link =
+			SelectableFormLabel link =
 				factory
-					.createHyperlinkLabel(
+					.createSelectableLabel(
 						container,
-						PDEPlugin.getResourceString(KEY_CLASS),
+						PDEPlugin.getResourceString(KEY_CLASS));
+				factory.turnIntoHyperlink(link,
 						new HyperlinkAdapter() {
-				public void linkActivated(Control link) {
-					handleOpen();
-				}
-			});
+					public void linkActivated(Control link) {
+						handleOpen();
+					}
+				});
 			link.setToolTipText(PDEPlugin.getResourceString(KEY_CLASS_TOOLTIP));
 		} else {
 			Label label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_CLASS));
 		}
 
-		classText = new FormText(createText(container, factory, 1));
+		classText = new FormEntry(createText(container, factory, 1));
 		classText.addFormTextListener(new IFormTextListener() {
-			public void textValueChanged(FormText text) {
+			public void textValueChanged(FormEntry text) {
 				try {
 					plugin.setClassName(text.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
-			public void textDirty(FormText text) {
+			public void textDirty(FormEntry text) {
 				forceDirty();
 			}
 		});
@@ -323,7 +323,7 @@ public void setFocus() {
 public void setFragment(boolean newFragment) {
 	fragment = newFragment;
 }
-private void setIfDefined(FormText formText, String value) {
+private void setIfDefined(FormEntry formText, String value) {
 	if (value != null) {
 		formText.setValue(value, true);
 	}
@@ -341,7 +341,7 @@ public void update(Object input) {
 	IPluginModelBase model = (IPluginModelBase) input;
 	IPluginBase pluginBase = model.getPluginBase();
 	setIfDefined(titleText, pluginBase.getName());
-	getFormPage().getForm().setTitle(
+	getFormPage().getForm().setHeadingText(
 		pluginBase.getResourceString(pluginBase.getName()));
 	((ManifestEditor) getFormPage().getEditor()).updateTitle();
 	setIfDefined(idText, pluginBase.getId());

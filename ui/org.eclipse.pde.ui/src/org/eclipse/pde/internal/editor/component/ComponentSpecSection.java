@@ -14,7 +14,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.*;
@@ -35,14 +35,14 @@ public class ComponentSpecSection extends PDEFormSection {
 	public static final String KEY_BAD_VERSION_TITLE = "ComponentEditor.SpecSection.badVersionTitle";
 	public static final String KEY_BAD_VERSION_MESSAGE = "ComponentEditor.SpecSection.badVersionMessage";
 	
-	private FormText idText;
-	private FormText titleText;
+	private FormEntry idText;
+	private FormEntry titleText;
 	private Button createJarButton;
 	private Button synchronizeButton;
 
 	private boolean updateNeeded;
-	private FormText providerText;
-	private FormText versionText;
+	private FormEntry providerText;
+	private FormEntry versionText;
 
 public ComponentSpecSection(ComponentFormPage page) {
 	super(page);
@@ -84,60 +84,60 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	IComponentModel model = (IComponentModel) getFormPage().getModel();
 	final IComponent component = model.getComponent();
 
-	idText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_ID), factory));
+	idText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_ID), factory));
 	idText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				component.setId(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
 	idText.getControl().setEditable(false);
 
-	titleText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory));
+	titleText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory));
 	titleText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				component.setLabel(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-			getFormPage().getForm().setTitle(component.getLabel());
+			getFormPage().getForm().setHeadingText(component.getLabel());
 			((ComponentEditor) getFormPage().getEditor()).updateTitle();
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
-	versionText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory));
+	versionText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory));
 	versionText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			if (verifySetVersion(component, text.getValue())==false) {
 				warnBadVersionFormat(text.getValue());
 				text.setValue(component.getVersion());
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
 	versionText.getControl().setEditable(false);
 
-	providerText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_PROVIDER), factory));
+	providerText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_PROVIDER), factory));
 	providerText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				component.setProviderName(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 			forceDirty();
 		}
 	});
@@ -254,7 +254,7 @@ public void setFocus() {
 	if (idText != null)
 		idText.getControl().setFocus();
 }
-private void setIfDefined(FormText formText, String value) {
+private void setIfDefined(FormEntry formText, String value) {
 	if (value != null) {
 		formText.setValue(value, true);
 	}
@@ -273,7 +273,7 @@ public void update(Object input) {
 	IComponent component = model.getComponent();
 	setIfDefined(idText, component.getId());
 	setIfDefined(titleText, component.getLabel());
-	getFormPage().getForm().setTitle(component.getLabel());
+	getFormPage().getForm().setHeadingText(component.getLabel());
 	setIfDefined(versionText, component.getVersion());
 	setIfDefined(providerText, component.getProviderName());
 	updateNeeded=false;

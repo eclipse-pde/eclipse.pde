@@ -9,9 +9,9 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 
-public class ComponentForm extends ScrollableForm {
+public class ComponentForm extends ScrollableSectionForm {
 	private ComponentFormPage page;
 	private URLSection urlSection;
 	private ComponentSpecSection specSection;
@@ -59,7 +59,7 @@ public void initialize(Object modelObject) {
 	IComponentModel model = (IComponentModel) modelObject;
 	super.initialize(model);
 	IComponent component = model.getComponent();
-	setTitle(component.getLabel());
-	getControl().layout(true);
+	setHeadingText(component.getLabel());
+	((Composite)getControl()).layout(true);
 }
 }

@@ -1,9 +1,10 @@
-package org.eclipse.pde.internal.forms;
+package org.eclipse.pde.internal.forms.renamed;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
+
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.graphics.*;
 import java.util.*;
@@ -14,7 +15,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
-
+
+
 public class FormWidgetFactory {
 	public static final String DEFAULT_HEADER_COLOR = "__default__header__";
 	public static final String COLOR_BACKGROUND = "__bg";
@@ -32,7 +34,8 @@ public class FormWidgetFactory {
 	private BorderPainter borderPainter;
 	private Color borderColor;
 	private HyperlinkHandler hyperlinkHandler;
-
+
+
 	class BorderPainter implements PaintListener {
 		public void paintControl(PaintEvent event) {
 			Composite composite = (Composite) event.widget;
@@ -62,7 +65,8 @@ public class FormWidgetFactory {
 			}
 		}
 	}
-
+
+
 public FormWidgetFactory() {
 	this(Display.getCurrent());
 }

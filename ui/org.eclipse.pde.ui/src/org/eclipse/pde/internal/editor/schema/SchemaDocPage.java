@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.swt.graphics.*;
@@ -33,7 +33,7 @@ public class SchemaDocPage extends PDEChildFormPage {
 public SchemaDocPage(SchemaFormPage mainPage) {
 	super(mainPage, PDEPlugin.getResourceString(PAGE_TITLE));
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new DocForm(this);
 }
 public IContentOutlinePage getContentOutlinePage() {

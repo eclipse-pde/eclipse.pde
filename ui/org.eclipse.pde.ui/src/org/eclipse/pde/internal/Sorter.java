@@ -47,4 +47,5 @@ public void sortInPlace(Object[] unSortedCollection) {
 	if (size > 1)
 		quickSort(unSortedCollection, 0, size - 1);
 }
+
 }

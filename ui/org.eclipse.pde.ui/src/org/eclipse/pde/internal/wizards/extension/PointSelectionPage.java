@@ -42,7 +42,7 @@ public class PointSelectionPage
 
 	public class NameSorter extends ViewerSorter {
 		public boolean isSorterProperty(Object element, Object propertyId) {
-			return propertyId.equals("label");
+			return true;
 		}
 	}
 
@@ -80,8 +80,11 @@ public class PointSelectionPage
 		public String getColumnText(Object obj, int index) {
 			IPluginExtensionPoint info = (IPluginExtensionPoint) obj;
 			if (index == 0)
-				return info.getResourceString(info.getName());
+				return info.getTranslatedName();
 			return "";
+		}
+		public String getText(Object obj) {
+			return getColumnText(obj, 0);
 		}
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)

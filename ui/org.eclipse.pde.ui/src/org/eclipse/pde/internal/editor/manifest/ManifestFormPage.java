@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.base.model.*;
 
@@ -30,7 +30,7 @@ private void commitAllPages() {}
 public IContentOutlinePage createContentOutlinePage() {
 	return new ManifestFormOutlinePage(this);
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new ManifestForm(this);
 }
 }

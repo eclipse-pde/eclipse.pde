@@ -13,7 +13,7 @@ import org.eclipse.ui.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.*;
@@ -98,7 +98,8 @@ private boolean checkMarkers(Composite parent, FormWidgetFactory factory) {
 			message = PDEPlugin.getFormattedMessage(KEY_PLUGIN_MARKERS, args);
 		Label imageLabel = factory.createLabel(parent, null);
 		imageLabel.setImage(taskAlertImage);
-		Label label = factory.createLabel(parent, message);
+		//Label label = factory.createLabel(parent, message);
+		SelectableFormLabel label = factory.createSelectableLabel(parent, message);
 		label.setToolTipText(PDEPlugin.getResourceString(KEY_MARKERS_TOOLTIP));
 		handler.registerHyperlink(label, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
@@ -148,7 +149,8 @@ private boolean checkReferences(Composite parent, FormWidgetFactory factory) {
 	String message = PDEPlugin.getResourceString(KEY_UNRESOLVED);
 	Label imageLabel = factory.createLabel(parent, null);
 	imageLabel.setImage(alertImage);
-	Label label = factory.createLabel(parent, message);
+	//Label label = factory.createLabel(parent, message);
+	SelectableFormLabel label = factory.createSelectableLabel(parent, message);
 	label.setToolTipText(PDEPlugin.getResourceString(KEY_UNRESOLVED_TOOLTIP));
 	handler.registerHyperlink(label, new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
@@ -268,7 +270,7 @@ public void update() {
 		createAlerts(container, getFormPage().getForm().getFactory());
 		container.layout(true);
 		container.getParent().getParent().layout(true);
-		getFormPage().getForm().getControl().layout(true);
+		((Composite)getFormPage().getForm().getControl()).layout(true);
 		updateNeeded = false;
 	}
 }

@@ -12,11 +12,11 @@ import org.eclipse.jface.resource.*;
 import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 
-public class ManifestForm extends ScrollableForm {
+public class ManifestForm extends ScrollableSectionForm {
 	private PluginSpecSection pluginSection;
 	private ExtensionSection extensionSection;
 	private RuntimeSection runtimeSection;
@@ -42,6 +42,7 @@ protected void createFormClient(Composite parent) {
 	Control control;
 
 	alertSection = new AlertSection(page);
+	alertSection.setCollapsable(true);
 	control = alertSection.createControl(parent, getFactory());
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	gd.horizontalSpan = 2;
@@ -64,19 +65,19 @@ protected void createFormClient(Composite parent) {
 	rightColumn.setLayout(rightLayout);
 
 	pluginSection = new PluginSpecSection(page);
-	pluginSection.setTitleAsHyperlink(true);
+	pluginSection.setCollapsable(true);
 	control = pluginSection.createControl(leftColumn, getFactory());
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	extensionSection = new ExtensionSection(page);
-	extensionSection.setTitleAsHyperlink(true);
+	extensionSection.setCollapsable(true);
 	control = extensionSection.createControl(leftColumn, getFactory());
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	runtimeSection = new RuntimeSection(page);
-	runtimeSection.setTitleAsHyperlink(true);
+	runtimeSection.setCollapsable(true);
 	control = runtimeSection.createControl(rightColumn, getFactory());
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
@@ -85,14 +86,14 @@ protected void createFormClient(Composite parent) {
 
 	if (!fragment) {
 		requiresSection = new RequiresSection(page);
-		requiresSection.setTitleAsHyperlink(true);
+		requiresSection.setCollapsable(true);
 		control = requiresSection.createControl(rightColumn, getFactory());
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		control.setLayoutData(gd);
 	}
 
 	extensionPointSection = new ExtensionPointSection(page);
-	extensionPointSection.setTitleAsHyperlink(true);
+	extensionPointSection.setCollapsable(true);
 	control = extensionPointSection.createControl(rightColumn, getFactory());
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	gd.grabExcessVerticalSpace = true;
@@ -106,6 +107,7 @@ protected void createFormClient(Composite parent) {
 	registerSection(extensionSection);
 	registerSection(extensionPointSection);
 }
+
 public void initialize(Object modelObject) {
 	IPluginModelBase model = (IPluginModelBase)modelObject;
 	IPluginBase plugin = model.getPluginBase();
@@ -113,9 +115,9 @@ public void initialize(Object modelObject) {
 	if (model.isEditable()==false) {
 		name = PDEPlugin.getFormattedMessage(ManifestEditor.KEY_READ_ONLY, name);
 	}
-	setTitle(name);
+	setHeadingText(name);
 
 	super.initialize(model);
-	getControl().layout(true);
+	((Composite)getControl()).layout(true);
 }
 }

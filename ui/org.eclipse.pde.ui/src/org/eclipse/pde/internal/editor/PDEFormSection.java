@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.base.model.*;
 
 public abstract class PDEFormSection extends FormSection implements IModelChangedListener {
@@ -17,5 +17,13 @@ public PDEFormPage getFormPage() {
 	return formPage;
 }
 public void modelChanged(IModelChangedEvent e) {
+}
+
+protected void reflow() {
+	super.reflow();
+	SectionForm form = formPage.getForm();
+	if (form instanceof ScrollableSectionForm) {
+		((ScrollableSectionForm)form).updateScrollBars();
+	}
 }
 }

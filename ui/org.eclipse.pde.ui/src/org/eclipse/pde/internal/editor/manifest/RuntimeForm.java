@@ -10,11 +10,11 @@ import org.eclipse.jface.resource.*;
 import org.w3c.dom.Document;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 
-public class RuntimeForm extends ScrollableForm {
+public class RuntimeForm extends ScrollableSectionForm {
 	private ManifestRuntimePage page;
 	private LibrarySection librarySection;
 	public static final String TITLE = "ManifestEditor.RuntimeForm.title";
@@ -64,8 +64,8 @@ public void expandTo(Object object) {
    librarySection.expandTo(object);
 }
 public void initialize(Object model) {
-	setTitle(PDEPlugin.getResourceString(TITLE));
+	setHeadingText(PDEPlugin.getResourceString(TITLE));
 	super.initialize(model);
-	getControl().layout(true);
+	((Composite)getControl()).layout(true);
 }
 }

@@ -20,6 +20,7 @@
    <import plugin="org.eclipse.ant.ui"/>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.debug.ui"/>
+   <import plugin="org.eclipse.update.ui.forms"/>
 </requires>
 
 <runtime>
@@ -37,98 +38,98 @@
 <extension
       point="org.eclipse.ui.perspectives">
    <perspective
+         name="%perspective.name"
          icon="icons/full/view16/plugin_persp.gif"
          class="org.eclipse.pde.internal.PDEPerspective"
-         id="org.eclipse.pde.PDEPerspective"
-         name="%perspective.name">
+         id="org.eclipse.pde.PDEPerspective">
    </perspective>
 </extension>
 <extension
       point="org.eclipse.ui.preferencePages">
    <page
+         name="%preferences.main.name"
          class="org.eclipse.pde.internal.preferences.PDEBasePreferencePage"
-         id="org.eclipse.pde.MainPreferencePage"
-         name="%preferences.main.name">
+         id="org.eclipse.pde.MainPreferencePage">
    </page>
    <page
+         name="%preferences.runtimeTracing.name"
          category="org.eclipse.pde.MainPreferencePage"
          class="org.eclipse.pde.internal.preferences.RuntimeTracingPreferencePage"
-         id="org.eclipse.pde.RuntimeTracingPage"
-         name="%preferences.runtimeTracing.name">
+         id="org.eclipse.pde.RuntimeTracingPage">
    </page>
    <page
+         name="%preferences.advancedTracing.name"
          category="org.eclipse.pde.MainPreferencePage"
          class="org.eclipse.pde.internal.preferences.AdvancedTracingPreferencePage"
-         id="org.eclipse.pde.AdvancedTracingPage"
-         name="%preferences.advancedTracing.name">
+         id="org.eclipse.pde.AdvancedTracingPage">
    </page>
    <page
+         name="%preferences.buildpath.name"
          category="org.eclipse.pde.MainPreferencePage"
          class="org.eclipse.pde.internal.preferences.BuildpathPreferencePage"
-         id="org.eclipse.pde.BuildpathPreferencePage"
-         name="%preferences.buildpath.name">
+         id="org.eclipse.pde.BuildpathPreferencePage">
    </page>
 </extension>
 <extension
       point="org.eclipse.ui.newWizards">
    <category
-         id="org.eclipse.pde.PDE"
-         name="%new.category.name">
+         name="%new.category.name"
+         id="org.eclipse.pde.PDE">
    </category>
    <wizard
+         availableAsShortcut="true"
+         name="%new.pluginProject.name"
          icon="icons/full/ctool16/newpprj_wiz.gif"
          category="org.eclipse.pde.PDE"
-         availableAsShortcut="true"
          class="org.eclipse.pde.internal.wizards.project.NewProjectWizard"
-         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
-         id="org.eclipse.pde.internal.wizards.project.NewProjectWizard"
          project="true"
-         name="%new.pluginProject.name">
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.wizards.project.NewProjectWizard">
       <description>
          %new.pluginProject.description
       </description>
    </wizard>
    <wizard
+         name="%new.fragmentProject.name"
          icon="icons/full/ctool16/newfprj_wiz.gif"
          category="org.eclipse.pde.PDE"
          class="org.eclipse.pde.internal.wizards.project.NewFragmentProjectWizard"
-         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
-         id="org.eclipse.pde.internal.wizards.project.NewFragmentWizard"
          project="true"
-         name="%new.fragmentProject.name">
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.wizards.project.NewFragmentWizard">
       <description>
          %new.fragmentProject.description
       </description>
    </wizard>
    <wizard
+         name="%new.schemaFile.name"
          icon="icons/full/obj16/schema_obj.gif"
          category="org.eclipse.pde.PDE"
          class="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard"
-         id="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard"
-         name="%new.schemaFile.name">
+         id="org.eclipse.pde.internal.wizards.extension.NewSchemaFileWizard">
       <description>
          %new.schemaFile.description
       </description>
    </wizard>
    <wizard
+         availableAsShortcut="false"
+         name="%new.convert.name"
          icon="icons/full/ctool16/convjpprj_wiz.gif"
          category="org.eclipse.pde.PDE"
-         availableAsShortcut="false"
          class="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard"
-         id="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard"
-         name="%new.convert.name">
+         id="org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard">
       <description>
          %new.convert.description
       </description>
    </wizard>
    <wizard
+         name="%new.component.name"
          icon="icons/full/ctool16/newpcomp_wiz.gif"
          category="org.eclipse.pde.PDE"
          class="org.eclipse.pde.internal.component.NewComponentProjectWizard"
-         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
-         id="org.eclipse.pde.internal.component.NewComponentProjectWizard"
          project="true"
-         name="%new.component.name">
+         finalPerspective="org.eclipse.pde.internal.PDEPerspective"
+         id="org.eclipse.pde.internal.component.NewComponentProjectWizard">
       <description>
          %new.component.description
       </description>
@@ -137,20 +138,20 @@
 <extension
       point="org.eclipse.pde.projectGenerators">
    <wizard
+         name="%projectGenerators.defaultPlugin.name"
          icon="icons/full/ctool16/defcon_wiz.gif"
          class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
-         id="org.eclipse.pde.projectGenerators.default"
-         name="%projectGenerators.defaultPlugin.name">
+         id="org.eclipse.pde.projectGenerators.default">
       <description>
          %projectGenerators.defaultPlugin.description
       </description>
    </wizard>
    <wizard
+         fragmentWizard="true"
+         name="%projectGenerators.defaultFragment.name"
          icon="icons/full/ctool16/defcon_wiz.gif"
          class="org.eclipse.pde.internal.wizards.project.PluginCodeGeneratorWizard"
-         fragmentWizard="true"
-         id="org.eclipse.pde.projectGenerators.defaultFragment"
-         name="%projectGenerators.defaultFragment.name">
+         id="org.eclipse.pde.projectGenerators.defaultFragment">
       <description>
          %projectGenerators.defaultFragment.description
       </description>
@@ -159,49 +160,49 @@
 <extension
       point="org.eclipse.ui.editors">
    <editor
+         name="%editors.pluginManifest.name"
+         default="true"
          icon="icons/full/obj16/plugin_mf_obj.gif"
+         filenames="plugin.xml"
          contributorClass="org.eclipse.pde.internal.editor.manifest.ManifestEditorContributor"
          class="org.eclipse.pde.internal.editor.manifest.ManifestEditor"
-         id="org.eclipse.pde.manifestEditor"
-         default="true"
-         filenames="plugin.xml"
-         name="%editors.pluginManifest.name">
+         id="org.eclipse.pde.manifestEditor">
    </editor>
    <editor
+         name="%editors.fragmentManifest.name"
+         default="true"
          icon="icons/full/obj16/frgmt_mf_obj.gif"
+         filenames="fragment.xml"
          contributorClass="org.eclipse.pde.internal.editor.manifest.ManifestEditorContributor"
          class="org.eclipse.pde.internal.editor.manifest.FragmentManifestEditor"
-         id="org.eclipse.pde.fragmentEditor"
-         default="true"
-         filenames="fragment.xml"
-         name="%editors.fragmentManifest.name">
+         id="org.eclipse.pde.fragmentEditor">
    </editor>
    <editor
+         name="%editors.schema.name"
+         default="false"
          icon="icons/full/obj16/schema_obj.gif"
+         extensions="xsd,mxsd"
          contributorClass="org.eclipse.pde.internal.editor.schema.SchemaEditorContributor"
          class="org.eclipse.pde.internal.editor.schema.SchemaEditor"
-         id="org.eclipse.pde.schemaEditor"
-         default="false"
-         name="%editors.schema.name"
-         extensions="xsd,mxsd">
+         id="org.eclipse.pde.schemaEditor">
    </editor>
    <editor
+         name="%editors.buildProperties.name"
+         default="true"
          icon="icons/full/obj16/build_exec.gif"
+         filenames="build.properties"
          contributorClass="org.eclipse.pde.internal.editor.build.BuildEditorContributor"
          class="org.eclipse.pde.internal.editor.build.BuildPropertiesEditor"
-         id="org.eclipse.pde.buildEditor"
-         default="true"
-         filenames="build.properties"
-         name="%editors.buildProperties.name">
+         id="org.eclipse.pde.buildEditor">
    </editor>
    <editor
+         name="%editors.componentManifest.name"
+         default="true"
          icon="icons/full/obj16/comp_mf_obj.gif"
+         filenames="install.xml"
          contributorClass="org.eclipse.pde.internal.editor.component.ComponentEditorContributor"
          class="org.eclipse.pde.internal.editor.component.ComponentEditor"
-         id="org.eclipse.pde.componentEditor"
-         default="true"
-         filenames="install.xml"
-         name="%editors.componentManifest.name">
+         id="org.eclipse.pde.componentEditor">
    </editor>
 </extension>
 <extension
@@ -257,25 +258,25 @@
 <extension
       point="org.eclipse.pde.newExtension">
    <category
-         id="custom"
-         name="%newExtension.custom">
+         name="%newExtension.custom"
+         id="custom">
    </category>
    <category
-         id="workbench"
+         name="%newExtension.custom.workbench"
          parentCategory="custom"
-         name="%newExtension.custom.workbench">
+         id="workbench">
    </category>
    <category
-         id="generic"
-         name="%newExtension.generic">
+         name="%newExtension.generic"
+         id="generic">
    </category>
    <wizard
+         availableAsShortcut="true"
+         name="%newExtension.generic.name"
          icon="icons/full/ctool16/newex_wiz.gif"
          category="generic"
-         availableAsShortcut="true"
          class="org.eclipse.pde.internal.wizards.extension.GenericExtensionWizard"
-         id="com.ibm.etools.plugins.generic"
-         name="%newExtension.generic.name">
+         id="com.ibm.etools.plugins.generic">
       <description>
          %newExtension.generic.desc
       </description>
@@ -284,232 +285,232 @@
 <extension
       point="org.eclipse.ui.popupMenus">
    <objectContribution
-         id="org.eclipse.pde.popupMenus"
-         objectClass="org.eclipse.core.resources.IProject">
+         objectClass="org.eclipse.core.resources.IProject"
+         id="org.eclipse.pde.popupMenus">
       <filter
-            value="org.eclipse.jdt.core.javanature"
-            name="projectNature">
+            name="projectNature"
+            value="org.eclipse.jdt.core.javanature">
       </filter>
       <action
-            menubarPath="additions"
+            label="%popupMenus.convert.label"
             class="org.eclipse.pde.internal.wizards.project.ConvertJavaToPDEProjectAction"
-            id="org.eclipse.pde.ConvertJavaToPDEProject"
-            label="%popupMenus.convert.label">
+            menubarPath="additions"
+            id="org.eclipse.pde.ConvertJavaToPDEProject">
       </action>
    </objectContribution>
    <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
          nameFilter="*install.xml"
-         id="org.eclipse.pde.componentJar"
-         objectClass="org.eclipse.core.resources.IFile">
+         id="org.eclipse.pde.componentJar">
       <filter
-            value="org.eclipse.pde.ComponentNature"
-            name="projectNature">
+            name="projectNature"
+            value="org.eclipse.pde.ComponentNature">
       </filter>
       <action
-            menubarPath="additions"
-            enablesFor="1"
+            label="%popupMenus.createJar.label"
             class="org.eclipse.pde.internal.component.BuildComponentJarAction"
-            id="org.eclipse.pde.BuildComponentJar"
-            label="%popupMenus.createJar.label">
+            menubarPath="additions"
+            enablesFor="1"
+            id="org.eclipse.pde.BuildComponentJar">
       </action>
    </objectContribution>
    <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
          nameFilter="*plugin.xml"
-         id="org.eclipse.pde.pluginBuild"
-         objectClass="org.eclipse.core.resources.IFile">
+         id="org.eclipse.pde.pluginBuild">
       <filter
-            value="org.eclipse.pde.PluginNature"
-            name="projectNature">
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
       </filter>
       <action
+            label="%popupMenus.buildPlugin.label"
+            class="org.eclipse.pde.internal.component.BuildPluginAction"
             menubarPath="additions"
             enablesFor="1"
-            class="org.eclipse.pde.internal.component.BuildPluginAction"
-            id="org.eclipse.pde.BuildPluginAction"
-            label="%popupMenus.buildPlugin.label">
+            id="org.eclipse.pde.BuildPluginAction">
       </action>
    </objectContribution>
    <objectContribution
+         objectClass="org.eclipse.core.resources.IFile"
          nameFilter="*fragment.xml"
-         id="org.eclipse.pde.fragmentBuild"
-         objectClass="org.eclipse.core.resources.IFile">
+         id="org.eclipse.pde.fragmentBuild">
       <filter
-            value="org.eclipse.pde.PluginNature"
-            name="projectNature">
+            name="projectNature"
+            value="org.eclipse.pde.PluginNature">
       </filter>
       <action
+            label="%popupMenus.buildFragment.label"
+            class="org.eclipse.pde.internal.component.BuildPluginAction"
             menubarPath="additions"
             enablesFor="1"
-            class="org.eclipse.pde.internal.component.BuildPluginAction"
-            id="org.eclipse.pde.BuildFragmentAction"
-            label="%popupMenus.buildFragment.label">
+            id="org.eclipse.pde.BuildFragmentAction">
       </action>
    </objectContribution>
 </extension>
 <extension
       point="org.eclipse.debug.core.launchers">
    <launcher
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher"
+         label="%launcher.regular.label"
          modes="run, debug"
-         id="org.eclipse.pde.WorkbenchRunLauncher"
-         label="%launcher.regular.label">
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher"
+         id="org.eclipse.pde.WorkbenchRunLauncher">
    </launcher>
    <launcher
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher:tracingEnabled"
+         label="%launcher.tracing.label"
          modes="run, debug"
-         id="org.eclipse.pde.TracingWorkbenchRunLauncher"
-         label="%launcher.tracing.label">
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher:tracingEnabled"
+         id="org.eclipse.pde.TracingWorkbenchRunLauncher">
    </launcher>
 </extension>
 <extension
       point="org.eclipse.pde.schemaMap">
    <map
-         schema="schema/map/org.eclipse.ant.core/antObjects.mxsd"
-         point="org.eclipse.ant.core.antObjects">
+         point="org.eclipse.ant.core.antObjects"
+         schema="schema/map/org.eclipse.ant.core/antObjects.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ant.core/antTasks.mxsd"
-         point="org.eclipse.ant.core.antTasks">
+         point="org.eclipse.ant.core.antTasks"
+         schema="schema/map/org.eclipse.ant.core/antTasks.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ant.core/antTypes.mxsd"
-         point="org.eclipse.ant.core.antTypes">
+         point="org.eclipse.ant.core.antTypes"
+         schema="schema/map/org.eclipse.ant.core/antTypes.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.compare/contentMergeViewers.mxsd"
-         point="org.eclipse.compare.contentMergeViewers">
+         point="org.eclipse.compare.contentMergeViewers"
+         schema="schema/map/org.eclipse.compare/contentMergeViewers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.compare/contentViewers.mxsd"
-         point="org.eclipse.compare.contentViewers">
+         point="org.eclipse.compare.contentViewers"
+         schema="schema/map/org.eclipse.compare/contentViewers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.compare/structureCreators.mxsd"
-         point="org.eclipse.compare.structureCreators">
+         point="org.eclipse.compare.structureCreators"
+         schema="schema/map/org.eclipse.compare/structureCreators.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.compare/structureMergeViewers.mxsd"
-         point="org.eclipse.compare.structureMergeViewers">
+         point="org.eclipse.compare.structureMergeViewers"
+         schema="schema/map/org.eclipse.compare/structureMergeViewers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.resources/builders.mxsd"
-         point="org.eclipse.core.resources.builders">
+         point="org.eclipse.core.resources.builders"
+         schema="schema/map/org.eclipse.core.resources/builders.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.resources/markers.mxsd"
-         point="org.eclipse.core.resources.markers">
+         point="org.eclipse.core.resources.markers"
+         schema="schema/map/org.eclipse.core.resources/markers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.resources/natures.mxsd"
-         point="org.eclipse.core.resources.natures">
+         point="org.eclipse.core.resources.natures"
+         schema="schema/map/org.eclipse.core.resources/natures.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.runtime/applications.mxsd"
-         point="org.eclipse.core.runtime.applications">
+         point="org.eclipse.core.runtime.applications"
+         schema="schema/map/org.eclipse.core.runtime/applications.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.runtime/urlHandlers.mxsd"
-         point="org.eclipse.core.runtime.urlHandlers">
+         point="org.eclipse.core.runtime.urlHandlers"
+         schema="schema/map/org.eclipse.core.runtime/urlHandlers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.core.target/targets.mxsd"
-         point="org.eclipse.core.target.targets">
+         point="org.eclipse.core.target.targets"
+         schema="schema/map/org.eclipse.core.target/targets.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.debug.core/launchers.mxsd"
-         point="org.eclipse.debug.core.launchers">
+         point="org.eclipse.debug.core.launchers"
+         schema="schema/map/org.eclipse.debug.core/launchers.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.debug.ui/debugModelPresentations.mxsd"
-         point="org.eclipse.debug.ui.debugModelPresentations">
+         point="org.eclipse.debug.ui.debugModelPresentations"
+         schema="schema/map/org.eclipse.debug.ui/debugModelPresentations.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.help/contexts.mxsd"
-         point="org.eclipse.help.contexts">
+         point="org.eclipse.help.contexts"
+         schema="schema/map/org.eclipse.help/contexts.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.help/contributions.mxsd"
-         point="org.eclipse.help.contributions">
+         point="org.eclipse.help.contributions"
+         schema="schema/map/org.eclipse.help/contributions.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.help/support.mxsd"
-         point="org.eclipse.help.support">
+         point="org.eclipse.help.support"
+         schema="schema/map/org.eclipse.help/support.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.jdt.launching/vmRunners.mxsd"
-         point="org.eclipse.jdt.launching.vmRunners">
+         point="org.eclipse.jdt.launching.vmRunners"
+         schema="schema/map/org.eclipse.jdt.launching/vmRunners.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.jdt.ui/javaElementFilters.mxsd"
-         point="org.eclipse.jdt.ui.javaElementFilters">
+         point="org.eclipse.jdt.ui.javaElementFilters"
+         schema="schema/map/org.eclipse.jdt.ui/javaElementFilters.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.search/searchPages.mxsd"
-         point="org.eclipse.search.searchPages">
+         point="org.eclipse.search.searchPages"
+         schema="schema/map/org.eclipse.search/searchPages.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.search/searchResultSorters.mxsd"
-         point="org.eclipse.search.searchResultSorters">
+         point="org.eclipse.search.searchResultSorters"
+         schema="schema/map/org.eclipse.search/searchResultSorters.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/actionSets.mxsd"
-         point="org.eclipse.ui.actionSets">
+         point="org.eclipse.ui.actionSets"
+         schema="schema/map/org.eclipse.ui/actionSets.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/dropActions.mxsd"
-         point="org.eclipse.ui.dropActions">
+         point="org.eclipse.ui.dropActions"
+         schema="schema/map/org.eclipse.ui/dropActions.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/editorActions.mxsd"
-         point="org.eclipse.ui.editorActions">
+         point="org.eclipse.ui.editorActions"
+         schema="schema/map/org.eclipse.ui/editorActions.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/editors.mxsd"
-         point="org.eclipse.ui.editors">
+         point="org.eclipse.ui.editors"
+         schema="schema/map/org.eclipse.ui/editors.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/elementFactories.mxsd"
-         point="org.eclipse.ui.elementFactories">
+         point="org.eclipse.ui.elementFactories"
+         schema="schema/map/org.eclipse.ui/elementFactories.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/exportWizards.mxsd"
-         point="org.eclipse.ui.exportWizards">
+         point="org.eclipse.ui.exportWizards"
+         schema="schema/map/org.eclipse.ui/exportWizards.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/importWizards.mxsd"
-         point="org.eclipse.ui.importWizards">
+         point="org.eclipse.ui.importWizards"
+         schema="schema/map/org.eclipse.ui/importWizards.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/newWizards.mxsd"
-         point="org.eclipse.ui.newWizards">
+         point="org.eclipse.ui.newWizards"
+         schema="schema/map/org.eclipse.ui/newWizards.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/perspectiveExtensions.mxsd"
-         point="org.eclipse.ui.perspectiveExtensions">
+         point="org.eclipse.ui.perspectiveExtensions"
+         schema="schema/map/org.eclipse.ui/perspectiveExtensions.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/perspectives.mxsd"
-         point="org.eclipse.ui.perspectives">
+         point="org.eclipse.ui.perspectives"
+         schema="schema/map/org.eclipse.ui/perspectives.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/popupMenus.mxsd"
-         point="org.eclipse.ui.popupMenus">
+         point="org.eclipse.ui.popupMenus"
+         schema="schema/map/org.eclipse.ui/popupMenus.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/preferencePages.mxsd"
-         point="org.eclipse.ui.preferencePages">
+         point="org.eclipse.ui.preferencePages"
+         schema="schema/map/org.eclipse.ui/preferencePages.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/propertyPages.mxsd"
-         point="org.eclipse.ui.propertyPages">
+         point="org.eclipse.ui.propertyPages"
+         schema="schema/map/org.eclipse.ui/propertyPages.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/viewActions.mxsd"
-         point="org.eclipse.ui.viewActions">
+         point="org.eclipse.ui.viewActions"
+         schema="schema/map/org.eclipse.ui/viewActions.mxsd">
    </map>
    <map
-         schema="schema/map/org.eclipse.ui/views.mxsd"
-         point="org.eclipse.ui.views">
+         point="org.eclipse.ui.views"
+         schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
 </extension>
 </plugin>

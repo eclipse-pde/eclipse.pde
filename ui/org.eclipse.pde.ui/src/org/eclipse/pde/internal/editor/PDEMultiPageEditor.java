@@ -26,7 +26,7 @@ import org.eclipse.ui.editors.text.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.base.model.IModel;
 import org.eclipse.jface.viewers.*;
 import java.util.*;

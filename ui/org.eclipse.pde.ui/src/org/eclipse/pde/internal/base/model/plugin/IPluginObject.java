@@ -27,6 +27,14 @@ IPluginModelBase getModel();
  *@return the object name
  */
 String getName();
+
+/**
+ * Returns the translated name of this model object using
+ * the result of 'getName()' call as a resource key.
+ * @return the translated name or the original name if not found
+ */
+String getTranslatedName();
+
 /**
  * Returns the parent of this model object.
  *

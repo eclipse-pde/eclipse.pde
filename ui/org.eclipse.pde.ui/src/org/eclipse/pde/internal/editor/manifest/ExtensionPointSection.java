@@ -12,7 +12,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.w3c.dom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
@@ -43,7 +43,8 @@ public ExtensionPointSection(ManifestFormPage page) {
 private void addExtensionPointLink(IPluginExtensionPoint point) {
 	Label imageLabel = factory.createLabel(pointParent, "");
 	String name = point.getResourceString(point.getName());
-	Label hyperlink = factory.createHyperlinkLabel(pointParent, name, this);
+	SelectableFormLabel hyperlink = factory.createSelectableLabel(pointParent, name);
+	factory.turnIntoHyperlink(hyperlink, this);
 	hyperlink.setToolTipText(point.getId());
 	imageLabel.setImage(pointImage);
 	hyperlink.setData(point);

@@ -20,7 +20,7 @@ import org.eclipse.swt.events.*;
 import org.w3c.dom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
@@ -68,7 +68,7 @@ public boolean addExternalPlugins(IPluginModel model) {
 	}
 	if (!havePluginsToAdd)
 		return false;
-	Label label = createHeader(pluginListParent, PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS), false);
+	SelectableFormLabel label = createHeader(pluginListParent, PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS), false);
 	label.setToolTipText(PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS_TOOLTIP));
 	factory.turnIntoHyperlink(label, new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
@@ -122,7 +122,7 @@ public boolean addUnresolvedPlugins(IPluginModel model) {
 	if (!havePluginsToAdd)
 		return false;
 
-	Label label = createHeader(pluginListParent, PDEPlugin.getResourceString(KEY_UNRESOLVED_PLUGINS), false);
+	SelectableFormLabel label = createHeader(pluginListParent, PDEPlugin.getResourceString(KEY_UNRESOLVED_PLUGINS), false);
 	label.setToolTipText(PDEPlugin.getResourceString(KEY_EXTERNAL_PLUGINS_TOOLTIP));
 	factory.turnIntoHyperlink(label, new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
@@ -226,10 +226,10 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	pluginListParent.setLayoutData(gd);
 	return container;
 }
-private Label createHeader(Composite parent, String text) {
+private SelectableFormLabel createHeader(Composite parent, String text) {
 	return createHeader(parent, text, true);
 }
-private Label createHeader(
+private SelectableFormLabel createHeader(
 	Composite parent,
 	String text,
 	boolean addSeparator) {
@@ -239,7 +239,14 @@ private Label createHeader(
 	//layout.marginHeight = 0;
 	layout.verticalSpacing = 2;
 	header.setLayout(layout);
-	Label label = factory.createLabel(header, text);
+	SelectableFormLabel label = null;
+	
+	if (addSeparator) {
+		factory.createLabel(header, text);
+	}
+	else {
+		label = factory.createSelectableLabel(header, text);
+	}
 	GridData gd;
 	if (addSeparator) {
 		Control sep = factory.createCompositeSeparator(header);
@@ -359,7 +366,7 @@ public void update(Object input) {
 	pluginListParent.getDisplay().asyncExec(new Runnable() {
 		public void run() {
 			fireSelectionNotification(null);
-			((ScrollableForm)getFormPage().getForm()).update();
+			((ScrollableSectionForm)getFormPage().getForm()).update();
 		}
 	});
 	needsUpdate = false;

@@ -9,13 +9,13 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.text.*;
 
 
-public class DocForm extends ScrollableForm {
+public class DocForm extends ScrollableSectionForm {
 	private IColorManager colorManager = new ColorManager();
 	private DocSection docSection;
 	public static final String FORM_TITLE = "SchemaEditor.DocForm.title";
@@ -53,7 +53,7 @@ public void expandTo(Object object) {
 	docSection.expandTo(object);
 }
 public void initialize(Object model) {
-	setTitle(PDEPlugin.getResourceString(FORM_TITLE));
+	setHeadingText(PDEPlugin.getResourceString(FORM_TITLE));
 	super.initialize(model);
 }
 public void updateEditorInput(Object obj) {

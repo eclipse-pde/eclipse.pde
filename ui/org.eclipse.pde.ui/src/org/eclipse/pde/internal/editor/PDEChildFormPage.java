@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.editor;
 import org.eclipse.jface.action.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public abstract class PDEChildFormPage extends PDEFormPage {
 	private PDEFormPage parentPage;
@@ -19,7 +19,7 @@ public PDEChildFormPage(PDEFormPage parentPage, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return null;
 }
-protected abstract Form createForm();
+protected abstract SectionForm createForm();
 public void doSave(IProgressMonitor monitor) {
 	getForm().commitChanges(true);
 	parentPage.doSave(monitor);

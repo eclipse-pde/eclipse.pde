@@ -12,7 +12,7 @@ import org.eclipse.swt.events.*;
 import org.w3c.dom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
@@ -47,7 +47,8 @@ private void addExtensionLink(IPluginExtension extension) {
 
 	String name = point;
 	if (pointInfo!=null) name = pointInfo.getResourceString(pointInfo.getName());   
-	Label hyperlink = factory.createHyperlinkLabel(extensionParent, name, this);
+	SelectableFormLabel hyperlink = factory.createSelectableLabel(extensionParent, name);
+	factory.turnIntoHyperlink(hyperlink, this);
 	hyperlink.setToolTipText(point);
 	hyperlink.setData(extension);
 	imageLabel.setImage(extensionImage);
@@ -111,7 +112,7 @@ public void linkEntered(Control link) {
 	IPDEEditorPage page =
 		getFormPage().getEditor().getPage(ManifestEditor.EXTENSIONS_PAGE);
 	String status =
-		((PDEFormPage) page).getStatusText() + "#" + ((Label) link).getText();
+		((PDEFormPage) page).getStatusText() + "#" + ((SelectableFormLabel) link).getText();
 	IStatusLineManager manager = getFormPage().getEditor().getStatusLineManager();
 	if (manager != null)
 		manager.setMessage(status);

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.swt.graphics.*;
@@ -37,7 +37,7 @@ public SchemaFormPage(PDEMultiPageEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new SchemaFormOutlinePage(this);
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new SchemaForm(this);
 }
 public IPropertySheetPage createPropertySheetPage() {

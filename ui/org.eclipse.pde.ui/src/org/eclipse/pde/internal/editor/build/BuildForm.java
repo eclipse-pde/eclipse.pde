@@ -9,10 +9,10 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.*;
 
-public class BuildForm extends ScrollableForm {
+public class BuildForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "BuildEditor.Form.title";
 	public static final String FORM_RTITLE = "BuildEditor.Form.rtitle";
 	private BuildPage page;
@@ -64,7 +64,7 @@ public void initialize(Object modelObject) {
 	} else
 		title =
 			PDEPlugin.getResourceString(FORM_TITLE);
-	setTitle(title);
-	getControl().layout(true);
+	setHeadingText(title);
+	((Composite)getControl()).layout(true);
 }
 }

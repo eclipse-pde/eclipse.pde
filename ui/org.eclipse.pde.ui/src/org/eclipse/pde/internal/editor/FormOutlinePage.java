@@ -10,7 +10,7 @@ import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.elements.*;

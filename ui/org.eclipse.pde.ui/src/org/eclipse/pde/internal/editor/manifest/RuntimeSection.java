@@ -12,7 +12,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.w3c.dom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
@@ -42,7 +42,8 @@ public RuntimeSection(ManifestFormPage page) {
 }
 private void addLibraryLink(IPluginLibrary library) {
 	Label imageLabel = factory.createLabel(libraryParent, "");
-	Label hyperlink = factory.createHyperlinkLabel(libraryParent, library.getName(), this);
+	SelectableFormLabel hyperlink = factory.createSelectableLabel(libraryParent, library.getName());
+	factory.turnIntoHyperlink(hyperlink, this);
 	imageLabel.setImage(libraryImage);
 	hyperlink.setData(library);
 }

@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.swt.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.w3c.dom.Document;
 import org.eclipse.pde.internal.PDEPluginImages;
@@ -37,7 +37,7 @@ public IContentOutlinePage createContentOutlinePage() {
 		form);
 */
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new DependenciesForm(this);
 }
 

@@ -14,7 +14,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.*;
@@ -24,7 +24,7 @@ public class DescriptionSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ComponentEditor.DescriptionSection.title";
 	private boolean updateNeeded;
 	private boolean ignoreChange=false;
-	private FormText descriptionText;
+	private FormEntry descriptionText;
 
 public DescriptionSection(ComponentFormPage page) {
 	super(page);
@@ -50,7 +50,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	gd.heightHint = 48;
 	descControl.setLayoutData(gd);
-	descriptionText = new FormText(descControl);
+	descriptionText = new FormEntry(descControl);
 	descControl.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			if (ignoreChange) return;
@@ -60,14 +60,14 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		}
 	});
 	descriptionText.addFormTextListener(new IFormTextListener() {
-		public void textValueChanged(FormText text) {
+		public void textValueChanged(FormEntry text) {
 			try {
 				component.setDescription(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
-		public void textDirty(FormText text) {
+		public void textDirty(FormEntry text) {
 		}
 	});
 	if (SWT.getPlatform().equals("motif")==false)
@@ -99,7 +99,7 @@ public void setFocus() {
 	if (descriptionText != null)
 		descriptionText.getControl().setFocus();
 }
-private void setIfDefined(FormText formText, String value) {
+private void setIfDefined(FormEntry formText, String value) {
 	if (value != null) {
 		formText.setValue(value);
 		formText.setDirty(false);

@@ -9,7 +9,7 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public interface IPDEEditorPage extends IEditorPart, IFormPage {
 

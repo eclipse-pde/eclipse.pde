@@ -1,9 +1,10 @@
-package org.eclipse.pde.internal.forms;
+package org.eclipse.pde.internal.forms.renamed;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
+
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
@@ -12,7 +13,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.resource.*;
-
+
+
 
 public abstract class FormSection implements IPropertyChangeListener {
 	public static final int SELECTION = 1;
@@ -45,7 +47,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 class SectionLayout extends Layout {
 	int vspacing = 3;
 	int sepHeight = 2;
-
+
+
 	protected Point computeSize(Composite parent, int wHint, int hHint, boolean flush) {
 		int width = 0;
 		int height = 0;
@@ -55,7 +58,8 @@ class SectionLayout extends Layout {
 		   width = wHint;
 		if (hHint != SWT.DEFAULT)
 			height = hHint;
-
+
+
 		cwidth = width;
 				
 		if (client != null) {
@@ -128,7 +132,8 @@ public final Control createControl(
 	SectionLayout slayout = new SectionLayout();
 	section.setLayout(slayout);
 	section.setData(this);
-
+
+
 	GridData gd;
 	if (headerPainted) {
 		Color headerColor = factory.getColor(getHeaderColorKey());
@@ -141,7 +146,8 @@ public final Control createControl(
 			});
 		}
 	}
-
+
+
 	if (addSeparator) {
         //separator = factory.createSeparator(section, SWT.HORIZONTAL);
 		separator = factory.createCompositeSeparator(section);
@@ -226,7 +232,8 @@ public void sectionChanged(FormSection source, int changeType, Object changeObje
 public void setAddSeparator(boolean newAddSeparator) {
 	addSeparator = newAddSeparator;
 }
-
+
+
 private String trimNewLines(String text) {
 	StringBuffer buff = new StringBuffer();
 	for (int i=0; i<text.length(); i++) {
@@ -283,11 +290,13 @@ public void setWidthHint(int newWidthHint) {
 public void titleActivated() {
 }
 public void update() {}
-public void propertyChange(PropertyChangeEvent arg0) {
+
+public void propertyChange(PropertyChangeEvent arg0) {
 	if (control!=null && header!=null) {
 		header.setFont(JFaceResources.getBannerFont());
 		control.layout(true);
 	}
 }
-
+
+
 }

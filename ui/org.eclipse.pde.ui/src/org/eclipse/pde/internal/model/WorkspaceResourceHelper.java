@@ -5,12 +5,16 @@ package org.eclipse.pde.internal.model;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceChangeEvent;
+
 import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.base.model.*;
+ 
 public class WorkspaceResourceHelper extends NLResourceHelper
 implements IResourceChangeListener {
 	private IFile file;
+	private IModelChangeProvider changeProvider;
 
 	/**
 	 * Constructor for WorkspaceResourceHelper
@@ -53,7 +57,18 @@ implements IResourceChangeListener {
 		IResource resource = delta.getResource();
 		if (resource.equals(file)) {
 			fBundle = null;
+			if (changeProvider!=null) {
+				// fire 'world changed' in the model
+				// to force views to refresh because
+				// translatable names changed
+				ModelChangedEvent e= new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null);
+				changeProvider.fireModelChanged(e);
+			}
 		}
 		return true;
+	}
+	
+	public void setModelChangeProvider(IModelChangeProvider changeProvider) {
+		this.changeProvider = changeProvider;
 	}
 }

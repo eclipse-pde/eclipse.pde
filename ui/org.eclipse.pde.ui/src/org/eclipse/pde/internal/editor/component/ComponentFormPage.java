@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.component;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.pde.internal.editor.*;
 
@@ -16,7 +16,7 @@ public ComponentFormPage(PDEMultiPageEditor editor, String title) {
 public IContentOutlinePage createContentOutlinePage() {
 	return new ComponentOutlinePage(this);
 }
-protected Form createForm() {
+protected SectionForm createForm() {
 	return new ComponentForm(this);
 }
 }

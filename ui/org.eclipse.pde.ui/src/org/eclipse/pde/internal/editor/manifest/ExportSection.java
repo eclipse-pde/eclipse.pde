@@ -10,7 +10,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.forms.*;
+import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.*;

@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 
 public abstract class PluginObject extends PlatformObject implements IPluginObject {
 	protected String name;
+	private String translatedName;
 	private IPluginObject parent;
 	private IPluginModelBase model;
 	private Vector comments;
@@ -54,6 +55,16 @@ public IPluginModelBase getModel() {
 public String getName() {
 	return name;
 }
+
+public String getTranslatedName() {
+	if (translatedName!=null && !model.isEditable())
+	   return translatedName;
+	if (translatedName==null && name!=null && model!=null) {
+		translatedName = model.getResourceString(name);
+	}
+	return translatedName;
+}
+
 String getNodeAttribute(Node node, String name) {
 	Node attribute = node.getAttributes().getNamedItem(name);
 	if (attribute != null)
