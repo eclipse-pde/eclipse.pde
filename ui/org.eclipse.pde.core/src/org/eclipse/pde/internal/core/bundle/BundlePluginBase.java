@@ -128,7 +128,7 @@ public class BundlePluginBase
 				IPluginLibrary library = (IPluginLibrary)libraries.get(i);
 				buffer.append(library.getName());
 				if (i < libraries.size() - 1)
-					buffer.append(","); //$NON-NLS-1$
+					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();
