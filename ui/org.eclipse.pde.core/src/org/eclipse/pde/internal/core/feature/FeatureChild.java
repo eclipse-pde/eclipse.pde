@@ -40,6 +40,8 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	}
 
 	public IFeature getReferencedFeature() {
+		if (feature==null)
+			hookWithWorkspace();
 		return feature;
 	}
 
@@ -48,7 +50,8 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
 		for (int i = 0; i < models.length; i++) {
 			IFeature feature = models[i].getFeature();
-			if (feature.getId().equals(getId())) {
+			
+			if (feature!=null && feature.getId().equals(getId())) {
 				if (version == null || feature.getVersion().equals(version)) {
 					this.feature = feature;
 					break;
