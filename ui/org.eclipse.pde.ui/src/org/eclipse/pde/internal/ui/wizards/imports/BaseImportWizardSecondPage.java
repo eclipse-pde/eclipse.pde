@@ -127,7 +127,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	
 	private IPluginModelBase findModel(String id) {
 		for (int i = 0; i < models.length; i++) {
-			if (models[i].getPluginBase().getId().equals(id))
+			String modelId = models[i].getPluginBase().getId();
+			if (modelId != null && modelId.equals(id))
 				return models[i];
 		}
 		return null;

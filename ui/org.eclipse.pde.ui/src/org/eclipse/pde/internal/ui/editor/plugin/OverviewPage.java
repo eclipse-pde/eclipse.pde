@@ -72,21 +72,21 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 		// alerts
-		createAlertSection(managedForm, body, toolkit);
+		//createAlertSection(managedForm, body, toolkit);
 		// sections
 		createGeneralInfoSection(managedForm, body, toolkit);
 		createContentSection(managedForm, body, toolkit);
 		createTestingSection(managedForm, body, toolkit);
 		createDeployingSection(managedForm, body, toolkit);
 	}
-	private void createAlertSection(IManagedForm managedForm, Composite parent,
+	/*private void createAlertSection(IManagedForm managedForm, Composite parent,
 			FormToolkit toolkit) {
 		AlertSection section = new AlertSection(this, parent);
 		managedForm.addPart(section);
 		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.colspan = 2;
 		section.getSection().setLayoutData(td);
-	}
+	}*/
 	private void createGeneralInfoSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		managedForm.addPart(new GeneralInfoSection(this, parent));
