@@ -4,17 +4,13 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.core.*;
-
-import java.util.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage.*;
+import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.swt.graphics.Image;
 
 public class SchemaFormOutlinePage extends FormOutlinePage {
 	private Object[] topics;

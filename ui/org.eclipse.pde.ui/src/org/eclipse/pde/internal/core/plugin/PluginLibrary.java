@@ -4,13 +4,13 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.LibraryModel;
+import java.io.PrintWriter;
 import java.util.*;
-import org.w3c.dom.*;
+
 import org.eclipse.core.runtime.CoreException;
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.model.LibraryModel;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.w3c.dom.*;
 
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	private String[] contentFilters;

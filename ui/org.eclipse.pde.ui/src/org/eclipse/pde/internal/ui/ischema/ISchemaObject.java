@@ -4,9 +4,8 @@ package org.eclipse.pde.internal.ui.ischema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.pde.core.IWritable;
 /**
  * Base interface for all objects that belong to the extension point
  * schema model.

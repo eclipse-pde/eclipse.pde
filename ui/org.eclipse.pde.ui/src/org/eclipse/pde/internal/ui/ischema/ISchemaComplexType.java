@@ -4,9 +4,7 @@ package org.eclipse.pde.internal.ui.ischema;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IWritable;
 /**
  * Objects of this type are holding information about complex types defined
  * inside schema elements.

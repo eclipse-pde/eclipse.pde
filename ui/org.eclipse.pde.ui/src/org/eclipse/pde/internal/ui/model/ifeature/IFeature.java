@@ -4,9 +4,8 @@ package org.eclipse.pde.internal.ui.model.ifeature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 /**
  * The top-level model object of the Eclipse feature model.
  */

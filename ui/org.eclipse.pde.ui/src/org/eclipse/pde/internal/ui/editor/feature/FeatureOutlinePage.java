@@ -4,22 +4,18 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import java.util.*;
-import org.eclipse.swt.graphics.*;
+import java.util.Vector;
+
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ISharedImages;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage.BasicContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
 
 public class FeatureOutlinePage extends FormOutlinePage {
 	private static final String KEY_REFERENCED_PLUGINS =

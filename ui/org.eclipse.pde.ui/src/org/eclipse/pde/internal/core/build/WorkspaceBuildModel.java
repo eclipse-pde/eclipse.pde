@@ -4,13 +4,11 @@ package org.eclipse.pde.internal.core.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.*;
-
 import java.io.*;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class WorkspaceBuildModel extends BuildModel implements IEditable {

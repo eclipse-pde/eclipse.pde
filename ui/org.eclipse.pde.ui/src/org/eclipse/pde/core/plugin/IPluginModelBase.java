@@ -4,12 +4,9 @@ package org.eclipse.pde.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.*;
-
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.build.IBuildModel;
 /**
  * This type of model is created by parsing the manifest file.
  * It serves as a base interface for both plug-in and

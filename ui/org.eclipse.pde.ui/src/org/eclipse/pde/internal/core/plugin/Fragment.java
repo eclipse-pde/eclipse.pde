@@ -4,16 +4,13 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.*;
-import org.w3c.dom.*;
+import java.io.PrintWriter;
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IResource;
-import java.io.*;
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.PlatformObject;
+import org.w3c.dom.Node;
 
 public class Fragment extends PluginBase implements IFragment {
 	private String pluginId = "";

@@ -4,15 +4,14 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.ConfigurationElementModel;
-import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
-import org.w3c.dom.*;
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.base.model.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.ischema.*;
+import org.w3c.dom.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private transient ISchemaElement elementInfo;

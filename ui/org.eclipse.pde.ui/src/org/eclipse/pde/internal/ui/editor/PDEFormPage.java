@@ -4,26 +4,19 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.swt.dnd.Clipboard;
-
-import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import java.io.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.*;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.*;
 
 
 public abstract class PDEFormPage extends EditorPart implements IPDEEditorPage {

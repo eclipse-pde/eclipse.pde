@@ -4,26 +4,22 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
+import java.util.Vector;
+
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-
-import java.util.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 
 public class RequiresSection
 	extends PDEFormSection

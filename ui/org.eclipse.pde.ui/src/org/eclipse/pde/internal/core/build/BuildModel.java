@@ -4,17 +4,13 @@ package org.eclipse.pde.internal.core.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.*;
+import java.util.*;
+
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public abstract class BuildModel extends AbstractModel implements IBuildModel {
 	protected Build build;

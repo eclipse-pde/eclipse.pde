@@ -4,40 +4,29 @@ package org.eclipse.pde.internal.ui.wizards.templates;
  * All Rights Reserved.
  */
 
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.project.PluginClassCodeGenerator;
-import org.eclipse.pde.internal.ui.wizards.project.PluginSelectionDialog;
-import org.eclipse.pde.internal.base.model.*;
-
-import java.util.*;
-import org.eclipse.ui.part.*;
-
-import java.lang.reflect.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.jface.operation.*;
-
 import java.io.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.views.navigator.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.events.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
-import org.eclipse.pde.internal.ui.editor.*;
-
-import java.util.List;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
+import org.eclipse.pde.internal.ui.util.CoreUtility;
+import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
+import org.eclipse.pde.internal.ui.wizards.project.*;
+import org.eclipse.pde.ui.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class DefaultCodeGenerationPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";

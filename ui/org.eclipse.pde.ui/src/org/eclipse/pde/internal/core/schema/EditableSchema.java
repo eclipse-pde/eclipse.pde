@@ -4,11 +4,10 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+import java.io.PrintWriter;
+
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.ischema.ISchemaDescriptor;
 
 public class EditableSchema extends Schema implements IEditable {
 	private boolean dirty;

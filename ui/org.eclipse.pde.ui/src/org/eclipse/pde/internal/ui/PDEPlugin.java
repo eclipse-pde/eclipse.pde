@@ -4,35 +4,29 @@ package org.eclipse.pde.internal.ui;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.*;
 import java.io.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.ui.editor.feature.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.ui.editor.schema.*;
-import org.eclipse.pde.internal.ui.editor.manifest.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.internal.core.schema.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.*;
-import org.eclipse.ui.*;
-import org.eclipse.swt.widgets.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.jface.dialogs.*;
-import java.net.URL;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import java.util.ArrayList;
-import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
+import org.eclipse.debug.core.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.ui.editor.feature.FeatureAdapterFactory;
+import org.eclipse.pde.internal.ui.editor.manifest.PluginAdapterFactory;
+import org.eclipse.pde.internal.ui.editor.schema.SchemaAdapterFactory;
+import org.eclipse.pde.internal.ui.ischema.ISchemaObject;
+import org.eclipse.pde.internal.ui.model.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.ui";

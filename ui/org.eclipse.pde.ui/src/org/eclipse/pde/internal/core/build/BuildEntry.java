@@ -4,13 +4,12 @@ package org.eclipse.pde.internal.core.build;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.*;
-
+import java.io.PrintWriter;
 import java.util.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.IBuildEntry;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
 	private Vector tokens = new Vector();

@@ -4,32 +4,16 @@ package org.eclipse.pde.internal.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.plugin.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
-
+import java.io.File;
 import java.util.*;
-import java.io.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.pde.internal.base.model.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.ui.*;
 
 public class PluginPathUpdater {
 	public static final String KEY_UPDATING = "PluginPathUpdater.updating";

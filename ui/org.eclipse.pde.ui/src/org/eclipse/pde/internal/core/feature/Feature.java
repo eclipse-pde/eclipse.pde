@@ -4,16 +4,15 @@ package org.eclipse.pde.internal.core.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.*;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import java.io.*;
-import org.w3c.dom.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.model.ifeature.*;
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.w3c.dom.*;
 
 public class Feature extends VersionableObject implements IFeature {
 	final static String INDENT = "   ";

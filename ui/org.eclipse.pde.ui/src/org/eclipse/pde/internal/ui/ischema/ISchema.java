@@ -4,12 +4,10 @@ package org.eclipse.pde.internal.ui.ischema;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
+import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangeProvider;
 /**
  * Objects of this class encapsulate data loaded from
  * the XML Schema file that defines an Eclipse extension point.

@@ -4,38 +4,25 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.editor.PropertiesAction;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import java.util.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.model.ifeature.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class PluginSection
 	extends TableSection

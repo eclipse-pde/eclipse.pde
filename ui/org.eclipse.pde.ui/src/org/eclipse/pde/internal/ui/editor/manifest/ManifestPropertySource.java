@@ -4,17 +4,13 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.Vector;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.editor.ModifiedTextPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 
 public abstract class ManifestPropertySource implements IPropertySource {
 	protected IPluginObject object;

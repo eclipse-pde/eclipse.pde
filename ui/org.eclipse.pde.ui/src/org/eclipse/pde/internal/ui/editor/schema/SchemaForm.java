@@ -4,18 +4,12 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class SchemaForm extends ScrollableSectionForm implements IModelChangedListener {
 	private SchemaSpecSection schemaSpecSection;

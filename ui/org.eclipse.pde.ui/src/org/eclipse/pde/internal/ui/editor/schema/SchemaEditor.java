@@ -4,19 +4,15 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.views.properties.*;
 import java.io.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.ischema.ISchema;
 
 public class SchemaEditor extends PDEMultiPageXMLEditor {
 	public static final String DEFINITION_PAGE = "definition";

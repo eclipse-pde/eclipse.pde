@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import java.util.*;

@@ -4,21 +4,16 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-
 import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
 
 
 public class SchemaRegistry implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {

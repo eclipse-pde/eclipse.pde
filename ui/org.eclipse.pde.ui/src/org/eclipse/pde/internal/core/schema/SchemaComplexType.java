@@ -4,11 +4,11 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
+import java.io.PrintWriter;
+import java.util.Vector;
+
+import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.core.*;
 
 public class SchemaComplexType extends SchemaType implements ISchemaComplexType {
 	public static final String P_COMPOSITOR = "compositorProperty";

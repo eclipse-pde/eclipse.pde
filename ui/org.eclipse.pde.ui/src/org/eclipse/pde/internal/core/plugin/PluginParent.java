@@ -4,12 +4,11 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
+import java.util.Vector;
+
 import org.eclipse.core.runtime.CoreException;
-import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	protected Vector children = new Vector();

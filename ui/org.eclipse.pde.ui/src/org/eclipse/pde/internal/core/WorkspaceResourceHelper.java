@@ -3,15 +3,17 @@ package org.eclipse.pde.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResourceChangeEvent;
-
 import java.net.URL;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.core.*;
  
 public class WorkspaceResourceHelper extends NLResourceHelper
 implements IResourceChangeListener {

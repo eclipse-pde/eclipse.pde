@@ -4,19 +4,16 @@ package org.eclipse.pde.internal.core.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.apache.xerces.parsers.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import org.xml.sax.*;
 import java.io.*;
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.*;
+
+import org.apache.xerces.parsers.DOMParser;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public abstract class AbstractFeatureModel extends AbstractModel implements IFeatureModel {
 	protected Feature feature;

@@ -4,17 +4,16 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.ConfigurationElementModel;
-import org.eclipse.core.runtime.model.ExtensionModel;
-import org.w3c.dom.*;
-import org.eclipse.core.runtime.*;
-import java.io.*;
-import java.util.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.base.model.*;
+import java.io.PrintWriter;
+import java.util.Hashtable;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.ischema.ISchema;
+import org.w3c.dom.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
 	private String point;

@@ -4,13 +4,13 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
-import org.w3c.dom.Node;
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
+import java.io.PrintWriter;
 import java.util.Hashtable;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.w3c.dom.Node;
 
 public class PluginImport
 	extends IdentifiablePluginObject

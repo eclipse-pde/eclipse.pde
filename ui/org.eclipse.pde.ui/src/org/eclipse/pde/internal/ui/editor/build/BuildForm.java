@@ -4,14 +4,12 @@ package org.eclipse.pde.internal.ui.editor.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.*;
 
 public class BuildForm extends ScrollableSectionForm {
 	public static final String FORM_TITLE = "BuildEditor.Form.title";

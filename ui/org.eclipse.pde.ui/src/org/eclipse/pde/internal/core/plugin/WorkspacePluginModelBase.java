@@ -4,19 +4,15 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import java.net.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public abstract class WorkspacePluginModelBase
 	extends AbstractPluginModelBase

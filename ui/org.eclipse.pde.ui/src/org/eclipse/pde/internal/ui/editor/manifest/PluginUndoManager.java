@@ -4,18 +4,12 @@
  */
 package org.eclipse.pde.internal.ui.editor.manifest;
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
-import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
-import org.eclipse.pde.internal.core.plugin.AttributeChangedEvent;
-import org.eclipse.pde.internal.core.plugin.PluginAttribute;
-import org.eclipse.pde.internal.core.plugin.PluginElement;
-import org.eclipse.pde.internal.core.plugin.PluginObject;
-import org.eclipse.pde.core.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
 
 /**
  * @version 	1.0

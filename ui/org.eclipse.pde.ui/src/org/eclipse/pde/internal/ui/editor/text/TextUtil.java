@@ -4,15 +4,7 @@ package org.eclipse.pde.internal.ui.editor.text;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
+
 
 public abstract class TextUtil {
 

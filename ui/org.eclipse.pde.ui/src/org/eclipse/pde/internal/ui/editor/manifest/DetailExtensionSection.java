@@ -4,42 +4,37 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.ModelDataTransfer;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import java.io.File;
+import java.net.*;
 import java.util.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.custom.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.ischema.*;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.jface.util.*;
-import java.io.File;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class DetailExtensionSection
 	extends TreeSection

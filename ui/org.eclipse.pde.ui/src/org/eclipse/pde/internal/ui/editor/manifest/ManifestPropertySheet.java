@@ -4,21 +4,17 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
 
 public class ManifestPropertySheet extends PropertySheetPage {
 	public static final String GOTO_ACTION_LABEL = "ManifestEditor.ManifestPropertySheet.gotoAction.label";

@@ -4,28 +4,22 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEFormSection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.swt.*;
 import org.eclipse.ui.*;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.custom.CCombo;
+import org.eclipse.update.ui.forms.internal.*;
 
 public class PluginSpecSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ManifestEditor.PluginSpecSection.title";

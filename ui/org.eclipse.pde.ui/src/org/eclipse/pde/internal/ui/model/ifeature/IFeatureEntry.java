@@ -4,8 +4,7 @@ package org.eclipse.pde.internal.ui.model.ifeature;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
 /**
  * The reference to a plug-in that is part of this feature.

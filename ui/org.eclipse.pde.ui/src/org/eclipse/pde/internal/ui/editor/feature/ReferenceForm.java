@@ -4,15 +4,12 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
 import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.manifest.MatchSection;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class ReferenceForm extends ScrollableSectionForm {
 	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";

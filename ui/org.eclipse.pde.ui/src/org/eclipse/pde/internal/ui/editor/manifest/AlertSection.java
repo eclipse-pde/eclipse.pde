@@ -4,24 +4,20 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.views.tasklist.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.builders.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.core.builders.DependencyLoop;
-import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
+import org.eclipse.pde.internal.ui.editor.PDEFormSection;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.views.tasklist.TaskList;
+import org.eclipse.update.ui.forms.internal.*;
 
 
 public class AlertSection

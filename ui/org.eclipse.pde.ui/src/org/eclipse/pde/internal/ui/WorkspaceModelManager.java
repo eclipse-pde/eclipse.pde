@@ -4,28 +4,21 @@ package org.eclipse.pde.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.core.feature.*;
 import java.io.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.core.resources.*;
 import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
-import org.eclipse.pde.internal.ui.wizards.imports.UpdateBuildpathWizard;
-import org.eclipse.jface.wizard.WizardDialog;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.ui.wizards.project.ConvertedProjectWizard;
-import org.eclipse.pde.core.*;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.*;
 
 public class WorkspaceModelManager
 	implements IModelProvider, IResourceChangeListener, IResourceDeltaVisitor {

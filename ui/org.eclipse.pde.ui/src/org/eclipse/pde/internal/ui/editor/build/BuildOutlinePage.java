@@ -4,19 +4,14 @@ package org.eclipse.pde.internal.ui.editor.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.core.*;
-
-import java.util.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 public class BuildOutlinePage extends FormOutlinePage {
 	private Image variableImage;

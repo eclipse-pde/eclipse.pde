@@ -4,15 +4,12 @@ package org.eclipse.pde.internal.core.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import java.util.*;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.plugin.*;
+import java.io.PrintWriter;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.build.*;
 
 public class Build extends BuildObject implements IBuild {
 	protected Vector entries = new Vector();

@@ -4,7 +4,7 @@ package org.eclipse.pde.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
+
 /**
  * @see IModelChangedEvent
  */

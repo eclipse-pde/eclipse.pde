@@ -4,13 +4,13 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.ui.views.properties.*;
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.IAdapterFactory;
-import java.util.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.PluginElement;
+import org.eclipse.pde.internal.ui.ischema.ISchemaElement;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PluginAdapterFactory implements IAdapterFactory {
 	private ExtensionPropertySource extensionProperties;

@@ -4,9 +4,8 @@ package org.eclipse.pde.core.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IWritable;
 /**
  * The top-level model object of the model that is created
  * from "plugin.jars" or "fragment.jars" file.

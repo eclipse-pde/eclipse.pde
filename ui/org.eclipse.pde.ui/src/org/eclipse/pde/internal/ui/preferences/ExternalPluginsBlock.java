@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.actions.*;

@@ -4,17 +4,11 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.ui.views.properties.*;
 import org.eclipse.core.runtime.IAdapterFactory;
-import java.util.*;
-
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.model.ifeature.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 public class FeatureAdapterFactory implements IAdapterFactory {
 	private Image errorImage;

@@ -4,30 +4,23 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.rules.RuleBasedPartitioner;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.ischema.*;
+import org.eclipse.pde.internal.ui.util.PDEProblemFinder;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.swt.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.presentation.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.jface.text.*;
-
-import java.util.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class DocSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "SchemaEditor.DocSection.title";

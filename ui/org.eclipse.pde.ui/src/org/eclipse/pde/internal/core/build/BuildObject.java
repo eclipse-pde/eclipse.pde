@@ -5,14 +5,8 @@ package org.eclipse.pde.internal.core.build;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.build.*;
-import java.util.*;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class BuildObject {
 	private IBuildModel model;

@@ -4,39 +4,22 @@ package org.eclipse.pde.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jdt.core.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-
+import java.io.File;
 import java.net.*;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-import org.eclipse.swt.widgets.*;
-
 import java.util.*;
-import java.io.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.core.runtime.IPluginRegistry;
 
-import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.util.ArraySorter;
+import org.eclipse.swt.widgets.Display;
 
 /**
  */

@@ -4,34 +4,19 @@ package org.eclipse.pde.internal.ui.editor.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.swt.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import java.util.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.window.*;
 
 public class TokenSection
 	extends TableSection

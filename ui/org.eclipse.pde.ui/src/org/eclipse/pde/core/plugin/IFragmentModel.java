@@ -4,9 +4,7 @@ package org.eclipse.pde.core.plugin;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.core.resources.IResource;
+
 /**
  * This type of model is created by parsing the fragment.xml file.
  * If the file is a workspace resource, it will be

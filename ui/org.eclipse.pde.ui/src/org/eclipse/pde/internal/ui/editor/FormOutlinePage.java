@@ -4,21 +4,16 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.core.*;
-
 import java.util.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.base.model.*;
+
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 
 public class FormOutlinePage extends ContentOutlinePage implements IModelChangedListener {

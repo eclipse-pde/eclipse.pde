@@ -4,10 +4,7 @@ package org.eclipse.pde.internal.ui.model.ifeature;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.core.resources.IResource;
 /**
  * This model type is designed to hold data loaded from
  * "feature.xml" file of an Eclipse feature.

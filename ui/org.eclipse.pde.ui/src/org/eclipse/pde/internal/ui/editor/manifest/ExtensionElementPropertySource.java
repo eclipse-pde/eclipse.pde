@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.core.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;

@@ -4,8 +4,7 @@ package org.eclipse.pde.internal.ui.model.ifeature;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.*;
+
 /**
  * A base class for plug-in and data entires
  */

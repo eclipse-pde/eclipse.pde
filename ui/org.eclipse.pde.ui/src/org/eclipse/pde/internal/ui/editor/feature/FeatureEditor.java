@@ -4,29 +4,19 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.core.runtime.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
+import java.util.Vector;
 
-import java.util.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.core.plugin.Plugin;
+import org.eclipse.pde.internal.ui.model.ifeature.*;
 import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public static final String FEATURE_PAGE = "ComponentPage";

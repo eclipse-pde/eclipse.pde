@@ -4,17 +4,14 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.runtime.*;
-import org.w3c.dom.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IResource;
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.plugin.*;
+import org.w3c.dom.*;
 
 public abstract class PluginBase
 	extends IdentifiablePluginObject

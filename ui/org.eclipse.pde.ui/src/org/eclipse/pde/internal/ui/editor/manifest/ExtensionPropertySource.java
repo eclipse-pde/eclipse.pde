@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.core.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;

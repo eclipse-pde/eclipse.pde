@@ -1,24 +1,20 @@
 package org.eclipse.pde.internal.core;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.eclipse.core.resources.IResource;
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
-
-import java.util.*;
-import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProvider {
 	private Vector listeners = new Vector();

@@ -4,10 +4,6 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IResource;
-import org.w3c.dom.*;
-import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelFactory implements IPluginModelFactory {

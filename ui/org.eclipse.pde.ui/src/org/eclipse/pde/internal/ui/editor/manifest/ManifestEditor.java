@@ -15,7 +15,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.core.*;
 
 import java.util.*;

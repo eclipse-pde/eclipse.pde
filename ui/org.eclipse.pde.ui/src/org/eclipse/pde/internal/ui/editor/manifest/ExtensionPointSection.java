@@ -8,7 +8,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import java.util.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

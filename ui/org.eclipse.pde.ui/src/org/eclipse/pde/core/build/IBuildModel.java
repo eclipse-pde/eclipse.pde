@@ -4,11 +4,8 @@ package org.eclipse.pde.core.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 /**
  * This model is created from the "plugin.jars" file
  * that defines what source folders in the plug-in are

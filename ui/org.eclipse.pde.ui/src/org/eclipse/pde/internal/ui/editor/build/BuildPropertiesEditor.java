@@ -4,28 +4,17 @@ package org.eclipse.pde.internal.ui.editor.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.core.runtime.*;
 import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.core.*;
 
-import java.util.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.core.plugin.Plugin;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.ui.IEditorInput;
 
 public class BuildPropertiesEditor extends PDEMultiPageEditor {
 	public static final String BUILD_PAGE_TITLE = "BuildEditor.BuildPage.title";

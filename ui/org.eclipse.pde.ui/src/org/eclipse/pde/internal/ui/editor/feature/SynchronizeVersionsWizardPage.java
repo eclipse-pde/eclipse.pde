@@ -4,33 +4,24 @@ package org.eclipse.pde.internal.ui.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.ant.internal.ui.*;
-import org.eclipse.ant.core.*;
-import org.eclipse.pde.core.plugin.*;
-import java.util.*;
-import org.eclipse.pde.internal.core.*;
-import java.io.*;
-import java.lang.reflect.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.swt.events.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.IModelProvider;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.model.ifeature.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
-import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.core.*;
-import org.apache.tools.ant.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;

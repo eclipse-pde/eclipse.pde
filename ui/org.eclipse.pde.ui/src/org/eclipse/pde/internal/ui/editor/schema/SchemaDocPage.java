@@ -4,24 +4,12 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
 import org.eclipse.pde.internal.ui.ischema.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
 
 
 public class SchemaDocPage extends PDEChildFormPage {

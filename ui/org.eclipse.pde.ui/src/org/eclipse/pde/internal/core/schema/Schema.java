@@ -4,19 +4,17 @@ package org.eclipse.pde.internal.core.schema;
  * All Rights Reserved.
  */
 
-import org.apache.xerces.parsers.*;
-import org.eclipse.pde.internal.base.model.*;
 import java.io.*;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-import java.net.*;
+import java.net.URL;
 import java.util.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.ischema.*;
+
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.internal.core.builders.SourceDOMParser;
 import org.eclipse.pde.core.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.pde.internal.core.builders.SourceDOMParser;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.ischema.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
 public class Schema extends PlatformObject implements ISchema {
 	private URL url;

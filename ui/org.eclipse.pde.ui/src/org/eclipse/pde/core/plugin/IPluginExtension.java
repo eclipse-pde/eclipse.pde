@@ -5,9 +5,7 @@ package org.eclipse.pde.core.plugin;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.ischema.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.core.IIdentifiable;
 
 /**
  * Classes that implement this interface model the extension

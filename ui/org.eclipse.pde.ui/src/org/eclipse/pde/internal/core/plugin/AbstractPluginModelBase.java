@@ -4,21 +4,18 @@ package org.eclipse.pde.internal.core.plugin;
  * All Rights Reserved.
  */
 
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
-import org.apache.xerces.parsers.*;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.builders.SourceDOMParser;
+import org.eclipse.pde.internal.ui.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
-import java.io.*;
-import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.core.plugin.*;
-import java.util.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.builders.SourceDOMParser;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.core.*;
-import java.net.*;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
