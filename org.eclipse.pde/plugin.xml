@@ -129,11 +129,10 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.platform.introConfig" 
-            content="overviewExtensionContent.xml"/>  
-      
+            content="$nl$/overviewExtensionContent.xml"/>  
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="tutorialsExtensionContent.xml"/>
+            content="$nl$/tutorialsExtensionContent.xml"/>
    </extension>
 
    <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
