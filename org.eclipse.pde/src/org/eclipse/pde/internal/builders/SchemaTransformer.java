@@ -96,7 +96,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 		ISchemaAttribute att,
 		int maxWidth) {
 		// add three spaces
-		out.print("<br><p class=code id=dtd>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+//		out.print("<p class=code id=dtd>&nbsp;&nbsp;");
+		out.print("<p class=code id=dtdAttlist>");
 		// add name
 		out.print(att.getName());
 		// fill spaces to align data type
@@ -130,7 +131,6 @@ public class SchemaTransformer implements ISchemaTransformer {
 			out.print("\"" + att.getValue() + "\"");
 		} else if (!choices)
 			out.print("#IMPLIED");
-		out.println("</p>");
 	}
 	private void appendRestriction(
 		ISchemaRestriction restriction,
@@ -337,8 +337,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			} else if (cssPurpose == BUILD) {
 				out.println(
 					"<!-- default platform documentation stylesheets -->");
-				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../../"+getPlatformCSSName()+"\"/>");
-				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getPlatformCSSName()+ "\"/>");	//defect 43227
+				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getPlatformCSSName()+ "\"/>");	
 				out.println("<style>@import url(\"../../" + getPlatformCSSName() + "\");</style>");
 				return;
 			} else { // cssPurpose is TEMP
@@ -441,6 +440,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 			schema,
 			"Supplied Implementation:",
 			IDocumentSection.IMPLEMENTATION);
+		out.println("<br>");
 		out.println("<p class=note id=copyright>");
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
 		out.println("</p>");
@@ -515,44 +515,47 @@ public class SchemaTransformer implements ISchemaTransformer {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation(true);
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>";
-		//out.print("<div class=\"dtd-fragment\">");
+		
 		out.print(
-			"<p class=code id=dtd>&nbsp;&nbsp; &lt;!ELEMENT "
+			"<p class=code id=dtd>&lt;!ELEMENT "
 				+ nameLink
 				+ " "
 				+ dtd);
 		out.println("&gt;</p>");
 
 		ISchemaAttribute[] attributes = element.getAttributes();
-		String description = element.getDescription();
 
-		if (description != null && description.trim().length() > 0) {
-			out.print("<p>");
-			out.print("&nbsp;&nbsp; ");
-			transformText(out, description);
-			out.println("</p>");
-			if (attributes.length > 0)
-				out.println("<p></p>");
-		} else if (attributes.length > 0) {
-			out.print("<br><br>");
-		}
-
-		if (attributes.length > 0) {
+		if (attributes.length > 0) { 
 			out.println(
-				"<p class=code id=dtd>&nbsp;&nbsp; &lt;!ATTLIST "
+				"<p class=code id=dtd>&lt;!ATTLIST "
 					+ name
 					+ "</p>");
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
 				appendAttlist(out, attributes[i], maxWidth);
 			}
-			out.println("<br><p class=code id=dtd>&nbsp;&nbsp; &gt;</p>");
+			out.println("&gt;</p>");
+			
 		}
-		//out.println("</div>");
-		if (attributes.length == 0)
-			return;
+		out.println("<p></p>");
+		
+		// inserted desc here for element
+		String description = element.getDescription();
 
-		out.println("<ul>");
+		if (description != null && description.trim().length() > 0) {
+			out.println("<p class=ConfigMarkup id=elementDesc>"); 
+			transformText(out, description);
+			out.println("</p>");
+		} 
+		// end of inserted desc for element
+		if (attributes.length == 0){
+			out.println("<br><br>");
+			return;
+		} else if (description != null && description.trim().length() > 0){
+			out.println("<br>");
+		}
+		
+		out.println("<ul class=ConfigMarkup id=attlistDesc>");
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
 			if (name.equals("extension")) {
@@ -563,9 +566,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 			}
 			out.print("<li><b>" + att.getName() + "</b> - ");
 			transformText(out, att.getDescription());
-			out.println("</li>");
+			out.println("</li>");			
 		}
 		out.println("</ul>");
+		// adding spaces for new shifted view
+		out.print("<br>");
 	}
 	private void transformMarkup(PrintWriter out, ISchema schema) {
 		ISchemaElement[] elements = schema.getResolvedElements();
@@ -574,13 +579,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 			ISchemaElement element = elements[i];
 			transformElement(out, element);
 		}
-		if (elements.length > 0) {
-			ISchemaElement lastElement = elements[elements.length - 1];
-			if (lastElement.getAttributeCount() == 0
-				&& lastElement.getDescription() == null) {
-				out.print("<br><br>");
-			}
-		}
+//		if (elements.length > 0) {
+//			ISchemaElement lastElement = elements[elements.length - 1];
+//			if (lastElement.getAttributeCount() == 0
+//				&& lastElement.getDescription() == null) {
+//				out.print("<br><br>");
+//			}
+//		}
 	}
 
 	private void transformSection(
