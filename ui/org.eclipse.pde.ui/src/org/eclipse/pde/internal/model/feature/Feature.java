@@ -5,7 +5,9 @@ package org.eclipse.pde.internal.model.feature;
  */
 
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.*;
+
 import java.io.*;
 import org.w3c.dom.*;
 import org.eclipse.core.runtime.*;

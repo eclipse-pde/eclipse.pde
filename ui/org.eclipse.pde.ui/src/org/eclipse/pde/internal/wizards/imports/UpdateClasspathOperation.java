@@ -10,7 +10,7 @@ import java.util.HashSet;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 import org.eclipse.jdt.core.*;
 

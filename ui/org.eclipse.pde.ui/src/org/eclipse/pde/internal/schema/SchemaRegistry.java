@@ -5,9 +5,10 @@ package org.eclipse.pde.internal.schema;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.util.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IConfigurationElement;

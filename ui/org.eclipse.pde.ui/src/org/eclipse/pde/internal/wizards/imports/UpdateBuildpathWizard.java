@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.wizards.imports;
 
 import org.eclipse.jdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.base.model.plugin.IPluginModelBase;
+import org.eclipse.pde.model.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.wizards.imports.UpdateClasspathAction;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.IDialogSettings;

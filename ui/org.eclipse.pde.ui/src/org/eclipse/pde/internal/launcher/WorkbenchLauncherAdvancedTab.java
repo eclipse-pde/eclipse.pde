@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.viewers.*;
@@ -45,48 +45,11 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
 	private Label restoreLabel;
-	private Image pluginImage;
-	private Image fragmentImage;
-	private Image pluginsImage;
-	private Image errorFragmentImage;
-	private Image errorPluginImage;
 	private NamedElement workspacePlugins;
 	private NamedElement externalPlugins;
 	private Vector externalList;
 	private Vector workspaceList;
 	private Button defaultsButton;
-
-	class PluginLabelProvider extends LabelProvider {
-		public String getText(Object obj) {
-			if (obj instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase plugin = model.getPluginBase();
-				String id = plugin.getId();
-				String name = plugin.getTranslatedName();
-				String version = plugin.getVersion();
-				String result = id;
-
-				if (showNamesCheck.getSelection() && name != null)
-					result = name;
-				if (version != null)
-					result += " (" + version + ")";
-				return result;
-			}
-			return obj.toString();
-		}
-		public Image getImage(Object obj) {
-			if (obj instanceof IPluginModelBase) {
-				boolean error = !((IPluginModelBase) obj).isLoaded();
-				if (obj instanceof IPluginModel)
-					return error ? errorPluginImage : pluginImage;
-				if (obj instanceof IFragmentModel)
-					return error ? errorFragmentImage : fragmentImage;
-			}
-			if (obj instanceof NamedElement)
-				return ((NamedElement) obj).getImage();
-			return null;
-		}
-	}
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -162,11 +125,7 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 	}
 
 	public WorkbenchLauncherAdvancedTab() {
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-		errorFragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
-		pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy config) {
@@ -174,7 +133,7 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 	}
 
 	public void dispose() {
-		pluginsImage.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tab) {
@@ -297,7 +256,7 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 	protected Control createPluginList(Composite parent) {
 		pluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
 		pluginTreeViewer.setContentProvider(new PluginContentProvider());
-		pluginTreeViewer.setLabelProvider(new PluginLabelProvider());
+		pluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginTreeViewer.setAutoExpandLevel(2);
 		pluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -321,6 +280,8 @@ public class WorkbenchLauncherAdvancedTab implements ILaunchConfigurationTab, IL
 				return 0;
 			}
 		});
+		
+		Image pluginsImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 
 		workspacePlugins =
 			new NamedElement(

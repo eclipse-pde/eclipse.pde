@@ -14,8 +14,9 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.elements.*;
+import org.eclipse.pde.model.*;
+
 import java.util.*;
-import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.base.model.*;
 

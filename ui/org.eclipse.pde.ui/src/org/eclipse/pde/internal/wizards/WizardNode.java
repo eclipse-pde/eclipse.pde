@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.jface.dialogs.*;
 
 public abstract class WizardNode implements IWizardNode {

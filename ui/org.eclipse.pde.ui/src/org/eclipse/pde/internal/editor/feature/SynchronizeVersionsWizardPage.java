@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.ant.internal.ui.*;
 import org.eclipse.ant.core.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.*;
 import java.io.*;
@@ -28,6 +28,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.launcher.*;
 import org.eclipse.pde.internal.preferences.*;
+import org.eclipse.pde.model.*;
 import org.apache.tools.ant.*;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {

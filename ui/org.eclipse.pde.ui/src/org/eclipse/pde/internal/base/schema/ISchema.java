@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 /**
  * Objects of this class encapsulate data loaded from
  * the XML Schema file that defines an Eclipse extension point.

@@ -20,7 +20,7 @@ import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.builders.*;
 import org.eclipse.pde.internal.base.model.feature.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.model.feature.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;

@@ -12,7 +12,7 @@ import org.eclipse.core.resources.IResource;
 import java.io.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class Plugin extends PluginBase implements IPlugin {

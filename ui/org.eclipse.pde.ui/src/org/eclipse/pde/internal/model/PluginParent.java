@@ -8,7 +8,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.*;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	protected Vector children = new Vector();

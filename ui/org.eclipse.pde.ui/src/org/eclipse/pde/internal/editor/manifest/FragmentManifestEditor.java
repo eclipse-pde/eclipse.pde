@@ -9,7 +9,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.model.*;
 import java.io.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.*;
 
 public class FragmentManifestEditor extends ManifestEditor {

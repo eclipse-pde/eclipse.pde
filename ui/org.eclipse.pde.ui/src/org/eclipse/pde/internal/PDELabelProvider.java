@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.*;
 import java.util.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.util.OverlayIcon;
 import org.eclipse.pde.internal.util.SharedLabelProvider;
@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.elements.NamedElement;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.pde.internal.editor.IPDEEditorPage;
-import org.eclipse.pde.internal.base.model.build.IBuildEntry;
+import org.eclipse.pde.model.build.IBuildEntry;
 import org.eclipse.pde.internal.model.feature.*;
 
 /**

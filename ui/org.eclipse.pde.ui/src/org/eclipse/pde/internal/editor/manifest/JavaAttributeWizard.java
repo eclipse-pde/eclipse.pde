@@ -19,7 +19,7 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
 import java.util.Hashtable;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class JavaAttributeWizard extends Wizard {
 	private String className;

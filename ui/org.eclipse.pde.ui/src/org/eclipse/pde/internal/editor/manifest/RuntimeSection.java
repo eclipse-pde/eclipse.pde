@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import java.util.*;
@@ -17,6 +17,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.model.*;
 
 public class RuntimeSection
 	extends PDEFormSection

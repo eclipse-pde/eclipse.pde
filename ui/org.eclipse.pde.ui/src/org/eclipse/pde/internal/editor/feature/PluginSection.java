@@ -9,7 +9,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.resources.*;
@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -49,10 +50,6 @@ public class PluginSection
 	private OpenReferenceAction openAction;
 	private PropertiesAction propertiesAction;
 	private TableViewer pluginViewer;
-	private Image pluginImage;
-	private Image warningPluginImage;
-	private Image fragmentImage;
-	private Image warningFragmentImage;
 	private Action newAction;
 	private Action deleteAction;
 
@@ -71,8 +68,6 @@ public class PluginSection
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(PLUGIN_TITLE));
 		setDescription(PDEPlugin.getResourceString(PLUGIN_DESC));
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-		fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
 	}
 
 	public void commitChanges(boolean onSave) {
@@ -102,26 +97,11 @@ public class PluginSection
 			handleNew();
 	}
 
-	private Image createWarningImage(
-		ImageDescriptor baseDescriptor,
-		ImageDescriptor overlayDescriptor) {
-		ImageDescriptor desc =
-			new OverlayIcon(baseDescriptor, new ImageDescriptor[][] { {
-			}, {
-			}, {
-				overlayDescriptor }
-		});
-		return desc.createImage();
-	}
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
 		WorkspaceModelManager mng = PDEPlugin.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
-		if (warningPluginImage != null)
-			warningPluginImage.dispose();
-		if (warningFragmentImage != null)
-			warningFragmentImage.dispose();
 		super.dispose();
 	}
 	public void expandTo(Object object) {

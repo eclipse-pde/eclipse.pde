@@ -7,12 +7,14 @@ package org.eclipse.pde.internal.builders;
 import org.apache.xerces.parsers.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.ISourceObject;
+
 import java.util.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.io.*;
 import org.eclipse.pde.internal.PDEPlugin;
-import org.eclipse.pde.internal.base.model.ISourceObject;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID="Builders.Schema.Verifier.booleanInvalid";

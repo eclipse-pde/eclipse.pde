@@ -11,10 +11,6 @@ wizards that create initial content of the PDE plug-in
 projects. These wizards can create plug-in manifest,
 key classes, initial folder structure and even
 generate some extensions and the required code for them.
-
-&lt;p&gt;&lt;b&gt;Note: this extension point is internal and
-is only used by PDE.&lt;/b&gt;
-&lt;/p&gt;
    </documentation>
 </annotation>
 
@@ -50,11 +46,8 @@ is only used by PDE.&lt;/b&gt;
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icon"/>
+            <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
-         <documentation>
-            Short description of this wizard.
-         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -75,29 +68,37 @@ of this wizard.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string" use="required">
+         <attribute name="icon" type="string">
             <annotation>
                <documentation>
                   a relative path of an icon that will be used to visually 
 represent the wizard.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.internal.base.IPluginContentWizard"/>
+                  <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified name of a class which implements 
-&lt;samp&gt;org.eclipse.pde.internal.base.IPluginContentWizard&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.pde.IPluginContentWizard&lt;/samp&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.IPluginContentWizard"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="description" type="string">
+      <annotation>
+         <documentation>
+            Short description of this wizard.
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>
@@ -128,9 +129,8 @@ represent the wizard.
       </appInfo>
       <documentation>
          Wizards that plug into this extension point must
-implement  
-&lt;samp&gt;org.eclipse.pde.internal.base.IPluginContentWizard&lt;/samp&gt;
- interface.
+implement &lt;samp&gt;org.eclipse.pde.IPluginContentWizard&lt;/samp&gt;
+interface.
       </documentation>
    </annotation>
 
@@ -152,7 +152,8 @@ plug-in class.
       <documentation>
          &lt;p&gt;
 &lt;a href="hglegal.htm"&gt;
-&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved."
+&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
+All Rights Reserved."
 BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>

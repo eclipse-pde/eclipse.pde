@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.builders.SourceDOMParser;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.Image;
 
 public class Schema extends PlatformObject implements ISchema {

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.elements.*;
 
@@ -31,12 +31,13 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.model.ImportObject;
 import org.eclipse.pde.internal.preferences.BuildpathPreferencePage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.pde.internal.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.parts.TablePart;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.pde.internal.wizards.imports.PluginImportWizard;
+import org.eclipse.pde.model.*;
 
 public class ImportListSection
 	extends TableSection

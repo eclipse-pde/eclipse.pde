@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.base.schema;
 
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 /**
  * Objects of this type are holding information about complex types defined
  * inside schema elements.

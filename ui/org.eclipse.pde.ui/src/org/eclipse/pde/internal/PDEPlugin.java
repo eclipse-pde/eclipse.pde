@@ -13,8 +13,8 @@ import org.eclipse.debug.core.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.editor.schema.*;
 import org.eclipse.pde.internal.editor.manifest.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.base.model.plugin.IMatchRules;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.schema.*;
 import java.util.*;
 import org.eclipse.ui.*;
@@ -27,7 +27,7 @@ import org.eclipse.jface.dialogs.*;
 import java.net.URL;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.pde.internal.base.model.plugin.IMatchRules;
+import org.eclipse.pde.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.launcher.ICurrentLaunchListener;
 
 public class PDEPlugin extends AbstractUIPlugin {

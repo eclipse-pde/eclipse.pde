@@ -8,7 +8,7 @@ import java.net.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.resources.*;
@@ -22,6 +22,7 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 
@@ -40,8 +41,8 @@ public class URLSection extends PDEFormSection {
 
 	private boolean updateNeeded;
 	private TreeViewer urlTree;
-	private Image urlFolderImage;
 	private Image urlImage;
+	private Image urlFolderImage;
 	private URLFolder[] folders =
 		new URLFolder[] {
 			new URLFolder(IFeatureURLElement.UPDATE),
@@ -130,8 +131,9 @@ public URLSection(FeatureFormPage page) {
 	super(page);
 	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-	urlImage = PDEPluginImages.DESC_LINK_OBJ.createImage();
-	urlFolderImage = PDEPluginImages.DESC_LINKS_OBJ.createImage();
+	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+	urlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
+	urlFolderImage = provider.get(PDEPluginImages.DESC_LINKS_OBJ);
 }
 public void commitChanges(boolean onSave) {
 }
@@ -169,8 +171,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 public void dispose() {
 	IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 	model.removeModelChangedListener(this);
-	urlImage.dispose();
-	urlFolderImage.dispose();
 	super.dispose();
 }
 public boolean doGlobalAction(String actionId) {

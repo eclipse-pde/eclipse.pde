@@ -9,8 +9,9 @@ import org.w3c.dom.Node;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.Hashtable;
 
 public class PluginAttribute extends PluginObject implements IPluginAttribute {
@@ -24,7 +25,7 @@ PluginAttribute(IPluginAttribute attribute) {
 	setParent(attribute.getParent());
 	this.name = attribute.getName();
 	this.value = attribute.getValue();
-	this.attributeInfo = attribute.getAttributeInfo();
+	this.attributeInfo = ((PluginAttribute)attribute).getAttributeInfo();
 }
 public Object clone() {
 	return new PluginAttribute(this);
@@ -37,7 +38,7 @@ public ISchemaAttribute getAttributeInfo() {
 		}
 	}
 	if (attributeInfo==null) {
-		IPluginElement element = (IPluginElement)getParent();
+		PluginElement element = (PluginElement)getParent();
 		ISchemaElement elementInfo = element.getElementInfo();
 		if (elementInfo!=null) {
 			attributeInfo = elementInfo.getAttribute(getName());

@@ -15,6 +15,7 @@ import org.eclipse.swt.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.wizards.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.swt.graphics.*;

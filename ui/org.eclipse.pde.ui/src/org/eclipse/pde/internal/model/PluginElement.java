@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private ISchemaElement elementInfo;
@@ -59,7 +59,7 @@ public ISchemaElement getElementInfo() {
 			parent = parent.getParent();
 		}
 		if (parent!=null) {
-			IPluginExtension extension = (IPluginExtension)parent;
+			PluginExtension extension = (PluginExtension)parent;
 			ISchema schema = extension.getSchema();
 			if (schema!=null) {
 				elementInfo = schema.findElement(getName());

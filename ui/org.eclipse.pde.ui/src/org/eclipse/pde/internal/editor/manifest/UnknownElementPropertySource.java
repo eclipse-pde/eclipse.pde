@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jdt.internal.ui.util.*;
 
 import java.lang.reflect.*;

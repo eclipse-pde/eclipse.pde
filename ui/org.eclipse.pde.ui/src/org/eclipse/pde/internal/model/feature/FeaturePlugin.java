@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public class FeaturePlugin

@@ -5,12 +5,12 @@ package org.eclipse.pde.internal.model.build;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import java.util.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.internal.*;
 

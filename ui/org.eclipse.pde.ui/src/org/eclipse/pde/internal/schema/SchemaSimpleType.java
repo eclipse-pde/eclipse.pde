@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.schema;
 
 import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.base.model.*;
 
 public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, IWritable {

@@ -17,8 +17,8 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.base.BuildPathUtil;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.BuildPathUtil;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import java.util.zip.*;
 

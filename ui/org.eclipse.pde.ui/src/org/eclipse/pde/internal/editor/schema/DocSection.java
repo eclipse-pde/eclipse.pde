@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.util.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;

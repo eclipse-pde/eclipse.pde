@@ -4,11 +4,11 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.model.Plugin;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.preferences.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.custom.BusyIndicator;
 

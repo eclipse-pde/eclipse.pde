@@ -13,7 +13,7 @@ import org.eclipse.jdt.launching.*;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.debug.core.model.*;
 import java.util.*;

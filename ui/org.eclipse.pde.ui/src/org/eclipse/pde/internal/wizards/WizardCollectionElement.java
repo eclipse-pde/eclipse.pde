@@ -16,7 +16,7 @@ public class WizardCollectionElement extends ElementList {
 	private String                  id;
 
 	// properties
-	public static String            P_WIZARDS = "org.eclipse.pde.internal.base.wizards";
+	public static String            P_WIZARDS = "org.eclipse.pde.wizards";
 
 public WizardCollectionElement(String id, String name, WizardCollectionElement parent) {
 	super(name, null, parent);

@@ -11,10 +11,11 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.builders.SourceDOMParser;
+import org.eclipse.pde.model.*;
 
 
 public abstract class AbstractPluginModelBase extends AbstractModel implements IPluginModelBase {

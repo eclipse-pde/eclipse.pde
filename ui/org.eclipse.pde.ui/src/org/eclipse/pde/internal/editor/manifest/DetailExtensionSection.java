@@ -10,6 +10,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.wizards.extension.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -17,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.elements.*;
 import java.util.*;
@@ -32,6 +33,7 @@ import java.net.MalformedURLException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.model.*;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -124,7 +126,7 @@ public class DetailExtensionSection
 		MenuManager menu,
 		IPluginExtension extension,
 		IPluginParent parent) {
-		ISchema schema = extension.getSchema();
+		ISchema schema = ((PluginExtension)extension).getSchema();
 		String tagName = (parent == extension ? "extension" : parent.getName());
 		ISchemaElement elementInfo = schema.findElement(tagName);
 		if (elementInfo == null)
@@ -236,7 +238,7 @@ public class DetailExtensionSection
 
 		IPluginExtension extension = getExtension(parent);
 
-		ISchema schema = extension.getSchema();
+		ISchema schema = ((PluginExtension)extension).getSchema();
 		if (schema == null) {
 			menu.add(new NewElementAction(null, parent));
 		} else {
@@ -383,7 +385,7 @@ public class DetailExtensionSection
 	}
 
 	static Image getCustomImage(IPluginElement element) {
-		ISchemaElement elementInfo = element.getElementInfo();
+		ISchemaElement elementInfo = ((PluginElement)element).getElementInfo();
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
 			IPluginAttribute att = element.getAttribute(iconProperty);
@@ -448,7 +450,7 @@ public class DetailExtensionSection
 			}
 		} else if (obj instanceof IPluginElement) {
 			String name = obj.toString();
-			IPluginElement element = (IPluginElement) obj;
+			PluginElement element = (PluginElement) obj;
 			if (!fullNames) return name;
 			ISchemaElement elementInfo = element.getElementInfo();
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {

@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 import java.net.*;
 import org.xml.sax.*;

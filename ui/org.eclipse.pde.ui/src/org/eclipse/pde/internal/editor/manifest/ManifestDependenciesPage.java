@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.editor.manifest;
  */
 
 import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.*;

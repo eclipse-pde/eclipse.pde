@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.editor.manifest;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.ui.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;

@@ -19,7 +19,7 @@ import org.eclipse.jdt.launching.*;
 
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.pde.internal.PDEPluginImages;
-import org.eclipse.pde.internal.base.model.plugin.IPluginModelBase;
+import org.eclipse.pde.model.plugin.IPluginModelBase;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 public class WorkbenchLauncherWizard extends Wizard implements ILaunchWizard {

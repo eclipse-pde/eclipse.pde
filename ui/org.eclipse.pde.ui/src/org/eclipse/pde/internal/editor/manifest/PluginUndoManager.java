@@ -5,7 +5,7 @@
 package org.eclipse.pde.internal.editor.manifest;
 
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.editor.ModelUndoManager;
 import org.eclipse.pde.internal.model.AbstractPluginModelBase;
@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.model.AttributeChangedEvent;
 import org.eclipse.pde.internal.model.PluginAttribute;
 import org.eclipse.pde.internal.model.PluginElement;
 import org.eclipse.pde.internal.model.PluginObject;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.PDEPlugin;
 

@@ -4,7 +4,8 @@ package org.eclipse.pde.internal.base.schema;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.IWritable;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.IWritable;
 /**
  * Classes that implement this interface define
  * simple types. Simple types do not have compositors.

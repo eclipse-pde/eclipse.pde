@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.editor.manifest;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;

@@ -9,6 +9,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.util.*;
+import org.eclipse.pde.model.*;
 
 import java.util.*;
 import org.eclipse.swt.graphics.*;

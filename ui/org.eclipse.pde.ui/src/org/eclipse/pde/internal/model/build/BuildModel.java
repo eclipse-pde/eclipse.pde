@@ -9,8 +9,9 @@ import java.util.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.*;
 
 public abstract class BuildModel extends AbstractModel implements IBuildModel {

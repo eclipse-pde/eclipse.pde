@@ -6,7 +6,9 @@ package org.eclipse.pde.internal.builders;
 
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.*;
+
 import java.util.Vector;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.core.resources.IProject;

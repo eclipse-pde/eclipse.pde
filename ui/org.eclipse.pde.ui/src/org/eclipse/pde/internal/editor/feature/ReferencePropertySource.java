@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.feature;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.*;
 import java.net.*;
 import org.eclipse.ui.*;

@@ -10,6 +10,7 @@ import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.widgets.*;

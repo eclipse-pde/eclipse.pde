@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public abstract class ManifestPropertySource implements IPropertySource {
 	protected IPluginObject object;

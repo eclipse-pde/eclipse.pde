@@ -14,8 +14,8 @@ import org.eclipse.ui.actions.*;
 
 import java.lang.reflect.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.core.resources.*;

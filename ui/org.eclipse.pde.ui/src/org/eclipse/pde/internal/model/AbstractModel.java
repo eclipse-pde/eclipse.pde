@@ -9,12 +9,14 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.IModel;
-import org.eclipse.pde.internal.base.model.IModelChangeProvider;
-import org.eclipse.pde.internal.base.model.IModelChangedEvent;
-import org.eclipse.pde.internal.base.model.IModelChangedListener;
-import org.eclipse.pde.internal.base.model.ModelChangedEvent;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.IModel;
+import org.eclipse.pde.model.IModelChangeProvider;
+import org.eclipse.pde.model.IModelChangedEvent;
+import org.eclipse.pde.model.IModelChangedListener;
+import org.eclipse.pde.model.ModelChangedEvent;
+
 import java.util.*;
 import org.eclipse.core.runtime.PlatformObject;
 

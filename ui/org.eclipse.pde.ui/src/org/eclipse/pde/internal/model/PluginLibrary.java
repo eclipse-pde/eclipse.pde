@@ -10,7 +10,7 @@ import org.w3c.dom.*;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	private String[] contentFilters;

@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 
 public class PointGraphSection extends PDEFormSection {

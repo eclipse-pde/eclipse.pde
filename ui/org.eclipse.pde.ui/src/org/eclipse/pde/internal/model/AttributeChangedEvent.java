@@ -4,8 +4,9 @@
  */
 package org.eclipse.pde.internal.model;
 
-import org.eclipse.pde.internal.base.model.IModelChangedEvent;
-import org.eclipse.pde.internal.base.model.ModelChangedEvent;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.IModelChangedEvent;
+import org.eclipse.pde.model.ModelChangedEvent;
 
 /**
  * @version 	1.0

@@ -5,7 +5,7 @@
 package org.eclipse.pde.internal.wizards.imports;
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.pde.internal.elements.DefaultContentProvider;
@@ -21,16 +21,8 @@ import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;
 
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
-	private Button showNamesCheck;
-	private Image pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-	private Image fragmentImage =
-		PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
-	private Image errorPluginImage = PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
-	private Image errorFragmentImage =
-		PDEPluginImages.get(PDEPluginImages.IMG_ERR_FRAGMENT_OBJ);
 	private boolean block;
 	private CheckboxTableViewer pluginListViewer;
-	private static final String SETTINGS_SHOW_IDS = "showIds";
 	private static final String KEY_TITLE = "UpdateBuildpathWizard.title";
 	private static final String KEY_DESC = "UpdateBuildpathWizard.desc";
 	private static final String KEY_SHOW_NAMES =
@@ -52,47 +44,6 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		}
 	}
 
-	public class BuildpathLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			if (index == 0) {
-				IPluginModelBase model = (IPluginModelBase) obj;
-				IPluginBase plugin = model.getPluginBase();
-				String name;
-				if (showNamesCheck.getSelection())
-					name = plugin.getTranslatedName();
-				else
-					name = plugin.getId();
-
-				String version = plugin.getVersion();
-				String result = name + " (" + version + ")";
-				if (!model.isInSync()) 
-					result += " "+PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
-				return result;
-					
-			}
-			return "";
-		}
-		public String getText(Object obj) {
-			return getColumnText(obj, 0);
-		}
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0) {
-				if (obj instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase)obj;
-					boolean error = !(model.isLoaded() && model.isInSync());
-					if (model instanceof IFragmentModel) {
-						return error?errorFragmentImage:fragmentImage;
-					}
-					else {
-						return error?errorPluginImage:pluginImage;
-					}
-				}
-			}
-			return null;
-		}
-	}
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
@@ -109,6 +60,12 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		this.selected = selected;
 		tablePart = new TablePart(PDEPlugin.getResourceString(KEY_PLUGIN_LIST));
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+	
+	public void dispose() {
+		super.dispose();
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
 	public void createControl(Composite parent) {
@@ -119,26 +76,12 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		layout.marginWidth = 5;
 		container.setLayout(layout);
 
-		showNamesCheck = new Button(container, SWT.CHECK);
-		showNamesCheck.setText(PDEPlugin.getResourceString(KEY_SHOW_NAMES));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		showNamesCheck.setLayoutData(gd);
-		showNamesCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!block)
-					pluginListViewer.refresh();
-			}
-		});
-		IDialogSettings settings = getDialogSettings();
-		showNamesCheck.setSelection(!settings.getBoolean(SETTINGS_SHOW_IDS));
-
 		tablePart.createControl(container);
 		pluginListViewer = tablePart.getTableViewer();
 		pluginListViewer.setContentProvider(new BuildpathContentProvider());
-		pluginListViewer.setLabelProvider(new BuildpathLabelProvider());
+		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		gd = (GridData)tablePart.getControl().getLayoutData();
+		GridData gd = (GridData)tablePart.getControl().getLayoutData();
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 
@@ -148,8 +91,6 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	}
 
 	public void storeSettings() {
-		IDialogSettings settings = getDialogSettings();
-		settings.put(SETTINGS_SHOW_IDS, !showNamesCheck.getSelection());
 	}
 
 	public Object[] getSelected() {

@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.base.schema;
  */
 
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.IAdaptable;
 /**
  * Base interface for all objects that belong to the extension point

@@ -9,8 +9,9 @@ import java.util.*;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.*;
 
 public class Build extends BuildObject implements IBuild {

@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.model.feature;
 import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDEPlugin;
 

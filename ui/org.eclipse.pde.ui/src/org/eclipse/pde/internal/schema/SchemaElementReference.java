@@ -6,11 +6,12 @@ package org.eclipse.pde.internal.schema;
 
 import java.io.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.ISourceObject;
 import org.eclipse.core.runtime.PlatformObject;
 import java.util.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.Comment;
-import org.eclipse.pde.internal.base.model.ISourceObject;
 
 
 public class SchemaElementReference extends PlatformObject implements ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject {

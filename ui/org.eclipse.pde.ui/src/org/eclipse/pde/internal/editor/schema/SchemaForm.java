@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.editor.schema;
 
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;

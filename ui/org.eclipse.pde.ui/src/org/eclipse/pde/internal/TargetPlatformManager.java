@@ -5,7 +5,7 @@
 package org.eclipse.pde.internal;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.Vector;
 import java.io.*;
 import org.eclipse.pde.internal.*;

@@ -6,7 +6,8 @@ package org.eclipse.pde.internal.editor.feature;
 
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.pde.internal.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;

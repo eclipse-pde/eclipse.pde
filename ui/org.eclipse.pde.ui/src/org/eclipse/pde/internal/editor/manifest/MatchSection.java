@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.pde.internal.editor.*;
@@ -21,6 +21,7 @@ import java.util.*;
 import org.eclipse.pde.internal.PDEPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.model.ImportObject;
+import org.eclipse.pde.model.*;
 
 public class MatchSection extends PDEFormSection {
 	private FormEntry versionText;

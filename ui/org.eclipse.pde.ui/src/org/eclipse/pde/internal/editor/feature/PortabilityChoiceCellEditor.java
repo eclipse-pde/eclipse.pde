@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class PortabilityChoiceCellEditor extends DialogCellEditor {
 	private static final String KEY_TITLE =

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.wizards.project;
  */
 
 import java.util.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.*;

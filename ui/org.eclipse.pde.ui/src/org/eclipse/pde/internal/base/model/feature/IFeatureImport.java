@@ -4,7 +4,7 @@
  */
 package org.eclipse.pde.internal.base.model.feature;
 
-import org.eclipse.pde.internal.base.model.plugin.IPluginReference;
+import org.eclipse.pde.model.plugin.IPluginReference;
 /**
  * @version 	1.0
  * @author

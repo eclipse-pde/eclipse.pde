@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class PluginModelFactory implements IPluginModelFactory {
 	private IPluginModelBase model;

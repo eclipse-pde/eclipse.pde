@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.wizards.extension;
  */
 
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.*;
 

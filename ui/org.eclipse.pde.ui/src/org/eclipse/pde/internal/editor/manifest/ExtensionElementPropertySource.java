@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.editor.manifest;
 
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.ui.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jdt.internal.ui.util.*;
 import java.lang.reflect.*;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -33,6 +33,8 @@ import org.eclipse.pde.internal.editor.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.*;
+import org.eclipse.pde.internal.model.PluginAttribute;
+import org.eclipse.pde.internal.model.PluginElement;
 
 public class ExtensionElementPropertySource
 	extends ManifestPropertySource
@@ -67,7 +69,7 @@ public boolean canGenerate(IPropertySheetEntry entry) {
 	IPluginAttribute att = getElement().getAttribute(name);
 	if (att == null)
 		return false;
-	ISchemaAttribute info = att.getAttributeInfo();
+	ISchemaAttribute info = ((PluginAttribute)att).getAttributeInfo();
 	if (info == null)
 		return false;
 	String baseType = info.getBasedOn();
@@ -134,7 +136,7 @@ public void createPropertyDescriptors() {
 	Image reqImage = provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ);
 	Image classImage = provider.get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
 	Image resourceImage = provider.get(PDEPluginImages.DESC_ATT_FILE_OBJ);
-	ISchemaElement info = getElement().getElementInfo();
+	ISchemaElement info = ((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute[] attributes = info.getAttributes();
 	for (int i = 0; i < attributes.length; i++) {
 		ISchemaAttribute att = attributes[i];
@@ -195,7 +197,7 @@ private Object getIndexUsingType(ISchemaSimpleType type, Object value) {
 	return value!=null?value:"";
 }
 public IPropertyDescriptor[] getPropertyDescriptors() {
-	ISchemaElement element = getElement().getElementInfo();
+	ISchemaElement element = ((PluginElement)getElement()).getElementInfo();
 	if (element!=null) {
 		ISchema schema = element.getSchema();
 		if (schema.isEditable()) {
@@ -208,7 +210,7 @@ public IPropertyDescriptor[] getPropertyDescriptors() {
 }
 public Object getPropertyValue(Object name) {
 	IPluginAttribute att = getElement().getAttribute(name.toString());
-	ISchemaElement elementInfo = getElement().getElementInfo();
+	ISchemaElement elementInfo = ((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute attInfo =
 		elementInfo != null ? elementInfo.getAttribute(name.toString()) : null;
 	IResource resource = getElement().getModel().getUnderlyingResource();
@@ -281,7 +283,7 @@ public boolean isOpenable(IPropertySheetEntry entry) {
 	String name = entry.getDisplayName();
 	IPluginAttribute att = getElement().getAttribute(name);
 	if (att==null) return false;
-	ISchemaAttribute info = att.getAttributeInfo();
+	ISchemaAttribute info = ((PluginAttribute)att).getAttributeInfo();
 	if (info==null) return false;
 	if (info.getKind()!=ISchemaAttribute.JAVA && info.getKind()!=ISchemaAttribute.RESOURCE) return false;
 	String value = entry.getValueAsString();
@@ -296,7 +298,7 @@ public void openInEditor(IPropertySheetEntry entry) {
 	IPluginAttribute att = getElement().getAttribute(name);
 	if (att == null)
 		return;
-	ISchemaAttribute info = att.getAttributeInfo();
+	ISchemaAttribute info = ((PluginAttribute)att).getAttributeInfo();
 	if (info == null)
 		return;
 	String value = entry.getValueAsString();
@@ -344,7 +346,7 @@ public void setElement(IPluginElement newElement) {
 	object = newElement;
 }
 public void setPropertyValue(Object name, Object value) {
-	IPluginElement ee = (IPluginElement) object;
+	PluginElement ee = (PluginElement) object;
 	ISchemaElement elementInfo = ee.getElementInfo();
 
 	if (value instanceof Integer && elementInfo != null) {

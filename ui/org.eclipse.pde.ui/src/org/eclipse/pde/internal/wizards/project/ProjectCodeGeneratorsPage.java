@@ -16,14 +16,14 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.resources.IProjectDescription;
 
 

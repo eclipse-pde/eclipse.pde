@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.wizards.project;
  */
 
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jdt.core.*;
 

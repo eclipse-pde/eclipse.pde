@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 import org.eclipse.pde.internal.*;
 import org

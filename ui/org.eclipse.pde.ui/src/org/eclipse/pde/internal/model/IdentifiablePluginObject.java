@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 
 public abstract class IdentifiablePluginObject extends PluginObject implements IIdentifiable {
 	protected String id;

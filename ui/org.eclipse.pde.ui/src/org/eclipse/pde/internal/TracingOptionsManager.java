@@ -5,7 +5,7 @@ package org.eclipse.pde.internal;
  */
 
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;

@@ -9,6 +9,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.feature.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.*;
 
 public abstract class FeatureObject extends PlatformObject implements IFeatureObject {

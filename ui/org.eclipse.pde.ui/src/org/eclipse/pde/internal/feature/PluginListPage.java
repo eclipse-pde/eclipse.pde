@@ -12,7 +12,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.parts.WizardCheckboxTablePart;

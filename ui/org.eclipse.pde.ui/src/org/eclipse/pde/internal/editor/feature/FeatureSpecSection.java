@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.editor.feature;
 
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.resources.*;
@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.PDEPlugin;

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.wizards.project;
  */
 
 import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.pde.internal.base.model.*;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.core.resources.*;

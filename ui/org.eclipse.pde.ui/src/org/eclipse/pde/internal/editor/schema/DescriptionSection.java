@@ -22,6 +22,7 @@ import org.eclipse.jface.text.presentation.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.util.PDEProblemFinder;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public class DescriptionSection extends PDEFormSection {

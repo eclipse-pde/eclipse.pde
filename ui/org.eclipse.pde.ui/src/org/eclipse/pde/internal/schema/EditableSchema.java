@@ -8,6 +8,7 @@ import java.io.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
 
 public class EditableSchema extends Schema implements IEditable {
 	private boolean dirty;

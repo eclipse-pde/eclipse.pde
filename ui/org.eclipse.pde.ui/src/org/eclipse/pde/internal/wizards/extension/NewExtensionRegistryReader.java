@@ -21,7 +21,7 @@ public class NewExtensionRegistryReader {
 	public static final String TAG_CATEGORY = "category";
 	public static final String TAG_DESCRIPTION = "description";
 
-	private final static String     UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.pde.internal.base.Other";
+	private final static String     UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.pde.Other";
 	private final static String     UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";
 	public NewExtensionRegistryReader() {
 		super();

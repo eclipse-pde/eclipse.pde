@@ -5,10 +5,10 @@ package org.eclipse.pde.internal.wizards.extension;
  */
 
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.wizards.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.*;
 

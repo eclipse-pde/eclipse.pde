@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.io.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage;

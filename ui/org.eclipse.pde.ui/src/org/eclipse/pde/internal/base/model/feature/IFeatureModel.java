@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.base.model.feature;
 
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.core.resources.IResource;
 /**
  * This model type is designed to hold data loaded from

@@ -9,7 +9,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.*;
 import org.eclipse.core.resources.*;
@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.elements.*;
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.wizards.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.editor.PropertiesAction;
 import org.eclipse.pde.internal.model.feature.FeatureImport;
@@ -91,17 +92,6 @@ public class RequiresSection
 			recomputeImports();
 	}
 
-	private Image createWarningImage(
-		ImageDescriptor baseDescriptor,
-		ImageDescriptor overlayDescriptor) {
-		ImageDescriptor desc =
-			new OverlayIcon(baseDescriptor, new ImageDescriptor[][] { {
-			}, {
-			}, {
-				overlayDescriptor }
-		});
-		return desc.createImage();
-	}
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);

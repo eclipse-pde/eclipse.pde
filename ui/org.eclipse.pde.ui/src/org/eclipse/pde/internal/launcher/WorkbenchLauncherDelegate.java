@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 import org.eclipse.jdt.launching.*;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.IExecutableExtension;
 

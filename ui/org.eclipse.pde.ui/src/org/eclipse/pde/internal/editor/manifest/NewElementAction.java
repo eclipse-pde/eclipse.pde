@@ -8,10 +8,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
 import java.util.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.model.PluginElement;
 
 public class NewElementAction extends Action {
 	public static final String UNKNOWN_ELEMENT_TAG = "Generic";
@@ -77,7 +78,7 @@ private void initializeRequiredAttribute(
 	element.setAttribute(attInfo.getName(), value);
 }
 private void initializeRequiredAttributes(IPluginElement element) throws CoreException {
-	ISchemaElement elementInfo = element.getElementInfo();
+	ISchemaElement elementInfo = ((PluginElement)element).getElementInfo();
 	if (elementInfo==null) return;
 	String counterKey = getCounterKey(elementInfo);
 	Integer counter = (Integer)counters.get(counterKey);

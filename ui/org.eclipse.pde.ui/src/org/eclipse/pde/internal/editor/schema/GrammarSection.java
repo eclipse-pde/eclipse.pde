@@ -15,6 +15,7 @@ import org.eclipse.swt.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.dialogs.*;

@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.*;
 import java.util.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.PDEPluginImages;
 import org.eclipse.core.runtime.IPluginDescriptor;

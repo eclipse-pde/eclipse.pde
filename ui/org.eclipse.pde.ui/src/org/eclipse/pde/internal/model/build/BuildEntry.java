@@ -7,7 +7,9 @@ package org.eclipse.pde.internal.model.build;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
+import org.eclipse.pde.model.*;
+
 import java.util.*;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {

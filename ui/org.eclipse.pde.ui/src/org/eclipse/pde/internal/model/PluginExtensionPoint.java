@@ -9,7 +9,7 @@ import org.w3c.dom.Node;
 import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.Hashtable;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {

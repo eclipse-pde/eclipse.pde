@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.launcher;
  */
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.pde.internal.base.model.plugin.IPluginModelBase;
+import org.eclipse.pde.model.plugin.IPluginModelBase;
 
 /**
  * @version 	1.0

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.builders;
  * @author
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.Vector;
 import org.eclipse.pde.internal.PDEPlugin;
 

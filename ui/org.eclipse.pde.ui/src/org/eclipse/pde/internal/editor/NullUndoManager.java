@@ -5,6 +5,7 @@
 package org.eclipse.pde.internal.editor;
 
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.jface.action.IAction;
 
 /**

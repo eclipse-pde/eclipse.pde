@@ -4,7 +4,8 @@
  */
 package org.eclipse.pde.internal.base.model.feature;
 
-import org.eclipse.pde.internal.base.model.IIdentifiable;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.IIdentifiable;
 import org.eclipse.core.runtime.CoreException;
 
 /**

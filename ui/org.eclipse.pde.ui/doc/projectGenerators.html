@@ -11,11 +11,7 @@ This extension point provides for plugging in
 wizards that create initial content of the PDE plug-in
 projects. These wizards can create plug-in manifest,
 key classes, initial folder structure and even
-generate some extensions and the required code for them.
-
-<p><b>Note: this extension point is internal and
-is only used by PDE.</b>
-</p><H2>Markup</H2>
+generate some extensions and the required code for them.<H2>Markup</H2>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (wizard*)&gt;</samp>
 <br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
@@ -28,14 +24,14 @@ is only used by PDE.</b>
 <br><samp>&nbsp;&nbsp; &lt;!ATTLIST wizard</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;CDATA #IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp; &gt;</samp>
 <ul>
 <li><b>id</b> - a unique name that will be used to identify this wizard.</li><li><b>name</b> - a translatable name that will be used in UI representation
 of this wizard.</li><li><b>icon</b> - a relative path of an icon that will be used to visually 
 represent the wizard.</li><li><b>class</b> - a fully qualified name of a class which implements 
-<samp>org.eclipse.pde.internal.base.IPluginContentWizard</samp>.</li></ul>
+<samp>org.eclipse.pde.IPluginContentWizard</samp>.</li></ul>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT description (#CDATA)&gt;</samp>
 <H2>Example</H2>
 The following is an example of this extension point:
@@ -53,13 +49,13 @@ The following is an example of this extension point:
    &lt;/extension&gt;
 </pre><H2>API Information</H2>
 Wizards that plug into this extension point must
-implement  
-<samp>org.eclipse.pde.internal.base.IPluginContentWizard</samp>
- interface.<H2>Supplied Implementation</H2>
+implement <samp>org.eclipse.pde.IPluginContentWizard</samp>
+interface.<H2>Supplied Implementation</H2>
 PDE provides default implementation of this wizard
 that generates the manifest file and the top-level
 plug-in class.<p>
 <a href="hglegal.htm">
-<img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved."
+<img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
+All Rights Reserved."
 BORDER=0 height=12 width=195></a></BODY>
 </HTML>

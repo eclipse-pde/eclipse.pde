@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class NewDependencyWizard extends Wizard {
 	private IPluginModel model;

@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.editor.manifest;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.pde.internal.editor.*;

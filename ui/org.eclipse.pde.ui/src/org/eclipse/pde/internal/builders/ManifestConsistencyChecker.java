@@ -4,8 +4,10 @@ package org.eclipse.pde.internal.builders;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.model.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.ISourceObject;
 import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;
@@ -14,7 +16,6 @@ import org.eclipse.pde.internal.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 import java.io.*;
-import org.eclipse.pde.internal.base.model.ISourceObject;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";

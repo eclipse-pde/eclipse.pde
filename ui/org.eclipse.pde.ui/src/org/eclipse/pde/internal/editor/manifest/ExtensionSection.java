@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.action.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -19,6 +19,7 @@ import org.eclipse.swt.*;
 import org.eclipse.pde.internal.editor.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
+import org.eclipse.pde.model.*;
 
 public class ExtensionSection
 	extends PDEFormSection

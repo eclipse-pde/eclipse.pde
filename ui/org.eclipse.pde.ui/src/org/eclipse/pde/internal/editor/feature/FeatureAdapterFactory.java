@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.editor.feature;
  */
 
 import org.eclipse.pde.internal.base.model.feature.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.ui.views.properties.*;

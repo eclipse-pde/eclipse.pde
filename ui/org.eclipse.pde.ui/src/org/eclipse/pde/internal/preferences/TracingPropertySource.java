@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import java.util.*;
 import java.io.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.ui.views.properties.*;
 import java.util.Vector;
 import org.eclipse.jface.viewers.*;
@@ -38,7 +38,7 @@ public class TracingPropertySource implements IPropertySource, IAdaptable {
 		}
 	}
 /**
- * @param model org.eclipse.pde.internal.base.model.plugin.IPluginModel
+ * @param model org.eclipse.pde.model.plugin.IPluginModel
  */
 public TracingPropertySource(IPluginModel model, Properties masterOptions, Hashtable template) {
 	this.model = model;

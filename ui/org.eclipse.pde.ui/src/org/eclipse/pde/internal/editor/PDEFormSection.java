@@ -6,6 +6,7 @@ package org.eclipse.pde.internal.editor;
 
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.pde.internal.PDEPlugin;
 
 public abstract class PDEFormSection extends FormSection implements IModelChangedListener {

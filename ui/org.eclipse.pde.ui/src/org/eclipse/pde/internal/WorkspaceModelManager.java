@@ -11,7 +11,7 @@ import org.eclipse.pde.internal.model.feature.*;
 import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.core.resources.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
@@ -21,6 +21,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.wizards.project.ConvertedProjectWizard;
+import org.eclipse.pde.model.*;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.preference.IPreferenceStore;
 

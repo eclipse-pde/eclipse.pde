@@ -4,12 +4,13 @@ package org.eclipse.pde.internal.editor.manifest;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.core.runtime.IAdapterFactory;
 import java.util.*;
+import org.eclipse.pde.internal.model.PluginElement;
 
 public class PluginAdapterFactory implements IAdapterFactory {
 	private ExtensionPropertySource extensionProperties;
@@ -41,7 +42,7 @@ private Hashtable getElementTable(IPluginElement element) {
 		: readOnlyElementProperties;
 }
 private IPropertySource getExtensionElementProperties(IPluginElement element) {
-	ISchemaElement elementInfo = element.getElementInfo();
+	ISchemaElement elementInfo = ((PluginElement)element).getElementInfo();
 	if (elementInfo == null) {
 		// Use standard page for unknown elements
 		return new UnknownElementPropertySource(element);

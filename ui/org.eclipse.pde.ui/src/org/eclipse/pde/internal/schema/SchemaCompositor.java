@@ -8,6 +8,7 @@ import java.io.*;
 import org.eclipse.pde.internal.base.model.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
 
 public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaCompositor {
 	public static final String P_KIND = "p_kind";

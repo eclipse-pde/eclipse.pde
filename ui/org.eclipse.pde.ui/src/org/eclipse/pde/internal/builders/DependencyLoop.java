@@ -1,7 +1,7 @@
 package org.eclipse.pde.internal.builders;
 
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class DependencyLoop {
 	private IPluginBase [] members;

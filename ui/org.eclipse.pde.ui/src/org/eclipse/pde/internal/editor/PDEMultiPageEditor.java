@@ -8,6 +8,9 @@ import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.editor.text.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.IModel;
+
 import java.lang.reflect.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.actions.*;
@@ -27,7 +30,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.internal.base.model.IModel;
+import org.eclipse.pde.model.IModel;
 import org.eclipse.jface.viewers.*;
 import java.util.*;
 import org.eclipse.ui.texteditor.*;

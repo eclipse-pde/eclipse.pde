@@ -5,11 +5,12 @@ package org.eclipse.pde.internal.schema;
  */
 
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.model.ISourceObject;
 import org.eclipse.core.runtime.PlatformObject;
 import java.util.*;
 import org.w3c.dom.*;
 import java.io.PrintWriter;
-import org.eclipse.pde.internal.base.model.ISourceObject;
 
 public abstract class SchemaObject
 	extends PlatformObject

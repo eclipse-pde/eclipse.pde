@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.editor.feature;
 import org.eclipse.pde.internal.base.model.feature.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.manifest.MatchSection;

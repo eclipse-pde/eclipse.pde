@@ -17,11 +17,13 @@ import org.eclipse.pde.internal.elements.*;
 import org.eclipse.jface.viewers.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.parts.TreePart;
 import org.eclipse.pde.internal.preferences.MainPreferencePage;
+import org.eclipse.pde.model.*;
+import org.eclipse.pde.internal.model.PluginElement;
 
 public class DetailChildrenSection
 	extends TreeSection
@@ -291,8 +293,8 @@ public class DetailChildrenSection
 	private String resolveObjectName(Object obj) {
 		String value = obj.toString();
 		if (!MainPreferencePage.isFullNameModeEnabled()) return value;
-		if (obj instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) obj;
+		if (obj instanceof PluginElement) {
+			PluginElement element = (PluginElement) obj;
 			ISchemaElement elementInfo = element.getElementInfo();
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {
 				IPluginAttribute att = element.getAttribute(elementInfo.getLabelProperty());

@@ -7,15 +7,11 @@
 <H1><CENTER>Extension Wizards</CENTER></H1>
 <H2>Identifier</H2>
 org.eclipse.pde.newExtension<H2>Description</H2>
-This extension point can be used to plug in wizards
+This extension point should be used to contribute wizards
 that will be used to create new extensions in 
 PDE plug-in manifest editor. Wizards can create on
 or more extensions at the same time, as well
-as the code needed to implement those extensions.
-<p>
-<b>Note: this extension point is internal and can
-only be used by PDE.
-</b><H2>Markup</H2>
+as the code needed to implement those extensions.<H2>Markup</H2>
 <p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (wizard | category)*&gt;</samp>
 <br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
@@ -81,11 +77,12 @@ The following is an example of the extension:
 </p><H2>API Information</H2>
 This extension point requires that a class that
 implements  
-<samp>org.eclipse.pde.internal.base.IExtensionWizard</samp>
- interface.<H2>Supplied Implementation</H2>
-PDE provides generic wizard that creates extension
+<samp>org.eclipse.pde.IExtensionWizard</samp>
+interface.<H2>Supplied Implementation</H2>
+PDE provides a generic wizard that creates extension
 points based on the extension point schema information.<p>
 <a href="hglegal.htm">
-<img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved."
+<img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.
+All Rights Reserved."
 BORDER=0 height=12 width=195></a></BODY>
 </HTML>

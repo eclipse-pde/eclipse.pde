@@ -25,8 +25,8 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.plugin.*;
+import org.eclipse.pde.model.build.*;
 
 public class JavaAttributeWizardPage extends WizardPage {
 	public static final String PAGE_TITLE = "JavaAttributeWizard.title";

@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.schema.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class PluginExtension extends PluginParent implements IPluginExtension {
 	private String point;

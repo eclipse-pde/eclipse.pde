@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.schema;
 
 import org.eclipse.jface.resource.*;
 import java.net.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 
 public class ExternalSchemaDescriptor extends AbstractSchemaDescriptor {

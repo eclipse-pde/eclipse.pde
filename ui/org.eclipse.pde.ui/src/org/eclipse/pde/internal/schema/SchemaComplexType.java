@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.model.*;
 
 public class SchemaComplexType extends SchemaType implements ISchemaComplexType {
 	public static final String P_COMPOSITOR = "compositorProperty";

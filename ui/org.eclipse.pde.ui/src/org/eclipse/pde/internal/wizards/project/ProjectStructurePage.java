@@ -4,10 +4,10 @@ package org.eclipse.pde.internal.wizards.project;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.pde.internal.model.build.*;
 import org.eclipse.ui.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
@@ -21,7 +21,7 @@ import java.util.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.base.*;
+import org.eclipse.pde.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.util.*;

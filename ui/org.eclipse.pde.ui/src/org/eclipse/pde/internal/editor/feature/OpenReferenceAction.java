@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.editor.feature;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.ui.actions.*;

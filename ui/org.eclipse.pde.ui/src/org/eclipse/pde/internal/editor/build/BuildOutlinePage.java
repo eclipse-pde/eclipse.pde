@@ -4,13 +4,15 @@ package org.eclipse.pde.internal.editor.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.*;
+import org.eclipse.pde.model.*;
+
 import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.viewers.*;

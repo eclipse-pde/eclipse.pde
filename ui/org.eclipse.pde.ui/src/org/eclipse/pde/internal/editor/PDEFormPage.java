@@ -6,6 +6,8 @@ package org.eclipse.pde.internal.editor;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.model.*;
+
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.jface.viewers.*;

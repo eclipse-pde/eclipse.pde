@@ -4,8 +4,8 @@ package org.eclipse.pde.internal.model.build;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.build.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.build.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class BuildModelFactory implements IBuildModelFactory {
 	private IBuildModel model;

@@ -8,6 +8,8 @@ import java.io.*;
 import org.w3c.dom.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.feature.*;
+import org.eclipse.pde.model.*;
+
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
 

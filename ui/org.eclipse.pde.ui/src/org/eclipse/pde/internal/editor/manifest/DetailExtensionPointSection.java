@@ -5,12 +5,13 @@ package org.eclipse.pde.internal.editor.manifest;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.wizards.extension.*;
+import org.eclipse.pde.model.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;

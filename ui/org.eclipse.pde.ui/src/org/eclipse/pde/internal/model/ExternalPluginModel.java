@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 public class ExternalPluginModel extends ExternalPluginModelBase implements IPluginModel {
 

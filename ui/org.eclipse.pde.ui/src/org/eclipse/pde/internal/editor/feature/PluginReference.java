@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.editor.feature;
  */
 
 import org.eclipse.pde.internal.base.model.feature.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 
 
 public class PluginReference {

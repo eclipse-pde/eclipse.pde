@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.elements.*;
-import org.eclipse.pde.internal.base.model.build.*;
+import org.eclipse.pde.model.build.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.*;
 

@@ -9,7 +9,7 @@ import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.pde.internal.base.model.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.internal.editor.*;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.pde.internal.elements.NamedElement;
+import org.eclipse.pde.model.*;
 
 public class FeatureOutlinePage extends FormOutlinePage {
 	private static final String KEY_REFERENCED_PLUGINS =

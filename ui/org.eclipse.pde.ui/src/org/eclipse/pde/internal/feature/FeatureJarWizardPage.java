@@ -6,7 +6,7 @@ package org.eclipse.pde.internal.feature;
 
 import org.eclipse.ant.internal.ui.*;
 import org.eclipse.ant.core.*;
-import org.eclipse.pde.internal.base.model.plugin.*;
+import org.eclipse.pde.model.plugin.*;
 import java.util.*;
 import org.eclipse.pde.internal.core.*;
 import java.io.*;
