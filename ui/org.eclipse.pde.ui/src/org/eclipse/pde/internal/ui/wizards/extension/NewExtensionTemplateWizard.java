@@ -71,6 +71,8 @@ public class NewExtensionTemplateWizard
 
 	public void addPages() {
 		section.addPages(this);
+		if (getSection() != null)
+			setWindowTitle(getSection().getLabel());
 		if (section instanceof BaseOptionTemplateSection) {
 			((BaseOptionTemplateSection)section).initializeFields(model);
 		}

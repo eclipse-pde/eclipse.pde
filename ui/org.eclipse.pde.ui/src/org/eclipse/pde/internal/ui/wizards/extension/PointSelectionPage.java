@@ -288,6 +288,7 @@ public class PointSelectionPage
 		wizardsPage.createControl(parent);
 		wizardsPage.setWizard(wizard);
 		wizardsPage.getSelectionProvider().addSelectionChangedListener(this);
+		wizardsPage.init(project, fPluginBase);
 		return wizardsPage.getControl();
 	}
 	private void createMenuManager(){
