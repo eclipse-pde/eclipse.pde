@@ -55,6 +55,7 @@ public boolean becomesInvisible(IFormPage newPage) {
 		boolean cleanModel = getEditor().updateModel();
 		if (cleanModel==false) {
 			warnErrorsInSource();
+			errorMode=true;
 			return false;
 		}
 		modelNeedsUpdating = false;
