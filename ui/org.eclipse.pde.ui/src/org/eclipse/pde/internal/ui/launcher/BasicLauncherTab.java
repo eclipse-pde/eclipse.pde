@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -150,6 +151,7 @@ public class BasicLauncherTab
 		hookListeners();
 		setControl(composite);
 		
+		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 

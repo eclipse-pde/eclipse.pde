@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -162,6 +163,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.addAll"));
@@ -176,6 +178,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 					pageChanged();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.remove"));
@@ -189,6 +192,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				} 
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.removeAll"));
@@ -199,6 +203,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				pageChanged();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.swap"));
@@ -213,6 +218,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				pageChanged();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing"));
@@ -230,6 +236,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				pageChanged();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existingBinary"));
@@ -247,6 +254,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 				pageChanged();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.addRequired"));
@@ -272,6 +280,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 
 		});
+		SWTUtil.setButtonDimensionHint(button);
 		
 		countLabel = new Label(comp, SWT.NONE);
 		countLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));		

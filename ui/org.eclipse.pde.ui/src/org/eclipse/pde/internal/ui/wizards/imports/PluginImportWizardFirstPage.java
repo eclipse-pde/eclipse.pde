@@ -142,6 +142,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				handleSourceLocations();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(sourceLocations);
+
 	}
 	
 	
@@ -166,6 +168,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				handleEnvChange();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(envButton);
 	}
 	
 	private void initialize() {

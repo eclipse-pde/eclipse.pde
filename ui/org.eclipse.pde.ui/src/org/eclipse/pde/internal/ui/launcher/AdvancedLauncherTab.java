@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -194,6 +195,7 @@ public class AdvancedLauncherTab
 		hookListeners();
 		setControl(composite);
 
+		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
 	}
 

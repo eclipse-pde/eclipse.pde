@@ -29,6 +29,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.pde.internal.ui.editor.manifest.NullMenuManager;
 import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.pde.internal.core.*;
@@ -184,6 +185,7 @@ public class TracingLauncherTab
 		initialize();
 		setControl(container);
 		
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
 
