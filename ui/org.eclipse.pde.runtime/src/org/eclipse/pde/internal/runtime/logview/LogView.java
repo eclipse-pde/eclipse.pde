@@ -138,6 +138,8 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Set all rows where the tableTreeItem has children to have a <b>bold</b> font.
 	 */
 	private void applyFonts() {
+		if (tableTreeViewer == null || tableTreeViewer.getTableTree().isDisposed())
+			return;
 		int max = tableTreeViewer.getTableTree().getItemCount();
 		int index = 0, tableIndex=0;
 		while (index <max){
