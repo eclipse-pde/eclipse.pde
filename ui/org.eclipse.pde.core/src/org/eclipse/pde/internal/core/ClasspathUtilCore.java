@@ -346,7 +346,8 @@ public class ClasspathUtilCore {
 		IProject project = model.getUnderlyingResource().getProject();
 		IBuildEntry[] buildEntries = getBuildEntries(model, project);
 
-		if (buildEntries.length == 0) {
+		if (!WorkspaceModelManager.isBinaryPluginProject(project) &&  
+					buildEntries.length == 0) {
 			// keep existing source folders
 			IPackageFragmentRoot[] roots = 
 				JavaCore.create(project).getPackageFragmentRoots();
