@@ -631,7 +631,12 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="feature.xml"
-            id="org.eclipse.pde.ui.featureJar">
+            id="org.eclipse.pde.ui.featureToolSet">
+         <menu
+         		id="org.eclipse.pde.ui.feature.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         </menu>
          <filter
                name="projectNature"
                value="org.eclipse.pde.FeatureNature">
@@ -640,7 +645,7 @@
                label="%popupMenus.createJar.label"
                helpContextId="org.eclipse.pde.doc.user.create_feature_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildFeatureAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.feature.tools/group0"
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildFeatureJar">
          </action>
@@ -648,12 +653,57 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
-            id="org.eclipse.pde.ui.pluginBuild">
+            id="org.eclipse.pde.ui.pluginToolSet">
+         <menu
+         		id="org.eclipse.pde.ui.plugin.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         	<separator name="group1"/>
+         	<separator name="group2"/>
+         </menu>
+         <action
+               label="%PluginSearch.references"
+               helpContextId="org.eclipse.pde.doc.user.find_references"
+               class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.SearchReferences">
+         </action>
+         <action
+               label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OpenDependenciesAction1">
+         </action>
+         <action
+               label="%UpdateClasspathAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.UpdateClasspathAction1">
+         </action>
+         <action
+               label="%PluginToBundleWizardAction.label"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.PluginToBundleWizard1">
+         </action>
+         <action
+               label="%MigrationAction.label"
+               class="org.eclipse.pde.internal.ui.wizards.project.MigrationAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.MigrationAction1">
+         </action>
          <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildPluginAction">
          </action>
@@ -661,12 +711,50 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="fragment.xml"
-            id="org.eclipse.pde.ui.fragmentBuild">
+            id="org.eclipse.pde.ui.fragmentToolSet">
+         <menu
+         		id="org.eclipse.pde.ui.fragment.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         	<separator name="group1"/>
+         	<separator name="group2"/>
+         </menu>
+         <action
+               label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OpenDependenciesAction2">
+         </action>
+         <action
+               label="%UpdateClasspathAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.UpdateClasspathAction2">
+         </action>
+         <action
+               label="%PluginToBundleWizardAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.PluginToBundleWizard1">
+         </action>
+         <action
+               label="%MigrationAction.label"
+               class="org.eclipse.pde.internal.ui.wizards.project.MigrationAction"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.MigrationAction2">
+         </action>
          <action
                label="%popupMenus.buildFragment.label"
                helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group2"
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildFragmentAction">
          </action>
@@ -674,171 +762,100 @@
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="site.xml"
-            id="org.eclipse.pde.ui.siteBuild">
+            id="org.eclipse.pde.ui.siteToolSet">
+         <menu
+         		id="org.eclipse.pde.ui.site.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         </menu>
          <action
                label="%popupMenus.buildSite.label"
                class="org.eclipse.pde.internal.ui.feature.BuildSiteAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.site.tools/group0"
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildSiteAction">
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="plugin.xml"
-            id="org.eclipse.pde.ui.UpdateClasspathAction1">
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <action
-               label="%UpdateClasspathAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.UpdateClasspathAction1">
-         </action>
-         <action
-               label="%OpenDependenciesAction.label"
-               icon="icons/cview16/plugin_depend.gif"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction1">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="fragment.xml"
-            id="org.eclipse.pde.ui.UpdateClasspathAction2">
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <action
-               label="%UpdateClasspathAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.UpdateClasspathAction2">
-         </action>
-         <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction2">
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            id="org.eclipse.pde.UpdateClasspathAction3">
+            id="org.eclipse.pde.ui.pluginProjectToolSet">
+         <menu
+         		id="org.eclipse.pde.ui.project.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         	<separator name="group1"/>
+          </menu>
          <filter
                name="projectNature"
                value="org.eclipse.pde.PluginNature">
          </filter>
          <action
+               label="%OpenDependenciesAction.label"
+               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
+               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OpenDependenciesAction3">
+         </action>
+         <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
                class="org.eclipse.pde.internal.ui.wizards.imports.UpdateClasspathAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.project.tools/group0"
                enablesFor="*"
                id="org.eclipse.pde.ui.UpdateClasspathAction3">
          </action>
          <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="additions"
+               label="%PluginToBundleWizardAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction3">
+               id="org.eclipse.pde.ui.PluginToBundleWizard2">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="plugin.xml"
-            id="org.eclipse.pde.ui.search.PluginReferences">
          <action
-               label="%PluginSearch.references"
-               helpContextId="org.eclipse.pde.doc.user.find_references"
-               class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.SearchReferences">
+               label="%MigrationAction.label"
+               class="org.eclipse.pde.internal.ui.wizards.project.MigrationAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group1"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.MigrationAction3">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="*.mxsd"
             id="org.eclipse.pde.ui.PreviewReference1">
+         <menu
+         		id="org.eclipse.pde.ui.schema.mxsd.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         </menu>
          <action
                label="%PreviewReference.label"
                helpContextId="org.eclipse.pde.doc.user.preview_reference"
                class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.schema.mxsd.tools/group0"
                enablesFor="1"
                id="org.eclipse.pde.ui.PreviewReference">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="plugin.xml"
-            id="org.eclipse.pde.ui.PluginToBundle1">
-         <action
-               label="%PluginToBundleWizardAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.PluginToBundleWizard1">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.pde.PluginToBundle3">
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.PluginNature">
-         </filter>
-         <action
-               label="%PluginToBundleWizardAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.PluginToBundleWizard2">
          </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="*.exsd"
-            id="org.eclipse.pde.ui.PreviewReference2">
+            id="org.eclipse.pde.ui.schema.exsd.tools">
+         <menu
+         		id="org.eclipse.pde.ui.schema.exsd.tools"
+         		label="%org.eclipse.pde.ui.tools">
+         	<separator name="group0"/>
+         </menu>
          <action
                label="%PreviewReference.label"
                helpContextId="org.eclipse.pde.doc.user.preview_reference"
                class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-               menubarPath="additions"
+               menubarPath="org.eclipse.pde.ui.schema.exsd.tools/group0"
                enablesFor="1"
-               id="org.eclipse.pde.ui.PreviewReference">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="fragment.xml"
-            id="org.eclipse.pde.ui.FragmentToBundle1">
-         <action
-               label="%PluginToBundleWizardAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.PluginToBundleWizard1">
+               id="org.eclipse.pde.ui.PreviewReference2">
          </action>
       </objectContribution>
    </extension>
