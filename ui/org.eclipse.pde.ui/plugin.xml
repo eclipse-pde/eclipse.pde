@@ -34,7 +34,7 @@
    <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.xsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.xsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
-   <extension-point id="source" name="%expoint.source.name"/>
+   <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
 
 <!-- Extensions -->
    <extension

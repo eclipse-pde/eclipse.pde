@@ -40,7 +40,7 @@ public class UpdateBuildpathWizard extends Wizard {
 		
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
 		System.arraycopy(finalSelected, 0, modelArray, 0, finalSelected.length);
-		UpdateClasspathAction.run(false, getContainer(), modelArray);
+		UpdateClasspathAction.run(true, getContainer(), modelArray);
 		return true;
 	}
 	

@@ -165,27 +165,16 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 			IProject parentProject = root.getProject(parentPluginId);
 			entries.add(JavaCore.newProjectEntry(parentProject.getFullPath()));
 			projectsAdded.add(parentProject);
+			IPluginModelBase parentModel = findModel(parentPluginId);
+			if (parentModel!=null) {
+				addPrereqs(parentModel, projectsAdded, entries);
+			}
 		} else {
 			// add fragment libraries
 			IPlugin plugin = ((IPluginModel) model).getPlugin();
 			//addFragmentLibraries(plugin, entries);
 		}
-		// add the prerequisites
-		IPluginBase plugin = ((IPluginModelBase) model).getPluginBase();
-		IPluginImport[] imports = plugin.getImports();
-		// all required projects
-		if (imports.length > 0) {
-			for (int i = 0; i < imports.length; i++) {
-				IPluginImport curr = imports[i];
-				IProject req = root.getProject(curr.getId());
-				if (!projectsAdded.contains(req)) {
-					IClasspathEntry entry =
-						JavaCore.newProjectEntry(req.getFullPath(), curr.isReexported());
-					entries.add(entry);
-					projectsAdded.add(req);
-				}
-			}
-		}
+		addPrereqs(model, projectsAdded, entries);
 		// boot project & runtime project are implicitly imported
 		String prjName = project.getName();
 		if (!"org.eclipse.core.boot".equals(prjName)) {
@@ -200,6 +189,36 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				if (!projectsAdded.contains(runtimeProj)) {
 					entries.add(JavaCore.newProjectEntry(runtimeProj.getFullPath()));
 					projectsAdded.add(runtimeProj);
+				}
+			}
+		}
+	}
+	
+	private IPluginModelBase findModel(String id) {
+		for (int i=0; i<models.length; i++) {
+			IPluginModelBase model = models[i];
+			IPluginBase pluginBase = model.getPluginBase();
+			if (pluginBase.getId().equals(id))
+				return model;
+		}
+		return null;
+	}
+
+	
+	private void addPrereqs(IPluginModelBase model, HashSet projectsAdded, ArrayList entries) {
+		// add the prerequisites
+		IPluginBase plugin = ((IPluginModelBase) model).getPluginBase();
+		IPluginImport[] imports = plugin.getImports();
+		// all required projects
+		if (imports.length > 0) {
+			for (int i = 0; i < imports.length; i++) {
+				IPluginImport curr = imports[i];
+				IProject req = root.getProject(curr.getId());
+				if (!projectsAdded.contains(req)) {
+					IClasspathEntry entry =
+						JavaCore.newProjectEntry(req.getFullPath(), curr.isReexported());
+					entries.add(entry);
+					projectsAdded.add(req);
 				}
 			}
 		}

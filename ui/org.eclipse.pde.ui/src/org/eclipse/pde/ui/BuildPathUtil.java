@@ -120,6 +120,10 @@ public class BuildPathUtil {
 		// if fragment, add referenced plug-in
 		if (model instanceof IFragmentModel) {
 			addFragmentPlugin((IFragmentModel) model, result);
+			IPlugin parentPlugin = findFragmentPlugin((IFragmentModel)model);
+			if (parentPlugin!=null) {
+				addDependencies(project, parentPlugin.getImports(), result);
+			}
 		} else {
 			addFragmentLibraries((IPluginModel) model, result, monitor);
 		}
@@ -295,14 +299,18 @@ public class BuildPathUtil {
 			new PluginPathUpdater(project, checkedPlugins.iterator());
 		ppu.addClasspathEntries(result);
 	}
-
-	private static void addFragmentPlugin(IFragmentModel model, Vector result) {
+	
+	private static IPlugin findFragmentPlugin(IFragmentModel model) {
 		IFragment fragment = model.getFragment();
 		String id = fragment.getPluginId();
 		String version = fragment.getPluginVersion();
 		int match = fragment.getRule();
 
-		IPlugin plugin = PDECore.getDefault().findPlugin(id, version, match);
+		return PDECore.getDefault().findPlugin(id, version, match);
+	}
+
+	private static void addFragmentPlugin(IFragmentModel model, Vector result) {
+		IPlugin plugin = findFragmentPlugin(model);
 		if (plugin != null) {
 			IProject project = plugin.getModel().getUnderlyingResource().getProject();
 			Vector checkedPlugins = new Vector();

@@ -134,6 +134,11 @@ public abstract class PluginBase
 			return;
 		for (int i = 0; i < extensionPointModels.length; i++) {
 			ExtensionPointModel extensionPointModel = extensionPointModels[i];
+			PluginModel parent = extensionPointModel.getParent();
+			if (parent instanceof PluginFragmentModel) {
+				// Do not accept merged entries
+				continue;
+			}
 			PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
 			extensionPoint.setModel(getModel());
 			extensionPoint.setInTheModel(true);
@@ -147,6 +152,11 @@ public abstract class PluginBase
 			return;
 		for (int i = 0; i < extensionModels.length; i++) {
 			ExtensionModel extensionModel = extensionModels[i];
+			PluginModel parent = extensionModel.getParent();
+			if (parent instanceof PluginFragmentModel) {
+				// Do not accept merged entries
+				continue;
+			}
 			PluginExtension extension = new PluginExtension();
 			extension.setModel(getModel());
 			extension.setInTheModel(true);
@@ -159,6 +169,7 @@ public abstract class PluginBase
 		if (libraryModels == null)
 			return;
 		for (int i = 0; i < libraryModels.length; i++) {
+			LibraryModel libraryModel = libraryModels[i];
 			PluginLibrary library = new PluginLibrary();
 			library.setModel(getModel());
 			library.setInTheModel(true);

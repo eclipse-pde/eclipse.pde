@@ -4,13 +4,8 @@
  */
 package org.eclipse.pde.internal.core;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xerces.utils.QName;
-import org.apache.xerces.framework.XMLAttrList;
-import org.w3c.dom.Node;
 import java.util.Hashtable;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXNotSupportedException;
+import org.apache.xerces.parsers.DOMParser;
 
 /**
  * @version 	1.0
@@ -22,13 +17,16 @@ public class SourceDOMParser extends DOMParser {
 	
 	public SourceDOMParser() {
 		try {
-			setDeferNodeExpansion(false);
+			//setDeferNodeExpansion(false);
 		}
 		catch (Exception e) {
 			notSupported = true;
 		}
 	}
-	
+/*
+ * This code does not work in XML4J 4.x.x
+ * Must find another way to map line numbers and model objects.
+ * 
 	public void startElement(QName qname, XMLAttrList atts, int index) throws Exception {
 		super.startElement(qname, atts, index);
 		if (notSupported) return;
@@ -38,7 +36,7 @@ public class SourceDOMParser extends DOMParser {
 		if (elNode!=null)
 			lines.put(elNode, lineValue);
 	}
-	
+*/
 	public Hashtable getLineTable() { 
 		return lines;
 	}

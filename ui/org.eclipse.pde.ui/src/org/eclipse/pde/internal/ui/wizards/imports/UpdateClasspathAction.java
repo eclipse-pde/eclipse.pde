@@ -83,7 +83,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		IRunnableContext context,
 		final IPluginModelBase[] models) {
 		try {
-			context.run(fork, false, new IRunnableWithProgress() {
+			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 					try {
@@ -125,6 +125,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 				IPluginModelBase model = models[i];
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 				setProjectBuildpath(model, subMonitor);
+				if (monitor.isCanceled()) break;
 			}
 		} finally {
 			monitor.done();

@@ -115,7 +115,9 @@ class LogReader {
 				LogEntry parent = (LogEntry) parents.get(depth - 1);
 				parent.addChild(entry);
 			} else if (state == MESSAGE_STATE) {
-				String message = line.substring(9);
+				String message="";
+				if (line.length()>8)
+					message = line.substring(9);
 				if (current != null)
 					current.setMessage(message);
 			}
