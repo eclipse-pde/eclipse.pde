@@ -21,9 +21,11 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 	public static final String PROP_PLATFORM_PATH="org.eclipse.pde.platformPath";
 	public static final String PROP_PLATFORM_LOCATION="org.eclipse.pde.platformLocation";
 	public static final String KEY_PLATFORM_HOME ="Preferences.MainPage.PlatformHome";
+	public static final String KEY_PLATFORM_HOME_BUTTON ="Preferences.MainPage.PlatformHome.Button";
 	public static final String KEY_ARGUMENTS ="Preferences.MainPage.Arguments";
 	public static final String KEY_DESCRIPTION ="Preferences.MainPage.Description";
 	public static final String KEY_LOCATION ="Preferences.MainPage.Location";
+	public static final String KEY_LOCATION_BUTTON ="Preferences.MainPage.Location.Button";
 	public static final String PROP_PLATFORM_ARGS="org.eclipse.pde.platformArgs";
 	private DirectoryFieldEditor editor;
 	
@@ -31,8 +33,10 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 		public ModifiedDirectoryFieldEditor(
 					String property,
 					String label,
-					Composite parent) {
+					Composite parent,
+					String buttonLabel) {
 			super(property, label, parent);
+			setChangeButtonText(buttonLabel);
 		}
 		public void adjustForNumColumns(int ncolumns) {
 			super.adjustForNumColumns(ncolumns);
@@ -59,12 +63,14 @@ protected void createFieldEditors() {
 		new ModifiedDirectoryFieldEditor(
 			PROP_PLATFORM_PATH,
 			PDEPlugin.getResourceString(KEY_PLATFORM_HOME),
-			getFieldEditorParent());
+			getFieldEditorParent(),
+			PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 	DirectoryFieldEditor platform =
 		new ModifiedDirectoryFieldEditor(
 			PROP_PLATFORM_LOCATION,
 			PDEPlugin.getResourceString(KEY_LOCATION),
-			getFieldEditorParent());
+			getFieldEditorParent(),
+			PDEPlugin.getResourceString(KEY_LOCATION_BUTTON));
 	StringFieldEditor args =
 		new StringFieldEditorWithSpace(
 			PROP_PLATFORM_ARGS,
