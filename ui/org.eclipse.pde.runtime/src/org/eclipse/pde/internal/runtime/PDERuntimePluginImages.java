@@ -72,6 +72,9 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL, "properties.gif");
 	public static final ImageDescriptor DESC_OPEN_LOG =
 		create(PATH_LCL, "open_log.gif");
+	public static final ImageDescriptor DESC_OPEN_LOG_DISABLED =
+		create(PATH_LCL_DISABLED, "open_log.gif");
+
 	public static final ImageDescriptor DESC_PROPERTIES_DISABLED =
 		create(PATH_LCL_DISABLED, "properties.gif");
 	public static final ImageDescriptor DESC_REFRESH =
