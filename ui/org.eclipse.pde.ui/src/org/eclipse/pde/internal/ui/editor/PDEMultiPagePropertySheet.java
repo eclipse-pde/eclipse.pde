@@ -73,6 +73,11 @@ public class PDEMultiPagePropertySheet implements IPropertySheetPage {
 	public Control getControl() {
 		return pagebook;
 	}
+	
+	public void closeActiveEditor() {
+		if (currentPage==null) return;
+	}
+	
 	private Control getPageControl(IPropertySheetPage page) {
 		Control control = page.getControl();
 		if (control == null || control.isDisposed()) {

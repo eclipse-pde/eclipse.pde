@@ -319,6 +319,8 @@ public class Schema extends PlatformObject implements ISchema {
 			InputStream source = getURL().openStream();
 			load(source);
 			source.close();
+		} catch (FileNotFoundException e) {
+			loaded = false;
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}

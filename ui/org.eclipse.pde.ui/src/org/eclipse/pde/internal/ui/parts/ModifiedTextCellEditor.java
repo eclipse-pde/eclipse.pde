@@ -4,9 +4,9 @@ package org.eclipse.pde.internal.ui.parts;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 
 public class ModifiedTextCellEditor extends TextCellEditor {
 	public ModifiedTextCellEditor(Composite parent) {
@@ -15,6 +15,7 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 	}
 	public Control createControl(Composite parent) {
 		Text text = (Text) super.createControl(parent);
+
 		text.addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event e) {
 				// do whatever it is you want to do on commit
@@ -26,6 +27,12 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 		});
 		return text;
 	}
+	
+	public void forceCommit() {
+		if (isDirty())
+			fireApplyEditorValue();
+	}
+
 	private void handleEnter() {
 		fireApplyEditorValue();
 	}

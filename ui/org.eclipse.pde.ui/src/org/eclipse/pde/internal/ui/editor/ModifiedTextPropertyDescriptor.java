@@ -13,10 +13,10 @@ public class ModifiedTextPropertyDescriptor extends TextPropertyDescriptor {
 	public ModifiedTextPropertyDescriptor(String name, String displayName) {
 		super(name, displayName);
 	}
-public CellEditor createPropertyEditor(Composite parent) {
-	CellEditor editor = new ModifiedTextCellEditor(parent);
-	if (getValidator() != null)
-		editor.setValidator(getValidator());
-	return editor;
-}
+	public CellEditor createPropertyEditor(Composite parent) {
+		CellEditor editor = new ModifiedTextCellEditor(parent);
+		if (getValidator() != null)
+			editor.setValidator(getValidator());
+		return editor;
+	}
 }
