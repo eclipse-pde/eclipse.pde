@@ -6,44 +6,16 @@ package org.eclipse.pde.internal.builders;
 
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.w3c.dom.Node;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
@@ -93,13 +65,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
 
+		IProject project = getProject();
+		
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)
 			delta = getDelta(getProject());
 
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
-			IProject project = getProject();
+			if (!PDE.hasPluginNature(project)) return null;
+			
 			IPath path = project.getFullPath().append("plugin.xml");
 			IWorkspace workspace = project.getWorkspace();
 			IFile file = workspace.getRoot().getFile(path);
@@ -133,12 +108,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
+		PluginErrorReporter reporter = new PluginErrorReporter(file);
+		if (WorkspaceModelManager.isBinaryPluginProject(file.getProject()))
+			return;
 		String message =
 			PDE.getFormattedMessage(
 				BUILDERS_VERIFYING,
 				file.getFullPath().toString());
 		monitor.subTask(message);
-		PluginErrorReporter reporter = new PluginErrorReporter(file);
+
 		ManifestParser parser = new ManifestParser(reporter);
 		parser.parse(file);
 		if (reporter.getErrorCount() == 0) {
