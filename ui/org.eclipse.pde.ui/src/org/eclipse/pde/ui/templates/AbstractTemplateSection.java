@@ -143,7 +143,11 @@ public abstract class AbstractTemplateSection
 	public void addPages(Wizard wizard) {
 	}
 	/**
-	 * TODO add javadoc
+	 * Tests if wizard pages for this template section
+	 * have been added.
+	 * @return <code>true</code> if wizard pages for
+	 * this section have been added, <code>false</code>
+	 * otherwise.
 	 */
 	public boolean getPagesAdded() {
 		return pagesAdded;
@@ -218,7 +222,8 @@ public abstract class AbstractTemplateSection
 	 * Java files are subject to conditional generation and variable replacement.</li>
 	 * <li>All other files and folders are copied directly into the
 	 * target folder with the conditional generation and variable replacement
-	 * for files. Variable replacement also includes file names.
+	 * for files. Variable replacement also includes file names.</li>
+	 * </ul>
 	 * 
 	 * @param monitor progress monitor to use to indicate generation progress
 	 */
@@ -244,7 +249,11 @@ public abstract class AbstractTemplateSection
 	 * subfolders and files it may contain. The default implementation
 	 * is <samp>true</samp>.
 	 * 
-	 * @param sourceFolder
+	 * @param sourceFolder the folder that is tested
+	 * @return <code>true</code> if the provided folder
+	 * should be created in the workspace, <code>false</code>
+	 * if the values of the substitution variables indicate
+	 * otherwise.
 	 */
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		return true;

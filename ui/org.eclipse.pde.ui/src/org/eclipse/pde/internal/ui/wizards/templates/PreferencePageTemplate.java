@@ -96,7 +96,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		return mainClassName;
 	}
 
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 

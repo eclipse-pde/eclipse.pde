@@ -102,7 +102,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	}
 
 
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 

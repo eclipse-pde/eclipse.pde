@@ -91,7 +91,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}
 	
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 	

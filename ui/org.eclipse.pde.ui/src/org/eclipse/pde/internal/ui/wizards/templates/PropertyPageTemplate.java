@@ -87,7 +87,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		return "propertyPages";
 	}
 
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 	

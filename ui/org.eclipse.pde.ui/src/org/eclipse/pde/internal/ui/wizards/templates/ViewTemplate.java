@@ -104,7 +104,7 @@ public class ViewTemplate extends PDETemplateSection {
 		initializeOption("viewCategoryId", pluginId);
 	}
 	
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 	

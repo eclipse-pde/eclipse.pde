@@ -17,7 +17,20 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
- * TODO add javadoc
+ * This class adds some conventions to the class it is based on.
+ * For example, it expects to find the template content in the
+ * following location:
+ * <pre>
+ *    [install location]/[templateDirectory]/[sectionId]
+ * </pre>
+ * where <code>templateDirectory</code> is expected to be 'templates_3.0'
+ * (to distinguish from template designed for earlier
+ * Eclipse versions), and <code>sectionId</code> is the
+ * unique identifier as reported by the template section. 
+ * <p>It also assumes that all wizard pages associated with
+ * this template will be based on <code>OptionWizardTemplatePage</code>.
+ * 
+ * @see OptionWizardTemplatePage
  */
 
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
@@ -25,7 +38,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		"OptionTemplateSection.mustBeSet";
 	private ArrayList pages = new ArrayList();
 
-	static class TemplatePage {
+	private static class TemplatePage {
 		WizardPage page;
 		ArrayList options;
 		public TemplatePage() {
@@ -34,7 +47,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	}
 
 	/**
-	 * Constructor for HelloWorldTemplate.
+	 * The default constructor.
 	 */
 	public OptionTemplateSection() {
 	}
@@ -53,9 +66,9 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Returns the directory where all the templates are located 
-	 * in the contributing plug-in. Default implementation is
-	 * "templates".
-	 * @return "templates"
+	 * in the contributing plug-in.
+	 * @return "templates_[schemaVersion]" for code since Eclipse 3.0,
+	 * or "templates" for pre-3.0 code.
 	 */
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
@@ -65,8 +78,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	}
 	/**
 	 * Returns the install URL of the plug-in that contributes this
-	 * template. Implement it by accessing the top-level class of
-	 * your plug-in and calling 'getDescriptor().getInstallURL()'.
+	 * template.
 	 * @return the install URL of the contributing plug-in
 	 */
 	protected abstract URL getInstallURL();
@@ -285,7 +297,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		currentPage.setPageComplete(true);
 	}
 
-	void registerOption(TemplateOption option, Object value, int pageIndex) {
+	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		super.registerOption(option, value, pageIndex);
 		if (pageIndex >= 0 && pageIndex < pages.size()) {
 			TemplatePage tpage = (TemplatePage) pages.get(pageIndex);

@@ -110,7 +110,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		initializeOption(KEY_PACKAGE_NAME, pluginId + ".editors");
 	}
 
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 

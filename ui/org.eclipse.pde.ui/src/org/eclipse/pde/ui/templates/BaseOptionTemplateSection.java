@@ -167,9 +167,9 @@ public abstract class BaseOptionTemplateSection
 		return super.getValue(name);
 	}
 	/**
-	 * Returns true if this template depends on values set on the
-	 * first (mandatory) wizard page. Values set on this page include
-	 * plug-in name, plug-in class name, plug-in provider etc.
+	 * Returns true if this template depends on values set in
+	 * the parent wizard. Values in the parent wizard include
+	 * plug-in id, plug-in name, plug-in class name, plug-in provider etc.
 	 * If the template does depend on these values, <samp>initializeFields</samp>
 	 * will be called when the page is made visible in the forward direction
 	 * (going from the first page to the pages owned by this template).
@@ -180,10 +180,10 @@ public abstract class BaseOptionTemplateSection
 	 * within the context of the plug-in manifest editor, because plug-in
 	 * model already exists at that time.
 	 * 
-	 * @return true if this template depends on the data set in 
-	 * the first wizard page, false otherwise.
+	 * @return <code>true</code> if this template depends on the data set in 
+	 * the parent wizard, <code>false</code> otherwise.
 	 */
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return false;
 	}
 	/**
@@ -196,7 +196,7 @@ public abstract class BaseOptionTemplateSection
 	 * <p>The method is called before the actual plug-in has
 	 * been built.
 	 * </p>
-	 * @param data plug-in structure data as defined in the common plug-in project
+	 * @param data plug-in data as defined in the common plug-in project
 	 * wizard pages
 	 */
 	protected void initializeFields(IFieldData data) {
@@ -255,7 +255,7 @@ public abstract class BaseOptionTemplateSection
 		super.execute(project, model, monitor);
 	}
 
-	void registerOption(TemplateOption option, Object value, int pageIndex) {
+	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		option.setValue(value);
 		options.put(option.getName(), option);
 	}

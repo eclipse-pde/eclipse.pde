@@ -17,7 +17,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 
 /**
- * <p>This interface represents a section of the template
+ * This interface represents a section of the template
  * wizard that generates a new extension or plug-in.
  * Typically, it maps to one wizard page, but more
  * complex sections may span several pages. Also note

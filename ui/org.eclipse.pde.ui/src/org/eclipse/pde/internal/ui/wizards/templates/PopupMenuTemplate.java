@@ -108,7 +108,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		return "popupMenus";
 	}
 
-	public boolean isDependentOnFirstPage() {
+	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
