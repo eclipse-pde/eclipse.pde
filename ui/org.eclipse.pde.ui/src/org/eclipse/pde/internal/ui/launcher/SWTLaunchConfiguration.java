@@ -125,7 +125,8 @@ public class SWTLaunchConfiguration extends
 	
 	private String getNativeLibrariesLocation(IFragment fragment) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(fragment.getModel().getInstallLocation());
+		IPath path = new Path(fragment.getModel().getInstallLocation());
+		buffer.append(path.removeTrailingSeparator().toString());
 		buffer.append(IPath.SEPARATOR);
 		buffer.append("os"); //$NON-NLS-1$
 		buffer.append(IPath.SEPARATOR);
