@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import java.util.*;
 import org.eclipse.pde.internal.core.*;
@@ -107,8 +108,8 @@ public class BinaryProjectDecorator
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
-	protected LabelProviderChangedEvent[] processDelta(IResourceDelta delta) {
-		final ArrayList events = new ArrayList();
+	protected IResource[] processDelta(IResourceDelta delta) {
+		final ArrayList affectedResources = new ArrayList();
 		try {
 			delta.accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta)
@@ -125,7 +126,7 @@ public class BinaryProjectDecorator
 					if (resource.getType() == IResource.PROJECT) {
 						if (WorkspaceModelManager
 							.isPluginProject((IProject) resource)) {
-							events.add(createLabelEvent(resource));
+							affectedResources.add(resource);
 						}
 						return false;
 					}
@@ -136,35 +137,26 @@ public class BinaryProjectDecorator
 			PDEPlugin.log(e.getStatus());
 		}
 		//convert event list to array
-		LabelProviderChangedEvent[] result =
-			new LabelProviderChangedEvent[events.size()];
-		events.toArray(result);
-		return result;
-	}
-
-	protected LabelProviderChangedEvent createLabelEvent(IResource resource) {
-		return new LabelProviderChangedEvent(this, resource);
+		return (IResource[])affectedResources.toArray(new IResource[affectedResources.size()]);
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
 		//first collect the label change events
-		final LabelProviderChangedEvent[] events =
+		final IResource[] affectedResources =
 			processDelta(event.getDelta());
-		Shell shell = PDEPlugin.getActiveWorkbenchShell();
-
 		//now post the change events to the UI thread
-		if (events.length > 0 && shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(new Runnable() {
+		if (affectedResources.length > 0) {
+			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					fireLabelUpdates(events);
+					fireLabelUpdates(affectedResources);
 				}
 			});
 		}
 	}
 
-	void fireLabelUpdates(final LabelProviderChangedEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			fireLabelProviderChanged(events[i]);
-		}
+	void fireLabelUpdates(final IResource[] affectedResources) {
+		LabelProviderChangedEvent event = new 
+		LabelProviderChangedEvent(this, affectedResources);
+		fireLabelProviderChanged(event);
 	}
 }
