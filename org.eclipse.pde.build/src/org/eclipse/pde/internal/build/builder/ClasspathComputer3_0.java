@@ -147,6 +147,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					bundleProperties.remove(PROPERTY_OUTPUT_PREFIX + ModelBuildScriptGenerator.DOT);
 				}
 			}
+			return bundleProperties;
 		} catch (CoreException e) {
 			//ignore
 		}
