@@ -597,17 +597,20 @@ public class FirstTemplateWizardPage extends WizardPage implements IFirstWizardP
 		generator.generate(monitor);
 		monitor.worked(1);
 	}
-	public IPluginReference [] getDependencies(boolean isUIPlugin) {
-		IPluginReference [] dependencies;
-		if (isUIPlugin){
-			dependencies = new IPluginReference[2];
-			dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
-			dependencies[1] = new PluginReference("org.eclipse.ui", null, 0);
-		} else {
-			dependencies = new IPluginReference[1];
-			dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
-		}	
-		return dependencies;
+	
+	public IPluginReference[] getDependencies(boolean isUIPlugin) {
+		ArrayList dependencies = new ArrayList();
+		dependencies.add(new PluginReference("org.eclipse.ui", null, 0));
+		if (isUIPlugin) {
+			dependencies.add(new PluginReference("org.eclipse.core.resources", null, 0));
+		}
+		if (structureData.isR3Compatible()) {
+			dependencies.add(
+				new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
+		}
+		
+		return (IPluginReference[]) dependencies.toArray(
+			new IPluginReference[dependencies.size()]);
 	}
 	
 	public IPluginStructureData getStructureData() {
