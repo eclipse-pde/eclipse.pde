@@ -21,9 +21,9 @@ import org.eclipse.jface.resource.JFaceResources;
 public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation";
-	private static final String SETTINGS_DOOTHER = "ImportWizard.doimport";
-	private static final String SETTINGS_DOIMPORT = "ImportWizard.doimport";
-	private static final String SETTINGS_DOEXTRACT = "ImportWizard.doextract";
+	private static final String SETTINGS_DOOTHER = "doimport";
+	private static final String SETTINGS_DOIMPORT = "doimport";
+	private static final String SETTINGS_DOEXTRACT = "doextract";
 	private static final String KEY_TITLE = "ImportWizard.FirstPage.title";
 	private static final String KEY_DESC = "ImportWizard.FirstPage.desc";
 	private static final String KEY_RUNTIME_LOCATION =
@@ -41,6 +41,12 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
 		"ImportWizard.FirstPage.extractCheck";
+	private static final String KEY_FOLDER_TITLE = "ImportWizard.messages.folder.title";
+	private static final String KEY_FOLDER_MESSAGE = "ImportWizard.messages.folder.message";
+	private static final String KEY_LOCATION_MISSING = "ImportWizard.errors.locationMissing";
+	private static final String KEY_BUILD_INVALID = "ImportWizard.errors.buildFolderInvalid";
+	private static final String KEY_BUILD_MISSING = "ImportWizard.errors.buildFolderMissing";
+
 	private Label otherLocationLabel;
 	private Button runtimeLocationButton;
 	private Button otherLocationButton;
@@ -233,34 +239,35 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(otherLocationLabel.getText());
-		dialog.setText("Folder in SDK build");
-		dialog.setMessage(
-			"Select the folder of the SDK build (containing the 'plugins' folder):");
+		dialog.setText(PDEPlugin.getResourceString(KEY_FOLDER_TITLE));
+		dialog.setMessage(PDEPlugin.getResourceString(KEY_FOLDER_MESSAGE));
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
 		}
 		return null;
 	}
+	
+
 
 	private void validateDropLocation() {
 		if (isOtherLocation()) {
 			IPath curr = getDropLocation();
 			if (curr.segmentCount() == 0) {
 				dropLocationStatus =
-					createStatus(IStatus.ERROR, "Enter the location of the build.");
+					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_LOCATION_MISSING));
 				return;
 			}
 			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
 				dropLocationStatus =
-					createStatus(IStatus.ERROR, "Build folder path is invalid.");
+					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_BUILD_INVALID));
 				return;
 			}
 
 			File file = curr.toFile();
 			if (!file.isDirectory()) {
 				dropLocationStatus =
-					createStatus(IStatus.ERROR, "Build folder directory does not exist.");
+					createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_BUILD_MISSING));
 				return;
 			}
 		}

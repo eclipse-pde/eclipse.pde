@@ -207,6 +207,7 @@ public boolean isVAJ() {
 public static void log(IStatus status) {
 	getDefault().getLog().log(status);
 }
+
 public static void logErrorMessage(String message) {
 	log(
 		new Status(
@@ -233,6 +234,14 @@ public static void logException(Throwable e, String title, String message) {
 public static void logException(Throwable e) {
 	logException(e, null, null);
 }
+
+public static void log(Throwable e) {
+	if (e instanceof InvocationTargetException) 
+		e = ((InvocationTargetException)e).getTargetException();
+	Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+	log(status);
+}
+
 public static void registerPlatformLaunchers(IProject project) {
 	try {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();

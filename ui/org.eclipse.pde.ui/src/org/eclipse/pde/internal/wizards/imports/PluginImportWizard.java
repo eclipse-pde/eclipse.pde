@@ -35,6 +35,13 @@ import org
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "PluginImportWizard";
+	private static final String KEY_MESSAGES_TITLE = "ImportWizard.messages.title";
+	private static final String KEY_MESSAGES_NO_PLUGINS =
+		"ImportWizard.messages.noPlugins";
+	private static final String KEY_MESSAGES_DO_NOT_ASK =
+		"ImportWizard.messages.doNotAsk";
+	private static final String KEY_MESSAGES_EXISTS =
+		"ImportWizard.messages.exists";
 
 	private PluginImportWizardFirstPage page1;
 	private PluginImportWizardDetailedPage page2;
@@ -83,12 +90,15 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			if (models.length == 0) {
 				MessageDialog.openInformation(
 					getShell(),
-					"Plugin Import",
-					"No plugins found. Check that the chosen directory points to the 'plugins' folder of a SDK drop.");
+					PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
+					PDEPlugin.getResourceString(KEY_MESSAGES_NO_PLUGINS));
 				return false;
 			}
 
 			page1.storeSettings(true);
+			page2.storeSettings(true);
+			final boolean doImportToWorkspace = page1.doImportToWorkspace();
+			final boolean doExtractPluginSource = page1.doExtractPluginSource();
 			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
@@ -97,8 +107,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 						PluginImportOperation op =
 							new PluginImportOperation(
 								page2.getSelectedModels(),
-								page1.doImportToWorkspace(),
-								page1.doExtractPluginSource(),
+								doImportToWorkspace,
+								doExtractPluginSource,
 								query);
 						PDEPlugin.getWorkspace().run(op, monitor);
 					} catch (CoreException e) {
@@ -111,7 +121,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
+			PDEPlugin.log(e);
 			return true; // exception handled
 		}
 		return true;
@@ -123,6 +133,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	public boolean performCancel() {
 		IDialogSettings setting = getDialogSettings();
 		page1.storeSettings(false);
+		page2.storeSettings(false);
 		return super.performCancel();
 	}
 
@@ -134,7 +145,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
-				"Plugin Import",
+				PDEPlugin.getResourceString(KEY_MESSAGES_TITLE),
 				null,
 				dialogMessage,
 				MessageDialog.QUESTION,
@@ -151,8 +162,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		 */
 		protected Control createCustomArea(Composite parent) {
 			fForAllCheckBox = new Button(parent, SWT.CHECK);
-			fForAllCheckBox.setText(
-				"&Do not ask again for this import (Yes to all / No to all).");
+			fForAllCheckBox.setText(PDEPlugin.getResourceString(KEY_MESSAGES_DO_NOT_ASK));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalIndent = convertWidthInCharsToPixels(10);
 			fForAllCheckBox.setLayoutData(gd);
@@ -179,8 +189,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			if (fForAll != -1) {
 				return fForAll;
 			}
+			String pattern = PDEPlugin.getResourceString(KEY_MESSAGES_EXISTS);
 			final String message =
-				"Project '" + project.getName() + "' already exists.\nOk to replace?";
+				PDEPlugin.getFormattedMessage(pattern, project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {

@@ -191,7 +191,7 @@ private void handleReload() {
 	if (platformPath != null && platformPath.length() > 0) {
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
-				registry.reload(platformPath);
+				registry.reload(platformPath, null);
 				pluginListViewer.setInput(registry);
 				initializeDefault(true);
 			}

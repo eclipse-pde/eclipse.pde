@@ -108,6 +108,7 @@ public static void setBuildPath(IPluginModelBase model, IProgressMonitor monitor
 }
 
 private static void addSourceFolders(IBuildModel model, Vector result)throws CoreException {
+	if (model==null) return;
 	IBuild build = model.getBuild();
 	IBuildEntry [] entries = build.getBuildEntries();
 	for (int i=0; i<entries.length; i++) {

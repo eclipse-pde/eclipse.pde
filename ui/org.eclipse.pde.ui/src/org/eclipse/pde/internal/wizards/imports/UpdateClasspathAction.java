@@ -99,25 +99,26 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		monitor.beginTask("Update classpaths...", models.size());
 		try {
 			for (int i = 0; i < models.size(); i++) {
-				IPluginModelBase model = models[i];
-				BuildPathUtil.setBuildPath(model, monitor);
-				monitor.worked(1);
-						} catch (CoreException e) {
-							PDEPlugin.logException(e);
-						}
-					}
-				};
-				try {
-	   				monitor.run(false, false, op);
-				}
-				catch (InterruptedException e) {
-					PDEPlugin.logException(e);
-				}
-				catch (InvocationTargetException e) {
-					PDEPlugin.logException(e.getTargetException());
-				}
+				IPluginModelBase model = (IPluginModelBase) models.get(i);
+				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+				setProjectBuildpath(model, subMonitor);
 			}
 		} finally {
+			monitor.done();
+		}
+	}
+
+	private void setProjectBuildpath(
+		IPluginModelBase model,
+		IProgressMonitor monitor)
+		throws CoreException {
+		IPluginBase pluginBase = model.getPluginBase();
+		monitor.beginTask("Setting class path of '" + pluginBase.getId() + "'...", 1);
+		try {
+			BuildPathUtil.setBuildPath(model, monitor);
+			monitor.worked(1);
+		}
+		finally {
 			monitor.done();
 		}
 	}
