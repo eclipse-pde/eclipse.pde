@@ -1239,7 +1239,7 @@
          point="org.eclipse.ui.workingSets">
       <workingSet
             icon="icons/obj16/plugin_obj.gif"
-            name="Plug-ins"
+            name="%Plugin.WorkingSet"
             pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"
             id="org.eclipse.pde.ui.pluginWorkingSet"/>
    </extension>
