@@ -22,7 +22,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart;
+import org.eclipse.ui.intro.config.IStandbyContentPart;
 import org.eclipse.ui.part.ISetSelectionTarget;
 /**
  * @author dejan

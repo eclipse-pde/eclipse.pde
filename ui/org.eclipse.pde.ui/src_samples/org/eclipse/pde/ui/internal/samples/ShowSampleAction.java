@@ -23,9 +23,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.internal.intro.impl.model.IIntroAction;
-import org.eclipse.ui.internal.intro.impl.model.IntroURL;
-import org.eclipse.ui.internal.intro.impl.model.IntroURLParser;
+import org.eclipse.ui.intro.config.*;
+import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.update.standalone.*;
 /**
  * @author dejan
@@ -43,16 +42,9 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	public ShowSampleAction() {
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IIntroAction#initialize(org.eclipse.ui.intro.IIntroSite,
-	 *      java.util.Properties)
-	 */
-	public void initialize(IIntroSite site, Properties params) {
+
+	public void run(IIntroSite site, Properties params) {
 		sampleId = params.getProperty("id");
-	}
-	public void run() {
 		if (sampleId == null)
 			return;
 		if (!ensureSampleFeaturePresent())
@@ -85,9 +77,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		url.append("&");
 		url.append("input=");
 		url.append(sampleId);
-		IntroURLParser parser = new IntroURLParser(url.toString());
-		if (parser.hasIntroUrl()) {
-			IntroURL introURL = parser.getIntroURL();
+		IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
+		if (introURL != null) {
 			introURL.execute();
 			ensureProperContext(wizard);
 		}
