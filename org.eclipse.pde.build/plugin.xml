@@ -80,5 +80,10 @@
       <run class="org.eclipse.pde.internal.core.Fetch"/>
    </application>
 </extension>
+<extension id="script" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.ScriptBuilder"/>
+   </application>
+</extension>
 
 </plugin>

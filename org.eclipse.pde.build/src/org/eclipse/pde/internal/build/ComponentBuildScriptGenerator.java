@@ -8,6 +8,7 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.plugins.PluginParser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
@@ -21,7 +22,6 @@ public class ComponentBuildScriptGenerator extends PluginTool {
 	private boolean generateChildren = true;
 	
 	// constants
-	private static final String TEMPLATE_LOCATION = "../org.eclipse.pde.core/template.xml";
 	private static final String SWITCH_COMPONENT = "-component";
 	
 	// output filenames
@@ -342,21 +342,13 @@ protected PluginModel[] readPluginsFromComponentModel() {
 		PluginModel currentReadPlugin = componentPlugins[i];
 		PluginModel resultingPlugin = getRegistry().getPlugin(currentReadPlugin.getId());
 		if (resultingPlugin == null) {
-			addProblem(new Status(
-				IStatus.ERROR,
-				PluginTool.PI_PDECORE,
-				ScriptGeneratorConstants.EXCEPTION_PLUGIN_MISSING,
-				Policy.bind("exception.missingPlugin",currentReadPlugin.getId()),
-				null));
+			String message = Policy.bind("exception.missingPlugin",currentReadPlugin.getId());
+			addProblem(new Status(IStatus.ERROR, PluginTool.PI_PDECORE, ScriptGeneratorConstants.EXCEPTION_PLUGIN_MISSING, message, null));
 			continue;
 		}
 		if (!currentReadPlugin.getVersion().equals(resultingPlugin.getVersion())) {
-			addProblem(new Status(
-				IStatus.WARNING,
-				PluginTool.PI_PDECORE,
-				ScriptGeneratorConstants.WARNING_PLUGIN_INCORRECTVERSION,
-				Policy.bind("warning.usingIncorrectPluginVersion",currentReadPlugin.getId()),
-				null));
+			String message = Policy.bind("warning.usingIncorrectPluginVersion", currentReadPlugin.getId());
+			addProblem(new Status(IStatus.WARNING, PluginTool.PI_PDECORE, ScriptGeneratorConstants.WARNING_PLUGIN_INCORRECTVERSION, message, null));
 		}
 		accumulatingResult.addElement(resultingPlugin);
 	}
@@ -382,20 +374,40 @@ public static void main(String argString) throws Exception {
 }
 protected String[][] computePrerequisiteOrder(PluginModel[] plugins) {
 	List prereqs = new ArrayList(9);
-	List pluginList = new ArrayList(plugins.length);
+	Set pluginList = new HashSet(plugins.length);
 	for (int i = 0; i < plugins.length; i++) 
 		pluginList.add(plugins[i].getId());
 	for (int i = 0; i < plugins.length; i++) {
-		prereqs.add(new String[] { plugins[i].getId(), null });
+		boolean boot = false;
+		boolean runtime = false;
+		// if this plugin is runtime and boot is on the list of things to build,
+		// add the boot plugin as a default prereq as 
+		// this is not stated in the plugin.xml.  Otherwise, add a null prereq
+		// to ensure that this plugin is in the output list.
+//		if (plugins[i].getId().equals(Platform.PI_RUNTIME) && pluginList.contains(BootLoader.PI_BOOT))
+//			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT});
+//		else		
+			prereqs.add(new String[] { plugins[i].getId(), null });
 		PluginPrerequisiteModel[] prereqList = plugins[i].getRequires();
 		if (prereqList != null) {
 			for (int j = 0; j < prereqList.length; j++) {
 				// ensure that we only include values from the original set.
 				String prereq = prereqList[j].getPlugin();
+				boot = boot || prereq.equals(BootLoader.PI_BOOT);
+				runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
 				if (pluginList.contains(prereq))
 					prereqs.add(new String[] { plugins[i].getId(), prereq });
 			}
 		}
+		// if we didn't find the boot or runtime plugins as prereqs and they are in the list
+		// of plugins to build, add prereq relations for them.  This is required since the 
+		// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
+		if (plugins[i].getId().equals("org.apache.xerces"))
+			continue;
+		if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
+			prereqs.add(new String[] { plugins[i].getId(), BootLoader.PI_BOOT});
+		if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getId().equals(Platform.PI_RUNTIME) && !plugins[i].getId().equals(BootLoader.PI_BOOT))
+			prereqs.add(new String[] { plugins[i].getId(), Platform.PI_RUNTIME});
 	}
 	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
 	return computeNodeOrder(prereqArray);
