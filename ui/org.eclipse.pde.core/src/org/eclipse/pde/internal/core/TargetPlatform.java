@@ -208,8 +208,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 					bWriter.write("osgi.splashPath=" + splashPath); //$NON-NLS-1$
 					bWriter.newLine();
 				}
-				bWriter.write("eclipse.product=" + primaryFeatureId); //$NON-NLS-1$
-				bWriter.newLine();
+				/*bWriter.write("eclipse.product=" + primaryFeatureId); //$NON-NLS-1$
+				bWriter.newLine();*/
 			}
 			
 			bWriter.write("osgi.configuration.cascaded=false"); //$NON-NLS-1$
