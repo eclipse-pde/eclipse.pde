@@ -247,21 +247,32 @@ public class PluginContentPage extends ContentPage {
     
 	private void presetClassField(Text text, String id, String suffix) {
 		StringBuffer buffer = new StringBuffer();
+        IStatus status;
 		for (int i = 0; i < id.length(); i++) {
 			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
 				if (Character.isJavaIdentifierStart(ch))
 					buffer.append(Character.toLowerCase(ch));
 			} else {
-				if (Character.isJavaIdentifierPart(ch) || ch == '.')
+				if (Character.isJavaIdentifierPart(ch))
+                    buffer.append(ch);
+                else if (ch == '.'){
+                    status = JavaConventions.validatePackageName(buffer.toString());
+                    if (status.getSeverity() == IStatus.ERROR)
+                        buffer.append(suffix.toLowerCase());
 					buffer.append(ch);
+                }
 			}
 		}
 		StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
-			if (!tok.hasMoreTokens())
+			if (!tok.hasMoreTokens()){
+                status = JavaConventions.validatePackageName(buffer.toString());
+                if (status.getSeverity() == IStatus.ERROR)
+                    buffer.append(suffix.toLowerCase());
 				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ //$NON-NLS-2$
+            }
 		}
 		text.setText(buffer.toString());
 	}
