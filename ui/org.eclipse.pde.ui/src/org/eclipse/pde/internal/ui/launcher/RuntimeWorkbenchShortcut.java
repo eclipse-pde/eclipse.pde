@@ -54,15 +54,10 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	 * Launches a configuration in the given mode
 	 */
 	protected void launch(String mode) {
-		try { 
-			ILaunchConfiguration config = findLaunchConfiguration(mode);
-			if (config != null) {
-				DebugUITools.saveAndBuildBeforeLaunch();
-				config.launch(mode, null);
-			}			
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+		ILaunchConfiguration config = findLaunchConfiguration(mode);
+		if (config != null) {
+			DebugUITools.launch(config, mode);
+		}			
 	}
 	
 	/**
