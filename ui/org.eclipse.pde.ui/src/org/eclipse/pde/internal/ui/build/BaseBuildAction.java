@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.build;
 
+import java.io.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -179,6 +180,13 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	}
 	
 	public static URL getDevEntriesProperties(String fileName) {
+		File file = new File(fileName);
+		if (!file.exists()) {
+			File directory = file.getParentFile();
+			if (directory != null && (!directory.exists() || directory.isFile())) {
+				directory.mkdirs();
+			}
+		}
 		Properties properties = new Properties();
 		properties.put("*", "bin");
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
