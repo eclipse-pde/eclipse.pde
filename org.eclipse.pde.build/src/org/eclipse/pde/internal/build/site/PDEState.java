@@ -67,7 +67,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
 			state.addBundle(descriptor);
 		} catch (BundleException e) {
-			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, ((String) enhancedManifest.get(Constants.BUNDLE_NAME))), e);
+			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, enhancedManifest.get(Constants.BUNDLE_NAME)), e);
 			BundleHelper.getDefault().getLog().log(status);
 			return false;
 		}
@@ -112,44 +112,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (manifest == null)
 			return false;
 		try {
-			String symbolicHeader = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-			if (symbolicHeader != null && ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicHeader)[0].getValue().equals("org.eclipse.osgi")) { //$NON-NLS-1$
-				manifest.put(Constants.BUNDLE_CLASSPATH, findOSGiJars(bundleLocation));
-			}
-
 			hasQualifier(bundleLocation, manifest);
 		} catch (BundleException e) {
 			//should not happen since we know the header
 		}
 		return addBundle(manifest, bundleLocation);
-	}
-
-	private String findOSGiJars(File bundleLocation) {
-		String eclipseProperies = "eclipse.properties"; //$NON-NLS-1$
-		InputStream manifestStream = null;
-		try {
-			URL manifestLocation = null;
-			if (bundleLocation.getName().endsWith("jar")) { //$NON-NLS-1$
-				manifestLocation = new URL("jar:file:" + bundleLocation + "!/" + eclipseProperies); //$NON-NLS-1$//$NON-NLS-2$
-				manifestStream = manifestLocation.openStream();
-			} else {
-				manifestStream = new FileInputStream(new File(bundleLocation, eclipseProperies));
-			}
-		} catch (IOException e) {
-			//ignore
-		}
-		Properties properties = new Properties();
-		try {
-			properties.load(manifestStream);
-			manifestStream.close();
-		} catch (IOException e1) {
-			//Ignore
-		}
-		String osgiPath = properties.getProperty("osgi.frameworkClassPath"); //$NON-NLS-1$
-		if (osgiPath == null)
-			osgiPath = "core.jar, console.jar, osgi.jar, resolver.jar, defaultAdaptor.jar, eclipseAdaptor.jar"; //$NON-NLS-1$
-
-		return osgiPath;
 	}
 
 	private void updateVersionNumber(Dictionary manifest) {
