@@ -35,7 +35,7 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 			script.printTargetDeclaration(tab++, TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
 			Map params = new HashMap(1);
 			params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins" + "/" + SOURCE_FEATURE_FULL_NAME + "/" + "src"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 			script.printTargetEnd(--tab);
 	}
