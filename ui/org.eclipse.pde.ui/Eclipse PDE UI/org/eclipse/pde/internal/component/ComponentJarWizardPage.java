@@ -45,6 +45,8 @@ public class ComponentJarWizardPage extends WizardPage {
 	public static final String WIZARD_GENERATING = "ComponentJarWizard.generating";
 	public static final String WIZARD_GENERATE_SCRIPTS = "ComponentJarWizard.generateScripts";
 	public static final String WIZARD_GENERATE_JARS = "ComponentJarWizard.generateJars";
+	public static final String KEY_ERRORS_TITLE = "ComponentJarWizard.errorsTitle";
+	public static final String KEY_ERRORS_MESSAGE = "ComponentJarWizard.errorsMessage";
 
 	private static final String PREFIX =
 		PDEPlugin.getDefault().getPluginId() + ".componentJar.";
@@ -266,6 +268,7 @@ private void runOperation(
 	boolean makeJars,
 	IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
+	if (ensureValid(monitor)==false) return;
 	if (makeScripts) {
 		makeScripts(monitor);
 		monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
@@ -280,6 +283,31 @@ private void runOperation(
 		logActivity();
 	}
 }
+
+private boolean ensureValid(IProgressMonitor monitor) 
+				throws InvocationTargetException, CoreException {
+	// Force the build if autobuild is off
+	IProject project = componentFile.getProject();
+	if (!project.getWorkspace().isAutoBuilding()) {
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+	// Check if there are errors against component file
+	IMarker [] markers = componentFile.findMarkers(IMarker.PROBLEM, 
+										true, IResource.DEPTH_ZERO);
+	if (markers.length > 0) {
+		// There are errors against this file - abort
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
+			PDEPlugin.getResourceString(KEY_ERRORS_TITLE),
+			PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE));
+		return false;
+	}
+	return true;
+}
+
 private void saveSettings() {
 	IDialogSettings settings = getDialogSettings();
 	settings.put(F_MAKE_SCRIPTS, makeScriptsButton.getSelection());

@@ -159,7 +159,7 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 				PDEPlugin.getFormattedMessage(
 					BUILDERS_COMPONENT_FOLDER_SYNC,
 					realName);
-			reporter.reportWarning(message);
+			reporter.reportError(message);
 		}
 	}
 }

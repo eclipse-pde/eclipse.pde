@@ -12,6 +12,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.*;
+import java.util.StringTokenizer;
 
 public class ComponentSpecPage extends WizardPage {
 	public static final String PAGE_TITLE = "NewComponentWizard.SpecPage.title";
@@ -20,6 +21,9 @@ public class ComponentSpecPage extends WizardPage {
 	public static final String PAGE_PROVIDER = "NewComponentWizard.SpecPage.provider";
 	public static final String PAGE_DESCRIPTION = "NewComponentWizard.SpecPage.description";
 	public static final String PAGE_DESC = "NewComponentWizard.SpecPage.desc";
+	public static final String KEY_VERSION_FORMAT = "NewComponentWizard.SpecPage.versionFormat";
+	public static final String KEY_MISSING = "NewComponentWizard.SpecPage.missing";
+	public static final String KEY_INVALID_ID = "NewComponentWizard.SpecPage.invalidId";
 	private Text idText;
 	private Text versionText;
 	private Text providerText;
@@ -95,23 +99,52 @@ public ComponentData getComponentData() {
 	return data;
 }
 private void verifyComplete() {
-	if (verifyVersion()) {
-	   boolean complete =
-		   idText.getText().length() > 0
-			&& providerText.getText().length() > 0;
-	   setPageComplete(complete);
-	}
+   boolean complete =
+	   idText.getText().length() > 0;
+   setPageComplete(complete);
+   if (complete) {
+   	  String message = verifyIdRules();
+   	  if (message!=null) {
+   	  	 setPageComplete(false);
+   	  	 setErrorMessage(message);
+   	  }
+   	  else {
+         setErrorMessage(null);
+         verifyVersion();
+   	  }
+   }
+   else 
+      setErrorMessage(PDEPlugin.getResourceString(KEY_MISSING));
 }
 
 private boolean verifyVersion() {
 	String value = versionText.getText();
-	if (value.length()==0) return false;
+	boolean result = true;
+	if (value.length()==0) result = false;
 	try {
 	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
 	}
-	catch (Exception e) {
-		return false;
+	catch (Throwable e) {
+		result = false;
 	}
-	return true;
+	if (result==false) {
+		setPageComplete(false);
+		setErrorMessage(PDEPlugin.getResourceString(KEY_VERSION_FORMAT));
+	}
+	return result;
+}
+
+private String verifyIdRules() {
+	String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
+	String name = idText.getText();
+	StringTokenizer stok = new StringTokenizer(name, ".");
+	while (stok.hasMoreTokens()) {
+		String token = stok.nextToken();
+		for (int i=0; i<token.length(); i++) {
+			if (Character.isLetterOrDigit(token.charAt(i))==false)
+			   return problemText;
+		}
+	}
+	return null;
 }
 }

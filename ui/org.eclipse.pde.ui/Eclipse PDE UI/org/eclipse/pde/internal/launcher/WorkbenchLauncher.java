@@ -74,6 +74,15 @@ public class WorkbenchLauncher
 		public Object getParent(Object object) {
 			return null;
 		}
+		public boolean equals(Object object) {
+			if (object instanceof MainTypeAdaptable) {
+				MainTypeAdaptable another = (MainTypeAdaptable)object;
+				if (another.typeName.equals(typeName) &&
+					another.project.equals(project))
+						return true;
+			}
+			return false;
+		}
 	}
 
 public WorkbenchLauncher() {

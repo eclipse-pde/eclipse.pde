@@ -124,6 +124,7 @@ public void reset() {
 	id = null;
 	label = null;
 	plugins.clear();
+	fragments.clear();
 	url = null;
 	providerName = null;
 	version = null;

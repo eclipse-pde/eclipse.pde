@@ -22,6 +22,8 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class PluginSpecSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "ManifestEditor.PluginSpecSection.title";
@@ -39,10 +41,8 @@ public class PluginSpecSection extends PDEFormSection {
 	public static final String KEY_PLUGIN_VERSION = "ManifestEditor.PluginSpecSection.pluginVersion";
 	public static final String KEY_CLASS = "ManifestEditor.PluginSpecSection.class";
 	public static final String KEY_CLASS_TOOLTIP = "ManifestEditor.PluginSpecSection.class.tooltip";
-
-
-
-
+	public static final String KEY_VERSION_FORMAT = "ManifestEditor.PluginSpecSection.versionFormat";
+	public static final String KEY_VERSION_TITLE = "ManifestEditor.PluginSpecSection.versionTitle";
 	
 	private Text idText;
 	private FormText titleText;
@@ -113,6 +113,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			getFormPage().getForm().setTitle(name);
 			((ManifestEditor) getFormPage().getEditor()).updateTitle();
 		}
+		public void textDirty(FormText text) {
+			forceDirty();
+		}
 	});
 	versionText =
 		new FormText(
@@ -120,10 +123,22 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	versionText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormText text) {
 			try {
-				pluginBase.setVersion(text.getValue());
+				PluginVersionIdentifier pvi = new PluginVersionIdentifier(text.getValue());
+				String formatted = pvi.toString();
+				text.setValue(formatted, true);
+				pluginBase.setVersion(formatted);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
+			} catch (Throwable e) {
+				String message = PDEPlugin.getResourceString(KEY_VERSION_FORMAT);
+				MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
+							PDEPlugin.getResourceString(KEY_VERSION_TITLE),
+							message);
+				text.setValue(pluginBase.getVersion(), true);
 			}
+		}
+		public void textDirty(FormText text) {
+			forceDirty();
 		}
 	});
 
@@ -137,6 +152,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
+		}
+		public void textDirty(FormText text) {
+			forceDirty();
 		}
 	});
 	if (isFragment()) {
@@ -161,6 +179,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 					PDEPlugin.logException(e);
 				}
 			}
+			public void textDirty(FormText text) {
+				forceDirty();
+			}
 		});
 		Label label =
 			factory.createLabel(container, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
@@ -172,6 +193,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
+			}
+			public void textDirty(FormText text) {
+				forceDirty();
 			}
 		});
 	} else {
@@ -201,6 +225,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 					PDEPlugin.logException(e);
 				}
 			}
+			public void textDirty(FormText text) {
+				forceDirty();
+			}
 		});
 		GridData gd = (GridData) classText.getControl().getLayoutData();
 		gd.widthHint = 150;
@@ -208,6 +235,17 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	factory.paintBordersFor(container);
 	return container;
 }
+
+private void forceDirty() {
+	setDirty(true);
+	IModel model = (IModel)getFormPage().getModel();
+	if (model instanceof IEditable) {
+		IEditable editable = (IEditable)model;
+		editable.setDirty(true);
+		getFormPage().getEditor().fireSaveNeeded();
+	}
+}
+
 public void dispose() {
 	IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 	model.removeModelChangedListener(this);
@@ -247,15 +285,15 @@ public void initialize(Object input) {
 	IPluginModelBase model = (IPluginModelBase) input;
 	update(input);
 	if (model.isEditable() == false) {
-		titleText.getControl().setEnabled(false);
-		versionText.getControl().setEnabled(false);
-		providerText.getControl().setEnabled(false);
+		titleText.getControl().setEditable(false);
+		versionText.getControl().setEditable(false);
+		providerText.getControl().setEditable(false);
 		if (isFragment()) {
-			pluginVersionText.getControl().setEnabled(false);
-			pluginIdText.getControl().setEnabled(false);
+			pluginVersionText.getControl().setEditable(false);
+			pluginIdText.getControl().setEditable(false);
 
 		} else {
-			classText.getControl().setEnabled(false);
+			classText.getControl().setEditable(false);
 		}
 	}
 	model.addModelChangedListener(this);
@@ -286,8 +324,7 @@ public void setFragment(boolean newFragment) {
 }
 private void setIfDefined(FormText formText, String value) {
 	if (value != null) {
-		formText.setValue(value);
-		formText.setDirty(false);
+		formText.setValue(value, true);
 	}
 }
 private void setIfDefined(Text text, String value) {

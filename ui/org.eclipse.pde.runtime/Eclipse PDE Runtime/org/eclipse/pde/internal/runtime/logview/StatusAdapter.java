@@ -6,9 +6,10 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class StatusAdapter extends PlatformObject {
+public class StatusAdapter extends PlatformObject implements IWorkbenchAdapter {
 	private IStatus status;
 	private static final String KEY_ERROR = "LogView.severity.error";
 	private static final String KEY_WARNING = "LogView.severity.warning";
@@ -59,4 +60,32 @@ public boolean hasChildren() {
 public String toString() {
 	return getSeverityText();
 }
+	/**
+	 * @see IWorkbenchAdapter#getChildren(Object)
+	 */
+	public Object[] getChildren(Object arg0) {
+		return null;
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object arg0) {
+		return null;
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getLabel(Object)
+	 */
+	public String getLabel(Object arg0) {
+		return getSeverityText();
+	}
+
+	/**
+	 * @see IWorkbenchAdapter#getParent(Object)
+	 */
+	public Object getParent(Object arg0) {
+		return null;
+	}
+
 }

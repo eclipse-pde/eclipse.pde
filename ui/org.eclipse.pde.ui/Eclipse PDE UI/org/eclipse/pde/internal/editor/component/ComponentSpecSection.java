@@ -93,7 +93,11 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				PDEPlugin.logException(e);
 			}
 		}
+		public void textDirty(FormText text) {
+			forceDirty();
+		}
 	});
+	idText.getControl().setEditable(false);
 
 	titleText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_NAME), factory));
 	titleText.addFormTextListener(new IFormTextListener() {
@@ -106,6 +110,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			getFormPage().getForm().setTitle(component.getLabel());
 			((ComponentEditor) getFormPage().getEditor()).updateTitle();
 		}
+		public void textDirty(FormText text) {
+			forceDirty();
+		}
 	});
 	versionText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory));
 	versionText.addFormTextListener(new IFormTextListener() {
@@ -115,7 +122,11 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				text.setValue(component.getVersion());
 			}
 		}
+		public void textDirty(FormText text) {
+			forceDirty();
+		}
 	});
+	versionText.getControl().setEditable(false);
 
 	providerText = new FormText(createText(container, PDEPlugin.getResourceString(SECTION_PROVIDER), factory));
 	providerText.addFormTextListener(new IFormTextListener() {
@@ -125,6 +136,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
+		}
+		public void textDirty(FormText text) {
+			forceDirty();
 		}
 	});
 
@@ -138,6 +152,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	GridLayout blayout = new GridLayout();
 	buttonContainer.setLayout(blayout);
 	blayout.makeColumnsEqualWidth=true;
+	blayout.numColumns = 2;
+	blayout.marginWidth = 0;
 	
 	
 	createJarButton = factory.createButton(buttonContainer, PDEPlugin.getResourceString(SECTION_CREATE_JAR), SWT.PUSH);
@@ -160,6 +176,16 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 
 	factory.paintBordersFor(container);
 	return container;
+}
+
+private void forceDirty() {
+	setDirty(true);
+	IModel model = (IModel)getFormPage().getModel();
+	if (model instanceof IEditable) {
+		IEditable editable = (IEditable)model;
+		editable.setDirty(true);
+		getFormPage().getEditor().fireSaveNeeded();
+	}
 }
 
 private boolean verifySetVersion(IComponent component, String value) {
@@ -229,8 +255,7 @@ public void setFocus() {
 }
 private void setIfDefined(FormText formText, String value) {
 	if (value != null) {
-		formText.setValue(value);
-		formText.setDirty(false);
+		formText.setValue(value, true);
 	}
 }
 private void setIfDefined(Text text, String value) {

@@ -42,7 +42,7 @@ public class NewProjectWizard extends NewWizard {
 	}
 public void addPages() {
 	super.addPages();
-	mainPage = new WizardNewProjectCreationPage("main");
+	mainPage = new WizardIdProjectCreationPage("main");
 	if (isFragmentWizard()) {
 		mainPage.setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(KEY_FDESC));

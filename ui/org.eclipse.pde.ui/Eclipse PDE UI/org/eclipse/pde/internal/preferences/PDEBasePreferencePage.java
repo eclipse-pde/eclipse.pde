@@ -26,6 +26,24 @@ public class PDEBasePreferencePage extends FieldEditorPreferencePage implements 
 	public static final String KEY_LOCATION ="Preferences.MainPage.Location";
 	public static final String PROP_PLATFORM_ARGS="org.eclipse.pde.platformArgs";
 	private DirectoryFieldEditor editor;
+	
+	class ModifiedDirectoryFieldEditor extends DirectoryFieldEditor {
+		public ModifiedDirectoryFieldEditor(
+					String property,
+					String label,
+					Composite parent) {
+			super(property, label, parent);
+		}
+		public void adjustForNumColumns(int ncolumns) {
+			super.adjustForNumColumns(ncolumns);
+			Text text = super.getTextControl();
+			GridData gd = (GridData)text.getLayoutData();
+			gd.grabExcessHorizontalSpace = true;
+			Button button = super.getChangeControl(text.getParent());
+			button.setLayoutData(null);
+		}
+	}
+		
 /**
  * MainPreferencePage constructor comment.
  */
@@ -38,17 +56,17 @@ public PDEBasePreferencePage() {
  */
 protected void createFieldEditors() {
 	editor =
-		new DirectoryFieldEditor(
+		new ModifiedDirectoryFieldEditor(
 			PROP_PLATFORM_PATH,
 			PDEPlugin.getResourceString(KEY_PLATFORM_HOME),
 			getFieldEditorParent());
 	DirectoryFieldEditor platform =
-		new DirectoryFieldEditor(
+		new ModifiedDirectoryFieldEditor(
 			PROP_PLATFORM_LOCATION,
 			PDEPlugin.getResourceString(KEY_LOCATION),
 			getFieldEditorParent());
 	StringFieldEditor args =
-		new StringFieldEditor(
+		new StringFieldEditorWithSpace(
 			PROP_PLATFORM_ARGS,
 			PDEPlugin.getResourceString(KEY_ARGUMENTS),
 			getFieldEditorParent());

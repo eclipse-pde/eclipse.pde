@@ -13,6 +13,7 @@ public class FormText {
 	private String value;
 	private boolean dirty;
 	private Vector listeners=new Vector();
+	boolean ignoreModify=false;
 
 public FormText(Text text) {
 	this.text = text;
@@ -50,8 +51,13 @@ public void commit() {
 	dirty = false;
 }
 protected void editOccured(ModifyEvent e) {
+	if (ignoreModify) return;
 	dirty = true;
+	for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+		((IFormTextListener) iter.next()).textDirty(this);
+	}
 }
+
 public Text getControl() {
 	return text;
 }
@@ -79,5 +85,13 @@ public void setDirty(boolean newDirty) {
 }
 public void setValue(String value) {
 	if (text!=null) text.setText(value);
+	this.value = value;
 }
+
+public void setValue(String value, boolean blockNotification) {
+	ignoreModify = blockNotification;
+	setValue(value);
+	ignoreModify = false;
+}
+
 }

@@ -32,7 +32,8 @@ public void dispose() {
 protected void doFillIntoGrid(Composite parent, int numColumns) {
 	label = new Label(parent, SWT.NONE);
 	label.setText(PDEPlugin.getResourceString(KEY_LABEL));
-	GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+	GridData gd = new GridData(GridData.FILL_HORIZONTAL | 
+							GridData.VERTICAL_ALIGN_BEGINNING);
 	gd.horizontalSpan = numColumns;
 	label.setLayoutData(gd);
 	

@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.swt.widgets.Display;
 
 
 public class PDERuntimePluginImages {
@@ -17,55 +18,59 @@ public class PDERuntimePluginImages {
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	private final static URL BASE_URL= PDERuntimePlugin.getDefault().getDescriptor().getInstallURL();
-	private final static String PATH_BASIC = "icons/basic/";
-	private final static String PATH_FULL  = "icons/full/";
 	private final static ImageRegistry PLUGIN_REGISTRY= PDERuntimePlugin.getDefault().getImageRegistry();
 
-
+	public final static String ICONS_PATH;
+	static {
+		if(Display.getCurrent().getIconDepth() > 4)
+			ICONS_PATH = "icons/full/";//$NON-NLS-1$
+		else
+			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
+	}
 	
-	private static final String BASIC_OBJ= PATH_BASIC+"obj16/";
-	private static final String BASIC_VIEW = PATH_BASIC+"view16/";
-	private static final String BASIC_LCL= PATH_BASIC+"elcl16/";
-	private static final String BASIC_LCL_HOVER= PATH_BASIC+"clcl16/";
-	private static final String BASIC_LCL_DISABLED= PATH_BASIC+"dlcl16/";
-	private static final String BASIC_OVR = PATH_BASIC + "ovr16/";
+	private static final String PATH_OBJ= ICONS_PATH+"obj16/";
+	private static final String PATH_VIEW = ICONS_PATH+"view16/";
+	private static final String PATH_LCL= ICONS_PATH+"elcl16/";
+	private static final String PATH_LCL_HOVER= ICONS_PATH+"clcl16/";
+	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/";
+	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 
 
 
-	public static final ImageDescriptor DESC_ERROR_ST_OBJ  = create(BASIC_OBJ, "error_st_obj.gif");
-	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(BASIC_OBJ, "ext_point_obj.gif");
-	public static final ImageDescriptor DESC_EXT_POINTS_OBJ = create(BASIC_OBJ, "ext_points_obj.gif");
-	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(BASIC_OBJ, "extension_obj.gif");
-	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(BASIC_OBJ, "extensions_obj.gif");
-	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(BASIC_OBJ, "generic_xml_obj.gif");
-	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(BASIC_OBJ, "info_st_obj.gif");
-	public static final ImageDescriptor DESC_JAVA_LIB_OBJ = create(BASIC_OBJ, "java_lib_obj.gif");
-	public static final ImageDescriptor DESC_NATIVE_LIB_OBJ = create(BASIC_OBJ, "native_lib_obj.gif");
-	public static final ImageDescriptor DESC_OK_ST_OBJ = create(BASIC_OBJ, "ok_st_obj.gif");
-	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(BASIC_OBJ, "plugin_obj.gif");
-	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ = create(BASIC_OBJ, "req_plugin_obj.gif");
-	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ = create(BASIC_OBJ, "req_plugins_obj.gif");
-	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(BASIC_OBJ, "runtime_obj.gif");
-	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(BASIC_OBJ, "warning_st_obj.gif");
+	public static final ImageDescriptor DESC_ERROR_ST_OBJ  = create(PATH_OBJ, "error_st_obj.gif");
+	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(PATH_OBJ, "ext_point_obj.gif");
+	public static final ImageDescriptor DESC_EXT_POINTS_OBJ = create(PATH_OBJ, "ext_points_obj.gif");
+	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.gif");
+	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.gif");
+	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(PATH_OBJ, "generic_xml_obj.gif");
+	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(PATH_OBJ, "info_st_obj.gif");
+	public static final ImageDescriptor DESC_JAVA_LIB_OBJ = create(PATH_OBJ, "java_lib_obj.gif");
+	public static final ImageDescriptor DESC_NATIVE_LIB_OBJ = create(PATH_OBJ, "native_lib_obj.gif");
+	public static final ImageDescriptor DESC_OK_ST_OBJ = create(PATH_OBJ, "ok_st_obj.gif");
+	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.gif");
+	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ = create(PATH_OBJ, "req_plugin_obj.gif");
+	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ = create(PATH_OBJ, "req_plugins_obj.gif");
+	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(PATH_OBJ, "runtime_obj.gif");
+	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ, "warning_st_obj.gif");
 
 	/*
 	 * Local tool bar image descriptors
 	 */ 
 
-	public static final ImageDescriptor DESC_PROPERTIES = create(BASIC_LCL, "properties.gif");
-	public static final ImageDescriptor DESC_PROPERTIES_HOVER = create(BASIC_LCL_HOVER, "properties.gif");
-	public static final ImageDescriptor DESC_PROPERTIES_DISABLED = create(BASIC_LCL_DISABLED, "properties.gif");
-	public static final ImageDescriptor DESC_REFRESH = create(BASIC_LCL, "refresh.gif");
-	public static final ImageDescriptor DESC_REFRESH_HOVER = create(BASIC_LCL_HOVER, "refresh.gif");
-	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(BASIC_LCL_DISABLED, "refresh.gif");
-	public static final ImageDescriptor DESC_CLEAR = create(BASIC_LCL, "clear.gif");
-	public static final ImageDescriptor DESC_CLEAR_HOVER = create(BASIC_LCL_HOVER, "clear.gif");
-	public static final ImageDescriptor DESC_CLEAR_DISABLED = create(BASIC_LCL_DISABLED, "clear.gif");
+	public static final ImageDescriptor DESC_PROPERTIES = create(PATH_LCL, "properties.gif");
+	public static final ImageDescriptor DESC_PROPERTIES_HOVER = create(PATH_LCL_HOVER, "properties.gif");
+	public static final ImageDescriptor DESC_PROPERTIES_DISABLED = create(PATH_LCL_DISABLED, "properties.gif");
+	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif");
+	public static final ImageDescriptor DESC_REFRESH_HOVER = create(PATH_LCL_HOVER, "refresh.gif");
+	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_LCL_DISABLED, "refresh.gif");
+	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.gif");
+	public static final ImageDescriptor DESC_CLEAR_HOVER = create(PATH_LCL_HOVER, "clear.gif");
+	public static final ImageDescriptor DESC_CLEAR_DISABLED = create(PATH_LCL_DISABLED, "clear.gif");
 	
 	/*
 	 * Overlays
 	 */
-	 public static final ImageDescriptor DESC_RUN_CO = create(BASIC_OVR, "run_co.gif");
+	 public static final ImageDescriptor DESC_RUN_CO = create(PATH_OVR, "run_co.gif");
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeIconURL(prefix, name));
 	}

@@ -230,7 +230,7 @@ private void updateExtensionPoint(IFile file) {
 }
 private void updateWorkspaceDescriptors() {
 	for (int i=0; i<dirtyWorkspaceModels.size(); i++) {
-		IPluginModel model = (IPluginModel)dirtyWorkspaceModels.elementAt(i);
+		IPluginModelBase model = (IPluginModelBase)dirtyWorkspaceModels.elementAt(i);
 		updateWorkspaceDescriptors(model);
 	}
 	dirtyWorkspaceModels.clear();

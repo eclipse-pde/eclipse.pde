@@ -67,6 +67,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				PDEPlugin.logException(e);
 			}
 		}
+		public void textDirty(FormText text) {
+		}
 	});
 	if (SWT.getPlatform().equals("motif")==false)
 	   factory.paintBordersFor(container);

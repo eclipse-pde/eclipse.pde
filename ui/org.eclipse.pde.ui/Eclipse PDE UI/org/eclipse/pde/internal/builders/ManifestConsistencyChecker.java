@@ -20,6 +20,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
 	public static final String BUILDERS_FRAGMENT_BROKEN_LINK = "Builders.Fragment.brokenLink";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
+	public static final String BUILDERS_VERSION_FORMAT = "Builders.versionFormat";
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -97,6 +98,9 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 		if (isFragment(file)) {
 			validateFragment(file, reporter);
 		}
+		else {
+			validatePlugin(file, reporter);
+		}
 	}
 	monitor.subTask(
 		PDEPlugin.getResourceString(BUILDERS_UPDATING));
@@ -117,12 +121,26 @@ private void reportValidationError(Node errorNode, PluginErrorReporter reporter)
 protected void startupOnInitialize() {
 	super.startupOnInitialize();
 }
+
+private void validatePlugin(IFile file, PluginErrorReporter reporter) {
+	WorkspacePluginModel model = new WorkspacePluginModel(file);
+	model.load();
+	if (model.isLoaded()) {
+		// Test the version
+		IPlugin plugin = model.getPlugin();
+		validateVersion(plugin.getVersion(), reporter);
+	}
+	model.release();
+}
+
 private void validateFragment(IFile file, PluginErrorReporter reporter) {
 	WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
 	model.load();
 	if (model.isLoaded()) {
+		// Test the version
 		// Test if plugin exists
 		IFragment fragment = model.getFragment();
+		validateVersion(fragment.getVersion(), reporter);
 		String pluginId = fragment.getPluginId();
 		String pluginVersion = fragment.getPluginVersion();
 		IPlugin plugin = PDEPlugin.getDefault().findPlugin(pluginId, pluginVersion);
@@ -134,5 +152,17 @@ private void validateFragment(IFile file, PluginErrorReporter reporter) {
 		}
 	}
 	model.release();
+}
+
+private void validateVersion(String version, PluginErrorReporter reporter) {
+	if (version==null) version = "";
+	try {
+	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
+	   pvi.toString();
+	}
+	catch (Throwable e) {
+		String message = PDEPlugin.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
+		reporter.reportError(message);
+	}
 }
 }
