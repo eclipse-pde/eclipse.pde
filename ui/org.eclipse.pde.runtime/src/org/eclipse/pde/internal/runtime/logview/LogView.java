@@ -720,7 +720,7 @@ public class LogView extends ViewPart implements ILogListener {
             fMemento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
         
        	fMemento.putInteger(P_ORDER_VALUE, -1);
-        fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
+        fMemento.putInteger(P_ORDER_TYPE, DATE);
     }
 
     public void saveState(IMemento memento) {
