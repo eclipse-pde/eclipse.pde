@@ -19,18 +19,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-
-public class ElementSection
-	extends TreeSection {
+public class ElementSection extends TreeSection {
 	private TreeViewer treeViewer;
 	private Schema schema;
 	private NewElementAction newElementAction = new NewElementAction();
 	private NewAttributeAction newAttributeAction = new NewAttributeAction();
 	private ElementList elements;
-	public static final String SECTION_TITLE = "SchemaEditor.ElementSection.title";
-	public static final String SECTION_DESC = "SchemaEditor.ElementSection.desc";
-	public static final String SECTION_NEW_ELEMENT = "SchemaEditor.ElementSection.newElement";
-	public static final String SECTION_NEW_ATTRIBUTE = "SchemaEditor.ElementSection.newAttribute";
+	public static final String SECTION_TITLE =
+		"SchemaEditor.ElementSection.title";
+	public static final String SECTION_DESC =
+		"SchemaEditor.ElementSection.desc";
+	public static final String SECTION_NEW_ELEMENT =
+		"SchemaEditor.ElementSection.newElement";
+	public static final String SECTION_NEW_ATTRIBUTE =
+		"SchemaEditor.ElementSection.newAttribute";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private FormWidgetFactory factory;
@@ -59,202 +61,296 @@ public class ElementSection
 		}
 	}
 
-public ElementSection(PDEFormPage page) {
-	super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW_ELEMENT), 
-					PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE) });
-	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-}
-public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	this.factory = factory;
-	Composite container = createClientContainer(parent, 2, factory);
-	createTree(container, factory);
-	factory.paintBordersFor(container);
-	return container;
-}
-
-private void createTree(Composite container, FormWidgetFactory factory) {
-	TreePart treePart = getTreePart();
-	createViewerPartControl(container, SWT.MULTI, 2, factory);
-	treeViewer = treePart.getTreeViewer();
-	treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-	treeViewer.setContentProvider(new ContentProvider()); 
-	treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-}
-
-protected void buttonSelected(int index) {
-	if (index==0) handleNewElement();
-	else if (index==1) handleNewAttribute();
-}
-
-public void dispose() {
-	schema.removeModelChangedListener(this);
-	super.dispose();
-}
-
-public boolean doGlobalAction(String actionId) {
-	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-		ISelection sel = treeViewer.getSelection();
-		Object obj = ((IStructuredSelection) sel).getFirstElement();
-		if (obj != null)
-			handleDelete(obj);
-		return true;
+	public ElementSection(PDEFormPage page) {
+		super(
+			page,
+			new String[] {
+				PDEPlugin.getResourceString(SECTION_NEW_ELEMENT),
+				PDEPlugin.getResourceString(SECTION_NEW_ATTRIBUTE)});
+		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
+		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
-	return false;
-}
-public void expandTo(Object object) {
-	if (object instanceof ISchemaElement || object instanceof ISchemaAttribute) {
-		treeViewer.setSelection(new StructuredSelection(object), true);
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
+		this.factory = factory;
+		Composite container = createClientContainer(parent, 2, factory);
+		createTree(container, factory);
+		factory.paintBordersFor(container);
+		return container;
 	}
-}
-protected void fillContextMenu(IMenuManager manager) {
-	final ISelection selection = treeViewer.getSelection();
-	final Object object = ((IStructuredSelection) selection).getFirstElement();
 
-	MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
-	if (object == null || object instanceof SchemaElement) {
+	private void createTree(Composite container, FormWidgetFactory factory) {
+		TreePart treePart = getTreePart();
+		createViewerPartControl(container, SWT.MULTI, 2, factory);
+		treeViewer = treePart.getTreeViewer();
+		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		treeViewer.setContentProvider(new ContentProvider());
+		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+	}
+
+	protected void buttonSelected(int index) {
+		if (index == 0)
+			handleNewElement();
+		else if (index == 1)
+			handleNewAttribute();
+	}
+
+	public void dispose() {
+		schema.removeModelChangedListener(this);
+		super.dispose();
+	}
+
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			ISelection sel = treeViewer.getSelection();
+			Object obj = ((IStructuredSelection) sel).getFirstElement();
+			if (obj != null)
+				handleDelete(obj);
+			return true;
+		}
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			ISelection sel = treeViewer.getSelection();
+			Object obj = ((IStructuredSelection) sel).getFirstElement();
+			if (obj != null)
+				handleDelete(obj);
+			return false;
+		}
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+			doPaste();
+			return true;
+		}
+		return false;
+	}
+	public void expandTo(Object object) {
+		if (object instanceof ISchemaElement
+			|| object instanceof ISchemaAttribute) {
+			treeViewer.setSelection(new StructuredSelection(object), true);
+		}
+	}
+	protected void fillContextMenu(IMenuManager manager) {
+		final ISelection selection = treeViewer.getSelection();
+		final Object object =
+			((IStructuredSelection) selection).getFirstElement();
+
+		MenuManager submenu =
+			new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+		if (object == null || object instanceof SchemaElement) {
+			newElementAction.setSchema(schema);
+			newElementAction.setEnabled(schema.isEditable());
+			submenu.add(newElementAction);
+		}
+		if (object != null) {
+			SchemaElement element;
+			if (object instanceof SchemaElement)
+				element = (SchemaElement) object;
+			else
+				element =
+					(SchemaElement) ((SchemaAttribute) object).getParent();
+			if (element.getName().equals("extension") == false) {
+				newAttributeAction.setElement(element);
+				newAttributeAction.setEnabled(schema.isEditable());
+				submenu.add(newAttributeAction);
+			}
+		}
+		manager.add(submenu);
+		if (!selection.isEmpty()) {
+			if (!(object instanceof SchemaElement)
+				|| ((SchemaElement) object).getName().equals("extension")
+					== false) {
+				manager.add(new Separator());
+				Action deleteAction = new Action() {
+					public void run() {
+						handleDelete((IStructuredSelection) selection);
+					}
+				};
+				deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+				deleteAction.setEnabled(schema.isEditable());
+				manager.add(deleteAction);
+			}
+		}
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
+		manager.add(new Separator());
+		manager.add(new PropertiesAction(getFormPage().getEditor()));
+	}
+
+	private void handleDelete(IStructuredSelection selection) {
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			handleDelete(iter.next());
+		}
+	}
+
+	private void handleDelete(Object object) {
+		ISchemaObject sobject = (ISchemaObject) object;
+		ISchemaObject parent = sobject.getParent();
+
+		if (sobject instanceof ISchemaElement) {
+			Schema schema = (Schema) parent;
+			schema.removeElement((ISchemaElement) sobject);
+			schema.updateReferencesFor((ISchemaElement)sobject, ISchema.REFRESH_DELETE);
+		} else if (sobject instanceof ISchemaAttribute) {
+			SchemaElement element = (SchemaElement) parent;
+			SchemaComplexType type = (SchemaComplexType) element.getType();
+			type.removeAttribute((ISchemaAttribute) sobject);
+		}
+	}
+
+	private void handleNewAttribute() {
+		Object object =
+			((IStructuredSelection) treeViewer.getSelection())
+				.getFirstElement();
+
+		if (object != null) {
+			SchemaElement element;
+			if (object instanceof SchemaElement)
+				element = (SchemaElement) object;
+			else
+				element =
+					(SchemaElement) ((SchemaAttribute) object).getParent();
+			if (element.getName().equals("extension") == false) {
+				newAttributeAction.setElement(element);
+				newAttributeAction.run();
+			}
+		}
+	}
+
+	private void handleNewElement() {
 		newElementAction.setSchema(schema);
-		newElementAction.setEnabled(schema.isEditable());
-		submenu.add(newElementAction);
+		newElementAction.run();
 	}
-	if (object != null) {
-		SchemaElement element;
-		if (object instanceof SchemaElement)
-			element = (SchemaElement) object;
-		else
-			element = (SchemaElement) ((SchemaAttribute) object).getParent();
-		if (element.getName().equals("extension") == false) {
-			newAttributeAction.setElement(element);
-			newAttributeAction.setEnabled(schema.isEditable());
-			submenu.add(newAttributeAction);
+	public void initialize(Object input) {
+		this.schema = (Schema) input;
+		treeViewer.setInput(input);
+		schema.addModelChangedListener(this);
+		getTreePart().setButtonEnabled(0, schema.isEditable());
+		getTreePart().setButtonEnabled(1, false);
+	}
+
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			treeViewer.refresh();
+			return;
 		}
-	}
-	manager.add(submenu);
-	if (!selection.isEmpty()) {
-		if (!(object instanceof SchemaElement)
-			|| ((SchemaElement) object).getName().equals("extension")==false) {
-			manager.add(new Separator());
-			Action deleteAction = new Action() {
-				public void run() {
-					handleDelete((IStructuredSelection)selection);
-				}
-			};
-			deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
-			deleteAction.setEnabled(schema.isEditable());
-			manager.add(deleteAction);
-		}
-	}
-	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
-	manager.add(new Separator());
-	manager.add(new PropertiesAction(getFormPage().getEditor()));
-}
-
-private void handleDelete(IStructuredSelection selection) {
-	for (Iterator iter=selection.iterator(); iter.hasNext();) {
-		handleDelete(iter.next());
-	}
-}
-
-private void handleDelete(Object object) {
-	ISchemaObject sobject = (ISchemaObject)object;
-	ISchemaObject parent = sobject.getParent();
-
-	if (sobject instanceof ISchemaElement) {
-		Schema schema = (Schema)parent;
-		schema.removeElement((ISchemaElement)sobject);
-	}
-	else if (sobject instanceof ISchemaAttribute) {
-		SchemaElement element = (SchemaElement)parent;
-		SchemaComplexType type = (SchemaComplexType)element.getType();
-		type.removeAttribute((ISchemaAttribute)sobject);
-	}
-}
-
-private void handleNewAttribute() {
-	Object object =
-		((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
-
-	if (object != null) {
-		SchemaElement element;
-		if (object instanceof SchemaElement)
-			element = (SchemaElement) object;
-		else
-			element = (SchemaElement) ((SchemaAttribute) object).getParent();
-		if (element.getName().equals("extension") == false) {
-			newAttributeAction.setElement(element);
-			newAttributeAction.run();
-		}
-	}
-}
-
-private void handleNewElement() {
-	newElementAction.setSchema(schema);
-	newElementAction.run();
-}
-public void initialize(Object input) {
-	this.schema = (Schema)input;
-	treeViewer.setInput(input);
-	schema.addModelChangedListener(this);
-	getTreePart().setButtonEnabled(0, schema.isEditable());
-	getTreePart().setButtonEnabled(1, false);
-}
-
-public void modelChanged(IModelChangedEvent e) {
-	if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED) {
-		treeViewer.refresh();
-		return;
-	}
-	Object obj = e.getChangedObjects()[0];
-	if (obj instanceof ISchemaObjectReference) return;
-	if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
-		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-			treeViewer.update(obj, null);
-		} else {
-			if (e.getChangeType() == IModelChangedEvent.INSERT) {
-				ISchemaObject sobj = (ISchemaObject) obj;
-				ISchemaObject parent = sobj.getParent();
-				treeViewer.add(parent, sobj);
-				treeViewer.setSelection(new StructuredSelection(obj), true);
-			} else
-				if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+		Object obj = e.getChangedObjects()[0];
+		if (obj instanceof ISchemaObjectReference)
+			return;
+		if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE) {
+				treeViewer.update(obj, null);
+			} else {
+				if (e.getChangeType() == IModelChangedEvent.INSERT) {
+					ISchemaObject sobj = (ISchemaObject) obj;
+					ISchemaObject parent = sobj.getParent();
+					treeViewer.add(parent, sobj);
+					treeViewer.setSelection(new StructuredSelection(obj), true);
+				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					ISchemaObject sobj = (ISchemaObject) obj;
 					ISchemaObject parent = sobj.getParent();
 					treeViewer.remove(obj);
-					treeViewer.setSelection(new StructuredSelection(parent), true);
+					treeViewer.setSelection(
+						new StructuredSelection(parent),
+						true);
 				}
+			}
 		}
 	}
-}
-protected void selectionChanged(IStructuredSelection selection) {
-	Object object = selection.getFirstElement();
-	fireSelectionNotification(object);
-	getFormPage().setSelection(selection);
-	updateButtons();
-}
+	protected void selectionChanged(IStructuredSelection selection) {
+		Object object = selection.getFirstElement();
+		fireSelectionNotification(object);
+		getFormPage().setSelection(selection);
+		updateButtons();
+	}
 
-public void setFocus() {
-	treeViewer.getTree().setFocus();
-	getFormPage().setSelection(treeViewer.getSelection());
-}
-private void updateButtons() {
-	if (schema.isEditable()==false) return;
-	Object object =
-		((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
-	ISchemaObject sobject = (ISchemaObject) object;
+	public void setFocus() {
+		treeViewer.getTree().setFocus();
+		getFormPage().setSelection(treeViewer.getSelection());
+	}
+	private void updateButtons() {
+		if (schema.isEditable() == false)
+			return;
+		Object object =
+			((IStructuredSelection) treeViewer.getSelection())
+				.getFirstElement();
+		ISchemaObject sobject = (ISchemaObject) object;
 
-	boolean canAddAttribute = false;
-	if (sobject != null) {
-		String name = sobject.getName();
-		if (sobject instanceof ISchemaElement) {
-			if (name.equals("extension") == false)
-				canAddAttribute = true;
-		} else
-			if (sobject instanceof ISchemaAttribute) {
+		boolean canAddAttribute = false;
+		if (sobject != null) {
+			String name = sobject.getName();
+			if (sobject instanceof ISchemaElement) {
+				if (name.equals("extension") == false)
+					canAddAttribute = true;
+			} else if (sobject instanceof ISchemaAttribute) {
 				ISchemaElement element = (ISchemaElement) (sobject.getParent());
 				if (element.getName().equals("extension") == false)
 					canAddAttribute = true;
 			}
+		}
+		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
-	getTreePart().setButtonEnabled(1, canAddAttribute);
-}
+
+	protected void doPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			Object realTarget = getRealTarget(target, object);
+			if (realTarget == null)
+				continue;
+			doPaste(realTarget, object);
+		}
+	}
+
+	private Object getRealTarget(Object target, Object object) {
+		if (object instanceof ISchemaElement) {
+			return schema;
+		}
+		if (object instanceof ISchemaAttribute) {
+			if (target instanceof ISchemaAttribute) {
+				// add it to the parent of the selected attribute
+				return ((ISchemaAttribute) target).getParent();
+			}
+			if (target instanceof ISchemaElement)
+				return target;
+		}
+		return null;
+	}
+
+	private void doPaste(Object realTarget, Object object) {
+		if (object instanceof ISchemaElement) {
+			SchemaElement element = (SchemaElement) object;
+			element.setParent(schema);
+			schema.addElement(element);
+			schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+		} else if (object instanceof ISchemaAttribute) {
+			SchemaElement element = (SchemaElement) realTarget;
+			SchemaAttribute attribute = (SchemaAttribute) object;
+			attribute.setParent(element);
+			ISchemaType type = element.getType();
+			SchemaComplexType complexType = null;
+			if (!(type instanceof ISchemaComplexType)) {
+				complexType = new SchemaComplexType(element.getSchema());
+				element.setType(complexType);
+			} else {
+				complexType = (SchemaComplexType) type;
+			}
+			complexType.addAttribute(attribute);
+		}
+	}
+
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object obj = objects[i];
+			// Attributes can only paste into elements
+			if (obj instanceof ISchemaAttribute) {
+				if (target instanceof ISchemaAttribute
+					|| target instanceof ISchemaElement)
+					continue;
+			} else if (obj instanceof ISchemaElement) {
+				continue;
+			}
+			return false;
+		}
+		return true;
+	}
 }

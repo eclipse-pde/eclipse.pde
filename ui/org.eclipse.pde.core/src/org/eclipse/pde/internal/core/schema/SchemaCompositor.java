@@ -43,7 +43,10 @@ public class SchemaCompositor
 	public void addChild(ISchemaObject child) {
 		children.addElement(child);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(ModelChangedEvent.INSERT, new Object[] { child }, null));
+			new ModelChangedEvent(
+				ModelChangedEvent.INSERT,
+				new Object[] { child },
+				null));
 	}
 	public int getChildCount() {
 		return children.size();
@@ -53,13 +56,24 @@ public class SchemaCompositor
 		children.copyInto(result);
 		return result;
 	}
+
+	public void setParent(ISchemaObject parent) {
+		super.setParent(parent);
+		for (int i = 0; i < children.size(); i++) {
+			ISchemaObject child = (ISchemaObject) children.get(i);
+			child.setParent(this);
+		}
+	}
 	public int getKind() {
 		return kind;
 	}
 	public void removeChild(ISchemaObject child) {
 		children.removeElement(child);
 		getSchema().fireModelChanged(
-			new ModelChangedEvent(ModelChangedEvent.REMOVE, new Object[] { child }, null));
+			new ModelChangedEvent(
+				ModelChangedEvent.REMOVE,
+				new Object[] { child },
+				null));
 	}
 	public void setKind(int kind) {
 		if (this.kind != kind) {
@@ -79,19 +93,65 @@ public class SchemaCompositor
 					name = "Sequence";
 					break;
 			}
-			getSchema().fireModelObjectChanged(this, P_KIND, oldValue, new Integer(kind));
+			getSchema().fireModelObjectChanged(
+				this,
+				P_KIND,
+				oldValue,
+				new Integer(kind));
 		}
 	}
-	public void updateReferencesFor(ISchemaElement element) {
+	public void updateReferencesFor(ISchemaElement element, int kind) {
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.elementAt(i);
 			if (child instanceof SchemaElementReference) {
 				SchemaElementReference ref = (SchemaElementReference) child;
-				if (ref.getReferencedElement() == element)
-					ref.setReferenceName(element.getName());
+				String refName = ref.getReferenceName();
+				switch (kind) {
+					case ISchema.REFRESH_ADD :
+						if (element.getName().equals(refName)) {
+							ref.setReferencedObject(element);
+							getSchema().fireModelObjectChanged(
+								ref,
+								null,
+								null,
+								null);
+						}
+						break;
+					case ISchema.REFRESH_DELETE :
+						if (element.getName().equals(refName)) {
+							ref.setReferencedObject(null);
+							getSchema().fireModelObjectChanged(
+								ref,
+								null,
+								null,
+								null);
+						}
+
+						break;
+					case ISchema.REFRESH_RENAME :
+						// Using the object comparison, try to
+						// resolve and set the name if there is
+						// a match. This is done to repair the
+						// reference when the referenced object's
+						// name changes.
+						if (ref.getReferencedElement() == element)
+							ref.setReferenceName(element.getName());
+						// Also handle the case where rename
+						// will satisfy a previously broken
+						// reference.
+						else if (element.getName().equals(refName)) {
+							ref.setReferencedObject(element);
+							getSchema().fireModelObjectChanged(
+								ref,
+								null,
+								null,
+								null);
+						}
+						break;
+				}
 			} else {
 				SchemaCompositor compositor = (SchemaCompositor) child;
-				compositor.updateReferencesFor(element);
+				compositor.updateReferencesFor(element, kind);
 			}
 		}
 	}
@@ -119,8 +179,11 @@ public class SchemaCompositor
 		if (getMinOccurs() != 1 && getMaxOccurs() != 1) {
 			String min = "" + getMinOccurs();
 			String max =
-				getMaxOccurs() == Integer.MAX_VALUE ? "unbounded" : ("" + getMaxOccurs());
-			writer.print(" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\"");
+				getMaxOccurs() == Integer.MAX_VALUE
+					? "unbounded"
+					: ("" + getMaxOccurs());
+			writer.print(
+				" minOccurs=\"" + min + "\" maxOccurs=\"" + max + "\"");
 		}
 		writer.println(">");
 		String indent2 = indent + Schema.INDENT;

@@ -29,6 +29,9 @@ import org.eclipse.pde.core.IModelChangeProvider;
 public interface ISchema extends ISchemaObject, IModelChangeProvider {
 	String P_POINT = "pointId";
 	String P_PLUGIN = "pluginId";
+	int REFRESH_ADD = 1;
+	int REFRESH_DELETE = 2;
+	int REFRESH_RENAME = 3;
 /**
  * Releases all data in this schema. From this point on,
  * the first subsequent reference of this schema will

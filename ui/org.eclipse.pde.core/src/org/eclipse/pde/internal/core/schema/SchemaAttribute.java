@@ -70,6 +70,13 @@ public void setType(ISchemaSimpleType newType) {
 	getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
 	verifyProperties();
 }
+
+public void setParent(ISchemaObject obj) {
+	super.setParent(obj);
+	if (type!=null)
+		type.setSchema(getSchema());
+}
+
 public void setUse(int newUse) {
 	Integer oldValue = new Integer(use);
 	use = newUse;

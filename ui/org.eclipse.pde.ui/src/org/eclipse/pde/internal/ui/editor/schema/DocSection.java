@@ -340,8 +340,11 @@ public class DocSection extends PDEFormSection {
 		}
 		if (text == null)
 			text = "";
+		/*
 		else
 			text = TextUtil.createMultiLine(text, 60, false);
+		*/
+			
 		document.set(text);
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);

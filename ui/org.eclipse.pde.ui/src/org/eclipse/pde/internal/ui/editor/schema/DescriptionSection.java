@@ -260,8 +260,10 @@ public class DescriptionSection extends PDEFormSection {
 		String text = element.getDescription();
 		if (text == null)
 			text = "";
+		/*
 		else
 			text = TextUtil.createMultiLine(text, 60, false);
+		*/
 		document.set(text);
 		resetButton.setEnabled(false);
 		applyButton.setEnabled(false);

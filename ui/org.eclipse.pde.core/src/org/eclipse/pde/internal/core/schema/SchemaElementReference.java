@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.core.schema;
  */
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.*;
 
 import org.eclipse.core.runtime.PlatformObject;
@@ -14,8 +15,13 @@ import org.w3c.dom.*;
 
 public class SchemaElementReference
 	extends PlatformObject
-	implements ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject {
-	private ISchemaElement element;
+	implements
+		ISchemaElement,
+		IMetaElement,
+		ISchemaObjectReference,
+		ISourceObject,
+		Serializable {
+	transient private ISchemaElement element;
 	private ISchemaCompositor compositor;
 	private String referenceName;
 	public static final String P_MAX_OCCURS = "max_occurs";
@@ -67,6 +73,10 @@ public class SchemaElementReference
 	public ISchemaObject getParent() {
 		return compositor;
 	}
+
+	public void setParent(ISchemaObject parent) {
+	}
+
 	protected ISchemaElement getReferencedElement() {
 		return element;
 	}
@@ -120,6 +130,8 @@ public class SchemaElementReference
 	public void setReferencedObject(ISchemaObject referencedObject) {
 		if (referencedObject instanceof ISchemaElement)
 			this.element = (ISchemaElement) referencedObject;
+		else
+			this.element = null;
 	}
 	public void setReferenceName(String name) {
 		String oldValue = this.referenceName;

@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.core.schema;
  */
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.*;
 
 import org.eclipse.core.runtime.PlatformObject;
@@ -14,10 +15,10 @@ import org.w3c.dom.*;
 
 public abstract class SchemaObject
 	extends PlatformObject
-	implements ISchemaObject, ISourceObject {
+	implements ISchemaObject, ISourceObject, Serializable {
 	protected String name;
 	private String description;
-	private ISchemaObject parent;
+	transient private ISchemaObject parent;
 	private Vector comments;
 	private int [] range;
 
@@ -33,6 +34,10 @@ public abstract class SchemaObject
 	}
 	public ISchemaObject getParent() {
 		return parent;
+	}
+	
+	public void setParent(ISchemaObject parent) {
+		this.parent = parent;
 	}
 	public ISchema getSchema() {
 		ISchemaObject object = this;

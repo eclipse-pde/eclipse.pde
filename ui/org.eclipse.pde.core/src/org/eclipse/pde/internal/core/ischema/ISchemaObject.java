@@ -35,6 +35,8 @@ public String getName();
  * Returns the parent of this schema object.
  */
 ISchemaObject getParent();
+
+void setParent(ISchemaObject parent);
 /**
  * Returns the schema object to which this object belongs.
  */	

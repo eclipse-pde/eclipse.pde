@@ -23,4 +23,6 @@ public String getName();
  * @return the top-level schema object
  */
 public ISchema getSchema();
+
+public void setSchema(ISchema schema);
 }

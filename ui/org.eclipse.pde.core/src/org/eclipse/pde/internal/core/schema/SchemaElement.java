@@ -117,6 +117,27 @@ public String getLabelProperty() {
 public ISchemaType getType() {
 	return type;
 }
+
+public void setParent(ISchemaObject parent) {
+	super.setParent(parent);
+	if (type!=null) {
+		type.setSchema(getSchema());
+		if (type instanceof ISchemaComplexType) {
+			ISchemaComplexType ctype = (ISchemaComplexType)type;
+			ISchemaCompositor comp = ctype.getCompositor();
+			if (comp!=null)
+				comp.setParent(this);
+		}
+	}
+	if (getAttributeCount()>0) {
+		ISchemaAttribute [] atts = getAttributes();
+		for (int i=0; i<atts.length; i++) {
+			ISchemaAttribute att = atts[i];
+			att.setParent(this);
+		}
+	}
+}
+
 public void setIconProperty(String newIconName) {
 	String oldValue = iconName;
 	iconName = newIconName;
