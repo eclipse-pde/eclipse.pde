@@ -94,7 +94,6 @@ public class WorkbenchLaunchConfigurationDelegate
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
 		throws CoreException {
 		boolean useDefault = config.getAttribute(USECUSTOM, true);
-		ArrayList res = new ArrayList();
 
 		ArrayList deselectedWSPlugins = new ArrayList();
 
@@ -112,32 +111,65 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (exstring != null) {
 			exstates.parseStates(exstring);
 		}
+		
+		ArrayList wsList = new ArrayList();
 
-		IPluginModelBase[] models = AdvancedLauncherTab.getWorkspacePlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+
+		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
+		for (int i = 0; i < wsmodels.length; i++) {
+			IPluginModelBase model = wsmodels[i];
 			if (useDefault || !deselectedWSPlugins.contains(model.getPluginBase().getId()))
-				res.add(model);
+				wsList.add(model);
 		}
-		models = AdvancedLauncherTab.getExternalPlugins();
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase model = models[i];
+		IPluginModelBase[] exmodels = AdvancedLauncherTab.getExternalPlugins();
+		ArrayList exList = new ArrayList();
+		for (int i = 0; i < exmodels.length; i++) {
+			IPluginModelBase model = exmodels[i];
 			if (useDefault) {
 				if (model.isEnabled())
-					res.add(model);
+					exList.add(model);
 			} else {
 				AdvancedLauncherTab.ExternalState es =
 					exstates.getState(model.getPluginBase().getId());
 				if (es != null) {
 					if(es.state)
-						res.add(model);
+						exList.add(model);
 				} else if (model.isEnabled())
-					res.add(model);
+					exList.add(model);
 			}
 		}
+		ArrayList result = new ArrayList();
+		mergeWithoutDuplicates(wsList, exList, result);
 		IPluginModelBase[] plugins =
-			(IPluginModelBase[]) res.toArray(new IPluginModelBase[res.size()]);
+			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 		return plugins;
+	}
+	
+	private void mergeWithoutDuplicates(ArrayList wsmodels, ArrayList exmodels, ArrayList result) {
+		boolean duplicates=false;
+		
+		for (int i=0; i<wsmodels.size(); i++) {
+			result.add(wsmodels.get(i));
+		}
+		for (int i=0; i<exmodels.size(); i++) {
+			IPluginModelBase exmodel = (IPluginModelBase)exmodels.get(i);
+			for (int j=0; j<wsmodels.size(); j++) {
+				IPluginModelBase wsmodel = (IPluginModelBase)wsmodels.get(j);
+				if (isDuplicate(wsmodel, exmodel)) {
+					duplicates=true;
+				}
+				else
+					result.add(exmodel);
+			}
+		}
+		if (duplicates) {
+			showWarningDialog("The list of plug-ins to run contains duplicates. Plug-ins from the workspace will be used. To fix the problem, uncheck offending external plug-ins in the Launch Configurations");
+		}
+	}
+	
+	private boolean isDuplicate(IPluginModelBase wsmodel, IPluginModelBase exmodel) {
+		if (!wsmodel.isLoaded() || !exmodel.isLoaded()) return false;
+		return wsmodel.getPluginBase().getId().equalsIgnoreCase(exmodel.getPluginBase().getId());
 	}
 	
 	private void validatePlugins(IPluginModelBase[] plugins, IProgressMonitor monitor) throws CoreException {
