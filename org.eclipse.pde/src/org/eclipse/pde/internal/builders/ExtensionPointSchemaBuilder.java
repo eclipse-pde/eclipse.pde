@@ -83,14 +83,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			IProject project = getProject();
 			if (!isInterestingProject(project))
 				return null;
-			IPath path = project.getFullPath().append(getSchemaLocation());
-			IWorkspace workspace = project.getWorkspace();
-			if (workspace.getRoot().exists(path)) {
-				IResource res = workspace.getRoot().findMember(path);
-				if (res != null && res instanceof IFolder) {
-					compileSchemasIn((IFolder) res, monitor);
-				}
-			}
+			compileSchemasIn(project, monitor);
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
@@ -171,17 +164,17 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void compileSchemasIn(IFolder folder, IProgressMonitor monitor)
+	private void compileSchemasIn(IContainer container, IProgressMonitor monitor)
 		throws CoreException {
 		monitor.subTask(
 			PDE.getResourceString(BUILDERS_SCHEMA_COMPILING_SCHEMAS));
 
-		IResource[] members = folder.members();
+		IResource[] members = container.members();
 
 		for (int i = 0; i < members.length; i++) {
 			IResource member = members[i];
-			if (member instanceof IFolder)
-				compileSchemasIn((IFolder) member, monitor);
+			if (member instanceof IContainer)
+				compileSchemasIn((IContainer) member, monitor);
 			else if (member instanceof IFile && isSchemaFile((IFile) member)) {
 				compileFile((IFile) member, monitor);
 			}
@@ -216,10 +209,6 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		return null;
-	}
-	
-	public String getSchemaLocation() {
-		return "schema";
 	}
 	
 	public URL getCSSURL(){
