@@ -36,6 +36,10 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static final String KEY_TITLE = "WorkbenchLauncherConfigurationDelegate.title";
 	private static final String KEY_SLIMLAUNCHER = "WorkbenchLauncherConfigurationDelegate.slimlauncher";
 	private static final String KEY_DELETE_WORKSPACE = "WorkbenchLauncherConfigurationDelegate.confirmDeleteWorkspace";
+	private static final String KEY_DUPLICATES = "WorkbenchLauncherConfigurationDelegate.duplicates";
+	private static final String KEY_DUPLICATE_PLUGINS = "WorkbenchLauncherConfigurationDelegate.duplicatePlugins";
+	
+	private Vector duplicates = new Vector();
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -53,6 +57,13 @@ public class WorkbenchLaunchConfigurationDelegate
 		final boolean tracing = configuration.getAttribute(TRACING, false);
 		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
+
+		if (duplicates.size() > 0) {
+			if (!continueRunning()) {
+				launch.terminate();
+				return;
+			}
+		}
 
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
@@ -153,28 +164,24 @@ public class WorkbenchLaunchConfigurationDelegate
 	}
 	
 	private void mergeWithoutDuplicates(ArrayList wsmodels, ArrayList exmodels, ArrayList result) {
-		boolean duplicates=false;
 		
 		for (int i=0; i<wsmodels.size(); i++) {
 			result.add(wsmodels.get(i));
 		}
+		duplicates = new Vector();
 		for (int i=0; i<exmodels.size(); i++) {
 			IPluginModelBase exmodel = (IPluginModelBase)exmodels.get(i);
-			boolean localDuplicate=false;
+			boolean duplicate = false;
 			for (int j=0; j<wsmodels.size(); j++) {
 				IPluginModelBase wsmodel = (IPluginModelBase)wsmodels.get(j);
 				if (isDuplicate(wsmodel, exmodel)) {
-					localDuplicate=true;
+					duplicates.add(exmodel.getPluginBase().getId() + " (" + exmodel.getPluginBase().getVersion() + ")");
+					duplicate = true;
 					break;
-				}
+				} 
 			}
-			if (localDuplicate) duplicates=true;
-			else
+			if (!duplicate)
 				result.add(exmodel);
-		}
-		if (duplicates) {
-			//FIXME NL
-			showWarningDialog("The list of plug-ins to run contains duplicates. Plug-ins from the workspace will be used. To fix the problem, uncheck the offending external plug-ins in the Preferences or Launch Configurations");
 		}
 	}
 	
@@ -363,10 +370,25 @@ public class WorkbenchLaunchConfigurationDelegate
 			null);
 	}
 	
+	
+	private boolean continueRunning() {
+		final boolean[] result = new boolean[1];
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				StringBuffer message = new StringBuffer();
+				String lineSeparator = System.getProperty("line.separator");
+				message.append(PDEPlugin.getResourceString(KEY_DUPLICATES) + lineSeparator + lineSeparator);
+				message.append(PDEPlugin.getResourceString(KEY_DUPLICATE_PLUGINS) + ":" + lineSeparator);
+				for (int i = 0; i < duplicates.size(); i++)
+					message.append(duplicates.get(i) + lineSeparator);
+				result[0] = MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(),PDEPlugin.getResourceString(KEY_TITLE),message.toString());
+			}
+		});
+		return result[0];
+	}
 	private boolean  confirmDeleteWorkspace(final File workspaceFile) {
-		Display display = getDisplay();
 		final boolean [] result = new boolean[1];
-		display.syncExec(new Runnable() {
+		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
 				String message = PDEPlugin.getFormattedMessage(KEY_DELETE_WORKSPACE, workspaceFile.getPath());
@@ -377,8 +399,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	}
 
 	private void showWarningDialog(final String message) {
-		Display display = getDisplay();
-		display.syncExec(new Runnable() {
+		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEPlugin.getResourceString(KEY_TITLE);
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
