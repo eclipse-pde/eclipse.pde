@@ -11,27 +11,21 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.io.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.builders.SchemaTransformer;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.builders.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.program.*;
 
 
 public class ShowDescriptionAction extends Action {
@@ -112,7 +106,7 @@ public class ShowDescriptionAction extends Action {
 		}
 	}
 	
-	private File getPreviewFile() throws CoreException {
+	private File getPreviewFile(){
 		try {
 			File file = File.createTempFile("pde", ".html");
 			file.deleteOnExit();
@@ -130,7 +124,7 @@ public class ShowDescriptionAction extends Action {
 		else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
 			try {
-				browser.displayURL(url);
+				browser.displayURL("file://" + url);
 			} catch (Exception e) {
 			}
 		}
