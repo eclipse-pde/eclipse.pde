@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 
@@ -244,12 +245,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generatePostProcessingSteps() {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
-			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), BUNDLE);
+			generatePostProcessingSteps( plugin.getSymbolicName(), plugin.getVersion().toString(), (String) getFinalShape(plugin)[1], BUNDLE);
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IFeature feature = features[i];
-			generatePostProcessingSteps(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), FEATURE);
+			generatePostProcessingSteps(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), (String) getFinalShape(feature)[1], FEATURE);
 		}
 	}
 
@@ -296,9 +297,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 	
 	//generate the appropriate postProcessingCall
-	private void generatePostProcessingSteps(String name, String version, byte type) {
-		String style = (String) getFinalShape(name, version, type)[1];
-
+	private void generatePostProcessingSteps(String name, String version, String style, byte type) {
 		if (FOLDER.equalsIgnoreCase(style))
 			return;
 		if (FILE.equalsIgnoreCase(style)) {
@@ -333,17 +332,21 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		return FLAT;
 	}
 
-	protected Object[] getFinalShape(String name, String version, byte type) {
-		String style = getPluginUnpackClause(name, version);
-		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
-		if (currentProperties.size() > 0) {
-			String styleFromFile = currentProperties.getProperty(name);
-			if (styleFromFile == null)
-				styleFromFile = currentProperties.getProperty(DEFAULT_FINAL_SHAPE);
-			style = styleFromFile;
-		}
-		if (forceUpdateJarFormat)
-			style = UPDATEJAR;
+	private boolean getUnpackClause(BundleDescription bundle) {
+		return ((PluginEntry) ((ArrayList) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY)).get(0)).isUnpack(); 
+	}
+	protected Object[] getFinalShape(BundleDescription bundle)  {
+		String style = getUnpackClause(bundle) ? FLAT : UPDATEJAR;
+		return getFinalShape(bundle.getSymbolicName(), bundle.getVersion().toString(), style, BUNDLE);
+	}
+	
+	protected Object[] getFinalShape(IFeature feature)  {
+		return getFinalShape(feature.getVersionedIdentifier().getIdentifier(), feature.getVersionedIdentifier().getVersion().toString(), FLAT, FEATURE);	
+	}
+	
+	protected Object[] getFinalShape(String name, String version, String initialShape, byte type) {
+		String style = initialShape;
+		style = getShapeOverride(name, type, style);
 
 		if (FLAT.equalsIgnoreCase(style)) {
 			//do nothing
@@ -353,6 +356,20 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return new Object[] {name + '_' + version + ".jar", FILE}; //$NON-NLS-1$
 		}
 		return new Object[] {name + '_' + version, FOLDER};
+	}
+
+	private String getShapeOverride(String name, byte type, String initialStyle) {
+		String result = initialStyle;
+		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
+		if (currentProperties.size() > 0) {
+			String styleFromFile = currentProperties.getProperty(name);
+			if (styleFromFile == null)
+				styleFromFile = currentProperties.getProperty(DEFAULT_FINAL_SHAPE);
+			result = styleFromFile;
+		}
+		if (forceUpdateJarFormat)
+			result = UPDATEJAR;
+		return result;
 	}
 
 	private void generateJarUpCall(String name, String version, byte type) {
@@ -379,7 +396,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
 		for (int i = 0; i < plugins.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE)[0]);
+			parameters.add(getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(plugins[i])[0]);
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -396,7 +413,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		for (int i = 0; i < features.length; i++) {
-			parameters.add(getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE)[0]);
+			parameters.add(getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) getFinalShape(features[i])[0]);
 			if (i % parameterSize == 0) {
 				createZipExecCommand(parameters);
 				parameters.clear();
@@ -452,7 +469,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generateAntZipTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
+			Object[] shape = getFinalShape(plugins[i]);
 			filesPlugins[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (plugins.length != 0)
@@ -460,7 +477,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
-			Object[] shape = getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE);
+			Object[] shape = getFinalShape(features[i]);
 			filesFeatures[i] = new ZipFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (features.length != 0)
@@ -516,7 +533,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateAntTarTarget() {
 		FileSet[] filesPlugins = new FileSet[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = getFinalShape(plugins[i].getSymbolicName(), plugins[i].getVersion().toString(), BUNDLE);
+			Object[] shape = getFinalShape(plugins[i]);
 			filesPlugins[i] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (plugins.length != 0)
@@ -524,7 +541,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		FileSet[] filesFeatures = new FileSet[features.length];
 		for (int i = 0; i < features.length; i++) {
-			Object[] shape = getFinalShape(features[i].getVersionedIdentifier().getIdentifier(), features[i].getVersionedIdentifier().getVersion().toString(), FEATURE);
+			Object[] shape = getFinalShape(features[i]);
 			filesFeatures[i] = new TarFileSet(getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == FILE, null, null, null, null, null, getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
 		}
 		if (features.length != 0)
