@@ -214,12 +214,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 
 			setProjectDescription(project, isJavaProject, monitor);
 
+			boolean sourceFound = false;
 			if (isJavaProject & extractSource) 
-				setInitialClasspath(project, model, monitor);
+				sourceFound = doExtractSource(project, model, monitor);
 
 			//Mark this project so that we can show image overlay
 			// using the label decorator
-			if (!extractSource && doImport && isJavaProject)
+			if (!isJavaProject || !sourceFound)
 				project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.BINARY_PROJECT_VALUE);
 
 		} finally {
@@ -378,11 +379,22 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	 * Tries to find the source archives for library entries. If found, it is imported and the library classpath entry 
 	 * is replaced by a source classpath entry.
 	 */
-	private void doExtractSource(
+	private boolean doExtractSource(
 		IProject project,
-		IClasspathEntry[] entries,
+		IPluginModelBase model,
 		IProgressMonitor monitor)
 		throws CoreException {
+			
+		boolean sourceFound = false;
+			
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+
+		IClasspathEntry[] entries =
+			new IClasspathEntry[libraries.length];
+		for (int i = 0; i < libraries.length; i++) {
+			entries[i] = UpdateClasspathOperation.getLibraryEntry(project, libraries[i], true);
+		}
+		
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_EXTRACTING),
 			entries.length * 2);
@@ -414,6 +426,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							res,
 							dest,
 							new SubProgressMonitor(monitor, 1));
+						sourceFound = true;
 							
 						// extract resources from the library JAR
 						res = root.findMember(curr);
@@ -434,9 +447,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							monitor.worked(1);
 						}
 													
-						// replace the entry
-						entries[i] =
-							JavaCore.newSourceEntry(dest.getFullPath());
 					} else {
 						monitor.worked(2);
 					}
@@ -448,6 +458,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		} finally {
 			monitor.done();
 		}
+		return sourceFound;
 	}
 
 	private void extractZipFile(
@@ -642,28 +653,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				return false;
 		}
 		return true;
-	}
-	
-	private void setInitialClasspath(
-		IProject project,
-		IPluginModelBase model,
-		IProgressMonitor monitor)
-		throws CoreException {
-		IPath outputLocation = project.getFullPath();
-
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-
-		IClasspathEntry[] classpathEntries =
-			new IClasspathEntry[libraries.length];
-		for (int i = 0; i < libraries.length; i++) {
-			classpathEntries[i] = UpdateClasspathOperation.getLibraryEntry(project, libraries[i], true);
-		}
-		if (extractSource) {
-			doExtractSource(project,classpathEntries, new SubProgressMonitor(monitor, 1));
-		} else {
-			monitor.worked(1);
-		}
-		outputLocation = project.getFullPath().append("bin");
 	}
 	
 	private void setProjectDescription(

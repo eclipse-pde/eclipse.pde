@@ -394,10 +394,14 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			String id = curr.getPluginBase().getId();
 			IProject proj = (IProject) root.findMember(id);
 			try {
-				if (proj != null
-					&& proj.hasNature(JavaCore.NATURE_ID)
-					&& !hasSourceFolder(proj)) {
-					selected.add(curr);
+				if (proj != null) {
+					String property =
+						proj.getPersistentProperty(
+							PDECore.EXTERNAL_PROJECT_PROPERTY);
+					if (property != null
+						&& property.equals(PDECore.BINARY_PROJECT_VALUE)) {
+						selected.add(curr);
+					}
 				}
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -425,7 +429,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	
 	*/
 
-	private boolean hasSourceFolder(IProject project) throws CoreException {
+	/*private boolean hasSourceFolder(IProject project) throws CoreException {
 		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
@@ -433,7 +437,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			}
 		}
 		return false;
-	}
+	}*/
 
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
