@@ -22,16 +22,6 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 	 */
 	protected PluginModel model;
 	
-	/**
-	 * FIXME: add comment
-	 */
-	protected Map devJars;
-
-	/**
-	 * FIXME: add comment
-	 */
-	protected List jarOrder;
-
 
 /**
  * @see AbstractScriptGenerator#generate()
@@ -75,17 +65,18 @@ protected void generateBuildScript() throws CoreException {
 	generateEpilogue();
 }
 
-protected void generateCleanTarget() {
+protected void generateCleanTarget() throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
-	tab++;
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	ArrayList jars = new ArrayList(9);
 	ArrayList zips = new ArrayList(9);
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		String jar = (String) i.next();
-		jars.add(jar);
-		zips.add(jar.substring(0, jar.length() - 4) + "src.zip");
+	Properties properties = getBuildProperties(model);
+	JAR[] availableJars = extractJars(properties);
+	for (int i = 0; i < availableJars.length; i++) {
+		String name = getJARLocation(availableJars[i].getName());
+		jars.add(name);
+		zips.add(getSRCName(name));
 	}
 	String compiledJars = Utils.getStringFromCollection(jars, ",");
 	String sourceZips = Utils.getStringFromCollection(zips, ",");
@@ -106,7 +97,7 @@ protected void generateCleanTarget() {
 	script.printString(tab, "</target>");
 }
 
-protected void generateGatherLogTarget() {
+protected void generateGatherLogTarget() throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
@@ -114,14 +105,16 @@ protected void generateGatherLogTarget() {
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		String jar = (String) i.next();
-		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
+	Properties properties = getBuildProperties(model);
+	JAR[] availableJars = extractJars(properties);
+	for (int i = 0; i < availableJars.length; i++) {
+		String name = availableJars[i].getName();
+		IPath destination = baseDestination.append(name).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(destination)) {
 			script.printMkdirTask(tab, destination.toString());
 			destinations.add(destination);
 		}
-		script.printCopyTask(tab, baseSource.append(jar + ".bin.log").toString(), destination.toString(), null);
+		script.printCopyTask(tab, baseSource.append(name + ".bin.log").toString(), destination.toString(), null);
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 }
@@ -142,7 +135,7 @@ protected void generateZipIndividualTarget(String zipName, String source) throws
 }
 
 
-protected void generateGatherSourcesTarget() {
+protected void generateGatherSourcesTarget() throws CoreException {
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
@@ -150,9 +143,11 @@ protected void generateGatherSourcesTarget() {
 	baseDestination = baseDestination.append(getDirectoryName());
 	List destinations = new ArrayList(5);
 	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
-	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
-		String jar = (String) i.next();
-		String zip = jar.substring(0, jar.length() - 4) + "src.zip";
+	Properties properties = getBuildProperties(model);
+	JAR[] availableJars = extractJars(properties);
+	for (int i = 0; i < availableJars.length; i++) {
+		String jar = availableJars[i].getName();
+		String zip = getSRCName(jar);
 		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(destination)) {
 			script.printMkdirTask(tab, destination.toString());
@@ -271,8 +266,6 @@ public void setModel(PluginModel model) throws CoreException {
 	if (model == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
 	this.model = model;
-	devJars = null;
-	jarOrder = null;
 }
 
 /**
