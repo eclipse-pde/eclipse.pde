@@ -34,6 +34,7 @@
                class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
          </run>
       </application>
+   </extension>
    <extension
          id="legacyUItestapplication"
          point="org.eclipse.core.runtime.applications">
@@ -51,7 +52,6 @@
                class="org.eclipse.pde.internal.junit.runtime.LegacyCoreTestApplication">
          </run>
       </application>
-   </extension>
    </extension>
 
 </plugin>
