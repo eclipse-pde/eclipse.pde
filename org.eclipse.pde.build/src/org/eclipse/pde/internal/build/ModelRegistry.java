@@ -40,7 +40,7 @@ protected void readComponent(File componentFile) {
 	FileInputStream inStream = null;
 	try {
 		inStream = new FileInputStream(componentFile);
-		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,ScriptGeneratorConstants.EXCEPTION_COMPONENT_PARSE, Policy.bind("exception.componentParse"), null);
+		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,ScriptGeneratorConstants.EXCEPTION_COMPONENT_PARSE, Policy.bind("exception.componentParse",componentFile.getPath()), null);
 		PluginParser parser = new PluginParser(new Factory(problems));
 		ComponentModel result = (ComponentModel)parser.parseInstall(new InputSource(inStream));
 		result.setLocation(componentFile.getParent());
@@ -53,7 +53,7 @@ protected void readComponent(File componentFile) {
 				IStatus.ERROR,
 				PluginTool.PI_PDECORE,
 				ScriptGeneratorConstants.EXCEPTION_COMPONENT_INPUT,
-				Policy.bind("exception.componentRead"),
+				Policy.bind("exception.componentRead",componentFile.getPath()),
 				e));
 		return;
 	} finally {
@@ -69,7 +69,7 @@ protected void readConfiguration(File configurationFile) {
 	FileInputStream inStream = null;
 	try {
 		inStream = new FileInputStream(configurationFile);
-		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_PARSE, Policy.bind("exception.configurationParse"), null);
+		MultiStatus problems = new MultiStatus(PluginTool.PI_PDECORE,ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_PARSE, Policy.bind("exception.configurationParse",configurationFile.getPath()), null);
 		PluginParser parser = new PluginParser(new Factory(problems));
 		ConfigurationModel result = (ConfigurationModel)parser.parseInstall(new InputSource(inStream));
 		result.setLocation(configurationFile.getParent());
@@ -82,7 +82,7 @@ protected void readConfiguration(File configurationFile) {
 				IStatus.ERROR,
 				PluginTool.PI_PDECORE,
 				ScriptGeneratorConstants.EXCEPTION_CONFIGURATION_INPUT,
-				Policy.bind("exception.configurationRead"),
+				Policy.bind("exception.configurationRead",configurationFile.getPath()),
 				e));
 		return;
 	} finally {

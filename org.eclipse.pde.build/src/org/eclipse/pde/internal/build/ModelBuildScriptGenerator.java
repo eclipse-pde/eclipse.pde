@@ -80,6 +80,13 @@ protected String computeCompleteSrc(PluginModel descriptor) {
 		jars.addAll((Collection) i.next());
 	return getStringFromCollection(jars, "", "/", ",");
 }
+/**
+ * Performs script generation for the configured plugins or fragments.
+ * Returns an <code>IStatus</code> detailing errors that occurred during
+ * generation.
+ * 
+ * @return the errors that occurred during generation
+ */
 public IStatus execute() {
 	if (modelsToGenerate == null)
 		retrieveCommandLineModels();
@@ -233,14 +240,16 @@ protected void generateJarTarget(PrintWriter output, PluginModel descriptor,Stri
 		output.println("    </ant>");
 	}
 
-	Iterator iterator = sourceDirs.iterator();
-	while (iterator.hasNext()) {
-		output.println("    <copy todir=\"${out}\">");
-		output.println("      <fileset dir=\"" + (String)iterator.next() + "\">");
-		output.println("        <include name=\"**\"/>");
-		output.println("        <exclude name=\"**/*.java\"/>");
-		output.println("      </fileset>");
-		output.println("    </copy>");
+	if (sourceDirs != null) {
+		Iterator iterator = sourceDirs.iterator();
+		while (iterator.hasNext()) {
+			output.println("    <copy todir=\"${out}\">");
+			output.println("      <fileset dir=\"" + (String)iterator.next() + "\">");
+			output.println("        <include name=\"**\"/>");
+			output.println("        <exclude name=\"**/*.java\"/>");
+			output.println("      </fileset>");
+			output.println("    </copy>");
+		}
 	}
 
 	output.println("    <property name=\"dest\" value=\"${destroot}/" + getComponentDirectoryName() + "\"/>");
@@ -322,7 +331,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 }
 protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("<?xml version=\"1.0\"?>");
-	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + TARGET_JAR + "\" basedir=\".\">");
+	output.println("<project name=\"" + descriptor.getId() + "\" default=\"" + getModelTypeName() + ".zip\" basedir=\".\">");
 	output.println("  <target name=\"init\">");
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
@@ -577,7 +586,10 @@ protected Hashtable trimDevJars(PluginModel descriptor, Hashtable devJars) {
 		ArrayList dirs = new ArrayList(list.size());
 		for (Iterator i = list.iterator(); i.hasNext();) {
 			String src = (String) i.next();
-			if (new File(base, src).getAbsoluteFile().exists())		// the exported source files
+			File sourceDir = new File(base, src).getAbsoluteFile();
+			if (!sourceDir.exists())
+				addProblem(new Status(IStatus.WARNING,PluginTool.PI_PDECORE,WARNING_MISSING_SOURCE,Policy.bind("warning.cannotLocateSource",sourceDir.getPath()),null));
+			else
 				dirs.add(src);
 		}
 		if (!dirs.isEmpty())

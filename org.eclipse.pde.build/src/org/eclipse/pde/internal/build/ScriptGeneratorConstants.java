@@ -36,19 +36,20 @@ interface ScriptGeneratorConstants {
 	public static final String SRC_EXCLUDES = "src.excludes";
 	
 	// exception codes
-	public final static int EXCEPTION_MODEL_PARSE = 0x1;
-	public final static int EXCEPTION_PLUGIN_MISSING = 0x2;
-	public final static int EXCEPTION_FRAGMENT_MISSING = 0x4;
-	public final static int EXCEPTION_COMPONENT_INPUT = 0x1024;
-	public final static int EXCEPTION_COMPONENT_MISSING = 0x16;
-	public final static int EXCEPTION_COMPONENT_PARSE = 0x8;
-	public final static int EXCEPTION_CONFIGURATION_INPUT = 0x1024;
-	public final static int EXCEPTION_CONFIGURATION_MISSING = 0x64;
-	public final static int EXCEPTION_CONFIGURATION_PARSE = 0x32;
-	public final static int WARNING_PLUGIN_INCORRECTVERSION = 0x128;
-	public final static int WARNING_FRAGMENT_INCORRECTVERSION = 0x256;
-	public final static int WARNING_COMPONENT_INCORRECTVERSION = 0x512;
-	public final static int EXCEPTION_FILE_MISSING = 0x1024;
-	public final static int EXCEPTION_OUTPUT = 0x1024;
-	public final static int EXCEPTION_URL = 0x1024;
+	public final static int EXCEPTION_MODEL_PARSE = 1;
+	public final static int EXCEPTION_PLUGIN_MISSING = 2;
+	public final static int EXCEPTION_FRAGMENT_MISSING = 3;
+	public final static int EXCEPTION_COMPONENT_INPUT = 4;
+	public final static int EXCEPTION_COMPONENT_MISSING = 5;
+	public final static int EXCEPTION_COMPONENT_PARSE = 6;
+	public final static int EXCEPTION_CONFIGURATION_INPUT = 7;
+	public final static int EXCEPTION_CONFIGURATION_MISSING = 8;
+	public final static int EXCEPTION_CONFIGURATION_PARSE = 9;
+	public final static int WARNING_PLUGIN_INCORRECTVERSION = 10;
+	public final static int WARNING_FRAGMENT_INCORRECTVERSION = 11;
+	public final static int WARNING_COMPONENT_INCORRECTVERSION = 12;
+	public final static int WARNING_MISSING_SOURCE = 13;
+	public final static int EXCEPTION_FILE_MISSING = 14;
+	public final static int EXCEPTION_OUTPUT = 15;
+	public final static int EXCEPTION_URL = 16;
 }
