@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -232,8 +234,6 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		FeatureBuildScriptGenerator generator =
 			new FeatureBuildScriptGenerator();
 		IFile featureFile = (IFile) featureModel.getUnderlyingResource();
-		String scriptName = "build.xml";
-		//generator.setBuildScriptName(scriptName);
 		generator.setFeatureRootLocation(
 			featureFile.getParent().getLocation().toOSString());
 		generator.setGenerateIncludedFeatures(true);
@@ -242,11 +242,34 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 			Platform.getLocation().append(featureFile.getProject().getName());
 		generator.setWorkingDirectory(platform.toOSString());
 		generator.setDevEntries(new String[] { "bin" });
-		URL[] pluginPath = TargetPlatform.createPluginPath();
-		generator.setPluginPath(pluginPath);
+
+		ArrayList paths = new ArrayList();
+		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceFeatureModels();
+		for (int i = 0; i < models.length; i++) {
+			try {
+				paths.add(new URL("file:" + models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"));
+			} catch (MalformedURLException e1) {
+			}
+		}		
+		URL[] plugins = TargetPlatform.createPluginPath();
+		URL[] features = (URL[]) paths.toArray(new URL[paths.size()]);
+		URL[] all = new URL[plugins.length + paths.size()];
+		System.arraycopy(plugins, 0, all, 0, plugins.length);
+		System.arraycopy(features, 0, all, plugins.length, features.length);		
+		generator.setPluginPath(all);
+		
+		setConfigInfo(featureModel.getFeature());
 		generator.setFeature(featureModel.getFeature().getId());
 		generator.generate();
-		return featureFile.getProject().getFile(scriptName);
+		return featureFile.getProject().getFile("build.xml");
+	}
+	
+	private void setConfigInfo(IFeature feature) throws CoreException {
+		String os = feature.getOS() == null ? "*" : feature.getOS();
+		String ws = feature.getWS() == null ? "*" : feature.getWS();
+		String arch = feature.getArch() == null ? "*" : feature.getArch();
+		
+		FeatureBuildScriptGenerator.setConfigInfo(os + "," + ws + "," + arch);
 	}
 
 	private void runScript(
