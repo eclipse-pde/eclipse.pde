@@ -249,7 +249,7 @@ public class ClasspathUtilCore {
 	}
 	
 	private static void addJARdPlugin(IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
-		IPath sourcePath = getSourceAnnotation(model, ".");
+		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
 		if (sourcePath == null)
 			sourcePath = new Path(model.getInstallLocation());
 		IClasspathEntry entry =

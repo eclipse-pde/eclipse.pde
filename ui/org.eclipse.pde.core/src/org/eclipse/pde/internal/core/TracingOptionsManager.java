@@ -95,10 +95,10 @@ public class TracingOptionsManager {
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory())
-				return new File(pluginLocation, ".options").exists();
+				return new File(pluginLocation, ".options").exists(); //$NON-NLS-1$
 			
 			jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-			ZipEntry manifestEntry = jarFile.getEntry(".options");
+			ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
 			if (manifestEntry != null) {
 				stream = jarFile.getInputStream(manifestEntry);
 			}
@@ -157,12 +157,12 @@ public class TracingOptionsManager {
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory()) {
-				File file = new File(pluginLocation, ".options");
+				File file = new File(pluginLocation, ".options"); //$NON-NLS-1$
 				if (file.exists()) 
 					stream = new FileInputStream(file);
 			} else {
 					jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-					ZipEntry manifestEntry = jarFile.getEntry(".options");
+					ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 					}
