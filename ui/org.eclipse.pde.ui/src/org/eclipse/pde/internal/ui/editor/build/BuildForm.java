@@ -65,8 +65,15 @@ public class BuildForm extends ScrollableSectionForm {
 				SWT.CHECK);
 		customButton.setAlignment(SWT.LEFT);
 		GridData gd = new GridData (GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan =2;
+		gd.horizontalSpan =1;
 		customButton.setLayoutData(gd);
+		
+		Label label = new Label(parent, SWT.NULL);
+		gd = new GridData (GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan =1;
+		label.setBackground(parent.getBackground());
+		label.setLayoutData(gd);
+		
 		customButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean isCustom = customButton.getSelection();
