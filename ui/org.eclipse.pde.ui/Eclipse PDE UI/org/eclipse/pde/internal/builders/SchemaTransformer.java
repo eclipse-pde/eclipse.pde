@@ -189,6 +189,10 @@ private int verifyAttribute(ISchemaElement element, ISchemaAttribute attribute, 
 }
 
 public void transform(StringBuffer out, ISchema schema) {
+	out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n");
+	out.append("<HEAD>\n");
+	out.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n");
+	out.append("</HEAD>\n");
 	out.append("<HTML>\n");
 	out.append("<BODY>\n");
 	out.append("<H1><CENTER>" + schema.getName() + "</CENTER></H1>\n");
