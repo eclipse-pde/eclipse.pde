@@ -40,4 +40,28 @@
          class="org.eclipse.pde.internal.core.InitTemplate">
    </antTask>
 </extension>
+<extension id="plugin" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.PluginBuildScriptGenerator"/>
+   </application>
+</extension>
+
+<extension id="fragment" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.FragmentuildScriptGenerator"/>
+   </application>
+</extension>
+
+<extension id="component" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.ComponentBuildScriptGenerator"/>
+   </application>
+</extension>
+
+<extension id="configuration" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.ConfigurationBuildScriptGenerator"/>
+   </application>
+</extension>
+
 </plugin>
