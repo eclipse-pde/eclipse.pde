@@ -73,7 +73,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			else if (searchLocationName.equals("both")) //$NON-NLS-1$
 				fSearchLocation = BOTH;
 		}
-		hookWithWorkspace();
+		//hookWithWorkspace();
 	}
 
 	public void loadFrom(IFeature feature) {

@@ -9,16 +9,32 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class ExternalModelManager {
 	private List fModels;
 	private List fFragmentModels;
+	private IFeatureModel[] fFeatureModels;
 	private Vector fListeners = new Vector();
 	private PDEState fState = null;
 	private boolean fInitialized = false;
@@ -26,6 +42,7 @@ public class ExternalModelManager {
 	public ExternalModelManager() {
 		fModels = Collections.synchronizedList(new ArrayList());
 		fFragmentModels = Collections.synchronizedList(new ArrayList());
+		fFeatureModels = new IFeatureModel[0];
 	}
 
 	public static String computeDefaultPlatformPath() {
@@ -120,6 +137,11 @@ public class ExternalModelManager {
 		return allModels;
 	}
 	
+	public IFeatureModel[] getAllFeatureModels(){
+		loadModels(new NullProgressMonitor());
+		return fFeatureModels;
+	}
+
 	private void initializeAllModels() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
@@ -142,10 +164,24 @@ public class ExternalModelManager {
 	private synchronized void loadModels(IProgressMonitor monitor) {
 		if (fInitialized)
 			return;
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		String platformHome = PDECore.getDefault().getPluginPreferences()
+		.getString(ICoreConstants.PLATFORM_PATH);
+
+		monitor.beginTask("", 100); //$NON-NLS-1$
+		loadPluginModels(new SubProgressMonitor(monitor, 85), platformHome);
+		loadFeatureModels(new SubProgressMonitor(monitor, 15), platformHome);
+		monitor.done();
+		initializeAllModels();
+		fInitialized=true;
+	}
+
+	/**
+	 * @param monitor
+	 * @param pref
+	 */
+	private void loadPluginModels(IProgressMonitor monitor, String platformHome) {
 		URL[] pluginPaths =
-			PluginPathFinder.getPluginPaths(
-				pref.getString(ICoreConstants.PLATFORM_PATH));
+			PluginPathFinder.getPluginPaths(platformHome);
 		fState = new PDEState(pluginPaths, true, monitor);
 		IPluginModelBase[] resolved = fState.getModels();
 		for (int i = 0; i < resolved.length; i++) {
@@ -154,16 +190,21 @@ public class ExternalModelManager {
 			} else {
 				fFragmentModels.add(resolved[i]);
 			}
-		}		
-		initializeAllModels();
-		fInitialized=true;
+		}
+	}
+	
+	/**
+	 * @param monitor
+	 */
+	private void loadFeatureModels(IProgressMonitor monitor, String platformHome) {
+		fFeatureModels = ExternalFeatureLoader.loadFeatureModels(monitor, platformHome);
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		fListeners.remove(listener);
 	}
 			
-	public void reset(PDEState state, IPluginModelBase[] newModels) {
+	public void reset(PDEState state, IPluginModelBase[] newModels, IFeatureModel[] newFeatureModels) {
 		fState = state;
 		PDECore.getDefault().getModelManager().addWorkspaceBundlesToState();
 		fModels.clear();
@@ -174,6 +215,19 @@ public class ExternalModelManager {
 			else
 				fFragmentModels.add(newModels[i]);
 		}
+		
+		if (fFeatureModels.length > 0 || newFeatureModels.length > 0) {
+			int type = 0;
+			if (fFeatureModels.length > 0)
+				type |= IModelProviderEvent.MODELS_REMOVED;
+			if (newFeatureModels.length > 0)
+				type |= IModelProviderEvent.MODELS_ADDED;
+			ModelProviderEvent replacedFeatures = new ModelProviderEvent(this,
+					type, newFeatureModels, fFeatureModels, null);
+			fFeatureModels = newFeatureModels;
+			fireModelProviderEvent(replacedFeatures);
+		}
+		
 	}
 	
 	public void shutdown() {
