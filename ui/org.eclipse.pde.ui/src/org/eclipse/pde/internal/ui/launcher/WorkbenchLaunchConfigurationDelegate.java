@@ -28,7 +28,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	private static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup";
 
-	private File fConfigFile = null;
+	private File fConfigDir = null;
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
 	 */
@@ -51,14 +51,11 @@ public class WorkbenchLaunchConfigurationDelegate
 			} 
 			monitor.worked(1);
 			
-			if (fConfigFile == null) {
+			if (fConfigDir == null) {
 				launch.setAttribute(ILauncherSettings.CONFIG_LOCATION, null);
 			} else {
-				launch.setAttribute(
-					ILauncherSettings.CONFIG_LOCATION,
-					fConfigFile.isDirectory()
-						? fConfigFile.toString()
-						: fConfigFile.getParent());
+				launch.setAttribute(ILauncherSettings.CONFIG_LOCATION,
+						fConfigDir.toString());
 			}
 				
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString());
@@ -129,14 +126,17 @@ public class WorkbenchLaunchConfigurationDelegate
 				return null;
 				
 			String primaryFeatureId = LauncherUtils.getPrimaryFeatureId();
-			fConfigFile =
+			fConfigDir =
 				TargetPlatform.createPlatformConfigurationArea(
 					pluginMap,
 					new Path(targetWorkspace),
 					primaryFeatureId,
 					LauncherUtils.getAutoStartPlugins(configuration));
 			programArgs.add("-configuration");
-			programArgs.add("file:" + fConfigFile.getPath());
+			if (isOSGI)
+				programArgs.add("file:" + fConfigDir.getPath());
+			else
+				programArgs.add("file:" + fConfigDir.getPath() + "/platform.cfg");
 			
 			if (!isOSGI) {
 				if (primaryFeatureId != null) {
@@ -161,11 +161,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (configuration.getAttribute(TRACING, false)
 				&& !TRACING_NONE.equals(configuration.getAttribute(
 					TRACING_CHECKED, (String) null))) {
-			if (fConfigFile == null) {
-				fConfigFile =
+			if (fConfigDir == null) {
+				fConfigDir =
 					TargetPlatform.createWorkingDirectory(new Path(targetWorkspace));
 			}
-			String directoryName = fConfigFile.isDirectory() ? fConfigFile.toString() : fConfigFile.getParent();
+			String directoryName = fConfigDir.toString();
 			programArgs.add("-debug");
 			programArgs.add(
 				LauncherUtils.getTracingFileArgument(

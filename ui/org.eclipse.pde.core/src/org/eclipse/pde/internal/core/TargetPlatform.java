@@ -14,7 +14,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
@@ -172,12 +172,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 			if (isOSGI) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
 			}
-			File configFile = null;			
 			if (!isOSGI || pluginMap.containsKey("org.eclipse.update.configurator")) {
-				configFile = new File(configDir, "platform.cfg");
-				savePlatformConfiguration(configFile, pluginMap, primaryFeatureId);
+				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
 			}
-			return (configFile == null) ? configDir : configFile;
+			return configDir;
 		} catch (CoreException e) {
 			// Rethrow
 			throw e;
@@ -298,7 +296,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
 		IPlatformConfiguration platformConfiguration =
-			BootLoader.getPlatformConfiguration(null);
+			new PlatformConfiguration(null);
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
 		createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
