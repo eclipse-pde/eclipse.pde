@@ -276,11 +276,17 @@ public class $className$ extends ViewPart {
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-	
+%endif
+
+%if (localToolbar || localPulldown)	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
+%if localPulldown
 		fillLocalPullDown(bars.getMenuManager());
+%endif
+%if localToolbar
 		fillLocalToolBar(bars.getToolBarManager());
+%endif
 	}
 %endif
 
