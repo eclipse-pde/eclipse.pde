@@ -55,10 +55,10 @@ public class FeatureExportWizard extends BaseExportWizard {
 		return new FeatureExportWizardPage(getSelection());
 	}
 
-	protected HashMap createProperties(String destination, boolean exportZip) {		
+	protected HashMap createProperties(String destination, int exportType) {		
 		HashMap map = new HashMap(5);
 		map.put("feature.temp.folder", buildTempLocation + "/destination");
-		if (exportZip) {
+		if (exportType != BaseExportWizard.EXPORT_AS_UPDATE_JARS) {
 			map.put("plugin.destination", destination);
 			map.put("feature.destination", destination);
 		} else {
@@ -94,7 +94,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 	
 	protected void doExport(
-		boolean exportZip,
+		int exportType,
 		boolean exportSource,
 		String destination,
 		String zipFileName,
@@ -112,9 +112,9 @@ public class FeatureExportWizard extends BaseExportWizard {
 			runScript(
 				feature.getInstallLocation(),
 				destination,
-				exportZip,
+				exportType,
 				exportSource,
-				createProperties(destination, exportZip),
+				createProperties(destination, exportType),
 				new SubProgressMonitor(monitor, 9));
 		} finally {
 			deleteBuildFiles(feature);
@@ -209,9 +209,9 @@ public class FeatureExportWizard extends BaseExportWizard {
 		return all;		
 	}
 	
-	protected String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
+	protected String[] getExecutionTargets(int exportType, boolean exportSource) {
 		ArrayList targets = new ArrayList();
-		if (!exportZip) {
+		if (exportType == EXPORT_AS_UPDATE_JARS) {
 			targets.add("build.update.jar");	
 		} else {
 			targets.add("build.jars");

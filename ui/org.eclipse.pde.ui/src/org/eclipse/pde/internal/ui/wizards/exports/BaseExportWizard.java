@@ -39,6 +39,11 @@ import org.eclipse.ui.*;
  * @see Wizard
  */
 public abstract class BaseExportWizard extends Wizard implements IExportWizard, IPreferenceConstants {
+
+	public static int EXPORT_AS_DIRECTORY = 1;
+	public static int EXPORT_AS_ZIP = 2;
+	public static int EXPORT_AS_UPDATE_JARS = 3;
+	
 	private IStructuredSelection selection;
 	private BaseExportWizardPage page1;
 	protected static PrintWriter writer;
@@ -59,13 +64,8 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 
 	private static void createLogWriter() {
 		try {
-			String path =
-				PDEPlugin
-					.getDefault()
-					.getStateLocation()
-					.addTrailingSeparator()
-					.toOSString();
-			logFile = new File(path + "exportLog.txt");
+			String path = PDEPlugin.getDefault().getStateLocation().toOSString();
+			logFile = new File(path, "exportLog.txt");
 			if (logFile.exists()) {
 				logFile.delete();
 				logFile.createNewFile();
@@ -94,7 +94,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	}
 
 	protected abstract void doExport(
-		boolean exportZip,
+		int exportType,
 		boolean exportSource,
 		String destination,
 		String zipFileName,
@@ -102,26 +102,21 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 		IProgressMonitor monitor) throws CoreException, InvocationTargetException;
 
 	protected void doPerformFinish(
-		boolean exportZip,
+		int exportType,
 		boolean exportSource,
 		String destination,
 		String zipFileName,
 		Object[] items,
 		IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
-		File file = new File(destination);
-		if (!file.exists() || !file.isDirectory())
-			if (!file.mkdirs()) {
-				throw new InvocationTargetException(
-					new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory")));
-			}
-
+			
+		createDestination(destination);
+		
 		monitor.beginTask("", items.length + 1);
-
 		for (int i = 0; i < items.length; i++) {
 			IModel model = (IModel) items[i];
 			doExport(
-				exportZip,
+				exportType,
 				exportSource,
 				destination,
 				zipFileName,
@@ -129,10 +124,20 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 				new SubProgressMonitor(monitor, 1));
 		}
 		
-		cleanup(zipFileName, destination, new SubProgressMonitor(monitor,1));
+		cleanup(zipFileName, destination, exportType, new SubProgressMonitor(monitor,1));
+	}
+	
+	private void createDestination(String destination) throws InvocationTargetException {
+		File file = new File(destination);
+		if (!file.exists() || !file.isDirectory()) {
+			if (!file.mkdirs()) {
+				throw new InvocationTargetException(
+					new Exception(
+						PDEPlugin.getResourceString("ExportWizard.badDirectory")));
+			}
+		}
 	}
 
-	
 	public IStructuredSelection getSelection() {
 		return selection;
 	}
@@ -151,7 +156,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	 */
 	public boolean performFinish() {
 		page1.saveSettings();
-		final boolean exportZip = page1.getExportZip();
+		final int exportType = page1.getExportType();
 		final boolean exportSource = page1.getExportSource();
 		final String destination = page1.getDestination();
 		final String zipFileName = page1.getFileName();
@@ -160,12 +165,6 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 		if (zipFileName != null) {
 			File zipFile = new File(destination, zipFileName);
 			if (zipFile.exists()) {
-				if (!MessageDialog
-					.openQuestion(
-						getShell(),
-						getWindowTitle(),
-						PDEPlugin.getResourceString("ExportWizard.zipFileExists")))
-					return false;
 				zipFile.delete();
 			}
 		}
@@ -173,12 +172,13 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException{
 				try {
-					doPerformFinish(exportZip, exportSource, destination, zipFileName, items, monitor);
+					doPerformFinish(exportType, exportSource, destination, zipFileName, items, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
 		};
+		
 		try {
 			createLogWriter();
 			getContainer().run(true, false, op);
@@ -215,7 +215,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 	protected void runScript(
 		String location,
 		String destination,
-		boolean exportZip,
+		int exportType,
 		boolean exportSource,
 		Map properties,
 		IProgressMonitor monitor)
@@ -228,13 +228,13 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 				+ Path.SEPARATOR
 				+ "build.xml");
 		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
-		runner.setExecutionTargets(getExecutionTargets(exportZip, exportSource));
+		runner.setExecutionTargets(getExecutionTargets(exportType, exportSource));
 		runner.run(monitor);
 	}
 
-	protected String[] getExecutionTargets(boolean exportZip, boolean exportSource) {
+	protected String[] getExecutionTargets(int exportType, boolean exportSource) {
 		ArrayList targets = new ArrayList();
-		if (!exportZip) {
+		if (exportType == BaseExportWizard.EXPORT_AS_UPDATE_JARS) {
 			targets.add("build.update.jar");	
 		} else {
 			targets.add("build.jars");
@@ -247,60 +247,106 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 		return (String[]) targets.toArray(new String[targets.size()]);
 	}
 	
-	protected void cleanup(String filename, String destination, IProgressMonitor monitor) {
+	protected void cleanup(String filename, String destination, int exportType, IProgressMonitor monitor) {
+		File scriptFile = null;
 		try {
-			String path =
-				PDEPlugin
-					.getDefault()
-					.getStateLocation()
-					.addTrailingSeparator()
-					.toOSString();
-			File zip = new File(path + "zip.xml");
-			if (zip.exists()) {
-				zip.delete();
-				zip.createNewFile();
-			}
-			writer = new PrintWriter(new FileWriter(zip), true);
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
-			writer.println("<target name=\"clean\">");
-			writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
-			writer.println("</target>");
-			if (filename != null) {
-				writer.println("<target name=\"zip.folder\">");
-				writer.println("<zip zipfile=\"" + destination+ "/"+ filename + "\" basedir=\""
-						+ buildTempLocation + "/destination\"/>");
-				writer.println("</target>");
-			}
-			boolean errors = false;
-			if (logFile != null && logFile.exists() && logFile.length() > 0) {
-				errors = true;
-				writer.println("<target name=\"zip.logs\">");
-				writer.println("<delete file=\"" + destination + "/logs.zip\"/>");
-				writer.println("<zip zipfile=\"" + destination+ "/logs.zip\" basedir=\""
-						+ buildTempLocation + "/temp.folder\"/>");
-				writer.println("</target>");
-			}
-			writer.println("</project>");
-			writer.close();
+			scriptFile = createScriptFile(); 
+			writer = new PrintWriter(new FileWriter(scriptFile), true);
+			generateHeader(writer);
+			generateCleanTarget(writer);
+			boolean errors = generateZipLogsTarget(writer, destination);
+			if (exportType == EXPORT_AS_ZIP)
+				generateZipFolderTarget(writer, destination, filename);
+			else if (exportType == EXPORT_AS_DIRECTORY)
+				generateCopyResultTarget(writer, destination);
+			generateClosingTag(writer);
+			writer.close();		
 
-			AntRunner runner = new AntRunner();
-			runner.setBuildFileLocation(zip.getAbsolutePath());
-			
 			ArrayList targets = new ArrayList();
 			if (errors)
 				targets.add("zip.logs");
-			if (filename != null)
+			if (exportType == EXPORT_AS_ZIP)
 				targets.add("zip.folder");
+			else if (exportType == EXPORT_AS_DIRECTORY)
+				targets.add("copy.result");
 			targets.add("clean");
 				
+			AntRunner runner = new AntRunner();
+			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets((String[])targets.toArray(new String[targets.size()]));
 			runner.run(monitor);
-			zip.delete();
 		} catch (IOException e) {
 		} catch (CoreException e) {
+		} finally {
+			if (scriptFile != null && scriptFile.exists())
+				scriptFile.delete();			
 		}
 
+	}
+	
+	private File createScriptFile() throws IOException {
+		String path = PDEPlugin.getDefault().getStateLocation().toOSString();
+		File zip = new File(path, "zip.xml");
+		if (zip.exists()) {
+			zip.delete();
+			zip.createNewFile();
+		}
+		return zip;
+	}
+	
+	private void generateHeader(PrintWriter writer) {
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
+	}
+	
+	private void generateCleanTarget(PrintWriter writer) {
+		writer.println("<target name=\"clean\">");
+		writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
+		writer.println("</target>");
+	}
+	
+	private void generateCopyResultTarget(PrintWriter writer, String destination) {
+		writer.println("<target name=\"copy.result\">");
+		writer.println("<copy todir=\"" + destination + "\">");
+		writer.println("<fileset dir=\"" + buildTempLocation + "/destination\"/>");
+		writer.println("</copy>");
+		writer.println("</target>");
+	}
+
+	private void generateZipFolderTarget(
+		PrintWriter writer,
+		String destination,
+		String filename) {
+		writer.println("<target name=\"zip.folder\">");
+		writer.println(
+			"<zip zipfile=\""
+				+ destination
+				+ "/"
+				+ filename
+				+ "\" basedir=\""
+				+ buildTempLocation
+				+ "/destination\"/>");
+		writer.println("</target>");
+	}
+	
+	private boolean generateZipLogsTarget(PrintWriter writer, String destination) {
+		if (logFile != null && logFile.exists() && logFile.length() > 0) {
+			writer.println("<target name=\"zip.logs\">");
+			writer.println("<delete file=\"" + destination + "/logs.zip\"/>");
+			writer.println(
+				"<zip zipfile=\""
+					+ destination
+					+ "/logs.zip\" basedir=\""
+					+ buildTempLocation
+					+ "/temp.folder\"/>");
+			writer.println("</target>");
+			return true;
+		}
+		return false;
+	}
+	
+	private void generateClosingTag(PrintWriter writer) {
+		writer.println("</project>");
 	}
 	
 	protected boolean isCustomBuild(IModel model) throws CoreException {

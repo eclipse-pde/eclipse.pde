@@ -39,24 +39,29 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class BaseExportWizardPage extends WizardPage {
 	private String S_EXPORT_UPDATE = "exportUpdate";
+	private String S_EXPORT_DIRECTORY = "exportDirectory";	
 	private String S_DESTINATION = "destination";
 	private String S_EXPORT_SOURCE="exportSource";
 	private String S_ZIP_FILENAME = "zipFileName";
 		
 	private IStructuredSelection selection;
-	private Combo destination;
-	private Combo zipFile;
 
 	protected ExportPart exportPart;
 	protected boolean featureExport;
+	
+	private Button directoryRadio;
 	private Button zipRadio;
 	private Button updateRadio;
-	private Button browseDirectory;
-	private Button includeSource;
 
 	private Label directoryLabel;
+	private Combo destination;
+	private Button browseDirectory;
+	
+	private Label fileLabel;
+	private Combo zipFile;
 	private Button browseFile;
-	private Label label;
+	
+	private Button includeSource;
 	
 	class ExportListProvider
 		extends DefaultContentProvider
@@ -95,12 +100,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 		
 		createTableViewerSection(container);
-		createExportSection(container);
+		createExportTypeSection(container);
 		createOptionsSection(container);
+		createExportDestinationSection(container);
 		
 		Dialog.applyDialogFont(container);
 		initializeList();
@@ -127,33 +132,70 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		gd.horizontalSpan = 2;		
 	}
 	
-	private void createExportSection(Composite parent) {
+	private void createExportTypeSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(
 			PDEPlugin.getResourceString(
 				featureExport
 					? "ExportWizard.Feature.label"
 					: "ExportWizard.Plugin.label"));
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		zipRadio = new Button(group, SWT.RADIO);
+		zipRadio.setText(PDEPlugin.getResourceString("ExportWizard.zip"));
+
+		directoryRadio = new Button(group, SWT.RADIO);
+		directoryRadio.setText(PDEPlugin.getResourceString("ExportWizard.directory"));
+
+		updateRadio = new Button(group, SWT.RADIO);
+		updateRadio.setText(PDEPlugin.getResourceString("ExportWizard.updateJars"));
+	}
+	
+	private void createExportDestinationSection(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(PDEPlugin.getResourceString("ExportWizard.destination.group"));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createZipSection(group);
-		createUpdateJarsSection(group);		
+		fileLabel = new Label(group, SWT.NONE);
+		fileLabel.setText(PDEPlugin.getResourceString("ExportWizard.zipFile"));
+		
+		zipFile = new Combo(group, SWT.BORDER);
+		zipFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		browseFile = new Button(group, SWT.PUSH);
+		browseFile.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
+		browseFile.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseFile);		
+
+		directoryLabel = new Label(group, SWT.NULL);
+		directoryLabel.setText(PDEPlugin.getResourceString("ExportWizard.destination"));
+
+		destination = new Combo(group, SWT.BORDER);
+		destination.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		browseDirectory = new Button(group, SWT.PUSH);
+		browseDirectory.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
+		browseDirectory.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(browseDirectory);
 	}
 	
 	private void createOptionsSection(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEPlugin.getResourceString("ExportWizard.buildOptions.title"));
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Group comp = new Group(parent, SWT.NONE);
+		comp.setText(PDEPlugin.getResourceString("ExportWizard.options"));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ExportWizard.buildOptions.label"));
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button button = new Button(group, SWT.PUSH);
+		includeSource = new Button(comp, SWT.CHECK);
+		includeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource"));
+		includeSource.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				
+		Button button = new Button(comp, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ExportWizard.buildOptions.button"));
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -176,61 +218,6 @@ public abstract class BaseExportWizardPage extends WizardPage {
 				dialog.open();
 			}
 		});
-	}
-	
-	private void createZipSection(Composite container) {
-		zipRadio =
-			createButton(
-				container,
-				PDEPlugin.getResourceString("ExportWizard.Plugin.zip"),
-				SWT.RADIO,
-				GridData.BEGINNING);
-												
-		label = new Label(container, SWT.NONE);
-		label.setText(PDEPlugin.getResourceString("ExportWizard.zipFile"));
-		GridData gd = new GridData();
-		gd.horizontalIndent = 25;
-		label.setLayoutData(gd);
-		
-		zipFile = new Combo(container, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		zipFile.setLayoutData(gd);
-		
-		browseFile = new Button(container, SWT.PUSH);
-		browseFile.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
-		browseFile.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(browseFile);
-		
-		includeSource = new Button(container, SWT.CHECK);
-		includeSource.setText(PDEPlugin.getResourceString("ExportWizard.includeSource"));
-		includeSource.setSelection(true);
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		gd.horizontalIndent = 25;
-		includeSource.setLayoutData(gd);		
-	}
-
-	private void createUpdateJarsSection(Composite container) {
-		updateRadio =
-			createButton(
-				container,
-				PDEPlugin.getResourceString("ExportWizard.Plugin.updateJars"),
-				SWT.RADIO,
-				GridData.BEGINNING);
-
-		directoryLabel = new Label(container, SWT.NULL);
-		directoryLabel.setText(PDEPlugin.getResourceString("ExportWizard.destination"));
-		GridData gd = new GridData();
-		gd.horizontalIndent = 25;
-		directoryLabel.setLayoutData(gd);
-
-		destination = new Combo(container, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		destination.setLayoutData(gd);
-		browseDirectory = new Button(container, SWT.PUSH);
-		browseDirectory.setText(PDEPlugin.getResourceString("ExportWizard.browse"));
-		browseDirectory.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(browseDirectory);
 	}
 	
 	private void hookListeners() {
@@ -273,8 +260,32 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		updateRadio.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = updateRadio.getSelection();
-				enableZipSection(!enabled);
-				enableUpdateJarsSection(enabled);
+				enableZipOption(!enabled);
+				enableDirectoryOption(enabled);
+				if (includeSource.getEnabled() == enabled)
+					includeSource.setEnabled(!enabled);
+				pageChanged();
+			}
+		});
+		
+		directoryRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = directoryRadio.getSelection();
+				enableZipOption(!enabled);
+				enableDirectoryOption(enabled);
+				if (includeSource.getEnabled() != enabled)
+					includeSource.setEnabled(enabled);
+				pageChanged();
+			}
+		});
+		
+		zipRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = zipRadio.getSelection();
+				enableZipOption(enabled);
+				enableDirectoryOption(!enabled);
+				if (includeSource.getEnabled() != enabled)
+					includeSource.setEnabled(enabled);
 				pageChanged();
 			}
 		});
@@ -299,27 +310,20 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		return null;
 	}
 	
-	private void enableZipSection(boolean enabled) {
-		label.setEnabled(enabled);
-		zipFile.setEnabled(enabled);
-		browseFile.setEnabled(enabled);
-		includeSource.setEnabled(enabled);		
+	private void enableZipOption(boolean enabled) {
+		if (fileLabel.getEnabled() != enabled) {
+			fileLabel.setEnabled(enabled);
+			zipFile.setEnabled(enabled);
+			browseFile.setEnabled(enabled);
+		}
 	}
 	
-	private void enableUpdateJarsSection(boolean enabled) {
-		directoryLabel.setEnabled(enabled);
-		destination.setEnabled(enabled);
-		browseDirectory.setEnabled(enabled);		
-	}
-
-	private Button createButton(Composite container, String text, int style, int align) {
-		Button button = new Button(container, style);
-		button.setText(text);
-		GridData gd = new GridData(align);
-		gd.horizontalSpan = 3;
-		gd.horizontalIndent = 0;
-		button.setLayoutData(gd);
-		return button;
+	private void enableDirectoryOption(boolean enabled) {
+		if (directoryLabel.getEnabled() != enabled) {
+			directoryLabel.setEnabled(enabled);
+			destination.setEnabled(enabled);
+			browseDirectory.setEnabled(enabled);
+		}		
 	}
 
 	protected abstract Object[] getListElements();
@@ -391,8 +395,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			hasDestination = zipFile.getText().length() > 0;
 			if (!hasDestination)
 				message = PDEPlugin.getResourceString("ExportWizard.status.nofile");
-		} else {
-			hasDestination = getDestination().length() > 0;
+		} else if (destination != null && !destination.isDisposed()){
+			hasDestination = destination.getText().length() > 0;
 			if (!hasDestination)
 				message = PDEPlugin.getResourceString("ExportWizard.status.nodirectory");
 		}
@@ -407,11 +411,19 @@ public abstract class BaseExportWizardPage extends WizardPage {
 
 	private void loadSettings() {
 		IDialogSettings settings = getDialogSettings();
+		
+		// initialize the radio buttons
 		boolean exportUpdate = settings.getBoolean(S_EXPORT_UPDATE);
-		zipRadio.setSelection(!exportUpdate);
+		boolean exportDirectory = settings.getBoolean(S_EXPORT_DIRECTORY);		
+		zipRadio.setSelection(!exportUpdate && !exportDirectory);
 		updateRadio.setSelection(exportUpdate);
-		enableZipSection(!updateRadio.getSelection());
+		directoryRadio.setSelection(exportDirectory);
+		
+		// enable/disable portions of the destination section
+		enableZipOption(!exportUpdate && !exportDirectory);
+		enableDirectoryOption(!zipRadio.getSelection());
 
+		// initialize the directory combo box
 		ArrayList items = new ArrayList();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(S_DESTINATION + String.valueOf(i));
@@ -422,9 +434,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		destination.setItems((String[]) items.toArray(new String[items.size()]));
 		if (items.size() > 0)
 			destination.setText(items.get(0).toString());
-
-		includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
-		enableUpdateJarsSection(!zipRadio.getSelection());
+			
+		// initialize the file combo box
 		items.clear();
 		for (int i = 0; i < 6; i++) {
 			String curr = settings.get(S_ZIP_FILENAME + String.valueOf(i));
@@ -435,11 +446,16 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		zipFile.setItems((String[]) items.toArray(new String[items.size()]));
 		if (items.size() > 0)
 			zipFile.setText(items.get(0).toString());
+			
+		// initialize the options section
+		includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
+		includeSource.setEnabled(!updateRadio.getSelection());
 	}
 
 	public void saveSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(S_EXPORT_UPDATE, updateRadio.getSelection());
+		settings.put(S_EXPORT_DIRECTORY, directoryRadio.getSelection());
 		
 		settings.put(S_EXPORT_SOURCE, includeSource.getSelection());
 			
@@ -503,6 +519,14 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			return "";
 			
 		return destination.getText();
+	}
+	
+	public int getExportType() {
+		if (directoryRadio.getSelection())
+			return BaseExportWizard.EXPORT_AS_DIRECTORY;
+		if (zipRadio.getSelection())
+			return BaseExportWizard.EXPORT_AS_ZIP;
+		return BaseExportWizard.EXPORT_AS_UPDATE_JARS;
 	}
 	
 	protected abstract void hookHelpContext(Control control);
