@@ -26,70 +26,71 @@ public class ResourceAttributeCellEditor extends DialogCellEditor {
 	public static final String TITLE = "ManifestEditor.ResourceAttributeCellEditor.title";
 	private Label label;
 
-
-protected ResourceAttributeCellEditor(Composite parent) {
-	super(parent);
-}
-protected Control createContents(Composite cell) {
-	label = new Label(cell, SWT.LEFT);
-	label.setFont(cell.getFont());
-	label.setBackground(cell.getBackground());
-	return label;
-}
-protected Object openDialogBox(Control cellEditorWindow) {
-	ResourceAttributeValue value = (ResourceAttributeValue) getValue();
-	final IProject project = value.getProject();
-
-	ElementTreeSelectionDialog dialog =
-		new ElementTreeSelectionDialog(
-			PDEPlugin.getActiveWorkbenchShell(),
-			new WorkbenchLabelProvider(),
-			new WorkbenchContentProvider());
-	dialog.setInput(project.getWorkspace());
-	
-	dialog.addFilter(new ViewerFilter() {		
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IProject)
-				return ((IProject)element).equals(project);
-			return true;
-		}
-	});
-	dialog.setAllowMultiple(false);
-	dialog.setTitle(PDEPlugin.getResourceString(TITLE));
-	dialog.setMessage(PDEPlugin.getResourceString("ManifestEditor.ResourceAttributeCellEditor.message"));
-	dialog.setValidator(new ISelectionStatusValidator() {
-		public IStatus validate(Object[] selection) {
-			if (selection != null
-				&& selection.length > 0
-				&& selection[0] instanceof IFile)
-				return new Status(
-					IStatus.OK,
-					PDEPlugin.getPluginId(),
-					IStatus.OK,
-					"",
-					null);
-			else
-				return new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					"",
-					null);
-		}
-	});
-	
-	if (dialog.open() == ElementTreeSelectionDialog.OK) {
-		IFile file = (IFile) dialog.getFirstResult();
-		return new ResourceAttributeValue(
-			project,
-			file.getProjectRelativePath().toString());
+	protected ResourceAttributeCellEditor(Composite parent) {
+		super(parent);
 	}
-	return value;
-}
-protected void updateContents(Object value) {
-	if (value != null)
-		label.setText(value.toString());
-	else
-		label.setText("");
-}
+	
+	protected Control createContents(Composite cell) {
+		label = new Label(cell, SWT.LEFT);
+		label.setFont(cell.getFont());
+		label.setBackground(cell.getBackground());
+		return label;
+	}
+	
+	protected Object openDialogBox(Control cellEditorWindow) {
+		ResourceAttributeValue value = (ResourceAttributeValue) getValue();
+		final IProject project = value.getProject();
+
+		ElementTreeSelectionDialog dialog =
+			new ElementTreeSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(),
+				new WorkbenchLabelProvider(),
+				new WorkbenchContentProvider());
+		dialog.setInput(project.getWorkspace());
+
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IProject)
+					return ((IProject) element).equals(project);
+				return true;
+			}
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setTitle(PDEPlugin.getResourceString(TITLE));
+		dialog.setMessage(
+			PDEPlugin.getResourceString(
+				"ManifestEditor.ResourceAttributeCellEditor.message"));
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection != null
+					&& selection.length > 0
+					&& selection[0] instanceof IFile)
+					return new Status(
+						IStatus.OK,
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						"",
+						null);
+				else
+					return new Status(
+						IStatus.ERROR,
+						PDEPlugin.getPluginId(),
+						IStatus.ERROR,
+						"",
+						null);
+			}
+		});
+
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+			IFile file = (IFile) dialog.getFirstResult();
+			return new ResourceAttributeValue(
+				project,
+				file.getProjectRelativePath().toString());
+		}
+		return value;
+	}
+	
+	protected void updateContents(Object value) {
+		label.setText(value == null ? "" : value.toString());
+	}
 }
