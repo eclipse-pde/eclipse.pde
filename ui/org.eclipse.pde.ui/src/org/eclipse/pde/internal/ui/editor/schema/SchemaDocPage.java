@@ -10,6 +10,7 @@ import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
+import org.eclipse.update.ui.forms.internal.IFormPage;
 
 public class SchemaDocPage extends PDEChildFormPage {
 	private IContentOutlinePage outlinePage;
@@ -19,9 +20,19 @@ public class SchemaDocPage extends PDEChildFormPage {
 	public SchemaDocPage(SchemaFormPage mainPage) {
 		super(mainPage, PDEPlugin.getResourceString(PAGE_TITLE));
 	}
+	
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#becomesInvisible(IFormPage)
+	 */
+	public boolean becomesInvisible(IFormPage newPage) {
+		getForm().commitChanges(false);
+		return true;
+	}
+
 	protected AbstractSectionForm createForm() {
 		return new DocForm(this);
 	}
+	
 	public IContentOutlinePage createContentOutlinePage() {
 		return null;
 	}
