@@ -264,6 +264,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(Integer.toString(port));
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
+		String testFailureNames = configuration.getAttribute(JUnitBaseLaunchConfiguration.FAILURES_FILENAME_ATTR, "");
+		if (testFailureNames.length() > 0) {
+			programArgs.add("-testfailures"); //$NON-NLS-1$
+			programArgs.add(testFailureNames);			
+		}
 
 		// a testname was specified just run the single test
 		String testName =
