@@ -42,7 +42,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 	private ControlEnableState wizardListEnableState;
 	private boolean fragment;
 	private IProjectProvider provider;
-	private boolean firstTime=true;
+	private boolean firstTime = true;
 	private static final String KEY_TITLE =
 		"NewProjectWizard.ProjectCodeGeneratorsPage.title";
 	private static final String KEY_BLANK_LABEL =
@@ -80,7 +80,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		setDescription(
 			PDEPlugin.getResourceString(fragment ? KEY_FDESC : KEY_DESC));
 	}
-	
+
 	public void createControl(Composite parent) {
 		Composite outerContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -88,7 +88,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		outerContainer.setLayout(layout);
 
 		blankPageRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
-		blankPageRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_BLANK_FLABEL : KEY_BLANK_LABEL));
+		blankPageRadio.setText(
+			PDEPlugin.getResourceString(
+				fragment ? KEY_BLANK_FLABEL : KEY_BLANK_LABEL));
 		blankPageRadio.setSelection(false);
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
@@ -103,35 +105,41 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		});
 
 		templateRadio = new Button(outerContainer, SWT.RADIO | SWT.LEFT);
-		templateRadio.setText(PDEPlugin.getResourceString(fragment ? KEY_TEMPLATE_FLABEL : KEY_TEMPLATE_LABEL));
+		templateRadio.setText(
+			PDEPlugin.getResourceString(
+				fragment ? KEY_TEMPLATE_FLABEL : KEY_TEMPLATE_LABEL));
 		templateRadio.setSelection(true);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment = GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace = true;
 		templateRadio.setLayoutData(gd);
-		
+
 		super.createControl(outerContainer);
 		wizardList = super.wizardSelectionViewer.getControl();
 		getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(outerContainer);
 		Dialog.applyDialogFont(outerContainer);
 		if (fragment)
-			WorkbenchHelp.setHelp(outerContainer,IHelpContextIds.NEW_FRAGMENT_CODE_GEN_PAGE);
+			WorkbenchHelp.setHelp(
+				outerContainer,
+				IHelpContextIds.NEW_FRAGMENT_CODE_GEN_PAGE);
 		else
-			WorkbenchHelp.setHelp(outerContainer, IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
+			WorkbenchHelp.setHelp(
+				outerContainer,
+				IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		
+
 		if (visible && firstTime) {
 			if (blankPageRadio.getSelection())
 				blankPageRadio.setFocus();
 			else {
 				focusAndSelectFirst();
 			}
-			firstTime=false;
+			firstTime = false;
 		}
 	}
 
@@ -139,15 +147,21 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		return new WizardNode(this, element) {
 			public IBasePluginWizard createWizard() throws CoreException {
 				IPluginContentWizard wizard =
-					(IPluginContentWizard) wizardElement.createExecutableExtension();
-				wizard.init(provider, projectStructurePage.getStructureData(), fragment, config);
+					(IPluginContentWizard) wizardElement
+						.createExecutableExtension();
+				wizard.init(
+					provider,
+					projectStructurePage.getStructureData(),
+					fragment,
+					config);
 				return wizard;
 			}
 		};
 	}
 	public boolean finish() {
 		if (blankPageRadio.getSelection()) {
-			if (projectStructurePage.getStructureData().getRuntimeLibraryName() != null) {
+			if (projectStructurePage.getStructureData().getRuntimeLibraryName()
+				!= null) {
 				// we must set the Java settings here
 				// because there are no wizards to run
 				runJavaSettingsOperation();
@@ -157,21 +171,25 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		}
 		return true;
 	}
-	
+
 	public boolean canFlipToNextPage() {
 		return !blankPageRadio.getSelection();
 	}
-	
+
 	public IWizardPage getNextPage() {
-		return (blankPageRadio.getSelection() ? null : super.getNextPage());
+		return (
+			blankPageRadio.getSelection()
+				? null
+				: super.getNextPage(
+					projectStructurePage.isStructureDataChanged()));
 	}
-	
+
 	public boolean isPageComplete() {
 		if (blankPageRadio != null && blankPageRadio.getSelection())
 			return true;
 		return super.isPageComplete();
 	}
-	
+
 	public void runSimpleManifestOperation() {
 		final IPluginStructureData structureData =
 			projectStructurePage.getStructureData();
@@ -180,7 +198,11 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					createBlankManifest(project, structureData, monitor);
-					ProjectStructurePage.createBuildProperties(project, structureData, fragment, monitor);
+					ProjectStructurePage.createBuildProperties(
+						project,
+						structureData,
+						fragment,
+						monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				} finally {
@@ -195,7 +217,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	private void runJavaSettingsOperation() {
 		final IPluginStructureData structureData =
 			projectStructurePage.getStructureData();
@@ -204,9 +226,10 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					boolean exists = createBlankManifest(project, structureData, monitor);
+					boolean exists =
+						createBlankManifest(project, structureData, monitor);
 					setJavaSettings(project, structureData, !exists, monitor);
-					BasicNewProjectResourceWizard.updatePerspective(config);					
+					BasicNewProjectResourceWizard.updatePerspective(config);
 				} catch (JavaModelException e) {
 					PDEPlugin.logException(e);
 				} catch (CoreException e) {
@@ -237,12 +260,19 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 			project.open(monitor);
 		}
 		if (!project.hasNature(JavaCore.NATURE_ID))
-			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
+			CoreUtility.addNatureToProject(
+				project,
+				JavaCore.NATURE_ID,
+				monitor);
 		if (!project.hasNature(PDE.PLUGIN_NATURE))
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		JavaCore.create(project);
 		if (setBuildpath)
-			ClasspathUtil.setClasspath(project, structureData, new IClasspathEntry[0], monitor);
+			ClasspathUtil.setClasspath(
+				project,
+				structureData,
+				new IClasspathEntry[0],
+				monitor);
 	}
 
 	private boolean createBlankManifest(
@@ -251,7 +281,9 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		IProgressMonitor monitor)
 		throws CoreException {
 
-		IPath path = project.getFullPath().append(fragment ? "fragment.xml" : "plugin.xml");
+		IPath path =
+			project.getFullPath().append(
+				fragment ? "fragment.xml" : "plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 
 		WorkspacePluginModelBase model = null;

@@ -117,7 +117,7 @@ public void selectionChanged(SelectionChangedEvent event) {
 	BusyIndicator.showWhile(wizardSelectionViewer.getControl().getDisplay(), new Runnable() {
 		public void run() {
 */
-			setSelectedNode(createWizardNode(finalSelection));
+			setSelectedNode(createWizardNode(finalSelection)); 
 			setDescriptionText((String) finalSelection.getDescription());
 /*
 		}
@@ -126,6 +126,27 @@ public void selectionChanged(SelectionChangedEvent event) {
 }
 public void setSelectedNode(IWizardNode node) {
 	super.setSelectedNode(node);
+}
+
+
+public IWizardPage getNextPage(boolean shouldCreate) {
+	if (!shouldCreate)
+		return super.getNextPage();
+		
+	IWizardNode selectedNode = getSelectedNode();
+	selectedNode.dispose();
+	IWizard wizard = selectedNode.getWizard();
+
+	if (wizard == null) {
+		super.setSelectedNode(null);	
+		return null;
+	}	
+
+	if (shouldCreate)
+		// Allow the wizard to create its pages
+		wizard.addPages();
+		
+	return wizard.getStartingPage();
 }
 
 protected void focusAndSelectFirst() {
