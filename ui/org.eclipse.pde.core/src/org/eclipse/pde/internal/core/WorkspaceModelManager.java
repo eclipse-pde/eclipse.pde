@@ -48,7 +48,6 @@ public class WorkspaceModelManager
 	private ArrayList fChangedModels;	
 	private ArrayList fListeners = new ArrayList();
 	private boolean fInitialized = false;
-	private boolean fModelsLocked;
 	
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen())
@@ -328,12 +327,6 @@ public class WorkspaceModelManager
 			new IPluginModelBase[result.size()]);
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWorkspaceModelManager#isLocked()
-	 */
-	public boolean isLocked() {
-		return fModelsLocked;
-	}
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProvider#removeModelProviderListener(org.eclipse.pde.core.IModelProviderListener)
 	 */
 	public void removeModelProviderListener(IModelProviderListener listener) {
@@ -428,10 +421,9 @@ public class WorkspaceModelManager
 		return true;
 	}
 	
-	private void initializeWorkspaceModels() {
-		if (fInitialized || fModelsLocked)
+	private synchronized void initializeWorkspaceModels() {
+		if (fInitialized)
 			return;
-		fModelsLocked = true;
 		fModels = new HashMap();
 		fFragmentModels = new HashMap();
 		fFeatureModels = new ArrayList();
@@ -447,7 +439,6 @@ public class WorkspaceModelManager
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
 		JavaCore.addPreProcessingResourceChangedListener(this);
 		fInitialized = true;
-		fModelsLocked = false;
 	}
 
 	/**
