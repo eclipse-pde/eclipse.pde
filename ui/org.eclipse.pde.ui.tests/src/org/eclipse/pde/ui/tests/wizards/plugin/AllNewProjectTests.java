@@ -18,6 +18,7 @@ public class AllNewProjectTests {
 		TestSuite suite = new TestSuite("Test Suite to test the new plug-in project creation wizard."); //$NON-NLS-1$
 		suite.addTest(SimplePluginTestCase.suite());
 		suite.addTest(BasicJavaPluginTestCase.suite());
+		suite.addTest(LibraryPluginTestCase.suite());
 		return suite;
 	}
 
