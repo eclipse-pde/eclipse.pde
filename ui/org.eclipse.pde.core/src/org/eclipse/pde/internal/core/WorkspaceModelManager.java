@@ -223,8 +223,10 @@ public class WorkspaceModelManager
 	
 	private void handleFileChanged(IFile file, IResourceDelta delta) {
 		IModel model = getWorkspaceModel(file);
-		if (model == null)
+		if (model == null) {
+			handleFileAdded(file);
 			return;
+		}
 		if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
 				if (isBundleManifestFile(file)) {
@@ -234,6 +236,12 @@ public class WorkspaceModelManager
 				}
 			} else {
 				loadModel(model, true);
+			}
+			if (model instanceof IPluginModelBase) {
+				String id = ((IPluginModelBase)model).getPluginBase().getId();
+				if (id == null || id.length() > 0)
+					removeWorkspaceModel(model);
+					return;
 			}
 			fireModelsChanged(new IModel[] { model });
 		}		

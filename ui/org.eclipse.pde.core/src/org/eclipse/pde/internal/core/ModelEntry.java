@@ -158,6 +158,8 @@ public class ModelEntry extends PlatformObject {
 		for (int i = 0; i < changedPlugins.length; i++) {
 			IPluginBase changedPlugin = changedPlugins[i];
 			String id = changedPlugin.getId();
+			if (id == null)
+				return false;
 			if (plugin.getId().equals(id))
 				return true;
 			if (isRequired(plugin, changedPlugin))

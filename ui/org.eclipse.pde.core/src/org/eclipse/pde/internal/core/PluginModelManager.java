@@ -330,8 +330,10 @@ public class PluginModelManager implements IAdaptable {
 			BundleDescription desc = external.getBundleDescription();
 			state.removeBundleDescription(desc);
 		}
-		if (model.getBundleDescription() == null)
-			state.addBundle(new File(model.getInstallLocation()));		
+		if (model.getBundleDescription() == null) {
+			BundleDescription bundle = state.addBundle(new File(model.getInstallLocation()));	
+			model.setBundleDescription(bundle);
+		}
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, PDEState state) {
