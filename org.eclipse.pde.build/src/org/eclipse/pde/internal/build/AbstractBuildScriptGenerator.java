@@ -455,6 +455,7 @@ protected URL[] getPluginPath() {
 			sb.append("/");
 			return new URL[] { new URL(sb.toString()) };
 		} catch (MalformedURLException e) {
+			// Ignore because should never happen.
 		}
 	}
 	return null;

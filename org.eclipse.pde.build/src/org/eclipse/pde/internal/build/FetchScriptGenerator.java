@@ -209,6 +209,7 @@ public static boolean clear(File root) {
 		if (root.exists())
 			result &= root.delete();
 	} catch (Exception e) {
+		// ignore any exceptions
 		result = false;
 	}
 	return result;

@@ -28,6 +28,9 @@ public Object run(Object args) throws Exception {
 	try {
 		run();
 	} catch (CoreException e) {
+		// Since this is an Eclipse application, printing the
+		// stack to the console should be good enough. It is not
+		// necessary to re-throw the exception.
 		e.printStackTrace(System.out);
 	}
 	return null;
