@@ -81,6 +81,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	reexportButton = factory.createButton(container, PDEPlugin.getResourceString(KEY_REEXPORT), SWT.CHECK);
 	reexportButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
+			if (blockChanges) return;
 			if (currentImport!=null) {
 				try {
 					currentImport.setReexported(reexportButton.getSelection());
@@ -123,6 +124,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 			}
 		}
 		public void textDirty(FormEntry text) {
+			if (blockChanges) return;
 			forceDirty();
 			blockChanges=true;
 			resetRadioButtons(currentImport);
@@ -236,8 +238,8 @@ public void sectionChanged(
 }
 
 private void resetRadioButtons(IPluginImport iimport) {
-	String text = versionText.getValue();
-	boolean enable = !isReadOnly() && text!=null && text.length() > 0;
+	String text = versionText.getControl().getText();
+	boolean enable = !isReadOnly() && text.length() > 0;
 	perfectButton.setEnabled(enable);
 	equivButton.setEnabled(enable);
 	compatibleButton.setEnabled(enable);

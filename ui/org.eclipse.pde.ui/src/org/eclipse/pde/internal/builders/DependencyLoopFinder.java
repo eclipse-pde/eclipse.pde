@@ -13,14 +13,22 @@ public class DependencyLoopFinder {
 	private static final String KEY_LOOP_NAME = "Builders.DependencyLoopFinder.loopName";	
 	
 	public static DependencyLoop [] findLoops(IPlugin root) {
+		return findLoops(root, null);
+	}
+
+	public static DependencyLoop [] findLoops(IPlugin root, IPlugin [] candidates) {
+		return findLoops(root, candidates, false);
+	}
+	
+	public static DependencyLoop [] findLoops(IPlugin root, IPlugin [] candidates, boolean onlyCandidates) {
 		Vector loops = new Vector();
 		
 		Vector path = new Vector();
-		findLoops(loops, path, root);
+		findLoops(loops, path, root, candidates, onlyCandidates);
 		return (DependencyLoop[])loops.toArray(new DependencyLoop[loops.size()]);
 	}
 	
-	private static void findLoops(Vector loops, Vector path, IPlugin subroot) {
+	private static void findLoops(Vector loops, Vector path, IPlugin subroot, IPlugin [] candidates, boolean onlyCandidates) {
 		if (path.size()>0) {
 			// test the path so far
 			// is the subroot the same as root - if yes, that's it
@@ -48,13 +56,22 @@ public class DependencyLoopFinder {
 		}
 		Vector newPath = path.size()>0?((Vector)path.clone()):path;	
 		newPath.add(subroot);
-		IPluginImport [] iimports = subroot.getImports();
-		for (int i=0; i<iimports.length; i++) {
-			IPluginImport iimport = iimports[i];
-			String id = iimport.getId();
-			IPlugin child = PDEPlugin.getDefault().findPlugin(id);
-			if (child!=null) {
-				findLoops(loops, newPath, child);
+		
+		if (!onlyCandidates) {
+			IPluginImport [] iimports = subroot.getImports();
+			for (int i=0; i<iimports.length; i++) {
+				IPluginImport iimport = iimports[i];
+				String id = iimport.getId();
+				IPlugin child = PDEPlugin.getDefault().findPlugin(id);
+				if (child!=null) {
+					findLoops(loops, newPath, child, null, false);
+				}	
+			}
+		}
+		if (candidates!=null) {
+			for (int i=0; i<candidates.length; i++) {
+				IPlugin candidate = candidates[i];
+				findLoops(loops, newPath, candidate, null, false);
 			}
 		}
 	}

@@ -36,7 +36,6 @@ protected NLResourceHelper createNLResourceHelper() {
 		String name = isFragmentModel() ? "fragment" : "plugin";
 		WorkspaceResourceHelper helper = new WorkspaceResourceHelper(name, url);
 		helper.setFile(file);
-		helper.setModelChangeProvider(this);
 		return helper;
 	} catch (MalformedURLException e) {
 		return null;

@@ -219,19 +219,26 @@ private void openExternalPlugin(IPlugin pluginInfo) {
 		}
 	}
 }
+
+
 public void openPluginEditor(String pluginId) {
 	IPlugin pluginToOpen = PDEPlugin.getDefault().findPlugin(pluginId);
 	if (pluginToOpen != null) {
-		IResource underlyingResource = pluginToOpen.getModel().getUnderlyingResource();
-		if (underlyingResource == null) {
-			openExternalPlugin(pluginToOpen);
-		} else {
-			openWorkspacePlugin((IFile) underlyingResource);
-		}
+		openPluginEditor(pluginToOpen);
 	} else {
 		Display.getCurrent().beep();
 	}
 }
+
+public void openPluginEditor(IPlugin plugin) {
+	IResource underlyingResource = plugin.getModel().getUnderlyingResource();
+	if (underlyingResource == null) {
+		openExternalPlugin(plugin);
+	} else {
+		openWorkspacePlugin((IFile) underlyingResource);
+	}	
+}
+
 private void openWorkspacePlugin(IFile pluginFile) {
 	String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
 	try {

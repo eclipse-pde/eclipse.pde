@@ -203,6 +203,7 @@ public void init(IWorkbench workbench) {}
 private void initialize() {
 	masterOptions = PDEPlugin.getDefault().getTracingOptionsManager().getTracingOptions();
 	pluginTreeViewer.setInput(PDEPlugin.getDefault());
+	pluginTreeViewer.reveal(workspacePlugins);
 }
 protected void performDefaults() {
 	if (currentSource != null) {

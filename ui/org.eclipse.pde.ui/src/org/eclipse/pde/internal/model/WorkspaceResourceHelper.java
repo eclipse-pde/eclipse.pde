@@ -57,6 +57,7 @@ implements IResourceChangeListener {
 		IResource resource = delta.getResource();
 		if (resource.equals(file)) {
 			fBundle = null;
+			/*
 			if (changeProvider!=null) {
 				// fire 'world changed' in the model
 				// to force views to refresh because
@@ -64,6 +65,7 @@ implements IResourceChangeListener {
 				ModelChangedEvent e= new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null);
 				changeProvider.fireModelChanged(e);
 			}
+			*/
 		}
 		return true;
 	}
