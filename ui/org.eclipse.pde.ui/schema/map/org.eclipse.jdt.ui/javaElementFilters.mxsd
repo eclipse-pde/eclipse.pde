@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.jdt.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.jdt.ui" id="javaElementFilters" name="Java Element Filter Extensions"/>
+   </appInfo>
+   <documentation>
+      This extension point is used to extend the set of 
+available filters provided by the Packages view.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <complexType>
+         <attribute name="pattern" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the filter pattern (? = any character, * = any string)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="selected" type="boolean">
+            <annotation>
+               <documentation>
+                  an optional attribute that defines whether the filter 
+is initially selected and active ("true" or "false").
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a pattern filter definition. 
+It filters out inner classes and is initially selected: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.jdt.ui.javaElementFilters"&gt;
+      &lt;filter
+         pattern="*$*.class"
+         selected="true"&gt;
+      &lt;/filter&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.jdt.launching">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.jdt.launching" id="vmRunners" name="Java VM Launchers"/>
+   </appInfo>
+   <documentation>
+      This extension point allows to plug in launchers for 
+java VM's. Each extension must implement 
+&lt;samp&gt;org.eclipse.jdt.launching.IVMRunner&lt;/samp&gt;. 
+A VM launcher is reponsible for launching a specific 
+VM in a specific "run mode". The only run modes 
+defined today are "run" and "debug" 
+(see also debugger documentation). 
+VM launchers are grouped by the "runtime" attribute 
+in their XML markup. These groups represent a single VM, 
+for example "J9" or "JDK 1.2.2". These groups will 
+be presented to the user as a single virtual machine.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="launcher" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launcher">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this launcher
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the class that implements 
+&lt;samp&gt;org.eclipse.jdt.launching.IVMRunner&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IVMRunner"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="modes" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a comma separated list of run modes e.g . "run, debug"
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="runtime" type="string" use="required">
+            <annotation>
+               <documentation>
+                  - the "Java runtime" this launcher belongs to, for example "J9".
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a "debug" launcher for the J9 VM: 
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point = "org.eclipse.jdt.launching.vmRunner"&gt; 
+     &lt;launcher 
+         class="org.eclipse.jdt.ui.launcher.J9DebugLauncher" 
+         id="org.eclipse.jdt.ui.launcher.J9DebugLauncher" 
+         modes="debug" 
+         runtime="J9" 
+    /&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The Java UI plugin defines run and debug launchers 
+for J9 and JDK 1.2.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

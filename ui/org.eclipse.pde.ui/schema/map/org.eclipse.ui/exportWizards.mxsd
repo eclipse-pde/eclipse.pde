@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.exportWizards">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
       <meta.schema plugin="org.eclipse.ui" id="exportWizards" name="Export Wizards"/>
@@ -81,19 +81,16 @@ source objects of type &lt;tt&gt;IProject&lt;/tt&gt;.
 interface
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IImportWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IExportWizard"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  an URI of the icon that will be used alongside the wizard name
-in the export engine listing
+                  a relative name of the icon that will be used 
+alongside the wizard name in the export engine listing.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="URI"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -139,10 +136,48 @@ in order to calculate if the wizard applies to it
 
    <annotation>
       <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of an export extension definition:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension 
+       point="org.eclipse.ui.exportWizards"&gt; 
+      &lt;wizard 
+         id="com.xyz.ExportWizard1" 
+         name="XYZ Web Exporter" 
+         class="com.xyz.exports.ExportWizard1" 
+         icon="./icons/import1.gif"&gt; 
+         &lt;description&gt; 
+            A simple engine that exports Web project 
+         &lt;/description&gt; 
+         &lt;selection class="org.eclipse.core.resources.IProject"/&gt; 
+      &lt;/wizard&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute 
+must be a name of the class that implements 
+&lt;samp&gt;org.eclipse.ui.IExportWizard&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The desktop comes preloaded with the basic import engines for files and directories.
+         The workbench comes preloaded with basic export engines 
+for files and directories.
       </documentation>
    </annotation>
 

@@ -1,24 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.viewActions">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="viewActions" name="View Actions"/>
+      <meta.schema plugin="org.eclipse.ui" id="viewActions" name="View Menus and Actions"/>
    </appInfo>
    <documentation>
-      This extension point allows tools to add menus, menu items and
-toolbar buttons to the views registered by other plug-ins. Each
-view has a local pulldown menu normally activated by clicking
-on the top right area. Other plug-ins can contribute submenus
-and actions to this menu. Plug-ins are allowed to contribute
-actions to the view toolbar. View owners are first given achance
-to populate these areas. Optional additions by other plug-ins
-are appended.   
-&lt;p&gt; 
-Action definition is the same for both the
-local toolbar and the pulldown menu. Additional markup is reserved
-for submenus in case the plug-in defines new ones, as opposed
-to adding to the existing menu.
+      This extension point is used to add actions to the menu 
+and toolbar for views registered by other plug-ins. 
+Each view has a local pulldown menu normally activated 
+by clicking on the top right area. Other plug-ins can 
+contribute submenus and actions to this menu. 
+Plug-ins may also contribute actions to a view toolbar. 
+View owners are first given a chance to populate these 
+areas. Optional additions by other plug-ins are appended.
    </documentation>
 </annotation>
 
@@ -76,6 +71,9 @@ to adding to the existing menu.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="separator" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -83,7 +81,7 @@ to adding to the existing menu.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   the text label of the new menu. The label should include mnemonic information.
@@ -108,6 +106,9 @@ menu will be added at the end of the pulldown.
          </appInfo>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -149,38 +150,79 @@ the action will not appear in the local toolbar.
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  a relative path for an icon that will be used to visually
+represent the action in its context. If omitted and the 
+action should appear in the local toolbar, 
+the workbench will use a place holder icon. 
+The path is relative to the location of the 
+plugin.xml file of the contributing plug-in.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
             <annotation>
                <documentation>
-                  
+                  used if the action is to appear in the local toolbar. 
+Otherwise, it is ignored.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="state" type="boolean">
             <annotation>
                <documentation>
-                  
+                  an optional attribute indicating that the action 
+should be of a toggle type. When added to a menu, 
+it will manifest itself as a check box item. When added 
+to a toolbar, it will become a toggle button. If defined, 
+the attribute value will be used as the initial state 
+(either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  name of the fully qualified class that implements 
+&lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IViewActionDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">
             <annotation>
                <documentation>
-                  
+                  a value indicating the selection count which must be met to 
+enable the action.  If this attribute is specified and 
+the condition is met the action is enabled.  
+If the condition is not met the action is disabled.  
+If no attribute is specified the action is enabled for 
+any number of items selected.  The following attribute 
+formats are supported: 
+&lt;ul&gt;
+&lt;li&gt;  
+! - 0 items selected 
+&lt;/li&gt;
+&lt;li&gt;
+? - 0 or 1 items selected 
+&lt;/li&gt;
+&lt;li&gt;
++ - 1 or more items selected 
+&lt;/li&gt;
+&lt;li&gt;
+multiple, 2+ - 2 or more items selected 
+&lt;/li&gt;
+&lt;li&gt;
+n - a precise number of items selected.  Example: 4. 
+&lt;/li&gt;
+&lt;li&gt;
+* - any number of items selected
+&lt;/li&gt;
+&lt;/ul&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -235,36 +277,57 @@ is specified and the match fails, the action will be disabled.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a view actions extension point
-(note the subelements and the way attributes are used):     
-
+         The following is an example of a view actions extension point (note the subelements and the way attributes are used): 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point="org.eclipse.ui.viewActions"&gt; 
       &lt;viewContribution 
          id="com.xyz.xyzViewC1" 
-         targetID="com.ibm.itp.ui.views.ResourceNavigator"&gt; 
-         &lt;menu id="com.xyz.xyzMenu" path="additions"&gt; 
+         targetID="org.eclipse.ui.views.navigator.ResourceNavigator"&gt; 
+         &lt;menu id="com.xyz.xyzMenu" 
+            label="XYZ Menu" 
+            path="additions"&gt; 
             &lt;separator name="group1"/&gt; 
          &lt;/menu&gt; 
          &lt;action id="com.xyz.runXYZ" 
-              label="&amp;amp;Run XYZ Tool"
+              label="&amp;amp;Run XYZ Tool" 
               menubarPath="com.xyz.xyzMenu/group1" 
               toolbarPath="Normal/XYZ" 
               icon="icons/runXYZ.gif" 
               tooltip="Run XYZ Tool" 
+              helpContextId="com.xyz.run_action_context" 
               class="com.xyz.actions.RunXYZ" 
               enablesFor="1"/&gt; 
-              &lt;selection class="com.ibm.itp.core.api.resources.IFile" name="*.java"/&gt;
+              &lt;selection class="org.eclipse.core.resources.IFile" name="*.java"&gt; 
          &lt;/action&gt; 
-   &lt;/extension&gt;
-&lt;/pre&gt;   
-&lt;p&gt;
-In the example above, the specified action will only enable for
-a single selection (&lt;samp&gt;enablesFor&lt;/samp&gt; attribute). In addition,
-each object in this selection must implement the specified interface
-(&lt;samp&gt;IFile&lt;/samp&gt;) and must be a Java file. Multiple selection
-elements can be specified, meaning 'one of'.
+     &lt;/viewContribution&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+In the example above, the specified action will only 
+enable for a single selection (enablesFor attribute). 
+In addition, each object in this selection must 
+implement the specified interface (IFile) and must 
+be a Java file. Multiple selection elements can be 
+specified, meaning 'one of'.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a fully 
+qualified name of a Java class that implements 
+&lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;. 
+This interface is loaded as late as possible to 
+avoid loading the entire plug-in before it 
+is really needed. It extends 
+&lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; 
+and adds an additional method that allows the 
+delegate to initialize with the view 
+instance it is contributing into.
       </documentation>
    </annotation>
 
@@ -273,7 +336,14 @@ elements can be specified, meaning 'one of'.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Each view normally comes with a number of standard 
+items on the pulldown menu and local toolbar. 
+Additions from other plug-ins will be appended to 
+the standard complement.  It is helpful to 
+publish the action identifiers for a view within a 
+public interface.  For example, the actions and 
+major groups for the workbench window are defined 
+in &lt;samp&gt;org.eclipse.ui.IWorkbenchActionConstants&lt;/samp&gt;.
       </documentation>
    </annotation>
 

@@ -1,22 +1,23 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.views">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="views" name="Workbench Views"/>
+      <meta.schema plugin="org.eclipse.ui" id="views" name="Views"/>
    </appInfo>
    <documentation>
-      The workbench has a number of standard views that include the
-Navigator, Properties and Outline. Plug-ins are allowed to augment
-this setup with additional views, provided that they are written
-in JFace. All the views (both the default setup and the views
-provided by the plug-ins) can be closed from their local title
-bar, and can be turned on again from the Perspective menu on
-the menu bar. 
+      This extension point is used to define additional views 
+for the workbench.  A view is a visual component 
+within a workbench page.  It is typically used to 
+navigate a hierarchy of information (like the workspace), 
+open an editor,  or display properties for 
+the active editor.  The user can make a view 
+visible from the View menu or close it from the 
+view local title bar. 
 &lt;p&gt;
-In order to reduce the visual clutter in the
-Perspective menu, views should be grouped using categories. Each
-category will create asubmenu.
+In order to reduce the visual clutter in the 
+Perspective menu, views should be grouped 
+using categories. Each category will create a submenu.
    </documentation>
 </annotation>
 
@@ -115,12 +116,24 @@ in this attribute.
          <attribute name="class" type="string" use="required" value="">
             <annotation>
                <documentation>
-                  a fully qualified name of the class the implements &lt;tt&gt;org.eclipse.ui.IViewPart&lt;/tt&gt;.
-A common practice is to subclass &lt;tt&gt;com.ibm.itp.ui.support.parts.ViewPart&lt;/tt&gt;
+                  a fully qualified name of the class the implements 
+&lt;samp&gt;org.eclipse.ui.IViewPart&lt;/samp&gt;. A common practice 
+is to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt; 
 in order to inherit the default functionality.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.ViewPart"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative name of the icon that will 
+be associated with the view.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -132,7 +145,37 @@ in order to inherit the default functionality.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of the extension point: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.views"&gt; 
+      &lt;category 
+         id="com.xyz.views.XYZviews" 
+         name="XYZ"&gt; 
+      &lt;/category&gt; 
+      &lt;view 
+         id="com.xyz.views.XYZView" 
+         name="XYZ View" 
+         category="com.xyz.views.XYZviews" 
+         class="com.xyz.views.XYZView" 
+         icon="icons/XYZ.gif"&gt; 
+      &lt;/view&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a 
+fully qualified name of the class that implements 
+&lt;samp&gt;org.eclipse.ui.IViewPart&lt;/samp&gt;.  It is common 
+practice to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
+ when developing a new view.
       </documentation>
    </annotation>
 
@@ -141,7 +184,15 @@ in order to inherit the default functionality.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The workbench provides a number of standard views 
+including Navigator, Properties, Outline and Tasks. 
+From the user point of view, these views are no 
+different from any other view provided by the plug-ins. 
+All the views can be shown from the View menu. 
+The position of a view is persistent: it is saved 
+when the view is closed and restored when the view 
+is reopened in a single session.  
+The position is also persisted between workbench sessions.
       </documentation>
    </annotation>
 

@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.preferencePages">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="preferencePages" name="Preferences"/>
+      <meta.schema plugin="org.eclipse.ui" id="preferencePages" name="Preference Pages"/>
    </appInfo>
    <documentation>
       The workbench provides one common dialog box for preferences.
@@ -11,10 +11,11 @@ The purpose of this extension point is to allow plug-ins to add
 pages to the preference dialog box. When preference dialog box
 is opened (initiated from the menu bar), pages contributed in
 this way will be added to the dialog box. 
+
 &lt;p&gt;
 The preference dialog
 box provides for hierarchical grouping of the pages. For this
-reason, a page can optionally specify a &lt;tt&gt;category&lt;/tt&gt; attribute.
+reason, a page can optionally specify a &lt;samp&gt;category&lt;/samp&gt; attribute.
 This
 attribute represents a path composed of parent page IDs separated
 by '/'. If this attribute is omitted or if any of the parent
@@ -77,7 +78,7 @@ the root level.
             <annotation>
                <documentation>
                   a name of the fully qualified class that implements 
-&lt;tt&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/tt&gt;.
+&lt;samp&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchPreferencePage"/>

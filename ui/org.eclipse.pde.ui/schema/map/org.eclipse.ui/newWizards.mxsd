@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.newWizards">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Artifact Creation (New)"/>
+      <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Resource Creation Wizards"/>
    </appInfo>
    <documentation>
       The workbench supports a common New dialog that organizes the
@@ -111,14 +111,6 @@ text about the wizard.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="availableAsShortcut" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  if true, a menu item will be added to the New submenu available from the File menu. This item allows 
-users to bypass the central New dialog box and go directly to the wizard.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
@@ -140,10 +132,10 @@ added to the "Other" category.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the Java class implementing &lt;samp&gt;com.ibm.itp.ui.api.INewWizard&lt;/samp&gt;.
+                  a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="com.ibm.itp.ui.api.INewWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.INewWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -163,7 +155,47 @@ added to the "Other" category.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Following is an example of creation wizard configuration: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.newWizards"&gt; 
+      &lt;category 
+        id="com.xyz.XYZ" 
+        name="XYZ Wizards"&gt; 
+      &lt;/category&gt; 
+      &lt;category 
+        id="com.xyz.XYZ.Web" 
+        name="Web Wizards" 
+        parentCategory="com.xyz.XYZ"&gt; 
+      &lt;/category&gt; 
+      &lt;wizard 
+          id="com.xyz.wizard1" 
+          name="XYZ artifact" 
+          category="com.xyz.XYZ/com.xyz.XYZ.Web" 
+          icon="./icons/XYZwizard1.gif" 
+          class="com.xyz.XYZWizard1"&gt; 
+          &lt;description&gt; 
+              Create a simple XYZ artifact and set initial content 
+          &lt;/description&gt; 
+      &lt;/wizard&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must represent a class 
+that implements &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;. 
+If the wizard is created from within the 
+New Wizard it will be inserted into the existing wizard.  
+If the wizard is launched as a shortcut 
+(from the File New menu or a toolbar button) it will 
+appear standalone as a separate dialog box.
       </documentation>
    </annotation>
 
@@ -172,7 +204,12 @@ added to the "Other" category.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The workbench comes with wizards for creating empty 
+resources of the following types: 
+project, folder and file. These wizards are registered 
+using the same mechanism as described above. 
+Additional wizards may also appear, subject to 
+particular platform installation.
       </documentation>
    </annotation>
 

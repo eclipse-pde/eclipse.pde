@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.propertyPages">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
       <meta.schema plugin="org.eclipse.ui" id="propertyPages" name="Property Pages"/>
@@ -84,6 +84,9 @@ property pages only for specific object types.
                <documentation>
                   a relative path to an icon that will be used in the UI in addition to the page name
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="objectClass" type="string" use="required">
@@ -123,7 +126,31 @@ wild card match applied to the target object name.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of the property page definition: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.propertyPages"&gt; 
+      &lt;page 
+         id="com.xyz.projectPage" 
+         name="XYZ Java Properties" 
+         objectClass="org.eclipse.core.resources.IFile" 
+         class="com.xyz.ppages.JavaPropertyPage" 
+         nameFilter="*.java"&gt; 
+      &lt;/page&gt; 
+    &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Attribute &lt;samp&gt;class&lt;/samp&gt; must specify a fully qualified name 
+of the class that implements 
+&lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -132,7 +159,14 @@ wild card match applied to the target object name.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Some objects provided by the workbench may have 
+property pages registered. Plug-ins are allowed 
+to add more property pages for these objects. 
+Property pages are not limited to workbench 
+resources: all objects showing up in the workbench 
+(even domain specific objects created by the plug-ins) 
+may have property pages and other plug-ins are 
+allowed to register property pages for them.
       </documentation>
    </annotation>
 

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.help">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.help" id="contributions" name="Contributions"/>
+   </appInfo>
+   <documentation>
+      For registering an online help contribution for an 
+individual plug-in. 
+&lt;p&gt;
+Each plug-in that contributes help files should in general 
+do the following: 
+&lt;ul&gt;
+&lt;li&gt;
+author the html files and store them in the plug-in 
+directory (perhaps using a subdirectory, for cleaner 
+structure).
+&lt;/li&gt;
+&lt;li&gt; 
+create navigation manifest files that describe 
+navigation (table of contents) for the help and the 
+necessary topic interleaving.
+&lt;/li&gt;
+&lt;li&gt; 
+the plugin.xml file should extend the 
+&lt;samp&gt;org.eclipse.help.contributions&lt;/samp&gt; extension 
+point and specify the navigation file(s).
+&lt;/li&gt;
+&lt;/ul&gt;
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="topics" minOccurs="0" maxOccurs="1"/>
+            <element ref="actions" minOccurs="0" maxOccurs="1"/>
+            <element ref="infoset" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="topics">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the manifest file which contains the table 
+of contents/navigation for this plug-in's online help.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="actions">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the manifest file which contains the 
+insertion rules for topic interleaving and wiring of 
+topics to views.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="infoset">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the manifest file defining the views.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension point="org.eclipse.help.contributions"&gt; 
+    &lt;infoset  name="infoset.xml"/&gt; 
+   &lt;/extension&gt; 
+
+   &lt;extension point="org.eclipse.help.contributions"&gt; 
+     &lt;topics  name="infosetTopics.xml"/&gt; 
+     &lt;actions name="infosetActions.xml"/&gt; 
+   &lt;/extension&gt; 
+
+   &lt;!-- Configure the help contribution for this plugin --&gt; 
+   &lt;!-- This part should be in a documentation plugin --&gt; 
+   &lt;extension point="org.eclipse.help.contributions"&gt; 
+        &lt;topics name="topics.xml"/&gt; 
+        &lt;actions name="topicsActions.xml" /&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No code is required to use this extension point. All that 
+is needed is to supply the appropriate manifest files 
+mentioned in the plugin.xml file.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The optional default implementation of the help system 
+UI supplied with the Eclipse platform fully supports 
+the contributions extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,71 +1,73 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.welcome">
+<schema targetNamespace="org.eclipse.ant.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="welcome" name="Welcome Dialog"/>
+      <meta.schema plugin="org.eclipse.ant.core" id="antObjects" name="Ant Objects"/>
    </appInfo>
    <documentation>
-      This extension point provides for plugging in wizards to be shown as choices in the 
-Welcome dialog box. These choices are added to the default choice to simply go to the workbench.
+      Allows plug-ins to define arbitrary classes for use by 
+the Ant infrastructure.  For example, in the case of 
+a Javac compiler adapters, the compiler adapter 
+factory can be supplied, via a property setting, 
+with the name of an adapter class to use.  
+Unfortunately, it is unlikely that the Ant Core 
+plug-in would have this class on its classpath 
+(or that of any of its prerequisites).  To address 
+this, clients should define an extension which plugs 
+into this extension-point and maps a name onto a class.  
+The Ant plug-in can then request that the declaring plug-in 
+load the specified class.
    </documentation>
 </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="wizard" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="antObject" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique extension point identifier
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  an optional extension identifier
+                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  an optional extension name
+                  
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="wizard">
+   <element name="antObject">
       <annotation>
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
       </annotation>
       <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a unique name that will be used to identify this &lt;samp&gt;Welcome&lt;/samp&gt; wizard entry
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used in the dialog box to represent this entry
+                  name of the class to be defined
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of a class that implements 
-&lt;samp&gt;com.ibm.itp.ui.api.wizards.INewWizard interface&lt;/samp&gt;.
+                  the fully qualified name of a Java class
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -80,17 +82,14 @@ Welcome dialog box. These choices are added to the default choice to simply go t
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a Welcome extension definition: 
+         The following is an example of an object declaration: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.welcome"&gt; 
-      &lt;wizard 
-         id="com.xyz.quickWizard1" 
-         name="XYZ Wizard" 
-         class="com.xyz.wizards.quickWizard1"&gt; 
-      &lt;/wizard&gt; 
+   &lt;extension point="org.eclipse.ant.core.antObject"&gt;
+      &lt;antObject name="com.example.Foo" class="com.example.Foo"/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -99,8 +98,10 @@ Welcome dialog box. These choices are added to the default choice to simply go t
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The class attribute should represent a fully qualified name of a class that implements
-&lt;samp&gt;com.ibm.itp.ui.api.wizards.INewWizard&lt;/samp&gt; interface.
+         The objects declared via this extension-point are 
+accessible though the following API:
+&lt;p&gt;
+&lt;samp&gt;org.eclipse.core.ant.AntPlugin.getObjectExtensions&lt;/samp&gt;
       </documentation>
    </annotation>
 
@@ -109,14 +110,16 @@ Welcome dialog box. These choices are added to the default choice to simply go t
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides two choices in the Welcome dialog box: 
-&lt;ul&gt;
-&lt;li&gt;Go to the workbench&lt;/li&gt;
-&lt;li&gt;Join a team&lt;/li&gt; 
-&lt;/ul&gt;
+         The platform itself does not supply any object extension.
+      </documentation>
+   </annotation>
 
-This list is subject to change depending on such things as installation options and product version. 
-The end user product will typically include more choices contributed by plug-ins.
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
       </documentation>
    </annotation>
 

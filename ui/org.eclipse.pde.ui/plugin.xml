@@ -23,6 +23,9 @@
 </requires>
 
 <!-- Runtime -->
+<!-- Runtime -->
+<!-- Runtime -->
+<!-- Runtime -->
 <runtime>
    <library name="pde.jar">
       <export name="*"/>
@@ -333,12 +336,112 @@
 <extension
       point="org.eclipse.pde.schemaMap">
    <map
-         point="org.eclipse.ui.editors"
-         schema="schema/map/org.eclipse.ui/editors.mxsd">
+         point="org.eclipse.ant.core.antObjects"
+         schema="schema/map/org.eclipse.ant.core/antObjects.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ant.core.antTasks"
+         schema="schema/map/org.eclipse.ant.core/antTasks.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ant.core.antTypes"
+         schema="schema/map/org.eclipse.ant.core/antTypes.mxsd">
+   </map>
+   <map
+         point="org.eclipse.compare.contentMergeViewers"
+         schema="schema/map/org.eclipse.compare/contentMergeViewers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.compare.contentViewers"
+         schema="schema/map/org.eclipse.compare/contentViewers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.compare.structureCreators"
+         schema="schema/map/org.eclipse.compare/structureCreators.mxsd">
+   </map>
+   <map
+         point="org.eclipse.compare.structureMergeViewers"
+         schema="schema/map/org.eclipse.compare/structureMergeViewers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.resources.builders"
+         schema="schema/map/org.eclipse.core.resources/builders.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.resources.markers"
+         schema="schema/map/org.eclipse.core.resources/markers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.resources.natures"
+         schema="schema/map/org.eclipse.core.resources/natures.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.runtime.applications"
+         schema="schema/map/org.eclipse.core.runtime/applications.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.runtime.urlHandlers"
+         schema="schema/map/org.eclipse.core.runtime/urlHandlers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.core.target.targets"
+         schema="schema/map/org.eclipse.target/targets.mxsd">
+   </map>
+   <map
+         point="org.eclipse.debug.core.launchers"
+         schema="schema/map/org.eclipse.debug.core/launchers.mxsd">
+   </map>
+   <map
+         point="org.eclipse.debug.ui.debugModelPresentations"
+         schema="schema/map/org.eclipse.debug.ui/debugModelPresentations.mxsd">
+   </map>
+   <map
+         point="org.eclipse.help.contexts"
+         schema="schema/map/org.eclipse.help/contexts.mxsd">
+   </map>
+   <map
+         point="org.eclipse.help.contributions"
+         schema="schema/map/org.eclipse.help/contributions.mxsd">
+   </map>
+   <map
+         point="org.eclipse.help.support"
+         schema="schema/map/org.eclipse.help/support.mxsd">
+   </map>
+   <map
+         point="org.eclipse.jdt.launching.vmRunners"
+         schema="schema/map/org.eclipse.jdt.launching/vmRunners.mxsd">
+   </map>
+   <map
+         point="org.eclipse.jdt.ui.javaElementFilters"
+         schema="schema/map/org.eclipse.jdt.ui/javaElementFilters.mxsd">
+   </map>
+   <map
+         point="org.eclipse.search.searchPages"
+         schema="schema/map/org.eclipse.search/searchPages.mxsd">
+   </map>
+   <map
+         point="org.eclipse.search.searchResultSorters"
+         schema="schema/map/org.eclipse.search/searchResultSorters.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.actionSets"
+         schema="schema/map/org.eclipse.ui/actionSets.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.dropActions"
+         schema="schema/map/org.eclipse.ui/dropActions.mxsd">
    </map>
    <map
          point="org.eclipse.ui.editorActions"
          schema="schema/map/org.eclipse.ui/editorActions.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.editors"
+         schema="schema/map/org.eclipse.ui/editors.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.elementFactories"
+         schema="schema/map/org.eclipse.ui/elementFactories.mxsd">
    </map>
    <map
          point="org.eclipse.ui.exportWizards"
@@ -349,12 +452,16 @@
          schema="schema/map/org.eclipse.ui/importWizards.mxsd">
    </map>
    <map
-         point="org.eclipse.ui.perspective"
-         schema="schema/map/org.eclipse.ui/perspective.mxsd">
-   </map>
-   <map
          point="org.eclipse.ui.newWizards"
          schema="schema/map/org.eclipse.ui/newWizards.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.perspectiveExtensions"
+         schema="schema/map/org.eclipse.ui/perspectiveExtensions.mxsd">
+   </map>
+   <map
+         point="org.eclipse.ui.perspectives"
+         schema="schema/map/org.eclipse.ui/perspectives.mxsd">
    </map>
    <map
          point="org.eclipse.ui.popupMenus"
@@ -375,14 +482,6 @@
    <map
          point="org.eclipse.ui.views"
          schema="schema/map/org.eclipse.ui/views.mxsd">
-   </map>
-   <map
-         point="org.eclipse.ui.welcome"
-         schema="schema/map/org.eclipse.ui/welcome.mxsd">
-   </map>
-   <map
-         point="org.eclipse.ui.actionSets"
-         schema="schema/map/org.eclipse.ui/actionSets.mxsd">
    </map>
 </extension>
 </plugin>

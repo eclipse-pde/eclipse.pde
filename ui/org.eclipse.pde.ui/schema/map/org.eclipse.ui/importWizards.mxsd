@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.importWizards">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizard"/>
+      <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
    </appInfo>
    <documentation>
       This extension point provides for plugging in alternative import
@@ -20,8 +20,7 @@ an import wizard can be made available only for objects of type
    <element name="extension">
       <annotation>
          <documentation>
-            an <tt>import</tt> extension can have unlimited number of <tt>wizard</tt> 
-         elements.
+            an
          </documentation>
       </annotation>
       <complexType>
@@ -55,7 +54,7 @@ an import wizard can be made available only for objects of type
    <element name="wizard">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name" iconName="icons/basic/obj16/import_wiz.gif"/>
+            <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
             an element that will be used to create import wizard
@@ -93,7 +92,7 @@ an import wizard can be made available only for objects of type
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
-                <documentation>
+               <documentation>
                   an URI of the icon that will be used alongside the wizard name in the import engine listing
                </documentation>
                <appInfo>
@@ -141,6 +140,43 @@ an import wizard can be made available only for objects of type
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of an import extension definition: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension 
+       point="org.eclipse.ui.importWizards"&gt; 
+      &lt;wizard 
+         id="com.xyz.ImportWizard1" 
+         name="XYZ Web Scraper" 
+         class="com.xyz.imports.ImportWizard1" 
+         icon="./icons/import1.gif"&gt; 
+         &lt;description&gt; 
+            A simple engine that searches the Web and imports files 
+         &lt;/description&gt; 
+         &lt;selection class="org.eclipse.core.resources.IResource"/&gt; 
+      &lt;/wizard&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent
+ a name of the class that implements 
+ &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt;.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>

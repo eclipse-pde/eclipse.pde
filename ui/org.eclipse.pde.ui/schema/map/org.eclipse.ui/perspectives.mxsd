@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.perspective">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
       <meta.schema plugin="org.eclipse.ui" id="perspective" name="Perspectives"/>
@@ -72,10 +72,21 @@ by invoking the "Switch To" submenu of the Perspective menu.
             <annotation>
                <documentation>
                   a fully qualified name of the class that implements 
-&lt;samp&gt;org.eclipse.ui.ILayoutEngine interface&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.ui.IPerspectiveFactory&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.ILayoutEngine"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IPerspectiveFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative name of the icon that will be associated 
+with this perspective.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -87,18 +98,20 @@ by invoking the "Switch To" submenu of the Perspective menu.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a layout extension: 
+         The following is an example of a perspective extension: 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension 
-        point="org.eclipse.ui.layout"&gt; 
-        &lt;layout 
-            id="org.eclipse.ui.defaultLayout" 
-            name="Default Layout" 
-            class="org.eclipse.ui.internal.DefaultLayout"&gt; 
-        &lt;/layout&gt; 
+        point="org.eclipse.ui.perspectives"&gt; 
+        &lt;perspective 
+            id="org.eclipse.ui.resourcePerspective" 
+            name="Resource" 
+            class="org.eclipse.ui.internal.ResourcePerspective" 
+            icon="icons/MyIcon.gif"&gt; 
+        &lt;/perspective&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -107,9 +120,11 @@ by invoking the "Switch To" submenu of the Perspective menu.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must be the fully qualified name of a class that 
-implements &lt;samp&gt;org.eclipse.ui.ILayoutEngine&lt;/samp&gt;. The class must 
-supply the initial layout for a perspective when asked by the workbench.
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be the 
+fully qualified name of a class that implements 
+&lt;samp&gt;org.eclipse.ui.IPerspectiveFactory&lt;/samp&gt;. 
+The class must supply the initial layout for a 
+perspective when asked by the workbench.
       </documentation>
    </annotation>
 
@@ -118,8 +133,10 @@ supply the initial layout for a perspective when asked by the workbench.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides a default layout.  Additional layouts may be added by plug-ins. They are
-selected using the "Switch To" submenu of the View menu.
+         The workbench provides a "Resource Perspective".  
+Additional perspectives may be added by plug-ins. 
+They are selected using the Switch Perspective submenu 
+of the View menu.
       </documentation>
    </annotation>
 

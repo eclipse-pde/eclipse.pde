@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.target">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.target" id="targets" name="Targets"/>
+   </appInfo>
+   <documentation>
+      The workspace supports the notion of incrementally 
+synchronizing with resources located outside the 
+workspace (i.e., in targets).  A target might be 
+a web server, embedded device, remote filesystem, ... 
+depending on the application . By default the platform 
+supports WebDAV and filesystem based uni- and 
+bi-directional targets.  The set of targets 
+available to users can be extended using the 
+targets extension point. 
+&lt;p&gt;
+The targets extension-point allows target writers 
+to register their target implementation under a 
+symbolic name that is then used from within the 
+workspace to find and run targets. The symbolic 
+name is the id of the target extension.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="target"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="target">
+      <complexType>
+         <sequence>
+            <element ref="run" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of an implementation of 
+&lt;samp&gt;org.eclipse.core.target.ITarget&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.target.ITarget"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of this parameter made available 
+to instances of the specified target class
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an arbitrary value associated with the given name 
+and made available to instances of the specified 
+target class
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of a target configuration: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.core.target.targets"&gt; 
+      &lt;target id="com.example.coolTarget" name="Cool Target"&gt; 
+         &lt;run class="com.example.targets.Cool"/&gt; 
+      &lt;/target&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must represent 
+an implementation of 
+&lt;samp&gt;org.eclipse.core.target.ITarget&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The platform supplies several targets including 
+uni- and bi-directional WebDAV and filesystem based targets.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

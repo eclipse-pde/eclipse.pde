@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.actionSets">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
    <appInfo>
       <meta.schema plugin="org.eclipse.ui" id="actionSets" name="Action Sets"/>
@@ -53,13 +53,14 @@ workbench window by user preference.
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="0" maxOccurs="unbounded">
-              <element ref="menu"/>
-              <element ref="action"/>
-         </choice>
+         <sequence>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
-              <annotation>
-                 <documentation>
+            <annotation>
+               <documentation>
                   a unique name that will be used to identify this action set.
                </documentation>
             </annotation>
@@ -74,15 +75,10 @@ workbench window by user preference.
          <attribute name="visible" type="boolean">
             <annotation>
                <documentation>
-                  determines the initial visibility of the action set. If &lt;samp&gt;true&lt;/samp&gt;, the action set is initially visible in the workbench window. Theuser may override this option from the "Action Sets Dialog".
-               </documentation>
-            </annotation>
-	 </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  a short description 
-of the action set.
+                  determines the initial visibility of the action set. 
+If &lt;samp&gt;true&lt;/samp&gt;, the action set is initially 
+visible in the workbench window. The
+user may override this option from the "Action Sets Dialog".
                </documentation>
             </annotation>
          </attribute>
@@ -106,7 +102,7 @@ of the action set.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="label" type="string">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   a text label of the new menu. 
@@ -332,6 +328,16 @@ will be disabled.
       </complexType>
    </element>
 
+   <element name="description" type="string">
+      <annotation>
+         <documentation>
+            an optional subelement whose body should contain text providing short description 
+of the action set. 
+
+         </documentation>
+      </annotation>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -339,13 +345,16 @@ will be disabled.
       <documentation>
          The following is an example of an action set (note 
 the subelements and the way attributes are used): 
+
 &lt;p&gt;
 &lt;pre&gt;
     &lt;extension point = "org.eclipse.ui.actionSets"&gt; 
         &lt;actionSet id="com.xyz.actionSet" 
             label="My Actions" 
             visible="true"&gt; 
-            &lt;menu id="com.xyz.xyzMenu" path="additions"&gt; 
+            &lt;menu id="com.xyz.xyzMenu" 
+                  label="XYZ Menu"
+                  path="additions"&gt; 
                 &lt;separator name="group1"/&gt; 
             &lt;/menu&gt; 
             &lt;action id="com.xyz.runXYZ" 
@@ -387,7 +396,34 @@ loading the entire plug-in before it is really needed.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Plug-ins may use this extension point to add new top levelmenus (for example, Debug). Plug-ins canalso define named groups which allow other plug-ins to contribute their actions into them. &lt;p&gt;Top level menus are created by using the following valuesfor the path attribute: &lt;ul&gt;&lt;li&gt;additions - represents a group to the left of the Window menu. &lt;/ul&gt;Omitting the path attribute will result in adding the new menu into the additions menu bar group. &lt;p&gt;The default groups in a workbench window are defined in the&lt;samp&gt;IWorkbenchActionConstants&lt;/samp&gt; interface. Theseconstants can be used in code for dynamic contribution.The values can also be copied into an XML file for finegrained integration with the existing workbench menusand toolbar. &lt;p&gt;Various menu and toolbar items within the workbench window are defined algorithmically.  In these cases a separate mechanism must be used to extend the window. For example, adding a new workbench view results in a new menu item appearing in thePerspective menu. Import, Export, and New Wizards extensions are also added automatically to the window.
+         Plug-ins may use this extension point to add new top level
+menus (for example, Debug). Plug-ins can
+also define named groups which allow other plug-ins to 
+contribute their actions into them. 
+&lt;p&gt;
+Top level menus are created by using the following values
+for the path attribute: 
+&lt;ul&gt;
+&lt;li&gt;additions - represents a group to the left of the 
+Window menu. 
+&lt;/ul&gt;
+Omitting the path attribute will result in adding the new 
+menu into the additions menu bar group. 
+&lt;p&gt;
+The default groups in a workbench window are defined in the
+&lt;samp&gt;IWorkbenchActionConstants&lt;/samp&gt; interface. These
+constants can be used in code for dynamic contribution.
+The values can also be copied into an XML file for fine
+grained integration with the existing workbench menus
+and toolbar. 
+&lt;p&gt;
+Various menu and toolbar items within the workbench 
+window are defined algorithmically.  In these cases 
+a separate mechanism must be used to extend the 
+window. For example, adding a new workbench view 
+results in a new menu item appearing in the
+Perspective menu. Import, Export, and New Wizards 
+extensions are also added automatically to the window.
       </documentation>
    </annotation>
 

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.core.resources">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.core.resources" id="natures" name="Project Natures"/>
+   </appInfo>
+   <documentation>
+      The workspace supports the notion of project natures 
+(or "natures" for short").  A nature associates lifecycle 
+behaviour with a project.  Natures are installed on 
+a per-project basis and are configured automatically 
+when a project is opened and deconfigured when a 
+project is closed.  For example, the Java nature 
+might install a Java builder and do other project 
+configuration when a project is opened. 
+&lt;p&gt;
+The natures extension-point allows nature writers 
+to register their nature implementation under a 
+symbolic name that is then used from within the 
+workspace to find and configure natures. 
+The symbolic name it the id of the nature extension.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="nature"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="nature">
+      <complexType>
+         <sequence>
+            <element ref="runtime" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="runtime">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of a class which implements 
+&lt;samp&gt;org.eclipse.core.resources.IProjectNature&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IProjectNature"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of this parameter made available to instances of the specified nature class
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an arbitrary value associated with the given name and made available to instances of the specificed nature class
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Following is an example of a builder configuration:
+&lt;p&gt;
+&lt;pre&gt; 
+   &lt;extension point="org.eclipse.core.resources.natures"&gt; 
+      &lt;nature id="com.xyz.coolNature" name="Cool Nature"&gt; 
+         &lt;runtime class="com.xyz.natures.Cool"&gt; 
+            &lt;parameter name="installBuilder" value="true"/&gt; 
+         &lt;/runtime&gt; 
+      &lt;/nature&gt; 
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must represent an 
+implementor of 
+&lt;samp&gt;org.eclipse.core.resources.IProjectNature&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The platform itself does not have any predefined natures. 
+Particular product installs may include natures as required.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
