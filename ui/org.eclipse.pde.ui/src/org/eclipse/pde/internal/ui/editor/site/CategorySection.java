@@ -219,93 +219,102 @@ public class CategorySection extends TreeSection {
 		fCategoryViewer.setInput(fModel.getSite());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_DEFAULT;
 		Transfer[] transfers = new Transfer[] { ModelDataTransfer.getInstance() };
-		fCategoryViewer.addDropSupport(ops, transfers, new ViewerDropAdapter(
-				fCategoryViewer) {
-			public void dragEnter(DropTargetEvent event) {
-				Object target = determineTarget(event);
-				if (target == null && event.detail == DND.DROP_COPY) {
-					event.detail = DND.DROP_MOVE;
-				}
-				super.dragEnter(event);
-			}
+		if (isEditable()) {
+			fCategoryViewer.addDropSupport(ops, transfers,
+					new ViewerDropAdapter(fCategoryViewer) {
+						public void dragEnter(DropTargetEvent event) {
+							Object target = determineTarget(event);
+							if (target == null && event.detail == DND.DROP_COPY) {
+								event.detail = DND.DROP_MOVE;
+							}
+							super.dragEnter(event);
+						}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
-			public void dragOperationChanged(DropTargetEvent event) {
-				Object target = determineTarget(event);
-				if (target == null && event.detail == DND.DROP_COPY) {
-					event.detail = DND.DROP_MOVE;
-				}
-				super.dragOperationChanged(event);
-			}
+						/*
+						 * (non-Javadoc)
+						 * 
+						 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
+						 */
+						public void dragOperationChanged(DropTargetEvent event) {
+							Object target = determineTarget(event);
+							if (target == null && event.detail == DND.DROP_COPY) {
+								event.detail = DND.DROP_MOVE;
+							}
+							super.dragOperationChanged(event);
+						}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
-			public void dragOver(DropTargetEvent event) {
-				Object target = determineTarget(event);
-				if (target == null && event.detail == DND.DROP_COPY) {
-					event.detail = DND.DROP_MOVE;
-				}
-				super.dragOver(event);
-			}
+						/*
+						 * (non-Javadoc)
+						 * 
+						 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
+						 */
+						public void dragOver(DropTargetEvent event) {
+							Object target = determineTarget(event);
+							if (target == null && event.detail == DND.DROP_COPY) {
+								event.detail = DND.DROP_MOVE;
+							}
+							super.dragOver(event);
+						}
 
-			/**
-			 * Returns the position of the given event's coordinates relative to
-			 * its target. The position is determined to be before, after, or on
-			 * the item, based on some threshold value.
-			 * 
-			 * @param event
-			 *            the event
-			 * @return one of the <code>LOCATION_* </code> constants defined in
-			 *         this class
-			 */
-			protected int determineLocation(DropTargetEvent event) {
-				if (!(event.item instanceof Item)) {
-					return LOCATION_NONE;
-				}
-				Item item = (Item) event.item;
-				Point coordinates = new Point(event.x, event.y);
-				coordinates = getViewer().getControl().toControl(coordinates);
-				if (item != null) {
-					Rectangle bounds = getBounds(item);
-					if (bounds == null) {
-						return LOCATION_NONE;
-					}
-				}
-				return LOCATION_ON;
-			}
+						/**
+						 * Returns the position of the given event's coordinates
+						 * relative to its target. The position is determined to
+						 * be before, after, or on the item, based on some
+						 * threshold value.
+						 * 
+						 * @param event
+						 *            the event
+						 * @return one of the <code>LOCATION_* </code>
+						 *         constants defined in this class
+						 */
+						protected int determineLocation(DropTargetEvent event) {
+							if (!(event.item instanceof Item)) {
+								return LOCATION_NONE;
+							}
+							Item item = (Item) event.item;
+							Point coordinates = new Point(event.x, event.y);
+							coordinates = getViewer().getControl().toControl(
+									coordinates);
+							if (item != null) {
+								Rectangle bounds = getBounds(item);
+								if (bounds == null) {
+									return LOCATION_NONE;
+								}
+							}
+							return LOCATION_ON;
+						}
 
-			public boolean performDrop(Object data) {
-				if (!(data instanceof Object[]))
-					return false;
-				Object target = getCurrentTarget();
+						public boolean performDrop(Object data) {
+							if (!(data instanceof Object[]))
+								return false;
+							Object target = getCurrentTarget();
 
-				int op = getCurrentOperation();
-				Object[] objects = (Object[]) data;
-				if (objects.length > 0
-						&& objects[0] instanceof SiteFeatureAdapter) {
-					if (op == DND.DROP_COPY && target != null) {
-						copyFeature((SiteFeatureAdapter) objects[0], target);
-					} else {
-						moveFeature((SiteFeatureAdapter) objects[0], target);
-					}
-					return true;
-				}
-				return false;
-			}
+							int op = getCurrentOperation();
+							Object[] objects = (Object[]) data;
+							if (objects.length > 0
+									&& objects[0] instanceof SiteFeatureAdapter) {
+								if (op == DND.DROP_COPY && target != null) {
+									copyFeature(
+											(SiteFeatureAdapter) objects[0],
+											target);
+								} else {
+									moveFeature(
+											(SiteFeatureAdapter) objects[0],
+											target);
+								}
+								return true;
+							}
+							return false;
+						}
 
-			public boolean validateDrop(Object target, int operation,
-					TransferData transferType) {
-				return (target instanceof ISiteCategoryDefinition || target == null);
-			}
+						public boolean validateDrop(Object target,
+								int operation, TransferData transferType) {
+							return (target instanceof ISiteCategoryDefinition || target == null);
+						}
 
-		});
+					});
+		}
+
 		fCategoryViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY,
 				transfers, new DragSourceListener() {
 					public void dragStart(DragSourceEvent event) {
@@ -327,6 +336,12 @@ public class CategorySection extends TreeSection {
 					public void dragFinished(DragSourceEvent event) {
 					}
 				});
+		
+		fCategoryTreePart.setButtonEnabled(BUTTON_ADD_CATEGORY, isEditable());
+		fCategoryTreePart.setButtonEnabled(BUTTON_ADD_FEATURE, isEditable());
+		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE, isEditable());
+		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_ALL, isEditable());
+
 		// fCategoryViewer.expandAll();
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -517,26 +532,31 @@ public class CategorySection extends TreeSection {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		manager.add(new Action(PDEPlugin
+		Action removeAction = new Action(PDEPlugin
 				.getResourceString("CategorySection.remove")) { //$NON-NLS-1$
-					public void run() {
-						doGlobalAction(ActionFactory.DELETE.getId());
-					}
-				});
+			public void run() {
+				doGlobalAction(ActionFactory.DELETE.getId());
+			}
+		};
+		removeAction.setEnabled(isEditable());
+		manager.add(removeAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
 				manager);
+
 		ISelection selection = fCategoryViewer.getSelection();
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			final Object o = ((IStructuredSelection) selection)
 					.getFirstElement();
 			if (o instanceof SiteFeatureAdapter) {
 				manager.add(new Separator());
-				manager.add(new Action(PDEPlugin
+				Action buildAction = new Action(PDEPlugin
 						.getResourceString("CategorySection.build")) { //$NON-NLS-1$
 							public void run() {
 								handleBuild(new ISiteFeature[] { ((SiteFeatureAdapter) o).feature });
 							}
-						});
+						};
+				manager.add(buildAction);
+				buildAction.setEnabled(isEditable());
 
 			}
 		}
@@ -565,6 +585,9 @@ public class CategorySection extends TreeSection {
 	}
 
 	private void updateButtons() {
+		if(!isEditable()){
+			return;
+		}
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer
 				.getSelection();
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE,
@@ -577,11 +600,7 @@ public class CategorySection extends TreeSection {
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
-			return;
-		}
-		refresh();
+		markStale();
 	}
 
 	public void initialize() {

@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -209,6 +210,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 			}
 		});
 		limitTextWidth(osText);
+		osText.setEditable(isEditable());
 
 		wsText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_WS), editLabel, false);
@@ -233,6 +235,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 			}
 		});
 		limitTextWidth(wsText);
+		wsText.setEditable(isEditable());
 
 		nlText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_NL), editLabel, false);
@@ -258,6 +261,7 @@ public class PortabilitySection extends PDESection implements IFormPart,
 			}
 		});
 		limitTextWidth(nlText);
+		nlText.setEditable(isEditable());
 
 		archText = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString(SECTION_ARCH), editLabel, false);
@@ -283,6 +287,8 @@ public class PortabilitySection extends PDESection implements IFormPart,
 
 		});
 		limitTextWidth(archText);
+		archText.setEditable(isEditable());
+
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
@@ -293,25 +299,14 @@ public class PortabilitySection extends PDESection implements IFormPart,
 			model.removeModelChangedListener(this);
 		super.dispose();
 	}
-
-	private void enableForInput(boolean enable) {
-		osText.getText().setEditable(enable);
-		wsText.getText().setEditable(enable);
-		if (nlText != null)
-			nlText.getText().setEditable(enable);
-		archText.getText().setEditable(enable);
-		osText.getButton().setEnabled(enable);
-		wsText.getButton().setEnabled(enable);
-		if (nlText != null)
-			nlText.getButton().setEnabled(enable);
-		archText.getButton().setEnabled(enable);
-	}
-
-	public void initialize() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
 		ISiteModel model = (ISiteModel) getPage().getModel();
-		enableForInput(model.isEditable());
-		refresh();
-		model.addModelChangedListener(this);
+		if (model != null)
+			model.addModelChangedListener(this);
+		super.initialize(form);
 	}
 
 	private void limitTextWidth(FormEntry entry) {
@@ -341,11 +336,9 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	public void refresh() {
 		if (currentSiteFeature == null) {
 			clearFields();
-			enableForInput(false);
 			super.refresh();
 			return;
 		}
-		enableForInput(true);
 		setValue(IEnvironment.P_OS);
 		setValue(IEnvironment.P_WS);
 		setValue(IEnvironment.P_ARCH);

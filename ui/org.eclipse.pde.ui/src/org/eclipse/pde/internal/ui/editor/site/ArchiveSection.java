@@ -139,6 +139,13 @@ public class ArchiveSection extends PDESection {
 		initialize();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		fModel.removeModelChangedListener(this);
+		super.dispose();
+	}
 	private void createButtons(Composite parent, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
@@ -154,6 +161,7 @@ public class ArchiveSection extends PDESection {
 				showDialog(null);
 			}
 		});
+		fAddButton.setEnabled(isEditable());
 		fEditButton = toolkit.createButton(container, PDEPlugin
 				.getResourceString("SiteEditor.edit"), SWT.PUSH); //$NON-NLS-1$
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -207,6 +215,9 @@ public class ArchiveSection extends PDESection {
 		});
 	}
 	private void handleSelectionChanged() {
+		if (!isEditable()) {
+			return;
+		}
 		ISelection selection = fViewer.getSelection();
 		if (selection != null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -274,12 +285,14 @@ public class ArchiveSection extends PDESection {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
-				mng.add(new Action(PDEPlugin
+				Action removeAction = new Action(PDEPlugin
 						.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}
-				});
+				};
+				removeAction.setEnabled(isEditable());
+				mng.add(removeAction);
 				mng.add(new Separator());
 				PDEFormEditorContributor contributor = getPage().getPDEEditor()
 						.getContributor();

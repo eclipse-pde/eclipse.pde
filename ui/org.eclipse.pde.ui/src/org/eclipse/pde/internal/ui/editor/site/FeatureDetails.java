@@ -40,17 +40,13 @@ public class FeatureDetails extends PDEDetails {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		portabilitySection.getSection().setLayoutData(gd);
 
-		featureDetailsSection.initialize();
-		portabilitySection.initialize();
 		getManagedForm().addPart(featureDetailsSection);
 		getManagedForm().addPart(portabilitySection);
-		//markDetailsPart(featureDetailsSection.getSection().getClient());
 	}
 
 	public void dispose() {
 		featureDetailsSection.dispose();
 		portabilitySection.dispose();
-		super.dispose();
 	}
 
 	public void fireSaveNeeded() {

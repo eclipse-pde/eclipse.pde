@@ -58,6 +58,8 @@ public class DescriptionSection extends PDESection {
 				setDescriptionURL(text.getValue());
 			}
 		});
+		fURLEntry.setEditable(isEditable());
+
 		fDescEntry = new FormEntry(container, toolkit, PDEPlugin
 				.getResourceString("SiteEditor.DescriptionSection.descLabel"), //$NON-NLS-1$
 				SWT.WRAP | SWT.MULTI);
@@ -67,6 +69,8 @@ public class DescriptionSection extends PDESection {
 				setDescriptionText(text.getValue());
 			}
 		});
+		fDescEntry.setEditable(isEditable());
+
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();

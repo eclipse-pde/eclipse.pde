@@ -231,6 +231,10 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		descriptionText.setEditable(isEditable());
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+
+		ISiteModel model = (ISiteModel) getPage().getModel();
+		if (model != null)
+			model.addModelChangedListener(this);
 	}
 
 	public void dispose() {

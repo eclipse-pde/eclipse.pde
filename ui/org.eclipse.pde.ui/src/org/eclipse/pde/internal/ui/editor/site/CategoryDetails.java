@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridData;
@@ -53,9 +52,8 @@ public class CategoryDetails extends PDEDetails {
 		categoryDetailsSection = new CategoryDetailsSection(getPage(), parent);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		categoryDetailsSection.getSection().setLayoutData(gd);
-		markDetailsPart(categoryDetailsSection.getSection().getClient());
-		if (isEditable())
-			((ISiteModel)getPage().getModel()).addModelChangedListener(this);
+		
+		getManagedForm().addPart(categoryDetailsSection);
 	}
 
 	public void dispose() {

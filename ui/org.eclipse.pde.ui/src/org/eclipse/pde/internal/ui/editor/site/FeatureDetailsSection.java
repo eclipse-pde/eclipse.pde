@@ -158,11 +158,16 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 			}
 		});
 		limitTextWidth(urlText);
-
+		urlText.getText().setEnabled(false);
+		
 		createPatchButton(toolkit, container);
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+
+		ISiteModel model = (ISiteModel) getPage().getModel();
+		if (model != null)
+			model.addModelChangedListener(this);
 	}
 
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
@@ -180,6 +185,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		patchCheckBox.setLayoutData(gd);
+		patchCheckBox.setEnabled(isEditable());
 	}
 
 	public void dispose() {
@@ -187,20 +193,6 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
-	}
-
-	private void enableForInput(boolean enable) {
-		//urlText.getText().setEditable(false);
-		urlText.getText().setEnabled(false);
-		//urlText.setEditable(false);
-		patchCheckBox.setEnabled(enable);
-	}
-
-	public void initialize() {
-		ISiteModel model = (ISiteModel) getPage().getModel();
-		enableForInput(model.isEditable());
-		refresh();
-		model.addModelChangedListener(this);
 	}
 
 	private void limitTextWidth(FormEntry entry) {
@@ -215,11 +207,9 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	public void refresh() {
 		if (currentSiteFeature == null) {
 			clearFields();
-			enableForInput(false);
 			super.refresh();
 			return;
 		}
-		enableForInput(true);
 		setValue(PROPERTY_URL);
 		setValue(PROPERTY_TYPE);
 		patchCheckBox.setSelection(currentSiteFeature.isPatch());
