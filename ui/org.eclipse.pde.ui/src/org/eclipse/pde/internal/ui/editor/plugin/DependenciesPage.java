@@ -50,6 +50,7 @@ public class DependenciesPage extends PDEFormPage {
 		if (isBundle)
 			gd.horizontalSpan = 2;
 		section.getSection().setLayoutData(gd);
+		managedForm.addPart(section);
 	}
 	
 	private boolean isBundle() {
