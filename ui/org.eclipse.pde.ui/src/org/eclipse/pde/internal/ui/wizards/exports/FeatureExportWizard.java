@@ -74,7 +74,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 				+ "\" destination=\"" + page1.getDestination() + "\" ");
 		String filename = page1.getFileName();
 		if (filename != null)
-			writer.print("filename =\"" + filename + "\" ");
+			writer.print("filename=\"" + filename + "\" ");
 		writer.print("exportType=\"" + getExportOperation() + "\" ");
 		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>"); 
 		writer.println("\t</target>");
