@@ -141,7 +141,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 					PDEPlugin.getResourceString(TablePart.KEY_SELECT_ALL),
 					PDEPlugin.getResourceString(TablePart.KEY_DESELECT_ALL)});
 		tablePart.createControl(container);
-		tablePart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		gd.heightHint = 200;
+		tablePart.getControl().setLayoutData(gd);
 		
 		CheckboxTableViewer viewer = tablePart.getTableViewer();
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
