@@ -11,17 +11,28 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.plugin.Plugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
+import org.eclipse.pde.internal.ui.editor.PDEChildFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEEditorContributor;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class RequiresSection
@@ -91,7 +102,7 @@ public class RequiresSection
 		pluginViewer.setSorter(ListUtil.NAME_SORTER);
 		pluginViewer.setLabelProvider(
 			PDEPlugin.getDefault().getLabelProvider());
-			
+					
 		deleteAction = new Action() {
 			public void run() {
 				handleDelete();
@@ -145,6 +156,13 @@ public class RequiresSection
 		}
 	}
 
+	private void handleSelectAll() {
+		IStructuredContentProvider provider =
+			(IStructuredContentProvider) pluginViewer.getContentProvider();
+		Object[] elements = provider.getElements(pluginViewer.getInput());
+		StructuredSelection ssel = new StructuredSelection(elements);
+		pluginViewer.setSelection(ssel);
+	}
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
@@ -153,6 +171,37 @@ public class RequiresSection
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
+
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleDelete();
+				}
+			});
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
+			return true;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+			BusyIndicator.showWhile(pluginViewer.getTable().getDisplay(), new Runnable() {
+				public void run() {
+					handleSelectAll();
+				}
+			});
+			return true;
+		}
+		return false;
+	}
+
 	public void expandTo(Object object) {
 		if (object instanceof IFeatureImport) {
 			StructuredSelection ssel = new StructuredSelection(object);
@@ -254,4 +303,74 @@ public class RequiresSection
 		pluginViewer.setInput(feature);
 		updateNeeded = false;
 	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+		if (objects != null && objects.length > 0) {
+			return canPaste(null, objects);
+		}
+		return false;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
+	 */
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (!(objects[i] instanceof FeatureImport))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 */
+	protected void doPaste() {
+		Clipboard clipboard = getFormPage().getEditor().getClipboard();
+		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
+		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		if (objects != null) {
+			doPaste(null, objects);
+		}
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
+	 */
+	protected void doPaste(Object target, Object[] objects) {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+		try {
+			for (int i = 0; i < objects.length; i++) {
+				if (objects[i] instanceof FeatureImport) {
+					FeatureImport fImport = (FeatureImport) objects[i];
+					fImport.setModel(model);
+					fImport.setParent(feature);
+					setPluginModel(fImport);
+					feature.addImport(fImport);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+
+	}
+	
+	private void setPluginModel(FeatureImport fImport) {
+		IPluginModel[] workspacePluginModels = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+		for (int j = 0; j < workspacePluginModels.length; j++) {
+			if (fImport.getPlugin().getId().equals(workspacePluginModels[j].getPluginBase().getId())) {
+				((Plugin)fImport.getPlugin()).setModel(workspacePluginModels[j].getPluginBase().getModel());
+				return;
+			}
+		}
+		IPluginModel[] externalPluginModels = PDECore.getDefault().getExternalModelManager().getModels();
+		for (int j = 0; j < externalPluginModels.length; j++) {
+			if (fImport.getPlugin().getId().equals(externalPluginModels[j].getPluginBase().getId())) {
+				((Plugin)fImport.getPlugin()).setModel(externalPluginModels[j].getPluginBase().getModel());
+				return;
+			}
+		}
+	}
+	
 }

@@ -298,7 +298,7 @@ public class PluginSection
 	 */
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof IFeaturePlugin))
+			if (!(objects[i] instanceof FeaturePlugin))
 				return false;
 		}
 		return true;
@@ -320,20 +320,27 @@ public class PluginSection
 	protected void doPaste(Object target, Object[] objects) {
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
-		IFeaturePlugin[] fPlugins = new IFeaturePlugin[objects.length];
-		IPluginModel[] workspacePluginModels = PDECore.getDefault().getWorkspaceModelManager().getWorkspacePluginModels();
+		FeaturePlugin[] fPlugins = new FeaturePlugin[objects.length];
+		IPluginModel[] workspacePluginModels =
+			PDECore
+				.getDefault()
+				.getWorkspaceModelManager()
+				.getWorkspacePluginModels();
 		try {
 			for (int i = 0; i < objects.length; i++) {
-				FeaturePlugin fPlugin = (FeaturePlugin)objects[i];
-				fPlugin.setModel(model);
-				fPlugin.setParent(feature);
-				for (int j = 0; j < workspacePluginModels.length; j++) {
-					if (fPlugin.getPluginBase().getId().equals(workspacePluginModels[j].getPluginBase().getId())) {
-						((Plugin)fPlugin.getPluginBase()).setModel(workspacePluginModels[j].getPluginBase().getModel());
-						break;
+				if (objects[i] instanceof FeaturePlugin) {
+					FeaturePlugin fPlugin = (FeaturePlugin) objects[i];
+					fPlugin.setModel(model);
+					fPlugin.setParent(feature);
+					for (int j = 0; j < workspacePluginModels.length; j++) {
+						IPluginBase currentPlugin = workspacePluginModels[j].getPluginBase();
+						if (fPlugin.getPluginBase().getId().equals(currentPlugin.getId())) {
+							((Plugin) fPlugin.getPluginBase()).setModel(currentPlugin.getModel());
+							break;
+						}
 					}
+					fPlugins[i] = fPlugin;
 				}
-				fPlugins[i] = fPlugin;
 			}
 			feature.addPlugins(fPlugins);
 		} catch (CoreException e) {

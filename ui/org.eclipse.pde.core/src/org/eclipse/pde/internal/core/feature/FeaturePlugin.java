@@ -123,11 +123,4 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		return getLabel();
 	}
 	
-	public void setModel(IFeatureModel model) {
-		this.model = model;
-	}
-	
-	public void setParent(IFeatureObject parent) {
-		this.parent = parent;
-	}
 }

@@ -182,4 +182,11 @@ public abstract class FeatureObject
 
 	public void write(String indent, PrintWriter writer) {
 	}
+	public void setModel(IFeatureModel model) {
+		this.model = model;
+	}
+	
+	public void setParent(IFeatureObject parent) {
+		this.parent = parent;
+	}
 }
