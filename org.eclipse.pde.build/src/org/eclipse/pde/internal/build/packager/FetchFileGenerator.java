@@ -18,13 +18,17 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.*;
 
 public class FetchFileGenerator extends AbstractScriptGenerator {
-	private static final String CONTENT_FILTER_SEPARATOR = "&";  //$NON-NLS-1$
+	private static final String ENTRY_SEPARATOR = "|"; //$NON-NLS-1$
+	private static final String FILTER_SEPARATOR = "&";  //$NON-NLS-1$
+	// Unknown component name
+	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
 	
 	private Config config;
 	private String[] filters;
 	private String mapLocation;
 	private String collectedFiles;
-
+	private String[] componentFilter;
+	
 	private Properties mapContent;
 	private Properties selectedFiles;
 
@@ -70,7 +74,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	}
 
 	public void setContentFilter(String filters) {
-		this.filters = Utils.getArrayFromStringWithBlank(filters, CONTENT_FILTER_SEPARATOR); //$NON-NLS-1$
+		this.filters = Utils.getArrayFromStringWithBlank(filters, FILTER_SEPARATOR); //$NON-NLS-1$
 	}
 
 	public void setMapLocation(String mapLocation) {
@@ -89,10 +93,10 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				stream.close();
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}
@@ -102,16 +106,17 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		final int CONFIGS = 1;
 		final int DIRECTORY = 2;
 		final int FILTERS = 3;
+		final int COMPONENT = 4;
 		
 		mapContent = readProperties(mapLocation, "", IStatus.ERROR); //$NON-NLS-1$
 
 		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry mapEntry = (Map.Entry) iter.next();
 			String fileName = (String) mapEntry.getKey();
-			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), "|"); //$NON-NLS-1$
+			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), ENTRY_SEPARATOR);
 
 			if (fileDescription.length < 4) {
-				String message = Policy.bind("error.incorrectDirectoryEntry", (String) mapEntry.getKey() + "=" + (String) mapEntry.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = Policy.bind("error.incorrectDirectoryEntry", (String) mapEntry.getKey() + '=' + (String) mapEntry.getValue()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 			}
 
@@ -124,7 +129,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				throw new CoreException(status); 
 			}
 			
-			if (filterByConfig(fileDescription[CONFIGS]) &&	filterByFilter(fileDescription[FILTERS])) {
+			if (filterByConfig(fileDescription[CONFIGS]) &&	filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
@@ -155,7 +160,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 	//Return true, if the entryConfigs match the config we are packaging
 	private boolean filterByConfig(String entryConfigString) {
-		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, CONTENT_FILTER_SEPARATOR); //$NON-NLS-1$
+		String[] entryConfigs = Utils.getArrayFromStringWithBlank(entryConfigString, FILTER_SEPARATOR);
 		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
 			return true;
 			
@@ -165,7 +170,21 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				return true;
 			}
 		}
-		
 		return false;
+	}
+	
+	private boolean filterByComponentName(String componentName) {
+		if (componentName.equals(UNKNOWN))
+			return true;
+		
+		for (int i = 0; i < componentFilter.length; i++) {
+			if (componentFilter[i].equalsIgnoreCase(componentName))
+				return true;
+		}
+		return false;
+	}
+	
+	public void setComponentFilter(String componentFiler) {
+		this.componentFilter = Utils.getArrayFromStringWithBlank(componentFiler, FILTER_SEPARATOR);
 	}
 }
