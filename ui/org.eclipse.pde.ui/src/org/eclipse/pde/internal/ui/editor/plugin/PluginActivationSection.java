@@ -417,7 +417,8 @@ public class PluginActivationSection extends TableSection
 			if (i < items.length - 1)
 				buffer.append("," + System.getProperty("line.separator"));
 		}
-		buffer.append("\"");
+		if (items.length > 0)
+			buffer.append("\"");
 		getBundleModel().getBundle().setHeader(ECLIPSE_AUTOSTART,
 				buffer.toString());
 	}
