@@ -476,18 +476,12 @@ public void setPluginPath(URL[] pluginPath) {
 	this.pluginPath = pluginPath;
 }
 
-/**
- * FIXME: comments
- */
 protected int scan(StringBuffer buf, int start, String target) {
 	return scan(buf, start, new String[] {target});
 }
 
 
 
-/**
- * FIXME: comments
- */
 protected int scan(StringBuffer buf, int start, String[] targets) {
 	for (int i=start; i<buf.length(); i++) {
 		for (int j=0; j<targets.length; j++) {

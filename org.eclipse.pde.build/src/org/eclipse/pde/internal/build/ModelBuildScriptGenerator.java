@@ -122,9 +122,6 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 }
 
 
-/**
- * FIXME: add comments
- */
 protected void generateZipIndividualTarget(AntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
@@ -295,9 +292,6 @@ public void setModelId(String modelId) throws CoreException {
 protected abstract PluginModel getModel(String modelId) throws CoreException;
 
 
-/**
- * FIXME: add comments
- */
 protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(model);

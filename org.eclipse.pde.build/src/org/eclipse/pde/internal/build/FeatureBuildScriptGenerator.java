@@ -133,9 +133,6 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 	generateEpilogue(script);
 }
 
-/**
- * FIXME: add comments
- */
 protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	StringBuffer zips = new StringBuffer();
 	Properties props = getBuildProperties(feature);
@@ -157,9 +154,6 @@ protected void generateBuildZipsTarget(AntScript script) throws CoreException {
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printString(--tab, "</target>"); //$NON-NLS-1$
 }
-/**
- * FIXME: add comments
- */
 protected void generateZipIndividualTarget(AntScript script, String zipName, String source) throws CoreException {
 	int tab = 1;
 	script.println();
