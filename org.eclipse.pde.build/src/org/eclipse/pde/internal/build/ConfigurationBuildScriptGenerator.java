@@ -112,8 +112,8 @@ protected void generateBinTarget(PrintWriter output) {
 	IPath base = new Path(configurationModel.getLocation());
 	String binLocation = makeRelative(new Path(getInstall()).append(DIRECTORY_BIN).toString(),base);
 	
-	output.println("    <property name=\"binSource\" value=\"" + binLocation + "\"/>");
-	output.println("    <property name=\"binDest\" value=\"${basedir}/_temp___/bin\"/>");
+	output.println("    <property name=\"binSource\" value=\"./root\"/>");
+	output.println("    <property name=\"binDest\" value=\"${basedir}/_temp___\"/>");
 	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
 	output.println("    <antcall target=\"bin-copy\"/>");
 
@@ -126,8 +126,6 @@ protected void generateBinTarget(PrintWriter output) {
 protected void generateBinCopyTarget(PrintWriter output) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_BINCOPY + "\" depends=\"init\" if=\"binSource.exists\">");
-	output.println("    <delete dir=\"${binDest}\"/>");	
-	output.println("    <mkdir dir=\"${binDest}\"/>");
 	output.println("    <copydir src=\"${binSource}\" dest=\"${binDest}\"/>");
 	output.println("  </target>");
 }
@@ -193,8 +191,9 @@ protected void generateTemplateTargetCall(PrintWriter output, String target) {
 }
 protected String makeRelative(String location, IPath base) {
 	IPath path = new Path(location);
-	if (!path.getDevice().equalsIgnoreCase(base.getDevice()))
-		return location.toString();
+	if (path.getDevice() != null && base.getDevice() != null)
+		if (!path.getDevice().equalsIgnoreCase(base.getDevice()))
+			return location.toString();
 	int baseCount = base.segmentCount();
 	int count = base.matchingFirstSegments(path);
 	if (count > 0) {
