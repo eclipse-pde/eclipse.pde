@@ -412,5 +412,17 @@ public class TargetPlatform implements IEnvironmentVariables {
 		TreeSet result = getProductNameSet();
 		return (String[])result.toArray(new String[result.size()]);
 	}
+	
+	public static Dictionary getTargetEnvironment() {
+		Dictionary result = new Hashtable(4);
+		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
+		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
+		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
+		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+		return result;
+	}
+
+	
+
 
 }

@@ -99,6 +99,7 @@ public class PDEState {
 			createState();
 		}
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
+		fState.setPlatformProperties(TargetPlatform.getTargetEnvironment());
 		fState.resolve();
 		if (fResolve)
 			logResolutionErrors();

@@ -120,15 +120,6 @@ public class ProductExportJob extends FeatureExportJob {
 		return null;
 	}
 	
-	private Dictionary getTargetEnvironment() {
-		Dictionary result = new Hashtable(4);
-		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
-		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
-		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
-		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
-		return result;
-	}
-
 	private void createFeature(String featureID, String featureLocation)
 			throws IOException {
 		File file = new File(featureLocation);
@@ -140,7 +131,7 @@ public class ProductExportJob extends FeatureExportJob {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Dictionary environment = getTargetEnvironment();
+		Dictionary environment = TargetPlatform.getTargetEnvironment();
 		BundleContext context = PDEPlugin.getDefault().getBundleContext();
 		for (int i = 0; i < fItems.length; i++) {
 			if (fItems[i] instanceof IPluginModelBase) {
