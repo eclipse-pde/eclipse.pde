@@ -51,11 +51,16 @@ public class PluginImportTest extends TestCase {
 		ids.add(model.getPluginBase().getId());
 		PluginImportOperation op =
 			new PluginImportOperation(
-				new IPluginModelBase[] {model},
+				new IPluginModelBase[] { model },
 				ids,
 				doImport,
 				doExtractSource,
-				null);
+				new PluginImportOperation.IReplaceQuery() {
+				public int doQuery(IProject project) {
+					return PluginImportOperation.IReplaceQuery.YES;
+				}
+
+			});
 		op.run(null);
 			
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
