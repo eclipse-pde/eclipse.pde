@@ -224,8 +224,7 @@ public abstract class AbstractNewPluginTemplateWizard
 		monitor.worked(1);
 
 		if (structureData.getRuntimeLibraryName() != null) {
-			setJavaSettings(model, monitor); // one step
-			monitor.worked(1);
+			setJavaSettings(model, new SubProgressMonitor(monitor, 1)); // one step
 		}
 		executeTemplates(project, model, monitor); // nsteps
 		model.save();
