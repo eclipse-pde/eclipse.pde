@@ -326,7 +326,7 @@ IRegistryChangeListener {
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider());
 		final IPluginDescriptor descriptor = Platform.getPluginRegistry()
-		.getPluginDescriptor(event.getBundle().getGlobalName());
+		.getPluginDescriptor(event.getBundle().getSymbolicName());
 		if (descriptor == null)
 			return;
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
