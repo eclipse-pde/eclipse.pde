@@ -238,7 +238,8 @@ public class BasicLauncherTab
 		String os = TargetPlatform.getOS();
 		String ws = TargetPlatform.getWS();
 		String arch = TargetPlatform.getOSArch();
-		return "-os " + os + " -ws " + ws + " -arch " + arch;
+		String nl = TargetPlatform.getNL();
+		return "-os " + os + " -ws " + ws + " -arch " + arch + " -nl " + nl;
 	}
 
 	private void hookListeners() {
