@@ -21,15 +21,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public class NewCategoryDefinitionDialog extends BaseNewDialog {
-	private static final String KEY_TITLE = "NewCategoryDefinitionDialog.title";	
-	private static final String KEY_NAME = "NewCategoryDefinitionDialog.name";
-	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label";
-	private static final String KEY_DESC = "NewCategoryDefinitionDialog.desc";
-	private static final String KEY_EMPTY = "NewCategoryDefinitionDialog.empty";
-	private static final String SETTINGS_SECTION = "NewCategoryDefinitionDialog";
-	private static final String S_NAME = "name";
-	private static final String S_LABEL = "label";
-	private static final String S_DESC = "desc";
+	private static final String KEY_TITLE = "NewCategoryDefinitionDialog.title";	 //$NON-NLS-1$
+	private static final String KEY_NAME = "NewCategoryDefinitionDialog.name"; //$NON-NLS-1$
+	private static final String KEY_LABEL = "NewCategoryDefinitionDialog.label"; //$NON-NLS-1$
+	private static final String KEY_DESC = "NewCategoryDefinitionDialog.desc"; //$NON-NLS-1$
+	private static final String KEY_EMPTY = "NewCategoryDefinitionDialog.empty"; //$NON-NLS-1$
+	private static final String SETTINGS_SECTION = "NewCategoryDefinitionDialog"; //$NON-NLS-1$
+	private static final String S_NAME = "name"; //$NON-NLS-1$
+	private static final String S_LABEL = "label"; //$NON-NLS-1$
+	private static final String S_DESC = "desc"; //$NON-NLS-1$
 	private Text nameText;
 	private Text labelText;
 	private Text descText;
@@ -110,14 +110,15 @@ public class NewCategoryDefinitionDialog extends BaseNewDialog {
 	}
 
 	protected void dialogChanged() {
+		boolean edit = getCategoryDefinition()!=null;
 		IStatus status = null;
 		String name = nameText.getText();
 		if (name.length() == 0
 			|| labelText.getText().length() == 0)
 			status = getEmptyErrorStatus();
 		else {
-			if (alreadyExists(name))
-				status = createErrorStatus("This category already exists."); 
+			if (!edit && alreadyExists(name))
+				status = createErrorStatus(PDEPlugin.getResourceString("NewCategoryDefinitionDialog.alreadyExists"));  //$NON-NLS-1$
 		}
 		if (status==null)
 			status = getOKStatus();
