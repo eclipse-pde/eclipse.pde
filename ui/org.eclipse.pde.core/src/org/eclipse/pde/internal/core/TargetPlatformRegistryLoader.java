@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
@@ -22,20 +23,34 @@ import org.eclipse.pde.internal.core.plugin.*;
  *
  */
 public class TargetPlatformRegistryLoader {
-
-	public static void load(URL[] urls, PDEState state, IProgressMonitor monitor) {
+	
+	private static String getFilesAndMode(URL[] urls, ArrayList fileList) {
+		String targetMode = "2.1";
 		for (int i = 0; i < urls.length; i++) {
 			File directory = new File(urls[i].getFile());
 			if (directory.exists() && directory.isDirectory()) {
 				File[] files = directory.listFiles();
 				if (files != null) {
 					for (int j = 0; j < files.length; j++) {
-						if (files[j].isDirectory())
-							state.addBundle(files[j]);
+						if (files[j].isDirectory()) {
+							fileList.add(files[j]);
+							if (files[j].getName().indexOf("org.eclipse.osgi") != -1)
+								targetMode = null;
+						}
 					}
 				}
 			}
-		}	
+		}			
+		return targetMode;
+	}
+
+	public static void load(URL[] urls, PDEState state, IProgressMonitor monitor) {
+		ArrayList list = new ArrayList();
+		String targetMode = getFilesAndMode(urls, list);
+		state.setTargetMode(targetMode);
+		for (int i = 0; i < list.size(); i++) {
+			state.addBundle((File)list.get(i));
+		}
 	}
 	
 	public static IPluginModelBase[] loadModels(URL[] urls, boolean resolve, PDEState state, IProgressMonitor monitor) {
@@ -50,7 +65,7 @@ public class TargetPlatformRegistryLoader {
 		monitor.worked(1);
 		
 		BundleDescription[] bundleDescriptions = resolve ? state.getState().getResolvedBundles() : state.getState().getBundles();
-		/*BundleDescription[] all = state.getState().getBundles();
+		BundleDescription[] all = state.getState().getBundles();
 		for (int i = 0; i < all.length; i++) {
 			if (!all[i].isResolved()) {
 				String message = "Bundle: " + all[i].getUniqueId() + '\n';
@@ -61,7 +76,7 @@ public class TargetPlatformRegistryLoader {
                 System.out.print(message);
 
 			}
-		}*/
+		}
 		IPluginModelBase[] models = new IPluginModelBase[bundleDescriptions.length];
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			monitor.subTask(bundleDescriptions[i].getUniqueId());

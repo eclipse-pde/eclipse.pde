@@ -16,6 +16,7 @@ public class PDEState {
 	protected State fState;
 	private long fId;
 	private HashMap fBundleClasspaths;
+	private String fTargetMode = null;
 	
 	protected long getNextId() {
 		return ++fId;
@@ -90,7 +91,7 @@ public class PDEState {
 		if (manifestStream == null) {
 			try {
 				PluginConverter converter = acquirePluginConverter();
-				return converter.convertManifest(bundleLocation, false);
+				return converter.convertManifest(bundleLocation, false, getTargetMode());
 			} catch (Exception e1) {
 				return null;
 			}
@@ -170,5 +171,13 @@ public class PDEState {
 	
 	public Dictionary getManifest(long bundleID) {
 		return (Dictionary)fBundleClasspaths.get(new Long(bundleID));
+	}
+	
+	public void setTargetMode(String mode) {
+		fTargetMode = mode;
+	}
+	
+	public String getTargetMode() {
+		return fTargetMode;
 	}
 }
