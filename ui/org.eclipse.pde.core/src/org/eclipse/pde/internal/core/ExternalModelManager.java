@@ -467,6 +467,11 @@ public class ExternalModelManager {
 		}
 		return buf.toString();
 	}
+	public void initializeAndStore(boolean selectAll) {
+		String toSave = selectAll ? ICoreConstants.VALUE_SAVED_ALL : ICoreConstants.VALUE_SAVED_NONE;
+		PDECore.getDefault().getSettings().setValue(ICoreConstants.CHECKED_PLUGINS, toSave);
+		initialize();
+	}
 	public void initialize() {
 		CoreSettings store = PDECore.getDefault().getSettings();
 		String saved = store.getString(ICoreConstants.CHECKED_PLUGINS);

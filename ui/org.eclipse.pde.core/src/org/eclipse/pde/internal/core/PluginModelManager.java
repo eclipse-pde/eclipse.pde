@@ -61,6 +61,13 @@ public class PluginModelManager implements IAdaptable {
 		}
 		return plugins;
 	}
+	
+	public IPluginModelBase findPlugin(String id, String version, int match) {
+		if (entries == null) initializeTable();
+		ModelEntry entry = (ModelEntry)entries.get(id);
+		if (entry==null) return null;
+		return entry.getActiveModel();
+	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();

@@ -54,7 +54,6 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private static boolean inVAJ;
 	private java.util.Hashtable counters;
 	private Vector currentLaunchListeners = new Vector();
-	private RunningInstanceManager runningInstanceManager;
 
 	static {
 		try {
@@ -198,23 +197,10 @@ public class PDEPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(factory, ModelEntry.class);
 		manager.registerAdapters(factory, FileAdapter.class);
 		// set eclipse home variable if not sets
-
-		attachToLaunchManager();
 	}
 	
 	public void shutdown() throws CoreException {
-		detachFromLaunchManager();
 		super.shutdown();
-	}
-
-	private void attachToLaunchManager() {
-		runningInstanceManager = new RunningInstanceManager();
-		DebugPlugin.getDefault().addDebugEventListener(runningInstanceManager);
-	}
-
-	private void detachFromLaunchManager() {
-		DebugPlugin.getDefault().removeDebugEventListener(runningInstanceManager);
-		runningInstanceManager.clear();
 	}
 
 	public static File getFileInPlugin(IPath path) {
@@ -232,20 +218,5 @@ public class PDEPlugin extends AbstractUIPlugin {
 		if (labelProvider == null)
 			labelProvider = new PDELabelProvider();
 		return labelProvider;
-	}
-
-	public void registerLaunch(ILaunch launch, IPath path) {
-		runningInstanceManager.register(launch, path);
-	}
-	
-	public IStatus getCurrentLaunchStatus(IPath path) {
-		if (!runningInstanceManager.isRunning(path)) return null;
-		// The run-time workbench is still running with the
-		// specified workspace path (if path is null, at least
-		// one workbench is still running)
-		String message = getResourceString(KEY_RUNNING);
-		Status status =
-			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, null);
-		return status;
 	}
 }

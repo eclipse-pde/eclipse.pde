@@ -8,20 +8,16 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.events.*;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferencePage;
-import org.eclipse.pde.internal.ui.TargetPlatform;
+import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
-public class PluginImportWizardFirstPage
-	extends StatusWizardPage {
+public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation";
 	private static final String SETTINGS_DOOTHER = "doother";
@@ -43,7 +39,8 @@ public class PluginImportWizardFirstPage
 		"ImportWizard.FirstPage.importCheck";
 	private static final String KEY_EXTRACT_CHECK =
 		"ImportWizard.FirstPage.extractCheck";
-	private static final String KEY_TARGET_DESC = "ImportWizard.FirstPage.targetDesc";
+	private static final String KEY_TARGET_DESC =
+		"ImportWizard.FirstPage.targetDesc";
 	private static final String KEY_FOLDER_TITLE =
 		"ImportWizard.messages.folder.title";
 	private static final String KEY_FOLDER_MESSAGE =
@@ -73,15 +70,6 @@ public class PluginImportWizardFirstPage
 		dropLocationStatus = createStatus(IStatus.OK, "");
 	}
 
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(null);
-			if (running != null)
-				updateStatus(running);
-		} 
-	}
-
 	/*
 	 * @see IDialogPage#createControl(Composite)
 	 */
@@ -100,15 +88,23 @@ public class PluginImportWizardFirstPage
 		fillHorizontal(runtimeLocationButton, 3, false);
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
-			
+
 		int wizardClientWidth = parent.getSize().x - 2 * layout.marginWidth;
 
-		createMultiLineLabel(composite, wizardClientWidth, PDEPlugin.getResourceString(KEY_RUNTIME_DESC), 3);
+		createMultiLineLabel(
+			composite,
+			wizardClientWidth,
+			PDEPlugin.getResourceString(KEY_RUNTIME_DESC),
+			3);
 
 		otherLocationButton = new Button(composite, SWT.RADIO);
 		fillHorizontal(otherLocationButton, 3, false);
 		otherLocationButton.setText(PDEPlugin.getResourceString(KEY_OTHER_LOCATION));
-		createMultiLineLabel(composite, wizardClientWidth, PDEPlugin.getResourceString(KEY_OTHER_DESC), 3);
+		createMultiLineLabel(
+			composite,
+			wizardClientWidth,
+			PDEPlugin.getResourceString(KEY_OTHER_DESC),
+			3);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
 		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
@@ -129,7 +125,7 @@ public class PluginImportWizardFirstPage
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = fillHorizontal(label, 3, false);
 		gd.heightHint = 20;
-		
+
 		doImportCheck = new Button(composite, SWT.CHECK);
 		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
 		fillHorizontal(doImportCheck, 3, false);
@@ -137,16 +133,20 @@ public class PluginImportWizardFirstPage
 		doExtractCheck = new Button(composite, SWT.CHECK);
 		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
 		fillHorizontal(doExtractCheck, 3, false);
-		
+
 		createTargetEnvironmentLabels(composite, wizardClientWidth, 3);
-		
+
 		initializeFields(getDialogSettings());
 		hookListeners();
 
 		setControl(composite);
 	}
-	
-	private Label createMultiLineLabel(Composite composite, int parentWidth, String text, int span) {
+
+	private Label createMultiLineLabel(
+		Composite composite,
+		int parentWidth,
+		String text,
+		int span) {
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(text);
 		GridData gd = new GridData();
@@ -155,8 +155,11 @@ public class PluginImportWizardFirstPage
 		label.setLayoutData(gd);
 		return label;
 	}
-	
-	private void createTargetEnvironmentLabels(Composite composite, int width, int span) {
+
+	private void createTargetEnvironmentLabels(
+		Composite composite,
+		int width,
+		int span) {
 		Label label = new Label(composite, SWT.NULL);
 		fillHorizontal(label, 3, false);
 		Composite container = new Composite(composite, SWT.NULL);
@@ -165,21 +168,37 @@ public class PluginImportWizardFirstPage
 		layout.numColumns = 2;
 		layout.marginWidth = layout.marginHeight = 0;
 		container.setLayout(layout);
-		
-		createMultiLineLabel(container, width, PDEPlugin.getResourceString(KEY_TARGET_DESC), 2);
-		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_OS, TargetPlatform.getOS());
-		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_WS, TargetPlatform.getWS());
-		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_NL, TargetPlatform.getNL());
-		createTargetLine(container, TargetEnvironmentPreferencePage.KEY_ARCH, TargetPlatform.getOSArch());
+
+		createMultiLineLabel(
+			container,
+			width,
+			PDEPlugin.getResourceString(KEY_TARGET_DESC),
+			2);
+		createTargetLine(
+			container,
+			TargetEnvironmentPreferencePage.KEY_OS,
+			TargetPlatform.getOS());
+		createTargetLine(
+			container,
+			TargetEnvironmentPreferencePage.KEY_WS,
+			TargetPlatform.getWS());
+		createTargetLine(
+			container,
+			TargetEnvironmentPreferencePage.KEY_NL,
+			TargetPlatform.getNL());
+		createTargetLine(
+			container,
+			TargetEnvironmentPreferencePage.KEY_ARCH,
+			TargetPlatform.getOSArch());
 	}
-	
+
 	private void createTargetLine(Composite parent, String nameKey, String value) {
 		GridData gd = new GridData();
 		Label label = new Label(parent, SWT.NULL);
 		label.setText(trimMnemonics(PDEPlugin.getResourceString(nameKey)));
 		gd.horizontalIndent = 10;
 		label.setLayoutData(gd);
-		
+
 		label = new Label(parent, SWT.NULL);
 		label.setText(value);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -187,9 +206,9 @@ public class PluginImportWizardFirstPage
 	}
 	private String trimMnemonics(String name) {
 		StringBuffer buf = new StringBuffer();
-		for (int i=0; i<name.length(); i++) {
+		for (int i = 0; i < name.length(); i++) {
 			char c = name.charAt(i);
-			if (c!='&') 
+			if (c != '&')
 				buf.append(c);
 		}
 		return buf.toString();
@@ -239,13 +258,8 @@ public class PluginImportWizardFirstPage
 	}
 
 	private void updateStatus() {
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(null);
-		if (running != null) {
-			updateStatus(running);
-		} else {
-			validateDropLocation();
-			updateStatus(dropLocationStatus);
-		}
+		validateDropLocation();
+		updateStatus(dropLocationStatus);
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {

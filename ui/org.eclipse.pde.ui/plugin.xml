@@ -671,6 +671,9 @@
             state="true"
             class="org.eclipse.pde.internal.ui.wizards.imports.BinaryProjectDecorator"
             id="org.eclipse.pde.ui.binaryProjectDecorator">
+         <description>
+            %decorator.desc
+         </description>
       </decorator>
    </extension>
    <extension

@@ -1,40 +1,35 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.ui.BuildPathUtil;
-import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.pde.ui.IPluginStructureData;
-import org.eclipse.pde.ui.IProjectProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.util.CoreUtility;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.core.resources.*;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.wizards.templates.*;
-import java.util.*;
 import java.io.*;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
+import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
+import org.eclipse.pde.ui.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 public abstract class AbstractNewPluginTemplateWizard
 	extends Wizard
 	implements IPluginContentWizard {
 	private static final String KEY_WTITLE = "PluginCodeGeneratorWizard.title";
 	private static final String KEY_WFTITLE = "PluginCodeGeneratorWizard.ftitle";
+	private static final String KEY_MISSING = "PluginCodeGeneratorWizard.missing";
+	private static final String KEY_FMISSING = "PluginCoreGeneratorWizard.fmissing";
 
 	private IProjectProvider provider;
 	private IPluginStructureData structureData;
@@ -126,6 +121,7 @@ public abstract class AbstractNewPluginTemplateWizard
 			firstPage.createPluginManifest(project, data, dependencies, monitor);
 		// one step
 		monitor.worked(1);
+		verifyPluginPath(dependencies);
 		setJavaSettings(model, monitor); // one step
 		monitor.worked(1);
 		executeTemplates(project, model, monitor); // nsteps
@@ -169,6 +165,44 @@ public abstract class AbstractNewPluginTemplateWizard
 			if (!result.contains(reference))
 				result.add(reference);
 		}
+	}
+
+	private void verifyPluginPath(ArrayList dependencies) {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		ArrayList matches = new ArrayList();
+		boolean workspaceModels = false;
+
+		for (int i = 0; i < dependencies.size(); i++) {
+			IPluginReference ref = (IPluginReference) dependencies.get(i);
+			IPluginModelBase model =
+				manager.findPlugin(ref.getId(), ref.getVersion(), ref.getMatch());
+			if (model != null) {
+				if (model.getUnderlyingResource() != null) {
+					workspaceModels = true;
+					break;
+				} else if (model.isEnabled() == false) {
+					// disabled external model
+					matches.add(model);
+				}
+			}
+		}
+		if (!workspaceModels && matches.size() > 0) {
+			// enable
+			getShell().getDisplay().syncExec(new Runnable () {
+				public void run() {
+					if (askToEnable()) {
+						ExternalModelManager mng = PDECore.getDefault().getExternalModelManager();
+						mng.initializeAndStore(true);
+					}
+				}
+			});
+		}
+	}
+	
+	private boolean askToEnable() {
+		String title = getWindowTitle();
+		String message = PDEPlugin.getResourceString(fragment?KEY_FMISSING:KEY_MISSING);
+		return MessageDialog.openQuestion(getShell(), title, message);
 	}
 
 	private void executeTemplates(

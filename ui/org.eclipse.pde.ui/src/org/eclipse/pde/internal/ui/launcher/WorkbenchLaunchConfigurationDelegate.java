@@ -42,10 +42,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		final boolean clearWorkspace = configuration.getAttribute(DOCLEAR, false);
 		final IPluginModelBase[] plugins = getPluginsFromConfiguration(configuration);
 
-		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus(new Path(data));
-		if (running != null)
-			throw new CoreException(running);
-
 		String vmInstallName = configuration.getAttribute(VMINSTALL, (String) null);
 		IVMInstall[] vmInstallations = BasicLauncherTab.getAllVMInstances();
 		IVMInstall launcher = null;
@@ -80,8 +76,6 @@ public class WorkbenchLaunchConfigurationDelegate
 				appName,
 				tracing,
 				monitor);
-		if (success)
-			PDEPlugin.getDefault().registerLaunch(launch, path);
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
