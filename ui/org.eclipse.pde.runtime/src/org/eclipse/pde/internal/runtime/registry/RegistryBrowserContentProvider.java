@@ -78,7 +78,8 @@ public class RegistryBrowserContentProvider
 		}
 		isInExtensionSet = false;
 		if (element instanceof ExtensionPointAdapter) {
-			 return getNonDuplicateLabelChildren(element);
+			return ((ExtensionPointAdapter) element).getChildren();
+//			return getNonDuplicateLabelChildren(element);
 		}
 		if (element instanceof ConfigurationElementAdapter) {
 			return ((ConfigurationElementAdapter) element).getChildren();
@@ -125,7 +126,8 @@ public class RegistryBrowserContentProvider
 		if (element instanceof IPluginFolder) {
 			IPluginFolder folder = (IPluginFolder) element;
 			isInExtensionSet = folder.getFolderId() == 1;
-			return getNonDuplicateLabelChildren(folder);
+			return ((IPluginFolder) element).getChildren();
+//			return getNonDuplicateLabelChildren(folder);
 		}
 		if (element instanceof IConfigurationElement) {
 			return ((IConfigurationElement) element).getChildren();
@@ -210,9 +212,6 @@ public class RegistryBrowserContentProvider
 		return children != null && children.length > 0;
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
-	public boolean isDeleted(Object element) {
-		return false;
 	}
 	public void setShowRunning(boolean showRunning){
 		this.showRunning = showRunning;

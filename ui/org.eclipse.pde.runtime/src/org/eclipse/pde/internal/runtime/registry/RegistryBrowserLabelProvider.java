@@ -33,7 +33,6 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image extensionPointsImage;
 	private Image requiresImage;
 	private Image reqPluginImage;
-	private boolean isInExtensionSet = false;
 	private TreeViewer viewer;
 	
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
@@ -162,10 +161,4 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		}
 		return super.getText(element);
 	}
-	
-	public void setIsInExtensionSet(boolean inExt){
-		isInExtensionSet = inExt;
-	}
-	
-
 }

@@ -135,24 +135,9 @@ IRegistryChangeListener {
 				if (selection != null && treeViewer.isExpandable(selection))
 					treeViewer.setExpandedState(selection, !treeViewer
 							.getExpandedState(selection));
-				boolean isOpeningExtensionSet = (selection != null
-						&& selection instanceof IPluginFolder && ((IPluginFolder) selection)
-						.getFolderId() == 1);
-				((RegistryBrowserLabelProvider) treeViewer.getLabelProvider())
-						.setIsInExtensionSet(isOpeningExtensionSet);
 			}
 		});
-		treeViewer.addTreeListener(new ITreeViewerListener() {
-			public void treeCollapsed(TreeExpansionEvent event) {
-			}
-			public void treeExpanded(TreeExpansionEvent event) {
-				Object selection = event.getElement();
-				boolean isOpeningExtensionSet = (selection instanceof IPluginFolder && ((IPluginFolder) selection)
-						.getFolderId() == 1);
-				((RegistryBrowserLabelProvider) treeViewer.getLabelProvider())
-						.setIsInExtensionSet(isOpeningExtensionSet);
-			}
-		});
+
 		WorkbenchHelp.setHelp(treeViewer.getControl(),
 				IHelpContextIds.REGISTRY_VIEW);
 		
