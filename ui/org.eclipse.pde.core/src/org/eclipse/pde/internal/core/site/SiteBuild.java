@@ -29,36 +29,20 @@ import org.w3c.dom.*;
 public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector features = new Vector();
-	private IPath pluginLocation;
-	private IPath featureLocation;
+	public static final String DEFAULT_PLUGIN_DIR = "plugins"; //$NON-NLS-1$
+	public static final String DEFAULT_FEATURE_DIR = "features"; //$NON-NLS-1$
+	private final IPath pluginLocation = new Path(DEFAULT_PLUGIN_DIR);
+	private final IPath featureLocation = new Path(DEFAULT_FEATURE_DIR);
 	private boolean useConsole;
 	private boolean autobuild;
 	private boolean scrubOutput;
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setType(java.lang.String)
-	 */
-	public void setPluginLocation(IPath location) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = this.pluginLocation;
-		this.pluginLocation = location;
-		firePropertyChanged(P_PLUGIN_LOCATION, oldValue, location);
-	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getType()
 	 */
 	public IPath getPluginLocation() {
 		return pluginLocation;
-	}
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setType(java.lang.String)
-	 */
-	public void setFeatureLocation(IPath location) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = this.featureLocation;
-		this.featureLocation = location;
-		firePropertyChanged(P_FEATURE_LOCATION, oldValue, location);
 	}
 
 	/**
@@ -139,8 +123,6 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 
 	protected void reset() {
 		features.clear();
-		pluginLocation = null;
-		featureLocation = null;
 		useConsole = false;
 		autobuild = false;
 		scrubOutput = false;
@@ -148,11 +130,6 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	
 	protected void parse(Node node) {
 		String value = getNodeAttribute(node, "plugin-location"); //$NON-NLS-1$
-		if (value!=null) 
-			pluginLocation = new Path(value);
-		value = getNodeAttribute(node, "feature-location"); //$NON-NLS-1$
-		if (value!=null)
-			featureLocation = new Path(value);
 		autobuild = getBooleanAttribute(node, "autobuild"); //$NON-NLS-1$
 		scrubOutput = getBooleanAttribute(node, "scrub-output"); //$NON-NLS-1$
 		useConsole = getBooleanAttribute(node, "use-console"); //$NON-NLS-1$
@@ -176,11 +153,7 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
 		throws CoreException {
-		if (name.equals(P_PLUGIN_LOCATION)) {
-			setPluginLocation((IPath)newValue);
-		} else if (name.equals(P_FEATURE_LOCATION)) {
-			setFeatureLocation((IPath)newValue);
-		} else if (name.equals(P_AUTOBUILD)) {
+	    if (name.equals(P_AUTOBUILD)) {
 			setAutobuild(newValue!=null?((Boolean)newValue).booleanValue():false);
 		} else if (name.equals(P_SCRUB_OUTPUT)) {
 			setScrubOutput(newValue!=null?((Boolean)newValue).booleanValue():false);
@@ -194,8 +167,6 @@ public class SiteBuild extends SiteBuildObject implements ISiteBuild {
 		writer.print(indent + "<site-build"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
-		writeIfDefined(indenta, writer, "feature-location", featureLocation!=null?featureLocation.toOSString():null); //$NON-NLS-1$
-		writeIfDefined(indenta, writer, "plugin-location", pluginLocation!=null?pluginLocation.toOSString():null); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "autobuild", autobuild?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writeIfDefined(indenta, writer, "scrub-output", scrubOutput?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writeIfDefined(indenta, writer, "use-console", useConsole?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

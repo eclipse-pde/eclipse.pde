@@ -21,8 +21,6 @@ public interface ISiteBuild extends ISiteBuildObject {
 	String P_AUTOBUILD = "autobuild"; //$NON-NLS-1$
 	String P_SCRUB_OUTPUT = "scrub-output"; //$NON-NLS-1$
 
-	void setPluginLocation(IPath location) throws CoreException;
-	void setFeatureLocation(IPath location) throws CoreException;
 	IPath getPluginLocation();
 	IPath getFeatureLocation();
 	boolean getScrubOutput();
