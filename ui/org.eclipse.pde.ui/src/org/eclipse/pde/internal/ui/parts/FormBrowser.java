@@ -12,18 +12,14 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.update.ui.forms.internal.engine.FormEngine;
+import org.eclipse.ui.forms.widgets.*;
 
 public class FormBrowser {
-	ScrolledComposite scomp;
-	FormEngine engine;
+	FormToolkit toolkit;
+	ScrolledFormText formText;
 	String text;
-	FormWidgetFactory factory;
 	int style;
 	
 	public FormBrowser(int style) {
@@ -31,56 +27,35 @@ public class FormBrowser {
 	}
 
 	public void createControl(Composite parent) {
-		factory = new FormWidgetFactory(parent.getDisplay());
-		scomp = new ScrolledComposite(parent, style);
-		scomp.setBackground(factory.getBackgroundColor());
-		engine = factory.createFormEngine(scomp);
-		engine.setMarginWidth(2);
-		engine.setMarginHeight(2);
-		engine.setHyperlinkSettings(factory.getHyperlinkHandler());
-		scomp.setContent(engine);
-     	scomp.addListener (SWT.Resize,  new Listener () {
-			public void handleEvent (Event e) {
-				updateSize();
-			}
-		});
-     	engine.addDisposeListener(new DisposeListener() {
+		toolkit = new FormToolkit(parent.getDisplay());
+		formText = new ScrolledFormText(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, false);
+		FormText ftext = toolkit.createFormText(formText, false);
+		formText.setFormText(ftext);
+		formText.setExpandHorizontal(true);
+		formText.setExpandVertical(true);
+		formText.setBackground(toolkit.getColors().getBackground());
+		formText.setForeground(toolkit.getColors().getForeground());
+		ftext.marginWidth =2;
+		ftext.marginHeight =2;
+		ftext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
+     	formText.addDisposeListener(new DisposeListener() {
      		public void widgetDisposed(DisposeEvent e) {
-     			if (factory!=null) {
-     				factory.dispose();
-     				factory = null;
+     			if (toolkit!=null) {
+     				toolkit.dispose();
+     				toolkit = null;
      			}
      		}
      	});
-		if (text!=null) loadText(text);
+     	if (text!=null)
+     		formText.setText(text);
 	}
-	
+
 	public Control getControl() {
-		return scomp;
+		return formText;
 	}
 	
 	public void setText(String text) {
 		this.text = text;
-		loadText(text);
-	}
-	
-	private void loadText(String text) {
-		if (engine!=null) {
-			String markup = "<form>"+text+"</form>";
-			engine.load(markup, true, false);
-			updateSize();
-			engine.redraw();
-			scomp.layout();
-		}
-	}
-	private void updateSize() {
-		Rectangle ssize = scomp.getClientArea();
-		int swidth = ssize.width;
-		ScrollBar vbar = scomp.getVerticalBar();
-		if (vbar!=null) {
-			swidth -= vbar.getSize().x;
-		}
-		Point size = engine.computeSize(swidth, SWT.DEFAULT, true);
-		engine.setSize(size);
+		if (formText!=null) formText.setText(text);
 	}
 }
