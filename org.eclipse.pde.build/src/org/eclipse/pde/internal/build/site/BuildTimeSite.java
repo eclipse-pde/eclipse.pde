@@ -72,7 +72,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				return state;
 
 			if (reportResolutionErrors) {
-				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Policy.bind("exception.registryResolution"), null); //$NON-NLS-1$
+				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Messages.exception_registryResolution, null);
 				BundleDescription[] all = state.getState().getBundles();
 				StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 				for (int i = 0; i < all.length; i++) {
@@ -96,13 +96,13 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
-			return Policy.bind("unsatisfied.import", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+			return NLS.bind(Messages.unsatisfied_import, displayVersionConstraint(unsatisfied));
 		if (unsatisfied instanceof BundleSpecification) {
 			if (((BundleSpecification) unsatisfied).isOptional())
-				return Policy.bind("unsatisfied.optionalBundle", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
-			return Policy.bind("unsatisfied.required", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+				return NLS.bind(Messages.unsatisfied_optionalBundle, displayVersionConstraint(unsatisfied));
+			return NLS.bind(Messages.unsatisfied_required, displayVersionConstraint(unsatisfied));
 		}
-		return Policy.bind("unsatisfied.host", displayVersionConstraint(unsatisfied));//$NON-NLS-1$
+		return NLS.bind(Messages.unsatisfied_host, displayVersionConstraint(unsatisfied));
 	}
 
 	private String displayVersionConstraint(VersionConstraint constraint) {
@@ -135,7 +135,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			}		
 		}
 		if (throwsException) {
-			String message = Policy.bind("exception.missingFeature", featureId); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_missingFeature, featureId);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 		}
 		return null;
@@ -158,7 +158,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
 				addFeatureReferenceModel(featureRef);
 			} catch (MalformedURLException e) {
-				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 			}
 		}
 	}

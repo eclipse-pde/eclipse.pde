@@ -56,7 +56,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		String installedBaseURL = null;
 		if (installedBaseLocation != null && !installedBaseLocation.equals("")) { //$NON-NLS-1$
 			if (!new File(installedBaseLocation).exists()) {
-				String message = Policy.bind("error.incorrectDirectoryEntry", installedBaseLocation); //$NON-NLS-1$
+				String message = NLS.bind(Messages.error_incorrectDirectoryEntry, installedBaseLocation);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
 			}
 
@@ -90,7 +90,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 					featureRef.setType(BuildTimeFeatureFactory.BUILDTIME_FEATURE_FACTORY_ID);
 					site.addFeatureReferenceModel(featureRef);
 				} catch (MalformedURLException e) {
-					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, Policy.bind("warning.cannotLocateSource", featureXML.getAbsolutePath()), e)); //$NON-NLS-1$
+					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 				}
 			}
 		}
@@ -106,8 +106,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	 * of a site.xml file which describes our site, and we don't have this file.
 	 */
 	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
-		String message = Policy.bind("error.incorrectDirectoryEntry"); //$NON-NLS-1$
-		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, Messages.error_incorrectDirectoryEntry, null));
 	}
 
 	public SiteModel createSiteMapModel() {

@@ -74,7 +74,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			login = login_password[0];
 			password = login_password[1];
 		} else {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 1, Policy.bind("warning.missingPassword", fileName), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 1, NLS.bind(Messages.warning_missingPassword, fileName), null);
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		script.printGet(baseurl + fileName, getPropertyFormat(PROPERTY_DOWNLOAD_DIRECTORY) + '/' + fileName, login, password, true);
@@ -99,10 +99,10 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				stream.close();
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}
@@ -122,7 +122,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), ENTRY_SEPARATOR);
 
 			if (fileDescription.length < 4) {
-				String message = Policy.bind("error.incorrectDirectoryEntry", (String) mapEntry.getKey() + '=' + (String) mapEntry.getValue()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.error_incorrectDirectoryEntry, (String) mapEntry.getKey() + '=' + (String) mapEntry.getValue());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 			}
 
@@ -131,7 +131,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			try {
 				userInfos = new URL(fileDescription[URL]).getUserInfo();
 			} catch (MalformedURLException e) {
-				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, Policy.bind("exception.url", fileDescription[URL]), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, NLS.bind(Messages.exception_url, fileDescription[URL]), e);
 				throw new CoreException(status);
 			}
 
@@ -140,7 +140,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
 			} else {
 				if (BundleHelper.getDefault().isDebugging()) {
-					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", fileDescription[DIRECTORY]), null); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, fileDescription[DIRECTORY]), null);
 					BundleHelper.getDefault().getLog().log(status);
 				}
 			}

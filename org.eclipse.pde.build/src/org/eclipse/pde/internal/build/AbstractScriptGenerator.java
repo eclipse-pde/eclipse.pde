@@ -74,7 +74,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		for (int i = 0; i < configs.length; i++) {
 			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
 			if (configElements.length != 3) {
-				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, Policy.bind("error.configWrongFormat", configs[i]), null); //$NON-NLS-1$
+				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, NLS.bind(Messages.error_configWrongFormat, configs[i]), null);
 				throw new CoreException(error);
 			}
 			Config aConfig = new Config(configs[i]); //$NON-NLS-1$
@@ -119,11 +119,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			}
 		} catch (FileNotFoundException e) {
 			if (errorLevel != IStatus.INFO && errorLevel != IStatus.OK) {
-				String message = Policy.bind("exception.missingFile", file.toString()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingFile, file);
 				BundleHelper.getDefault().getLog().log(new Status(errorLevel, PI_PDEBUILD, EXCEPTION_READING_FILE, message, null));
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("exception.readingFile", file.toString()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_readingFile, file);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		}
 		return result;
@@ -140,14 +140,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			} catch (IOException e) {
 				try {
 					scriptStream.close();
-					String message = Policy.bind("exception.writingFile", scriptLocation + '/' + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
+					String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 				} catch (IOException e1) {
 					// Ignored		
 				}
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.writingFile", scriptLocation + '/' + scriptName); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = NLS.bind(Messages.exception_writingFile, scriptLocation + '/' + scriptName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}

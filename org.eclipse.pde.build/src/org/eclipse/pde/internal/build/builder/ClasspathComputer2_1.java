@@ -267,7 +267,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 				modelLocation = generator.getLocation(generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]));
 
 			if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
-				String message = Policy.bind("exception.url", generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, null));
 			}
 			if (modelLocation != null) {
@@ -287,11 +287,11 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			try {
 				relativePath = Utils.makeRelative(new Path(Platform.resolve(extraURL).getFile()), new Path(location)).toOSString();
 			} catch (IOException e) {
-				String message = Policy.bind("exception.url", generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
 			}
 		} catch (MalformedURLException e) {
-			String message = Policy.bind("exception.url", PROPERTIES_FILE + "::" + url); //$NON-NLS-1$  //$NON-NLS-2$
+			String message = NLS.bind(Messages.exception_url, PROPERTIES_FILE + "::" + url); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message, e));
 		}
 		return relativePath;
@@ -307,7 +307,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
-			String message = Policy.bind("error.pluginCycle", cycleString); //$NON-NLS-1$
+			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
 

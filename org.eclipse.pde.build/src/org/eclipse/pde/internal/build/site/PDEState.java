@@ -66,7 +66,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
 			state.addBundle(descriptor);
 		} catch (BundleException e) {
-			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.stateAddition", (String) enhancedManifest.get(Constants.BUNDLE_NAME)), e);//$NON-NLS-1$
+			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, ((String) enhancedManifest.get(Constants.BUNDLE_NAME))), e);
 			BundleHelper.getDefault().getLog().log(status);
 			return false;
 		}
@@ -240,12 +240,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (bundleLocation.getName().equals("feature.xml")) //$NON-NLS-1$
 				return null;
 			if (logConversionException) {
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.errorConverting", bundleLocation.getAbsolutePath()), convertException); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_errorConverting, bundleLocation.getAbsolutePath()), convertException);
 				BundleHelper.getDefault().getLog().log(status);
 			}
 			return null;
 		} catch (Exception serviceException) {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, Policy.bind("exception.cannotAcquireService", "Plugin converter"), serviceException); //$NON-NLS-1$ //$NON-NLS-2$
+			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, 0, NLS.bind(Messages.exception_cannotAcquireService, "Plugin converter"), serviceException); //$NON-NLS-1$
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}

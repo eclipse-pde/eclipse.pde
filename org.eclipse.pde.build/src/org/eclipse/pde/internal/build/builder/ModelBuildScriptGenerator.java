@@ -104,8 +104,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	public void generate() throws CoreException {
 		String message;
 		if (model == null) {
-			message = Policy.bind("error.missingElement"); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Messages.error_missingElement, null));
 		}
 
 		// If the the plugin we want to generate is a source plugin, and the feature that required the generation of this plugin is not being asked to build the source
@@ -139,11 +138,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void checkBootAndRuntime() throws CoreException {
 		if (getSite(false).getRegistry().getResolvedBundle(PI_BOOT) == null) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_BOOT), null);//$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, NLS.bind(Messages.exception_missingPlugin, PI_BOOT), null);
 			throw new CoreException(status);
 		}
 		if (getSite(false).getRegistry().getResolvedBundle(PI_RUNTIME) == null) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", PI_RUNTIME), null);//$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, NLS.bind(Messages.exception_missingPlugin, PI_RUNTIME), null);
 			throw new CoreException(status);
 		}
 	}
@@ -278,7 +277,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
-		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getSymbolicName())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_clean, model.getSymbolicName()));
 		if (!binaryPlugin) {
 			for (int i = 0; i < availableJars.length; i++) {
 				String jarName = availableJars[i].getName(true);
@@ -480,7 +479,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateZipPluginTarget() {
 		script.println();
-		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, Policy.bind("build.plugin.zipPlugin", model.getSymbolicName())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_zipPlugin, model.getSymbolicName()));
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
@@ -501,7 +500,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateBuildUpdateJarTarget() {
 		script.println();
-		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, Policy.bind("build.plugin.buildUpdateJar", model.getSymbolicName())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildUpdateJar, model.getSymbolicName()));
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printMkdirTask(getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
@@ -518,7 +517,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateRefreshTarget() {
 		script.println();
-		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Policy.bind("build.plugin.refresh")); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Messages.build_plugin_refresh);
 		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
@@ -582,8 +581,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	public void setModel(BundleDescription model) throws CoreException {
 		if (model == null) {
-			String message = Policy.bind("error.missingElement"); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Messages.error_missingElement, null));
 		}
 		this.model = model;
 		if (getBuildProperties().size() != 0) {
@@ -604,7 +602,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	public void setModelId(String modelId) throws CoreException {
 		BundleDescription newModel = getModel(modelId);
 		if (newModel == null) {
-			String message = Policy.bind("exception.missingElement", modelId); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_missingElement, modelId);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 		}
 		setModel(newModel);
@@ -683,7 +681,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateSRCTarget(jar);
 		}
 		script.println();
-		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.plugin.buildJars", pluginModel.getSymbolicName())); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildJars, pluginModel.getSymbolicName()));
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String name = ((CompiledEntry) iter.next()).getName(false);
 			script.printAvailableTask(name, replaceVariables(getJARLocation(name), true));
@@ -712,7 +710,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateCompilationTarget(List classpath, CompiledEntry entry) {
 		script.println();
 		String name = entry.getName(false);
-		script.printTargetDeclaration(name, TARGET_INIT, null, entry.getName(true), Policy.bind("build.plugin.jar", name)); //$NON-NLS-1$
+		script.printTargetDeclaration(name, TARGET_INIT, null, entry.getName(true), NLS.bind(Messages.build_plugin_jar, name));
 		String destdir = getTempJARFolderLocation(entry.getName(true));
 		script.printDeleteTask(destdir, null, null);
 		script.printMkdirTask(destdir);
@@ -818,7 +816,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			File file = new File(pluginRoot, sources[i]);
 			if (!file.exists()) {
 				sources[i] = null;
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, Policy.bind("warning.cannotLocateSource", file.getAbsolutePath()), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_SOURCE_LOCATION_MISSING, NLS.bind(Messages.warning_cannotLocateSource, file.getAbsolutePath()), null);
 				BundleHelper.getDefault().getLog().log(status);
 			}
 		}
@@ -892,7 +890,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			updateVersion(buildFile, PROPERTY_VERSION_SUFFIX, model.getVersion().toString());
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writeScript", buildFile.toString()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writeScript, buildFile);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 		}
 		return;

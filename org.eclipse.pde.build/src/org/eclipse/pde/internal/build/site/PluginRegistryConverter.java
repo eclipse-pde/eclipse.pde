@@ -44,7 +44,7 @@ public class PluginRegistryConverter extends PDEState {
 		if (registry == null) {
 			files = removeInvalidURLs(files);
 			// create the registry according to the site where the code to compile is, and a existing installation of eclipse 
-			MultiStatus problems = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Policy.bind("exception.pluginParse"), null); //$NON-NLS-1$
+			MultiStatus problems = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_MODEL_PARSE, Messages.exception_pluginParse, null);
 			Factory factory = new Factory(problems);
 			registry = PluginRegistryModel.parsePlugins(files, factory);
 			registry.resolve(true, false);
@@ -108,7 +108,7 @@ public class PluginRegistryConverter extends PDEState {
 		try {
 			getPluginRegistry(Utils.asURL(bundles));
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Policy.bind("exception.registryResolution"), e); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Messages.exception_registryResolution, e);
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {

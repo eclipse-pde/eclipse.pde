@@ -15,8 +15,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.*;
 
 public class DevClassPathHelper {
@@ -69,7 +68,7 @@ public class DevClassPathHelper {
 				is.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("exception.missingFile", url.toExternalForm()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_missingFile, url.toExternalForm());
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, message, null));
 		}
 		return props;

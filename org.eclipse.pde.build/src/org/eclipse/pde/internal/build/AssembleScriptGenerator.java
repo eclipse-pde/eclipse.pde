@@ -33,7 +33,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		} catch (FileNotFoundException e) {
 			// ignore this exception
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", filename); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writingFile, filename);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 	}

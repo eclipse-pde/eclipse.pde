@@ -52,11 +52,11 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			feature.setFeatureContentProvider(contentProvider);
 			feature.resolve(url, url);
 		} catch (CoreException e) {
-			String message = Policy.bind("error.creatingFeature", url.toString()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.error_creatingFeature, url);
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_PARSE, message, e));
 			throw e;
 		} catch (Exception e) {
-			String message = Policy.bind("exception.readingFile", url.toString()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_readingFile, url);
 			Status status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
 			BundleHelper.getDefault().getLog().log(status);	//Logging here because the caller consumes CoreExceptions.
 			throw new CoreException(status);

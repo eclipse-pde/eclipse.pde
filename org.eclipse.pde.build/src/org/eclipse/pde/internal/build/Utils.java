@@ -314,7 +314,7 @@ public final class Utils implements IPDEBuildConstants {
 					try {
 						inputStream = new FileInputStream(files[i]);
 					} catch (FileNotFoundException e) {
-						String message = Policy.bind("exception.missingFile", files[i].getAbsolutePath()); //$NON-NLS-1$
+						String message = NLS.bind(Messages.exception_missingFile, files[i].getAbsolutePath());
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
 
@@ -322,7 +322,7 @@ public final class Utils implements IPDEBuildConstants {
 					try {
 						outputStream = new FileOutputStream(fileToCopy);
 					} catch (FileNotFoundException e) {
-						String message = Policy.bind("exception.missingFile", fileToCopy); //$NON-NLS-1$
+						String message = NLS.bind(Messages.exception_missingFile, fileToCopy);
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
 
@@ -330,7 +330,7 @@ public final class Utils implements IPDEBuildConstants {
 						Utils.transferStreams(inputStream, outputStream);
 						copiedFiles.add(files[i].getName());
 					} catch (IOException e) {
-						String message = Policy.bind("exception.writingFile", fileToCopy); //$NON-NLS-1$
+						String message = NLS.bind(Messages.exception_writingFile, fileToCopy);
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 					}
 				}
@@ -405,7 +405,7 @@ public final class Utils implements IPDEBuildConstants {
 			if (plugins.contains(current.getHost().getBundle()))
 				prereqs.add(new Relation(current, current.getHost().getSupplier()));
 			else
-				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_GENERIC, Policy.bind("exception.hostNotFound", current.getSymbolicName()), null)); //$NON-NLS-1$
+				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_GENERIC, NLS.bind(Messages.exception_hostNotFound, current.getSymbolicName()), null));
 
 			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
 			for (int j = 0; j < prereqList.length; j++) {

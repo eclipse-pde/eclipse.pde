@@ -140,7 +140,7 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				IFeature tmpFeature = generator.getSite(false).findFeature(features[i].getVersionedIdentifier().getIdentifier(), null, true);
 				parameters.put("version", tmpFeature.getVersionedIdentifier().getVersion().toString()); //$NON-NLS-1$
 			} catch (CoreException e) {
-				String message = Policy.bind("exception.missingFeature", features[i].getVersionedIdentifier().getIdentifier()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingFeature, features[i].getVersionedIdentifier().getIdentifier());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 
@@ -204,11 +204,11 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			try {
 				effectivePlugin = generator.getSite(false).getRegistry().getResolvedBundle(plugins[i].getVersionedIdentifier().getIdentifier(), versionRequested);
 			} catch (CoreException e) {
-				String message = Policy.bind("exception.missingPlugin", plugins[i].getVersionedIdentifier().toString()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingPlugin, plugins[i].getVersionedIdentifier());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			if (effectivePlugin == null) {
-				String message = Policy.bind("exception.missingPlugin", plugins[i].getVersionedIdentifier().toString()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingPlugin, plugins[i].getVersionedIdentifier());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			parameters.put("version", effectivePlugin.getVersion()); //$NON-NLS-1$

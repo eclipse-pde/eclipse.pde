@@ -87,7 +87,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		mapInfos = processMapFileEntry(element);
 		if (mapInfos == null) {
-			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null); //$NON-NLS-1$
+			IStatus warning = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, element), null);
 			BundleHelper.getDefault().getLog().log(warning);
 			return;
 		}
@@ -126,7 +126,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				os.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", directoryLocation + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writingFile, directoryLocation + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 	}
@@ -193,7 +193,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			generateFetchEntry(element, false);
 		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, Policy.bind("error.fetchingFailed", element), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, element), null);
 			BundleHelper.getDefault().getLog().log(status);
 		}
 		script.printTargetEnd();
@@ -218,14 +218,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		String cvsInfo = getCVSInfo(entry);
 		if (cvsInfo == null) {
-			String message = Policy.bind("error.missingDirectoryEntry", entry); //$NON-NLS-1$
+			String message = NLS.bind(Messages.error_missingDirectoryEntry, entry);
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 			return null;
 		}
 
 		String[] cvsFields = Utils.getArrayFromStringWithBlank(cvsInfo, ","); //$NON-NLS-1$
 		if (cvsFields.length < 2) {
-			String message = Policy.bind("error.incorrectDirectoryEntry", element); //$NON-NLS-1$
+			String message = NLS.bind(Messages.error_incorrectDirectoryEntry, element);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 		}
 
@@ -405,7 +405,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				retrieve.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writeScript", target.toString()); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writeScript, target);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 		}
 
@@ -427,11 +427,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			featureStream.close();
 			clear(featureFolder);
 			if (feature == null) {
-				String message = Policy.bind("exception.missingFeature", elementName); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingFeature, elementName);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 		} catch (Exception e) {
-			String message = Policy.bind("error.fetchingFeature", elementName); //$NON-NLS-1$
+			String message = NLS.bind(Messages.error_fetchingFeature, elementName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e));
 		}
 	}

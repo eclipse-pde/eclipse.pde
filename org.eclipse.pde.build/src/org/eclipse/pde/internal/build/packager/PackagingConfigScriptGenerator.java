@@ -161,10 +161,10 @@ public class PackagingConfigScriptGenerator extends AssembleConfigScriptGenerato
 				propertyStream.close();
 			}
 		} catch (FileNotFoundException e) {
-			String message = Policy.bind("exception.readingFile", packagingPropertiesLocation); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		} catch (IOException e) {
-			String message = Policy.bind("exception.readingFile", packagingPropertiesLocation); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		}
 	}

@@ -71,7 +71,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			//TODO Log an error
 			// a file doesn't exist so we will create a new one
 		} catch (IOException e) {
-			String message = Policy.bind("exception.writingFile", filename); //$NON-NLS-1$
+			String message = NLS.bind(Messages.exception_writingFile, filename);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 		loadPostProcessingSteps();
@@ -157,7 +157,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String fileExists = getPropertyFormat(PROPERTY_SOURCE) + '/' + getPropertyFormat(PROPERTY_ELEMENT_NAME) + "_exists"; //$NON-NLS-1$
 
 		script.printComment("Beginning of the jarUp task"); //$NON-NLS-1$
-		script.printTargetDeclaration(TARGET_JARUP, null, null, null, Policy.bind("assemble.jarUp")); //$NON-NLS-1$
+		script.printTargetDeclaration(TARGET_JARUP, null, null, null, Messages.assemble_jarUp);
 		script.printAvailableTask(fileExists, fileName);
 		Map params = new HashMap(2);
 		params.put(PROPERTY_SOURCE, getPropertyFormat(PROPERTY_SOURCE));
