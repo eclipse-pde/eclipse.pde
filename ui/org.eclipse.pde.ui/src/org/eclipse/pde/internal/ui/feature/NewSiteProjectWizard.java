@@ -207,7 +207,7 @@ public class NewSiteProjectWizard
 			PDEPlugin.logException(e);
 		}
 	}
-		
+
 	private void createXSLFile(IProject project){
 		try {
 		IFile file = project.getFile(htmlPage.getWebLocation() + "/site.xsl");
@@ -236,7 +236,7 @@ public class NewSiteProjectWizard
 		writer.println("					<xsl:value-of select=\"@name\"/>");
 		writer.println("				</td>");
 		writer.println("				<td class=\"sub-header\" width=\"70%\">");
-		writer.println("					<xsl:value-of select=\"description\"/>");
+		writer.println("					<xsl:value-of select=\"@label\"/>");
 		writer.println("				</td>");
 		writer.println("			</tr>");
 		writer.println("			<xsl:for-each select=\"key('cat',@name)\">");
