@@ -168,15 +168,13 @@ public class TargetPlatform implements IEnvironmentVariables {
 		throws CoreException {
 		try {
 			File configDir = createWorkingDirectory(data);
-			boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
-			if (isOSGI) {
+			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 				createConfigIniFile(configDir, pluginMap, primaryFeatureId, autoStartPlugins);
-			}
-			if (!isOSGI) {
+				if (pluginMap.containsKey("org.eclipse.update.configurator")) 
+					savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
+			} else {
 				savePlatformConfiguration(new File(configDir, "platform.cfg"), pluginMap, primaryFeatureId);
-			} else if (pluginMap.containsKey("org.eclipse.update.configurator")) {
-				savePlatformConfiguration(configDir, pluginMap, primaryFeatureId);
-			}			
+			} 			
 			return configDir;
 		} catch (CoreException e) {
 			// Rethrow
