@@ -54,8 +54,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	public static final String ID_PLUGIN_JUNIT= "org.eclipse.pde.junit.launchconfig"; //$NON-NLS-1$
 
 	public static final String[] fgApplicationNames= new String[] {
-			"org.eclipse.pde.junit.uitestapplication",
-			"org.eclipse.pde.junit.coretestapplication"
+			"org.eclipse.pde.junit.runtime.uitestapplication",
+			"org.eclipse.pde.junit.runtime.coretestapplication"
 	};
 	public static final String fgDefaultApp= fgApplicationNames[0];
 	

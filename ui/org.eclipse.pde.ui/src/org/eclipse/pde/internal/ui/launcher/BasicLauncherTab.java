@@ -45,7 +45,6 @@ public class BasicLauncherTab
 	private Text classpathText;
 	private Text vmArgsText;
 	private Text progArgsText;
-	private Button showSplashCheck;
 	private Button defaultsButton;
 	private Image image;
 	private String currentClasspath;
@@ -170,10 +169,14 @@ public class BasicLauncherTab
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createJRESection(group);
+		createApplicationSection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
 		createDevEntriesSection(group);
 		createShowSplashSection(group);		
+	}
+	
+	protected void createApplicationSection(Composite parent) {
 	}
 	
 	protected void createJRESection(Composite parent) {
@@ -273,16 +276,6 @@ public class BasicLauncherTab
 	}
 	
 	protected void createShowSplashSection(Composite parent) {
-		showSplashCheck = new Button(parent, SWT.CHECK);
-		showSplashCheck.setText(PDEPlugin.getResourceString("BasicLauncherTab.showSplash"));
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		showSplashCheck.setLayoutData(gd);
-		showSplashCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});		
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
@@ -291,6 +284,7 @@ public class BasicLauncherTab
 			
 			initializeWorkspaceDataSection(config);
 			initializeJRESection(config);
+			initializeApplicationSection(config);
 			initializeVMArgsSection(config);
 			initializeProgArgsSection(config);
 			initializeDevEntriesSection(config);
@@ -303,6 +297,10 @@ public class BasicLauncherTab
 			PDEPlugin.logException(e);
 		}
 		blockChanges = false;
+	}
+
+	protected void initializeApplicationSection(ILaunchConfiguration config)
+		throws CoreException {
 	}
 
 	protected void initializeWorkspaceDataSection(ILaunchConfiguration config)
@@ -349,7 +347,6 @@ public class BasicLauncherTab
 	}
 
 	protected void initializeShowSplashSection(ILaunchConfiguration config) throws CoreException {
-		showSplashCheck.setSelection(config.getAttribute(SHOW_SPLASH, true));		
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
@@ -370,13 +367,12 @@ public class BasicLauncherTab
 		return currentClasspath;
 	}
 
-	private void doRestoreDefaults() {
+	protected void doRestoreDefaults() {
 		progArgsText.setText(LauncherUtils.getDefaultProgramArguments());
 		vmArgsText.setText("");
 		workspaceCombo.setText(LauncherUtils.getDefaultWorkspace());
 		classpathText.setText(getClasspathEntries());
 		clearWorkspaceCheck.setSelection(false);
-		showSplashCheck.setSelection(true);
 		askClearCheck.setSelection(true);
 		askClearCheck.setEnabled(false);
 		jreCombo.setText(LauncherUtils.getDefaultVMInstallName());		
@@ -391,10 +387,12 @@ public class BasicLauncherTab
 		try {
 			if (isChanged()) {
 				saveWorkspaceDataSection(config);
+				saveApplicationSection(config);
 				saveJRESection(config);
 				saveVMArgsSection(config);
 				saveProgArgsSection(config);
 				saveDevEntriesSection(config);
+				saveShowSplashSection(config);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -453,7 +451,9 @@ public class BasicLauncherTab
 	}
 	
 	protected void saveShowSplashSection(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(SHOW_SPLASH, showSplashCheck.getSelection());		
+	}
+	
+	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 	}
 
 	private IPath chooseWorkspaceLocation() {

@@ -26,17 +26,13 @@ public class WorkbenchLauncherTabGroup
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[5];
-		tabs[0] = new BasicLauncherTab();
-		tabs[0].setLaunchConfigurationDialog(dialog);
-		tabs[1] = new AdvancedLauncherTab();
-		tabs[1].setLaunchConfigurationDialog(dialog);
-		tabs[2] = new TracingLauncherTab();
-		tabs[2].setLaunchConfigurationDialog(dialog);
-		tabs[3] = new JavaSourceLookupTab();
-		tabs[3].setLaunchConfigurationDialog(dialog);		
-		tabs[4] = new CommonTab();
-		tabs[4].setLaunchConfigurationDialog(dialog);
+		ILaunchConfigurationTab[] tabs =
+			new ILaunchConfigurationTab[] {
+				new RuntimeWorkbenchArgumentsTab(),
+				new AdvancedLauncherTab(),
+				new TracingLauncherTab(),
+				new JavaSourceLookupTab(),
+				new CommonTab()};
 		setTabs(tabs);
 	}
 	/**
