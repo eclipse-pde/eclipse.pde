@@ -75,9 +75,8 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 				int dResult = dialog.open();
 				
 				if (dResult == WizardDialog.OK) {
-					String newValue = wizard.getClassName();
-					path = newValue.replace('.', '/') + ".java";
-					text.setText(newValue);
+					path = wizard.getClassName().replace('.', '/') + ".java";
+					text.setText(wizard.getClassNameWithArgs());
 					result = javaProject.findElement(new Path(path));
 					if (result != null)
 						JavaUI.openInEditor(result);
@@ -193,7 +192,11 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 		value = value.trim();
 		while(value.length() >0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
-		
+		int loc = value.indexOf(":");
+		if (loc!=-1 && loc >0)
+			value = value.substring(0,loc);
+		else if (loc == 0)
+			value = "";
 		return value;
 	}
 }

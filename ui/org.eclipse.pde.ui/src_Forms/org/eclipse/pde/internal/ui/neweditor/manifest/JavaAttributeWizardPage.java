@@ -48,6 +48,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		IType interfaceType;
 		String interfaceName;
 		String className;
+		String classArgs;
 		String packageName;
 		IPackageFragmentRoot packageFragmentRoot;
 		IPackageFragment packageFragment;
@@ -57,6 +58,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			this.interfaceName = null;
 			this.interfaceType = null;
 			this.className = null;
+			this.classArgs = null;
 			this.packageName = null;
 			this.packageFragment = null;
 			this.packageFragmentRoot = null;
@@ -124,23 +126,38 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		return type;
 	}
 	private void initializeExpectedValues() {
+		
+		
+		//			source folder name, package name, class name
+		int loc = className.indexOf(":");
+		if (loc != -1) {
+			if (loc < className.length()) {
+				initialValues.classArgs = className.substring(loc + 1,
+						className.length());
+				className = className.substring(0, loc);
+			}
+			if (loc > 0)
+				initialValues.className = className.substring(0, loc);
+			else if (loc == 0)
+				initialValues.className = "";
+		}
+		fClassNameStatus = JavaConventions
+		.validateJavaTypeName(initialValues.className);
+		
+		loc = className.lastIndexOf('.');
+		if (loc != -1) {
+			initialValues.packageName = className.substring(0, loc);
+			initialValues.className = className.substring(loc + 1);
+			fPackageNameStatus = JavaConventions.validatePackageName(initialValues.packageName);
+			fClassNameStatus = JavaConventions.validateJavaTypeName(initialValues.className);
+		}
 		if (javaProject == null)
 			return;
 		try {
-			//			source folder name, package name, class name
-			fClassNameStatus = JavaConventions.validateJavaTypeName(initialValues.className);
-			int loc = className.lastIndexOf('.');
-			if (loc != -1) {
-				fPackageNameStatus = JavaConventions.validatePackageName(className.substring(0, loc));
-				initialValues.packageName = className.substring(0, loc);
-				fClassNameStatus = JavaConventions.validateJavaTypeName(className
-						.substring(loc + 1));
-				initialValues.className = className.substring(loc + 1);
-			} 
 			if (initialValues.packageFragmentRoot == null) {
 				IPackageFragmentRoot srcEntryDft = null;
 				IPackageFragmentRoot[] roots = javaProject
-						.getPackageFragmentRoots();
+				.getPackageFragmentRoots();
 				for (int i = 0; i < roots.length; i++) {
 					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 						srcEntryDft = roots[i];
@@ -149,21 +166,18 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				}
 				if (srcEntryDft != null)
 					initialValues.packageFragmentRoot = srcEntryDft;
-				else if (initialValues.packageName != null
-						&& initialValues.packageName.length() > 0) {
-					initialValues.packageFragmentRoot = javaProject
-							.getPackageFragmentRoot(project
-									.getFolder(initialValues.packageName));
+				else {
+					initialValues.packageFragmentRoot = javaProject.getPackageFragmentRoot(javaProject.getResource());
 				}
 				if (initialValues.packageFragment == null
 						&& initialValues.packageFragmentRoot != null
 						&& initialValues.packageName != null
 						&& initialValues.packageName.length() > 0) {
 					IFolder packageFolder = project
-							.getFolder(initialValues.packageName);
+					.getFolder(initialValues.packageName);
 					initialValues.packageFragment = initialValues.packageFragmentRoot
-							.getPackageFragment(packageFolder
-									.getProjectRelativePath().toOSString());
+					.getPackageFragment(packageFolder
+							.getProjectRelativePath().toOSString());
 				}
 			}
 			//			superclass and interface
@@ -210,7 +224,9 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			PDEPlugin.logException(e);
 		}
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jdt.ui.wizards.NewClassWizardPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
@@ -218,9 +234,15 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		// policy: wizards are not allowed to come up with an error message;
 		// in this wizard, some fields may need initial validation and thus,
 		// potentially start with an error message.
-		if (!fClassNameStatus.isOK())
+		if (fClassNameStatus !=null && !fClassNameStatus.isOK())
 		updateStatus(fClassNameStatus);
-		if (!fPackageNameStatus.isOK())
+		if (fPackageNameStatus != null && !fPackageNameStatus.isOK())
 		updateStatus(fPackageNameStatus);
+	}
+	
+	public String getClassArgs(){
+		if (initialValues.classArgs == null)
+			return "";
+		return initialValues.classArgs;
 	}
 }

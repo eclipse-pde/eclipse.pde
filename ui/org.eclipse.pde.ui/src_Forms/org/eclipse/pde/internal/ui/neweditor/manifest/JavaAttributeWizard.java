@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class JavaAttributeWizard extends Wizard {
-	private String className;
+	private String className, classArgs;
 	private IProject project;
 	private ISchemaAttribute attInfo;
 	private IPluginModelBase model;
@@ -77,6 +77,7 @@ public class JavaAttributeWizard extends Wizard {
 			className = mainPage.getPackageText() + "." + mainPage.getTypeName();
 		else
 			className = mainPage.getTypeName();
+		classArgs = mainPage.getClassArgs();
 		IWorkspaceRunnable op = new IWorkspaceRunnable(){
 			public void run(IProgressMonitor monitor){
 				try {
@@ -121,5 +122,10 @@ public class JavaAttributeWizard extends Wizard {
 
 	public String getClassName() {
 		return className;
+	}
+	public String getClassNameWithArgs(){
+		if (classArgs!=null && classArgs.length()>0)
+			return className + ":" + classArgs;
+		return getClassName();
 	}
 }

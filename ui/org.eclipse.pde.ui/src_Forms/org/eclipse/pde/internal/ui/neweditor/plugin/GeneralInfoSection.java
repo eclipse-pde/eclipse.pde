@@ -215,7 +215,7 @@ public class GeneralInfoSection extends PDESection {
 							SWTUtil.setDialogSize(dialog, 400, 500);
 							int result = dialog.open();
 							if (result == WizardDialog.OK) {
-								String newValue = wizard.getClassName();
+								String newValue = wizard.getClassNameWithArgs();
 								fClassEntry.setValue(newValue);
 							}
 						}
@@ -230,13 +230,16 @@ public class GeneralInfoSection extends PDESection {
 		value = value.trim();
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
+		int loc = value.indexOf(":");
+		if (loc!=-1 && loc >0)
+			value = value.substring(0,loc);
+		else if (loc == 0)
+			value = "";
 		return value;
 	}
 	private boolean doesClassExist(String className) {
-		String name = fClassEntry.getText().getText();
 		IProject project = getPage().getPDEEditor().getCommonProject();
-		name = trimNonAlphaChars(name);
-		String path = name.replace('.', '/') + ".java";
+		String path = className.replace('.', '/') + ".java";
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
