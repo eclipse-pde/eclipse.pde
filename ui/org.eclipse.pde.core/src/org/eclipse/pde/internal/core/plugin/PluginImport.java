@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.plugin.*;
@@ -52,28 +51,6 @@ public class PluginImport
 		return optional;
 	}
 
-	void load(PluginPrerequisiteModel importModel) {
-		this.id = importModel.getPlugin();
-		this.reexported = importModel.getExport();
-		this.version = importModel.getVersion();
-		switch (importModel.getMatchByte()) {
-			case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT :
-				this.match = PERFECT;
-				break;
-			case PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT :
-				this.match = EQUIVALENT;
-				break;
-			case PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE :
-				this.match = COMPATIBLE;
-				break;
-			case PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL :
-				this.match = GREATER_OR_EQUAL;
-				break;
-		}
-		this.optional = importModel.getOptional();
-		range = new int [] { importModel.getStartLine(), importModel.getStartLine() };
-	}
-	
 	public void load(BundleDescription description) {
 		this.id = description.getSymbolicName();
 	}
@@ -81,35 +58,25 @@ public class PluginImport
 	public void load(ManifestElement element) {
 		this.id = element.getValue();
 		this.optional = "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE));
-		this.reexported = "true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE));
-		this.version = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
+		this.reexported ="true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE));
+		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+		if (bundleVersion != null) {
+			VersionRange versionRange = new VersionRange(bundleVersion);
+			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			this.match = PluginBase.getMatchRule(versionRange);
+		}
 	}
 	
 	public void load(BundleSpecification importModel) {
 		this.id = importModel.getName();
 		this.reexported = importModel.isExported();
-		this.version = importModel.getVersionSpecification() != null ? importModel.getVersionSpecification().toString() : null;
 		this.optional = importModel.isOptional();
-		range = new int[] {0,0};
-		switch (importModel.getMatchingRule()) {
-			case VersionConstraint.GREATER_EQUAL_MATCH:
-				match = IMatchRules.GREATER_OR_EQUAL;
-				break;
-			case VersionConstraint.NO_MATCH:
-				match = IMatchRules.NONE;
-				break;
-			case VersionConstraint.MINOR_MATCH:
-				match = IMatchRules.EQUIVALENT;
-				break;
-			case VersionConstraint.MICRO_MATCH:
-				match = IMatchRules.PERFECT;
-				break;
-			case VersionConstraint.QUALIFIER_MATCH:
-				match = IMatchRules.PERFECT;
-				break;
-			default:
-				match = IMatchRules.COMPATIBLE;			
+		VersionRange versionRange = importModel.getVersionRange();
+		if (versionRange != null) {
+			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			match = PluginBase.getMatchRule(versionRange);
 		}
+		range = new int[] {0,0};
 	}
 
 	public boolean equals(Object obj) {

@@ -44,22 +44,10 @@ public class Fragment extends PluginBase implements IFragment {
 	void load(BundleDescription bundleDescription, PDEState state) {
 		HostSpecification host = bundleDescription.getHosts()[0];
 		this.pluginId = host.getName();
-		this.pluginVersion = host.getVersionSpecification().toString();
-		switch (host.getMatchingRule()) {
-			case VersionConstraint.GREATER_EQUAL_MATCH:
-				rule = IMatchRules.GREATER_OR_EQUAL;
-				break;
-			case VersionConstraint.MINOR_MATCH:
-				rule = IMatchRules.EQUIVALENT;
-				break;
-			case VersionConstraint.MAJOR_MATCH:
-				rule = IMatchRules.COMPATIBLE;
-				break;
-			case VersionConstraint.QUALIFIER_MATCH:
-				rule = IMatchRules.PERFECT;
-				break;
-			default:
-				rule = IMatchRules.NONE;			
+		VersionRange versionRange = host.getVersionRange();
+		if (versionRange != null) {
+			this.pluginVersion = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			this.rule = PluginBase.getMatchRule(versionRange);
 		}
 		super.load(bundleDescription, state);
 	}

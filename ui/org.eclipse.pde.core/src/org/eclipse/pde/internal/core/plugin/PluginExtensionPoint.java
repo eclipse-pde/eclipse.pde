@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -57,14 +56,6 @@ public class PluginExtensionPoint
 		this.schema = attributes.getValue("schema");
 		this.range = new int[] {line, line};
 		return true;
-	}
-	void load(ExtensionPointModel extensionPointModel) {
-		this.id = extensionPointModel.getId();
-		this.name = extensionPointModel.getName();
-		this.schema = extensionPointModel.getSchema();
-		int line = extensionPointModel.getStartLine();
-		this.range = new int[] { line, line };
-
 	}
 	void load(Node node, Hashtable lineTable) {
 		this.id = getNodeAttribute(node, "id");

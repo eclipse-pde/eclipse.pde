@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.w3c.dom.*;
@@ -85,24 +84,6 @@ public abstract class AbstractExtensions
 		}
 	}
 
-	void loadExtensionPoints(ExtensionPointModel[] extensionPointModels) {
-		if (extensionPointModels == null)
-			return;
-		for (int i = 0; i < extensionPointModels.length; i++) {
-			ExtensionPointModel extensionPointModel = extensionPointModels[i];
-			PluginModel parent = extensionPointModel.getParent();
-			if (parent instanceof PluginFragmentModel) {
-				// Do not accept merged entries
-				continue;
-			}
-			PluginExtensionPoint extensionPoint = new PluginExtensionPoint();
-			extensionPoint.setModel(getModel());
-			extensionPoint.setInTheModel(true);
-			extensionPoint.setParent(this);
-			extensionPoints.add(extensionPoint);
-			extensionPoint.load(extensionPointModel);
-		}
-	}
 	protected void processChild(Node child, Hashtable lineTable) {
 		String name = child.getNodeName().toLowerCase();
 		if (name.equals("extension")) {

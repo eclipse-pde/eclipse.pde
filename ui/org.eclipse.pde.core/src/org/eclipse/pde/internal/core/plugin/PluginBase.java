@@ -16,7 +16,6 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
@@ -242,21 +241,7 @@ public abstract class PluginBase
 			}
 		}
 	}
-	void loadImports(PluginPrerequisiteModel[] importModels) {
-		if (importModels == null)
-			return;
 
-		for (int i = 0; i < importModels.length; i++) {
-			PluginPrerequisiteModel importModel = importModels[i];
-			PluginImport importElement = new PluginImport();
-			importElement.setModel(getModel());
-			importElement.setInTheModel(true);
-			importElement.setParent(this);
-			imports.add(importElement);
-			importElement.load(importModel);
-		}
-	}
-	
 	void loadImports(BundleDescription description) {
 		BundleSpecification[] required = description.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
@@ -419,4 +404,31 @@ public abstract class PluginBase
 		return SAXParserFactory.newInstance().newSAXParser();
 	}
 
+
+	public static int getMatchRule(VersionRange versionRange) {
+		if (versionRange == null || versionRange.getMinimum() == null)
+			return IMatchRules.NONE;
+
+		Version minimum = versionRange.getMinimum();
+		Version maximum = versionRange.getMaximum() == null ? Version.maxVersion : versionRange.getMaximum();
+
+		if (maximum.equals(Version.maxVersion))
+			return IMatchRules.GREATER_OR_EQUAL;
+		else if (minimum.equals(maximum))
+			return IMatchRules.PERFECT;
+		else if (!minimum.isInclusive() || maximum.isInclusive())
+			return IMatchRules.NONE; // no real match rule for this
+		else if (minimum.getMajorComponent() == maximum.getMajorComponent() - 1)
+			return IMatchRules.COMPATIBLE;
+		else if (minimum.getMajorComponent() != maximum.getMajorComponent())
+			return IMatchRules.NONE; // no real match rule for this
+		else if (minimum.getMinorComponent() == maximum.getMinorComponent() - 1)
+			return IMatchRules.EQUIVALENT;
+		else if (minimum.getMinorComponent() != maximum.getMinorComponent())
+			return IMatchRules.NONE; // no real match rule for this
+		else if (minimum.getMicroComponent() == maximum.getMicroComponent() - 1)
+			return IMatchRules.PERFECT; // this is as close as we got
+
+		return IMatchRules.NONE;  // no real match rule for this
+	}
 }
