@@ -174,6 +174,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 							|| (configApp != null && applicationName != null && configApp.equals(applicationName))) {
 							result.add(configs[i]);
 						}
+					} else {
+						String thisProduct = configs[i].getAttribute(ILauncherSettings.PRODUCT, (String)null);
+						if (thisProduct != null && thisProduct.equals(getProduct(applicationName))) {
+							result.add(configs[i]);
+						}
 					}
 					
 				}
@@ -224,7 +229,13 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
 			wc.setAttribute(ILauncherSettings.USE_DEFAULT, applicationName == null);
 			if (applicationName != null) {
-				wc.setAttribute(ILauncherSettings.APPLICATION, applicationName);
+				String product = getProduct(applicationName);
+				if (product == null) {
+					wc.setAttribute(ILauncherSettings.APPLICATION, applicationName);
+				} else {
+					wc.setAttribute(ILauncherSettings.USE_PRODUCT, true);
+					wc.setAttribute(ILauncherSettings.PRODUCT, product);
+				}
 				wc.setAttribute(ILauncherSettings.AUTOMATIC_ADD, false);
 				TreeMap map = new TreeMap();
 				addPluginAndDependencies(fModel, map);
@@ -249,6 +260,28 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			PDEPlugin.logException(ce);
 		} 
 		return config;
+	}
+	
+	private String getProduct(String appName) {
+		if (fModel != null && appName != null) {
+			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IPluginExtension ext = extensions[i];
+				String point = ext.getPoint();
+				if ("org.eclipse.core.runtime.products".equals(point)) {
+					if (ext.getChildCount() == 1) {
+						IPluginElement prod = (IPluginElement)ext.getChildren()[0];
+						if (prod.getName().equals("product")) {
+							IPluginAttribute attr = prod.getAttribute("application");
+							if (attr != null && appName.equals(attr.getValue())) {
+								return fModel.getPluginBase().getId() + "." + ext.getId();
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
