@@ -93,7 +93,9 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 					launch(mode, dialog.getSelectedApplication());
 				}
 			}
-		}		
+		} else {
+			launch(mode, null);
+		}
 	}
 	
 	private IPluginModelBase getSelectedModel(ISelection selection) {
