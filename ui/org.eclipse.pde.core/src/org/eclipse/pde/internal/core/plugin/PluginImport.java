@@ -175,6 +175,8 @@ public class PluginImport
 		writer.print("<import plugin=\"" + getId() + "\"");
 		if (isReexported())
 			writer.print(" export=\"true\"");
+		if (isOptional())
+			writer.print(" optional=\"true\"");
 		if (version != null && version.length() > 0)
 			writer.print(" version=\"" + version + "\"");
 		if (match != NONE) {

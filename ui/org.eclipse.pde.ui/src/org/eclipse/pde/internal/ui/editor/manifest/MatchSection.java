@@ -33,6 +33,7 @@ import org.eclipse.update.ui.forms.internal.*;
 public class MatchSection extends PDEFormSection {
 	private FormEntry versionText;
 	private Button reexportButton;
+	private Button optionalButton;
 	private CCombo matchCombo;
 	protected IPluginReference currentImport;
 	protected IStructuredSelection multiSelection;
@@ -43,6 +44,8 @@ public class MatchSection extends PDEFormSection {
 		"ManifestEditor.MatchSection.title";
 	public static final String SECTION_DESC =
 		"ManifestEditor.MatchSection.desc";
+	public static final String KEY_OPTIONAL = 
+		"ManifestEditor.MatchSection.optional";
 	public static final String KEY_REEXPORT =
 		"ManifestEditor.MatchSection.reexport";
 	public static final String KEY_VERSION =
@@ -101,37 +104,10 @@ public class MatchSection extends PDEFormSection {
 		layout.verticalSpacing = 9;
 		layout.marginWidth = layout.marginHeight = 2;
 		container.setLayout(layout);
-		GridData gd;
 
 		if (addReexport) {
-			reexportButton =
-				factory.createButton(
-					container,
-					PDEPlugin.getResourceString(KEY_REEXPORT),
-					SWT.CHECK);
-			reexportButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (blockChanges)
-						return;
-					if (!(currentImport instanceof IPluginImport))
-						return;
-					if (currentImport != null) {
-						try {
-							IPluginImport iimport =
-								(IPluginImport) currentImport;
-							ignoreModelEvents = true;
-							iimport.setReexported(
-								reexportButton.getSelection());
-							ignoreModelEvents = false;
-						} catch (CoreException ex) {
-							PDEPlugin.logException(ex);
-						}
-					}
-				}
-			});
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			reexportButton.setLayoutData(gd);
+			createOptionalButton(factory, container);
+			createReexportButton(factory, container);
 		}
 
 		versionText =
@@ -200,6 +176,68 @@ public class MatchSection extends PDEFormSection {
 
 		update((IPluginReference) null);
 		return container;
+	}
+	
+	private void createReexportButton(FormWidgetFactory factory, Composite container) {
+		reexportButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getResourceString(KEY_REEXPORT),
+				SWT.CHECK);
+		reexportButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (blockChanges)
+					return;
+				if (!(currentImport instanceof IPluginImport))
+					return;
+				if (currentImport != null) {
+					try {
+						IPluginImport iimport =
+							(IPluginImport) currentImport;
+						ignoreModelEvents = true;
+						iimport.setReexported(
+							reexportButton.getSelection());
+						ignoreModelEvents = false;
+					} catch (CoreException ex) {
+						PDEPlugin.logException(ex);
+					}
+				}
+			}
+		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		reexportButton.setLayoutData(gd);		
+	}
+	
+	private void createOptionalButton(FormWidgetFactory factory, Composite container) {
+		optionalButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getResourceString(KEY_OPTIONAL),
+				SWT.CHECK);
+		optionalButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (blockChanges)
+					return;
+				if (!(currentImport instanceof IPluginImport))
+					return;
+				if (currentImport != null) {
+					try {
+						IPluginImport iimport =
+							(IPluginImport) currentImport;
+						//ignoreModelEvents = true;
+						iimport.setOptional(
+							optionalButton.getSelection());
+						//ignoreModelEvents = false;
+					} catch (CoreException ex) {
+						PDEPlugin.logException(ex);
+					}
+				}
+			}
+		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		optionalButton.setLayoutData(gd);				
 	}
 
 	private void applyVersion(String version) {
@@ -357,6 +395,8 @@ public class MatchSection extends PDEFormSection {
 		blockChanges = true;
 		if (iimport == null) {
 			if (addReexport) {
+				optionalButton.setSelection(false);
+				optionalButton.setEnabled(false);
 				reexportButton.setSelection(false);
 				reexportButton.setEnabled(false);
 			}
@@ -377,6 +417,8 @@ public class MatchSection extends PDEFormSection {
 		currentImport = iimport;
 		if (currentImport instanceof IPluginImport) {
 			IPluginImport pimport = (IPluginImport) currentImport;
+			optionalButton.setEnabled(!isReadOnly());
+			optionalButton.setSelection(pimport.isOptional());
 			reexportButton.setEnabled(!isReadOnly());
 			reexportButton.setSelection(pimport.isReexported());
 		}
