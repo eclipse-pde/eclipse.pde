@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
@@ -87,6 +89,7 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	public boolean isDependentOnFirstPage() {
 		return true;
 	}
+	
 
 	protected void initializeFields(String id) {
 		// In a new project wizard, we don't know this yet - the
@@ -160,10 +163,13 @@ public class PropertyPageTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		PluginReference[] refs = new PluginReference[2];
-		refs[0] = new PluginReference("org.eclipse.core.resources", null, 0);
-		refs[1] = new PluginReference("org.eclipse.ui", null, 0);		
-		return refs;
+		ArrayList result = new ArrayList();
+		result.add(new PluginReference("org.eclipse.core.resources", null, 0));
+		if (schemaVersion != null)
+			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));		
+		result.add(new PluginReference("org.eclipse.ui", null, 0));		
+			
+		return (IPluginReference[])result.toArray(new IPluginReference[result.size()]);
 	}
 
 }

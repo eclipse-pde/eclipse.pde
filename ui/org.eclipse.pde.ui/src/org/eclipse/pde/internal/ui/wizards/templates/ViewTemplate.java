@@ -11,9 +11,12 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
@@ -213,5 +216,16 @@ public class ViewTemplate extends PDETemplateSection {
 	 */
 	public String[] getFoldersToInclude() {
 		return new String[] {"icons/"};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		ArrayList result = new ArrayList();
+		if (schemaVersion != null)
+			result.add(new PluginReference("org.eclipse.core.runtime.compatibility", null, 0));
+		result.add(new PluginReference("org.eclipse.ui", null, 0));	
+		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 }

@@ -401,7 +401,7 @@ public class ContentPage extends WizardPage {
 	public boolean canFlipToNextPage() {
 		if (fIsFragment)
 			return super.canFlipToNextPage();
-		return fGenerateClass.getSelection() && fUIPlugin.getSelection();
+		return (fGenerateClass.getSelection() && fUIPlugin.getSelection()) || !fGenerateClass.getSelection();
 	}
 	
 }
