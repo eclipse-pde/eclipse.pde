@@ -79,7 +79,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			final Display display = getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(display.getActiveShell(), "Error", e.getMessage(), e.getStatus());
+					ErrorDialog.openError(display.getActiveShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), e.getMessage(), e.getStatus()); //$NON-NLS-1$
 					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 				}
 			});
@@ -251,8 +251,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				for (int i = 0; i < children.length; i++) {
 					if (!children[i].isDirectory()) {
 						String filename = children[i].getName();
-						if (filename.equals("build.xml") ||
-								(filename.startsWith("assemble.") && filename.endsWith(".xml"))) {
+						if (filename.equals("build.xml") || //$NON-NLS-1$
+								(filename.startsWith("assemble.") && filename.endsWith(".xml"))) { //$NON-NLS-1$ //$NON-NLS-2$
 							children[i].delete();
 						}
 					}
@@ -374,31 +374,31 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		return zip;
 	}
 	private void generateHeader(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">"); //$NON-NLS-1$
 	}
 	private void generateCleanTarget(PrintWriter writer) {
-		writer.println("<target name=\"clean\">");
-		writer.println("<delete dir=\"" + fBuildTempLocation + "\"/>");
-		writer.println("</target>");
+		writer.println("<target name=\"clean\">"); //$NON-NLS-1$
+		writer.println("<delete dir=\"" + fBuildTempLocation + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("</target>"); //$NON-NLS-1$
 	}
 	private void generateDeleteZipTarget(PrintWriter writer) {
-		writer.println("<target name=\"deleteZip\">");
-		writer.println("<delete file=\"" + fDestinationDirectory + "/logs.zip\"/>");
-		writer.println("</target>");	
+		writer.println("<target name=\"deleteZip\">"); //$NON-NLS-1$
+		writer.println("<delete file=\"" + fDestinationDirectory + "/logs.zip\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("</target>");	 //$NON-NLS-1$
 	}
 	
 	private boolean generateZipLogsTarget(PrintWriter writer) {
 		if (logFile != null && logFile.exists() && logFile.length() > 0) {
-			writer.println("<target name=\"zip.logs\">");
-			writer.println("<zip zipfile=\"" + fDestinationDirectory + "/logs.zip\" basedir=\"" + fBuildTempLocation + "/temp.folder\"/>");
-			writer.println("</target>");
+			writer.println("<target name=\"zip.logs\">"); //$NON-NLS-1$
+			writer.println("<zip zipfile=\"" + fDestinationDirectory + "/logs.zip\" basedir=\"" + fBuildTempLocation + "/temp.folder\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println("</target>"); //$NON-NLS-1$
 			return true;
 		}
 		return false;
 	}
 	private void generateClosingTag(PrintWriter writer) {
-		writer.println("</project>");
+		writer.println("</project>"); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the standard display to be used. The method first checks, if the
@@ -415,7 +415,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	
 	private void asyncNotifyExportException(String errorMessage) {
 		getStandardDisplay().beep();
-		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), "Error", errorMessage);
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("FeatureExportJob.error"), errorMessage); //$NON-NLS-1$
 		done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 	}
 	

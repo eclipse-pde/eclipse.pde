@@ -204,7 +204,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			featureIdText.addModifyListener(listener);
 			
 			browseButton = new Button(patchContainer, SWT.PUSH);
-			browseButton.setText("Browse...");
+			browseButton.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.browse")); //$NON-NLS-1$
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			browseButton.setLayoutData(gd);
 			browseButton.addSelectionListener(new SelectionAdapter() {

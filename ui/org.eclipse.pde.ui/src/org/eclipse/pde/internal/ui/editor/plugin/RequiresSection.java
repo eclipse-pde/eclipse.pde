@@ -62,7 +62,7 @@ public class RequiresSection
 	}
 
 	public RequiresSection(DependenciesPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {"Add...", null, "Up", "Down"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEPlugin.getResourceString("RequiresSection.add"), null, PDEPlugin.getResourceString("RequiresSection.up"), PDEPlugin.getResourceString("RequiresSection.down")});  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		getSection().setText(PDEPlugin.getResourceString("RequiresSection.title")); //$NON-NLS-1$
 		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)

@@ -64,18 +64,18 @@ public class PluginExportWizard extends BaseExportWizard {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#generateAntTask(java.io.PrintWriter)
 	 */
 	protected void generateAntTask(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		writer.println("<project name=\"build\" default=\"plugin_export\">");
-		writer.println("\t<target name=\"plugin_export\">");
-		writer.print("\t\t<pde.exportPlugins plugins=\"" + getPluginIDs()
-				+ "\" destination=\"" + page1.getDestination() + "\" ");
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		writer.println("<project name=\"build\" default=\"plugin_export\">"); //$NON-NLS-1$
+		writer.println("\t<target name=\"plugin_export\">"); //$NON-NLS-1$
+		writer.print("\t\t<pde.exportPlugins plugins=\"" + getPluginIDs() //$NON-NLS-1$
+				+ "\" destination=\"" + page1.getDestination() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		String filename = page1.getFileName();
 		if (filename != null)
-			writer.print("filename=\"" + filename + "\" ");
-		writer.print("exportType=\"" + getExportOperation() + "\" ");
-		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>"); 
-		writer.println("\t</target>");
-		writer.println("</project>");
+			writer.print("filename=\"" + filename + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print("exportType=\"" + getExportOperation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("exportSource=\"" + (page1.doExportSource() ? "true" : "false") + "\"/>");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		writer.println("\t</target>"); //$NON-NLS-1$
+		writer.println("</project>"); //$NON-NLS-1$
 	}
 	
 	private String getPluginIDs() {

@@ -764,7 +764,7 @@ public class RuntimeInfoSection extends PDESection
 								getSection().getShell(), libNames,
 								pluginModelBase);
 						dialog.create();
-						dialog.getShell().setText("Add Entry"); //$NON-NLS-1$
+						dialog.getShell().setText(PDEPlugin.getResourceString("RuntimeInfoSection.addEntry"));  //$NON-NLS-1$
 						dialog.getShell().setSize(300, 350);
 
 						try {
