@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.ui.*;
@@ -36,6 +37,10 @@ public class CompilersPreferencePage
 	implements IWorkbenchPreferencePage, IEnvironmentVariables {
 	private ArrayList fFlagControls;
 	private HashSet fChangedControls = new HashSet();
+	private Composite fPluginPage;
+	private Composite fSchemaPage;
+	private Composite fFeaturePage;
+	private HashSet fBuilders = new HashSet();
 
 	public CompilersPreferencePage() {
 		setDescription(PDEPlugin.getResourceString("CompilersPreferencePage.desc")); //$NON-NLS-1$
@@ -68,9 +73,9 @@ public class CompilersPreferencePage
 		
 		String[] choices = new String[] { PDEPlugin.getResourceString("CompilersPreferencePage.error"), PDEPlugin.getResourceString("CompilersPreferencePage.warning"), PDEPlugin.getResourceString("CompilersPreferencePage.ignore")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
-		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.schemas"), CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
-		createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
+		fPluginPage = createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.plugins"), CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
+		fSchemaPage = createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.schemas"), CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
+		fFeaturePage = createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.features"), CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
 		//createPage(folder, PDEPlugin.getResourceString("CompilersPreferencePage.sites"), CompilerFlags.SITE_FLAGS, choices); //$NON-NLS-1$
 
 		for (int i = 0; i < fFlagControls.size(); i++) {
@@ -109,7 +114,7 @@ public class CompilersPreferencePage
 			fChangedControls.remove(control);
 	}
 
-	private void createPage(
+	private Composite createPage(
 		TabFolder folder,
 		String name,
 		int index,
@@ -139,6 +144,7 @@ public class CompilersPreferencePage
 			Control control = createFlag(page, flagIds[i], choices);
 			fFlagControls.add(control);
 		}
+		return page;
 	}
 
 	private Control createFlag(
@@ -233,6 +239,7 @@ public class CompilersPreferencePage
 			if (res == 2) {
 				return false;
 			}
+			fBuilders = new HashSet();
 			for (Iterator iter = fChangedControls.iterator(); iter.hasNext();) {
 				Control control = (Control) iter.next();
 				String flagId = (String) control.getData();
@@ -246,6 +253,12 @@ public class CompilersPreferencePage
 					String value = ((Text) control).getText();
 					CompilerFlags.setString(flagId, value);
 				}
+				if (control.getParent().equals(fPluginPage))
+					fBuilders.add(PDE.MANIFEST_BUILDER_ID);
+				else if (control.getParent().equals(fSchemaPage))
+					fBuilders.add(PDE.SCHEMA_BUILDER_ID);
+				else if (control.getParent().equals(fFeaturePage))
+					fBuilders.add(PDE.FEATURE_BUILDER_ID);
 			}
 			CompilerFlags.save();
 
@@ -273,9 +286,26 @@ public class CompilersPreferencePage
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					PDEPlugin.getWorkspace().build(
-							IncrementalProjectBuilder.FULL_BUILD,
-							monitor);
+					IProject[] projects = PDE.getWorkspace().getRoot().getProjects();
+					monitor.beginTask("", projects.length*2);
+					for (int i = 0; i < projects.length; i++) {
+						IProject project = projects[i];
+						if (project.hasNature(PDE.PLUGIN_NATURE)) {
+							if (fBuilders.contains(PDE.MANIFEST_BUILDER_ID))
+								project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.MANIFEST_BUILDER_ID, null, new SubProgressMonitor(monitor,1));
+							else
+								monitor.worked(1);
+							if (fBuilders.contains(PDE.SCHEMA_BUILDER_ID))
+								project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.SCHEMA_BUILDER_ID, null, new SubProgressMonitor(monitor,1));
+							else
+								monitor.worked(1);
+						} else if (project.hasNature(PDE.FEATURE_NATURE)) {
+							if (fBuilders.contains(PDE.FEATURE_BUILDER_ID))
+								project.build(IncrementalProjectBuilder.FULL_BUILD, PDE.FEATURE_BUILDER_ID, null, new SubProgressMonitor(monitor,2));
+						} else {
+							monitor.worked(2);
+						}
+					}
 				} catch (CoreException e) {
 					return e.getStatus();
 				} catch (OperationCanceledException e) {
