@@ -89,7 +89,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		try {
 			String dataSuffix = createDataSuffix(data);
 			IPath statePath = PDECore.getDefault().getStateLocation();
-			IPath pluginPath;
 			String fileName = "plugin_path.properties";
 			File dir = new File(statePath.toOSString());
 
@@ -105,7 +104,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginModelBase curr = plugins[i];
 				String key = getKey(curr);
-				properties.setProperty(key, createURL(curr));
+				if (key != null)
+					properties.setProperty(key, createURL(curr));
 			}
 
 			FileOutputStream fos = null;
