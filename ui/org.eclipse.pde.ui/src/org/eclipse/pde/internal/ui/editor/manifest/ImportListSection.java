@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
+import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.swt.SWT;
@@ -169,6 +170,10 @@ public class ImportListSection
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 		actionGroup.setContext(new ActionContext(selection));
 		actionGroup.fillContextMenu(manager);
+		if (getFormPage().getModel() instanceof WorkspacePluginModelBase) {
+			manager.add(new Separator());
+			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase) getFormPage().getModel()));
+		}
 	}
 
 	private void handleDelete() {

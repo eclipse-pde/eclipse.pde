@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.pde.internal.core.*;
@@ -15,10 +16,12 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
+import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.core.*;
 
 public class ManifestFormOutlinePage extends FormOutlinePage {
@@ -102,6 +105,11 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 				contextMenuAboutToShow(manager);
 			}
 			private void contextMenuAboutToShow(IMenuManager manager) {
+				IPluginModelBase model = getPlugin().getModel();
+				if (model instanceof WorkspacePluginModelBase) {
+					manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)model));
+					manager.add(new Separator());
+				}
 				PluginSearchActionGroup actionGroup =
 					new PluginSearchActionGroup();
 				actionGroup.setContext(new ActionContext(getSelection()));

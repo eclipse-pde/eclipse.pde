@@ -45,6 +45,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ImportObject) {
 			return getObjectText((ImportObject) obj);
 		}
+		if (obj instanceof IPluginImport) {
+			return getObjectText((IPluginImport)obj);
+		}
 		if (obj instanceof IPluginLibrary) {
 			return getObjectText((IPluginLibrary) obj);
 		}
@@ -118,6 +121,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ImportObject obj) {
+		if (isFullNameModeEnabled())
+			return obj.toString();
+		return obj.getId();
+	}
+	
+	public String getObjectText(IPluginImport obj) {
 		if (isFullNameModeEnabled())
 			return obj.toString();
 		return obj.getId();

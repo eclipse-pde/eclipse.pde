@@ -8,11 +8,13 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
+import org.eclipse.pde.internal.ui.search.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.project.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
@@ -152,6 +154,10 @@ public class DependenciesView extends ViewPart {
 			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
 			actionGroup.setContext(new ActionContext(selection));
 			actionGroup.fillContextMenu(manager);
+			manager.add(new Separator());
+		}
+		if (treeViewer.getInput() instanceof WorkspacePluginModelBase) {
+			manager.add(new UnusedDependenciesAction((WorkspacePluginModelBase)treeViewer.getInput()));
 			manager.add(new Separator());
 		}
 		drillDownAdapter.addNavigationActions(manager);
