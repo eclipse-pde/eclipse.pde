@@ -389,6 +389,7 @@
       point="org.eclipse.debug.core.launchers">
    <launcher
          label="%launcher.regular.label"
+         wizard="org.eclipse.pde.internal.launcher.WorkbenchLauncherWizard"
          modes="run, debug"
          class="org.eclipse.pde.internal.launcher.WorkbenchLauncher"
          id="org.eclipse.pde.WorkbenchRunLauncher">
