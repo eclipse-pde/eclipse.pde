@@ -47,7 +47,7 @@ public abstract class WorkspacePluginModelBase
 	}
 
 	public WorkspacePluginModelBase(IFile file) {
-		this.file = file;
+		setFile(file);
 		setEnabled(true);
 	}
 	public void fireModelChanged(IModelChangedEvent event) {
@@ -169,5 +169,6 @@ public abstract class WorkspacePluginModelBase
 	}
 	public void setFile(IFile newFile) {
 		file = newFile;
+		setEditable(newFile.isReadOnly()==false);
 	}
 }

@@ -103,22 +103,22 @@ public class WorkspaceModelManager
 			String name = file.getName().toLowerCase();
 			if (name.equals("plugin.xml")) {
 				WorkspacePluginModel model = new WorkspacePluginModel(file);
-				model.setEditable(editable);
+				model.setEditable(editable && model.isEditable());
 				return model;
 			}
 			if (name.equals("fragment.xml")) {
 				WorkspaceFragmentModel model = new WorkspaceFragmentModel(file);
-				model.setEditable(editable);
+				model.setEditable(editable && model.isEditable());
 				return model;
 			}
 			if (name.equals("build.properties")) {
 				WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-				model.setEditable(editable);
+				model.setEditable(editable && model.isEditable());
 				return model;
 			}
 			if (name.equals("feature.xml")) {
 				WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
-				model.setEditable(editable);
+				model.setEditable(editable && model.isEditable());
 				return model;
 			}
 		}

@@ -130,25 +130,28 @@ public class JarsSection
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		if (!(getFormPage().getModel() instanceof IEditable))
-			return;
+		IModel model = (IModel)getFormPage().getModel();
+
 		ISelection selection = entryTable.getSelection();
 
 		if (currentLibrary != null) {
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
+			Action newAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_FOLDER)) {
 				public void run() {
 					handleNew();
 				}
-			});
+			};
+			newAction.setEnabled(model.isEditable());
+			manager.add(newAction);
 		}
 
 		if (!selection.isEmpty()) {
 			manager.add(new Separator());
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();
 				}
-			});
+			};
+			deleteAction.setEnabled(model.isEditable());
 		}
 		manager.add(new Separator());
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);

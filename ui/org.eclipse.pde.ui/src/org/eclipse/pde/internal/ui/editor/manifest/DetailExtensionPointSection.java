@@ -59,7 +59,7 @@ public class DetailExtensionPointSection
 	}
 
 	public DetailExtensionPointSection(ManifestExtensionPointPage page) {
-		super(page, new String [] { PDEPlugin.getResourceString(SECTION_NEW) });
+		super(page, new String[] { PDEPlugin.getResourceString(SECTION_NEW)});
 		this.setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		this.setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		getTablePart().setEditable(false);
@@ -67,23 +67,23 @@ public class DetailExtensionPointSection
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		this.factory = factory;
 		Composite container = createClientContainer(parent, 2, factory);
-		
+
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, factory);
 		TablePart part = getTablePart();
 		pointTable = part.getTableViewer();
 		pointTable.setContentProvider(new TableContentProvider());
 		pointTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
-		
+
 		return container;
 	}
-	
+
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
 		fireSelectionNotification(item);
 		getFormPage().setSelection(selection);
 	}
-	
+
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		model.removeModelChangedListener(this);
@@ -112,19 +112,21 @@ public class DetailExtensionPointSection
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = pointTable.getSelection();
 
-		manager
-			.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_EXTENSION_POINT)) {
+		Action newAction =
+			new Action(PDEPlugin.getResourceString(POPUP_NEW_EXTENSION_POINT)) {
 			public void run() {
 				handleNew();
 			}
-		});
+		};
+		newAction.setEnabled(!isReadOnly());
+		manager.add(newAction);
 
 		if (!selection.isEmpty()) {
 			Object object = ((IStructuredSelection) selection).getFirstElement();
 			final IPluginExtensionPoint point = (IPluginExtensionPoint) object;
 
 			manager.add(new Separator());
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					IPluginBase plugin = point.getPluginBase();
 					try {
@@ -132,15 +134,18 @@ public class DetailExtensionPointSection
 					} catch (CoreException e) {
 					}
 				}
-			});
+			};
+			deleteAction.setEnabled(!isReadOnly());
+			manager.add(deleteAction);
 		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		manager.add(new PropertiesAction(getFormPage().getEditor()));
 	}
-	
+
 	protected void buttonSelected(int index) {
-		if (index==0) handleNew();
+		if (index == 0)
+			handleNew();
 	}
 	private void handleDelete() {
 		Object object =
@@ -212,7 +217,7 @@ public class DetailExtensionPointSection
 		pointTable.getTable().setFocus();
 	}
 	protected void doPaste(Object target, Object[] objects) {
-		IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
+		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 		IPluginBase plugin = model.getPluginBase();
 		try {
 			for (int i = 0; i < objects.length; i++) {
@@ -229,7 +234,8 @@ public class DetailExtensionPointSection
 		}
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof IPluginExtensionPoint) return true;
+		if (objects[0] instanceof IPluginExtensionPoint)
+			return true;
 		return false;
 	}
 }

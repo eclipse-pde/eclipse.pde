@@ -416,7 +416,7 @@ public class DetailExtensionSection
 		manager.add(new Separator());
 		//}
 		if (fullMenu) {
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					try {
 						IPluginObject parentsParent = parent.getParent();
@@ -430,7 +430,9 @@ public class DetailExtensionSection
 					} catch (CoreException e) {
 					}
 				}
-			});
+			};
+			deleteAction.setEnabled(((IModel)page.getModel()).isEditable());
+			manager.add(deleteAction);
 		}
 		return menu;
 	}

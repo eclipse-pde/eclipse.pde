@@ -95,7 +95,6 @@ private IFile createFeatureManifest(
 	IWorkspaceRoot root = folder.getProject().getWorkspace().getRoot();
 	IFile file = root.getFile(path);
 	WorkspaceFeatureModel model = new WorkspaceFeatureModel();
-	model.setEditable(true);
 	model.setFile(file);
 	IFeature feature = model.getFeature();
 	String name = data.name;

@@ -17,7 +17,7 @@ public class WorkspaceBuildModel extends BuildModel implements IEditable {
 	private boolean editable = true;
 
 public WorkspaceBuildModel(IFile file) {
-	this.file = file;
+	setFile(file);
 }
 public void fireModelChanged(IModelChangedEvent event) {
 	dirty = true;
@@ -118,5 +118,6 @@ public void setEditable(boolean newEditable) {
 }
 public void setFile(IFile newFile) {
 	file = newFile;
+	setEditable(file.isReadOnly()==false);
 }
 }

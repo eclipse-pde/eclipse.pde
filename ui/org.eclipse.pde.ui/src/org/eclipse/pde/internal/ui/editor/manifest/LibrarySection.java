@@ -164,23 +164,26 @@ public class LibrarySection
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		if (!(getFormPage().getModel() instanceof IEditable))
-			return;
+		IModel model = (IModel)getFormPage().getModel();
 		ISelection selection = libraryTable.getSelection();
 
-		manager.add(new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
+		Action newAction = new Action(PDEPlugin.getResourceString(POPUP_NEW_LIBRARY)) {
 			public void run() {
 				handleNew();
 			}
-		});
+		};
+		newAction.setEnabled(model.isEditable());
+		manager.add(newAction);
 
 		if (!selection.isEmpty()) {
 			manager.add(new Separator());
-			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();
 				}
-			});
+			};
+			deleteAction.setEnabled(model.isEditable());
+			manager.add(deleteAction);
 		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
