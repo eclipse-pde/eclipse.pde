@@ -61,6 +61,16 @@ public class SchemaTransformer implements ISchemaTransformer {
 		"Builders.Schema.Verifier.defaultWithoutValue";
 	public static final String KEY_DEPRECATED_TYPE =
 		"Builders.Schema.deprecatedType";
+	public static final String REPORT_UNMATCHED =
+		"SchemaTransformer.Validator.unmatched";
+	public static final String REPORT_FORBIDDEN = 
+		"SchemaTransformer.Validator.forbidden";
+	public static final String REPORT_OPTIONAL =
+		"SchemaTransformer.Validator.optional";
+	public static final String REPORT_GENERAL = 
+		"SchemaTransformer.Validator.general";
+	public static final String REPORT_OPEN = 
+		"SchemaTransformer.Validator.open_tag";
 
 	private static final String COLOR_TAG = "#000080";
 	private static final String COLOR_CSTRING = "#008000";
@@ -678,9 +688,9 @@ public class SchemaTransformer implements ISchemaTransformer {
 					} else {
 						if (flagGeneral){
 							if (locEnd ==-1) {
-								report("GENERAL", tag, linenum, container, reporter);
+								report("OPEN_TAG", "null", linenum, container, reporter);
 							} else {
-								report("GENERAL", "/" + tag, linenum, container, reporter);
+								report("OPEN_TAG", "null", linenum, container, reporter);
 							}  
 							openTag = false;
 						}
@@ -698,7 +708,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		
 		if (openTag){
-			report("GENERAL", "", linenum, container, reporter);
+			report("OPEN_TAG", "null", linenum, container, reporter);
 		} 
 
 		while (!tagStack.isEmpty()) {
@@ -727,23 +737,28 @@ public class SchemaTransformer implements ISchemaTransformer {
 	private boolean report(String errType, String errTag, int linenum, PlatformObject container, PluginErrorReporter reporter){
 		if (container instanceof SchemaObject) {
 			if (errTag.equals("")) {
-				reporter.report("Unmatched tags in documentation.",
+				reporter.report(PDE.getResourceString(REPORT_UNMATCHED),
 					((SchemaObject) container).getStartLine() + linenum,
 					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 				return	CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
 			} else {
 				if (errType.equals("FORBIDDEN")) {
-					reporter.report("Found illegal end tag <"+ errTag+ ">.",
+					reporter.report(PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 						((SchemaObject) container).getStartLine()+ linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)== CompilerFlags.ERROR;
 				} else if (errType.equals("OPTIONAL")) {
-					reporter.report("<"+ errTag+ "> missing optional end tag.",
+					reporter.report(PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 						((SchemaObject) container).getStartLine()+ linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)== CompilerFlags.ERROR;
+				} else if (errType.equals("OPEN_TAG")){
+					reporter.report(PDE.getResourceString(REPORT_OPEN),
+						((SchemaObject) container).getStartLine()+ linenum,
+						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
 				} else {
-					reporter.report("<"+ errTag+ "> unmatched in documentation.",
+					reporter.report(PDE.getFormattedMessage(REPORT_GENERAL, errTag),
 						((SchemaObject) container).getStartLine()+ linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
@@ -751,23 +766,28 @@ public class SchemaTransformer implements ISchemaTransformer {
 			}
 		} else { //i.e. if (container instanceof Schema)
 			if (errTag.equals("")) {
-				reporter.report("Unmatched tags in documentation.",
+				reporter.report(PDE.getResourceString(REPORT_UNMATCHED),
 					((Schema) container).getOverviewStartLine() + linenum,
 					CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
 			} else {
 				if (errType.equals("FORBIDDEN")) {
-					reporter.report("Found illegal end tag <"+ errTag+ ">. ",
+					reporter.report(PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 						((Schema) container).getOverviewStartLine() + linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_FORBIDDEN_END_TAGS)== CompilerFlags.ERROR;
 				} else if (errType.equals("OPTIONAL")) {
-					reporter.report("<"+ errTag+ "> missing optional end tag.",
+					reporter.report(PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 						((Schema) container).getOverviewStartLine() + linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_OPTIONAL_END_TAGS)== CompilerFlags.ERROR;
+				} else if (errType.equals("OPEN_TAG")){
+					reporter.report(PDE.getResourceString(REPORT_OPEN),
+						((Schema) container).getOverviewStartLine() + linenum,
+						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
+					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
 				} else {
-					reporter.report("<"+ errTag+ "> unmatched in documentation.",
+					reporter.report(PDE.getFormattedMessage(REPORT_GENERAL, errTag),
 						((Schema) container).getOverviewStartLine() + linenum,
 						CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS));
 					return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)== CompilerFlags.ERROR;
