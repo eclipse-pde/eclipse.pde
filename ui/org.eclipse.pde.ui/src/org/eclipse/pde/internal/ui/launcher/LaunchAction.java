@@ -188,7 +188,7 @@ public class LaunchAction extends Action {
 
 	private ILaunchConfiguration createConfiguration() throws CoreException {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
-		String computedName = getComputedName(fProduct.getId());
+		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 		wc.setAttribute(ILauncherSettings.LOCATION + "0", RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 		wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
