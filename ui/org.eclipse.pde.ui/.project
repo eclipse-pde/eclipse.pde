@@ -4,8 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>org.apache.xerces</project>
-		<project>org.eclipse.ant.core</project>
-		<project>org.eclipse.ant.ui</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
@@ -17,6 +15,7 @@
 		<project>org.eclipse.pde</project>
 		<project>org.eclipse.pde.build</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.ui.externaltools</project>
 		<project>org.eclipse.update.core</project>
 		<project>org.eclipse.update.ui.forms</project>
 	</projects>

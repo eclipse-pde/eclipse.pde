@@ -4,10 +4,9 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.ant.internal.ui.AntAction;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
@@ -22,6 +21,7 @@ import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.externaltools.internal.ui.AntAction;
 
 public class BuildPluginAction implements IObjectActionDelegate {
 	public static final String KEY_ERRORS_TITLE = "GeneratePluginJars.errorsTitle";
@@ -192,7 +192,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 			// should probably warn the user
 			return;
 		}
-		AntAction action = new AntAction(file);
+		AntAction action = new AntAction(file, PDEPlugin.getActiveWorkbenchWindow());
 		action.run();
 	}
 }
