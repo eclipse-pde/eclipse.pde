@@ -684,10 +684,7 @@ IModelChangedListener {
 			update((IBuildEntry) item);
 			updateDirectionalButtons();
 			String name = ((IBuildEntry) item).getName();
-			if (!name.endsWith(".")) //$NON-NLS-1$
-				fIncludeLibraryButton.setVisible(true);
-			else
-				fIncludeLibraryButton.setVisible(false);
+			fIncludeLibraryButton.setVisible(true);
 			if (name.startsWith(IBuildEntry.JAR_PREFIX))
 				name = name.substring(IBuildEntry.JAR_PREFIX.length());
 			fIncludeLibraryButton.setSelection(isJarIncluded(name));
