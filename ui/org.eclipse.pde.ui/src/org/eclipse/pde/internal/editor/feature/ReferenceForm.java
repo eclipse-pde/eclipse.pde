@@ -11,6 +11,7 @@ import org.eclipse.pde.model.plugin.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.pde.internal.editor.manifest.MatchSection;
+import org.eclipse.pde.internal.PDEPlugin;
 
 public class ReferenceForm extends ScrollableSectionForm {
 	private static final String KEY_HEADING = "FeatureEditor.ReferencePage.heading";
@@ -69,8 +70,8 @@ public void expandTo(Object object) {
 public void initialize(Object modelObject) {
 	IFeatureModel model = (IFeatureModel) modelObject;
 	super.initialize(model);
-	IFeature component = model.getFeature();
-	setHeadingText(component.getLabel());
+	IFeature feature = model.getFeature();
+	setHeadingText(PDEPlugin.getResourceString(KEY_HEADING));
 	((Composite)getControl()).layout(true);
 }
 }

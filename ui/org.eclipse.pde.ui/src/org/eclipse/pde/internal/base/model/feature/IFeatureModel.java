@@ -16,7 +16,7 @@ public interface IFeatureModel extends IModel, IModelChangeProvider {
 /**
  * Returns the top-level model object.
  *
- * @return top-level model object of the component model
+ * @return top-level model object of the feature model
  */
 public IFeature getFeature();
 /**

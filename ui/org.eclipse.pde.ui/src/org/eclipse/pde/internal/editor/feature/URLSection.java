@@ -30,13 +30,19 @@ public class URLSection extends PDEFormSection {
 	public static final String SECTION_TITLE = "FeatureEditor.URLSection.title";
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
-	public static final String POPUP_UPDATE_URL = "FeatureEditor.URLSection.updateURL";
-	public static final String POPUP_DISCOVERY_URL = "FeatureEditor.URLSection.discoveryURL";
+	public static final String POPUP_UPDATE_URL =
+		"FeatureEditor.URLSection.updateURL";
+	public static final String POPUP_DISCOVERY_URL =
+		"FeatureEditor.URLSection.discoveryURL";
 	public static final String SECTION_DESC = "FeatureEditor.URLSection.desc";
-	public static final String NEW_UPDATE_SITE = "FeatureEditor.URLSection.newUpdateSite";
-	public static final String NEW_DISCOVERY_SITE = "FeatureEditor.URLSection.newDiscoverySite";
-	public static final String KEY_UPDATE_URLS = "FeatureEditor.URLSection.updateURLs";
-	public static final String KEY_DISCOVERY_URLS = "FeatureEditor.URLSection.discoveryURLs";
+	public static final String NEW_UPDATE_SITE =
+		"FeatureEditor.URLSection.newUpdateSite";
+	public static final String NEW_DISCOVERY_SITE =
+		"FeatureEditor.URLSection.newDiscoverySite";
+	public static final String KEY_UPDATE_URLS =
+		"FeatureEditor.URLSection.updateURLs";
+	public static final String KEY_DISCOVERY_URLS =
+		"FeatureEditor.URLSection.discoveryURLs";
 	public static final String NEW_URL = "FeatureEditor.URLSection.newURL";
 
 	private boolean updateNeeded;
@@ -56,8 +62,8 @@ public class URLSection extends PDEFormSection {
 		}
 		IFeatureURL getURL() {
 			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-			IFeature component = model.getFeature();
-			return component.getURL();
+			IFeature feature = model.getFeature();
+			return feature.getURL();
 		}
 	}
 
@@ -89,10 +95,11 @@ public class URLSection extends PDEFormSection {
 				return ((URLFolder) child).getURL();
 			}
 			if (child instanceof IFeatureURLElement) {
-				IFeatureURLElement element = (IFeatureURLElement)child;
-				if (element.getElementType()==IFeatureURLElement.UPDATE)
-				return folders[0];
-				else return folders[1];
+				IFeatureURLElement element = (IFeatureURLElement) child;
+				if (element.getElementType() == IFeatureURLElement.UPDATE)
+					return folders[0];
+				else
+					return folders[1];
 			}
 			return null;
 		}
@@ -127,185 +134,184 @@ public class URLSection extends PDEFormSection {
 
 	}
 
-public URLSection(FeatureFormPage page) {
-	super(page);
-	setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
-	setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-	urlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
-	urlFolderImage = provider.get(PDEPluginImages.DESC_LINKS_OBJ);
-}
-public void commitChanges(boolean onSave) {
-}
-public Composite createClient(Composite parent, FormWidgetFactory factory) {
-	Composite container = factory.createComposite(parent);
-	GridLayout layout = new GridLayout();
-	container.setLayout(layout);
-	Tree tree = factory.createTree(container, SWT.NULL);
-	urlTree = new TreeViewer(tree);
-	urlTree.setContentProvider(new URLContentProvider());
-	urlTree.setLabelProvider(new URLLabelProvider());
-	urlTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-	urlTree.addSelectionChangedListener(new ISelectionChangedListener() {
-		public void selectionChanged(SelectionChangedEvent e) {
-			getFormPage().setSelection(e.getSelection());
-		}
-	});
-	MenuManager popupMenuManager = new MenuManager();
-	IMenuListener listener = new IMenuListener() {
-		public void menuAboutToShow(IMenuManager mng) {
-			fillContextMenu(mng);
-		}
-	};
-	popupMenuManager.addMenuListener(listener);
-	popupMenuManager.setRemoveAllWhenShown(true);
-	Menu menu = popupMenuManager.createContextMenu(urlTree.getTree());
-	urlTree.getTree().setMenu(menu);
-
-	GridData gd = new GridData(GridData.FILL_BOTH);
-	gd.heightHint = 100;
-	tree.setLayoutData(gd);
-	factory.paintBordersFor(container);
-	return container;
-}
-public void dispose() {
-	IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-	model.removeModelChangedListener(this);
-	super.dispose();
-}
-public boolean doGlobalAction(String actionId) {
-	if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-		handleDelete();
-		return true;
+	public URLSection(FeatureFormPage page) {
+		super(page);
+		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
+		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
+		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+		urlImage = provider.get(PDEPluginImages.DESC_LINK_OBJ);
+		urlFolderImage = provider.get(PDEPluginImages.DESC_LINKS_OBJ);
 	}
-	return false;
-}
-public void expandTo(Object object) {
-	urlTree.setSelection(new StructuredSelection(object), true);
-}
-private void fillContextMenu(IMenuManager manager) {
-	if (!(getFormPage().getModel() instanceof IEditable))
-		return;
-	ISelection selection = urlTree.getSelection();
-	Object object = ((IStructuredSelection) selection).getFirstElement();
-
-	MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
-
-	submenu.add(new Action(PDEPlugin.getResourceString(POPUP_UPDATE_URL)) {
-		public void run() {
-			handleNewURL(IFeatureURLElement.UPDATE);
-		}
-	});
-	submenu.add(new Action(PDEPlugin.getResourceString(POPUP_DISCOVERY_URL)) {
-		public void run() {
-			handleNewURL(IFeatureURLElement.DISCOVERY);
-		}
-	});
-	manager.add(submenu);
-
-	if (object != null && object instanceof IFeatureURLElement) {
-		manager.add(new Separator());
-		manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
-			public void run() {
-				handleDelete();
+	public void commitChanges(boolean onSave) {
+	}
+	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		container.setLayout(layout);
+		Tree tree = factory.createTree(container, SWT.NULL);
+		urlTree = new TreeViewer(tree);
+		urlTree.setContentProvider(new URLContentProvider());
+		urlTree.setLabelProvider(new URLLabelProvider());
+		urlTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		urlTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				getFormPage().setSelection(e.getSelection());
 			}
 		});
+		MenuManager popupMenuManager = new MenuManager();
+		IMenuListener listener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mng) {
+				fillContextMenu(mng);
+			}
+		};
+		popupMenuManager.addMenuListener(listener);
+		popupMenuManager.setRemoveAllWhenShown(true);
+		Menu menu = popupMenuManager.createContextMenu(urlTree.getTree());
+		urlTree.getTree().setMenu(menu);
+
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 100;
+		tree.setLayoutData(gd);
+		factory.paintBordersFor(container);
+		return container;
 	}
-	manager.add(new Separator());
-	getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
-}
-private void handleDelete() {
-	Object object =
-		((IStructuredSelection) urlTree.getSelection()).getFirstElement();
-	if (object != null && object instanceof IFeatureURLElement) {
-		IFeatureURLElement urlElement = (IFeatureURLElement) object;
-		IFeature component = urlElement.getFeature();
-		IFeatureURL url = component.getURL();
+	public void dispose() {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		model.removeModelChangedListener(this);
+		super.dispose();
+	}
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+			handleDelete();
+			return true;
+		}
+		return false;
+	}
+	public void expandTo(Object object) {
+		urlTree.setSelection(new StructuredSelection(object), true);
+	}
+	private void fillContextMenu(IMenuManager manager) {
+		if (!(getFormPage().getModel() instanceof IEditable))
+			return;
+		ISelection selection = urlTree.getSelection();
+		Object object = ((IStructuredSelection) selection).getFirstElement();
+
+		MenuManager submenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
+
+		submenu.add(new Action(PDEPlugin.getResourceString(POPUP_UPDATE_URL)) {
+			public void run() {
+				handleNewURL(IFeatureURLElement.UPDATE);
+			}
+		});
+		submenu.add(new Action(PDEPlugin.getResourceString(POPUP_DISCOVERY_URL)) {
+			public void run() {
+				handleNewURL(IFeatureURLElement.DISCOVERY);
+			}
+		});
+		manager.add(submenu);
+
+		if (object != null && object instanceof IFeatureURLElement) {
+			manager.add(new Separator());
+			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
+				public void run() {
+					handleDelete();
+				}
+			});
+		}
+		manager.add(new Separator());
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
+	}
+	private void handleDelete() {
+		Object object =
+			((IStructuredSelection) urlTree.getSelection()).getFirstElement();
+		if (object != null && object instanceof IFeatureURLElement) {
+			IFeatureURLElement urlElement = (IFeatureURLElement) object;
+			IFeature feature = urlElement.getFeature();
+			IFeatureURL url = feature.getURL();
+			try {
+				if (urlElement.getElementType() == IFeatureURLElement.UPDATE)
+					url.removeUpdate(urlElement);
+				else
+					url.removeDiscovery(urlElement);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+	private void handleNewURL(int type) {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+		IFeatureURL url = feature.getURL();
+
+		if (url == null) {
+			url = model.getFactory().createURL();
+			try {
+				feature.setURL(url);
+			} catch (CoreException e) {
+				return;
+			}
+		}
 		try {
-			if (urlElement.getElementType() == IFeatureURLElement.UPDATE)
-				url.removeUpdate(urlElement);
+			IFeatureURLElement element = model.getFactory().createURLElement(url, type);
+			String label =
+				type == IFeatureURLElement.UPDATE
+					? PDEPlugin.getResourceString(NEW_UPDATE_SITE)
+					: PDEPlugin.getResourceString(NEW_DISCOVERY_SITE);
+			element.setLabel(label);
+			element.setURL(new URL(PDEPlugin.getResourceString(NEW_URL)));
+			if (type == IFeatureURLElement.UPDATE)
+				url.addUpdate(element);
 			else
-				url.removeDiscovery(urlElement);
+				url.addDiscovery(element);
+
 		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}
 	}
-}
-private void handleNewURL(int type) {
-	IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-	IFeature component = model.getFeature();
-	IFeatureURL url = component.getURL();
-
-	if (url == null) {
-		url = model.getFactory().createURL();
-		try {
-			component.setURL(url);
-		} catch (CoreException e) {
-			return;
+	public void initialize(Object input) {
+		IFeatureModel model = (IFeatureModel) input;
+		update(input);
+		if (model.isEditable() == false) {
 		}
+		model.addModelChangedListener(this);
 	}
-	try {
-		IFeatureURLElement element = model.getFactory().createURLElement(url, type);
-		String label =
-			type == IFeatureURLElement.UPDATE
-				? PDEPlugin.getResourceString(NEW_UPDATE_SITE)
-				: PDEPlugin.getResourceString(NEW_DISCOVERY_SITE);
-		element.setLabel(label);
-		element.setURL(new URL(PDEPlugin.getResourceString(NEW_URL)));
-		if (type == IFeatureURLElement.UPDATE)
-			url.addUpdate(element);
-		else
-			url.addDiscovery(element);
-
-	} catch (CoreException e) {
-		PDEPlugin.logException(e);
-	} catch (MalformedURLException e) {
-		PDEPlugin.logException(e);
-	}
-}
-public void initialize(Object input) {
-	IFeatureModel model = (IFeatureModel)input;
-	update(input);
-	if (model.isEditable()==false) {
-	}
-	model.addModelChangedListener(this);
-}
-public void modelChanged(IModelChangedEvent e) {
-	if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-		updateNeeded = true;
-		if (getFormPage().isVisible())
-			update();
-	} else {
-		Object obj = e.getChangedObjects()[0];
-		if (obj instanceof IFeatureURLElement) {
-			if (e.getChangeType() == IModelChangedEvent.INSERT) {
-				Object parent = null;
-				IFeatureURLElement element = (IFeatureURLElement) obj;
-				if (element.getElementType() == IFeatureURLElement.UPDATE) {
-					parent = folders[0];
-				} else
-					parent = folders[1];
-				urlTree.add(parent, element);
-				urlTree.setSelection(new StructuredSelection(element), true);
-			} else
-				if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			updateNeeded = true;
+			if (getFormPage().isVisible())
+				update();
+		} else {
+			Object obj = e.getChangedObjects()[0];
+			if (obj instanceof IFeatureURLElement) {
+				if (e.getChangeType() == IModelChangedEvent.INSERT) {
+					Object parent = null;
+					IFeatureURLElement element = (IFeatureURLElement) obj;
+					if (element.getElementType() == IFeatureURLElement.UPDATE) {
+						parent = folders[0];
+					} else
+						parent = folders[1];
+					urlTree.add(parent, element);
+					urlTree.setSelection(new StructuredSelection(element), true);
+				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					urlTree.remove(obj);
 				} else {
 					urlTree.update(obj, null);
 				}
+			}
 		}
 	}
-}
-public void setFocus() {
-}
-public void update() {
-	if (updateNeeded) {
-		this.update(getFormPage().getModel());
+	public void setFocus() {
 	}
-}
-public void update(Object input) {
-	IFeatureModel model = (IFeatureModel)input;
-	urlTree.setInput(model);
-	updateNeeded=false;
-}
+	public void update() {
+		if (updateNeeded) {
+			this.update(getFormPage().getModel());
+		}
+	}
+	public void update(Object input) {
+		IFeatureModel model = (IFeatureModel) input;
+		urlTree.setInput(model);
+		updateNeeded = false;
+	}
 }

@@ -52,17 +52,17 @@ public FeatureSpecSection(FeatureFormPage page) {
 }
 public void commitChanges(boolean onSave) {
 	IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-	IFeature component = model.getFeature();
-	String oldId = component.getId();
-	String oldVersion = component.getVersion();
+	IFeature feature = model.getFeature();
+	String oldId = feature.getId();
+	String oldVersion = feature.getVersion();
 	titleText.commit();
 	providerText.commit();
 	idText.commit();
 	versionText.commit();
-	String newId = component.getId();
-	String newVersion = component.getVersion();
+	String newId = feature.getId();
+	String newVersion = feature.getVersion();
 	if (!oldId.equals(newId) || !oldVersion.equals(newVersion)) {
-		// component folder must be renamed
+		// feature folder must be renamed
 		String newName = newId+"_"+newVersion;
 		IFolder folder = (IFolder)model.getUnderlyingResource().getParent();
 		IPath newPath = folder.getFullPath().removeLastSegments(1).append(newName);
@@ -82,14 +82,14 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	layout.horizontalSpacing = 6;
 	container.setLayout(layout);
 
-	IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-	final IFeature component = model.getFeature();
+	final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+	final IFeature feature = model.getFeature();
 
 	idText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_ID), factory));
 	idText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormEntry text) {
 			try {
-				component.setId(text.getValue());
+				feature.setId(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -104,11 +104,11 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	titleText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormEntry text) {
 			try {
-				component.setLabel(text.getValue());
+				feature.setLabel(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-			getFormPage().getForm().setHeadingText(component.getLabel());
+			getFormPage().getForm().setHeadingText(model.getResourceString(feature.getLabel()));
 			((FeatureEditor) getFormPage().getEditor()).updateTitle();
 		}
 		public void textDirty(FormEntry text) {
@@ -118,9 +118,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	versionText = new FormEntry(createText(container, PDEPlugin.getResourceString(SECTION_VERSION), factory));
 	versionText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormEntry text) {
-			if (verifySetVersion(component, text.getValue())==false) {
+			if (verifySetVersion(feature, text.getValue())==false) {
 				warnBadVersionFormat(text.getValue());
-				text.setValue(component.getVersion());
+				text.setValue(feature.getVersion());
 			}
 		}
 		public void textDirty(FormEntry text) {
@@ -133,7 +133,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	providerText.addFormTextListener(new IFormTextListener() {
 		public void textValueChanged(FormEntry text) {
 			try {
-				component.setProviderName(text.getValue());
+				feature.setProviderName(text.getValue());
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -189,10 +189,10 @@ private void forceDirty() {
 	}
 }
 
-private boolean verifySetVersion(IFeature component, String value) {
+private boolean verifySetVersion(IFeature feature, String value) {
 	try {
 		PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
-		component.setVersion(pvi.toString());
+		feature.setVersion(pvi.toString());
 	}
 	catch (Exception e) {
 		return false;
@@ -271,12 +271,12 @@ public void update() {
 }
 public void update(Object input) {
 	IFeatureModel model = (IFeatureModel)input;
-	IFeature component = model.getFeature();
-	setIfDefined(idText, component.getId());
-	setIfDefined(titleText, component.getLabel());
-	getFormPage().getForm().setHeadingText(component.getLabel());
-	setIfDefined(versionText, component.getVersion());
-	setIfDefined(providerText, component.getProviderName());
+	IFeature feature = model.getFeature();
+	setIfDefined(idText, feature.getId());
+	setIfDefined(titleText, feature.getLabel());
+	getFormPage().getForm().setHeadingText(model.getResourceString(feature.getLabel()));
+	setIfDefined(versionText, feature.getVersion());
+	setIfDefined(providerText, feature.getProviderName());
 	updateNeeded=false;
 }
 }

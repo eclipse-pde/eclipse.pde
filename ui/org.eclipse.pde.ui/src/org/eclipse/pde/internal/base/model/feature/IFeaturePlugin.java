@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.base.model.feature;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.base.model.*;
 /**
- * The reference to a plug-in that is part of this component.
+ * The reference to a plug-in that is part of this feature.
  */
 public interface IFeaturePlugin extends IFeatureObject, IVersonable {
 	String P_OS = "p_os";

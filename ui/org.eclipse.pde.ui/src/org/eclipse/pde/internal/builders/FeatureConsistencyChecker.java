@@ -19,9 +19,9 @@ import java.io.*;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
-	public static final String BUILDERS_COMPONENT_REFERENCE = "Builders.Component.reference";
+	public static final String BUILDERS_FEATURE_REFERENCE = "Builders.Component.reference";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
-	public static final String BUILDERS_COMPONENT_FOLDER_SYNC = "Builders.Component.folderSync";
+	public static final String BUILDERS_FEATURE_FOLDER_SYNC = "Builders.Component.folderSync";
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -138,27 +138,27 @@ private void testPluginReferences(IFile file, PluginErrorReporter reporter) {
 	WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 	model.load();
 	if (model.isLoaded()) {
-		IFeature component = model.getFeature();
-		IFeaturePlugin[] plugins = component.getPlugins();
+		IFeature feature = model.getFeature();
+		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			IFeaturePlugin plugin = plugins[i];
 			if (isValidReference(plugin) == false) {
 				String message =
 					PDEPlugin.getFormattedMessage(
-						BUILDERS_COMPONENT_REFERENCE,
+						BUILDERS_FEATURE_REFERENCE,
 						plugin.getLabel());
 				reporter.reportError(message);
 			}
 		}
-		String version = component.getVersion();
-		String id = component.getId();
+		String version = feature.getVersion();
+		String id = feature.getId();
 		String expectedFolderName = id+"_"+version;
 		IFolder folder = (IFolder)file.getParent();
 		String realName = folder.getName();
 		if (realName.equals(expectedFolderName)==false) {
 			String message =
 				PDEPlugin.getFormattedMessage(
-					BUILDERS_COMPONENT_FOLDER_SYNC,
+					BUILDERS_FEATURE_FOLDER_SYNC,
 					realName);
 			reporter.reportError(message);
 		}

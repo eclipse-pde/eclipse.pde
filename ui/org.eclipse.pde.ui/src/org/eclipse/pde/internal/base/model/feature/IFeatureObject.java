@@ -19,7 +19,7 @@ public interface IFeatureObject extends IWritable, IAdaptable {
  */
 String P_LABEL = "label";
 /**
- * Returns the top-level component model object.
+ * Returns the top-level feature model object.
  * @return root feature object
  */
 public IFeature getFeature();

@@ -10,6 +10,9 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.model.NLResourceHelper;
+import java.net.*;
+import org.eclipse.pde.internal.model.WorkspaceResourceHelper;
 
 public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEditable {
 	private boolean dirty;
@@ -26,6 +29,23 @@ public void fireModelChanged(IModelChangedEvent event) {
 	dirty = true;
 	super.fireModelChanged(event);
 }
+
+protected NLResourceHelper createNLResourceHelper() {
+	try {
+		IPath path = file.getLocation().removeLastSegments(1);
+		String installLocation = path.toOSString();
+		if (installLocation.startsWith("file:")==false)
+		   installLocation = "file:"+installLocation;
+		URL url = new URL(installLocation+"/");
+		String name = "feature";
+		WorkspaceResourceHelper helper = new WorkspaceResourceHelper(name, url);
+		helper.setFile(file);
+		return helper;
+	} catch (MalformedURLException e) {
+		return null;
+	}
+}
+
 public String getContents() {
 	StringWriter swriter = new StringWriter();
 	PrintWriter writer = new PrintWriter(swriter);

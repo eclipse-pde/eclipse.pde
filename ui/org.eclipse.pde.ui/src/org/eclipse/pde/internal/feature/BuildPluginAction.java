@@ -132,7 +132,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 		if (!project.getWorkspace().isAutoBuilding()) {
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
-		// Check if there are errors against component file
+		// Check if there are errors against feature file
 		IMarker[] markers =
 			pluginBaseFile.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 		if (markers.length > 0) {
@@ -186,7 +186,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 	}
 
 	private void refreshLocal(IProgressMonitor monitor) throws CoreException {
-		// refresh component
+		// refresh feature
 		pluginBaseFile.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 

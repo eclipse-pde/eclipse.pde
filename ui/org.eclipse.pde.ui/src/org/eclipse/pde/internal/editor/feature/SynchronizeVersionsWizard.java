@@ -9,17 +9,17 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.*;
 
 public class SynchronizeVersionsWizard extends Wizard {
-	private FeatureEditor componentEditor;
+	private FeatureEditor featureEditor;
 	private SynchronizeVersionsWizardPage mainPage;
 
-public SynchronizeVersionsWizard(FeatureEditor componentEditor) {
+public SynchronizeVersionsWizard(FeatureEditor featureEditor) {
 	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
 	setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	setNeedsProgressMonitor(true);
-	this.componentEditor = componentEditor;
+	this.featureEditor = featureEditor;
 }
 public void addPages() {
-	mainPage = new SynchronizeVersionsWizardPage(componentEditor);
+	mainPage = new SynchronizeVersionsWizardPage(featureEditor);
 	addPage(mainPage);
 }
 public boolean performFinish() {

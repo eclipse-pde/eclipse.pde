@@ -63,8 +63,8 @@ public void expandTo(Object object) {
 public void initialize(Object modelObject) {
 	IFeatureModel model = (IFeatureModel) modelObject;
 	super.initialize(model);
-	IFeature component = model.getFeature();
-	setHeadingText(component.getLabel());
+	IFeature feature = model.getFeature();
+	setHeadingText(model.getResourceString(feature.getLabel()));
 	((Composite)getControl()).layout(true);
 }
 }

@@ -7,12 +7,12 @@ package org.eclipse.pde.internal.base.model.feature;
 import org.eclipse.core.runtime.*;
 import java.net.*;
 /**
- * The container for all URL definitions of this component.
+ * The container for all URL definitions of this feature.
  */
 public interface IFeatureURL extends IFeatureObject {
 /**
  * Add a URL element that should be used to
- * discover new Eclipse components. This
+ * discover new Eclipse features. This
  * method may throw a CoreException if
  * the model is not editable.
  *
@@ -21,7 +21,7 @@ public interface IFeatureURL extends IFeatureObject {
 public void addDiscovery(IFeatureURLElement discovery) throws CoreException;
 /**
  * Add a URL element that should be used to
- * update Eclipse components. This
+ * update Eclipse features. This
  * method may throw a CoreException if
  * the model is not editable.
  *
@@ -30,21 +30,21 @@ public void addDiscovery(IFeatureURLElement discovery) throws CoreException;
 public void addUpdate(IFeatureURLElement update) throws CoreException;
 /**
  * Return all URL elements that can be used
- * to discover new Eclipse components.
+ * to discover new Eclipse features.
  *
- * @return an array of URL components
+ * @return an array of URL features
  */
 public IFeatureURLElement [] getDiscoveries();
 /**
  * Return all URL elements that can be used
- * to update new Eclipse components.
+ * to update new Eclipse features.
  *
- * @return an array of URL components
+ * @return an array of URL features
  */
 public IFeatureURLElement [] getUpdates();
 /**
  * Remove a URL element that should be used to
- * discover new Eclipse components. This
+ * discover new Eclipse features. This
  * method may throw a CoreException if
  * the model is not editable.
  *
@@ -53,7 +53,7 @@ public IFeatureURLElement [] getUpdates();
 public void removeDiscovery(IFeatureURLElement discovery) throws CoreException;
 /**
  * Remove a URL element that should be used to
- * update new Eclipse components. This
+ * update new Eclipse features. This
  * method may throw a CoreException if
  * the model is not editable.
  *

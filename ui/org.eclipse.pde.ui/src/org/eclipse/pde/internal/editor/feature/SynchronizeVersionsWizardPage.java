@@ -36,7 +36,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_FEATURE = 1;
 	public static final int USE_PLUGINS = 2;
 	public static final int USE_REFERENCES = 3;
-	private FeatureEditor componentEditor;
+	private FeatureEditor featureEditor;
 	private Button useComponentButton;
 	private Button usePluginsButton;
 	private Button useReferencesButton;
@@ -52,11 +52,11 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final String KEY_SYNCHRONIZING = "VersionSyncWizard.synchronizing";
 	public static final String PAGE_DESC = "VersionSyncWizard.desc";
 
-public SynchronizeVersionsWizardPage(FeatureEditor componentEditor) {
-	super("componentJar");
+public SynchronizeVersionsWizardPage(FeatureEditor featureEditor) {
+	super("featureJar");
 	setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 	setDescription(PDEPlugin.getResourceString(PAGE_DESC));
-	this.componentEditor = componentEditor;
+	this.featureEditor = featureEditor;
 }
 public void createControl(Composite parent) {
 	Composite container = new Composite(parent, SWT.NULL);
@@ -98,7 +98,7 @@ private WorkspacePluginModelBase findModel(String id) {
 	return findWorkspaceModelBase(models, id);
 }
 private IFeaturePlugin findPluginReference(String id) {
-	IFeatureModel model = (IFeatureModel) componentEditor.getModel();
+	IFeatureModel model = (IFeatureModel) featureEditor.getModel();
 	IFeaturePlugin[] references = model.getFeature().getPlugins();
 	for (int i = 0; i<references.length; i++) {
 		if (references[i].getId().equals(id))
@@ -148,9 +148,9 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 	IFile file = (IFile) modelBase.getUnderlyingResource();
 	IModelProvider modelProvider =
 		PDEPlugin.getDefault().getWorkspaceModelManager();
-	modelProvider.connect(file, componentEditor);
+	modelProvider.connect(file, featureEditor);
 	WorkspacePluginModelBase model =
-		(WorkspacePluginModelBase) modelProvider.getModel(file, componentEditor);
+		(WorkspacePluginModelBase) modelProvider.getModel(file, featureEditor);
 	model.load();
 	if (model.isLoaded()) {
 		IPluginBase base = model.getPluginBase();
@@ -172,7 +172,7 @@ private void forceVersion(String targetVersion, IPluginModelBase modelBase)
 		   }
 		}
 	}
-	modelProvider.disconnect(file, componentEditor);
+	modelProvider.disconnect(file, featureEditor);
 
 }
 private void loadSettings() {
@@ -197,13 +197,13 @@ private void loadSettings() {
 private void runOperation(int mode, IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
 	WorkspaceFeatureModel model =
-		(WorkspaceFeatureModel) componentEditor.getModel();
-	IFeature component = model.getFeature();
-	IFeaturePlugin[] plugins = component.getPlugins();
+		(WorkspaceFeatureModel) featureEditor.getModel();
+	IFeature feature = model.getFeature();
+	IFeaturePlugin[] plugins = feature.getPlugins();
 	int size = plugins.length;
 	monitor.beginTask(PDEPlugin.getResourceString(KEY_SYNCHRONIZING), size);
 	for (int i = 0; i < plugins.length; i++) {
-		synchronizeVersion(mode, component.getVersion(), plugins[i], monitor);
+		synchronizeVersion(mode, feature.getVersion(), plugins[i], monitor);
 	}
 	model.fireModelChanged(
 		new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null));
@@ -223,7 +223,7 @@ private int saveSettings() {
 }
 private void synchronizeVersion(
 	int mode,
-	String componentVersion,
+	String featureVersion,
 	IFeaturePlugin ref,
 	IProgressMonitor monitor)
 	throws CoreException {
@@ -242,7 +242,7 @@ private void synchronizeVersion(
 			ref.setVersion(baseVersion);
 		}
 	} else {
-		String targetVersion = componentVersion;
+		String targetVersion = featureVersion;
 		if (mode == USE_REFERENCES)
 			targetVersion = ref.getVersion();
 		else

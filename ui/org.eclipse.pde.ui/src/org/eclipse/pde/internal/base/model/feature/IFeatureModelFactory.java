@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.w3c.dom.*;
 /**
  * This model factory should be used to create
- * model objects of the component model.
+ * model objects of the feature model.
  */
 public interface IFeatureModelFactory {
 /**
@@ -41,7 +41,7 @@ IFeatureInstallHandler createInstallHandler();
  */
 public IFeatureInfo createInfo(int info);
 /**
- * Creates a new instance of a component URL element for
+ * Creates a new instance of a feature URL element for
  * the provided URL parent and the type.
  *
  * @return a new URL element instance

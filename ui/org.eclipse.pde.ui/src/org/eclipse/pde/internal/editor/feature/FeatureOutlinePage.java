@@ -114,8 +114,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	}
 	private Object[] getURLs() {
 		IFeatureModel model = (IFeatureModel) formPage.getModel();
-		IFeature component = model.getFeature();
-		IFeatureURL url = component.getURL();
+		IFeature feature = model.getFeature();
+		IFeatureURL url = feature.getURL();
 		if (url == null)
 			return new Object[0];
 		IFeatureURLElement[] updates = url.getUpdates();
