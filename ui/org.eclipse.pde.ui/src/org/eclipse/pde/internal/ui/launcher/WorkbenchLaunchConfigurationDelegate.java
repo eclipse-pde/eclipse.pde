@@ -30,6 +30,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.noJRE";
 	private static final String KEY_JRE_PATH_NOT_FOUND =
 		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
+		private static final String KEY_BAD_FEATURE_SETUP =
+			"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
 	private static final String KEY_STARTING =
 		"WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT =
@@ -71,8 +73,10 @@ public class WorkbenchLaunchConfigurationDelegate
 			configuration.getAttribute(DOCLEAR, false);
 		final boolean showSplash =
 			configuration.getAttribute(SHOW_SPLASH, true);
+		final boolean useFeatures =
+			configuration.getAttribute(USEFEATURES, false);
 		final IPluginModelBase[] plugins =
-			getPluginsFromConfiguration(configuration);
+			useFeatures ? null : getPluginsFromConfiguration(configuration);
 
 		if (duplicates.size() > 0) {
 			if (!continueRunning()) {
@@ -111,11 +115,15 @@ public class WorkbenchLaunchConfigurationDelegate
 					PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
 		}
 
-		validatePlugins(plugins, monitor);
+		if (plugins != null)
+			validatePlugins(plugins, monitor);
+		else if (useFeatures) {
+			validateFeatures(monitor);
+		}
 		IVMRunner runner = launcher.getVMRunner(mode);
 		ExecutionArguments args = new ExecutionArguments(vmArgs, progArgs);
 		IPath path = new Path(data);
-		
+
 		doLaunch(
 			launch,
 			configuration,
@@ -126,9 +134,29 @@ public class WorkbenchLaunchConfigurationDelegate
 			showSplash,
 			args,
 			plugins,
+			useFeatures,
 			appName,
 			tracing,
 			monitor);
+	}
+	
+	private void validateFeatures(IProgressMonitor monitor) throws CoreException {
+		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
+		String lastSegment = installPath.lastSegment();
+		boolean badStructure = false;
+		if (lastSegment.equalsIgnoreCase("plugins")==false) {
+			badStructure = true;
+		}
+		IPath featuresPath = installPath.removeLastSegments(1).append("features");
+		if (featuresPath.toFile().exists()==false) {
+			badStructure = true;
+		}
+		if (badStructure) {
+			monitor.setCanceled(true);
+			throw new CoreException(
+				createErrorStatus(
+					PDEPlugin.getResourceString(KEY_BAD_FEATURE_SETUP)));
+		}
 	}
 
 	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
@@ -289,6 +317,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		boolean showSplash,
 		ExecutionArguments args,
 		IPluginModelBase[] plugins,
+		boolean useFeatures,
 		String appname,
 		boolean tracing,
 		IProgressMonitor monitor)
@@ -299,8 +328,6 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 3);
 		try {
-			File propertiesFile =
-				TargetPlatform.createPropertiesFile(plugins, targetWorkspace);
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
@@ -309,13 +336,29 @@ public class WorkbenchLaunchConfigurationDelegate
 				exCount += 2;
 			if (showSplash)
 				exCount += 2;
+			if (useFeatures)
+				exCount += 1;
 
 			String[] fullProgArgs = new String[progArgs.length + exCount];
 			int i = 0;
 			fullProgArgs[i++] = "-application";
 			fullProgArgs[i++] = appname;
-			fullProgArgs[i++] = "-plugins";
-			fullProgArgs[i++] = "file:" + propertiesFile.getPath();
+
+			if (useFeatures) {
+				IPath installPath =
+					PDEPlugin.getWorkspace().getRoot().getLocation();
+				File installDir = installPath.removeLastSegments(1).toFile();
+				fullProgArgs[i++] = "-install";
+				fullProgArgs[i++] = "file:" + installDir.getPath();
+				fullProgArgs[i++] = "-update";
+			} else {
+				fullProgArgs[i++] = "-plugins";
+				File propertiesFile =
+					TargetPlatform.createPropertiesFile(
+						plugins,
+						targetWorkspace);
+				fullProgArgs[i++] = "file:" + propertiesFile.getPath();
+			}
 			fullProgArgs[i++] = "-dev";
 			fullProgArgs[i++] = getBuildOutputFolders();
 			fullProgArgs[i++] = "-data";
@@ -589,6 +632,12 @@ public class WorkbenchLaunchConfigurationDelegate
 	}
 
 	private IPluginModelBase findModel(String id, IPluginModelBase[] models) {
+		if (models == null)
+			models =
+				PDECore
+					.getDefault()
+					.getWorkspaceModelManager()
+					.getWorkspacePluginModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) models[i];
 			if (model.getPluginBase().getId().equals(id))
@@ -602,6 +651,12 @@ public class WorkbenchLaunchConfigurationDelegate
 	 */
 	private ISourceLocator constructSourceLocator(IPluginModelBase[] plugins)
 		throws CoreException {
+		if (plugins == null)
+			plugins =
+				PDECore
+					.getDefault()
+					.getWorkspaceModelManager()
+					.getWorkspacePluginModels();
 		ArrayList javaProjects = new ArrayList(plugins.length);
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		for (int i = 0; i < plugins.length; i++) {

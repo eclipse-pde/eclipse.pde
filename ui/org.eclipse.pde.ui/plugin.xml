@@ -164,8 +164,8 @@
             icon="icons/full/ctool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.feature.NewSiteProjectWizard"
-            finalPerspective="org.eclipse.ui.resourcePerspective"
             project="true"
+            finalPerspective="org.eclipse.ui.resourcePerspective"
             id="org.eclipse.pde.ui.NewSiteProjectWizard">
          <description>
             %new.site.description
@@ -182,6 +182,15 @@
             id="org.eclipse.pde.ui.PluginImportWizard">
          <description>
             %PluginImportWizard.description
+         </description>
+      </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
+            name="%FeatureImportWizard.label"
+            icon="icons/full/ctool16/newftrprj_wiz.gif"
+            id="org.eclipse.pde.ui.FeatureImportWizard">
+         <description>
+            %FeatureImportWizard.description
          </description>
       </wizard>
    </extension>

@@ -36,6 +36,8 @@ public class AdvancedLauncherTab
 		"AdvancedLauncherTab.externalPlugins";
 	private static final String KEY_USE_DEFAULT =
 		"AdvancedLauncherTab.useDefault";
+	private static final String KEY_USE_FEATURES =
+		"AdvancedLauncherTab.useFeatures";
 	private static final String KEY_USE_LIST = "AdvancedLauncherTab.useList";
 	private static final String KEY_VISIBLE_LIST =
 		"AdvancedLauncherTab.visibleList";
@@ -52,6 +54,7 @@ public class AdvancedLauncherTab
 		"AdvancedLauncherTab.error.brokenPlugins";
 
 	private Button useDefaultRadio;
+	private Button useFeaturesRadio;
 	private Button useListRadio;
 	private CheckboxTreeViewer pluginTreeViewer;
 	private Label visibleLabel;
@@ -66,7 +69,7 @@ public class AdvancedLauncherTab
 	private int numWorkspaceChecked = 0;
 	private boolean firstReveal = true;
 	private boolean check;
-	
+
 	class PluginContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
@@ -164,6 +167,10 @@ public class AdvancedLauncherTab
 		useDefaultRadio.setText(PDEPlugin.getResourceString(KEY_USE_DEFAULT));
 		fillIntoGrid(useDefaultRadio, 1, false);
 
+		useFeaturesRadio = new Button(composite, SWT.RADIO);
+		useFeaturesRadio.setText(PDEPlugin.getResourceString(KEY_USE_FEATURES));
+		fillIntoGrid(useFeaturesRadio, 1, false);
+
 		useListRadio = new Button(composite, SWT.RADIO);
 		useListRadio.setText(PDEPlugin.getResourceString(KEY_USE_LIST));
 		fillIntoGrid(useListRadio, 1, false);
@@ -198,7 +205,7 @@ public class AdvancedLauncherTab
 
 		hookListeners();
 		setControl(composite);
-		
+
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
 	}
 
@@ -213,6 +220,7 @@ public class AdvancedLauncherTab
 			}
 		};
 		useDefaultRadio.addSelectionListener(adapter);
+		useFeaturesRadio.addSelectionListener(adapter);
 		//useListRadio.addSelectionListener(adapter);
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -237,8 +245,9 @@ public class AdvancedLauncherTab
 	}
 
 	private void useDefaultChanged() {
-		boolean useDefault = useDefaultRadio.getSelection();
+		boolean useDefault = !useListRadio.getSelection();
 		adjustCustomControlEnableState(!useDefault);
+		pluginPathButton.setEnabled(!useFeaturesRadio.getSelection());
 		if (!updateStatus())
 			updateLaunchConfigurationDialog();
 		/*else 
@@ -286,7 +295,7 @@ public class AdvancedLauncherTab
 							check = true;
 							updateLaunchConfigurationDialog();
 						}
-							
+
 					}
 				});
 
@@ -352,7 +361,8 @@ public class AdvancedLauncherTab
 	public void initializeFrom(ILaunchConfiguration config) {
 	}
 
-	private ArrayList parseDeselectedIds(ILaunchConfiguration config) throws CoreException {
+	private ArrayList parseDeselectedIds(ILaunchConfiguration config)
+		throws CoreException {
 		ArrayList deselected = new ArrayList();
 		String deselectedPluginIDs =
 			config.getAttribute(WSPROJECT, (String) null);
@@ -380,7 +390,7 @@ public class AdvancedLauncherTab
 		}
 
 		int size = result.size();
-		
+
 		if (size > 0)
 			result.add(workspacePlugins);
 		pluginTreeViewer.setGrayed(
@@ -425,6 +435,8 @@ public class AdvancedLauncherTab
 
 		try {
 			useDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
+			useFeaturesRadio.setSelection(
+				config.getAttribute(USEFEATURES, false));
 			useListRadio.setSelection(!useDefaultRadio.getSelection());
 
 			if (pluginTreeViewer.getInput() == null)
@@ -433,9 +445,8 @@ public class AdvancedLauncherTab
 			if (useDefaultRadio.getSelection()) {
 				pluginTreeViewer.setCheckedElements(
 					computeInitialCheckState().toArray());
-			} else {
-				ArrayList result =
-					initWorkspacePluginsState(config);
+			} else if (useListRadio.getSelection()) {
+				ArrayList result = initWorkspacePluginsState(config);
 				result.addAll(initExternalPluginsState(config));
 				pluginTreeViewer.setCheckedElements(result.toArray());
 			}
@@ -443,7 +454,7 @@ public class AdvancedLauncherTab
 			PDEPlugin.logException(e);
 		}
 
-		adjustCustomControlEnableState(!useDefaultRadio.getSelection());
+		adjustCustomControlEnableState(useListRadio.getSelection());
 		updateStatus();
 	}
 
@@ -522,31 +533,37 @@ public class AdvancedLauncherTab
 	private void handleGroupStateChanged(Object group, boolean checked) {
 		pluginTreeViewer.setSubtreeChecked(group, checked);
 		pluginTreeViewer.setGrayed(group, false);
-		
+
 		if (group == workspacePlugins)
 			numWorkspaceChecked = checked ? workspaceModels.length : 0;
 		else if (group == externalPlugins)
 			numExternalChecked = checked ? externalModels.length : 0;
-			
+
 		setChanged(true);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(USECUSTOM, true);
+		config.setAttribute(USEFEATURES, false);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isChanged()) {
-			if (!check)	{
-				configuration.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
+			if (!check) {
+				configuration.setAttribute(
+					USECUSTOM,
+					useDefaultRadio.getSelection());
+				configuration.setAttribute(
+					USEFEATURES,
+					useFeaturesRadio.getSelection());
 				setChanged(false);
 			} else {
 				check = false;
-				configuration.setAttribute(EXTPLUGINS,"");
+				configuration.setAttribute(EXTPLUGINS, "");
 			}
-		}	
+		}
 	}
-	
+
 	public void doPerformApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (!configuration.isDirty())
 			return;
@@ -555,8 +572,11 @@ public class AdvancedLauncherTab
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				config.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
-				
-				if (useDefaultRadio.getSelection()) {
+				config.setAttribute(
+					USEFEATURES,
+					useFeaturesRadio.getSelection());
+
+				if (!useListRadio.getSelection()) {
 					setChanged(false);
 					return;
 				}
@@ -612,24 +632,27 @@ public class AdvancedLauncherTab
 	}
 
 	private IStatus validatePlugins() {
-		IPluginModelBase[] plugins = getPlugins();
-		if (plugins.length == 0) {
-			return createStatus(
-				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_ERROR_NO_PLUGINS));
-		}
-		IPluginModelBase boot = findModel("org.eclipse.core.boot", plugins);
-		if (boot == null) {
-			return createStatus(
-				IStatus.ERROR,
-				PDEPlugin.getResourceString(KEY_ERROR_NO_BOOT));
-		}
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginModelBase model = plugins[i];
-			if (model.isLoaded() == false) {
+		if (!useFeaturesRadio.getSelection()) {
+
+			IPluginModelBase[] plugins = getPlugins();
+			if (plugins.length == 0) {
 				return createStatus(
-					IStatus.WARNING,
-					PDEPlugin.getResourceString(KEY_ERROR_BROKEN_PLUGINS));
+					IStatus.ERROR,
+					PDEPlugin.getResourceString(KEY_ERROR_NO_PLUGINS));
+			}
+			IPluginModelBase boot = findModel("org.eclipse.core.boot", plugins);
+			if (boot == null) {
+				return createStatus(
+					IStatus.ERROR,
+					PDEPlugin.getResourceString(KEY_ERROR_NO_BOOT));
+			}
+			for (int i = 0; i < plugins.length; i++) {
+				IPluginModelBase model = plugins[i];
+				if (model.isLoaded() == false) {
+					return createStatus(
+						IStatus.WARNING,
+						PDEPlugin.getResourceString(KEY_ERROR_BROKEN_PLUGINS));
+				}
 			}
 		}
 		return createStatus(IStatus.OK, "");
@@ -661,12 +684,15 @@ public class AdvancedLauncherTab
 				// check for null is to accomodate previous unclean exits (e.g. workspace crashes)
 				if (workspaceModels[i].getPluginBase().getId() != null) {
 					res.add(workspaceModels[i]);
-					wtable.put(workspaceModels[i].getPluginBase().getId(), workspaceModels[i]);
+					wtable.put(
+						workspaceModels[i].getPluginBase().getId(),
+						workspaceModels[i]);
 				}
 			}
 			for (int i = 0; i < externalModels.length; i++) {
 				IPluginModelBase model = externalModels[i];
-				boolean masked = wtable.get(model.getPluginBase().getId()) != null;
+				boolean masked =
+					wtable.get(model.getPluginBase().getId()) != null;
 				if (!masked && externalModels[i].isEnabled())
 					res.add(externalModels[i]);
 			}
