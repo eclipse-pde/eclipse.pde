@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<cheatsheet title="Creating and publishing a feature">
+
+	<intro 
+		href="/org.eclipse.ui.cheatsheets.doc/tasks/tcheatst.htm">
+		<description>
+This cheat sheet will automatically launch wizards, perform actions, and guide you through the individual steps to create a feature and publish it using the Plug-in Development Environment (PDE). To learn more about using cheat sheets or to see a list of available cheat sheets click help (?). To start working on this cheat sheet, click the &quot;Click to begin&quot; button below.
+		</description>
+	</intro>
+
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+		title="Switching to the PDE perspective">
+		<action
+			confirm="true"
+			pluginId="org.eclipse.pde.ui"
+			class="org.eclipse.pde.internal.ui.OpenPDEPerspectiveAction"/>
+		<description>
+			Select <b>Window&gt;Open Perspective&gt;Other...&gt;Plug-in Development</b>
+			to switch to the PDE perspective.
+		</description>
+	</item>
+	<item
+		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
+		title="Configuring PDE">
+		<action
+			confirm="true"
+			pluginId=""
+			class=""/>
+		<description>
+		   	Select <b>File&gt;New&gt;Plug-in Project</b> to bring up the plug-in
+			project creation wizard. Choose 'com.example.xyz' for the project
+			name. Accept all the defaults. Pick the <b>Hello, World</b> template
+			from the list of templates and press <b>Finish</b>.
+		</description>
+	</item>
+</cheatsheet>

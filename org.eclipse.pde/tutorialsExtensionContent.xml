@@ -17,14 +17,14 @@
                   <text>Create a full RCP application step by step</text>
                </link>
                <link
-                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.pde_1"
-                     label="Create a &quot;Hello, World&quot;  plug-in"
+                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.helloworld"
+                     label="Create a &quot;Hello, World&quot; plug-in"
                      id="pde-hello-world"
                      class-id="tutorials-link">
                   <text>Create an Eclipse plug-in that will open a message box from the menu</text>
                </link>
                <link
-                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
+                     url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.updates"
                      label="Deploy a feature on an update site"
                      id="features"
                      class-id="tutorials-link">

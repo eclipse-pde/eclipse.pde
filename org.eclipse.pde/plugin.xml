@@ -141,10 +141,16 @@
 
    <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
-            name="%cheatsheet.name"
-            contentFile="cheatsheets/PDE_1.xml"
-            id="org.eclipse.pde.pde_1">
-         <description>%cheatsheet.desc</description>
+            name="%cheatsheet.helloworld.name"
+            contentFile="cheatsheets/helloworld.xml"
+            id="org.eclipse.pde.helloworld">
+         <description>%cheatsheet.helloworld.desc</description>
+      </cheatsheet>
+      <cheatsheet
+            name="%cheatsheet.updates.name"
+            contentFile="cheatsheets/updates.xml"
+            id="org.eclipse.pde.updates">
+         <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
    </extension>
 </plugin>
