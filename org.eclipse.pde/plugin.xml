@@ -21,6 +21,7 @@
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.ui.intro"/>
    </requires>
 
 
@@ -125,5 +126,47 @@
             value="true">
       </persistent>
    </extension>
-
+   
+  <extension point="org.eclipse.ui.intro.configExtension"> 
+  	<configExtension configId="org.eclipse.platform.introConfig">  
+  		<!-- Extension to the SDK Overview Page. -->
+  		<extensionContent path="overview" style="" alt-style="css/swt.properties">
+        	<link
+	        	url="about:blank;"
+	            label="%intro.pde.label"
+	            id="pde">
+	            <text>%intro.pde.text</text>
+	        </link>
+    	</extensionContent>
+    	<!-- This is where you define shared divs or pages to be used by the   -->
+    	<!-- above extension.   -->
+     </configExtension>
+     
+     <!-- Extension to the SDK Tutorial Page. -->
+     <configExtension configId="org.eclipse.platform.introConfig">  
+  		<extensionContent path="tutorials" style="" alt-style="css/swt.properties">
+        	<div label="%intro.div.pde.label"
+	            id="pde">
+	            <link
+	               label="%intro.rcp.label"
+	               url="about:blank;"
+	               id="rcp">
+	               <text>%intro.rcp.text</text>
+	         	</link>
+	         	<link
+	               label="%intro.hello.label"
+	               url="about:blank;"
+	               id="pde-hello-world">
+	            	<text>%intro.hello.text</text>
+	         	</link>
+	         	<link
+	               label="%intro.feature.label"
+	               url="about:blank;"
+	               id="features">
+	            	<text>%intro.feature.text</text>
+	         	</link>
+	        </div>
+    	</extensionContent>
+     </configExtension>  
+   </extension>    
 </plugin>
