@@ -196,9 +196,6 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		try {
 			manager.connect(file.getFullPath(), monitor);
 			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-			if (buffer.isDirty()) {
-				buffer.commit(monitor, true);
-			}
 			
 			fDocument = buffer.getDocument();
 			PluginModelBase model = getEditingModel("fragment.xml".equals(file.getName())); //$NON-NLS-1$
