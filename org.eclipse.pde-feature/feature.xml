@@ -2,37 +2,42 @@
 <feature
       id="org.eclipse.pde"
       label="%featureName"
-      version="1.9.0"
+      version="2.0.0"
       provider-name="%providerName">
 
-   <plugin id="org.eclipse.pde" version="1.9.0"/>
+   <plugin
+         id="org.eclipse.pde"
+         download-size="0"
+         install-size="0"
+         version="2.0.0">
+   </plugin>
 
    <plugin
          id="org.eclipse.pde.build"
          download-size="0"
          install-size="0"
-         version="1.9.0">
+         version="2.0.0">
    </plugin>
 
    <plugin
          id="org.eclipse.pde.core"
          download-size="0"
          install-size="0"
-         version="1.9.0">
+         version="2.0.0">
    </plugin>
 
    <plugin
          id="org.eclipse.pde.runtime"
          download-size="0"
          install-size="0"
-         version="1.9.0">
+         version="2.0.0">
    </plugin>
 
    <plugin
          id="org.eclipse.pde.ui"
          download-size="0"
          install-size="0"
-         version="1.9.0">
+         version="2.0.0">
    </plugin>
 
 </feature>
