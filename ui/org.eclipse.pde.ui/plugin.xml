@@ -598,6 +598,7 @@
          </action>
          <action
                label="%OpenDependenciesAction.label"
+               icon="icons/full/cview16/plugin_depend.gif"
                helpContextId="org.eclipse.pde.doc.user.open_dependencies"
                class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
                menubarPath="additions"
