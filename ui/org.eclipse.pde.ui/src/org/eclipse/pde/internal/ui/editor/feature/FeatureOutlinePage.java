@@ -109,7 +109,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	public void dispose() {
 		super.dispose();
 		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
-		model.removeModelChangedListener(this);
+		if (model != null)
+			model.removeModelChangedListener(this);
 	}
 
 	public String getParentPageId(Object item) {

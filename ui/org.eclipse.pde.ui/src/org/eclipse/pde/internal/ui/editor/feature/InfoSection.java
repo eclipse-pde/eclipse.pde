@@ -375,7 +375,8 @@ public class InfoSection extends PDESection {
 
 	public void dispose() {
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
-		featureModel.removeModelChangedListener(this);
+		if (featureModel != null)
+			featureModel.removeModelChangedListener(this);
 		super.dispose();
 	}
 

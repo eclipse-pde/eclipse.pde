@@ -379,13 +379,20 @@ public class RequiresSection extends TableSection implements
 		}
 	}
 
-	public void modelsChanged(IModelProviderEvent event) {
-		IModel[] added = event.getAddedModels();
-		IModel[] removed = event.getRemovedModels();
-		IModel[] changed = event.getChangedModels();
-		if (hasPluginModels(added) || hasPluginModels(removed)
-				|| hasPluginModels(changed))
-			markStale();
+	public void modelsChanged(final IModelProviderEvent event) {
+		getSection().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (getSection().isDisposed()) {
+					return;
+				}
+				IModel[] added = event.getAddedModels();
+				IModel[] removed = event.getRemovedModels();
+				IModel[] changed = event.getChangedModels();
+				if (hasPluginModels(added) || hasPluginModels(removed)
+						|| hasPluginModels(changed))
+					markStale();
+			}
+		});
 	}
 
 	private boolean hasPluginModels(IModel[] models) {

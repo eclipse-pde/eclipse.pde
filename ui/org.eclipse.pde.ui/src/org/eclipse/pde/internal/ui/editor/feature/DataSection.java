@@ -320,7 +320,14 @@ public class DataSection extends TableSection implements IModelProviderListener 
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		markStale();
+		getSection().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (getSection().isDisposed()) {
+					return;
+				}
+				markStale();
+			}
+		});
 	}
 
 	public void setFocus() {

@@ -339,13 +339,20 @@ public class IncludedFeaturesSection extends TableSection implements
 		fOpenAction = new OpenReferenceAction(fIncludesViewer);
 	}
 
-	public void modelsChanged(IModelProviderEvent event) {
-		IModel[] added = event.getAddedModels();
-		IModel[] removed = event.getRemovedModels();
-		IModel[] changed = event.getChangedModels();
-		if (hasFeatureModels(added) || hasFeatureModels(removed)
-				|| hasFeatureModels(changed))
-			markStale();
+	public void modelsChanged(final IModelProviderEvent event) {
+		getSection().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (getSection().isDisposed()) {
+					return;
+				}
+				IModel[] added = event.getAddedModels();
+				IModel[] removed = event.getRemovedModels();
+				IModel[] changed = event.getChangedModels();
+				if (hasFeatureModels(added) || hasFeatureModels(removed)
+						|| hasFeatureModels(changed))
+					markStale();
+			}
+		});
 	}
 
 	private boolean hasFeatureModels(IModel[] models) {
