@@ -86,7 +86,6 @@ private void loadExternalDescriptors() {
 	}
 }
 private void loadMappedDescriptors() {
-	IWorkspace workspace = PDEPlugin.getWorkspace();
 	IPluginRegistry registry = Platform.getPluginRegistry();
 	org.eclipse.core.runtime.IExtensionPoint point =
 		registry.getExtensionPoint(PDEPlugin.getPluginId(), PLUGIN_POINT);

@@ -149,7 +149,6 @@ public class RequiresSection
 		} else {
 			Object obj = e.getChangedObjects()[0];
 			if (obj instanceof IFeatureImport) {
-				IFeatureImport iimport = (IFeatureImport) obj;
 				if (e.getChangeType() == IModelChangedEvent.INSERT)
 					pluginViewer.add(e.getChangedObjects());
 				else

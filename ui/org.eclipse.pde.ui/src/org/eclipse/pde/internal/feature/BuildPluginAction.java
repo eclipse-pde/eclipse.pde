@@ -158,9 +158,6 @@ public class BuildPluginAction implements IObjectActionDelegate {
 		IPluginModelBase model =
 			PDEPlugin.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
 
-		String eclipseDir =
-			PDEPlugin.getDefault().getPreferenceStore().getString(
-				TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
 		File pluginFile = TargetPlatformManager.createPropertiesFile();
 		String pluginPath = pluginFile.getPath();
 

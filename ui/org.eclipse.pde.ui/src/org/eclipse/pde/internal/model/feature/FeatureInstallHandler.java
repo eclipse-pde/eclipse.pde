@@ -85,7 +85,6 @@ public class FeatureInstallHandler
 	}
 public void write(String indent, PrintWriter writer) {
 	writer.print(indent+"<install-handler");
-	String indent2 = indent+Feature.INDENT;
 	if (url!=null) {
 		writer.print(" url=\""+url.toString()+"\"");
 	}

@@ -165,7 +165,6 @@ private void logActivity() {
 }
 private void makeJars(IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
-	IFile buildFile = null;
 
 	IPath path =
 		componentFile.getFullPath().removeLastSegments(1).append(buildFileName);
@@ -205,9 +204,6 @@ private void makeScripts(IProgressMonitor monitor) throws CoreException {
 
 	args.add("-plugins");
 	args.add(pluginPath);
-
-	String name =
-		model.getFeature().getId() + "_" + model.getFeature().getVersion();
 
 	args.add("-component");
 	//args.add(name);

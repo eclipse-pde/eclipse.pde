@@ -305,7 +305,6 @@ public void update() {
 }
 public void update(Object input) {
 	IFeatureModel model = (IFeatureModel)input;
-	IFeature component = model.getFeature();
 	urlTree.setInput(model);
 	updateNeeded=false;
 }

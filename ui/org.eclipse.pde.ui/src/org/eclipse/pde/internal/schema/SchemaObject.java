@@ -35,8 +35,6 @@ public abstract class SchemaObject
 		return parent;
 	}
 	public ISchema getSchema() {
-		ISchemaObject parent = this.parent;
-
 		ISchemaObject object = this;
 
 		while (object.getParent() != null) {

@@ -59,7 +59,6 @@ public class TokenSection
 		public void modify(Object object, String property, final Object value) {
 			Item item = (Item) object;
 			final Token token = (Token) item.getData();
-			IBuildModel model = (IBuildModel) getFormPage().getModel();
 			try {
 				currentVariable.renameToken(token.name, value.toString());
 				token.name = value.toString();

@@ -44,7 +44,6 @@ public NewExtensionPointMainPage(IProject project, IPluginModelBase model) {
 	this.model = model;
 }
 public boolean finish() {
-	final boolean openFile = openSchemaButton.getSelection();
 	final String id = idText.getText();
 	final String name = nameText.getText();
 	final String schema = schemaText.getText();

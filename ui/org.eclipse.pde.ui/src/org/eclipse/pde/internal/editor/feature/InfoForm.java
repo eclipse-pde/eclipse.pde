@@ -33,7 +33,7 @@ protected void createFormClient(Composite parent) {
 	GridData gd;
 	
 	infoSection = new InfoSection(page, colorManager);
-	Control control = infoSection.createControl(parent, getFactory());
+	Control control = infoSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 	registerSection(infoSection);

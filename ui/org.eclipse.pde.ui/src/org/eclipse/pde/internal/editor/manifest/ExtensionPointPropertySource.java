@@ -91,7 +91,6 @@ public boolean isPropertySet(Object property) {
 	return false;
 }
 public void openInEditor(IPropertySheetEntry entry) {
-	String name = entry.getDisplayName();
 	String value = entry.getValueAsString();
 	if (value == null || value.length() == 0)
 		return;

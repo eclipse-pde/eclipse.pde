@@ -33,22 +33,22 @@ protected void createFormClient(Composite parent) {
 	GridData gd;
 
 	specSection = new FeatureSpecSection(page);
-	Control control = specSection.createControl(parent, getFactory());
+	Control control = specSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	urlSection = new URLSection(page);
-	control = urlSection.createControl(parent, getFactory());
+	control = urlSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL| GridData.VERTICAL_ALIGN_FILL);
 	control.setLayoutData(gd);
 
 	portabilitySection = new PortabilitySection(page);
-	control = portabilitySection.createControl(parent, getFactory());
+	control = portabilitySection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 	
 	handlerSection = new HandlerSection(page);
-	control = handlerSection.createControl(parent, getFactory());
+	control = handlerSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 

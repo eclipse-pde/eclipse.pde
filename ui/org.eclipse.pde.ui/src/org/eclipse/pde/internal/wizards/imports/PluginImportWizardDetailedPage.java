@@ -119,7 +119,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	private void initializeFields(IPath dropLocation) {
-		IDialogSettings settings = getDialogSettings();
 		boolean oldLoadFromRegistry = loadFromRegistry;
 
 		loadFromRegistry = !firstPage.isOtherLocation();
@@ -141,7 +140,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	}
 
 	public void storeSettings(boolean finishPressed) {
-		IDialogSettings settings = getDialogSettings();
 	}
 
 	/*

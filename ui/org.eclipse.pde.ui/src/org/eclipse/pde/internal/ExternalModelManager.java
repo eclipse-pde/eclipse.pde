@@ -221,20 +221,20 @@ public class ExternalModelManager {
 	}
 
 	private boolean loadModels(IProgressMonitor monitor) {
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 		boolean result = reload(null, monitor);
 		if (result) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			ExternalPluginsBlock.initialize(this, store);
 		}
-		long stopTime = System.currentTimeMillis();
+		//long stopTime = System.currentTimeMillis();
 		Object[] array = models.toArray();
 		ArraySorter.INSTANCE.sortInPlace(array);
 
 		for (int i = 0; i < array.length; i++) {
 			models.set(i, array[i]);
 		}
-		long sortTime = System.currentTimeMillis();
+		//long sortTime = System.currentTimeMillis();
 		/*
 		System.out.println("Load time: "+(stopTime - startTime));
 		System.out.println("Sort time: "+(sortTime - stopTime));
@@ -263,7 +263,7 @@ public class ExternalModelManager {
 		if (model.isLoaded()) {
 			result.add(model);
 			// force creation of the plugin object
-			Plugin plugin = (Plugin) model.getPlugin();
+			model.getPlugin();
 			model.setEnabled(true);
 		}
 	}
@@ -288,7 +288,7 @@ public class ExternalModelManager {
 		if (model.isLoaded()) {
 			result.add(model);
 			// force creation of the fragment object
-			Fragment fragment = (Fragment) model.getFragment();
+			model.getFragment();
 			model.setEnabled(true);
 		}
 	}

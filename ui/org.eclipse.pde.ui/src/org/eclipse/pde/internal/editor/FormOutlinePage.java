@@ -66,7 +66,7 @@ public void createControl(Composite parent) {
 	treeViewer.setAutoExpandLevel(999);
 	treeViewer.setUseHashlookup(true);
 	treeViewer.setInput(formPage.getEditor());
-	Tree tree = treeViewer.getTree();
+
 	//tree.setBackground(formPage.getForm().getFactory().getBackgroundColor());
 	Object model = formPage.getModel();
 	if (model instanceof IModelChangeProvider) {

@@ -76,7 +76,9 @@ public class BuildpathConsistencyChecker implements IModelProviderListener {
 		}
 	}
 	private void processAffectedModel(IPluginModelBase model) {
+		/*
 		IProject project = model.getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
+		*/
 	}
 }

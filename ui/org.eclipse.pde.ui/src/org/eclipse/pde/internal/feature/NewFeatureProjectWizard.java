@@ -74,9 +74,9 @@ private IFolder createFeatureFolder(IProject project, String name, IProgressMoni
 	IWorkspaceRoot root = project.getWorkspace().getRoot();
 	IPath path = project.getFullPath();
 	path = path.append("install");
-	IFolder folder = createFolder(root, path, monitor);
+	createFolder(root, path, monitor);
 	path = path.append("features");
-	folder = createFolder(root, path, monitor);
+	createFolder(root, path, monitor);
 	path = path.append(name);
 	return createFolder(root, path, monitor);
 }

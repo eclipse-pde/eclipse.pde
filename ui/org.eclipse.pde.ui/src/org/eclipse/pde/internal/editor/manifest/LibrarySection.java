@@ -163,9 +163,6 @@ public class LibrarySection
 		});
 
 		if (!selection.isEmpty()) {
-			Object object = ((IStructuredSelection) selection).getFirstElement();
-			final IPluginLibrary library = (IPluginLibrary) object;
-
 			manager.add(new Separator());
 			manager.add(new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {

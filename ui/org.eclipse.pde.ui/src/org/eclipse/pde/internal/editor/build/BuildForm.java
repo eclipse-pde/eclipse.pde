@@ -35,12 +35,12 @@ protected void createFormClient(Composite parent) {
 	layout.makeColumnsEqualWidth = true;
 	
 	variableSection = new VariableSection(page);
-	Control control = variableSection.createControl(parent, getFactory());
+	Control control = variableSection.createControl(parent, factory);
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
 	tokenSection = new TokenSection(page);
-	control = tokenSection.createControl(parent, getFactory());
+	control = tokenSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 

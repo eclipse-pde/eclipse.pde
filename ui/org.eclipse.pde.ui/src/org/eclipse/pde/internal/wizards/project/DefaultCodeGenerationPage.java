@@ -365,7 +365,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 
 	private boolean isVersionValid(String version) {
 		try {
-			PluginVersionIdentifier pid = new PluginVersionIdentifier(version);
+			new PluginVersionIdentifier(version);
 		} catch (Exception e) {
 			return false;
 		}
@@ -620,7 +620,6 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		throws CoreException, JavaModelException {
 		Vector result = new Vector();
 		Vector missing = new Vector();
-		IJavaProject javaProject = JavaCore.create(project);
 
 		if (fragment) {
 			if (data.pluginId != null) {

@@ -181,8 +181,6 @@ public abstract class PDEMultiPageEditor
 			}
 		};
 
-		Shell shell = getSite().getWorkbenchWindow().getShell();
-
 		try {
 			documentProvider.aboutToChange(input);
 			op.run(monitor);
@@ -409,7 +407,6 @@ public abstract class PDEMultiPageEditor
 			page.openTo(openToObject);
 	}
 	public IPDEEditorPage showPage(final IPDEEditorPage page) {
-		IPDEEditorPage oldPage = getCurrentPage();
 		formWorkbook.selectPage(page);
 		return page;
 	}

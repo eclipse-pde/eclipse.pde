@@ -123,7 +123,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void reportValidationError(
 		Node errorNode,
 		PluginErrorReporter reporter) {
+		/*
 		int type = errorNode.getNodeType();
+		*/
 	}
 	protected void startupOnInitialize() {
 		super.startupOnInitialize();

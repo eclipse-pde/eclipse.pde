@@ -122,7 +122,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 
 	container.setLayout(layout);
 	
-	Label label = factory.createLabel(container, PDEPlugin.getResourceString(COMBO_LABEL));
+	factory.createLabel(container, PDEPlugin.getResourceString(COMBO_LABEL));
 	int comboStyle = SWT.READ_ONLY;
 	if (SWT.getPlatform().equals("motif")==false)
 	   comboStyle |= SWT.FLAT;
@@ -353,7 +353,7 @@ private Object[] getFragmentReferences() {
 		IPluginBase plugin = model.getPluginBase();
 		String referenceId = plugin.getId();
 		WorkspaceModelManager wm = PDEPlugin.getDefault().getWorkspaceModelManager();
-		IFragment [] fragments = wm.getFragmentsFor(plugin.getId(), plugin.getVersion());
+		IFragment [] fragments = wm.getFragmentsFor(referenceId, plugin.getVersion());
 		for (int i=0; i<fragments.length; i++) {
 			freferences.add(fragments[i]);
 		}

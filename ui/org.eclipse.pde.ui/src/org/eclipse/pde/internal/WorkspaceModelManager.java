@@ -568,6 +568,7 @@ public class WorkspaceModelManager
 		if (type != 0) {
 			final ModelProviderEvent event =
 				new ModelProviderEvent(this, type, addedArray, removedArray, null);
+			fireModelProviderEvent(event);
 		}
 	}
 

@@ -56,7 +56,7 @@ public ProjectCodeGeneratorsPage(
 	boolean fragment) {
 	super(wizardElements, message);
 	this.fragment = fragment;
-	PDEPlugin plugin = PDEPlugin.getDefault();
+
 	if (fragment) {
 		setTitle(PDEPlugin.getResourceString(KEY_FTITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_FDESC));
@@ -131,7 +131,6 @@ protected IWizardNode createWizardNode(WizardElement element) {
 	};
 }
 public boolean finish() {
-	IProject project = provider.getProject();
 	if (blankPageRadio.getSelection()) {
 		// we must set the Java settings here
 		// because there are no wizards to run

@@ -128,7 +128,6 @@ public class ManifestEditor
 		addPage(SOURCE_PAGE, new ManifestSourcePage(this));
 	}
 	private IPluginModelBase createResourceModel(IFile file) throws CoreException {
-		boolean fragment = file.getName().toLowerCase().equals("fragment.xml");
 		InputStream stream = null;
 
 		stream = file.getContents(false);

@@ -190,7 +190,6 @@ private void logActivity() {
 }
 private void makeJars(IProgressMonitor monitor)
 	throws CoreException, InvocationTargetException {
-	IFile buildFile = null;
 
 	IPath path =
 		pluginBaseFile.getFullPath().removeLastSegments(1).append(buildFileName);
@@ -217,9 +216,6 @@ private void makeJars(IProgressMonitor monitor)
 private void makeScripts(IProgressMonitor monitor) throws CoreException {
 	Vector args = new Vector();
 
-	String eclipseDir =
-		PDEPlugin.getDefault().getPreferenceStore().getString(
-			TargetPlatformPreferencePage.PROP_PLATFORM_PATH);
 	File pluginFile = TargetPlatformManager.createPropertiesFile();
 	String pluginPath = pluginFile.getPath();
 

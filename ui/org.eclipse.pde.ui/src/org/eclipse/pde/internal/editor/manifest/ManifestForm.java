@@ -37,7 +37,6 @@ public class ManifestForm extends ScrollableSectionForm {
 		//layout.makeColumnsEqualWidth=true;
 		parent.setLayout(layout);
 
-		FormSection section;
 		GridData gd;
 		Control control;
 		FormWidgetFactory factory = getFactory();
@@ -84,15 +83,11 @@ public class ManifestForm extends ScrollableSectionForm {
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		control.setLayoutData(gd);
 
-		boolean fragment = ((ManifestEditor) page.getEditor()).isFragmentEditor();
-
-		//if (!fragment) {
-			requiresSection = new RequiresSection(page);
-			requiresSection.setCollapsable(true);
-			control = requiresSection.createControl(rightColumn, factory);
-			gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-			control.setLayoutData(gd);
-		//}
+		requiresSection = new RequiresSection(page);
+		requiresSection.setCollapsable(true);
+		control = requiresSection.createControl(rightColumn, factory);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		control.setLayoutData(gd);
 
 		extensionPointSection = new ExtensionPointSection(page);
 		extensionPointSection.setCollapsable(true);
@@ -104,8 +99,7 @@ public class ManifestForm extends ScrollableSectionForm {
 		registerSection(alertSection);
 		registerSection(pluginSection);
 		registerSection(runtimeSection);
-		//if (!fragment)
-			registerSection(requiresSection);
+		registerSection(requiresSection);
 		registerSection(extensionSection);
 		registerSection(extensionPointSection);
 	}

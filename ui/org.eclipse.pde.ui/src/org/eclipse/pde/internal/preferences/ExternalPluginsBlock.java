@@ -219,7 +219,6 @@ public class ExternalPluginsBlock {
 			platformPath = editor.getPlatformPath();
 		if (platformPath != null && platformPath.length() == 0)
 			return;
-		int mode;
 
 		store.setDefault(CHECKED_PLUGINS, SAVED_NONE);
 
@@ -227,10 +226,8 @@ public class ExternalPluginsBlock {
 		String saved = store.getString(CHECKED_PLUGINS);
 		if (saved.length() == 0 || saved.equals(SAVED_NONE)) {
 			initializeDefault(false);
-			mode = DESELECT_ALL;
 		} else if (saved.equals(SAVED_ALL)) {
 			initializeDefault(true);
-			mode = SELECT_ALL;
 		} else {
 			Vector savedList = createSavedList(saved);
 
@@ -244,7 +241,6 @@ public class ExternalPluginsBlock {
 					selection.add(model);
 			}
 			tablePart.setSelection(selection.toArray());
-			mode = SELECT_SOME;
 		}
 		initialModels = registry.getModels();
 	}

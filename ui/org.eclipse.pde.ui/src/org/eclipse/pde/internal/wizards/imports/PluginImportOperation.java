@@ -395,9 +395,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IFile jarFile,
 		IPath descriptorPath) {
 		IPath folderPath = folder.getFullPath();
-		IPath jarPath = jarFile.getFullPath();
-		String name = folderPath.lastSegment();
-		String jarName = jarPath.lastSegment();
 		IPath manifestPath = folderPath.append("META-INF").append("MANIFEST.MF");
 
 		IPackageFragmentRoot root =

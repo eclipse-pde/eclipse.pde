@@ -51,8 +51,6 @@ public class PortabilitySection extends PDEFormSection {
 		setCollapsed(feature.getOS()==null && feature.getWS()==null && feature.getNL()==null);
 	}
 	public void commitChanges(boolean onSave) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature component = model.getFeature();
 		osText.commit();
 		wsText.commit();
 		nlText.commit();

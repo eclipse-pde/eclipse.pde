@@ -254,7 +254,6 @@ protected void initialize() {
 }
 public void selectionChanged(SelectionChangedEvent event) {
 	ISelection selection = event.getSelection();
-	ISelectionProvider provider = event.getSelectionProvider();
 
 	Object input=null;
 

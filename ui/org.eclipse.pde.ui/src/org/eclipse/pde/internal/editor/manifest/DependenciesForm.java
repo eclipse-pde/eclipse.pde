@@ -42,7 +42,6 @@ public class DependenciesForm extends ScrollableSectionForm {
 		layout.horizontalSpacing = 15;
 		parent.setLayout(layout);
 
-		FormSection section;
 		GridData gd;
 		Control control;
 

@@ -146,10 +146,11 @@ public java.lang.String getName() {
 private String getNormalizedText(String source) {
 	String result = source.replace('\t', ' ');
 	result = result.trim();
-	boolean skip=false;
+
 
 	return result;
 	/*
+	boolean skip=false;
 	
 	StringBuffer buff = new StringBuffer();
 	for (int i=0; i<result.length(); i++) {
@@ -604,7 +605,7 @@ private void reset() {
 	elements = new Vector();
 	docSections = new Vector();
 	internalId = null;
-	Vector references = null;
+	references = null;
 	description = null;
 	name = null;
 }

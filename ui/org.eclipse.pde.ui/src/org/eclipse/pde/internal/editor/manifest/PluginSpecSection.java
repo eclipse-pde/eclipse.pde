@@ -191,8 +191,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				forceDirty();
 			}
 		});
-		Label label =
-			factory.createLabel(container, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
+		factory.createLabel(container, PDEPlugin.getResourceString(KEY_PLUGIN_VERSION));
 		pluginVersionText = new FormEntry(createText(container, factory, 1));
 		pluginVersionText.addFormTextListener(new IFormTextListener() {
 			public void textValueChanged(FormEntry text) {
@@ -206,7 +205,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				forceDirty();
 			}
 		});
-		label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_MATCH));
+		factory.createLabel(container, PDEPlugin.getResourceString(KEY_MATCH));
 		matchCombo = new CCombo(container, SWT.READ_ONLY|SWT.FLAT);
 		matchCombo.setBackground(factory.getBackgroundColor());
 		matchCombo.setForeground(factory.getForegroundColor());
@@ -247,7 +246,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				});
 			link.setToolTipText(PDEPlugin.getResourceString(KEY_CLASS_TOOLTIP));
 		} else {
-			Label label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_CLASS));
+			factory.createLabel(container, PDEPlugin.getResourceString(KEY_CLASS));
 		}
 
 		classText = new FormEntry(createText(container, factory, 1));

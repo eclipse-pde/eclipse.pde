@@ -36,18 +36,18 @@ protected void createFormClient(Composite parent) {
 	GridData gd;
 
 	pluginSection = new PluginSection(page);
-	Control control = pluginSection.createControl(parent, getFactory());
+	Control control = pluginSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 	gd.verticalSpan = 2;
 	control.setLayoutData(gd);
 	
 	requiresSection = new RequiresSection(page);
-	control = requiresSection.createControl(parent, getFactory());
+	control = requiresSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);	
 
 	matchSection = new MatchSection(page, false);
-	control = matchSection.createControl(parent, getFactory());
+	control = matchSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
 

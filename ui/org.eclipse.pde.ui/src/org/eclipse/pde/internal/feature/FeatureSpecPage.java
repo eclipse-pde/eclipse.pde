@@ -136,7 +136,7 @@ private boolean verifyVersion() {
 	boolean result = true;
 	if (value.length()==0) result = false;
 	try {
-	   PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
+	   new PluginVersionIdentifier(value);
 	}
 	catch (Throwable e) {
 		result = false;

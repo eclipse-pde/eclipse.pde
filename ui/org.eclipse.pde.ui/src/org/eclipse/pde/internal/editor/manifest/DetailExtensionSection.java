@@ -382,7 +382,6 @@ public class DetailExtensionSection
 		if (obj instanceof IPluginExtension) {
 			return extensionImage;
 		} else if (obj instanceof IPluginElement) {
-			String name = obj.toString();
 			IPluginElement element = (IPluginElement) obj;
 			Image customImage = getCustomImage(element);
 			if (customImage != null)

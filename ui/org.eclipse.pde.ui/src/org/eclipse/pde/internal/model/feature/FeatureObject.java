@@ -73,10 +73,10 @@ int getIntegerAttribute(Node node, String name) {
 protected String getNormalizedText(String source) {
 	String result = source.replace('\t', ' ');
 	result = result.trim();
-	boolean skip=false;
 
 	return result;
 	/*
+	 boolean skip = false;
 	
 	StringBuffer buff = new StringBuffer();
 	for (int i=0; i<result.length(); i++) {

@@ -267,11 +267,9 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage
 	 */
 	static void setLauncherData(IDialogSettings settings, LauncherData data) {
 		IVMInstall launcher = null;
-		int jreSelectionIndex = 0;
 		String vmArgs = "";
 		String progArgs = "";
 		String appName = "org.eclipse.ui.workbench";
-		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
 		String defaultWorkspace = "";
 		boolean tracing = false;

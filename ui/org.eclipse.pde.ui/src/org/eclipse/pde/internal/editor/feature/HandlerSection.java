@@ -49,7 +49,6 @@ public class HandlerSection extends PDEFormSection {
 		setCollapsed(feature.getInstallHandler()==null);
 	}
 	public void commitChanges(boolean onSave) {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		urlText.commit();
 		libraryText.commit();
 		classText.commit();

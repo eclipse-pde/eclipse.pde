@@ -128,7 +128,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performCancel()
 	 */
 	public boolean performCancel() {
-		IDialogSettings setting = getDialogSettings();
 		page1.storeSettings(false);
 		page2.storeSettings(false);
 		return super.performCancel();
