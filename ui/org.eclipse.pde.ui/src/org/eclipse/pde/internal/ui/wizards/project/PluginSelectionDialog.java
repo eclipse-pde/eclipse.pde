@@ -4,20 +4,22 @@ package org.eclipse.pde.internal.ui.wizards.project;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import org.eclipse.pde.core.plugin.*;
+import java.util.Vector;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.util.ArraySorter;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.swt.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.core.*;
 
 public class PluginSelectionDialog extends SelectionDialog {
 	public static final String KEY_TITLE = "PluginSelectionDialog.title";
@@ -153,6 +155,7 @@ public class PluginSelectionDialog extends SelectionDialog {
 			setResult(null);
 			setMessage("");
 		}
+		getButton(IDialogConstants.OK_ID).setEnabled(model!=null);
 	}
 	public void setMessage(String message) {
 		super.setMessage(message);

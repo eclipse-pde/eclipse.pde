@@ -32,7 +32,8 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 	class MaxValidator implements ICellEditorValidator {
 		public String isValid(Object value) {
 			String svalue = value.toString();
-			if (svalue.equals("unbounded")) return null;
+			if (svalue.equals("unbounded"))
+				return null;
 			try {
 				int ivalue = Integer.parseInt(svalue);
 				if (ivalue < 0)
@@ -44,78 +45,79 @@ public class GrammarPropertySource extends SchemaObjectPropertySource {
 		}
 	}
 
-public GrammarPropertySource(ISchemaRepeatable obj) {
-	super(obj);
-}
-public Object getEditableValue() {
-	return null;
-}
-protected String getMaxOccurs(ISchemaRepeatable obj) {
-	if (obj.getMaxOccurs()==Integer.MAX_VALUE) return "unbounded";
-	return Integer.toString(obj.getMaxOccurs());
-}
-protected String getMinOccurs(ISchemaRepeatable obj) {
-	return Integer.toString(obj.getMinOccurs());
-}
-public IPropertyDescriptor[] getPropertyDescriptors() {
-	if (descriptors == null) {
-		descriptors = getPropertyDescriptorsVector();
+	public GrammarPropertySource(ISchemaRepeatable obj) {
+		super(obj);
 	}
-	return toDescriptorArray(descriptors);
-}
-protected Vector getPropertyDescriptorsVector() {
-	Vector result = new Vector();
-	PropertyDescriptor desc =
-		createTextPropertyDescriptor(P_MIN_OCCURS, "minOccurs");
-	desc.setValidator(new MinValidator());
-	result.addElement(desc);
-	desc = createTextPropertyDescriptor(P_MAX_OCCURS, "maxOccurs");
-	desc.setValidator(new MaxValidator());
-	result.addElement(desc);
-	return result;
-}
-public Object getPropertyValue(Object name) {
-	ISchemaRepeatable obj= (ISchemaRepeatable) getSourceObject();
-	if (name.equals(P_MIN_OCCURS)) return getMinOccurs(obj);
-	if (name.equals(P_MAX_OCCURS)) return getMaxOccurs(obj);
-	return null;
-}
-public boolean isPropertySet(Object property) {
-	return false;
-}
-public int parseValue(Object value) {
-	String svalue = (String) value;
-	if (svalue.equals("unbounded"))
-		return Integer.MAX_VALUE;
-	try {
-		return Integer.parseInt(svalue.toString());
+	public Object getEditableValue() {
+		return null;
+	}
+	protected String getMaxOccurs(ISchemaRepeatable obj) {
+		if (obj.getMaxOccurs() == Integer.MAX_VALUE)
+			return "unbounded";
+		return Integer.toString(obj.getMaxOccurs());
+	}
+	protected String getMinOccurs(ISchemaRepeatable obj) {
+		return Integer.toString(obj.getMinOccurs());
+	}
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		if (descriptors == null) {
+			descriptors = getPropertyDescriptorsVector();
+		}
+		return toDescriptorArray(descriptors);
+	}
+	protected Vector getPropertyDescriptorsVector() {
+		Vector result = new Vector();
+		PropertyDescriptor desc =
+			createTextPropertyDescriptor(P_MIN_OCCURS, "minOccurs");
+		desc.setValidator(new MinValidator());
+		result.addElement(desc);
+		desc = createTextPropertyDescriptor(P_MAX_OCCURS, "maxOccurs");
+		desc.setValidator(new MaxValidator());
+		result.addElement(desc);
+		return result;
+	}
+	public Object getPropertyValue(Object name) {
+		ISchemaRepeatable obj = (ISchemaRepeatable) getSourceObject();
+		if (name.equals(P_MIN_OCCURS))
+			return getMinOccurs(obj);
+		if (name.equals(P_MAX_OCCURS))
+			return getMaxOccurs(obj);
+		return null;
+	}
+	public boolean isPropertySet(Object property) {
+		return false;
+	}
+	public int parseValue(Object value) {
+		String svalue = (String) value;
+		if (svalue.equals("unbounded"))
+			return Integer.MAX_VALUE;
+		try {
+			return Integer.parseInt(svalue.toString());
 
-	} catch (NumberFormatException e) {
-		PDEPlugin.logException(e);
+		} catch (NumberFormatException e) {
+			PDEPlugin.logException(e);
+		}
+		return 1;
 	}
-	return 1;
-}
-public void resetPropertyValue(Object property) {}
-public void setPropertyValue(Object name, Object value) {
-	ISchemaRepeatable obj = (ISchemaRepeatable) getSourceObject();
-	
-	if (name.equals(P_MIN_OCCURS)) {
-		int ivalue = parseValue(value);
-		if (obj instanceof RepeatableSchemaObject) {
-			((RepeatableSchemaObject)obj).setMinOccurs(ivalue);
-		}
-		else if (obj instanceof SchemaElementReference) {
-			((SchemaElementReference)obj).setMinOccurs(ivalue);
+	public void resetPropertyValue(Object property) {
+	}
+	public void setPropertyValue(Object name, Object value) {
+		ISchemaRepeatable obj = (ISchemaRepeatable) getSourceObject();
+
+		if (name.equals(P_MIN_OCCURS)) {
+			int ivalue = parseValue(value);
+			if (obj instanceof RepeatableSchemaObject) {
+				((RepeatableSchemaObject) obj).setMinOccurs(ivalue);
+			} else if (obj instanceof SchemaElementReference) {
+				((SchemaElementReference) obj).setMinOccurs(ivalue);
+			}
+		} else if (name.equals(P_MAX_OCCURS)) {
+			int ivalue = parseValue(value);
+			if (obj instanceof RepeatableSchemaObject) {
+				((RepeatableSchemaObject) obj).setMaxOccurs(ivalue);
+			} else if (obj instanceof SchemaElementReference) {
+				((SchemaElementReference) obj).setMaxOccurs(ivalue);
+			}
 		}
 	}
-	else if (name.equals(P_MAX_OCCURS)) {
-		int ivalue = parseValue(value);
-		if (obj instanceof RepeatableSchemaObject) {
-			((RepeatableSchemaObject)obj).setMaxOccurs(ivalue);
-		}
-		else if (obj instanceof SchemaElementReference) {
-			((SchemaElementReference)obj).setMaxOccurs(ivalue);
-		}
-	}
-}
 }

@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.*;
@@ -89,5 +89,16 @@ public class SiteFeatureSection extends ObjectListSection {
 
 	protected void setButtonsEnabled(boolean value) {
 		getTablePart().setButtonEnabled(0, value);
+	}
+	
+	protected boolean isValidObject(Object obj) {
+		return obj instanceof ISiteFeature;
+	}
+
+	protected void accept(ISite site, ArrayList features)
+		throws CoreException {
+		site.addFeatures(
+			(ISiteFeature[]) features.toArray(
+				new ISiteFeature[features.size()]));
 	}
 }

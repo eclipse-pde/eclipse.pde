@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.CheckboxTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -268,51 +269,19 @@ public abstract class CheckboxObjectListSection
 	}
 
 	/**
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
-	 */
-	protected boolean canPaste(Object target, Object[] objects) {
-		/*
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof FeaturePlugin || !(objects[i] instanceof FeatureData))
-				return false;
-		}
-		*/
-		return true;
-	}
-	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		/*
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
 		if (objects != null) {
 			doPaste(null, objects);
 		}
-		*/
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		/*
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = model.getFeature();
-		FeatureData[] fData = new FeatureData[objects.length];
-		try {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeatureData && !(objects[i] instanceof FeaturePlugin)) {
-					FeatureData fd = (FeatureData) objects[i];
-					fd.setModel(model);
-					fd.setParent(feature);
-					fData[i] = fd;
-				}
-			}
-			feature.addData(fData);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		*/
 	}
 }

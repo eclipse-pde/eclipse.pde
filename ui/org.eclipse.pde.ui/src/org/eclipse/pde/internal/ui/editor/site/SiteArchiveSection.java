@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -85,5 +86,16 @@ public class SiteArchiveSection extends ObjectListSection {
 
 	protected void setButtonsEnabled(boolean value) {
 		getTablePart().setButtonEnabled(0, value);
+	}
+
+	protected boolean isValidObject(Object obj) {
+		return obj instanceof ISiteArchive;
+	}
+
+	protected void accept(ISite site, ArrayList archives)
+		throws CoreException {
+		site.addArchives(
+			(ISiteArchive[]) archives.toArray(
+				new ISiteArchive[archives.size()]));
 	}
 }

@@ -115,6 +115,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		//return cleanModel ? model : null;
 		return model;
 	}
+	
 	private ISiteModel createStorageModel(IStorage storage) {
 		/*
 		InputStream stream = null;
@@ -124,7 +125,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 			PDEPlugin.logException(e);
 			return null;
 		}
-		ExternalFeatureModel model = new ExternalFeatureModel();
+		ExternalSiteModel model = new ExternalSiteModel();
 		model.setInstallLocation("");
 		try {
 			model.load(stream, false);
@@ -141,6 +142,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		*/
 		return null;
 	}
+	
 	public void dispose() {
 		super.dispose();
 		IModelProvider provider =

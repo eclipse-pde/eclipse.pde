@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -112,5 +113,16 @@ public class CategoryDefinitionSection extends ObjectListSection {
 	protected void setButtonsEnabled(boolean value) {
 		getTablePart().setButtonEnabled(0, value);
 		getTablePart().setButtonEnabled(1, value);
+	}
+
+	protected boolean isValidObject(Object obj) {
+		return obj instanceof ISiteCategoryDefinition;
+	}
+
+	protected void accept(ISite site, ArrayList definitions)
+		throws CoreException {
+		site.addCategoryDefinitions(
+			(ISiteCategoryDefinition[]) definitions.toArray(
+				new ISiteCategoryDefinition[definitions.size()]));
 	}
 }

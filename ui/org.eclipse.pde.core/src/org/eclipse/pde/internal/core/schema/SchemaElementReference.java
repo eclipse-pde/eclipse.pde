@@ -90,8 +90,14 @@ public class SchemaElementReference
 		return referenceName;
 	}
 	public ISchema getSchema() {
-		if (element != null)
-			return element.getSchema();
+		if (element != null) {
+			ISchema schema = element.getSchema();
+			if (schema!=null) {
+				ISchemaDescriptor desc = schema.getSchemaDescriptor();
+				if (!(desc instanceof IncludedSchemaDescriptor))
+					return schema;
+			}
+		}
 		if (compositor != null)
 			return compositor.getSchema();
 		return null;

@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -12,12 +12,14 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.SiteObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -67,8 +69,7 @@ public abstract class ObjectListSection
 		EditableTablePart tablePart = getTablePart();
 		tableViewer = tablePart.getTableViewer();
 		tableViewer.setContentProvider(new PluginContentProvider());
-		tableViewer.setLabelProvider(
-			PDEPlugin.getDefault().getLabelProvider());
+		tableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
@@ -97,7 +98,8 @@ public abstract class ObjectListSection
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(newAction);
 		manager.add(new Separator());
-		if (isOpenable()) manager.add(openAction);
+		if (isOpenable())
+			manager.add(openAction);
 		manager.add(deleteAction);
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
@@ -119,8 +121,9 @@ public abstract class ObjectListSection
 			PDEPlugin.logException(e);
 		}
 	}
-	
-	protected abstract void remove(Object input, List objects) throws CoreException;
+
+	protected abstract void remove(Object input, List objects)
+		throws CoreException;
 
 	private void handleSelectAll() {
 		IStructuredContentProvider provider =
@@ -133,9 +136,7 @@ public abstract class ObjectListSection
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 			BusyIndicator
-				.showWhile(
-					tableViewer.getTable().getDisplay(),
-					new Runnable() {
+				.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 				public void run() {
 					handleDelete();
 				}
@@ -144,9 +145,7 @@ public abstract class ObjectListSection
 		}
 		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
 			BusyIndicator
-				.showWhile(
-					tableViewer.getTable().getDisplay(),
-					new Runnable() {
+				.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
 				public void run() {
 					handleSelectAll();
 				}
@@ -171,9 +170,9 @@ public abstract class ObjectListSection
 			fireSelectionNotification(selection.getFirstElement());
 		else
 			fireSelectionNotification(null);
-		boolean singleSelection = selection.size()==1;
+		boolean singleSelection = selection.size() == 1;
 		openAction.setEnabled(singleSelection);
-		deleteAction.setEnabled(selection.isEmpty()==false);
+		deleteAction.setEnabled(selection.isEmpty() == false);
 	}
 
 	public void initialize(Object input) {
@@ -268,52 +267,53 @@ public abstract class ObjectListSection
 		updateNeeded = false;
 	}
 
+	protected abstract boolean isValidObject(Object object);
+
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
 	 */
 	protected boolean canPaste(Object target, Object[] objects) {
-		/*
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof FeaturePlugin || !(objects[i] instanceof FeatureData))
+			if (isValidObject(objects[i]) == false)
 				return false;
 		}
-		*/
 		return true;
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
-		/*
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
-		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		Object[] objects = (Object[]) clipboard.getContents(modelTransfer);
 		if (objects != null) {
 			doPaste(null, objects);
 		}
-		*/
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
-		/*
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = model.getFeature();
-		FeatureData[] fData = new FeatureData[objects.length];
-		try {
-			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeatureData && !(objects[i] instanceof FeaturePlugin)) {
-					FeatureData fd = (FeatureData) objects[i];
-					fd.setModel(model);
-					fd.setParent(feature);
-					fData[i] = fd;
-				}
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISite site = model.getSite();
+
+		ArrayList siteObjects = new ArrayList();
+		for (int i = 0; i < objects.length; i++) {
+			if (isValidObject(objects[i])) {
+				SiteObject sobj = (SiteObject) objects[i];
+				sobj.setModel(model);
+				sobj.setParent(site);
+				siteObjects.add(sobj);
 			}
-			feature.addData(fData);
+		}
+		try {
+			accept(site, siteObjects);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		*/
+
 	}
+
+	protected abstract void accept(ISite site, ArrayList siteObjects)
+		throws CoreException;
 }
