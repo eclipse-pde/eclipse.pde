@@ -7,7 +7,6 @@ import java.util.*;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.IModelUndoManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**

@@ -5,8 +5,6 @@ package org.eclipse.pde.core.plugin;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.ischema.*;
-import java.util.*;
 /**
  * Classes that implement this interface model the
  * XML elements found in the plug-in model.

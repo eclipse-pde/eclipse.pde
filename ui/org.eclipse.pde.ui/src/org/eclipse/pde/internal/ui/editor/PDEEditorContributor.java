@@ -9,7 +9,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.pde.internal.core.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.texteditor.*;
 import java.util.*;

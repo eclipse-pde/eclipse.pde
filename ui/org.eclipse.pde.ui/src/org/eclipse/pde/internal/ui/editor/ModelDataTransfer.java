@@ -2,11 +2,11 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.swt.dnd.ByteArrayTransfer;
-import org.eclipse.swt.dnd.TransferData;
 import java.io.*;
+
+import org.eclipse.swt.dnd.*;
 
 /**
  * @version 	1.0

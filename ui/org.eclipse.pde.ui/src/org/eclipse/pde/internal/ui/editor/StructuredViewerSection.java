@@ -5,7 +5,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
-import org.eclipse.pde.internal.core.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;

@@ -1,11 +1,9 @@
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.*;
-import java.io.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import java.io.File;
+
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.view.*;
-import org.eclipse.ui.views.properties.IPropertySource;
 
 public class FileAdapter extends PlatformObject {
 	private File file;

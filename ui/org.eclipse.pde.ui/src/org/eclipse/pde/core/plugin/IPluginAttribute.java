@@ -5,7 +5,6 @@ package org.eclipse.pde.core.plugin;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.ischema.*;
 /**
  * An attribute of XML elements found in the plug-in.
  */

@@ -4,38 +4,28 @@ package org.eclipse.pde.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.IModel;
-
-import java.lang.reflect.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.ui.actions.*;
 import java.io.*;
-import org.eclipse.ui.views.contentoutline.*;
-import org.eclipse.jface.action.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import org.eclipse.swt.layout.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.part.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
 import org.eclipse.ui.texteditor.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.update.ui.forms.internal.*;
 
 public abstract class PDEMultiPageEditor
 	extends EditorPart

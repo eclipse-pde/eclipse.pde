@@ -161,7 +161,7 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.pde.projectGenerators">
+         point="org.eclipse.pde.ui.projectGenerators">
       <wizard
             name="%projectGenerators.defaultPlugin.name"
             icon="icons/full/ctool16/defcon_wiz.gif"
@@ -219,7 +219,7 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.pde.newExtension">
+         point="org.eclipse.pde.ui.newExtension">
       <category
             name="%newExtension.templates"
             id="templates">
@@ -374,7 +374,7 @@
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
-               class="org.eclipse.pde.internal.ui.builders.ManifestConsistencyChecker">
+               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
          </run>
       </builder>
    </extension>
@@ -562,7 +562,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
-            configTypeID="org.eclipse.pde.RuntimeWorkbench"
+            configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -570,19 +570,19 @@
          point="org.eclipse.debug.ui.launchConfigurationTabs">
       <launchConfigurationTab
             name="%launchConfigurationTab.firstTab.name"
-            type="org.eclipse.pde.RuntimeWorkbench"
+            type="org.eclipse.pde.ui.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.BasicLauncherTab"
             id="org.eclipse.pde.ui.launchConfigurationTab.FirstTab">
       </launchConfigurationTab>
       <launchConfigurationTab
             name="%launchConfigurationTab.advancedTab.name"
-            type="org.eclipse.pde.RuntimeWorkbench"
+            type="org.eclipse.pde.ui.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.AdvancedLauncherTab"
             id="org.eclipse.pde.ui.launchConfigurationTab.AdvancedTab">
       </launchConfigurationTab>
       <launchConfigurationTab
             name="%launchConfigurationTab.tracingTab.name"
-            type="org.eclipse.pde.RuntimeWorkbench"
+            type="org.eclipse.pde.ui.RuntimeWorkbench"
             class="org.eclipse.pde.internal.ui.launcher.TracingLauncherTab"
             id="org.eclipse.pde.ui.launchConfigurationTab.TracingTab">
       </launchConfigurationTab>

@@ -73,17 +73,14 @@ public void addPages() {
 
 	structurePage = new ProjectStructurePage(provider, isFragmentWizard());
 	addPage(structurePage);
-	ElementList codegenWizards = getAvailableCodegenWizards();
-	if (codegenWizards.size() > 0) {
-		codegenPage =
-			new ProjectCodeGeneratorsPage(
+	codegenPage =
+		new ProjectCodeGeneratorsPage(
 				provider,
 				structurePage,
-				codegenWizards,
+				getAvailableCodegenWizards(),
 				PDEPlugin.getResourceString(KEY_CODEGEN_MESSAGE),
 				isFragmentWizard());
-		addPage(codegenPage);
-	}
+	addPage(codegenPage);
 }
 public boolean canFinish() {
 	IWizardPage page = getContainer().getCurrentPage();

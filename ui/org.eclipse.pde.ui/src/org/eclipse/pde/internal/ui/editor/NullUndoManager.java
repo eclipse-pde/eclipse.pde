@@ -6,7 +6,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.internal.core.IModelUndoManager;
 
 /**
  * @version 	1.0
