@@ -239,9 +239,8 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		TextEdit op = null;
 		Object changedObject = textNode;
 		if (textNode.getOffset() > -1) {
-			int length = textNode.getText().length() == 0 ? textNode.getFullLength() : textNode.getLength();
-			int offset = textNode.getText().length() == 0 ? textNode.getTopOffset() : textNode.getOffset();
-			op = new ReplaceEdit(offset, length, textNode.getText());
+			String newText = getWritableString(textNode.getText());
+			op = new ReplaceEdit(textNode.getOffset(), textNode.getLength(), newText);
 		} else {
 			IDocumentNode parent = textNode.getEnclosingElement();
 			if (parent.getOffset() > -1) {

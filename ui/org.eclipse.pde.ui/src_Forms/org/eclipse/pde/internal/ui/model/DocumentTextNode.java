@@ -39,7 +39,7 @@ public class DocumentTextNode implements IDocumentTextNode {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#getText()
 	 */
 	public String getText() {
-		return fText == null ? "" : fText.trim();
+		return fText == null ? "" : fText;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentTextNode#setOffset(int)

@@ -162,6 +162,17 @@ public class PluginDocumentHandler extends DefaultHandler {
 		IDocumentNode node = (IDocumentNode)fDocumentNodeStack.pop();
 		try {
 			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
+			IDocumentTextNode textNode = node.getTextNode();
+			if (textNode != null) {
+				int length = textNode.getLength();
+				StringBuffer buffer = new StringBuffer(textNode.getText()).reverse();
+				for (int i = 0; i < buffer.length(); i++) {
+					if (!Character.isWhitespace(buffer.charAt(i)))
+						break;
+					length -= 1;
+				}
+				textNode.setLength(length);
+			}
 		} catch (BadLocationException e) {
 		}
 	}
@@ -193,9 +204,41 @@ public class PluginDocumentHandler extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {		
+		if (length == 0)
+			return;
+		
+		IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
+		if (parent == null)
+			return;
+		
 		StringBuffer buffer = new StringBuffer();
+		buffer.append(ch, start, length);
+		IDocumentTextNode textNode = parent.getTextNode();
+		if (textNode == null) {
+			if (buffer.toString().trim().length() > 0) {
+				textNode = new DocumentTextNode();
+				textNode.setEnclosingElement(parent);
+				parent.addTextNode(textNode);
+				
+				int offset = start;
+				for (; offset <= start + length; offset++) {
+					if (!Character.isWhitespace(ch[offset])) {
+						textNode.setOffset(offset);
+						textNode.setTopOffset(start);
+						textNode.setFullLength(buffer.length());
+						textNode.setLength(buffer.length() - offset + start);
+						textNode.setText(buffer.substring(offset - start));
+						break;
+					}
+				}
+			}
+		} else {
+			textNode.setText(textNode.getText() + buffer.toString());
+			textNode.setLength(textNode.getLength() + buffer.length());
+			textNode.setFullLength(textNode.getFullLength() + buffer.length());
+		}
+		/*StringBuffer buffer = new StringBuffer();
 		buffer.append(ch, start, length);
 		String text = buffer.toString().trim();
 		if (text.length() > 0) {
@@ -214,8 +257,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 					break;
 				}
 			}
-		}
-		super.characters(ch, start, length);
+		}*/
 	}
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
