@@ -527,10 +527,8 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		IPluginModelBase model,
 		HashSet checked,
 		boolean addFragmentPlugin) {
-		if (checked.contains(model)) {
+		if (!checked.add(model))
 			return;
-		}
-		checked.add(model);
 		if (model instanceof IPluginModel) {
 			IPlugin plugin = ((IPluginModel) model).getPlugin();
 			IPluginImport[] required = plugin.getImports();
