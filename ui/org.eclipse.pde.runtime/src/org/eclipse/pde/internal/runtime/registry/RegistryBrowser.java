@@ -249,10 +249,10 @@ IRegistryChangeListener {
 	 * @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
 	 */
 	public void bundleChanged(BundleEvent event) {
-		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer
-				.getContentProvider());
-		final IPluginDescriptor descriptor = Platform.getPluginRegistry()
-		.getPluginDescriptor(event.getBundle().getSymbolicName());
+		if (treeViewer == null)
+			return;
+		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer.getContentProvider());
+		final IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(event.getBundle().getSymbolicName());
 		if (descriptor == null)
 			return;
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
@@ -263,8 +263,7 @@ IRegistryChangeListener {
 				TreeItem[] items = treeViewer.getTree().getItems();
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
-						PluginObjectAdapter plugin = (PluginObjectAdapter) items[i]
-																				 .getData();
+						PluginObjectAdapter plugin = (PluginObjectAdapter) items[i].getData();
 						if (plugin != null) {
 							Object object = plugin.getObject();
 							if (object instanceof IPluginDescriptor) {
