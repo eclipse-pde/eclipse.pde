@@ -83,6 +83,9 @@ public class BaseExportWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		exportPart.createControl(container);
+		GridData gd = (GridData) exportPart.getControl().getLayoutData();
+		gd.heightHint = 150;
+		gd.widthHint = 300;
 
 		if (!featureExport) {
 			createLabel(container, "", 2);
@@ -94,7 +97,7 @@ public class BaseExportWizardPage extends WizardPage {
 					"&JAR archives for the Update site");
 		}
 		sourceZipsCheck = new Button(container, SWT.CHECK);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		sourceZipsCheck.setText("&Include source code archives");
 		sourceZipsCheck.setLayoutData(gd);
