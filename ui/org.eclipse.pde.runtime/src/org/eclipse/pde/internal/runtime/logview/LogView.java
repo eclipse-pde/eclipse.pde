@@ -204,8 +204,9 @@ public class LogView extends ViewPart implements ILogListener {
 		toolBarManager.add(exportAction);
 		toolBarManager.add(importAction);
 		toolBarManager.add(new Separator());
-		toolBarManager.add(deleteLogAction);
 		toolBarManager.add(clearAction);
+		toolBarManager.add(deleteLogAction);
+		toolBarManager.add(viewLogAction);
 		toolBarManager.add(readLogAction);
 		toolBarManager.add(new Separator());
 		
@@ -442,6 +443,7 @@ public class LogView extends ViewPart implements ILogListener {
 		};
 		viewLogAction.setImageDescriptor(PDERuntimePluginImages.DESC_PAGE_OBJ);
 		viewLogAction.setEnabled(inputFile.exists());
+		viewLogAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.view.currentLog.tooltip"));
 	}
 	
 	public void dispose() {
@@ -557,9 +559,9 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(copyAction);
 		manager.add(new Separator());
-		manager.add(viewLogAction);
 		manager.add(clearAction);
 		manager.add(deleteLogAction);
+		manager.add(viewLogAction);
 		manager.add(readLogAction);
 		manager.add(new Separator());
 		manager.add(exportAction);
