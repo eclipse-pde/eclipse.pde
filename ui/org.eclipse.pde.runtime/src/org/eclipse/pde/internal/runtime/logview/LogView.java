@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.runtime.logview;
  */
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -22,7 +22,7 @@ public class LogView
 	extends ViewPart
 	implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
-	private Vector logs = new Vector();
+	private ArrayList logs = new ArrayList();
 	private static final String C_SEVERITY = "LogView.column.severity";
 	private static final String KEY_PROPERTIES_TOOLTIP =
 		"LogView.properties.tooltip";
@@ -32,12 +32,13 @@ public class LogView
 	private static final String KEY_READ_LOG_TOOLTIP = "LogView.readLog.tooltip";
 	private static final String C_MESSAGE = "LogView.column.message";
 	private static final String C_PLUGIN = "LogView.column.plugin";
+	private static final String C_DATE = "LogView.column.date";
 	private Action propertiesAction;
 	private Action clearAction;
 	private Action readLogAction;
 
 	public LogView() {
-		logs = new Vector();
+		logs = new ArrayList();
 	}
 	public void createPartControl(Composite parent) {
 		TableTree tableTree = new TableTree(parent, SWT.FULL_SELECTION);
@@ -52,11 +53,15 @@ public class LogView
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_MESSAGE));
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_PLUGIN));
+		tableColumn = new TableColumn(table, SWT.NULL);
+		tableColumn.setText(PDERuntimePlugin.getResourceString(C_DATE));
 		ColumnLayoutData cLayout = new ColumnPixelData(21);
 		tlayout.addColumnData(cLayout);
 		cLayout = new ColumnPixelData(20);
 		tlayout.addColumnData(cLayout);
 		cLayout = new ColumnWeightData(100, true);
+		tlayout.addColumnData(cLayout);
+		cLayout = new ColumnPixelData(100);
 		tlayout.addColumnData(cLayout);
 		cLayout = new ColumnPixelData(100);
 		tlayout.addColumnData(cLayout);
@@ -149,9 +154,7 @@ public class LogView
 		manager.add(propertiesAction);
 	}
 	public LogEntry[] getLogs() {
-		LogEntry[] array = new LogEntry[logs.size()];
-		logs.copyInto(array);
-		return array;
+		return (LogEntry[])logs.toArray(new LogEntry[logs.size()]);
 	}
 	public TableTreeViewer getTableTreeViewer() {
 		return tableTreeViewer;
@@ -178,13 +181,14 @@ public class LogView
 		logs.clear();
 		File logFile = Platform.getLogFileLocation().toFile();
 		if (!logFile.exists()) return;
+		LogReader.parseLogFile(logFile, logs);
 	}
 	public void logging(IStatus status) {
-		logs.insertElementAt(new LogEntry(status), 0);
+		logs.set(0, new LogEntry(status));
 		tableTreeViewer.refresh();
 	}
 	public void logging(IStatus status, String plugin) {
-		logs.insertElementAt(new LogEntry(status), 0);
+		logs.set(0, new LogEntry(status));
 		tableTreeViewer.refresh();
 	}
 	public void setFocus() {

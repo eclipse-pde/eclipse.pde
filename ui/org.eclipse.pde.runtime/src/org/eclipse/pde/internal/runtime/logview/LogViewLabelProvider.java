@@ -54,6 +54,8 @@ public class LogViewLabelProvider
 				return entry.getMessage();
 			case 3 :
 				return entry.getPluginId();
+			case 4 :
+				return entry.getDate();
 		}
 		return "";
 	}

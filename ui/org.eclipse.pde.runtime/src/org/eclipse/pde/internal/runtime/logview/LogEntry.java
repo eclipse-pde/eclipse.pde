@@ -4,12 +4,10 @@ package org.eclipse.pde.internal.runtime.logview;
  * All Rights Reserved.
  */
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -36,7 +34,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public int getSeverity() {
 		return severity;
 	}
-	
+
 	public boolean isOK() {
 		return severity == IStatus.OK;
 	}
@@ -51,6 +49,9 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	}
 	public String getStack() {
 		return stack;
+	}
+	public String getDate() {
+		return date;
 	}
 	public String getSeverityText() {
 		return getSeverityText(severity);
@@ -91,6 +92,10 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		return parent;
 	}
 
+	void setParent(LogEntry parent) {
+		this.parent = parent;
+	}
+
 	private String getSeverityText(int severity) {
 		switch (severity) {
 			case IStatus.ERROR :
@@ -103,11 +108,69 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		return "?";
 	}
 
+	int processLogLine(String line, boolean root) {
+		//!ENTRY <pluginID> <severity> <code> <date>
+		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
+		StringTokenizer stok = new StringTokenizer(line, " ", true);
+		StringBuffer dateBuffer = new StringBuffer();
+
+		int dateCount = 5;
+		int depth = 0;
+		for (int i = 0; stok.hasMoreTokens();) {
+			String token = stok.nextToken();
+			if (i >= dateCount) {
+				dateBuffer.append(token);
+				continue;
+			} else if (token.equals(" "))
+				continue;
+			switch (i) {
+				case 0 : // entry or subentry
+					if (root) i+=2;
+					else i++;
+					break;
+				case 1 : // depth
+					depth = parseInteger(token);
+					i++;
+					break;
+				case 2 :
+					pluginId = token;
+					i++;
+					break;
+				case 3 : // severity
+					severity = parseInteger(token);
+					i++;
+					break;
+				case 4 : // code
+					code = parseInteger(token);
+					i++;
+					break;
+			}
+		}
+		date = dateBuffer.toString();
+		return depth;
+	}
+	
+	private int parseInteger(String token) {
+		try {
+			return Integer.parseInt(token);
+		}
+		catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
+	void setStack(String stack) {
+		this.stack = stack;
+	}
+	void setMessage(String message) {
+		this.message = message;
+	}
+
 	private void processStatus(IStatus status) {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		date = "";
+		date = 	new Date().toString();
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
@@ -123,8 +186,15 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		if (schildren.length > 0) {
 			children = new ArrayList();
 			for (int i = 0; i < schildren.length; i++) {
-				children.add(new LogEntry(schildren[i]));
+				LogEntry child = new LogEntry(schildren[i]);
+				addChild(child);
 			}
 		}
+	}
+	void addChild(LogEntry child) {
+		if (children == null)
+			children = new ArrayList();
+		children.add(child);
+		child.setParent(this);
 	}
 }
