@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
@@ -381,6 +382,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                 result.add(refs[i]);
             }
         }
+        
+        if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).isRCPApplicationPlugin()) {
+        	IPluginReference ref = new PluginReference("org.eclipse.core.runtime", null, 0);
+        	if (!result.contains(ref))
+        		result.add(ref);
+        	ref = new PluginReference("org.eclipse.ui", null, 0);
+        	if (!result.contains(ref))
+        		result.add(ref);
+        }
+        
         if (fContentWizard != null) {
             IPluginReference[] refs = fContentWizard.getDependencies(fData
                     .isLegacy() ? null : "3.0"); //$NON-NLS-1$
@@ -389,8 +400,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
                     result.add(refs[j]);
             }
         }
-        return (IPluginReference[]) result.toArray(new IPluginReference[result
-                                                                        .size()]);
+        return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
     }
     
     private void openFile(final IFile file) {

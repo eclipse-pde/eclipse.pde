@@ -221,10 +221,9 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		if (badStructure) {
 			throw new CoreException(LauncherUtils.createErrorStatus(PDEPlugin
 					.getResourceString(KEY_BAD_FEATURE_SETUP)));
-		} else {
-			// Ensure important files are present
-			ensureProductFilesExist(getProductPath());
 		}
+		// Ensure important files are present
+		ensureProductFilesExist(getProductPath());		
 	}
 	
 	private IPath getInstallPath() {

@@ -110,6 +110,7 @@ public class PluginContentPage extends ContentPage {
 				fClassLabel.setEnabled(fGenerateClass.getSelection());
 				fClassText.setEnabled(fGenerateClass.getSelection());
 				fUIPlugin.setEnabled(fGenerateClass.getSelection());
+				fRCPGroup.setVisible(!fGenerateClass.getSelection() || fUIPlugin.getSelection());
 				validatePage();
 			}
 		});
@@ -128,6 +129,12 @@ public class PluginContentPage extends ContentPage {
 		gd.horizontalIndent = 20;
 		gd.horizontalSpan = 2;
 		fUIPlugin.setLayoutData(gd);
+		fUIPlugin.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fRCPGroup.setVisible(fUIPlugin.getSelection());
+				validatePage();
+			}
+		});
 	}
 
 	public void updateData() {
@@ -136,7 +143,10 @@ public class PluginContentPage extends ContentPage {
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
-		data.setRCPApplicationPlugin(!fData.isSimple() && !fData.isLegacy() && fYesButton.getSelection());
+		data.setRCPApplicationPlugin(!fData.isSimple()
+						&& !fData.isLegacy()
+						&& fYesButton.getSelection()
+						&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection()));
 		data.setApplicationID(fAppIdText.getText().trim());
 		data.setApplicationClassname(fAppClassText.getText().trim());
 	}
@@ -229,7 +239,8 @@ public class PluginContentPage extends ContentPage {
 				presetClassField(fAppClassText, computeId(), "Application"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
-			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple());
+			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple()
+						&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection()));
     	}
         super.setVisible(visible);
     }
@@ -269,7 +280,9 @@ public class PluginContentPage extends ContentPage {
 				setMessage(status.getMessage(), DialogPage.WARNING);
 			}
 		}
-		if (errorMessage == null && !fData.isSimple() && !fData.isLegacy() && fYesButton.getSelection()) {
+		if (errorMessage == null 
+				&& !fData.isSimple() && !fData.isLegacy() && fYesButton.getSelection()
+				&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection())) {
 			IStatus status = JavaConventions.validateJavaTypeName(fAppClassText.getText().trim());
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
