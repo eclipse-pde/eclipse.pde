@@ -15,6 +15,11 @@ public class ScrollableForm extends Form {
 	private Composite container;
 	private boolean verticalFit;
 	private boolean scrollable=true;
+	
+	private static final int HBAR_INCREMENT = 10;
+	private static final int HPAGE_INCREMENT = 40;
+	private static final int VBAR_INCREMENT = 10;
+	private static final int VPAGE_INCREMENT = 40;
 
 public ScrollableForm() {
 }
@@ -44,6 +49,7 @@ protected Composite createParent(Composite parent) {
 			scomp.setExpandHorizontal(true);
 			scomp.setExpandVertical(true);
 		}
+		initializeScrollBars(scomp);
 		result = scomp;
 	} else {
 		result = new Composite(parent, SWT.NONE);
@@ -66,6 +72,20 @@ public void setScrollable(boolean newScrollable) {
 public void setVerticalFit(boolean newVerticalFit) {
 	verticalFit = newVerticalFit;
 }
+
+private void initializeScrollBars(ScrolledComposite scomp) {
+	ScrollBar hbar = scomp.getHorizontalBar();
+	if (hbar!=null) {
+		hbar.setIncrement(HBAR_INCREMENT);
+		hbar.setPageIncrement(HPAGE_INCREMENT);
+	}
+	ScrollBar vbar = scomp.getVerticalBar();
+	if (vbar!=null) {
+		vbar.setIncrement(VBAR_INCREMENT);
+		vbar.setPageIncrement(VPAGE_INCREMENT);
+	}	
+}
+
 public void update() {
 	super.update();
 	if (container instanceof ScrolledComposite) {
