@@ -118,7 +118,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		runnerConfig.setVMArguments(computeVMArguments(configuration));
 		runnerConfig.setProgramArguments(programArgs);
 		runnerConfig.setEnvironment(envp);
-
+		runnerConfig.setVMSpecificAttributesMap(LauncherUtils.getVMSpecificAttributes(configuration));
 		return runnerConfig;
 	}
 

@@ -101,6 +101,7 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		runnerConfig.setVMArguments(getVMArguments(configuration));
 		runnerConfig.setProgramArguments(programArgs);
 		runnerConfig.setEnvironment(envp);
+		runnerConfig.setVMSpecificAttributesMap(LauncherUtils.getVMSpecificAttributes(configuration));
 		return runnerConfig;
 	}
 	

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.core.plugin.*;
@@ -43,6 +44,8 @@ public class BasicLauncherTab
 	private Text fVmArgsText;
 	private Text fProgArgsText;
 	private Image fImage;
+	private Button fJavawButton;
+	private Button fJavaButton;
 
 	private IStatus fJreSelectionStatus;
 	private IStatus fWorkspaceSelectionStatus;
@@ -174,6 +177,7 @@ public class BasicLauncherTab
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		createJavaExecutableSection(group);
 		createJRESection(group);
 		createVMArgsSection(group);
 		createProgArgsSection(group);
@@ -263,6 +267,7 @@ public class BasicLauncherTab
 		return APPLICATION;
 	}
 	
+		
 	protected void createJRESection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.jre")); //$NON-NLS-1$
@@ -314,7 +319,35 @@ public class BasicLauncherTab
 			}
 		});
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(button);		
+		SWTUtil.setButtonDimensionHint(button);				
+	}
+	
+	protected void createJavaExecutableSection(Composite parent) {
+		Label label = new Label(parent, SWT.NONE);
+		label.setText(PDEPlugin.getResourceString("BasicLauncherTab.javaExec")); //$NON-NLS-1$
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fJavawButton = new Button(composite, SWT.RADIO);
+		fJavawButton.setText("javaw " + PDEPlugin.getResourceString("BasicLauncherTab.javaExecDefault")); //$NON-NLS-1$ //$NON-NLS-2$
+		fJavawButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fJavaButton = new Button(composite, SWT.RADIO);
+		fJavaButton.setText("&java");	 //$NON-NLS-1$
+		fJavaButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	protected void createVMArgsSection(Composite parent) {
@@ -469,6 +502,10 @@ public class BasicLauncherTab
 	}
 	
 	protected void initializeJRESection(ILaunchConfiguration config) throws CoreException {
+		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "javaw"); //$NON-NLS-1$
+		fJavawButton.setSelection(javaCommand.equals("javaw")); //$NON-NLS-1$
+		fJavaButton.setSelection(!fJavawButton.getSelection());
+		
 		fJreCombo.setItems(LauncherUtils.getVMInstallNames());
 		String vmInstallName =
 			config.getAttribute(VMINSTALL, LauncherUtils.getDefaultVMInstallName());
@@ -549,6 +586,10 @@ public class BasicLauncherTab
 	
 	protected void saveJRESection(ILaunchConfigurationWorkingCopy config)
 		throws CoreException {
+		
+		String javaCommand = fJavawButton.getSelection() ? null : "java"; //$NON-NLS-1$
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
+		
 		if (fJreCombo.getSelectionIndex() == -1)
 			return;
 
