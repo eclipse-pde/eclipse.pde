@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import org.eclipse.core.internal.plugins.PluginDescriptor;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
@@ -195,15 +195,25 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		File cssFile;
 		
 		if (outputPath.toFile().getName().equals(SchemaTransformer.getPlatformCSSName())){
-			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
+			IPluginDescriptor descriptor =(IPluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
 			if (descriptor == null)
 				return false;
-			cssFile = new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getPlatformCSSName());
+			cssFile =
+				new File(
+					BootLoader.getInstallURL().getFile()
+						+ "plugins/"
+						+ descriptor.toString() + File.separator 
+						+ SchemaTransformer.getPlatformCSSName());
 		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
-			PluginDescriptor descriptor =(PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
+			IPluginDescriptor descriptor =(IPluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(SchemaTransformer.PLATFORM_PLUGIN_DOC);
 			if (descriptor == null)
 				return false;
-			cssFile = new File(descriptor.getInstallURLInternal().getFile() +SchemaTransformer.getSchemaCSSName());
+			cssFile =
+				new File(
+					BootLoader.getInstallURL().getFile()
+						+ "plugins/"
+						+ descriptor.toString() + File.separator 
+						+ SchemaTransformer.getSchemaCSSName());
 		} else{
 			if (getCSSURL() == null)
 				return false;
