@@ -22,7 +22,6 @@ import org.eclipse.update.core.SiteManager;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
-
 	protected static String outputFormat = "zip"; 
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
@@ -167,4 +166,24 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return workingDirectory;
 	}
 
+	public static String getDefaultOutputFormat() {
+		return "zip"; 
+	}
+	
+	public static boolean getDefaultEmbeddedSource() {
+		return false;
+	}
+	
+	public static boolean getForceUpdateJarFormat() {
+		return false;
+	}
+	
+	public static String getDefaultConfigInfos() {
+		return "*, *, *";
+	}
+	
+	public static boolean getDefaultBuildingOSGi() {
+		return buildingOSGi;
+	}
+	
 }
