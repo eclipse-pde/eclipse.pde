@@ -12,15 +12,11 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.pde.internal.ui.*;
-/**
- *
- */
+
+
 public class SchemaPropertySheet extends PropertySheetPage {
 	public static final String CLONE_LABEL = "SchemaPropertySheet.clone.label"; //$NON-NLS-1$
 	public static final String CLONE_TOOLTIP = "SchemaPropertySheet.clone.tooltip"; //$NON-NLS-1$
@@ -30,20 +26,6 @@ public class SchemaPropertySheet extends PropertySheetPage {
 	public SchemaPropertySheet() {
 		makeSchemaActions();
 	}
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		final TableTree tableTree = (TableTree) getControl();
-		tableTree.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				/*
-				 * TableTreeItem [] items = tableTree.getSelection();
-				 * IPropertySheetEntry entry = null; if (items.length >0) entry =
-				 * (IPropertySheetEntry)items[0].getData();
-				 * updateActions(entry);
-				 */
-			}
-		});
-	}
 	public void disableActions() {
 		cloneAction.setEnabled(false);
 	}
@@ -52,12 +34,9 @@ public class SchemaPropertySheet extends PropertySheetPage {
 		toolBarManager.add(cloneAction);
 	}
 	public IPropertySheetEntry getSelectedEntry() {
-		TableTree tableTree = (TableTree) getControl();
-		TableTreeItem[] items = tableTree.getSelection();
-		IPropertySheetEntry entry = null;
-		if (items.length > 0)
-			entry = (IPropertySheetEntry) items[0].getData();
-		return entry;
+		if(!currentSelection.isEmpty() && currentSelection instanceof IStructuredSelection)
+			return (IPropertySheetEntry) ((IStructuredSelection)currentSelection).getFirstElement();
+		return null;
 	}
 	protected void handleClone() {
 		Object input = null;
