@@ -7,6 +7,7 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.FormColors;

@@ -18,13 +18,14 @@ import org.eclipse.ui.forms.widgets.*;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class RuntimePage extends PDEFormPage {
+	public static final String PAGE_ID="runtime";
 	/**
 	 * @param editor
 	 * @param id
 	 * @param title
 	 */
 	public RuntimePage(FormEditor editor) {
-		super(editor, "runtime", "Runtime");
+		super(editor, PAGE_ID, "Runtime");
 	}
 	
 	protected void createFormContent(ManagedForm managedForm) {

@@ -8,6 +8,7 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;

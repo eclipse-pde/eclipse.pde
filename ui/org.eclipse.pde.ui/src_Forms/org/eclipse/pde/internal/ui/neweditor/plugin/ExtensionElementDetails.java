@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;

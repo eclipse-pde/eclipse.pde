@@ -19,15 +19,12 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-
 /**
- * This class can be used to show a standard section with 
- * an array of links. Links are objects from editor pages,
- * and each one will select the owning page and reveal
- * the element in it. If the number of objects from the
- * content provider is greated than the preset limit,
- * only the first 'limit' number of links will be shown,
- * and a 'More...' button will show up (this is a change
+ * This class can be used to show a standard section with an array of links.
+ * Links are objects from editor pages, and each one will select the owning
+ * page and reveal the element in it. If the number of objects from the content
+ * provider is greated than the preset limit, only the first 'limit' number of
+ * links will be shown, and a 'More...' button will show up (this is a change
  * from 2.1 where 'More...' was visible all the time).
  */
 public class LinkSection extends PDESection {
@@ -39,7 +36,6 @@ public class LinkSection extends PDESection {
 	private String morePageId;
 	private int linkNumberLimit = 20;
 	private LinkHandler linkHandler;
-	
 	class LinkHandler implements HyperlinkListener {
 		public void linkActivated(HyperlinkEvent e) {
 			doLinkActivated((Hyperlink) e.widget);
@@ -76,7 +72,11 @@ public class LinkSection extends PDESection {
 		section.setClient(container);
 		linkContainer = toolkit.createComposite(container);
 		linkContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		linkContainer.setLayout(new GridLayout());
+		GridLayout linkLayout = new GridLayout();
+		linkLayout.marginWidth = 0;
+		linkLayout.marginHeight = 0;
+		linkLayout.verticalSpacing = 0;
+		linkContainer.setLayout(linkLayout);
 	}
 	private void createMoreButton() {
 		moreButton = getForm().getToolkit().createButton(container, "More...",
@@ -171,11 +171,14 @@ public class LinkSection extends PDESection {
 				break;
 			createLink(objects[i]);
 		}
+		if (objects.length > linkNumberLimit)
+			getForm().getToolkit().createLabel(linkContainer, "...", SWT.NULL);
 		updateMoreState(objects.length > linkNumberLimit);
 	}
 	private void updateMoreState(boolean needMore) {
-		if (needMore && moreButton == null)
+		if (needMore && moreButton == null) {
 			createMoreButton();
+		}
 		else if (!needMore && moreButton != null) {
 			moreButton.dispose();
 			moreButton = null;

@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -17,6 +18,8 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class ExtensionPointsPage extends PDEFormPage {
+	public static final String PAGE_ID = "ex-points";
+	
 	private ExtensionPointsBlock block;
 	public class ExtensionPointsBlock extends PDEMasterDetailsBlock {
 		public ExtensionPointsBlock() {
@@ -37,7 +40,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionPointsPage(FormEditor editor) {
-		super(editor, "ex-points", "Extension Points");
+		super(editor, PAGE_ID, "Extension Points");
 		block = new ExtensionPointsBlock();
 	}
 	protected void createFormContent(ManagedForm managedForm) {

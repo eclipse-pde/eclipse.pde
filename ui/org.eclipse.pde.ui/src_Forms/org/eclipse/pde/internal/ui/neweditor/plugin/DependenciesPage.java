@@ -18,13 +18,14 @@ import org.eclipse.ui.forms.widgets.*;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class DependenciesPage extends PDEFormPage {
+	public static final String PAGE_ID="dependencies";
 	/**
 	 * @param editor
 	 * @param id
 	 * @param title
 	 */
 	public DependenciesPage(FormEditor editor) {
-		super(editor, "dependencies", "Dependencies");
+		super(editor, PAGE_ID, "Dependencies");
 	}
 	
 	protected void createFormContent(ManagedForm managedForm) {

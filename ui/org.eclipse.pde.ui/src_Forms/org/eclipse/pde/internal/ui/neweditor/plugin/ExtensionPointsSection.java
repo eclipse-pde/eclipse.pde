@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.plugin.dummy.*;
 import org.eclipse.pde.internal.ui.newparts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
