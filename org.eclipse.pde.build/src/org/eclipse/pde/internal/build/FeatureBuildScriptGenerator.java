@@ -87,7 +87,7 @@ public void generate() throws CoreException {
 
 	try {
 		File root = new File(getFeatureRootLocation());
-		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
+		File target = new File(root, buildScriptName);
 		script = new BuildAntScript(new FileOutputStream(target));
 		setUpAntBuildScript();
 		try {
@@ -480,7 +480,7 @@ protected void generateAllPluginsTarget() throws CoreException {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
 			String location = getPluginLocationProperty(plugin.getId());
-			script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+			script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
 	script.printString(--tab, "</target>");
@@ -498,7 +498,7 @@ protected void generateAllFragmentsTarget() throws CoreException {
 	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
 		PluginModel fragment = (PluginModel) iterator.next();
 		String location = getPluginLocationProperty(fragment.getId());
-		script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+		script.printAntTask(tab, buildScriptName, location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
 	script.printString(--tab, "</target>");
 }

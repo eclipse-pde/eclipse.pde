@@ -63,7 +63,7 @@ public void generate() throws CoreException {
 	computeJarDefinitions(); // FIXME: this is a hack. It should be transparent. 
 	try {
 		File root = new File(getModelLocation(model));
-		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
+		File target = new File(root, buildScriptName);
 		script = new BuildAntScript(new FileOutputStream(target));
 		setUpAntBuildScript();
 		try {

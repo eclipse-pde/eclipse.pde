@@ -25,6 +25,11 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected BuildAntScript script;
 
 	/**
+	 * 
+	 */
+	protected String buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
+
+	/**
 	 * Where to find the elements.
 	 */
 	protected String installLocation;
@@ -114,10 +119,6 @@ protected void filterProperties(Properties from, Map to) {
 		from.remove(key);
 	}
 }
-
-
-
-
 
 /**
  * Checks if the given element is already present in the list.
@@ -251,5 +252,13 @@ protected String getPluginLocationProperty(String pluginId) {
 	return sb.toString();
 }
 
-
+/**
+ * Sets the buildScriptName.
+ */
+public void setBuildScriptName(String buildScriptName) {
+	if (buildScriptName == null)
+		this.buildScriptName = DEFAULT_BUILD_SCRIPT_FILENAME;
+	else
+		this.buildScriptName = buildScriptName;
+}
 }
