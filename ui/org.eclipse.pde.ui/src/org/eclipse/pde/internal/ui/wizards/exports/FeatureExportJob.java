@@ -55,13 +55,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap fBuildProperties;
 
 	public FeatureExportJob(int exportType, boolean exportSource, String destination, String zipFileName, Object[] items) {
-		super("PDE Export");
+		super("PDE Export"); //$NON-NLS-1$
 		fExportType = exportType;
 		fExportSource = exportSource;
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fItems = items;
-		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString();
+		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(null);
 	}
 	
@@ -80,7 +80,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					ErrorDialog.openError(display.getActiveShell(), "Error", e.getMessage(), e.getStatus());
-					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null));
+					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 				}
 			});
 			return Job.ASYNC_FINISH;
@@ -106,13 +106,13 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			});
 			return Job.ASYNC_FINISH;
 		}
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null);
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 	
 	
 	protected void doExports(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		createDestination();
-		monitor.beginTask("", fItems.length + 1);
+		monitor.beginTask("", fItems.length + 1); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < fItems.length; i++) {
 				IFeatureModel model = (IFeatureModel)fItems[i];
@@ -132,21 +132,21 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		File file = new File(fDestinationDirectory);
 		if (!file.exists() || !file.isDirectory()) {
 			if (!file.mkdirs())
-				throw new InvocationTargetException(new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory")));
+				throw new InvocationTargetException(new Exception(PDEPlugin.getResourceString("ExportWizard.badDirectory"))); //$NON-NLS-1$
 		}
 	}
 	
 	protected void doExport(String featureID, String version, String featureLocation, IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
-		monitor.beginTask("", 5);
-		monitor.setTaskName("Building Plug-ins...");
+		monitor.beginTask("", 5); //$NON-NLS-1$
+		monitor.setTaskName(PDEPlugin.getResourceString("FeatureExportJob.taskName")); //$NON-NLS-1$
 		try {
 			HashMap properties = createBuildProperties();
 			makeScript(featureID, version, featureLocation);
 			monitor.worked(1);
 			runScript(getBuildScriptName(featureLocation), getBuildExecutionTargets(),
 					properties, new SubProgressMonitor(monitor, 2));
-			runScript(getAssemblyScriptName(featureID, featureLocation), new String[]{"main"},
+			runScript(getAssemblyScriptName(featureID, featureLocation), new String[]{"main"}, //$NON-NLS-1$
 					properties, new SubProgressMonitor(monitor, 2));
 		} finally {
 			monitor.done();
@@ -156,27 +156,27 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap createBuildProperties() {
 		if (fBuildProperties == null) {
 			fBuildProperties = new HashMap(15);
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination");
-			fBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder");
-			fBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination");
-			fBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true");
-			fBuildProperties.put("eclipse.running", "true");
+			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder"); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
+			fBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
 			fBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false");
-			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, store.getString(PROP_JAVAC_SOURCE));
 			fBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, store.getString(PROP_JAVAC_TARGET));
 			
 			// for the assembler...
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation");
-			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, ".");
-			fBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, ".");
-			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, ".");
+			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY,  fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_BUILD_LABEL, "."); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
+			fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, "."); //$NON-NLS-1$
 			if (fExportType == EXPORT_AS_ZIP)
 				fBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + fZipFilename);
 			else 
@@ -191,20 +191,20 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
 		generator.setDevEntries(getDevProperties());
-		generator.setElements(new String[] {"feature@" + featureID + (versionId == null ? "" : ":" + versionId)});
+		generator.setElements(new String[] {"feature@" + featureID + (versionId == null ? "" : ":" + versionId)}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		generator.setPluginPath(getPaths());
-		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder");
+		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder"); //$NON-NLS-1$ //$NON-NLS-2$
 		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
-		BuildScriptGenerator.setConfigInfo("*,*,*");
+		BuildScriptGenerator.setConfigInfo("*,*,*"); //$NON-NLS-1$
 		generator.generate();	
 	}
 	
 	private String getDevProperties() {
 		if (fDevProperties == null) {
-			fDevProperties = BaseBuildAction.getDevEntriesProperties(fBuildTempLocation + "/dev.properties");
+			fDevProperties = BaseBuildAction.getDevEntriesProperties(fBuildTempLocation + "/dev.properties"); //$NON-NLS-1$
 		}
-		return (fDevProperties != null) ? fDevProperties.toString() : "bin";
+		return (fDevProperties != null) ? fDevProperties.toString() : "bin"; //$NON-NLS-1$
 	}
 
 	protected void runScript(String location, String[] targets, Map properties,
@@ -213,24 +213,24 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		runner.addUserProperties(properties);
 		runner.setAntHome(location);
 		runner.setBuildFileLocation(location);
-		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener");
+		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener"); //$NON-NLS-1$
 		runner.setExecutionTargets(targets);
 		runner.run(monitor);
 	}
 
 	private String getBuildScriptName(String featureLocation) {
-		return featureLocation + Path.SEPARATOR + "build.xml";
+		return featureLocation + Path.SEPARATOR + "build.xml"; //$NON-NLS-1$
 	}
 	
 	private String getAssemblyScriptName(String featureID, String featureLocation) {
-		return featureLocation + Path.SEPARATOR + "assemble."
-				+ featureID + ".xml";
+		return featureLocation + Path.SEPARATOR + "assemble." //$NON-NLS-1$
+				+ featureID + ".xml"; //$NON-NLS-1$
 	}
 	
 	private String[] getBuildExecutionTargets() {
 		if (fExportSource && fExportType != EXPORT_AS_UPDATE_JARS)
-			return new String[] {"build.jars", "build.sources", "gather.logs"};
-		return new String[] {"build.jars", "gather.logs"};
+			return new String[] {"build.jars", "build.sources", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] {"build.jars", "gather.logs"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void deleteBuildFiles(IModel model) throws CoreException {
@@ -240,16 +240,16 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				: ((IPluginModelBase) model).getInstallLocation();
 				
 		if (model.getUnderlyingResource() != null && !isCustomBuild(model)) {
-			File file = new File(directory, "build.xml");
+			File file = new File(directory, "build.xml"); //$NON-NLS-1$
 			if (file.exists() && !file.isDirectory()) {
 				file.delete();
 			}
 			if (model instanceof IFeatureModel) {
 				String id = ((IFeatureModel)model).getFeature().getId();
-				file = new File(directory, "assemble." + id + ".all.xml");
+				file = new File(directory, "assemble." + id + ".all.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && !file.isDirectory())
 					file.delete();
-				file = new File(directory, "assemble." + id + ".xml");
+				file = new File(directory, "assemble." + id + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && !file.isDirectory())
 					file.delete();
 			}
@@ -275,18 +275,18 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	protected boolean isCustomBuild(IModel model) throws CoreException {
 		IBuildModel buildModel = null;
-		IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties");
+		IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties"); //$NON-NLS-1$
 		if (buildFile.exists()) {
 			buildModel = new WorkspaceBuildModel(buildFile);
 			buildModel.load();
 		}
 		if (buildModel != null) {
 			IBuild build = buildModel.getBuild();
-			IBuildEntry entry = build.getEntry("custom");
+			IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
-					if (tokens[i].equals("true"))
+					if (tokens[i].equals("true")) //$NON-NLS-1$
 						return true;
 				}
 			}
@@ -298,7 +298,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		ArrayList paths = new ArrayList();
 		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
-			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml");
+			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"); //$NON-NLS-1$
 		}
 		
 		String[] plugins = TargetPlatform.createPluginPath();
@@ -312,7 +312,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private static void createLogWriter() {
 		try {
 			String path = PDEPlugin.getDefault().getStateLocation().toOSString();
-			logFile = new File(path, "exportLog.txt");
+			logFile = new File(path, "exportLog.txt"); //$NON-NLS-1$
 			if (logFile.exists()) {
 				logFile.delete();
 				logFile.createNewFile();
@@ -341,10 +341,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			writer.close();
 			
 			ArrayList targets = new ArrayList();
-			targets.add("deleteZip");
+			targets.add("deleteZip"); //$NON-NLS-1$
 			if (errors)
-				targets.add("zip.logs");
-			targets.add("clean");
+				targets.add("zip.logs"); //$NON-NLS-1$
+			targets.add("clean"); //$NON-NLS-1$
 			AntRunner runner = new AntRunner();
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets((String[]) targets.toArray(new String[targets.size()]));
@@ -358,7 +358,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 	private File createScriptFile() throws IOException {
 		String path = PDEPlugin.getDefault().getStateLocation().toOSString();
-		File zip = new File(path, "zip.xml");
+		File zip = new File(path, "zip.xml"); //$NON-NLS-1$
 		if (zip.exists()) {
 			zip.delete();
 			zip.createNewFile();
@@ -408,10 +408,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private void asyncNotifyExportException(String errorMessage) {
 		getStandardDisplay().beep();
 		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), "Error", errorMessage);
-		done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null));
+		done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 	}
 	
 	protected String getLogFoundMessage() {
-		return PDEPlugin.getFormattedMessage("ExportJob.error.message", fDestinationDirectory + File.separator + "logs.zip");
+		return PDEPlugin.getFormattedMessage("ExportJob.error.message", fDestinationDirectory + File.separator + "logs.zip"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

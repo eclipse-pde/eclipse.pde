@@ -82,7 +82,9 @@ public abstract class BaseExportWizard
 			File zipFile = new File(page1.getDestination(), page1.getFileName());
 			if (zipFile.exists()) {
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
-						"Confirm Replace", "The file \"" + page1.getDestination() + File.separator + page1.getFileName() +  "\" already exists.  Do you want to overwrite it?"))
+						PDEPlugin.getResourceString("BaseExportWizard.confirmReplace.title"),  //$NON-NLS-1$
+						PDEPlugin.getFormattedMessage("BaseExportWizard.confirmReplace.desc", //$NON-NLS-1$
+								page1.getDestination() + File.separator + page1.getFileName())))
 					return false;
 				zipFile.delete();
 			}
@@ -94,8 +96,8 @@ public abstract class BaseExportWizard
 	private void generateAntBuildFile(String filename) {
 		String parent = new Path(filename).removeLastSegments(1).toOSString();
 		String buildFilename = new Path(filename).lastSegment();
-		if (!buildFilename.endsWith(".xml"))
-			buildFilename += ".xml";
+		if (!buildFilename.endsWith(".xml")) //$NON-NLS-1$
+			buildFilename += ".xml"; //$NON-NLS-1$
 		File dir = new File(new File(parent).getAbsolutePath());
 		if (!dir.exists())
 			dir.mkdirs();
@@ -116,13 +118,13 @@ public abstract class BaseExportWizard
 		int exportType = page1.getExportType();
 		switch (exportType) {
 			case FeatureExportJob.EXPORT_AS_ZIP:
-				return "zip";
+				return "zip"; //$NON-NLS-1$
 			case FeatureExportJob.EXPORT_AS_DIRECTORY:
-				return "directory";
+				return "directory"; //$NON-NLS-1$
 			case FeatureExportJob.EXPORT_AS_UPDATE_JARS:
-				return "update";
+				return "update"; //$NON-NLS-1$
 		}
-		return "zip";
+		return "zip"; //$NON-NLS-1$
 	}
 
 }

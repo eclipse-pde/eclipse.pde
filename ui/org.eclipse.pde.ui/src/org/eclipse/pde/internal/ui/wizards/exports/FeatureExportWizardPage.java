@@ -26,10 +26,10 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	public FeatureExportWizardPage(IStructuredSelection selection) {
 		super(
 			selection,
-			"featureExport",
-			PDEPlugin.getResourceString("ExportWizard.Feature.pageBlock"),
+			"featureExport", //$NON-NLS-1$
+			PDEPlugin.getResourceString("ExportWizard.Feature.pageBlock"), //$NON-NLS-1$
 			true);
-		setTitle(PDEPlugin.getResourceString("ExportWizard.Feature.pageTitle"));
+		setTitle(PDEPlugin.getResourceString("ExportWizard.Feature.pageTitle")); //$NON-NLS-1$
 	}
 
 	public Object[] getListElements() {

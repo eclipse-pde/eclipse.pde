@@ -23,8 +23,8 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
  * @see Wizard
  */
 public class FeatureExportWizard extends BaseExportWizard {
-	private static final String KEY_WTITLE = "ExportWizard.Feature.wtitle";
-	private static final String STORE_SECTION = "FeatureExportWizard";
+	private static final String KEY_WTITLE = "ExportWizard.Feature.wtitle"; //$NON-NLS-1$
+	private static final String STORE_SECTION = "FeatureExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.

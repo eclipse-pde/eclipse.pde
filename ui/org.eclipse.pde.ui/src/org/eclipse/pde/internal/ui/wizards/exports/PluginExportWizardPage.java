@@ -28,10 +28,10 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(
 			selection,
-			"pluginExport",
-			PDEPlugin.getResourceString("ExportWizard.Plugin.pageBlock"),
+			"pluginExport", //$NON-NLS-1$
+			PDEPlugin.getResourceString("ExportWizard.Plugin.pageBlock"), //$NON-NLS-1$
 			false);
-		setTitle(PDEPlugin.getResourceString("ExportWizard.Plugin.pageTitle"));
+		setTitle(PDEPlugin.getResourceString("ExportWizard.Plugin.pageTitle")); //$NON-NLS-1$
 	}
 
 	public Object[] getListElements() {
@@ -54,7 +54,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	}
 	
 	private boolean hasBuildProperties(IPluginModelBase model) {
-		File file = new File(model.getInstallLocation(),"build.properties");
+		File file = new File(model.getInstallLocation(),"build.properties"); //$NON-NLS-1$
 		return file.exists();
 	}
 	

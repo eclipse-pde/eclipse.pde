@@ -36,7 +36,7 @@ public class PluginExportJob extends FeatureExportJob {
 			throws InvocationTargetException, CoreException {
 		try {
 			// create a feature to contain all plug-ins
-			String featureID = "org.eclipse.pde.container.feature";
+			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
@@ -57,8 +57,8 @@ public class PluginExportJob extends FeatureExportJob {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
-		File featureXML = new File(file, "feature.xml");
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(featureXML), "UTF-8"), true);
+		File featureXML = new File(file, "feature.xml"); //$NON-NLS-1$
+		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(featureXML), "UTF-8"), true); //$NON-NLS-1$
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		writer.println("<feature id=\"" + featureID + "\" version=\"1.0\">");
 		for (int i = 0; i < fItems.length; i++) {
@@ -79,7 +79,7 @@ public class PluginExportJob extends FeatureExportJob {
 	protected String[] getPaths() throws CoreException {
 		String[] paths =  super.getPaths();
 		String[] all = new String[paths.length + 1];
-		all[0] = fFeatureLocation + File.separator + "feature.xml";
+		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
 		System.arraycopy(paths, 0, all, 1, paths.length);
 		return all;
 	}
@@ -88,7 +88,7 @@ public class PluginExportJob extends FeatureExportJob {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
-		File build = new File(file, "build.properties");
+		File build = new File(file, "build.properties"); //$NON-NLS-1$
 		try {
 			build.createNewFile();
 		} catch (IOException e) {

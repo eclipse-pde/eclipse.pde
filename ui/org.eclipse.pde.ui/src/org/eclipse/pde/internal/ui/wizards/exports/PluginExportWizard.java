@@ -23,8 +23,8 @@ import org.eclipse.pde.internal.ui.*;
  * @see Wizard
  */
 public class PluginExportWizard extends BaseExportWizard {
-	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle";
-	private static final String STORE_SECTION = "PluginExportWizard";
+	private static final String KEY_WTITLE = "ExportWizard.Plugin.wtitle"; //$NON-NLS-1$
+	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
 
 	/**
 	 * The constructor.
@@ -84,7 +84,7 @@ public class PluginExportWizard extends BaseExportWizard {
 			if (object instanceof IPluginModelBase) {
 				buffer.append(((IPluginModelBase)object).getPluginBase().getId());
 				if (i < objects.length - 1)
-					buffer.append(",");					
+					buffer.append(",");					 //$NON-NLS-1$
 			}
 		}
 		return buffer.toString();
