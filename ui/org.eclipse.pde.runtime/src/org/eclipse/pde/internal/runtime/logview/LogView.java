@@ -1025,18 +1025,28 @@ public class LogView extends ViewPart implements ILogListener {
     }
     
     /**
-     * Returns the log view settings object used to maintain
-     * state of view and filter dialog.
+     * Returns the filter dialog settings object used to maintain
+     * state between filter dialogs
      * @return the dialog settings to be used
      */
     private IDialogSettings getLogSettings() {
         IDialogSettings settings= PDERuntimePlugin.getDefault().getDialogSettings();
         return settings.getSection(getClass().getName());
     }
+    
+    /**
+     * Returns the plugin preferences used to maintain
+     * state of log view
+     * @return the plugin preferences
+     */
+    private Preferences getLogPreferences(){
+    	return PDERuntimePlugin.getDefault().getPluginPreferences();
+    }
 
     private void readSettings(){
         IDialogSettings s = getLogSettings();
-        if (s == null){
+        Preferences p = getLogPreferences();
+        if (s == null || p == null){
             initializeMemento();
             return;
         }
@@ -1047,14 +1057,14 @@ public class LogView extends ViewPart implements ILogListener {
 			memento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			memento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			memento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			memento.putInteger(P_COLUMN_1, s.getInt(P_COLUMN_1));
-			memento.putInteger(P_COLUMN_2, s.getInt(P_COLUMN_2));
-			memento.putInteger(P_COLUMN_3, s.getInt(P_COLUMN_3));
-			memento.putInteger(P_COLUMN_4, s.getInt(P_COLUMN_4));
-			memento.putString(P_ACTIVATE, s.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			int order = s.getInt(P_ORDER_VALUE);
+			memento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1));
+			memento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2));
+			memento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3));
+			memento.putInteger(P_COLUMN_4, p.getInt(P_COLUMN_4));
+			memento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			int order = p.getInt(P_ORDER_VALUE);
 			memento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
-			memento.putString(P_ORDER_TYPE, s.get(P_ORDER_TYPE));
+			memento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
 		} catch (NumberFormatException e) {
 			memento.putInteger(P_LOG_LIMIT, 50);
 			memento.putInteger(P_COLUMN_1, 20);
@@ -1084,16 +1094,14 @@ public class LogView extends ViewPart implements ILogListener {
     }
     
     private void writeViewSettings(){
-        IDialogSettings settings = getLogSettings();
-        if (settings == null)
-            settings = PDERuntimePlugin.getDefault().getDialogSettings().addNewSection(getClass().getName());
-        settings.put(P_COLUMN_1, memento.getInteger(P_COLUMN_1).intValue());
-        settings.put(P_COLUMN_2, memento.getInteger(P_COLUMN_2).intValue());
-        settings.put(P_COLUMN_3, memento.getInteger(P_COLUMN_3).intValue());
-        settings.put(P_COLUMN_4, memento.getInteger(P_COLUMN_4).intValue());
-        settings.put(P_ACTIVATE, memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+        Preferences preferences = getLogPreferences();
+        preferences.setValue(P_COLUMN_1, memento.getInteger(P_COLUMN_1).intValue());
+        preferences.setValue(P_COLUMN_2, memento.getInteger(P_COLUMN_2).intValue());
+        preferences.setValue(P_COLUMN_3, memento.getInteger(P_COLUMN_3).intValue());
+        preferences.setValue(P_COLUMN_4, memento.getInteger(P_COLUMN_4).intValue());
+        preferences.setValue(P_ACTIVATE, memento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
         int order = memento.getInteger(P_ORDER_VALUE).intValue();
-        settings.put(P_ORDER_VALUE, order == 0 ? -1 : order);
-        settings.put(P_ORDER_TYPE, memento.getString(P_ORDER_TYPE));
+        preferences.setValue(P_ORDER_VALUE, order == 0 ? -1 : order);
+        preferences.setValue(P_ORDER_TYPE, memento.getInteger(P_ORDER_TYPE).intValue());
     }
 }
