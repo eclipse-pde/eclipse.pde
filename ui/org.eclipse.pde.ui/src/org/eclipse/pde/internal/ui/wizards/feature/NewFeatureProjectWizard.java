@@ -263,12 +263,9 @@ public class NewFeatureProjectWizard extends NewWizard
 		feature.addPlugins(added);
 		feature.computeImports();
 		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler == null) {
-			handler = feature.getModel().getFactory().createInstallHandler();
-			feature.setInstallHandler(handler);
+		if (handler != null) {		
+			handler.setLibrary(data.library);
 		}
-		
-		handler.setLibrary(data.library);
 
 		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
