@@ -30,7 +30,6 @@ import org.xml.sax.SAXException;
 public class ValidatingSAXParser {
 	
 	private static SAXParserFactory fFactory;
-	private static SAXParser fParser;
 	
 	public static void parse(IFile file, PluginErrorReporter reporter, boolean useSystemId) {
 		try {
@@ -63,18 +62,12 @@ public class ValidatingSAXParser {
 		} 
 	}
 	
-	private static SAXParserFactory getParserFactory() {
+	private static SAXParser getParser()
+		throws ParserConfigurationException, SAXException {
 		if (fFactory == null) {
 			fFactory = SAXParserFactory.newInstance();
 		}
-		return fFactory;
+		return fFactory.newSAXParser();
 	}
 	
-	private static SAXParser getParser()
-		throws ParserConfigurationException, SAXException {
-		if (fParser == null) {
-			fParser = getParserFactory().newSAXParser();
-		}
-		return fParser;
-	}
 }
