@@ -78,6 +78,8 @@ public class PDEState {
 				createState();
 				saveState(timestamp);
 				savePluginInfo(timestamp);
+			} else {
+				fId = fState.getBundles().length;
 			}
 			if (!readExtensionsCache(timestamp)) {
 				saveExtensions(timestamp);
