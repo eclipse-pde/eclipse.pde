@@ -107,11 +107,9 @@ private IFile createFeatureManifest(
 	
 	for (int i = 0; i < plugins.length; i++) {
 		IPluginBase plugin = plugins[i];
-		IFeaturePlugin cplugin = model.getFactory().createPlugin();
-		cplugin.setId(plugin.getId());
-		cplugin.setLabel(plugin.getName());
-		cplugin.setVersion(plugin.getVersion());
-		added[i] = cplugin;
+		FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+		fplugin.loadFrom(plugin);
+		added[i] = fplugin;
 	}
 	feature.addPlugins(added);
 	feature.computeImports();

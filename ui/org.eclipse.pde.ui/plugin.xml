@@ -27,6 +27,7 @@
       <import plugin="org.eclipse.update.ui.forms"/>
       <import plugin="org.eclipse.pde.build"/>
       <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.update.core"/>
    </requires>
 
 
@@ -373,16 +374,15 @@
          </description>
       </wizard>
       <wizard
+            availableAsShortcut="true"
+            name="%newExtension.templates.help.name"
+            template="true"
+            icon="icons/full/ctool16/newex_wiz.gif"
             category="templates"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelpTemplate"
-            icon="icons/full/ctool16/newex_wiz.gif"
-            template="true"
-            availableAsShortcut="true"
-            id="org.eclipse.pde.ui.newExtension.help"
-            name="%newExtension.templates.help.name">
+            id="org.eclipse.pde.ui.newExtension.help">
          <description>
             %newExtension.templates.help.desc
-
          </description>
       </wizard>
    </extension>

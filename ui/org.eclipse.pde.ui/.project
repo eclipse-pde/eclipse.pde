@@ -17,6 +17,7 @@
 		<project>org.eclipse.pde</project>
 		<project>org.eclipse.pde.build</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.update.core</project>
 		<project>org.eclipse.update.ui.forms</project>
 	</projects>
 	<buildSpec>

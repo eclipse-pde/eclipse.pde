@@ -11,26 +11,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -131,16 +128,13 @@ public class NewFeaturePluginWizardPage extends WizardPage {
 	}
 
 	private Object[] getChoices() {
-		/*
 		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModel[] plugins = mng.getWorkspacePluginModels();
 		IFragmentModel[] fragments = mng.getWorkspaceFragmentModels();
 		Object[] choices = new Object[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, choices, 0, plugins.length);
 		System.arraycopy(fragments, 0, choices, plugins.length, fragments.length);
-		*/
-		PluginModelManager mng = PDECore.getDefault().getModelManager();
-		return mng.getPlugins();
+		return choices;
 	}
 
 	public boolean finish() {
