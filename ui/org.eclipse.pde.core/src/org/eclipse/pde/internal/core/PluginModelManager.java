@@ -148,14 +148,9 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(IProject project) {
-		Map map = getEntryTable();
+		initializeTable();
 		IPluginModelBase model = workspaceManager.getWorkspacePluginModel(project);
-		if (model==null)
-			return null;
-		String id = model.getPluginBase().getId();
-		if (id == null || id.length() == 0)
-			return null;
-		return (ModelEntry)map.get(id);
+		return model == null ? null : findEntry(model.getPluginBase().getId());
 	}
 	
 	public IPluginModelBase findModel(IProject project) {
@@ -164,9 +159,7 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(String id) {
-		if (id == null)
-			return null;
-		return (ModelEntry) getEntryTable().get(id);
+		return id == null ? null : (ModelEntry) getEntryTable().get(id);
 	}
 	
 	public IPluginModelBase findModel(String id) {
@@ -414,23 +407,6 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	/*
-	 * This method must be synchronized so that only one thread
-	 * initializes the table, and the rest would block until
-	 * the table is initialized.
-	 * 
-	 */
-	private synchronized void initializeTable() {
-		if (fEntries != null) return;
-		fEntries = Collections.synchronizedMap(new TreeMap());
-		IPluginModelBase[] models = externalManager.getAllModels();
-		addToTable(models, false);
-		models = workspaceManager.getAllModels();
-		addToTable(models, true);
-		addWorkspaceBundlesToState();
-		searchablePluginsManager.initialize();
-	}
-
-	/*
 	 * Allow access to the table only through this getter.
 	 * It always calls initialize to make sure the table is initialized.
 	 * If more than one thread tries to read the table at the same time,
@@ -442,6 +418,39 @@ public class PluginModelManager implements IAdaptable {
 		return fEntries;
 	}
 
+	/*
+	 * This method must be synchronized so that only one thread
+	 * initializes the table, and the rest would block until
+	 * the table is initialized.
+	 * 
+	 */
+	private synchronized void initializeTable() {
+		if (fEntries != null) return;
+		fEntries = Collections.synchronizedMap(new TreeMap());
+		addToTable(workspaceManager.getAllModels(), true);
+		addToTable(externalManager.getAllModels(), false);
+		addWorkspaceBundlesToState();
+		searchablePluginsManager.initialize();
+	}
+
+	private void addToTable(IPluginModelBase[] pmodels, boolean workspace) {
+		for (int i = 0; i < pmodels.length; i++) {
+			IPluginModelBase model = pmodels[i];
+			String id = model.getPluginBase().getId();
+			if (id == null)
+				return;
+			ModelEntry entry = (ModelEntry) fEntries.get(id);
+			if (entry == null) {
+				entry = new ModelEntry(this, id);
+				fEntries.put(id, entry);
+			}
+			if (workspace)
+				entry.setWorkspaceModel(model);
+			else
+				entry.setExternalModel(model);
+		}
+	}
+		
 	public void addWorkspaceBundlesToState() {
 		IPluginModelBase[] models = workspaceManager.getAllModels();
 		PDEState state = externalManager.getState();
@@ -506,30 +515,6 @@ public class PluginModelManager implements IAdaptable {
 		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
 		model.setBundleDescription(newDesc);
 		state.resolveState(true);
-	}
-	
-	private void addToTable(
-		IPluginModelBase[] pmodels,
-		boolean workspace) {
-		for (int i = 0; i < pmodels.length; i++) {
-			addToTable(pmodels[i], workspace);
-		}
-	}
-
-	private void addToTable(IPluginModelBase model, boolean workspace) {
-		String id = model.getPluginBase().getId();
-		if (id == null)
-			return;
-		Map entries = getEntryTable();
-		ModelEntry entry = (ModelEntry) entries.get(id);
-		if (entry == null) {
-			entry = new ModelEntry(this, id);
-			entries.put(id, entry);
-		}
-		if (workspace)
-			entry.setWorkspaceModel(model);
-		else
-			entry.setExternalModel(model);
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {
