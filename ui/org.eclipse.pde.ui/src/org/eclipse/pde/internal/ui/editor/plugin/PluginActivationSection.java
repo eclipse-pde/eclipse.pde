@@ -369,10 +369,9 @@ public class PluginActivationSection extends TableSection
 			getPage().getEditor().doSave(null);
 			IPluginModelBase model = (IPluginModelBase) getPage()
 					.getPDEEditor().getAggregateModel();
-			IResource resource = model.getUnderlyingResource();
-			
+			IProject project = model.getUnderlyingResource().getProject();
 			String target = PDECore.getDefault().getModelManager().getTargetVersion();
-			PDEPluginConverter.convertToOSGIFormat(resource.getProject(), resource.getName(), target, ClasspathHelper.getDevDictionary(model), new NullProgressMonitor()); //$NON-NLS-1$
+			PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(model), new NullProgressMonitor()); //$NON-NLS-1$
 
 			InputContextManager mgr = getPage().getPDEEditor().getContextManager();
 			InputContext context = mgr.findContext(PluginInputContext.CONTEXT_ID);

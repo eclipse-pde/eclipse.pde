@@ -20,11 +20,11 @@ import org.osgi.util.tracker.*;
 
 public class PDEPluginConverter {
 	
-	public static void convertToOSGIFormat(IProject project, String filename, String target, Dictionary dictionary, IProgressMonitor monitor) throws CoreException {
+	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
-			File inputFile = new File(project.getLocation().append(filename).toOSString());
+			File inputFile = new File(project.getLocation().toOSString());
 			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
 					.getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();

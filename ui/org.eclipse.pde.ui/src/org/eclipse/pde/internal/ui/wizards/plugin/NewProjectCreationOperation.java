@@ -102,9 +102,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fModel.save();
 
 		if (fData.hasBundleStructure()) {
-			String filename = (fData instanceof IFragmentFieldData) ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-			PDEPluginConverter.convertToOSGIFormat(project, filename, fData.getTargetVersion(), null, 
-					new SubProgressMonitor(monitor, 1));
+			PDEPluginConverter.convertToOSGIFormat(project, fData.getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
 			trimModel(fModel.getPluginBase());
 			fModel.save();
 			openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
