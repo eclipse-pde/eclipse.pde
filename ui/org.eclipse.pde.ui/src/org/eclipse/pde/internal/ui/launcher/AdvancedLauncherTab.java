@@ -52,6 +52,8 @@ public class AdvancedLauncherTab
 		"AdvancedLauncherTab.error.no_boot";
 	private static final String KEY_ERROR_BROKEN_PLUGINS =
 		"AdvancedLauncherTab.error.brokenPlugins";
+	private static final String KEY_ERROR_FEATURE_SETUP =
+		"AdvancedLauncherTab.error.featureSetup";
 
 	private Button useDefaultRadio;
 	private Button useFeaturesRadio;
@@ -437,7 +439,7 @@ public class AdvancedLauncherTab
 			useDefaultRadio.setSelection(config.getAttribute(USECUSTOM, true));
 			useFeaturesRadio.setSelection(
 				config.getAttribute(USEFEATURES, false));
-			useListRadio.setSelection(!useDefaultRadio.getSelection());
+			useListRadio.setSelection(!useDefaultRadio.getSelection() && !useFeaturesRadio.getSelection());
 
 			if (pluginTreeViewer.getInput() == null)
 				pluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -449,6 +451,9 @@ public class AdvancedLauncherTab
 				ArrayList result = initWorkspacePluginsState(config);
 				result.addAll(initExternalPluginsState(config));
 				pluginTreeViewer.setCheckedElements(result.toArray());
+			}
+			else {
+				pluginPathButton.setEnabled(false);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -654,6 +659,21 @@ public class AdvancedLauncherTab
 						PDEPlugin.getResourceString(KEY_ERROR_BROKEN_PLUGINS));
 				}
 			}
+		}
+		else {
+			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
+			String lastSegment = workspacePath.lastSegment();
+			boolean badSetup = false;
+			if (lastSegment.equalsIgnoreCase("plugins")==false)
+				badSetup = true;
+			IPath featurePath = workspacePath.removeLastSegments(1).append("features");
+			if (featurePath.toFile().exists()==false) {
+				badSetup = true;
+			}
+			if (badSetup)
+				return createStatus(
+					IStatus.ERROR,
+					PDEPlugin.getResourceString(KEY_ERROR_FEATURE_SETUP));
 		}
 		return createStatus(IStatus.OK, "");
 	}

@@ -32,7 +32,8 @@ public class BinaryProjectFilter extends ViewerFilter {
 		if (element instanceof IJavaProject) {
 			IJavaProject javaProject = (IJavaProject)element;
 			IProject project = javaProject.getProject();
-			if (WorkspaceModelManager.isBinaryPluginProject(project))
+			if (WorkspaceModelManager.isBinaryPluginProject(project) ||
+				WorkspaceModelManager.isBinaryFeatureProject(project))
 				return false;
 		}
 		return true;

@@ -522,6 +522,23 @@ public class WorkspaceModelManager
 		}
 		return false;
 	}
+	
+	public static boolean isBinaryFeatureProject(IProject project) {
+		if (!isFeatureProject(project))
+			return false;
+		try {
+			String binary =
+				project.getPersistentProperty(
+					PDECore.EXTERNAL_PROJECT_PROPERTY);
+			if (binary != null) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(project);
+				return provider==null || provider instanceof BinaryRepositoryProvider;
+			}
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		}
+		return false;
+	}
 
 	private void ensureModelExists(IProject pluginProject) {
 		if (!initialized)

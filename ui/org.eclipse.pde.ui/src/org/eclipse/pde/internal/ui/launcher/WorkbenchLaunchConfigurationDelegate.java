@@ -30,8 +30,8 @@ public class WorkbenchLaunchConfigurationDelegate
 		"WorkbenchLauncherConfigurationDelegate.noJRE";
 	private static final String KEY_JRE_PATH_NOT_FOUND =
 		"WorkbenchLauncherConfigurationDelegate.jrePathNotFound";
-		private static final String KEY_BAD_FEATURE_SETUP =
-			"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
+	private static final String KEY_BAD_FEATURE_SETUP =
+		"WorkbenchLauncherConfigurationDelegate.badFeatureSetup";
 	private static final String KEY_STARTING =
 		"WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT =
@@ -139,16 +139,18 @@ public class WorkbenchLaunchConfigurationDelegate
 			tracing,
 			monitor);
 	}
-	
-	private void validateFeatures(IProgressMonitor monitor) throws CoreException {
+
+	private void validateFeatures(IProgressMonitor monitor)
+		throws CoreException {
 		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 		String lastSegment = installPath.lastSegment();
 		boolean badStructure = false;
-		if (lastSegment.equalsIgnoreCase("plugins")==false) {
+		if (lastSegment.equalsIgnoreCase("plugins") == false) {
 			badStructure = true;
 		}
-		IPath featuresPath = installPath.removeLastSegments(1).append("features");
-		if (featuresPath.toFile().exists()==false) {
+		IPath featuresPath =
+			installPath.removeLastSegments(1).append("features");
+		if (featuresPath.toFile().exists() == false) {
 			badStructure = true;
 		}
 		if (badStructure) {
@@ -331,7 +333,11 @@ public class WorkbenchLaunchConfigurationDelegate
 			String[] vmArgs = args.getVMArgumentsArray();
 			String[] progArgs = args.getProgramArgumentsArray();
 
-			int exCount = 8;
+			boolean appSpecified = appname != null && appname.length() > 0;
+
+			int exCount = 6;
+			if (appSpecified)
+				exCount += 2;
 			if (tracing)
 				exCount += 2;
 			if (showSplash)
@@ -341,15 +347,19 @@ public class WorkbenchLaunchConfigurationDelegate
 
 			String[] fullProgArgs = new String[progArgs.length + exCount];
 			int i = 0;
-			fullProgArgs[i++] = "-application";
-			fullProgArgs[i++] = appname;
 
+			if (appSpecified) {
+				fullProgArgs[i++] = "-application";
+				fullProgArgs[i++] = appname;
+			}
+			fullProgArgs[i++] = "-dev";
+			fullProgArgs[i++] = getBuildOutputFolders();
 			if (useFeatures) {
 				IPath installPath =
 					PDEPlugin.getWorkspace().getRoot().getLocation();
 				File installDir = installPath.removeLastSegments(1).toFile();
 				fullProgArgs[i++] = "-install";
-				fullProgArgs[i++] = "file:" + installDir.getPath();
+				fullProgArgs[i++] = "file:" + installDir.getPath()+File.separator;
 				fullProgArgs[i++] = "-update";
 			} else {
 				fullProgArgs[i++] = "-plugins";
@@ -359,8 +369,6 @@ public class WorkbenchLaunchConfigurationDelegate
 						targetWorkspace);
 				fullProgArgs[i++] = "file:" + propertiesFile.getPath();
 			}
-			fullProgArgs[i++] = "-dev";
-			fullProgArgs[i++] = getBuildOutputFolders();
 			fullProgArgs[i++] = "-data";
 			fullProgArgs[i++] = targetWorkspace.toOSString();
 			if (showSplash) {
