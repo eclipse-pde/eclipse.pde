@@ -119,14 +119,14 @@ public class CompilerFlags {
 
 	public static void initializeDefaults() {
 		Preferences pref = PDE.getDefault().getPluginPreferences();
-		pref.setDefault(P_UNRESOLVED_IMPORTS, IGNORE);
-		pref.setDefault(P_UNRESOLVED_EX_POINTS, IGNORE);
-		pref.setDefault(P_UNKNOWN_ELEMENT, IGNORE);
-		pref.setDefault(P_UNKNOWN_ATTRIBUTE, IGNORE);
-		pref.setDefault(P_ILLEGAL_ATT_VALUE, IGNORE);
-		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
-		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
-		pref.setDefault(P_NO_REQUIRED_ATT, IGNORE);
+		pref.setDefault(P_UNRESOLVED_IMPORTS, WARNING);
+		pref.setDefault(P_UNRESOLVED_EX_POINTS, WARNING);
+		pref.setDefault(P_UNKNOWN_ELEMENT, WARNING);
+		pref.setDefault(P_UNKNOWN_ATTRIBUTE, WARNING);
+		pref.setDefault(P_ILLEGAL_ATT_VALUE, WARNING);
+		pref.setDefault(P_UNKNOWN_CLASS, WARNING);
+		pref.setDefault(P_UNKNOWN_RESOURCE, WARNING);
+		pref.setDefault(P_NO_REQUIRED_ATT, WARNING);
 		
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc");

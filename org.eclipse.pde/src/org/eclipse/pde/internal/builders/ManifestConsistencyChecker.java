@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.builders;
  * All Rights Reserved.
  */
 
+import java.util.*;
 import java.util.Map;
 
 import org.eclipse.core.resources.*;
@@ -268,7 +269,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		PluginErrorReporter reporter) {
 		IPluginExtension[] extensions = pluginBase.getExtensions();
 		SchemaMarkerFactory factory = new SchemaMarkerFactory();
-		
+
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
 			IPluginExtensionPoint point =
@@ -299,21 +300,24 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IPluginExtension extension,
 		ISchema schema,
 		PluginErrorReporter reporter) {
-			
+
 		ISchemaElement extensionInfo = schema.findElement("extension");
-		if (extensionInfo!=null)
-			validateContentModel(extension, extensionInfo, reporter);	
+		if (extensionInfo != null)
+			validateContentModel(extension, extensionInfo, reporter);
 		IPluginObject[] elements = extension.getChildren();
 		for (int i = 0; i < elements.length; i++) {
 			IPluginElement element = (IPluginElement) elements[i];
 			validateElement(element, schema, reporter);
 		}
 	}
-	
-	private void validateContentModel(IPluginParent parent, ISchemaElement elementInfo, PluginErrorReporter reporter) {
-		IPluginObject [] children = parent.getChildren();
+
+	private void validateContentModel(
+		IPluginParent parent,
+		ISchemaElement elementInfo,
+		PluginErrorReporter reporter) {
+		IPluginObject[] children = parent.getChildren();
 		ISchemaType type = elementInfo.getType();
-		
+
 		// Compare the content model defined in the 'type' 
 		// to the actual content of this parent.
 		// Errors should be:
@@ -321,9 +325,48 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		//   - Elements that appear too few or too many times
 		//   - No elements when the type requires some
 		//   - Elements in the wrong order
-		
-		for (int i=0; i<children.length; i++) {
-			IPluginElement child = (IPluginElement)children[i];
+		HashSet allowedElements = new HashSet();
+		computeAllowedElements(type, allowedElements);
+
+		for (int i = 0; i < children.length; i++) {
+			IPluginElement child = (IPluginElement) children[i];
+			String name = child.getName();
+			if (!allowedElements.contains(name)) {
+				// Invalid
+				reporter.report(
+					PDE.getFormattedMessage(
+						"Builders.Manifest.child",
+						new String[] { child.getName(), parent.getName()}),
+					getLine(child),
+					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
+			}
+		}
+	}
+
+	private void computeAllowedElements(ISchemaType type, HashSet elementSet) {
+		if (type instanceof ISchemaComplexType) {
+			ISchemaComplexType complexType = (ISchemaComplexType) type;
+			ISchemaCompositor compositor = complexType.getCompositor();
+			if (compositor!=null)
+				computeAllowedElements(compositor, elementSet);
+		}
+	}
+
+	private void computeAllowedElements(
+		ISchemaCompositor compositor,
+		HashSet elementSet) {
+		ISchemaObject[] children = compositor.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			ISchemaObject child = children[i];
+			if (child instanceof ISchemaObjectReference) {
+				ISchemaObjectReference ref = (ISchemaObjectReference) child;
+				ISchemaElement refElement =
+					(ISchemaElement) ref.getReferencedObject();
+				if (refElement != null)
+					elementSet.add(refElement.getName());
+			} else if (child instanceof ISchemaCompositor) {
+				computeAllowedElements((ISchemaCompositor) child, elementSet);
+			}
 		}
 	}
 
@@ -345,14 +388,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateExistingAttributes(atts, schemaElement, reporter);
 			validateRequiredAttributes(element, schemaElement, reporter);
 		}
-		
-		if (schemaElement!=null) 
-		   validateContentModel(element, schemaElement, reporter);
-		
-		IPluginObject [] children = element.getChildren();
 
-		for (int i=0; i<children.length; i++) {
-			IPluginElement child = (IPluginElement)children[i];
+		if (schemaElement != null)
+			validateContentModel(element, schemaElement, reporter);
+
+		IPluginObject[] children = element.getChildren();
+
+		for (int i = 0; i < children.length; i++) {
+			IPluginElement child = (IPluginElement) children[i];
 			// need to validate if this child can appear here
 			// according to the parent type.
 			validateElement(child, schema, reporter);
@@ -420,12 +463,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			getLine(att.getParent()),
 			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
-	
-	private void validateBoolean(IPluginAttribute att,
-	PluginErrorReporter reporter) {
+
+	private void validateBoolean(
+		IPluginAttribute att,
+		PluginErrorReporter reporter) {
 		String value = att.getValue();
-		if (value.equalsIgnoreCase("true")) return;
-		if (value.equalsIgnoreCase("false")) return;
+		if (value.equalsIgnoreCase("true"))
+			return;
+		if (value.equalsIgnoreCase("false"))
+			return;
 		reporter.report(
 			PDE.getFormattedMessage(
 				"Builders.Manifest.att-value",
@@ -433,7 +479,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			getLine(att.getParent()),
 			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
-		
 
 	private void validateJava(
 		IPluginAttribute att,
