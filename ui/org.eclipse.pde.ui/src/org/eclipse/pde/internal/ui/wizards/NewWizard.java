@@ -4,12 +4,12 @@ package org.eclipse.pde.internal.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 
 public class NewWizard extends Wizard implements INewWizard {

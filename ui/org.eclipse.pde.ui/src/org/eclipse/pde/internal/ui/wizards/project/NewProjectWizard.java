@@ -5,21 +5,11 @@ package org.eclipse.pde.internal.ui.wizards.project;
  */
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.NewWizard;
-import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.ui.IProjectProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;

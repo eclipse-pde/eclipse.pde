@@ -4,11 +4,11 @@ package org.eclipse.pde.internal.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.core.runtime.*;
-
 import java.util.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.swt.graphics.Image;
 
 
 public class WizardElement extends NamedElement {

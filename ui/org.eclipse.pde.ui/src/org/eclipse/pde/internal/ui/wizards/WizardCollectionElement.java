@@ -5,7 +5,7 @@ package org.eclipse.pde.internal.ui.wizards;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.elements.ElementList;
 
 
 

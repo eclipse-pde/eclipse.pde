@@ -4,8 +4,12 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.actions.OpenAction;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -18,7 +22,6 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.preferences.*;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.imports.*;
 import org.eclipse.swt.SWT;
@@ -43,6 +46,9 @@ public class PluginsView extends ViewPart {
 	private Action workspaceFilterAction;
 	private Action openManifestAction;
 	private Action openSystemEditorAction;
+	private Action openClassFileAction;
+	private Action openDependenciesAdapter;
+	private OpenDependenciesAction openDependenciesAction;
 	private Action openTextEditorAction;
 	private Action selectDependentAction;
 	private Action addToJavaSearchAction;
@@ -51,6 +57,7 @@ public class PluginsView extends ViewPart {
 	private ShowInWorkspaceAction showInPackagesAction;
 	private DisabledFilter disabledFilter = new DisabledFilter();
 	private WorkspaceFilter workspaceFilter = new WorkspaceFilter();
+	private JavaFilter javaFilter = new JavaFilter();
 	private CopyToClipboardAction copyAction;
 	private ArrayList tempFiles;
 	private Clipboard clipboard;
@@ -78,6 +85,22 @@ public class PluginsView extends ViewPart {
 			return true;
 		}
 	}
+	
+	class JavaFilter extends ViewerFilter {
+		public boolean select(Viewer v, Object parent, Object element) {
+			if (element instanceof IPackageFragment) {
+				IPackageFragment packageFragment = (IPackageFragment)element;
+				try {
+					return packageFragment.hasChildren();
+				}
+				catch (JavaModelException e) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+				
 
 	/**
 	 * Constructor for PluginsView.
@@ -100,6 +123,7 @@ public class PluginsView extends ViewPart {
 			.removePropertyChangeListener(
 			propertyListener);
 		purgeTempFiles();
+		openDependenciesAction.dispose();
 		super.dispose();
 	}
 
@@ -156,7 +180,19 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openAction.setText("Open");
-
+		
+		openDependenciesAction = new OpenDependenciesAction();
+		openDependenciesAction.init(PDEPlugin.getActiveWorkbenchWindow());
+		openDependenciesAdapter = new Action() {
+			public void run() {
+				ModelEntry entry = getEnclosingEntry();
+				IPluginModelBase model = entry.getActiveModel();
+				openDependenciesAction.selectionChanged(this, new StructuredSelection(model));
+				openDependenciesAction.run(this);
+			}
+		};
+		openDependenciesAdapter.setText("Open Dependencies");
+		
 		importBinaryAction = new Action() {
 			public void run() {
 				handleImport(false);
@@ -247,11 +283,29 @@ public class PluginsView extends ViewPart {
 		showInPackagesAction =
 			new ShowInWorkspaceAction(JavaUI.ID_PACKAGES, treeViewer);
 		showInPackagesAction.setText("Show In Packages View");
+		
+		openClassFileAction = new OpenAction(getViewSite());
 	}
 	private FileAdapter getSelectedFile() {
 		Object obj = getSelectedObject();
 		if (obj instanceof FileAdapter)
 			return (FileAdapter) obj;
+		return null;
+	}
+	
+	private ModelEntry getEnclosingEntry() {
+		Object obj = getSelectedObject();
+		if (obj==null) return null;
+		if (obj instanceof ModelEntry)
+			return (ModelEntry)obj;
+		if (obj instanceof FileAdapter) {
+			FileAdapter file = (FileAdapter)obj;
+			if (file.isManifest()) {
+				FileAdapter parent = file.getParent();
+				if (parent instanceof EntryFileAdapter)
+					return ((EntryFileAdapter)parent).getEntry();
+			}
+		}
 		return null;
 	}
 
@@ -268,14 +322,29 @@ public class PluginsView extends ViewPart {
 
 		if (selection.size() == 1) {
 			Object sobj = selection.getFirstElement();
+			boolean addSeparator = false;
 			if (sobj instanceof FileAdapter
 				&& ((FileAdapter) sobj).isDirectory() == false) {
 				manager.add(openAction);
 				MenuManager openWithMenu = new MenuManager("Open With");
 				fillOpenWithMenu(openWithMenu, sobj);
 				manager.add(openWithMenu);
-				manager.add(new Separator());
+				addSeparator=true;
 			}
+			if (sobj instanceof IStorage) {
+				manager.add(openAction);
+				addSeparator=true;
+			}
+			if (sobj instanceof IClassFile) {
+				manager.add(openClassFileAction);
+				addSeparator=true;
+			}
+			ModelEntry entry = getEnclosingEntry();
+			if (entry!=null) {
+				manager.add(openDependenciesAdapter);
+				addSeparator = true;
+			}
+			if (addSeparator) manager.add(new Separator());
 		}
 		if (selection.size() > 0) {
 			boolean addSeparator = false;
@@ -405,6 +474,7 @@ public class PluginsView extends ViewPart {
 			treeViewer.addFilter(workspaceFilter);
 		if (disabled)
 			treeViewer.addFilter(disabledFilter);
+		treeViewer.addFilter(javaFilter);
 		workspaceFilterAction.setChecked(!workspace);
 		disabledFilterAction.setChecked(!disabled);
 	}
@@ -440,6 +510,23 @@ public class PluginsView extends ViewPart {
 				handleOpenSystemEditor(adapter);
 			else
 				handleOpenTextEditor(adapter, editorId);
+		}
+		if (obj instanceof IClassFile) {
+			openClassFileAction.run();
+		}
+		if (obj instanceof IStorage) {
+			handleOpenStorage((IStorage)obj);
+		}
+	}
+	
+	private void handleOpenStorage(IStorage obj) {
+		IWorkbenchPage page = PDEPlugin.getActivePage();
+		IEditorInput input = new JarEntryEditorInput((IStorage)obj);
+		try {
+			page.openEditor(input, DEFAULT_EDITOR_ID);
+		}
+		catch (PartInitException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 

@@ -1,11 +1,10 @@
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
 public class PluginsContentProvider
 	extends DefaultContentProvider
@@ -13,6 +12,7 @@ public class PluginsContentProvider
 	private PluginModelManager manager;
 	private TreeViewer viewer;
 	private PluginsView view;
+	private StandardJavaElementContentProvider javaProvider;
 
 	/**
 	 * Constructor for PluginsContentProvider.
@@ -21,6 +21,7 @@ public class PluginsContentProvider
 		this.manager = manager;
 		manager.addPluginModelListener(this);
 		this.view = view;
+		javaProvider = new StandardJavaElementContentProvider(false, false);
 	}
 
 	public void dispose() {
@@ -46,6 +47,10 @@ public class PluginsContentProvider
 		if (parentElement instanceof FileAdapter) {
 			return ((FileAdapter) parentElement).getChildren();
 		}
+		if (parentElement instanceof IPackageFragmentRoot ||
+			parentElement instanceof IPackageFragment ||
+			parentElement instanceof ICompilationUnit) 
+			return javaProvider.getChildren(parentElement);
 		return new Object[0];
 	}
 
@@ -83,6 +88,10 @@ public class PluginsContentProvider
 			FileAdapter fileAdapter = (FileAdapter) element;
 			return fileAdapter.hasChildren();
 		}
+		if (element instanceof IPackageFragmentRoot ||
+			element instanceof IPackageFragment ||
+			element instanceof ICompilationUnit)
+			return javaProvider.hasChildren(element);
 		return false;
 	}
 

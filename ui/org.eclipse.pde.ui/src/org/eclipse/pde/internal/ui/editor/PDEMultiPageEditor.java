@@ -12,17 +12,19 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -156,10 +158,13 @@ public abstract class PDEMultiPageEditor
 			IFormPage page = (IFormPage) iter.next();
 			formWorkbook.addPage(page);
 		}
+		if (EditorPreferencePage.getUseSourcePage())
+			firstPageId = getSourcePageId();
 		if (firstPageId != null)
 			showPage(firstPageId);
 	}
 	public void dispose() {
+		verifyDefaultPage();
 		setSelection(new StructuredSelection());
 		for (int i = 0; i < pages.size(); i++) {
 			IWorkbenchPart part = (IWorkbenchPart) pages.elementAt(i);
@@ -178,6 +183,37 @@ public abstract class PDEMultiPageEditor
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		disposed = true;
 	}
+	
+	private void verifyDefaultPage() {
+		boolean askDefault = EditorPreferencePage.getAskDefaultPage();
+		boolean shouldUseSource = EditorPreferencePage.getUseSourcePage();
+		if (!askDefault) return;
+		boolean usingSource = getCurrentPage().isSource();
+		boolean ask=false;
+		String msg="";
+		if (usingSource && !shouldUseSource) {
+			// Ask if source page should be the default
+			// the next time
+			msg = PDEPlugin.getResourceString("MultiPageEditor.defaultPage.source");			
+			ask = true;
+		}
+		if (!usingSource && shouldUseSource) {
+			// Ask if overview page should be the default
+			// the next time
+			msg = PDEPlugin.getResourceString("MultiPageEditor.defaultPage.overview");
+			ask = true;
+		}
+		if (ask) {
+			DefaultPageDialog dialog = new DefaultPageDialog(PDEPlugin.getActiveWorkbenchShell(), msg);
+			boolean doIt = (dialog.open()==0);
+			boolean stopAsking = dialog.getStopAsking();
+			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+			store.setValue(EditorPreferencePage.P_ASK_DEFAULT_PAGE, !stopAsking);
+			if (doIt)
+				store.setValue(EditorPreferencePage.P_USE_SOURCE_PAGE, usingSource);
+		}
+	}
+	
 	public void doSave(IProgressMonitor monitor) {
 		final IEditorInput input = getEditorInput();
 		commitFormPages(true);

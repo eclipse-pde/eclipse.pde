@@ -37,6 +37,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	public static final String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
 	public static final String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
 	public static final String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView";
+	public static final String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView";
 
 	public static final String RUN_LAUNCHER_ID =
 		PLUGIN_ID + "." + "WorkbenchRunLauncher";

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -22,7 +23,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.pde.internal.core.PDECore;
 
 public class FirstTemplateWizardPage extends WizardPage {
 	private static final String RUNTIME_ID = "org.eclipse.core.runtime";

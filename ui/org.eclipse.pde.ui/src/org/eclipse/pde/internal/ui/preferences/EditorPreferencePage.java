@@ -5,22 +5,60 @@ package org.eclipse.pde.internal.ui.preferences;
  */
 
 import org.eclipse.jface.preference.*;
-import org.eclipse.ui.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.*;
 
 public class EditorPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
+	public static final String P_USE_SOURCE_PAGE = "useSourcePage";
+	public static final String P_ASK_DEFAULT_PAGE = "askDefaultPage";
 
 	public EditorPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
 		setDescription(PDEPlugin.getResourceString("EditorPreferencePage.desc")); //$NON-NLS-1$
 	}
+	
+	private static IPreferenceStore initializeDefaults() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		store.setDefault(P_USE_SOURCE_PAGE, false);
+		store.setDefault(P_ASK_DEFAULT_PAGE, true);
+		return store;
+	}
 
 	protected void createFieldEditors() {
+		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
+				PDEPlugin.getResourceString("EditorPreferencePage.useSourcePage"),
+				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(P_ASK_DEFAULT_PAGE, 
+				PDEPlugin.getResourceString("EditorPreferencePage.askDefaultPage"),
+				getFieldEditorParent()));
+		addLabel("", 2);
+		addLabel(PDEPlugin.getResourceString("EditorPreferencePage.colorSettings"), 2);
 		addSourceColorFields();
+	}
+	
+	public static boolean getUseSourcePage() {
+		IPreferenceStore store = initializeDefaults();
+		return store.getBoolean(P_USE_SOURCE_PAGE);
+	}
+	
+	public static boolean getAskDefaultPage() {
+		IPreferenceStore store = initializeDefaults();
+		return store.getBoolean(P_ASK_DEFAULT_PAGE);
+	}
+	
+	private void addLabel(String text, int span) {
+		Label label = new Label(getFieldEditorParent(), SWT.NULL);
+		GridData gd = new GridData();
+		gd.horizontalSpan = span;
+		label.setLayoutData(gd);
+		label.setText(text);
 	}
 
 	private void addSourceColorFields() {

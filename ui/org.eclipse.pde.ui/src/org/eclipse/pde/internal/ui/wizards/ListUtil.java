@@ -5,14 +5,12 @@ package org.eclipse.pde.internal.ui.wizards;
  */
 
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 
 
 public class ListUtil {
