@@ -2,21 +2,15 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
 
 public class JUnitArgumentsTab extends BasicLauncherTab {
@@ -65,9 +59,9 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	protected void initializeApplicationSection(ILaunchConfiguration config)
 		throws CoreException {
 		String junitApplication =
-			config.getAttribute(APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
+			config.getAttribute(APPLICATION, JUnitLaunchConfiguration.UI_APPLICATION);
 		fRequiresUI.setSelection(
-			junitApplication.equals(JUnitLaunchConfiguration.fgDefaultApp));
+			junitApplication.equals(JUnitLaunchConfiguration.UI_APPLICATION));
 
 		fApplicationLabel.setEnabled(fRequiresUI.getSelection());
 		fApplicationCombo.setEnabled(fRequiresUI.getSelection());
@@ -99,7 +93,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		try {
 			if (fRequiresUI.getSelection()) {
-				config.setAttribute(APPLICATION, JUnitLaunchConfiguration.fgDefaultApp);
+				config.setAttribute(APPLICATION, JUnitLaunchConfiguration.UI_APPLICATION);
 				String text = fApplicationCombo.getText();
 				if ((config.getAttribute(APP_TO_TEST, (String) null) != null)
 					|| (!text.equals("org.eclipse.ui.workbench")
@@ -109,7 +103,7 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 			} else {
 				config.setAttribute(
 					APPLICATION,
-					JUnitLaunchConfiguration.fgApplicationNames[1]);
+					JUnitLaunchConfiguration.CORE_APPLICATION);
 			}
 		} catch (CoreException e) {
 		}
@@ -139,6 +133,10 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 					}
 				}
 			}
+		}
+		if (result.contains("org.eclipse.ui.workbench")) {
+			result.clear();
+			result.add("org.eclipse.ui.workbench");
 		}
 		return (String[])result.toArray(new String[result.size()]);
 	}

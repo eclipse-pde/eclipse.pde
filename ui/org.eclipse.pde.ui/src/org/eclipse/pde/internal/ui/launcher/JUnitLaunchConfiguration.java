@@ -8,6 +8,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.debug.core.*;
@@ -15,6 +16,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -27,14 +29,13 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	private static final String KEY_NO_STARTUP =
 		"WorkbenchLauncherConfigurationDelegate.noStartup";
 		
-	public static final String[] fgApplicationNames= new String[] {
-			"org.eclipse.pde.junit.runtime.uitestapplication",
-			"org.eclipse.pde.junit.runtime.coretestapplication"
-	};
-	public static final String fgDefaultApp= fgApplicationNames[0];
+	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication";
+	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication";
+	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication";
 	
+	private static IPluginModelBase[] registryPlugins;
 	private File configFile = null;
-	
+
 	public void launch(
 		ILaunchConfiguration configuration,
 		String mode,
@@ -147,20 +148,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
-		programArgs.add("-application");
-		programArgs.add(configuration.getAttribute(APPLICATION, fgDefaultApp));
-		
-		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
-		if (testApplication != null && testApplication.length() > 0) {
-			programArgs.add("-testApplication");
-			programArgs.add(testApplication);
-		}
-
-		String targetWorkspace =
-			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
-		programArgs.add("-data");
-		programArgs.add(targetWorkspace);
-		
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
 		IPluginModelBase[] plugins =
 			LauncherUtils.validatePlugins(
@@ -170,7 +157,21 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			return null;
 			
 		plugins = addRequiredPlugins(plugins);
-
+		
+		programArgs.add("-application");
+		programArgs.add(getApplicationName(plugins, configuration));
+		
+		String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
+		if (testApplication != null && testApplication.length() > 0) {
+			programArgs.add("-testApplication");
+			programArgs.add(testApplication);
+		}
+		
+		String targetWorkspace =
+			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
+		programArgs.add("-data");
+		programArgs.add(targetWorkspace);
+		
 		programArgs.add("-configuration");
 		String primaryFeatureId = getPrimaryFeatureId();
 		configFile =
@@ -282,14 +283,33 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		IPluginModelBase model = manager.findPlugin(id, null, 0);
 		if (model != null)
 			return model;
-		PluginRegistryModel registryModel = (PluginRegistryModel) Platform.getPluginRegistry();
-		PluginDescriptorModel plugin = registryModel.getPlugin(id);
-		if (plugin == null)
-			abort(
-				PDEPlugin.getFormattedMessage("JUnitLaunchConfiguration.error.missingPlugin", id),
-				null,
-				IStatus.OK);
-		return RegistryLoader.processPluginModel(plugin, false);
+
+		if (registryPlugins == null) {
+			String[] pluginPaths =
+				PluginPathFinder.getPluginPaths(BootLoader.getInstallURL().getFile());
+			Vector models = new Vector();
+			RegistryLoader.loadFromDirectories(
+				models,
+				new Vector(),
+				pluginPaths,
+				false,
+				false,
+				new NullProgressMonitor());
+			registryPlugins =
+				(IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
+		}
+
+		for (int i = 0; i < registryPlugins.length; i++) {
+			if (registryPlugins[i].getPluginBase().getId().equals(id))
+				return registryPlugins[i];
+		}
+		abort(
+			PDEPlugin.getFormattedMessage(
+				"JUnitLaunchConfiguration.error.missingPlugin",
+				id),
+			null,
+			IStatus.OK);
+		return null;
 	}
 	
 	private String[] computeVMArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -347,9 +367,29 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	}
 
 	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
-		if (config.getAttribute(APPLICATION, fgDefaultApp).equals(fgDefaultApp))
+		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
 			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
+	}
+	
+	private String getApplicationName(IPluginModelBase[] models, ILaunchConfiguration config) throws CoreException {
+		String application = config.getAttribute(APPLICATION, (String)null);
+		if (CORE_APPLICATION.equals(application))
+			return CORE_APPLICATION;
+		
+		for (int i = 0; i < models.length; i++) {
+			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) {
+					String id = extensions[j].getPluginBase().getId() + "." + extensions[j].getId();
+					if ("org.eclipse.ui.workbench".equals(id)){
+						return LEGACY_UI_APPLICATION;
+					}
+				}
+			}
+		}
+		return UI_APPLICATION;
 	}
 
 }

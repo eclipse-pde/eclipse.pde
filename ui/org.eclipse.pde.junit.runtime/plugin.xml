@@ -13,7 +13,7 @@
       <import plugin="org.eclipse.jdt.junit.runtime"/>
       <import plugin="org.eclipse.ui" optional="true"/>
       <import plugin="org.junit"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
    </requires>
 
 
@@ -22,11 +22,16 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.pde.internal.junit.runtime.UITestApplication">
-            <parameter
-                  name="productInfo"
-                  value="product.ini">
-            </parameter>
+            class="org.eclipse.pde.internal.junit.runtime.UITestApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="legacyUItestapplication"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+            class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
          </run>
       </application>
    </extension>
@@ -35,7 +40,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
+            class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
          </run>
       </application>
    </extension>
