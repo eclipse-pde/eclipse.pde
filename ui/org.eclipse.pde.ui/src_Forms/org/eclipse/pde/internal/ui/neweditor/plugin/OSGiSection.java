@@ -108,34 +108,25 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		initializeFonts();
 		
-		section.setLayout(new TableWrapLayout());
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
 		Composite mainContainer = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		mainContainer.setLayout(layout);
-		GridData gd =new GridData(GridData.FILL_BOTH);
-		mainContainer.setLayoutData(gd);
+		mainContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		/*
 		 * create new manifest part
 		 */
-		Composite createManifestContainer = toolkit.createComposite(mainContainer);
+		Composite topContainer = toolkit.createComposite(mainContainer);
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth= false;
-		createManifestContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		createManifestContainer.setLayoutData(gd);
-		Label manifestLabel = toolkit.createLabel(createManifestContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
-		gd = new GridData();
-		manifestLabel.setLayoutData(gd);
-		Hyperlink manifestLink = toolkit.createHyperlink(createManifestContainer, "Create a manifest file",SWT.NULL);
+		topContainer.setLayout(layout);
+
+		toolkit.createLabel(topContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
+		Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
 		manifestLink.addHyperlinkListener(new IHyperlinkListener(){
 			public void linkActivated(HyperlinkEvent e) {
 				/**
@@ -147,9 +138,6 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 			public void linkEntered(HyperlinkEvent e) {
 			}
 		});
-		manifestLink.setLayout(new GridLayout());
-		gd = new GridData();
-		manifestLink.setLayoutData(gd);
 		
 		/*
 		 * Bottom parts (Activation Rule & Exceptions)
@@ -160,27 +148,17 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.numColumns = 2;
 		bottomContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 2;
-		bottomContainer.setLayoutData(gd);
+		bottomContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		/*
 		 * Activation rule part
 		 */
 		Composite ruleContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 1;
-		layout.makeColumnsEqualWidth = true;
 		ruleContainer.setLayout(layout);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.grabExcessHorizontalSpace = true;
-		ruleContainer.setLayoutData(gd);
+		ruleContainer.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 1;
-		activateLabel.setLayoutData(gd);
 		activateLabel.setFont(boldFont);
 
 		autoActivateButton = toolkit
@@ -188,9 +166,10 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						ruleContainer,
 						"Always activate this plug-in",
 						SWT.RADIO);
-		gd = new GridData(GridData.FILL_BOTH);
-		autoActivateButton
-				.setLayoutData(gd);
+		
+		GridData gd = new GridData();
+		gd.horizontalIndent = 5;
+		autoActivateButton.setLayoutData(gd);
 		autoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				/*
@@ -207,7 +186,8 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 						ruleContainer,
 						"Do not activate this plug-in",
 						SWT.RADIO);
-		gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData();
+		gd.horizontalIndent = 5;
 		nonAutoActivateButton.setLayoutData(gd);
 		nonAutoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -223,33 +203,24 @@ public class OSGiSection extends TableSection implements IModelChangedListener {
 		Composite exceptionsContainer = toolkit.createComposite(bottomContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 2;
-		layout.numColumns = 1;
-		layout.makeColumnsEqualWidth = false;
+		layout.verticalSpacing = 3;
 		exceptionsContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		exceptionsContainer.setLayoutData(gd);
+		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		exceptionLabel.setLayoutData(gd);
 		exceptionLabel.setFont(boldFont);
-		Label exceptionPkgLabel = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
+		exceptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Label label = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 100;
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 2;
-		exceptionPkgLabel.setLayoutData(gd);
+		gd.widthHint = 225;
+		label.setLayoutData(gd);
 		
 		Composite exceptionsPkgContainer = toolkit.createComposite(exceptionsContainer);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
 		exceptionsPkgContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = false;
-		gd.horizontalSpan = 1;
-		exceptionsPkgContainer.setLayoutData(gd);
+		exceptionsPkgContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 				
 		EditableTablePart tablePart = getTablePart();
 		IModel model = (IModel) getPage().getModel();
