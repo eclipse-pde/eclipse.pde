@@ -518,7 +518,7 @@ protected void generateConditionalProperties(int tab) {
 				String[] condition = Utils.getArrayFromString(conditions[k], "/");
 				String variable = condition[0];
 				String value = condition[1];
-				cond.addEquals(variable, value);
+				cond.addEquals(getPropertyFormat(variable), value);
 			}
 			String conditionKey = "condition" + (++n) + "." + realKey;
 			script.printProperty(tab, conditionKey, "");
