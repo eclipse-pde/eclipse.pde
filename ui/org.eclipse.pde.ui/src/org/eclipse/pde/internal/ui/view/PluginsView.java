@@ -602,8 +602,7 @@ public class PluginsView extends ViewPart {
 				PluginImportWizard.getImportOperation(
 					shell,
 					importType,
-					models,
-					new ArrayList());
+					models);
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell);
 			pmd.run(true, true, op);
 		} catch (InterruptedException e) {

@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.wizards.tools.*;
 import org.eclipse.team.core.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -36,9 +35,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	public static final int IMPORT_WITH_SOURCE = 3;
 
 	private IPluginModelBase[] fModels;
-	private ArrayList fModelIds;
 	private int fImportType;
 	private IReplaceQuery fReplaceQuery;
+	private WorkspaceBuildModel buildModel;
 
 	public interface IReplaceQuery {
 		public static final int CANCEL = 0;
@@ -50,11 +49,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 	
 	public PluginImportOperation(
 		IPluginModelBase[] models,
-		ArrayList modelIds,
 		int importType,
 		IReplaceQuery replaceQuery) {
 		this.fModels = models;
-		this.fModelIds = modelIds;
 		this.fImportType = importType;
 		this.fReplaceQuery = replaceQuery;
 	}
@@ -104,6 +101,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			PDEPlugin.getFormattedMessage("ImportWizard.operation.creating2", id);
 		monitor.beginTask(task, 6);
 		try {
+			buildModel = null;
+			
 			IProject project = findProject(model.getPluginBase().getId());
 
 			if (project.exists()) {
@@ -135,7 +134,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			setProjectDescription(project, model);
 
 			if (project.hasNature(JavaCore.NATURE_ID))
-				resetClasspath(project, model);
+				setClasspath(project, model);
 		} finally {
 			monitor.done();
 		}
@@ -230,25 +229,16 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		
 		importPluginContent(project, model, new SubProgressMonitor(monitor, 2));
 		
-		boolean isSWTPlugin = model.getPluginBase().getId().equals("org.eclipse.swt");
-		if (isSWTPlugin) {
-			IFragment swtFragment = getSWTFragment(model);
-			if (swtFragment != null) {
-				String libraryName = model.getPluginBase().getLibraries()[0].getName();
-				importSWTJar(project, swtFragment, libraryName);
-				importSWTSource(project, swtFragment, libraryName);
-			}
-		}
-		
-		WorkspaceBuildModel buildModel = configureBinIncludes(project, model);
+		buildModel = configureBinIncludes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		
-		boolean sourceFound = false;
 		for (int i = 0; i < libraries.length; i++) {
-			IPath libraryPath = UpdateClasspathOperation.getExpandedPath(new Path(libraries[i].getName()));
+			if (ClasspathUtilCore.containsVariables(libraries[i].getName()))
+				continue;
+			IPath libraryPath = new Path(libraries[i].getName());
 			IResource jarFile = project.findMember(libraryPath);
 			if (jarFile != null) {
-				IPath srcPath = UpdateClasspathOperation.getSourcePath(libraryPath);
+				IPath srcPath = getSourcePath(libraryPath);
 				IResource srcZip = jarFile.getProject().findMember(srcPath);
 				if (srcZip != null) {
 					String jarName = libraryPath.removeFileExtension().lastSegment();
@@ -265,12 +255,13 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					extractResources(jarFile, dest, monitor);
 					srcZip.delete(true, null);
 					jarFile.delete(true, null);
-					sourceFound = true;
 				}
 			}
 		}
 		buildModel.save();
-		if (!sourceFound)
+		// Give the project a binary property if no source was extracted.
+		// the model contains at minimum the bin.includes key
+		if (buildModel.getBuild().getBuildEntries().length < 2)
 			project.setPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
 					PDECore.BINARY_PROJECT_VALUE);
@@ -308,12 +299,28 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			FileSystemStructureProvider.INSTANCE,
 			null,
 			new SubProgressMonitor(monitor, 1));
-
+		
 		importSource(
 					project,
 					model.getPluginBase(),
 					new Path(model.getInstallLocation()),
-					new SubProgressMonitor(monitor, 1));		
+					new SubProgressMonitor(monitor, 1));
+		
+		// make sure all libraries have been imported
+		// if any are missing, check in fragments		
+		IFragment[] fragments = getFragmentsFor(model);
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		
+		for (int i = 0; i < libraries.length; i++) {
+			String libraryName = libraries[i].getName();
+			if (ClasspathUtilCore.containsVariables(libraryName) &&
+					!project.exists(new Path(ClasspathUtilCore.expandLibraryName(libraryName)))) {
+				for (int j = 0; j < fragments.length; j++) {
+					importJarFromFragment(project, fragments[j], libraryName);
+					importSourceFromFragment(project, fragments[j], libraryName);
+				}
+			}
+		}
 	}
 	
 	private void importContent(
@@ -363,7 +370,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
 			IPath libPath = new Path(libraries[i].getName());
-			IPath srcPath = UpdateClasspathOperation.getSourcePath(libPath);
+			IPath srcPath = getSourcePath(libPath);
 			if (srcPath != null && !project.getFile(srcPath).exists()) {
 				File srcZip = manager.findSourceFile(plugin, srcPath);
 				if (srcZip != null) {
@@ -511,18 +518,83 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		project.setDescription(desc, null);
 	}
 	
-	private void resetClasspath(IProject project, IPluginModelBase model)
+	private void setClasspath(IProject project, IPluginModelBase model)
 		throws JavaModelException {
 		IJavaProject jProject = JavaCore.create(project);
-		jProject.setRawClasspath(
-			new IClasspathEntry[0],
-			jProject.getOutputLocation(),
-			null);
-		fModelIds.add(model.getPluginBase().getId());
+		Vector entries = new Vector();
+		if (fImportType == IMPORT_BINARY_WITH_LINKS) {
+			ClasspathUtilCore.addLibraries(model, true, entries);
+		} else {
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			for (int i = 0; i < libraries.length; i++) {
+				if (buildModel != null) {
+					IBuildEntry buildEntry = buildModel.getBuild().getEntry("source." + libraries[i].getName());
+					if (buildEntry != null) {
+						IPath path = new Path(buildEntry.getTokens()[0]);
+						entries.add(JavaCore.newSourceEntry(project.getFullPath().append(path)));
+						continue;
+					}
+				}
+				IClasspathEntry entry = getLibraryEntry(project, libraries[i]);
+				if (entry != null)
+					entries.add(entry);
+			}
+		}
+		entries.add(ClasspathUtilCore.createContainerEntry());
+		entries.add(ClasspathUtilCore.createJREEntry());
+		jProject.setRawClasspath((IClasspathEntry[]) entries
+				.toArray(new IClasspathEntry[entries.size()]), jProject
+				.getOutputLocation(), null);
+	}
+	
+	private IClasspathEntry getLibraryEntry(IProject project, IPluginLibrary library) {
+		if (IPluginLibrary.RESOURCE.equals(library.getType()))
+			return null;
+		
+		String libraryName = ClasspathUtilCore.expandLibraryName(library.getName());
+		if (!project.exists(new Path(libraryName)))
+			return null;
+		
+		IPath srcAttach = getSourceAttachmentPath(project, project.getFullPath().append(libraryName));
+		IPath srcRoot = srcAttach != null ? Path.EMPTY : null;
+		return JavaCore.newLibraryEntry(project.getFullPath().append(libraryName), srcAttach, srcRoot, library.isExported());
+	}
+
+	private IPath getSourceAttachmentPath(IProject project, IPath jarPath) {
+		IPath sourcePath = getSourcePath(jarPath);
+		if (sourcePath == null)
+			return null;
+		IWorkspaceRoot root = project.getWorkspace().getRoot();
+		if (root.findMember(sourcePath) != null) {
+			return sourcePath;
+		}
+		return null;
+	}
+	
+	private IPath getSourcePath(IPath jarPath) {
+		jarPath = new Path(ClasspathUtilCore.expandLibraryName(jarPath
+				.toString()));
+		String libName = jarPath.lastSegment();
+		if (libName != null) {
+			int idx = libName.lastIndexOf('.');
+			if (idx != -1) {
+				String srcName = libName.substring(0, idx) + "src.zip";
+				IPath path = jarPath.removeLastSegments(1).append(srcName);
+				return path;
+			}
+		}
+		return null;
 	}
 	
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
-		boolean isJavaProject = model.getPluginBase().getLibraries().length > 0;
+		boolean isJavaProject = false;
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		for (int i = 0; i < libraries.length; i++) {
+			if (!IPluginLibrary.RESOURCE.equals(libraries[i].getType())) {
+				isJavaProject = true;
+				break;
+			}
+		}
 		if (!isJavaProject) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
 			for (int i = 0; i < imports.length; i++) {
@@ -535,7 +607,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		return isJavaProject;
 	}
 	
-	private IFragment getSWTFragment(IPluginModelBase model) {
+	private IFragment[] getFragmentsFor(IPluginModelBase model) {
+		ArrayList result = new ArrayList();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
@@ -544,18 +617,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						model.getPluginBase().getVersion(),
 						fragment.getPluginId(),
 						fragment.getVersion(),
-						fragment.getRule())
-					&& fragment.getLibraries().length == 0) {
-					return fragment;
+						fragment.getRule())) {
+					result.add(fragment);
 				}
 			}
 		}
-		return null;
+		return (IFragment[])result.toArray(new IFragment[result.size()]);
 	}
 	
-	private void importSWTJar(IProject project, IFragment fragment, String name)
+	private void importJarFromFragment(IProject project, IFragment fragment, String name)
 		throws CoreException {
-		IPath jarPath = UpdateClasspathOperation.getExpandedPath(new Path(name));
+		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
 		File swtJar =
 			new File(fragment.getModel().getInstallLocation(), jarPath.toString());
 		if (swtJar.exists()) {
@@ -563,10 +635,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private void importSWTSource(IProject project, IFragment fragment, String name)
+	private void importSourceFromFragment(IProject project, IFragment fragment, String name)
 		throws CoreException {
-		IPath jarPath = UpdateClasspathOperation.getExpandedPath(new Path(name));
-		IPath srcPath = UpdateClasspathOperation.getSourcePath(jarPath);
+		IPath jarPath = new Path(ClasspathUtilCore.expandLibraryName(name));
+		IPath srcPath = getSourcePath(jarPath);
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		File srcFile = manager.findSourceFile(fragment, srcPath);
 		if (srcFile != null) {

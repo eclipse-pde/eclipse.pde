@@ -393,7 +393,7 @@ public class ClasspathUtilCore {
 		}
 	}
 	
-	private static boolean containsVariables(String name) {
+	public static boolean containsVariables(String name) {
 		return name.indexOf("$os$") != -1
 			|| name.indexOf("$ws$") != -1
 			|| name.indexOf("$nl$") != -1

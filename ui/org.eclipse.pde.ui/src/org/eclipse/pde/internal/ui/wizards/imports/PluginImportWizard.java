@@ -20,11 +20,8 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.*;
-import org.eclipse.pde.internal.ui.wizards.tools.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -83,8 +80,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				getImportOperation(
 					getShell(),
 					page1.getImportType(),
-					models,
-					modelIds);
+					models);
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -99,69 +95,26 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
 		final int importType,
-		final IPluginModelBase[] models,
-		final ArrayList modelIds) {
+		final IPluginModelBase[] models) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
-				boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
 				try {
-					if (isAutoBuilding) {
-						IWorkspace workspace = PDEPlugin.getWorkspace();
-						IWorkspaceDescription description = workspace.getDescription();
-						description.setAutoBuilding(false);
-						workspace.setDescription(description);
-					}
-					monitor.beginTask("", 10);
 					IReplaceQuery query = new ReplaceQuery(shell);
 					PluginImportOperation op =
-						new PluginImportOperation(models, modelIds, importType, query);
-					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor, 8));
-					Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+						new PluginImportOperation(models, importType, query);
+					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
 					throw new InterruptedException(e.getMessage());
 				} finally {
-					try {
-						PDEPlugin.getWorkspace().run(
-							getUpdateClasspathOperation(modelIds),
-							new SubProgressMonitor(monitor, 1));
-						if (isAutoBuilding) {
-							PDEPlugin.getWorkspace().run(
-								getActivateAutoBuildOperation(),
-								new SubProgressMonitor(monitor, 1));
-						} else {
-							monitor.worked(1);
-						}
-					} catch (CoreException e) {
-					}
 					monitor.done();
 				}
 			}
 		};
 	}
 	
-	private static IWorkspaceRunnable getActivateAutoBuildOperation() {
-		return new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
-		};
-	}
-	
-	private static IWorkspaceRunnable getUpdateClasspathOperation(final ArrayList modelIds) {
-		return new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				UpdateClasspathAction.doUpdateClasspath(
-						monitor,
-						getWorkspaceCounterparts(modelIds));
-			}
-		};
-	}
 
 	private static class ReplaceDialog extends MessageDialog {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
@@ -220,18 +173,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			});
 			return result[0];
 		}
-	}
-	
-	private static IPluginModelBase[] getWorkspaceCounterparts(ArrayList modelIds) {
-		ArrayList desiredModels = new ArrayList();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		for (int i = 0; i < modelIds.size(); i++) {
-			ModelEntry entry = manager.findEntry(modelIds.get(i).toString(), null);
-			if (entry != null && entry.getActiveModel() instanceof WorkspacePluginModelBase) {
-				desiredModels.add(entry.getActiveModel());
-			}
-		}
-		return (IPluginModelBase[])desiredModels.toArray(new IPluginModelBase[desiredModels.size()]);
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
