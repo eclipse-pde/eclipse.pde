@@ -33,7 +33,7 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		if (fSearchString != null) {
 			NewSearchUI.activateSearchResultView();
-			NewSearchUI.runQuery(createSearchQuery());
+			NewSearchUI.runQueryInBackground(createSearchQuery());
 		}
 	}
 	

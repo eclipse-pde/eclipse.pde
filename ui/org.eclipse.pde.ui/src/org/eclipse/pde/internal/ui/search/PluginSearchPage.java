@@ -307,7 +307,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	public boolean performAction() {
 		saveQueryData();
 		NewSearchUI.activateSearchResultView();
-		NewSearchUI.runQuery(new PluginSearchQuery(getInput()));
+		NewSearchUI.runQueryInBackground(new PluginSearchQuery(getInput()));
 		return true;
 	}
 	
