@@ -9,7 +9,7 @@ import org.eclipse.pde.internal.ui.neweditor.text.*;
 
 public abstract class KeyValueSourcePage extends PDESourcePage {
 
-	class BuildSourceViewerConfiguration extends SourceViewerConfiguration {
+	class KeyValueSourceViewerConfiguration extends SourceViewerConfiguration {
 		public IReconciler getReconciler(ISourceViewer sourceViewer) {
 			ReconcilingStrategy strategy = new ReconcilingStrategy();
 			strategy.addParticipant((IReconcilingParticipant) getInputContext()
@@ -21,7 +21,7 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 	}
 	public KeyValueSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		setSourceViewerConfiguration(new BuildSourceViewerConfiguration());
+		setSourceViewerConfiguration(new KeyValueSourceViewerConfiguration());
 	}
 
 	/* (non-Javadoc)

@@ -6,11 +6,15 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 
+import java.io.*;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.neweditor.context.UTF8InputContext;
 import org.eclipse.text.edits.*;
@@ -29,26 +33,24 @@ public class BundleInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
-	protected IBaseModel createModel(IEditorInput input) {
-		if (input instanceof IFileEditorInput)
-			return createResourceModel((IFileEditorInput)input);
-		if (input instanceof SystemFileEditorInput)
-			return createExternalModel((SystemFileEditorInput)input);
-		if (input instanceof IStorageEditorInput)
-			return createStorageModel((IStorageEditorInput)input);
-		return null;
-	}
-	private IBaseModel createResourceModel(IFileEditorInput input) {
-		WorkspaceBundleModel model = new WorkspaceBundleModel(input.getFile());
-		model.load();
+	protected IBaseModel createModel(IEditorInput input) throws CoreException {
+		BundleModel model = null;
+		if (input instanceof IStorageEditorInput) {
+			boolean isReconciling = input instanceof IFileEditorInput;
+			IDocument document = getDocumentProvider().getDocument(input);
+			model = new BundleModel(document, isReconciling);
+			if (input instanceof IFileEditorInput) {
+				IFile file = ((IFileEditorInput)input).getFile();
+				model.setUnderlyingResource(file);
+				model.setCharset(file.getCharset());
+			} else if (input instanceof SystemFileEditorInput){
+				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
+				model.setInstallLocation(file.getParent());
+				model.setCharset(getDefaultCharset());
+			}
+			model.load();
+		}
 		return model;
-	}
-	private IBaseModel createExternalModel(SystemFileEditorInput input) {
-		return null;
-	}
-	
-	private IBaseModel createStorageModel(IStorageEditorInput input) {
-		return null;
 	}
 
 	/* (non-Javadoc)

@@ -27,7 +27,7 @@ public class BundleObject {
 	public IBundleModel getModel() {
 		return model;
 	}
-	void setModel(IBundleModel newModel) {
+	public void setModel(IBundleModel newModel) {
 		model = newModel;
 	}
 	protected void throwCoreException(String message) throws CoreException {

@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.model;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
@@ -15,19 +16,21 @@ import org.eclipse.pde.internal.core.*;
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel {
 	
 	private ArrayList fListeners = new ArrayList();
-	protected boolean fIsReconciling;
-	protected boolean fIsInSync = true;
-	protected boolean fIsLoaded = false;
-	protected boolean fIsDisposed;
+	protected boolean fReconciling;
+	protected boolean fInSync = true;
+	protected boolean fLoaded = false;
+	protected boolean fDisposed;
 	protected long fTimestamp;
 	private transient NLResourceHelper fNLResourceHelper;
 	private IDocument fDocument;
 	private boolean fDirty;
 	private String fCharset;
+	private IResource fUnderlyingResource;
+	private String fInstallLocation;
 	
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;
-		fIsReconciling = isReconciling;		
+		fReconciling = isReconciling;		
 	}
 	
 	/* (non-Javadoc)
@@ -38,7 +41,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 			fNLResourceHelper.dispose();
 			fNLResourceHelper = null;
 		}
-		fIsDisposed = true;
+		fDisposed = true;
 		fListeners.clear();
 	}
 	
@@ -61,25 +64,25 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 * @see org.eclipse.pde.core.IModel#isDisposed()
 	 */
 	public boolean isDisposed() {
-		return fIsDisposed;
+		return fDisposed;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isEditable()
 	 */
 	public boolean isEditable() {
-		return fIsReconciling;
+		return fReconciling;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isLoaded()
 	 */
 	public boolean isLoaded() {
-		return fIsLoaded;
+		return fLoaded;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
-		return fIsInSync;
+		return fInSync;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isValid()
@@ -107,12 +110,19 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 */
 	public void reload(InputStream source, boolean outOfSync)
 			throws CoreException {
+		load(source, outOfSync);
+		fireModelChanged(
+				new ModelChangedEvent(this, 
+					IModelChangedEvent.WORLD_CHANGED,
+					new Object[] {this},
+					null));
+		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isReconcilingModel()
 	 */
 	public boolean isReconcilingModel() {
-		return fIsReconciling;
+		return fReconciling;
 	}
 	
 	public IDocument getDocument() {
@@ -187,4 +197,29 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public void setDirty(boolean dirty) {
 		this.fDirty = dirty;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
+	 */
+	public IResource getUnderlyingResource() {
+		return fUnderlyingResource;
+	}
+	
+	public void setUnderlyingResource(IResource resource) {
+		fUnderlyingResource = resource;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
+	 */
+	public String getInstallLocation() {
+		if (fUnderlyingResource != null)
+			return fUnderlyingResource.getProject().getLocation().toString();
+		return fInstallLocation;
+	}
+	
+	public void setInstallLocation(String location) {
+		fInstallLocation = location;
+	}
+
+
 }

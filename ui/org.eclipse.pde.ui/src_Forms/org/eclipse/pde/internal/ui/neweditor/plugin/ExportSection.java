@@ -20,6 +20,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.swt.*;
@@ -51,8 +52,10 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	class TableContentProvider extends DefaultContentProvider
 			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IPluginLibrary)
-				return((IPluginLibrary) parent).getContentFilters();
+			if (parent instanceof IPluginLibrary) {
+				String[] filters = ((IPluginLibrary) parent).getContentFilters();
+				return filters == null ? new Object[0] : filters;
+			}
 			return new Object[0];
 		}
 	}
@@ -208,8 +211,8 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	
 	private boolean isReadOnly() {
 		IBaseModel model = getPage().getModel();
-		if (model instanceof IEditable)
-			return !((IEditable)model).isEditable();
+		if (model instanceof IEditingModel)
+			return !((IEditingModel)model).isEditable();
 		return true;
 	}
 	

@@ -115,8 +115,6 @@ public class Build implements IBuild {
 				}
 			}
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

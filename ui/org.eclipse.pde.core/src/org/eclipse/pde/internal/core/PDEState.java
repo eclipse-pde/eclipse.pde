@@ -67,15 +67,6 @@ public class PDEState {
 		if (manifest == null) {
 			return null;
 		}
-		String id = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-		if (id == null)
-			return null;
-		if (id.equals("org.eclipse.osgi")) {
-			//TODO We need to handle the special case of the osgi bundle for 
-			//whose bundle-classpath is specified in the eclipse.properties file 
-			// in the osgi folder
-			manifest.put(Constants.BUNDLE_CLASSPATH, "core.jar, console.jar, osgi.jar, resolver.jar, defaultAdaptor.jar, eclipseAdaptor.jar");
-		}
 		return addBundle(manifest, bundleLocation);
 	}
 	

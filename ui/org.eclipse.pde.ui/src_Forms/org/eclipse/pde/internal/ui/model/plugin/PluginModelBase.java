@@ -1,9 +1,7 @@
 package org.eclipse.pde.internal.ui.model.plugin;
 
-import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
@@ -21,8 +19,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 
 	private PluginBaseNode fPluginBase;
 	private boolean fIsEnabled;
-	private String fInstallLocation;
-	private IResource fUnderlyingResource;
 	private PluginDocumentHandler fHandler;
 	private IPluginModelFactory fFactory;
 	
@@ -68,7 +64,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
 	public IPluginBase getPluginBase(boolean createIfMissing) {
-		if (!fIsLoaded && createIfMissing) {
+		if (!fLoaded && createIfMissing) {
 			createPluginBase();
 			try {
 				load();
@@ -92,17 +88,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		fIsEnabled = enabled;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#getUnderlyingResource()
-	 */
-	public IResource getUnderlyingResource() {
-		return fUnderlyingResource;
-	}
-	
-	public void setUnderlyingResource(IResource resource) {
-		fUnderlyingResource = resource;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginFactory()
 	 */
@@ -134,19 +119,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
-	 */
-	public String getInstallLocation() {
-		if (fUnderlyingResource != null)
-			return fUnderlyingResource.getProject().getLocation().toString();
-		return fInstallLocation;
-	}
-	
-	public void setInstallLocation(String location) {
-		fInstallLocation = location;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
@@ -154,18 +126,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		URL lookupLocation = getNLLookupLocation();
 		if (lookupLocation==null) return null;
 		return new NLResourceHelper(name, new URL[] {lookupLocation});
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
-	public void reload(InputStream source, boolean outOfSync) {
-		load(source, outOfSync);
-		fireModelChanged(
-			new ModelChangedEvent(this, 
-				IModelChangedEvent.WORLD_CHANGED,
-				new Object[] {getPluginBase()},
-				null));
 	}
 	
 	/* (non-Javadoc)

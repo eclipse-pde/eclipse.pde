@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
@@ -138,8 +137,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				.getResourceString("ManifestEditor.TestingSection.title"));
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
-		info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJS_INFO_TSK));
+		/*info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_OBJS_INFO_TSK));*/
 		info.setBackground(section.getTitleBarGradientBackground());
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -166,8 +165,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				.getResourceString("ManifestEditor.DeployingSection.title"));
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
-		info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_OBJS_INFO_TSK));
+		/*info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+				ISharedImages.IMG_OBJS_INFO_TSK));*/
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				WorkbenchHelp

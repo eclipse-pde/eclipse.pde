@@ -26,10 +26,10 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	 */
 	public void load(InputStream source, boolean outOfSync) {
 		try {
-			fIsLoaded = true;
+			fLoaded = true;
 			getParser().parse(source, createDocumentHandler(this));
 		} catch (SAXException e) {
-			fIsLoaded = false;
+			fLoaded = false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

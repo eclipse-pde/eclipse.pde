@@ -11,11 +11,13 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.osgi.framework.*;
 import org.osgi.framework.Constants;
 
 /**
@@ -236,25 +238,22 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getProviderName()
 	 */
 	public String getProviderName() {
+		return parseHeader(Constants.BUNDLE_VENDOR);
+	}
+	
+	private String parseHeader(String header) {
 		Dictionary manifest = getManifest();
 		if (manifest == null)
-			return null;
-		return (String)manifest.get(Constants.BUNDLE_VENDOR);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
-	 */
-	public String getVersion() {
-		BundleDescription desc = model.getBundleDescription();
-		if (desc != null) {
-			Version version = desc.getVersion();
-			if (version != null)
-				return version.toString();
+			return "";
+		String value = (String)manifest.get(header);
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
+			if (elements.length > 0)
+				return elements[0].getValue();
+		} catch (BundleException e) {
 		}
-		return null;
+		return "";
+		
 	}
 
 	/*
@@ -270,6 +269,22 @@ public class BundlePluginBase
 		manifest.put(Constants.BUNDLE_VENDOR, providerName);
 		model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, oldValue, providerName);			
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#getVersion()
+	 */
+	public String getVersion() {
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			Version version = desc.getVersion();
+			if (version != null)
+				return version.toString();
+		} 
+		return parseHeader(Constants.BUNDLE_VERSION);
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -414,9 +429,9 @@ public class BundlePluginBase
 	 */
 	public String getId() {
 		BundleDescription desc = model.getBundleDescription();
-		return (desc == null) ? "" : desc.getSymbolicName();
+		return (desc != null) ? desc.getSymbolicName() : parseHeader(Constants.BUNDLE_SYMBOLICNAME);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -446,12 +461,22 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return null;
-		return (String) manifest.get(Constants.BUNDLE_NAME);
+		return parseHeader(Constants.BUNDLE_NAME);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
+	 */
+	public void setName(String name) throws CoreException {
+		Dictionary manifest = getManifest();
+		if (manifest == null)
+			return;
+		Object oldValue = getProviderName();
+		manifest.put(Constants.BUNDLE_NAME, name);
+		model.fireModelObjectChanged(this, IPluginBase.P_NAME, oldValue, name);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -497,19 +522,6 @@ public class BundlePluginBase
 		return key;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginObject#setName(java.lang.String)
-	 */
-	public void setName(String name) throws CoreException {
-		Dictionary manifest = getManifest();
-		if (manifest == null)
-			return;
-		Object oldValue = getProviderName();
-		manifest.put(Constants.BUNDLE_NAME, name);
-		model.fireModelObjectChanged(this, IPluginBase.P_NAME, oldValue, name);
-	}
 
 	/*
 	 * (non-Javadoc)
