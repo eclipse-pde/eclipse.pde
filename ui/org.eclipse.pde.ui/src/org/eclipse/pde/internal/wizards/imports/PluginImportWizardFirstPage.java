@@ -83,7 +83,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		composite.setLayout(layout);
 
 		runtimeLocationButton = new Button(composite, SWT.RADIO);
-		fillHorizontal(runtimeLocationButton, 3);
+		fillHorizontal(runtimeLocationButton, 3, false);
 		runtimeLocationButton.setText(
 			PDEPlugin.getResourceString(KEY_RUNTIME_LOCATION));
 
@@ -95,7 +95,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		label.setLayoutData(gd);
 
 		otherLocationButton = new Button(composite, SWT.RADIO);
-		fillHorizontal(otherLocationButton, 3);
+		fillHorizontal(otherLocationButton, 3, false);
 		otherLocationButton.setText(PDEPlugin.getResourceString(KEY_OTHER_LOCATION));
 
 		label = new Label(composite, SWT.WRAP);
@@ -109,8 +109,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		otherLocationLabel.setText(PDEPlugin.getResourceString(KEY_OTHER_FOLDER));
 
 		dropLocation = new Combo(composite, SWT.DROP_DOWN);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		dropLocation.setLayoutData(gd);
+		fillHorizontal(dropLocation, 1, true);
 
 		browseButton = new Button(composite, SWT.PUSH);
 		browseButton.setText(PDEPlugin.getResourceString(KEY_BROWSE));
@@ -123,15 +122,15 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		});
 
 		label = new Label(composite, SWT.NULL);
-		fillHorizontal(label, 3);
+		fillHorizontal(label, 3, false);
 
 		doImportCheck = new Button(composite, SWT.CHECK);
 		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
-		fillHorizontal(doImportCheck, 3);
+		fillHorizontal(doImportCheck, 3, false);
 
 		doExtractCheck = new Button(composite, SWT.CHECK);
 		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
-		fillHorizontal(doExtractCheck, 3);
+		fillHorizontal(doExtractCheck, 3, false);
 		initializeFields(getDialogSettings());
 
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
@@ -181,9 +180,10 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		setControl(composite);
 	}
 
-	private GridData fillHorizontal(Control control, int span) {
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+	private GridData fillHorizontal(Control control, int span, boolean grab) {
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
+		gd.grabExcessHorizontalSpace = grab;
 		control.setLayoutData(gd);
 		return gd;
 	}
