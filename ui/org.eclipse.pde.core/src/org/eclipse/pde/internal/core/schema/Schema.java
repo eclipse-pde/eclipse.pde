@@ -487,7 +487,7 @@ public class Schema extends PlatformObject implements ISchema {
 					complexType.addAttribute(processAttribute(owner, child));
 				} else {
 					ISchemaObject object =
-						processCompositorChild(owner, child, -1);
+						processCompositorChild(owner, child, ISchemaCompositor.ROOT);
 					if (object instanceof ISchemaCompositor
 						&& compositor == null) {
 						compositor = (ISchemaCompositor) object;
@@ -551,7 +551,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		// all: element
 		if (tag.equals("all")
-			&& (parentKind == 0 || parentKind == ISchemaCompositor.GROUP)) {
+			&& (parentKind == ISchemaCompositor.ROOT || parentKind == ISchemaCompositor.GROUP)) {
 			return processCompositor(parent, child, ISchemaCompositor.ALL);
 		}
 		// group: all | choice | sequence

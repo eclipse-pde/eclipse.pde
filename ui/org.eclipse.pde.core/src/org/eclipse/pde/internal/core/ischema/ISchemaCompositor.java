@@ -13,6 +13,10 @@ package org.eclipse.pde.internal.core.ischema;
  */
 public interface ISchemaCompositor extends ISchemaObject, ISchemaRepeatable {
 	/**
+	 * Indicates the root parent of the compositor.
+	 */
+	public static final int ROOT = -1;
+	/**
 	 * Indicates that the children can be in any order and cardinality.
 	 */
 	public static final int ALL = 0;
