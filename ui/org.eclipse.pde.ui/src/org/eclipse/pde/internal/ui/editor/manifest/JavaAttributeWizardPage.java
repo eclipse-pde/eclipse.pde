@@ -352,13 +352,14 @@ public class JavaAttributeWizardPage extends WizardPage {
 		return null;
 	}
 
-	protected static void addSourceFolder(String name, IProject project)
+	protected static void addSourceFolder(String name, IProject project, IProgressMonitor monitor)
 		throws CoreException {
 		IPath path = project.getFullPath().append(name);
-		ensureFolderExists(project, path);
+		ensureFolderExists(project, path, monitor);
+		monitor.worked(1);
 	}
 
-	private static void ensureFolderExists(IProject project, IPath folderPath)
+	private static void ensureFolderExists(IProject project, IPath folderPath, IProgressMonitor monitor)
 		throws CoreException {
 		IWorkspace workspace = project.getWorkspace();
 
@@ -368,7 +369,9 @@ public class JavaAttributeWizardPage extends WizardPage {
 				IFolder folder = workspace.getRoot().getFolder(partialPath);
 				folder.create(true, true, null);
 			}
+			monitor.worked(1);
 		}
+		
 	}
 
 	public boolean finish() {
@@ -381,7 +384,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		return true;
 	}
 
-	private boolean generateClass() {
+	private boolean generateClass(){
 
 		if (isAlreadyCreated(className)) {
 			Display.getCurrent().beep();
@@ -396,36 +399,28 @@ public class JavaAttributeWizardPage extends WizardPage {
 		}
 
 		final String folderName = containerText.getText();
-
-		int separatorIndex = folderName.lastIndexOf(Path.SEPARATOR);
-		if ((separatorIndex != -1
-			&& separatorIndex != (folderName.length() - 1)
-			&& separatorIndex != 0)
-			|| (folderName.indexOf(Path.SEPARATOR, 1) != -1
-				&& folderName.indexOf(Path.SEPARATOR, 1) != separatorIndex)) {
-			MessageDialog.openError(
-				searchText.getShell(),
-				PDEPlugin.getResourceString(NESTED_TITLE),
-				PDEPlugin.getFormattedMessage(NESTED_DESC, folderName));
-			return false;
-		}
-
 		final boolean openFile = openFileButton.getSelection();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor pm) {
+			public void run(IProgressMonitor pm) throws InvocationTargetException{
 				try {
 					generateClass(folderName, openFile, pm);
-				} catch (CoreException e) {
+				} catch (JavaModelException e) {
+					MessageDialog.openError(
+						searchText.getShell(),
+						PDEPlugin.getResourceString(NESTED_TITLE),
+						PDEPlugin.getFormattedMessage(NESTED_DESC, folderName));
+					throw new InvocationTargetException(e);
+				} catch (Exception e) {
 					PDEPlugin.logException(e);
 				}
 			}
 		};
 		try {
 			getContainer().run(false, true, op);
+
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
 			return false;
 		}
 
@@ -435,46 +430,47 @@ public class JavaAttributeWizardPage extends WizardPage {
 	private void generateClass(
 		String folderName,
 		boolean openFile,
-		IProgressMonitor monitor)
-		throws CoreException {
+		IProgressMonitor monitor)throws Exception{
 
+		monitor.beginTask(PDEPlugin.getFormattedMessage(KEY_GENERATING, className),11);//IProgressMonitor.UNKNOWN);
 		if (folderName.charAt(0) == Path.SEPARATOR)
 			folderName = folderName.substring(1, folderName.length());
 
 		IJavaProject javaProject = JavaCore.create(project);
 		IPath path = project.getFullPath().append(folderName);
 		IFolder folder = project.getWorkspace().getRoot().getFolder(path);
+		
 		AttributeClassCodeGenerator generator =
 			new AttributeClassCodeGenerator(javaProject, folder, className, attInfo);
-		monitor.subTask(PDEPlugin.getFormattedMessage(KEY_GENERATING, className));
 
+		
 		path = project.getFullPath().append(folderName);
 
 		if (!path.toFile().exists()) {
+
 			// begin insert for source file conversion
 			IPackageFragmentRoot sourceFolder = getSourceFolder(folderName);
 			if (sourceFolder == null) {
-				try {
 					IClasspathEntry newSrcEntry =
 						JavaCore.newSourceEntry(folder.getFullPath());
+					monitor.worked(1);
 					IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
+					monitor.worked(1);
 					IClasspathEntry[] newEntries =
 						new IClasspathEntry[oldEntries.length + 1];
 					System.arraycopy(oldEntries, 0, newEntries, 0, oldEntries.length);
 					newEntries[oldEntries.length] = newSrcEntry;
-					javaProject.setRawClasspath(newEntries, monitor);
-
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+					monitor.worked(1);
+					javaProject.setRawClasspath(newEntries, new SubProgressMonitor(monitor,1));
+					monitor.worked(2);
 			}
 			// end insert
 		}
 
-		addSourceFolder(folderName, project);
-
-		IFile file = generator.generate(monitor);
-
+		addSourceFolder(folderName, project,new SubProgressMonitor(monitor,1));
+		monitor.worked(1);
+		IFile file = generator.generate(new SubProgressMonitor(monitor,2));
+		monitor.worked(8);
 		if (file != null) {
 			//Using Java todo support instead 
 			//createTask(file);
@@ -482,6 +478,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 				IWorkbenchPage page = PDEPlugin.getActivePage();
 				page.openEditor(file);
 			}
+			monitor.worked(2);
 		}
 
 		monitor.done();
@@ -642,4 +639,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 			setMessage(null);
 
 	}
+
+
+
 }
