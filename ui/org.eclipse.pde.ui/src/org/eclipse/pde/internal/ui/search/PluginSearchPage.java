@@ -243,12 +243,14 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			}
 		} else if (scope == ISearchPageContainer.WORKING_SET_SCOPE) {
 			IWorkingSet[] workingSets = container.getSelectedWorkingSets();
-			for (int i = 0; i < workingSets.length; i++) {
-				IAdaptable[] elements = workingSets[i].getElements();
-				for (int j = 0; j < elements.length; j++) {
-					IFile file = findManifestFile(elements[j]);
-					if (file != null)
-						result.add(file);
+			if (workingSets != null) {
+				for (int i = 0; i < workingSets.length; i++) {
+					IAdaptable[] elements = workingSets[i].getElements();
+					for (int j = 0; j < elements.length; j++) {
+						IFile file = findManifestFile(elements[j]);
+						if (file != null)
+							result.add(file);
+					}
 				}
 			}
 		}
