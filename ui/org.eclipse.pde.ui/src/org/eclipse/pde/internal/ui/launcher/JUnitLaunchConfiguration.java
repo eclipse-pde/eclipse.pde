@@ -93,9 +93,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				ILauncherSettings.CONFIG_LOCATION,
 				(configFile == null) ? null : configFile.getParent());
 			
-			String workspace = configuration.getAttribute(LOCATION + "0", (String)null);
-			if (workspace != null)
-				LauncherUtils.clearWorkspace(configuration,workspace);
+			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
+			LauncherUtils.clearWorkspace(configuration,workspace);
+
 			setDefaultSourceLocator(launch, configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
 			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
@@ -162,11 +162,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(configuration.getAttribute(APPLICATION, fgDefaultApp));
 
 		String targetWorkspace =
-			configuration.getAttribute(LOCATION + "0", (String) null);
-		if (targetWorkspace != null) {
-			programArgs.add("-data");
-			programArgs.add(targetWorkspace);
-		}
+			configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration));
+		programArgs.add("-data");
+		programArgs.add(targetWorkspace);
 		
 		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
 		IPluginModelBase[] plugins =
@@ -345,5 +343,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return (IPluginModelBase[])exList.toArray(new IPluginModelBase[exList.size()]);
 	}
 
+	private String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
+		if (config.getAttribute(APPLICATION, fgDefaultApp).equals(fgDefaultApp))
+			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();
+		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toOSString();				
+	}
 
 }
