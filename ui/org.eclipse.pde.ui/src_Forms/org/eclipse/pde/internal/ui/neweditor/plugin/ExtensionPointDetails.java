@@ -119,8 +119,8 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 					}
 			}
 		});
-		boolean storage = ((IPluginModelBase)getPage().getModel()).getInstallLocation()==null;
-		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", !storage);
+		boolean editable = getPage().getModel().isEditable();
+		fSchemaEntry = new FormEntry(client, toolkit, "Schema:", "Browse...", editable);
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {

@@ -32,6 +32,9 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 	public ClassAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
+	protected boolean isReferenceModel() {
+		return part.getPage().getModel().isEditable();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

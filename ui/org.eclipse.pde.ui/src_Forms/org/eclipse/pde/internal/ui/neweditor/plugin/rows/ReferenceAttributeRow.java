@@ -38,13 +38,13 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				if (!isStorageModel())
+				if (isReferenceModel())
 					openReference();
 			}
 		});
 		link.setToolTipText(getToolTipText());
 	}
-	private boolean isStorageModel() {
+	protected boolean isReferenceModel() {
 		return ((IPluginModelBase) part.getPage().getModel())
 				.getInstallLocation() == null;
 	}
@@ -54,7 +54,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 		Button button = toolkit.createButton(parent, "Browse...", SWT.PUSH);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (!isStorageModel())
+				if (!isReferenceModel())
 					browse();
 			}
 		});

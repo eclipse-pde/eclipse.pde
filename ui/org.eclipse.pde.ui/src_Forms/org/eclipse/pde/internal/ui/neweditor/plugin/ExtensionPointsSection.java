@@ -88,6 +88,7 @@ public class ExtensionPointsSection extends TableSection {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
+		tablePart.setButtonEnabled(0, model.isEditable());
 	}
 	private void selectFirstExtensionPoint() {
 		Table table = pointTable.getTable();

@@ -147,8 +147,9 @@ public class LibrarySection
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		//getFormPage().setSelection(selection);
-		updateDirectionalButtons();
+		getPage().getPDEEditor().setSelection(selection);
+		if (getPage().getModel().isEditable())
+			updateDirectionalButtons();
 	}
 
 	protected void buttonSelected(int index) {
