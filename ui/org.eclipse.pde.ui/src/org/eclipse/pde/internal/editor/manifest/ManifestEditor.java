@@ -207,9 +207,10 @@ protected boolean isValidContentType(IEditorInput input) {
 	}
 	return false;
 }
-private void openExternalPlugin(IPlugin pluginInfo) {
+private void openExternalPlugin(IPluginBase pluginInfo) {
+	String manifest = pluginInfo.getModel().isFragmentModel() ? "fragment.xml" : "plugin.xml";
 	String fileName =
-		pluginInfo.getModel().getInstallLocation() + File.separator + "plugin.xml";
+		pluginInfo.getModel().getInstallLocation() + File.separator + manifest;
 	File file = new File(fileName);
 	if (file.exists()) {
 		String editorId = PDEPlugin.getPluginId() + ".manifestEditor";
@@ -232,7 +233,7 @@ public void openPluginEditor(String pluginId) {
 	}
 }
 
-public void openPluginEditor(IPlugin plugin) {
+public void openPluginEditor(IPluginBase plugin) {
 	IResource underlyingResource = plugin.getModel().getUnderlyingResource();
 	if (underlyingResource == null) {
 		openExternalPlugin(plugin);

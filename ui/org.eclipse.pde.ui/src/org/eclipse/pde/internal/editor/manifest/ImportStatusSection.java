@@ -38,12 +38,14 @@ public class ImportStatusSection
 	private TreeViewer statusTree;
 	private FormWidgetFactory factory;
 	private Image pluginImage;
+	private Image fragmentImage;
 	private Image importImage;
 	private Image warningLoopImage;
 	private Image loopNodeImage;
 	private CCombo combo;
 	private Vector references;
 	private Object[] loops;
+	private Vector freferences;
 	private Action openAction;
 	private Action refreshAction;
 
@@ -52,11 +54,13 @@ public class ImportStatusSection
 	public static final String COMBO_LABEL = "ManifestEditor.ImportStatusSection.comboLabel";
 	public static final String COMBO_LOOPS = "ManifestEditor.ImportStatusSection.comboLoops";
 	public static final String COMBO_REFS = "ManifestEditor.ImportStatusSection.comboRefs";
+	public static final String COMBO_FREFS = "ManifestEditor.ImportStatusSection.comboFrefs";
 	public static final String KEY_OPEN_LABEL = "Actions.open.label";
 	public static final String KEY_REFRESH_LABEL = "Actions.refresh.label";
 
 	private static final int LOOP_MODE = 0;
 	private static final int REFERENCE_MODE = 1;
+	private static final int FREFERENCE_MODE = 2;
 
 	private int mode = LOOP_MODE;
 	
@@ -85,6 +89,9 @@ public class ImportStatusSection
 			}
 			if (mode==LOOP_MODE) {
 				return getLoops();
+			}
+			if (mode == FREFERENCE_MODE) {
+				return getFragmentReferences();
 			}
 			return new Object[0];
 		}
@@ -125,6 +132,7 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 	combo.setForeground(factory.getForegroundColor());
 	combo.add(PDEPlugin.getResourceString(COMBO_LOOPS));
 	combo.add(PDEPlugin.getResourceString(COMBO_REFS));
+	combo.add(PDEPlugin.getResourceString(COMBO_FREFS));
 	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	combo.setLayoutData(gd);
 	combo.addSelectionListener(new SelectionAdapter() {
@@ -174,7 +182,6 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 }
 public void dispose() {
 	importImage.dispose();
-	pluginImage.dispose();
 	warningLoopImage.dispose();
 	loopNodeImage.dispose();
 	IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
@@ -200,7 +207,7 @@ private void fillContextMenu(IMenuManager manager) {
 	ISelection selection = statusTree.getSelection();
 	if (!selection.isEmpty()) {
 		Object object = ((IStructuredSelection) selection).getFirstElement();
-		if (object instanceof IPlugin) {
+		if (object instanceof IPluginBase) {
 			manager.add(openAction);
 		}
 	}
@@ -219,7 +226,8 @@ public void initialize(Object input) {
 
 public void initializeImages() {
 	importImage = PDEPluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-	pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
+	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
+	fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
 	loopNodeImage = PDEPluginImages.DESC_LOOP_NODE_OBJ.createImage();
 	ImageDescriptor warningDesc = 
 		new OverlayIcon(PDEPluginImages.DESC_LOOP_OBJ, 
@@ -254,8 +262,8 @@ private void handleOpen(ISelection sel) {
 }
 
 private void handleOpen(Object obj) {
-	if (obj instanceof IPlugin) {
-		IPlugin plugin = ((IPlugin)obj);
+	if (obj instanceof IPluginBase) {
+		IPluginBase plugin = ((IPluginBase)obj);
 		((ManifestEditor)getFormPage().getEditor()).openPluginEditor(plugin);
 	}
 }
@@ -273,6 +281,7 @@ public void modelChanged(IModelChangedEvent event) {
 	}
 	if (fullRefresh) {
 		references = null;
+		freferences = null;
 		loops = null;
 		statusTree.refresh();
 		return;
@@ -281,15 +290,26 @@ public void modelChanged(IModelChangedEvent event) {
 
 private void viewChanged() {
 	int index = combo.getSelectionIndex();
-	if (index==0) {
-		mode = LOOP_MODE;
-		statusTree.setAutoExpandLevel(0);
+	
+	switch (index) {
+		case 0:
+			mode = LOOP_MODE;
+			statusTree.setAutoExpandLevel(0);
+			break;
+		case 1:
+			mode = REFERENCE_MODE;
+			statusTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+			break;
+		case 2:
+			mode = FREFERENCE_MODE;
+			statusTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+			break;
 	}
-	else {
-		mode = REFERENCE_MODE;
-		statusTree.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-	}
-	statusTree.refresh();
+	BusyIndicator.showWhile(statusTree.getTree().getDisplay(), new Runnable() {
+		public void run() {
+			statusTree.refresh();
+		}
+	});
 }
 
 private Object[] getReferences() {
@@ -330,6 +350,21 @@ private boolean isReferencing(IPluginModel model, String id) {
 	return false;
 }
 
+private Object[] getFragmentReferences() {
+	if (freferences==null) {
+		freferences = new Vector();
+		IPluginModelBase model = (IPluginModelBase)getFormPage().getModel();
+		IPluginBase plugin = model.getPluginBase();
+		String referenceId = plugin.getId();
+		WorkspaceModelManager wm = PDEPlugin.getDefault().getWorkspaceModelManager();
+		IFragment [] fragments = wm.getFragmentsFor(plugin.getId(), plugin.getVersion());
+		for (int i=0; i<fragments.length; i++) {
+			freferences.add(fragments[i]);
+		}
+	}
+	return freferences.toArray();
+}
+
 private Object[] getLoops() {
 	if (loops==null) {
 		IPlugin plugin = ((IPluginModel)getFormPage().getModel()).getPlugin();
@@ -345,6 +380,9 @@ private Image resolveObjectImage(Object obj) {
 		else if (mode==LOOP_MODE)
 			return loopNodeImage;
 	}
+	if (obj instanceof IFragment) {
+		return fragmentImage;
+	}
 	if (obj instanceof DependencyLoop) {
 		return warningLoopImage;
 	}
@@ -356,6 +394,12 @@ private String resolveObjectName(Object obj) {
 		if (obj instanceof IPlugin) {
 			IPlugin plugin = (IPlugin)obj;
 			return plugin.getTranslatedName();
+		}
+	}
+	if (mode==FREFERENCE_MODE) {
+		if (obj instanceof IFragment) {
+			IFragment fragment = (IFragment)obj;
+			return fragment.getTranslatedName();
 		}
 	}
 	return obj.toString();

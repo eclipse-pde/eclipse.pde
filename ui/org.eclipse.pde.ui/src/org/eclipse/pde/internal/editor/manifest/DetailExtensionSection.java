@@ -145,6 +145,25 @@ public class DetailExtensionSection
 		layout.numColumns = 2;
 
 		container.setLayout(layout);
+		
+		showAllChildrenButton =
+			factory.createButton(
+				container,
+				PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN),
+				SWT.CHECK);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		showAllChildrenButton.setLayoutData(gd);
+		showAllChildrenButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
+					public void run() {
+						extensionTree.refresh();
+					}
+				});
+			}
+		});		
+		
 		Tree tree = new Tree(container, factory.BORDER_STYLE);
 		factory.hookDeleteListener(tree);
 
@@ -173,7 +192,7 @@ public class DetailExtensionSection
 			}
 		});
 
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
 
 		Composite buttonContainer = factory.createComposite(container);
@@ -198,23 +217,6 @@ public class DetailExtensionSection
 			}
 		});
 
-		showAllChildrenButton =
-			factory.createButton(
-				container,
-				PDEPlugin.getResourceString(SECTION_SHOW_CHILDREN),
-				SWT.CHECK);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		showAllChildrenButton.setLayoutData(gd);
-		showAllChildrenButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				BusyIndicator.showWhile(extensionTree.getTree().getDisplay(), new Runnable() {
-					public void run() {
-						extensionTree.refresh();
-					}
-				});
-			}
-		});
 		return container;
 	}
 	public void dispose() {
