@@ -62,36 +62,33 @@ public class TargetEnvironmentPreferencePage
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_OS));
 		
-		os = new Combo(container, SWT.NULL);
+		os = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		os.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		os.setItems(BootLoader.knownOSValues());
-		os.setText(preferences.getString(OS));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_WS));
 		
-		ws = new Combo(container, SWT.NULL);
+		ws = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		ws.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		ws.setItems(BootLoader.knownWSValues());
-		ws.setText(preferences.getString(WS));
 		
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_NL));
 		
-		nl = new Combo(container, SWT.NULL);
+		nl = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		nl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		nl.setItems(getLocales());
-		nl.setText(preferences.getString(NL));
-		
+				
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(KEY_ARCH));
 		
-		arch = new Combo(container, SWT.NULL);
+		arch = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		arch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		arch.setItems(BootLoader.knownOSArchValues());
-		arch.setText(preferences.getString(ARCH));
 		
 		Dialog.applyDialogFont(container);
+		performDefaults();
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
 
 		return container;
@@ -101,23 +98,16 @@ public class TargetEnvironmentPreferencePage
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		os.select(os.indexOf(preferences.getDefaultString(OS)));
-		ws.select(ws.indexOf(preferences.getDefaultString(WS)));
-		nl.select(nl.indexOf(expandLocaleName(preferences.getDefaultString(NL))));
-		arch.select(arch.indexOf(preferences.getDefaultString(ARCH)));	
+		os.setText(preferences.getDefaultString(OS));
+		ws.setText(preferences.getDefaultString(WS));
+		nl.setText(expandLocaleName(preferences.getDefaultString(NL)));
+		arch.setText(preferences.getDefaultString(ARCH));	
 	}
 
 
 	public boolean performOk() {
-		/*
-	    preferences.setValue(OS,os.getItem(os.getSelectionIndex()));
-	    preferences.setValue(WS,ws.getItem(ws.getSelectionIndex()));
-	    String locale = nl.getItem(nl.getSelectionIndex());
-	    preferences.setValue(NL,locale.substring(0,locale.indexOf("-")).trim());
-	    preferences.setValue(ARCH, arch.getItem(arch.getSelectionIndex()));
-	    */
-		preferences.setValue(OS,os.getText().trim());
-		preferences.setValue(WS,ws.getText().trim());
+		preferences.setValue(OS, os.getText().trim());
+		preferences.setValue(WS, ws.getText().trim());
 		String locale = nl.getText().trim();
 		int dash = locale.indexOf("-");
 		if (dash != -1)
@@ -125,7 +115,7 @@ public class TargetEnvironmentPreferencePage
 		locale = locale.trim();
 		preferences.setValue(NL, locale);
 		preferences.setValue(ARCH, arch.getText().trim());
-	    
+
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
@@ -137,7 +127,6 @@ public class TargetEnvironmentPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
 	
 	private String expandLocaleName(String name) {
 		String language = "";

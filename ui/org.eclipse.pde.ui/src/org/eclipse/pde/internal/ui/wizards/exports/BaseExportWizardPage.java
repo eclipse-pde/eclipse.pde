@@ -111,12 +111,12 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		createZipSection(container);
 		createUpdateJarsSection(container);
 		
+		Dialog.applyDialogFont(container);
 		initializeList();
 		loadSettings();
 		pageChanged();
 		hookListeners();
 		setControl(container);
-		Dialog.applyDialogFont(container);
 		hookHelpContext(container);
 	}
 	
@@ -319,7 +319,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			}
 			if (project != null) {
 				IModel model = findModelFor(project);
-				if (model != null) {
+				if (model != null && !checked.contains(model)) {
 					checked.add(model);
 				}
 			}
@@ -368,6 +368,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			}
 		}
 		destination.setItems((String[]) items.toArray(new String[items.size()]));
+		if (items.size() > 0)
+			destination.setText(items.get(0).toString());
 
 		includeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		enableUpdateJarsSection(!zipRadio.getSelection());
@@ -379,6 +381,8 @@ public abstract class BaseExportWizardPage extends WizardPage {
 			}
 		}
 		zipFile.setItems((String[]) items.toArray(new String[items.size()]));
+		if (items.size() > 0)
+			zipFile.setText(items.get(0).toString());
 	}
 
 	public void saveSettings() {
