@@ -583,9 +583,6 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 		IFile descriptorFile =
 			scriptsFolder.getFile(sourceFolder.getName() + ".jardesc");
-		if (descriptorFile.exists()) {
-			descriptorFile.delete(true, null);
-		}
 
 		String string =
 			constructJarPackagerFileContent(
@@ -593,10 +590,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				jarFile,
 				descriptorFile.getFullPath());
 
-		descriptorFile.create(
-			new ByteArrayInputStream(string.getBytes()),
-			true,
-			null);
+		if (!descriptorFile.exists()) {
+			descriptorFile.create(
+				new ByteArrayInputStream(string.getBytes()),
+				true,
+				null);
+		} else {
+			descriptorFile.setContents(
+				new ByteArrayInputStream(string.getBytes()),
+				true,
+				true,
+				null);
+		}
 	}
 
 	private String constructJarPackagerFileContent(
