@@ -50,12 +50,18 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
+		IStatus status = PluginVersionIdentifier.validateVersion(pluginBase.getVersion());
+		if (status.getSeverity() != IStatus.OK)
+			return null;
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
 		SearchResult result = findSourceLocation(pluginBase, relativePath);
 		return (result != null)? result.file : null;
 	}
 
 	public IPath findPath(IPluginBase pluginBase, IPath sourcePath) {
+		IStatus status = PluginVersionIdentifier.validateVersion(pluginBase.getVersion());
+		if (status.getSeverity() != IStatus.OK)
+			return null;
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
 		SearchResult result = findSourceLocation(pluginBase, relativePath);
 		return result == null ? null : result.loc.getPath().append(relativePath);
