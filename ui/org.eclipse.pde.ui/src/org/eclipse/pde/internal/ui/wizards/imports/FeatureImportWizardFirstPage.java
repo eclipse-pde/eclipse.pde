@@ -30,11 +30,13 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
 	private static final String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
+	private static final String SETTINGS_NOT_BINARY = "notbinary"; //$NON-NLS-1$
 
 	private Label fOtherLocationLabel;
 	private Button fRuntimeLocationButton;
 	private Button fBrowseButton;
 	private Combo fDropLocation;
+	private Button fBinaryButton;
 
 	public FeatureImportWizardFirstPage() {
 		super("FeatureImportWizardPage"); //$NON-NLS-1$
@@ -78,6 +80,11 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 		fBrowseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
+		fBinaryButton = new Button(composite, SWT.CHECK);
+		fillHorizontal(fBinaryButton, 3, false);
+		fBinaryButton.setText(
+			PDEPlugin.getResourceString("FeatureImportWizard.FirstPage.binaryImport")); //$NON-NLS-1$
+		
 		initializeFields(getDialogSettings());
 		hookListeners();
 
@@ -125,9 +132,11 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 	private void initializeFields(IDialogSettings initialSettings) {
 		String[] dropItems = new String[0];
 		boolean doOther = false;
+		boolean binary = true;
 
 		if (initialSettings != null) {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
+			binary = !initialSettings.getBoolean(SETTINGS_NOT_BINARY);
 
 			ArrayList items = new ArrayList();
 			for (int i = 0; i < 6; i++) {
@@ -149,6 +158,7 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 		} else {
 			fDropLocation.setText(getTargetHome());
 		}
+		fBinaryButton.setSelection(binary);
 
 		validateDropLocation();
 	}
@@ -162,6 +172,7 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 	public void storeSettings(boolean finishPressed) {
 		IDialogSettings settings = getDialogSettings();
 		boolean other = !fRuntimeLocationButton.getSelection();
+		boolean binary = fBinaryButton.getSelection();
 		if (finishPressed || fDropLocation.getText().length() > 0 && other) {
 			settings.put(
 				SETTINGS_DROPLOCATION + String.valueOf(0),
@@ -176,6 +187,7 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 		}
 		if (finishPressed) {
 			settings.put(SETTINGS_DOOTHER, other);
+			settings.put(SETTINGS_NOT_BINARY, !binary);
 		}
 	}
 
@@ -218,6 +230,10 @@ public class FeatureImportWizardFirstPage extends WizardPage {
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
+	}
+	
+	public boolean isBinary(){
+		return fBinaryButton.getSelection();
 	}
 
 	/**

@@ -41,16 +41,25 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	}
 
 	private IFeatureModel[] fModels;
+	private boolean fBinary;
 	private IPath fTargetPath;
 
 	private IWorkspaceRoot fRoot;
 	private IReplaceQuery fReplaceQuery;
 
+	/**
+	 * 
+	 * @param models
+	 * @param targetPath a parent of external project or null
+	 * @param replaceQuery
+	 */
 	public FeatureImportOperation(
 		IFeatureModel[] models,
+		boolean binary,
 		IPath targetPath,
 		IReplaceQuery replaceQuery) {
 		fModels = models;
+		fBinary = binary;
 		fTargetPath = targetPath;
 		fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		fReplaceQuery = replaceQuery;
@@ -130,7 +139,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 			IProjectDescription description =
 				PDEPlugin.getWorkspace().newProjectDescription(name);
-			description.setLocation(fTargetPath.append(name));
+			if (fTargetPath != null)
+				description.setLocation(fTargetPath.append(name));
 
 			project.create(description, new SubProgressMonitor(monitor, 1));
 			if (!project.isOpen()) {
@@ -145,11 +155,13 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				null,
 				new SubProgressMonitor(monitor, 1));
 
-			//Mark this project so that we can show image overlay
-			// using the label decorator
-			project.setPersistentProperty(
-					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					PDECore.BINARY_PROJECT_VALUE);
+			if (fBinary) {
+				// Mark this project so that we can show image overlay
+				// using the label decorator
+				project.setPersistentProperty(
+						PDECore.EXTERNAL_PROJECT_PROPERTY,
+						PDECore.BINARY_PROJECT_VALUE);
+			}
 			
 				setProjectNatures(project, model, monitor);
 

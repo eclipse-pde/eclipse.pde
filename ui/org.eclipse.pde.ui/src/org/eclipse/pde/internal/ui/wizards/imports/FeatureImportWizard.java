@@ -74,7 +74,8 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 			fPage1.storeSettings(true);
 			IPath targetPath = computeTargetPath();
 
-			IRunnableWithProgress op = getImportOperation(getShell(), models, targetPath);
+			IRunnableWithProgress op = getImportOperation(getShell(), fPage1
+					.isBinary(), models, targetPath);
 			getContainer().run(true, true, op);
 
 		} catch (InterruptedException e) {
@@ -86,13 +87,26 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		return true;
 	}
 
-	private IPath computeTargetPath() {
+	/**
+	 * 
+	 * @return IPath or null
+	 */private IPath computeTargetPath() {
 		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
-		return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
+		if("plugins".equals(pluginsLocation.lastSegment()))
+			return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
+		return null;
 	}
 
+	/**
+	 * 
+	 * @param shell
+	 * @param models
+	 * @param targetPath null to use default workspace location
+	 * @return
+	 */
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
+		final boolean binary,
 		final IFeatureModel[] models,
 		final IPath targetPath) {
 		return new IRunnableWithProgress() {
@@ -101,7 +115,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 				try {
 					IReplaceQuery query = new ReplaceQuery(shell);
 					FeatureImportOperation op =
-						new FeatureImportOperation(models, targetPath, query);
+						new FeatureImportOperation(models, binary, targetPath, query);
 					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
