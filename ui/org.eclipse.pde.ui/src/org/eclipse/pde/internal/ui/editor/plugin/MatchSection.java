@@ -289,18 +289,18 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 	}
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		IPluginReference input = null;
-		Object changeObject = ((IStructuredSelection) selection)
-				.getFirstElement();
-		if (changeObject instanceof ImportObject)
-			input = ((ImportObject) changeObject).getImport();
-		else if (changeObject instanceof IPluginReference)
-			input = (IPluginReference) changeObject;
-		else if (changeObject instanceof IStructuredSelection) {
-			update((IStructuredSelection) changeObject);
-			return;
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()==1) {
+			Object changeObject = ((IStructuredSelection) selection)
+			.getFirstElement();
+			IPluginReference input = null;			
+			if (changeObject instanceof ImportObject)
+				input = ((ImportObject) changeObject).getImport();
+			else if (changeObject instanceof IPluginReference)
+				input = (IPluginReference) changeObject;
+			update(input);
 		}
-		update(input);
+		else update(ssel);
 	}
 	private void resetMatchCombo(IPluginReference iimport) {
 		String text = versionText.getText().getText();

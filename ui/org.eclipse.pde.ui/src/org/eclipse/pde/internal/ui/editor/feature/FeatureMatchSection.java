@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -112,17 +113,17 @@ public class FeatureMatchSection extends MatchSection {
 		patchButton.setSelection(ntrue > 0);
 	}
 
-	private void update(IFeatureImport iimport) {
-		super.update(iimport);
+	protected void update(IPluginReference reference) {
+		super.update(reference);
 		if (patchButton == null)
 			return;
-		IFeatureImport fimport = iimport;
+		IFeatureImport fimport = (IFeatureImport)reference;
 		if (fimport == null || fimport.getType() == IFeatureImport.PLUGIN) {
 			patchButton.setSelection(false);
 			patchButton.setEnabled(false);
 			return;
 		}
-		patchButton.setEnabled(isEditable());
+		patchButton.setEnabled(getPage().getModel().isEditable());
 		patchButton.setSelection(fimport.isPatch());
 	}
 }

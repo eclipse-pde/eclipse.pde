@@ -1,20 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -41,7 +39,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String application;
 	private String plugin;
 	private boolean valid;
-	
+
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < newPlugins.length; i++) {
@@ -61,7 +59,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void addIncludedFeatures(IFeatureChild[] features)
-		throws CoreException {
+			throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < features.length; i++) {
 			children.add(features[i]);
@@ -70,11 +68,11 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
 
-	public void addImports(IFeatureImport [] iimports) throws CoreException {
+	public void addImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i=0; i<iimports.length; i++) {
+		for (int i = 0; i < iimports.length; i++) {
 			imports.add(iimports[i]);
-			((FeatureImport)iimports[i]).setInTheModel(true);
+			((FeatureImport) iimports[i]).setInTheModel(true);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
@@ -104,13 +102,14 @@ public class Feature extends VersionableObject implements IFeature {
 	public String getProviderName() {
 		return providerName;
 	}
-	
+
 	public String getPlugin() {
 		return plugin;
 	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager mng = PDECore.getDefault()
+				.getWorkspaceModelManager();
 		IPluginModelBase[] models = null;
 		if (reference.isFragment())
 			models = mng.getFragmentModels();
@@ -138,10 +137,10 @@ public class Feature extends VersionableObject implements IFeature {
 	public boolean isPrimary() {
 		return primary;
 	}
-	
+
 	public boolean isExclusive() {
 		return exclusive;
-	}	
+	}
 
 	protected void parse(Node node, Hashtable lineTable) {
 		super.parse(node, lineTable);
@@ -157,25 +156,27 @@ public class Feature extends VersionableObject implements IFeature {
 		primary = getBooleanAttribute(node, "primary"); //$NON-NLS-1$
 		exclusive = getBooleanAttribute(node, "exclusive"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
-		valid=true;
+		valid = true;
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase();
 				if (tag.equals("description")) { //$NON-NLS-1$
-					IFeatureInfo info =
-						getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
+					IFeatureInfo info = getModel().getFactory().createInfo(
+							IFeature.INFO_DESCRIPTION);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_DESCRIPTION] = info;
 				} else if (tag.equals("license")) { //$NON-NLS-1$
-					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
+					IFeatureInfo info = getModel().getFactory().createInfo(
+							IFeature.INFO_LICENSE);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_LICENSE] = info;
 				} else if (tag.equals("copyright")) { //$NON-NLS-1$
-					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
+					IFeatureInfo info = getModel().getFactory().createInfo(
+							IFeature.INFO_COPYRIGHT);
 					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child, lineTable);
 					infos[IFeature.INFO_COPYRIGHT] = info;
@@ -188,12 +189,14 @@ public class Feature extends VersionableObject implements IFeature {
 				} else if (tag.equals("requires")) { //$NON-NLS-1$
 					parseRequires(child, lineTable);
 				} else if (tag.equals("install-handler")) { //$NON-NLS-1$
-					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
+					IFeatureInstallHandler handler = getModel().getFactory()
+							.createInstallHandler();
 					((FeatureInstallHandler) handler).parse(child, lineTable);
 					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.handler = handler;
 				} else if (tag.equals("plugin")) { //$NON-NLS-1$
-					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
+					IFeaturePlugin plugin = getModel().getFactory()
+							.createPlugin();
 					((FeaturePlugin) plugin).parse(child, lineTable);
 					((FeaturePlugin) plugin).setInTheModel(true);
 					plugins.add(plugin);
@@ -203,7 +206,8 @@ public class Feature extends VersionableObject implements IFeature {
 					((FeatureData) newData).setInTheModel(true);
 					data.add(newData);
 				} else if (tag.equals("includes")) { //$NON-NLS-1$
-					IFeatureChild newChild = getModel().getFactory().createChild();
+					IFeatureChild newChild = getModel().getFactory()
+							.createChild();
 					((FeatureChild) newChild).parse(child, lineTable);
 					((FeatureChild) newChild).setInTheModel(true);
 					this.children.add(newChild);
@@ -218,7 +222,8 @@ public class Feature extends VersionableObject implements IFeature {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equalsIgnoreCase("import")) { //$NON-NLS-1$
-					IFeatureImport iimport = getModel().getFactory().createImport();
+					IFeatureImport iimport = getModel().getFactory()
+							.createImport();
 					((FeatureImport) iimport).parse(child, lineTable);
 					((FeatureImport) iimport).setInTheModel(true);
 					imports.add(iimport);
@@ -229,17 +234,28 @@ public class Feature extends VersionableObject implements IFeature {
 
 	public void computeImports() throws CoreException {
 		IFeatureImport[] removed = null;
-		if (imports.size() > 0)
-			removed =
-				(IFeatureImport[]) imports.toArray(new IFeatureImport[imports.size()]);
+
+		if (imports.size() > 0) {
+			ArrayList list = new ArrayList();
+			for (int i = 0; i < imports.size(); i++) {
+				IFeatureImport iimport = (IFeatureImport) imports.get(i);
+				if (iimport.getType() != IFeatureImport.FEATURE)
+					list.add(iimport);
+			}
+			if (list.size() > 0) {
+				imports.removeAll(list);
+				removed = (IFeatureImport[]) list
+						.toArray(new IFeatureImport[list.size()]);
+			}
+		}
 		imports.clear();
 		if (removed != null)
 			fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 		// Create full import list
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) plugins.get(i);
-			IPluginBase plugin =
-				PDECore.getDefault().findPlugin(fp.getId(), fp.getVersion(), 0);
+			IPluginBase plugin = PDECore.getDefault().findPlugin(fp.getId(),
+					fp.getVersion(), 0);
 			if (plugin != null) {
 				addPluginImports(plugin);
 			}
@@ -249,14 +265,14 @@ public class Feature extends VersionableObject implements IFeature {
 		Vector inputImports = (Vector) imports.clone();
 		for (int i = 0; i < inputImports.size(); i++) {
 			IFeatureImport iimport = (IFeatureImport) inputImports.get(i);
-			IFeaturePlugin local =
-				findFeaturePlugin(iimport.getId(), iimport.getVersion(), iimport.getMatch());
+			IFeaturePlugin local = findFeaturePlugin(iimport.getId(), iimport
+					.getVersion(), iimport.getMatch());
 			if (local != null)
 				imports.remove(iimport);
 		}
 		if (imports.size() > 0) {
-			IFeatureImport[] added =
-				(IFeatureImport[]) imports.toArray(new IFeatureImport[imports.size()]);
+			IFeatureImport[] added = (IFeatureImport[]) imports
+					.toArray(new IFeatureImport[imports.size()]);
 			fireStructureChanged(added, IModelChangedEvent.INSERT);
 		}
 	}
@@ -277,16 +293,12 @@ public class Feature extends VersionableObject implements IFeature {
 			iimport.setMatch(match);
 			((FeatureImport) iimport).setInTheModel(true);
 			imports.add(iimport);
-			IPlugin p =
-				PDECore.getDefault().findPlugin(
-					pluginImport.getId(),
-					pluginImport.getVersion(),
-					pluginImport.getMatch());
+			IPlugin p = PDECore.getDefault().findPlugin(pluginImport.getId(),
+					pluginImport.getVersion(), pluginImport.getMatch());
 			((FeatureImport) iimport).setPlugin(p);
 			/*
-			if (p != null)
-				addPluginImports(p);
-			*/
+			 * if (p != null) addPluginImports(p);
+			 */
 		}
 	}
 
@@ -296,17 +308,16 @@ public class Feature extends VersionableObject implements IFeature {
 			if (iimport.getId().equals(id)) {
 				if (version == null)
 					return iimport;
-				if (version.equals(iimport.getVersion()) && match == iimport.getMatch())
+				if (version.equals(iimport.getVersion())
+						&& match == iimport.getMatch())
 					return iimport;
 			}
 		}
 		return null;
 	}
 
-	private IFeaturePlugin findFeaturePlugin(
-		String id,
-		String version,
-		int match) {
+	private IFeaturePlugin findFeaturePlugin(String id, String version,
+			int match) {
 
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) plugins.get(i);
@@ -337,7 +348,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void removeIncludedFeatures(IFeatureChild[] features)
-		throws CoreException {
+			throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < features.length; i++) {
 			children.remove(features[i]);
@@ -345,11 +356,11 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 		fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
-	public void removeImports(IFeatureImport [] iimports) throws CoreException {
+	public void removeImports(IFeatureImport[] iimports) throws CoreException {
 		ensureModelEditable();
-		for (int i=0; i<iimports.length; i++) {
+		for (int i = 0; i < iimports.length; i++) {
 			imports.remove(iimports[i]);
-			((FeatureImport)iimports[i]).setInTheModel(false);
+			((FeatureImport) iimports[i]).setInTheModel(false);
 		}
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
@@ -369,15 +380,15 @@ public class Feature extends VersionableObject implements IFeature {
 	public String getArch() {
 		return arch;
 	}
-	
+
 	public String getColocationAffinity() {
 		return colocationAffinity;
 	}
-	
+
 	public String getApplication() {
 		return application;
 	}
-	
+
 	public void setOS(String os) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.os;
@@ -409,31 +420,29 @@ public class Feature extends VersionableObject implements IFeature {
 		ensureModelEditable();
 		Boolean oldValue = this.primary ? Boolean.TRUE : Boolean.FALSE;
 		this.primary = newValue;
-		firePropertyChanged(
-			P_PRIMARY,
-			oldValue,
-			newValue ? Boolean.TRUE : Boolean.FALSE);
+		firePropertyChanged(P_PRIMARY, oldValue, newValue
+				? Boolean.TRUE
+				: Boolean.FALSE);
 	}
-	
+
 	public void setExclusive(boolean newValue) throws CoreException {
 		if (this.exclusive == newValue)
 			return;
 		ensureModelEditable();
 		Boolean oldValue = this.exclusive ? Boolean.TRUE : Boolean.FALSE;
 		this.exclusive = newValue;
-		firePropertyChanged(
-			P_EXCLUSIVE,
-			oldValue,
-			newValue ? Boolean.TRUE : Boolean.FALSE);
-	}	
-		
+		firePropertyChanged(P_EXCLUSIVE, oldValue, newValue
+				? Boolean.TRUE
+				: Boolean.FALSE);
+	}
+
 	public void setColocationAffinity(String newValue) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.colocationAffinity;
 		this.colocationAffinity = newValue;
 		firePropertyChanged(P_COLLOCATION_AFFINITY, oldValue, newValue);
 	}
-	
+
 	public void setApplication(String newValue) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.application;
@@ -447,7 +456,7 @@ public class Feature extends VersionableObject implements IFeature {
 		this.providerName = providerName;
 		firePropertyChanged(P_PROVIDER, oldValue, providerName);
 	}
-	
+
 	public void setPlugin(String plugin) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.plugin;
@@ -464,7 +473,7 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 	public void setInstallHandler(IFeatureInstallHandler handler)
-		throws CoreException {
+			throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.handler;
 		if (this.handler != null) {
@@ -474,7 +483,8 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_INSTALL_HANDLER, oldValue, handler);
 	}
 
-	public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException {
+	public void setFeatureInfo(IFeatureInfo info, int index)
+			throws CoreException {
 		ensureModelEditable();
 		Object oldValue = infos[index];
 		if (oldValue != null) {
@@ -500,7 +510,9 @@ public class Feature extends VersionableObject implements IFeature {
 
 	/**
 	 * Sets the imageName.
-	 * @param imageName The imageName to set
+	 * 
+	 * @param imageName
+	 *            The imageName to set
 	 */
 	public void setImageName(String imageName) throws CoreException {
 		ensureModelEditable();
@@ -510,7 +522,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue)
-		throws CoreException {
+			throws CoreException {
 		if (name.equals(P_OS)) {
 			setOS((String) newValue);
 		} else if (name.equals(P_WS)) {
@@ -520,27 +532,31 @@ public class Feature extends VersionableObject implements IFeature {
 		} else if (name.equals(P_ARCH)) {
 			setArch((String) newValue);
 		} else if (name.equals(P_COLLOCATION_AFFINITY)) {
-			setColocationAffinity((String)newValue);
+			setColocationAffinity((String) newValue);
 		} else if (name.equals(P_APPLICATION)) {
-			setApplication((String)newValue);
+			setApplication((String) newValue);
 		} else if (name.equals(P_PRIMARY)) {
-			setPrimary(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+			setPrimary(newValue != null
+					? ((Boolean) newValue).booleanValue()
+					: false);
 		} else if (name.equals(P_EXCLUSIVE)) {
-			setExclusive(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+			setExclusive(newValue != null
+					? ((Boolean) newValue).booleanValue()
+					: false);
 		} else if (name.equals(P_PROVIDER)) {
 			setProviderName((String) newValue);
 		} else if (name.equals(P_PLUGIN)) {
-			setPlugin((String)newValue);
+			setPlugin((String) newValue);
 		} else if (name.equals(P_URL)) {
 			setURL((IFeatureURL) newValue);
 		} else if (name.equals(P_INSTALL_HANDLER)) {
 			setInstallHandler((IFeatureInstallHandler) newValue);
 		} else if (name.equals(P_DESCRIPTION)) {
-			setFeatureInfo((IFeatureInfo)newValue, INFO_DESCRIPTION);
+			setFeatureInfo((IFeatureInfo) newValue, INFO_DESCRIPTION);
 		} else if (name.equals(P_LICENSE)) {
-			setFeatureInfo((IFeatureInfo)newValue, INFO_LICENSE);
+			setFeatureInfo((IFeatureInfo) newValue, INFO_LICENSE);
 		} else if (name.equals(P_COPYRIGHT)) {
-			setFeatureInfo((IFeatureInfo)newValue, INFO_COPYRIGHT);
+			setFeatureInfo((IFeatureInfo) newValue, INFO_COPYRIGHT);
 		} else if (name.equals(P_IMAGE)) {
 			setImageName((String) newValue);
 		} else
@@ -567,9 +583,9 @@ public class Feature extends VersionableObject implements IFeature {
 		exclusive = false;
 		colocationAffinity = null;
 		application = null;
-		valid=false;
+		valid = false;
 	}
-	
+
 	public boolean isValid() {
 		return valid;
 	}
@@ -577,27 +593,31 @@ public class Feature extends VersionableObject implements IFeature {
 	private boolean hasRequiredAttributes() {
 		// Verify that all the required attributes are
 		// defined.
-		if (id==null) return false;
-		if (version==null) return false;
+		if (id == null)
+			return false;
+		if (version == null)
+			return false;
 
 		for (int i = 0; i < children.size(); i++) {
 			IFeatureChild child = (IFeatureChild) children.elementAt(i);
-			if (child.getId()==null || child.getVersion()==null)
+			if (child.getId() == null || child.getVersion() == null)
 				return false;
 		}
 		for (int i = 0; i < plugins.size(); i++) {
 			IFeaturePlugin plugin = (IFeaturePlugin) plugins.elementAt(i);
-			if (plugin.getId()==null || plugin.getVersion()==null)
+			if (plugin.getId() == null || plugin.getVersion() == null)
 				return false;
-			
+
 		}
 		for (int i = 0; i < data.size(); i++) {
 			IFeatureData entry = (IFeatureData) data.elementAt(i);
-			if (entry.getId()==null) return false;
+			if (entry.getId() == null)
+				return false;
 		}
 		for (int i = 0; i < imports.size(); i++) {
 			IFeatureImport iimport = (IFeatureImport) imports.elementAt(i);
-			if (iimport.getId()==null) return false;
+			if (iimport.getId() == null)
+				return false;
 		}
 		return true;
 	}
@@ -609,22 +629,17 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "id", getId()); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "label", getWritableString(getLabel())); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "version", getVersion()); //$NON-NLS-1$
-		writeIfDefined(
-			indenta,
-			writer,
-			"provider-name", //$NON-NLS-1$
-			getWritableString(providerName));
-		writeIfDefined(
-			indenta,
-			writer,
-			"plugin", //$NON-NLS-1$
-			getPlugin());
+		writeIfDefined(indenta, writer, "provider-name", //$NON-NLS-1$
+				getWritableString(providerName));
+		writeIfDefined(indenta, writer, "plugin", //$NON-NLS-1$
+				getPlugin());
 		writeIfDefined(indenta, writer, "os", os); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "ws", ws); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "nl", nl); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "arch", arch); //$NON-NLS-1$
-		if (imageName!=null)
-			writeIfDefined(indenta, writer, "image", getWritableString(imageName)); //$NON-NLS-1$
+		if (imageName != null)
+			writeIfDefined(indenta, writer,
+					"image", getWritableString(imageName)); //$NON-NLS-1$
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\""); //$NON-NLS-1$
@@ -633,7 +648,8 @@ public class Feature extends VersionableObject implements IFeature {
 			writer.println();
 			writer.print(indenta + "exclusive=\"true\""); //$NON-NLS-1$
 		}
-		writeIfDefined(indenta, writer, "colocation-affinity", colocationAffinity); //$NON-NLS-1$
+		writeIfDefined(indenta, writer,
+				"colocation-affinity", colocationAffinity); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "application", application); //$NON-NLS-1$
 
 		writer.println(">"); //$NON-NLS-1$
@@ -679,11 +695,8 @@ public class Feature extends VersionableObject implements IFeature {
 		writer.println();
 		writer.println(indent + "</feature>"); //$NON-NLS-1$
 	}
-	private void writeIfDefined(
-		String indent,
-		PrintWriter writer,
-		String attName,
-		String attValue) {
+	private void writeIfDefined(String indent, PrintWriter writer,
+			String attName, String attValue) {
 		if (attValue == null)
 			return;
 		writer.println();
@@ -691,6 +704,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 	/**
 	 * Gets the imageName.
+	 * 
 	 * @return Returns a String
 	 */
 	public String getImageName() {
