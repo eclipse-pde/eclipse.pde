@@ -83,6 +83,8 @@ public class DocSection extends PDEFormSection {
 		layout.verticalSpacing = 6;
 		container.setLayout(layout);
 		GridData gd;
+		
+		schema = (ISchema) getFormPage().getModel();
 
 		Label label = factory.createLabel(container, null);
 		gd = new GridData();
@@ -157,6 +159,7 @@ public class DocSection extends PDEFormSection {
 				handleReset();
 			}
 		});
+		initializeSectionCombo();
 		return container;
 	}
 	public boolean doGlobalAction(String actionId) {
@@ -230,7 +233,6 @@ public class DocSection extends PDEFormSection {
 		updateEditorInput(element);
 	}
 	public void initialize(Object model) {
-		schema = (ISchema) model;
 		sourceViewer.setEditable(schema.isEditable());
 		document.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
@@ -261,6 +263,7 @@ public class DocSection extends PDEFormSection {
 			IDocumentSection section = sections[i];
 			sectionCombo.add(getTopicName(section));
 		}
+		sectionCombo.pack();
 		sectionCombo.select(0);
 		sectionCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
