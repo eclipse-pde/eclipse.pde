@@ -21,22 +21,22 @@ import org.eclipse.core.runtime.QualifiedName;
  * Window>Preferences>Java>Code Generation.
  */
 public interface IPDEUIConstants {
-	String PLUGIN_ID = "org.eclipse.pde.ui";
+	String PLUGIN_ID = "org.eclipse.pde.ui"; //$NON-NLS-1$
 
-	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor";
-	String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor";
-	String SITE_EDITOR_ID = PLUGIN_ID + ".siteEditor";
-	String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor";
-	String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor";
-	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView";
-	String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView";
+	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor"; //$NON-NLS-1$
+	String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor"; //$NON-NLS-1$
+	String SITE_EDITOR_ID = PLUGIN_ID + ".siteEditor"; //$NON-NLS-1$
+	String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor"; //$NON-NLS-1$
+	String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor"; //$NON-NLS-1$
+	String PLUGINS_VIEW_ID = "org.eclipse.pde.ui.PluginsView"; //$NON-NLS-1$
+	String DEPENDENCIES_VIEW_ID = "org.eclipse.pde.ui.DependenciesView"; //$NON-NLS-1$
 
-	String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher";
-	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher";
-	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath";
+	String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
+	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher"; //$NON-NLS-1$ //$NON-NLS-2$
+	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	QualifiedName DEFAULT_EDITOR_PAGE_KEY =
-		new QualifiedName(PLUGIN_ID, "default-editor-page");	
+		new QualifiedName(PLUGIN_ID, "default-editor-page");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_EDITOR_PAGE_KEY_NEW =
-		new QualifiedName(PLUGIN_ID, "default-editor-page-new");	
+		new QualifiedName(PLUGIN_ID, "default-editor-page-new");	 //$NON-NLS-1$
 }

@@ -5,6 +5,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
 public class BuildSiteJob extends FeatureExportJob {
@@ -31,7 +32,7 @@ public class BuildSiteJob extends FeatureExportJob {
 	}
 	
 	private void touchSite(IProgressMonitor monitor) {
-		File file = new File(fSiteProject.getLocation().toOSString(), "site.xml");
+		File file = new File(fSiteProject.getLocation().toOSString(), "site.xml"); //$NON-NLS-1$
 		file.setLastModified(System.currentTimeMillis());
 	}
 	
@@ -46,6 +47,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getLogFoundMessage()
 	 */
 	protected String getLogFoundMessage() {
-		return "Compilation errors occurred during the build.  Logs can be found in 'logs.zip' at the root of the site project.";
+		return PDEPlugin.getResourceString("BuildSiteJob.message"); //$NON-NLS-1$
 	}
 }

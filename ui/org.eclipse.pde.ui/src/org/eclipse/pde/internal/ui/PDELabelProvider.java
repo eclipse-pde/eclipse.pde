@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PDELabelProvider extends SharedLabelProvider {
 	private static final String KEY_OUT_OF_SYNC =
-		"PluginModelManager.outOfSync";
+		"PluginModelManager.outOfSync"; //$NON-NLS-1$
 
 	public PDELabelProvider() {
 
@@ -111,16 +111,16 @@ public class PDELabelProvider extends SharedLabelProvider {
 		String text;
 
 		if (version != null && version.length() > 0)
-			text = name + " (" + pluginBase.getVersion() + ")";
+			text = name + " (" + pluginBase.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			text = name;
 		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
-			text += " " + PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
+			text += " " + PDEPlugin.getResourceString(KEY_OUT_OF_SYNC); //$NON-NLS-1$
 		return text;
 	}
 	
 	private String preventNull(String text) {
-		return text!=null?text:"";
+		return text!=null?text:""; //$NON-NLS-1$
 	}
 
 	public String getObjectText(IPluginExtension extension) {
@@ -162,11 +162,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 			int maxOccurs = rso.getMaxOccurs();
 			int minOccurs = rso.getMinOccurs();
 			if (maxOccurs != 1 || minOccurs != 1) {
-				text += " (" + minOccurs + " - ";
+				text += " (" + minOccurs + " - "; //$NON-NLS-1$ //$NON-NLS-2$
 				if (unbounded)
-					text += "*)";
+					text += "*)"; //$NON-NLS-1$
 				else
-					text += maxOccurs + ")";
+					text += maxOccurs + ")"; //$NON-NLS-1$
 			}
 		}
 		return text;
@@ -180,7 +180,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		String text;
 
 		if (version != null && version.length() > 0)
-			text = name + " (" + version + ")";
+			text = name + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			text = name;
 		return preventNull(text);
@@ -204,12 +204,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(IFeatureModel obj) {
 		IFeature feature = obj.getFeature();
-		return preventNull(feature.getId()) + " (" + preventNull(feature.getVersion()) + ")";
+		return preventNull(feature.getId()) + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
 	public String getObjectText(FeatureChild obj) {
-		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")";
+		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getObjectText(ISiteFeature obj) {
@@ -229,7 +229,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return preventNull(obj.getName());
 	}
 	public String getObjectText(ISiteBuildFeature obj) {
-		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")";
+		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public Image getImage(Object obj) {

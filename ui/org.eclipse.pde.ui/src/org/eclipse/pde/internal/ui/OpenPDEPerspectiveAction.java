@@ -29,7 +29,7 @@ public class OpenPDEPerspectiveAction extends Action {
 			input = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			PlatformUI.getWorkbench().showPerspective(
-				"org.eclipse.pde.ui.PDEPerspective",
+				"org.eclipse.pde.ui.PDEPerspective", //$NON-NLS-1$
 				window,
 				input);
 			notifyResult(true);

@@ -78,16 +78,16 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	
 	private void doBuild(IProgressMonitor monitor)
 		throws CoreException, InvocationTargetException {
-			monitor.beginTask(PDEPlugin.getResourceString("BuildAction.Validate"), 4);
+			monitor.beginTask(PDEPlugin.getResourceString("BuildAction.Validate"), 4); //$NON-NLS-1$
 			if (!ensureValid(file, monitor)) {
 				monitor.done();
 				return;
 			}
 			monitor.worked(1);
-			monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Generate"));
+			monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Generate")); //$NON-NLS-1$
 			makeScripts(monitor);
 			monitor.worked(1);
-			monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Update"));
+			monitor.setTaskName(PDEPlugin.getResourceString("BuildAction.Update")); //$NON-NLS-1$
 			refreshLocal(monitor);
 			monitor.worked(1);
 			setDefaultValues();
@@ -109,8 +109,8 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			// There are errors against this file - abort
 			MessageDialog.openError(
 				null,
-				PDEPlugin.getResourceString("BuildAction.ErrorDialog.Title"),
-				PDEPlugin.getResourceString("BuildAction.ErrorDialog.Message"));
+				PDEPlugin.getResourceString("BuildAction.ErrorDialog.Title"), //$NON-NLS-1$
+				PDEPlugin.getResourceString("BuildAction.ErrorDialog.Message")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -134,7 +134,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 	
 	private void setDefaultValues() {
 		IProject project = file.getProject();
-		IFile generatedFile = (IFile) project.findMember("build.xml");
+		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
 		if (generatedFile == null)
 			return;
 
@@ -155,18 +155,18 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			Map properties = new HashMap();
 			properties =
 				launchCopy.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
-			properties.put("basews", TargetPlatform.getWS());
-			properties.put("baseos", TargetPlatform.getOS());
-			properties.put("basearch", TargetPlatform.getOSArch());
-			properties.put("basenl", TargetPlatform.getNL());
-			properties.put("eclipse.running", "true");
+			properties.put("basews", TargetPlatform.getWS()); //$NON-NLS-1$
+			properties.put("baseos", TargetPlatform.getOS()); //$NON-NLS-1$
+			properties.put("basearch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+			properties.put("basenl", TargetPlatform.getNL()); //$NON-NLS-1$
+			properties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			properties.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR));
-			properties.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off");
-			properties.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE));
-			properties.put("javacSource", store.getString(PROP_JAVAC_SOURCE));
-			properties.put("javacTarget", store.getString(PROP_JAVAC_TARGET));
+			properties.put("javacFailOnError", store.getString(PROP_JAVAC_FAIL_ON_ERROR)); //$NON-NLS-1$
+			properties.put("javacDebugInfo", store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			properties.put("javacVerbose", store.getString(PROP_JAVAC_VERBOSE)); //$NON-NLS-1$
+			properties.put("javacSource", store.getString(PROP_JAVAC_SOURCE)); //$NON-NLS-1$
+			properties.put("javacTarget", store.getString(PROP_JAVAC_TARGET)); //$NON-NLS-1$
 			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, 
 					(String)null);
@@ -186,7 +186,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 			}
 		}
 		Properties properties = new Properties();
-		properties.put("*", "bin");
+		properties.put("*", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models = manager.getAllModels();
 		for (int i = 0; i < models.length; i++) {
@@ -200,10 +200,10 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 		
 		try {
 			FileOutputStream stream = new FileOutputStream(fileName);
-			properties.store(stream, "");
+			properties.store(stream, ""); //$NON-NLS-1$
 			stream.flush();
 			stream.close();
-			return new URL("file:" + fileName);
+			return new URL("file:" + fileName); //$NON-NLS-1$
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
@@ -234,7 +234,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate, IPrefere
 		for (int i = 0; i < result.size(); i++) {
 			buffer.append(result.get(i).toString());
 			if (i < result.size() - 1)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

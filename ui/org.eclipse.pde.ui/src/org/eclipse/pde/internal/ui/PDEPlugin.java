@@ -57,7 +57,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		inst = this;
 		try {
 			resourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
+				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -250,8 +250,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		store.setDefault(PROP_JAVAC_DEBUG_INFO, true);
 		store.setDefault(PROP_JAVAC_FAIL_ON_ERROR, false);
 		store.setDefault(PROP_JAVAC_VERBOSE, true);
-		store.setDefault(PROP_JAVAC_SOURCE, "1.3");
-		store.setDefault(PROP_JAVAC_TARGET, "1.2");
+		store.setDefault(PROP_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
+		store.setDefault(PROP_JAVAC_TARGET, "1.2"); //$NON-NLS-1$
 		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 	

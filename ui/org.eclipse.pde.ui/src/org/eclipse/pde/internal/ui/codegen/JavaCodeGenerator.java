@@ -51,7 +51,7 @@ private void ensureFolderExist(IPath folderPath) throws CoreException {
 	}
 }
 private void ensureFoldersExist(String packageName) throws CoreException {
-	StringTokenizer stok = new StringTokenizer(packageName, ".");
+	StringTokenizer stok = new StringTokenizer(packageName, "."); //$NON-NLS-1$
 	IPath fpath=sourceFolder!=null?sourceFolder.getFullPath():project.getFullPath();
 	ensureFolderExist(fpath);
 	while (stok.hasMoreTokens()) {
@@ -73,12 +73,12 @@ public IFile generate(IProgressMonitor monitor) throws CoreException {
 	int nameloc = qualifiedClassName.lastIndexOf('.');
 	String packageName;
 	if (nameloc==-1)
-		packageName="";
+		packageName=""; //$NON-NLS-1$
 	else
 		packageName = qualifiedClassName.substring(0, nameloc);
 	String className = qualifiedClassName.substring(nameloc + 1);
 
-	String javaFileName = className + ".java";
+	String javaFileName = className + ".java"; //$NON-NLS-1$
 	ensureFoldersExist(packageName);
 	IWorkspace workbench = project.getWorkspace();
 	IPath path =

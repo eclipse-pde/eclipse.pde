@@ -32,167 +32,167 @@ public class PluginClassCodeGenerator extends JavaCodeGenerator {
 	}
 	
 	private void generatePluginClass(String packageName, String className, PrintWriter writer) {
-		if (!packageName.equals("")) {
-			writer.println("package " + packageName + ";");
+		if (!packageName.equals("")) { //$NON-NLS-1$
+			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
 		}
 		if (fPluginData.isUIPlugin())
-			writer.println("import org.eclipse.ui.plugin.*;");
-		writer.println("import org.osgi.framework.BundleContext;");
-		writer.println("import java.util.*;");
+			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
+		writer.println("import org.osgi.framework.BundleContext;"); //$NON-NLS-1$
+		writer.println("import java.util.*;"); //$NON-NLS-1$
 		writer.println();
-		writer.println("/**");
-		writer.println(" * The main plugin class to be used in the desktop.");
-		writer.println(" */");
+		writer.println("/**"); //$NON-NLS-1$
+		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
+		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer.println("public class " + className + " extends AbstractUIPlugin {");
+			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
-			writer.println("public class " + className + " extends Plugin {");
-		writer.println("\t//The shared instance.");
-		writer.println("\tprivate static " + className + " plugin;");
-		writer.println("\t//Resource bundle.");
-		writer.println("\tprivate ResourceBundle resourceBundle;");
-		writer.println("\t");
-		writer.println("\t/**");
-		writer.println("\t * The constructor.");
-		writer.println("\t */");
-		writer.println("\tpublic " + className + "() {");
-		writer.println("\t\tsuper();");
-		writer.println("\t\tplugin = this;");
-		writer.println("\t\ttry {");
-		writer.println("\t\t\tresourceBundle = ResourceBundle.getBundle(\""
-				+ packageName + "." + className + "Resources\");");
-		writer.println("\t\t} catch (MissingResourceException x) {");
-		writer.println("\t\t\tresourceBundle = null;");
-		writer.println("\t\t}");
-		writer.println("\t}");
+			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t//The shared instance."); //$NON-NLS-1$
+		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t//Resource bundle."); //$NON-NLS-1$
+		writer.println("\tprivate ResourceBundle resourceBundle;"); //$NON-NLS-1$
+		writer.println("\t"); //$NON-NLS-1$
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * The constructor."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t\tsuper();"); //$NON-NLS-1$
+		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
+		writer.println("\t\ttry {"); //$NON-NLS-1$
+		writer.println("\t\t\tresourceBundle = ResourceBundle.getBundle(\"" //$NON-NLS-1$
+				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$
+		writer.println("\t\t\tresourceBundle = null;"); //$NON-NLS-1$
+		writer.println("\t\t}"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 		
-		writer.println("\t/**");
-		writer.println("\t * This method is called upon plug-in activation");
-		writer.println("\t */");
-		writer.println("\tpublic void start(BundleContext context) throws Exception {");
-		writer.println("\t\tsuper.start(context);");
-		writer.println("\t}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * This method is called upon plug-in activation"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/**");
-		writer.println("\t * This method is called when the plug-in is stopped");
-		writer.println("\t */");
-		writer.println("\tpublic void stop(BundleContext context) throws Exception {");
-		writer.println("\t\tsuper.stop(context);");
-		writer.println("\t}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/**");
-		writer.println("\t * Returns the shared instance.");
-		writer.println("\t */");
-		writer.println("\tpublic static " + className + " getDefault() {");
-		writer.println("\t\treturn plugin;");
-		writer.println("\t}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * Returns the shared instance."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic static " + className + " getDefault() {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**");
+		writer.println("\t/**"); //$NON-NLS-1$
 		writer
-				.println("\t * Returns the string from the plugin's resource bundle,");
-		writer.println("\t * or 'key' if not found.");
-		writer.println("\t */");
+				.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
 		writer
-				.println("\tpublic static String getResourceString(String key) {");
-		writer.println("\t\tResourceBundle bundle = " + className
-				+ ".getDefault().getResourceBundle();");
-		writer.println("\t\ttry {");
+				.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
+		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
+				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
+		writer.println("\t\ttry {"); //$NON-NLS-1$
 		writer
-				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;");
-		writer.println("\t\t} catch (MissingResourceException e) {");
-		writer.println("\t\t\treturn key;");
-		writer.println("\t\t}");
-		writer.println("\t}");
+				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
+		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
+		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
+		writer.println("\t\t}"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**");
-		writer.println("\t * Returns the plugin's resource bundle,");
-		writer.println("\t */");
-		writer.println("\tpublic ResourceBundle getResourceBundle() {");
-		writer.println("\t\treturn resourceBundle;");
-		writer.println("\t}");
-		writer.println("}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * Returns the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
+		writer.println("\t\treturn resourceBundle;"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
+		writer.println("}"); //$NON-NLS-1$
 	}
 	private void generateLegacyPluginClass(String packageName, String className,
 			PrintWriter writer) {
-		if (!packageName.equals("")) {
-			writer.println("package " + packageName + ";");
+		if (!packageName.equals("")) { //$NON-NLS-1$
+			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
 		}
 		if (fPluginData.isUIPlugin())
-			writer.println("import org.eclipse.ui.plugin.*;");
-		writer.println("import org.eclipse.core.runtime.*;");
-		writer.println("import java.util.*;");
+			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
+		writer.println("import org.eclipse.core.runtime.*;"); //$NON-NLS-1$
+		writer.println("import java.util.*;"); //$NON-NLS-1$
 		writer.println();
-		writer.println("/**");
-		writer.println(" * The main plugin class to be used in the desktop.");
-		writer.println(" */");
+		writer.println("/**"); //$NON-NLS-1$
+		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
+		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer.println("public class " + className + " extends AbstractUIPlugin {");
+			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
-			writer.println("public class " + className + " extends Plugin {");
-		writer.println("\t//The shared instance.");
-		writer.println("\tprivate static " + className + " plugin;");
-		writer.println("\t//Resource bundle.");
-		writer.println("\tprivate ResourceBundle resourceBundle;");
-		writer.println("\t");
-		writer.println("\t/**");
-		writer.println("\t * The constructor.");
-		writer.println("\t */");
-		writer.println("\tpublic " + className
-				+ "(IPluginDescriptor descriptor) {");
-		writer.println("\t\tsuper(descriptor);");
-		writer.println("\t\tplugin = this;");
-		writer.println("\t\ttry {");
-		writer.println("\t\t\tresourceBundle   = ResourceBundle.getBundle(\""
-				+ packageName + "." + className + "Resources\");");
-		writer.println("\t\t} catch (MissingResourceException x) {");
-		writer.println("\t\t\tresourceBundle = null;");
-		writer.println("\t\t}");
-		writer.println("\t}");
+			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t//The shared instance."); //$NON-NLS-1$
+		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t//Resource bundle."); //$NON-NLS-1$
+		writer.println("\tprivate ResourceBundle resourceBundle;"); //$NON-NLS-1$
+		writer.println("\t"); //$NON-NLS-1$
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * The constructor."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic " + className //$NON-NLS-1$
+				+ "(IPluginDescriptor descriptor) {"); //$NON-NLS-1$
+		writer.println("\t\tsuper(descriptor);"); //$NON-NLS-1$
+		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
+		writer.println("\t\ttry {"); //$NON-NLS-1$
+		writer.println("\t\t\tresourceBundle   = ResourceBundle.getBundle(\"" //$NON-NLS-1$
+				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$
+		writer.println("\t\t\tresourceBundle = null;"); //$NON-NLS-1$
+		writer.println("\t\t}"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**");
-		writer.println("\t * Returns the shared instance.");
-		writer.println("\t */");
-		writer.println("\tpublic static " + className + " getDefault() {");
-		writer.println("\t\treturn plugin;");
-		writer.println("\t}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * Returns the shared instance."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic static " + className + " getDefault() {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**");
+		writer.println("\t/**"); //$NON-NLS-1$
 		writer
-				.println("\t * Returns the string from the plugin's resource bundle,");
-		writer.println("\t * or 'key' if not found.");
-		writer.println("\t */");
+				.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
 		writer
-				.println("\tpublic static String getResourceString(String key) {");
-		writer.println("\t\tResourceBundle bundle = " + className
-				+ ".getDefault().getResourceBundle();");
-		writer.println("\t\ttry {");
+				.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
+		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
+				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
+		writer.println("\t\ttry {"); //$NON-NLS-1$
 		writer
-				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;");
-		writer.println("\t\t} catch (MissingResourceException e) {");
-		writer.println("\t\t\treturn key;");
-		writer.println("\t\t}");
-		writer.println("\t}");
+				.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
+		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
+		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
+		writer.println("\t\t}"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**");
-		writer.println("\t * Returns the plugin's resource bundle,");
-		writer.println("\t */");
-		writer.println("\tpublic ResourceBundle getResourceBundle() {");
-		writer.println("\t\treturn resourceBundle;");
-		writer.println("\t}");
-		writer.println("}");
+		writer.println("\t/**"); //$NON-NLS-1$
+		writer.println("\t * Returns the plugin's resource bundle,"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
+		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
+		writer.println("\t\treturn resourceBundle;"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
+		writer.println("}"); //$NON-NLS-1$
 	}
 	
 	public IPluginReference[] getDependencies() {
 		ArrayList result = new ArrayList();
 		if (fPluginData.isUIPlugin())
-			result.add(new PluginReference("org.eclipse.ui", null, 0));
+			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy())
-			result.add(new PluginReference("org.eclipse.core.runtime", null, 0));
+			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 	

@@ -32,7 +32,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 	}
 	
 	private void addPerspectiveShortcuts() {
-		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective");
+		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
 		factory.addPerspectiveShortcut(JavaUI.ID_PERSPECTIVE);
 		factory.addPerspectiveShortcut(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);		
 	}
@@ -40,7 +40,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 	private void addViews() {
 		IFolderLayout topLeft =
 			factory.createFolder(
-				"topLeft",
+				"topLeft", //$NON-NLS-1$
 				IPageLayout.LEFT,
 				0.25f,
 				factory.getEditorArea());
@@ -51,11 +51,11 @@ public class PDEPerspective implements IPerspectiveFactory {
 
 		IFolderLayout bottom =
 			factory.createFolder(
-				"bottomRight",
+				"bottomRight", //$NON-NLS-1$
 				IPageLayout.BOTTOM,
 				0.75f,
 				factory.getEditorArea());
-		bottom.addView("org.eclipse.pde.runtime.LogView");
+		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(IPageLayout.ID_PROP_SHEET);
@@ -75,9 +75,9 @@ public class PDEPerspective implements IPerspectiveFactory {
 	}
 	
 	private void addNewWizardShortcuts() {
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProjectWizard");
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFragmentWizard");
-		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFeatureProjectWizard");
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProjectWizard"); //$NON-NLS-1$
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFragmentWizard"); //$NON-NLS-1$
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFeatureProjectWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 	
 	private void addViewShortcuts() {
 		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
-		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView");
+		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		factory.addShowViewShortcut(PDEPlugin.PLUGINS_VIEW_ID);
 		factory.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);

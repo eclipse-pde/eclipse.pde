@@ -31,7 +31,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		ArrayList paths = new ArrayList();
 		IFeatureModel[] models = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
 		for (int i = 0; i < models.length; i++) {
-			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml");
+			paths.add(models[i].getInstallLocation() + Path.SEPARATOR + "feature.xml"); //$NON-NLS-1$
 			if (models[i].getUnderlyingResource().equals(file))
 				model = models[i];
 		}
@@ -49,8 +49,8 @@ public class BuildFeatureAction extends BaseBuildAction {
 		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		
 		generator.setWorkingDirectory(file.getProject().getLocation().toOSString());
-		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties");
-		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin"));
+		URL url = getDevEntriesProperties(file.getProject().getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
+		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin")); //$NON-NLS-1$
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		generator.setAnalyseChildren(true);
 		generator.setFeature(model.getFeature().getId());

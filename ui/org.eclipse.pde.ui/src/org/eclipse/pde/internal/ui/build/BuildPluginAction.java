@@ -34,8 +34,8 @@ public class BuildPluginAction extends BaseBuildAction {
 		
 		IProject project = file.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
-		URL url = getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties");
-		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin"));
+		URL url = getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties"); //$NON-NLS-1$
+		generator.setDevEntries(new DevClassPathHelper(url != null ? url.toString() : "bin")); //$NON-NLS-1$
 		generator.setPluginPath(TargetPlatform.createPluginPath());
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		try {
