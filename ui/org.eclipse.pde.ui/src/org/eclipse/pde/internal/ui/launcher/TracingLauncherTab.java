@@ -10,24 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.ScrolledPageBook;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 public class TracingLauncherTab extends AbstractLauncherTab
 		implements
 			ILauncherSettings {
@@ -36,8 +36,8 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	private IPluginModelBase[] fTraceableModels;
 	private Properties fMasterOptions = new Properties();
 	private Hashtable fPropertySources = new Hashtable();
-	private FormToolkit toolkit;
-	private ScrolledPageBook pageBook;
+	private FormToolkit fToolkit;
+	private ScrolledPageBook fPageBook;
 	private Label fPropertyLabel;
 	private Image fImage;
 	private Button fSelectAllButton;
@@ -49,14 +49,13 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
-		Dialog.applyDialogFont(container);
 		createEnableTracingButton(container);
 		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createSashSection(container);
 		createButtonSection(container);
-		Dialog.applyDialogFont(container);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.LAUNCHER_TRACING);
 	}
 	private void createButtonSection(Composite parent) {
@@ -110,7 +109,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	private void createPluginViewer(Composite sashForm) {
 		Composite composite = new Composite(sashForm, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
+		layout.marginWidth = layout.marginHeight = 1;
 		composite.setLayout(layout);
 		Label label = new Label(composite, SWT.NULL);
 		label
@@ -141,6 +140,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	private void createPropertySheetClient(Composite sashForm) {
 		Composite tableChild = new Composite(sashForm, SWT.NULL);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
 		tableChild.setLayout(layout);
 		fPropertyLabel = new Label(tableChild, SWT.NULL);
 		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -149,34 +149,43 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		layout.marginWidth = layout.marginHeight = margin;
 	}
 	protected int createPropertySheet(Composite parent) {
-		toolkit = new FormToolkit(parent.getDisplay());
-		int toolkitBorderStyle = toolkit.getBorderStyle();
-		int style = toolkitBorderStyle==SWT.BORDER?SWT.NULL:SWT.BORDER;
-		pageBook = new ScrolledPageBook(parent, style|SWT.V_SCROLL|SWT.H_SCROLL);
-		toolkit.adapt(pageBook, false, false);
+		fToolkit = new FormToolkit(parent.getDisplay());
+		int toolkitBorderStyle = fToolkit.getBorderStyle();
+		int style = toolkitBorderStyle == SWT.BORDER ? SWT.NULL : SWT.BORDER;
+		
+		Composite container = new Composite(parent, style);
+		FillLayout flayout = new FillLayout();
+		flayout.marginWidth = 1;
+		flayout.marginHeight = 1;
+		container.setLayout(flayout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fPageBook = new ScrolledPageBook(container, style | SWT.V_SCROLL | SWT.H_SCROLL);
+		fToolkit.adapt(fPageBook, false, false);	
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 100;
 		gd.widthHint = 125;
-		pageBook.setLayoutData(gd);
-		if (style==SWT.NULL) {
-			pageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-			toolkit.paintBordersFor(parent);
+		fPageBook.setLayoutData(gd);
+		
+		if (style == SWT.NULL) {
+			fPageBook.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+			fToolkit.paintBordersFor(container);
 		}
-		return style==SWT.NULL?2:0;
+		return style == SWT.NULL ? 2 : 0;
 	}
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		pageBook.getParent().getParent().layout(true);
+		fPageBook.getParent().getParent().layout(true);
 	}
 	public void dispose() {
-		if (toolkit != null)
-			toolkit.dispose();
+		if (fToolkit != null)
+			fToolkit.dispose();
 		if (fImage != null)
 			fImage.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 	public FormToolkit getToolkit() {
-		return toolkit;
+		return fToolkit;
 	}
 	private IPluginModelBase[] getTraceableModels() {
 		if (fTraceableModels == null) {
@@ -210,7 +219,9 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	private void masterCheckChanged(boolean userChange) {
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginViewer.getTable().setEnabled(enabled);
-		pageBook.setEnabled(enabled);
+		Control currentPage = fPageBook.getCurrentPage();
+		if (currentPage != null)
+			currentPage.setEnabled(enabled);
 		fSelectAllButton.setEnabled(enabled);
 		fDeselectAllButton.setEnabled(enabled);
 	}
@@ -219,7 +230,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 				.hasMoreElements();) {
 			TracingPropertySource source = (TracingPropertySource) elements
 					.nextElement();
-			pageBook.removePage(source.getModel());
+			fPageBook.removePage(source.getModel());
 		}
 		fPropertySources.clear();
 	}
@@ -330,13 +341,13 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	private void pluginSelected(IPluginModelBase model) {
 		TracingPropertySource source = getPropertySource(model);
 		if (source==null)
-			pageBook.showEmptyPage();
+			fPageBook.showEmptyPage();
 		else {
-			if (!pageBook.hasPage(model)) {
-				Composite parent = pageBook.createPage(model);
+			if (!fPageBook.hasPage(model)) {
+				Composite parent = fPageBook.createPage(model);
 				source.createContents(parent);
 			}
-			pageBook.showPage(model);
+			fPageBook.showPage(model);
 		}
 		updatePropertyLabel(model);
 	}
