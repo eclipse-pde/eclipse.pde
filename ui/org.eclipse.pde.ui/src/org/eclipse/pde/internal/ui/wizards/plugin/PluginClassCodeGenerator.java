@@ -17,60 +17,63 @@ import org.eclipse.pde.ui.IPluginFieldData;
  * @author melhem
  *  
  */
-public class PluginClassCodeGenerator  {
+public class PluginClassCodeGenerator {
 	private IPluginFieldData fPluginData;
 	private IProject fProject;
 	private String fQualifiedClassName;
 
-	public PluginClassCodeGenerator(IProject project, String qualifiedClassName, IPluginFieldData data) {
+	public PluginClassCodeGenerator(IProject project,
+			String qualifiedClassName, IPluginFieldData data) {
 		this.fProject = project;
 		this.fQualifiedClassName = qualifiedClassName;
 		fPluginData = data;
 	}
-	
-	public IFile generate(IProgressMonitor monitor) throws CoreException{
+
+	public IFile generate(IProgressMonitor monitor) throws CoreException {
 		int nameloc = fQualifiedClassName.lastIndexOf('.');
-		String packageName = (nameloc == -1) ? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
+		String packageName = (nameloc == -1)
+				? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
 		String className = fQualifiedClassName.substring(nameloc + 1);
-		
+
 		IPath path = new Path(packageName.replace('.', '/'));
 		if (fPluginData.getSourceFolderName().trim().length() > 0)
 			path = new Path(fPluginData.getSourceFolderName()).append(path);
-		
+
 		CoreUtility.createFolder(fProject.getFolder(path), true, true, null);
-		
+
 		IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		if (fPluginData.isLegacy()){
+		if (fPluginData.isLegacy()) {
 			generateLegacyPluginClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);
 		}
 		writer.flush();
-		try{
+		try {
 			swriter.close();
-			ByteArrayInputStream stream = 
-				new ByteArrayInputStream(swriter.toString().getBytes(fProject.getDefaultCharset()));
+			ByteArrayInputStream stream = new ByteArrayInputStream(swriter
+					.toString().getBytes(fProject.getDefaultCharset()));
 			if (file.exists())
 				file.setContents(stream, false, true, monitor);
 			else
 				file.create(stream, false, monitor);
 			stream.close();
-		} catch (IOException e){
-			
+		} catch (IOException e) {
+
 		}
 		return file;
 	}
 
-	private void generatePluginClass(String packageName, String className, PrintWriter writer) {
+	private void generatePluginClass(String packageName, String className,
+			PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
 			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
 		}
 		if (fPluginData.isUIPlugin())
 			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
-		else 
+		else
 			writer.println("import org.eclipse.core.runtime.Plugin;"); //$NON-NLS-1$
 		writer.println("import org.osgi.framework.BundleContext;"); //$NON-NLS-1$
 		writer.println("import java.util.*;"); //$NON-NLS-1$
@@ -79,7 +82,8 @@ public class PluginClassCodeGenerator  {
 		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer
+					.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
@@ -101,19 +105,22 @@ public class PluginClassCodeGenerator  {
 		writer.println("\t\t}"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		
+
 		writer.println("\t/**"); //$NON-NLS-1$
 		writer.println("\t * This method is called upon plug-in activation"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer
+				.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
+		writer
+				.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer
+				.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
@@ -150,8 +157,8 @@ public class PluginClassCodeGenerator  {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println("}"); //$NON-NLS-1$
 	}
-	private void generateLegacyPluginClass(String packageName, String className,
-			PrintWriter writer) {
+	private void generateLegacyPluginClass(String packageName,
+			String className, PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
 			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.println();
@@ -165,7 +172,8 @@ public class PluginClassCodeGenerator  {
 		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
-			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer
+					.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
@@ -220,14 +228,17 @@ public class PluginClassCodeGenerator  {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println("}"); //$NON-NLS-1$
 	}
-	
+
 	public IPluginReference[] getDependencies() {
 		ArrayList result = new ArrayList();
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy())
-			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+			result
+					.add(new PluginReference(
+							"org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
+		return (IPluginReference[]) result.toArray(new IPluginReference[result
+				.size()]);
 	}
-	
+
 }
