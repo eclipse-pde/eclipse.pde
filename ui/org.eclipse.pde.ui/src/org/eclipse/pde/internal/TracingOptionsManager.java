@@ -80,14 +80,21 @@ public String getTracingFileName() {
 	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
 	return stateLocation.append(".options").toOSString();
 }
+
 public Properties getTracingOptions() {
 	// Start with the fresh template from plugins
-	if (template==null) createTemplate();
-	options = (Properties)template.clone();
+	Properties defaults = getTracingTemplateCopy();
+	options = defaults;
 	// Load stored values, but only for existing keys
 	loadStoredOptions();
 	return options;
 }
+
+public Properties getTracingTemplateCopy() {
+	if (template==null) createTemplate();
+	return (Properties)template.clone();
+}
+
 public static boolean isTraceable(IPluginModel model) {
 	if (model.getUnderlyingResource() != null) {
 		IProject project = model.getUnderlyingResource().getProject();

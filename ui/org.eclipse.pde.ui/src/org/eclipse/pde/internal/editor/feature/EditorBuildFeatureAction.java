@@ -15,14 +15,14 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.pde.internal.*;
 import org.eclipse.core.runtime.*;
 
-public class BuildFeatureAction extends Action {
+public class EditorBuildFeatureAction extends Action {
 	public static final String LABEL = "FeatureEditor.BuildAction.label";
-	BuildFeatureJarAction buildDelegate;
+	BuildFeatureAction buildDelegate;
 	FeatureEditor activeEditor;
 
-public BuildFeatureAction() {
+public EditorBuildFeatureAction() {
 	setText(PDEPlugin.getResourceString(LABEL));
-	buildDelegate = new BuildFeatureJarAction();
+	buildDelegate = new BuildFeatureAction();
 
 }
 private void ensureContentSaved() {
@@ -49,6 +49,6 @@ public void setActiveEditor(FeatureEditor editor) {
 	this.activeEditor = editor;
 	buildDelegate.setActivePart(this, editor);
 	IFeatureModel model = (IFeatureModel) editor.getModel();
-	buildDelegate.setComponentFile((IFile) model.getUnderlyingResource());
+	buildDelegate.setFeatureFile((IFile) model.getUnderlyingResource());
 }
 }

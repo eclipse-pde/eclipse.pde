@@ -15,4 +15,7 @@ public interface ILauncherSettings {
 	String USECUSTOM = "default";
 	String WSPROJECT = "wsproject";
 	String EXTPLUGINS = "extplugins";
+	String TRACING_OPTIONS = "tracingOptions";
+	String SELECTED_PLUGIN = "selectedPlugin";
+	String MAXIMIZED = "maximized";
 }

@@ -75,6 +75,12 @@
          class="org.eclipse.pde.internal.preferences.TargetPlatformPreferencePage"
          id="org.eclipse.pde.TargetPlatformPreferencePage">
    </page>
+   <page
+         name="%preferences.targetEnv.name"
+         category="org.eclipse.pde.MainPreferencePage"
+         class="org.eclipse.pde.internal.preferences.TargetEnvironmentPreferencePage"
+         id="org.eclipse.pde.TargetEnvironmentPreferencePage">
+   </page>
 </extension>
 <extension
       point="org.eclipse.ui.newWizards">
@@ -323,7 +329,7 @@
       </filter>
       <action
             label="%popupMenus.createJar.label"
-            class="org.eclipse.pde.internal.feature.BuildFeatureJarAction"
+            class="org.eclipse.pde.internal.feature.BuildFeatureAction"
             menubarPath="additions"
             enablesFor="1"
             id="org.eclipse.pde.BuildFeatureJar">
@@ -457,6 +463,12 @@
          type="org.eclipse.pde.RuntimeWorkbench"
          class="org.eclipse.pde.internal.launcher.BasicLauncherTab"
          id="org.eclipse.pde.launchConfigurationTab.FirstTab">
+   </launchConfigurationTab>
+   <launchConfigurationTab
+         name="%launchConfigurationTab.tracingTab.name"
+         type="org.eclipse.pde.RuntimeWorkbench"
+         class="org.eclipse.pde.internal.launcher.AdvancedTracingLauncherTab"
+         id="org.eclipse.pde.launchConfigurationTab.TracingTab">
    </launchConfigurationTab>
    <launchConfigurationTab
          name="%launchConfigurationTab.advancedTab.name"

@@ -116,7 +116,7 @@ public class TargetPlatformPreferencePage
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < path.length(); i++) {
 			char c = path.charAt(i);
-			if (BootLoader.getOS().equals("win32")) {
+			if (TargetPlatform.getOS().equals("win32")) {
 				if (i == 0 && c == '/')
 					continue;
 			}

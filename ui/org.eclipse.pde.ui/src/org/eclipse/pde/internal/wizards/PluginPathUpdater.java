@@ -365,11 +365,11 @@ public class PluginPathUpdater {
 		String variable = firstSegment.substring(1, firstSegment.length() - 1);
 		variable = variable.toLowerCase();
 		if (variable.equals("ws")) {
-			variable = BootLoader.getWS();
+			variable = TargetPlatform.getWS();
 			if (variable != null)
 				variable = "ws" + File.separator + variable;
 		} else if (variable.equals("os")) {
-			variable = BootLoader.getOS();
+			variable = TargetPlatform.getOS();
 			if (variable != null)
 				variable = "os" + File.separator + variable;
 		} else

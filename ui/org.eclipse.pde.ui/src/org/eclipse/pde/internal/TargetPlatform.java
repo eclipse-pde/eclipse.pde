@@ -8,21 +8,42 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.model.plugin.*;
 import java.util.Vector;
 import java.io.*;
-
 import org.eclipse.pde.internal.util.*;
 import org.eclipse.pde.internal.util.Choice;
 import org.eclipse.core.boot.BootLoader;
 import java.util.Locale;
-
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.preferences.TargetEnvironmentPreferencePage;
 import java.util.Properties;
+import java.net.*;
 
 /**
  * @version 	1.0
  * @author
  */
-public class TargetPlatform {
-	
+public class TargetPlatform implements IEnvironmentVariables {
+
 	public static File createPropertiesFile() throws CoreException {
+		return createPropertiesFile(getVisibleModels());
+	}
+
+	public static URL[] createPluginPath() throws CoreException {
+		IPluginModelBase[] models = getVisibleModels();
+		URL urls[] = new URL[models.length];
+		for (int i = 0; i < urls.length; i++) {
+			IPluginModelBase model = models[i];
+			String urlName = createURL(model);
+			try {
+				urls[i] = new URL(urlName);
+			} catch (MalformedURLException e) {
+				PDEPlugin.logException(e);
+				return new URL[0];
+			}
+		}
+		return urls;
+	}
+
+	private static IPluginModelBase[] getVisibleModels() {
 		Vector result = new Vector();
 		WorkspaceModelManager wmanager =
 			PDEPlugin.getDefault().getWorkspaceModelManager();
@@ -36,7 +57,7 @@ public class TargetPlatform {
 		addFromList(result, eplugins);
 		IPluginModelBase[] array =
 			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
-		return createPropertiesFile(array);
+		return array;
 	}
 
 	private static void addFromList(Vector result, IPluginModelBase[] list) {
@@ -57,14 +78,8 @@ public class TargetPlatform {
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginModelBase curr = plugins[i];
 				String prefix = "file:" + curr.getInstallLocation() + File.separator;
-
-				if (curr instanceof IPluginModel) {
-					IPlugin plugin = ((IPluginModel) curr).getPlugin();
-					properties.setProperty(plugin.getId(), prefix + "plugin.xml");
-				} else if (curr instanceof IFragmentModel) {
-					IFragment fragment = ((IFragmentModel) curr).getFragment();
-					properties.setProperty(fragment.getId(), prefix + "fragment.xml");
-				}
+				String id = curr.getPluginBase().getId();
+				properties.setProperty(id, createURL(curr));
 			}
 
 			FileOutputStream fos = null;
@@ -81,6 +96,49 @@ public class TargetPlatform {
 			throw new CoreException(
 				new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", e));
 		}
+	}
+
+	private static String createURL(IPluginModelBase model) {
+		String prefix = "file:" + model.getInstallLocation() + File.separator;
+
+		if (model instanceof IPluginModel) {
+			return prefix + "plugin.xml";
+		} else if (model instanceof IFragmentModel) {
+			return prefix + "fragment.xml";
+		} else
+			return "";
+	}
+
+	public static String getOS() {
+		initializeDefaults();
+		return getProperty(OS);
+	}
+
+	public static String getWS() {
+		initializeDefaults();
+		return getProperty(WS);
+	}
+
+	public static String getNL() {
+		initializeDefaults();
+		return getProperty(NL);
+	}
+
+	public static String getOSArch() {
+		initializeDefaults();
+		return getProperty(ARCH);
+	}
+
+	private static String getProperty(String key) {
+		return PDEPlugin.getDefault().getPreferenceStore().getString(key);
+	}
+
+	public static void initializeDefaults() {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		store.setDefault(OS, BootLoader.getOS());
+		store.setDefault(WS, BootLoader.getWS());
+		store.setDefault(NL, BootLoader.getNL());
+		store.setDefault(ARCH, BootLoader.getOSArch());
 	}
 
 	public static Choice[] getOSChoices() {
@@ -109,5 +167,8 @@ public class TargetPlatform {
 			choices[i] = new Choice(locale.toString(), locale.getDisplayName());
 		}
 		return choices;
+	}
+	public static Choice[] getArchChoices() {
+		return new Choice[] { new Choice(BootLoader.ARCH_X86, BootLoader.ARCH_X86)};
 	}
 }

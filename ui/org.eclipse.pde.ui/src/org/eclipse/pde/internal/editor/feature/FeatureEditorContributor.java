@@ -10,7 +10,7 @@ import org.eclipse.pde.internal.editor.*;
 
 
 public class FeatureEditorContributor extends PDEEditorContributor {
-	private BuildFeatureAction buildAction;
+	private EditorBuildFeatureAction buildAction;
 	private SynchronizeVersionsAction synchronizeAction;
 
 public FeatureEditorContributor() {
@@ -30,7 +30,7 @@ public Action getSynchronizeAction() {
 }
 protected void makeActions() {
 	super.makeActions();
-	buildAction = new BuildFeatureAction();
+	buildAction = new EditorBuildFeatureAction();
 	synchronizeAction = new SynchronizeVersionsAction();
 }
 public void setActiveEditor(IEditorPart targetEditor) {

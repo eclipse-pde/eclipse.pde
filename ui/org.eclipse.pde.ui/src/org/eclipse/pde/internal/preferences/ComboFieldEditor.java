@@ -8,6 +8,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.util.Choice;
 
 /**
  * @version 	1.0
@@ -15,10 +16,11 @@ import org.eclipse.swt.SWT;
  */
 public class ComboFieldEditor extends FieldEditor {
 	private Combo combo;
-	private String [] choices;
+	private Choice [] choices;
 	
 	
-public ComboFieldEditor(String name, String labelText, String [] choices, Composite parent) {
+public ComboFieldEditor(String name, String labelText, Choice [] choices, Composite parent) {
+	this.choices = choices;
 	init(name, labelText);
 	createControl(parent);
 }
@@ -38,8 +40,17 @@ public Combo getComboControl() {
 
 public Combo getComboControl(Composite parent) {
 	Combo control = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
-	control.setItems(choices);
+	control.setItems(createItems());
 	return control;
+}
+
+private String [] createItems() {
+	if (choices==null) return new String[0];
+	String [] items = new String[choices.length];
+	for (int i=0; i<choices.length; i++) {
+		items[i] = choices[i].getLabel();
+	}
+	return items;
 }
 
 protected void doFillIntoGrid(Composite parent, int numColumns) {
@@ -63,8 +74,8 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	
 	private void selectItem(String value) {
 		if (combo != null) {
-			for (int i=0; i<combo.getItemCount(); i++) {
-				String item = combo.getItem(i);
+			for (int i=0; i<choices.length; i++) {
+				String item = choices[i].getValue();
 				if (item.equals(value)) {
 					combo.select(i);
 					break;
@@ -87,7 +98,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	protected void doStore() {
 		int index = combo.getSelectionIndex();
 		if (index!= -1) {
-			String newValue = combo.getItem(index);
+			String newValue = choices[index].getValue();
 			getPreferenceStore().setValue(getPreferenceName(), newValue);
 		}
 	}

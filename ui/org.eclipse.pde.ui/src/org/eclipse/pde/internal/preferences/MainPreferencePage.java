@@ -12,7 +12,6 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.swt.*;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.jdt.core.*;
 
 

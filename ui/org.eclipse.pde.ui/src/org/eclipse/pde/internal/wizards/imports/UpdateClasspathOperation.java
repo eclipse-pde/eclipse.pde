@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.wizards.imports;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.pde.internal.TargetPlatform;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.model.plugin.*;
@@ -139,11 +139,13 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 		if (first != null) {
 			IPath rest= path.removeFirstSegments(1);
 			if (first.equals("$ws$")) {
-				path= new Path("ws").append(BootLoader.getWS()).append(rest);
+				path= new Path("ws").append(TargetPlatform.getWS()).append(rest);
 			} else if (first.equals("$os$")) {
-				path= new Path("os").append(BootLoader.getOS()).append(rest);
+				path= new Path("os").append(TargetPlatform.getOS()).append(rest);
 			} else if (first.equals("$nl$")) {
-				path= new Path("nl").append(BootLoader.getNL()).append(rest);
+				path= new Path("nl").append(TargetPlatform.getNL()).append(rest);
+			} else if (first.equals("$arch$")) {
+				path= new Path("arch").append(TargetPlatform.getOSArch()).append(rest);
 			}
 		}
 		return project.getFullPath().append(path);
