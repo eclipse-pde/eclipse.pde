@@ -31,16 +31,23 @@ public JavaCodeGenerator(IProject project, IFolder sourceFolder, String qualifie
 	this.qualifiedClassName = qualifiedClassName;
 }
 public static void ensureFolderExist(IWorkspace workspace, IPath folderPath) throws CoreException {
-	if (!workspace.getRoot().exists(folderPath)) {
-		IFolder folder = workspace.getRoot().getFolder(folderPath);
-		folder.create(true, true, null);
+	for (int i = 1; i <= folderPath.segmentCount(); i++) {
+		IPath partialPath = folderPath.uptoSegment(i);
+		if (!workspace.getRoot().exists(partialPath)) {
+			IFolder folder = workspace.getRoot().getFolder(partialPath);
+			folder.create(true, true, null);
+		}
 	}
 }
 private void ensureFolderExist(IPath folderPath) throws CoreException {
 	IWorkspace workspace = project.getWorkspace();
-	if (!workspace.getRoot().exists(folderPath)) {
-		IFolder folder = workspace.getRoot().getFolder(folderPath);
-		folder.create(true, true, null);
+	
+	for (int i = 1; i <= folderPath.segmentCount(); i++) {
+		IPath partialPath = folderPath.uptoSegment(i);
+		if (!workspace.getRoot().exists(partialPath)) {
+			IFolder folder = workspace.getRoot().getFolder(partialPath);
+			folder.create(true, true, null);
+		}
 	}
 }
 private void ensureFoldersExist(String packageName) throws CoreException {
