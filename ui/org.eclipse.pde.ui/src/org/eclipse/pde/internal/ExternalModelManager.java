@@ -41,7 +41,8 @@ public class ExternalModelManager {
 		"ExternalModelManager.scanningProblems";
 	private static final String KEY_ERROR_NO_HOME =
 		"Errors.SetupError.NoPlatformHome";
-	private static final String KEY_PROCESSING_PATH = "ExternalModelManager.processingPath";
+	private static final String KEY_PROCESSING_PATH =
+		"ExternalModelManager.processingPath";
 	private Vector listeners = new Vector();
 
 	public ExternalModelManager() {
@@ -156,11 +157,11 @@ public class ExternalModelManager {
 		return (models != null) ? models.size() : 0;
 	}
 
-	private Vector getPluginPaths() {
+	private String[] getPluginPaths() {
 		return getPluginPaths(null);
 	}
 
-	private Vector getPluginPaths(String platformHome) {
+	private String[] getPluginPaths(String platformHome) {
 		if (platformHome == null) {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			platformHome = store.getString(PDEBasePreferencePage.PROP_PLATFORM_PATH);
@@ -171,13 +172,11 @@ public class ExternalModelManager {
 				PDEPlugin.getActiveWorkbenchShell(),
 				PDEPlugin.getResourceString(KEY_ERROR_TITLE),
 				PDEPlugin.getResourceString(KEY_ERROR_NO_HOME));
-			return null;
+			return new String[0];
 		}
-		Vector paths = new Vector();
-		String pluginDir = platformHome + File.separator + "plugins";
-		paths.addElement(pluginDir);
-		String fragmentDir = platformHome + File.separator + "fragments";
-		paths.addElement(fragmentDir);
+		String[] paths = new String[2];
+		paths[0] = platformHome + File.separator + "plugins";
+		paths[1] = platformHome + File.separator + "fragments";
 		return paths;
 	}
 
@@ -240,34 +239,37 @@ public class ExternalModelManager {
 		}
 	}
 
-	private void internalProcessPluginDirectory(
+	private void internalProcessPluginDirectories(
 		Vector result,
-		String pluginPath,
+		String[] pluginPaths,
 		IProgressMonitor monitor) {
-		MultiStatus errors = processPluginDirectory(result, pluginPath, monitor);
+		MultiStatus errors = processPluginDirectories(result, pluginPaths, monitor);
 		if (errors != null && errors.getChildren().length > 0) {
 			ResourcesPlugin.getPlugin().getLog().log(errors);
 		}
 	}
 
-	public static MultiStatus processPluginDirectory(
+	public static MultiStatus processPluginDirectories(
 		Vector result,
-		String pluginPath,
+		String[] pluginPaths,
 		IProgressMonitor monitor) {
 		try {
-			URL url = new URL("file:" + pluginPath.replace('\\', '/') + "/");
-
 			MultiStatus errors =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					1,
 					PDEPlugin.getResourceString(KEY_SCANNING_PROBLEMS),
 					null);
-			String pattern = PDEPlugin.getResourceString(KEY_PROCESSING_PATH);
-			String message = PDEPlugin.getFormattedMessage(pattern, pluginPath);
-			monitor.subTask(message);
+			URL[] urls = new URL[pluginPaths.length];
+			for (int i = 0; i < pluginPaths.length; i++) {
+				urls[i] = new URL("file:" + pluginPaths[i].replace('\\', '/') + "/");
+			}
+
+			//String pattern = PDEPlugin.getResourceString(KEY_PROCESSING_PATH);
+			//String message = PDEPlugin.getFormattedMessage(pattern, pluginPath);
+			//monitor.subTask(message);
 			PluginRegistryModel registryModel =
-				Platform.parsePlugins(new URL[] { url }, new Factory(errors));
+				Platform.parsePlugins(urls, new Factory(errors));
 			IStatus resolveStatus = registryModel.resolve(true, false);
 			PluginDescriptorModel[] pluginDescriptorModels = registryModel.getPlugins();
 			for (int i = 0; i < pluginDescriptorModels.length; i++) {
@@ -287,16 +289,14 @@ public class ExternalModelManager {
 		models = new Vector();
 		if (platformPath != null)
 			setEclipseHome(platformPath);
-		Vector ppaths = getPluginPaths(platformPath);
-		if (ppaths == null)
+		String[] paths = getPluginPaths(platformPath);
+		if (paths.length == 0)
 			return false;
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 
-		for (int i = 0; i < ppaths.size(); i++) {
-			String pluginDir = (String) ppaths.elementAt(i);
-			internalProcessPluginDirectory(models, pluginDir, monitor);
-		}
+		internalProcessPluginDirectories(models, paths, monitor);
+
 		return true;
 	}
 

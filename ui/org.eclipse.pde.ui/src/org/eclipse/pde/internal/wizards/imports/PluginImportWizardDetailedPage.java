@@ -335,9 +335,13 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 						monitor.beginTask(
 							PDEPlugin.getResourceString(KEY_LOADING_FILE),
 							IProgressMonitor.UNKNOWN);
-						String path = dropLocation.toOSString();
+						String [] paths = createPaths(dropLocation);
+						
 						MultiStatus errors =
-							ExternalModelManager.processPluginDirectory(result, path, monitor);
+							ExternalModelManager.processPluginDirectories(
+								result,
+								paths,
+								monitor);
 						if (errors != null && errors.getChildren().length > 0) {
 							PDEPlugin.log(errors);
 						}
@@ -354,6 +358,22 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 		}
 		return models;
+	}
+	
+	private String [] createPaths(IPath dropLocation) {
+		File dropDir= dropLocation.toFile();
+		Vector result = new Vector();
+
+		File pluginsDir= new File(dropDir, "plugins");
+		if (pluginsDir.exists()) {
+			result.add(pluginsDir.getAbsolutePath());
+		}
+		File fragmentDir= new File(dropDir, "fragments");
+		if (fragmentDir.exists()) {
+			result.add(fragmentDir.getAbsolutePath());
+		}
+		result.add(dropDir.getAbsolutePath());
+		return (String[])result.toArray(new String[result.size()]);				
 	}
 
 	public IPluginModelBase[] getSelectedModels() {

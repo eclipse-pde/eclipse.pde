@@ -168,6 +168,12 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 				updateStatus(dropLocationStatus);
 			}
 		});
+		dropLocation.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateDropLocation();
+				updateStatus(dropLocationStatus);
+			}
+		});
 		setControl(composite);
 	}
 	
