@@ -68,6 +68,18 @@ public class SchemaRegistry {
 		if (schema == null || schema.trim().length() == 0)
 			return null;
 		URL url = point.getModel().getResourceURL(schema);
+		
+		// try in the external plugin, if we did not find anything in workspace
+		if (url == null && point.getModel().getUnderlyingResource() != null) {
+			String pluginID = point.getPluginBase().getId();
+			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
+			if (entry != null) {
+				IPluginModelBase model = entry.getExternalModel();
+				if (model != null) {
+					url = model.getResourceURL(schema);
+				}
+			}
+		}
 		if (url == null) {
 			try {
 				SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
