@@ -29,6 +29,11 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		return new TestSuite(InitializeModelsPerfTest.class);
 	}
 	
+	protected void setUp() throws Exception {
+		super.setUp();
+		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
+	}
+	
 	public void testModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.CPU_TIME);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
