@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -103,7 +104,8 @@ public abstract class BaseBuildAction
 		// Force the build if autobuild is off
 		IProject project = file.getProject();
 		if (!project.getWorkspace().isAutoBuilding()) {
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			String builderID = "feature.xml".equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID;
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderID, null, monitor);
 		}
 
 		if (hasErrors(file)) {
