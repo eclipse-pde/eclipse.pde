@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui;
 
 import java.net.*;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
 
@@ -23,7 +22,7 @@ public class PDEPluginImages {
 
 	private static final String NAME_PREFIX= PDEPlugin.getPluginId()+"."; //$NON-NLS-1$
 
-	private final static URL BASE_URL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
+	private final static URL BASE_URL = PDEPlugin.getDefault().getBundle().getEntry("/");
 
 	private static ImageRegistry PLUGIN_REGISTRY;
 	
@@ -219,19 +218,6 @@ public class PDEPluginImages {
 		if (PLUGIN_REGISTRY==null) initialize();
 		return PLUGIN_REGISTRY.get(key);
 	}
-
-public static ImageDescriptor getImageDescriptorFromPlugin(
-	IPluginDescriptor pluginDescriptor, 
-	String subdirectoryAndFilename) {
-	URL installURL = pluginDescriptor.getInstallURL();
-	try {
-		URL newURL = new URL(installURL, subdirectoryAndFilename);
-		return ImageDescriptor.createFromURL(newURL);
-	}
-	catch (MalformedURLException e) {
-	}
-	return null;
-}
 
 /* package */
 private static final void initialize() {
