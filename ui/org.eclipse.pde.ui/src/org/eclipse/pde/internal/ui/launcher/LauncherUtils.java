@@ -81,7 +81,7 @@ public class LauncherUtils {
 	
 	public static Map getVMSpecificAttributes(ILaunchConfiguration config) throws CoreException {
 		Map map = new HashMap(1);
-		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "javaw"); //$NON-NLS-1$
+		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String)null); 
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		return map;
 	}
