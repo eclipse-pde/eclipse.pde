@@ -125,15 +125,7 @@ public class NewFeatureProjectWizard extends NewWizard
 	}
 
 	private boolean hasInterestingProjects() {
-		IWorkspace workspace = PDEPlugin.getWorkspace();
-		IWorkspaceRoot root = workspace.getRoot();
-		IProject[] projects = root.getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if (WorkspaceModelManager.isPluginProject(project))
-				return true;
-		}
-		return false;
+		return PDECore.getDefault().getModelManager().getPlugins().length > 0;
 	}
 
 	public boolean performFinish() {
