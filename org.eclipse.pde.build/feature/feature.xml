@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.pde.builder"
       label="%featureName"
-      version="2.1.0"
+      version="3.0.0"
       provider-name="%providerName"
       image="eclipse_update_120.jpg"
       primary="true"
@@ -23,9 +23,15 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-         
+
    <plugin
          id="org.eclipse.core.variables"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.text"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -80,12 +86,6 @@
 
    <plugin
          id="org.eclipse.update.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.core.variables"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
