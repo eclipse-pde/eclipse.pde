@@ -68,7 +68,7 @@ public class PreviewAction extends Action {
 			fref.setURL(url);
 			
 			fref.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
-			return fref.getFeature();
+			return fref.getFeature(null);
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
 		} catch (CoreException e) {
