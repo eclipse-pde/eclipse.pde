@@ -290,13 +290,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 	
 	private void handleSourceLocations() {
-		IPreferenceNode sourceNode = new SourceCodeLocationsPreferenceNode();
-		showPreferencePage(sourceNode);
+		showPreferencePage(new SourceCodeLocationsPreferenceNode());
 	}
 	
 	private void handleEnvChange() {
-		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-		showPreferencePage(targetNode);
+		showPreferencePage(new TargetEnvironmentPreferenceNode());
 	}
 
 	private boolean showPreferencePage(final IPreferenceNode targetNode) {

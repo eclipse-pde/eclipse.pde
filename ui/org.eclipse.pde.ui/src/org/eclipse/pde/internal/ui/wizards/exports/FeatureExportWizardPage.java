@@ -89,7 +89,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage implements IHy
 	}
 
 	public void linkActivated(HyperlinkEvent e) {
-		showPreferencePage(new TargetPlatformPreferenceNode());
+		showPreferencePage(new TargetEnvironmentPreferenceNode());
 	}
 	
 	private void showPreferencePage(final IPreferenceNode targetNode) {

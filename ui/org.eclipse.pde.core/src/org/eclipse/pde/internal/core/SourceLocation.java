@@ -15,11 +15,9 @@ import org.eclipse.core.runtime.*;
 public class SourceLocation {
 	private IPath path;
 	private boolean userDefined = true;
-	private boolean enabled;
 
-	public SourceLocation(IPath path, boolean enabled) {
+	public SourceLocation(IPath path) {
 		this.path = path;
-		this.enabled = enabled;
 	}
 
 	public IPath getPath() {
@@ -40,22 +38,6 @@ public class SourceLocation {
 	
 	public String toString() {
 		return path.toOSString();
-	}
-	
-	/**
-	 * Gets the enabled.
-	 * @return Returns a boolean
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	/**
-	 * Sets the enabled.
-	 * @param enabled The enabled to set
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
 	
 	public boolean equals(Object obj) {

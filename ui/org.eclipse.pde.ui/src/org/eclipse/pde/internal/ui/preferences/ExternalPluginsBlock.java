@@ -38,15 +38,15 @@ import org.eclipse.ui.forms.widgets.*;
 
 
 public class ExternalPluginsBlock {
-	private CheckboxTableViewer pluginListViewer;
-	private TargetPlatformPreferencePage page;
 	private static final String KEY_RELOAD = "ExternalPluginsBlock.reload"; //$NON-NLS-1$
 	private static final String KEY_WORKSPACE = "ExternalPluginsBlock.workspace"; //$NON-NLS-1$
 
-	private boolean reloaded;
-	private TablePart tablePart;
-	private HashSet changed = new HashSet();
-	private IPluginModelBase[] initialModels;
+	private CheckboxTableViewer fPluginListViewer;
+	private TargetPlatformPreferencePage fPage;
+	private boolean fReloaded;
+	private TablePart fTablePart;
+	private HashSet fChangedModels = new HashSet();
+	private IPluginModelBase[] fInitialModels;
 	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
 	private Button fIncludeFragments;
@@ -111,10 +111,10 @@ public class ExternalPluginsBlock {
 
 		protected void elementChecked(Object element, boolean checked) {
 			IPluginModelBase model = (IPluginModelBase) element;
-			if (changed.contains(model) && model.isEnabled() == checked) {
-				changed.remove(model);
+			if (fChangedModels.contains(model) && model.isEnabled() == checked) {
+				fChangedModels.remove(model);
 			} else if (model.isEnabled() != checked) {
-				changed.add(model);
+				fChangedModels.add(model);
 			}
 			super.elementChecked(element, checked);
 		}
@@ -125,9 +125,9 @@ public class ExternalPluginsBlock {
 			for (int i = 0; i < allModels.length; i++) {
 				IPluginModelBase model = allModels[i];
 				if (model.isEnabled() != select) {
-					changed.add(model);
-				} else if (changed.contains(model) && model.isEnabled() == select) {
-					changed.remove(model);
+					fChangedModels.add(model);
+				} else if (fChangedModels.contains(model) && model.isEnabled() == select) {
+					fChangedModels.remove(model);
 				}
 			}
 		}
@@ -138,7 +138,7 @@ public class ExternalPluginsBlock {
 	}
 
 	public ExternalPluginsBlock(TargetPlatformPreferencePage page) {
-		this.page = page;
+		this.fPage = page;
 		String[] buttonLabels =
 			{
 				PDEPlugin.getResourceString(KEY_RELOAD),
@@ -150,9 +150,9 @@ public class ExternalPluginsBlock {
 				PDEPlugin.getResourceString("ExternalPluginsBlock.workingSet"), //$NON-NLS-1$
 				PDEPlugin.getResourceString("ExternalPluginsBlock.addRequired"), //$NON-NLS-1$
 				PDEPlugin.getResourceString(KEY_WORKSPACE)};
-		tablePart = new TablePart(buttonLabels);
-		tablePart.setSelectAllIndex(3);
-		tablePart.setDeselectAllIndex(4);
+		fTablePart = new TablePart(buttonLabels);
+		fTablePart.setSelectAllIndex(3);
+		fTablePart.setDeselectAllIndex(4);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -161,17 +161,17 @@ public class ExternalPluginsBlock {
 		IModel[] addedArray = null;
 		IModel[] removedArray = null;
 		IModel[] changedArray = null;
-		if (reloaded) {
+		if (fReloaded) {
 			type =
 				IModelProviderEvent.MODELS_REMOVED
 					| IModelProviderEvent.MODELS_ADDED;
-			removedArray = initialModels;
+			removedArray = fInitialModels;
 			addedArray = getAllModels();
-		} else if (changed.size() > 0) {
+		} else if (fChangedModels.size() > 0) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
-			changedArray = (IModel[]) changed.toArray(new IModel[changed.size()]);
+			changedArray = (IModel[]) fChangedModels.toArray(new IModel[fChangedModels.size()]);
 		}
-		changed.clear();
+		fChangedModels.clear();
 		if (type != 0) {
 			ExternalModelManager registry =
 				PDECore.getDefault().getExternalModelManager();
@@ -190,28 +190,25 @@ public class ExternalPluginsBlock {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = 5;
+		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
 
-		tablePart.createControl(container);
+		fTablePart.createControl(container);
 
-		pluginListViewer = tablePart.getTableViewer();
-		pluginListViewer.setContentProvider(new PluginContentProvider());
-		pluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPluginListViewer = fTablePart.getTableViewer();
+		fPluginListViewer.setContentProvider(new PluginContentProvider());
+		fPluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 
-		GridData gd = (GridData) tablePart.getControl().getLayoutData();
+		GridData gd = (GridData) fTablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
-		
-		Label label = new Label(container, SWT.NONE);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
 				
 		fIncludeFragments = new Button(container, SWT.CHECK);
 		fIncludeFragments.setText(PDEPlugin.getResourceString("ExternalPluginsBlock.includeFragments")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
+		gd.verticalIndent = 5;
+		gd.horizontalIndent = 5;
 		fIncludeFragments.setLayoutData(gd);
 		fIncludeFragments.setSelection(PDECore.getDefault().getPluginPreferences().getBoolean(ICoreConstants.INCLUDE_FRAGMENTS));
 		return container;
@@ -222,17 +219,17 @@ public class ExternalPluginsBlock {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	private IPluginModelBase[] getAllModels() {
+	public IPluginModelBase[] getAllModels() {
 		if (fModels == null) {
-			initialModels =
+			fInitialModels =
 				PDECore.getDefault().getExternalModelManager().getAllModels();
-			return initialModels;
+			return fInitialModels;
 		}
 		return fModels;
 	}
 
 	protected void handleReload() {
-		String platformPath = page.getPlatformPath();
+		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
 			URL[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
 			ReloadOperation op = new ReloadOperation(pluginPaths);
@@ -241,20 +238,21 @@ public class ExternalPluginsBlock {
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}
-			pluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-			changed.clear();
+			fPluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+			fChangedModels.clear();
 			handleSelectAll(true);
-			reloaded = true;
+			fReloaded = true;
+			fPage.getSourceBlock().resetExtensionLocations(getAllModels());
 		}
-		page.resetNeedsReload();
+		fPage.resetNeedsReload();
 	}
 
 	public void initialize() {
-		String platformPath = page.getPlatformPath();
+		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() == 0)
 			return;
 
-		pluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fPluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
 		IPluginModelBase[] allModels = getAllModels();
 
 		Vector selection = new Vector();
@@ -264,14 +262,14 @@ public class ExternalPluginsBlock {
 				selection.add(model);
 			}
 		}
-		tablePart.setSelection(selection.toArray());
+		fTablePart.setSelection(selection.toArray());
 	}
 
-	public void save() {
-		BusyIndicator.showWhile(page.getShell().getDisplay(), new Runnable() {
+	public void performOk() {
+		BusyIndicator.showWhile(fPage.getShell().getDisplay(), new Runnable() {
 			public void run() {
 				savePreferences();
-				if (reloaded)
+				if (fReloaded)
 					EclipseHomeInitializer.resetEclipseHomeVariable();
 				updateModels();
 				computeDelta();
@@ -281,15 +279,15 @@ public class ExternalPluginsBlock {
 	
 	private void savePreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		IPath newPath = new Path(page.getPlatformPath());
+		IPath newPath = new Path(fPage.getPlatformPath());
 		IPath defaultPath = new Path(ExternalModelManager.computeDefaultPlatformPath());
 		String mode =
 			ExternalModelManager.arePathsEqual(newPath, defaultPath)
 				? ICoreConstants.VALUE_USE_THIS
 				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
-		preferences.setValue(ICoreConstants.PLATFORM_PATH, page.getPlatformPath());
-		String[] locations = page.getPlatformLocations();
+		preferences.setValue(ICoreConstants.PLATFORM_PATH, fPage.getPlatformPath());
+		String[] locations = fPage.getPlatformLocations();
 		for (int i = 0; i < locations.length && i < 5; i++) {
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
 		}
@@ -298,13 +296,13 @@ public class ExternalPluginsBlock {
 	}
 	
 	private void updateModels() {
-		Iterator iter = changed.iterator();
+		Iterator iter = fChangedModels.iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
-			model.setEnabled(tablePart.getTableViewer().getChecked(model));
+			model.setEnabled(fTablePart.getTableViewer().getChecked(model));
 		}
 
-		if (reloaded) {
+		if (fReloaded) {
 			PDECore.getDefault().getExternalModelManager().reset(fCurrentState, fModels);
 		}
 	}
@@ -330,20 +328,20 @@ public class ExternalPluginsBlock {
 				selected.add(exModel);
 			}
 			if (exModel.isEnabled() == inWorkspace)
-				changed.add(exModel);
-			else if (changed.contains(exModel))
-				changed.remove(exModel);
+				fChangedModels.add(exModel);
+			else if (fChangedModels.contains(exModel))
+				fChangedModels.remove(exModel);
 		}
-		tablePart.setSelection(selected.toArray());
+		fTablePart.setSelection(selected.toArray());
 	}
 	
 	public void handleSelectAll(boolean selected) {
-		tablePart.selectAll(selected);
+		fTablePart.selectAll(selected);
 	}
 	
 	private void handleWorkingSets() {
 		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(tablePart.getControl().getShell(), true);
+		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(fTablePart.getControl().getShell(), true);
 		if (dialog.open() == Window.OK) {
 			HashSet set = getPluginIDs(dialog.getSelection());
 			IPluginModelBase[] models = getAllModels();
@@ -353,18 +351,18 @@ public class ExternalPluginsBlock {
 				if (id == null)
 					continue;
 				if (set.contains(id)) {
-					if (!pluginListViewer.getChecked(models[i])) {
-						pluginListViewer.setChecked(models[i], true);
+					if (!fPluginListViewer.getChecked(models[i])) {
+						fPluginListViewer.setChecked(models[i], true);
 						counter += 1;
 						if (!models[i].isEnabled())
-							changed.add(models[i]);
+							fChangedModels.add(models[i]);
 					}
 					set.remove(id);
 				}
 				if (set.isEmpty())
 					break;				
 			}
-			tablePart.incrementCounter(counter);
+			fTablePart.incrementCounter(counter);
 		}
 	}
 	
@@ -391,7 +389,7 @@ public class ExternalPluginsBlock {
 	}
 	
 	private void handleAddRequired() {
-		TableItem[] items = tablePart.getTableViewer().getTable().getItems();
+		TableItem[] items = fTablePart.getTableViewer().getTable().getItems();
 		
 		if (items.length == 0)
 			return;
@@ -399,10 +397,10 @@ public class ExternalPluginsBlock {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < items.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)items[i].getData();
-			if (tablePart.getTableViewer().getChecked(model))
+			if (fTablePart.getTableViewer().getChecked(model))
 				addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
 		}
-		tablePart.setSelection(result.toArray());
+		fTablePart.setSelection(result.toArray());
 	}
 	
 	protected void addPluginAndDependencies(
@@ -412,7 +410,7 @@ public class ExternalPluginsBlock {
 			if (!selected.contains(model)) {
 				selected.add(model);
 				if (!model.isEnabled())
-					changed.add(model);
+					fChangedModels.add(model);
 				addDependencies(getAllModels(), model, selected);
 			}
 		}

@@ -28,26 +28,36 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class TargetPlatformPreferencePage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	public static final int PLUGINS_INDEX = 0;
+	public static final int ENVIRONMENT_INDEX = 1;
+	public static final int SOURCE_INDEX = 2;
+	
 	private Label fHomeLabel;
 	private Combo fHomeText;
 	private Button fBrowseButton;
 	private ExternalPluginsBlock fPluginsBlock;
+	private EnvironmentBlock fEnvironmentBlock;
+	private SourceBlock fSourceBlock;
+	
 	private Preferences fPreferences = null;
 	private boolean fNeedsReload = false;
 	private String fOriginalText;
-	private EnvironmentBlock fEnvironmentBlock;
+	private int fIndex;
 	
 	/**
 	 * MainPreferencePage constructor comment.
 	 */
 	public TargetPlatformPreferencePage() {
+		this(PLUGINS_INDEX);
+	}
+	
+	public TargetPlatformPreferencePage(int index) {
 		setDescription(PDEPlugin.getResourceString("Preferences.TargetPlatformPage.Description")); //$NON-NLS-1$
 		fPreferences = PDECore.getDefault().getPluginPreferences();
 		fPluginsBlock = new ExternalPluginsBlock(this);
+		fIndex = index;
 	}
 	
 	public void dispose() {
@@ -110,6 +120,8 @@ public class TargetPlatformPreferencePage
 		
 		createPluginsTab(folder);
 		createEnvironmentTab(folder);
+		createSourceTab(folder);
+		folder.setSelection(fIndex);
 		
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
@@ -132,6 +144,15 @@ public class TargetPlatformPreferencePage
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.environmentTab")); //$NON-NLS-1$
+		tab.setControl(block);
+	}
+	
+	private void createSourceTab(TabFolder folder) {
+		fSourceBlock = new SourceBlock();
+		Control block = fSourceBlock.createContents(folder);
+		
+		TabItem tab = new TabItem(folder, SWT.NONE);
+		tab.setText("S&ource Code Locations"); 
 		tab.setControl(block);
 	}
 
@@ -181,7 +202,8 @@ public class TargetPlatformPreferencePage
 				return false;
 			fPluginsBlock.handleReload();
 		} 
-		fPluginsBlock.save();
+		fSourceBlock.performOk();
+		fPluginsBlock.performOk();
 		fEnvironmentBlock.performOk();
 		return super.performOk();
 	}
@@ -195,5 +217,9 @@ public class TargetPlatformPreferencePage
 		String location = fHomeText.getText();
 		if (fHomeText.indexOf(location) == -1)
 			fHomeText.add(location, 0);
+	}
+	
+	public SourceBlock getSourceBlock() {
+		return fSourceBlock;
 	}
 }

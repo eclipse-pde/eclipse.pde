@@ -73,12 +73,6 @@
             id="org.eclipse.pde.ui.TargetPlatformPreferencePage">
       </page>
       <page
-            name="%preferences.source.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.SourcePreferencePage"
-            id="org.eclipse.pde.ui.SourcePreferencePage">
-      </page>
-      <page
             name="%preferences.editor.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.EditorPreferencePage"

@@ -78,7 +78,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 225;
-		gd.heightHint = 200;
 		table.setLayoutData(gd);
 
 		importListViewer = new TableViewer(table);
@@ -89,11 +88,13 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		return container;
 	}
 	
-	protected Composite createComputationsOption(Composite parent) {
+	protected Composite createComputationsOption(Composite parent, int span) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
+		GridData gd = new GridData();
+		gd.horizontalSpan = span;
+		composite.setLayoutData(gd);
 		
-				
 		addFragmentsButton = new Button(composite, SWT.CHECK);
 		addFragmentsButton.setText(PDEPlugin.getResourceString("ImportWizard.SecondPage.addFragments")); //$NON-NLS-1$
 		addFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

@@ -114,10 +114,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		createTablePart(container);
 		createImportPart(container);
 
-		Composite options = createComputationsOption(container);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		options.setLayoutData(gd);
+		createComputationsOption(container, 2);
 
 		addFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -146,7 +143,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 					PDEPlugin.getResourceString(TablePart.KEY_DESELECT_ALL)});
 		tablePart.createControl(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 200;
 		gd.widthHint = 225;
 		tablePart.getControl().setLayoutData(gd);
 		

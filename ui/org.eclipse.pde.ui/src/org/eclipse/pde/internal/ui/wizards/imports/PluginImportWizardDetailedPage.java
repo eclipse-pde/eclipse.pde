@@ -75,11 +75,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		createButtonArea(container);
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		updateCount();
-		Composite options = createComputationsOption(container);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		options.setLayoutData(gd);
-		
+		createComputationsOption(container, 3);		
 		addViewerListeners();
 		
 		initialize();
@@ -127,7 +123,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 225;
-		gd.heightHint = 200;
 		table.setLayoutData(gd);
 
 		fAvailableListViewer = new TableViewer(table);
@@ -150,9 +145,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		Composite container = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
-		layout.marginHeight = 30;
 		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		gd.verticalIndent = 15;
+		container.setLayoutData(gd);
 		
 		Button button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.existing")); //$NON-NLS-1$
@@ -173,9 +169,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);
-		
-		new Label(container, SWT.NONE);
-		//new Label(container, SWT.NONE);
 		
 		button = new Button(container, SWT.PUSH);
 		button.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.add")); //$NON-NLS-1$

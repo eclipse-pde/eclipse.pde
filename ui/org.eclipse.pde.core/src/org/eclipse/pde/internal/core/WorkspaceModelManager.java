@@ -287,6 +287,9 @@ public class WorkspaceModelManager
 					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
 				} else {
 					loadModel(((IBundlePluginModelBase)model).getExtensionsModel(), true);
+					// no need to fire any notifications if the plugin.xml/fragment.xml
+					// of a bundle is modified.
+					return;
 				}
 			} else {
 				loadModel(model, true);
