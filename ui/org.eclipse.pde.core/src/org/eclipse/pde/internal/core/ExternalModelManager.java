@@ -65,7 +65,13 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 
 	public ExternalModelManager() {
-		loadModels(new NullProgressMonitor());
+		//Moved to lazy loading due to reentry issues
+		//loadModels(new NullProgressMonitor());
+	}
+	
+	private void ensureLoaded() {
+		if (initialized==false)
+			loadModels(new NullProgressMonitor());
 	}
 
 	public void addModelProviderListener(IModelProviderListener listener) {
@@ -80,8 +86,13 @@ public class ExternalModelManager implements IExternalModelManager {
 		}
 		return result;
 	}
+	
+	public  void enableAll() {
+		enableAll(true);
+	}
 
-	public void enableAll() {
+	private void enableAll(boolean loadIfNeeded) {
+		if (loadIfNeeded) ensureLoaded();
 		for (int i = 0; i < models.size(); i++)
 			((IPluginModel)models.get(i)).setEnabled(true);
 			
@@ -111,6 +122,7 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 
 	public IPlugin findPlugin(String id) {
+		ensureLoaded();
 		for (int i = 0; i < models.size(); i++) {
 			IPlugin plugin = ((IPluginModel)models.get(i)).getPlugin();
 			if (plugin.getId().equals(id))
@@ -127,6 +139,7 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 
 	public IFragmentModel[] getFragmentModels() {
+		ensureLoaded();
 		return (IFragmentModel[]) fmodels.toArray(
 			new IFragmentModel[fmodels.size()]);
 	}
@@ -136,6 +149,7 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 
 	public IFragment[] getFragmentsFor(String pluginID, String pluginVersion) {
+		ensureLoaded();
 		ArrayList result = new ArrayList();
 
 		for (int i = 0; i < fmodels.size(); i++) {
@@ -154,6 +168,7 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 
 	public IPluginModelBase[] getAllModels() {
+		ensureLoaded();
 		IPluginModelBase[] allModels =
 			new IPluginModelBase[models.size() + fmodels.size()];
 		System.arraycopy(getPluginModels(), 0, allModels, 0, models.size());
@@ -168,6 +183,7 @@ public class ExternalModelManager implements IExternalModelManager {
 	}
 	
 	public IPluginModelBase[] getAllEnabledModels() {
+		ensureLoaded();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < models.size(); i++) {
 			IPluginModelBase model = (IPluginModelBase) models.get(i);
@@ -184,10 +200,12 @@ public class ExternalModelManager implements IExternalModelManager {
 	
 
 	public IPluginModel[] getPluginModels() {
+		ensureLoaded();
 		return (IPluginModel[]) models.toArray(new IPluginModel[models.size()]);
 	}
 
 	public boolean hasEnabledModels() {
+		ensureLoaded();
 		for (int i = 0; i < models.size(); i++) {
 			if (((IPluginModel)models.get(i)).isEnabled())
 				return true;
@@ -199,7 +217,7 @@ public class ExternalModelManager implements IExternalModelManager {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
-			enableAll();
+			enableAll(false);
 		else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			Vector list = createSavedList(saved);
 			for (int i = 0; i < models.size(); i++) {
@@ -219,7 +237,6 @@ public class ExternalModelManager implements IExternalModelManager {
 		String[] pluginPaths =
 			PluginPathFinder.getPluginPaths(
 				pref.getString(ICoreConstants.PLATFORM_PATH));
-		EclipseHomeInitializer.resetEclipseHomeVariables();
 
 		if (pref.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS)
 			  && !Platform.isRunningOSGi())
@@ -228,6 +245,7 @@ public class ExternalModelManager implements IExternalModelManager {
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initializeAllModels();
 		initialized=true;
+		EclipseHomeInitializer.resetEclipseHomeVariables();
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {
@@ -271,6 +289,7 @@ public class ExternalModelManager implements IExternalModelManager {
 		}
 		
 		PDECore.getDefault().savePluginPreferences();
+		initialized=false;
 	}
 	
 }
