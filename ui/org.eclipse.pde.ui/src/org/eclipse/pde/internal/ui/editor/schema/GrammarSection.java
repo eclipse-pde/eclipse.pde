@@ -179,8 +179,8 @@ public class GrammarSection extends PDEFormSection {
 			ISchemaElement[] elements = schema.getResolvedElements();
 			for (int i = 0; i < elements.length; i++) {
 				ISchemaElement element = elements[i];
-				if (element == sourceElement)
-					continue;
+				//if (element == sourceElement)
+					//continue;
 				refMenu.add(new NewReferenceAction(sourceElement, object, element));
 			}
 			submenu.add(refMenu);

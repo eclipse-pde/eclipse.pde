@@ -273,7 +273,7 @@ public class DescriptionSection extends PDEFormSection {
 		if (element instanceof ISchemaAttribute) {
 			eobj = element.getParent();
 		}
-		sourceViewer.setEditable(eobj.getName().equals("extension")==false);
+		//sourceViewer.setEditable(eobj.getName().equals("extension")==false);
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
