@@ -16,7 +16,6 @@ import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.*;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -31,30 +30,28 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		return PDEPlugin.getDefault().getInstallURL();
 	}
 	
-	public URL getTemplateLocation() {		
+	public URL getTemplateLocation() {
 		try {
-			URL url = getInstallURL();
-			url = Platform.asLocalURL(url);
-			File dir = new File(url.getFile());
 			String[] candidates = getDirectoryCandidates();
 			for (int i = 0; i < candidates.length; i++) {
-				if (new File(dir, candidates[i]).exists())
-					return new URL(url, candidates[i]);
+				if (PDEPlugin.getDefault().getBundle().getEntry(candidates[i]) != null) {
+					URL candidate = new URL(getInstallURL(), candidates[i]);
+					return candidate;
+				}
 			}
 		} catch (MalformedURLException e) {
-		} catch (IOException e) {
 		}
 		return null;
 	}
-	
+
 	private String[] getDirectoryCandidates() {
 		String version = model.getPluginBase().getTargetVersion();
 		if ("3.0".equals(version)) //$NON-NLS-1$
-			return new String[] {"templates_3.0" + File.separator + getSectionId()}; //$NON-NLS-1$
+			return new String[] { "templates_3.0" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if ("3.1".equals(version)) //$NON-NLS-1$
-			return new String[] {"templates_3.1" + File.separator + getSectionId(), //$NON-NLS-1$
-								 "templates_3.0" + File.separator + getSectionId()};	 //$NON-NLS-1$
-		return new String[] {"templates" + File.separator + getSectionId()};  //$NON-NLS-1$
+			return new String[] { "templates_3.1" + "/" + getSectionId() + "/", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"templates_3.0" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] { "templates" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/* (non-Javadoc)

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -239,13 +243,57 @@ public abstract class AbstractTemplateSection
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
 
-		File templateDirectory = getTemplateDirectory();
-		if (templateDirectory == null || !templateDirectory.exists())
+		URL locationUrl = getTemplateLocation();
+		if (locationUrl == null) {
 			return;
-		generateFiles(templateDirectory, project, true, false, monitor);
+		}
+		try {
+			locationUrl = Platform.resolve(locationUrl);
+			locationUrl = Platform.asLocalURL(locationUrl);
+		} catch (IOException e) {
+			return;
+		}
+		if ("file".equals(locationUrl.getProtocol())) { //$NON-NLS-1$
+			File templateDirectory = new File(locationUrl.getFile());
+			if (!templateDirectory.exists())
+				return;
+			generateFiles(templateDirectory, project, true, false, monitor);
+		} else if ("jar".equals(locationUrl.getProtocol())) { //$NON-NLS-1$
+			String file = locationUrl.getFile();
+			int exclamation = file.indexOf('!');
+			if (exclamation < 0)
+				return;
+			URL fileUrl = null;
+			try {
+				fileUrl = new URL(file.substring(0, exclamation));
+			} catch (MalformedURLException mue) {
+				return;
+			}
+			File pluginJar = new File(fileUrl.getFile());
+			if (!pluginJar.exists())
+				return;
+			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
+			IPath path = new Path(templateDirectory);
+			ZipFile zipFile = null;
+			try {
+				zipFile = new ZipFile(pluginJar);
+				generateFiles(zipFile, path, project, true, false, monitor);
+			} catch (ZipException ze) {
+			} catch (IOException ioe) {
+			} finally {
+				if (zipFile != null) {
+					try {
+						zipFile.close();
+					} catch (IOException e) {
+					}
+				}
+			}
+
+		}
 		monitor.subTask(""); //$NON-NLS-1$
 		monitor.worked(1);
 	}
+	
 	/**
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
@@ -331,23 +379,6 @@ public abstract class AbstractTemplateSection
 		return extension;
 	}
 
-	private File getTemplateDirectory() {
-		try {
-			URL location = getTemplateLocation();
-			if (location == null)
-				return null;
-			URL url = Platform.resolve(location);
-			url = Platform.asLocalURL(url);
-			if (url != null) {
-				String name = url.getFile();
-				return new File(name);
-			}
-		} catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
-
 	private void generateFiles(File src, IContainer dst, boolean firstLevel,
 			boolean binary, IProgressMonitor monitor) throws CoreException {
 		File[] members = src.listFiles();
@@ -381,7 +412,94 @@ public abstract class AbstractTemplateSection
 				if (isOkToCreateFile(member)) {
 					if (firstLevel)
 						binary = false;
-					copyFile(member, dst, binary, monitor);
+					InputStream in = null;
+					try {
+						in = new FileInputStream(member);
+						copyFile(member.getName(), in, dst, binary, monitor);
+					} catch (IOException ioe) {
+					} finally {
+						if (in != null)
+							try {
+								in.close();
+							} catch (IOException ioe2) {
+							}
+					}
+				}
+			}
+		}
+	}
+
+	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst,
+			boolean firstLevel, boolean binary, IProgressMonitor monitor)
+			throws CoreException {
+		int pathLength = path.segmentCount();
+		// Immidiate children
+		Set childZipEntries = new HashSet(); // "dir/" or "dir/file.java"
+
+		for (Enumeration zipEntries = zipFile.entries(); zipEntries
+				.hasMoreElements();) {
+			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+			IPath entryPath = new Path(zipEntry.getName());
+			if (entryPath.segmentCount() <= pathLength) {
+				// ancestor or current directory
+				continue;
+			}
+			if (!path.isPrefixOf(entryPath)) {
+				// not a descendant
+				continue;
+			}
+			if (entryPath.segmentCount() == pathLength + 1) {
+				childZipEntries.add(zipEntry);
+			} else {
+				ZipEntry dirEntry = new ZipEntry(entryPath.uptoSegment(
+						pathLength + 1).addTrailingSeparator().toString());
+				childZipEntries.add(dirEntry);
+			}
+		}
+
+		for (Iterator it = childZipEntries.iterator(); it.hasNext();) {
+			ZipEntry zipEnry = (ZipEntry) it.next();
+			String name = new Path(zipEnry.getName()).lastSegment().toString();
+			if (zipEnry.isDirectory()) {
+				IContainer dstContainer = null;
+
+				if (firstLevel) {
+					binary = false;
+					if (name.equals("java")) { //$NON-NLS-1$
+						IFolder sourceFolder = getSourceFolder(monitor);
+						dstContainer = generateJavaSourceFolder(sourceFolder,
+								monitor);
+					} else if (name.equals("bin")) { //$NON-NLS-1$
+						binary = true;
+						dstContainer = dst;
+					}
+				}
+				if (dstContainer == null) {
+					if (isOkToCreateFolder(new File(path.toFile(), name)) == false)
+						continue;
+					String folderName = getProcessedString(name, name);
+					dstContainer = dst.getFolder(new Path(folderName));
+				}
+				if (dstContainer instanceof IFolder && !dstContainer.exists())
+					((IFolder) dstContainer).create(true, true, monitor);
+				generateFiles(zipFile, path.append(name), dstContainer, false,
+						binary, monitor);
+			} else {
+				if (isOkToCreateFile(new File(path.toFile(), name))) {
+					if (firstLevel)
+						binary = false;
+					InputStream in = null;
+					try {
+						in = zipFile.getInputStream(zipEnry);
+						copyFile(name, in, dst, binary, monitor);
+					} catch (IOException ioe) {
+					} finally {
+						if (in != null)
+							try {
+								in.close();
+							} catch (IOException ioe2) {
+							}
+					}
 				}
 			}
 		}
@@ -408,16 +526,15 @@ public abstract class AbstractTemplateSection
 		return project.getFolder(path);
 	}
 
-	private void copyFile(File file, IContainer dst, boolean binary,
+	private void copyFile(String fileName, InputStream input, IContainer dst, boolean binary,
 			IProgressMonitor monitor) throws CoreException {
-		String targetFileName = getProcessedString(file.getName(), file
-				.getName());
+		String targetFileName = getProcessedString(fileName, fileName);
 
 		monitor.subTask(targetFileName);
 		IFile dstFile = dst.getFile(new Path(targetFileName));
 
 		try {
-			InputStream stream = getProcessedStream(file, binary);
+			InputStream stream = getProcessedStream(fileName, input, binary);
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
@@ -455,9 +572,8 @@ public abstract class AbstractTemplateSection
 		return buffer.toString();
 	}
 
-	private InputStream getProcessedStream(File file, boolean binary)
+	private InputStream getProcessedStream(String fileName, InputStream stream, boolean binary)
 			throws IOException, CoreException {
-		FileInputStream stream = new FileInputStream(file);
 		if (binary)
 			return stream;
 
@@ -520,7 +636,7 @@ public abstract class AbstractTemplateSection
 						replacementMode = false;
 						String key = keyBuffer.toString();
 						String value = key.length() == 0 ? "$" //$NON-NLS-1$
-								: getReplacementString(file.getName(), key);
+								: getReplacementString(fileName, key);
 						outBuffer.append(value);
 						keyBuffer.delete(0, keyBuffer.length());
 					} else {
@@ -539,7 +655,6 @@ public abstract class AbstractTemplateSection
 				}
 			}
 		}
-		stream.close();
 		return new ByteArrayInputStream(outBuffer.toString().getBytes(project.getDefaultCharset()));
 	}
 

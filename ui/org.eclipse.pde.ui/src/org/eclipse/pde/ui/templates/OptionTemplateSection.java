@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
-import java.io.File;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -100,8 +99,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public URL getTemplateLocation() {
 		URL url = getInstallURL();
 		try {
-			String location = getTemplateDirectory() + File.separator
-					+ getSectionId();
+			String location = getTemplateDirectory() + "/" //$NON-NLS-1$
+					+ getSectionId() + "/"; //$NON-NLS-1$
 			return new URL(url, location);
 		} catch (MalformedURLException e) {
 			return null;

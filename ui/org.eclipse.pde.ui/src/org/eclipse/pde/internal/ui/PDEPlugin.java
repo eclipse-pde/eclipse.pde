@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
-import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
@@ -56,11 +55,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 	
 	public URL getInstallURL() {
-		try {
-			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
-		} catch (IOException e) {
-			return null;
-		}
+		return getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 	}
 	
 	public ResourceBundle getResourceBundle() {
