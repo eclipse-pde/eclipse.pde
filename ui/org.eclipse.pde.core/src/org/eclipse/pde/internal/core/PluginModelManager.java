@@ -178,9 +178,12 @@ public class PluginModelManager implements IAdaptable {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
 				IPluginBase plugin = model.getPluginBase();
-				ModelEntry entry = (ModelEntry)entries.get(plugin.getId());
-				delta.addEntry(entry, PluginModelDelta.CHANGED);
-				changedPlugins.add(plugin);
+				String id = plugin.getId();
+				if (id != null) {
+					ModelEntry entry = (ModelEntry)entries.get(plugin.getId());
+					delta.addEntry(entry, PluginModelDelta.CHANGED);
+					changedPlugins.add(plugin);
+				}
 			}
 		}
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]));
