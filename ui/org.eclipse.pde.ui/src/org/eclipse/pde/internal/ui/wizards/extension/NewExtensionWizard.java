@@ -55,6 +55,8 @@ public class NewExtensionWizard extends NewWizard {
 		
 	}
 	public boolean performFinish() {
+		if (pointPage.canFinish())
+			return pointPage.finish();
 		return true;
 	}
 
