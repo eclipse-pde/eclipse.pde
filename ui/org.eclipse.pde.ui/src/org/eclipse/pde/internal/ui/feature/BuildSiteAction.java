@@ -31,7 +31,7 @@ import org.eclipse.ui.*;
 public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConstants {
 	
 	private ISiteBuildModel fBuildModel;
-	private IFile siteXML;
+	private IFile fSiteXML;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -202,11 +202,11 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 			siteProject.getFolder(
 				PDECore.SITEBUILD_DIR + "/" + PDECore.SITEBUILD_TEMP_FOLDER);
 		try {
+			if (fSiteXML != null)
+				fSiteXML.touch(null);			
 			if (tempFolder.exists()) {
 				tempFolder.delete(true, false, null);
 			}
-			if (siteXML != null)
-				siteXML.touch(null);			
 			siteProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
 		}
@@ -220,8 +220,8 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null && obj instanceof IFile) {
-				siteXML = (IFile)obj;
-				IProject project = siteXML.getProject();
+				fSiteXML = (IFile)obj;
+				IProject project = fSiteXML.getProject();
 				IWorkspaceModelManager manager =
 					PDECore.getDefault().getWorkspaceModelManager();
 				IResource buildFile =
@@ -302,7 +302,7 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 	}
 	
 	private void deleteLogDestination() {
-		IFolder folder = siteXML.getProject().getFolder("logs");
+		IFolder folder = fSiteXML.getProject().getFolder("logs");
 		if (folder.exists()) {
 			try {
 				folder.delete(true, null);
@@ -312,7 +312,7 @@ public class BuildSiteAction implements IObjectActionDelegate, IPreferenceConsta
 	}
 	
 	private IFolder getLogDestination() {
-		IFolder folder = siteXML.getProject().getFolder("logs");
+		IFolder folder = fSiteXML.getProject().getFolder("logs");
 		if (!folder.exists()) {
 			try {
 				CoreUtility.createFolder(folder, true, true, null);
