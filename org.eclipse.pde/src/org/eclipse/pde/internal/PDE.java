@@ -37,18 +37,24 @@ public class PDE extends Plugin {
 		PLUGIN_ID + "." + "UpdateSiteBuilder"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Shared instance
-	private static PDE inst;
+	private static PDE fInstance;
+	
+	private BundleContext fBundleContext;
+	
 	// Resource bundle
-	private ResourceBundle resourceBundle;
+	private ResourceBundle fResourceBundle;
 
 	public PDE() {
-		inst = this;
+		fInstance = this;
 	}
-	
+	public BundleContext getBundleContext(){
+		return fBundleContext;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
+		fBundleContext = context;
 		super.start(context);
 		CompilerFlags.initializeDefaults();
 	}
@@ -58,18 +64,19 @@ public class PDE extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		inst = null;
-		resourceBundle = null;
+		fInstance = null;
+		fResourceBundle = null;
+		fBundleContext = null;
 	}
 
 	public ResourceBundle getResourceBundle() {
 		try {
-			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
+			if (fResourceBundle == null)
+				fResourceBundle = ResourceBundle.getBundle("org.eclipse.pde.internal.pderesources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
-			resourceBundle = null;
+			fResourceBundle = null;
 		}
-		return resourceBundle;
+		return fResourceBundle;
 	}
 	
 	public URL getInstallURL() {
@@ -108,7 +115,7 @@ public class PDE extends Plugin {
 	}
 	
 	public static PDE getDefault() {
-		return inst;
+		return fInstance;
 	}
 
 	public static String getFormattedMessage(String key, String[] args) {

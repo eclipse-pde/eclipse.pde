@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,27 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (!file.exists())
 			file = project.getFile("fragment.xml"); //$NON-NLS-1$
 		
-		if (file.exists())
+		if (file.exists()) {
 			checkFile(file, monitor);
+		} else {	
+			IFile manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+			if (manifestFile.exists())
+				checkManifestFileOnly(manifestFile, monitor);
+		}	
+	}
+
+	private void checkManifestFileOnly(IFile file, IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+		String message = PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
+		monitor.subTask(message);
+
+		BundleErrorReporter reporter = new BundleErrorReporter(file);
+		if (reporter != null) {
+			reporter.validateContent(monitor);
+			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+		}
+		monitor.done();
 	}
 
 	private void checkFile(IFile file, IProgressMonitor monitor) {
@@ -54,8 +73,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		IFile bundleManifest = file.getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		XMLErrorReporter reporter = null;
+		BundleErrorReporter bundleReporter = null;
 		if (bundleManifest.exists()) {
 			reporter = new ExtensionsErrorReporter(file);
+			bundleReporter = new BundleErrorReporter(bundleManifest);
 		} else if (file.getName().equals("plugin.xml")) { //$NON-NLS-1$
 			reporter = new PluginErrorReporter(file);
 		} else if (file.getName().equals("fragment.xml")){ //$NON-NLS-1$
@@ -64,6 +85,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (reporter != null) {
 			ValidatingSAXParser.parse(file, reporter);
 			reporter.validateContent(monitor);
+			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
+		}
+		if (bundleReporter != null) {
+			bundleReporter.validateContent(monitor);
 			monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		}
 		monitor.done();
