@@ -700,7 +700,7 @@ public class LogView extends ViewPart implements ILogListener {
     private void initializeMemento() {
         if (fMemento.getString(P_USE_LIMIT) == null)
             fMemento.putString(P_USE_LIMIT, "true"); //$NON-NLS-1$
-        if (fMemento.getInteger(P_LOG_LIMIT) == null);
+        if (fMemento.getInteger(P_LOG_LIMIT) == null)
             fMemento.putInteger(P_LOG_LIMIT, 50);
         if (fMemento.getString(P_LOG_INFO) == null)
             fMemento.putString(P_LOG_INFO, "true"); //$NON-NLS-1$
