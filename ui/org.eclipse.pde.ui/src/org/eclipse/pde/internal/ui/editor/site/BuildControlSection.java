@@ -452,6 +452,15 @@ public class BuildControlSection extends PDEFormSection {
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */
 	public boolean canPaste(Clipboard clipboard) {
-		return (clipboard.getContents(TextTransfer.getInstance()) != null);
+		TransferData[] types = clipboard.getAvailableTypes();
+		Transfer[] transfers =
+			new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+		for (int i = 0; i < types.length; i++) {
+			for (int j = 0; j < transfers.length; j++) {
+				if (transfers[j].isSupportedType(types[i]))
+					return true;
+			}
+		}
+		return false;
 	}
 }

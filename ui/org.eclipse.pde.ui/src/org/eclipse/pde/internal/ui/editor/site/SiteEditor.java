@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.ui.*;
 
@@ -190,12 +191,18 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	}
 	protected boolean hasKnownTypes() {
 		try {
-			Object data =
-				getClipboard().getContents(TextTransfer.getInstance());
-			return (data != null);
+			TransferData[] types = clipboard.getAvailableTypes();
+			Transfer[] transfers =
+				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			for (int i = 0; i < types.length; i++) {
+				for (int j = 0; j < transfers.length; j++) {
+					if (transfers[j].isSupportedType(types[i]))
+						return true;
+				}
+			}
 		} catch (SWTError e) {
-			return false;
 		}
+		return false;
 	}
 	protected boolean isModelCorrect(Object model) {
 		return model != null ? ((ISiteModel) model).isValid() : false;

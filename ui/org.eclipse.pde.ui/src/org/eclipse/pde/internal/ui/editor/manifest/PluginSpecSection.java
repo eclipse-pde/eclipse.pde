@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.*;
@@ -404,7 +405,16 @@ public void update(Object input) {
  * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
  */
 public boolean canPaste(Clipboard clipboard) {
-	return (clipboard.getContents(TextTransfer.getInstance()) != null);
+	TransferData[] types = clipboard.getAvailableTypes();
+	Transfer[] transfers =
+		new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+	for (int i = 0; i < types.length; i++) {
+		for (int j = 0; j < transfers.length; j++) {
+			if (transfers[j].isSupportedType(types[i]))
+				return true;
+		}
+	}
+	return false;
 }
 
 }
