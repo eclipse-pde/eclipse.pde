@@ -264,7 +264,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			}
 
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_TEMP_FOLDER, fBuildTempLocation + "/temp.folder"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_FEATURE_TEMP_FOLDER, fBuildTempLocation + "/destination"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 			fAntBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -395,6 +394,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 								|| filename.equals(PLUGIN_POST_PROCESSING)) {
 								children[i].delete();
 						}
+					} else if (children[i].getName().equals("temp.folder")) { //$NON-NLS-1$
+						CoreUtility.deleteContent(children[i]);
 					}
 				}
 			}

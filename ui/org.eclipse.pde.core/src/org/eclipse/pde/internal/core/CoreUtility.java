@@ -90,15 +90,17 @@ public class CoreUtility {
 	}
 
 	public static void deleteContent(File curr) {
-		if (curr.isDirectory()) {
-			File[] children = curr.listFiles();
-			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					deleteContent(children[i]);
+		if (curr.exists()) {
+			if (curr.isDirectory()) {
+				File[] children = curr.listFiles();
+				if (children != null) {
+					for (int i = 0; i < children.length; i++) {
+						deleteContent(children[i]);
+					}
 				}
 			}
+			curr.delete();
 		}
-		curr.delete();
 	}
 
 
