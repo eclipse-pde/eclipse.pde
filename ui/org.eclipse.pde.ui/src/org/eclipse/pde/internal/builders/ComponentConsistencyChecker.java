@@ -111,7 +111,6 @@ private void checkFile(IFile file, IProgressMonitor monitor) {
 		}
 	}
 	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
-	reporter.reportErrors();
 	monitor.done();
 }
 private boolean isManifestFile(IFile file) {

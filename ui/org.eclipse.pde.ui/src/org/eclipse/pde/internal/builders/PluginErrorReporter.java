@@ -65,9 +65,6 @@ public void reportWarning(String message) {
 	addMarker(message, -1, IMarker.SEVERITY_WARNING, false);
 }
 
-public void reportErrors() {
-	//addFileMarkers();
-}
 public void warning(SAXParseException exception) throws SAXException {
    addMarker(exception, IMarker.SEVERITY_WARNING, false);
 }

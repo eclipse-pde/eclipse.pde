@@ -128,7 +128,6 @@ private void compileFile(IFile file, IProgressMonitor monitor) {
 		PDEPlugin.logException(e);
 	}
 	monitor.subTask(PDEPlugin.getResourceString(BUILDERS_UPDATING));
-	reporter.reportErrors();
 	monitor.done();
 }
 private void compileSchemasIn(IFolder folder, IProgressMonitor monitor)

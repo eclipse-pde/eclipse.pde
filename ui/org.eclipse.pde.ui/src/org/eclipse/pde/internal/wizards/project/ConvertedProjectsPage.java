@@ -111,13 +111,13 @@ public static void convertProject(IProject project, IProgressMonitor monitor)
 	else {
 		createManifestFile(file, monitor);
 	}
-	IPath jarsPath = project.getFullPath().append("plugin.jars");
-	IFile jarsFile = project.getWorkspace().getRoot().getFile(jarsPath);
-	if (jarsFile.exists()) {
+	IPath buildPath = project.getFullPath().append("build.properties");
+	IFile buildFile = project.getWorkspace().getRoot().getFile(buildPath);
+	if (buildFile.exists()) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getEditorRegistry().setDefaultEditor(
-			jarsFile,
-			PDEPlugin.JARS_EDITOR_ID);
+			buildFile,
+			PDEPlugin.BUILD_EDITOR_ID);
 	}
 	PDEPlugin.registerPlatformLaunchers(project);
 }

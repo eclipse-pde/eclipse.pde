@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.internal.base.model.plugin.*;
 import java.util.*;
 import org.eclipse.pde.internal.*;
+import org.apache.xerces.utils.QName;
 
 
 public abstract class AbstractPluginModelBase extends AbstractModel implements IPluginModelBase {

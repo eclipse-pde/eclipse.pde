@@ -16,11 +16,13 @@ import org.eclipse.core.runtime.Status;
 
 public abstract class AbstractParser extends DefaultHandler {
 	public static final int PARSE_PROBLEM = 99;
-	
+
 	private static final String KEY_INTERNAL_STACK = "parse.internalStack";
 	private static final String KEY_UNKNOWN_TOP_ELEMENT = "parse.unknownTopElement";
+	private static final String KEY_UNKNOWN_ELEMENT = "parse.unknownElement";
 	private static final String KEY_ERROR = "parse.error";
-	private static final String KEY_ERROR_NAME_LINE_COLUMN = "parse.errorNameLineColumn";
+	private static final String KEY_ERROR_NAME_LINE_COLUMN =
+		"parse.errorNameLineColumn";
 
 	// Current State Information
 	Stack stateStack = new Stack();
@@ -37,10 +39,11 @@ public abstract class AbstractParser extends DefaultHandler {
 	}
 
 	// Valid States
-	private final int IGNORED_ELEMENT_STATE = 0;
-	private final int INITIAL_STATE = 1;
+	private static final int IGNORED_ELEMENT_STATE = 0;
+	private static final int INITIAL_STATE = 1;
+	private static final int DESCRIPTION_STATE = 2;
 
-	private IModel model;
+	protected IModel model;
 
 	public AbstractParser(IModel model) {
 		super();
@@ -49,10 +52,6 @@ public abstract class AbstractParser extends DefaultHandler {
 		parser.setDTDHandler(this);
 		parser.setEntityResolver(this);
 		parser.setErrorHandler(this);
-	}
-	
-	protected IModel getModel() {
-		return model;
 	}
 
 	private static void initializeParser() {
@@ -70,6 +69,7 @@ public abstract class AbstractParser extends DefaultHandler {
 	protected abstract boolean canAcceptText(int state);
 	protected abstract void acceptText(String text);
 	protected abstract void handleErrorStatus(IStatus status);
+	protected abstract void handleEndState(int state, String elementName);
 
 	public void characters(char[] ch, int start, int length) {
 		int state = ((Integer) stateStack.peek()).intValue();
@@ -84,18 +84,24 @@ public abstract class AbstractParser extends DefaultHandler {
 	public void endDocument() {
 	}
 
-	protected abstract void handleEndState(int state, String elementName);
-
 	public void endElement(String uri, String elementName, String qName) {
 		int state = ((Integer) stateStack.peek()).intValue();
 
-		if (state == IGNORED_ELEMENT_STATE) {
-			stateStack.pop();
-		} else if (state == INITIAL_STATE) {
-			// shouldn't get here
-			internalError(PDEPlugin.getFormattedMessage(KEY_INTERNAL_STACK, elementName));
-		} else
-			handleEndState(state, elementName);
+		switch (state) {
+			case IGNORED_ELEMENT_STATE :
+				stateStack.pop();
+				break;
+			case DESCRIPTION_STATE :
+				if (elementName.equals("description"))
+					stateStack.pop();
+				break;
+			case INITIAL_STATE :
+				// shouldn't get here
+				internalError(PDEPlugin.getFormattedMessage(KEY_INTERNAL_STACK, elementName));
+				break;
+			default :
+				handleEndState(state, elementName);
+		}
 	}
 
 	public void error(SAXParseException ex) {
@@ -107,13 +113,20 @@ public abstract class AbstractParser extends DefaultHandler {
 		throw ex;
 	}
 
-	public void handleInitialState(String elementName, Attributes attributes) {
+	protected void handleInitialState(String elementName, Attributes attributes) {
 		if (elementName.equals(getDocumentElementName())) {
 			stateStack.push(new Integer(getDocumentStateIndex()));
 		} else {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(PDEPlugin.getFormattedMessage(KEY_UNKNOWN_TOP_ELEMENT, elementName));
+			internalError(
+				PDEPlugin.getFormattedMessage(KEY_UNKNOWN_TOP_ELEMENT, elementName));
 		}
+	}
+
+	public void handleDescriptionState(String elementName, Attributes attributes) {
+		// We ignore all elements (if there are any)
+		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+		internalError(PDEPlugin.getFormattedMessage(KEY_UNKNOWN_ELEMENT, elementName));
 	}
 
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
@@ -139,12 +152,7 @@ public abstract class AbstractParser extends DefaultHandler {
 						Integer.toString(ex.getColumnNumber()),
 						ex.getMessage()});
 		handleErrorStatus(
-			new Status(
-				IStatus.WARNING,
-				PDEPlugin.getPluginId(),
-				PARSE_PROBLEM,
-				msg,
-				ex));
+			new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PARSE_PROBLEM, msg, ex));
 	}
 
 	static String replace(String s, String from, String to) {
@@ -170,7 +178,8 @@ public abstract class AbstractParser extends DefaultHandler {
 			handleInitialState(elementName, attributes);
 		} else {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(PDEPlugin.getFormattedMessage(KEY_UNKNOWN_TOP_ELEMENT, elementName));
+			internalError(
+				PDEPlugin.getFormattedMessage(KEY_UNKNOWN_TOP_ELEMENT, elementName));
 		}
 	}
 
@@ -183,11 +192,17 @@ public abstract class AbstractParser extends DefaultHandler {
 		handleState(state, elementName, attributes);
 	}
 
-	public void warning(SAXParseException ex) {	
+	public void warning(SAXParseException ex) {
 		logStatus(ex);
 	}
-	
+
 	private void internalError(String message) {
-		handleErrorStatus(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PARSE_PROBLEM, message, null));
+		handleErrorStatus(
+			new Status(
+				IStatus.WARNING,
+				PDEPlugin.getPluginId(),
+				PARSE_PROBLEM,
+				message,
+				null));
 	}
 }
