@@ -32,10 +32,13 @@ public class LogSessionPropertyPage extends PropertyPage {
 				container,
 				SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		text.setEditable(false);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 300;
+		gd.heightHint = 300;
 		// defect 17008
 		if (session != null && session.getSessionData() != null)
 			text.setText(session.getSessionData());
-		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+		text.setLayoutData(gd);
 		return container;
 	}
 }

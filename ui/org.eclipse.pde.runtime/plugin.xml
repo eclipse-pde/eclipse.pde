@@ -10,6 +10,7 @@
    <runtime>
       <library name="pdert.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.pde.internal.runtime"/>
       </library>
    </runtime>
 <!-- Required plugins -->
@@ -19,8 +20,8 @@
    </requires>
 
 
-<!-- Extension points -->
 <!-- Extensions -->
+<!-- Extension points -->
    <extension
          point="org.eclipse.ui.views">
       <category

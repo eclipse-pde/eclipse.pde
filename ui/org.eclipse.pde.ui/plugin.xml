@@ -9,6 +9,7 @@
    <runtime>
       <library name="pdeui.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.pde.internal.ui,org.eclipse.pde.ui"/>
       </library>
    </runtime>
 <!-- Required plugins -->

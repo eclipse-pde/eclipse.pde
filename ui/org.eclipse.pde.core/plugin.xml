@@ -9,6 +9,7 @@
    <runtime>
       <library name="pdecore.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.pde.core,org.eclipse.pde.internal.core"/>
       </library>
    </runtime>
    <requires>
