@@ -1,11 +1,11 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
@@ -66,15 +66,22 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		private String[] source;
 		private String[] output;
 		private String[] extraClasspath;
-
+		private String resolvedName;
+		
 		protected JAR(String name, String[] source, String[] output, String[] extraClasspath) {
 			this.name = name;
 			this.source = source;
 			this.output = output;
 			this.extraClasspath = extraClasspath;
 		}
-		protected String getName() {
-			return name;
+		protected String getName(boolean resolved) {
+			if (! resolved) 
+				return name;
+			
+			if (resolvedName==null)
+				resolvedName = replaceVariables(name);
+				
+			return resolvedName;
 		}
 		protected String[] getSource() {
 			return source;
@@ -148,7 +155,7 @@ protected void addSelf(PluginModel model, JAR jar, List classpath, String locati
 		if (libraries != null) {
 			for (int i = 0; i < libraries.length; i++) {
 				String libraryName = libraries[i].getName();
-				if (jar.getName().equals(libraryName))
+				if (jar.getName(false).equals(libraryName))
 					continue;
 	
 				boolean isSource = (modelProperties.getProperty(PROPERTY_SOURCE_PREFIX + libraryName) != null);
@@ -165,7 +172,7 @@ protected void addSelf(PluginModel model, JAR jar, List classpath, String locati
 		// otherwise we add all the predecessor jars
 		String[] order = Utils.getArrayFromString(jarOrder);
 		for (int i = 0; i < order.length; i++) {
-			if (order[i].equals(jar.getName()))
+			if (order[i].equals(jar.getName(false)))
 				break;
 			addDevEntries(model, location, classpath, (String[]) Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
 			addPathAndCheck(order[i], classpath);
@@ -543,7 +550,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	List jarNames = new ArrayList(availableJars.length);
 	Map jars = new HashMap(availableJars.length);
 	for (int i = 0; i < availableJars.length; i++)
-		jars.put(availableJars[i].getName(), availableJars[i]);
+		jars.put(availableJars[i].getName(false), availableJars[i]);
 	// try to put the jars in a correct compile order
 	String jarOrder = (String) getBuildProperties(model).get(PROPERTY_JAR_ORDER);
 	if (jarOrder != null) {
@@ -552,7 +559,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 			JAR jar = (JAR) jars.get(order[i]);
 			if (jar == null)
 				continue;
-			String name = jar.getName();
+			String name = jar.getName(false);
 			jarNames.add(name);
 			generateJARTarget(script, getClasspath(model, jar), jar);
 			generateSRCTarget(script, jar);
@@ -561,7 +568,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	}
 	for (Iterator iterator = jars.values().iterator(); iterator.hasNext();) {
 		JAR jar = (JAR) iterator.next();
-		String name = jar.getName();
+		String name = jar.getName(false);
 		jarNames.add(name);
 		generateJARTarget(script, getClasspath(model, jar), jar);
 		generateSRCTarget(script, jar);
@@ -581,7 +588,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
 		String jarName = (String) iter.next();
 		String srcName = getSRCName(jarName);
-		script.printAvailableTask(tab, srcName, getSRCLocation(jarName));
+		script.printAvailableTask(tab, srcName, replaceVariables(getSRCLocation(jarName)));
 		script.printAntCallTask(tab, srcName, null, null);
 	}
 	script.printTargetEnd(--tab);
@@ -599,9 +606,9 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 protected void generateJARTarget(AntScript script, String classpath, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
-	String name = jar.getName();
-	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, name, Policy.bind("build.plugin.jar", name));  //$NON-NLS-1$
-	String destdir = getTempJARFolderLocation(name);
+	String name = jar.getName(false);
+	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, jar.getName(true), Policy.bind("build.plugin.jar", name));  //$NON-NLS-1$
+	String destdir = getTempJARFolderLocation(jar.getName(true));
 	script.printProperty(tab, "destdir", destdir); //$NON-NLS-1$
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printMkdirTask(tab, destdir);
@@ -623,7 +630,7 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 		fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null); //$NON-NLS-1$
 	}
 	script.printCopyTask(tab, null, destdir, fileSets);
-	String jarLocation = getJARLocation(name);
+	String jarLocation = getJARLocation(jar.getName(true));
 	script.printMkdirTask(tab, new Path(jarLocation).removeLastSegments(1).toString());
 	script.printJarTask(tab, jarLocation, destdir);
 	script.printDeleteTask(tab, destdir, null, null);
@@ -640,15 +647,15 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException {
 	int tab = 1;
 	script.println();
-	String name = jar.getName();
+	String name = jar.getName(false);
 	String srcName = getSRCName(name);
-	script.printTargetDeclaration(tab++, srcName, TARGET_INIT, null, srcName, null);
+	script.printTargetDeclaration(tab++, srcName, TARGET_INIT, null, replaceVariables(name), null);
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {
 		fileSets[i] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
 	}
-	String srcLocation = getSRCLocation(name);
+	String srcLocation = replaceVariables(getSRCLocation(name));
 	script.printMkdirTask(tab, new Path(srcLocation).removeLastSegments(1).toString());
 	script.printZipTask(tab, srcLocation, null, false, null, false, fileSets);
 	script.printTargetEnd(--tab);

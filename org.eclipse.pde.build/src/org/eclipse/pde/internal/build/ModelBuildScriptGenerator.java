@@ -1,11 +1,11 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
+ * Contributors: 
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
@@ -110,7 +110,7 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	JAR[] availableJars = extractJars(properties);
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getId()));  //$NON-NLS-1$
 	for (int i = 0; i < availableJars.length; i++) {
-		String jarName = availableJars[i].getName();
+		String jarName = availableJars[i].getName(true);
 		script.printDeleteTask(tab, null, getJARLocation(jarName), null);
 		script.printDeleteTask(tab, null, getSRCLocation(jarName), null);
 	}
@@ -136,7 +136,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
-		String name = availableJars[i].getName();
+		String name = availableJars[i].getName(true);
 		IPath destination = baseDestination.append(name).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(destination)) {
 			script.printMkdirTask(tab, destination.toString());
@@ -179,7 +179,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
-		String jar = availableJars[i].getName();
+		String jar = availableJars[i].getName(true);
 		IPath destination = baseDestination.append(jar).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(destination)) {
 			script.printMkdirTask(tab, destination.toString());
@@ -215,7 +215,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
-		String jar = availableJars[i].getName();
+		String jar = availableJars[i].getName(true);
 		IPath dest = destination.append(jar).removeLastSegments(1); // remove the jar name
 		if (!destinations.contains(dest)) {
 			script.printMkdirTask(tab, dest.toString());
