@@ -22,6 +22,8 @@ public class PDECore extends Plugin {
 		new QualifiedName(PLUGIN_ID, "imported");
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
+	
+	public static final String CLASSPATH_CONTAINER_ID = PLUGIN_ID+".requiredPlugins";
 
 	// Shared instance
 	private static PDECore inst;

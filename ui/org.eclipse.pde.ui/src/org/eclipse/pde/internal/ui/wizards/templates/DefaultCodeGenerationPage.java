@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.util.CoreUtility;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.wizards.PluginPathUpdater;
 import org.eclipse.pde.internal.ui.wizards.project.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.SWT;
@@ -28,6 +27,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.PDE;
 
@@ -182,13 +182,13 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		});
 	}
 	private void copyTargetPluginImports(IPlugin targetPlugin, Vector missing) {
-		missing.addElement(new PluginPathUpdater.CheckedPlugin(targetPlugin, true));
+		missing.addElement(new PluginPathUpdater.PluginEntry(targetPlugin));
 		IPluginImport[] imports = targetPlugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
 			IPlugin importPlugin = PDECore.getDefault().findPlugin(iimport.getId());
 			if (importPlugin != null)
-				missing.addElement(new PluginPathUpdater.CheckedPlugin(importPlugin, true));
+				missing.addElement(new PluginPathUpdater.PluginEntry(importPlugin));
 		}
 	}
 	private Button createCheck(Composite parent, String label, boolean state) {
@@ -629,17 +629,17 @@ public class DefaultCodeGenerationPage extends WizardPage {
 		} else {
 			IPlugin plugin = PDECore.getDefault().findPlugin(RUNTIME_ID);
 			if (plugin != null) {
-				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
+				missing.addElement(new PluginPathUpdater.PluginEntry(plugin));
 				result.addElement(RUNTIME_ID);
 			}
 			plugin = PDECore.getDefault().findPlugin(RESOURCES_ID);
 			if (plugin != null) {
-				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
+				missing.addElement(new PluginPathUpdater.PluginEntry(plugin));
 				result.addElement(RESOURCES_ID);
 			}
 			plugin = PDECore.getDefault().findPlugin(WORKBENCH_ID);
 			if (plugin != null) {
-				missing.addElement(new PluginPathUpdater.CheckedPlugin(plugin, true));
+				missing.addElement(new PluginPathUpdater.PluginEntry(plugin));
 				result.addElement(WORKBENCH_ID);
 			}
 		}
@@ -651,7 +651,7 @@ public class DefaultCodeGenerationPage extends WizardPage {
 			updateBuildpath = BuildpathPreferencePage.isPluginProjectUpdate();
 
 		if (updateBuildpath) {
-			PluginPathUpdater updater = new PluginPathUpdater(project, missing.iterator());
+			PluginPathUpdater updater = new PluginPathUpdater(missing.iterator());
 			IClasspathEntry[] libraries = updater.getClasspathEntries();
 			BuildPathUtil.setBuildPath(project, data.structureData, libraries, monitor);
 		}

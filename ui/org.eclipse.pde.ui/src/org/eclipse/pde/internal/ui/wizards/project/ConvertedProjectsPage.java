@@ -234,10 +234,10 @@ public class ConvertedProjectsPage extends WizardPage {
 			IPluginImport iimport = imports[i];
 			IPlugin plugin = PDECore.getDefault().findPlugin(iimport.getId());
 			if (plugin != null) {
-				required.add(new PluginPathUpdater.CheckedPlugin(plugin, true));
+				required.add(new PluginPathUpdater.PluginEntry(plugin));
 			}
 		}
-		PluginPathUpdater updater = new PluginPathUpdater(project, required.iterator());
+		PluginPathUpdater updater = new PluginPathUpdater(required.iterator());
 		IClasspathEntry[] oldEntries = javaProject.getRawClasspath();
 		IClasspathEntry[] sourceEntries = updater.getSourceClasspathEntries(model);
 		IClasspathEntry[] entries = updater.getClasspathEntries();

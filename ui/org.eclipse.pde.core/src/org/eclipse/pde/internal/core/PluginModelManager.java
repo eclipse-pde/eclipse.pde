@@ -2,6 +2,8 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
@@ -70,9 +72,21 @@ public class PluginModelManager implements IAdaptable {
 		if (entry==null) return null;
 		return entry.getActiveModel();
 	}
+	
+	public ModelEntry findEntry(IProject project) {
+		if (entries==null) initializeTable();
+		IModel model = workspaceManager.getWorkspaceModel(project);
+		if (model==null) return null;
+		if (!(model instanceof IPluginModelBase))
+			return null;
+		IPluginModelBase modelBase = (IPluginModelBase)model;
+		String id = modelBase.getPluginBase().getId();
+		return (ModelEntry)entries.get(id);
+	}
 
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
+		ArrayList changedPlugins = new ArrayList();
 
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
@@ -81,6 +95,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
 				updateTable(plugin.getId(), model, false, delta);
+				changedPlugins.add(plugin);
 			}
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
@@ -90,6 +105,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				IPluginBase plugin = model.getPluginBase();
 				updateTable(plugin.getId(), model, true, delta);
+				changedPlugins.add(plugin);
 			}
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
@@ -100,8 +116,10 @@ public class PluginModelManager implements IAdaptable {
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = (ModelEntry)entries.get(plugin.getId());
 				delta.addEntry(entry, PluginModelDelta.CHANGED);
+				changedPlugins.add(plugin);
 			}
 		}
+		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]));
 		fireDelta(delta);
 	}
 
@@ -117,6 +135,11 @@ public class PluginModelManager implements IAdaptable {
 			entry = new ModelEntry(id);
 			entries.put(id, entry);
 			kind = PluginModelDelta.ADDED;
+			try {
+				entry.updateClasspathContainer(false);
+			}
+			catch (CoreException e) {
+			}
 		}
 		if (added) {
 			if (workspace)
@@ -135,7 +158,23 @@ public class PluginModelManager implements IAdaptable {
 		if (kind==0) kind = PluginModelDelta.CHANGED;
 		delta.addEntry(entry, kind);
 	}
-
+	
+	private void updateAffectedEntries(IPluginBase [] changedPlugins) {
+		// Reset classpath containers for affected entries
+		ModelEntry [] entries = getEntries();
+		
+		for (int i=0; i<entries.length; i++) {
+			ModelEntry entry = entries[i];
+			if (entry.isAffected(changedPlugins)) {
+				try {
+					entry.updateClasspathContainer(true);
+				}
+				catch (CoreException e) {
+				}
+			}
+		}
+	}
+	
 	private void initializeTable() {
 		entries = new Hashtable();
 		IPluginModel[] models = workspaceManager.getWorkspacePluginModels();

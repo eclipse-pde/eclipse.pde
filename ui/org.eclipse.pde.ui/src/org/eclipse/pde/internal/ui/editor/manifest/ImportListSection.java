@@ -342,7 +342,8 @@ public class ImportListSection
 					if (save && getFormPage().getEditor().isDirty()) {
 						getFormPage().getEditor().doSave(monitor);
 					}
-					BuildPathUtil.setBuildPath(model, monitor);
+					boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
+					BuildPathUtil.setBuildPath(model, useContainers, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);

@@ -12,7 +12,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.util.Choice;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.*;
 

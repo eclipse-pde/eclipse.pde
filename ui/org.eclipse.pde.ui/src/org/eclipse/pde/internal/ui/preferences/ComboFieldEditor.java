@@ -10,7 +10,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.SWT;
-import org.eclipse.pde.internal.ui.util.Choice;
+import org.eclipse.pde.internal.core.Choice;
 
 /**
  * @version 	1.0

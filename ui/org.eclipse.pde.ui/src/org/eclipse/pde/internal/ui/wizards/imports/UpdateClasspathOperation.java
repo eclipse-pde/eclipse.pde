@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.eclipse.pde.internal.ui.TargetPlatform;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
@@ -16,6 +15,7 @@ import org.eclipse.jdt.core.*;
 
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 
 public class UpdateClasspathOperation implements IWorkspaceRunnable {
 

@@ -265,7 +265,7 @@ public class ExternalPluginsBlock {
 		System.arraycopy(fmodels, 0, all, models.length, fmodels.length);
 		return all;
 	}
-	public void save() {
+	public boolean save() {
 		String saved = "";
 		IPluginModelBase[] models = getAllModels();
 		if (tablePart.getSelectionCount() == models.length) {
@@ -285,7 +285,7 @@ public class ExternalPluginsBlock {
 		PDECore.getDefault().getSettings().setValue(
 			ICoreConstants.CHECKED_PLUGINS,
 			saved);
-		computeDelta();
+		return computeDelta();
 	}
 	private Vector createSavedList(String saved) {
 		Vector result = new Vector();
@@ -296,7 +296,7 @@ public class ExternalPluginsBlock {
 		return result;
 	}
 
-	void computeDelta() {
+	boolean computeDelta() {
 		int type = 0;
 		IModel[] addedArray = null;
 		IModel[] removedArray = null;
@@ -316,6 +316,7 @@ public class ExternalPluginsBlock {
 				new ModelProviderEvent(registry, type, addedArray, removedArray, changedArray);
 			registry.fireModelProviderEvent(event);
 		}
+		return type != 0;
 	}
 
 }

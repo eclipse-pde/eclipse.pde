@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.ui.BuildPathUtil;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.core.runtime.IAdaptable;
@@ -120,11 +121,12 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		IPluginModelBase[] models)
 		throws CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATE), models.length);
+		boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = models[i];
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-				setProjectBuildpath(model, subMonitor);
+				setProjectBuildpath(model, useContainers, subMonitor);
 				if (monitor.isCanceled()) break;
 			}
 		} finally {
@@ -134,13 +136,14 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 
 	private static void setProjectBuildpath(
 		IPluginModelBase model,
+		boolean useContainers,
 		IProgressMonitor monitor)
 		throws CoreException {
 		IPluginBase pluginBase = model.getPluginBase();
 		String message = PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
 		monitor.beginTask(message, 1);
 		try {
-			BuildPathUtil.setBuildPath(model, monitor);
+			BuildPathUtil.setBuildPath(model, useContainers, monitor);
 			monitor.worked(1);
 		} finally {
 			monitor.done();

@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.PDE;
 

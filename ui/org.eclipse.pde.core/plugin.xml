@@ -30,5 +30,12 @@
             class="org.eclipse.pde.internal.core.EclipseHomeInitializer">
       </classpathVariableInitializer>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.eclipse.pde.internal.core.RequiredPluginsInitializer"
+            id="org.eclipse.pde.core.requiredPlugins">
+      </classpathContainerInitializer>
+   </extension>
 
 </plugin>

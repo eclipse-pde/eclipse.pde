@@ -6,7 +6,8 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
@@ -83,7 +84,7 @@ public class TargetPlatformPreferencePage
 		gd.horizontalSpan = 3;
 		gd.horizontalIndent = 15;
 		otherRadio.setLayoutData(gd);
-		
+
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				modeChanged(otherRadio.getSelection());
@@ -99,7 +100,8 @@ public class TargetPlatformPreferencePage
 		homeText.setLayoutData(gd);
 
 		browseButton = new Button(container, SWT.PUSH);
-		browseButton.setText(PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
+		browseButton.setText(
+			PDEPlugin.getResourceString(KEY_PLATFORM_HOME_BUTTON));
 		browseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(browseButton);
 		browseButton.addSelectionListener(new SelectionAdapter() {
@@ -109,7 +111,9 @@ public class TargetPlatformPreferencePage
 		});
 
 		Control block = pluginsBlock.createContents(container);
-		gd = new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL);
+		gd =
+			new GridData(
+				GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
 		load();
@@ -143,7 +147,7 @@ public class TargetPlatformPreferencePage
 		otherRadio.setSelection(useOther);
 		updateEnableState(useOther);
 	}
-	
+
 	private void updateEnableState(boolean useOther) {
 		homeLabel.setEnabled(useOther);
 		homeText.setEnabled(useOther);
@@ -165,13 +169,13 @@ public class TargetPlatformPreferencePage
 		if (reloadNeeded)
 			pluginsBlock.handleReload();
 	}
-	
+
 	private void handleBrowse() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		if (homeText.getText().length()>0)
+		if (homeText.getText().length() > 0)
 			dialog.setFilterPath(homeText.getText());
 		String newPath = dialog.open();
-		if (newPath!=null) 
+		if (newPath != null)
 			homeText.setText(newPath);
 	}
 
@@ -182,15 +186,17 @@ public class TargetPlatformPreferencePage
 		load(mode.equals(ICoreConstants.VALUE_USE_OTHER), path);
 	}
 
-	private void store() {
+	private boolean store() {
 		String mode =
-			useOther ? ICoreConstants.VALUE_USE_OTHER : ICoreConstants.VALUE_USE_THIS;
+			useOther
+				? ICoreConstants.VALUE_USE_OTHER
+				: ICoreConstants.VALUE_USE_THIS;
 		String path = homeText.getText();
 
 		CoreSettings settings = PDECore.getDefault().getSettings();
 		settings.setValue(ICoreConstants.TARGET_MODE, mode);
 		settings.setValue(ICoreConstants.PLATFORM_PATH, path);
-		pluginsBlock.save();
+		return pluginsBlock.save();
 	}
 
 	/**
@@ -200,7 +206,7 @@ public class TargetPlatformPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	public void performDefaults() {
 		loadDefaults();
 		super.performDefaults();
@@ -211,16 +217,45 @@ public class TargetPlatformPreferencePage
 	 */
 	public boolean performOk() {
 		CoreSettings settings = PDECore.getDefault().getSettings();
-		String oldEclipseHome = settings.getString(ICoreConstants.PLATFORM_PATH);
+		String oldEclipseHome =
+			settings.getString(ICoreConstants.PLATFORM_PATH);
 		final String newEclipseHome = getPlatformPath();
+		boolean eclipseHomeSet = false;
 		if (!oldEclipseHome.equals(newEclipseHome)) {
 			// home changed -update Java variable
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
-					ExternalModelManager.setEclipseHome(newEclipseHome, monitor);
+					ExternalModelManager.setEclipseHome(
+						newEclipseHome,
+						monitor);
 				}
 			};
-			ProgressMonitorDialog pm = new ProgressMonitorDialog(getControl().getShell());
+			ProgressMonitorDialog pm =
+				new ProgressMonitorDialog(getControl().getShell());
+			try {
+				pm.run(true, false, op);
+				eclipseHomeSet = true;
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+		boolean buildNeeded = store();
+		if (buildNeeded && !eclipseHomeSet) {
+			IRunnableWithProgress op = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+					PDEPlugin.getWorkspace().build(
+						IncrementalProjectBuilder.FULL_BUILD,
+						monitor);
+					}
+					catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			};
+			ProgressMonitorDialog pm =
+				new ProgressMonitorDialog(getControl().getShell());
 			try {
 				pm.run(true, false, op);
 			} catch (InterruptedException e) {
@@ -228,7 +263,6 @@ public class TargetPlatformPreferencePage
 				PDEPlugin.logException(e);
 			}
 		}
-		store();
 		boolean value = super.performOk();
 		PDEPlugin.getDefault().savePluginPreferences();
 		return value;

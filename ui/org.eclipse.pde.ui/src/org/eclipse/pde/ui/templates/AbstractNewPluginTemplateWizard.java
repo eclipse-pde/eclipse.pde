@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
@@ -17,6 +16,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
+import org.eclipse.pde.internal.ui.preferences.BuildpathPreferencePage;
 import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
@@ -232,7 +232,8 @@ public abstract class AbstractNewPluginTemplateWizard
 		IProgressMonitor monitor)
 		throws CoreException {
 		try {
-			BuildPathUtil.setBuildPath(model, monitor);
+			boolean useContainers = BuildpathPreferencePage.getUseClasspathContainers();
+			BuildPathUtil.setBuildPath(model, useContainers, monitor);
 		} catch (JavaModelException e) {
 			String message = e.getMessage();
 			IStatus status =
