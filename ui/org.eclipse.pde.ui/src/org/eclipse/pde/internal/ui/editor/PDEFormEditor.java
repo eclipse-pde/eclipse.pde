@@ -157,6 +157,7 @@ public abstract class PDEFormEditor extends FormEditor
 		String pageToShow = computeInitialPageId();
 		if (pageToShow != null)
 			setActivePage(pageToShow);
+		updateTitle();
 	}
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
