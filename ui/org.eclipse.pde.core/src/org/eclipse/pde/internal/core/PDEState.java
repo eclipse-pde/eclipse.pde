@@ -70,8 +70,6 @@ public class PDEState {
 			//whose bundle-classpath is specified in the eclipse.properties file 
 			// in the osgi folder
 			manifest.put(Constants.BUNDLE_CLASSPATH, "core.jar, console.jar, osgi.jar, resolver.jar, defaultAdaptor.jar, eclipseAdaptor.jar");
-		} else if (id.equals("org.eclipse.swt")) {
-			manifest.put(Constants.BUNDLE_CLASSPATH, "$ws$/swt.jar");
 		}
 		return addBundle(manifest, bundleLocation);
 	}
