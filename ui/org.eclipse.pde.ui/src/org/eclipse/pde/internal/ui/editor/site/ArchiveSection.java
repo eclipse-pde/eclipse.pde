@@ -74,7 +74,7 @@ public class ArchiveSection extends PDESection {
 				case 1 :
 					return archive.getURL();
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public Image getColumnImage(Object obj, int index) {
 			return null;
@@ -88,9 +88,9 @@ public class ArchiveSection extends PDESection {
 		getSection()
 				.setText(
 						PDEPlugin
-								.getResourceString("SiteEditor.ArchiveSection.header"));
+								.getResourceString("SiteEditor.ArchiveSection.header")); //$NON-NLS-1$
 		getSection().setDescription(
-				PDEPlugin.getResourceString("SiteEditor.ArchiveSection.instruction"));
+				PDEPlugin.getResourceString("SiteEditor.ArchiveSection.instruction")); //$NON-NLS-1$
 		createClient(getSection(), formPage.getManagedForm().getToolkit());
 	}
 	/*
@@ -128,7 +128,7 @@ public class ArchiveSection extends PDESection {
 		container
 				.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fAddButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.add"), SWT.PUSH);
+				.getResourceString("SiteEditor.add"), SWT.PUSH); //$NON-NLS-1$
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -136,7 +136,7 @@ public class ArchiveSection extends PDESection {
 			}
 		});
 		fEditButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.edit"), SWT.PUSH);
+				.getResourceString("SiteEditor.edit"), SWT.PUSH); //$NON-NLS-1$
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -147,7 +147,7 @@ public class ArchiveSection extends PDESection {
 			}
 		});
 		fRemoveButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString("SiteEditor.remove"), SWT.PUSH);
+				.getResourceString("SiteEditor.remove"), SWT.PUSH); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -165,10 +165,10 @@ public class ArchiveSection extends PDESection {
 		fTable.setLayoutData(gd);
 		TableColumn col1 = new TableColumn(fTable, SWT.NULL);
 		col1.setText(PDEPlugin
-				.getResourceString("SiteEditor.ArchiveSection.col1"));
+				.getResourceString("SiteEditor.ArchiveSection.col1")); //$NON-NLS-1$
 		TableColumn col2 = new TableColumn(fTable, SWT.NULL);
 		col2.setText(PDEPlugin
-				.getResourceString("SiteEditor.ArchiveSection.col2"));
+				.getResourceString("SiteEditor.ArchiveSection.col2")); //$NON-NLS-1$
 		TableLayout tlayout = new TableLayout();
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
 		tlayout.addColumnData(new ColumnWeightData(50, 200));
@@ -257,7 +257,7 @@ public class ArchiveSection extends PDESection {
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
 				mng.add(new Action(PDEPlugin
-						.getResourceString("SiteEditor.remove")) {
+						.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}

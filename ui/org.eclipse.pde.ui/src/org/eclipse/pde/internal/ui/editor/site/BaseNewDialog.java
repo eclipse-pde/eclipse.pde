@@ -115,7 +115,7 @@ public abstract class BaseNewDialog extends StatusDialog {
 					IStatus.OK,
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					"",
+					"", //$NON-NLS-1$
 					null);
 		return okStatus;
 	}

@@ -59,7 +59,7 @@ public class DescriptionSection extends PDESection {
 			}
 		});
 		fDescEntry = new FormEntry(container, toolkit, PDEPlugin
-				.getResourceString("SiteEditor.DescriptionSection.descLabel"),
+				.getResourceString("SiteEditor.DescriptionSection.descLabel"), //$NON-NLS-1$
 				SWT.WRAP | SWT.MULTI);
 		fDescEntry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {

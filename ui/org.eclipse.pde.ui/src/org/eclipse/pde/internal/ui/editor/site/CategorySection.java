@@ -102,7 +102,7 @@ public class CategorySection extends TreeSection {
 			if (element instanceof SiteFeatureAdapter) {
 				ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
 				if (feature.getId() != null && feature.getVersion() != null)
-					return feature.getId() + " (" + feature.getVersion() + ")";
+					return feature.getId() + " (" + feature.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				return feature.getURL();
 			}
 			return super.getText(element);
@@ -115,9 +115,9 @@ public class CategorySection extends TreeSection {
 	}
 	public CategorySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION,
-				new String[]{"New Category..."});
+				new String[]{"New Category..."}); //$NON-NLS-1$
 		//TODO text not translated
-		getSection().setText("Features To Publish");
+		getSection().setText(PDEPlugin.getResourceString("CategorySection.title")); //$NON-NLS-1$
 		getSection()
 				.setDescription(
 						"Categorize the features to facilitate the browsing and searching of the update site.  A feature may appear in 0 or more categories. "); //$NON-NLS-1$
@@ -385,7 +385,7 @@ public class CategorySection extends TreeSection {
 	protected void fillContextMenu(IMenuManager manager) {
 		manager
 				.add(new Action(PDEPlugin
-						.getResourceString("SiteEditor.remove")) {
+						.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}
@@ -394,7 +394,7 @@ public class CategorySection extends TreeSection {
 				manager);
 		manager.add(new Separator());
 		manager.add(new Action(PDEPlugin
-				.getResourceString("SiteEditor.properties")) {
+				.getResourceString("SiteEditor.properties")) { //$NON-NLS-1$
 			public void run() {
 				handleDoubleClick((IStructuredSelection) fCategoryViewer
 						.getSelection());

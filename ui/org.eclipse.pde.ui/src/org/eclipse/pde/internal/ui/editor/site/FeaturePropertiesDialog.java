@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -37,7 +38,7 @@ public class FeaturePropertiesDialog extends BaseNewDialog {
 	 * @see org.eclipse.pde.internal.ui.editor.site.BaseNewDialog#getDialogTitle()
 	 */
 	protected String getDialogTitle() {
-		return "Feature JAR Properties";
+		return PDEPlugin.getResourceString("FeaturePropertiesDialog.title"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.site.BaseNewDialog#getHelpId()
@@ -52,7 +53,7 @@ public class FeaturePropertiesDialog extends BaseNewDialog {
 		ISiteFeature feature = (ISiteFeature)getSiteObject();
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText("URL:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.url")); //$NON-NLS-1$
 		fURLText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
@@ -60,57 +61,57 @@ public class FeaturePropertiesDialog extends BaseNewDialog {
 		setIfDefined(fURLText, feature.getURL());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Id:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.id")); //$NON-NLS-1$
 		fIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fIdText.setEnabled(false);
 		setIfDefined(fIdText, feature.getId());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Version:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.version")); //$NON-NLS-1$
 		fVersionText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fVersionText.setEnabled(false);
 		setIfDefined(fVersionText, feature.getVersion());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Label:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.label")); //$NON-NLS-1$
 		fLabelText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fLabelText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fLabelText, feature.getLabel());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Type:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.type")); //$NON-NLS-1$
 		fTypeText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fTypeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fTypeText, feature.getType());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("O/S:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.os")); //$NON-NLS-1$
 		fOSText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fOSText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fOSText, feature.getOS());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("W/S:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.ws")); //$NON-NLS-1$
 		fWSText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fWSText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fWSText, feature.getWS());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Languages:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.nl")); //$NON-NLS-1$
 		fNLText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fNLText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fNLText, feature.getNL());
 		
 		label = new Label(container, SWT.NONE);
-		label.setText("Architectures:");
+		label.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.arch")); //$NON-NLS-1$
 		fArchText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fArchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setIfDefined(fArchText, feature.getArch());
 		
 		fIsPatch = new Button(container, SWT.CHECK);
-		fIsPatch.setText("Patch");
+		fIsPatch.setText(PDEPlugin.getResourceString("FeaturePropertiesDialog.patch")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIsPatch.setLayoutData(gd);
@@ -134,7 +135,7 @@ public class FeaturePropertiesDialog extends BaseNewDialog {
 	 * @see org.eclipse.pde.internal.ui.editor.site.BaseNewDialog#getEmptyErrorMessage()
 	 */
 	protected String getEmptyErrorMessage() {
-		return "URL is a required attribute";
+		return PDEPlugin.getResourceString("FeaturePropertiesDialog.requiredURL"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.site.BaseNewDialog#execute()

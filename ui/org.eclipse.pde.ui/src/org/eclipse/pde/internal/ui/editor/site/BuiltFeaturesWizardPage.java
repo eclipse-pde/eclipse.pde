@@ -47,7 +47,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	
 	class TablePart extends WizardCheckboxTablePart {
 		public TablePart() {
-			super(PDEPlugin.getResourceString("BuildFeatureWizardPage.label"));
+			super(PDEPlugin.getResourceString("BuildFeatureWizardPage.label")); //$NON-NLS-1$
 		}
 		public void updateCounter(int count) {
 			super.updateCounter(count);
@@ -65,10 +65,10 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 	}
 
 	public BuiltFeaturesWizardPage(ISiteBuildModel model) {
-		super("BuiltFeaturesWizardPage");
+		super("BuiltFeaturesWizardPage"); //$NON-NLS-1$
 		this.model = model;
-		setTitle(PDEPlugin.getResourceString("BuildFeatureWizardPage.title"));
-		setDescription(PDEPlugin.getResourceString("BuildFeatureWizardPage.desc"));
+		setTitle(PDEPlugin.getResourceString("BuildFeatureWizardPage.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("BuildFeatureWizardPage.desc")); //$NON-NLS-1$
 		setPageComplete(false);
 		
 		checkboxTablePart = new TablePart();	
@@ -160,7 +160,7 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 
 	private void doAdd(Object [] candidates, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
-			PDEPlugin.getResourceString("BuildFeatureWizardPage.adding"),
+			PDEPlugin.getResourceString("BuildFeatureWizardPage.adding"), //$NON-NLS-1$
 			candidates.length + 1);
 		ISiteBuild siteBuild = model.getSiteBuild();
 		ISiteBuildFeature[] added = new ISiteBuildFeature[candidates.length];
@@ -173,8 +173,8 @@ public class BuiltFeaturesWizardPage extends WizardPage {
 			added[i] = child;
 			monitor.worked(1);
 		}
-		monitor.subTask("");
-		monitor.setTaskName(PDEPlugin.getResourceString("BuildFeatureWizardPage.updating"));
+		monitor.subTask(""); //$NON-NLS-1$
+		monitor.setTaskName(PDEPlugin.getResourceString("BuildFeatureWizardPage.updating")); //$NON-NLS-1$
 		siteBuild.addFeatures(added);
 		monitor.worked(1);
 	}

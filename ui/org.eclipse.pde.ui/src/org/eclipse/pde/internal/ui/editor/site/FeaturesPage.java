@@ -21,12 +21,12 @@ import org.eclipse.ui.forms.widgets.*;
  * Features page.
  */
 public class FeaturesPage extends PDEFormPage {
-	public static final String PAGE_ID = "features";
+	public static final String PAGE_ID = "features"; //$NON-NLS-1$
 	private FeatureSection featureSection;
 	private CategorySection categorySection;
 	
 	public FeaturesPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEPlugin.getResourceString("SiteEditor.page1"));
+		super(editor, PAGE_ID, PDEPlugin.getResourceString("SiteEditor.page1")); //$NON-NLS-1$
 	}
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();

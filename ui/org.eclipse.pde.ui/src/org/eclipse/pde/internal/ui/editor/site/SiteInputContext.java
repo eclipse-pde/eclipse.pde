@@ -32,7 +32,7 @@ import org.eclipse.ui.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class SiteInputContext extends XMLInputContext {
-	public static final String CONTEXT_ID = "site-context";
+	public static final String CONTEXT_ID = "site-context"; //$NON-NLS-1$
 	private boolean storageModel=false;
 	/**
 	 * @param editor
@@ -130,7 +130,7 @@ public class SiteInputContext extends XMLInputContext {
 		String text = doc.get();
 		try {
 			InputStream stream =
-				new ByteArrayInputStream(text.getBytes("UTF8"));
+				new ByteArrayInputStream(text.getBytes("UTF8")); //$NON-NLS-1$
 			try {
 				model.reload(stream, false);
 			} catch (CoreException e) {

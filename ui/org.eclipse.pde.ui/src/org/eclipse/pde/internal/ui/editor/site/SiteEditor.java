@@ -41,7 +41,7 @@ public class SiteEditor extends MultiSourceEditor {
 		IFile file = input.getFile();
 		IFile siteFile = null;
 		String name = file.getName().toLowerCase();
-		if (name.equals("site.xml")) {
+		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
 		}
 		if (siteFile.exists()) {
@@ -112,7 +112,7 @@ public class SiteEditor extends MultiSourceEditor {
 		File siteFile = null;
 
 		String name = file.getName().toLowerCase();
-		if (name.equals("site.xml")) {
+		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
 		}
 		if (siteFile.exists()) {
@@ -125,7 +125,7 @@ public class SiteEditor extends MultiSourceEditor {
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase();
-		if (name.startsWith("site.xml")) {
+		if (name.startsWith("site.xml")) { //$NON-NLS-1$
 			manager.putContext(input,
 							new SiteInputContext(this, input, true));
 		}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.forms.IManagedForm;
@@ -20,12 +21,12 @@ import org.eclipse.ui.forms.widgets.*;
  * Features page.
  */
 public class ArchivePage extends PDEFormPage {
-	public static final String PAGE_ID = "archives";
+	public static final String PAGE_ID = "archives"; //$NON-NLS-1$
 	private DescriptionSection fDescSection;
 	private ArchiveSection fArchiveSection;
 	
 	public ArchivePage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, "Archives");
+		super(editor, PAGE_ID, "Archives"); //$NON-NLS-1$
 		//TODO translate page title
 	}
 	protected void createFormContent(IManagedForm mform) {
@@ -46,6 +47,6 @@ public class ArchivePage extends PDEFormPage {
 		//WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_SITE_OVERVIEW);
 		//TODO translate page header
-		form.setText("Description and Archives");
+		form.setText(PDEPlugin.getResourceString("ArchivePage.title")); //$NON-NLS-1$
 	}
 }

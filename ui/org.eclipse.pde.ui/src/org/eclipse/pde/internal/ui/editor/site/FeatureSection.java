@@ -44,8 +44,8 @@ public class FeatureSection extends TableSection {
 		super(formPage, 
 				parent,
 				Section.DESCRIPTION,
-				new String[] {PDEPlugin.getResourceString("SiteEditor.add"),
-				PDEPlugin.getResourceString("SiteEditor.buildAll")});
+				new String[] {PDEPlugin.getResourceString("SiteEditor.add"), //$NON-NLS-1$
+				PDEPlugin.getResourceString("SiteEditor.buildAll")}); //$NON-NLS-1$
 		getSection().setText(PDEPlugin
 				.getResourceString("SiteEditor.FeatureSection.header")); //$NON-NLS-1$
 		getSection().setDescription(PDEPlugin
@@ -110,7 +110,7 @@ public class FeatureSection extends TableSection {
 	public void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = fFeaturesViewer.getSelection();
 		if (selection != null && !selection.isEmpty()) {
-			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.publish")) {
+			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.publish")) { //$NON-NLS-1$
 				public void run() {
 					Object[]selected = ((IStructuredSelection)selection).toArray();
 					for (int i = 0; i < selected.length; i++) {
@@ -124,14 +124,14 @@ public class FeatureSection extends TableSection {
 					}
 				}
 			});
-			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.build")) {
+			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.build")) { //$NON-NLS-1$
 				public void run() {
 					List list = ((IStructuredSelection)selection).toList();
 					handleBuild((ISiteBuildFeature[])list.toArray(new ISiteBuildFeature[list.size()]));
 				}
 			});
 			manager.add(new Separator());
-			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.remove")) {
+			manager.add(new Action(PDEPlugin.getResourceString("SiteEditor.remove")) { //$NON-NLS-1$
 				public void run() {
 					doGlobalAction(ActionFactory.DELETE.getId());
 				}
@@ -237,7 +237,7 @@ public class FeatureSection extends TableSection {
 		ISiteFeature sfeature = model.getFactory().createFeature();
 		sfeature.setId(sbfeature.getId());
 		sfeature.setVersion(sbfeature.getVersion());
-		sfeature.setURL(model.getBuildModel().getSiteBuild().getFeatureLocation() + "/" + sbfeature.getId() + "_" + sbfeature.getVersion()+".jar");
+		sfeature.setURL(model.getBuildModel().getSiteBuild().getFeatureLocation() + "/" + sbfeature.getId() + "_" + sbfeature.getVersion()+".jar"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IFeature refFeature = sbfeature.getReferencedFeature();
 		sfeature.setOS(refFeature.getOS());
 		sfeature.setWS(refFeature.getWS());
