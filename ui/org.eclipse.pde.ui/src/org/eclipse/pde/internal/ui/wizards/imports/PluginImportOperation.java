@@ -176,18 +176,18 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					FileSystemStructureProvider.INSTANCE,
 					null,
 					new SubProgressMonitor(monitor, 1));
+				importSource(
+					project,
+					model.getPluginBase(),
+					new Path(pluginDir.getPath()), doImport,
+					new SubProgressMonitor(monitor, 1));
 			} else {
 				linkContent(
 					pluginDir,
 					project,
-					new SubProgressMonitor(monitor, 1));
-
+					new SubProgressMonitor(monitor, 2));
 			}
-			importSource(
-				project,
-				model.getPluginBase(),
-				new Path(pluginDir.getPath()), doImport,
-				new SubProgressMonitor(monitor, 1));
+
 
 			boolean isJavaProject =
 				model.getPluginBase().getLibraries().length > 0;
@@ -330,8 +330,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		boolean doImport)
 		throws CoreException {
 		try {
-			IFile file = project.getFile(srcPath);
+
 			if (doImport) {
+				IFile file = project.getFile(srcPath);
 				FileInputStream fstream = new FileInputStream(srcFile);
 				if (file.exists())
 					file.setContents(fstream, true, false, null);
@@ -340,6 +341,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				fstream.close();
 			}
 			else {
+				IFile file = project.getFile(srcPath);
+				if (!(file.getParent() instanceof IProject)) {
+					// cannot link the file directly - must make
+					// a flat path
+					file = project.getFile(getFlatPath(srcPath));
+				}
 				file.createLink(new Path(srcFile.getPath()), IResource.NONE, null);
 			}
 
@@ -353,6 +360,15 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					e);
 			throw new CoreException(status);
 		}
+	}
+	
+	private String getFlatPath(IPath path) {
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<path.segmentCount(); i++) {
+			if (i>0) buf.append("_");
+			buf.append(path.segment(i));
+		}
+		return buf.toString();
 	}
 
 	private boolean importCrossFragmentSource(
