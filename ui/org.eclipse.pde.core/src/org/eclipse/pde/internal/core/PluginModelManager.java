@@ -18,11 +18,13 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 
 public class PluginModelManager implements IAdaptable {
+	private static final String OSGI_RUNTIME ="org.eclipse.core.runtime.osgi";
 	private IModelProviderListener providerListener;
 	private IExternalModelManager externalManager;
 	private IWorkspaceModelManager workspaceManager;
 	private SearchablePluginsManager searchablePluginsManager;
 	private ArrayList listeners;
+	private boolean osgiRuntime;
 
 	private Hashtable entries;
 
@@ -42,9 +44,11 @@ public class PluginModelManager implements IAdaptable {
 	 */
 
 	public boolean isOSGiRuntime() {
-		return findPlugin("org.eclipse.core.runtime.osgi", null, 0)!=null;
+		if (entries == null)
+			initializeTable();
+		return osgiRuntime;
 	}
-	
+
 	public Object getAdapter(Class key) {
 		return null;
 	}
@@ -170,6 +174,9 @@ public class PluginModelManager implements IAdaptable {
 		if (added && entry == null) {
 			entry = new ModelEntry(this, id);
 			entries.put(id, entry);
+			if (id.equals(OSGI_RUNTIME)) {
+				osgiRuntime=true;
+			}
 			kind = PluginModelDelta.ADDED;
 			try {
 				entry.updateClasspathContainer(false);
@@ -189,6 +196,9 @@ public class PluginModelManager implements IAdaptable {
 			if (entry.isEmpty()) {
 				entries.remove(id);
 				kind = PluginModelDelta.REMOVED;
+				if (id.equals(OSGI_RUNTIME)) {
+					osgiRuntime=false;
+				}
 			}
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
@@ -243,6 +253,9 @@ public class PluginModelManager implements IAdaptable {
 			entry.setWorkspaceModel(model);
 		else
 			entry.setExternalModel(model);
+		if (id.equals(OSGI_RUNTIME)) {
+			osgiRuntime=true;
+		}
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {
