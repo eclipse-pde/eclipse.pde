@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.build;
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
 All rights reserved.   This program and the accompanying materials
