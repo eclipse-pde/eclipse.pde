@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.IWorkspaceModelManager;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -41,6 +42,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
+			IAlternativeRuntimeSupport alt = PDECore.getDefault().getRuntimeSupport();
 
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
@@ -55,7 +57,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null
-					&& WorkspaceModelManager.isJavaPluginProject(project)) {
+				 && alt.isRelevantJavaProject(project)) {
 					IPluginModelBase model = findModelFor(project);
 					if (model != null) {
 						models.add(model);

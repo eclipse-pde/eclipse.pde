@@ -893,6 +893,7 @@ public class OSGiWorkspaceModelManager
 			model.load(stream, outOfSync);
 			stream.close();
 		} catch (CoreException e) {
+			e.printStackTrace();
 			// errors in loading, but we will still
 			// initialize.
 		} catch (IOException e) {
@@ -916,6 +917,7 @@ public class OSGiWorkspaceModelManager
 		// and back during reload - must be able to do it
 		if (model!=null) {
 			loadModel(model);
+			model.fireModelChanged(new ModelChangedEvent(IModelChangedEvent.WORLD_CHANGED, null, null));
 			//bmodel.reset();
 			fireModelsChanged(new IModel[] { bmodel });
 		}

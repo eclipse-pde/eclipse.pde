@@ -235,7 +235,7 @@ public abstract class PluginObject
 	}
 
 	void bindSourceLocation(Node node, Map lineTable) {
-		if (getPluginModel().isReconcilingModel() && XMLCore.NEW_CODE_PATHS) {
+		if (getModel().isReconcilingModel() && XMLCore.NEW_CODE_PATHS) {
 			bindSourceLocationNew(node, lineTable);
 		} else {
 			bindSourceLocationOrig(node, lineTable);

@@ -23,7 +23,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	public String getClassName() {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
-			return bundle.getHeader(IBundle.KEY_PLUGIN);
+			return bundle.getHeader(IBundle.KEY_ACTIVATOR);
 		}
 		return null;
 	}
@@ -35,16 +35,12 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			if (className!=null) {
-				bundle.setHeader(
-						IBundle.KEY_ACTIVATOR,
-						IBundle.COMPATIBILITY_ACTIVATOR);
-				bundle.setHeader(IBundle.KEY_PLUGIN, className);
+				bundle.setHeader(IBundle.KEY_ACTIVATOR, className);
 			}
 			else {
 				bundle.setHeader(
 						IBundle.KEY_ACTIVATOR,
 						null);
-				bundle.setHeader(IBundle.KEY_PLUGIN, null);
 			}
 		}
 	}

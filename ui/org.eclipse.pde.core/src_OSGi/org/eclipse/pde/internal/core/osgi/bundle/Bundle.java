@@ -86,10 +86,7 @@ public class Bundle extends BundleObject implements IBundle {
 	private boolean loadPlugin(IPlugin plugin) {
 		String pluginClass = plugin.getClassName();
 		if (pluginClass != null) {
-			headers.put(
-				KEY_ACTIVATOR,
-				"org.eclipse.core.runtime.compatibility.PluginActivator");
-			headers.put(KEY_PLUGIN, pluginClass);
+			headers.put(KEY_ACTIVATOR, pluginClass);
 			return true;
 		}
 		return false;

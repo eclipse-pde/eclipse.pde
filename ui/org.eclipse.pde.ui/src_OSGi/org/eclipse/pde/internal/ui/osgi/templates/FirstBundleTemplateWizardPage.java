@@ -586,18 +586,18 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 			return;
 		int flags = 0;
 		if (data.isThisCheck())
-			flags |= PluginClassCodeGenerator.F_THIS;
+			flags |= BundleActivatorClassCodeGenerator.F_THIS;
 		if (data.isWorkspaceCheck())
-			flags |= PluginClassCodeGenerator.F_WORKSPACE;
+			flags |= BundleActivatorClassCodeGenerator.F_WORKSPACE;
 		if (data.isBundleCheck())
-			flags |= PluginClassCodeGenerator.F_BUNDLES;
+			flags |= BundleActivatorClassCodeGenerator.F_BUNDLES;
 		if (data.hasPreference())
-			flags |= PluginClassCodeGenerator.F_PREF;
+			flags |= BundleActivatorClassCodeGenerator.F_PREF;
 		String sourceFolder = structureData.getSourceFolderName();
 		IPath folderPath = project.getFullPath().append(sourceFolder);
 		IFolder folder = project.getWorkspace().getRoot().getFolder(folderPath);
-		PluginClassCodeGenerator generator =
-			new PluginClassCodeGenerator(folder, fullyQualifiedClassName, flags);
+		BundleActivatorClassCodeGenerator generator =
+			new BundleActivatorClassCodeGenerator(folder, fullyQualifiedClassName, flags);
 
 		monitor.subTask(
 			PDEPlugin.getFormattedMessage(KEY_CREATING, fullyQualifiedClassName));
@@ -606,9 +606,12 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 	}
 	
 	public IPluginReference [] getDependencies() {
-		IPluginReference [] dependencies = new IPluginReference[2];
+		boolean needActivator = generateMainClass.getSelection();
+		IPluginReference [] dependencies = new IPluginReference[needActivator?3:2];
 		dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
 		dependencies[1] = new PluginReference("org.eclipse.ui", null, 0);
+		if (needActivator)
+			dependencies[2] = new PluginReference("org.eclipse.osgi", null, 0);
 		return dependencies;
 	}
 	

@@ -126,14 +126,14 @@ public abstract class AbstractModel
 		listeners.remove(listener);
 	}
 
-	public void throwParseErrorsException() throws CoreException {
+	public void throwParseErrorsException(Throwable e) throws CoreException {
 		Status status =
 			new Status(
 				IStatus.ERROR,
 				PDECore.getPluginId(),
 				IStatus.OK,
 				PDECore.getResourceString(KEY_ERROR),
-				null);
+				e);
 		throw new CoreException(status);
 	}
 	

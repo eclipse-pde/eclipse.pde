@@ -5,7 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.core;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -75,5 +75,9 @@ public class DefaultRuntimeSupport implements IAlternativeRuntimeSupport {
 			IPath path = new Path(model.getInstallLocation());
 			return path.removeLastSegments(2);
 		}
+	}
+	
+	public boolean isRelevantJavaProject(IProject project) {
+		return WorkspaceModelManager.isJavaPluginProject(project);
 	}
 }

@@ -71,7 +71,7 @@ public abstract class AbstractSiteBuildModel
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
-			throwParseErrorsException();
+			throwParseErrorsException(e);
 		}
 	}
 

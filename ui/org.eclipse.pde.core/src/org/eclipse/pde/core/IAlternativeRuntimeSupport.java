@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -18,5 +19,6 @@ public interface IAlternativeRuntimeSupport {
 	IExternalModelManager getExternalModelManager();
 	IPath getPluginLocation(IPluginModelBase model);
 	IPath getTransientSitePath(IPluginModelBase model);
+	boolean isRelevantJavaProject(IProject project);
 	void shutdown();
 }

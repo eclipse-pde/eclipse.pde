@@ -103,7 +103,7 @@ public class DocumentModel implements IDocumentNode {
 			if (updateStrategy != null) {
 				updateStrategy.run();
 				if (!updateStrategy.isSuccessful()) {
-					fPluginModelBase.throwParseErrorsException();
+					fPluginModelBase.throwParseErrorsException(null);
 				}
 			}
 		}

@@ -5,7 +5,7 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.core.osgi;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase;
@@ -97,5 +97,9 @@ public class OSGiRuntimeSupport implements IAlternativeRuntimeSupport {
 			IPath path = new Path(model.getInstallLocation());
 			return path.removeLastSegments(2);
 		}
+	}
+	public boolean isRelevantJavaProject(IProject project) {
+		return OSGiWorkspaceModelManager.isJavaPluginProject(project) ||
+			OSGiWorkspaceModelManager.isJavaBundleProject(project);
 	}
 }

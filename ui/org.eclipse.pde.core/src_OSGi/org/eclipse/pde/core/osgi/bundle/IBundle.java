@@ -54,7 +54,6 @@ public interface IBundle extends IWritable {
 	String KEY_HOST_BUNDLE = "Host-Bundle";
 
 	String KEY_LEGACY = "Legacy"; //$NON-NLS-1$
-	String KEY_PLUGIN = "Plugin-Class"; //$NON-NLS-1$
 	
 	String COMPATIBILITY_ACTIVATOR = "org.eclipse.core.runtime.compatibility.PluginActivator";
 
@@ -80,8 +79,8 @@ public interface IBundle extends IWritable {
 			KEY_REQUIRE_BUNDLE,
 			KEY_HOST_BUNDLE,
 			KEY_GLOBAL_NAME,
-			KEY_LEGACY,
-			KEY_PLUGIN };
+			KEY_LEGACY
+			};
 
 	String[] COMMA_SEPARATED_KEYS =
 		{
