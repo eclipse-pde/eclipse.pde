@@ -161,6 +161,9 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_LCL_DISABLED, "refresh.gif");
 	public static final ImageDescriptor DESC_REMOVE_ATT_DISABLED = create(PATH_LCL_DISABLED, "remove_att.gif");
 
+	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif");
+	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL_HOVER, "eclipse_launcher_wiz.gif");
+
 	/**
 	 * WIZ
 	 */

@@ -36,8 +36,14 @@ public abstract class PDEFormPage extends EditorPart implements IPDEEditorPage {
 
 public PDEFormPage(PDEMultiPageEditor editor, String title) {
 	this.editor = editor;
-	form = createForm();
-	//form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_WIZ));
+	this.form = createForm();
+	form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_BANNER));
+	setTitle(title);
+}
+
+public PDEFormPage(PDEMultiPageEditor editor, String title, AbstractSectionForm form) {
+	this.editor = editor;
+	this.form = form;
 	form.setHeadingImage(PDEPluginImages.get(PDEPluginImages.IMG_FORM_BANNER));
 	setTitle(title);
 }

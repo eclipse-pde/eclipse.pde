@@ -28,6 +28,7 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.codegen.*;
 import org.eclipse.pde.internal.editor.schema.*;
 import org.eclipse.pde.internal.editor.*;
 

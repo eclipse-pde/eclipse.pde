@@ -129,6 +129,12 @@ public class BuildPathUtil {
 		IClasspathEntry[] entries = new IClasspathEntry[result.size()];
 		result.copyInto(entries);
 
+		IStatus validation =
+				JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
+		if (!validation.isOK()) {
+			throw new CoreException(validation);
+		}
+
 		javaProject.setRawClasspath(entries, monitor);
 	}
 

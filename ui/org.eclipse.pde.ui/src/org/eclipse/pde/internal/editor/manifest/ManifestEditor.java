@@ -28,10 +28,12 @@ import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.pde.internal.wizards.templates.TemplateEditorInput;
 
 public class ManifestEditor
 	extends PDEMultiPageXMLEditor
 	implements IPropertyChangeListener {
+	public static final String TEMPLATE_PAGE = "TemplatePage";
 	public static final String OVERVIEW_PAGE = "OverviewPage";
 	public static final String EXTENSIONS_PAGE = "ExtensionsPage";
 	public static final String RUNTIME_PAGE = "RuntimePage";
@@ -39,6 +41,7 @@ public class ManifestEditor
 	public static final String DEPENDENCIES_PAGE = "DependenciesPage";
 	public static final String SOURCE_PAGE = "SourcePage";
 
+	public static final String KEY_TEMPLATE = "ManifestEditor.TemplatePage.title";
 	public static final String KEY_OVERVIEW = "ManifestEditor.OverviewPage.title";
 	public static final String KEY_DEPENDENCIES =
 		"ManifestEditor.DependenciesPage.title";
@@ -49,6 +52,7 @@ public class ManifestEditor
 	public static final String KEY_EXTENSION_POINTS =
 		"ManifestEditor.ExtensionPointsPage.title";
 	public static final String NO_PLATFORM_HOME = "ManifestEditor.noPlatformHome";
+
 
 	public ManifestEditor() {
 		super();
@@ -128,6 +132,16 @@ public class ManifestEditor
 				PDEPlugin.getResourceString(KEY_EXTENSION_POINTS)));
 		addPage(SOURCE_PAGE, new ManifestSourcePage(this));
 	}
+	
+	private void addTemplatePage(final TemplateEditorInput input) {
+		PDEFormPage parentPage = (PDEFormPage)getPage(OVERVIEW_PAGE);
+		firstPageId = TEMPLATE_PAGE;
+		
+		PDEChildFormPage page = input.createPage(parentPage,
+				PDEPlugin.getResourceString(KEY_TEMPLATE));
+		addPage(TEMPLATE_PAGE, page, 0);
+	}
+	
 	private IPluginModelBase createResourceModel(IFile file) throws CoreException {
 		InputStream stream = null;
 
@@ -193,8 +207,12 @@ public class ManifestEditor
 	public void init(IEditorSite site, IEditorInput input)
 		throws PartInitException {
 		checkPlatformHome();
+		if (input instanceof TemplateEditorInput) {
+			addTemplatePage((TemplateEditorInput)input);
+		}
 		super.init(site, input);
 	}
+	
 	public boolean isFragmentEditor() {
 		return false;
 	}

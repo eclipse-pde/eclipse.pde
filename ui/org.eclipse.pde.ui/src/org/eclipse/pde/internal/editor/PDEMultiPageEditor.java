@@ -79,6 +79,12 @@ public abstract class PDEMultiPageEditor
 		table.put(id, page);
 		pages.addElement(page);
 	}
+	
+	public void addPage(String id, IPDEEditorPage page, int index) {
+		table.put(id, page);
+		pages.add(index, page);
+	}
+	
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionProvider.addSelectionChangedListener(listener);
 	}

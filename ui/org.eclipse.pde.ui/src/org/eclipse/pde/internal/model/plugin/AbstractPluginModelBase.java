@@ -42,6 +42,7 @@ public abstract class AbstractPluginModelBase
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (pluginBase == null) {
 			pluginBase = (PluginBase) createPluginBase();
+			loaded=true;
 		}
 		return pluginBase;
 	}

@@ -22,10 +22,10 @@ public BaseWizardSelectionPage(String name, String label) {
 	this.label = label;
 }
 public void createDescriptionIn(Composite composite) {
-	descriptionText = new Label(composite, SWT.NONE);
-	descriptionText.setLayoutData(
-		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL)); 
+	descriptionText = new Label(composite, SWT.WRAP);
+	descriptionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
 }
+
 protected abstract IWizardNode createWizardNode(WizardElement element);
 public String getLabel() {
 	return label;

@@ -99,7 +99,7 @@ public class ProjectStructurePage extends WizardPage {
 		}
 	}
 
-	private void createProject(IProject project, IProgressMonitor monitor)
+	public static void createProject(IProject project, IProjectProvider provider, IProgressMonitor monitor)
 		throws CoreException {
 		if (project.exists() == false) {
 			CoreUtility.createProject(project, provider.getLocationPath(), monitor);
@@ -121,8 +121,15 @@ public class ProjectStructurePage extends WizardPage {
 			JavaRuntime.setVM(javaProject, install);
 		}
 	}
+	
+	public static void createBuildProperties(
+		IProject project,
+		IPluginStructureData data,
+		IProgressMonitor monitor) throws CoreException {
+		createBuildProperties(project, data.getRuntimeLibraryName(), data.getSourceFolderName());
+	}
 
-	private void createBuildProperties(
+	public static void createBuildProperties(
 		IProject project,
 		String library,
 		String source)
@@ -224,16 +231,15 @@ public class ProjectStructurePage extends WizardPage {
 	}
 	public boolean finish() {
 		final IProject project = provider.getProject();
-		final String library = libraryText.getText();
-		final String source = sourceText.getText();
+		final IPluginStructureData data = getStructureData();
 
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					String message = PDEPlugin.getResourceString(KEY_CREATING);
 					monitor.beginTask(message, 1);
-					createProject(project, monitor);
-					createBuildProperties(project, library, source);
+					createProject(project, provider, monitor);
+					createBuildProperties(project, data, monitor);
 					monitor.worked(1);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);

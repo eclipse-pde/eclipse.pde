@@ -24,6 +24,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.codegen.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.model.plugin.*;
 import org.eclipse.pde.model.build.*;

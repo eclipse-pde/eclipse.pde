@@ -189,30 +189,30 @@ public boolean finish() {
 	String point = currentPoint.getFullId();
 
 	try {
+		if (!ensureImportExists(pluginBase, currentPoint)) return false;
 		IPluginExtension extension = pluginBase.getModel().getFactory().createExtension();
 		extension.setName(name);
 		extension.setPoint(point);
 		if (id != null)
 			extension.setId(id);
 		pluginBase.add(extension);
-		ensureImportExists(pluginBase, currentPoint);
 	} catch (CoreException e) {
 		PDEPlugin.logException(e);
 	}
 	return true;
 }
 
-private void ensureImportExists(IPluginBase pluginBase, IPluginExtensionPoint point) throws CoreException {
+private boolean ensureImportExists(IPluginBase pluginBase, IPluginExtensionPoint point) throws CoreException {
 	IPlugin thisPlugin = getTargetPlugin(pluginBase);
 	IPlugin exPlugin = getTargetPlugin(point.getPluginBase());
-	if (thisPlugin==null || exPlugin==null) return;
+	if (thisPlugin==null || exPlugin==null) return true;
 	
 	String exId = exPlugin.getId();
 	// Check if it is us
-	if (exId.equals(thisPlugin.getId())) return;
+	if (exId.equals(thisPlugin.getId())) return true;
 	//Check if it is implicit
 	if (exId.equals("org.eclipse.core.boot") ||
-		exId.equals("org.eclipse.core.runtime")) return;
+		exId.equals("org.eclipse.core.runtime")) return true;
 	// We must have it
 	
 	IPluginImport [] iimports = thisPlugin.getImports();
@@ -220,7 +220,7 @@ private void ensureImportExists(IPluginBase pluginBase, IPluginExtensionPoint po
 		IPluginImport iimport = iimports[i];
 		if (iimport.getId().equals(exId)) {
 			// found it
-			return;
+			return true;
 		}
 	}
 	// Don't have it - warn
@@ -231,6 +231,7 @@ private void ensureImportExists(IPluginBase pluginBase, IPluginExtensionPoint po
 	MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(),
 					PDEPlugin.getResourceString(KEY_MISSING_TITLE),
 					message);
+	return false;
 }
 
 private IPlugin getTargetPlugin(IPluginBase base) {

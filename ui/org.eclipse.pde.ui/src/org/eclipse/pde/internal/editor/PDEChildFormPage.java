@@ -16,6 +16,12 @@ public PDEChildFormPage(PDEFormPage parentPage, String title) {
 	super(parentPage.getEditor(), title);
 	this.parentPage = parentPage;
 }
+
+public PDEChildFormPage(PDEFormPage parentPage, String title, AbstractSectionForm form) {
+	super(parentPage.getEditor(), title, form);
+	this.parentPage = parentPage;
+}
+
 public IContentOutlinePage createContentOutlinePage() {
 	return null;
 }
