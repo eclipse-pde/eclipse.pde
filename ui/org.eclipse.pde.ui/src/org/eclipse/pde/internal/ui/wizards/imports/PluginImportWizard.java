@@ -81,6 +81,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
+		boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
+		final ArrayList modelIds = new ArrayList();
 		try {
 			final IPluginModelBase[] models = page2.getSelectedModels();
 			if (models.length == 0) {
@@ -94,10 +96,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			page1.storeSettings(true);
 			page2.storeSettings(true);
 			
-			final ArrayList modelIds = new ArrayList();
-			
-			boolean isAutoBuilding = PDEPlugin.getWorkspace().isAutoBuilding();
-
 			if (isAutoBuilding) {
 				IWorkspace workspace = PDEPlugin.getWorkspace();
 				IWorkspaceDescription description = workspace.getDescription();
@@ -114,24 +112,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					modelIds);
 			getContainer().run(true, true, op);
 
-			if (isAutoBuilding) {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
-			
-			UpdateClasspathAction.run(
-				true,
-				getContainer(),
-				getWorkspaceCounterparts(modelIds));
-				
-			if (isAutoBuilding) {
-				IWorkspace workspace = PDEPlugin.getWorkspace();
-				IWorkspaceDescription description = workspace.getDescription();
-				description.setAutoBuilding(true);
-				workspace.setDescription(description);
-			}
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -140,9 +120,25 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 			return true;
+		} finally {
+			try {
+				if (isAutoBuilding) {
+					IWorkspace workspace = PDEPlugin.getWorkspace();
+					IWorkspaceDescription description = workspace.getDescription();
+					description.setAutoBuilding(true);
+					workspace.setDescription(description);
+				}
+				
+				UpdateClasspathAction.run(
+					true,
+					getContainer(),
+					getWorkspaceCounterparts(modelIds));
+			} catch (CoreException e) {
+			}
 		}
 		return true;
 	}
+	
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
 		final boolean doImport,
