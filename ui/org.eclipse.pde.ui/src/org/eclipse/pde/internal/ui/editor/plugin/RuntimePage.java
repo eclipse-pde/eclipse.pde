@@ -38,12 +38,24 @@ public class RuntimePage extends PDEFormPage {
 		layout.makeColumnsEqualWidth = true;
         form.getBody().setLayout(layout);
 		
-		mform.addPart(new LibrarySection(this, form.getBody()));		
-		mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
+        if (isBundle()) {
+            mform.addPart(new ExportPackageSection(this, form.getBody()));
+            mform.addPart(new ExportPackageVisibilitySection(this, form.getBody()));
+            mform.addPart(new LibrarySection(this, form.getBody()));
+        } else {
+            mform.addPart(new LibrarySection(this, form.getBody()));		
+            mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
+        }
 		
 		if (((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel())
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 	}
+    
+    private boolean isBundle() {
+        return getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
+    }
+
+
 }

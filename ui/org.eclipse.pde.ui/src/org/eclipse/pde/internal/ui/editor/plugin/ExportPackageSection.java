@@ -13,13 +13,13 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.*;
 
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -38,27 +38,27 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.*;
 
-public class ImportPackageSection extends TableSection implements IModelChangedListener {
+public class ExportPackageSection extends TableSection implements IModelChangedListener {
 
     private static final int ADD_INDEX = 0;
     private static final int REMOVE_INDEX = 1;
     private static final int PROPERTIES_INDEX = 2;
     
-	class ImportPackageContentProvider extends DefaultTableProvider {
+	class ExportPackageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			if (fPackages == null)
-				createImportObjects();
+				createExportObjects();
 			return fPackages.values().toArray();
 		}
 
-		private void createImportObjects() {
+		private void createExportObjects() {
 			fPackages = new TreeMap();
 			try {
-				String value = getBundle().getHeader(Constants.IMPORT_PACKAGE);
+				String value = getBundle().getHeader(getExportedPackageHeader());
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.IMPORT_PACKAGE, value);
 					for (int i = 0; i < elements.length; i++) {
-						ImportPackageObject p = new ImportPackageObject(elements[i], getVersionAttribute());
+						ExportPackageObject p = new ExportPackageObject(elements[i], getVersionAttribute());
                         fPackages.put(p.getName(), p);
 					}
 				}
@@ -67,7 +67,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         }
 	}
 
-	class ImportPackageLabelProvider extends LabelProvider implements
+	class ExportPackageLabelProvider extends LabelProvider implements
 			ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
@@ -78,7 +78,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 	}
 
-	class ImportPackageDialogLabelProvider extends LabelProvider {
+	class ExportPackageDialogLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
 			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
@@ -103,7 +103,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     private Action fRemoveAction;
     private Action fPropertiesAction;
 
-	public ImportPackageSection(PDEFormPage page, Composite parent) {
+	public ExportPackageSection(PDEFormPage page, Composite parent) {
 		super(
 				page,
 				parent,
@@ -126,9 +126,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
-		fPackageViewer
-				.setContentProvider(new ImportPackageContentProvider());
-		fPackageViewer.setLabelProvider(new ImportPackageLabelProvider());
+		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
+		fPackageViewer.setLabelProvider(new ExportPackageLabelProvider());
 		fPackageViewer.setSorter(new ViewerSorter() {
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
@@ -142,7 +141,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         });
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		section.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.verticalSpan = 2;
+		section.setLayoutData(gd);
         makeActions();
         
         IBundleModel model = getBundleModel();
@@ -204,16 +205,15 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 	private void handleOpenProperties() {
         Object object = ((IStructuredSelection)fPackageViewer.getSelection()).getFirstElement();
-        ImportPackageObject importObject = (ImportPackageObject)object;
+        ExportPackageObject exportObject = (ExportPackageObject)object;
 
-        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(),importObject);
+        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(),exportObject);
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, -1);
-        dialog.setTitle(importObject.getName());
+        dialog.setTitle(exportObject.getName());
         if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
-            importObject.setOptional(dialog.isOptional());
-            importObject.setVersion(dialog.getVersion());
-            fPackageViewer.refresh(importObject);
+             exportObject.setVersion(dialog.getVersion());
+             fPackageViewer.refresh(exportObject);
          }
     }
 
@@ -221,72 +221,58 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		IStructuredSelection ssel = (IStructuredSelection) fPackageViewer.getSelection();
 		Object[] items = ssel.toArray();
 		fPackageViewer.remove(items);
-		removeImportPackages(items);
+		removeExportPackages(items);
 	}
 
-	/**
-	 * @param items
-	 */
-	private void removeImportPackages(Object[] removed) {
+	private void removeExportPackages(Object[] removed) {
 		for (int k = 0; k < removed.length; k++) {
-			ImportPackageObject p = (ImportPackageObject) removed[k];
+			ExportPackageObject p = (ExportPackageObject) removed[k];
 			fPackages.remove(p.getName());
 		}
-		writeImportPackages();
+		writeExportPackageHeader();
 	}
 
 	private void handleAdd() {
        ElementListSelectionDialog dialog = new ElementListSelectionDialog(
                 PDEPlugin.getActiveWorkbenchShell(), 
-                new ImportPackageDialogLabelProvider());
+                new ExportPackageDialogLabelProvider());
         dialog.setElements(getAvailablePackages());
         dialog.setMultipleSelection(true);
-        dialog.setMessage("Packages exported by other plug-ins:");
+        dialog.setMessage("Available Packages:");
         dialog.setTitle("Package Selection");
         dialog.create();
-        SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			Object[] selected = dialog.getResult();
 			for (int i = 0; i < selected.length; i++) {
-				ExportPackageDescription candidate = (ExportPackageDescription) selected[i];
-				ImportPackageObject p = new ImportPackageObject(candidate, getVersionAttribute());
+				IPackageFragment candidate = (IPackageFragment) selected[i];
+				ExportPackageObject p = new ExportPackageObject(candidate, getVersionAttribute());
                 fPackages.put(p.getName(), p);
                 fPackageViewer.add(p);
             }
 			if (selected.length > 0) {
-				writeImportPackages();
+				writeExportPackageHeader();
 			}
 		}
 	}
 
-	private void writeImportPackages() {
+	private void writeExportPackageHeader() {
 		StringBuffer buffer = new StringBuffer();
 		if (fPackages != null) {
             Iterator iter = fPackages.values().iterator();
 			while (iter.hasNext()) {
-				buffer.append(((ImportPackageObject)iter.next()).write());
+				buffer.append(((ExportPackageObject)iter.next()).write());
 				if (iter.hasNext()) {
 					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
-		getBundle().setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
+		getBundle().setHeader(getExportedPackageHeader(), buffer.toString());
 	}
 
-	private ExportPackageDescription[] getAvailablePackages() {
+	private IPackageFragment[] getAvailablePackages() {
 		ArrayList result = new ArrayList();
-        Set set = getForbiddenIds();
-        
-        //TODO add method to PluginModelManager
-        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
-        ExportPackageDescription[] desc = state.getState().getExportedPackages();
-        for (int i = 0; i < desc.length; i++) {
-			if (set.contains(desc[i].getExporter().getSymbolicName()))
-                continue;
-			if (fPackages != null && !fPackages.containsKey(desc[i].getName()))
-				result.add(desc[i]);			
-		}
-		return (ExportPackageDescription[])result.toArray(new ExportPackageDescription[result.size()]);
+        //TODO collect packages
+ 		return (IPackageFragment[])result.toArray(new IPackageFragment[result.size()]);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -355,36 +341,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
         return (manifestVersion < 2) ? Constants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
-    
-    private Set getForbiddenIds() {
-        HashSet set = new HashSet();
-        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
-        String id = model.getPluginBase().getId();
-        if (id != null)
-            set.add(id);
-        IPluginImport[] imports = model.getPluginBase().getImports();
-        PDEState state = PDECore.getDefault().getExternalModelManager().getState();
-        for (int i = 0; i < imports.length; i++) {
-            addDependency(state.getState(), imports[i].getId(), set);
-        }
-        return set;
+ 
+    private String getExportedPackageHeader() {
+        int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
+        return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
     }
-    
-    private void addDependency(State state, String bundleID, Set set) {
-        if (bundleID == null || !set.add(bundleID))
-            return;
-            
-        BundleDescription desc = state.getBundle(bundleID, null);
-        if (desc == null)
-            return;
-        
-        BundleSpecification[] specs = desc.getRequiredBundles();
-        for (int j = 0; j < specs.length; j++) {
-            if (specs[j].isResolved() && specs[j].isExported()) {
-                addDependency(state, specs[j].getName(), set);
-            }
-        }        
-    }
-    
 
+    
+ 
 }

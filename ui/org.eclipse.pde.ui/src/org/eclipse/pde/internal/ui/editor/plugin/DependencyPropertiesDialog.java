@@ -32,22 +32,28 @@ public class DependencyPropertiesDialog extends StatusDialog {
     private boolean fOptional;
     private String fVersion;
     private Text fVersionText;
+    private boolean fShowOptional;
 
     public DependencyPropertiesDialog(boolean editable, IPluginImport plugin) {
-        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion());
+        this (editable, true, plugin.isReexported(), plugin.isOptional(), plugin.getVersion(), true);
     }
     
     public DependencyPropertiesDialog(boolean editable, ImportPackageObject object) {
-        this (editable, false, false, object.isOptional(), object.getVersion());
+        this (editable, false, false, object.isOptional(), object.getVersion(), true);
     }
-    
-    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version) {
+
+    public DependencyPropertiesDialog(boolean editable, ExportPackageObject object) {
+        this (editable, false, false, false, object.getVersion(), false);
+    }
+
+    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional) {
         super(PDEPlugin.getActiveWorkbenchShell());
         fEditable = editable;
         fShowReexport = showReexport;
         fExported = export;
         fOptional = optional;
         fVersion = version;
+        fShowOptional = showOptional;
     }
     
     
@@ -66,18 +72,20 @@ public class DependencyPropertiesDialog extends StatusDialog {
         container.setLayout(layout);
         container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
-        fOptionalButton = new Button(container, SWT.CHECK);
-        fOptionalButton.setText("Optional");
-        GridData gd = new GridData();
-        gd.horizontalSpan = 2;
-        fOptionalButton.setLayoutData(gd); 
-        fOptionalButton.setEnabled(fEditable);
-        fOptionalButton.setSelection(fOptional);
+        if (fShowOptional) {
+            fOptionalButton = new Button(container, SWT.CHECK);
+            fOptionalButton.setText("Optional");
+            GridData gd = new GridData();
+            gd.horizontalSpan = 2;
+            fOptionalButton.setLayoutData(gd); 
+            fOptionalButton.setEnabled(fEditable);
+            fOptionalButton.setSelection(fOptional);
+        }
         
         if (fShowReexport) {
             fReexportButton = new Button(container, SWT.CHECK);
             fReexportButton.setText("Reexport this dependency");
-            gd = new GridData();
+            GridData gd = new GridData();
             gd.horizontalSpan = 2;
             fReexportButton.setLayoutData(gd);
             fReexportButton.setEnabled(fEditable);
@@ -85,7 +93,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         }
         
         Label label = new Label(container, SWT.NONE);
-        label.setText("Version to match:");
+        label.setText("Version:");
         
         fVersionText = new Text(container, SWT.SINGLE|SWT.BORDER);
         fVersionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -157,7 +165,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         return fVersion;
     }
     protected void okPressed() {
-        fOptional = fOptionalButton.getSelection();
+        fOptional = (fOptionalButton == null) ? false : fOptionalButton.getSelection();
         fVersion = fVersionText.getText().trim();
         fExported = (fReexportButton == null) ? false : fReexportButton.getSelection();
         super.okPressed();
