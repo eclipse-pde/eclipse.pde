@@ -29,7 +29,6 @@ public class ArchivePage extends PDEFormPage {
 		//TODO translate page title
 	}
 	protected void createFormContent(IManagedForm mform) {
-		FormToolkit toolkit = mform.getToolkit();
 		ScrolledForm form = mform.getForm();
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 10;

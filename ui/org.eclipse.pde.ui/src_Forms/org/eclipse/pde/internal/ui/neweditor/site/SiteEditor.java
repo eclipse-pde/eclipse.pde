@@ -1,25 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 /*
  * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.site;
-import java.io.File;
-
+import java.io.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.neweditor.PDESourcePage;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.views.contentoutline.*;
 
 /**
  * @author dejan
@@ -31,7 +38,6 @@ public class SiteEditor extends MultiSourceEditor {
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();
-		IProject project = file.getProject();
 		IFile siteFile = null;
 		String name = file.getName().toLowerCase();
 		if (name.equals("site.xml")) {
