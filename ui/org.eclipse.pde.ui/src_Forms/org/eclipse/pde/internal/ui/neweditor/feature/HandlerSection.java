@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.neweditor.feature;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
@@ -132,7 +133,11 @@ public class HandlerSection extends PDESection {
 			handler.setURL(url);
 		}
 		catch (MalformedURLException e) {
-			PDEPlugin.logException(e);
+			//TODO translate messages
+			MessageDialog.openError(getPage().getEditor().getEditorSite().getShell(),
+					"Feature Editor",
+					"Invalid URL format: "+value);
+			setIfDefined(urlText, handler.getURL());
 		}
 	}
 	private void setLibrary(IFeature feature, String value) throws CoreException {
@@ -180,9 +185,10 @@ public class HandlerSection extends PDESection {
 	}
 
 	private void setIfDefined(FormEntry formText, Object value) {
-		if (value != null) {
+		if (value!=null)
 			formText.setValue(value.toString(), true);
-		}
+		else
+			formText.setValue(null, true);
 	}
 
 	public void refresh() {

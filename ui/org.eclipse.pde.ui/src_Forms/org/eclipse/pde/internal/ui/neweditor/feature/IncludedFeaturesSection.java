@@ -50,7 +50,7 @@ public class IncludedFeaturesSection
 	private Action openAction;
 	private Action deleteAction;
 
-	class PluginContentProvider
+	class IncludedFeaturesContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
@@ -84,7 +84,7 @@ public class IncludedFeaturesSection
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		includesViewer = tablePart.getTableViewer();
-		includesViewer.setContentProvider(new PluginContentProvider());
+		includesViewer.setContentProvider(new IncludedFeaturesContentProvider());
 		includesViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		includesViewer.setSorter(ListUtil.NAME_SORTER);
 		toolkit.paintBordersFor(container);
@@ -251,16 +251,37 @@ public class IncludedFeaturesSection
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		markStale();
+		IModel [] added = event.getAddedModels();
+		IModel [] removed = event.getRemovedModels();
+		IModel [] changed = event.getChangedModels();
+		if (hasFeatureModels(added)||hasFeatureModels(removed)||hasFeatureModels(changed))		
+			markStale();
 	}
+	private boolean hasFeatureModels(IModel [] models) {
+		IFeatureModel thisModel = (IFeatureModel)getPage().getModel();
+		if (thisModel==null) return false;
+		IFeature thisFeature = thisModel.getFeature();
+		if (thisFeature==null) return false;
+		if (models==null) return false;
+		if (models.length==0) return false;
+		for (int i=0; i<models.length; i++) {
+			if (models[i] instanceof IFeatureModel) {
+				IFeature feature = ((IFeatureModel)models[i]).getFeature();
+				if (feature.getId().equals(thisFeature.getId()))
+					continue;
+			}
+			return true;
+		}
+		return false;
+	}	
 
 	public void setFocus() {
 		if (includesViewer != null)
 			includesViewer.getTable().setFocus();
 	}
 
-	public void refresh(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+	public void refresh() {
+		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		includesViewer.setInput(feature);
 		super.refresh();

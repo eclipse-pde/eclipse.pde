@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.feature;
 
+import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.feature.*;
@@ -55,20 +56,21 @@ public class NewFeatureRequireWizardPage extends ReferenceWizardPage {
 			PDEPlugin.getResourceString(KEY_ADDING),
 			candidates.length + 1);
 		IFeature feature = model.getFeature();
-		IFeatureImport[] added = new IFeatureImport[candidates.length];
+		ArrayList added = new ArrayList();
 		for (int i = 0; i < candidates.length; i++) {
 			IPluginModelBase candidate = (IPluginModelBase) candidates[i];
 			IPluginBase pluginBase = candidate.getPluginBase();
+			if (candidate.isFragmentModel()) continue;
 			monitor.subTask(pluginBase.getTranslatedName());
 			FeatureImport fimport = (FeatureImport) model.getFactory().createImport();
 			fimport.setPlugin((IPlugin)candidate.getPluginBase());
 			fimport.setId(pluginBase.getId());
-			added[i] = fimport;
+			added.add(fimport);
 			monitor.worked(1);
 		}
 		monitor.subTask("");
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_UPDATING));
-		feature.addImports(added);
+		feature.addImports((IFeatureImport[])added.toArray(new IFeatureImport[added.size()]));
 		monitor.worked(1);
 	}
 	

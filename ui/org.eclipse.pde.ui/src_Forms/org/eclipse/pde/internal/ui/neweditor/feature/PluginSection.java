@@ -17,6 +17,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -253,7 +254,20 @@ public class PluginSection
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		markStale();
+		IModel [] added = event.getAddedModels();
+		IModel [] removed = event.getRemovedModels();
+		IModel [] changed = event.getChangedModels();
+		if (hasPluginModels(added)||hasPluginModels(removed)||hasPluginModels(changed))		
+			markStale();
+	}
+	private boolean hasPluginModels(IModel [] models) {
+		if (models==null) return false;
+		if (models.length==0) return false;
+		for (int i=0; i<models.length; i++) {
+			if (models[i] instanceof IPluginModelBase)
+				return true;
+		}
+		return false;
 	}
 
 	public void setFocus() {

@@ -135,10 +135,13 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			IFeatureObject obj = (IFeatureObject) event.getChangedObjects()[0];
-			//Ignore events from objects that are not yet in the model.
-			if (!(obj instanceof IFeature) && obj.isInTheModel() == false)
-				return;
+			Object obj = event.getChangedObjects()[0];
+			if (obj instanceof IFeatureObject) {
+				IFeatureObject fobj = (IFeatureObject) event.getChangedObjects()[0];
+				//Ignore events from objects that are not yet in the model.
+				if (!(fobj instanceof IFeature) && fobj.isInTheModel() == false)
+					return;
+			}
 		}
 		super.modelChanged(event);
 	}

@@ -724,8 +724,10 @@ public class RuntimeInfoSection
 
 	protected void handleNew() {
 		final String[] libNames = getLibraryNames();
-		final IPluginModelBase pluginModelBase;
-		pluginModelBase = (IPluginModelBase)getPage().getModel();
+		IBaseModel pmodel = getPage().getModel();
+		final IPluginModelBase pluginModelBase=(pmodel instanceof IPluginModelBase)?
+			(IPluginModelBase)pmodel:null;
+		
 
 		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), new Runnable() {
 			public void run(){

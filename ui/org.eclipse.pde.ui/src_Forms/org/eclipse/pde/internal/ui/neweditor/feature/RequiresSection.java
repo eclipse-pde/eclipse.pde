@@ -119,6 +119,7 @@ public class RequiresSection
 		deleteAction.setText(PDEPlugin.getResourceString(KEY_DELETE));
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		initialize();
 	}
 
 	protected void buttonSelected(int index) {
@@ -321,7 +322,20 @@ public class RequiresSection
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
-		markStale();
+		IModel [] added = event.getAddedModels();
+		IModel [] removed = event.getRemovedModels();
+		IModel [] changed = event.getChangedModels();
+		if (hasPluginModels(added)||hasPluginModels(removed)||hasPluginModels(changed))		
+			markStale();
+	}
+	private boolean hasPluginModels(IModel [] models) {
+		if (models==null) return false;
+		if (models.length==0) return false;
+		for (int i=0; i<models.length; i++) {
+			if (models[i] instanceof IPluginModelBase)
+				return true;
+		}
+		return false;
 	}
 
 	public void setFocus() {
