@@ -261,8 +261,7 @@ public class BasicLauncherTab
 				IPath chosen = chooseWorkspaceLocation();
 				if (chosen != null) {
 					workspaceCombo.setText(chosen.toOSString());
-					if (!updateStatus())
-						updateLaunchConfigurationDialog();
+					updateStatus();
 				}
 			}
 		});
@@ -270,17 +269,15 @@ public class BasicLauncherTab
 			public void widgetSelected(SelectionEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();
 				if (!blockChanges) {
-					if (!updateStatus())
-						updateLaunchConfigurationDialog();
-				}
+					updateStatus();
+				} 
 			}
 		});
 		workspaceCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				workspaceSelectionStatus = validateWorkspaceSelection();				
 				if (!blockChanges) {
-					if (!updateStatus())
-						updateLaunchConfigurationDialog();
+					updateStatus();
 				}
 			}
 		});
@@ -322,8 +319,7 @@ public class BasicLauncherTab
 		jreCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				jreSelectionStatus = validateJRESelection();
-				if (!updateStatus())
-					updateLaunchConfigurationDialog();
+				updateStatus();
 			}
 		});
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
@@ -334,8 +330,8 @@ public class BasicLauncherTab
 		});
 	}
 
-	private boolean updateStatus() {
-		return updateStatus(
+	private void updateStatus() {
+		updateStatus(
 			getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 

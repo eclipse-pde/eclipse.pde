@@ -6,24 +6,44 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AdvancedLauncherTab
@@ -70,7 +90,6 @@ public class AdvancedLauncherTab
 	private int numExternalChecked = 0;
 	private int numWorkspaceChecked = 0;
 	private boolean firstReveal = true;
-	private boolean check;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -104,52 +123,11 @@ public class AdvancedLauncherTab
 		}
 	}
 
-	static class ExternalState {
-		String id;
-		boolean state;
-	}
-
-	static class ExternalStates {
-		Vector states = new Vector();
-
-		ExternalStates() {
-		}
-		ExternalStates(String settings) {
-			parseStates(settings);
-		}
-
-		public void parseStates(String settings) {
-			StringTokenizer stok =
-				new StringTokenizer(settings, File.pathSeparator);
-			while (stok.hasMoreTokens()) {
-				String token = stok.nextToken();
-				ExternalState state = new ExternalState();
-				int loc = token.lastIndexOf(',');
-				if (loc == -1) {
-					state.id = token;
-					state.state = false;
-				} else {
-					state.id = token.substring(0, loc);
-					state.state = token.charAt(loc + 1) == 't';
-				}
-				states.add(state);
-			}
-		}
-		ExternalState getState(String id) {
-			for (int i = 0; i < states.size(); i++) {
-				ExternalState state = (ExternalState) states.get(i);
-				if (state.id.equals(id)) {
-					return state;
-				}
-			}
-			return null;
-		}
-	}
 
 	public AdvancedLauncherTab() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		externalModels = getExternalPlugins();
-		workspaceModels = getWorkspacePlugins();
+		externalModels = PDECore.getDefault().getExternalModelManager().getAllModels();
+		workspaceModels = PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 	}
 
 	public void dispose() {
@@ -223,7 +201,6 @@ public class AdvancedLauncherTab
 		};
 		useDefaultRadio.addSelectionListener(adapter);
 		useFeaturesRadio.addSelectionListener(adapter);
-		//useListRadio.addSelectionListener(adapter);
 		defaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator
@@ -249,10 +226,7 @@ public class AdvancedLauncherTab
 		boolean useDefault = !useListRadio.getSelection();
 		adjustCustomControlEnableState(!useDefault);
 		pluginPathButton.setEnabled(!useFeaturesRadio.getSelection());
-		if (!updateStatus())
-			updateLaunchConfigurationDialog();
-		/*else 
-			setChanged(true);*/
+		updateStatus();
 	}
 
 	private void adjustCustomControlEnableState(boolean enable) {
@@ -288,15 +262,9 @@ public class AdvancedLauncherTab
 								(IPluginModelBase) event.getElement();
 							handleCheckStateChanged(model, event.getChecked());
 						} else {
-							handleGroupStateChanged(
-								element,
-								event.getChecked());
+							handleGroupStateChanged(element, event.getChecked());
 						}
-						if (!updateStatus()) {
-							check = true;
-							updateLaunchConfigurationDialog();
-						}
-
+						updateStatus();
 					}
 				});
 
@@ -327,109 +295,85 @@ public class AdvancedLauncherTab
 		return pluginTreeViewer.getTree();
 	}
 
-	static IPluginModelBase[] getExternalPlugins() {
-		IPluginModelBase[] plugins =
-			PDECore.getDefault().getExternalModelManager().getModels();
-		IPluginModelBase[] fragments =
-			PDECore.getDefault().getExternalModelManager().getFragmentModels();
-		return getAllPlugins(plugins, fragments);
-	}
-
-	static IPluginModelBase[] getAllPlugins(
-		IPluginModelBase[] plugins,
-		IPluginModelBase[] fragments) {
-		IPluginModelBase[] all =
-			new IPluginModelBase[plugins.length + fragments.length];
-		System.arraycopy(plugins, 0, all, 0, plugins.length);
-		System.arraycopy(fragments, 0, all, plugins.length, fragments.length);
-		return all;
-	}
-
-	static IPluginModelBase[] getWorkspacePlugins() {
-		IPluginModelBase[] plugins =
-			PDECore
-				.getDefault()
-				.getWorkspaceModelManager()
-				.getWorkspacePluginModels();
-		IPluginModelBase[] fragments =
-			PDECore
-				.getDefault()
-				.getWorkspaceModelManager()
-				.getWorkspaceFragmentModels();
-		return getAllPlugins(plugins, fragments);
-	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
 	}
 
-	private ArrayList parseDeselectedIds(ILaunchConfiguration config)
+	public static TreeSet parseDeselectedWSIds(ILaunchConfiguration config)
 		throws CoreException {
-		ArrayList deselected = new ArrayList();
-		String deselectedPluginIDs =
-			config.getAttribute(WSPROJECT, (String) null);
+		TreeSet deselected = new TreeSet();
+		String deselectedPluginIDs = config.getAttribute(WSPROJECT, (String) null);
 		if (deselectedPluginIDs != null) {
 			StringTokenizer tok =
 				new StringTokenizer(deselectedPluginIDs, File.pathSeparator);
 			while (tok.hasMoreTokens()) {
-				deselected.add(tok.nextToken());
+				String token = tok.nextToken();
+				deselected.add(token);
 			}
 		}
 		return deselected;
 	}
-
-	private ArrayList initWorkspacePluginsState(ILaunchConfiguration config)
+	
+	public static TreeSet parseSelectedExtIds(ILaunchConfiguration config)
 		throws CoreException {
-
-		ArrayList result = new ArrayList();
-		ArrayList deselected = parseDeselectedIds(config);
-
-		for (int i = 0; i < workspaceModels.length; i++) {
-			IPluginModelBase desc = workspaceModels[i];
-			if (!deselected.contains(desc.getPluginBase().getId())) {
-				result.add(desc);
+		TreeSet selected = new TreeSet();
+		String selectedPluginIDs = config.getAttribute(EXTPLUGINS, (String) null);
+		if (selectedPluginIDs != null) {
+			StringTokenizer tok =
+				new StringTokenizer(selectedPluginIDs, File.pathSeparator);
+			while (tok.hasMoreTokens()) {
+				String token = tok.nextToken();
+				int loc = token.lastIndexOf(',');
+				if (loc == -1) {
+					selected.add(token);
+				} else if (token.charAt(loc + 1) == 't') {
+					selected.add(token.substring(0, loc));
+				}
 			}
 		}
-
-		int size = result.size();
-
-		if (size > 0)
-			result.add(workspacePlugins);
-		pluginTreeViewer.setGrayed(
-			workspacePlugins,
-			size > 0 && size < workspaceModels.length);
-		return result;
+		return selected;
 	}
 
-	private ArrayList initExternalPluginsState(ILaunchConfiguration config)
+	private void initWorkspacePluginsState(ILaunchConfiguration config)
 		throws CoreException {
 
-		String exSettings = config.getAttribute(EXTPLUGINS, (String) null);
-		ExternalStates states =
-			new ExternalStates((exSettings != null) ? exSettings : "");
-		ArrayList result = new ArrayList();
+		numWorkspaceChecked = workspaceModels.length;
+		pluginTreeViewer.setSubtreeChecked(workspacePlugins, true);
 
-		for (int i = 0; i < externalModels.length; i++) {
-			IPluginModelBase desc = externalModels[i];
-			ExternalState es = states.getState(desc.getPluginBase().getId());
-			if (es != null) {
-				// use the saved state
-				if (es.state) {
-					result.add(desc);
-				}
-			} else if (desc.isEnabled()) {
-				result.add(desc);
+		TreeSet deselected = parseDeselectedWSIds(config);
+		for (int i = 0; i < workspaceModels.length; i++) {
+			if (deselected.contains(workspaceModels[i].getPluginBase().getId())) {
+				if (pluginTreeViewer.setChecked(workspaceModels[i], false))
+					numWorkspaceChecked -= 1;
 			}
 		}
 
-		int size = result.size();
+		if (numWorkspaceChecked == 0)
+			pluginTreeViewer.setChecked(workspacePlugins, false);
+		pluginTreeViewer.setGrayed(
+			workspacePlugins,
+			numWorkspaceChecked > 0 && numWorkspaceChecked < workspaceModels.length);
+	}
 
-		if (size > 0)
-			result.add(externalPlugins);
+	private void initExternalPluginsState(ILaunchConfiguration config)
+		throws CoreException {
+
+		numExternalChecked = externalModels.length;
+		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
+
+		TreeSet selected = parseSelectedExtIds(config);
+		for (int i = 0; i < externalModels.length; i++) {
+			if (!selected.contains(externalModels[i].getPluginBase().getId())) {
+				if (pluginTreeViewer.setChecked(externalModels[i], false))
+					numExternalChecked -= 1;
+			}
+		}
+
+		if (numExternalChecked == 0)
+			pluginTreeViewer.setChecked(externalPlugins, false);
 		pluginTreeViewer.setGrayed(
 			externalPlugins,
-			size > 0 && size < externalModels.length);
-
-		return result;
+			numExternalChecked > 0 && numExternalChecked < externalModels.length);
 	}
 
 	public void initialize(ILaunchConfiguration config) {
@@ -440,14 +384,14 @@ public class AdvancedLauncherTab
 			useListRadio.setSelection(
 				!useDefaultRadio.getSelection() && !useFeaturesRadio.getSelection());
 			if (pluginTreeViewer.getInput() == null)
+				//pluginTreeViewer.setUseHashlookup(true);
 				pluginTreeViewer.setInput(PDEPlugin.getDefault());
 
 			if (useDefaultRadio.getSelection()) {
 				computeInitialCheckState();
 			} else if (useListRadio.getSelection()) {
-				ArrayList result = initWorkspacePluginsState(config);
-				result.addAll(initExternalPluginsState(config));
-				pluginTreeViewer.setCheckedElements(result.toArray());
+				initWorkspacePluginsState(config);
+				initExternalPluginsState(config);
 			} else {
 				pluginPathButton.setEnabled(false);
 			}
@@ -460,7 +404,7 @@ public class AdvancedLauncherTab
 	}
 
 	private void computeInitialCheckState() {
-		Hashtable wtable = new Hashtable();
+		TreeSet wtable = new TreeSet();
 		numWorkspaceChecked = 0;
 		numExternalChecked = 0;
 
@@ -470,7 +414,7 @@ public class AdvancedLauncherTab
 			numWorkspaceChecked += 1;
 			String id = model.getPluginBase().getId();
 			if (id != null)
-				wtable.put(model.getPluginBase().getId(), model);
+				wtable.add(model.getPluginBase().getId());
 		}
 		if (numWorkspaceChecked > 0)
 			pluginTreeViewer.setChecked(workspacePlugins, true);
@@ -478,13 +422,13 @@ public class AdvancedLauncherTab
 
 
 		pluginTreeViewer.setSubtreeChecked(externalPlugins, true);
+		numExternalChecked = externalModels.length;
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginModelBase model = externalModels[i];
-			boolean masked = wtable.get(model.getPluginBase().getId()) != null;
-			if (!masked && model.isEnabled()) {
-				numExternalChecked += 1;
-			} else {
+			boolean masked = wtable.contains(model.getPluginBase().getId());
+			if (masked || !model.isEnabled()) {
 				pluginTreeViewer.setChecked(model, false);
+				numExternalChecked -= 1;
 			}
 		}
 
@@ -549,34 +493,16 @@ public class AdvancedLauncherTab
 		config.setAttribute(USEFEATURES, false);
 	}
 
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (isChanged()) {
-			if (!check) {
-				configuration.setAttribute(
-					USECUSTOM,
-					useDefaultRadio.getSelection());
-				configuration.setAttribute(
-					USEFEATURES,
-					useFeaturesRadio.getSelection());
-				setChanged(false);
-			} else {
-				check = false;
-				configuration.setAttribute(EXTPLUGINS, "");
-			}
-		}
-	}
 
-	public void doPerformApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (!configuration.isDirty())
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		if (!isChanged())
 			return;
 
 		final ILaunchConfigurationWorkingCopy config = configuration;
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				config.setAttribute(USECUSTOM, useDefaultRadio.getSelection());
-				config.setAttribute(
-					USEFEATURES,
-					useFeaturesRadio.getSelection());
+				config.setAttribute(USEFEATURES, useFeaturesRadio.getSelection());
 
 				if (!useListRadio.getSelection()) {
 					setChanged(false);
@@ -584,29 +510,27 @@ public class AdvancedLauncherTab
 				}
 				// store deselected projects
 				StringBuffer wbuf = new StringBuffer();
-
 				for (int i = 0; i < workspaceModels.length; i++) {
-					IPluginModelBase model =
-						(IPluginModelBase) workspaceModels[i];
+					IPluginModelBase model = (IPluginModelBase) workspaceModels[i];
 					if (!pluginTreeViewer.getChecked(model))
 						wbuf.append(
-							model.getPluginBase().getId()
-								+ File.pathSeparatorChar);
-				}
-
-				StringBuffer exbuf = new StringBuffer();
-
-				// Store external state
-				for (int i = 0; i < externalModels.length; i++) {
-					IPluginModelBase model =
-						(IPluginModelBase) externalModels[i];
-					exbuf.append(model.getPluginBase().getId());
-					exbuf.append(
-						pluginTreeViewer.getChecked(model) ? ",t" : ",f");
-					exbuf.append(File.pathSeparatorChar);
+							model.getPluginBase().getId() + File.pathSeparatorChar);
 				}
 				config.setAttribute(WSPROJECT, wbuf.toString());
+
+				// Store selected external models
+				StringBuffer exbuf = new StringBuffer();
+				Object[] checked = pluginTreeViewer.getCheckedElements();
+				for (int i = 0; i < checked.length; i++) {
+					Object element = checked[i];
+					if (element instanceof ExternalPluginModelBase) {
+						ExternalPluginModelBase model = (ExternalPluginModelBase) element;
+						exbuf.append(
+							model.getPluginBase().getId() + File.pathSeparatorChar);
+					}
+				}
 				config.setAttribute(EXTPLUGINS, exbuf.toString());
+				
 				setChanged(false);
 			}
 		});
@@ -629,8 +553,8 @@ public class AdvancedLauncherTab
 		}
 	}
 
-	private boolean updateStatus() {
-		return updateStatus(validatePlugins());
+	private void updateStatus() {
+		updateStatus(validatePlugins());
 	}
 
 	private IStatus validatePlugins() {
@@ -696,20 +620,19 @@ public class AdvancedLauncherTab
 		ArrayList res = new ArrayList();
 		boolean useDefault = useDefaultRadio.getSelection();
 		if (useDefault) {
-			Hashtable wtable = new Hashtable();
+			TreeSet wtable = new TreeSet();
 			for (int i = 0; i < workspaceModels.length; i++) {
 				// check for null is to accomodate previous unclean exits (e.g. workspace crashes)
 				if (workspaceModels[i].getPluginBase().getId() != null) {
 					res.add(workspaceModels[i]);
-					wtable.put(
-						workspaceModels[i].getPluginBase().getId(),
-						workspaceModels[i]);
+					wtable.add(
+						workspaceModels[i].getPluginBase().getId());
 				}
 			}
 			for (int i = 0; i < externalModels.length; i++) {
 				IPluginModelBase model = externalModels[i];
 				boolean masked =
-					wtable.get(model.getPluginBase().getId()) != null;
+					wtable.contains(model.getPluginBase().getId());
 				if (!masked && externalModels[i].isEnabled())
 					res.add(externalModels[i]);
 			}
@@ -717,17 +640,18 @@ public class AdvancedLauncherTab
 		} else {
 			Object[] elements = pluginTreeViewer.getCheckedElements();
 			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-				if (element instanceof IPluginModelBase)
-					res.add(element);
+				if (elements[i] instanceof IPluginModelBase)
+					res.add(elements[i]);
 			}
 		}
 		return (IPluginModelBase[]) res.toArray(
 			new IPluginModelBase[res.size()]);
 	}
+	
 	public String getName() {
 		return PDEPlugin.getResourceString(KEY_NAME);
 	}
+	
 	public Image getImage() {
 		return PDEPlugin.getDefault().getLabelProvider().get(
 			PDEPluginImages.DESC_REQ_PLUGINS_OBJ);

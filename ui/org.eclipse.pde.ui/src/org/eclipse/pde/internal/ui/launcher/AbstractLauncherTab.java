@@ -19,12 +19,12 @@ import org.eclipse.swt.SWT;
  * @author
  */
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
-	private IStatus currentStatus;
+	//private IStatus currentStatus;
 	private boolean valid=true;
 	private boolean changed=false;
 
 	public AbstractLauncherTab() {
-		currentStatus= createStatus(IStatus.OK, "");
+		//currentStatus= createStatus(IStatus.OK, "");
 	}
 
 	protected boolean isChanged() {
@@ -57,16 +57,17 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	/**
 	 * Updates the status line and the ok button depending on the status
 	 */
-	protected boolean updateStatus(IStatus status) {
-		IStatus oldStatus = currentStatus;
-		currentStatus = status;
+	protected void updateStatus(IStatus status) {
+		//IStatus oldStatus = currentStatus;
+		//currentStatus = status;
 		setValid(!status.matches(IStatus.ERROR));
-		if (oldStatus.getSeverity() != currentStatus.getSeverity()
+		applyToStatusLine(this, status);
+		/*if (oldStatus.getSeverity() != currentStatus.getSeverity()
 			|| !oldStatus.getMessage().equals(currentStatus.getMessage())) {
 			applyToStatusLine(this, status);
 			return true;
 		}
-		return false;
+		return false;*/
 	}
 
 	/**

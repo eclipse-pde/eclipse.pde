@@ -75,8 +75,15 @@ public class WorkbenchLaunchConfigurationDelegate
 			configuration.getAttribute(SHOW_SPLASH, true);
 		final boolean useFeatures =
 			configuration.getAttribute(USEFEATURES, false);
+			
+		boolean useDefault = configuration.getAttribute(USECUSTOM, true);
+		
 		final IPluginModelBase[] plugins =
-			useFeatures ? null : getPluginsFromConfiguration(configuration);
+			useFeatures
+				? null
+				: mergeWithoutDuplicates(
+					getWorkspacePluginsToRun(configuration, useDefault),
+					getExternalPluginsToRun(configuration, useDefault));
 
 		if (duplicates.size() > 0) {
 			if (!continueRunning()) {
@@ -165,70 +172,51 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 	}
 
-	private IPluginModelBase[] getPluginsFromConfiguration(ILaunchConfiguration config)
-		throws CoreException {
-		boolean useDefault = config.getAttribute(USECUSTOM, true);
+	private ArrayList getWorkspacePluginsToRun(ILaunchConfiguration config, boolean useDefault) throws CoreException{
+		ArrayList result = new ArrayList();
 
-		ArrayList deselectedWSPlugins = new ArrayList();
+		TreeSet deselectedWSPlugins =
+			AdvancedLauncherTab.parseDeselectedWSIds(config);
 
-		String wstring = config.getAttribute(WSPROJECT, (String) null);
-		String exstring = config.getAttribute(EXTPLUGINS, (String) null);
+		IPluginModelBase[] wsmodels =
+			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 
-		if (wstring != null) {
-			StringTokenizer tok =
-				new StringTokenizer(wstring, File.pathSeparator);
-			while (tok.hasMoreTokens()) {
-				deselectedWSPlugins.add(tok.nextToken());
-			}
-		}
-		AdvancedLauncherTab.ExternalStates exstates =
-			new AdvancedLauncherTab.ExternalStates();
-		if (exstring != null) {
-			exstates.parseStates(exstring);
-		}
-
-		ArrayList wsList = new ArrayList();
-
-		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
 		for (int i = 0; i < wsmodels.length; i++) {
 			IPluginModelBase model = wsmodels[i];
 			if (useDefault
 				|| !deselectedWSPlugins.contains(model.getPluginBase().getId()))
-				wsList.add(model);
+				result.add(model);
 		}
-		IPluginModelBase[] exmodels = AdvancedLauncherTab.getExternalPlugins();
+		return result;
+	}
+	
+	private ArrayList getExternalPluginsToRun(ILaunchConfiguration config, boolean useDefault)
+		throws CoreException {
+		
 		ArrayList exList = new ArrayList();
+		TreeSet selectedExModels =
+			AdvancedLauncherTab.parseSelectedExtIds(config);
+		IPluginModelBase[] exmodels =
+			PDECore.getDefault().getExternalModelManager().getAllModels();
 		for (int i = 0; i < exmodels.length; i++) {
 			IPluginModelBase model = exmodels[i];
 			if (useDefault) {
 				if (model.isEnabled())
 					exList.add(model);
-			} else {
-				AdvancedLauncherTab.ExternalState es =
-					exstates.getState(model.getPluginBase().getId());
-				if (es != null) {
-					if (es.state)
-						exList.add(model);
-				} else if (model.isEnabled())
-					exList.add(model);
-			}
+			} else if (selectedExModels.contains(model.getPluginBase().getId()))
+				exList.add(model);
 		}
-		ArrayList result = new ArrayList();
-		mergeWithoutDuplicates(wsList, exList, result);
-		IPluginModelBase[] plugins =
-			(IPluginModelBase[]) result.toArray(
-				new IPluginModelBase[result.size()]);
-		return plugins;
+		return exList;
 	}
 
-	private void mergeWithoutDuplicates(
+	private IPluginModelBase[] mergeWithoutDuplicates(
 		ArrayList wsmodels,
-		ArrayList exmodels,
-		ArrayList result) {
+		ArrayList exmodels) {
+
+		ArrayList result = new ArrayList();
 
 		for (int i = 0; i < wsmodels.size(); i++) {
-			if (((IPluginModelBase) wsmodels.get(i)).getPluginBase().getId()
-				!= null)
+			if (((IPluginModelBase) wsmodels.get(i)).getPluginBase().getId() != null)
 				result.add(wsmodels.get(i));
 		}
 		duplicates = new Vector();
@@ -240,11 +228,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				if (wsmodel.getPluginBase().getId() != null
 					&& exmodel.getPluginBase().getId() != null) {
 					if (isDuplicate(wsmodel, exmodel)) {
-						duplicates.add(
-							exmodel.getPluginBase().getId()
-								+ " ("
-								+ exmodel.getPluginBase().getVersion()
-								+ ")");
+						duplicates.add(exmodel.getPluginBase().getId());
 						duplicate = true;
 						break;
 					}
@@ -253,6 +237,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			if (!duplicate)
 				result.add(exmodel);
 		}
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	private boolean isDuplicate(
@@ -357,7 +342,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				fullProgArgs[i++] = appname;
 			}
 			fullProgArgs[i++] = "-dev";
-			fullProgArgs[i++] = getBuildOutputFolders();
+			fullProgArgs[i++] = getBuildOutputFolders(getWorkspacePluginsToRun(config, config.getAttribute(USECUSTOM,true)));
 			if (useFeatures) {
 				IPath installPath =
 					PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -434,19 +419,16 @@ public class WorkbenchLaunchConfigurationDelegate
 		return true;
 	}
 
-	private String getBuildOutputFolders() {
-		IPluginModelBase[] wsmodels = AdvancedLauncherTab.getWorkspacePlugins();
+	private String getBuildOutputFolders(ArrayList wsmodels) {
 		HashSet set = new HashSet();
 		set.add(new Path("bin"));
-		for (int i = 0; i < wsmodels.length; i++) {
-			IProject project = wsmodels[i].getUnderlyingResource().getProject();
+		for (int i = 0; i < wsmodels.size(); i++) {
+			IProject project =
+				((IPluginModelBase) wsmodels.get(i)).getUnderlyingResource().getProject();
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
 					set.add(
-						JavaCore
-							.create(project)
-							.getOutputLocation()
-							.removeFirstSegments(
+						JavaCore.create(project).getOutputLocation().removeFirstSegments(
 							1));
 				}
 			} catch (JavaModelException e) {
@@ -455,8 +437,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		}
 		StringBuffer result = new StringBuffer();
 		for (Iterator iter = set.iterator(); iter.hasNext();) {
-			String folder = iter.next().toString();
-			result.append(folder);
+			result.append(iter.next().toString());
 			if (iter.hasNext())
 				result.append(",");
 		}

@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -43,20 +42,5 @@ public class WorkbenchLauncherTabGroup
 			}
 		});
 	}
-	
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			if (tabs[i] instanceof AdvancedLauncherTab) {
-				((AdvancedLauncherTab)tabs[i]).doPerformApply(configuration);
-			} else {
-				tabs[i].performApply(configuration);
-			}
-		}
-	}
-
 
 }
