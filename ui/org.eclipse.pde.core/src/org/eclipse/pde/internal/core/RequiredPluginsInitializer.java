@@ -22,8 +22,12 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	public void initialize(IPath containerPath, IJavaProject javaProject)
 		throws CoreException {
 		IProject project = javaProject.getProject();
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(project);
-		if (entry==null) return;
-		entry.updateClasspathContainer(true);
+		ModelEntry entry =
+			PDECore.getDefault().getModelManager().findEntry(project);
+		if (entry == null) {
+			ModelEntry.updateUnknownClasspathContainer(javaProject);
+		} else {
+			entry.updateClasspathContainer(true);
+		}
 	}
 }

@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
@@ -66,7 +67,9 @@ public class RequiredPluginsContainerPage
 			else {
 				IPath path = entry.getPath();
 				String name = path.lastSegment();
-				return name + " - " + path.uptoSegment(path.segmentCount()-1).toOSString();
+				return name
+					+ " - "
+					+ path.uptoSegment(path.segmentCount() - 1).toOSString();
 			}
 		}
 
@@ -95,9 +98,11 @@ public class RequiredPluginsContainerPage
 		setDescription(PDEPlugin.getResourceString("RequiredPluginsContainerPage.desc")); //$NON-NLS-1$
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
-			org.eclipse.ui.ISharedImages.IMG_OBJ_PROJECT);
+				org.eclipse.ui.ISharedImages.IMG_OBJ_PROJECT);
 		//libraryImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
-		libraryImage = JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
+		libraryImage =
+			JavaUI.getSharedImages().getImage(
+				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
 		setImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
 		replacedEntries = new Hashtable();
 	}
@@ -269,24 +274,26 @@ public class RequiredPluginsContainerPage
 
 	private void createRealEntries() {
 		IJavaProject javaProject = getJavaProject();
-		
-		if (entry == null) {
-			entry =
-				BuildPathUtilCore.createContainerEntry();
-		}		
 
-		if (javaProject != null) {
+		if (entry == null) {
+			entry = BuildPathUtilCore.createContainerEntry();
+			try {
+				ModelEntry.updateUnknownClasspathContainer(javaProject);
+				realEntries = new IClasspathEntry[0];
+			} catch (CoreException e) {
+			}
+		} else {
 			try {
 				IClasspathContainer container =
 					JavaCore.getClasspathContainer(
 						entry.getPath(),
 						javaProject);
-				if (container!=null) 
+				if (container != null)
 					realEntries = container.getClasspathEntries();
 			} catch (JavaModelException e) {
 			}
 		}
-		if (realEntries==null)
+		if (realEntries == null)
 			realEntries = new IClasspathEntry[0];
 	}
 

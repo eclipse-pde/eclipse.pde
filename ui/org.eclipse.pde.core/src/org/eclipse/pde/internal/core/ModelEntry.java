@@ -99,25 +99,21 @@ public class ModelEntry extends PlatformObject {
 			new IJavaProject[] { JavaCore.create(project)};
 		IClasspathContainer[] containers =
 			new IClasspathContainer[] { container };
-		IPath path =
-			new Path(PDECore.CLASSPATH_CONTAINER_ID);
-		try {
-			JavaCore.setClasspathContainer(
-				path,
-				javaProjects,
-				containers,
-				null);
-		} catch (JavaModelException e) {
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					PDECore.PLUGIN_ID,
-					IStatus.OK,
-					e.getMessage(),
-					e);
-			throw new CoreException(status);
-		}
+		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
+		JavaCore.setClasspathContainer(path, javaProjects, containers, null);
 	}
+
+	public static void updateUnknownClasspathContainer(IJavaProject javaProject)
+		throws CoreException {
+		IPath path = new Path(PDECore.CLASSPATH_CONTAINER_ID);
+		JavaCore.setClasspathContainer(
+			path,
+			new IJavaProject[] { javaProject },
+			new IClasspathContainer[] {
+				 new RequiredPluginsClasspathContainer(null)},
+			null);
+	}
+
 	public boolean isAffected(IPluginBase[] changedPlugins) {
 		if (workspaceModel == null)
 			return false;

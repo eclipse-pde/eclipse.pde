@@ -32,6 +32,7 @@ public class RequiredPluginsClasspathContainer implements IClasspathContainer {
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
+		if (model==null) return new IClasspathEntry[0];
 		if (entries == null) {
 			entries = BuildPathUtilCore.computePluginEntries(model);
 			entries = verifyWithAttachmentManager(entries);
