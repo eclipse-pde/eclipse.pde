@@ -80,9 +80,20 @@ public class LauncherUtils {
 	}
 	
 	public static Map getVMSpecificAttributes(ILaunchConfiguration config) throws CoreException {
-		Map map = new HashMap(1);
+		Map map = new HashMap(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String)null); 
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
+		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.jdt.debug"); //$NON-NLS-1$
+			if (model != null) {
+				File file = new File(model.getInstallLocation(), "bin"); //$NON-NLS-1$
+				if (!file.exists())
+					file = new File(model.getInstallLocation(), "jdi.jar"); //$NON-NLS-1$
+				if (file.exists()) {
+					map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+				}
+			}
+		}
 		return map;
 	}
 
@@ -373,7 +384,7 @@ public class LauncherUtils {
 		
 		return launcher;
 	}
-
+	
 	public static IStatus createErrorStatus(String message) {
 		return new Status(
 			IStatus.ERROR,
