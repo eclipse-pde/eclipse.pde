@@ -63,12 +63,19 @@ public Hashtable getTemplateTable(String pluginId) {
 	Hashtable defaults = new Hashtable();
 	for (Enumeration enum = template.keys(); enum.hasMoreElements();) {
 		String key = enum.nextElement().toString();
-		if (key.startsWith(pluginId)) {
+		if (belongsTo(key, pluginId)) {
 			defaults.put(key, template.get(key));
 		}
 	}
 	return defaults;
 }
+
+private boolean belongsTo(String option, String pluginId) {
+	IPath path = new Path(option);
+	String firstSegment = path.segment(0);
+	return pluginId.equalsIgnoreCase(firstSegment);
+}
+
 public String getTracingFileName() {
 	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
 	return stateLocation.append(".options").toOSString();
