@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.templates;
 
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.IPluginFieldData;
+import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.*;
 
 public class EditorNewWizard extends NewPluginTemplateWizard {
@@ -23,7 +23,7 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 	public EditorNewWizard() {
 		super();
 	}
-	public void init(IPluginFieldData data) {
+	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 	}
