@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.environment.Constants;
-import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.update.core.IFeature;
