@@ -33,9 +33,9 @@ public class DetailChildrenSection
 		"ManifestEditor.DetailChildrenSection.title";
 	public static final String SECTION_BODY_TEXT =
 		"ManifestEditor.DetailChildrenSection.bodyText";
-	public static final String KEY_APPLY = "Actions.apply.label";
-	public static final String KEY_RESET = "Actions.reset.label";
-	public static final String KEY_DELETE = "Actions.delete.label";
+	public static final String KEY_APPLY = "Actions.apply.flabel";
+	public static final String KEY_RESET = "Actions.reset.flabel";
+	public static final String KEY_DELETE = "Actions.delete.flabel";
 	private FormWidgetFactory factory;
 	private Button applyButton;
 	private Button resetButton;

@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.net.*;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
@@ -26,9 +27,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class InfoSection extends PDEFormSection {
-	private static final String SECTION_TITLE = "FeatureEditor.InfoSection.title";
-	private static final String KEY_APPLY = "Actions.apply.label";
-	private static final String KEY_RESET = "Actions.reset.label";
+	private static final String SECTION_TITLE =
+		"FeatureEditor.InfoSection.title";
+	private static final String KEY_APPLY = "Actions.apply.flabel";
+	private static final String KEY_RESET = "Actions.reset.flabel";
 	private static final String SECTION_DESC = "FeatureEditor.InfoSection.desc";
 	private static final String KEY_INFO = "FeatureEditor.InfoSection.info";
 	private static final String KEY_URL = "FeatureEditor.InfoSection.url";
@@ -36,7 +38,8 @@ public class InfoSection extends PDEFormSection {
 	private static final String KEY_INFO_DESCRIPTION =
 		"FeatureEditor.info.description";
 	private static final String KEY_INFO_LICENSE = "FeatureEditor.info.license";
-	private static final String KEY_INFO_COPYRIGHT = "FeatureEditor.info.copyright";
+	private static final String KEY_INFO_COPYRIGHT =
+		"FeatureEditor.info.copyright";
 	private IDocument document;
 	private IDocumentPartitioner partitioner;
 	private SourceViewerConfiguration sourceConfiguration;
@@ -62,7 +65,9 @@ public class InfoSection extends PDEFormSection {
 		partitioner =
 			new DefaultPartitioner(
 				new PDEPartitionScanner(),
-				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
+				new String[] {
+					PDEPartitionScanner.XML_TAG,
+					PDEPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
 	}
@@ -75,7 +80,9 @@ public class InfoSection extends PDEFormSection {
 			resetButton.setEnabled(false);
 		}
 	}
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
 		this.factory = factory;
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
@@ -116,7 +123,10 @@ public class InfoSection extends PDEFormSection {
 		urlText.setLayoutData(gd);
 		factory.createLabel(container, null);
 
-		label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_TEXT));
+		label =
+			factory.createLabel(
+				container,
+				PDEPlugin.getResourceString(KEY_TEXT));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 
@@ -125,20 +135,25 @@ public class InfoSection extends PDEFormSection {
 		sourceViewer = new SourceViewer(container, null, styles);
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
-		sourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		sourceViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
 		});
 		StyledText styledText = sourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
+		styledText.setMenu(getFormPage().getEditor().getContextMenu());
+
 		if (SWT.getPlatform().equals("motif") == false)
 			factory.paintBordersFor(container);
 		Control[] children = container.getChildren();
 		Control control = children[children.length - 1];
 		gd =
 			new GridData(
-				GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+				GridData.FILL_BOTH
+					| GridData.GRAB_HORIZONTAL
+					| GridData.GRAB_VERTICAL);
 		//gd.widthHint = 600;
 		//gd.heightHint = 600;
 		control.setLayoutData(gd);
@@ -156,7 +171,9 @@ public class InfoSection extends PDEFormSection {
 				PDEPlugin.getResourceString(KEY_APPLY),
 				SWT.PUSH);
 		applyButton.setEnabled(false);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		applyButton.setLayoutData(gd);
 		applyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -170,7 +187,9 @@ public class InfoSection extends PDEFormSection {
 				PDEPlugin.getResourceString(KEY_RESET),
 				SWT.PUSH);
 		resetButton.setEnabled(false);
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		resetButton.setLayoutData(gd);
 		resetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -186,19 +205,24 @@ public class InfoSection extends PDEFormSection {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.CUT)) {
 			sourceViewer.doOperation(sourceViewer.CUT);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.COPY)) {
 			sourceViewer.doOperation(sourceViewer.COPY);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.PASTE)) {
 			sourceViewer.doOperation(sourceViewer.PASTE);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
 			sourceViewer.doOperation(sourceViewer.DELETE);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.UNDO)) {
 			sourceViewer.doOperation(sourceViewer.UNDO);
 			return true;
-		} else if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
+		} else if (
+			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.REDO)) {
 			sourceViewer.doOperation(sourceViewer.REDO);
 			return true;
 		}
@@ -257,6 +281,11 @@ public class InfoSection extends PDEFormSection {
 		}
 	}
 
+	protected void fillContextMenu(IMenuManager manager) {
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
+	}
+
 	private void updateInfoURL(URL url) {
 	}
 
@@ -302,7 +331,7 @@ public class InfoSection extends PDEFormSection {
 			int index = sectionCombo.getSelectionIndex();
 			IFeatureInfo info = model.getFeature().getFeatureInfo(index);
 			setDirty(false);
-			element=null;
+			element = null;
 			updateEditorInput(info, false);
 		}
 	}
@@ -342,7 +371,10 @@ public class InfoSection extends PDEFormSection {
 	}
 
 	public void updateEditorInput(Object input, boolean commitPrevious) {
-		if (isDirty() && commitPrevious && element != null && element != input) {
+		if (isDirty()
+			&& commitPrevious
+			&& element != null
+			&& element != input) {
 			commitPrevious();
 		}
 		ignoreChange = true;

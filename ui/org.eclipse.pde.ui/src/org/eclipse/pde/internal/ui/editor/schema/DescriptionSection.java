@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
@@ -37,8 +38,8 @@ public class DescriptionSection extends PDEFormSection {
 		"SchemaEditor.DescriptionSection.title";
 	public static final String KEY_PENDING_TITLE =
 		"SchemaEditor.DescriptionSection.pending.title";
-	public static final String KEY_APPLY = "Actions.apply.label";
-	public static final String KEY_RESET = "Actions.reset.label";
+	public static final String KEY_APPLY = "Actions.apply.flabel";
+	public static final String KEY_RESET = "Actions.reset.flabel";
 	public static final String KEY_PENDING_MESSAGE =
 		"SchemaEditor.DescriptionSection.pending.message";
 	public static final String SECTION_DESC =
@@ -102,6 +103,7 @@ public class DescriptionSection extends PDEFormSection {
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
+		styledText.setMenu(getFormPage().getEditor().getContextMenu());
 
 		Composite buttonContainer = factory.createComposite(container);
 		layout = new GridLayout();
@@ -165,6 +167,9 @@ public class DescriptionSection extends PDEFormSection {
 			return true;
 		}
 		return false;
+	}
+	protected void fillContextMenu(IMenuManager manager) {
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 	private void handleApply() {
 		if (element != null)
