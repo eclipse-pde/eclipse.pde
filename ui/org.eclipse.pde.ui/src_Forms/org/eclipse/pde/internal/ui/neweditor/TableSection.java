@@ -49,11 +49,7 @@ public abstract class TableSection extends StructuredViewerSection {
 		super(formPage, parent, style, buttonLabels);
 	}
 	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
-		//IModel model = (IModel)getPage().getModel();
-		EditableTablePart tablePart;
-		tablePart = new PartAdapter(buttonLabels);
-		//tablePart.setEditable(model.isEditable());
-		return tablePart;
+		return new PartAdapter(buttonLabels);
 	}
 	protected IAction getRenameAction() {
 		return getTablePart().getRenameAction();

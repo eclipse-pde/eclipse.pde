@@ -32,12 +32,6 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
 public class ExportSection extends TableSection implements IPartSelectionListener {
-	private Button noExportButton;
-	private Button fullExportButton;
-	private Button selectedExportButton;
-	private IPluginLibrary currentLibrary;
-	private Composite nameFilterContainer;
-	private TableViewer nameTableViewer;
 	public static final String SECTION_TITLE = "ManifestEditor.ExportSection.title";
 	public static final String SECTION_DESC = "ManifestEditor.ExportSection.desc";
 	public static final String KEY_NO_EXPORT = "ManifestEditor.ExportSection.noExport";
@@ -48,45 +42,30 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	public static final String KEY_REMOVE = "ManifestEditor.ExportSection.remove";
 	public static final String SECTION_ADD_TITLE = "ManifestEditor.ExportSection.addTitle";
 	
-	private Vector fPackageFilters;
-	private boolean fIgnoreModelEvents;
-	
-	class NameFilter {
-		private String name;
-		public NameFilter(String name) {
-			this.name = name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getName() {
-			return name;
-		}
-		public String toString() {
-			return name;
-		}
-	}
+	private Button fFullExportButton;
+	private Button fSelectedExportButton;
+	private IPluginLibrary fCurrentLibrary;
+	private Composite fPackageExportContainer;
+	private TableViewer fPackageExportViewer;
+
 	class TableContentProvider extends DefaultContentProvider
-			implements
-				IStructuredContentProvider {
+			implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IPluginLibrary) {
-				return createFilters(((IPluginLibrary) parent)
-						.getContentFilters());
-			}
+			if (parent instanceof IPluginLibrary)
+				return((IPluginLibrary) parent).getContentFilters();
 			return new Object[0];
 		}
 	}
-	class TableLabelProvider extends LabelProvider
-			implements
-				ITableLabelProvider {
+	
+	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 		public Image getColumnImage(Object obj, int index) {
-			return null;
+			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
 	}
+	
 	public ExportSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[]{
 				PDEPlugin.getResourceString(KEY_ADD),
@@ -95,104 +74,67 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		handleDefaultButton = false;
 	}
-	private void buttonChanged(Button selectedButton) {
-		fIgnoreModelEvents = true;
-		nameFilterContainer.setVisible(selectedButton == selectedExportButton
-				&& selectedButton.getSelection());
-		try {
-			currentLibrary.setExported(selectedButton == selectedExportButton
-					|| selectedButton == fullExportButton);
-			if (selectedExportButton.getSelection() == false) {
-				if (currentLibrary.getContentFilters() != null)
-					currentLibrary.setContentFilters(null);
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
-		fIgnoreModelEvents = false;
-	}
-
+	
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
+		container.setLayout(new GridLayout());
+
+		String label = PDEPlugin.getResourceString(KEY_FULL_EXPORT);
+		fFullExportButton = toolkit.createButton(container, label, SWT.RADIO);
+		fFullExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fFullExportButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					if (fCurrentLibrary != null)
+						fCurrentLibrary.setExported(fFullExportButton.getSelection());
+					getTablePart().setButtonEnabled(0, !fFullExportButton.getSelection());
+					getTablePart().setButtonEnabled(1, false);
+				} catch (CoreException e1) {
+				}
+			}
+		});
+		
+		label =  PDEPlugin.getResourceString(KEY_SELECTED_EXPORT);
+		fSelectedExportButton = toolkit.createButton(container, label, SWT.RADIO);
+		fSelectedExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fPackageExportContainer = toolkit.createComposite(container);
+		fPackageExportContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		GridData gd;
-		noExportButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(KEY_NO_EXPORT), SWT.RADIO);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		noExportButton.setLayoutData(gd);
-		noExportButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (noExportButton.getSelection())
-					buttonChanged(noExportButton);
-			}
-		});
-		fullExportButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(KEY_FULL_EXPORT), SWT.RADIO);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fullExportButton.setLayoutData(gd);
-		fullExportButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fullExportButton.getSelection())
-					buttonChanged(fullExportButton);
-			}
-		});
-		selectedExportButton = toolkit.createButton(container, PDEPlugin
-				.getResourceString(KEY_SELECTED_EXPORT), SWT.RADIO);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		selectedExportButton.setLayoutData(gd);
-		selectedExportButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (selectedExportButton.getSelection())
-					buttonChanged(selectedExportButton);
-			}
-		});
-		nameFilterContainer = toolkit.createComposite(container);
-		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL);
-		nameFilterContainer.setLayoutData(gd);
-		layout = new GridLayout();
 		layout.marginWidth = 2;
 		layout.marginHeight = 2;
 		layout.numColumns = 2;
-		nameFilterContainer.setLayout(layout);
-		createNameTable(nameFilterContainer, toolkit);
+		fPackageExportContainer.setLayout(layout);
+		
+		createNameTable(fPackageExportContainer, toolkit);
 		update(null);
 		initialize();
 		section.setClient(container);
 	}
-	private Object[] createFilters(String[] names) {
-		if (fPackageFilters == null) {
-			fPackageFilters = new Vector();
-			if (names != null) {
-				for (int i = 0; i < names.length; i++) {
-					fPackageFilters.add(new NameFilter(names[i]));
-				}
-			}
-		}
-		Object[] result = new Object[fPackageFilters.size()];
-		fPackageFilters.copyInto(result);
-		return result;
-	}
+
 	private void createNameTable(Composite parent, FormToolkit toolkit) {
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(getPage().getModel().isEditable());
 		createViewerPartControl(parent, SWT.FULL_SELECTION, 2, toolkit);
-		nameTableViewer = tablePart.getTableViewer();
-		nameTableViewer.setContentProvider(new TableContentProvider());
-		nameTableViewer.setLabelProvider(new TableLabelProvider());
+		fPackageExportViewer = tablePart.getTableViewer();
+		fPackageExportViewer.setContentProvider(new TableContentProvider());
+		fPackageExportViewer.setLabelProvider(new TableLabelProvider());
+		fPackageExportViewer.setSorter(new ViewerSorter());
 		toolkit.paintBordersFor(parent);
 	}
+	
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
 		getTablePart().setButtonEnabled(1, item != null);
 	}
+	
 	protected void buttonSelected(int index) {
 		if (index == 0)
 			handleAdd();
 		else if (index == 1)
 			handleDelete();
 	}
+	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
@@ -200,34 +142,36 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		}
 		return false;
 	}
+	
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.removeModelChangedListener(this);
 		super.dispose();
 	}
+	
 	protected void fillContextMenu(IMenuManager manager) {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IAction renameAction = getRenameAction();
-		renameAction.setEnabled(model.isEditable());
-		manager.add(renameAction);
-		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
+	
 	private void handleAdd() {
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
+				String[] names = fCurrentLibrary.getContentFilters();
+				Vector existing = new Vector();
+				for (int i = 0; i < names.length; i++) {
+					existing.add(names[i]);
+				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(
-						nameTableViewer.getTable().getShell(), labelProvider,
-						JavaCore.create(project), new Vector());
+						fPackageExportViewer.getTable().getShell(), labelProvider,
+						JavaCore.create(project), existing);
 				if (dialog.open() == PackageSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
 						IPackageFragment fragment = (IPackageFragment)elements[i];
-						currentLibrary.addContentFilter(fragment.getElementName());
+						fCurrentLibrary.addContentFilter(fragment.getElementName());
 					}
 				}
 				labelProvider.dispose();
@@ -236,42 +180,31 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 		}		
 	}
 	
-	
-	
 	private void handleDelete() {
-		ISelection selection = nameTableViewer.getSelection();
-		Object item = ((IStructuredSelection) selection).getFirstElement();
-		if (item != null) {
-			fPackageFilters.remove(item);
-			nameTableViewer.remove(item);
+		IStructuredSelection ssel = (IStructuredSelection)fPackageExportViewer.getSelection();
+		Object[] items = ssel.toArray();
+		try {
+			for (int i = 0; i < items.length; i++) {
+				fCurrentLibrary.removeContentFilter(items[i].toString());
+			}
+		} catch (CoreException e) {
 		}
-		getTablePart().setButtonEnabled(1, false);
-		markDirty();
-		commit(false);
 	}
+	
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 	}
+	
 	public void modelChanged(IModelChangedEvent e) {
-		if (fIgnoreModelEvents)
-			return;
-		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-			Object object = e.getChangedObjects()[0];
-			if (object.equals(currentLibrary)) {
-				update(currentLibrary);
-			}
-		}
+		update(fCurrentLibrary);
 	}
+	
 	public void selectionChanged(IFormPart source, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection)selection;
 		update((IPluginLibrary) ssel.getFirstElement());
 	}
-	private void selectButton(Button button) {
-		noExportButton.setSelection(button == noExportButton);
-		selectedExportButton.setSelection(button == selectedExportButton);
-		fullExportButton.setSelection(button == fullExportButton);
-	}
+	
 	private boolean isReadOnly() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IEditable)
@@ -280,33 +213,25 @@ public class ExportSection extends TableSection implements IPartSelectionListene
 	}
 	
 	private void update(IPluginLibrary library) {
+		fCurrentLibrary = library;
 		if (library == null) {
-			nameFilterContainer.setVisible(false);
-			fullExportButton.setEnabled(false);
-			fullExportButton.setSelection(false);
-			noExportButton.setEnabled(false);
-			noExportButton.setSelection(false);
-			selectedExportButton.setEnabled(false);
-			selectedExportButton.setSelection(false);
-			currentLibrary = null;
+			fFullExportButton.setEnabled(false);
+			fFullExportButton.setSelection(false);
+			fSelectedExportButton.setEnabled(false);
+			fSelectedExportButton.setSelection(false);
+			fPackageExportViewer.setInput(new Object[0]);
+			getTablePart().setButtonEnabled(0, false);
+			getTablePart().setButtonEnabled(1, false);
 			return;
 		} 
-		if (currentLibrary == null && !isReadOnly()) {
-			fullExportButton.setEnabled(true);
-			noExportButton.setEnabled(true);
-			selectedExportButton.setEnabled(true);
-		}
-		this.currentLibrary = library;
-		if (library.isFullyExported())
-			selectButton(fullExportButton);
-		else if (library.isExported() == false)
-			selectButton(noExportButton);
-		else {
-			selectButton(selectedExportButton);
-		}
-		nameFilterContainer.setVisible(selectedExportButton.getSelection());
-		fPackageFilters = null;
-		nameTableViewer.setInput(library);
+		
+		fFullExportButton.setEnabled(!isReadOnly());
+		fSelectedExportButton.setEnabled(!isReadOnly());
+		fFullExportButton.setSelection(library.isFullyExported());
+		fSelectedExportButton.setSelection(!library.isFullyExported());
+
+		fPackageExportViewer.setInput(library);
 		getTablePart().setButtonEnabled(1, false);
+		getTablePart().setButtonEnabled(0, fSelectedExportButton.getSelection());
 	}
 }

@@ -11,11 +11,7 @@ import org.eclipse.pde.internal.ui.model.*;
  * @author melhem
  *
  */
-public class PluginLibraryNode extends PluginObjectNode
-		implements
-			IPluginLibrary {
-	
-	
+public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#getContentFilters()
 	 */
@@ -26,8 +22,12 @@ public class PluginLibraryNode extends PluginObjectNode
 			PluginObjectNode node = (PluginObjectNode)children[i];
 			if (node.getName().equals(P_EXPORTED)) {
 				String name = children[i].getXMLAttributeValue(P_NAME);
-				if (name != null && !name.equals("*"))
+				if (name != null && !name.equals("*")) {
+					int index = name.indexOf(".*");
+					if (index != -1)
+						name = name.substring(0, index);
 					result.add(name);
+				}
 			}
 		}
 		return (String[])result.toArray(new String[result.size()]);
@@ -86,7 +86,7 @@ public class PluginLibraryNode extends PluginObjectNode
 		node.setXMLTagName(P_EXPORTED);
 		node.setParentNode(this);
 		node.setModel(getModel());
-		node.setXMLAttribute(P_NAME, filter);
+		node.setXMLAttribute(P_NAME, "*".equals(filter) || filter.endsWith(".*") ? filter : filter + ".*");
 		addChildNode(node);
 		if (isInTheModel())
 			fireStructureChanged((IPluginElement)node, IModelChangedEvent.INSERT);
@@ -96,8 +96,19 @@ public class PluginLibraryNode extends PluginObjectNode
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#removeContentFilter(java.lang.String)
 	 */
 	public void removeContentFilter(String filter) throws CoreException {
-		
+		if (!filter.endsWith(".*"))
+			filter += ".*";
+		IDocumentNode[] children = getChildNodes();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getXMLTagName().equals(P_EXPORTED)
+				   && filter.equals(children[i].getXMLAttributeValue(P_NAME))) {
+				removeChildNode(children[i]);
+				if (isInTheModel())
+					fireStructureChanged((IPluginElement)children[i], IModelChangedEvent.REMOVE);
+			}
+		}		
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginLibrary#setPackages(java.lang.String[])
 	 */
