@@ -198,10 +198,12 @@ public class EventDetailsDialog extends Dialog {
 		if (isChild(entry) && childIndex < entryChildren.length-1) {
 			childIndex++;
 			entry = entryChildren[childIndex];
-		} else {
-			if (elementNum + 1 < totalElementCount)
+		} else if (elementNum + 1 < totalElementCount){
 				elementNum += 1;
 			entry = (LogEntry) ((TableTreeViewer) provider).getElementAt(elementNum);
+		} else { // at end of list but can branch into child elements - bug 58083
+			setEntryChildren(entry);
+			entry = entryChildren[0];
 		}
 		setEntrySelectionInTable();
 	}
@@ -312,12 +314,14 @@ public class EventDetailsDialog extends Dialog {
 	}
 	
 	private void updateButtons(){
+		boolean isAtEnd = elementNum == totalElementCount - 1;
 		if (isChild(entry)){
 			backButton.setEnabled(true);
-			nextButton.setEnabled(childIndex < entryChildren.length-1 || elementNum < totalElementCount - 1);
+			boolean isLastChild = childIndex == entryChildren.length-1;
+			nextButton.setEnabled(!isLastChild || !isAtEnd || entry.hasChildren());
 		} else {
 			backButton.setEnabled(elementNum != 0);
-			nextButton.setEnabled(elementNum != totalElementCount - 1);
+			nextButton.setEnabled(!isAtEnd || entry.hasChildren());
 		}
 	}
 	
