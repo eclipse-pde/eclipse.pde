@@ -10,49 +10,49 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-/**
- * @author cgwong
- *  
- */
+import org.osgi.framework.*;
+
 public class PluginActivationSection extends TableSection implements IModelChangedListener {
-	private TableViewer osgiTableViewer;
-	private Button autoActivateButton;
-	private Button nonAutoActivateButton;
-	private Font boldFont;
+	private TableViewer fExceptionsTableViewer;
+	private Button fDoActivateButton;
+	private Button fDoNotActivateButton;
+	private Font fBoldFont;
+	private static final String ECLIPSE_AUTOSTART = "Eclipse-AutoStart";
 	
 	class TableContentProvider extends DefaultContentProvider
 			implements
 				IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IPluginLibrary)
-				return ((IPluginLibrary) parent).getContentFilters();
-			return new Object[0];
+			return getExceptions();
 		}
 	}
 	class TableLabelProvider extends LabelProvider
 			implements
 				ITableLabelProvider {
 		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IPackageFragment)
-				return ((IPackageFragment) obj).getElementName();
 			return obj.toString();
 		}
 		public Image getColumnImage(Object obj, int index) {
@@ -73,15 +73,56 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		getSection().setText("Plug-in Activation (Eclipse 3.0 Platforms Only)");
 		getSection().setDescription("In order to improve performance, specify the conditions under which the plug-in should be activated.");
 	}
-	public void initialize() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		model.addModelChangedListener(this);
+	private void update() {
+		fDoActivateButton.setEnabled(isEditable());
+		fDoActivateButton.setSelection(isAutoStart());
+		fDoNotActivateButton.setSelection(!isAutoStart());
+		fDoNotActivateButton.setEnabled(isEditable());
+		enableButtons();
+	}
+	
+	private boolean isAutoStart() {
+		ManifestElement element = getManifestElement();
+		return (element == null) ? true : !"false".equals(element.getValue());
+	}
+	
+	private String[] getExceptions() {
+		ManifestElement element = getManifestElement();
+		if (element == null)
+			return new String[0];
+		
+		String exceptions = element.getAttribute("exceptions");
+		if (exceptions == null)
+			return new String[0];
+		
+		ArrayList tokens = new ArrayList();
+		StringTokenizer tok = new StringTokenizer(exceptions, ",");
+		while (tok.hasMoreTokens())
+			tokens.add(tok.nextToken().trim());
+		return (String[])tokens.toArray(new String[tokens.size()]);
+	}
+	
+	private ManifestElement getManifestElement() {
+		IBundleModel model = getBundleModel();
+		if (model != null) {
+			String value = model.getBundle().getHeader(ECLIPSE_AUTOSTART);
+			if (value != null) {
+				try {
+					ManifestElement[] elements = ManifestElement.parseHeader(ECLIPSE_AUTOSTART, value);
+					if (elements != null && elements.length > 0)
+						return elements[0];
+				} catch (BundleException e) {
+				}
+			}
+		}
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#isEditable()
 	 */
 	public boolean isEditable() {
-		return getPage().getModel().isEditable();
+		return getPage().getModel().isEditable()
+			&& getContextId().equals(BundleInputContext.CONTEXT_ID);
 	}
 	/*
 	 * (non-Javadoc)
@@ -89,12 +130,50 @@ public class PluginActivationSection extends TableSection implements IModelChang
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		model.removeModelChangedListener(this);
-		boldFont.dispose();
+		IBundleModel model = getBundleModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
+		fBoldFont.dispose();
 		super.dispose();
 	}
 	
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			handleRemove();
+			return true;
+		}
+		return false;
+	}
+
+	
+	protected void fillContextMenu(IMenuManager manager) {
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
+				manager);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+			return;
+		}
+		if (event.getChangedProperty().equals(ECLIPSE_AUTOSTART)) {
+			refresh();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		fExceptionsTableViewer.refresh();
+		fDoActivateButton.setSelection(isAutoStart());
+		fDoNotActivateButton.setSelection(!isAutoStart());
+		super.refresh();
+	}
+
 	private void initializeFonts(){
 		FontData[] fontData = getSection().getFont().getFontData();
 		FontData data;
@@ -103,7 +182,7 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		else
 			data = new FontData();
 		data.setStyle(SWT.BOLD);
-		boldFont = new Font(getSection().getDisplay(), fontData);
+		fBoldFont = new Font(getSection().getDisplay(), fontData);
 	}
 	/*
 	 * (non-Javadoc)
@@ -124,45 +203,28 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		/*
 		 * create new manifest part
 		 */
-		Composite topContainer = toolkit.createComposite(mainContainer);
-		layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth= false;
-		topContainer.setLayout(layout);
-
-		/*
-		 * Note:  this code does NOT show the hyperlink.  Checked in for future use but debug first.
-		 */
-//		FormText formText = toolkit.createFormText(topContainer, true);
-//		formText.setLayoutData(new GridData());
-//		formText.setText("<form>" +
-//				"<p>To take advantage of this feature, the plug-in must contain a manifest.mf " +
-//				"file." +
-//				"<a href=\"create\">Create a manifest file</a>" +
-//				"</p></form>", true, false);
-//		formText.addHyperlinkListener(new HyperlinkAdapter(){
-//			public void linkActivated(HyperlinkEvent e) {
-//				if (e.getHref().toString().equals("create")){
-//				/**
-//				 * TODO: code to create manifest.mf here
-//				 */
-//				}
-//			}
-//		});
-		toolkit.createLabel(topContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
-		Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
-		manifestLink.addHyperlinkListener(new IHyperlinkListener(){
-			public void linkActivated(HyperlinkEvent e) {
-				/**
-				 * TODO: hook code to create manifest.mf here
-				 */
-			}
-			public void linkExited(HyperlinkEvent e) {
-			}
-			public void linkEntered(HyperlinkEvent e) {
-			}
-		});
+		if (!getContextId().equals(BundleInputContext.CONTEXT_ID) && getPage().getPDEEditor().getAggregateModel().isEditable()) {
+			Composite topContainer = toolkit.createComposite(mainContainer);
+			layout = new GridLayout();
+			layout.marginHeight = layout.marginWidth = 2;
+			layout.numColumns = 2;
+			layout.makeColumnsEqualWidth= false;
+			topContainer.setLayout(layout);
+			
+				toolkit.createLabel(topContainer, "To take advantage of this feature, the plug-in must contain a manifest.mf file.");
+				Hyperlink manifestLink = toolkit.createHyperlink(topContainer, "Create a manifest file",SWT.NULL);
+				manifestLink.addHyperlinkListener(new IHyperlinkListener(){
+					public void linkActivated(HyperlinkEvent e) {
+						/**
+						 * TODO: hook code to create manifest.mf here
+						 */
+					}
+					public void linkExited(HyperlinkEvent e) {
+					}
+					public void linkEntered(HyperlinkEvent e) {
+					}
+			});
+		}
 		
 		/*
 		 * Bottom parts (Activation Rule & Exceptions)
@@ -184,9 +246,9 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		ruleContainer.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		Label activateLabel = toolkit.createLabel(ruleContainer, "Activation Rule");
-		activateLabel.setFont(boldFont);
+		activateLabel.setFont(fBoldFont);
 
-		autoActivateButton = toolkit
+		fDoActivateButton = toolkit
 				.createButton(
 						ruleContainer,
 						"Always activate this plug-in",
@@ -194,35 +256,28 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		
 		GridData gd = new GridData();
 		gd.horizontalIndent = 5;
-		autoActivateButton.setLayoutData(gd);
-		autoActivateButton.addSelectionListener(new SelectionAdapter() {
+		fDoActivateButton.setLayoutData(gd);
+		fDoActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				/*
-				 * TODO: set auto-start header properties
-				 */
+				writeHeader();
 			}
 		});
-		autoActivateButton.setEnabled(isEditable());
 		/*
 		 * auto-activate should be set to true by default with empty exceptions package list
 		 */
-		autoActivateButton.setSelection(true);
-		nonAutoActivateButton = toolkit
+		fDoNotActivateButton = toolkit
 				.createButton(
 						ruleContainer,
 						"Do not activate this plug-in",
 						SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalIndent = 5;
-		nonAutoActivateButton.setLayoutData(gd);
-		nonAutoActivateButton.addSelectionListener(new SelectionAdapter() {
+		fDoNotActivateButton.setLayoutData(gd);
+		fDoNotActivateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				/*
-				 * TODO: set auto-start header properties
-				 */
+				writeHeader();
 			}
 		});
-		nonAutoActivateButton.setEnabled(isEditable());
 		/*
 		 * Exceptions part
 		 */
@@ -234,7 +289,7 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		exceptionsContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label exceptionLabel = toolkit.createLabel(exceptionsContainer, "Exceptions to the Rule");
-		exceptionLabel.setFont(boldFont);
+		exceptionLabel.setFont(fBoldFont);
 		exceptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = toolkit.createLabel(exceptionsContainer, "Ignore the activation rule when loaded classes belong to the following subset of packages:", SWT.WRAP);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -248,18 +303,18 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		exceptionsPkgContainer.setLayout(layout);
 		exceptionsPkgContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 				
-		EditableTablePart tablePart = getTablePart();
-		IModel model = (IModel) getPage().getModel();
-		tablePart.setEditable(model.isEditable());
 		createViewerPartControl(exceptionsPkgContainer, SWT.FULL_SELECTION, 2, toolkit);
-		osgiTableViewer = tablePart.getTableViewer();
-		osgiTableViewer.setContentProvider(new TableContentProvider());
-		osgiTableViewer.setLabelProvider(new TableLabelProvider());
-		tablePart.setEditable(isEditable());
+		fExceptionsTableViewer = getTablePart().getTableViewer();
+		fExceptionsTableViewer.setContentProvider(new TableContentProvider());
+		fExceptionsTableViewer.setLabelProvider(new TableLabelProvider());
+		fExceptionsTableViewer.setInput(getBundleModel());
 
 		toolkit.paintBordersFor(exceptionsContainer);
 		section.setClient(mainContainer);
-		initialize();
+		IBundleModel model = getBundleModel();
+		if (model != null)
+			model.addModelChangedListener(this);
+		update();
 	}
 	protected void enableButtons(){
 		getTablePart().setButtonEnabled(0, isEditable());
@@ -276,7 +331,7 @@ public class PluginActivationSection extends TableSection implements IModelChang
 		IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				TableItem[] existingPackages = osgiTableViewer.getTable()
+				TableItem[] existingPackages = fExceptionsTableViewer.getTable()
 						.getItems();
 				Vector existing = new Vector();
 				for (int i = 0; i < existingPackages.length; i++) {
@@ -284,29 +339,46 @@ public class PluginActivationSection extends TableSection implements IModelChang
 				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(
-						osgiTableViewer.getTable().getShell(), labelProvider,
+						fExceptionsTableViewer.getTable().getShell(), labelProvider,
 						JavaCore.create(project), existing);
 				if (dialog.open() == PackageSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
-						/**
-						 * TODO: add these packages to exceptions header
-						 */
-						osgiTableViewer.add((IPackageFragment) elements[i]);
+						fExceptionsTableViewer.add(((IPackageFragment) elements[i]).getElementName());
 					}
+					writeHeader();
 				}
 				labelProvider.dispose();
 			}
 		} catch (CoreException e) {
 		}
 	}
+	
+	private void writeHeader() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(fDoActivateButton.getSelection() ? "true" : "false");
+		TableItem[] items = fExceptionsTableViewer.getTable().getItems();
+		if (items.length > 0)
+			buffer.append(";exceptions=\"");
+		for (int i = 0; i < items.length; i++) {
+			if (i > 0)
+				buffer.append(" ");
+			buffer.append(items[i].getData().toString());
+			if (i < items.length - 1)
+				buffer.append("," + System.getProperty("line.separator"));		
+		}
+		buffer.append("\"");
+		getBundleModel().getBundle().setHeader(ECLIPSE_AUTOSTART, buffer.toString());
+	}
+	
 	private void handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) osgiTableViewer
+		IStructuredSelection ssel = (IStructuredSelection) fExceptionsTableViewer
 				.getSelection();
 		Object[] items = ssel.toArray();
 		for (int i = 0; i < items.length; i++) {
-			osgiTableViewer.remove(items[i]);
+			fExceptionsTableViewer.remove(items[i]);
 		}
+		writeHeader();
 	}
 	/*
 	 * (non-Javadoc)
@@ -314,8 +386,23 @@ public class PluginActivationSection extends TableSection implements IModelChang
 	 * @see org.eclipse.pde.internal.ui.neweditor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
-		Object item = selection.getFirstElement();
-		getTablePart().setButtonEnabled(1,
-				item != null && item instanceof IPackageFragment);
+		getTablePart().setButtonEnabled(1, selection != null && !selection.isEmpty());
 	}
+	
+	public String getContextId() {
+		if (getPluginBase() instanceof IBundlePluginBase)
+			return BundleInputContext.CONTEXT_ID;
+		return PluginInputContext.CONTEXT_ID;
+	}
+	private IPluginBase getPluginBase() {
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		return ((IPluginModelBase) model).getPluginBase();
+	}
+	
+	private IBundleModel getBundleModel() {
+		InputContext context = getPage().getPDEEditor().getContextManager()
+				.findContext(BundleInputContext.CONTEXT_ID);
+		return context != null ? (IBundleModel) context.getModel() : null;
+	}
+	
 }

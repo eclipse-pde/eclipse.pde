@@ -155,8 +155,10 @@ public class ExportSection extends TableSection
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				String[] names = fCurrentLibrary.getContentFilters();
 				Vector existing = new Vector();
-				for (int i = 0; i < names.length; i++) {
-					existing.add(names[i]);
+				if (names != null) {
+					for (int i = 0; i < names.length; i++) {
+						existing.add(names[i]);
+					}
 				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(

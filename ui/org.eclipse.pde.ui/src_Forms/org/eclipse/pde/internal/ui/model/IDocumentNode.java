@@ -1,6 +1,8 @@
 package org.eclipse.pde.internal.ui.model;
 
-public interface IDocumentNode {
+import java.io.*;
+
+public interface IDocumentNode extends Serializable {
 		
 	IDocumentNode getParentNode();	
 	void setParentNode(IDocumentNode node);

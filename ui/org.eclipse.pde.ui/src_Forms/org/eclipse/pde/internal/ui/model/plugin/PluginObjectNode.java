@@ -16,7 +16,7 @@ public class PluginObjectNode extends PluginDocumentNode
 			IPluginObject {
 	private String fName;
 	private boolean fInTheModel;
-	private ISharedPluginModel fModel;
+	private transient ISharedPluginModel fModel;
 
 	/*
 	 * (non-Javadoc)

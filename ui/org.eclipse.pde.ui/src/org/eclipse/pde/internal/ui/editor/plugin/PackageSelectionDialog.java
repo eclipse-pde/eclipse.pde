@@ -32,7 +32,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 * 
 	 */
 	private void setElements(IJavaProject jProject, Vector existingPackages) {
-		ArrayList list = new ArrayList();
+		HashMap map = new HashMap();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
 			for (int i = 0; i < roots.length; i++) {
@@ -40,12 +40,12 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 				for (int j = 0; j < children.length; j++) {
 					IPackageFragment fragment = (IPackageFragment)children[j];
 					if (fragment.hasChildren() && !existingPackages.contains(fragment.getElementName()))
-						list.add(fragment);
+						map.put(fragment.getElementName(), fragment);
 				}
 			}
 		} catch (JavaModelException e) {
 		}
-		setElements(list.toArray());
+		setElements(map.values().toArray());
 	}
 	
 	private IPackageFragmentRoot[] getRoots(IJavaProject jProject) {
