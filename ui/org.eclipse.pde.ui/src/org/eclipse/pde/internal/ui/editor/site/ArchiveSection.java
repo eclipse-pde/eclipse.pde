@@ -3,15 +3,18 @@
  */
 package org.eclipse.pde.internal.ui.editor.site;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -19,6 +22,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.model.*;
 import org.eclipse.update.ui.forms.internal.*;
 
 /**
@@ -29,10 +34,26 @@ public class ArchiveSection extends PDEFormSection {
 	private Table fTable;
 	private TableViewer fViewer;
 	private boolean fUpdateNeeded;
+	private ISiteModel fModel;
+	private ISiteBuildModel fBuildModel;
 	private Button fAddButton;	
 	private Button fEditButton;
 	private Button fRemoveButton;
+	private FormEntry fPluginDest;
+	private FormEntry fFeatureDest;
 	
+	class FolderProvider extends WorkbenchContentProvider {
+		public boolean hasChildren(Object element) {
+			Object[] children = getChildren(element);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof IFolder) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+	}
 	class ContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -66,9 +87,11 @@ public class ArchiveSection extends PDEFormSection {
 		super(formPage);
 		setHeaderText(PDEPlugin.getResourceString("SiteEditor.ArchiveSection.header"));
 		setDescription(PDEPlugin.getResourceString("SiteEditor.ArchiveSection.title"));
-		setCollapsable(true);
-		setCollapsed(
-			((ISiteModel) getFormPage().getModel()).getSite().getArchives().length == 0);
+		fModel = (ISiteModel)getFormPage().getModel();
+		fModel.addModelChangedListener(this);
+		fBuildModel = fModel.getBuildModel();
+		if (fBuildModel != null)
+			fBuildModel.addModelChangedListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -77,16 +100,93 @@ public class ArchiveSection extends PDEFormSection {
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		Composite container = factory.createComposite(parent);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 25;
+		layout.marginWidth = 9;
+		layout.horizontalSpacing = 9;
 		container.setLayout(layout);
+		
+		createTopContainer(container, factory);
+		Label label = factory.createLabel(container, PDEPlugin.getResourceString("SiteEditor.Archive.instruction"), SWT.WRAP);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 400;
+		label.setLayoutData(gd);
+		
+		createBottomContainer(container, factory);
+		factory.paintBordersFor(container);		
+		return container;
+	}
+	
+	private void createTopContainer(Composite parent, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = layout.marginWidth = 0;
+		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fPluginDest =
+		new FormEntry(
+			createText(
+				container,
+				PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.DescriptionSection.pluginLocation")), //$NON-NLS-1$
+				factory,
+				1));
+		fPluginDest.addFormTextListener(new IFormTextListener() {
+			public void textValueChanged(FormEntry text) {
+				setPluginDestination(text.getValue());
+			}
+			public void textDirty(FormEntry text) {
+				forceDirty();
+			}
+		});
+		
+		Button browse = factory.createButton(container, PDEPlugin.getResourceString("SiteEditor.DescriptionSection.browse"), SWT.PUSH); //$NON-NLS-1$
+		browse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IFolder folder = handleFindContainer();
+				if (folder != null)
+					fPluginDest.setValue(folder.getProjectRelativePath().addTrailingSeparator().toString());
+			}
+		});
+		
+		fFeatureDest =
+			new FormEntry(
+				createText(
+					container,
+					PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.DescriptionSection.featureLocation")), //$NON-NLS-1$
+					factory,
+					1));
+		fFeatureDest.addFormTextListener(new IFormTextListener() {
+			public void textValueChanged(FormEntry text) {
+				setFeatureDestination(text.getValue());
+			}
+			public void textDirty(FormEntry text) {
+				forceDirty();
+			}
+		});
+	
+		browse = factory.createButton(container, PDEPlugin.getResourceString("SiteEditor.DescriptionSection.browse"), SWT.PUSH); //$NON-NLS-1$
+		browse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IFolder folder = handleFindContainer();
+				if (folder != null)
+					fFeatureDest.setValue(folder.getProjectRelativePath().addTrailingSeparator().toString());
+			}
+		});	
+		factory.paintBordersFor(container);
+	}
+	
+	private void createBottomContainer(Composite parent, FormWidgetFactory factory) {
+		Composite container = factory.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 0;
+		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		createTable(container, factory);
 		createTableViewer();
-		createButtons(container, factory);
+		createButtons(container, factory);	
 		factory.paintBordersFor(container);
-		
-		return container;
 	}
 	
 	private void createButtons(Composite parent, FormWidgetFactory factory) {
@@ -99,9 +199,6 @@ public class ArchiveSection extends PDEFormSection {
 		fAddButton = factory.createButton(container, PDEPlugin.getResourceString("SiteEditor.add"), SWT.PUSH);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc) @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			public void widgetSelected(SelectionEvent e) {
 				showDialog(null);
 			}
@@ -110,9 +207,6 @@ public class ArchiveSection extends PDEFormSection {
 		fEditButton = factory.createButton(container, PDEPlugin.getResourceString("SiteEditor.edit"), SWT.PUSH);
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc) @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection ssel = (IStructuredSelection)fViewer.getSelection();
 				if (ssel != null && ssel.size() == 1)
@@ -124,9 +218,6 @@ public class ArchiveSection extends PDEFormSection {
 		fRemoveButton = factory.createButton(container, PDEPlugin.getResourceString("SiteEditor.remove"), SWT.PUSH);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc) @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			public void widgetSelected(SelectionEvent e) {
 				handleDelete();
 			}
@@ -175,8 +266,10 @@ public class ArchiveSection extends PDEFormSection {
 		if (selection != null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection)selection;
 			fRemoveButton.setEnabled(ssel.size() > 0);
+			fEditButton.setEnabled(ssel.size() == 1);
 		} else {
 			fRemoveButton.setEnabled(false);
+			fEditButton.setEnabled(false);
 		}
 	}
 	
@@ -232,22 +325,40 @@ public class ArchiveSection extends PDEFormSection {
 		if (fUpdateNeeded) {
 			update(getFormPage().getModel());
 		}
+		ISiteBuildModel buildModel = fModel.getBuildModel();
+		if (buildModel != null) {
+			ISiteBuild siteBuild = buildModel.getSiteBuild();
+			setIfDefined(
+				fFeatureDest,
+				siteBuild.getFeatureLocation() != null
+					? siteBuild.getFeatureLocation().toString()
+					: null);
+			setIfDefined(
+				fPluginDest,
+				siteBuild.getPluginLocation() != null
+					? siteBuild.getPluginLocation().toString()
+					: null);
+		}
+	}
+	
+	private void setIfDefined(FormEntry formText, String value) {
+		if (value != null) {
+			formText.setValue(value, true);
+		}
 	}
 
 	public void update(Object input) {
-		fViewer.setInput(input);
-		fViewer.refresh();
+		fViewer.refresh();		
+		ISiteBuild siteBuild = fBuildModel.getSiteBuild();
+		if (siteBuild != null) {
+			setIfDefined(fPluginDest, siteBuild.getPluginLocation().toOSString());
+			setIfDefined(fFeatureDest, siteBuild.getFeatureLocation().toOSString());
+		}
 		fUpdateNeeded = false;
 	}
 	
 	public void initialize(Object input) {
 		update(input);
-		ISiteModel model = (ISiteModel) input;
-		if (!model.isEditable()) {
-			fAddButton.setEnabled(false);
-			fRemoveButton.setEnabled(false);
-		}
-		model.addModelChangedListener(this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -285,5 +396,83 @@ public class ArchiveSection extends PDEFormSection {
 		control.setMenu(popupMenuManager.createContextMenu(control));
 	}
 
+	public void commitChanges(boolean onSave) {
+		fPluginDest.commit();
+		fFeatureDest.commit();
+		if (onSave && fBuildModel instanceof WorkspaceSiteBuildModel
+				&& ((WorkspaceSiteBuildModel) fBuildModel).isDirty()) {
+			((WorkspaceSiteBuildModel) fBuildModel).save();
+		}
+	}
+	
+	private void setPluginDestination(String text) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (buildModel == null)
+			return;
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+		try {
+			siteBuild.setPluginLocation(new Path(text));
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+	private IFolder handleFindContainer() {
+		FolderSelectionDialog dialog =
+			new FolderSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(),
+				new WorkbenchLabelProvider(),
+				new FolderProvider() {
+		});
+		dialog.setInput(PDEPlugin.getWorkspace());
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IProject) {
+					IResource resource = ((ISiteModel)getFormPage().getModel()).getUnderlyingResource();
+					if (resource != null)
+					return ((IProject)element).equals(resource.getProject());
+				}
+				return element instanceof IFolder;
+			}			
+		});
+		dialog.setAllowMultiple(false);
+		dialog.setTitle(PDEPlugin.getResourceString("SiteEditor.DescriptionSection.folderSelection")); //$NON-NLS-1$
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object[] selection) {
+				if (selection != null
+					&& selection.length > 0
+					&& selection[0] instanceof IFolder)
+					return new Status(
+						IStatus.OK,
+						PDEPlugin.getPluginId(),
+						IStatus.OK,
+						"", //$NON-NLS-1$
+						null);
+				return new Status(
+					IStatus.ERROR,
+					PDEPlugin.getPluginId(),
+					IStatus.ERROR,
+					"", //$NON-NLS-1$
+					null);
+			}
+		});
+		if (dialog.open() == FolderSelectionDialog.OK) {
+			return (IFolder) dialog.getFirstResult();
+		}
+		return null;
+	}
+
+	private void setFeatureDestination(String text) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (buildModel == null)
+			return;
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+		try {
+			siteBuild.setFeatureLocation(new Path(text));
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
 
 }

@@ -11,15 +11,16 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.parts.StatusDialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
 
 public abstract class BaseNewDialog extends StatusDialog {
 	private Button okButton;
@@ -62,6 +63,7 @@ public abstract class BaseNewDialog extends StatusDialog {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginHeight = layout.marginWidth = 10;
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
@@ -77,7 +79,7 @@ public abstract class BaseNewDialog extends StatusDialog {
 		};
 		hookListeners(listener);
 		setTitle(getDialogTitle());
-
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, getHelpId());
 		return container;
 	}

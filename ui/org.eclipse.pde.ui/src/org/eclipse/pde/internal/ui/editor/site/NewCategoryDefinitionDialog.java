@@ -13,10 +13,9 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewCategoryDefinitionDialog extends BaseNewDialog {

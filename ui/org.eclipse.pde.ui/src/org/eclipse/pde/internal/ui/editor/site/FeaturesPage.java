@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.ui.views.contentoutline.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.update.ui.forms.internal.*;
 
-public class SitePage extends PDEFormPage {
+public class FeaturesPage extends PDEFormPage {
 
-public SitePage(PDEMultiPageEditor editor, String title) {
+public FeaturesPage(PDEMultiPageEditor editor, String title) {
 	super(editor, title);
 }
 public IContentOutlinePage createContentOutlinePage() {
 	return null;
 }
 protected AbstractSectionForm createForm() {
-	return new SiteForm(this);
+	return new FeaturesForm(this);
 }
 }

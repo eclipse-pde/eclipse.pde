@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class SiteForm extends ScrollableSectionForm {
-	private SitePage page;
-	private DescriptionSection descriptionSection;
+public class FeaturesForm extends ScrollableSectionForm {
+	private FeaturesPage page;
 	private FeatureSection featureSection;
-	private ArchiveSection archiveSection;
+	private CategorySection categorySection;
 
-	public SiteForm(SitePage page) {
+	public FeaturesForm(FeaturesPage page) {
 		this.page = page;
 		setVerticalFit(true);
 	}
@@ -33,41 +32,32 @@ public class SiteForm extends ScrollableSectionForm {
 		FormWidgetFactory factory = getFactory();
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
-		layout.numColumns = 1;
-		layout.makeColumnsEqualWidth=true;
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		layout.horizontalSpacing = 12;
 		layout.marginWidth = 10;
-		layout.horizontalSpacing = 15;
-		layout.verticalSpacing = 15;
 
-		descriptionSection = new DescriptionSection(page);
-		Control control = descriptionSection.createControl(parent, factory);
-		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
 		featureSection = new FeatureSection(page);
-		control = featureSection.createControl(parent, factory);
-		control.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Control control = featureSection.createControl(parent, factory);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 250;
+		control.setLayoutData(gd);
 		
-		archiveSection = new ArchiveSection(page);
-		control = archiveSection.createControl(parent, factory);
-		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		registerSection(descriptionSection);
+		categorySection = new CategorySection(page);
+		control = categorySection.createControl(parent, factory); 
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 250;
+		control.setLayoutData(gd);
+		
 		registerSection(featureSection);
-		registerSection(archiveSection);
 	
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_SITE_OVERVIEW);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.ui.forms.internal.AbstractSectionForm#dispose()
-	 */
 	public void dispose() {
-		unregisterSection(descriptionSection);
 		unregisterSection(featureSection);
+		unregisterSection(categorySection);
 		super.dispose();
-	}
-	
-	public void expandTo(Object object) {
 	}
 	
 	public void initialize(Object modelObject) {
@@ -77,9 +67,5 @@ public class SiteForm extends ScrollableSectionForm {
 		String name = input.getName();
 		setHeadingText(model.getResourceString(name));
 		((Composite) getControl()).layout(true);
-	}
-	
-	public void setFocus() {
-		descriptionSection.setFocus();
 	}
 }

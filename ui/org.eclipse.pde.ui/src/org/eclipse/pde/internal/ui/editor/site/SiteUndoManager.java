@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.SiteObject;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.site.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 
 /**
@@ -49,7 +49,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected String getPageId(Object obj) {
-		return SiteEditor.SITE_PAGE;
+		return SiteEditor.FEATURES_PAGE;
 	}
 
 	protected void execute(IModelChangedEvent event, boolean undo) {

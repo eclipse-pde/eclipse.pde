@@ -14,22 +14,20 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.ui.*;
 
 public class SiteEditor extends PDEMultiPageXMLEditor {
-	public static final String SITE_PAGE = "SitePage";
+	public static final String FEATURES_PAGE = "FeaturesPage";
+	public static final String ARCHIVE_PAGE = "ArchivePage";
 	public static final String SOURCE_PAGE = "SourcePage";
 	private boolean storageModel = false;
 
@@ -50,11 +48,12 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		return null;
 	}
 	protected void createPages() {
-		firstPageId = SITE_PAGE;
+		firstPageId = FEATURES_PAGE;
 		formWorkbook.setFirstPageSelected(false);
-		SitePage sitePage =
-			new SitePage(this, PDEPlugin.getResourceString("SiteEditor.page1"));
-		addPage(SITE_PAGE, sitePage);
+		FeaturesPage sitePage =
+			new FeaturesPage(this, PDEPlugin.getResourceString("SiteEditor.page1"));
+		addPage(FEATURES_PAGE, sitePage);
+		addPage(ARCHIVE_PAGE, new ArchivePage(this, "Site Layout"));
 		addPage(SOURCE_PAGE, new SiteSourcePage(this));
 	}
 	private ISiteModel createResourceModel(IFile file) throws CoreException {
@@ -111,7 +110,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	}
 
 	public IPDEEditorPage getHomePage() {
-		return getPage(SITE_PAGE);
+		return getPage(FEATURES_PAGE);
 	}
 	protected String getSourcePageId() {
 		return SOURCE_PAGE;

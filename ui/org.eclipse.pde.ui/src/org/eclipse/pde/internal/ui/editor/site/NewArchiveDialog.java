@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NewArchiveDialog extends BaseNewDialog {
@@ -27,18 +27,15 @@ public class NewArchiveDialog extends BaseNewDialog {
 	}
 
 	protected void createEntries(Composite container) {
-		GridData gd;
 		Label label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.path")); //$NON-NLS-1$
 		pathText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		pathText.setLayoutData(gd);
+		pathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		label = new Label(container, SWT.NULL);
 		label.setText(PDEPlugin.getResourceString(PDEPlugin.getResourceString("SiteEditor.NewArchiveDialog.url"))); //$NON-NLS-1$
 		urlText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		urlText.setLayoutData(gd);
+		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		ISiteArchive archive = (ISiteArchive)getSiteObject();
 		if (archive != null) {

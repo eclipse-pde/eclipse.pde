@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.*;
 
 public class SiteEditorContributor extends PDEEditorContributor {
 
 	public SiteEditorContributor() {
 		super("Site"); //$NON-NLS-1$
-	}
-	public void contextMenuAboutToShow(IMenuManager mng) {
-		mng.add(getRevertAction());
-		mng.add(getSaveAction());
 	}
 
 	protected boolean hasKnownTypes(Clipboard clipboard) {

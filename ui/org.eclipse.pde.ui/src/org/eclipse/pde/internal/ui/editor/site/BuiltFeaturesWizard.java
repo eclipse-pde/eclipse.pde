@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.core.isite.ISiteBuildModel;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 
 public class BuiltFeaturesWizard extends Wizard {

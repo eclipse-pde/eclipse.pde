@@ -32,7 +32,7 @@ public class SiteBuildFeature
 	implements ISiteBuildFeature {
 	private String id;
 	private String version;
-	private transient IFeature feature;
+	private IFeature feature;
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getType()
