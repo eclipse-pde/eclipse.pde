@@ -150,6 +150,8 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 				} else {
 					reload(getInputStream(document), false);
 				}
+				if (isDirty())
+					setDirty(false);
 			} catch (Exception e) {
 			} 	
 		}

@@ -135,7 +135,14 @@ public abstract class InputContext {
 							if (!editor.getLastDirtyState())
 								editor.fireSaveNeeded(input, true);
 							if (!fIsSourceMode) {
-								addTextEditOperation(fEditOperations, e);
+								IModelChangeProvider provider = e.getChangeProvider();
+								if (provider instanceof IEditingModel) {
+									// this is to guard against false notifications
+									// when a revert operation is performed, focus is taken away from a FormEntry
+									// and a text edit operation is falsely requested
+									if (((IEditingModel)provider).isDirty())
+										addTextEditOperation(fEditOperations, e);
+								}
 							}
 						} 
 					}
