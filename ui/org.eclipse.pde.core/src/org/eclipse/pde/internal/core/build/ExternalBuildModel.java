@@ -34,10 +34,10 @@ public class ExternalBuildModel extends BuildModel {
 		try {
 			URL url = null;
 			File file = new File(getInstallLocation());
-			if (file.isFile() && file.getName().endsWith(".jar")) {
+			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
 				url = new URL("jar:file:" + file.getAbsolutePath() + "!/build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + "build.properties");
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + "build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			InputStream stream = url.openStream();
 			load(stream, false);
@@ -55,7 +55,7 @@ public class ExternalBuildModel extends BuildModel {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		return (file.isFile()) ? file : new File(file, "build.properties");		
+		return (file.isFile()) ? file : new File(file, "build.properties");		 //$NON-NLS-1$
 	}
 
 	public boolean isInSync() {

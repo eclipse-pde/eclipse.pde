@@ -33,7 +33,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	
 	public URL getNLLookupLocation() {
 		try {
-			return new URL("file:" + getInstallLocation());
+			return new URL("file:" + getInstallLocation()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -76,7 +76,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		if (file.isFile() && new Path(file.getAbsolutePath()).getFileExtension().equals("jar"))
+		if (file.isFile() && new Path(file.getAbsolutePath()).getFileExtension().equals("jar")) //$NON-NLS-1$
 			return file;
 
 		file = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$

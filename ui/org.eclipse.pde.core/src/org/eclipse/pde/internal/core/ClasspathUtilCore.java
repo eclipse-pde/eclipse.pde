@@ -187,7 +187,7 @@ public class ClasspathUtilCore {
 		String location = plugin.getModel().getInstallLocation();
 		
 		// handle Plugin-in-a-JAR
-		if (new File(location).isFile() && location.endsWith(".jar")) {
+		if (new File(location).isFile() && location.endsWith(".jar")) { //$NON-NLS-1$
 			IClasspathEntry entry =
 				JavaCore.newLibraryEntry(
 						new Path(location),

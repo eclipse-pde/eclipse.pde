@@ -45,7 +45,7 @@ public class TracingOptionsManager {
 	
 	private Properties getOptions(IPluginModelBase model) {
 		try {
-			InputStream stream = model.getResourceURL(".options").openStream();
+			InputStream stream = model.getResourceURL(".options").openStream(); //$NON-NLS-1$
 			Properties modelOptions = new Properties();
 			modelOptions.load(stream);
 			stream.close();
@@ -98,7 +98,7 @@ public class TracingOptionsManager {
 
 	public static boolean isTraceable(IPluginModelBase model) {
 		try {
-			InputStream stream = model.getResourceURL(".options").openStream();
+			InputStream stream = model.getResourceURL(".options").openStream(); //$NON-NLS-1$
 			stream.close();
 		} catch (IOException e) {
 			return false;

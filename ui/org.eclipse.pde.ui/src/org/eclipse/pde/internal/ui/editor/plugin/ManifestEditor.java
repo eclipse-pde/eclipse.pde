@@ -238,22 +238,22 @@ public class ManifestEditor extends MultiSourceEditor {
 		if (zip == null)
 			return;
 		
-		if (zip.getEntry("META-INF/MANIFEST.MF") != null) {
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "META-INF/MANIFEST.MF"));
-			manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF")));
+		if (zip.getEntry("META-INF/MANIFEST.MF") != null) { //$NON-NLS-1$
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "META-INF/MANIFEST.MF")); //$NON-NLS-1$
+			manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF"))); //$NON-NLS-1$
 		}
 		
 		if (zip.getEntry("plugin.xml") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "plugin.xml"));
-			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false));
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "plugin.xml")); //$NON-NLS-1$
+			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false)); //$NON-NLS-1$
 		} else if (zip.getEntry("fragment.xml") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "fragment.xml"));
-			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true));
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "fragment.xml")); //$NON-NLS-1$
+			manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true)); //$NON-NLS-1$
 		}
 		
 		if (zip.getEntry("build.properties") != null) { //$NON-NLS-1$
-			input = new JarEntryEditorInput(new JarEntryFile(zip, "build.properties"));
-			manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties")));
+			input = new JarEntryEditorInput(new JarEntryFile(zip, "build.properties")); //$NON-NLS-1$
+			manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties"))); //$NON-NLS-1$
 		}
 	}
 	
@@ -387,22 +387,22 @@ public class ManifestEditor extends MultiSourceEditor {
 		
 		IStorageEditorInput input = null;
 		File pluginLocation = new File(pluginInfo.getModel().getInstallLocation());
-		if (pluginLocation.isFile() && pluginLocation.getName().endsWith(".jar")) {
+		if (pluginLocation.isFile() && pluginLocation.getName().endsWith(".jar")) { //$NON-NLS-1$
 			try {
 				ZipFile zipFile = new ZipFile(pluginLocation);
-				if (zipFile.getEntry("META-INF/MANIFEST.MF") != null)
-					manifest = "META-INF/MANIFEST.MF";
+				if (zipFile.getEntry("META-INF/MANIFEST.MF") != null) //$NON-NLS-1$
+					manifest = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 				else 
-					manifest = isFragment ? "fragment.xml" : "plugin.xml";
+					manifest = isFragment ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 				input = new JarEntryEditorInput(new JarEntryFile(zipFile, manifest));
 			} catch (Exception e) {
 			}			
 		}
 		
 		if (input == null) {
-			File file = new File(pluginLocation, "META-INF/MANIFEST.MF");
+			File file = new File(pluginLocation, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			if (!file.exists())
-				file = new File(pluginLocation, isFragment ? "fragment.xml" : "plugin.xml");
+				file = new File(pluginLocation, isFragment ? "fragment.xml" : "plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (file.exists())
 				input = new SystemFileEditorInput(file);
 		}

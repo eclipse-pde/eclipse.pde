@@ -35,7 +35,7 @@ public class WorkspaceExtensionsModel
 	
 	public URL getNLLookupLocation() {
 		try {
-			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$
+			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -74,10 +74,10 @@ public class WorkspaceExtensionsModel
 		File file = new File(location);
 		URL url = null;
 		try {
-			if (file.isFile() && file.getName().endsWith(".jar")) {
+			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
 				url = new URL("jar:file:" + file.getAbsolutePath() + "!/" + relativePath); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath);
+				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + relativePath); //$NON-NLS-1$
 			}
 		} catch (MalformedURLException e) {
 		}

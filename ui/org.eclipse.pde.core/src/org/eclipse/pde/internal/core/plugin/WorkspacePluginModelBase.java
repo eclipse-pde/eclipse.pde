@@ -37,7 +37,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 
 	public URL getNLLookupLocation() {
 		try {
-			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$
+			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			return null;
 		}
