@@ -370,7 +370,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	protected String[] getPaths() throws CoreException {
 		ArrayList paths = new ArrayList();
-		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		for (int i = 0; i < models.length; i++) {
 			paths.add(models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
 		}

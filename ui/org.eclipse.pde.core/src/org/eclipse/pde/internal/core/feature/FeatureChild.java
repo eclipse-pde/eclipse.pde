@@ -129,19 +129,12 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	}
 
 	public void hookWithWorkspace() {
-		IFeatureModel[] models =
-			PDECore
-				.getDefault()
-				.getWorkspaceModelManager()
-				.getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeature feature = models[i].getFeature();
-
-			if (feature != null && feature.getId().equals(getId())) {
-				if (fVersion == null || feature.getVersion().equals(fVersion)) {
-					this.fFeature = feature;
-					break;
-				}
+		if (fVersion != null) {
+			IFeatureModel workspaceModel = PDECore.getDefault()
+					.getFeatureModelManager().findFeatureModel(getId(),
+							fVersion);
+			if (workspaceModel != null && workspaceModel.getFeature() != null) {
+				this.fFeature = workspaceModel.getFeature();
 			}
 		}
 	}

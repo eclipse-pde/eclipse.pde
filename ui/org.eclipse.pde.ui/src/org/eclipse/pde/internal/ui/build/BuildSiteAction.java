@@ -66,33 +66,14 @@ public class BuildSiteAction implements IObjectActionDelegate,
 	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sFeatures.length; i++) {
-			IFeature feature = getFeatureModel(sFeatures[i]);
-			if (feature == null)
-				continue;
-			IFeatureModel model = feature.getModel();
+			ISiteFeature siteFeature = sFeatures[i];
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
+					.findFeatureModel(siteFeature.getId(),
+							siteFeature.getVersion());
 			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);
 		}
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
-	}
-
-	/**
-	 * 
-	 * @param siteFeature
-	 * @return IFeatureModel or null
-	 */
-	private IFeature getFeatureModel(ISiteFeature siteFeature) {
-		IFeatureModel[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel model = models[i];
-			IFeature feature = model.getFeature();
-			if (feature.getId().equals(siteFeature.getId())
-					&& feature.getVersion().equals(siteFeature.getVersion())) {
-				return feature;
-			}
-		}
-		return null;
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

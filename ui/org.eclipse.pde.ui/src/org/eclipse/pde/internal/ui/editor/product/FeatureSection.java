@@ -183,7 +183,7 @@ public class FeatureSection extends TableSection {
 	}
 	
 	private IFeatureModel[] getAvailableChoices() {
-		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
+		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		IProduct product = getProduct();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < models.length; i++) {

@@ -146,16 +146,12 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 	 * @return IFeatureModel or null
 	 */
 	private IFeature getFeature(ISiteFeature siteFeature) {
-		IFeatureModel[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel model = models[i];
-			IFeature feature = model.getFeature();
-			if (feature.getId().equals(siteFeature.getId())
-					&& feature.getVersion().equals(siteFeature.getVersion())) {
-				return feature;
-			}
-		}
+		IFeatureModel model = PDECore
+				.getDefault()
+				.getFeatureModelManager()
+				.findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
+		if (model != null)
+			return model.getFeature();
 		return null;
 	}
 

@@ -261,13 +261,29 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return null;
 	}
 
+	/**
+	 * Finds a feature with the given ID, any version
+	 * @param id
+	 * @return IFeature or null
+	 */
 	public IFeature findFeature(String id) {
-		return findFeature(id, null, IMatchRules.NONE);
+		IFeatureModel[] models = getFeatureModelManager().findFeatureModels(id);
+		if (models.length > 0)
+			return models[0].getFeature();
+		return null;
 	}
 
+	/**
+	 * Finds a feature with the given ID and satisfying constraints
+	 * of the version and the match.
+	 * @param id
+	 * @param version
+	 * @param match
+	 * @return IFeature or null
+	 */
 	public IFeature findFeature(String id, String version, int match) {
-		WorkspaceModelManager manager = getWorkspaceModelManager();
-		return findFeature(manager.getFeatureModels(), id, version, match);
+		IFeatureModel[] models = getFeatureModelManager().findFeatureModels(id);
+		return findFeature(models, id, version, match);
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {

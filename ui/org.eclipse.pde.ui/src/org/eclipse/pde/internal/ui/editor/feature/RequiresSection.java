@@ -23,17 +23,18 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.IFeatureModelDelta;
+import org.eclipse.pde.internal.core.IFeatureModelListener;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -60,7 +61,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection extends TableSection implements
-		IModelProviderListener {
+		IPluginModelListener, IFeatureModelListener {
 	public static final int MULTI_SELECTION = 33;
 
 	private static final String KEY_TITLE = "FeatureEditor.RequiresSection.title"; //$NON-NLS-1$
@@ -208,7 +209,7 @@ public class RequiresSection extends TableSection implements
 				new Runnable() {
 					public void run() {
 						IFeatureModel[] allModels = PDECore.getDefault()
-								.getFeatureModelManager().getAllFeatures();
+								.getFeatureModelManager().getModels();
 						ArrayList newModels = new ArrayList();
 						for (int i = 0; i < allModels.length; i++) {
 							if (canAdd(allModels[i]))
@@ -309,9 +310,9 @@ public class RequiresSection extends TableSection implements
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.removeModelProviderListener(this);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		PDECore.getDefault().getFeatureModelManager()
+				.removeFeatureModelListener(this);
 		super.dispose();
 	}
 
@@ -380,9 +381,9 @@ public class RequiresSection extends TableSection implements
 			fSyncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.addModelProviderListener(this);
+		PDECore.getDefault().getModelManager().addPluginModelListener(this);
+		PDECore.getDefault().getFeatureModelManager().addFeatureModelListener(
+				this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -423,15 +424,15 @@ public class RequiresSection extends TableSection implements
 		}
 	}
 
-	public void modelsChanged(final IModelProviderEvent event) {
+	public void modelsChanged(final PluginModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;
 				}
-				IModel[] added = event.getAddedModels();
-				IModel[] removed = event.getRemovedModels();
-				IModel[] changed = event.getChangedModels();
+				ModelEntry[] added = delta.getAddedEntries();
+				ModelEntry[] removed = delta.getRemovedEntries();
+				ModelEntry[] changed = delta.getChangedEntries();
 				if (hasModels(added) || hasModels(removed)
 						|| hasModels(changed))
 					markStale();
@@ -439,26 +440,35 @@ public class RequiresSection extends TableSection implements
 		});
 	}
 
-	private boolean hasModels(IModel[] models) {
+	private boolean hasModels(ModelEntry[] entries) {
+		if (entries == null)
+			return false;
+		return entries.length > 0;
+	}
+
+	public void modelsChanged(final IFeatureModelDelta delta) {
+		getSection().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (getSection().isDisposed()) {
+					return;
+				}
+				IFeatureModel[] added = delta.getAdded();
+				IFeatureModel[] removed = delta.getRemoved();
+				IFeatureModel[] changed = delta.getChanged();
+				if (hasModels(added) || hasModels(removed)
+						|| hasModels(changed))
+					markStale();
+			}
+		});
+	}
+
+	private boolean hasModels(IFeatureModel[] models) {
 		if (models == null)
 			return false;
-		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		IFeatureImport[] imports = model.getFeature().getImports();
-
+		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IPluginModelBase) {
-				for (int j = 0; j < imports.length; j++) {
-					if (((IPluginModelBase) models[i]).getPluginBase().getId()
-							.equals(imports[j].getId()))
-						return true;
-				}
-			}
-			if (models[i] instanceof IFeatureModel) {
-				for (int j = 0; j < imports.length; j++) {
-					if (((IFeatureModel) models[i]).getFeature().getId()
-							.equals(imports[j].getId()))
-						return true;
-				}
+			if (models[i] != thisModel) {
+				return true;
 			}
 		}
 		return false;

@@ -25,10 +25,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.IFeatureModelDelta;
+import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -52,7 +52,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class IncludedFeaturesSection extends TableSection implements
-		IModelProviderListener {
+		IFeatureModelListener {
 	private static final String SECTION_TITLE = "FeatureEditor.IncludedFeatures.title"; //$NON-NLS-1$
 
 	private static final String SECTION_DESC = "FeatureEditor.IncludedFeatures.desc"; //$NON-NLS-1$
@@ -126,9 +126,9 @@ public class IncludedFeaturesSection extends TableSection implements
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.removeModelProviderListener(this);
+		FeatureModelManager mng = PDECore.getDefault()
+		.getFeatureModelManager();
+		mng.removeFeatureModelListener(this);
 		super.dispose();
 	}
 
@@ -155,7 +155,7 @@ public class IncludedFeaturesSection extends TableSection implements
 				new Runnable() {
 					public void run() {
 						IFeatureModel[] allModels = PDECore.getDefault()
-								.getFeatureModelManager().getAllFeatures();
+								.getFeatureModelManager().getModels();
 						ArrayList newModels = new ArrayList();
 						for (int i = 0; i < allModels.length; i++) {
 							if (canAdd(allModels[i]))
@@ -287,9 +287,9 @@ public class IncludedFeaturesSection extends TableSection implements
 		refresh();
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.addModelProviderListener(this);
+		FeatureModelManager mng = PDECore.getDefault()
+				.getFeatureModelManager();
+		mng.addFeatureModelListener(this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -339,39 +339,31 @@ public class IncludedFeaturesSection extends TableSection implements
 		fOpenAction = new OpenReferenceAction(fIncludesViewer);
 	}
 
-	public void modelsChanged(final IModelProviderEvent event) {
+	public void modelsChanged(final IFeatureModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;
 				}
-				IModel[] added = event.getAddedModels();
-				IModel[] removed = event.getRemovedModels();
-				IModel[] changed = event.getChangedModels();
-				if (hasFeatureModels(added) || hasFeatureModels(removed)
-						|| hasFeatureModels(changed))
+				IFeatureModel[] added = delta.getAdded();
+				IFeatureModel[] removed = delta.getRemoved();
+				IFeatureModel[] changed = delta.getChanged();
+				if (hasModels(added) || hasModels(removed)
+						|| hasModels(changed))
 					markStale();
 			}
 		});
 	}
 
-	private boolean hasFeatureModels(IModel[] models) {
+	private boolean hasModels(IFeatureModel[] models) {
+		if (models == null)
+			return false;
 		IFeatureModel thisModel = (IFeatureModel) getPage().getModel();
 		if (thisModel == null)
 			return false;
-		IFeature thisFeature = thisModel.getFeature();
-		if (thisFeature == null)
-			return false;
-		if (models == null)
-			return false;
-		IFeatureChild[] includedFeatures = thisFeature.getIncludedFeatures();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IFeatureModel) {
-				IFeature feature = ((IFeatureModel) models[i]).getFeature();
-				for (int j = 0; j < includedFeatures.length; j++) {
-					if (feature.getId().equals(includedFeatures[j].getId()))
-						return true;
-				}
+			if (models[i] != thisModel) {
+				return true;
 			}
 		}
 		return false;

@@ -254,7 +254,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 				public void widgetSelected(SelectionEvent e) {
 					FeatureSelectionDialog dialog = new FeatureSelectionDialog(
 							getShell(), PDECore.getDefault()
-									.getFeatureModelManager().getAllFeatures(),
+									.getFeatureModelManager().getModels(),
 							false);
 					dialog.create();
 					if (dialog.open() == Window.OK) {

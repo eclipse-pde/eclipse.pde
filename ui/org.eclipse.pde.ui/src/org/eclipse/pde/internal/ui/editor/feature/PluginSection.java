@@ -25,12 +25,13 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -53,7 +54,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements
-		IModelProviderListener {
+		IPluginModelListener {
 	private static final String PLUGIN_TITLE = "FeatureEditor.PluginSection.pluginTitle"; //$NON-NLS-1$
 
 	private static final String PLUGIN_DESC = "FeatureEditor.PluginSection.pluginDesc"; //$NON-NLS-1$
@@ -133,9 +134,8 @@ public class PluginSection extends TableSection implements
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.removeModelProviderListener(this);
+		PluginModelManager mng = PDECore.getDefault().getModelManager();
+		mng.removePluginModelListener(this);
 		super.dispose();
 	}
 
@@ -300,9 +300,9 @@ public class PluginSection extends TableSection implements
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		getTablePart().setButtonEnabled(2, model.isEditable());
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault()
-				.getWorkspaceModelManager();
-		mng.addModelProviderListener(this);
+		PluginModelManager mng = PDECore.getDefault()
+				.getModelManager();
+		mng.addPluginModelListener(this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -351,15 +351,15 @@ public class PluginSection extends TableSection implements
 		fOpenAction = new OpenReferenceAction(fPluginViewer);
 	}
 
-	public void modelsChanged(final IModelProviderEvent event) {
+	public void modelsChanged(final PluginModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;
 				}
-				IModel[] added = event.getAddedModels();
-				IModel[] removed = event.getRemovedModels();
-				IModel[] changed = event.getChangedModels();
+				ModelEntry[] added = delta.getAddedEntries();
+				ModelEntry[] removed = delta.getRemovedEntries();
+				ModelEntry[] changed = delta.getChangedEntries();
 				if (hasPluginModels(added) || hasPluginModels(removed)
 						|| hasPluginModels(changed))
 					markStale();
@@ -367,21 +367,10 @@ public class PluginSection extends TableSection implements
 		});
 	}
 
-	private boolean hasPluginModels(IModel[] models) {
-		if (models == null)
+	private boolean hasPluginModels(ModelEntry[] entries) {
+		if (entries == null)
 			return false;
-		IFeatureModel model = (IFeatureModel) getPage().getModel();
-		IFeaturePlugin[] plugins = model.getFeature().getPlugins();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IPluginModelBase) {
-				for (int j = 0; j < plugins.length; j++) {
-					if (((IPluginModelBase) models[i]).getPluginBase().getId()
-							.equals(plugins[j].getId()))
-						return true;
-				}
-			}
-		}
-		return false;
+		return true;
 	}
 
 	public void setFocus() {

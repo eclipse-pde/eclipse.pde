@@ -50,7 +50,7 @@ public class WorkspaceModelManager
 	
 	private Map fModels;
 	private Map fFragmentModels;	
-	private List fFeatureModels;	
+	private Map fFeatureModels;	
 	private ArrayList fChangedModels;	
 	private ArrayList fListeners = new ArrayList();
 	private boolean fInitialized = false;
@@ -153,8 +153,9 @@ public class WorkspaceModelManager
 	private IModel getWorkspaceModel(IProject project) {
 		initializeWorkspaceModels();
 		
-		if (hasFeatureManifest(project))
-			return getWorkspaceModel(project, fFeatureModels);
+		if (hasFeatureManifest(project)){
+			return (IModel)fFeatureModels.get(project);
+		}
 		
 		if (hasBundleManifest(project)) {
 			IModel model = (IModel)fModels.get(project);
@@ -195,6 +196,16 @@ public class WorkspaceModelManager
 			IProject project = file.getProject();
 			if (isPluginProject(project) && !isBinaryPluginProject(project)) {
 				IPluginModelBase model = getWorkspacePluginModel(project);
+				if (model != null && model instanceof AbstractModel) {
+					((AbstractModel)model).resetNLResourceHelper();
+				}
+			}
+		}
+		
+		if (file.getName().equals("feature.properties")) { //$NON-NLS-1$
+			IProject project = file.getProject();
+			if (isFeatureProject(project)) {
+				IFeatureModel model = getFeatureModel(project);
 				if (model != null && model instanceof AbstractModel) {
 					((AbstractModel)model).resetNLResourceHelper();
 				}
@@ -336,21 +347,10 @@ public class WorkspaceModelManager
 		if (path.equals(new Path("fragment.xml"))) //$NON-NLS-1$
 			return (IModel)fFragmentModels.get(project);
 		if (path.equals(new Path("feature.xml"))) //$NON-NLS-1$
-			return getWorkspaceModel(file.getProject(), fFeatureModels);
+			return (IModel)fFeatureModels.get(project);
 		return null;		
 	}
 	
-	private IModel getWorkspaceModel(IProject project, List models) {
-		for (int i = 0; i < models.size(); i++) {
-			IModel model = (IModel) models.get(i);
-			IFile file = (IFile) model.getUnderlyingResource();
-			if (file.getProject().equals(project)) {
-				return model;
-			}
-		}
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getAllModels()
 	 */
@@ -410,9 +410,7 @@ public class WorkspaceModelManager
 		} else if (fFragmentModels.containsKey(project)) {
 			model = (IModel)fFragmentModels.remove(project);
 		} else {
-			model = getWorkspaceModel(project, fFeatureModels);
-			if (model != null)
-				fFeatureModels.remove(model);
+			model = (IModel)fFeatureModels.remove(project);
 		}
 		if (model != null) {
 			if (model instanceof IPluginModelBase) {
@@ -465,7 +463,7 @@ public class WorkspaceModelManager
 		fModelsLocked = true;
 		fModels = Collections.synchronizedMap(new HashMap());
 		fFragmentModels = Collections.synchronizedMap(new HashMap());
-		fFeatureModels = Collections.synchronizedList(new ArrayList());
+		fFeatureModels = Collections.synchronizedMap(new HashMap());
 		
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
@@ -616,8 +614,14 @@ public class WorkspaceModelManager
 			}
 		} else if (isFeatureProject(project)) {
 			model = createFeatureModel(project.getFile("feature.xml")); //$NON-NLS-1$
-			if (model != null)
-				fFeatureModels.add(model);
+			if (model != null) {
+				fFeatureModels.put(project, model);
+				if (notify) {
+					if (fChangedModels == null)
+						fChangedModels = new ArrayList();
+					fChangedModels.add(new ModelChange(model, true));
+				}
+			}
 		}
 	}
 
@@ -640,7 +644,7 @@ public class WorkspaceModelManager
 	 */
 	public IFeatureModel[] getFeatureModels() {
 		initializeWorkspaceModels();
-		return (IFeatureModel[]) fFeatureModels.toArray(new IFeatureModel[fFeatureModels.size()]);
+		return (IFeatureModel[]) fFeatureModels.values().toArray(new IFeatureModel[fFeatureModels.size()]);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelManager#getFragmentsFor(java.lang.String, java.lang.String)

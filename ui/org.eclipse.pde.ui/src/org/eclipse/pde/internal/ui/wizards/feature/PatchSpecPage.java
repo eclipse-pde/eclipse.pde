@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
@@ -68,21 +67,17 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			setErrorMessage(PDEPlugin.getResourceString(KEY_LIBRARY_MISSING));
 			return;
 		}
-		IFeatureModel[] featureModels = PDECore.getDefault().getFeatureModelManager().getAllFeatures();
 		
-		for (int i = 0; i < featureModels.length; i++) {
-		    IFeature feature = featureModels[i].getFeature();
-		    if (feature.getId().equals(featureIdText.getText())
-		            && feature.getVersion().equals(featureVersionText.getText())) {
-		        fFeatureToPatch = feature.getModel();
-		        setMessage(null);
-		        setPageComplete(true);
-		        setErrorMessage(null);
-		        return;
-		    }
+		fFeatureToPatch = PDECore.getDefault().getFeatureModelManager()
+				.findFeatureModel(featureIdText.getText(),
+						featureVersionText.getText());
+		if (fFeatureToPatch != null) {
+			setMessage(null);
+			setPageComplete(true);
+			setErrorMessage(null);
+			return;
 		}
 		
-		fFeatureToPatch = null;
 		setMessage(PDEPlugin.getFormattedMessage("NewFeaturePatch.SpecPage.notFound", featureIdText.getText()), IMessageProvider.WARNING); //$NON-NLS-1$
 		setErrorMessage(null);
 		getContainer().updateButtons();

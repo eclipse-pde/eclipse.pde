@@ -12,8 +12,6 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
@@ -52,32 +50,15 @@ class SiteLabelProvider extends LabelProvider {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
 		if (element instanceof SiteFeatureAdapter) {
-			if (getFeature(((SiteFeatureAdapter) element).feature) == null)
+			if (PDECore.getDefault().getFeatureModelManager().findFeatureModel(
+					((SiteFeatureAdapter) element).feature.getId(),
+					((SiteFeatureAdapter) element).feature.getVersion()) == null)
 				return fMissingSiteFeatureImage;
 			return fSiteFeatureImage;
 		}
 		if (element instanceof IFormPage)
 			return fPageImage;
 		return fSharedProvider.getImage(element);
-	}
-
-	/**
-	 * 
-	 * @param siteFeature
-	 * @return IFeatureModel or null
-	 */
-	private IFeature getFeature(ISiteFeature siteFeature) {
-		IFeatureModel[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel model = models[i];
-			IFeature feature = model.getFeature();
-			if (feature.getId().equals(siteFeature.getId())
-					&& feature.getVersion().equals(siteFeature.getVersion())) {
-				return feature;
-			}
-		}
-		return null;
 	}
 
 	public String getText(Object element) {

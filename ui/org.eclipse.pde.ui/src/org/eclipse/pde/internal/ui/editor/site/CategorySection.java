@@ -545,7 +545,7 @@ public class CategorySection extends TreeSection {
 							}
 						};
 				manager.add(buildAction);
-				buildAction.setEnabled(isEditable()&& getFeature(adapter.feature) != null);
+				buildAction.setEnabled(isEditable()&& getFeature(adapter.feature) != null );
 
 			}
 		}
@@ -676,26 +676,21 @@ public class CategorySection extends TreeSection {
 	 * @return IFeatureModel or null
 	 */
 	private IFeature getFeature(ISiteFeature siteFeature) {
-		IFeatureModel[] models = PDECore.getDefault()
-				.getWorkspaceModelManager().getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			IFeatureModel model = models[i];
-			IFeature feature = model.getFeature();
-			if (feature.getId().equals(siteFeature.getId())
-					&& feature.getVersion().equals(siteFeature.getVersion())) {
-				return feature;
-			}
-		}
+		IFeatureModel model = PDECore
+				.getDefault()
+				.getFeatureModelManager()
+				.findFeatureModel(siteFeature.getId(), siteFeature.getVersion());
+		if (model != null)
+			return model.getFeature();
 		return null;
 	}
 
 	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < sFeatures.length; i++) {
-			IFeature feature = getFeature(sFeatures[i]);
-			if (feature == null)
-				continue;
-			IFeatureModel model = feature.getModel();
+			IFeatureModel model = PDECore.getDefault().getFeatureModelManager()
+					.findFeatureModel(sFeatures[i].getId(),
+							sFeatures[i].getVersion());
 			if (model != null && model.getUnderlyingResource() != null)
 				list.add(model);
 		}
