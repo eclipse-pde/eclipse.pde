@@ -52,7 +52,7 @@ public class PDECore extends Plugin {
 		inst = this;
 		try {
 			resourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.pderesources");
+				ResourceBundle.getBundle("org.eclipse.pde.internal.core.pderesources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
