@@ -65,6 +65,7 @@ public class AdvancedLauncherTab
 	private Button fAddWorkspaceButton;
 	private String fProductID;
 	private String fApplicationID;
+	private Button fIncludeOptionalButton;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -198,6 +199,12 @@ public class AdvancedLauncherTab
 				updateStatus();
 			}
 		});
+		
+		fIncludeOptionalButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateStatus();
+			}
+		});
 
 		fAddWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -270,6 +277,7 @@ public class AdvancedLauncherTab
 		fSelectAllButton.setEnabled(enable);
 		fDeselectButton.setEnabled(enable);
 		fIncludeFragmentsButton.setEnabled(enable);
+		fIncludeOptionalButton.setEnabled(enable);
 		fAddWorkspaceButton.setEnabled(enable);
 	}
 
@@ -290,6 +298,12 @@ public class AdvancedLauncherTab
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIncludeFragmentsButton.setLayoutData(gd);
+		
+		fIncludeOptionalButton = new Button(composite, SWT.CHECK);
+		fIncludeOptionalButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.includeOptional")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fIncludeOptionalButton.setLayoutData(gd);
 		
 		fAddWorkspaceButton = new Button(composite, SWT.CHECK);
 		fAddWorkspaceButton.setText(PDEPlugin.getResourceString("AdvancedLauncherTab.addNew")); //$NON-NLS-1$
@@ -358,6 +372,8 @@ public class AdvancedLauncherTab
 
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].isOptional() && !fIncludeOptionalButton.getSelection())
+				continue;
 			addPluginAndDependencies(findPlugin(imports[i].getId()), map);
 		}
 		
@@ -565,6 +581,7 @@ public class AdvancedLauncherTab
 				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
 			}
 			fIncludeFragmentsButton.setSelection(config.getAttribute(INCLUDE_FRAGMENTS, false));
+			fIncludeOptionalButton.setSelection(config.getAttribute(INCLUDE_OPTIONAL, true));
 			fAddWorkspaceButton.setSelection(config.getAttribute(AUTOMATIC_ADD, true));
 
 			if (fPluginTreeViewer.getInput() == null) {
@@ -683,6 +700,7 @@ public class AdvancedLauncherTab
 			config.setAttribute(USE_DEFAULT, true);
 		}
 		config.setAttribute(INCLUDE_FRAGMENTS, false);
+		config.setAttribute(INCLUDE_OPTIONAL, true);
 		config.setAttribute(AUTOMATIC_ADD, true);
 	}
 	
@@ -691,6 +709,7 @@ public class AdvancedLauncherTab
 		if (fShowFeatures)
 			config.setAttribute(USEFEATURES, fUseFeaturesRadio.getSelection());
 		config.setAttribute(INCLUDE_FRAGMENTS, fIncludeFragmentsButton.getSelection());
+		config.setAttribute(INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
 		if (fUseListRadio.getSelection()) {
 			// store deselected projects

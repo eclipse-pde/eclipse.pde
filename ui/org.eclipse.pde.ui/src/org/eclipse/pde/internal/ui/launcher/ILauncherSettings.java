@@ -33,6 +33,7 @@ public interface ILauncherSettings {
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
 	String WSPROJECT = "wsproject"; //$NON-NLS-1$
 	String EXTPLUGINS = "extplugins"; //$NON-NLS-1$
+	String INCLUDE_OPTIONAL = "includeOptional";
 	String INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	String AUTOMATIC_ADD = "automaticAdd"; //$NON-NLS-1$
 	
