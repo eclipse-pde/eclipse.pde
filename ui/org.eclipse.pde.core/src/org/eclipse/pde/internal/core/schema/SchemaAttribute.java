@@ -77,7 +77,7 @@ public void setUse(int newUse) {
 	verifyProperties();
 }
 public void setValue(String value) {
-	String oldValue = value;
+	String oldValue = this.value.toString();
 	this.value = value;
 	getSchema().fireModelObjectChanged(this, P_VALUE, oldValue, value);
 	verifyProperties();
