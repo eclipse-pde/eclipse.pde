@@ -20,6 +20,7 @@ public class SiteBuildListener implements BuildListener {
 	 */
 	public void buildStarted(BuildEvent event) {
 		try {
+			File staticFile = FeatureBuildOperation.getDefault().getLogFile();
 			//File file = FeatureBuildOperation.getDefault().getLogFile();
 			File file = new File("d:\\buildlog.txt");
 			FileOutputStream fos = new FileOutputStream(file);

@@ -1,34 +1,19 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ant.core.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.isite.ISiteBuild;
-import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
-import org.eclipse.pde.internal.core.isite.ISiteBuildModel;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -247,7 +232,9 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		createLogFile(buildModel);
 		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
 		runner.setArguments(computeBuildArguments(buildModel));
-		//runner.setCustomClasspath(computeCustomClasspath());
+		URL [] customURLs = computeCustomClasspath();
+		if (customURLs!=null)
+			runner.setCustomClasspath(customURLs);
 		runner.setExecutionTargets(computeTargets());
 		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener(BUILD_LISTENER_CLASS);
@@ -256,13 +243,20 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 
 	private URL[] computeCustomClasspath() {
 		// Add this plug-in's space
+		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+		URL [] defaultAntURLs = preferences.getDefaultAntURLs();
 		URL installURL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
 		try {
-			URL runtimeURL = new URL(installURL, "pdeui.jar");
-			URL selfhostingURL = new URL(installURL, "bin/");
-			return new URL[] { selfhostingURL, runtimeURL };
-		} catch (MalformedURLException e) {
-			return new URL[0];
+			int length = defaultAntURLs.length;
+			URL [] customURLs = new URL[length+2];
+			System.arraycopy(defaultAntURLs, 0, customURLs, 0, length);
+			customURLs[length] = new URL(installURL, "bin/");
+			customURLs[length+1] = new URL(installURL, "pdeui.jar");
+			return customURLs;
+		}
+		catch (IOException e) {
+			PDEPlugin.logException(e);
+			return null;
 		}
 	}
 
