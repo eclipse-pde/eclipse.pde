@@ -47,6 +47,8 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String P_COLUMN_3 = "column3";
 	private static final String P_COLUMN_4 = "column4";
 	
+	private static final String P_ACTIVATE = "activate";
+	
 		
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
@@ -62,6 +64,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action deleteLogAction;
 	private Action exportAction;
 	private Action importAction;
+	private Action activateViewAction;
 	
 	private Action filterAction;
 	private Clipboard clipboard;
@@ -112,10 +115,14 @@ public class LogView extends ViewPart implements ILogListener {
 		toolBarManager.add(clearAction);
 		toolBarManager.add(readLogAction);
 		toolBarManager.add(new Separator());
-		toolBarManager.add(filterAction);
-		toolBarManager.add(propertiesAction);		
+		toolBarManager.add(propertiesAction);	
 		
+		IMenuManager mgr = bars.getMenuManager();
+		mgr.add(filterAction);
+		mgr.add(new Separator());
+		mgr.add(activateViewAction);		
 	}
+	
 	private void createViewer(TableTree tableTree) {
 		tableTreeViewer = new TableTreeViewer(tableTree);
 		tableTreeViewer.setContentProvider(new LogViewContentProvider(this));
@@ -276,7 +283,7 @@ public class LogView extends ViewPart implements ILogListener {
 			PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
-		deleteLogAction.setEnabled(inputFile.exists() && inputFile.equals(Platform.getLogFileLocation()));
+		deleteLogAction.setEnabled(inputFile.exists() && inputFile.equals(Platform.getLogFileLocation().toFile()));
 
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
 			public void run() {
@@ -328,6 +335,12 @@ public class LogView extends ViewPart implements ILogListener {
 		importAction.setDisabledImageDescriptor(
 			PDERuntimePluginImages.DESC_IMPORT_DISABLED);
 		importAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_IMPORT_HOVER);
+		
+		activateViewAction = new Action(PDERuntimePlugin.getResourceString("LogView.activate")) {
+			public void run() {				
+			}
+		};
+		activateViewAction.setChecked(memento.getString(P_ACTIVATE).equals("true"));
 	}
 	
 	public void dispose() {
@@ -539,7 +552,7 @@ public class LogView extends ViewPart implements ILogListener {
 						deleteLogAction.setEnabled(
 							inputFile.exists()
 								&& inputFile.equals(Platform.getLogFileLocation().toFile()));
-						if (activate)
+						if (activate && activateViewAction.isChecked())
 							PDERuntimePlugin.getActivePage().activate(view);
 					}
 				}
@@ -617,7 +630,9 @@ public class LogView extends ViewPart implements ILogListener {
 		if (memento.getInteger(P_COLUMN_3) == null)
 			memento.putInteger(P_COLUMN_3, 150);
 		if (memento.getInteger(P_COLUMN_4) == null)
-			memento.putInteger(P_COLUMN_4, 150);	
+			memento.putInteger(P_COLUMN_4, 150);
+		if (memento.getString(P_ACTIVATE) == null)
+			memento.putString(P_ACTIVATE, "true");
 	}
 	
 	public void saveState(IMemento memento) {
@@ -625,7 +640,10 @@ public class LogView extends ViewPart implements ILogListener {
 		this.memento.putInteger(P_COLUMN_2, column2.getWidth());
 		this.memento.putInteger(P_COLUMN_3, column3.getWidth());
 		this.memento.putInteger(P_COLUMN_4, column4.getWidth());
-		
+		this.memento.putString(
+			P_ACTIVATE,
+			activateViewAction.isChecked() ? "true" : "false");
+
 		memento.putMemento(this.memento);
 	}
 	
