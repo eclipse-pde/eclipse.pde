@@ -92,7 +92,7 @@ public abstract class PluginBase
 		loadRuntime(bundleDescription, state);
 		loadImports(bundleDescription);
 		
-		String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml";
+		String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		File file = new File(getModel().getInstallLocation(), filename);
 		if (file.exists()) {
 			try {
@@ -101,7 +101,7 @@ public abstract class PluginBase
 				parser.parse(new FileInputStream(file), handler);
 				loadExtensions(handler.getExtensions());
 				loadExtensionPoints(handler.getExtensionPoints());
-				schemaVersion = handler.isLegacy() ? null : "3.0";
+				schemaVersion = handler.isLegacy() ? null : "3.0"; //$NON-NLS-1$
 			} catch (Exception e) {
 			}
 		}	
@@ -169,12 +169,12 @@ public abstract class PluginBase
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
 		bindSourceLocation(node, lineTable);
 		this.schemaVersion = schemaVersion;
-		this.id = getNodeAttribute(node, "id");
-		this.name = getNodeAttribute(node, "name");
-		this.providerName = getNodeAttribute(node, "provider-name");
+		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.providerName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
 		if (providerName == null)
-			this.providerName = getNodeAttribute(node, "vendor");
-		this.version = getNodeAttribute(node, "version");
+			this.providerName = getNodeAttribute(node, "vendor"); //$NON-NLS-1$
+		this.version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -206,7 +206,7 @@ public abstract class PluginBase
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase().equals("library")) {
+				&& child.getNodeName().toLowerCase().equals("library")) { //$NON-NLS-1$
 				PluginLibrary library = new PluginLibrary();
 				library.setModel(getModel());
 				library.setInTheModel(true);
@@ -243,7 +243,7 @@ public abstract class PluginBase
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase().equals("import")) {
+				&& child.getNodeName().toLowerCase().equals("import")) { //$NON-NLS-1$
 				PluginImport importElement = new PluginImport();
 				importElement.setModel(getModel());
 				importElement.setInTheModel(true);
@@ -255,9 +255,9 @@ public abstract class PluginBase
 	}
 	protected void processChild(Node child, Hashtable lineTable) {
 		String name = child.getNodeName().toLowerCase();
-		if (name.equals("runtime")) {
+		if (name.equals("runtime")) { //$NON-NLS-1$
 			loadRuntime(child, lineTable);
-		} else if (name.equals("requires")) {
+		} else if (name.equals("requires")) { //$NON-NLS-1$
 			loadImports(child, lineTable);
 		}
 		else super.processChild(child, lineTable);
@@ -280,13 +280,13 @@ public abstract class PluginBase
 		imports = new Vector();
 		providerName = null;
 		schemaVersion = null;
-		version = "";
-		this.name = "";
-		this.id = "";
+		version = ""; //$NON-NLS-1$
+		this.name = ""; //$NON-NLS-1$
+		this.id = ""; //$NON-NLS-1$
 		if (getModel() != null && getModel().getUnderlyingResource() != null) {
 			this.id = getModel().getUnderlyingResource().getProject().getName();
 			this.name = this.id;
-			this.version = "0.0.0";
+			this.version = "0.0.0"; //$NON-NLS-1$
 		}
 		super.reset();
 		valid=false;
@@ -321,7 +321,7 @@ public abstract class PluginBase
 		int index1 = libraries.indexOf(l1);
 		int index2 = libraries.indexOf(l2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException("Libraries not in the model");
+			throwCoreException(PDECore.getResourceString("PluginBase.librariesNotFoundException")); //$NON-NLS-1$
 		libraries.setElementAt(l1, index2);
 		libraries.setElementAt(l2, index1);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
@@ -336,7 +336,7 @@ public abstract class PluginBase
 		int index1 = imports.indexOf(import1);
 		int index2 = imports.indexOf(import2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException("Imports not in the model");
+			throwCoreException(PDECore.getResourceString("PluginBase.importsNotFoundException")); //$NON-NLS-1$
 		imports.setElementAt(import1, index2);
 		imports.setElementAt(import2, index1);
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);

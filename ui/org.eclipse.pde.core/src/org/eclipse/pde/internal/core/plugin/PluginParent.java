@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	protected Vector children = new Vector();
@@ -76,7 +77,7 @@ public void swap(IPluginObject child1, IPluginObject child2) throws CoreExceptio
 	int index1 = children.indexOf(child1);
 	int index2 = children.indexOf(child2);
 	if (index1 == -1 || index2 == -1)
-		throwCoreException("Siblings not in the model");
+		throwCoreException(PDECore.getResourceString("PluginParent.siblingsNotFoundException")); //$NON-NLS-1$
 	children.setElementAt(child1, index2);
 	children.setElementAt(child2, index1);
 	firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);

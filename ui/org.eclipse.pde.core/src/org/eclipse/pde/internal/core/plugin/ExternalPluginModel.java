@@ -29,6 +29,6 @@ public IPlugin getPlugin() {
 }
 
 protected File getFile() {
-	return new File(getInstallLocation() + File.separator + "plugin.xml");
+	return new File(getInstallLocation() + File.separator + "plugin.xml"); //$NON-NLS-1$
 }
 }

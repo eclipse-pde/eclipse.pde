@@ -101,6 +101,6 @@ public void setValue(String newValue) throws CoreException {
 public void write(String indent, PrintWriter writer) {
 	if (value==null) return;
 	writer.print(indent);
-	writer.print(getName()+"=\""+getWritableString(value)+"\"");
+	writer.print(getName()+"=\""+getWritableString(value)+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 }
 }

@@ -27,16 +27,16 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		super();
 	}
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = isFragmentModel() ? "fragment" : "plugin";
+		String name = isFragmentModel() ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		return new NLResourceHelper(name, getNLLookupLocations());
 	}
 	
 	public URL getNLLookupLocation() {
 		String installLocation = getInstallLocation();
-		if (installLocation.startsWith("file:") == false)
-			installLocation = "file:" + installLocation;
+		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/");
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			return url;
 		} catch (MalformedURLException e) {
 			return null;
@@ -103,9 +103,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	private File getLocalFile() {
-		File file = new File(getInstallLocation(), "META-INF/MANIFEST.MF");
+		File file = new File(getInstallLocation(), "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (!file.exists()) {
-			String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml";
+			String manifest = isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 			file = new File(getInstallLocation(), manifest);
 		}
 		return file;

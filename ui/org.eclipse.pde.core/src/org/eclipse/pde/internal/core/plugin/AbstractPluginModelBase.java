@@ -133,7 +133,7 @@ public abstract class AbstractPluginModelBase
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;
@@ -157,14 +157,14 @@ public abstract class AbstractPluginModelBase
 			if (node.getNodeType()==Node.PROCESSING_INSTRUCTION_NODE) {
 				ProcessingInstruction pi = (ProcessingInstruction)node;
 				String target = pi.getTarget();
-				if (target.equals("eclipse")) {
+				if (target.equals("eclipse")) { //$NON-NLS-1$
 					String data = pi.getData();
 					if (data!=null) {
 						data = data.trim().toLowerCase();
 						int loc = data.indexOf('=');
 						if (loc!=-1) {
 							String key = data.substring(0, loc);
-							if (key.equals("version")) {
+							if (key.equals("version")) { //$NON-NLS-1$
 								int start = loc+1;
 								if (data.charAt(start)=='\"')
 									start++;

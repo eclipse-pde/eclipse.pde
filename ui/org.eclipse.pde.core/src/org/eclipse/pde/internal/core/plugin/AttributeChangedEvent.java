@@ -17,7 +17,7 @@ import org.eclipse.pde.core.*;
  * @author
  */
 public class AttributeChangedEvent extends ModelChangedEvent {
-	public static final String P_ATTRIBUTE_VALUE = "att_value";
+	public static final String P_ATTRIBUTE_VALUE = "att_value"; //$NON-NLS-1$
 	private Object attribute;
 	public AttributeChangedEvent(IModelChangeProvider provider, Object element, Object attribute, String oldValue, String newValue) {
 		super(provider, element, P_ATTRIBUTE_VALUE, oldValue, newValue);

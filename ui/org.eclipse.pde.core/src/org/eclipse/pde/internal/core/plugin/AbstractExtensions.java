@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public abstract class AbstractExtensions
@@ -86,14 +87,14 @@ public abstract class AbstractExtensions
 
 	protected void processChild(Node child, Hashtable lineTable) {
 		String name = child.getNodeName().toLowerCase();
-		if (name.equals("extension")) {
+		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();
 			extension.setModel(getModel());
 			extension.setParent(this);
 			extensions.add(extension);
 			extension.setInTheModel(true);
 			extension.load(child, lineTable);
-		} else if (name.equals("extension-point")) {
+		} else if (name.equals("extension-point")) { //$NON-NLS-1$
 			PluginExtensionPoint point = new PluginExtensionPoint();
 			point.setModel(getModel());
 			point.setParent(this);
@@ -134,7 +135,7 @@ public abstract class AbstractExtensions
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException("Extensions not in the model");
+			throwCoreException(PDECore.getResourceString("AbstractExtensions.extensionsNotFoundException")); //$NON-NLS-1$
 		extensions.setElementAt(e1, index2);
 		extensions.setElementAt(e2, index1);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
@@ -144,12 +145,12 @@ public abstract class AbstractExtensions
 		String tag,
 		Object[] children,
 		PrintWriter writer) {
-		writer.println(indent + "<" + tag + ">");
+		writer.println(indent + "<" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.length; i++) {
 			IPluginObject obj = (IPluginObject) children[i];
-			obj.write(indent + "   ", writer);
+			obj.write(indent + "   ", writer); //$NON-NLS-1$
 		}
-		writer.println(indent + "</" + tag + ">");
+		writer.println(indent + "</" + tag + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected boolean hasRequiredAttributes(){

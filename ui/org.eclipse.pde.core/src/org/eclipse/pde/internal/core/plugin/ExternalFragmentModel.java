@@ -34,6 +34,6 @@ public class ExternalFragmentModel
 	}
 
 	protected File getFile() {
-		return new File(getInstallLocation() + File.separator + "fragment.xml");
+		return new File(getInstallLocation() + File.separator + "fragment.xml"); //$NON-NLS-1$
 	}
 }

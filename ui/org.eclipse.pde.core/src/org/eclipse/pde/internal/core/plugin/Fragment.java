@@ -20,8 +20,8 @@ import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
 
 public class Fragment extends PluginBase implements IFragment {
-	private String pluginId = "";
-	private String pluginVersion = "";
+	private String pluginId = ""; //$NON-NLS-1$
+	private String pluginVersion = ""; //$NON-NLS-1$
 	private int rule = IMatchRules.NONE;
 
 	public Fragment() {
@@ -59,9 +59,9 @@ public class Fragment extends PluginBase implements IFragment {
 		super.load(srcPluginBase);
 	}
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
-		this.pluginId = getNodeAttribute(node, "plugin-id");
-		this.pluginVersion = getNodeAttribute(node, "plugin-version");
-		String match = getNodeAttribute(node, "match");
+		this.pluginId = getNodeAttribute(node, "plugin-id"); //$NON-NLS-1$
+		this.pluginVersion = getNodeAttribute(node, "plugin-version"); //$NON-NLS-1$
+		String match = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (match != null) {
 			String[] table = IMatchRules.RULE_NAME_TABLE;
 			for (int i = 0; i < table.length; i++) {
@@ -74,8 +74,8 @@ public class Fragment extends PluginBase implements IFragment {
 		super.load(node, schemaVersion, lineTable);
 	}
 	public void reset() {
-		pluginId = "";
-		pluginVersion = "";
+		pluginId = ""; //$NON-NLS-1$
+		pluginVersion = ""; //$NON-NLS-1$
 		rule = IMatchRules.NONE;
 		super.reset();
 	}
@@ -122,51 +122,51 @@ public class Fragment extends PluginBase implements IFragment {
 			writer.print(getSchemaVersion());
 			writer.println("\"?>");
 		}
-		writer.print("<fragment");
+		writer.print("<fragment"); //$NON-NLS-1$
 		if (getId() != null) {
 			writer.println();
-			writer.print("   id=\"" + getId() + "\"");
+			writer.print("   id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getName() != null) {
 			writer.println();
-			writer.print("   name=\"" + getWritableString(getName()) + "\"");
+			writer.print("   name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getVersion() != null) {
 			writer.println();
-			writer.print("   version=\"" + getVersion() + "\"");
+			writer.print("   version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getProviderName() != null) {
 			writer.println();
-			writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\"");
+			writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getPluginId() != null) {
 			writer.println();
-			writer.print("   plugin-id=\"" + getPluginId() + "\"");
+			writer.print("   plugin-id=\"" + getPluginId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getPluginVersion() != null) {
 			writer.println();
-			writer.print("   plugin-version=\"" + getPluginVersion() + "\"");
+			writer.print("   plugin-version=\"" + getPluginVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getRule() != IMatchRules.NONE) {
 			writer.println();
-			writer.print("   match=\"" + IMatchRules.RULE_NAME_TABLE[getRule()] + "\"");
+			writer.print("   match=\"" + IMatchRules.RULE_NAME_TABLE[getRule()] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		writer.println();
 
-		String firstIndent = "   ";
+		String firstIndent = "   "; //$NON-NLS-1$
 
 		// add runtime
 		Object[] children = getLibraries();
 		if (children.length > 0) {
-			writeChildren(firstIndent, "runtime", children, writer);
+			writeChildren(firstIndent, "runtime", children, writer); //$NON-NLS-1$
 			writer.println();
 		}
 
 		// add requires
 		children = getImports();
 		if (children.length > 0) {
-			writeChildren(firstIndent, "requires", children, writer);
+			writeChildren(firstIndent, "requires", children, writer); //$NON-NLS-1$
 			writer.println();
 		}
 
@@ -183,6 +183,6 @@ public class Fragment extends PluginBase implements IFragment {
 		for (int i = 0; i < children.length; i++) {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
-		writer.println("</fragment>");
+		writer.println("</fragment>"); //$NON-NLS-1$
 	}
 }

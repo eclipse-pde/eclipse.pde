@@ -22,7 +22,7 @@ public class PluginExtensionPoint
 	extends IdentifiablePluginObject
 	implements IPluginExtensionPoint {
 	private String schema;
-	static final String ID_SEPARATOR = ".";
+	static final String ID_SEPARATOR = "."; //$NON-NLS-1$
 
 	public PluginExtensionPoint() {
 	}
@@ -43,24 +43,24 @@ public class PluginExtensionPoint
 	}
 	
 	boolean load(Attributes attributes, int line) {
-		String id = attributes.getValue("id");
+		String id = attributes.getValue("id"); //$NON-NLS-1$
 		if (id == null || id.length() == 0)
 			return false;
 		this.id = id;
 		
-		String name = attributes.getValue("name");
+		String name = attributes.getValue("name"); //$NON-NLS-1$
 		if (name == null || name.length() == 0)
 			return false;
 		this.name = name;
 		
-		this.schema = attributes.getValue("schema");
+		this.schema = attributes.getValue("schema"); //$NON-NLS-1$
 		this.range = new int[] {line, line};
 		return true;
 	}
 	void load(Node node, Hashtable lineTable) {
-		this.id = getNodeAttribute(node, "id");
-		this.name = getNodeAttribute(node, "name");
-		this.schema = getNodeAttribute(node, "schema");
+		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.schema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
 		bindSourceLocation(node, lineTable);
 	}
 
@@ -99,13 +99,13 @@ public class PluginExtensionPoint
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<extension-point");
+		writer.print("<extension-point"); //$NON-NLS-1$
 		if (getId() != null)
-			writer.print(" id=\"" + getWritableString(getId()) + "\"");
+			writer.print(" id=\"" + getWritableString(getId()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getName() != null)
-			writer.print(" name=\"" + getWritableString(getName()) + "\"");
+			writer.print(" name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getSchema() != null)
-			writer.print(" schema=\"" + getSchema() + "\"");
-		writer.println("/>");
+			writer.print(" schema=\"" + getSchema() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>"); //$NON-NLS-1$
 	}
 }

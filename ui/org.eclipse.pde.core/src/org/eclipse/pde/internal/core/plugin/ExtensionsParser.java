@@ -35,7 +35,7 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public void processingInstruction(String target, String data)
 			throws SAXException {
-		if ("eclipse".equals(target)) {
+		if ("eclipse".equals(target)) { //$NON-NLS-1$
 			fIsLegacy = false;
 		}
 	}
@@ -45,13 +45,13 @@ public class ExtensionsParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if (fOpenElements == null) {
-			if (qName.equals("plugin") || qName.equals("fragment")) {
+			if (qName.equals("plugin") || qName.equals("fragment")) { //$NON-NLS-1$ //$NON-NLS-2$
 				fOpenElements = new Stack();
 			}
 		} else if (fOpenElements.size() == 0) {
-			if (qName.equals("extension")) {
+			if (qName.equals("extension")) { //$NON-NLS-1$
 				createExtension(attributes);
-			} else if (qName.equals("extension-point")) {
+			} else if (qName.equals("extension-point")) { //$NON-NLS-1$
 				createExtensionPoint(attributes);
 			}				
 		} else {
@@ -68,7 +68,7 @@ public class ExtensionsParser extends DefaultHandler {
 			extension.setModel(fModel);
 			extension.setInTheModel(true);
 			fExtensions.add(extension);
-			if (extension.getPoint().equals("org.eclipse.pde.core.source"))
+			if (extension.getPoint().equals("org.eclipse.pde.core.source")) //$NON-NLS-1$
 				fOpenElements.push(extension);
 		}
 	}

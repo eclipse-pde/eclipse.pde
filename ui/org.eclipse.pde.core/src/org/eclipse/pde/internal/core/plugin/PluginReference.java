@@ -41,7 +41,7 @@ public class PluginReference extends PlatformObject {
 		if (plugin!=null) {
 			return plugin.getTranslatedName();
 		}
-		return id!=null?id:"?";
+		return id!=null?id:"?"; //$NON-NLS-1$
 	}
 	public boolean isResolved() {
 		return plugin!=null;

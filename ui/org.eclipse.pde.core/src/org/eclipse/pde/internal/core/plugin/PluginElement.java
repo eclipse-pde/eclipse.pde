@@ -22,8 +22,8 @@ import org.xml.sax.*;
 public class PluginElement extends PluginParent implements IPluginElement {
 	private transient ISchemaElement elementInfo;
 	private String text;
-	static final String ATTRIBUTE_SHIFT = "      ";
-	static final String ELEMENT_SHIFT = "   ";
+	static final String ATTRIBUTE_SHIFT = "      "; //$NON-NLS-1$
+	static final String ELEMENT_SHIFT = "   "; //$NON-NLS-1$
 	private Hashtable attributes = new Hashtable();
 
 	public PluginElement() {
@@ -217,7 +217,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<" + getName());
+		writer.print("<" + getName()); //$NON-NLS-1$
 		String newIndent = indent + ATTRIBUTE_SHIFT;
 		if (attributes.isEmpty() == false) {
 			writer.println();
@@ -228,7 +228,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 					writer.println();
 			}
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		newIndent = indent + ELEMENT_SHIFT;
 		IPluginObject[] children = getChildren();
 		for (int i = 0; i < children.length; i++) {
@@ -238,6 +238,6 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		if (getText() != null) {
 			writer.println(newIndent + getWritableString(getText()));
 		}
-		writer.println(indent + "</" + getName() + ">");
+		writer.println(indent + "</" + getName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

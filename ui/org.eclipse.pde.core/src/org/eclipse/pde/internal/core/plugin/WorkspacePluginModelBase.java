@@ -28,7 +28,7 @@ public abstract class WorkspacePluginModelBase
 	private IBuildModel buildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = isFragmentModel() ? "fragment" : "plugin";
+		String name = isFragmentModel() ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		NLResourceHelper helper =
 			new NLResourceHelper(name, getNLLookupLocations());
 		//helper.setFile(file);
@@ -38,10 +38,10 @@ public abstract class WorkspacePluginModelBase
 	public URL getNLLookupLocation() {
 		IPath path = file.getLocation().removeLastSegments(1);
 		String installLocation = path.toOSString();
-		if (installLocation.startsWith("file:") == false)
-			installLocation = "file:" + installLocation;
+		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/");
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			return url;
 		} catch (MalformedURLException e) {
 			return null;
@@ -146,7 +146,7 @@ public abstract class WorkspacePluginModelBase
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8"));
+				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -160,7 +160,7 @@ public abstract class WorkspacePluginModelBase
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			pluginBase.write("", writer);
+			pluginBase.write("", writer); //$NON-NLS-1$
 		}
 		dirty = false;
 	}

@@ -46,20 +46,20 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	}
 	
 	boolean load(Attributes attributes, int line) {
-		String point = attributes.getValue("point");
+		String point = attributes.getValue("point"); //$NON-NLS-1$
 		if (point == null || point.length() == 0)
 			return false;
 		this.point = point;
-		this.id = attributes.getValue("id");
-		this.name = attributes.getValue("name");
+		this.id = attributes.getValue("id"); //$NON-NLS-1$
+		this.name = attributes.getValue("name"); //$NON-NLS-1$
 		range = new int[] {line, line};
 		return true;
 	}
 
 	void load(Node node, Hashtable lineTable) {
-		this.id = getNodeAttribute(node, "id");
-		this.name = getNodeAttribute(node, "name");
-		this.point = getNodeAttribute(node, "point");
+		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.point = getNodeAttribute(node, "point"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -121,27 +121,27 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	}
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<extension");
+		writer.print("<extension"); //$NON-NLS-1$
 		String attIndent = indent + PluginElement.ATTRIBUTE_SHIFT;
 		if (getId() != null) {
 			writer.println();
-			writer.print(attIndent + "id=\"" + getId() + "\"");
+			writer.print(attIndent + "id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getName() != null) {
 			writer.println();
 			writer.print(
-				attIndent + "name=\"" + getWritableString(getName()) + "\"");
+				attIndent + "name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getPoint() != null) {
 			writer.println();
-			writer.print(attIndent + "point=\"" + getPoint() + "\"");
+			writer.print(attIndent + "point=\"" + getPoint() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		IPluginObject[] children = getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement) children[i];
 			child.write(indent + PluginElement.ELEMENT_SHIFT, writer);
 		}
-		writer.println(indent + "</extension>");
+		writer.println(indent + "</extension>"); //$NON-NLS-1$
 	}
 }

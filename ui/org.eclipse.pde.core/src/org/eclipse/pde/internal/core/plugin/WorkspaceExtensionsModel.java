@@ -29,7 +29,7 @@ public class WorkspaceExtensionsModel
 
 
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = file.getName().equals("plugin.xml") ? "plugin" : "fragment";
+		String name = file.getName().equals("plugin.xml") ? "plugin" : "fragment"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		NLResourceHelper helper =
 			new NLResourceHelper(name, getNLLookupLocations());
 		//helper.setFile(file);
@@ -39,10 +39,10 @@ public class WorkspaceExtensionsModel
 	public URL getNLLookupLocation() {
 		IPath path = file.getLocation().removeLastSegments(1);
 		String installLocation = path.toOSString();
-		if (installLocation.startsWith("file:") == false)
-			installLocation = "file:" + installLocation;
+		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/");
+			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			return url;
 		} catch (MalformedURLException e) {
 			return null;
@@ -145,7 +145,7 @@ public class WorkspaceExtensionsModel
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream =
-				new ByteArrayInputStream(contents.getBytes("UTF8"));
+				new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
@@ -159,7 +159,7 @@ public class WorkspaceExtensionsModel
 	}
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			extensions.write("", writer);
+			extensions.write("", writer); //$NON-NLS-1$
 		}
 		dirty = false;
 	}
@@ -178,7 +178,7 @@ public class WorkspaceExtensionsModel
 	 */
 	protected Extensions createExtensions() {
 		Extensions extensions = super.createExtensions();
-		extensions.setIsFragment(file.getName().equals("fragment.xml"));
+		extensions.setIsFragment(file.getName().equals("fragment.xml")); //$NON-NLS-1$
 		return extensions;
 	}
 	

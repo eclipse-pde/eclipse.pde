@@ -66,8 +66,8 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 	
 	void load(Node node, Hashtable lineTable) {
-		this.name = getNodeAttribute(node, "name");
-		this.type = getNodeAttribute(node, "type");
+		this.name = getNodeAttribute(node, "name"); //$NON-NLS-1$
+		this.type = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
 		Vector exports = new Vector();
 		Vector prefixes = new Vector();
@@ -76,21 +76,21 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase();
-				if (tag.equals("export")) {
-					String ename = getNodeAttribute(child, "name");
+				if (tag.equals("export")) { //$NON-NLS-1$
+					String ename = getNodeAttribute(child, "name"); //$NON-NLS-1$
 					if (ename != null) {
 						ename = ename.trim();
-						if (ename.equals("*")) {
+						if (ename.equals("*")) { //$NON-NLS-1$
 							all = true;
 						} else {
 							exports.add(ename);
 						}
 					}
-				} else if (tag.equals("packages")) {
-					String ename = getNodeAttribute(child, "prefixes");
+				} else if (tag.equals("packages")) { //$NON-NLS-1$
+					String ename = getNodeAttribute(child, "prefixes"); //$NON-NLS-1$
 					if (ename != null) {
 						ename = ename.trim();
-						StringTokenizer stok = new StringTokenizer(ename, ",");
+						StringTokenizer stok = new StringTokenizer(ename, ","); //$NON-NLS-1$
 						while (stok.hasMoreTokens()) {
 							prefixes.add(stok.nextToken());
 						}
@@ -182,24 +182,24 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<library name=\"" + getName() + "\"");
+		writer.print("<library name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (type != null)
-			writer.print(" type=\"" + type + "\"");
+			writer.print(" type=\"" + type + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isExported() == false && packages == null) {
-			writer.println("/>");
+			writer.println("/>"); //$NON-NLS-1$
 		} else {
-			writer.println(">");
-			String indent2 = indent + "   ";
+			writer.println(">"); //$NON-NLS-1$
+			String indent2 = indent + "   "; //$NON-NLS-1$
 			if (isExported()) {
 				if (isFullyExported()) {
-					writer.println(indent2 + "<export name=\"*\"/>");
+					writer.println(indent2 + "<export name=\"*\"/>"); //$NON-NLS-1$
 				} else {
 					for (int i = 0; i < contentFilters.length; i++) {
 						writer.println(
 							indent2
-								+ "<export name=\""
+								+ "<export name=\"" //$NON-NLS-1$
 								+ contentFilters[i]
-								+ "\"/>");
+								+ "\"/>"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -208,12 +208,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				for (int i = 0; i < groups.size(); i++) {
 					writer.println(
 						indent2
-							+ "<packages prefixes=\""
+							+ "<packages prefixes=\"" //$NON-NLS-1$
 							+ (String)groups.get(i)
-							+ "\"/>");
+							+ "\"/>"); //$NON-NLS-1$
 				}
 			}
-			writer.println(indent + "</library>");
+			writer.println(indent + "</library>"); //$NON-NLS-1$
 		}
 	}
 	private ArrayList computePackageGroups(String [] packages) {
@@ -225,7 +225,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			counter++;
 			
 			if (counter>1)
-				buff.append(",");
+				buff.append(","); //$NON-NLS-1$
 			buff.append(packages[i]);
 			
 			if (counter==GROUP_COUNT) {

@@ -57,8 +57,8 @@ public class PluginImport
 	
 	public void load(ManifestElement element) {
 		this.id = element.getValue();
-		this.optional = "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE));
-		this.reexported ="true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE));
+		this.optional = "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+		this.reexported ="true".equals(element.getAttribute(Constants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
 		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (bundleVersion != null) {
 			VersionRange versionRange = new VersionRange(bundleVersion);
@@ -102,19 +102,19 @@ public class PluginImport
 	}
 
 	void load(Node node, Hashtable lineTable) {
-		String id = getNodeAttribute(node, "plugin");
-		String export = getNodeAttribute(node, "export");
-		String option = getNodeAttribute(node, "optional");
-		String version = getNodeAttribute(node, "version");
-		String match = getNodeAttribute(node, "match");
+		String id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
+		String export = getNodeAttribute(node, "export"); //$NON-NLS-1$
+		String option = getNodeAttribute(node, "optional"); //$NON-NLS-1$
+		String version = getNodeAttribute(node, "version"); //$NON-NLS-1$
+		String match = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		boolean reexport =
-			export != null && export.toLowerCase().equals("true");
+			export != null && export.toLowerCase().equals("true"); //$NON-NLS-1$
 		boolean optional =
-			option != null && option.toLowerCase().equals("true");
+			option != null && option.toLowerCase().equals("true"); //$NON-NLS-1$
 		this.match = NONE;
 		if (match != null) {
 			String lmatch = match.toLowerCase();
-			if (lmatch.equals("exact"))
+			if (lmatch.equals("exact")) //$NON-NLS-1$
 				lmatch = RULE_EQUIVALENT;
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
 				if (lmatch.equals(RULE_NAME_TABLE[i])) {
@@ -177,17 +177,17 @@ public class PluginImport
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<import plugin=\"" + getId() + "\"");
+		writer.print("<import plugin=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isReexported())
-			writer.print(" export=\"true\"");
+			writer.print(" export=\"true\""); //$NON-NLS-1$
 		if (isOptional())
-			writer.print(" optional=\"true\"");
+			writer.print(" optional=\"true\""); //$NON-NLS-1$
 		if (version != null && version.length() > 0)
-			writer.print(" version=\"" + version + "\"");
+			writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (match != NONE) {
 			String matchValue = RULE_NAME_TABLE[match];
-			writer.print(" match=\"" + matchValue + "\"");
+			writer.print(" match=\"" + matchValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		writer.println("/>");
+		writer.println("/>"); //$NON-NLS-1$
 	}
 }

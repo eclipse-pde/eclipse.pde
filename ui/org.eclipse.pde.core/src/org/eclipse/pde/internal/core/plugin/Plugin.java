@@ -51,7 +51,7 @@ public class Plugin extends PluginBase implements IPlugin {
 	}
 	
 	void load(Node node, String schemaVersion, Hashtable lineTable) {
-		this.className = getNodeAttribute(node, "class");
+		this.className = getNodeAttribute(node, "class"); //$NON-NLS-1$
 		super.load(node, schemaVersion, lineTable);
 	}
 
@@ -109,19 +109,19 @@ public class Plugin extends PluginBase implements IPlugin {
 		writer.println(">");
 		writer.println();
 
-		String firstIndent = "   ";
+		String firstIndent = "   "; //$NON-NLS-1$
 
 		// add runtime
 		Object[] children = getLibraries();
 		if (children.length > 0) {
-			writeChildren(firstIndent, "runtime", children, writer);
+			writeChildren(firstIndent, "runtime", children, writer); //$NON-NLS-1$
 			writer.println();
 		}
 
 		// add requires
 		children = getImports();
 		if (children.length > 0) {
-			writeChildren(firstIndent, "requires", children, writer);
+			writeChildren(firstIndent, "requires", children, writer); //$NON-NLS-1$
 			writer.println();
 		}
 
@@ -140,6 +140,6 @@ public class Plugin extends PluginBase implements IPlugin {
 		if (children.length > 0)
 			writer.println();
 		
-		writer.println("</plugin>");
+		writer.println("</plugin>"); //$NON-NLS-1$
 	}
 }
