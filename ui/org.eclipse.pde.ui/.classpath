@@ -1,30 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="src"/>
-    <classpathentry kind="src" path="sandbox"/>
-    <classpathentry kind="src" path="src_OSGi"/>
-    <classpathentry kind="src" path="/org.apache.xerces"/>
-    <classpathentry kind="src" path="/org.eclipse.ant.core"/>
-    <classpathentry kind="src" path="/org.eclipse.core.resources"/>
-    <classpathentry kind="src" path="/org.eclipse.debug.core"/>
-    <classpathentry kind="src" path="/org.eclipse.debug.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.help"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.core"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.debug.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.launching"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.pde"/>
-    <classpathentry kind="src" path="/org.eclipse.pde.build"/>
-    <classpathentry kind="src" path="/org.eclipse.search"/>
-    <classpathentry kind="src" path="/org.eclipse.team.core"/>
-    <classpathentry kind="src" path="/org.eclipse.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.update.core"/>
-    <classpathentry kind="src" path="/org.eclipse.update.ui.forms"/>
-    <classpathentry kind="src" path="/org.eclipse.ant.ui"/>
-    <classpathentry kind="src" path="/org.eclipse.jdt.junit"/>
-    <classpathentry kind="lib" path="/org.apache.ant/lib/ant.jar"/>
-    <classpathentry kind="src" path="/org.eclipse.core.boot"/>
-    <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
-    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="sandbox"/>
+	<classpathentry kind="src" path="src_OSGi"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
