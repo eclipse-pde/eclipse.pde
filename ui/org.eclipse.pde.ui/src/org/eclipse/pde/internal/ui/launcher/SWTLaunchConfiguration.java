@@ -132,10 +132,6 @@ public class SWTLaunchConfiguration extends
 		buffer.append(TargetPlatform.getOS());
 		buffer.append(IPath.SEPARATOR);
 		buffer.append(TargetPlatform.getOSArch());
-		if (buffer.indexOf(" ") != -1) { //$NON-NLS-1$
-			buffer.insert(0, "\""); //$NON-NLS-1$
-			buffer.append("\""); //$NON-NLS-1$
-		}
 		return buffer.toString();
 	}
 	
