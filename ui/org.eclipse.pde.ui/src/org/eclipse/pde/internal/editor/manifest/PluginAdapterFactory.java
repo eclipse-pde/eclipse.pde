@@ -48,7 +48,7 @@ private IPropertySource getExtensionElementProperties(IPluginElement element) {
 		return new UnknownElementPropertySource(element);
 	} else {
 		// Use or build custom property page for this class
-		String key = elementInfo.getSchema().getPointId() + "." + elementInfo.getName();
+		String key = elementInfo.getSchema().getQualifiedPointId() + "." + elementInfo.getName();
 		Hashtable table = getElementTable(element);
 		ExtensionElementPropertySource customSource = (ExtensionElementPropertySource) table.get(key);
 		if (customSource == null) {

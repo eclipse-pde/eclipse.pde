@@ -314,9 +314,16 @@ public class ImportListSection
 
 	public void commitChanges(boolean onSave) {
 		if (onSave) {
-			boolean shouldUpdate = BuildpathPreferencePage.isManifestUpdate();
-			if (shouldUpdate)
-				updateBuildPath();
+			IResource resource =
+				((IPluginModelBase) getFormPage().getModel()).getUnderlyingResource();
+			if (resource!=null) {
+				IProject project = resource.getProject();
+				if (WorkspaceModelManager.isJavaPluginProject(project)) {
+					boolean shouldUpdate = BuildpathPreferencePage.isManifestUpdate();
+					if (shouldUpdate)
+						updateBuildPath();
+				}
+			}
 		}
 		setDirty(false);
 	}
@@ -329,7 +336,9 @@ public class ImportListSection
 		return buildpathAction;
 	}
 
-	private void computeBuildPath(final IPluginModelBase model, final boolean save) {
+	private void computeBuildPath(
+		final IPluginModelBase model,
+		final boolean save) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(PDEPlugin.getResourceString(KEY_UPDATING_BUILD_PATH), 1);
@@ -371,8 +380,8 @@ public class ImportListSection
 			for (int i = 0; i < objects.length; i++) {
 				Object obj = objects[i];
 				if (obj instanceof ImportObject) {
-					ImportObject iobj = (ImportObject)obj;
-					PluginImport iimport = (PluginImport)iobj.getImport();
+					ImportObject iobj = (ImportObject) obj;
+					PluginImport iimport = (PluginImport) iobj.getImport();
 					iimport.setModel(model);
 					iimport.setParent(plugin);
 					plugin.add(iimport);
@@ -383,7 +392,8 @@ public class ImportListSection
 		}
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof ImportObject) return true;
+		if (objects[0] instanceof ImportObject)
+			return true;
 		return false;
 	}
 }

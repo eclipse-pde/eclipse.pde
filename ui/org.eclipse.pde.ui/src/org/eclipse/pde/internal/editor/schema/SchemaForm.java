@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.editor.text.*;
 import org.eclipse.pde.internal.base.model.*;
 
 public class SchemaForm extends ScrollableSectionForm implements IModelChangedListener {
+	private SchemaSpecSection schemaSpecSection;
 	private ElementSection elementSection;
 	private DescriptionSection descriptionSection;
 	private GrammarSection grammarSection;
@@ -39,14 +40,20 @@ protected void createFormClient(Composite parent) {
 
 	GridData gd;
 	Control control;
-
-	elementSection = new ElementSection(page);
-	control = elementSection.createControl(parent, factory);
-	gd = new GridData(GridData.FILL_BOTH);
+	
+	schemaSpecSection = new SchemaSpecSection(page);
+	control = schemaSpecSection.createControl(parent, factory);
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 	control.setLayoutData(gd);
 
 	grammarSection = new GrammarSection(page);
 	control = grammarSection.createControl(parent, factory);
+	gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+	gd.verticalSpan = 2;
+	control.setLayoutData(gd);
+	
+	elementSection = new ElementSection(page);
+	control = elementSection.createControl(parent, factory);
 	gd = new GridData(GridData.FILL_BOTH);
 	control.setLayoutData(gd);
 
@@ -66,6 +73,7 @@ protected void createFormClient(Composite parent) {
 	manager.linkSections(elementSection, grammarSection);
 	manager.linkSections(elementSection, descriptionSection);
 
+	registerSection(schemaSpecSection);
 	registerSection(elementSection);
 	registerSection(grammarSection);
 	registerSection(descriptionSection);

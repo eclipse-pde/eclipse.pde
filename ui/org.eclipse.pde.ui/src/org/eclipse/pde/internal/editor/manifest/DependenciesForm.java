@@ -15,6 +15,7 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.core.resources.*;
 
 public class DependenciesForm extends ScrollableSectionForm {
 	public static final String TITLE = "ManifestEditor.DependenciesForm.title";
@@ -88,8 +89,13 @@ public class DependenciesForm extends ScrollableSectionForm {
 	}
 
 	public boolean fillContextMenu(IMenuManager manager) {
-		manager.add(importListSection.getBuildpathAction());
-		manager.add(new Separator());
+		IResource resource =
+			((IPluginModelBase) page.getModel()).getUnderlyingResource();
+		if (resource != null
+			&& WorkspaceModelManager.isJavaPluginProject(resource.getProject())) {
+			manager.add(importListSection.getBuildpathAction());
+			manager.add(new Separator());
+		}
 		return true;
 	}
 }

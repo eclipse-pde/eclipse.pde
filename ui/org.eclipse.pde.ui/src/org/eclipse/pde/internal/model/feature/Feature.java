@@ -334,6 +334,9 @@ public class Feature extends VersionableObject implements IFeature {
 		ws = null;
 		nl = null;
 		arch = null;
+		infos[0] = null;
+		infos[1] = null;
+		infos[2] = null;
 	}
 
 	public void setProviderName(String providerName) throws CoreException {

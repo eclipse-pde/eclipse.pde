@@ -13,8 +13,8 @@ import org.eclipse.pde.model.*;
 public class EditableSchema extends Schema implements IEditable {
 	private boolean dirty;
 
-public EditableSchema(String id, String name) {
-	super(id, name);
+public EditableSchema(String pluginId, String pointId, String name) {
+	super(pluginId, pointId, name);
 }
 public EditableSchema(ISchemaDescriptor schemaDescriptor, java.net.URL url) {
 	super(schemaDescriptor, url);

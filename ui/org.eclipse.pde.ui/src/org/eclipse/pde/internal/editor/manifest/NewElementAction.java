@@ -60,7 +60,7 @@ public String createDefaultName(ISchemaAttribute attInfo, int counter) {
 	return project.getName() + "." + tag + counter;
 }
 private String getCounterKey(ISchemaElement elementInfo) {
-	return elementInfo.getSchema().getPointId()+"."+elementInfo.getName();
+	return elementInfo.getSchema().getQualifiedPointId()+"."+elementInfo.getName();
 }
 private String getElementName() {
 	return elementInfo!=null?elementInfo.getName() : UNKNOWN_ELEMENT_TAG;

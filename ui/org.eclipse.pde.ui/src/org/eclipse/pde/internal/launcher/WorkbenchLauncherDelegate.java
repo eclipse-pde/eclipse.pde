@@ -294,10 +294,12 @@ public class WorkbenchLauncherDelegate
 			try {
 				File pluginDir =
 					new File(new URL("file:" + plugins[i].getInstallLocation()).getFile());
-				IContainer project =
+				IContainer container =
 					root.getContainerForLocation(new Path(pluginDir.getPath()));
-				if (project instanceof IProject) {
-					javaProjects.add(JavaCore.create((IProject) project));
+				if (container instanceof IProject) {
+					IProject project = (IProject)container;
+					if (WorkspaceModelManager.isJavaPluginProject(project))
+						javaProjects.add(JavaCore.create(project));
 				}
 			} catch (MalformedURLException e) {
 				PDEPlugin.log(e);

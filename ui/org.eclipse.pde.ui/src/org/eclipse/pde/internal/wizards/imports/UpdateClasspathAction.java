@@ -55,7 +55,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 				} else if (elem instanceof IJavaProject) {
 					project = ((IJavaProject) elem).getProject();
 				}
-				if (project != null && WorkspaceModelManager.isPluginProject(project)) {
+				if (project != null && WorkspaceModelManager.isJavaPluginProject(project)) {
 					IPluginModelBase model = findModelFor(project);
 					if (model != null) {
 						models.add(model);

@@ -9,6 +9,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.jdt.core.IJavaProject;
 
 public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private NewSchemaFileMainPage mainPage;
@@ -26,9 +27,13 @@ public void addPages() {
 }
 public void init(IWorkbench workbench, IStructuredSelection selection) {
 	Object sel = selection.getFirstElement();
-	if (sel instanceof IContainer)
+	if (sel instanceof IJavaProject) {
+		container = ((IJavaProject)sel).getProject();
+	}
+	else if (sel instanceof IContainer)
 		container = (IContainer) sel;
 }
+
 public boolean performFinish() {
 	return mainPage.finish();
 }

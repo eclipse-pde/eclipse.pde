@@ -91,7 +91,7 @@ public class InfoSection extends PDEFormSection {
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
-		
+
 		Label label = factory.createLabel(container, null);
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -122,8 +122,7 @@ public class InfoSection extends PDEFormSection {
 		urlText.setLayoutData(gd);
 		factory.createLabel(container, null);
 
-		label =
-			factory.createLabel(container, PDEPlugin.getResourceString(KEY_TEXT));
+		label = factory.createLabel(container, PDEPlugin.getResourceString(KEY_TEXT));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 
@@ -274,7 +273,14 @@ public class InfoSection extends PDEFormSection {
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
+		featureModel.addModelChangedListener(this);
 		updateEditorInput(featureModel.getFeature().getFeatureInfo(0), false);
+	}
+
+	public void dispose() {
+		IFeatureModel featureModel = (IFeatureModel) getFormPage().getModel();
+		featureModel.removeModelChangedListener(this);
+		super.dispose();
 	}
 
 	private void infoModified() {
@@ -288,12 +294,23 @@ public class InfoSection extends PDEFormSection {
 		resetButton.setEnabled(true);
 	}
 
+	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+			int index = sectionCombo.getSelectionIndex();
+			IFeatureInfo info = model.getFeature().getFeatureInfo(index);
+			setDirty(false);
+			element=null;
+			updateEditorInput(info, false);
+		}
+	}
+
 	private void initializeSectionCombo() {
 		sectionCombo.setItems(
 			new String[] {
 				PDEPlugin.getResourceString(KEY_INFO_DESCRIPTION),
 				PDEPlugin.getResourceString(KEY_INFO_COPYRIGHT),
-				PDEPlugin.getResourceString(KEY_INFO_LICENSE) });
+				PDEPlugin.getResourceString(KEY_INFO_LICENSE)});
 
 		sectionCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

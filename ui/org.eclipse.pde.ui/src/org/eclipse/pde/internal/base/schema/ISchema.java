@@ -9,6 +9,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
 import org.eclipse.pde.model.*;
+import org.eclipse.core.runtime.CoreException;
 /**
  * Objects of this class encapsulate data loaded from
  * the XML Schema file that defines an Eclipse extension point.
@@ -28,6 +29,8 @@ import org.eclipse.pde.model.*;
  * to receive notification about these changes.
  */
 public interface ISchema extends ISchemaObject, IModelChangeProvider {
+	String P_POINT = "pointId";
+	String P_PLUGIN = "pluginId";
 /**
  * Releases all data in this schema. From this point on,
  * the first subsequent reference of this schema will
@@ -74,7 +77,12 @@ public ISchemaElement[] getElements();
  * Returns an Id of the extension point that is defined in this schema.
  * @return extension point Id of this schema
  */
+public String getQualifiedPointId();
+
 public String getPointId();
+public void setPointId(String pointId) throws CoreException;
+public String getPluginId();
+public void setPluginId(String pluginId) throws CoreException;
 /**
  * Returns an object that holds a reference to this schema.
  * Descriptors are responsible for loading and disposing

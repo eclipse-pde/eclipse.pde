@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.pde.internal.WorkspaceModelManager;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
@@ -359,10 +360,12 @@ public class WorkbenchLaunchConfigurationDelegate
 			try {
 				File pluginDir =
 					new File(new URL("file:" + plugins[i].getInstallLocation()).getFile());
-				IContainer project =
+				IContainer container =
 					root.getContainerForLocation(new Path(pluginDir.getPath()));
-				if (project instanceof IProject) {
-					javaProjects.add(JavaCore.create((IProject) project));
+				if (container instanceof IProject) {
+					IProject project = (IProject)container;
+					if (WorkspaceModelManager.isJavaPluginProject(project))
+						javaProjects.add(JavaCore.create(project));
 				}
 			} catch (MalformedURLException e) {
 				PDEPlugin.log(e);

@@ -117,9 +117,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			idText.setFocus();
 		setControl(container);
 	}
-	private InputStream createSchemaStream(String plugin, String id, String name) {
-		String fullId = plugin + "." + id;
-		EditableSchema schema = new EditableSchema(fullId, name);
+	private InputStream createSchemaStream(String pluginId, String pointId, String name) {
+		if (name.length()==0) name = pointId;
+		EditableSchema schema = new EditableSchema(pluginId, pointId, name);
 		schema.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;
 

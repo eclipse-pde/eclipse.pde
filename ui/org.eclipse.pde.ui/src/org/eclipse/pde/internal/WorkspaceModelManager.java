@@ -410,16 +410,22 @@ public class WorkspaceModelManager
 		}
 		return false;
 	}
+
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen() == false)
 			return false;
+		return project.exists(new Path("plugin.xml")) || project.exists(new Path("fragment.xml"));
+	}
+	
+	public static boolean isJavaPluginProject(IProject project) {
+		if (!isPluginProject(project)) return false;
 		try {
 			if (!project.hasNature(JavaCore.NATURE_ID)) return false;
-			
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+			return false;
 		}
-		return project.exists(new Path("plugin.xml")) || project.exists(new Path("fragment.xml"));
+		return true;
 	}
 
 	private void ensureModelExists(IProject pluginProject) {

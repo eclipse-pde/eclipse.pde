@@ -23,20 +23,23 @@ public class Schema extends PlatformObject implements ISchema {
 	private Vector listeners = new Vector();
 	private Vector elements = new Vector();
 	private Vector docSections = new Vector();
-	private String internalId;
+	private String pointId;
+	private String pluginId;
 	private ISchemaDescriptor schemaDescriptor;
 	private boolean loaded;
 	private Vector references;
 	private String description;
-	private String name;
+	private String name="";
 	private boolean notificationEnabled;
 	public final static java.lang.String INDENT = "   ";
 	private boolean disposed=false;
 	private Hashtable lineTable;
 
-public Schema(String id, String name) {
-	internalId = id;
-	setName(name);
+
+public Schema(String pluginId, String pointId, String name) {
+	this.pluginId = pluginId;
+	this.pointId = pointId;
+	this.name = name;
 }
 public Schema(ISchemaDescriptor schemaDescriptor, URL url) {
 	this.schemaDescriptor = schemaDescriptor;
@@ -171,10 +174,19 @@ private String getNormalizedText(String source) {
 public ISchemaObject getParent() {
 	return null;
 }
-public String getPointId() {
+public String getQualifiedPointId() {
 	//return schemaDescriptor!=null?schemaDescriptor.getPointId():internalId;
-	return internalId;
+	return pluginId + "."+pointId;
 }
+
+public String getPluginId() {
+	return pluginId;
+}
+
+public String getPointId() {
+	return pointId;
+}
+
 public ISchema getSchema() {
 	return this;
 }
@@ -552,7 +564,8 @@ private void processSchemaAnnotation(Node node) {
 							if (meta.getNodeName().equals("meta.schema")) {
 								section = "overview";
 								setName(getAttribute(meta, "name"));
-								internalId = getAttribute(meta, "plugin") + "." + getAttribute(meta, "id");
+								pluginId = getAttribute(meta, "plugin");
+								pointId = getAttribute(meta, "id");
 							} else
 								if (meta.getNodeName().equals("meta.section")) {
 									section = getAttribute(meta, "type");
@@ -604,7 +617,8 @@ private void reset() {
 	lineTable = null;
 	elements = new Vector();
 	docSections = new Vector();
-	internalId = null;
+	pointId = null;
+	pluginId = null;
 	references = null;
 	description = null;
 	name = null;
@@ -642,9 +656,20 @@ public void setDescription(String newDescription) {
 	fireModelObjectChanged(this, P_DESCRIPTION, oldValue, description);
 }
 public void setName(String newName) {
+	if (newName==null) newName = "";
 	String oldValue = name;
 	name = newName;
 	fireModelObjectChanged(this, P_NAME, oldValue, name);
+}
+public void setPluginId(String newId) {
+	String oldValue = pluginId;
+	pluginId = newId;
+	fireModelObjectChanged(this, P_PLUGIN, oldValue, newId);
+}
+public void setPointId(String newId) {
+	String oldValue = pointId;
+	pointId = newId;
+	fireModelObjectChanged(this, P_POINT, oldValue, newId);
 }
 public void setNotificationEnabled(boolean newNotificationEnabled) {
 	notificationEnabled = newNotificationEnabled;
@@ -689,7 +714,7 @@ public void updateReferencesFor(ISchemaElement element) {
 	}
 }
 public void write(String indent, PrintWriter writer) {
-	String pointId = this.getPointId();
+	String pointId = this.getQualifiedPointId();
 	int loc = pointId.lastIndexOf('.');
 	String pluginId = "";
 	if (loc!= -1) {

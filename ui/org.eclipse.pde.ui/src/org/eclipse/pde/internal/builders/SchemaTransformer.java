@@ -205,7 +205,7 @@ public void transform(StringBuffer out, ISchema schema) {
 	out.append("<BODY>\n");
 	out.append("<H1><CENTER>" + schema.getName() + "</CENTER></H1>\n");
 	out.append("<H2>Identifier</H2>\n");
-	out.append(schema.getPointId());
+	out.append(schema.getQualifiedPointId());
 	out.append("<H2>Description</H2>\n");
 	transformText(out, schema.getDescription());
 	out.append("<H2>Markup</H2>\n");
