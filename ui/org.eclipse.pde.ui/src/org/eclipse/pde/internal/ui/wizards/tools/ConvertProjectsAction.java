@@ -30,25 +30,32 @@ import org.eclipse.ui.*;
 public class ConvertProjectsAction implements IObjectActionDelegate {
 
 	private ISelection fSelection;
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-	    IProject[] unconverted = getUnconvertedProjects();
-		if (unconverted.length == 0){
-			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("ConvertProjectsAction.find"), //$NON-NLS-1$
-					null, PDEPlugin.getResourceString("ConvertProjectsAction.none"), //$NON-NLS-1$
-					MessageDialog.INFORMATION, new String[]{IDialogConstants.OK_LABEL}, 0);
-			dialog.open();
+		IProject[] unconverted = getUnconvertedProjects();
+		if (unconverted.length == 0) {
+			MessageDialog
+					.openInformation(
+							this.getDisplay().getActiveShell(),
+							PDEPlugin
+									.getResourceString("ConvertProjectsAction.find"), PDEPlugin.getResourceString("ConvertProjectsAction.none")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		
+
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			Vector initialSelection = new Vector(elems.length);
@@ -82,30 +89,34 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			});
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-	
-	public Display getDisplay(){
+
+	public Display getDisplay() {
 		Display display = Display.getCurrent();
 		if (display == null)
 			display = Display.getDefault();
 		return display;
 	}
-	
-	private IProject[] getUnconvertedProjects(){
-	    ArrayList unconverted = new ArrayList();
+
+	private IProject[] getUnconvertedProjects() {
+		ArrayList unconverted = new ArrayList();
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i<projects.length; i++){
+		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i])
-			        && !PDE.hasFeatureNature(projects[i])
-			        && !PDE.hasUpdateSiteNature(projects[i]))
+					&& !PDE.hasFeatureNature(projects[i])
+					&& !PDE.hasUpdateSiteNature(projects[i]))
 				unconverted.add(projects[i]);
 		}
-		return (IProject[])unconverted.toArray(new IProject[unconverted.size()]);
+		return (IProject[]) unconverted
+				.toArray(new IProject[unconverted.size()]);
 	}
 }

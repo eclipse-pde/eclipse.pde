@@ -29,25 +29,30 @@ import org.eclipse.ui.*;
  * @author melhem
  */
 public class MigrationAction implements IObjectActionDelegate {
-	
+
 	private ISelection fSelection;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		IPluginModelBase[] modelsToMigrate = getModelsToMigrate();
-		if (modelsToMigrate.length == 0){
-			MessageDialog dialog = new MessageDialog(this.getDisplay().getActiveShell(), PDEPlugin.getResourceString("MigrationAction.find"), //$NON-NLS-1$
-					null, PDEPlugin.getResourceString("MigrationAction.none"), //$NON-NLS-1$
-					MessageDialog.INFORMATION, new String[]{IDialogConstants.OK_LABEL}, 0);
-			dialog.open();
+		if (modelsToMigrate.length == 0) {
+			MessageDialog
+					.openInformation(
+							this.getDisplay().getActiveShell(),
+							PDEPlugin.getResourceString("MigrationAction.find"), PDEPlugin.getResourceString("MigrationAction.none"));//$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 
@@ -76,14 +81,14 @@ public class MigrationAction implements IObjectActionDelegate {
 				}
 			}
 
-			final IPluginModelBase[] modelArray =
-			(IPluginModelBase[]) models.toArray(
-					new IPluginModelBase[models.size()]);
+			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models
+					.toArray(new IPluginModelBase[models.size()]);
 
-			MigratePluginWizard wizard = new MigratePluginWizard(modelsToMigrate, modelArray);
+			MigratePluginWizard wizard = new MigratePluginWizard(
+					modelsToMigrate, modelArray);
 			final Display display = getDisplay();
-			final WizardDialog dialog =
-				new WizardDialog(display.getActiveShell(), wizard);
+			final WizardDialog dialog = new WizardDialog(display
+					.getActiveShell(), wizard);
 			BusyIndicator.showWhile(display, new Runnable() {
 				public void run() {
 					dialog.open();
@@ -91,14 +96,17 @@ public class MigrationAction implements IObjectActionDelegate {
 			});
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-	
+
 	private Display getDisplay() {
 		Display display = Display.getCurrent();
 		if (display == null) {
@@ -106,18 +114,19 @@ public class MigrationAction implements IObjectActionDelegate {
 		}
 		return display;
 	}
-	
+
 	private IPluginModelBase[] getModelsToMigrate() {
 		Vector result = new Vector();
-		IPluginModelBase[] models =
-			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
+		IPluginModelBase[] models = PDECore.getDefault()
+				.getWorkspaceModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].getUnderlyingResource().isLinked()
-				&& models[i].isLoaded()
-				&& models[i].getPluginBase().getSchemaVersion() == null) 
+					&& models[i].isLoaded()
+					&& models[i].getPluginBase().getSchemaVersion() == null)
 				result.add(models[i]);
 		}
-		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result
+				.size()]);
 	}
-	
+
 }

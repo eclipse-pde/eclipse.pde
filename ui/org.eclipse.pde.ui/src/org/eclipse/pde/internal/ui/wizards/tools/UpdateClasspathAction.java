@@ -42,13 +42,10 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	public void run(IAction action) {
 		IPluginModelBase[] fUnupdated = getModelsToUpdate();
 		if (fUnupdated.length == 0) {
-			MessageDialog dialog = new MessageDialog(
+			MessageDialog.openInformation(
 					PDEPlugin.getActiveWorkbenchShell(),
-					PDEPlugin.getResourceString("UpdateClasspathAction.find"), //$NON-NLS-1$
-					null,
-					PDEPlugin.getResourceString("UpdateClasspathAction.none"), //$NON-NLS-1$
-					MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0);
-			dialog.open();
+					PDEPlugin.getResourceString("UpdateClasspathAction.find"),  //$NON-NLS-1$
+					PDEPlugin.getResourceString("UpdateClasspathAction.none")); //$NON-NLS-1$
 			return;
 		}
 		if (fSelection instanceof IStructuredSelection) {
