@@ -77,6 +77,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		implicitButton.setLayoutData(gd);
+		implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
 		
 		setPageComplete(false);
 		setControl(container);

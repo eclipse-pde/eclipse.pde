@@ -115,6 +115,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		implicitButton.setLayoutData(gd);
+		implicitButton.setSelection(getDialogSettings().getBoolean(SETTINGS_IMPLICIT));
 
 		initialize();
 		setControl(container);

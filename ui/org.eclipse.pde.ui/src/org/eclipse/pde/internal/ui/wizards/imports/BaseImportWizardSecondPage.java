@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,6 +27,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage {
+	
+	protected static final String SETTINGS_IMPLICIT = "implicit";
 	
 	protected PluginImportWizardFirstPage page1;
 	protected IPluginModelBase[] models = new IPluginModelBase[0];
@@ -192,6 +195,11 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 	}
 	public IPluginModelBase[] getModelsToImport() {
 		return (IPluginModelBase[]) selected.toArray(new IPluginModelBase[selected.size()]);
+	}
+	
+	public void storeSettings() {
+		IDialogSettings settings = getDialogSettings();
+		settings.put(SETTINGS_IMPLICIT, implicitButton.getSelection());
 	}
 
 }
