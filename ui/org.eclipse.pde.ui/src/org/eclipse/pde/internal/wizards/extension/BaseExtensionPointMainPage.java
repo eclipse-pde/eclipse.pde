@@ -12,6 +12,8 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.schema.*;
+import org.eclipse.pde.internal.util.*;
+
 import java.io.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.ui.actions.*;
@@ -28,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.editor.schema.*;
 import org.eclipse.pde.internal.editor.*;
-import org.eclipse.pde.internal.codegen.*;
 
 public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_PLUGIN_ID = "BaseExtensionPoint.pluginId";

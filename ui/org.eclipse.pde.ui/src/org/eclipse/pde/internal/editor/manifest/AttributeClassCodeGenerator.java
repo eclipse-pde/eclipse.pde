@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.codegen;
+package org.eclipse.pde.internal.editor.manifest;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -9,6 +9,7 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 import org.eclipse.pde.internal.base.schema.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.jdt.core.*;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.PDEPlugin;

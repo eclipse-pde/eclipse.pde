@@ -12,7 +12,6 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.pde.internal.codegen.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.Shell;

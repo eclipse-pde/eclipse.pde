@@ -7,7 +7,6 @@ package org.eclipse.pde.internal.editor.manifest;
 import org.eclipse.ui.*;
 import java.lang.reflect.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.codegen.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.ui.dialogs.*;

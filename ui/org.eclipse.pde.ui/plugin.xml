@@ -623,22 +623,6 @@
          schema="schema/map/org.eclipse.ui/views.mxsd">
    </map>
 </extension>
-<!--
-<extension
-      point="org.eclipse.ui.views">
-   <category
-         name="%views.category.name"
-         id="org.eclipse.pde">
-   </category>
-   <view
-         name="%views.pluginsView.name"
-         icon="icons/full/obj16/plugin_obj.gif"
-         category="org.eclipse.pde"
-         class="org.eclipse.pde.internal.pluginsview.PluginsView"
-         id="org.eclipse.pde.pluginsView">
-   </view>
-</extension>
--->
 <extension
       point="org.eclipse.ui.decorators">
    <decorator

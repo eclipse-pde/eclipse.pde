@@ -4,7 +4,7 @@ package org.eclipse.pde.internal.wizards.project;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.codegen.*;
+import org.eclipse.pde.internal.util.*;
 import org.eclipse.core.resources.*;
 import java.io.*;
 

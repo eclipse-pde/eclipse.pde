@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.base.schema.*;
 import org.eclipse.pde.internal.editor.schema.*;
 import org.eclipse.pde.internal.editor.*;
-import org.eclipse.pde.internal.codegen.*;
 
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public static final String KEY_TITLE = "NewSchemaFileWizard.title";
