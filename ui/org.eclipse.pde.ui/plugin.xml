@@ -217,7 +217,7 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             name="%PluginImportWizard.label"
-            icon="icons/ctool16/imp_extfeat.gif"
+            icon="icons/ctool16/imp_extplug.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
             id="org.eclipse.pde.ui.PluginImportWizard">
          <description>
@@ -226,7 +226,7 @@
       </wizard>
       <wizard
             name="%FeatureImportWizard.label"
-            icon="icons/ctool16/imp_extplug.gif"
+            icon="icons/ctool16/imp_extfeat.gif"
             class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
             id="org.eclipse.pde.ui.FeatureImportWizard">
          <description>
