@@ -47,6 +47,7 @@ public abstract class InputContext {
 	public InputContext(PDEFormEditor editor, IEditorInput input) {
 		this.editor = editor;
 		this.input = input;
+		create();
 	}
 	public abstract String getId();
 
@@ -62,7 +63,8 @@ public abstract class InputContext {
 	protected abstract IDocumentProvider createDocumentProvider(
 			IEditorInput input);
 	protected abstract IModel createModel(IEditorInput input);
-	public void create() {
+	
+	protected void create() {
 		documentProvider = createDocumentProvider(input);
 		if (documentProvider == null)
 			return;
@@ -88,6 +90,7 @@ public abstract class InputContext {
 			PDEPlugin.logException(e);
 		}
 	}
+	
 	public void validateEdit() {
 		if (!validated) {
 			if (input instanceof IFileEditorInput) {

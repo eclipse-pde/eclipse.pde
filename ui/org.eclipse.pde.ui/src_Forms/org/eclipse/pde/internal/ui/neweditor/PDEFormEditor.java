@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 /**
  * A simple multi-page form editor that uses Eclipse Forms support.
  * Example plug-in is configured to create one instance of
@@ -33,6 +34,7 @@ public abstract class PDEFormEditor extends FormEditor {
 	private Clipboard clipboard;
 	private Menu contextMenu;
 	private Hashtable inputContexts;
+	private IContentOutlinePage formOutline;
 	/**
 	 *  
 	 */
@@ -263,4 +265,28 @@ public abstract class PDEFormEditor extends FormEditor {
 			section = root.addNewSection("multi-page-editor");
 		return section;
 	}
+/*
+	public Object getAdapter(Class key) {
+		if (key.equals(IContentOutlinePage.class)) {
+			return getContentOutline();
+		}
+		if (key.equals(IPropertySheetPage.class)) {
+			return getPropertySheet();
+		}
+		if (key.equals(IGotoMarker.class)) {
+			return this;
+		}
+		return super.getAdapter(key);
+	}
+
+	private void updateContentOutline(IFormPage page) {
+		IContentOutlinePage page = null;
+		if (page instanceof PDESourcePage) {
+		}
+		IContentOutlinePage outlinePage = page.getContentOutlinePage();
+		if (outlinePage != null) {
+			contentOutline.setPageActive(outlinePage);
+		}
+	}
+*/
 }
