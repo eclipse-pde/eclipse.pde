@@ -309,10 +309,9 @@ public class ExternalPluginsBlock {
 			boolean inWorkspace = false;
 			for (int j = 0; j < wsModels.length; j++) {
 				IPluginModelBase wsModel = wsModels[j];
-				if (exModel
-					.getPluginBase()
-					.getId()
-					.equals(wsModel.getPluginBase().getId())) {
+				String extId = exModel.getPluginBase().getId();
+				String wsId = wsModel.getPluginBase().getId();
+				if (extId != null && wsId != null && extId.equals(wsId)) {
 					inWorkspace = true;
 					break;
 				}
