@@ -196,7 +196,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return;
 
 		int offset = node.getOffset();
-		setHighlightRange(offset, node.getLength(), true);
+		int length = node.getLength();
+		setHighlightRange(offset, length == -1 ? 1 : length, true);
 		sourceViewer.setSelectedRange(offset + 1, node.getXMLTagName().length());
 	}
 	
