@@ -69,4 +69,8 @@ public abstract class BasePreviewSection extends FormSection {
 		super.reflow();
 		form.update();
 	}
+	
+	public boolean hasFocus() {
+		return text.isFocusControl();
+	}
 }

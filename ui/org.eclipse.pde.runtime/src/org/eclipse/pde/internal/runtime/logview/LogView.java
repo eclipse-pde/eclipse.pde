@@ -319,7 +319,11 @@ public class LogView extends ViewPart implements ILogListener {
 
 		copyAction = new Action(PDERuntimePlugin.getResourceString("LogView.copy")) {
 			public void run() {
-				copyToClipboard(tableTreeViewer.getSelection());
+				if (detailsForm.hasFocus()) {
+					detailsForm.doGlobalAction(IWorkbenchActionConstants.COPY);
+				} else {
+					copyToClipboard(tableTreeViewer.getSelection());
+				}
 			}
 		};
 		copyAction.setImageDescriptor(

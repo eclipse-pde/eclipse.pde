@@ -149,4 +149,8 @@ public class DetailsForm extends ScrollableSectionForm {
 			LogView.P_COLLAPSE_STACK,
 			stackSection.isCollapsed() ? "true" : "false");
 	}
+	
+	public boolean hasFocus() {
+		return message.isFocusControl() || stackSection.hasFocus() || sessionSection.hasFocus(); 
+	}
 }
