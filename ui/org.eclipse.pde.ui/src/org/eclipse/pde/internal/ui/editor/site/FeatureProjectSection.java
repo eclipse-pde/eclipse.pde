@@ -4,21 +4,37 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.IModelProviderEvent;
+import org.eclipse.pde.internal.core.IModelProviderListener;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISiteBuild;
+import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
+import org.eclipse.pde.internal.core.isite.ISiteBuildModel;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.CheckboxTableSection;
 import org.eclipse.pde.internal.ui.editor.feature.OpenReferenceAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.parts.CheckboxTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,7 +43,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class FeatureProjectSection
-	extends TableSection
+	extends CheckboxTableSection
 	implements IModelProviderListener {
 	private static final String SECTION_TITLE =
 		"SiteEditor.FeatureProjectSection.title";
@@ -35,10 +51,14 @@ public class FeatureProjectSection
 		"SiteEditor.FeatureProjectSection.desc";
 	private static final String KEY_NEW =
 		"SiteEditor.FeatureProjectSection.new";
+	private static final String KEY_SELECT_ALL =
+		"SiteEditor.FeatureProjectSection.selectAll";
+	private static final String KEY_DESELECT_ALL =
+		"SiteEditor.FeatureProjectSection.deselectAll";
 	private static final String POPUP_NEW = "Menus.new.label";
 	private static final String POPUP_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
-	private TableViewer projectViewer;
+	private CheckboxTableViewer projectViewer;
 	private Action newAction;
 	private Action openAction;
 	private Action deleteAction;
@@ -55,10 +75,15 @@ public class FeatureProjectSection
 	}
 
 	public FeatureProjectSection(BuildPage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
+		super(
+			page,
+			new String[] {
+				PDEPlugin.getResourceString(KEY_NEW),
+				null,
+				PDEPlugin.getResourceString(KEY_SELECT_ALL),
+				PDEPlugin.getResourceString(KEY_DESELECT_ALL)});
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
-		getTablePart().setEditable(false);
 		//setCollapsable(true);
 		//IFeatureModel model = (IFeatureModel)page.getModel();
 		//IFeature feature = model.getFeature();
@@ -83,7 +108,7 @@ public class FeatureProjectSection
 		layout.verticalSpacing = 9;
 
 		createViewerPartControl(container, SWT.MULTI, 2, factory);
-		TablePart tablePart = getTablePart();
+		CheckboxTablePart tablePart = getTablePart();
 		projectViewer = tablePart.getTableViewer();
 		projectViewer.setContentProvider(new PluginContentProvider());
 		projectViewer.setLabelProvider(
@@ -98,15 +123,24 @@ public class FeatureProjectSection
 	}
 
 	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleNew();
+		switch (index) {
+			case 0 :
+				handleNew();
+				break;
+			case 2 :
+				handleSelectAll(true);
+				break;
+			case 3 :
+				handleSelectAll(false);
+				break;
+		}
 	}
 
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
 		model.removeModelChangedListener(this);
-		if (buildModel!=null)
+		if (buildModel != null)
 			buildModel.removeModelChangedListener(this);
 		WorkspaceModelManager mng =
 			PDECore.getDefault().getWorkspaceModelManager();
@@ -147,7 +181,7 @@ public class FeatureProjectSection
 			}
 		});
 	}
-	
+
 	private void forceDirty() {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
@@ -228,9 +262,16 @@ public class FeatureProjectSection
 	protected void selectionChanged(IStructuredSelection selection) {
 		getFormPage().setSelection(selection);
 	}
+
 	public void initialize(Object input) {
 		ISiteModel model = (ISiteModel) input;
 		update(input);
+
+		if (model.isEditable() == false) {
+			projectViewer.setAllGrayed(true);
+			getTablePart().setButtonEnabled(2, false);
+			getTablePart().setButtonEnabled(3, false);
+		}
 
 		ISiteBuildModel buildModel = model.getBuildModel();
 		getTablePart().setButtonEnabled(0, buildModel.isEditable());
@@ -310,7 +351,132 @@ public class FeatureProjectSection
 		ISiteBuild build = buildModel.getSiteBuild();
 		build.resetReferences();
 		projectViewer.setInput(build);
+		updateChecks(model, buildModel);
 		updateNeeded = false;
+	}
+
+	protected void elementChecked(Object element, boolean checked) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		if (model.isEditable() == false) {
+			projectViewer.setChecked(element, !checked);
+			return;
+		}
+		ISiteBuildFeature selection = (ISiteBuildFeature) element;
+		updateSiteFeature(selection, checked);
+	}
+
+	protected void handleSelectAll(boolean selected) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		projectViewer.setAllChecked(selected);
+		ISiteBuildFeature[] sbfeatures =
+			buildModel.getSiteBuild().getFeatures();
+		ArrayList result = new ArrayList();
+
+		try {
+			for (int i = 0; i < sbfeatures.length; i++) {
+				ISiteBuildFeature sbfeature = sbfeatures[i];
+				ISiteFeature sfeature = findMatchingSiteFeature(sbfeature);
+				if (selected && sfeature == null) {
+					// add
+					sfeature = createSiteFeature(model, sbfeature);
+					result.add(sfeature);
+				} else if (!selected && sfeature != null) {
+					result.add(sfeature);
+				}
+			}
+			if (result.size() > 0) {
+				ISiteFeature[] array =
+					(ISiteFeature[]) result.toArray(
+						new ISiteFeature[result.size()]);
+				if (selected)
+					model.getSite().addFeatures(array);
+				else
+					model.getSite().removeFeatures(array);
+			}
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
+	private ISiteFeature createSiteFeature(
+		ISiteModel model,
+		ISiteBuildFeature sbfeature)
+		throws CoreException {
+		ISiteFeature sfeature = model.getFactory().createFeature();
+		sfeature.setId(sbfeature.getId());
+		sfeature.setVersion(sbfeature.getVersion());
+		sfeature.setURL(sbfeature.getTargetURL());
+		return sfeature;
+	}
+
+	private void updateSiteFeature(ISiteBuildFeature sbfeature, boolean add) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISite site = model.getSite();
+		ISiteFeature sfeature = findMatchingSiteFeature(sbfeature);
+		if (add) {
+			// make sure it exists - add if needed
+			if (sfeature == null) {
+				try {
+					sfeature = createSiteFeature(model, sbfeature);
+					site.addFeatures(new ISiteFeature[] { sfeature });
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		} else {
+			// make sure it does not exist - remove if needed
+			if (sfeature != null) {
+				try {
+					site.removeFeatures(new ISiteFeature[] { sfeature });
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		}
+	}
+
+	private ISiteFeature findMatchingSiteFeature(ISiteBuildFeature sbfeature) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteFeature[] sfeatures = model.getSite().getFeatures();
+		return findMatchingSiteFeature(sbfeature, sfeatures);
+	}
+
+	private ISiteFeature findMatchingSiteFeature(
+		ISiteBuildFeature sbfeature,
+		ISiteFeature[] sfeatures) {
+		for (int j = 0; j < sfeatures.length; j++) {
+			ISiteFeature sfeature = sfeatures[j];
+			if (matches(sfeature, sbfeature))
+				return sfeature;
+		}
+		return null;
+	}
+
+	private void updateChecks(ISiteModel model, ISiteBuildModel buildModel) {
+		ISiteBuildFeature[] sbfeatures =
+			buildModel.getSiteBuild().getFeatures();
+		ISiteFeature[] sfeatures = model.getSite().getFeatures();
+		ArrayList checked = new ArrayList();
+		for (int i = 0; i < sbfeatures.length; i++) {
+			ISiteBuildFeature sbfeature = sbfeatures[i];
+			ISiteFeature sfeature =
+				findMatchingSiteFeature(sbfeature, sfeatures);
+			if (sfeature != null)
+				checked.add(sbfeature);
+		}
+		projectViewer.setCheckedElements(checked.toArray());
+	}
+
+	private boolean matches(
+		ISiteFeature sfeature,
+		ISiteBuildFeature sbfeature) {
+		String targetURL = sbfeature.getTargetURL();
+		String url = sfeature.getURL();
+		return (
+			url != null
+				&& targetURL != null
+				&& url.equalsIgnoreCase(targetURL));
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])

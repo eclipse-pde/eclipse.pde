@@ -14,4 +14,5 @@ import org.eclipse.pde.internal.core.ifeature.IVersionable;
 public interface ISiteBuildFeature extends IVersionable, ISiteBuildObject {
 	IFeature getReferencedFeature();
 	void setReferencedFeature(IFeature feature);
+	String getTargetURL();
 }

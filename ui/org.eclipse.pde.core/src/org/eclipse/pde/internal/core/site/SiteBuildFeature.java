@@ -3,8 +3,10 @@ package org.eclipse.pde.internal.core.site;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.isite.ISiteBuild;
 import org.eclipse.pde.internal.core.isite.ISiteBuildFeature;
 import org.w3c.dom.Node;
 
@@ -113,5 +115,12 @@ public class SiteBuildFeature
 		if (version != null)
 			writer.print(" version=\"" + version + "\"");
 		writer.println("/>");
+	}
+	
+	public String getTargetURL() {
+		ISiteBuild siteBuild = getSiteBuild();
+		IPath featureLocation = siteBuild.getFeatureLocation();
+		String jar = id + "_"+version+".jar";
+		return featureLocation.append(jar).toString();
 	}
 }

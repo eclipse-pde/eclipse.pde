@@ -13,8 +13,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.CoreUtility;
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.ui.*;
@@ -58,6 +58,7 @@ public class NewSiteProjectWizard
 		SiteData data)
 		throws CoreException {
 		IFile file = project.getFile("site.xml");
+		if (file.exists()) return file;
 		WorkspaceSiteModel model = new WorkspaceSiteModel();
 		model.setFile(file);
 		ISite site = model.getSite();
@@ -69,6 +70,20 @@ public class NewSiteProjectWizard
 		// Save the model
 		model.save();
 		model.dispose();
+		
+		// Create and save build model
+		WorkspaceSiteBuildModel buildModel = new WorkspaceSiteBuildModel();
+		IFile buildFile = project.getFile(".sitebuild");
+		buildModel.setFile(buildFile);
+		ISiteBuild siteBuild = buildModel.getSiteBuild();
+	 	siteBuild.setAutobuild(false);
+	 	siteBuild.setPluginLocation(new Path("plugins"));
+	 	siteBuild.setFeatureLocation(new Path("features"));
+	 	siteBuild.setShowConsole(true);
+	 	buildModel.save();
+		buildModel.dispose();
+		
+		// Set the default editor
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.getEditorRegistry().setDefaultEditor(
 			file,

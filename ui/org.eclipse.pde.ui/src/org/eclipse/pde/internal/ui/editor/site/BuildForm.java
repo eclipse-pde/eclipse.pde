@@ -79,7 +79,7 @@ public class BuildForm extends ScrollableSectionForm {
 	}
 
 	public void setFocus() {
-		controlSection.setFocus();
+		featureSection.setFocus();
 	}
 
 }
