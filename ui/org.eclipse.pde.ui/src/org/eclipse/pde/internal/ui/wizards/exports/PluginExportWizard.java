@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IProject;
@@ -38,6 +39,15 @@ public class PluginExportWizard extends BaseExportWizard {
 		return new PluginExportWizardPage(getSelection());
 	}
 
+	protected HashMap createProperties(String destination) {
+		HashMap map = new HashMap(4);
+		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
+		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
+		map.put("destination.temp.folder", destination + Path.SEPARATOR + "temp");
+		map.put("plugin.destination", destination);
+		return map;
+	}
+	
 	protected void doExport(
 		boolean exportZip,
 		boolean exportSource,

@@ -1,5 +1,5 @@
 /*
- * Created on Feb 20, 2003
+ * Created on Feb 28, 2003
  *
  * To change this generated comment go to 
  * Window>Preferences>Java>Code Generation>Code Template
@@ -31,3 +31,4 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 	}
 
 }
+

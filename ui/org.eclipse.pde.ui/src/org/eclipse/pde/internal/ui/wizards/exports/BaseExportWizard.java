@@ -71,16 +71,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 
 	protected abstract BaseExportWizardPage createPage1();
 
-	protected HashMap createProperties(String destination) {
-		HashMap map = new HashMap(5);
-		map.put("build.result.folder", destination + Path.SEPARATOR + "build_result");
-		map.put("temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("destination.temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("feature.temp.folder", destination + Path.SEPARATOR + "temp");
-		map.put("plugin.destination", destination);
-		map.put("feature.destination", destination);
-		return map;
-	}
+	protected abstract HashMap createProperties(String destination);
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
