@@ -16,13 +16,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
 
 public class LogView
 	extends ViewPart
-	implements ISelectionListener, ILogListener {
+	implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
 	private Vector logs = new Vector();
 	private static final String C_SEVERITY = "LogView.column.severity";
@@ -68,6 +67,11 @@ public class LogView
 		tableTreeViewer = new TableTreeViewer(tableTree);
 		tableTreeViewer.setContentProvider(new LogViewContentProvider(this));
 		tableTreeViewer.setLabelProvider(new LogViewLabelProvider());
+		tableTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				propertiesAction.setEnabled(!e.getSelection().isEmpty());
+			}
+		});
 
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
@@ -79,7 +83,7 @@ public class LogView
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Menu menu = popupMenuManager.createContextMenu(tableTree);
 		tableTree.setMenu(menu);
-		readLogFile();
+		//readLogFile();
 		Platform.addLogListener(this);
 
 		tableTreeViewer.setInput(Platform.class);
@@ -92,6 +96,7 @@ public class LogView
 			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
 		propertiesAction.setToolTipText(
 			PDERuntimePlugin.getResourceString(KEY_PROPERTIES_TOOLTIP));
+		propertiesAction.setEnabled(false);
 
 		clearAction = new Action(PDERuntimePlugin.getResourceString(KEY_CLEAR_LABEL)) {
 			public void run() {
@@ -120,8 +125,12 @@ public class LogView
 		readLogAction.setHoverImageDescriptor(
 			PDERuntimePluginImages.DESC_READ_LOG_HOVER);
 
-		getViewSite().getActionBars().getToolBarManager().add(clearAction);
-		getViewSite().getActionBars().getToolBarManager().add(propertiesAction);
+		
+		IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+		toolBarManager.add(clearAction);
+		//toolBarManager.add(readLogAction);
+		toolBarManager.add(new Separator());
+		toolBarManager.add(propertiesAction);
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (tableTreeViewer.getSelection().isEmpty() == false) {
@@ -135,8 +144,10 @@ public class LogView
 		super.dispose();
 	}
 	public void fillContextMenu(IMenuManager manager) {
-		manager.add(propertiesAction);
+		//manager.add(readLogAction);
 		manager.add(clearAction);
+		manager.add(new Separator());
+		manager.add(propertiesAction);
 	}
 	public StatusAdapter[] getLogs() {
 		StatusAdapter[] array = new StatusAdapter[logs.size()];
@@ -182,8 +193,6 @@ public class LogView
 	public void logging(IStatus status, String plugin) {
 		logs.insertElementAt(new StatusAdapter(status), 0);
 		tableTreeViewer.refresh();
-	}
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 	}
 	public void setFocus() {
 		tableTreeViewer.getTableTree().getTable().setFocus();
