@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.osgi.bundle.*;
-import org.eclipse.pde.internal.core.osgi.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -232,7 +231,12 @@ public class OSGiWorkspaceModelManager
 		connect(bundleFile, null, false);
 		IBundleModel model = (IBundleModel) getModel(bundleFile, null);
 		loadModel(model);
-		IBundlePluginModelBase bmodel = new BundlePluginModelBase();
+		boolean fragment = model.isFragmentModel();
+		IBundlePluginModelBase bmodel;
+		if (fragment)
+			bmodel = new BundleFragmentModel();
+		else
+			bmodel = new BundlePluginModel();
 		bmodel.setEnabled(true);
 		bmodel.setBundleModel(model);
 		
@@ -374,7 +378,15 @@ public class OSGiWorkspaceModelManager
 		if (validate)
 			validate();
 
-		if (name.equals("plugin.xml") || isBundleManifestFile(file))
+		if (isBundleManifestFile(file)) {
+			//try a plug-in bundle first
+			IModel model = getWorkspaceModel(file.getProject(), workspaceModels);
+			if (model!=null) return model;
+			// if not found, try fragments -maybe this is a bundle fragment
+			model = getWorkspaceModel(file.getProject(), workspaceFragmentModels);
+			return model;
+		}
+		if (name.equals("plugin.xml"))
 			models = workspaceModels;
 		else if (name.equals("fragment.xml"))
 			models = workspaceFragmentModels;
@@ -388,8 +400,12 @@ public class OSGiWorkspaceModelManager
 	public IModel getWorkspaceModel(IProject project, boolean validate) {
 		if (validate) validate();
 
-		if (isBundleProject(project))
-			return getWorkspaceModel(project, workspaceModels);
+		if (isBundleProject(project)) {
+			IModel model = getWorkspaceModel(project, workspaceModels);
+			if (model==null)
+				model = getWorkspaceModel(project, workspaceFragmentModels);
+			return model;
+		}
 		IPath filePath = project.getFullPath().append("plugin.xml");
 		IFile file = project.getWorkspace().getRoot().getFile(filePath);
 		if (file.exists()) {
@@ -507,7 +523,7 @@ public class OSGiWorkspaceModelManager
 			else if (model instanceof IFeatureModel)
 				reloadModel(model);
 			else {
-				//see if we need to switch to a budle
+				//see if we need to switch to a bundle
 				if (isBundleManifestFile(file)) {
 					if (model instanceof IBundlePluginModelBase) {
 						reloadBundleModel((IBundlePluginModelBase)model);
@@ -641,7 +657,12 @@ public class OSGiWorkspaceModelManager
 				continue;
 			if (isBundleProject(project)) {
 				IModel model = createWorkspacePluginModel(project);
-				workspaceModels.add(model);
+				if (model != null) {
+					if (model instanceof IFragmentModel)
+						workspaceFragmentModels.add(model);
+					else
+						workspaceModels.add(model);
+				}
 			}
 			else if (isPluginProject(project)) {
 				IModel model = createWorkspacePluginModel(project);
@@ -653,7 +674,8 @@ public class OSGiWorkspaceModelManager
 				}
 			} else if (isFeatureProject(project)) {
 				IFeatureModel model = createWorkspaceFeatureModel(project);
-				workspaceFeatureModels.add(model);
+				if (model != null)
+					workspaceFeatureModels.add(model);
 			}
 		}
 		workspace.addResourceChangeListener(
@@ -884,6 +906,9 @@ public class OSGiWorkspaceModelManager
 	}
 	private void reloadBundleModel(IBundlePluginModelBase bmodel) {
 		IBundleModel model = bmodel.getBundleModel();
+		//TODO If master Id key is removed or added,
+		// IBundlePluginModel can turn into a IBundleFragmentModel
+		// and back during reload - must be able to do it
 		if (model!=null) {
 			loadModel(model);
 			//bmodel.reset();
@@ -1117,7 +1142,7 @@ public class OSGiWorkspaceModelManager
 		return feature != null;
 	}
 	private void switchToBundleMode(IBundlePluginModelBase bmodel) {
-		// bundle model has been added - remove the plug-in
+		// bundle model will be added - remove the plug-in
 		// model for the same project
 		IProject project = bmodel.getUnderlyingResource().getProject();
 		IModel model = getWorkspaceModel(project);

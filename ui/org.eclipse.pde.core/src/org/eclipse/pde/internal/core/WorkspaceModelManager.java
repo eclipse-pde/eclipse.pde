@@ -492,7 +492,8 @@ public class WorkspaceModelManager
 				}
 			} else if (isFeatureProject(project)) {
 				IFeatureModel model = createWorkspaceFeatureModel(project);
-				workspaceFeatureModels.add(model);
+				if (model != null)
+					workspaceFeatureModels.add(model);
 			}
 		}
 		workspace.addResourceChangeListener(

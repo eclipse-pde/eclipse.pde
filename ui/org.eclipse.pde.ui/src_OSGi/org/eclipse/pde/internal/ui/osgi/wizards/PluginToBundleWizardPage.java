@@ -130,7 +130,6 @@ public class PluginToBundleWizardPage extends StatusWizardPage {
 		IPluginModelBase[] models =
 			PDECore.getDefault().getWorkspaceModelManager().getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			if (!models[i].isFragmentModel())
 			result.add(models[i]);
 		}
 		

@@ -41,7 +41,7 @@ public interface IBundle extends IWritable {
 	String KEY_DYNAMIC_IMPORT_PACKAGE = "DynamicImport-Package";
 	String KEY_EXPORT_PACKAGE = "Export-Package";
 	String KEY_IMPORT_PACKAGE = "Import-Package";
-
+	
 	// Equinox addenda
 	String PERFECT_MATCH = "perfect";
 	String EQUIVALENT_MATCH = "equivalent";
@@ -55,6 +55,8 @@ public interface IBundle extends IWritable {
 
 	String KEY_LEGACY = "Legacy"; //$NON-NLS-1$
 	String KEY_PLUGIN = "Plugin-Class"; //$NON-NLS-1$
+	
+	String COMPATIBILITY_ACTIVATOR = "org.eclipse.core.runtime.compatibility.PluginActivator";
 
 	String[] VALID_KEYS =
 		{

@@ -43,6 +43,13 @@ public abstract class BundleModel
 	}
 
 	public abstract void load();
+	
+	public boolean isFragmentModel() {
+		IBundle bundle = getBundle();
+		if (bundle!=null && bundle.getHeader(IBundle.KEY_HOST_BUNDLE)!=null)
+			return true;
+		return false;
+	}
 
 	public void load(InputStream source, boolean outOfSync) {
 		Manifest manifest = new Manifest();

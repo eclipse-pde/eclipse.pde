@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IWorkspaceModelManager;
+import org.eclipse.pde.core.osgi.bundle.*;
 import org.eclipse.pde.core.osgi.bundle.IBundle;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -90,7 +91,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 				if (project != null
 					&& WorkspaceModelManager.isJavaPluginProject(project)) {
 					IPluginModelBase model = findModelFor(project);
-					if (model != null) {
+					if (model != null && !(model instanceof IBundlePluginModelBase)) {
 						models.add(model);
 					}
 				}
@@ -165,7 +166,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 
 				IProgressMonitor subMonitor =
 					new SubProgressMonitor(monitor, 1);
-				convertPluginToBundle((IPluginModel)model, confirmation, subMonitor);
+				convertPluginToBundle(model, confirmation, subMonitor);
 				if (monitor.isCanceled())
 					break;
 			}
@@ -175,7 +176,7 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	private static void convertPluginToBundle(
-		IPluginModel model,
+		IPluginModelBase model,
 		IMissingPluginConfirmation confirmation,
 		IProgressMonitor monitor)
 		throws CoreException {
@@ -191,24 +192,24 @@ public class PluginToBundleAction implements IWorkbenchWindowActionDelegate {
 		monitor.done();
 	}
 
-	private static void createBundleManifest(IPluginModel model, IProgressMonitor monitor) throws CoreException {
+	private static void createBundleManifest(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IProject project = model.getUnderlyingResource().getProject();
 		IFile file = project.getFile("META-INF/MANIFEST.MF");
 		WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
 		IBundle bundle = bmodel.getBundle(true);
 		monitor.beginTask("", 2);
-		bundle.load(model.getPlugin(), new SubProgressMonitor(monitor, 1));
+		bundle.load(model.getPluginBase(), new SubProgressMonitor(monitor, 1));
 		IFolder folder = (IFolder)file.getParent();
 		CoreUtility.createFolder(folder, true, true, new SubProgressMonitor(monitor, 1));
 		bmodel.save();
 	}
 	
-	private static void createExtensions(IPluginModel model) {
+	private static void createExtensions(IPluginModelBase model) {
 		IProject project = model.getUnderlyingResource().getProject();
 		IFile file = project.getFile("extensions.xml");
 		WorkspaceExtensionsModel emodel = new WorkspaceExtensionsModel(file);
 		IExtensions ex = emodel.getExtensions(true);
-		ex.load(model.getPlugin());
+		ex.load(model.getPluginBase());
 		emodel.save();
 	}
 

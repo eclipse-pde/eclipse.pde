@@ -82,23 +82,18 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	private void loadPlugin(IPlugin plugin) {
-		headers.put(
-			KEY_ACTIVATOR,
-			"org.eclipse.core.runtime.compatibility.PluginActivator");
 		String pluginClass = plugin.getClassName();
-		if (pluginClass != null)
+		if (pluginClass != null) {
+			headers.put(
+				KEY_ACTIVATOR,
+				"org.eclipse.core.runtime.compatibility.PluginActivator");
 			headers.put(KEY_PLUGIN, pluginClass);
+		}
 	}
 
 	private void loadFragment(IFragment fragment) {
-		String pluginId = fragment.getPluginId();
-		String pluginVersion = fragment.getPluginVersion();
-		StringBuffer hostBundle = new StringBuffer();
-
-		hostBundle.append(pluginId).append("; ");
-		hostBundle.append("version=");
-		hostBundle.append(pluginVersion);
-		headers.put(KEY_HOST_BUNDLE, hostBundle.toString());
+		FragmentUtil futil = new FragmentUtil(fragment);
+		headers.put(KEY_HOST_BUNDLE, futil.getHeader());
 	}
 
 	private void loadLibraries(
@@ -137,26 +132,29 @@ public class Bundle extends BundleObject implements IBundle {
 	private void loadExports(IProject project) {
 		if (!OSGiWorkspaceModelManager.isJavaPluginProject(project))
 			return;
-		boolean binary = OSGiWorkspaceModelManager.isBinaryPluginProject(project);
+		boolean binary =
+			OSGiWorkspaceModelManager.isBinaryPluginProject(project);
 		IJavaProject javaProject = JavaCore.create(project);
 		StringBuffer provides = new StringBuffer();
-		int added=0;
+		int added = 0;
 		try {
-			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
-			for (int i=0; i<roots.length; i++) {
+			IPackageFragmentRoot[] roots =
+				javaProject.getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
-				
+
 				if (root.isArchive() && root.isExternal())
 					continue;
 
-				IJavaElement [] children = root.getChildren();
-				for (int j=0; j<children.length; j++) {
+				IJavaElement[] children = root.getChildren();
+				for (int j = 0; j < children.length; j++) {
 					IJavaElement child = children[j];
 					if (child instanceof IPackageFragment) {
-						IPackageFragment packageChild = (IPackageFragment)child;
+						IPackageFragment packageChild =
+							(IPackageFragment) child;
 						if (packageChild.containsJavaResources()) {
 							String name = packageChild.getElementName();
-							if (added>0)
+							if (added > 0)
 								provides.append(", ");
 							provides.append(name);
 							added++;
@@ -164,8 +162,8 @@ public class Bundle extends BundleObject implements IBundle {
 					}
 				}
 			}
-				
-			if (added>0)
+
+			if (added > 0)
 				headers.put(KEY_PROVIDE_PACKAGE, provides.toString());
 		} catch (JavaModelException e) {
 			PDECore.logException(e);

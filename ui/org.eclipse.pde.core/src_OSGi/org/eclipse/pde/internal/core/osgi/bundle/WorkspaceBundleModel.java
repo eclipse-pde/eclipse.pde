@@ -57,7 +57,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditable {
 	public boolean isEditable() {
 		return editable;
 	}
-
+	
 	public void load() {
 		if (file == null)
 			return;

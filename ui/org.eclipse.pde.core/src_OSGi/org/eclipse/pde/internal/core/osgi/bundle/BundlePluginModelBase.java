@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.plugin.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class BundlePluginModelBase extends AbstractModel implements IBundlePluginModelBase {
+public abstract class BundlePluginModelBase extends AbstractModel implements IBundlePluginModelBase {
 	private IBundleModel bundleModel;
 	private IExtensionsModel extensionsModel;
 	private IBundlePluginBase bundlePluginBase;
@@ -79,11 +79,6 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#createPluginBase()
 	 */
-	public IPluginBase createPluginBase() {
-		BundlePlugin bplugin = new BundlePlugin();
-		bplugin.setModel(this);
-		return bplugin;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
@@ -104,17 +99,10 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	 */
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (bundlePluginBase == null && createIfMissing) {
-			bundlePluginBase = (BundlePlugin) createPluginBase();
+			bundlePluginBase = (BundlePluginBase) createPluginBase();
 			loaded = true;
 		}
 		return bundlePluginBase;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#isFragmentModel()
-	 */
-	public boolean isFragmentModel() {
-		return false;
 	}
 
 	/* (non-Javadoc)

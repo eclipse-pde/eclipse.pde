@@ -540,7 +540,6 @@
             class="org.eclipse.pde.internal.ui.editor.standalone.extensions.ExtensionsSourceEditor"
             id="org.eclipse.pde.ui.extensionsEditor">
       </editor>
-      
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -744,12 +743,12 @@
                value="org.eclipse.pde.PluginNature">
          </filter>
          <action
-               menubarPath="additions"
-               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
                label="%PluginToBundleWizardAction.label"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.pde.ui.PluginToBundleWizard2"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath">
+               id="org.eclipse.pde.ui.PluginToBundleWizard2">
          </action>
       </objectContribution>
       <objectContribution
@@ -763,6 +762,19 @@
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.pde.ui.PreviewReference">
+         </action>
+      </objectContribution>
+      <objectContribution
+            nameFilter="fragment.xml"
+            objectClass="org.eclipse.core.resources.IFile"
+            id="org.eclipse.pde.ui.FragmentToBundle1">
+         <action
+               menubarPath="additions"
+               class="org.eclipse.pde.internal.ui.osgi.wizards.PluginToBundleAction"
+               label="%PluginToBundleWizardAction.label"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.PluginToBundleWizard1"
+               helpContextId="org.eclipse.pde.doc.user.update_classpath">
          </action>
       </objectContribution>
    </extension>

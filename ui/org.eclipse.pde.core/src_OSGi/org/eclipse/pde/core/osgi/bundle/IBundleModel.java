@@ -55,4 +55,6 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 * </p>
 	 */
 	public String getInstallLocation();
+	
+	public boolean isFragmentModel();
 }

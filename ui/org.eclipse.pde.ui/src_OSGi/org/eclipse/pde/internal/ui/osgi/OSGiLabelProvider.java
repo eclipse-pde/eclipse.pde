@@ -31,6 +31,7 @@ public class OSGiLabelProvider extends PDELabelProvider {
 		}
 		return super.getImage(obj);
 	}
+
 	public Image getObjectImage(IBundlePluginBase bundlePluginBase) {
 		return getObjectImage(bundlePluginBase, false, false);
 	}
@@ -45,6 +46,8 @@ public class OSGiLabelProvider extends PDELabelProvider {
 		if (javaSearch)
 			flags |= F_JAVA;
 		ImageDescriptor desc = PDEPluginImages.DESC_BUNDLE_OBJ;
+		if (model.isFragmentModel())
+			desc = PDEPluginImages.DESC_BUNDLE_FRAGMENT_OBJ;
 		if (checkEnabled && model.isEnabled() == false)
 			{}//desc = PDEPluginImages.DESC_EXT_PLUGIN_OBJ;
 		return get(desc, flags);
