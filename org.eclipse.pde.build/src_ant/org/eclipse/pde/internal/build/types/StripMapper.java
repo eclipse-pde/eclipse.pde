@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.core.types;
+package org.eclipse.pde.internal.build.types;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

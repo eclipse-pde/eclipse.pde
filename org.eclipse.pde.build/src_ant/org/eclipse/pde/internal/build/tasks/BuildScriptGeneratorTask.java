@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.core.tasks;
+package org.eclipse.pde.internal.build.tasks;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
