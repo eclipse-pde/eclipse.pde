@@ -13,6 +13,7 @@ public class XMLErrorHandler implements ErrorHandler {
 
 public XMLErrorHandler() {
 }
+
 public void error(SAXParseException exception) throws SAXException {
 	errorCount++;
 }

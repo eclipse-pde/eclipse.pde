@@ -20,6 +20,12 @@ public abstract class AbstractPluginModelBase
 	implements IPluginModelBase, IPluginModelFactory {
 	protected PluginBase pluginBase;
 	private boolean enabled;
+	private static SourceDOMParser parser;
+	private static XMLErrorHandler errorHandler;
+	
+	static {
+		initializeParser();
+	}
 
 	public AbstractPluginModelBase() {
 		super();
@@ -116,12 +122,16 @@ public abstract class AbstractPluginModelBase
 			}
 		}
 	}
-
-	public void load(InputStream stream, boolean outOfSync)
-		throws CoreException {
-		XMLErrorHandler errorHandler = new XMLErrorHandler();
-		SourceDOMParser parser = new SourceDOMParser();
+	
+	private static void initializeParser() {
+		parser = new SourceDOMParser();
+		errorHandler = new XMLErrorHandler();
 		parser.setErrorHandler(errorHandler);
+	}
+
+	public synchronized void load(InputStream stream, boolean outOfSync)
+		throws CoreException {
+
 		if (pluginBase == null) {
 			pluginBase = (PluginBase) createPluginBase();
 			pluginBase.setModel(this);
@@ -130,7 +140,12 @@ public abstract class AbstractPluginModelBase
 		loaded = false;
 		try {
 			InputSource source = new InputSource(stream);
+			errorHandler.reset();
 			parser.parse(source);
+			//XMLErrorHandler errorHandler = new XMLErrorHandler();
+			//SourceDOMParser parser = new SourceDOMParser();
+			//parser.setErrorHandler(errorHandler);
+			//parser.parse(source);
 			if (errorHandler.getErrorCount() > 0
 				|| errorHandler.getFatalErrorCount() > 0) {
 				throwParseErrorsException();

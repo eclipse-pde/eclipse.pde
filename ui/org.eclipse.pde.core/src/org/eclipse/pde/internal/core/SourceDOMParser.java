@@ -29,6 +29,11 @@ public class SourceDOMParser extends DOMParser {
 			notSupported = true;
 		}
 	}
+	
+	public void reset() {
+		super.reset();
+		lines.clear();
+	}
 
 	public void startDocument(
 		XMLLocator locator,

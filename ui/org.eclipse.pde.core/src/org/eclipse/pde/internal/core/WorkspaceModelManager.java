@@ -33,6 +33,7 @@ public class WorkspaceModelManager
 	private Vector workspaceFeatureModels = null;
 	private Vector modelChanges = null;
 	private boolean startup = true;
+	private static final boolean DEBUG = true;
 
 	class ModelChange {
 		IModel model;
@@ -447,6 +448,7 @@ public class WorkspaceModelManager
 		}
 	}
 	private void initializeWorkspacePluginModels() {
+		long start = System.currentTimeMillis();
 		workspaceModels = new Vector();
 		workspaceFragmentModels = new Vector();
 		workspaceFeatureModels = new Vector();
@@ -475,26 +477,9 @@ public class WorkspaceModelManager
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_AUTO_BUILD);
 		initialized = true;
+		long stop = System.currentTimeMillis();
+		if (DEBUG) System.out.println("Workspace plugins loaded in "+(stop-start)+"ms");
 	}
-	//	private boolean isEditorOpened(PDEMultiPageEditor pdeEditor) {
-	////		IWorkbench workbench = PlatformUI.getWorkbench();
-	////		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-	////		for (int i = 0; i < windows.length; i++) {
-	////			IWorkbenchWindow window = windows[i];
-	////			IWorkbenchPage[] pages = window.getPages();
-	////			for (int j = 0; j < pages.length; j++) {
-	////				IWorkbenchPage page = pages[j];
-	////				IEditorPart[] editors = page.getEditors();
-	////				for (int k = 0; k < editors.length; k++) {
-	////					IEditorPart editor = editors[k];
-	////					if (editor == pdeEditor) {
-	////						return true;
-	////					}
-	////				}
-	////			}
-	////		}
-	//		return false;
-	//	}
 
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen() == false)

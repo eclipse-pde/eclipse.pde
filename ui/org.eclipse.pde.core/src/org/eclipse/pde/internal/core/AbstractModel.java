@@ -103,8 +103,7 @@ public abstract class AbstractModel
 	public boolean isLoaded() {
 		return loaded;
 	}
-	public void release() {
-	}
+
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		listeners.remove(listener);
 	}
