@@ -145,7 +145,9 @@ public abstract class BaseImportWizardSecondPage extends WizardPage {
 			selected.add(model);
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
-				if (extensions[i].getPoint().equals("org.eclipse.ant.core.extraClasspathEntries")) {
+				String point = extensions[i].getPoint();
+				if (point.equals("org.eclipse.ant.core.extraClasspathEntries")
+					|| point.equals("org.eclipse.ant.core.antTasks")) {
 					IPluginModelBase antModel = findModel("org.apache.ant");
 					if (antModel != null && !selected.contains(antModel))
 						selected.add(antModel);
