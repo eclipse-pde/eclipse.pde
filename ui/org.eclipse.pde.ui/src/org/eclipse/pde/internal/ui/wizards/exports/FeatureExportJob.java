@@ -192,9 +192,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setDevEntries(getDevProperties());
 		generator.setElements(new String[] {"feature@" + featureID});
 		generator.setPluginPath(getPaths());
-		generator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder");
-		generator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
-		generator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
+		BuildScriptGenerator.setOutputFormat(fExportType == EXPORT_AS_ZIP ? "antzip" : "folder");
+		BuildScriptGenerator.setForceUpdateJar(fExportType == EXPORT_AS_UPDATE_JARS);
+		BuildScriptGenerator.setEmbeddedSource(fExportSource && fExportType != EXPORT_AS_UPDATE_JARS);
 		BuildScriptGenerator.setConfigInfo("*,*,*");
 		generator.generate();	
 	}
