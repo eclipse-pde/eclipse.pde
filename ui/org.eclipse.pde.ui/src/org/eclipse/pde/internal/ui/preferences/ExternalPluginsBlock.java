@@ -284,15 +284,6 @@ public class ExternalPluginsBlock {
 		tablePart.setSelection(selection.toArray());
 	}
 
-	private boolean isChecked(IPluginModelBase model) {
-		Object[] selected = tablePart.getSelection();
-		for (int i = 0; i < selected.length; i++) {
-			if (model == selected[i])
-				return true;
-		}
-		return false;
-	}
-
 	public void save() {
 		BusyIndicator.showWhile(
 			page.getShell().getDisplay(),
@@ -315,7 +306,7 @@ public class ExternalPluginsBlock {
 			IPluginModelBase[] allModels = getAllModels();
 			for (int i = 0; i < allModels.length; i++) {
 				ExternalPluginModelBase model = (ExternalPluginModelBase) allModels[i];
-				model.setEnabled(isChecked(model));
+				model.setEnabled(tablePart.getTableViewer().getChecked(model));
 				model.setEclipseHomeRelativePath(
 					PluginPathFinder.createEclipseRelativeHome(
 						model.getInstallLocation(),
@@ -326,7 +317,7 @@ public class ExternalPluginsBlock {
 			Iterator iter = changed.iterator();
 			while (iter.hasNext()) {
 				IPluginModelBase model = (IPluginModelBase)iter.next();
-				model.setEnabled(isChecked(model));
+				model.setEnabled(tablePart.getTableViewer().getChecked(model));
 			}			
 		}
 	}
