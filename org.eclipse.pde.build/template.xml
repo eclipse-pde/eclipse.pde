@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<project name="build template" default="dist">
+  <target name="init">
+    <property name="build.compiler" value="org.eclipse.pde.internal.core.JDTCompilerAdapter"/>
+  </target>
+  <commapatternset id="pattern.id" includes="${includes}" excludes="${excludes}"/>
+  <commapatternset id="copy.id" includes="${includes}" excludes="**/*.java"/>
+  <commapatternset id="excludes.id" excludes="${excludes}"/>
+  <fileset id="file.id" dir=".">
+    <patternset refid="pattern.id"/>
+  </fileset>  
+  <path id="path.id">
+    <fileset refid="file.id"/>
+  </path>
+
+  <target name="jar" depends="init">
+    <javac srcdir="${basedir}" destdir="${out}" verbose="yes" failonerror="no">
+      <patternset refid="pattern.id"/>
+      <classpath path="${compilePath}"/>
+    </javac>
+  </target>
+
+  <target name="javadoc" depends="init">
+    <javadoc 
+      sourcepath="${sourcepath}"
+      destdir="${out}"
+      packagenames="${packages}"
+      classpath="${compilePath}" 
+      excludepackagenames="${excludedpackages}">
+    </javadoc>
+  </target>
+
+  <target name="bin" depends="init">
+    <mkdir dir="${dest}" />
+    <copy todir="${dest}">
+      <fileset refid="file.id"/>
+    </copy>
+  </target>
+
+  <target name="src" depends="init">
+    <mkdir dir="${dest}/src" />
+    <copy todir="${dest}/src">
+      <fileset refid="file.id"/>
+    </copy>
+    <delete file="${dest}/src.zip"/>
+    <zip zipfile="${dest}/src.zip" basedir="${dest}/src"/>
+    <delete dir="${dest}/src"/>
+  </target>
+
+  <target name="log" depends="init">
+    <mkdir dir="${dest}/logs"/>
+    <copy todir="${dest}/logs">
+      <fileset dir="." includes="*.log"/>
+      <mapper type="glob" from="*.bin.log" to="*.log"/>
+    </copy>
+  </target>
+
+  <target name="doc-copy" depends="init" if="doc-exists">
+    <copy todir="${dest}/doc">
+      <fileset dir="doc" includes="*"/>
+    </copy>
+  </target>
+
+  <target name="doc" depends="init">
+    <mkdir dir="${dest}/${plugin}/doc" />
+    <available property="doc-exists" file="doc"/>
+    <antcall target="doc-copy"/>
+    <copy todir="${dest}/doc/javadoc">
+      <fileset dir="javadoc"/>
+    </copy>
+  </target>
+
+  <target name="clean" depends="init">
+    <delete>
+      <fileset dir="." includes="*.bin" />
+      <fileset dir="." includes="*.log" />
+      <fileset dir="." includes="${jar}" />
+      <fileset dir="." includes="${srczips}" />
+    </delete>
+    <delete dir="javadoc"/>
+  </target>
+</project>
+

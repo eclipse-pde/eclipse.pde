@@ -1,0 +1,30 @@
+package org.eclipse.pde.internal.core;
+
+import org.eclipse.core.runtime.model.*;
+
+public class FragmentBuildScriptGenerator extends ModelBuildScriptGenerator {
+
+public FragmentBuildScriptGenerator() {
+	super();
+}
+public FragmentBuildScriptGenerator(PluginModel modelsToGenerate[],PluginRegistryModel registry) {
+	super(modelsToGenerate,registry);
+}
+
+protected String getComponentDirectoryName() {
+	return "fragments/${fragment}_${version}";
+}
+
+protected String getModelTypeName() {
+	return "fragment";
+}
+public static void main(String[] args) throws Exception {
+	new FragmentBuildScriptGenerator().run(args);
+}
+public static void main(String argString) throws Exception {
+	main(tokenizeArgs(argString));
+}
+protected PluginModel retrieveModelNamed(String modelName) {
+	return getRegistry().getFragment(modelName);
+}
+}
