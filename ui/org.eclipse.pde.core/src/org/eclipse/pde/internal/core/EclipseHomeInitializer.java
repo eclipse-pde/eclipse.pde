@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
 
 /**
@@ -24,7 +25,6 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
 	public void initialize(String variable) {
-		// No need to do anything - PDECore will initialize
-		// variable anyway
+		ExternalModelManager.getEclipseHome(new NullProgressMonitor());
 	}
 }
