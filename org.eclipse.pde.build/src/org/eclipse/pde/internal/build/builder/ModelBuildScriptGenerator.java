@@ -175,7 +175,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				getBuildProperties().setProperty(PROPERTY_JAR_ORDER, Utils.getStringFromArray(order, ","));
 			}
 
-			String includeString  = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
+			String includeString = getBuildProperties().getProperty(PROPERTY_BIN_INCLUDES);
 			if (includeString != null) {
 				String[] includes = Utils.getArrayFromString(includeString);
 				for (int i = 0; i < includes.length; i++)
@@ -346,6 +346,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
+	private boolean containsStarDotJar(String[] strings) {
+		for (int i = 0; i < strings.length; i++) {
+			if (strings[i].endsWith("*.jar"))
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Add the <code>gather.bin.parts</code> target to the given Ant script.
@@ -366,25 +373,26 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		//Copy only the jars that has been compiled and are listed in the includes
 		String[] splitIncludes = Utils.getArrayFromString(include);
+		boolean allJars = containsStarDotJar(splitIncludes);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
-			String formatedName = entry.getName(false) + (entry.getType()==CompiledEntry.FOLDER ? "/" : "");
-			if (Utils.isStringIn(splitIncludes,formatedName)) {
+			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : "");
+			if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
 				fileSetValues[count++] = formatedName;
-				break;
+				continue;
 			}
 		}
-		if(count != 0) {
+		if (count != 0) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
-		if(dotOnTheClasspath) {
+		if (dotOnTheClasspath) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, null, null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
-		
+
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
