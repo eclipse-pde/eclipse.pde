@@ -29,6 +29,5 @@ public interface IExternalModelManager extends IModelManager {
 	
 	void enableAll();
 	boolean hasEnabledModels();
-
 	void resetModels(Vector models, Vector fmodels);
 }

@@ -286,5 +286,4 @@ public class ExternalModelManager implements IExternalModelManager {
 		PDECore.getDefault().savePluginPreferences();
 		initialized=false;
 	}
-	
 }
