@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -132,7 +133,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				boolean isAutoBuilding =
 					PDEPlugin.getWorkspace().isAutoBuilding();
 				try {
-					monitor.beginTask("",2);
+					monitor.beginTask("",3);
 					if (isAutoBuilding) {
 						IWorkspace workspace = PDEPlugin.getWorkspace();
 						IWorkspaceDescription description =
@@ -148,7 +149,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 							doImport,
 							doExtract,
 							query);
-					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor,1));
+					PDEPlugin.getWorkspace().run(op, new SubProgressMonitor(monitor,2));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} catch (OperationCanceledException e) {
@@ -163,13 +164,23 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 							workspace.setDescription(description);
 						}
 
-						UpdateClasspathAction.doUpdateClasspath(
-							new SubProgressMonitor(monitor,1),
-							getWorkspaceCounterparts(modelIds));
+						PDEPlugin.getWorkspace().run(getUpdateClasspathOperation(modelIds),new SubProgressMonitor(monitor, 1));
 					} catch (CoreException e) {
 					}
+					monitor.done();
 				}
 			}
+		};
+	}
+	
+	private static IWorkspaceRunnable getUpdateClasspathOperation(final ArrayList modelIds) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				UpdateClasspathAction.doUpdateClasspath(
+					monitor,
+					getWorkspaceCounterparts(modelIds));
+			}
+
 		};
 	}
 
