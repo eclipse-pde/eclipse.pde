@@ -397,7 +397,7 @@ public class ClasspathUtilCore {
 				JavaCore.create(project).getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
-				if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+				if (root.getKind() == IPackageFragmentRoot.K_SOURCE && root.getPath().segmentCount() > 1) {
 					IClasspathEntry entry = JavaCore.newSourceEntry(root.getPath());
 					if (!result.contains(entry))
 						result.add(entry);
