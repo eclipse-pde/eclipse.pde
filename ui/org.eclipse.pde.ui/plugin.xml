@@ -558,11 +558,7 @@
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
             id="org.eclipse.pde.ui.pluginBuild">
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <action
+        <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
@@ -575,11 +571,7 @@
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="fragment.xml"
             id="org.eclipse.pde.ui.fragmentBuild">
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <action
+        <action
                label="%popupMenus.buildFragment.label"
                helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
                class="org.eclipse.pde.internal.ui.feature.BuildPluginAction"
