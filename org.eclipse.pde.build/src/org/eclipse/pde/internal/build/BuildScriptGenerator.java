@@ -157,20 +157,4 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		this.recursiveGeneration = recursiveGeneration;
 	}
-
-	/**
-	 * Indicates the output format of the resulting files. Supports "zip", "antzip", "folder".
-	 * @param output
-	 */
-	public void setOutputFormat(String output) {
-		outputFormat = output;
-	}
-
-	public void setForceUpdateJar(boolean forcing) {
-		forceUpdateJarFormat = forcing;
-	}
-
-	public void setEmbeddedSource(boolean embed) {
-		embeddedSource = embed;
-	}
 }

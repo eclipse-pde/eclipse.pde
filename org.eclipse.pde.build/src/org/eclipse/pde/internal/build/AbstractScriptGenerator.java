@@ -172,20 +172,31 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return "zip";
 	}
 
+	public static void setOutputFormat(String format) {
+		outputFormat = format;
+	}
+	
 	public static boolean getDefaultEmbeddedSource() {
 		return false;
 	}
 
+	public static void setEmbeddedSource(boolean embed) {
+		embeddedSource = embed;
+	}
+	
 	public static boolean getForceUpdateJarFormat() {
 		return false;
 	}
 
+	public static void setForceUpdateJar(boolean force) {
+		forceUpdateJarFormat = force;
+	}
+	
 	public static String getDefaultConfigInfos() {
 		return "*, *, *";
 	}
 
 	public static boolean getDefaultBuildingOSGi() {
-		return buildingOSGi;
+		return true;
 	}
-
 }
