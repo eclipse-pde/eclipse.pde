@@ -8,21 +8,32 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  * @author Wassim Melhem
@@ -40,8 +51,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private Label countLabel;
 	private TableViewer availableListViewer;
-	private Text filterText;
-	private Button startButton, endButton, containButton;
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
@@ -56,8 +65,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		layout.horizontalSpacing = 5;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-				
-		createScrollArea(container);
+		
 		createAvailableList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
 		createButtonArea(container);
 		createImportList(container).setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -69,15 +77,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		
 		addViewerListeners();
 		
-		initialize();
+		setPageComplete(false);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		
-	}
-	
-	private void initialize(){
-		startButton.setSelection(true);
-		setPageComplete(false);
 	}
 	
 	private void addViewerListeners() {
@@ -90,39 +93,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		importListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleRemove();
-			}
-		});
-		
-		filterText.addModifyListener(new ModifyListener(){
-			public void modifyText(ModifyEvent e) {
-				handleFilter();
-			}
-		});
-		
-		startButton.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				handleFilter();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		
-		endButton.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				handleFilter();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		
-		containButton.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				handleFilter();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 	}
@@ -257,44 +227,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		return container;
 	}
 	
-	private Composite createScrollArea(Composite parent){
-		Group container = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 5;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
-		layout.verticalSpacing = 4;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=3;
-		container.setLayoutData(gd);
-		container.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.filterDesc"));
-	
-		startButton = new Button(container, SWT.RADIO);
-		startButton.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.startButton"));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		startButton.setLayoutData(gd);
-		
-		filterText = new Text(container, SWT.BORDER);
-		filterText.setText("");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalSpan = 3;
-		filterText.setLayoutData(gd);
-		
-		endButton = new Button(container, SWT.RADIO);
-		endButton.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.endButton"));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		endButton.setLayoutData(gd);
-		
-		containButton = new Button(container, SWT.RADIO);
-		containButton.setText(PDEPlugin.getResourceString("ImportWizard.DetailedPage.containButton"));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		containButton.setLayoutData(gd);
-		
-
-		
-		return container;
-	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		setPageComplete(visible && importListViewer.getTable().getItemCount() > 0);
@@ -307,7 +239,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	protected void pageChanged() {
 		updateCount();
-		handleFilter();
 		setPageComplete(importListViewer.getTable().getItemCount() > 0);
 	}
 	private void updateCount() {
@@ -343,39 +274,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			importListViewer.add(data.toArray());
 			availableListViewer.remove(data.toArray());
 			pageChanged();
-		}
-	}
-	
-	private void handleFilter() {
-		if (filterText == null || filterText.getText() == null || filterText.getText().length() == 0){
-			availableListViewer.setSelection(null);
-			return;
-		}
-
-		TableItem[] tableItems = availableListViewer.getTable().getItems();
-		ArrayList results = new ArrayList();
-		for (int i = 0; i<tableItems.length; i++){
-			Object data = tableItems[i].getData();
-			
-			if (data instanceof IPluginModelBase){
-				IPluginModelBase pluginBase = (IPluginModelBase)data;
-				if (startButton.getSelection()){
-					if (pluginBase.getBundleDescription().getUniqueId().startsWith(filterText.getText()))
-						results.add(tableItems[i]);
-				} else if (endButton.getSelection()) {
-					if (pluginBase.getBundleDescription().getUniqueId().endsWith(filterText.getText()))
-						results.add(tableItems[i]);
-				} else if (containButton.getSelection()) {
-					if (pluginBase.getBundleDescription().getUniqueId().indexOf(filterText.getText()) != -1)
-						results.add(tableItems[i]);
-				}
-			}
-		}
-		if (results.size()>0){
-			TableItem[] selectionList = (TableItem[])results.toArray(new TableItem[results.size()]);
-			availableListViewer.getTable().setSelection(selectionList);
-		} else {
-			availableListViewer.setSelection(null);
 		}
 	}
 	
