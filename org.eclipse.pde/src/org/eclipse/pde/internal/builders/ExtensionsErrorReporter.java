@@ -325,13 +325,16 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		
 		ArrayList paths = new ArrayList();		
 		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
-			String language = TargetPlatform.getNL().substring(0, 2);
-			String country = TargetPlatform.getNL().substring(3);
-			paths.add(location
-					.replaceAll(
-							"\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country)); //$NON-NLS-1$ //$NON-NLS-2$
-			paths.add(location.replaceAll(
-					"\\$nl\\$", "nl" + IPath.SEPARATOR + language)); //$NON-NLS-1$ //$NON-NLS-2$
+			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_");	
+			String language = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
+			String country = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
+			if (language != null && country != null)
+				paths.add(location
+						.replaceAll(
+								"\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country)); //$NON-NLS-1$ //$NON-NLS-2$
+			if (language != null)
+				paths.add(location.replaceAll(
+						"\\$nl\\$", "nl" + IPath.SEPARATOR + language)); //$NON-NLS-1$ //$NON-NLS-2$
 			paths.add(location.replaceAll("\\$nl\\$", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			paths.add(location);
