@@ -7,7 +7,6 @@
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
-    <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.ant.core/ant.jar"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antui.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.ant.ui/antuisrc.zip"/>
@@ -25,5 +24,7 @@
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.pde.core/pdecore.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.pde.core/pdecoresrc.zip"/>
     <classpathentry kind="var" path="WS/swt.jar" sourcepath="WS/swtsrc.zip"/>
+    <classpathentry kind="var"
+        path="ECLIPSE_HOME/plugins/org.apache.ant/ant.jar" rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.apache.ant/antsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
