@@ -234,6 +234,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	public void deleteBuildFiles(IModel model) throws CoreException {
+		if (model == null)
+			return;
+		
 		String directory =
 			(model instanceof IFeatureModel)
 				? ((IFeatureModel) model).getInstallLocation()
@@ -259,7 +262,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			IFeature feature = ((IFeatureModel)model).getFeature();
 			IFeatureChild[] children = feature.getIncludedFeatures();
 			for (int i = 0; i < children.length; i++) {
-				deleteBuildFiles(((FeatureChild)children[i]).getReferencedFeature().getModel());
+				IFeature ref = ((FeatureChild)children[i]).getReferencedFeature();
+				if (ref != null) {
+					deleteBuildFiles(ref.getModel());
+				}
 			}
 			
 			IFeaturePlugin[] plugins = feature.getPlugins();
