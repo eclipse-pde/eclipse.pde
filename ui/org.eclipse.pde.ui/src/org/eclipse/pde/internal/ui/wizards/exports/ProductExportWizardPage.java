@@ -223,5 +223,9 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
     protected boolean addJARFormatSection() {
         return false;
     }
+    
+    protected int getVerticalSpacing() {
+        return super.getVerticalSpacing() * 2;
+    }
 
 }
