@@ -55,7 +55,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Dependency Analysis");
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		
 		formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);		

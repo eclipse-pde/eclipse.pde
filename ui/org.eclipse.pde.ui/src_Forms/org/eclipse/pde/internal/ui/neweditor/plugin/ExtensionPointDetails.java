@@ -67,7 +67,7 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
 		FormToolkit toolkit = getForm().getToolkit();
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
+		Section section = toolkit.createSection(parent, Section.DESCRIPTION|Section.TITLE_BAR);
 		section.marginHeight = 5;
 		section.marginWidth = 5;
 		section.setText("Extension Point Details");
@@ -77,11 +77,11 @@ public class ExtensionPointDetails extends AbstractFormPart implements IDetailsP
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
 		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
-		glayout.marginWidth = glayout.marginHeight = paintedBorder?2:0;
+		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
 		glayout.numColumns = 2;
 		if (paintedBorder) glayout.verticalSpacing = 7;
 		client.setLayout(glayout);

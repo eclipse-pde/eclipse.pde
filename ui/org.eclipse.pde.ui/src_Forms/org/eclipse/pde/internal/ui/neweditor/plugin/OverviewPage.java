@@ -7,18 +7,18 @@
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.pde.internal.ui.neweditor.*;
-import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
-import org.eclipse.pde.internal.ui.neweditor.build.*;
-import org.eclipse.pde.internal.ui.neweditor.runtime.*;
+import org.eclipse.pde.internal.ui.neweditor.build.BuildPage;
+import org.eclipse.pde.internal.ui.neweditor.runtime.RuntimePage;
 import org.eclipse.swt.*;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * @author dejan
  * 
@@ -113,7 +113,17 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	}
 	private void createTestingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);		
-		section.setText("Testing");		
+		section.setText("Testing");
+		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
+		toolkit.adapt(info, true, true);
+		info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
+		info.setBackground(section.getTitleGradientBackground());
+		info.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				WorkbenchHelp.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm");
+			}
+		});
+		section.setTextClient(info);
 		FormText text = createClient(section, testingText, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC));
@@ -123,11 +133,21 @@ public class OverviewPage extends PDEFormPage implements HyperlinkListener {
 	private void createDeployingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);		
 		section.setText("Deploying");
+		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
+		toolkit.adapt(info, true, true);
+		info.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_INFO_TSK));
+		info.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				WorkbenchHelp.displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm");
+			}
+		});
+		info.setBackground(section.getTitleGradientBackground());
+		section.setTextClient(info);
 		createClient(section, deployingText, toolkit);
 	}
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, SWT.NONE);		
-		toolkit.createCompositeSeparator(section);
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR);		
+		//toolkit.createCompositeSeparator(section);
 		return section;
 	}
 	private FormText createClient(Section section, String content, FormToolkit toolkit) {

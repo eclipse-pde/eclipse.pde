@@ -36,7 +36,7 @@ public class AlertSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Alerts and Action Items");
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		text = toolkit.createFormText(section, true);
 		text.setImage("warning", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
 		text.setImage("error", PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));

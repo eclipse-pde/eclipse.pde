@@ -5,9 +5,8 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
@@ -31,8 +30,8 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_FORM_BANNER));
+		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
+		//		PDEPluginImages.DESC_FORM_BANNER));
 		final String href = getHelpResource();
 		if (href != null) {
 			IToolBarManager manager = form.getToolBarManager();

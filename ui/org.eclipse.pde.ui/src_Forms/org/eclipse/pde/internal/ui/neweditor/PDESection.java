@@ -24,7 +24,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	 * @param section
 	 */
 	public PDESection(PDEFormPage page, Composite parent, int style) {
-		super(parent, page.getManagedForm().getToolkit(), style);
+		super(parent, page.getManagedForm().getToolkit(), Section.TITLE_BAR | style);
 		this.page = page;
 		initialize(page.getManagedForm());
 		//createClient(getSection(), page.getManagedForm().getToolkit());

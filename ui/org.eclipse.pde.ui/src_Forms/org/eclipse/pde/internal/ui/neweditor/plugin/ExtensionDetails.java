@@ -56,7 +56,7 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		parent.setLayout(layout);
 
 
-		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
+		Section section = toolkit.createSection(parent, Section.TITLE_BAR|Section.DESCRIPTION);
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
 		section.setText("Extension Details");
@@ -64,10 +64,10 @@ public class ExtensionDetails extends AbstractFormPart implements IDetailsPage, 
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = paintedBorder?2:0;
+		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
 		glayout.numColumns = 2;
 		if (paintedBorder) glayout.verticalSpacing = 7;
 		client.setLayout(glayout);

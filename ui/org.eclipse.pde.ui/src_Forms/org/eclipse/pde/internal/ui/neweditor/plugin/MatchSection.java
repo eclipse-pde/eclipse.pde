@@ -89,7 +89,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		super.commit(onSave);
 	}
 	public void createClient(Section section, FormToolkit toolkit) {
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

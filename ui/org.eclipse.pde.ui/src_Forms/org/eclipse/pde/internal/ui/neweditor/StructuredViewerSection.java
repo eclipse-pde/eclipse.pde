@@ -34,7 +34,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		viewerPart = createViewerPart(buttonLabels);
 		viewerPart.setMinimumSize(50, 50);
 		FormToolkit toolkit = formPage.getManagedForm().getToolkit();
-		toolkit.createCompositeSeparator(getSection());
+		//toolkit.createCompositeSeparator(getSection());
 		createClient(getSection(), toolkit);
 	}
 

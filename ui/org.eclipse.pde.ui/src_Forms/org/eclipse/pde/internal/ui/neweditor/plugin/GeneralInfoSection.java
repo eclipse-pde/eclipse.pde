@@ -68,7 +68,7 @@ public class GeneralInfoSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.title"));
-		toolkit.createCompositeSeparator(section);
+		//toolkit.createCompositeSeparator(section);
 		section.setDescription(PDEPlugin.getResourceString("ManifestEditor.PluginSpecSection.desc"));
 
 		Composite client = toolkit.createComposite(section);
