@@ -9,9 +9,10 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -528,17 +529,16 @@ public class WorkspaceModelManager
 		if (!isJavaPluginProject(project))
 			return false;
 		try {
-			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+			IJavaProject jProject = JavaCore.create(project);
+			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 
-			for (int i = 0; i < entries.length; i++) {
-				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
-					&& entry.getContentKind() == IPackageFragmentRoot.K_SOURCE)
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE)
 					return true;
 			}
-		} finally {
-			return false;
+		} catch (JavaModelException e) {
 		}
+		return false;
 	}
 
 	public static boolean isBinaryPluginProject(IProject project) {
