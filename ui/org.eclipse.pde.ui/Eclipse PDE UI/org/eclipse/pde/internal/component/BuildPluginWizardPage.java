@@ -39,15 +39,20 @@ public class BuildPluginWizardPage extends WizardPage {
 	private String buildFileName = "build.xml";
 
 	public static final String WIZARD_DESC = "BuildPluginWizard.description";
+	public static final String WIZARD_FDESC = "BuildPluginWizard.fdescription";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
 	public static final String WIZARD_TITLE = "BuildPluginWizard.title";
+	public static final String WIZARD_FTITLE = "BuildPluginWizard.ftitle";
 	public static final String WIZARD_GROUP = "BuildPluginWizard.group";
 	public static final String WIZARD_RUNNING = "BuildPluginWizard.running";
 	public static final String WIZARD_GENERATING = "BuildPluginWizard.generating";
 	public static final String WIZARD_GENERATE_SCRIPTS = "BuildPluginWizard.generateScripts";
+	public static final String WIZARD_GENERATE_FSCRIPTS = "BuildPluginWizard.generateFScripts";
 	public static final String WIZARD_GENERATE_JARS = "BuildPluginWizard.generateJars";
+	public static final String WIZARD_GENERATE_FJARS = "BuildPluginWizard.generateFJars";
 	public static final String KEY_ERRORS_TITLE = "BuildPluginWizard.errorsTitle";
 	public static final String KEY_ERRORS_MESSAGE = "BuildPluginWizard.errorsMessage";
+	public static final String KEY_ERRORS_FMESSAGE = "BuildPluginWizard.errorsFMessage";
 
 	private static final String PREFIX =
 		PDEPlugin.getDefault().getPluginId() + ".pluginJars.";
@@ -73,8 +78,14 @@ public class BuildPluginWizardPage extends WizardPage {
 
 public BuildPluginWizardPage(IFile pluginBaseFile, boolean fragment) {
 	super("pluginJar");
-	setTitle(PDEPlugin.getResourceString(WIZARD_TITLE));
-	setDescription(PDEPlugin.getResourceString(WIZARD_DESC));
+	if (fragment) {
+		setTitle(PDEPlugin.getResourceString(WIZARD_FTITLE));
+		setDescription(PDEPlugin.getResourceString(WIZARD_FDESC));
+	}
+	else {
+		setTitle(PDEPlugin.getResourceString(WIZARD_TITLE));
+		setDescription(PDEPlugin.getResourceString(WIZARD_DESC));
+	}
 	this.pluginBaseFile = pluginBaseFile;
 	this.fragment = fragment;
 	if (fragment)
@@ -107,13 +118,22 @@ public void createControl(Composite parent) {
 	group.setText(PDEPlugin.getResourceString(WIZARD_GROUP));
 
 	makeScriptsButton = new Button(group, SWT.CHECK);
-	makeScriptsButton.setText(PDEPlugin.getResourceString(WIZARD_GENERATE_SCRIPTS));
+	String text;
+	if (fragment)
+		text =PDEPlugin.getResourceString(WIZARD_GENERATE_FSCRIPTS);
+	else
+	   	text =PDEPlugin.getResourceString(WIZARD_GENERATE_SCRIPTS);
+	makeScriptsButton.setText(text);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	makeScriptsButton.setLayoutData(gd);
 	makeScriptsButton.setSelection(true);
 
 	makeJarsButton = new Button(group, SWT.CHECK);
-	makeJarsButton.setText(PDEPlugin.getResourceString(WIZARD_GENERATE_JARS));
+	if (fragment)
+		text =PDEPlugin.getResourceString(WIZARD_GENERATE_FJARS);
+	else
+	   	text =PDEPlugin.getResourceString(WIZARD_GENERATE_JARS);
+	makeJarsButton.setText(text);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	makeJarsButton.setLayoutData(gd);
 	makeJarsButton.setSelection(true);
@@ -129,7 +149,7 @@ public void createControl(Composite parent) {
 private String createPluginPath(String eclipseDir) {
 	IPath stateLocation = PDEPlugin.getDefault().getStateLocation();
 
-	File file = stateLocation.append("component_plugin_path.properties").toFile();
+	File file = stateLocation.append("build_plugin_path.properties").toFile();
 
 	String fileName = file.getAbsolutePath();
 	try {
@@ -298,9 +318,14 @@ private boolean ensureValid(IProgressMonitor monitor)
 										true, IResource.DEPTH_ZERO);
 	if (markers.length > 0) {
 		// There are errors against this file - abort
+		String message;
+		if (fragment)
+			message = PDEPlugin.getResourceString(KEY_ERRORS_FMESSAGE);
+		else
+			message = PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE);
 		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
 			PDEPlugin.getResourceString(KEY_ERRORS_TITLE),
-			PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE));
+			message);
 		return false;
 	}
 	return true;
