@@ -10,16 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.reconciler.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.model.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.ui.editor.text.AnnotationHover;
+import org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
+import org.eclipse.pde.internal.ui.model.IDocumentKey;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public abstract class KeyValueSourcePage extends PDESourcePage {
 
-	class KeyValueSourceViewerConfiguration extends SourceViewerConfiguration {
+	class KeyValueSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		private AnnotationHover fAnnotationHover;
 		public IReconciler getReconciler(ISourceViewer sourceViewer) {
 			ReconcilingStrategy strategy = new ReconcilingStrategy();

@@ -10,13 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.presentation.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.pde.internal.ui.editor.text.AnnotationHover;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
+import org.eclipse.pde.internal.ui.editor.text.NonRuleBasedDamagerRepairer;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.XMLScanner;
+import org.eclipse.pde.internal.ui.editor.text.XMLTagScanner;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
-public class XMLConfiguration extends SourceViewerConfiguration {
+public class XMLConfiguration extends TextSourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner pdeScanner;

@@ -18,9 +18,10 @@ import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 
-public class XMLSourceViewerConfiguration extends SourceViewerConfiguration {
+public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	private AnnotationHover fAnnotationHover;
 	private XMLDoubleClickStrategy fDoubleClickStrategy;
 	private XMLTagScanner fTagScanner;
