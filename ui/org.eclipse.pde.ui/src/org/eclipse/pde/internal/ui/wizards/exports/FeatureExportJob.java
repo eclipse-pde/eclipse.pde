@@ -53,6 +53,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap fAntBuildProperties;
 	private String[] fSigningInfo = null;
 	private String[] fJnlpInfo = null;
+	
+	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
+	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 
 	class SchedulingRule implements ISchedulingRule {
 
@@ -148,6 +151,11 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 					throw new OperationCanceledException();
 				IFeatureModel model = (IFeatureModel) fItems[i];
 				try {
+					String location = model.getInstallLocation();
+					if (fUseJarFormat) {
+						createPostProcessingFile(new File(location, FEATURE_POST_PROCESSING));
+						createPostProcessingFile(new File(location, PLUGIN_POST_PROCESSING));
+					}
 					IFeature feature = model.getFeature();
 					String id = feature.getId();
 					String os = getOS(feature);
@@ -161,6 +169,24 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		} finally {
 			cleanup(new SubProgressMonitor(monitor, 1));
 			monitor.done();
+		}
+	}
+	
+	protected void createPostProcessingFile(File file) {
+		FileOutputStream stream = null;
+		try {
+			stream = new FileOutputStream(file);
+			Properties prop = new Properties();
+			prop.put("*", "updateJar"); //$NON-NLS-1$ //$NON-NLS-2$
+			prop.store(stream, ""); //$NON-NLS-1$
+			stream.flush();
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+			}			
 		}
 	}
 
@@ -287,7 +313,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			format = Platform.getOS().equals("win32") ? "antZip" : "tarGz"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 		AbstractScriptGenerator.setOutputFormat(format);
-		AbstractScriptGenerator.setForceUpdateJar(fUseJarFormat);
+		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fExportSource);
 		AbstractScriptGenerator.setConfigInfo(os + "," + ws + "," + arch); //$NON-NLS-1$ //$NON-NLS-2$
 		generator.generate();
@@ -362,8 +388,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 						String filename = children[i].getName();
 						if (filename.equals("build.xml") || //$NON-NLS-1$
 								(filename.startsWith("assemble.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
-								|| (filename.startsWith("package.") && filename.endsWith(".xml"))) { //$NON-NLS-1$ //$NON-NLS-2$
-							children[i].delete();
+								|| (filename.startsWith("package.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
+								|| filename.equals(FEATURE_POST_PROCESSING)
+								|| filename.equals(PLUGIN_POST_PROCESSING)) {
+								children[i].delete();
 						}
 					}
 				}

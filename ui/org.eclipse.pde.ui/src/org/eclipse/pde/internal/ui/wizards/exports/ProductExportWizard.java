@@ -59,7 +59,8 @@ public class ProductExportWizard extends BaseExportWizard {
 		ProductExportJob job = new ProductExportJob(
 										fProductModel, 
 										page.getRootDirectory(), 
-										page.doExportToDirectory(), 
+										page.doExportToDirectory(),
+										page.useJARFormat(),
 										page.doExportSource(), 
 										page.getDestination(), 
 										page.getFileName());
@@ -74,11 +75,11 @@ public class ProductExportWizard extends BaseExportWizard {
 		try {
 			fProductModel.load();
 			if (!fProductModel.isLoaded()) {
-				MessageDialog.openError(getContainer().getShell(), "Error", "The specified product configuration is corrupt.");
+				MessageDialog.openError(getContainer().getShell(), PDEPlugin.getResourceString("ProductExportWizard.error"), PDEPlugin.getResourceString("ProductExportWizard.corrupt")); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 		} catch (CoreException e) {
-			MessageDialog.openError(getContainer().getShell(), "Error", "The specified product configuration is corrupt.");
+			MessageDialog.openError(getContainer().getShell(), PDEPlugin.getResourceString("ProductExportWizard.error"), PDEPlugin.getResourceString("ProductExportWizard.corrupt")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 

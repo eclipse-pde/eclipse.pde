@@ -38,12 +38,12 @@ public class ProductExportJob extends FeatureExportJob {
 
 	private String fRoot;
 
-	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName) {
+	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName) {
 		super(PDEPlugin.getResourceString("ProductExportJob.jobName")); //$NON-NLS-1$
 		fProduct = model.getProduct();
 		fExportToDirectory = toDirectory;
 		fExportSource = exportSource;
-		fUseJarFormat = false;
+		fUseJarFormat = useJarFormat;
 		fDestinationDirectory = destination;
 		fZipFilename = zipFileName;
 		fRoot = productRoot;
@@ -90,6 +90,8 @@ public class ProductExportJob extends FeatureExportJob {
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
+			if (fUseJarFormat)
+				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 			createConfigIniFile();
 			createEclipseProductFile();
 			createLauncherIniFile();

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 
-
 public class PluginExportJob extends FeatureExportJob {
 
 	private String fFeatureLocation;
@@ -55,6 +54,8 @@ public class PluginExportJob extends FeatureExportJob {
 			fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 			createFeature(featureID, fFeatureLocation);
 			createBuildPropertiesFile(fFeatureLocation);
+			if (fUseJarFormat)
+				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
 		} catch (IOException e) {
 		} finally {
@@ -118,6 +119,4 @@ public class PluginExportJob extends FeatureExportJob {
 		}
 	}
 	
-
-
 }

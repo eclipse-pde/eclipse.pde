@@ -133,7 +133,6 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	protected void initializeExportOptions(IDialogSettings settings) {
 		super.initializeExportOptions(settings);
-		fJarButton.setEnabled(false);
 		fSaveAsAntButton.setEnabled(false);
 	}
 	
