@@ -305,10 +305,16 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 		srcNames.add(getSRCName(name));
 	}
 	script.println();
-	script.printTargetDeclaration(1, TARGET_BUILD_JARS, Utils.getStringFromCollection(jarNames, ","), null, null, null);
+	String depends = Utils.getStringFromCollection(jarNames, ",");
+	if (!depends.equals(""))
+		depends = TARGET_INIT + "," + depends;
+	script.printTargetDeclaration(1, TARGET_BUILD_JARS, depends, null, null, null);
 	script.printEndTag(1, "target");
 	script.println();
-	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, Utils.getStringFromCollection(srcNames, ","), null, null, null);
+	depends = Utils.getStringFromCollection(srcNames, ",");
+	if (!depends.equals(""))
+		depends = TARGET_INIT + "," + depends;
+	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, depends, null, null, null);
 	script.printEndTag(1, "target");
 }
 
@@ -316,7 +322,7 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
-	script.printTargetDeclaration(tab++, name, null, null, null, null);
+	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, null, null);
 	String destdir = getTempJARFolderLocation(name);
 	script.printProperty(tab, "destdir", destdir);
 	script.printDeleteTask(tab, destdir, null, null);
@@ -350,7 +356,7 @@ protected void generateSRCTarget(AntScript script, JAR jar) throws CoreException
 	script.println();
 	String name = jar.getName();
 	String zip = getSRCName(name);
-	script.printTargetDeclaration(tab++, zip, null, null, null, null);
+	script.printTargetDeclaration(tab++, zip, TARGET_INIT, null, null, null);
 	String[] sources = jar.getSource();
 	FileSet[] fileSets = new FileSet[sources.length];
 	for (int i = 0; i < sources.length; i++) {

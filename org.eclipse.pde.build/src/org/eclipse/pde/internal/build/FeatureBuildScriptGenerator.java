@@ -138,13 +138,19 @@ protected void generateBuildJarsTarget(AntScript script, Feature feature) throws
 	}
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, Utils.getStringFromCollection(jarNames, ","), null, null, null);
+	String depends = Utils.getStringFromCollection(jarNames, ",");
+	if (!depends.equals(""))
+		depends = TARGET_INIT + "," + depends;
+	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, depends, null, null, null);
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printEndTag(--tab, "target");
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, Utils.getStringFromCollection(srcNames, ","), null, null, null);
+	depends = Utils.getStringFromCollection(srcNames, ",");
+	if (!depends.equals(""))
+		depends = TARGET_INIT + "," + depends;
+	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, depends, null, null, null);
 	params.clear();
 	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
