@@ -48,6 +48,7 @@ public class AdvancedLauncherTab
 	private Vector externalList;
 	private Vector workspaceList;
 	private Button defaultsButton;
+	private Button pluginPathButton;
 
 	class PluginContentProvider
 		extends DefaultContentProvider
@@ -138,11 +139,12 @@ public class AdvancedLauncherTab
 		composite.setLayout(layout);
 
 		createStartingSpace(composite, 1);
-		
+
 		useDefaultRadio = new Button(composite, SWT.RADIO);
-		useDefaultRadio.setText("&Launch with all workspace and enabled external plug-ins");
+		useDefaultRadio.setText(
+			"&Launch with all workspace and enabled external plug-ins");
 		fillIntoGrid(useDefaultRadio, 1, false);
-		
+
 		useListRadio = new Button(composite, SWT.RADIO);
 		useListRadio.setText("&Choose plug-ins and fragments to launch from the list");
 		fillIntoGrid(useListRadio, 1, false);
@@ -155,11 +157,25 @@ public class AdvancedLauncherTab
 		gd = new GridData(GridData.FILL_BOTH);
 		list.setLayoutData(gd);
 
-		defaultsButton = new Button(composite, SWT.PUSH);
-		defaultsButton.setText("Restore &Defaults");
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		defaultsButton.setLayoutData(gd);
+		Composite buttonContainer = new Composite(composite, SWT.NULL);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.horizontalSpacing = 10;
+		buttonContainer.setLayout(layout);
+
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		buttonContainer.setLayoutData(gd);
+
+		defaultsButton = new Button(buttonContainer, SWT.PUSH);
+		defaultsButton.setText("&Restore Defaults");
+		defaultsButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(defaultsButton);
+
+		pluginPathButton = new Button(buttonContainer, SWT.PUSH);
+		pluginPathButton.setText("&Plug-in Paths...");
+		pluginPathButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(pluginPathButton);
 
 		hookListeners();
 		pluginTreeViewer.reveal(workspacePlugins);
@@ -179,6 +195,11 @@ public class AdvancedLauncherTab
 				Vector checked = computeInitialCheckState();
 				pluginTreeViewer.setCheckedElements(checked.toArray());
 				updateStatus();
+			}
+		});
+		pluginPathButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				showPluginPaths();
 			}
 		});
 	}
@@ -247,12 +268,16 @@ public class AdvancedLauncherTab
 	}
 
 	static IPluginModelBase[] getExternalPlugins() {
-		IPluginModelBase[] plugins = PDEPlugin.getDefault().getExternalModelManager().getModels();
-		IPluginModelBase[] fragments = PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
+		IPluginModelBase[] plugins =
+			PDEPlugin.getDefault().getExternalModelManager().getModels();
+		IPluginModelBase[] fragments =
+			PDEPlugin.getDefault().getExternalModelManager().getFragmentModels(null);
 		return getAllPlugins(plugins, fragments);
 	}
-	
-	static IPluginModelBase [] getAllPlugins(IPluginModelBase[] plugins, IPluginModelBase[] fragments) {
+
+	static IPluginModelBase[] getAllPlugins(
+		IPluginModelBase[] plugins,
+		IPluginModelBase[] fragments) {
 		IPluginModelBase[] all =
 			new IPluginModelBase[plugins.length + fragments.length];
 		System.arraycopy(plugins, 0, all, 0, plugins.length);
@@ -366,12 +391,24 @@ public class AdvancedLauncherTab
 		updateStatus();
 	}
 
+	private String getModelKey(IPluginModelBase model) {
+		IPluginBase plugin = model.getPluginBase();
+		String id = plugin.getId();
+		String version = plugin.getVersion();
+		//String key = id + "_"+version;
+		String key = id;
+		return key;
+	}
+
 	private Vector computeInitialCheckState() {
 		IPluginModelBase[] models = (IPluginModelBase[]) getWorkspacePlugins();
 		Vector checked = new Vector();
+		Hashtable wtable = new Hashtable();
 
 		for (int i = 0; i < models.length; i++) {
-			checked.add(models[i]);
+			IPluginModelBase model = models[i];
+			checked.add(model);
+			wtable.put(getModelKey(model), model);
 		}
 		checked.add(workspacePlugins);
 		if (pluginTreeViewer.getGrayed(workspacePlugins))
@@ -380,7 +417,8 @@ public class AdvancedLauncherTab
 		models = (IPluginModelBase[]) getExternalPlugins();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
-			if (model.isEnabled())
+			boolean masked = wtable.get(getModelKey(model)) != null;
+			if (!masked && model.isEnabled())
 				checked.add(model);
 		}
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
@@ -494,6 +532,21 @@ public class AdvancedLauncherTab
 		config.setAttribute(EXTPLUGINS, exbuf.toString());
 	}
 
+	private void showPluginPaths() {
+		IPluginModelBase[] plugins = getPlugins();
+		try {
+			URL[] urls = TargetPlatform.createPluginPath(plugins);
+			PluginPathDialog dialog =
+				new PluginPathDialog(pluginPathButton.getShell(), urls);
+			dialog.create();
+			dialog.getShell().setText("Plug-in URLs");
+			dialog.getShell().setSize(500, 400);
+			dialog.open();
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
+
 	private void updateStatus() {
 		IStatus genStatus = validatePlugins();
 		updateStatus(genStatus);
@@ -538,12 +591,16 @@ public class AdvancedLauncherTab
 		boolean useDefault = useDefaultRadio.getSelection();
 		if (useDefault) {
 			IPluginModelBase[] models = getWorkspacePlugins();
+			Hashtable wtable = new Hashtable();
 			for (int i = 0; i < models.length; i++) {
 				res.add(models[i]);
+				wtable.put(getModelKey(models[i]), models[i]);
 			}
 			models = getExternalPlugins();
 			for (int i = 0; i < models.length; i++) {
-				if (models[i].isEnabled())
+				IPluginModelBase model = models[i];
+				boolean masked = wtable.get(getModelKey(model)) != null;
+				if (!masked && models[i].isEnabled())
 					res.add(models[i]);
 			}
 

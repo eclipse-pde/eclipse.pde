@@ -28,7 +28,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	public static URL[] createPluginPath() throws CoreException {
-		IPluginModelBase[] models = getVisibleModels();
+		return createPluginPath(getVisibleModels());
+	}
+	
+	public static URL[] createPluginPath(IPluginModelBase[] models) throws CoreException {
 		URL urls[] = new URL[models.length];
 		for (int i = 0; i < urls.length; i++) {
 			IPluginModelBase model = models[i];

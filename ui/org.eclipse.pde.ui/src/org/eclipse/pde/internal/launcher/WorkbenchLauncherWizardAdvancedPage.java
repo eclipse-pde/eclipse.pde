@@ -391,13 +391,24 @@ public class WorkbenchLauncherWizardAdvancedPage
 		adjustCustomControlEnableState(!useDefault);
 		updateStatus();
 	}
+	
+	private String getModelKey(IPluginModelBase model) {
+		IPluginBase plugin = model.getPluginBase();
+		String id = plugin.getId();
+		String version = plugin.getVersion();
+		String key = id + "_"+version;
+		return key;
+	}
 
 	private Vector computeInitialCheckState() {
 		IPluginModelBase[] models = (IPluginModelBase[]) getWorkspacePlugins();
 		Vector checked = new Vector();
+		Hashtable wtable = new Hashtable();
 
 		for (int i = 0; i < models.length; i++) {
-			checked.add(models[i]);
+			IPluginModelBase model = models[i];
+			checked.add(model);
+			wtable.put(getModelKey(model), model);
 		}
 		checked.add(workspacePlugins);
 		if (pluginTreeViewer.getGrayed(workspacePlugins))
@@ -406,7 +417,8 @@ public class WorkbenchLauncherWizardAdvancedPage
 		models = (IPluginModelBase[]) getExternalPlugins();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
-			if (model.isEnabled())
+			boolean masked = wtable.get(getModelKey(model))!=null;
+			if (!masked && model.isEnabled())
 				checked.add(model);
 		}
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
@@ -606,7 +618,7 @@ public class WorkbenchLauncherWizardAdvancedPage
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Returns the selected plugins.
 	 */
@@ -616,12 +628,16 @@ public class WorkbenchLauncherWizardAdvancedPage
 		boolean useDefault = useDefaultCheck.getSelection();
 		if (useDefault) {
 			IPluginModelBase[] models = getWorkspacePlugins();
+			Hashtable wtable = new Hashtable();
 			for (int i = 0; i < models.length; i++) {
 				res.add(models[i]);
+				wtable.put(getModelKey(models[i]), models[i]);
 			}
 			models = getExternalPlugins();
 			for (int i = 0; i < models.length; i++) {
-				if (models[i].isEnabled())
+				IPluginModelBase model = models[i];
+				boolean masked = wtable.get(getModelKey(model))!=null;
+				if (!masked && models[i].isEnabled())
 					res.add(models[i]);
 			}
 

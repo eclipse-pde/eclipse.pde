@@ -51,10 +51,12 @@ public class ModelSynchronizer implements IPropertyChangeListener {
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {
+		/*
 		if (blockChanges) return;
 		String property = e.getProperty();
 		if (property.equals(ExternalPluginsBlock.CHECKED_PLUGINS))
 			savedList = getPreference();
+		*/
 	}
 
 	private IPreferenceStore getPreferenceStore() {
@@ -71,6 +73,7 @@ public class ModelSynchronizer implements IPropertyChangeListener {
 	}
 
 	private void workspaceModelsChanged(IModelProviderEvent e) {
+		/*
 		if (savedList != null && savedList.equals(ExternalPluginsBlock.SAVED_NONE))
 				return;
 		IModel[] added = e.getAddedModels();
@@ -90,6 +93,7 @@ public class ModelSynchronizer implements IPropertyChangeListener {
 			}
 		}
 		synchronize();
+		*/
 	}
 
 	private void updateTable(String id, IPluginModelBase wmodel, boolean added) {

@@ -137,10 +137,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 
 	private class ReplaceDialog extends MessageDialog {
-
-		private Button fForAllCheckBox;
-		private boolean fIsForAll;
-
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
@@ -150,44 +146,24 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				MessageDialog.QUESTION,
 				new String[] {
 					IDialogConstants.YES_LABEL,
+					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
 					IDialogConstants.CANCEL_LABEL },
 				0);
-			fIsForAll = false;
-		}
-
-		/*
-		 * @see MessageDialog#createCustomArea(Composite)
-		 */
-		protected Control createCustomArea(Composite parent) {
-			fForAllCheckBox = new Button(parent, SWT.CHECK);
-			fForAllCheckBox.setText(PDEPlugin.getResourceString(KEY_MESSAGES_DO_NOT_ASK));
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalIndent = convertWidthInCharsToPixels(10);
-			fForAllCheckBox.setLayoutData(gd);
-			return fForAllCheckBox;
-		}
-
-		protected void buttonPressed(int buttonId) {
-			fIsForAll = fForAllCheckBox.getSelection();
-			super.buttonPressed(buttonId);
-		}
-
-		public boolean isForAll() {
-			return fIsForAll;
 		}
 	}
 
 	private class ReplaceQuery implements IReplaceQuery {
 
-		private int fForAll = -1;
+		private boolean yesToAll;
 		private int[] RETURNCODES =
-			{ IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.CANCEL };
+			{ IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.CANCEL };
 
 		public int doQuery(IProject project) {
-			if (fForAll != -1) {
-				return fForAll;
+			if (yesToAll) {
+				return IReplaceQuery.YES;
 			}
+
 			final String message =
 				PDEPlugin.getFormattedMessage(KEY_MESSAGES_EXISTS, project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
@@ -197,8 +173,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					int retVal = dialog.open();
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];
-						if (dialog.isForAll()) {
-							fForAll = result[0];
+						if (retVal == 1) {
+							yesToAll = true;
 						}
 					}
 				}

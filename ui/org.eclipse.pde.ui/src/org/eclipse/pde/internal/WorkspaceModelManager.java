@@ -618,6 +618,7 @@ public class WorkspaceModelManager
 	}
 	
 	private void handleMissingNature() {
+/*
 		if (missingNature) {
 			NoPDENatureDialog dialog = new NoPDENatureDialog(PDEPlugin.getActiveWorkbenchShell(),
 					PDEPlugin.getResourceString(KEY_MISSING_NATURE_TITLE),
@@ -635,6 +636,7 @@ public class WorkspaceModelManager
 				wdialog.open();
 			}
 		}
+*/
 		missingNature = false;
 	}
 	
