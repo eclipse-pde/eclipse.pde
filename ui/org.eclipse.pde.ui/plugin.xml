@@ -1175,7 +1175,7 @@
       <sorter
             pageId="org.eclipse.pde.internal.ui.search.dependencyExtent"
             label="%DependencyExtent.type"
-            icon="icons/clcl16/search_sortmatch.gif"
+            icon="icons/dlcl16/search_sortmatch.gif"
             class="org.eclipse.pde.internal.ui.search.DependencyExtentViewerSorter"
             id="org.eclipse.pde.ui.sorter1">
       </sorter>
