@@ -122,9 +122,15 @@ public class WorkbenchLaunchConfigurationDelegate
 					PDEPlugin.getResourceString(KEY_JRE_PATH_NOT_FOUND)));
 		}
 
-		if (plugins != null)
-			validatePlugins(plugins, monitor);
-		else if (useFeatures) {
+		if (plugins != null) {
+			final MultiStatus status = validatePlugins(plugins, monitor);
+			if (status != null) {
+				if (!ignoreValidationErrors(status)) {
+					launch.terminate();
+					return;
+				}
+			}
+		} else if (useFeatures) {
 			validateFeatures(monitor);
 		}
 		IVMRunner runner = launcher.getVMRunner(mode);
@@ -147,6 +153,20 @@ public class WorkbenchLaunchConfigurationDelegate
 			monitor);
 	}
 
+	private boolean ignoreValidationErrors(final MultiStatus status) {
+		final boolean[] result = new boolean[1];
+		getDisplay().syncExec(new Runnable() {
+			public void run() {
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
+				result[0] = MessageDialog.openConfirm(
+					PDEPlugin.getActiveWorkbenchShell(),
+					title,
+					status.getMessage());
+			}
+		});
+
+		return result[0];
+	}
 	private void validateFeatures(IProgressMonitor monitor)
 		throws CoreException {
 		IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -249,7 +269,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			exmodel.getPluginBase().getId());
 	}
 
-	private void validatePlugins(
+	private MultiStatus validatePlugins(
 		IPluginModelBase[] plugins,
 		IProgressMonitor monitor)
 		throws CoreException {
@@ -282,20 +302,9 @@ public class WorkbenchLaunchConfigurationDelegate
 					children,
 					message,
 					null);
-			//monitor.setCanceled(true);
-			//throw new CoreException(status);
-			Display display = getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					String title = PDEPlugin.getResourceString(KEY_TITLE);
-					ErrorDialog.openError(
-						PDEPlugin.getActiveWorkbenchShell(),
-						title,
-						null,
-						status);
-				}
-			});
+			return status;
 		}
+		return null;
 	}
 
 	private boolean doLaunch(
