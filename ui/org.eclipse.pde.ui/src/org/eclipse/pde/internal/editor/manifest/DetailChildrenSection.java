@@ -77,7 +77,13 @@ public class DetailChildrenSection
 	}
 
 	public DetailChildrenSection(ManifestExtensionsPage page) {
-		super(page, new String[] { PDEPlugin.getResourceString(KEY_DELETE)});
+		super(
+			page,
+			new String[] {
+				PDEPlugin.getResourceString(KEY_DELETE),
+				null,
+				PDEPlugin.getResourceString(DetailExtensionSection.SECTION_UP),
+				PDEPlugin.getResourceString(DetailExtensionSection.SECTION_DOWN)});
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 	}
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -167,6 +173,26 @@ public class DetailChildrenSection
 		} else
 			currentElement = null;
 		updateText(currentElement);
+		updateUpDownButtons(item);
+	}
+
+	private void updateUpDownButtons(Object item) {
+		boolean upEnabled = false;
+		boolean downEnabled = false;
+		if (item != null) {
+			if (item instanceof IPluginElement) {
+				IPluginElement element = (IPluginElement) item;
+				IPluginParent parent = (IPluginParent) element.getParent();
+				// check up
+				int index = parent.getIndexOf(element);
+				if (index > 0)
+					upEnabled = true;
+				if (index < parent.getChildCount() - 1)
+					downEnabled = true;
+			}
+		}
+		getTreePart().setButtonEnabled(2, upEnabled);
+		getTreePart().setButtonEnabled(3, downEnabled);
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -175,8 +201,19 @@ public class DetailChildrenSection
 	}
 
 	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleDelete();
+		switch (index) {
+			case 0:
+				handleDelete();
+				break;
+			case 1:
+				break;
+			case 2:
+				handleMove(true);
+				break;
+			case 3:
+				handleMove(false);
+				break;
+		}
 	}
 
 	public void dispose() {
@@ -246,6 +283,23 @@ public class DetailChildrenSection
 		currentElement = null;
 		updateInput();
 	}
+	private void handleMove(boolean up) {
+		IStructuredSelection sel = (IStructuredSelection) treeViewer.getSelection();
+		IPluginObject object = (IPluginObject) sel.getFirstElement();
+		
+		if (object instanceof IPluginElement) {
+			IPluginParent parent = (IPluginParent) object.getParent();
+			IPluginObject[] children = parent.getChildren();
+			int index = parent.getIndexOf(object);
+			int newIndex = up ? index - 1 : index + 1;
+			IPluginObject child2 = children[newIndex];
+			try {
+				parent.swap(object, child2);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
 	private void handleReset() {
 		updateText(currentElement);
 		resetButton.setEnabled(false);
@@ -256,6 +310,8 @@ public class DetailChildrenSection
 		model.addModelChangedListener(this);
 		setReadOnly(!model.isEditable());
 		text.setEditable(model.isEditable());
+		getTreePart().setButtonEnabled(2, false);
+		getTreePart().setButtonEnabled(3, false);
 		updateInput();
 	}
 	public void initializeImages() {
@@ -303,7 +359,8 @@ public class DetailChildrenSection
 	}
 	private String resolveObjectName(Object obj) {
 		String value = obj.toString();
-		if (!MainPreferencePage.isFullNameModeEnabled()) return value;
+		if (!MainPreferencePage.isFullNameModeEnabled())
+			return value;
 		if (obj instanceof PluginElement) {
 			PluginElement element = (PluginElement) obj;
 			ISchemaElement elementInfo = element.getElementInfo();
@@ -343,17 +400,18 @@ public class DetailChildrenSection
 		resetButton.setEnabled(false);
 	}
 	protected void doPaste(Object target, Object[] objects) {
-		if (target==null) target = currentElement;
+		if (target == null)
+			target = currentElement;
 		try {
 			for (int i = 0; i < objects.length; i++) {
 				Object obj = objects[i];
 				if (obj instanceof IPluginElement && target instanceof IPluginParent) {
 					PluginElement element = (PluginElement) obj;
-					element.setModel((IPluginModelBase)getFormPage().getModel());
-					element.setParent((IPluginParent)target);
+					element.setModel((IPluginModelBase) getFormPage().getModel());
+					element.setParent((IPluginParent) target);
 					((IPluginParent) target).add(element);
 					if (element instanceof PluginParent)
-						((PluginParent)element).reconnect();
+						 ((PluginParent) element).reconnect();
 				}
 			}
 		} catch (CoreException e) {
@@ -361,7 +419,8 @@ public class DetailChildrenSection
 		}
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent) return true;
+		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent)
+			return true;
 		return false;
 	}
 }

@@ -275,13 +275,26 @@ public class DetailExtensionSection
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = extensionTree.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
-		if (object instanceof IPluginParent) {
-			IPluginParent parent = (IPluginParent) object;
-			if (parent.getModel().getUnderlyingResource() != null) {
-				fillContextMenu(getFormPage(), parent, manager);
-				manager.add(new Separator());
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size() == 1) {
+			Object object = ssel.getFirstElement();
+			if (object instanceof IPluginParent) {
+				IPluginParent parent = (IPluginParent) object;
+				if (parent.getModel().getUnderlyingResource() != null) {
+					fillContextMenu(getFormPage(), parent, manager);
+					manager.add(new Separator());
+				}
 			}
+		} else {
+			// multiple
+			Action delAction = new Action() {
+				public void run() {
+					handleDelete();
+				}
+			};
+			delAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
+			manager.add(delAction);
+			manager.add(new Separator());
 		}
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
 	}
@@ -426,8 +439,8 @@ public class DetailExtensionSection
 		setReadOnly(!editable);
 		TreePart treePart = getTreePart();
 		treePart.setButtonEnabled(0, editable);
-		treePart.setButtonEnabled(2, editable);
-		treePart.setButtonEnabled(3, editable);
+		treePart.setButtonEnabled(2, false);
+		treePart.setButtonEnabled(3, false);
 		model.addModelChangedListener(this);
 	}
 	public void initializeImages() {
@@ -613,14 +626,14 @@ public class DetailExtensionSection
 					((PluginExtension) extension).setModel(model);
 					((PluginExtension) extension).setParent(plugin);
 					plugin.add(extension);
-					((PluginParent)extension).reconnect();
+					((PluginParent) extension).reconnect();
 				} else if (obj instanceof IPluginElement && target instanceof IPluginParent) {
 					PluginElement element = (PluginElement) obj;
 					element.setModel(model);
-					element.setParent((IPluginParent)target);
+					element.setParent((IPluginParent) target);
 					((IPluginParent) target).add(element);
 					if (element instanceof PluginParent)
-						((PluginParent)element).reconnect();
+						 ((PluginParent) element).reconnect();
 				}
 			}
 		} catch (CoreException e) {
@@ -628,8 +641,10 @@ public class DetailExtensionSection
 		}
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof IPluginExtension) return true;
-		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent) return true;
+		if (objects[0] instanceof IPluginExtension)
+			return true;
+		if (objects[0] instanceof IPluginElement && target instanceof IPluginParent)
+			return true;
 		return false;
 	}
 }

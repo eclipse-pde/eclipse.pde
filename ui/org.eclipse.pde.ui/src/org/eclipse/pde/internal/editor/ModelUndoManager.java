@@ -5,6 +5,7 @@
 package org.eclipse.pde.internal.editor;
 import java.util.*;
 import org.eclipse.pde.internal.base.model.*;
+import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.model.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.texteditor.IUpdate;

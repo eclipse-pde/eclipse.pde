@@ -205,9 +205,9 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 				//treeViewer.refresh(parent);
 				//treeViewer.expandToLevel(parent, 2);
 				if (event.getChangeType() == IModelChangedEvent.INSERT)
-					treeViewer.add(parent, object);
+					treeViewer.add(parent, event.getChangedObjects());
 				else
-					treeViewer.remove(object);
+					treeViewer.remove(event.getChangedObjects());
 			} else {
 				treeViewer.refresh();
 				treeViewer.expandAll();

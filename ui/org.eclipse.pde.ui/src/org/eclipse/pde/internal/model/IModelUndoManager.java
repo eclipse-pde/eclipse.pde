@@ -2,8 +2,9 @@
  * (c) Copyright 2001 MyCorporation.
  * All Rights Reserved.
  */
-package org.eclipse.pde.model;
+package org.eclipse.pde.internal.model;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.pde.model.IModelChangeProvider;
 
 /**
  * Classes that implement this interface provide undo/redo
