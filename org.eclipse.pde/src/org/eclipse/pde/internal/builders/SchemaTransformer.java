@@ -304,8 +304,9 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("<ul>");
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
-			out.print(
-				"<li><b>" + att.getName() + "</b> - " + att.getDescription() + "</li>");
+			out.print("<li><b>" + att.getName() + "</b> - ");
+			transformText(out, att.getDescription());
+			out.print("</li>");
 		}
 		out.println("</ul>");
 	}
@@ -371,6 +372,12 @@ public static final String KEY_DEPRECATED_TYPE =
 						break;
 					case '&' :
 						out.print("&amp;");
+						break;
+					case '\'' :
+						out.print("&apos;");
+						break;
+					case '\"' :
+						out.print("&quot;");
 						break;
 					default :
 						out.print(c);
