@@ -245,8 +245,7 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.print(schema.getQualifiedPointId());
 		out.println("<p>");
 		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
-		out.print("<b><i>Description: </i></b>");
-		transformText(out, schema.getDescription());
+		transformDescription(out, schema);
 		out.println("<p><b><i>Configuration Markup:</i></b><p>");
 		transformMarkup(out, schema);
 		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
@@ -256,6 +255,21 @@ public static final String KEY_DEPRECATED_TYPE =
 		out.println("</BODY>");
 		out.println("</HTML>");
 	}
+	
+	private void transformDescription(PrintWriter out, ISchema schema) {
+		out.print("<b><i>Description: </i></b>");
+		transformText(out, schema.getDescription());
+		ISchemaInclude [] includes = schema.getIncludes();
+		for (int i=0; i<includes.length; i++) {
+
+			ISchema ischema = includes[i].getIncludedSchema();
+			if (ischema!=null) {
+				out.println("<p>");
+				transformText(out, ischema.getDescription());
+			}
+		}
+	}
+	
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation();

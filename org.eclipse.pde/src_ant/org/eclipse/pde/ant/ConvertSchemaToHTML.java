@@ -14,18 +14,18 @@ public class ConvertSchemaToHTML extends Task {
 	
 	private SourceDOMParser parser = new SourceDOMParser();
 	private SchemaTransformer transformer = new SchemaTransformer();
-	private String schemalocation;
-	private String outputlocation;
+	private String schemaLocation;
+	private String outputLocation;
 	
 	
 	public void execute() throws BuildException {
 		FileInputStream is = null;
 		PrintWriter printWriter = null;
 		try {
-			if (schemalocation == null || outputlocation == null)
+			if (schemaLocation == null || outputLocation == null)
 				return;
 				
-			File schemaFile = new File(schemalocation);
+			File schemaFile = new File(schemaLocation);
 			if (!schemaFile.exists())
 				return;
 
@@ -43,7 +43,7 @@ public class ConvertSchemaToHTML extends Task {
 				parser.getDocument().getDocumentElement(),
 				parser.getLineTable());
 
-			printWriter = new PrintWriter(new FileOutputStream(outputlocation), true);
+			printWriter = new PrintWriter(new FileOutputStream(outputLocation), true);
 			transformer.transform(printWriter, schema);
 		} catch (FileNotFoundException e) {
 		} catch (SAXException e) {
@@ -62,11 +62,11 @@ public class ConvertSchemaToHTML extends Task {
 	}
 	
 	public void setSchemalocation(String location) {
-		this.schemalocation = location;
+		this.schemaLocation = location;
 	}
 	
 	public void setOutputlocation(String location) {
-		this.outputlocation = location;
+		this.outputLocation = location;
 	}
 
 }
