@@ -259,6 +259,13 @@ public class GrammarSection extends PDEFormSection {
 				});
 			}
 		}
+		else if (obj instanceof ISchemaElement) {
+			if (e.getChangeType() == IModelChangedEvent.CHANGE &&
+				e.getChangedProperty()==SchemaElement.P_TYPE) {
+					treeViewer.refresh();
+			}
+		}
+
 		updateDTDLabel((ISchemaObject) treeViewer.getInput());
 	}
 	public void sectionChanged(

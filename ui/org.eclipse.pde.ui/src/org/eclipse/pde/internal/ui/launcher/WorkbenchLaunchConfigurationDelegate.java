@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.*;
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
 	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
+	private static final String KEY_NO_JRE2 = "WorkbenchLauncherConfigurationDelegate.noJRE2";
 	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
 	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
 	private static final String KEY_BROKEN_PLUGINS = "WorkbenchLauncherConfigurationDelegate.brokenPlugins";
@@ -68,7 +69,11 @@ public class WorkbenchLaunchConfigurationDelegate
 		} else if (vmInstallations.length>0)
 			launcher = vmInstallations[0];
 		if (launcher == null) {
-			String message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
+			String message;
+			if (vmInstallName!=null)
+				message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
+			else
+				message = PDEPlugin.getResourceString(KEY_NO_JRE2);
 			monitor.setCanceled(true);
 			throw new CoreException(createErrorStatus(message));
 		}
