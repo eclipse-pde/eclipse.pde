@@ -120,13 +120,10 @@ public class PluginInputContext extends XMLInputContext {
 		}
 	}
 	public void doRevert() {
-		// TODO wassim to execute the following operations
-		// in the new model (don't push this method lower
-		// because there are other XML input contexts that
-		// still do not use the new XML model (schema, feature, site)
-		// 1. Cancel all text operations and reconcile model with the document
-		// 2. Set model dirty state to false
-		// 3. Fire 'WORLD_CHANGE' model notification to make all the
-		// pages stale.
+		fEditOperations.clear();
+		fOperationTable.clear();
+		fMoveOperations.clear();
+		AbstractEditingModel model = (AbstractEditingModel)getModel();
+		model.fireModelChanged(new ModelChangedEvent(model, IModelChangedEvent.WORLD_CHANGED, new Object[] {model}, null));
 	}
 }
