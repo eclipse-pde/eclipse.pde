@@ -747,6 +747,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	public void saveState(IMemento memento) {
+		if (this.memento == null || memento == null)
+			return;
 		this.memento.putInteger(P_COLUMN_1, column1.getWidth());
 		this.memento.putInteger(P_COLUMN_2, column2.getWidth());
 		this.memento.putInteger(P_COLUMN_3, column3.getWidth());
