@@ -261,7 +261,7 @@ public class IncludedFeaturesDetailsSection extends PDESection implements
 			fSearchBothButton
 					.setSelection(searchLocation == IFeatureChild.BOTH);
 		} else {
-			fNameText.setValue(null);
+			fNameText.setValue(null, true);
 			fOptionalButton.setSelection(false);
 			fSearchRootButton.setSelection(true);
 			fSearchSelfButton.setSelection(false);
