@@ -6,6 +6,9 @@
  */
 package org.eclipse.pde.internal.runtime.logview;
 
+import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -15,43 +18,98 @@ import org.eclipse.update.ui.forms.internal.*;
  */
 public class DetailsForm extends ScrollableSectionForm {
 	
-	private LogEntry logEntry;
 	private SessionDataSection sessionSection;
 	private StackSection stackSection;
+	private Image headingImage;
+	private Label dateLabel;
+	private Label message;
 
 	public DetailsForm() {
 		setVerticalFit(true);
+		headingImage = PDERuntimePluginImages.DESC_FORM_BANNER_SHORT.createImage();
+		if (isWhiteBackground())
+			setHeadingImage(headingImage);
 	}
 	
 	protected void createFormClient(Composite parent) {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 3;
 		layout.marginHeight = 0;
-		layout.verticalSpacing = 10;
+		layout.verticalSpacing = 15;
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		FormWidgetFactory factory = getFactory();
-		
+
+		Composite comp = factory.createComposite(parent);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		comp.setLayout(layout);
+		comp.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+
+		dateLabel = factory.createLabel(comp, "", SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		dateLabel.setLayoutData(gd);
+
+		Label label =
+			factory.createLabel(
+				comp,
+				PDERuntimePlugin.getResourceString("LogView.preview.message"),
+				SWT.NONE);
+		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+		message = factory.createLabel(comp, "", SWT.WRAP);
+		gd = new GridData();
+		gd.widthHint = 380;
+		message.setLayoutData(gd);
+
 		sessionSection = new SessionDataSection(this);
 		Control control = sessionSection.createControl(parent, factory);
-		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
+		control.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 
 		stackSection = new StackSection(this);
 		control = stackSection.createControl(parent, factory);
-		control.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_FILL));
-		
+		control.setLayoutData(
+			new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL));
+
 		registerSection(sessionSection);
 		registerSection(stackSection);
 	}
-	
-	public void initialize() {
-		if (logEntry!=null) setHeadingText(logEntry.getSeverityText());
-		update();
+
+	private boolean isWhiteBackground() {
+		Color color = getFactory().getBackgroundColor();
+		return (
+			color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255);
 	}
-	
+
 	public void openTo(LogEntry entry) {
 		sessionSection.expandTo(entry);
 		stackSection.expandTo(entry);
 		setHeadingText(entry.getSeverityText());
+		dateLabel.setText(
+			PDERuntimePlugin.getResourceString("LogView.preview.date")
+				+ " "
+				+ entry.getDate());
+		message.setText(entry.getMessage());
+		updateLabel(dateLabel.getParent());
+		update();
+
+	}
+
+	private void updateLabel(Composite control) {
+		control.setRedraw(false);
+		control.getParent().setRedraw(false);
+		control.layout(true);
+		control.getParent().layout(true);
+		control.setRedraw(true);
+		control.getParent().setRedraw(true);
+
+	}
+	public void dispose() {
+		super.dispose();
+		headingImage.dispose();
 	}
 }

@@ -26,14 +26,6 @@ public abstract class BasePreviewSection extends FormSection {
 		setCompactMode(true);
 	}
 	
-	protected int getTextWidthHint() {
-		return SWT.DEFAULT;
-	}
-	
-	protected int getTextStyle() {
-		return SWT.NULL;
-	}
-	
 	public LogEntry getEntry() {
 		return entry;
 	}
@@ -46,9 +38,9 @@ public abstract class BasePreviewSection extends FormSection {
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		text = new Text(container, SWT.MULTI | getTextStyle());
+		text = new Text(container, SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = getTextWidthHint();
+		gd.widthHint = SWT.DEFAULT;
 		text.setLayoutData(gd);
 		return container;
 	}

@@ -28,7 +28,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
@@ -59,7 +58,6 @@ public class LogView extends ViewPart implements ILogListener {
 	private static int ASCENDING = 1;
 	private static int DESCENDING = -1;
 	
-	private Action propertiesAction;
 	private Action clearAction;
 	private Action copyAction;
 	private Action readLogAction; 
@@ -134,14 +132,14 @@ public class LogView extends ViewPart implements ILogListener {
 		
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createVerticalLine(container);
-		container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		
 		detailsForm = new DetailsForm();
 		Control formControl = detailsForm.createControl(container);
 		formControl.setLayoutData(new GridData(GridData.FILL_BOTH));
-		detailsForm.initialize();
-		if (logs.size()>0)
-			detailsForm.openTo((LogEntry)logs.get(0));
+		if (logs.size() > 0) {
+			tableTreeViewer.setSelection(new StructuredSelection(logs.get(0)));
+			detailsForm.update();
+		}
 	}
 	
 	private void createVerticalLine(Composite parent) {
@@ -153,7 +151,6 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void fillToolBar() {
 		IActionBars bars = getViewSite().getActionBars();
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
@@ -164,7 +161,6 @@ public class LogView extends ViewPart implements ILogListener {
 		toolBarManager.add(clearAction);
 		toolBarManager.add(readLogAction);
 		toolBarManager.add(new Separator());
-		toolBarManager.add(propertiesAction);	
 		
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(filterAction);
@@ -274,16 +270,6 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void makeActions(Table table) {
-		propertiesAction = new PropertyDialogAction(table.getShell(), tableTreeViewer);
-		propertiesAction.setImageDescriptor(PDERuntimePluginImages.DESC_PROPERTIES);
-		propertiesAction.setDisabledImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES_DISABLED);
-		propertiesAction.setHoverImageDescriptor(
-			PDERuntimePluginImages.DESC_PROPERTIES_HOVER);
-		propertiesAction.setToolTipText(
-			PDERuntimePlugin.getResourceString("LogView.properties.tooltip"));
-		propertiesAction.setEnabled(false);
-
 		clearAction = new Action(PDERuntimePlugin.getResourceString("LogView.clear")) {
 			public void run() {
 				handleClear();
@@ -311,13 +297,6 @@ public class LogView extends ViewPart implements ILogListener {
 			PDERuntimePluginImages.DESC_READ_LOG_DISABLED);
 		readLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_READ_LOG_HOVER);
 
-		table.addSelectionListener(new SelectionAdapter() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				if (tableTreeViewer.getSelection().isEmpty() == false) {
-					propertiesAction.run();
-				}
-			}
-		});
 
 		deleteLogAction =
 			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
@@ -511,7 +490,6 @@ public class LogView extends ViewPart implements ILogListener {
 		manager.add(exportAction);
 		manager.add(importAction);
 		manager.add(new Separator());
-		manager.add(propertiesAction);
 	}
 	public LogEntry[] getLogs() {
 		return (LogEntry[]) logs.toArray(new LogEntry[logs.size()]);
@@ -614,7 +592,6 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 	
 	private void handleSelectionChanged(ISelection selection) {
-		propertiesAction.setEnabled(!selection.isEmpty());
 		updateStatus(selection);
 		updatePreview(selection);
 		copyAction.setEnabled(!selection.isEmpty());
@@ -622,7 +599,12 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private void updatePreview(ISelection selection) {
 		LogEntry entry = (LogEntry)((IStructuredSelection)selection).getFirstElement();
-		detailsForm.openTo(entry);
+		if (entry == null && logs.size() > 0) {
+			entry = (LogEntry)logs.get(0);
+			tableTreeViewer.setSelection(new StructuredSelection(entry));
+		}
+		if (entry != null)
+			detailsForm.openTo(entry);
 	}
 	
 	private void updateStatus(ISelection selection) {
@@ -681,7 +663,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (memento.getInteger(P_COLUMN_1) == null)
 			memento.putInteger(P_COLUMN_1, 20);
 		if (memento.getInteger(P_COLUMN_2) == null)
-			memento.putInteger(P_COLUMN_2, 300);
+			memento.putInteger(P_COLUMN_2, 150);
 		if (memento.getInteger(P_COLUMN_3) == null)
 			memento.putInteger(P_COLUMN_3, 150);
 		if (memento.getInteger(P_COLUMN_4) == null)

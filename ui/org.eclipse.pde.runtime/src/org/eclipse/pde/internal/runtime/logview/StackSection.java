@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.runtime.logview;
 
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 
 /**
@@ -14,10 +15,14 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 public class StackSection extends BasePreviewSection {
 	
 	public StackSection(ScrollableSectionForm form) {
-		super(form, "Exception Stack Trace");
+		super(form, PDERuntimePlugin.getResourceString("LogView.preview.stackTrace"));
+		setCollapsed(true);
 	}
 	
 	protected String getTextFromEntry() {
-		return getEntry().getStack();
+		String text = getEntry().getStack();
+		if (text == null)
+			text = PDERuntimePlugin.getResourceString("LogView.preview.noStack");
+		return text;
 	}
 }

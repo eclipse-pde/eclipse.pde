@@ -24,11 +24,14 @@ public class PDERuntimePluginImages {
 
 	public final static String ICONS_PATH = "icons/full/";
 
+	private static final String PATH_FORMS = ICONS_PATH + "forms/";
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/";
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/";
 	private static final String PATH_LCL_HOVER = ICONS_PATH + "clcl16/";
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
+
+	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_ERROR_ST_OBJ =
 		create(PATH_OBJ, "error_st_obj.gif");

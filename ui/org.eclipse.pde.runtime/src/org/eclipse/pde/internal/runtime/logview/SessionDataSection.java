@@ -6,6 +6,7 @@
  */
 package org.eclipse.pde.internal.runtime.logview;
 
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 
 /**
@@ -14,20 +15,14 @@ import org.eclipse.update.ui.forms.internal.ScrollableSectionForm;
 public class SessionDataSection extends BasePreviewSection {
 	
 	public SessionDataSection(ScrollableSectionForm form) {
-		super(form, "Session Data");
+		super(form, PDERuntimePlugin.getResourceString("LogView.preview.sessionData"));
 		setCollapsed(true);
 	}
-/*	
-	protected int getTextWidthHint() {
-		return 200;
-	}
-	
-	protected int getTextStyle() {
-		return SWT.WRAP;
-	}
-*/
-	
+
 	protected String getTextFromEntry() {
-		return getEntry().getSession().getSessionData();
+		String data = getEntry().getSession().getSessionData();
+		if (data == null || data.length() == 0)
+			data = PDERuntimePlugin.getResourceString("LogView.preview.noSessionData");
+		return data;
 	}
 }
