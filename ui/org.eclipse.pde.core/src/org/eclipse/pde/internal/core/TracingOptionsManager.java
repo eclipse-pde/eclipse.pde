@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -44,13 +45,22 @@ public class TracingOptionsManager {
 	}
 	
 	private Properties getOptions(IPluginModelBase model) {
+		InputStream stream = null;
 		try {
-			InputStream stream = model.getResourceURL(".options").openStream(); //$NON-NLS-1$
-			Properties modelOptions = new Properties();
-			modelOptions.load(stream);
-			stream.close();
-			return modelOptions;
-		} catch (Exception e) {
+			URL url = model.getResourceURL(".options"); //$NON-NLS-1$
+			if (url != null) {
+				stream = url.openStream();
+				Properties modelOptions = new Properties();
+				modelOptions.load(stream);
+				return modelOptions;
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+			}
 		}
 		return null;
 	}
