@@ -73,9 +73,9 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		fStructurePage.finish(fFragmentData);
 		fContentPage.finish(fFragmentData);
 		try {
+			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true,
 					new NewProjectCreationOperation(fFragmentData, fProjectProvider));
-			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			return true;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
