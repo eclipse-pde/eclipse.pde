@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.imports.*;
 import org.eclipse.swt.SWT;
@@ -29,6 +30,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.*;
 
 public class PluginsView extends ViewPart {
@@ -349,10 +351,14 @@ public class PluginsView extends ViewPart {
 			ModelEntry entry = getEnclosingEntry();
 			if (entry != null) {
 				manager.add(openDependenciesAdapter);
-				addSeparator = true;
+				manager.add(new Separator());
+				PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+				actionGroup.setContext(new ActionContext(selection));
+				actionGroup.fillContextMenu(manager);
+				addSeparator = true;			
 			}
 			if (addSeparator)
-				manager.add(new Separator());
+				manager.add(new Separator());			
 		}
 		if (selection.size() > 0) {
 			boolean addSeparator = false;

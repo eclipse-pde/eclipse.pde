@@ -11,10 +11,12 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.*;
 
 public class DependenciesView extends ViewPart {
@@ -110,8 +112,13 @@ public class DependenciesView extends ViewPart {
 
 		if (selection.size() == 1) {
 			manager.add(openAction);
+			manager.add(new Separator());
+			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+			actionGroup.setContext(new ActionContext(selection));
+			actionGroup.fillContextMenu(manager);
 		}
 		manager.add(new Separator());
+
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions"));
 	}

@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -16,13 +16,13 @@ import org.eclipse.search.ui.SearchUI;
 
 public class FindDeclarationsAction extends Action {
 	
-	private static final String KEY_DECLARATIONS = "SearchAction.declarations";
+	private static final String KEY_DECLARATION = "SearchAction.Declaration";
 
 	private Object object;
 
 	public FindDeclarationsAction(Object object) {
 		this.object = object;
-		setText(PDEPlugin.getResourceString(KEY_DECLARATIONS));
+		setText(PDEPlugin.getResourceString(KEY_DECLARATION));
 	}
 	public void run() {
 		PluginSearchInput input = new PluginSearchInput();
@@ -30,14 +30,15 @@ public class FindDeclarationsAction extends Action {
 		if (object instanceof IPluginImport) {
 			input.setSearchString(((IPluginImport) object).getId());
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
-		} else if (object instanceof ModelEntry) {
-			IPluginBase pluginBase =
-				((ModelEntry) object).getActiveModel().getPluginBase();
-			input.setSearchString(pluginBase.getId());
-			input.setSearchElement(
-				(pluginBase instanceof IPlugin)
-					? PluginSearchInput.ELEMENT_PLUGIN
-					: PluginSearchInput.ELEMENT_FRAGMENT);
+		} else if (object instanceof IPluginExtension)  {
+			input.setSearchString(((IPluginExtension)object).getPoint());
+			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
+		} else if (object instanceof IPlugin) {
+			input.setSearchString(((IPlugin)object).getId());
+			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
+		} else if (object instanceof IFragment) {
+			input.setSearchString(((IFragment)object).getId());
+			input.setSearchElement(PluginSearchInput.ELEMENT_FRAGMENT);
 		}
 		input.setSearchLimit(PluginSearchInput.LIMIT_DECLARATIONS);
 		input.setSearchScope(new PluginSearchScope());

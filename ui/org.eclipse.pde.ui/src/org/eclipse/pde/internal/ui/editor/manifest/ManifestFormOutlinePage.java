@@ -6,14 +6,19 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.core.*;
 
 public class ManifestFormOutlinePage extends FormOutlinePage {
@@ -86,6 +91,34 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 		super.createControl(parent);
 		IPluginModelBase model = (IPluginModelBase) formPage.getModel();
 		model.addModelChangedListener(this);
+		createContextMenu();
+	}
+	
+	private void createContextMenu() {
+		MenuManager manager = new MenuManager();
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				contextMenuAboutToShow(manager);
+			}
+			private void contextMenuAboutToShow(IMenuManager manager) {
+				ISelection selection = getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection sSelection =
+						(IStructuredSelection) selection;
+					if (sSelection.size() == 1) {
+						PluginSearchActionGroup actionGroup =
+							new PluginSearchActionGroup();
+						actionGroup.setContext(new ActionContext(selection));
+						actionGroup.fillContextMenu(manager);
+					}
+				}
+			}
+		});
+		
+		Menu menu = manager.createContextMenu(getControl());
+		getControl().setMenu(menu);
+
 	}
 	protected ILabelProvider createLabelProvider() {
 		return new OutlineLabelProvider();
@@ -213,4 +246,5 @@ public class ManifestFormOutlinePage extends FormOutlinePage {
 			}
 		}
 	}
+
 }

@@ -4,9 +4,11 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.search.internal.ui.SearchResultViewEntry;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.ui.actions.ActionContext;
@@ -33,10 +35,11 @@ public class PluginSearchActionGroup extends ActionGroup {
 	private void addFindDeclarationsAction(Object object, IMenuManager menu) {
 		if (object instanceof ISearchResultViewEntry) {
 			object = ((SearchResultViewEntry) object).getGroupByKey();
-			if (object instanceof IPluginImport)
-				menu.add(new FindDeclarationsAction(object));
-		} else if (
-			object instanceof IPluginImport || object instanceof ModelEntry) {
+		} else if (object instanceof ImportObject) {
+			object = ((ImportObject)object).getImport();
+		}
+		if (object instanceof IPluginImport
+			|| object instanceof IPluginExtension) {
 			menu.add(new FindDeclarationsAction(object));
 		}
 	}
@@ -46,6 +49,8 @@ public class PluginSearchActionGroup extends ActionGroup {
 			object = ((SearchResultViewEntry) object).getGroupByKey();
 		} else if (object instanceof ModelEntry) {
 			object = ((ModelEntry)object).getActiveModel().getPluginBase();
+		} else if (object instanceof ImportObject) {
+			object = ((ImportObject)object).getImport();
 		}
 		if (object instanceof IPluginExtensionPoint
 			|| object instanceof IPluginImport
@@ -54,6 +59,8 @@ public class PluginSearchActionGroup extends ActionGroup {
 	}
 
 	private void addShowDescriptionAction(Object object, IMenuManager menu) {
+		if (object instanceof ISearchResultViewEntry)
+			object = ((SearchResultViewEntry) object).getGroupByKey();
 		if (object instanceof IPluginExtensionPoint)
 			menu.add(new ShowDescriptionAction((IPluginExtensionPoint) object));
 	}

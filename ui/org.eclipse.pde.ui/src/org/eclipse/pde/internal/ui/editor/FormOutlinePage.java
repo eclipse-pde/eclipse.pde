@@ -122,4 +122,9 @@ public void setFocus() {
 	if (treeViewer != null)
 		treeViewer.getTree().setFocus();
 }
+public ISelection getSelection() {
+	if (treeViewer == null)
+		return StructuredSelection.EMPTY;
+	return treeViewer.getSelection();
+}
 }
