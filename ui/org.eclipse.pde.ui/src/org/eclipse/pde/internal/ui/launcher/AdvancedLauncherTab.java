@@ -438,15 +438,6 @@ public class AdvancedLauncherTab
 		updateStatus();
 	}
 
-	private String getModelKey(IPluginModelBase model) {
-		IPluginBase plugin = model.getPluginBase();
-		String id = plugin.getId();
-		//String version = plugin.getVersion();
-		//String key = id + "_"+version;
-		String key = id;
-		return key;
-	}
-
 	private Vector computeInitialCheckState() {
 		Vector checked = new Vector();
 		Hashtable wtable = new Hashtable();
@@ -457,7 +448,7 @@ public class AdvancedLauncherTab
 			IPluginModelBase model = workspaceModels[i];
 			checked.add(model);
 			numWorkspaceChecked += 1;
-			wtable.put(getModelKey(model), model);
+			wtable.put(model.getPluginBase().getId(), model);
 		}
 		if (checked.size() > 0)
 			checked.add(workspacePlugins);
@@ -465,7 +456,7 @@ public class AdvancedLauncherTab
 
 		for (int i = 0; i < externalModels.length; i++) {
 			IPluginModelBase model = externalModels[i];
-			boolean masked = wtable.get(getModelKey(model)) != null;
+			boolean masked = wtable.get(model.getPluginBase().getId()) != null;
 			if (!masked && model.isEnabled()) {
 				checked.add(model);
 				numExternalChecked += 1;
@@ -645,11 +636,11 @@ public class AdvancedLauncherTab
 			Hashtable wtable = new Hashtable();
 			for (int i = 0; i < workspaceModels.length; i++) {
 				res.add(workspaceModels[i]);
-				wtable.put(getModelKey(workspaceModels[i]), workspaceModels[i]);
+				wtable.put(workspaceModels[i].getPluginBase().getId(), workspaceModels[i]);
 			}
 			for (int i = 0; i < externalModels.length; i++) {
 				IPluginModelBase model = externalModels[i];
-				boolean masked = wtable.get(getModelKey(model)) != null;
+				boolean masked = wtable.get(model.getPluginBase().getId()) != null;
 				if (!masked && externalModels[i].isEnabled())
 					res.add(externalModels[i]);
 			}
