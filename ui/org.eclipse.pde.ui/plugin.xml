@@ -12,7 +12,6 @@
          <packages prefixes="org.eclipse.pde.internal.ui,org.eclipse.pde.ui"/>
       </library>
    </runtime>
-<!-- Required plugins -->
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.jdt.ui"/>
@@ -1222,10 +1221,17 @@
    </extension>
    <extension
          point="org.eclipse.jdt.launching.classpathProviders">
-       <classpathProvider
-       		id="org.eclipse.pde.ui.workbenchClasspathProvider"
-       		class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider">
-       </classpathProvider>
+      <classpathProvider
+            class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider"
+            id="org.eclipse.pde.ui.workbenchClasspathProvider">
+      </classpathProvider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.pde.validation-marker"
+            class="org.eclipse.pde.internal.ui.search.SchemaMarkerResolutionGenerator">
+      </markerResolutionGenerator>
    </extension>
 
 </plugin>

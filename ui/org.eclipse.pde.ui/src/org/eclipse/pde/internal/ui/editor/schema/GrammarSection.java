@@ -250,8 +250,8 @@ public class GrammarSection extends PDEFormSection {
 				});
 
 			} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-				treeViewer.setSelection(new StructuredSelection(parent), true);
 				treeViewer.remove(sobj);
+				treeViewer.setSelection(new StructuredSelection(parent), true);
 			}
 		} else if (obj instanceof ISchemaComplexType) {
 			// first compositor added/removed

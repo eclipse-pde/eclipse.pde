@@ -42,6 +42,7 @@ public class SchemaCompositor
 	}
 	public void addChild(ISchemaObject child) {
 		children.addElement(child);
+		child.setParent(this);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(
 				ModelChangedEvent.INSERT,
