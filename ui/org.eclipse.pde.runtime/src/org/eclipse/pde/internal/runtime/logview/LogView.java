@@ -34,6 +34,11 @@ import org.eclipse.ui.part.ViewPart;
 public class LogView extends ViewPart implements ILogListener {
 	private TableTreeViewer tableTreeViewer;
 	private ArrayList logs = new ArrayList();
+	
+	private int MESSAGE_ORDER = -1;
+	private int PLUGIN_ORDER = -1;
+	private int DATE_ORDER = -1;
+	
 	private static final String C_SEVERITY = "LogView.column.severity";
 	private static final String KEY_PROPERTIES_TOOLTIP =
 		"LogView.properties.tooltip";
@@ -50,6 +55,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private Action copyAction;
 	private Action readLogAction; 
 	private Action deleteLogAction;
+	private Action filterAction;
 	private LogSession thisSession;
 	private Clipboard clipboard;
 
@@ -69,19 +75,58 @@ public class LogView extends ViewPart implements ILogListener {
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_SEVERITY));
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_MESSAGE));
+		tableColumn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MESSAGE_ORDER *= -1;
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						LogEntry entry1 = (LogEntry)e1;
+						LogEntry entry2 = (LogEntry)e2;
+						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * MESSAGE_ORDER;
+					}
+				});
+				tableTreeViewer.refresh();
+			}
+		});
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_PLUGIN));
+		tableColumn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PLUGIN_ORDER *= -1;
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						LogEntry entry1 = (LogEntry)e1;
+						LogEntry entry2 = (LogEntry)e2;
+						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+					}
+				});
+				tableTreeViewer.refresh();
+			}
+		});
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_DATE));
+		tableColumn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				DATE_ORDER *= -1;
+				tableTreeViewer.setSorter(new ViewerSorter() {
+					public int compare(Viewer viewer, Object e1, Object e2) {
+						LogEntry entry1 = (LogEntry)e1;
+						LogEntry entry2 = (LogEntry)e2;
+						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * DATE_ORDER;
+					}
+				});
+				tableTreeViewer.refresh();
+			}
+		});
 		ColumnLayoutData cLayout = new ColumnPixelData(21);
 		tlayout.addColumnData(cLayout);
 		cLayout = new ColumnPixelData(20);
 		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnWeightData(100, true);
+		cLayout = new ColumnWeightData(100, 300, true);
 		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnPixelData(100);
+		cLayout = new ColumnWeightData(50, 150);
 		tlayout.addColumnData(cLayout);
-		cLayout = new ColumnPixelData(100);
+		cLayout = new ColumnWeightData(50, 150);
 		tlayout.addColumnData(cLayout);
 		table.setLayout(tlayout);
 		table.setHeaderVisible(true);
@@ -183,12 +228,23 @@ public class LogView extends ViewPart implements ILogListener {
 		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
 		
+		filterAction = new Action("Filter") {
+			public void run() {
+			}
+		};
+		filterAction.setToolTipText("Filter");
+		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
+		filterAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
+		filterAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_FILTER_HOVER);
+		
+		
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, propertiesAction);
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();
-		
+		toolBarManager.add(filterAction);
+		toolBarManager.add(new Separator());
 		toolBarManager.add(deleteLogAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(clearAction);

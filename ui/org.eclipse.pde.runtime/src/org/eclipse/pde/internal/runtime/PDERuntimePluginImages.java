@@ -100,6 +100,13 @@ public class PDERuntimePluginImages {
 		create(PATH_LCL_HOVER, "remove.gif");
 	public static final ImageDescriptor DESC_REMOVE_LOG_DISABLED =
 		create(PATH_LCL_DISABLED, "remove.gif");
+		
+	public static final ImageDescriptor DESC_FILTER =
+		create(PATH_LCL, "filter_ps.gif");
+	public static final ImageDescriptor DESC_FILTER_HOVER =
+		create(PATH_LCL_HOVER, "filter_ps.gif");
+	public static final ImageDescriptor DESC_FILTER_DISABLED =
+		create(PATH_LCL_DISABLED, "filter_ps.gif");
 
 	/*
 	 * Overlays
