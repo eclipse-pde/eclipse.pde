@@ -27,9 +27,7 @@ public class PluginsViewPerfTest extends PerformanceTestCase {
 		tagAsSummary("Open Plug-ins View", Dimension.CPU_TIME); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		startMeasuring();
-		long start = System.currentTimeMillis();
 		page.showView(PDEPlugin.PLUGINS_VIEW_ID);
-		System.out.println("Time elapsed: " + (System.currentTimeMillis() - start) + " ms");
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
