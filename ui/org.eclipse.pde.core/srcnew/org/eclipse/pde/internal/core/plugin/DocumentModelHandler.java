@@ -164,11 +164,7 @@ public class DocumentModelHandler extends DefaultHandler implements LexicalHandl
 			new BufferedReader(new InputStreamReader(stream));
 			StringBuffer buffer = new StringBuffer();
 			while (reader.ready()) {
-				String line = reader.readLine();
-				if (line != null) {
-					buffer.append(line);
-					buffer.append(System.getProperty("line.separator"));
-				}
+				buffer.append((char)reader.read());
 			}
 			fTextDocument = new Document(buffer.toString());
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);

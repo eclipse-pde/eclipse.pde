@@ -1,16 +1,8 @@
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -26,28 +18,13 @@ import org.xml.sax.helpers.*;
 public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler {
 	
 	private org.w3c.dom.Document fDocument;
-	private IDocument fTextDocument;
-	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 	private Locator fLocator;
 	private Hashtable fLineTable;
 	private Element fRootElement;
 	
 	private Stack fElementStack = new Stack();
 	
-	public XMLDefaultHandler(IFile file) {
-		this(new File(file.getLocation().toOSString()));
-	}
-	
-	public XMLDefaultHandler(File file) {		
-		try {
-			createTextDocument(new FileReader(file));
-		} catch (FileNotFoundException e) {
-		}
-		fLineTable = new Hashtable();
-	}
-	
-	public XMLDefaultHandler(InputStream stream) {
-		createTextDocument(new InputStreamReader(stream));
+	public XMLDefaultHandler() {
 		fLineTable = new Hashtable();
 	}
 	
@@ -59,10 +36,6 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 		}
 		
 		Integer lineNumber = new Integer(fLocator.getLineNumber());
-		try {
-			lineNumber = getCorrectStartLine(qName);
-		} catch (BadLocationException e) {
-		}
 		Integer[] range = new Integer[] {lineNumber, new Integer(-1)};
 		fLineTable.put(element, range);
 		if (fRootElement == null)
@@ -138,41 +111,6 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 		return fLineTable;
 	}
 	
-	private void createTextDocument(InputStreamReader stream) {
-		try {
-			BufferedReader reader = new BufferedReader(stream);
-			StringBuffer buffer = new StringBuffer();
-			while (reader.ready()) {
-				String line = reader.readLine();
-				if (line != null) {
-					buffer.append(line);
-					buffer.append(System.getProperty("line.separator"));
-				}
-			}
-			fTextDocument = new Document(buffer.toString());
-			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
-			reader.close();
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
-	}
-	
-	private Integer getCorrectStartLine(String elementName) throws BadLocationException{
-		int lineNumber = fLocator.getLineNumber();
-		int colNumber = fLocator.getColumnNumber();
-		if (colNumber < 0)
-			colNumber = getLastCharColumn(lineNumber);
-		int offset = fTextDocument.getLineOffset(lineNumber - 1) + colNumber - 1;
-		IRegion region = fFindReplaceAdapter.search(offset, "<" + elementName, false, false, false, false);
-		return new Integer(fTextDocument.getLineOfOffset(region.getOffset()) + 1);
-	}
-	
-	private int getLastCharColumn(int line) throws BadLocationException {
-		String lineDelimiter = fTextDocument.getLineDelimiter(line - 1);
-		int lineDelimiterLength = lineDelimiter != null ? lineDelimiter.length() : 0;
-		return fTextDocument.getLineLength(line - 1) - lineDelimiterLength;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
 	 */
@@ -222,10 +160,6 @@ public class XMLDefaultHandler extends DefaultHandler implements LexicalHandler 
 	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void startDTD(String name, String publicId, String systemId) throws SAXException {
-	}
-	
-	public String getText() {
-		return (fTextDocument == null) ? "" : fTextDocument.get();
 	}
 	
 }

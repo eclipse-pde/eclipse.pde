@@ -21,7 +21,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.w3c.dom.*;
-import org.xml.sax.InputSource;
 
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
@@ -162,9 +161,9 @@ public abstract class AbstractPluginModelBase
 		loaded = false;
 		try {
 			SAXParser parser = getSaxParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;
 			if (!outOfSync)

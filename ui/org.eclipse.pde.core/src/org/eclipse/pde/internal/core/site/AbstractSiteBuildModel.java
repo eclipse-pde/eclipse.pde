@@ -19,7 +19,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 public abstract class AbstractSiteBuildModel
 	extends AbstractModel
@@ -64,9 +63,9 @@ public abstract class AbstractSiteBuildModel
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			parser.parse(stream, handler);
 			processDocument(handler.getDocument());
 			loaded = true;
 			if (!outOfSync)

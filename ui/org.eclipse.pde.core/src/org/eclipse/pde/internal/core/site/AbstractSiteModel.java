@@ -69,8 +69,8 @@ public abstract class AbstractSiteModel
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
-			InputSource source = new InputSource(new StringReader(handler.getText()));
+			XMLDefaultHandler handler = new XMLDefaultHandler();
+			InputSource source = new InputSource(stream);
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);

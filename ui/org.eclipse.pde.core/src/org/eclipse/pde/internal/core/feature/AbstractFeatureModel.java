@@ -61,9 +61,9 @@ public abstract class AbstractFeatureModel
 			InputSource source = new InputSource(stream);
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
-			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			parser.parse(stream, handler);
 			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;
 			if (!outOfSync)

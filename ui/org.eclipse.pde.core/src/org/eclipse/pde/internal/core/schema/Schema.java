@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.w3c.dom.*;
-import org.xml.sax.*;
 
 public class Schema extends PlatformObject implements ISchema {
 	private URL url;
@@ -339,9 +338,9 @@ public class Schema extends PlatformObject implements ISchema {
 	public void load(InputStream stream) {
 		try {
 			SAXParser parser = AbstractPluginModelBase.getSaxParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler(stream);			
+			XMLDefaultHandler handler = new XMLDefaultHandler();			
 			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
-			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement(), handler.getLineTable());
 		} catch (Exception e) {
 			PDECore.logException(e);
