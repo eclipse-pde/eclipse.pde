@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
@@ -80,7 +81,9 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 				ModelEntry entry =
 					PDECore.getDefault().getModelManager().findEntry(
 						file.getProject());
-				searchString = entry.getActiveModel().getPluginBase().getId();
+				IPluginModelBase model = entry.getActiveModel();
+				if (model != null)
+					searchString = model.getPluginBase().getId();
 			}
 		}
 	}
