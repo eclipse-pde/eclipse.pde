@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.jface.action.Action;
@@ -27,6 +28,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 
 public class ShowDescriptionAction extends Action {
@@ -117,7 +121,7 @@ public class ShowDescriptionAction extends Action {
 			} catch (Exception e) {
 			}
 		}
-
+*/
 		try {
 			URL theURL = new URL("file:"+url);
 			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
@@ -128,6 +132,6 @@ public class ShowDescriptionAction extends Action {
 		}
 		catch (PartInitException e) {
 			PDEPlugin.logException(e);
-		}*/
+		}
 	}
 }
