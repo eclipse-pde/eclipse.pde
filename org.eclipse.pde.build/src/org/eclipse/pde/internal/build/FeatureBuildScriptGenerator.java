@@ -49,9 +49,13 @@ protected List computeElements(boolean fragments) throws CoreException {
 	IPluginEntry[] pluginList = feature.getPluginEntries();
 	for (int i = 0; i < pluginList.length; i++) {
 		IPluginEntry entry = pluginList[i];
-		if (fragments == entry.isFragment()) {
+		if (fragments == entry.isFragment()) { // filter the plugins or fragments
 			VersionedIdentifier identifier = entry.getVersionedIdentifier();
-			PluginModel model = getRegistry().getPlugin(identifier.getIdentifier(), identifier.getVersion().toString());
+			PluginModel model;
+			if (fragments)
+				model = getRegistry().getFragment(identifier.getIdentifier(), identifier.getVersion().toString());
+			else
+				model = getRegistry().getPlugin(identifier.getIdentifier(), identifier.getVersion().toString());
 			if (model == null)
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_PLUGIN_MISSING, Policy.bind("exception.missingPlugin", entry.getVersionedIdentifier().toString()), null));
 			else
@@ -100,26 +104,21 @@ public void generate() throws CoreException {
  */
 protected void generateBuildScript() throws CoreException {
 	generatePrologue();
-
 	generateAllPluginsTarget();
 	generateAllFragmentsTarget();
 	generateAllChildrenTarget();
 	generateChildrenTarget();
 	generateBuildJarsTarget();
-
+	generateBuildZipsTarget();
 	generateUpdateJarTarget();
 	generateGatherBinPartsTarget();
-
 	generateZipDistributionWholeTarget();
-
 	generateBuildSourcesTarget();
 	generateZipSourcesTarget();
 	generateGatherSourcesTarget();
-
 	generateGatherLogTarget();
 	generateZipLogsTarget();
 	generateCleanTarget();
-
 	generateEpilogue();
 }
 
@@ -132,7 +131,7 @@ protected void generateBuildJarsTarget() throws CoreException {
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
-		if (key.startsWith(PROPERTY_SOURCE_PREFIX)) {
+		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)) {
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			jars.append(',');
 			jars.append(jarName);
@@ -153,13 +152,52 @@ protected void generateBuildJarsTarget() throws CoreException {
 /**
  * FIXME: add comments
  */
+protected void generateBuildZipsTarget() throws CoreException {
+	StringBuffer zips = new StringBuffer();
+	Properties props = getBuildProperties();
+	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
+		Map.Entry entry = (Map.Entry) iterator.next();
+		String key = (String) entry.getKey();
+		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_ZIP_SUFFIX)) {
+			String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
+			zips.append(',');
+			zips.append(zipName);
+			generateZipIndividualTarget(zipName, (String) entry.getValue());
+		}
+	}
+	script.println();
+	int tab = 1;
+	script.printTargetDeclaration(tab++, TARGET_BUILD_ZIPS, TARGET_INIT + zips.toString(), null, null, null);
+	Map params = new HashMap(2);
+	params.put(PROPERTY_TARGET, TARGET_BUILD_ZIPS);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
+	script.printString(--tab, "</target>");
+}
+
+/**
+ * FIXME: add comments
+ */
+protected void generateZipIndividualTarget(String zipName, String source) throws CoreException {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
+	IPath root = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	root = root.append(DEFAULT_FEATURE_LOCATION);
+	root = root.append(getPropertyFormat(PROPERTY_FEATURE));
+	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
+	script.printString(--tab, "</target>");
+}
+
+/**
+ * FIXME: add comments
+ */
 protected void generateBuildSourcesTarget() throws CoreException {
 	StringBuffer sources = new StringBuffer();
 	Properties props = getBuildProperties();
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
-		if (key.startsWith(PROPERTY_SOURCE_PREFIX)) {
+		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)) {
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			// zip name is jar name without the ".jar" but with "src.zip" appended
 			String sourceName = jarName.substring(0, jarName.length() - 4) + "src.zip";
@@ -270,7 +308,7 @@ protected void generateGatherSourcesTarget() {
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
-		if (key.startsWith(PROPERTY_SOURCE_PREFIX)) {
+		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)) {
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			// zip name is jar name without the ".jar" but with "src.zip" appended
 			String zip = jarName.substring(0, jarName.length() - 4) + "src.zip";

@@ -214,16 +214,10 @@ public static boolean clear(File root) {
 
 protected String getElementLocation(String type) {
 	IPath location = new Path(getPropertyFormat(PROPERTY_INSTALL));
-	if (type.equals("feature")) {
+	if (type.equals("feature"))
 		location = location.append(DEFAULT_FEATURE_LOCATION);
-	} else {
-		if (type.equals("plugin")) {
-			location = location.append(DEFAULT_PLUGIN_LOCATION);
-		} else {
-			if (type.equals("fragment"))
-				location = location.append(DEFAULT_FRAGMENT_LOCATION);
-		}
-	}
+	else
+		location = location.append(DEFAULT_PLUGIN_LOCATION);
 	return location.toString();
 }
 

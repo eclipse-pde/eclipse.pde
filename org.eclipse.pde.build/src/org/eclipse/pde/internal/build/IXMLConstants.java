@@ -10,11 +10,13 @@ package org.eclipse.pde.internal.core;
 public interface IXMLConstants {
 
 	// general
-	public static final String PROPERTY_ASSIGNMENT_PREFIX = "${";
-	public static final String PROPERTY_ASSIGNMENT_SUFFIX = "}";
-	public static final String PROPERTY_SOURCE_PREFIX = "source.";
 	public static final String DEFAULT_FILENAME_SRC = ".src.zip";
 	public static final String DEFAULT_FILENAME_LOG = ".log.zip";
+	public static final String PROPERTY_ASSIGNMENT_PREFIX = "${";
+	public static final String PROPERTY_ASSIGNMENT_SUFFIX = "}";
+	public static final String PROPERTY_JAR_SUFFIX = ".jar";
+	public static final String PROPERTY_SOURCE_PREFIX = "source.";
+	public static final String PROPERTY_ZIP_SUFFIX = ".zip";
 
 
 	// element description variables (used in files like plugin.xml, e.g. $ws$)
@@ -30,6 +32,7 @@ public interface IXMLConstants {
 	public static final String TARGET_BUILD_JARS = "build.jars";
 	public static final String TARGET_BUILD_SOURCES = "build.sources";
 	public static final String TARGET_BUILD_UPDATE_JAR = "build.update.jar";
+	public static final String TARGET_BUILD_ZIPS = "build.zips";
 	public static final String TARGET_CHILDREN = "children";
 	public static final String TARGET_CLEAN = "clean";
 	public static final String TARGET_FETCH = "fetch";

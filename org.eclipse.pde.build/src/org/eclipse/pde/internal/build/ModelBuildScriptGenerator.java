@@ -79,17 +79,14 @@ public void generate() throws CoreException {
  */
 protected void generateBuildScript() throws CoreException {
 	generatePrologue();
-
 	generatePropertiesTarget();
 	generateUpdateJarTarget();
 	generateGatherBinPartsTarget();
 	generateBuildJarsTarget();
-
+	generateBuildZipsTarget();
 	generateGatherSourcesTarget();
 	generateBuildSourcesTarget();
-
 	generateGatherLogTarget();
-
 	generateCleanTarget();
 	generateEpilogue();
 }
@@ -202,6 +199,19 @@ protected void generateSourceIndividualTarget(String relativeJar, String target)
 }
 
 /**
+ * FIXME: add comments
+ */
+protected void generateZipIndividualTarget(String zipName, String source) throws CoreException {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
+	IPath root = new Path(getPropertyFormat(PROPERTY_INSTALL));
+	root = root.append(getDirectoryName());
+	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString());
+	script.printString(--tab, "</target>");
+}
+
+/**
  * FIXME: add comment
  */
 protected String getSourceList (Collection source, String ending) {
@@ -285,6 +295,7 @@ protected void generateJarIndividualTarget(String jarName) throws CoreException 
 	tab--;
 	script.printString(tab, "</target>");
 }
+
 
 protected IPath getRelativeInstallLocation() {
 	IPath destination = new Path(getPropertyFormat(PROPERTY_INSTALL));
@@ -692,13 +703,35 @@ protected Map computeJarDefinitions() {
 	for (Iterator iterator = getBuildProperties().entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
 		String key = (String) entry.getKey();
-		if (!key.startsWith(PROPERTY_SOURCE_PREFIX))
+		if (!(key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_JAR_SUFFIX)))
 			continue;
 		key = key.substring(n);
 		jarOrder.add(key);
 		result.put(base + key, getListFromString((String) entry.getValue()));
 	}
 	return result;
+}
+
+/**
+ * FIXME: add comments
+ */
+protected void generateBuildZipsTarget() throws CoreException {
+	StringBuffer zips = new StringBuffer();
+	Properties props = getBuildProperties();
+	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
+		Map.Entry entry = (Map.Entry) iterator.next();
+		String key = (String) entry.getKey();
+		if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_ZIP_SUFFIX)) {
+			String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
+			zips.append(',');
+			zips.append(zipName);
+			generateZipIndividualTarget(zipName, (String) entry.getValue());
+		}
+	}
+	script.println();
+	int tab = 1;
+	script.printTargetDeclaration(tab++, TARGET_BUILD_ZIPS, TARGET_INIT + zips.toString(), null, null, null);
+	script.printString(--tab, "</target>");
 }
 
 protected List getListFromString(String prop) {
