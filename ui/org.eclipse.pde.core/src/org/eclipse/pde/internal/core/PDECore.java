@@ -166,7 +166,8 @@ public class PDECore extends Plugin {
 	public ExternalModelManager getExternalModelManager() {
 		if (externalModelManager == null) {
 			externalModelManager = new ExternalModelManager();
-			modelManager.connect(getWorkspaceModelManager(),externalModelManager);
+			if (modelManager != null)
+				modelManager.connect(getWorkspaceModelManager(),externalModelManager);
 		}
 		return externalModelManager;
 	}
@@ -295,8 +296,8 @@ public class PDECore extends Plugin {
 		super.startup();
 		loadSettings();
 		workspaceModelManager = new WorkspaceModelManager();
-		workspaceModelManager.reset();
 		modelManager = new PluginModelManager();
+		workspaceModelManager.reset();
 	}
 
 	public void shutdown() throws CoreException {
