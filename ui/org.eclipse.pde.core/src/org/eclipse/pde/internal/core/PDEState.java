@@ -66,6 +66,7 @@ public class PDEState {
 		fPluginInfos = new HashMap();
 		fState = stateObjectFactory.createState();
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
+        fState.setPlatformProperties(TargetPlatform.getTargetEnvironment());
 	}
 	
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
