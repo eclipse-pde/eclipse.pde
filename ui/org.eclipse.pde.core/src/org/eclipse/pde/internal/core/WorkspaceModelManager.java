@@ -358,7 +358,7 @@ public class WorkspaceModelManager
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
-			case IResourceChangeEvent.PRE_AUTO_BUILD :
+			case IResourceChangeEvent.POST_CHANGE :
 				handleResourceDelta(event.getDelta());
 				processModelChanges();
 				break;
@@ -446,7 +446,7 @@ public class WorkspaceModelManager
 		}
 		workspace.addResourceChangeListener(this,
 				IResourceChangeEvent.PRE_CLOSE
-				| IResourceChangeEvent.PRE_AUTO_BUILD);
+				| IResourceChangeEvent.POST_CHANGE);
 		fInitialized = true;
 		fModelsLocked = false;
 	}
