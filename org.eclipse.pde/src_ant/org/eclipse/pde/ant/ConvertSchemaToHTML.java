@@ -57,30 +57,31 @@ public class ConvertSchemaToHTML extends Task {
 				schema.traverseDocumentTree(
 					parser.getDocument().getDocumentElement(),
 					parser.getLineTable());
-
-				File file = new File(destination);
-				if (!file.exists() || !file.isDirectory())
-					if (!file.mkdirs())
-						return;
 					
-				String fileName =
-					destination
-						+ Path.SEPARATOR
-						+ extPoints[i].getFullId().replace('.', '_')
-						+ ".html";
-				out = new PrintWriter(new FileWriter(fileName), true);
+				File directory =
+					new Path(destination).isAbsolute()
+						? new File(destination)
+						: new File(getProject().getBaseDir(), destination);
+				if (!directory.exists() || !directory.isDirectory())
+					if (!directory.mkdirs())
+						return;
+
+				File file =
+					new File(
+						directory,
+						extPoints[i].getFullId().replace('.', '_') + ".html");
+				out = new PrintWriter(new FileWriter(file), true);
 				transformer.transform(out, schema);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
 					System.out.println(e.getMessage());
 			} finally {
 				try {
+					if (out != null)
+						out.close();
 					if (is != null)
 						is.close();
 				} catch (IOException e) {
-				}
-				if (out != null) {
-					out.close();
 				}
 			}
 		}
@@ -101,11 +102,14 @@ public class ConvertSchemaToHTML extends Task {
 				PDE.getFormattedMessage("Builders.Convert.missingAttribute", "manifest"));
 			return null;
 		}
-
+		
+		File file =
+			new Path(manifest).isAbsolute()
+				? new File(manifest)
+				: new File(getProject().getBaseDir(), manifest);
 		InputStream stream = null;
-		File file = new File(manifest);
 		try {
-			stream = new FileInputStream(manifest);
+			stream = new FileInputStream(file);
 		} catch (Exception e) {
 			if (e.getMessage() != null)
 				System.out.println(e.getMessage());
