@@ -15,14 +15,6 @@ import java.util.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 
-/**
- * @author W Melhem
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class PluginSearchScope {
 
 	public static final int SCOPE_WORKSPACE = 0;
