@@ -20,6 +20,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private Vector listeners = new Vector();
 	private Vector elements = new Vector();
 	private Vector docSections = new Vector();
+	private Vector includes;
 	private String pointId;
 	private String pluginId;
 	private ISchemaDescriptor schemaDescriptor;
@@ -70,6 +71,28 @@ public class Schema extends PlatformObject implements ISchema {
 			new ModelChangedEvent(
 				ModelChangedEvent.INSERT,
 				new Object[] { element },
+				null));
+	}
+
+	public void addInclude(ISchemaInclude include) {
+		if (includes == null)
+			includes = new Vector();
+		includes.add(include);
+		fireModelChanged(
+			new ModelChangedEvent(
+				ModelChangedEvent.INSERT,
+				new Object[] { include },
+				null));
+	}
+
+	public void removeInclude(ISchemaInclude include) {
+		if (includes == null)
+			return;
+		includes.remove(include);
+		fireModelChanged(
+			new ModelChangedEvent(
+				ModelChangedEvent.REMOVE,
+				new Object[] { include },
 				null));
 	}
 
@@ -127,7 +150,8 @@ public class Schema extends PlatformObject implements ISchema {
 		Node attNode = map.getNamedItem(name);
 		if (attNode != null) {
 			String value = attNode.getNodeValue();
-			if (value.length()>0) return value;
+			if (value.length() > 0)
+				return value;
 		}
 		return null;
 	}
@@ -159,12 +183,51 @@ public class Schema extends PlatformObject implements ISchema {
 	public int getElementCount() {
 		return elements.size();
 	}
+	public int getResolvedElementCount() {
+		int localCount = getElementCount();
+		if (includes == null)
+			return localCount;
+		int totalCount = localCount;
+		for (int i = 0; i < includes.size(); i++) {
+			ISchemaInclude include = (ISchemaInclude) includes.get(i);
+			ISchema schema = include.getIncludedSchema();
+			if (schema == null)
+				continue;
+			totalCount += schema.getResolvedElementCount();
+		}
+		return totalCount;
+	}
 	public ISchemaElement[] getElements() {
 		if (!isLoaded())
 			load();
 		ISchemaElement[] result = new ISchemaElement[elements.size()];
 		elements.copyInto(result);
 		return result;
+	}
+	public ISchemaElement[] getResolvedElements() {
+		if (includes == null)
+			return getElements();
+		if (!isLoaded())
+			load();
+		Vector result = (Vector) elements.clone();
+		for (int i = 0; i < includes.size(); i++) {
+			ISchemaInclude include = (ISchemaInclude) includes.get(i);
+			ISchema schema = include.getIncludedSchema();
+			if (schema == null)
+				continue;
+			ISchemaElement[] ielements = schema.getElements();
+			for (int j = 0; j < ielements.length; j++)
+				result.add(ielements[j]);
+		}
+		return (ISchemaElement[]) result.toArray(
+			new ISchemaElement[result.size()]);
+	}
+
+	public ISchemaInclude[] getIncludes() {
+		if (includes == null)
+			return new ISchemaInclude[0];
+		return (ISchemaInclude[]) includes.toArray(
+			new ISchemaInclude[includes.size()]);
 	}
 	public java.lang.String getName() {
 		return name;
@@ -632,13 +695,20 @@ public class Schema extends PlatformObject implements ISchema {
 									sectionName = section;
 							}
 						}
-
 					}
-
 				}
 			}
 		}
 	}
+
+	private void processInclude(Node node) {
+		String location = getAttribute(node, "schemaLocation");
+		SchemaInclude include = new SchemaInclude(this, location);
+		if (includes == null)
+			includes = new Vector();
+		includes.add(include);
+	}
+
 	public void reload() {
 		reload(null);
 	}
@@ -680,6 +750,7 @@ public class Schema extends PlatformObject implements ISchema {
 		lineTable = null;
 		elements = new Vector();
 		docSections = new Vector();
+		includes = null;
 		pointId = null;
 		pluginId = null;
 		references = null;
@@ -688,8 +759,9 @@ public class Schema extends PlatformObject implements ISchema {
 		valid = false;
 	}
 	private void resolveElementReference(ISchemaObjectReference reference) {
-		for (int i = 0; i < elements.size(); i++) {
-			ISchemaElement element = (ISchemaElement) elements.elementAt(i);
+		ISchemaElement[] elementList = getResolvedElements();
+		for (int i = 0; i < elementList.length; i++) {
+			ISchemaElement element = elementList[i];
 			if (!(element instanceof ISchemaObjectReference)
 				&& element.getName().equals(reference.getName())) {
 				// Link
@@ -752,11 +824,14 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("element")) {
+				String nodeName = child.getNodeName().toLowerCase();
+				if (nodeName.equals("element")) {
 					ISchemaElement element = processElement(this, child);
 					elements.addElement(element);
-				} else if (child.getNodeName().equals("annotation")) {
+				} else if (nodeName.equals("annotation")) {
 					processSchemaAnnotation(child);
+				} else if (nodeName.equals("include")) {
+					processInclude(child);
 				}
 			}
 		}
@@ -798,21 +873,29 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println("<?xml version='1.0' encoding='UTF-8'?>");
 		writer.println("<!-- Schema file written by PDE -->");
 		writer.println("<schema targetNamespace=\"" + pluginId + "\">");
-		writer.println("<annotation>");
-		writer.println(INDENT + "<appInfo>");
-		writer.print(
-			INDENT + INDENT + "<meta.schema plugin=\"" + pluginId + "\"");
+		String indent2 = INDENT + INDENT;
+		String indent3 = indent2 + INDENT; 
+		writer.println(indent+"<annotation>");
+		writer.println(indent2 + "<appInfo>");
+		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\"");
 		writer.print(" id=\"" + pointId + "\"");
 		writer.println(" name=\"" + getName() + "\"/>");
-		writer.println(INDENT + "</appInfo>");
-		writer.println(INDENT + "<documentation>");
-		writer.println(
-			INDENT
-				+ INDENT
-				+ SchemaObject.getWritableDescription(getDescription()));
-		writer.println(INDENT + "</documentation>");
-		writer.println("</annotation>");
+		writer.println(indent2 + "</appInfo>");
+		writer.println(indent2 + "<documentation>");
+		writer.println(indent3
+			+ SchemaObject.getWritableDescription(getDescription()));
+		writer.println(indent2 + "</documentation>");
+		writer.println(INDENT + "</annotation>");
 		writer.println();
+		
+		// add includes, if defined
+		if (includes!=null) {
+			for (int i=0; i<includes.size(); i++) {
+				ISchemaInclude include = (ISchemaInclude)includes.get(i);
+				include.write(INDENT, writer);
+				writer.println();
+			}
+		}
 
 		// add elements
 		for (int i = 0; i < elements.size(); i++) {

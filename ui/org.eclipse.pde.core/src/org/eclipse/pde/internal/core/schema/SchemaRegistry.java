@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class SchemaRegistry
 	implements IModelProviderListener, IResourceChangeListener, IResourceDeltaVisitor {
@@ -57,7 +57,7 @@ public class SchemaRegistry
 			return null;
 		return descriptor.getSchema();
 	}
-
+	
 	private void initializeDescriptors() {
 		workspaceDescriptors = new Hashtable();
 		externalDescriptors = new Hashtable();
@@ -346,7 +346,8 @@ public class SchemaRegistry
 		IResource resource = delta.getResource();
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
-			if (file.getName().toLowerCase().endsWith(".exsd") == false)
+			String fileName = file.getName().toLowerCase();
+			if (!(fileName.endsWith(".exsd") || fileName.endsWith(".mxsd")))
 				return true;
 			if (WorkspaceModelManager.isPluginProject(file.getProject())
 				== false)

@@ -70,10 +70,23 @@ IDocumentSection[] getDocumentSections();
  */
 public int getElementCount();
 /**
+ * Returns a total number of elements after the included
+ * schemas have been resolved and their elements added to
+ * the list.
+ * @return the total number of elements including external schemas
+ */
+public int getResolvedElementCount();
+/**
  * Returns an array of elements with the global scope defined in this schema.
  * @return an array of global elements
  */
 public ISchemaElement[] getElements();
+/**
+ * Returns an array of elements with the global scope defined in this
+ * schema and all the included schemas.
+ * @return an expanded array of global elements
+ */
+public ISchemaElement[] getResolvedElements();
 /**
  * Returns an Id of the extension point that is defined in this schema.
  * @return extension point Id of this schema
@@ -115,4 +128,15 @@ boolean isEditable();
  * @return true if the schema is valid and can be used
  */
 boolean isValid();
+
+/**
+ * Returns a list of elements that correspond to the
+ * <samp>include</samp> statements in the schema file.
+ * Included schemas are incorporated into the model
+ * and references can be made to elements in the included
+ * files.
+ * @return an array of included schema elements or a zero-size
+ * array if none.
+ */
+ISchemaInclude [] getIncludes();
 }
