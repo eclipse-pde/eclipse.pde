@@ -228,12 +228,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			if (!product.containsPlugin(hostId) && set.add(hostId))
 				addDependencies(hostId, set);
 		} else {
-			boolean addFragments = fIncludeFragments.getSelection();
-			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libs.length; i++) {
-				if (ClasspathUtilCore.containsVariables(libs[i].getName())) {
-					addFragments = true;
-					break;
+			boolean addFragments = fIncludeFragments.getSelection()
+					|| ((IPlugin)model.getPluginBase()).hasExtensibleAPI();
+			if (!addFragments) {
+				IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+				for (int i = 0; i < libs.length; i++) {
+					if (ClasspathUtilCore.containsVariables(libs[i].getName())) {
+						addFragments = true;
+						break;
+					}
 				}
 			}
 			if (addFragments) {

@@ -22,6 +22,7 @@ import org.w3c.dom.*;
 public class Plugin extends PluginBase implements IPlugin {
 	private static final long serialVersionUID = 1L;
 	private String className;
+	private boolean fHasExtensibleAPI;
 
 	public Plugin() {
 	}
@@ -36,6 +37,7 @@ public class Plugin extends PluginBase implements IPlugin {
 
 	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
 		this.className = state.getClassName(bundleDescription.getBundleId());
+		fHasExtensibleAPI = state.hasExtensibleAPI(bundleDescription.getBundleId());
 		super.load(bundleDescription, state, ignoreExtensions);
 	}
 	
@@ -128,5 +130,9 @@ public class Plugin extends PluginBase implements IPlugin {
 			writer.println();
 		
 		writer.println("</plugin>"); //$NON-NLS-1$
+	}
+
+	public boolean hasExtensibleAPI() {
+		return fHasExtensibleAPI;
 	}
 }

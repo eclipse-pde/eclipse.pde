@@ -16,6 +16,7 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 
@@ -63,7 +64,11 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 			path = path.setDevice(device.toUpperCase());
 		setInstallLocation(path.toOSString());
 		setBundleDescription(description);
-		((PluginBase)getPluginBase()).load(description, state, ignoreExtensions);
+		IPluginBase base = getPluginBase();
+		if (base instanceof Plugin)
+			((Plugin)base).load(description, state, ignoreExtensions);
+		else
+			((Fragment)base).load(description, state, ignoreExtensions);
 		updateTimeStamp();
 		setLoaded(true);
 		

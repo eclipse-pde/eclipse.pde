@@ -39,5 +39,8 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 			return new String[] {"   " + P_CLASS_NAME + "=\"" + classname + "\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return new String[0];
 	}
+	public boolean hasExtensibleAPI() {
+		return false;
+	}
 	
 }

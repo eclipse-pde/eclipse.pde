@@ -165,7 +165,8 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		boolean containsVariable = false;
 		if (!selected.contains(model)) {
 			selected.add(model);
-			if (!addFragments && model instanceof IPluginModel) {
+			boolean hasextensibleAPI = model instanceof IPluginModel && ((IPlugin)model.getPluginBase()).hasExtensibleAPI();
+			if (!addFragments && !hasextensibleAPI && model instanceof IPluginModel) {
 				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 				for (int i = 0; i < libraries.length; i++) {
 					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
@@ -174,7 +175,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 					}
 				}
 			}
-			addDependencies(model, selected, addFragments || containsVariable);
+			addDependencies(model, selected, addFragments || containsVariable || hasextensibleAPI);
 		}
 	}
 	

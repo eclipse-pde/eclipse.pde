@@ -54,4 +54,9 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		}
 		return compatibilityMode ? "Plugin-Class" : Constants.BUNDLE_ACTIVATOR; //$NON-NLS-1$
 	}
+
+	public boolean hasExtensibleAPI() {
+		return "true".equals(parseSingleValuedHeader("Eclipse-ExtensibleAPI"));
+	}
+	
 }
