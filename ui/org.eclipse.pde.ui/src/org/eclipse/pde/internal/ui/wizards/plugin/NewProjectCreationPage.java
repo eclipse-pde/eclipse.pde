@@ -106,7 +106,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			label.setText(PDEPlugin.getResourceString("ProjectStructurePage.pTarget"));
 		}
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET21, ICoreConstants.TARGET30, ICoreConstants.TARGET31});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
 		GridData gd = new GridData();
 		gd.widthHint = 50;
 		fTargetCombo.setLayoutData(gd);

@@ -414,16 +414,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 	
 	public String getTargetVersion() {
-		ModelEntry entry = getModelManager().findEntry("org.eclipse.osgi"); //$NON-NLS-1$
-		if (entry == null) 
-			return ICoreConstants.TARGET21;
-		IPluginModelBase model = entry.getActiveModel();
-		String version = model.getPluginBase().getVersion();
-		if (PluginVersionIdentifier.validateVersion(version).getSeverity() == IStatus.OK) {
-			PluginVersionIdentifier id = new PluginVersionIdentifier(version);
-			return Integer.toString(id.getMajorComponent()) + "." + Integer.toString(id.getMinorComponent());	 //$NON-NLS-1$
-		}	
-		return ICoreConstants.TARGET31;
+		return getModelManager().getTargetVersion();
 	}
 	
 	public void start(BundleContext context) throws Exception {

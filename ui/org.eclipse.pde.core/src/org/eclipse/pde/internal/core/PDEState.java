@@ -569,8 +569,8 @@ public class PDEState {
 		return fState;
 	}
 	
-	public void setTargetMode() {
-		fTargetMode = "2.1"; //$NON-NLS-1$
+	private void setTargetMode() {
+		fTargetMode = ICoreConstants.TARGET21; 
 		for (int i = 0; i < fURLs.length; i++) {
 			if (fURLs[i].getFile().indexOf("org.eclipse.osgi") != -1) {//$NON-NLS-1$
 				fTargetMode = null;

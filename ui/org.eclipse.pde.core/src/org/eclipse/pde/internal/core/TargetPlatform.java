@@ -64,6 +64,21 @@ public class TargetPlatform implements IEnvironmentVariables {
 			return list;
 		}
 	}
+	
+	public static Properties getConfigIniProperties(String filename) {
+		File iniFile = new File(ExternalModelManager.getEclipseHome().toOSString(), filename);
+		if (!iniFile.exists())
+			return null;
+		Properties pini = new Properties();
+		try {
+			FileInputStream fis = new FileInputStream(iniFile);
+			pini.load(fis);
+			fis.close();
+			return pini;
+		} catch (IOException e) {
+		}		
+		return null;
+	}
 
 	public static String[] createPluginPath() throws CoreException {
 		return createPluginPath(PDECore.getDefault().getModelManager().getPlugins());

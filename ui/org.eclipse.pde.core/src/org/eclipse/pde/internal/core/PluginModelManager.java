@@ -23,21 +23,21 @@ import org.eclipse.pde.internal.core.ibundle.*;
 
 public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi"; //$NON-NLS-1$
-	private IModelProviderListener providerListener;
-	private ExternalModelManager externalManager;
-	private WorkspaceModelManager workspaceManager;
-	private SearchablePluginsManager searchablePluginsManager;
-	private ArrayList listeners;
+	private IModelProviderListener fProviderListener;
+	private ExternalModelManager fExternalManager;
+	private WorkspaceModelManager fWorkspaceManager;
+	private SearchablePluginsManager fSearchablePluginsManager;
+	private ArrayList fListeners;
 	private Map fEntries;
 
 	public PluginModelManager() {
-		providerListener = new IModelProviderListener() {
+		fProviderListener = new IModelProviderListener() {
 			public void modelsChanged(IModelProviderEvent e) {
 				handleModelsChanged(e);
 			}
 		};
-		listeners = new ArrayList();
-		searchablePluginsManager = new SearchablePluginsManager(this);
+		fListeners = new ArrayList();
+		fSearchablePluginsManager = new SearchablePluginsManager(this);
 	}
 	
 	/*
@@ -47,19 +47,43 @@ public class PluginModelManager implements IAdaptable {
 	public boolean isOSGiRuntime() {
 		return findEntry(OSGI_RUNTIME) != null;
 	}
+	
+	public String getTargetVersion() {
+		ModelEntry entry = findEntry(OSGI_RUNTIME); 
+		if (entry == null) 
+			return ICoreConstants.TARGET21;
+		
+		//TODO temporary hack for backward compatibility with 3.1 milestones
+		Properties prop = TargetPlatform.getConfigIniProperties("configuration/config.ini");
+		if (prop != null) {
+			String property = prop.getProperty("eclipse.buildId");
+			if (property != null) {
+				if (Integer.parseInt(property.substring(1, 9)) < 20050119)
+					return ICoreConstants.TARGET30;
+			}
+		}
+		
+		/*IPluginModelBase model = entry.getActiveModel();
+		String version = model.getPluginBase().getVersion();
+		if (PluginVersionIdentifier.validateVersion(version).getSeverity() == IStatus.OK) {
+			PluginVersionIdentifier id = new PluginVersionIdentifier(version);
+			return Integer.toString(id.getMajorComponent()) + "." + Integer.toString(id.getMinorComponent());	 //$NON-NLS-1$
+		}*/	
+		return ICoreConstants.TARGET31;	
+	}
 
 	public Object getAdapter(Class key) {
 		return null;
 	}
 	
 	public void addPluginModelListener(IPluginModelListener listener) {
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+		if (!fListeners.contains(listener))
+			fListeners.add(listener);
 	}
 	
 	public void removePluginModelListener(IPluginModelListener listener) {
-		if (listeners.contains(listener))
-			listeners.remove(listener);
+		if (fListeners.contains(listener))
+			fListeners.remove(listener);
 	}
 	
 	public boolean isEmpty() {
@@ -126,7 +150,7 @@ public class PluginModelManager implements IAdaptable {
 	
 	public ModelEntry findEntry(IProject project) {
 		initializeTable();
-		IPluginModelBase model = workspaceManager.getWorkspacePluginModel(project);
+		IPluginModelBase model = fWorkspaceManager.getWorkspacePluginModel(project);
 		return model == null ? null : findEntry(model.getPluginBase().getId());
 	}
 	
@@ -238,7 +262,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
 		if (javaSearchAffected)
-			searchablePluginsManager.updateClasspathContainer();
+			fSearchablePluginsManager.updateClasspathContainer();
 		fireDelta(delta);
 	}
 	
@@ -336,7 +360,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		if (workspace) {
-			PDEState state = externalManager.getState();
+			PDEState state = fExternalManager.getState();
 			if (added) {
 				addWorkspaceBundleToState(model, state);
 			} else {
@@ -404,10 +428,10 @@ public class PluginModelManager implements IAdaptable {
 	private synchronized void initializeTable() {
 		if (fEntries != null) return;
 		fEntries = Collections.synchronizedMap(new TreeMap());
-		addToTable(workspaceManager.getAllModels(), true);
-		addToTable(externalManager.getAllModels(), false);
+		addToTable(fWorkspaceManager.getAllModels(), true);
+		addToTable(fExternalManager.getAllModels(), false);
 		addWorkspaceBundlesToState();
-		searchablePluginsManager.initialize();
+		fSearchablePluginsManager.initialize();
 	}
 
 	private void addToTable(IPluginModelBase[] pmodels, boolean workspace) {
@@ -429,8 +453,8 @@ public class PluginModelManager implements IAdaptable {
 	}
 		
 	public void addWorkspaceBundlesToState() {
-		IPluginModelBase[] models = workspaceManager.getAllModels();
-		PDEState state = externalManager.getState();
+		IPluginModelBase[] models = fWorkspaceManager.getAllModels();
+		PDEState state = fExternalManager.getState();
 		for (int i = 0; i < models.length; i++) {
 			addWorkspaceBundleToState(models[i], state);
 		}
@@ -486,7 +510,7 @@ public class PluginModelManager implements IAdaptable {
 		BundleDescription description = model.getBundleDescription();
 		if (description == null)
 			return;
-		PDEState state = externalManager.getState();
+		PDEState state = fExternalManager.getState();
 		state.removeBundleDescription(description);
 		
 		BundleDescription newDesc = state.addBundle(new File(model.getInstallLocation()));
@@ -495,24 +519,24 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void fireDelta(PluginModelDelta delta) {
-		Object [] entries = listeners.toArray();
+		Object [] entries = fListeners.toArray();
 		for (int i=0; i<entries.length; i++) {
 			((IPluginModelListener)entries[i]).modelsChanged(delta);
 		}
 	}
 
 	public void connect(WorkspaceModelManager wm, ExternalModelManager em) {
-		externalManager = em;
-		workspaceManager = wm;
-		externalManager.addModelProviderListener(providerListener);
-		workspaceManager.addModelProviderListener(providerListener);
+		fExternalManager = em;
+		fWorkspaceManager = wm;
+		fExternalManager.addModelProviderListener(fProviderListener);
+		fWorkspaceManager.addModelProviderListener(fProviderListener);
 	}
 	public void shutdown() {
-		if (workspaceManager != null)	
-			workspaceManager.removeModelProviderListener(providerListener);
-		if (externalManager != null)
-			externalManager.removeModelProviderListener(providerListener);
-		searchablePluginsManager.shutdown();
+		if (fWorkspaceManager != null)	
+			fWorkspaceManager.removeModelProviderListener(fProviderListener);
+		if (fExternalManager != null)
+			fExternalManager.removeModelProviderListener(fProviderListener);
+		fSearchablePluginsManager.shutdown();
 	}
 	
 	public void setInJavaSearch(ModelEntry [] entries, boolean value, IProgressMonitor monitor) throws CoreException {
@@ -525,7 +549,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		if (delta.getKind()!=0) {
-			searchablePluginsManager.persistStates( monitor);
+			fSearchablePluginsManager.persistStates( monitor);
 			fireDelta(delta);
 		}
 	}
@@ -546,13 +570,13 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public IFileAdapterFactory getFileAdapterFactory() {
-		return searchablePluginsManager;
+		return fSearchablePluginsManager;
 	}
 	/**
 	 * @return Returns the searchablePluginsManager.
 	 */
 	public SearchablePluginsManager getSearchablePluginsManager() {
 		initializeTable();
-		return searchablePluginsManager;
+		return fSearchablePluginsManager;
 	}
 }

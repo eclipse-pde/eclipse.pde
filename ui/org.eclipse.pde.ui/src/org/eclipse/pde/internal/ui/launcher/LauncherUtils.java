@@ -545,7 +545,7 @@ public class LauncherUtils {
 			return result;
 		
 		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		 //$NON-NLS-1$ //$NON-NLS-2$
-		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), filename);		
+		Properties properties = TargetPlatform.getConfigIniProperties(filename);		
 
 		String property = isOSGi ? "eclipse.product" : "feature.default.id"; //$NON-NLS-1$ //$NON-NLS-2$
 		return (properties == null) ? null : properties.getProperty(property);
@@ -555,24 +555,9 @@ public class LauncherUtils {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
 			return "org.eclipse.ui.workbench"; //$NON-NLS-1$
 		
-		Properties properties = getConfigIniProperties(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
+		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
-	}
-	
-	public static Properties getConfigIniProperties(String directory, String filename) {
-		File iniFile = new File(directory, filename);
-		if (!iniFile.exists())
-			return null;
-		Properties pini = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(iniFile);
-			pini.load(fis);
-			fis.close();
-			return pini;
-		} catch (IOException e) {
-		}		
-		return null;
 	}
 	
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String brandingID, Map map, File directory) throws CoreException {
