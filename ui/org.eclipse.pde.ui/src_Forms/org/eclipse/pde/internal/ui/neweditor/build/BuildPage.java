@@ -26,7 +26,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BuildPage extends PDEFormPage {
-	public static final String FORM_TITLE = "BuildEditor.Form.title";
+	public static final String FORM_TITLE = "BuildPropertiesEditor.BuildPage.title";
 	public static final String PAGE_ID = "build";
 	private BuildClasspathSection classpathSection;
 	private BuildContentsSection srcSection;
@@ -36,6 +36,7 @@ public class BuildPage extends PDEFormPage {
 	private Button customButton;
 	
 	public BuildPage(FormEditor editor) {
+		//TODO translate this string
 		super(editor, PAGE_ID, "Build Configuration");
 	}
 
