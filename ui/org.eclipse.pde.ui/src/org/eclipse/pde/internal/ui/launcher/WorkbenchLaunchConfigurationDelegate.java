@@ -226,7 +226,7 @@ public class WorkbenchLaunchConfigurationDelegate
 	}
 
 	private String computeShowsplashArgument() {
-		IPath eclipseHome = ExternalModelManager.getEclipseHome(null);
+		IPath eclipseHome = ExternalModelManager.getEclipseHome();
 		IPath fullPath = eclipseHome.append("eclipse");
 		return fullPath.toOSString() + " -showsplash 600";
 	}
@@ -236,7 +236,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		File marker = new File(productDir, ".eclipseproduct");
 		File ini = new File(productDir, "install.ini");
 		if (marker.exists() && ini.exists()) return;
-		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		IPath eclipsePath = ExternalModelManager.getEclipseHome();
 		if (!marker.exists()) 
 			copyFile(eclipsePath, ".eclipseproduct", marker);
 		if (!ini.exists())

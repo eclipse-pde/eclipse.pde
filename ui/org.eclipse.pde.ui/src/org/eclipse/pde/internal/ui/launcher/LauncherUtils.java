@@ -136,7 +136,7 @@ public class LauncherUtils {
 			}
 		}
 		File startupJar =
-			ExternalModelManager.getEclipseHome(null).append("startup.jar").toFile();
+			ExternalModelManager.getEclipseHome().append("startup.jar").toFile();
 		
 		return startupJar.exists() ? new String[] { startupJar.getAbsolutePath()} : null;
 	}
@@ -563,7 +563,7 @@ public class LauncherUtils {
 	}
 	
 	public static Properties getInstallProperties() {
-		IPath eclipsePath = ExternalModelManager.getEclipseHome(null);
+		IPath eclipsePath = ExternalModelManager.getEclipseHome();
 		File iniFile = new File(eclipsePath.toFile(), "install.ini");
 		if (!iniFile.exists())
 			return null;

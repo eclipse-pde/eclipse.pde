@@ -59,7 +59,7 @@ public class ExternalModelManager implements IExternalModelManager {
 		return buf.toString();
 	}
 	
-	public static IPath getEclipseHome(IProgressMonitor monitor) {
+	public static IPath getEclipseHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return new Path(preferences.getString(ICoreConstants.PLATFORM_PATH));
 	}

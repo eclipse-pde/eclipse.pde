@@ -272,7 +272,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		if (showPreferencePage(targetNode))
-			dropLocation.setText(ExternalModelManager.getEclipseHome(null).toOSString());
+			dropLocation.setText(ExternalModelManager.getEclipseHome().toOSString());
 	}
 	
 	private void handleSourceLocations() {

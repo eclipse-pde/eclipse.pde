@@ -92,7 +92,7 @@ public class SourceAttachmentManager {
 		String platformPath = properties.getProperty(KEY_PLATFORM_PATH);
 		if (platformPath==null) return;
 		IPath oldPlatformPath = new Path(platformPath);
-		IPath currentPlatformPath = ExternalModelManager.getEclipseHome(null);
+		IPath currentPlatformPath = ExternalModelManager.getEclipseHome();
 		// If the saved entries are for a different platform path,
 		// discard them.
 		if (oldPlatformPath.equals(currentPlatformPath)==false) return;
@@ -124,7 +124,7 @@ public class SourceAttachmentManager {
 	public void save() {
 		String fileName = getFileName();
 		Properties properties = new Properties();
-		IPath platformPath = ExternalModelManager.getEclipseHome(null);
+		IPath platformPath = ExternalModelManager.getEclipseHome();
 		properties.setProperty(KEY_PLATFORM_PATH, platformPath.toOSString());
 		
 		int i=0;

@@ -57,14 +57,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 			for (int i = 0; i < plugins.size(); i++) {
 				IPluginModelBase model = (IPluginModelBase) plugins.get(i);
 				IPath location = getPluginLocation(model);
-				location =
-					location.append(
-						model.isFragmentModel()
+				// defect 37319
+				if (location.segmentCount() > 2)
+					location = location.removeFirstSegments(location.segmentCount() - 2);
+				if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+					location = location.append(model.isFragmentModel()
 							? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
-				// defect 37319
-				if (location.segmentCount() > 3)
-					location = location.removeFirstSegments(location.segmentCount() - 3);
+				}
 				//31489 - entry must be relative
 				list[i] = location.setDevice(null).makeRelative().toString();
 			}
@@ -204,7 +204,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			bWriter.write("#Eclipse Runtime Configuration File");
 			bWriter.newLine();
-			bWriter.write("osgi.installLocation=file:" + ExternalModelManager.getEclipseHome(null).toString());
+			bWriter.write("osgi.installLocation=file:" + ExternalModelManager.getEclipseHome().toString());
 			bWriter.newLine();
 			
 			if (primaryFeatureId != null) {
@@ -406,20 +406,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 			if (model instanceof IBundlePluginModelBase) {
 				// OSGi bundle - remove two segments.
 				// We must get rid of META-INF
-				location =
-					resource
-						.getLocation()
-						.removeLastSegments(2)
-						.addTrailingSeparator()
-						.toString();
-			}
-			else {
-				location =
-					resource
-						.getLocation()
-						.removeLastSegments(1)
-						.addTrailingSeparator()
-						.toString();
+				location = resource.getLocation().removeLastSegments(2).toOSString();
+			} else {
+				location = resource.getLocation().removeLastSegments(1).toOSString();
 			}
 		}
 		return new Path(location).addTrailingSeparator();
@@ -430,7 +419,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		TreeMap pluginMap,
 		String primaryFeatureId)
 		throws MalformedURLException {
-		IPath targetPath = ExternalModelManager.getEclipseHome(null);
+		IPath targetPath = ExternalModelManager.getEclipseHome();
 
 		if (primaryFeatureId == null)
 			return;
