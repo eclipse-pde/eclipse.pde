@@ -26,6 +26,16 @@ public IBuild getBuild() {
 	if (isLoaded()==false) load();
 	return build;
 }
+
+public IBuild getBuild(boolean createIfMissing) {
+	if (build==null && createIfMissing) {
+		build = new Build();
+		build.setModel(this);
+		loaded=true;
+	}
+	return getBuild();
+}
+
 public IBuildModelFactory getFactory() {
 	if (factory==null) factory = new BuildModelFactory(this);
 	return factory;

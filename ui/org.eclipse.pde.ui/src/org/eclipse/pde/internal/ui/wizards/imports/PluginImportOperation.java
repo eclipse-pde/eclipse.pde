@@ -36,6 +36,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -44,6 +46,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -464,9 +467,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			PDEPlugin.getResourceString(KEY_EXTRACTING),
 			entries.length * 2);
 		try {
+			IFile buildFile = project.getFile("build.properties");
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+			IBuild build = buildModel.getBuild(true);
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
 				IPath curr = entry.getPath();
+				String entryName = "source."+curr.lastSegment();
+				IBuildEntry buildEntry = null;
 
 				IPath sourceAttach = entry.getSourceAttachmentPath();
 				if (sourceAttach != null) {
@@ -474,6 +482,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					if (res instanceof IFile) {
 						String name = curr.removeFileExtension().lastSegment();
 						IFolder dest = project.getFolder("src-" + name);
+						if (buildEntry==null) {
+							buildEntry = buildModel.getFactory().createEntry(entryName);
+							build.add(buildEntry);
+						}
+						buildEntry.addToken(dest.getName()+"/");
 						if (!dest.exists()) {
 							dest.create(true, true, null);
 						}
@@ -502,6 +515,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					monitor.worked(2);
 				}
 			}
+			buildModel.save();
 		} finally {
 			monitor.done();
 		}
