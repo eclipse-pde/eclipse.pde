@@ -98,7 +98,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		final int URL = 0;
 		final int CONFIGS = 1;
 		final int DIRECTORY = 2;
-
+		final int FILTERS = 3;
+		
 		mapContent = readProperties(mapLocation, ""); //$NON-NLS-1$
 
 		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
@@ -119,21 +120,47 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			} catch (MalformedURLException e) {
 				//TODO Should through an exception? and / or try to check the url with the file name concatenated?
 			}
-			if (entryConfigs.length == 0) {
+			
+			if (filterByConfig(entryConfigs) &&	filterByFilter(fileDescription[FILTERS])) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
-				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
-
-			for (int i = 0; i < entryConfigs.length; i++) {
-				Config aConfig = new Config(entryConfigs[i]);
-				if (aConfig.equals(config) || aConfig.equals(Config.genericConfig())) { //$NON-NLS-1$
-					generateFetchFileFor(fileName, fileDescription[URL], userInfos);
-					collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					break;
-				}
-			}
-
-			//TODO Needs to add the filtering on the content 
+				collectedFiles += fileName + ", " + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + " & "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$				
+			} else {
+				//TODO Write something into a log
+			} 
 		}
+	}
+
+	//Return true if the filters specified to be packaged match the entry.
+	//When no filter is specified on the entry or there is no filtering, then the file is fetched 
+	private boolean filterByFilter(String filterString) {
+		if (filters.length==0)
+			return true;
+		
+		String[] entryFilters = Utils.getArrayFromStringWithBlank(filterString, ","); //$NON-NLS-1$
+		if (entryFilters.length == 0)
+			return true;
+			
+		for (int i = 0; i < entryFilters.length; i++) {
+			for (int j = 0; j < filters.length; j++) {
+				if (filters[j].equals(entryFilters[i]))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	//Return true, if the entryConfigs match the config we are packaging
+	private boolean filterByConfig(String[] entryConfigs) {
+		if (entryConfigs.length == 0 || config.equals(Config.genericConfig()))
+			return true;
+			
+		for (int i = 0; i < entryConfigs.length; i++) {
+			Config aConfig = new Config(entryConfigs[i]);
+			if (aConfig.equals(config) || aConfig.equals(Config.genericConfig())) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
