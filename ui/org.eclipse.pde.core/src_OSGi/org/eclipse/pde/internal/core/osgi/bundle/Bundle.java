@@ -70,15 +70,15 @@ public class Bundle extends BundleObject implements IBundle {
 		headers.put(KEY_DESC, plugin.getName());
 		headers.put(KEY_VENDOR, plugin.getProviderName());
 		headers.put(KEY_VERSION, plugin.getVersion());
-		boolean hasPluginClass=false;
+
 		if (plugin instanceof IFragment)
 			loadFragment((IFragment) plugin);
 		else
-			hasPluginClass = loadPlugin((IPlugin) plugin);
+			loadPlugin((IPlugin) plugin);
 		loadLibraries(
 			plugin.getLibraries(),
 			new SubProgressMonitor(monitor, 1));
-		loadImports(plugin.getImports(), hasPluginClass, new SubProgressMonitor(monitor, 1));
+		loadImports(plugin.getImports(), new SubProgressMonitor(monitor, 1));
 		if (plugin.getModel().getUnderlyingResource() != null)
 			loadExports(plugin.getModel().getUnderlyingResource().getProject());
 	}
@@ -117,7 +117,6 @@ public class Bundle extends BundleObject implements IBundle {
 
 	private void loadImports(
 		IPluginImport[] imports,
-		boolean hasPluginClass,
 		IProgressMonitor monitor) {
 		StringBuffer requires = new StringBuffer();
 		boolean hasRuntime=false;
@@ -134,7 +133,7 @@ public class Bundle extends BundleObject implements IBundle {
 			if (version != null) {
 			}
 		}
-		if (hasPluginClass && !hasRuntime) {
+		if (!hasRuntime) {
 			if (requires.length()>0)
 				requires.append(", ");
 			requires.append("org.eclipse.core.runtime");

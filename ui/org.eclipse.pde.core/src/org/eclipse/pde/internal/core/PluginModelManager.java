@@ -36,6 +36,14 @@ public class PluginModelManager implements IAdaptable {
 		listeners = new ArrayList();
 		searchablePluginsManager = new SearchablePluginsManager(this);
 	}
+	/*
+	 * Returns true if OSGi runtime is currently present either in
+	 * the workspace or in the target platform.
+	 */
+
+	public boolean isOSGiRuntime() {
+		return findPlugin("org.eclipse.core.runtime.osgi", null, 0)!=null;
+	}
 	
 	public Object getAdapter(Class key) {
 		return null;

@@ -311,22 +311,9 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
-	//OSGi exception plugins - should never have
-	// boot or runtime added to the classpath
-	// We should eventually move this to
-	// alternative runtime support
-	private static boolean isImplicitException(String id) {
-		if (id.startsWith("org.eclipse.osgi"))
-			return true;
-		if (id.equals("org.eclipse.core.runtime.adaptor"))
-			return true;
-		if (id.equals("org.eclipse.core.runtime.compatibility"))
-			return true;
-		if (id.equals("org.eclipse.core.runtime.osgi"))
-			return true;
-		if (id.equals("org.eclipse.update.configurator"))
-			return true;
-		return false;
+	
+	private static boolean isOSGiRuntime() {
+		return PDECore.getDefault().getModelManager().isOSGiRuntime();
 	}
 
 	protected static void addImplicitDependencies(
@@ -335,8 +322,7 @@ public class ClasspathUtilCore {
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-		//TODO we should handle this using alternative runtime support
-		if (isImplicitException(id))
+		if (isOSGiRuntime())
 			return;
 		if (!id.equals("org.eclipse.core.boot")
 			&& !id.equals("org.apache.xerces")) {

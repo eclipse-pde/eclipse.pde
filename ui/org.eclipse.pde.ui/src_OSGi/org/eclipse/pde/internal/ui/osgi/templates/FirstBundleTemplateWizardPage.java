@@ -530,12 +530,18 @@ public class FirstBundleTemplateWizardPage extends WizardPage implements IFirstW
 			plugin.add(library);
 		}
 		
+		boolean hasRuntime=false;
 		for (int i=0; i<dependencies.size(); i++) {
 			IPluginReference ref = (IPluginReference)dependencies.get(i);
 			IPluginImport iimport = model.getPluginFactory().createImport();
 			iimport.setId(ref.getId());
 			iimport.setVersion(ref.getVersion());
 			iimport.setMatch(ref.getMatch());
+			plugin.add(iimport);
+		}
+		if (data.getClassName()!=null && !hasRuntime) {
+			IPluginImport iimport = model.getPluginFactory().createImport();
+			iimport.setId("org.eclipse.core.runtime");
 			plugin.add(iimport);
 		}
 		IFile buildFile = project.getFile("build.properties");
