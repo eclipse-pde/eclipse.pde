@@ -118,6 +118,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			topics = null;
 			treeViewer.refresh();
 			return;
 		}

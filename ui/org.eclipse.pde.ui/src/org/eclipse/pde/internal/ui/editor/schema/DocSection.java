@@ -195,7 +195,8 @@ public class DocSection extends PDEFormSection {
 			sourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
 		} else if (
-			actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.SELECT_ALL)) {
+			actionId.equals(
+				org.eclipse.ui.IWorkbenchActionConstants.SELECT_ALL)) {
 			sourceViewer.doOperation(SourceViewer.SELECT_ALL);
 			return true;
 		} else if (
@@ -294,13 +295,8 @@ public class DocSection extends PDEFormSection {
 
 	private void initializeSectionCombo() {
 		IDocumentSection[] sections = schema.getDocumentSections();
-		sectionCombo.add(getTopicName(schema));
-		for (int i = 0; i < sections.length; i++) {
-			IDocumentSection section = sections[i];
-			sectionCombo.add(getTopicName(section));
-		}
-		sectionCombo.pack();
-		sectionCombo.select(0);
+		loadSectionCombo(sections);
+
 		sectionCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = sectionCombo.getSelectionIndex();
@@ -315,6 +311,16 @@ public class DocSection extends PDEFormSection {
 				}
 			}
 		});
+	}
+
+	private void loadSectionCombo(IDocumentSection[] sections) {
+		sectionCombo.add(getTopicName(schema));
+		for (int i = 0; i < sections.length; i++) {
+			IDocumentSection section = sections[i];
+			sectionCombo.add(getTopicName(section));
+		}
+		sectionCombo.pack();
+		sectionCombo.select(0);
 	}
 
 	private String resolveObjectName(Object object) {
@@ -344,7 +350,7 @@ public class DocSection extends PDEFormSection {
 		else
 			text = TextUtil.createMultiLine(text, 60, false);
 		*/
-			
+
 		document.set(text);
 		applyButton.setEnabled(false);
 		resetButton.setEnabled(false);
@@ -362,14 +368,24 @@ public class DocSection extends PDEFormSection {
 	}
 
 	public void update() {
+		int itemCount = sectionCombo.getItemCount();
+		IDocumentSection[] sections = schema.getDocumentSections();
+		if (itemCount != sections.length+1) {
+			// sections added or removed - reload combo
+			sectionCombo.removeAll();
+			loadSectionCombo(sections);
+			sectionCombo.getParent().layout();
+			updateEditorInput(schema);
+			return;
+		}
 		int index = sectionCombo.getSelectionIndex();
 		if (index == 0)
 			updateEditorInput(schema);
 		else {
-			IDocumentSection[] sections = schema.getDocumentSections();
 			updateEditorInput(sections[index - 1]);
 		}
 	}
+
 	public boolean canPaste(Clipboard clipboard) {
 		return sourceViewer.canDoOperation(SourceViewer.PASTE);
 	}
