@@ -25,7 +25,7 @@ public class BuildObject implements IBuildObject {
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException("Illegal attempt to change read-only build.properties");
+			throwCoreException(PDECore.getResourceString("BuildObject.readOnlyException")); //$NON-NLS-1$
 		}
 	}
 	public IBuildModel getModel() {

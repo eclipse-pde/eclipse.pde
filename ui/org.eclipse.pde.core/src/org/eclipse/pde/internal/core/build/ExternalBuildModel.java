@@ -45,7 +45,7 @@ protected void updateTimeStamp() {
 }
 
 private String getFullPath() {
-	String fileName = "build.properties";
+	String fileName = "build.properties"; //$NON-NLS-1$
 	return getInstallLocation() + File.separator + fileName;
 }
 

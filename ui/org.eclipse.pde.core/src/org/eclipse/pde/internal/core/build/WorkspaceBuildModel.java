@@ -100,7 +100,7 @@ public void save() {
 		return;
 	try {
 		String contents = getContents();
-		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("8859_1"));
+		ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes("8859_1")); //$NON-NLS-1$
 		if (file.exists()) {
 			file.setContents(stream, false, false, null);
 		} else {
@@ -113,7 +113,7 @@ public void save() {
 	}
 }
 public void save(PrintWriter writer) {
-	getBuild().write("", writer);
+	getBuild().write("", writer); //$NON-NLS-1$
 	dirty = false;
 }
 public void setDirty(boolean newDirty) {

@@ -38,7 +38,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 		return tokens.contains(token);
 	}
 	void processEntry(String value) {
-		StringTokenizer stok = new StringTokenizer(value, ",");
+		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			token = token.trim();

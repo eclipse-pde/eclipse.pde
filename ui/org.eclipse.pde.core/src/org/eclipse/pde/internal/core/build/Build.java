@@ -58,7 +58,7 @@ public void reset() {
 public void write(String indent, PrintWriter writer) {
 	for (int i=0; i<entries.size(); i++) {
 		IBuildEntry entry = (IBuildEntry)entries.elementAt(i);
-		entry.write("", writer);
+		entry.write("", writer); //$NON-NLS-1$
 	}
 }
 }

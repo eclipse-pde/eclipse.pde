@@ -61,7 +61,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 			buffer.append(id);
 		
 		if (version != null && version.trim().length() > 0) {
-			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\"");
+			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return buffer.toString();
 	}
