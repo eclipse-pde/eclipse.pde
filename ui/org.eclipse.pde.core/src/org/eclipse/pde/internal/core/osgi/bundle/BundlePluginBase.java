@@ -471,6 +471,13 @@ public class BundlePluginBase
 			return new IPluginExtension[0];
 		return extensions.getExtensions();
 	}
+	
+	public int getIndexOf(IPluginExtension e) {
+		IExtensions extensions = getExtensionsRoot();
+		if (extensions == null)
+			return -1;
+		return extensions.getIndexOf(e);
+	}
 
 	/*
 	 * (non-Javadoc)

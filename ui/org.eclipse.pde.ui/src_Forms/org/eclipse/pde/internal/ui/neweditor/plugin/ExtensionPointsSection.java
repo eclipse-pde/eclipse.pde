@@ -6,7 +6,8 @@
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.neweditor.*;
@@ -30,7 +31,7 @@ public class ExtensionPointsSection extends TableSection {
 			implements
 				IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 			return model.getPluginBase().getExtensionPoints();
 		}
 	}
@@ -52,6 +53,39 @@ public class ExtensionPointsSection extends TableSection {
 		pointTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		pointTable.setInput(getPage());		
+		pointTable.setInput(getPage());
+		IModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).addModelChangedListener(this);
+	}
+	public void dispose() {
+		IModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider)model).removeModelChangedListener(this);
+		super.dispose();
+	}
+	public void refresh() {
+		pointTable.refresh();
+		getForm().fireSelectionChanged(this, pointTable.getSelection());
+	}
+	public void modelChanged(IModelChangedEvent event) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+			return;
+		}
+		Object changeObject = event.getChangedObjects()[0];
+		if (changeObject instanceof IPluginExtensionPoint) {
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
+				pointTable.add(changeObject);
+				pointTable.setSelection(
+					new StructuredSelection(changeObject),
+					true);
+				pointTable.getTable().setFocus();
+			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+				pointTable.remove(changeObject);
+			} else {
+				pointTable.update(changeObject, null);
+			}
+		}
 	}
 }

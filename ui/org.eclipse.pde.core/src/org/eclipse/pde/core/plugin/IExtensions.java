@@ -116,5 +116,10 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 * </p>
 	 */
 	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
-	
+	/**
+	 * Returns the position of the extension in the receiver.
+	 * @param e the extension
+	 * @return the 0-based index of the extension in the receiver.
+	 */
+	int getIndexOf(IPluginExtension e);	
 }

@@ -8,7 +8,6 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.plugin.PluginElement;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.swt.widgets.Composite;
@@ -45,9 +44,7 @@ public class ExtensionsPage extends PDEFormPage {
 			if (object instanceof IPluginExtension)
 				return IPluginExtension.class;
 			if (object instanceof IPluginElement) {
-				// TODO this will burn us with source models
-				PluginElement e = (PluginElement)object;
-				return e.getElementInfo();
+				return ExtensionsSection.getSchemaElement((IPluginElement)object);
 			}
 			return object.getClass();
 		}

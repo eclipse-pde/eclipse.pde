@@ -147,6 +147,14 @@ public class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 		}
 		return (IPluginExtension[]) result.toArray(new IPluginExtension[result.size()]);
 	}
+	public int getIndexOf(IPluginExtension e) {
+		IPluginExtension [] children = getExtensions();
+		for (int i=0; i<children.length; i++) {
+			if (children[i].equals(e))
+				return i;
+		}
+		return -1;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#remove(org.eclipse.pde.core.plugin.IPluginExtension)
 	 */

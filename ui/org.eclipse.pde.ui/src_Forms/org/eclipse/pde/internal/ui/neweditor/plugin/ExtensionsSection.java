@@ -131,8 +131,7 @@ public class ExtensionsSection extends TreeSection
 	}
 	private static void addItemsForExtensionWithSchema(MenuManager menu,
 			IPluginExtension extension, IPluginParent parent) {
-		// TODO this will break with the source model elements
-		ISchema schema = ((PluginExtension) extension).getSchema();
+		ISchema schema = getSchema(extension);
 		String tagName = (parent == extension ? "extension" : parent.getName());
 		ISchemaElement elementInfo = schema.findElement(tagName);
 		if (elementInfo == null)
@@ -144,6 +143,25 @@ public class ExtensionsSection extends TreeSection
 			menu.add(action);
 		}
 	}
+	private static ISchema getSchema(IPluginExtension extension) {
+		String point = extension.getPoint();
+		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+		return registry.getSchema(point);
+	}
+	static ISchemaElement getSchemaElement(IPluginElement element) {
+		IPluginObject parent = element.getParent();
+		while (parent != null && !(parent instanceof IPluginExtension)) {
+			parent = parent.getParent();
+		}
+		if (parent != null) {
+			ISchema schema = getSchema((IPluginExtension)parent);
+			if (schema != null) {
+				return schema.findElement(element.getName());
+			}
+		}
+		return null;
+	}
+
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -277,7 +295,7 @@ public class ExtensionsSection extends TreeSection
 		MenuManager menu = new MenuManager(PDEPlugin
 				.getResourceString(POPUP_NEW));
 		IPluginExtension extension = getExtension(parent);
-		ISchema schema = ((PluginExtension) extension).getSchema();
+		ISchema schema = getSchema(extension);
 		if (schema == null) {
 			menu.add(new NewElementAction(null, parent));
 		} else {
@@ -395,13 +413,18 @@ public class ExtensionsSection extends TreeSection
 		genericElementImage = provider
 				.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
+	public void refresh() {
+		extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				extensionTree.refresh();
+				getForm().fireSelectionChanged(ExtensionsSection.this, extensionTree.getSelection());
+			}
+		});
+		super.refresh();
+	}
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					extensionTree.refresh();
-				}
-			});
+			markStale();
 			return;
 		}
 		Object changeObject = event.getChangedObjects()[0];
@@ -478,7 +501,7 @@ public class ExtensionsSection extends TreeSection
 	}
 	static Image getCustomImage(IPluginElement element) {
 		// TODO this will break us with the source model
-		ISchemaElement elementInfo = ((PluginElement) element).getElementInfo();
+		ISchemaElement elementInfo = getSchemaElement(element);
 		if (elementInfo != null && elementInfo.getIconProperty() != null) {
 			String iconProperty = elementInfo.getIconProperty();
 			IPluginAttribute att = element.getAttribute(iconProperty);
@@ -548,9 +571,9 @@ public class ExtensionsSection extends TreeSection
 			}
 		} else if (obj instanceof IPluginElement) {
 			String baseName = obj.toString();
-			PluginElement element = (PluginElement) obj;
+			IPluginElement element = (IPluginElement) obj;
 			String fullName = null;
-			ISchemaElement elementInfo = element.getElementInfo();
+			ISchemaElement elementInfo = getSchemaElement(element);
 			IPluginAttribute labelAtt = null;
 			if (elementInfo != null && elementInfo.getLabelProperty() != null) {
 				labelAtt = element.getAttribute(elementInfo.getLabelProperty());
@@ -614,6 +637,7 @@ public class ExtensionsSection extends TreeSection
 				Object obj = objects[i];
 				if (obj instanceof IPluginExtension) {
 					IPluginExtension extension = (IPluginExtension) obj;
+					//TODO this will break with the XML model
 					((PluginExtension) extension).setModel(model);
 					((PluginExtension) extension).setParent(plugin);
 					plugin.add(extension);
@@ -678,9 +702,9 @@ public class ExtensionsSection extends TreeSection
 					downEnabled = true;
 			} else if (item instanceof IPluginExtension) {
 				IPluginExtension extension = (IPluginExtension) item;
-				PluginBase pluginBase = (PluginBase) extension.getParent();
-				int index = pluginBase.getIndexOf(extension);
-				int size = pluginBase.getExtensionCount();
+				IExtensions extensions = (IExtensions)extension.getParent();
+				int index = extensions.getIndexOf(extension);
+				int size = extensions.getExtensions().length;
 				if (index > 0)
 					upEnabled = true;
 				if (index < size - 1)
