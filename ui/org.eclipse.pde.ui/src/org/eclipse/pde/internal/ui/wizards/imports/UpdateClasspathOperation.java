@@ -69,8 +69,9 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 
 			for (int i = 0; i < libraryClasspathEntries.length; i++) {
 				IClasspathEntry entry = libraryClasspathEntries[i];
+				if (entries.contains(entry)) continue;
 				if (root.findMember(entry.getPath()) != null)
-					entries.add(libraryClasspathEntries[i]);
+					entries.add(entry);
 				else if (model.isFragmentModel() == false) {
 					resolveEntryInFragments(root, entry, entries);
 				}
@@ -143,7 +144,8 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 					IClasspathEntry newEntry = getLibraryEntry(project, name, true);
 					if (root.exists(newEntry.getPath())) {
 						// Resolved - finish
-						entries.add(newEntry);
+						if (!entries.contains(entry))
+							entries.add(newEntry);
 						return true;
 					}
 				}
@@ -218,8 +220,10 @@ public class UpdateClasspathOperation implements IWorkspaceRunnable {
 				for (int j = 0; j < libraries.length; j++) {
 					IProject project = root.getProject(fragment.getId());
 					IClasspathEntry entry = getLibraryEntry(project, libraries[j], true);
-					if (root.exists(entry.getPath()))
-						entries.add(entry);
+					if (root.exists(entry.getPath())) {
+						if (!entries.contains(entry))
+							entries.add(entry);
+					}
 				}
 			}
 		}
