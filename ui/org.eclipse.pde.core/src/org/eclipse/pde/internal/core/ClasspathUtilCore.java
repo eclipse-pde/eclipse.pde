@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
@@ -188,6 +189,15 @@ public class ClasspathUtilCore {
 		computePluginEntries(model, result, null);
 		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
+    
+    
+    public static boolean hasExtensibleAPI(IPlugin plugin) {
+        if (plugin instanceof Plugin) 
+            return ((Plugin)plugin).hasExtensibleAPI();
+        if (plugin instanceof BundlePlugin)
+            return ((BundlePlugin)plugin).hasExtensibleAPI();
+        return false;
+    }
 
 	private static void addDependency(
 		IPluginBase  plugin,
@@ -201,7 +211,7 @@ public class ClasspathUtilCore {
 
 		boolean inWorkspace = addPlugin(plugin, isExported, true, result, alreadyAdded);
 		
-		if (plugin instanceof IPlugin && hasExtensibleAPI((IPlugin)plugin)) {
+		if (plugin instanceof Plugin && ((Plugin)plugin).hasExtensibleAPI()) {
 			String id  = plugin.getId();
 			String version = plugin.getVersion();
 			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, version);
@@ -230,14 +240,6 @@ public class ClasspathUtilCore {
 			}
 		}
 	}
-    
-    public static boolean hasExtensibleAPI(IPlugin plugin) {
-        if (plugin instanceof Plugin) 
-            return ((Plugin)plugin).hasExtensibleAPI();
-        if (plugin instanceof BundlePlugin)
-            return ((BundlePlugin)plugin).hasExtensibleAPI();
-        return false;
-    }
 	
 	private static boolean addPlugin(IPluginBase plugin, boolean isExported, boolean useInclusionPatterns, Vector result, HashSet alreadyAdded) throws CoreException {
 		IPluginModelBase model = (IPluginModelBase)plugin.getModel();
@@ -256,11 +258,10 @@ public class ClasspathUtilCore {
 			IClasspathEntry entry = null;
 			if (ENABLE_RESTRICTIONS && useinclusionPatterns) {
 				IPath[] inclusionPatterns = getInclusionPatterns(model);
-				IPath[] exclusionPatterns = (inclusionPatterns.length == 0) ? new IPath[] {new Path("**/*")} : new Path[0]; //$NON-NLS-1$
+				IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
 				entry = JavaCore.newProjectEntry(
 							project.getFullPath(), 
-							inclusionPatterns, 
-							exclusionPatterns, 
+							accessRules, 
 							false, 
 							new IClasspathAttribute[0], 
 							isExported);
@@ -306,13 +307,12 @@ public class ClasspathUtilCore {
 		IClasspathEntry entry = null;
 		if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
 			IPath[] inclusionPatterns = getInclusionPatterns(model);
-			IPath[] exclusionPatterns = inclusionPatterns.length == 0 ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+			IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
 			entry = JavaCore.newLibraryEntry(
 						new Path(model.getInstallLocation()), 
 						sourcePath, 
 						null,
-						inclusionPatterns, 
-						exclusionPatterns,
+						accessRules,
 						new IClasspathAttribute[0],
 						isExported);
 		} else {
@@ -497,13 +497,12 @@ public class ClasspathUtilCore {
 			
 			if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
 				IPath[] inclusionPatterns = getInclusionPatterns(library);
-				IPath[] exclusionPatterns = inclusionPatterns.length == 0 ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+				IAccessRule[] accessRules = getAccessRules(inclusionPatterns);
 				entry = JavaCore.newLibraryEntry(
 							path, 
 							getSourceAnnotation(model, expandedName), 
 							null, 
-							inclusionPatterns,
-							exclusionPatterns,
+							accessRules,
 							new IClasspathAttribute[0], 
 							exported);
 			} else {
@@ -543,6 +542,19 @@ public class ClasspathUtilCore {
 		return (IPath[])list.toArray(new IPath[list.size()]);
 	}
 	
+	private static IAccessRule[] getAccessRules(IPath[] inclusionPatterns) {
+		int length = inclusionPatterns.length;
+		IAccessRule[] accessRules;
+		if (length == 0) {
+			accessRules = new IAccessRule[] {JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE)}; //$NON-NLS-1$
+		} else {
+			accessRules = new IAccessRule[length];
+			for (int i = 0; i < length; i++) {
+				accessRules[i] = JavaCore.newAccessRule(inclusionPatterns[i], IAccessRule.K_ACCESSIBLE);
+			}
+		}
+		return accessRules;
+	}
 	
 	private static IPath[] getInclusionPatterns(IPluginLibrary library) {		
 		String[] exports = library.getContentFilters();
