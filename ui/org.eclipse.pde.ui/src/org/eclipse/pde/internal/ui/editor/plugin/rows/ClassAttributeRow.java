@@ -130,7 +130,8 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
 						PlatformUI.getWorkbench().getProgressService(),
 						SearchEngine.createWorkspaceScope(),
-						IJavaElementSearchConstants.CONSIDER_CLASSES, false,
+						IJavaElementSearchConstants.CONSIDER_ALL_TYPES, 
+                        false,
 						""); //$NON-NLS-1$
 				dialog.setTitle(PDEPlugin.getResourceString("ClassAttributeRow.dialogTitle")); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
