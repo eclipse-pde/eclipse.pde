@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
@@ -26,6 +27,8 @@ public class ProductExportJob extends FeatureExportJob {
 	private String fZipExtension = Platform.getOS().equals("macosx") ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
 
 	private String fFeatureLocation;
+
+	private ArrayList fTransientFeatureProps = new ArrayList();
 
 	public ProductExportJob(String name, IProductModel model) {
 		super(name);
@@ -98,8 +101,7 @@ public class ProductExportJob extends FeatureExportJob {
 		} catch (IOException e) {
 		} finally {
 			for (int i = 0; i < fItems.length; i++) {
-				if (fItems[i] instanceof IPluginModelBase)
-					deleteBuildFiles((IPluginModelBase) fItems[i]);
+				deleteBuildFiles((IModel)fItems[i]);
 			}
 			cleanup(new SubProgressMonitor(monitor, 1));
 			monitor.done();
@@ -134,10 +136,27 @@ public class ProductExportJob extends FeatureExportJob {
 				IPluginBase plugin = ((IPluginModelBase) fItems[i])
 						.getPluginBase();
 				writer.println("<plugin id=\"" + plugin.getId() + "\" version=\"0.0.0\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (fItems[i] instanceof IFeatureModel) {
+				IFeature feature = ((IFeatureModel)fItems[i]).getFeature();
+				writer.println("<includes id=\""+ feature.getId() + "\" version=\"" + feature.getVersion() + "\"/>");
+				createTransientBuildPropertiesFile((IFeatureModel)fItems[i]);
 			}
 		}
 		writer.println("</feature>"); //$NON-NLS-1$
 		writer.close();
+	}
+
+	private void createTransientBuildPropertiesFile(IFeatureModel model) {
+		// must add fake build.properties file.
+		// Otherwise, the feature will not appear in the feature-based build
+		File file = new File(model.getInstallLocation(), "build.properties");
+		if (!file.exists()) {
+			Properties properties = new Properties();
+			properties.put("bin.includes", "*");
+			properties.put("bin.excludes", "build.properties");
+			save(file, properties, "Build Properties");
+			fTransientFeatureProps.add(model.getInstallLocation());
+		}
 	}
 
 	/*
@@ -353,6 +372,19 @@ public class ProductExportJob extends FeatureExportJob {
 			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
+		}
+	}
+	
+	public void deleteBuildFiles(IModel model) throws CoreException {
+		super.deleteBuildFiles(model);
+		if (model instanceof IFeatureModel) {
+			String location = ((IFeatureModel)model).getInstallLocation();
+			if (fTransientFeatureProps.contains(location)) {
+				File file = new File(location, "build.properties");
+				if (file.exists())
+					file.delete();
+				fTransientFeatureProps.remove(location);
+			}
 		}
 	}
 }
