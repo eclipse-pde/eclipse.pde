@@ -11,12 +11,13 @@
 
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.update.ui.forms.internal.engine.FormEngine;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 public class FormBrowser {
 	ScrolledComposite scomp;
@@ -43,6 +44,14 @@ public class FormBrowser {
 				updateSize();
 			}
 		});
+     	engine.addDisposeListener(new DisposeListener() {
+     		public void widgetDisposed(DisposeEvent e) {
+     			if (factory!=null) {
+     				factory.dispose();
+     				factory = null;
+     			}
+     		}
+     	});
 		if (text!=null) loadText(text);
 	}
 	
