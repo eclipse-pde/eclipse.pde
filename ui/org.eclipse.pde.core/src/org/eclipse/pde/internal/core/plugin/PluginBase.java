@@ -132,7 +132,10 @@ public abstract class PluginBase
 
 	private void addArrayToVector(Vector vector, Object[] array) {
 		for (int i = 0; i < array.length; i++) {
-			vector.add(array[i]);
+			Object obj= array[i];
+			if (obj instanceof PluginObject)
+				((PluginObject) obj).setParent(this);
+			vector.add(obj);
 		}
 	}
 
