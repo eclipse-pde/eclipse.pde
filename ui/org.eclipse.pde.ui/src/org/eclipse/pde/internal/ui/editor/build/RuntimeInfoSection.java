@@ -63,8 +63,6 @@ public class RuntimeInfoSection
 		"ManifestEditor.JarsSection.newFolder";
 	public static final String JAR_INCLUDE =
 		"BuildPropertiesEditor.RuntimeInfoSection.buildInclude";
-	private static RGB LIGHT_GRAY = new RGB(172, 168, 153);
-	private static RGB BLACK = new RGB(0, 0, 0);
 	public Image libImage;
 	public Image jarsImage;
 	protected TableViewer libraryViewer;

@@ -52,9 +52,6 @@ public class BuildClasspathSection
 	private TableViewer entryTable;
 	private Image entryImage;
 	protected Control sectionControl;
-	private static RGB LIGHT_GRAY =  new RGB(172, 168, 153);
-	private static RGB BLACK = new RGB(0, 0, 0);
-	
 
 	/**
 	 * Implementation of a <code>ISelectionValidator</code> to validate the
