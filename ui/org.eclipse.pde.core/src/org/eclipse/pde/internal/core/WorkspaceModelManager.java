@@ -120,7 +120,7 @@ public class WorkspaceModelManager
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getAllEditableModelsUnused(java.lang.Class)
 	 */
 	public boolean getAllEditableModelsUnused(Class modelClass) {
-		return false;
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
