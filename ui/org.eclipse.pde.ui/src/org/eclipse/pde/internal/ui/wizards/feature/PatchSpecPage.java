@@ -23,8 +23,8 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 
 	public PatchSpecPage(WizardNewProjectCreationPage mainPage) {
 		super(mainPage, true);
-		setTitle(PDEPlugin.getResourceString("PatchSpec.title"));
-		setDescription(PDEPlugin.getResourceString("PatchSpec.desc"));
+		setTitle(PDEPlugin.getResourceString("PatchSpec.title")); //$NON-NLS-1$
+		setDescription(PDEPlugin.getResourceString("PatchSpec.desc")); //$NON-NLS-1$
 	}
 
 	protected void initialize() {
@@ -72,19 +72,19 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 
 	public String getPatchId(){
 		if (patchIdText == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return patchIdText.getText();
 	}
 	
 	public String getPatchName(){
 		if (patchNameText == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return patchNameText.getText();
 	}
 	
 	public String getPatchProvider(){
 		if (patchProviderText == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return patchProviderText.getText();
 	}
 	

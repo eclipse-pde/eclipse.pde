@@ -30,8 +30,8 @@ import org.eclipse.ui.help.*;
  */
 public class PatchPluginListPage extends BasePluginListPage {
 
-	public static final String PAGE_TITLE = "PatchPlugins.title";
-	public static final String PAGE_DESC = "PatchPlugins.desc";
+	public static final String PAGE_TITLE = "PatchPlugins.title"; //$NON-NLS-1$
+	public static final String PAGE_DESC = "PatchPlugins.desc"; //$NON-NLS-1$
 	private IProjectProvider provider;
 	private CheckboxTableViewer pluginViewer;
 
@@ -48,7 +48,7 @@ public class PatchPluginListPage extends BasePluginListPage {
 	 * @param provider
 	 */
 	public PatchPluginListPage(IProjectProvider provider) {
-		super("patchPluginList");
+		super("patchPluginList"); //$NON-NLS-1$
 		this.provider = provider;
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
@@ -74,7 +74,7 @@ public class PatchPluginListPage extends BasePluginListPage {
 	}
 
 	public PatchPluginListPage() {
-		super("patchPluginListPage");
+		super("patchPluginListPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
 	}

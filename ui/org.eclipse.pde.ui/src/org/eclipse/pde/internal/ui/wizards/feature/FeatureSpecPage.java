@@ -15,8 +15,8 @@ import org.eclipse.ui.dialogs.*;
 
 public class FeatureSpecPage extends BaseFeatureSpecPage {
 
-	public static final String PAGE_TITLE = "NewFeatureWizard.SpecPage.title";
-	public static final String PAGE_DESC = "NewFeatureWizard.SpecPage.desc";
+	public static final String PAGE_TITLE = "NewFeatureWizard.SpecPage.title"; //$NON-NLS-1$
+	public static final String PAGE_DESC = "NewFeatureWizard.SpecPage.desc"; //$NON-NLS-1$
 
 	protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
 		super(mainPage, false);
@@ -34,7 +34,7 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 		}
 		if (initialName == null)
 			featureNameText.setText(projectName);
-		featureVersionText.setText("1.0.0");
+		featureVersionText.setText("1.0.0"); //$NON-NLS-1$
 	}
 
 	public FeatureData getFeatureData() {

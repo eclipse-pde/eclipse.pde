@@ -22,17 +22,17 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class FeatureCustomHandlerPage extends WizardPage {
-	private static final String KEY_TITLE = "FeatureCustomHandlerPage.title";
-	private static final String KEY_OUTPUT = "ProjectStructurePage.output";
-	private static final String KEY_LIBRARY = "FeatureCustomHandlerPage.library";
-	private static final String KEY_SOURCE = "ProjectStructurePage.source";
-	private static final String KEY_DESC = "FeatureCustomHandlerPage.desc";
+	private static final String KEY_TITLE = "FeatureCustomHandlerPage.title"; //$NON-NLS-1$
+	private static final String KEY_OUTPUT = "ProjectStructurePage.output"; //$NON-NLS-1$
+	private static final String KEY_LIBRARY = "FeatureCustomHandlerPage.library"; //$NON-NLS-1$
+	private static final String KEY_SOURCE = "ProjectStructurePage.source"; //$NON-NLS-1$
+	private static final String KEY_DESC = "FeatureCustomHandlerPage.desc"; //$NON-NLS-1$
 	private static final String KEY_CUSTOM_INSTALL_HANDLER =
-		"FeatureCustomHandlerPage.customProject";
-	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle";
-	public static final String FEATURE_LIBRARY_ERR = "FeatureCustomHandlerPage.error.library";
-	public static final String FEATURE_SOURCE_ERR = "FeatureCustomHandlerPage.error.source";
-	public static final String FEATURE_OUTPUT_ERR = "FeatureCustomHandlerPage.error.output";
+		"FeatureCustomHandlerPage.customProject"; //$NON-NLS-1$
+	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle"; //$NON-NLS-1$
+	public static final String FEATURE_LIBRARY_ERR = "FeatureCustomHandlerPage.error.library"; //$NON-NLS-1$
+	public static final String FEATURE_SOURCE_ERR = "FeatureCustomHandlerPage.error.source"; //$NON-NLS-1$
+	public static final String FEATURE_OUTPUT_ERR = "FeatureCustomHandlerPage.error.output"; //$NON-NLS-1$
 
 	private IProjectProvider provider;
 	private Text buildOutputText;
@@ -58,8 +58,8 @@ public class FeatureCustomHandlerPage extends WizardPage {
 			return source;
 		}
 		public String getRuntimeLibraryName() {
-			if (library != null && !library.endsWith(".jar"))
-				library += ".jar";
+			if (library != null && !library.endsWith(".jar")) //$NON-NLS-1$
+				library += ".jar"; //$NON-NLS-1$
 			return library;
 		}
 		public boolean hasCustomHandler(){
@@ -68,7 +68,7 @@ public class FeatureCustomHandlerPage extends WizardPage {
 	}
 
 	public FeatureCustomHandlerPage(IProjectProvider provider) {
-		super("projectStructure");
+		super("projectStructure"); //$NON-NLS-1$
 		this.provider = provider;
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
@@ -199,19 +199,19 @@ public class FeatureCustomHandlerPage extends WizardPage {
 		if (isInitialized)
 			return;
 		customChoice.setSelection(false);
-		if (buildOutputText.getText().equals(""))
-			buildOutputText.setText("bin");
-		if (libraryText.getText().equals("")
-			|| libraryText.getText().equals(".jar")) {
+		if (buildOutputText.getText().equals("")) //$NON-NLS-1$
+			buildOutputText.setText("bin"); //$NON-NLS-1$
+		if (libraryText.getText().equals("") //$NON-NLS-1$
+			|| libraryText.getText().equals(".jar")) { //$NON-NLS-1$
 			String lastSegment = setInitialId(provider.getProjectName());
 			int loc = lastSegment.lastIndexOf('.');
 			if (loc != -1) {
 				lastSegment = lastSegment.substring(loc + 1);
 			}
-			libraryText.setText(lastSegment + ".jar");
+			libraryText.setText(lastSegment + ".jar"); //$NON-NLS-1$
 		}
-		if (sourceText.getText().equals(""))
-			sourceText.setText("src");
+		if (sourceText.getText().equals("")) //$NON-NLS-1$
+			sourceText.setText("src"); //$NON-NLS-1$
 		if (customChoice != null){
 			libraryText.setEnabled(customChoice.getSelection());
 			sourceText.setEnabled(customChoice.getSelection());
@@ -231,7 +231,7 @@ public class FeatureCustomHandlerPage extends WizardPage {
 
 	private String setInitialId(String projectName) {
 		StringBuffer buffer = new StringBuffer();
-		StringTokenizer stok = new StringTokenizer(projectName, ".");
+		StringTokenizer stok = new StringTokenizer(projectName, "."); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			for (int i = 0; i < token.length(); i++) {
@@ -240,7 +240,7 @@ public class FeatureCustomHandlerPage extends WizardPage {
 			}
 			if (stok.hasMoreTokens()
 				&& buffer.charAt(buffer.length() - 1) != '.')
-				buffer.append(".");
+				buffer.append("."); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

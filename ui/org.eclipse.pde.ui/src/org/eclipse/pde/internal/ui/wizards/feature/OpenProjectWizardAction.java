@@ -19,7 +19,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @param text
 	 */
 	public OpenProjectWizardAction() {
-		super("OpenProject");
+		super("OpenProject"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -33,7 +33,6 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
 	 */
 	public void run(String[] params, ICheatSheetManager manager) {
-		System.out.println("OpenProjectWizardAction run");
 		Hashtable defValues = new Hashtable();
 		if (params.length>0)
 			defValues.put(NewFeatureProjectWizard.DEF_PROJECT_NAME, params[0]);

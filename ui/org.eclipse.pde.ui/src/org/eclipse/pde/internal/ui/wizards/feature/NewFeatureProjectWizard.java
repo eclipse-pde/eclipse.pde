@@ -39,17 +39,17 @@ import org.eclipse.ui.wizards.newresource.*;
 public class NewFeatureProjectWizard extends NewWizard
 		implements
 			IExecutableExtension {
-	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle";
-	public static final String MAIN_PAGE_TITLE = "NewFeatureWizard.MainPage.title";
-	public static final String MAIN_PAGE_DESC = "NewFeatureWizard.MainPage.desc";
-	public static final String DEF_PROJECT_NAME = "project-name";
-	public static final String DEF_ID = "feature-id";
-	public static final String DEF_NAME = "feature-name";
+	public static final String KEY_WTITLE = "NewFeatureWizard.wtitle"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_TITLE = "NewFeatureWizard.MainPage.title"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_DESC = "NewFeatureWizard.MainPage.desc"; //$NON-NLS-1$
+	public static final String DEF_PROJECT_NAME = "project-name"; //$NON-NLS-1$
+	public static final String DEF_ID = "feature-id"; //$NON-NLS-1$
+	public static final String DEF_NAME = "feature-name"; //$NON-NLS-1$
 
-	public static final String CREATING_PROJECT = "NewFeatureWizard.creatingProject";
-	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature";
-	public static final String CREATING_FOLDERS = "NewFeatureWizard.creatingFolders";
-	public static final String CREATING_MANIFEST = "NewFeatureWizard.creatingManifest";
+	public static final String CREATING_PROJECT = "NewFeatureWizard.creatingProject"; //$NON-NLS-1$
+	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature"; //$NON-NLS-1$
+	public static final String CREATING_FOLDERS = "NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
+	public static final String CREATING_MANIFEST = "NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
 
 	private WizardNewProjectCreationPage mainPage;
 	private FeatureSpecPage specPage;
@@ -92,7 +92,7 @@ public class NewFeatureProjectWizard extends NewWizard
 	
 	public void addPages() {
 		provider = new FeatureProjectProvider();
-		mainPage = new WizardNewProjectCreationPage("main");
+		mainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -198,21 +198,21 @@ public class NewFeatureProjectWizard extends NewWizard
 	}
 	private void createBuildProperties(IProject project) throws CoreException {
 		StructureData structureData = structurePage.getStructureData();
-		String fileName = "build.properties";
+		String fileName = "build.properties"; //$NON-NLS-1$
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-			IBuildEntry ientry = model.getFactory().createEntry("bin.includes");
-			ientry.addToken("feature.xml");
+			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			ientry.addToken("feature.xml"); //$NON-NLS-1$
 			String library = structureData.getRuntimeLibraryName();
 			if (library != null) {
 				String source = structureData.getSourceFolderName();
 				if (source != null) {
 					IBuildEntry entry = model.getFactory().createEntry(
 							IBuildEntry.JAR_PREFIX + library);
-					if (!source.endsWith("/"))
-						source += "/";
+					if (!source.endsWith("/")) //$NON-NLS-1$
+						source += "/"; //$NON-NLS-1$
 					entry.addToken(source);
 					ientry.addToken(library);
 					model.getBuild().add(entry);
@@ -222,8 +222,8 @@ public class NewFeatureProjectWizard extends NewWizard
 					IBuildEntry entry = model.getFactory().createEntry(
 							IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX
 									+ library);
-					if (!output.endsWith("/"))
-						output += "/";
+					if (!output.endsWith("/")) //$NON-NLS-1$
+						output += "/"; //$NON-NLS-1$
 					entry.addToken(output);
 					model.getBuild().add(entry);
 				}
@@ -237,7 +237,7 @@ public class NewFeatureProjectWizard extends NewWizard
 
 	private IFile createFeatureManifest(IProject project, FeatureData data,
 			IPluginBase[] plugins) throws CoreException {
-		IFile file = project.getFile("feature.xml");
+		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
 		model.setFile(file);
 		IFeature feature = model.getFeature();
@@ -333,7 +333,7 @@ public class NewFeatureProjectWizard extends NewWizard
 		} else {
 			project.create(monitor);
 			project.open(monitor);
-			IFile featureFile = project.getFile("feature.xml");
+			IFile featureFile = project.getFile("feature.xml"); //$NON-NLS-1$
 			if (featureFile.exists())
 				openFeatureManifest(featureFile);
 			monitor.worked(3);

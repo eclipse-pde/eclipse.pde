@@ -53,22 +53,22 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	protected boolean isInitialized = false;
 	protected IFeatureModel fFeatureToPatch;
 	
-	public static final String PATCH_ID = "NewFeaturePatch.SpecPage.id";
-	public static final String PATCH_NAME = "NewFeaturePatch.SpecPage.name";
-	public static final String PATCH_PROVIDER = "NewFeaturePatch.SpecPage.provider";
+	public static final String PATCH_ID = "NewFeaturePatch.SpecPage.id"; //$NON-NLS-1$
+	public static final String PATCH_NAME = "NewFeaturePatch.SpecPage.name"; //$NON-NLS-1$
+	public static final String PATCH_PROVIDER = "NewFeaturePatch.SpecPage.provider"; //$NON-NLS-1$
 	
-	public static final String FEATURE_ID = "NewFeatureWizard.SpecPage.id";
-	public static final String FEATURE_NAME = "NewFeatureWizard.SpecPage.name";
-	public static final String FEATURE_VERSION = "NewFeatureWizard.SpecPage.version";
-	public static final String FEATURE_PROVIDER = "NewFeatureWizard.SpecPage.provider";
+	public static final String FEATURE_ID = "NewFeatureWizard.SpecPage.id"; //$NON-NLS-1$
+	public static final String FEATURE_NAME = "NewFeatureWizard.SpecPage.name"; //$NON-NLS-1$
+	public static final String FEATURE_VERSION = "NewFeatureWizard.SpecPage.version"; //$NON-NLS-1$
+	public static final String FEATURE_PROVIDER = "NewFeatureWizard.SpecPage.provider"; //$NON-NLS-1$
 	
-	public static final String KEY_VERSION_FORMAT = "NewFeatureWizard.SpecPage.versionFormat";
-	public static final String KEY_INVALID_ID = "NewFeatureWizard.SpecPage.invalidId";
-	public static final String KEY_MISSING = "NewFeatureWizard.SpecPage.missing";
+	public static final String KEY_VERSION_FORMAT = "NewFeatureWizard.SpecPage.versionFormat"; //$NON-NLS-1$
+	public static final String KEY_INVALID_ID = "NewFeatureWizard.SpecPage.invalidId"; //$NON-NLS-1$
+	public static final String KEY_MISSING = "NewFeatureWizard.SpecPage.missing"; //$NON-NLS-1$
 	
 	public BaseFeatureSpecPage(WizardNewProjectCreationPage mainPage,
 			boolean isPatch) {
-		super("specPage");
+		super("specPage"); //$NON-NLS-1$
 		this.isPatch = isPatch;
 		this.mainPage = mainPage;
 	}
@@ -120,7 +120,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			patchGroup.setLayoutData(gd);
-			patchGroup.setText("Properties of feature being patched");
+			patchGroup.setText(PDEPlugin.getResourceString("BaseFeatureSpecPage.patchGroup.title")); //$NON-NLS-1$
 			addFeatureProperties(patchGroup, listener);
 		} else {
 			addFeatureProperties(container, listener);
@@ -261,7 +261,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	}
 	protected String computeInitialId(String projectName) {
 		StringBuffer buffer = new StringBuffer();
-		StringTokenizer stok = new StringTokenizer(projectName, ".");
+		StringTokenizer stok = new StringTokenizer(projectName, "."); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			for (int i = 0; i < token.length(); i++) {
@@ -270,7 +270,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			}
 			if (stok.hasMoreTokens()
 					&& buffer.charAt(buffer.length() - 1) != '.')
-				buffer.append(".");
+				buffer.append("."); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
@@ -295,7 +295,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 	protected String verifyIdRules() {
 		String problemText = PDEPlugin.getResourceString(KEY_INVALID_ID);
 		String name = featureIdText.getText();
-		StringTokenizer stok = new StringTokenizer(name, ".");
+		StringTokenizer stok = new StringTokenizer(name, "."); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			for (int i = 0; i < token.length(); i++) {
@@ -305,7 +305,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		}
 		if (isPatch()){
 			name = patchIdText.getText();
-			stok = new StringTokenizer(name, ".");
+			stok = new StringTokenizer(name, "."); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String token = stok.nextToken();
 				for (int i = 0; i < token.length(); i++) {

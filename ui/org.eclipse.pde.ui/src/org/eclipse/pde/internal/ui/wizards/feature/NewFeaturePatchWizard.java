@@ -44,19 +44,19 @@ import org.eclipse.ui.wizards.newresource.*;
  */
 public class NewFeaturePatchWizard extends NewWizard implements IExecutableExtension {
 
-	public static final String KEY_WTITLE = "FeaturePatch.wtitle";
-	public static final String MAIN_PAGE_TITLE = "FeaturePatch.MainPage.title";
-	public static final String MAIN_PAGE_DESC = "FeaturePatch.MainPage.desc";
-	public static final String DEF_PROJECT_NAME = "project-name";
-	public static final String DEF_FEATURE_ID = "feature-id";
-	public static final String DEF_FEATURE_NAME = "feature-name";
+	public static final String KEY_WTITLE = "FeaturePatch.wtitle"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_TITLE = "FeaturePatch.MainPage.title"; //$NON-NLS-1$
+	public static final String MAIN_PAGE_DESC = "FeaturePatch.MainPage.desc"; //$NON-NLS-1$
+	public static final String DEF_PROJECT_NAME = "project-name"; //$NON-NLS-1$
+	public static final String DEF_FEATURE_ID = "feature-id"; //$NON-NLS-1$
+	public static final String DEF_FEATURE_NAME = "feature-name"; //$NON-NLS-1$
 	public static final String CREATING_PROJECT =
-		"NewFeatureWizard.creatingProject";
-	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature";
+		"NewFeatureWizard.creatingProject"; //$NON-NLS-1$
+	public static final String OVERWRITE_FEATURE = "NewFeatureWizard.overwriteFeature"; //$NON-NLS-1$
 	public static final String CREATING_FOLDERS =
-		"NewFeatureWizard.creatingFolders";
+		"NewFeatureWizard.creatingFolders"; //$NON-NLS-1$
 	public static final String CREATING_MANIFEST =
-		"NewFeatureWizard.creatingManifest";
+		"NewFeatureWizard.creatingManifest"; //$NON-NLS-1$
 	
 	public static final int COPYRIGHT_INDEX = 1;
 	public static final int LICENSE_INDEX = 2;
@@ -103,7 +103,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 	}
 
 	public void addPages() {
-		mainPage = new WizardNewProjectCreationPage("main");
+		mainPage = new WizardNewProjectCreationPage("main"); //$NON-NLS-1$
 		mainPage.setTitle(PDEPlugin.getResourceString(MAIN_PAGE_TITLE));
 		mainPage.setDescription(PDEPlugin.getResourceString(MAIN_PAGE_DESC));
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -210,7 +210,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		} else {
 			project.create(monitor);
 			project.open(monitor);
-			IFile featureFile = project.getFile("feature.xml");
+			IFile featureFile = project.getFile("feature.xml"); //$NON-NLS-1$
 			if (featureFile.exists())
 				openFeatureManifest(featureFile);
 			monitor.worked(3);
@@ -228,14 +228,14 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 	private void createBuildProperties(IProject project)
 	throws CoreException {
 		StructureData structureData = structurePage.getStructureData();
-		String fileName = "build.properties";
+		String fileName = "build.properties"; //$NON-NLS-1$
 		IPath path = project.getFullPath().append(fileName);
 		IFile file = project.getWorkspace().getRoot().getFile(path);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry =
-				model.getFactory().createEntry("bin.includes");
-			ientry.addToken("feature.xml");
+				model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			ientry.addToken("feature.xml"); //$NON-NLS-1$
 			String library = structureData.getRuntimeLibraryName();
 			if (library != null){
 				String source = structureData.getSourceFolderName();
@@ -243,8 +243,8 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 					IBuildEntry entry =
 						model.getFactory().createEntry(
 							IBuildEntry.JAR_PREFIX + library);
-					if (!source.endsWith("/"))
-						source += "/";
+					if (!source.endsWith("/")) //$NON-NLS-1$
+						source += "/"; //$NON-NLS-1$
 					entry.addToken(source);
 					ientry.addToken(library);
 					model.getBuild().add(entry);
@@ -252,8 +252,8 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 				String output = structureData.getJavaBuildFolderName();
 				if (output!=null){
 					IBuildEntry entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
-					if (!output.endsWith("/"))
-						output+="/";
+					if (!output.endsWith("/")) //$NON-NLS-1$
+						output+="/"; //$NON-NLS-1$
 					entry.addToken(output);
 					model.getBuild().add(entry);
 				}
@@ -270,28 +270,28 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			IFeaturePlugin[] plugins,
 			IFeatureModel featureModel)
 	throws CoreException {
-		IFile file = project.getFile("feature.xml");
+		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
 		model.setFile(file);
 		IFeature feature = model.getFeature();
 		feature.setLabel(specPage.getPatchName());
 		feature.setId(specPage.getPatchId());
-		feature.setVersion("1.0.0");
+		feature.setVersion("1.0.0"); //$NON-NLS-1$
 		feature.setProviderName(specPage.getPatchProvider());
 
 		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
 		for (int i = 0; i<plugins.length; i++){
 			added[i] = model.getFactory().createPlugin();
 			String name = feature.getId();
-			int loc = name.lastIndexOf(".");
+			int loc = name.lastIndexOf("."); //$NON-NLS-1$
 			if (loc!=-1 && loc != name.length())
 				name = name.substring(loc+1, name.length());
-			String[] versionSegments = plugins[i].getVersion().split("\\.");
+			String[] versionSegments = plugins[i].getVersion().split("\\."); //$NON-NLS-1$
 			StringBuffer version = new StringBuffer();
 			for (int j = 0; j<versionSegments.length; j++){
 				if (j<3){
 					version.append(versionSegments[j]);
-					version.append(".");
+					version.append("."); //$NON-NLS-1$
 				}
 			}
 			version.append(name);
@@ -329,14 +329,14 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		IFeatureInfo info = model.getFactory().createInfo(COPYRIGHT_INDEX);
 		feature.setFeatureInfo(info, COPYRIGHT_INDEX);
 		
-		info.setURL(feature.getId() + " Copyright URL");
-		info.setDescription(feature.getId() + " Copyright Description");
+		info.setURL(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleCopyrightURL")); //$NON-NLS-1$
+		info.setDescription(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleCopyrightDesc")); //$NON-NLS-1$
 		
 		info = model.getFactory().createInfo(LICENSE_INDEX);
 		feature.setFeatureInfo(info, LICENSE_INDEX);
 		
-		info.setURL(feature.getId() + " License URL");
-		info.setDescription(feature.getId() + " License Description");
+		info.setURL(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleLicenseURL")); //$NON-NLS-1$
+		info.setDescription(feature.getId() + PDEPlugin.getResourceString("NewFeaturePatchWizard.sampleLicenseDesc")); //$NON-NLS-1$
 
 		
 		// Save the model

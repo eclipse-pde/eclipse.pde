@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class PluginListPage extends BasePluginListPage {
-	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title";
-	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc";
+	public static final String PAGE_TITLE = "NewFeatureWizard.PlugPage.title"; //$NON-NLS-1$
+	public static final String PAGE_DESC = "NewFeatureWizard.PlugPage.desc"; //$NON-NLS-1$
 	private IPluginModelBase [] models;
 
 	class PluginContentProvider
@@ -36,7 +36,7 @@ public class PluginListPage extends BasePluginListPage {
 	}
 
 	public PluginListPage() {
-		super("pluginListPage");
+		super("pluginListPage"); //$NON-NLS-1$
 		setTitle(PDEPlugin.getResourceString(PAGE_TITLE));
 		setDescription(PDEPlugin.getResourceString(PAGE_DESC));
 	}
