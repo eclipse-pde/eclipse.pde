@@ -135,18 +135,7 @@
       </description>
    </wizard>
 </extension>
-<extension
-      point="org.eclipse.ui.importWizards">
-   <wizard
-         name="%PluginImportWizard.label"
-         icon="icons/full/ctool16/newexprj_wiz.gif"
-         class="org.eclipse.pde.internal.wizards.imports.PluginImportWizard"
-         id="org.eclipse.pde.import.PluginImportWizard">
-      <description>
-         %PluginImportWizard.description
-      </description>
-   </wizard>
-</extension>
+
 <extension
       point="org.eclipse.pde.projectGenerators">
    <wizard
@@ -358,49 +347,20 @@
             id="org.eclipse.pde.BuildFragmentAction">
       </action>
    </objectContribution>
-   <objectContribution
-         objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="plugin.xml"
-         id="org.eclipse.pde.UpdateClasspathAction1">
-      <action
-            label="%UpdateClasspathAction.label"
-            tooltip="%UpdateClasspathAction.tooltip"
-            class="org.eclipse.pde.internal.wizards.imports.UpdateClasspathAction"
-            menubarPath="additions"
-            enablesFor="+"
-            id="UpdateClasspathAction">
-      </action>
-   </objectContribution>
-   <objectContribution
-         objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="fragment.xml"
-         id="org.eclipse.pde.UpdateClasspathAction2">
-      <action
-            label="%UpdateClasspathAction.label"
-            tooltip="%UpdateClasspathAction.tooltip"
-            class="org.eclipse.pde.internal.wizards.imports.UpdateClasspathAction"
-            menubarPath="additions"
-            enablesFor="+"
-            id="UpdateClasspathAction">
-      </action>
-   </objectContribution>
 </extension>
 <extension
       point="org.eclipse.debug.core.launchers">
    <launcher
-         label="%newlauncher.withWizard.label"
-         icon="icons/full/ctool16/eclipse_launcher_wiz.gif"
-         wizard="org.eclipse.pde.internal.launcher.WorkbenchLauncherWizard"
+         label="%launcher.regular.label"
          modes="run, debug"
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate:withWizard"
-         id="org.eclipse.pde.WorkbenchLauncherWithWizard">
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher"
+         id="org.eclipse.pde.WorkbenchRunLauncher">
    </launcher>
    <launcher
-         label="%newlauncher.regular.label"
-         icon="icons/full/ctool16/eclipse_launcher.gif"
+         label="%launcher.tracing.label"
          modes="run, debug"
-         class="org.eclipse.pde.internal.launcher.WorkbenchLauncherDelegate"
-         id="org.eclipse.pde.WorkbenchLauncher">
+         class="org.eclipse.pde.internal.launcher.WorkbenchLauncher:tracingEnabled"
+         id="org.eclipse.pde.TracingWorkbenchRunLauncher">
    </launcher>
 </extension>
 <extension

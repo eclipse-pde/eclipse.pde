@@ -121,8 +121,9 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			}
 		});
 
-		label = new Label(composite, SWT.NULL);
-		fillHorizontal(label, 3, false);
+		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gd = fillHorizontal(label, 3, false);
+		gd.heightHint = 10;
 
 		doImportCheck = new Button(composite, SWT.CHECK);
 		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
@@ -190,13 +191,13 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 	private void initializeFields(IDialogSettings initialSettings) {
 		String[] dropItems = new String[0];
-		boolean doImport = false;
+		boolean doImport = true;
 		boolean doExtract = false;
 		boolean doOther = false;
 
 		if (initialSettings != null) {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
-			doImport = initialSettings.getBoolean(SETTINGS_DOIMPORT);
+			doImport = !initialSettings.getBoolean(SETTINGS_DOIMPORT);
 			doExtract = initialSettings.getBoolean(SETTINGS_DOEXTRACT);
 
 			ArrayList items = new ArrayList();
@@ -239,7 +240,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		}
 		if (finishPressed) {
 			settings.put(SETTINGS_DOOTHER, other);
-			settings.put(SETTINGS_DOIMPORT, doImportCheck.getSelection());
+			settings.put(SETTINGS_DOIMPORT, !doImportCheck.getSelection());
 			settings.put(SETTINGS_DOEXTRACT, doExtractCheck.getSelection());
 		}
 	}

@@ -113,7 +113,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 	public WorkbenchLauncherWizardAdvancedPage(String title) {
 		super("WorkbenchLauncherWizardAdvancedPage", false);
 		setTitle(title);
-		setDescription("Plugins visible to the plugin loader.");
+		setDescription("Plug-ins and fragments visible to the plug-in loader.");
 		pluginImage = PDEPluginImages.DESC_PLUGIN_OBJ.createImage();
 		fragmentImage = PDEPluginImages.DESC_FRAGMENT_OBJ.createImage();
 		pluginsImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
@@ -150,7 +150,7 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 		fillIntoGrid(label, 2, false);
 
 		showNamesCheck = new Button(composite, SWT.CHECK);
-		showNamesCheck.setText("Show plug-in and fragment full names");
+		showNamesCheck.setText("Show full plug-in and fragment names");
 		fillIntoGrid(showNamesCheck, 2, false);
 
 		visibleLabel = new Label(composite, SWT.NULL);
@@ -498,19 +498,14 @@ public class WorkbenchLauncherWizardAdvancedPage extends StatusWizardPage {
 					IStatus.WARNING,
 					"'org.eclipse.sdk' not found. It is implicitly required by 'org.eclipse.ui'.");
 			}
-			/*
-			try {
-				File bootDir = new File(new URL(boot.getLocation()).getFile());
-				File installDir = new File(bootDir.getParentFile().getParentFile(), "install");
-				if (!installDir.exists()) {
-					return createStatus(
-						IStatus.WARNING,
-						installDir.getPath()
-							+ " not found.\nThe install directory is required by 'org.eclipse.ui'.");
-				}
-			} catch (MalformedURLException e) {
+			File bootDir = new File(boot.getInstallLocation());
+			File installDir = new File(bootDir.getParentFile().getParentFile(), "install");
+			if (!installDir.exists()) {
+				return createStatus(
+					IStatus.WARNING,
+					installDir.getPath()
+						+ " not found.\nThe install directory is required by 'org.eclipse.ui'.");
 			}
-			*/
 		};
 		return createStatus(IStatus.OK, "");
 	}

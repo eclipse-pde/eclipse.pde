@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 
 public class WorkbenchLauncherDelegate
 	implements ILauncherDelegate, IExecutableExtension {
+
 	private boolean showWizard = false;
 
 	public WorkbenchLauncherDelegate() {

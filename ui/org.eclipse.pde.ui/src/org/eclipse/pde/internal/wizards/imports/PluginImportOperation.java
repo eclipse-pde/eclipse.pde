@@ -86,10 +86,10 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					createProject(models[i], new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					IStatus status = e.getStatus();
-					String pattern = PDEPlugin.getResourceString(KEY_PROBLEM);
+
 					String newMessage =
 						PDEPlugin.getFormattedMessage(
-							pattern,
+							KEY_PROBLEM,
 							new String[] { models[i].getPluginBase().getId(), status.getMessage()});
 					IStatus newStatus =
 						new Status(
@@ -116,8 +116,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		String name = plugin.getId();
-		String pattern = PDEPlugin.getResourceString(KEY_CREATING2);
-		String task = PDEPlugin.getFormattedMessage(pattern, name);
+		String task = PDEPlugin.getFormattedMessage(KEY_CREATING2, name);
 		monitor.beginTask(task, 7);
 		try {
 			File pluginDir = new File(model.getInstallLocation());

@@ -116,8 +116,7 @@ public class UpdateClasspathAction implements IWorkbenchWindowActionDelegate {
 		IProgressMonitor monitor)
 		throws CoreException {
 		IPluginBase pluginBase = model.getPluginBase();
-		String pattern = PDEPlugin.getResourceString(KEY_SETTING);
-		String message = PDEPlugin.getFormattedMessage(pattern, pluginBase.getId());
+		String message = PDEPlugin.getFormattedMessage(KEY_SETTING, pluginBase.getId());
 		monitor.beginTask(message, 1);
 		try {
 			BuildPathUtil.setBuildPath(model, monitor);

@@ -189,9 +189,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			if (fForAll != -1) {
 				return fForAll;
 			}
-			String pattern = PDEPlugin.getResourceString(KEY_MESSAGES_EXISTS);
 			final String message =
-				PDEPlugin.getFormattedMessage(pattern, project.getName());
+				PDEPlugin.getFormattedMessage(KEY_MESSAGES_EXISTS, project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
