@@ -20,7 +20,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 public class ExportPackageObject extends PackageObject {
     
     private static final String INTERNAL = "x-internal";
-    private static final String FRIEND = "x-friends";
+    private static final String FRIENDS = "x-friends";
     
     private static final long serialVersionUID = 1L;
     
@@ -31,7 +31,7 @@ public class ExportPackageObject extends PackageObject {
     public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
         super(header, element, versionAttribute);
         fInternal = "true".equals(element.getDirective(INTERNAL));
-        processFriends(element.getDirective(FRIEND));
+        processFriends(element.getDirective(FRIENDS));
     }
     
     public ExportPackageObject(ManifestHeader header, IPackageFragment fragment, String versionAttribute) {
@@ -57,7 +57,7 @@ public class ExportPackageObject extends PackageObject {
        }
        if (fFriends.size() > 0) {
            buffer.append(";");
-           buffer.append(FRIEND);
+           buffer.append(FRIENDS);
            buffer.append(":=\"");
            Iterator iter = fFriends.keySet().iterator();
            while (iter.hasNext()) {
@@ -98,7 +98,7 @@ public class ExportPackageObject extends PackageObject {
     }
     
     protected boolean skipDirective(String directive) {
-        return INTERNAL.equals(directive) || FRIEND.equals(directive);
+        return INTERNAL.equals(directive) || FRIENDS.equals(directive);
     }
 
 }
