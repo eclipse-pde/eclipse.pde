@@ -267,36 +267,50 @@ public class ProductExportJob extends FeatureExportJob {
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 
-		Properties properties = new Properties();
-		File custom = getCustomIniFile();
+        PrintWriter writer = null;
+
+        File custom = getCustomIniFile();       
 		if (custom != null) {
 			String path = getExpandedPath(fProduct.getConfigurationFileInfo().getPath());
-			InputStream stream = null;
+			BufferedReader in = null;
 			try {
-				stream = new FileInputStream(new File(path));
-				properties.load(stream);
+                in = new BufferedReader(new FileReader(path));
+                writer = new PrintWriter(new FileWriter(new File(dir, "config.ini")));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    writer.println(line);
+                }
 			} catch (IOException e) {
 			} finally {
 				try {
-					if (stream != null)
-						stream.close();
+					if (in != null)
+						in.close();
+                    if (writer != null)
+                        writer.close();
 				} catch (IOException e) {
 				}
 			}
-		} else {
-			//properties.put("osgi.framework", "platform:/base/plugins/org.eclipse.osgi");
-			String location = getSplashLocation();
-			if (location != null)
-				properties.put("osgi.splashPath", location); //$NON-NLS-1$
-			properties.put("eclipse.product", fProduct.getId()); //$NON-NLS-1$
-			if (fProduct.useFeatures()) {
-				properties.put("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				properties.put("osgi.bundles", getPluginList()); //$NON-NLS-1$
-			}
-			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		save(new File(dir, "config.ini"), properties, "Eclipse Runtime Configuration File"); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+		} 
+        try {
+            writer = new PrintWriter(new FileWriter(new File(dir, "config.ini")));
+            String location = getSplashLocation();
+            writer.println("#Product Runtime Configuration File");
+            writer.println();
+            if (location != null)
+            	writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
+            writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
+            if (fProduct.useFeatures()) {
+                writer.println("osgi.bundles=" +  "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                writer.println("osgi.bundles=" + getPluginList()); //$NON-NLS-1$
+            }
+            writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ //$NON-NLS-2$		
+        } catch (IOException e) {
+        } finally {
+            if (writer != null)
+                writer.close();
+        }
 	}
 	
 	private String getSplashLocation() {
@@ -328,6 +342,8 @@ public class ProductExportJob extends FeatureExportJob {
 			buffer.append(id);
 			if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
 				buffer.append("@2:start"); //$NON-NLS-1$
+            if ("org.eclipse.update.configurator".equals(id))
+                buffer.append("@3:start");
 		}
 		return buffer.toString();
 	}
