@@ -413,19 +413,4 @@ public class ManifestEditor
 			: super.canCopy(selection);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.ui.editor.PDEMultiPageEditor#hasKnownTypes()
-	 */
-	protected boolean hasKnownTypes() {
-		if (getCurrentPage() instanceof ManifestFormPage) {
-			try {
-				Object data =
-					getClipboard().getContents(TextTransfer.getInstance());
-				return (data != null);
-			} catch (SWTError e) {
-				return false;
-			}
-		}
-		return super.hasKnownTypes();
-	}
 }

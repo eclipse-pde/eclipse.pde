@@ -11,13 +11,18 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.feature.FeatureURLElement;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class URLSection extends PDEFormSection {
@@ -179,7 +184,17 @@ public class URLSection extends PDEFormSection {
 			handleDelete();
 			return true;
 		}
-		return false;
+			if (actionId.equals(IWorkbenchActionConstants.CUT)) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleDelete();
+			return false;
+		}
+		if (actionId.equals(IWorkbenchActionConstants.PASTE)) {
+			doPaste();
+			return true;
+		}
+	return false;
 	}
 	public void expandTo(Object object) {
 		urlTree.setSelection(new StructuredSelection(object), true);
@@ -313,4 +328,72 @@ public class URLSection extends PDEFormSection {
 		urlTree.setInput(model);
 		updateNeeded = false;
 	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		IStructuredSelection ssel = (IStructuredSelection)urlTree.getSelection();
+		if (ssel.size() != 1) return false;
+		
+		Object target = ssel.getFirstElement();
+		if (target instanceof URLFolder) {
+			Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+			if (objects != null && objects.length > 0) {
+				return canPaste((URLFolder)target, objects);
+			}
+		}
+		return false;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
+	 */
+	protected boolean canPaste(URLFolder target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (!(objects[i] instanceof FeatureURLElement) || 
+				((FeatureURLElement)objects[i]).getElementType() != target.type)
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
+	 */
+	protected void doPaste() {
+		IStructuredSelection ssel = (IStructuredSelection)urlTree.getSelection();
+		if (ssel.size() != 1) return;
+		
+		Object target = ssel.getFirstElement();
+		if (target instanceof URLFolder) {
+			Clipboard clipboard = getFormPage().getEditor().getClipboard();
+			Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
+			if (objects != null) {
+				doPaste((URLFolder)target, objects);
+			}
+		}
+	}
+	/**
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
+	 */
+	protected void doPaste(URLFolder target, Object[] objects) {
+		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		IFeature feature = model.getFeature();
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof FeatureURLElement) {
+				FeatureURLElement element = (FeatureURLElement)objects[i];
+				if (element.getElementType() == target.type) {
+					element.setModel(model);
+					element.setParent(feature);
+					try {
+						if (target.type == IFeatureURLElement.UPDATE) 
+							feature.getURL().addUpdate(element);
+						else
+							feature.getURL().addDiscovery(element);
+					} catch (CoreException e) {
+						PDECore.logException(e);
+					}
+				}
+			}
+		}
+	}
+	
 }

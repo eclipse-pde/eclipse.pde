@@ -11,6 +11,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -37,6 +39,9 @@ public class HandlerSection extends PDEFormSection {
 		IFeatureModel model = (IFeatureModel)page.getModel();
 		IFeature feature = model.getFeature();
 		//setCollapsed(feature.getInstallHandler()==null);
+	}
+	public boolean canPaste(Clipboard clipboard) {
+		return (clipboard.getContents(TextTransfer.getInstance()) != null);
 	}
 	public void commitChanges(boolean onSave) {
 		urlText.commit();

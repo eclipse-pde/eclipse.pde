@@ -16,6 +16,8 @@ import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.ui.*;
 
 public class FeatureEditor extends PDEMultiPageXMLEditor {
@@ -50,9 +52,7 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	}
 
 	public boolean canCopy(ISelection selection) {
-		return (getCurrentPage() instanceof FeatureFormPage)
-			? true
-			: super.canCopy(selection);
+		return true;
 	}
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
@@ -157,6 +157,15 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		if (name == null)
 			return super.getTitle();
 		return model.getResourceString(name);
+	}
+	protected boolean hasKnownTypes() {
+		try {
+			Object data =
+				getClipboard().getContents(TextTransfer.getInstance());
+			return (data != null);
+		} catch (SWTError e) {
+			return false;
+		}
 	}
 	protected boolean isModelDirty(Object model) {
 		return model != null

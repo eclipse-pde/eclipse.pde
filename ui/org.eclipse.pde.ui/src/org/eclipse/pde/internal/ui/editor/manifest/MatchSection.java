@@ -16,6 +16,8 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -254,6 +256,9 @@ public class MatchSection extends PDEFormSection {
 		forceDirty();
 	}
 
+	public boolean canPaste(Clipboard clipboard) {
+		return (clipboard.getContents(TextTransfer.getInstance()) != null);
+	}
 	public void dispose() {
 		IModel model = (IModel) getFormPage().getModel();
 		if (model instanceof IModelChangeProvider)

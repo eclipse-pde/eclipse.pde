@@ -558,22 +558,12 @@ public abstract class PDEMultiPageEditor
 	public boolean canPasteFromClipboard() {
 		IPDEEditorPage page = getCurrentPage();
 		if (page instanceof PDEFormPage) {
-			return hasKnownTypes() && page.canPaste(getClipboard());
+			return page.canPaste(getClipboard());
 		}
 		return false;
 	}
 	
-	protected boolean hasKnownTypes() {
-		// defect 18146
-		try {
-			Object data =
-				getClipboard().getContents(ModelDataTransfer.getInstance());
-			return (data != null);
-		} catch (SWTError e) {
-			return false;
-		}
-	}
-	
+
 	public boolean canCopy(ISelection selection) {
 		return selection != null && !selection.isEmpty();
 	}

@@ -13,6 +13,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -376,4 +378,11 @@ public class FeatureSpecSection extends PDEFormSection {
 		primaryButton.setSelection(feature.isPrimary());
 		updateNeeded = false;
 	}
+	/**
+	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
+	 */
+	public boolean canPaste(Clipboard clipboard) {
+		return (clipboard.getContents(TextTransfer.getInstance()) != null);
+	}
+
 }
