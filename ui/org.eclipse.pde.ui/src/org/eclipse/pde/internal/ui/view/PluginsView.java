@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -355,6 +356,14 @@ public class PluginsView extends ViewPart {
 		if (selection.size() == 1) {
 			Object sobj = selection.getFirstElement();
 			boolean addSeparator = false;
+            if (sobj instanceof ModelEntry) {
+                ModelEntry entry = (ModelEntry) sobj;
+                IPluginModelBase model = entry.getActiveModel();
+                File file = new File(model.getInstallLocation());
+                if (file.isFile() || model.getUnderlyingResource() != null) {
+                    manager.add(openAction);
+                }
+            }
 			if (sobj instanceof FileAdapter
 				&& ((FileAdapter) sobj).isDirectory() == false) {
 				manager.add(openAction);
@@ -545,7 +554,13 @@ public class PluginsView extends ViewPart {
 	private void handleDoubleClick() {
 		Object obj = getSelectedObject();
 		if (obj instanceof ModelEntry) {
-			treeViewer.setExpandedState(obj, !treeViewer.getExpandedState(obj));
+            boolean expanded = treeViewer.getExpandedState(obj);
+            treeViewer.setExpandedState(obj, !expanded);
+            if (treeViewer.getExpandedState(obj) == expanded) {
+                // not expandable, open editor
+                ModelEntry modelEntry = (ModelEntry) obj;
+                ManifestEditor.openPluginEditor(modelEntry.getId());
+            }
 		}
 		if (obj instanceof FileAdapter) {
 			FileAdapter adapter = (FileAdapter) obj;
