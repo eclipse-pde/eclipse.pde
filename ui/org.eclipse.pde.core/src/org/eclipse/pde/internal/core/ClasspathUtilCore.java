@@ -69,7 +69,7 @@ public class ClasspathUtilCore {
 		try {
 			HashSet alreadyAdded = new HashSet();
 			if (model.isFragmentModel()) {
-				addParentPlugin(
+				addHostPlugin(
 					(IFragment) model.getPluginBase(),
 					result,
 					alreadyAdded);
@@ -175,7 +175,7 @@ public class ClasspathUtilCore {
 		if (!alreadyAdded.add(plugin))
 			return;
 
-		boolean inWorkspace = addPlugin(plugin, isExported, result, alreadyAdded);
+		boolean inWorkspace = addPlugin(plugin, isExported, true, result, alreadyAdded);
 		
 		if (plugin instanceof IPlugin && ((IPlugin)plugin).hasExtensibleAPI()) {
 			String id  = plugin.getId();
@@ -207,21 +207,21 @@ public class ClasspathUtilCore {
 		}
 	}
 	
-	private static boolean addPlugin(IPluginBase plugin, boolean isExported, Vector result, HashSet alreadyAdded) throws CoreException {
+	private static boolean addPlugin(IPluginBase plugin, boolean isExported, boolean useInclusionPatterns, Vector result, HashSet alreadyAdded) throws CoreException {
 		IPluginModelBase model = (IPluginModelBase)plugin.getModel();
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), (IPluginModelBase)plugin.getModel(), isExported, result);
+			addProjectEntry(resource.getProject(), (IPluginModelBase)plugin.getModel(), isExported, useInclusionPatterns, result);
 		} else {
-			addLibraries(model, isExported, true, result);
+			addLibraries(model, isExported, useInclusionPatterns, result);
 		}
 		return resource != null;
 	}
 	
-	private static void addProjectEntry(IProject project, IPluginModelBase model, boolean isExported, Vector result) throws CoreException {
+	private static void addProjectEntry(IProject project, IPluginModelBase model, boolean isExported, boolean useinclusionPatterns, Vector result) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
-			if (ENABLE_RESTRICTIONS) {
+			if (ENABLE_RESTRICTIONS && useinclusionPatterns) {
 				IPath[] inclusionPatterns = getInclusionPatterns(model);
 				IPath[] exclusionPatterns = (inclusionPatterns.length == 0) ? new IPath[] {new Path("**/*")} : new Path[0]; //$NON-NLS-1$
 				entry = JavaCore.newProjectEntry(
@@ -272,9 +272,9 @@ public class ClasspathUtilCore {
 			sourcePath = new Path(model.getInstallLocation());
 		
 		IClasspathEntry entry = null;
-		if (ENABLE_RESTRICTIONS) {
-			IPath[] inclusionPatterns = useInclusionPatterns ? getInclusionPatterns(model) : new IPath[0];
-			IPath[] exclusionPatterns = (inclusionPatterns.length == 0 && useInclusionPatterns) ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+		if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
+			IPath[] inclusionPatterns = getInclusionPatterns(model);
+			IPath[] exclusionPatterns = inclusionPatterns.length == 0 ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
 			entry = JavaCore.newLibraryEntry(
 						new Path(model.getInstallLocation()), 
 						sourcePath, 
@@ -335,7 +335,7 @@ public class ClasspathUtilCore {
 		"org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 	}
 
-	private static void addParentPlugin(
+	private static void addHostPlugin(
 		IFragment fragment,
 		Vector result,
 		HashSet alreadyAdded)
@@ -347,7 +347,7 @@ public class ClasspathUtilCore {
 				fragment.getRule());
 		if (parent != null && alreadyAdded.add(parent)) {
 			// add parent plug-in
-			boolean inWorkspace = addPlugin(parent, false, result, alreadyAdded);
+			boolean inWorkspace = addPlugin(parent, false, false, result, alreadyAdded);
 			IPluginImport[] imports = parent.getImports();
 			for (int i = 0; i < imports.length; i++) {
 				// if the plug-in is a project in the workspace, only add non-reexported dependencies
@@ -463,9 +463,9 @@ public class ClasspathUtilCore {
 				path = getPath(model, expandedName);
 			}
 			
-			if (ENABLE_RESTRICTIONS) {
-				IPath[] inclusionPatterns = useInclusionPatterns ? getInclusionPatterns((IPluginModelBase) library.getModel()) : new IPath[0];
-				IPath[] exclusionPatterns = (inclusionPatterns.length == 0 && useInclusionPatterns) ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
+			if (ENABLE_RESTRICTIONS && useInclusionPatterns) {
+				IPath[] inclusionPatterns = getInclusionPatterns((IPluginModelBase) library.getModel());
+				IPath[] exclusionPatterns = inclusionPatterns.length == 0 ? new IPath[] { new Path("**/*") } : new Path[0]; //$NON-NLS-1$
 				entry = JavaCore.newLibraryEntry(
 							path, 
 							getSourceAnnotation(model, expandedName), 
