@@ -10,7 +10,6 @@ package org.eclipse.pde.internal.core;
 public interface IXMLConstants {
 
 	// general
-	public static final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 	public static final String PROPERTY_ASSIGNMENT_PREFIX = "${";
 	public static final String PROPERTY_ASSIGNMENT_SUFFIX = "}";
 	public static final String PROPERTY_SOURCE_PREFIX = "source.";
@@ -39,6 +38,7 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_SOURCES = "gather.sources";
 	public static final String TARGET_INIT = "init";
 	public static final String TARGET_JAR = "jar";
+	public static final String TARGET_PROPERTIES = "properties";
 	public static final String TARGET_SRC = "src";
 	public static final String TARGET_SRC_GATHER_WHOLE = "src.gather.whole";
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution";

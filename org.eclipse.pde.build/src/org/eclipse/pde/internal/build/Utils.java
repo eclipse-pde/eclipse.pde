@@ -33,4 +33,17 @@ public static String[] getArrayFromString(String list) {
 	return getArrayFromString(list, ",");
 }
 
+/**
+ * Substitutes a word in a sentence.
+ */
+public static String substituteWord(String sentence, String oldWord, String newWord) {
+	int index = sentence.indexOf(oldWord);
+	if (index == -1)
+		return sentence;
+	StringBuffer sb = new StringBuffer();
+	sb.append(sentence.substring(0, index));
+	sb.append(newWord);
+	sb.append(sentence.substring(index + oldWord.length()));
+	return sb.toString();
+}
 }

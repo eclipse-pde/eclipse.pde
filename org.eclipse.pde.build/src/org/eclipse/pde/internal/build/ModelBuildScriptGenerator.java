@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.pde.core.internal.ant.*;
 /**
  * Generic class for generating scripts for plug-ins and fragments.
  */
@@ -61,12 +62,12 @@ public void generate() throws CoreException {
 	try {
 		File root = new File(getModelLocation(model));
 		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
-		PrintWriter output = new PrintWriter(new FileOutputStream(target));
+		script = new BuildAntScript(new FileOutputStream(target));
+		setUpAntBuildScript();
 		try {
-			generateBuildScript(output);
+			generateBuildScript();
 		} finally {
-			output.flush();
-			output.close();
+			script.close();
 		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
@@ -76,26 +77,27 @@ public void generate() throws CoreException {
 /**
  * Main call for generating the script.
  */
-protected void generateBuildScript(PrintWriter output) throws CoreException {
-	generatePrologue(output);
+protected void generateBuildScript() throws CoreException {
+	generatePrologue();
 
-	generateUpdateJarTarget(output);
-	generateGatherBinPartsTarget(output);
-	generateBuildJarsTarget(output);
+	generatePropertiesTarget();
+	generateUpdateJarTarget();
+	generateGatherBinPartsTarget();
+	generateBuildJarsTarget();
 
-	generateGatherSourcesTarget(output);
-	generateBuildSourcesTarget(output);
+	generateGatherSourcesTarget();
+	generateBuildSourcesTarget();
 
-	generateGatherLogTarget(output);
+	generateGatherLogTarget();
 
-	generateCleanTarget(output);
-	generateEpilogue(output);
+	generateCleanTarget();
+	generateEpilogue();
 }
 
-protected void generateCleanTarget(PrintWriter output) {
+protected void generateCleanTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	tab++;
 	ArrayList jars = new ArrayList(9);
 	ArrayList zips = new ArrayList(9);
@@ -115,32 +117,32 @@ protected void generateCleanTarget(PrintWriter output) {
 		fileSet.add(new FileSet(basedir, null, sourceZips, null, null, null, null));
 	}
 	fileSet.add(new FileSet(basedir, null, "**/*.pdetemp", null, null, null, null));
-	printDeleteTask(output, tab, null, null, (FileSet[]) fileSet.toArray(new FileSet[fileSet.size()]));
-	printDeleteTask(output, tab, null, getModelFileBase() + ".jar", null);
-	printDeleteTask(output, tab, null, getModelFileBase() + DEFAULT_FILENAME_SRC, null);
-	printDeleteTask(output, tab, null, getModelFileBase() + DEFAULT_FILENAME_LOG, null);
+	script.printDeleteTask(tab, null, null, (FileSet[]) fileSet.toArray(new FileSet[fileSet.size()]));
+	script.printDeleteTask(tab, null, getModelFileBase() + ".jar", null);
+	script.printDeleteTask(tab, null, getModelFileBase() + DEFAULT_FILENAME_SRC, null);
+	script.printDeleteTask(tab, null, getModelFileBase() + DEFAULT_FILENAME_LOG, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
-protected void generateGatherLogTarget(PrintWriter output) {
+protected void generateGatherLogTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
 	tab++;
 	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	base = base.append(DEFAULT_PLUGIN_LOCATION);
 	base = base.append(getPropertyFormat(getModelTypeName()));
-	printProperty(output, tab, PROPERTY_BASE, base.toString());
-	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_BASE));
+	script.printProperty(tab, PROPERTY_BASE, base.toString());
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
 	FileSet fileSet = new FileSet(getRelativeInstallLocation().toString(), null, "*.log", null, null, null, null);
-	printCopyTask(output, tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
+	script.printCopyTask(tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
-protected void generateBuildSourcesTarget(PrintWriter output) throws CoreException {
+protected void generateBuildSourcesTarget() throws CoreException {
 	StringBuffer jars = new StringBuffer();
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(",");
@@ -149,17 +151,17 @@ protected void generateBuildSourcesTarget(PrintWriter output) throws CoreExcepti
 		String zip = removeBraces(jar);
 		zip = zip.substring(0, zip.length() - 4) + "src.zip";
 		jars.append(zip);
-		generateSourceIndividualTarget(output, jar, zip);
+		generateSourceIndividualTarget(jar, zip);
 	}
-	output.println();
-	printTargetDeclaration(output, 1, TARGET_BUILD_SOURCES, TARGET_INIT + jars.toString(), null, null, null);
-	printString(output, 1, "</target>");
+	script.println();
+	script.printTargetDeclaration(1, TARGET_BUILD_SOURCES, TARGET_INIT + jars.toString(), null, null, null);
+	script.printString(1, "</target>");
 }
 
-protected void generateSourceIndividualTarget(PrintWriter output, String relativeJar, String target) throws CoreException {
+protected void generateSourceIndividualTarget(String relativeJar, String target) throws CoreException {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, target, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, target, TARGET_INIT, null, null, null);
 	tab++;
 	String fullJar = null;
 	try {
@@ -190,10 +192,10 @@ protected void generateSourceIndividualTarget(PrintWriter output, String relativ
 		IPath destination = getRelativeInstallLocation();
 		destination = destination.append(target);
 		properties.put("dest", destination.toString());
-		printAntTask(output, tab, "${template}", null, TARGET_SRC, null, null, properties);
+		script.printAntTask(tab, "${template}", null, TARGET_SRC, null, null, properties);
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 /**
@@ -208,39 +210,39 @@ protected String getSourceList (Collection source, String ending) {
 	return getStringFromCollection(srcList, "", "", ",");
 }
 
-protected void generateGatherSourcesTarget(PrintWriter output) {
+protected void generateGatherSourcesTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	tab++;
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
 	String dest = destination.toString();
-	printMkdirTask(output, tab, dest);
+	script.printMkdirTask(tab, dest);
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		// zip name is jar name without the ".jar" but with "src.zip" appended
 		String jar = (String) i.next();
 		String zip = removeBraces(jar);
 		zip = zip.substring(0, zip.length() - 4) + "src.zip";
-		printCopyTask(output, tab, zip, dest, null);
+		script.printCopyTask(tab, zip, dest, null);
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
 
-protected void generateBuildJarsTarget(PrintWriter output) throws CoreException {
+protected void generateBuildJarsTarget() throws CoreException {
 	StringBuffer jars = new StringBuffer();
 	for (Iterator i = jarOrder.iterator(); i.hasNext();) {
 		jars.append(',');
 		String currentJar = (String) i.next();
 		jars.append(removeBraces(currentJar));
-		generateJarIndividualTarget(output, currentJar);
+		generateJarIndividualTarget(currentJar);
 	}
-	output.println();
-	printTargetDeclaration(output, 1, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
-	printString(output, 1, "</target>");
+	script.println();
+	script.printTargetDeclaration(1, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
+	script.printString(1, "</target>");
 }
 
 protected String removeBraces (String entry) {
@@ -254,11 +256,11 @@ protected String removeBraces (String entry) {
 	return result;
 }
 
-protected void generateJarIndividualTarget(PrintWriter output, String relativeJar) throws CoreException {
+protected void generateJarIndividualTarget(String relativeJar) throws CoreException {
 	int tab = 1;
-	output.println();
+	script.println();
 	String jarName = removeBraces(relativeJar);
-	printTargetDeclaration(output, tab, jarName, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab, jarName, TARGET_INIT, null, null, null);
 	tab++;
 	String fullJar = null;
 	try {
@@ -285,10 +287,10 @@ protected void generateJarIndividualTarget(PrintWriter output, String relativeJa
 		destination = destination.append(jarName);
 		properties.put("dest", destination.toString());
 		properties.put("compilePath", compilePath);
-		printAntTask(output, tab, "${template}", null, TARGET_JAR, null, null, properties);
+		script.printAntTask(tab, "${template}", null, TARGET_JAR, null, null, properties);
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 protected IPath getRelativeInstallLocation() {
@@ -479,27 +481,80 @@ protected Hashtable trimDevJars(Map devJars) throws CoreException {
 	return result;
 }
 
-protected void generateGatherBinPartsTarget(PrintWriter output) {
+protected void generateGatherBinPartsTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	tab++;
 	Map properties = new HashMap(1);
-	String inclusions = getBuildProperty(PROPERTY_BIN_INCLUDES);
-	if (inclusions == null)
-		inclusions = "**";
-	properties.put("includes", inclusions);
-	String exclusions = getBuildProperty(PROPERTY_BIN_EXCLUDES);
-	if (exclusions == null)
-		exclusions = computeCompleteSrc();
-	properties.put("excludes", exclusions);
+	properties.put("includes", getPropertyFormat(PROPERTY_BIN_INCLUDES));
+	properties.put("excludes", getPropertyFormat(PROPERTY_BIN_EXCLUDES));
 	IPath destination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	destination = destination.append(getDirectoryName());
 	properties.put("dest", destination.toString());
-	printAntTask(output, tab, "${template}", null, "includesExcludesCopy", null, null, properties);
+	script.printAntTask(tab, "${template}", null, "includesExcludesCopy", null, null, properties);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
+
+protected void generatePropertiesTarget() {
+	int tab = 1;
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_PROPERTIES, null, null, null, null);
+	tab++;
+	generateMandatoryProperties(tab);
+	generateConditionalProperties(tab);
+	tab--;
+	script.printEndTag(tab, "target");
+}
+
+protected void generateConditionalProperties(int tab) {
+	for (Iterator i = getConditionalProperties().entrySet().iterator(); i.hasNext();) {
+		Map.Entry entry = (Map.Entry) i.next();
+		String realKey = (String) entry.getKey();
+		StringBuffer realValue = new StringBuffer();
+		realValue.append(getBuildProperty(realKey));
+		Map variations = (Map) entry.getValue();
+		int n = 0;
+		for (Iterator j = variations.entrySet().iterator(); j.hasNext();) {
+			Map.Entry variation = (Map.Entry) j.next();
+			String key = (String) variation.getKey();
+			String[] conditions = getConditions(key);
+			Condition cond = new Condition(Condition.TYPE_AND);
+			for (int k = 0; k < conditions.length; k++) {
+				String[] condition = Utils.getArrayFromString(conditions[k], "/");
+				String variable = condition[0];
+				String value = condition[1];
+				cond.addEquals(variable, value);
+			}
+			String conditionKey = "condition" + (++n) + "." + realKey;
+			script.printProperty(tab, conditionKey, "");
+			ConditionTask task = new ConditionTask(conditionKey, "," + variation.getValue(), cond);
+			script.print(tab, task);
+			realValue.append(getPropertyFormat(conditionKey));
+		}
+		script.printProperty(tab, realKey, realValue.toString());
+	}
+}
+
+/**
+ * 
+ */
+protected void generateMandatoryProperties(int tab) {
+	if (!getConditionalProperties().containsKey(PROPERTY_BIN_INCLUDES)) {
+		String value = getBuildProperty(PROPERTY_BIN_INCLUDES);
+		if (value == null)
+			value = "**";
+		script.printProperty(tab, PROPERTY_BIN_INCLUDES, value);
+	}
+	if (!getConditionalProperties().containsKey(PROPERTY_BIN_EXCLUDES)) {
+		String value = getBuildProperty(PROPERTY_BIN_EXCLUDES);
+		if (value == null)
+			value = computeCompleteSrc();
+		script.printProperty(tab, PROPERTY_BIN_EXCLUDES, value);
+	}
+}
+
 
 /**
  * FIXME: add comment
@@ -547,25 +602,25 @@ protected String getStringFromCollection(Collection list, String prefix, String 
 }
 
 
-protected void generateUpdateJarTarget(PrintWriter output) {
+protected void generateUpdateJarTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
 	tab++;
 	IPath destination = getRelativeInstallLocation();
-	printProperty(output, tab, PROPERTY_BASE, destination.append("bin.zip.pdetemp").toString());
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_BASE), null, null);
-	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_BASE));
-	printAntCallTask(output, tab, TARGET_BUILD_JARS, null, null);
+	script.printProperty(tab, PROPERTY_BASE, destination.append("bin.zip.pdetemp").toString());
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
+	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE) + "/");
-	printAntCallTask(output, tab, TARGET_GATHER_BIN_PARTS, null, params);
+	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
 	FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASE), null, "**/*.bin.log", null, null, null, null);
-	printDeleteTask(output, tab, null, null, new FileSet[] {fileSet});
-	printZipTask(output, tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getDirectoryName());
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
+	script.printZipTask(tab, destination.append(getModelFileBase() + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + getDirectoryName());
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 protected abstract String getDirectoryName();
@@ -580,32 +635,31 @@ protected String getModelFileBase() {
 /**
  * Just ends the script.
  */
-protected void generateEpilogue(PrintWriter output) {
-	output.println();
-	output.println("</project>");
+protected void generateEpilogue() {
+	script.println();
+	script.printString(0, "</project>");
 }
 
 
 /**
  * Defines, the XML declaration, Ant project and targets init and initTemplate.
  */
-protected void generatePrologue(PrintWriter output) {
+protected void generatePrologue() {
 	int tab = 1;
-	output.println(XML_PROLOG);
-	printProjectDeclaration(output, model.getId(), TARGET_INIT, ".");
-	output.println();
-	printTargetDeclaration(output, tab, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
+	script.printProjectDeclaration(model.getId(), TARGET_INIT, ".");
+	script.println();
+	script.printTargetDeclaration(tab, "initTemplate", null, null, PROPERTY_TEMPLATE, null);
 	tab++;
-	printString(output, tab, "<initTemplate/>");
+	script.printString(tab, "<initTemplate/>");
 	tab--;
-	printString(output, tab, "</target>");
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_INIT, "initTemplate", null, null, null);
+	script.printString(tab, "</target>");
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_INIT, "initTemplate, " + TARGET_PROPERTIES, null, null, null);
 	tab++;
-	printProperty(output, tab, getModelTypeName(), model.getId());
-	printProperty(output, tab, "version", model.getVersion());
+	script.printProperty(tab, getModelTypeName(), model.getId());
+	script.printProperty(tab, "version", model.getVersion());
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 protected abstract String getModelTypeName();
@@ -665,4 +719,12 @@ protected List getListFromString(String prop) {
 	}
 	return result;
 }
+
+
+protected String[] getConditions(String key) {
+	int prefix = key.indexOf(PROPERTY_ASSIGNMENT_PREFIX);
+	int suffix = key.indexOf(PROPERTY_ASSIGNMENT_SUFFIX);
+	return Utils.getArrayFromString(key.substring(prefix + PROPERTY_ASSIGNMENT_PREFIX.length(), suffix));
+}
+
 }

@@ -11,11 +11,18 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.pde.core.internal.ant.AntScript;
+import sun.awt.font.ScriptRun;
 
 /**
  * 
  */
 public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerator {
+
+	/**
+	 * 
+	 */
+	protected BuildAntScript script;
 
 	/**
 	 * Where to find the elements.
@@ -41,6 +48,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Properties read from the build.properties file.
 	 */
 	private Properties buildProperties;
+	private Map conditionalProperties;
 	
 	/**
 	 * Build variables.
@@ -50,52 +58,15 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	protected String buildVariableOS;
 	protected String buildVariableWS;
 	
-protected void printExternalZipTask(PrintWriter output, int tab, String zipFile, String basedir) {
-	String executable = getBuildProperty(PROPERTY_ZIP_PROGRAM);
-	List args = new ArrayList(1);
-	String arg = getBuildProperty(PROPERTY_ZIP_ARGUMENT);
-	if (arg != null) {
-		arg = substituteWord(arg, PROPERTY_ZIP_FILE, zipFile);
-		args.add(arg);
-	}
-	printExecTask(output, tab, executable, basedir, args);
-}
-
-/**
- * If the user has specified an external zip program in the build.properties file,
- * use it. Otherwise use the default Ant jar task.
- */
-protected void printJarTask(PrintWriter output, int tab, String zipFile, String basedir) {
-	String external = getBuildProperty(PROPERTY_JAR_EXTERNAL);
-	if (external != null && external.equalsIgnoreCase("true"))
-		printExternalZipTask(output, tab, zipFile, basedir);
-	else
-		printAntJarTask(output, tab, zipFile, basedir);
-}
-
-/**
- * If the user has specified an external zip program in the build.properties file,
- * use it. Otherwise use the default Ant zip task.
- */
-protected void printZipTask(PrintWriter output, int tab, String zipFile, String basedir) {
-	String external = getBuildProperty(PROPERTY_ZIP_EXTERNAL);
-	if (external != null && external.equalsIgnoreCase("true"))
-		printExternalZipTask(output, tab, zipFile, basedir);
-	else
-		printAntZipTask(output, tab, zipFile, basedir);
-}
-
-
-
-
 protected void readProperties(String root) {
 	try {
 		buildProperties = new Properties();
+		conditionalProperties = new HashMap(10);
 		File file = new File(root, PROPERTIES_FILE);
 		InputStream is = new FileInputStream(file);
 		try {
 			buildProperties.load(is);
-			buildProperties = filterProperties(buildProperties);
+			filterProperties(buildProperties, conditionalProperties);
 		} finally {
 			is.close();
 		}
@@ -105,32 +76,50 @@ protected void readProperties(String root) {
 }
 
 /**
- * Filters and merges properties that are relative to the current
- * build, based on the values of the build variables (os, ws, nl and arch).
+ * 
  */
-protected Properties filterProperties(Properties target) {
-	for(Enumeration keys = target.keys(); keys.hasMoreElements(); ) {
-		String key = (String) keys.nextElement();
+protected void setUpAntBuildScript() {
+	String external = getBuildProperty(PROPERTY_ZIP_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setZipExternal(true);
+
+	external = getBuildProperty(PROPERTY_JAR_EXTERNAL);
+	if (external != null && external.equalsIgnoreCase("true"))
+		script.setJarExternal(true);
+
+	String executable = getBuildProperty(PROPERTY_ZIP_PROGRAM);
+	if (executable != null)
+		script.setZipExecutable(executable);
+	
+	String arg = getBuildProperty(PROPERTY_ZIP_ARGUMENT);
+	if (arg != null)
+		script.setZipArgument(arg);
+}
+
+/**
+ * Filters properties, separating the ones that have conditions based
+ * on build variables (os, ws, nl and arch). The resulting filtered
+ * properties (to) is a Map of containing the real key and a Map
+ * of all its variations.
+ */
+protected void filterProperties(Properties from, Map to) {
+	for (Enumeration enum = from.keys(); enum.hasMoreElements();) {
+		String key = (String) enum.nextElement();
 		if (!key.startsWith(PROPERTY_ASSIGNMENT_PREFIX))
 			continue;
-		if (propertyMatchesCurrentBuild(key)) {
-			String value = target.getProperty(key);
-			if (value != null) {
-				String realKey = extractRealKey(key);
-				String currentValue = target.getProperty(realKey);
-				if (currentValue != null) {
-					if (!contains(Utils.getArrayFromString(currentValue), value))
-						value = currentValue + "," + value;
-					else
-						value = currentValue;
-				}
-				target.put(realKey, value);
-			}
-		}
-		target.remove(key);
+		String realKey = extractRealKey(key);
+		Map variations = (Map) to.get(realKey);
+		if (variations == null)
+			variations = new HashMap(10);
+		variations.put(key, from.get(key));
+		to.put(realKey, variations);
+		from.remove(key);
 	}
-	return target;
 }
+
+
+
+
 
 /**
  * Checks if the given element is already present in the list.
@@ -168,6 +157,10 @@ protected void setBuildProperty(String key, String value) {
 
 protected Properties getBuildProperties() {
 	return buildProperties;
+}
+
+protected Map getConditionalProperties() {
+	return conditionalProperties;
 }
 
 
@@ -233,34 +226,6 @@ public void setRegistry(PluginRegistryModel registry) {
 
 
 
-
-
-
-
-
-
-
-
-protected String substituteWord(String sentence, String oldWord, String newWord) {
-	int index = sentence.indexOf(oldWord);
-	if (index == -1)
-		return sentence;
-	StringBuffer sb = new StringBuffer();
-	sb.append(sentence.substring(0, index));
-	sb.append(newWord);
-	sb.append(sentence.substring(index + oldWord.length()));
-	return sb.toString();
-}
-
-
-
-
-
-
-
-
-
-
 /**
  * 
  */
@@ -290,45 +255,6 @@ protected String makeRelative(String property, String fullPath, String pathToTri
 	return result.toString();
 }
 
-/**
- * Checks if the given property key should be included in the current
- * build by looking into the build variables defined with it.
- * For example ${os/linux,ws/motif}.bin.includes is targeted
- * for a linux-motif build and should not be part of a Windows build.
- */
-protected boolean propertyMatchesCurrentBuild(String property) {
-	int prefix = property.indexOf(PROPERTY_ASSIGNMENT_PREFIX);
-	int suffix = property.indexOf(PROPERTY_ASSIGNMENT_SUFFIX);
-	String[] variables = Utils.getArrayFromString(property.substring(prefix + PROPERTY_ASSIGNMENT_PREFIX.length(), suffix));
-	for (int i = 0; i < variables.length; i++) {
-		String[] var = Utils.getArrayFromString(variables[i], "/");
-		String key = var[0];
-		String value = var[1];
-		if (value.equals("*"))
-			continue;
-		if (key.equalsIgnoreCase(PROPERTY_OS)) {
-			if (!value.equalsIgnoreCase(buildVariableOS))
-				return false;
-			continue;
-		}
-		if (key.equalsIgnoreCase(PROPERTY_WS)) {
-			if (!value.equalsIgnoreCase(buildVariableWS))
-				return false;
-			continue;
-		}
-		if (key.equalsIgnoreCase(PROPERTY_NL)) {
-			if (!value.equalsIgnoreCase(buildVariableNL))
-				return false;
-			continue;
-		}
-		if (key.equalsIgnoreCase(PROPERTY_ARCH)) {
-			if (!value.equalsIgnoreCase(buildVariableARCH))
-				return false;
-			continue;
-		}
-	}
-	return true;
-}
 	
 /**
  * Sets the buildVariableARCH.

@@ -11,6 +11,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.core.runtime.model.PluginPrerequisiteModel;
+import org.eclipse.pde.core.internal.ant.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
 
@@ -82,12 +83,12 @@ public void generate() throws CoreException {
 	try {
 		File root = new File(getFeatureRootLocation());
 		File target = new File(root, DEFAULT_BUILD_SCRIPT_FILENAME);
-		PrintWriter output = new PrintWriter(new FileOutputStream(target));
+		script = new BuildAntScript(new FileOutputStream(target));
+		setUpAntBuildScript();
 		try {
-			generateBuildScript(output);
+			generateBuildScript();
 		} finally {
-			output.flush();
-			output.close();
+			script.close();
 		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
@@ -97,35 +98,35 @@ public void generate() throws CoreException {
 /**
  * Main call for generating the script.
  */
-protected void generateBuildScript(PrintWriter output) throws CoreException {
-	generatePrologue(output);
+protected void generateBuildScript() throws CoreException {
+	generatePrologue();
 
-	generateAllPluginsTarget(output);
-	generateAllFragmentsTarget(output);
-	generateAllChildrenTarget(output);
-	generateChildrenTarget(output);
-	generateBuildJarsTarget(output);
+	generateAllPluginsTarget();
+	generateAllFragmentsTarget();
+	generateAllChildrenTarget();
+	generateChildrenTarget();
+	generateBuildJarsTarget();
 
-	generateUpdateJarTarget(output);
-	generateGatherBinPartsTarget(output);
+	generateUpdateJarTarget();
+	generateGatherBinPartsTarget();
 
-	generateZipDistributionWholeTarget(output);
+	generateZipDistributionWholeTarget();
 
-	generateBuildSourcesTarget(output);
-	generateZipSourcesTarget(output);
-	generateGatherSourcesTarget(output);
+	generateBuildSourcesTarget();
+	generateZipSourcesTarget();
+	generateGatherSourcesTarget();
 
-	generateGatherLogTarget(output);
-	generateZipLogsTarget(output);
-	generateCleanTarget(output);
+	generateGatherLogTarget();
+	generateZipLogsTarget();
+	generateCleanTarget();
 
-	generateEpilogue(output);
+	generateEpilogue();
 }
 
 /**
  * FIXME: add comments
  */
-protected void generateBuildJarsTarget(PrintWriter output) throws CoreException {
+protected void generateBuildJarsTarget() throws CoreException {
 	StringBuffer jars = new StringBuffer();
 	Properties props = getBuildProperties();
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
@@ -135,24 +136,24 @@ protected void generateBuildJarsTarget(PrintWriter output) throws CoreException 
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			jars.append(',');
 			jars.append(jarName);
-			generateJarIndividualTarget(output, jarName, (String) entry.getValue());
+			generateJarIndividualTarget(jarName, (String) entry.getValue());
 		}
 	}
-	output.println();
+	script.println();
 	int tab = 1;
-	printTargetDeclaration(output, tab, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
+	script.printTargetDeclaration(tab, TARGET_BUILD_JARS, TARGET_INIT + jars.toString(), null, null, null);
 	tab++;
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, null, params);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 /**
  * FIXME: add comments
  */
-protected void generateBuildSourcesTarget(PrintWriter output) throws CoreException {
+protected void generateBuildSourcesTarget() throws CoreException {
 	StringBuffer sources = new StringBuffer();
 	Properties props = getBuildProperties();
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
@@ -164,28 +165,28 @@ protected void generateBuildSourcesTarget(PrintWriter output) throws CoreExcepti
 			String sourceName = jarName.substring(0, jarName.length() - 4) + "src.zip";
 			sources.append(',');
 			sources.append(sourceName);
-			generateSourceIndividualTarget(output, sourceName, (String) entry.getValue());
+			generateSourceIndividualTarget(sourceName, (String) entry.getValue());
 		}
 	}
-	output.println();
+	script.println();
 	int tab = 1;
-	printTargetDeclaration(output, tab, TARGET_BUILD_SOURCES, TARGET_INIT + sources.toString(), null, null, null);
+	script.printTargetDeclaration(tab, TARGET_BUILD_SOURCES, TARGET_INIT + sources.toString(), null, null, null);
 	tab++;
 	Map params = new HashMap(2);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, null, params);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
 /**
  * FIXME: add comments
  */
-protected void generateJarIndividualTarget(PrintWriter output, String jarName, String jarSource) throws CoreException {
+protected void generateJarIndividualTarget(String jarName, String jarSource) throws CoreException {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, jarName, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, jarName, TARGET_INIT, null, null, null);
 	tab++;
 	Map properties = new HashMap(1);
 	properties.put("mapping", jarSource);
@@ -197,74 +198,74 @@ protected void generateJarIndividualTarget(PrintWriter output, String jarName, S
 	destination = destination.append(jarName);
 	properties.put("dest", destination.toString());
 	properties.put("compilePath", ""); // FIXME: why empty??? should we bother leaving it here??
-	printAntTask(output, tab, "${template}", null, TARGET_JAR, null, null, properties);
+	script.printAntTask(tab, "${template}", null, TARGET_JAR, null, null, properties);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
-protected void generateCleanTarget(PrintWriter output) {
+protected void generateCleanTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	tab++;
 	Map params = new HashMap(1);
 	params.put("target", TARGET_CLEAN);
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, null, params);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	FileSet[] fileSet = new FileSet[3];
 	fileSet [0] = new FileSet(".", null, "*.pdetemp", null, null, null, null);
 	fileSet [1] = new FileSet(".", null, "${feature}*.jar", null, null, null, null);
 	fileSet [2] = new FileSet(".", null, "${feature}*.zip", null, null, null, null);
-	printDeleteTask(output, tab, null, null, fileSet);
+	script.printDeleteTask(tab, null, null, fileSet);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
-protected void generateZipLogsTarget(PrintWriter output) {
+protected void generateZipLogsTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
 	tab++;
 	IPath base = getRelativeInstallLocation();
 	base = base.append("_temp_");
-	printProperty(output, tab, PROPERTY_BASE, base.toString());
+	script.printProperty(tab, PROPERTY_BASE, base.toString());
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOG);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_BASE));
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, "false", params);
-	printAntCallTask(output, tab, TARGET_GATHER_LOG, "false", params);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
+	script.printAntCallTask(tab, TARGET_GATHER_LOG, "false", params);
 	IPath destination = getRelativeInstallLocation().append("${feature}.log.zip");
-	printZipTask(output, tab, destination.toString(), getPropertyFormat(PROPERTY_BASE));
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_BASE), null, null);
+	script.printZipTask(tab, destination.toString(), getPropertyFormat(PROPERTY_BASE));
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
-protected void generateGatherLogTarget(PrintWriter output) {
+protected void generateGatherLogTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_LOG, TARGET_INIT, null, null, null);
 	tab++;
 	IPath base = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	base = base.append(DEFAULT_FEATURE_LOCATION);
 	base = base.append(getPropertyFormat(PROPERTY_FEATURE));
-	printProperty(output, tab, PROPERTY_BASE, base.toString());
-	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_BASE));
+	script.printProperty(tab, PROPERTY_BASE, base.toString());
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
 	FileSet fileSet = new FileSet(getRelativeInstallLocation().toString(), null, "*.log", null, null, null, null);
-	printCopyTask(output, tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
+	script.printCopyTask(tab, null, getPropertyFormat(PROPERTY_BASE), new FileSet[] {fileSet});
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
-protected void generateGatherSourcesTarget(PrintWriter output) {
+protected void generateGatherSourcesTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION, null, null);
 	tab++;
 	IPath destination = getRelativeInstallLocation();
 	String dest = destination.toString();
-	printMkdirTask(output, tab, dest);
+	script.printMkdirTask(tab, dest);
 	Properties props = getBuildProperties();
 	for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
 		Map.Entry entry = (Map.Entry) iterator.next();
@@ -273,32 +274,32 @@ protected void generateGatherSourcesTarget(PrintWriter output) {
 			String jarName = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			// zip name is jar name without the ".jar" but with "src.zip" appended
 			String zip = jarName.substring(0, jarName.length() - 4) + "src.zip";
-			printCopyTask(output, tab, destination.append(zip).toString(), dest, null);
+			script.printCopyTask(tab, destination.append(zip).toString(), dest, null);
 		}
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
-protected void generateZipSourcesTarget(PrintWriter output) {
+protected void generateZipSourcesTarget() {
 	String featurebase = getPropertyFormat(PROPERTY_FEATURE_BASE);
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
 	tab++;
 	IPath destination = getRelativeInstallLocation();
-	printProperty(output, tab, PROPERTY_FEATURE_BASE, destination.append("zip.sources.pdetemp").toString());
-	printDeleteTask(output, tab, featurebase, null, null);
-	printMkdirTask(output, tab, featurebase);
+	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("zip.sources.pdetemp").toString());
+	script.printDeleteTask(tab, featurebase, null, null);
+	script.printMkdirTask(tab, featurebase);
 	Map params = new HashMap(1);
 	params.put(PROPERTY_DESTINATION, featurebase);
-	printAntCallTask(output, tab, TARGET_GATHER_SOURCES, null, params);
+	script.printAntCallTask(tab, TARGET_GATHER_SOURCES, null, params);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, null, params);
-	printZipTask(output, tab, destination.append("${feature}_src_${featureVersion}.zip").toString(), "${feature.base}");
-	printDeleteTask(output, tab, featurebase, null, null);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
+	script.printZipTask(tab, destination.append("${feature}_src_${featureVersion}.zip").toString(), "${feature.base}");
+	script.printDeleteTask(tab, featurebase, null, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 protected IPath getRelativeInstallLocation() {
@@ -309,15 +310,15 @@ protected IPath getRelativeInstallLocation() {
 }
 
 
-protected void generateGatherBinPartsTarget(PrintWriter output) {
+protected void generateGatherBinPartsTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 	tab++;
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
 	params.put(PROPERTY_DESTINATION, getPropertyFormat(PROPERTY_FEATURE_BASE));
-	printAntCallTask(output, tab, TARGET_CHILDREN, null, params);
+	script.printAntCallTask(tab, TARGET_CHILDREN, null, params);
 	String inclusions = getBuildProperty(PROPERTY_BIN_INCLUDES);
 	if (inclusions == null)
 		inclusions = "";
@@ -328,34 +329,34 @@ protected void generateGatherBinPartsTarget(PrintWriter output) {
 	params.put("includes", inclusions);
 	params.put("excludes", exclusions);
 	params.put("dest", "${feature.base}/install/features/${feature}");
-	printAntTask(output, tab, "${template}", null, "includesExcludesCopy", null, null, params);
+	script.printAntTask(tab, "${template}", null, "includesExcludesCopy", null, null, params);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
-protected void generateUpdateJarTarget(PrintWriter output) {
+protected void generateUpdateJarTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
 	tab++;
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
-	printAntCallTask(output, tab, TARGET_ALL_CHILDREN, null, params);
-	printAntCallTask(output, tab, TARGET_BUILD_JARS, null, null);
+	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
+	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
 	IPath destination = getRelativeInstallLocation();
-	printProperty(output, tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
-	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
+	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	// be sure to call the gather with children turned off.  The only way to do this is 
 	// to clear all inherited values.  Must remember to setup anything that is really expected.
 	params.clear();
 	params.put(PROPERTY_FEATURE_BASE, getPropertyFormat(PROPERTY_FEATURE_BASE));
-	printAntCallTask(output, tab, TARGET_GATHER_BIN_PARTS, "false", params);
-	printJarTask(output, tab, destination.append("${feature}_${featureVersion}.jar").toString(), "${feature.base}");
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
+	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, "false", params);
+	script.printJarTask(tab, destination.append("${feature}_${featureVersion}.jar").toString(), "${feature.base}");
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
@@ -363,22 +364,22 @@ protected void generateUpdateJarTarget(PrintWriter output) {
 /**
  * Zip up the whole feature.
  */
-protected void generateZipDistributionWholeTarget(PrintWriter output) {
+protected void generateZipDistributionWholeTarget() {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
 	tab++;
 	IPath destination = getRelativeInstallLocation();
-	printProperty(output, tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
-	printMkdirTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
+	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
+	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
 	Map params = new HashMap(1);
 	params.put(PROPERTY_INCLUDE_CHILDREN, "true");
-	printAntCallTask(output, tab, TARGET_GATHER_BIN_PARTS, null, params);
-	printZipTask(output, tab, destination.append("${feature}_${featureVersion}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
-	printDeleteTask(output, tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
+	script.printAntCallTask(tab, TARGET_GATHER_BIN_PARTS, null, params);
+	script.printZipTask(tab, destination.append("${feature}_${featureVersion}.bin.dist.zip").toString(), getPropertyFormat(PROPERTY_FEATURE_BASE));
+	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
@@ -386,7 +387,7 @@ protected void generateZipDistributionWholeTarget(PrintWriter output) {
 /**
  * Executes a given target in all children's script files.
  */
-protected void generateAllChildrenTarget(PrintWriter output) {
+protected void generateAllChildrenTarget() {
 	StringBuffer depends = new StringBuffer();
 	depends.append(TARGET_INIT);
 	depends.append(",");
@@ -394,15 +395,15 @@ protected void generateAllChildrenTarget(PrintWriter output) {
 	depends.append(",");
 	depends.append(TARGET_ALL_FRAGMENTS);
 	
-	output.println();
-	printTargetDeclaration(output, 1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
-	printString(output, 1, "</target>");
+	script.println();
+	script.printTargetDeclaration(1, TARGET_ALL_CHILDREN, depends.toString(), null, null, null);
+	script.printString(1, "</target>");
 }
 
-protected void generateSourceIndividualTarget(PrintWriter output, String name, String source) throws CoreException {
+protected void generateSourceIndividualTarget(String name, String source) throws CoreException {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, name, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, name, TARGET_INIT, null, null, null);
 	tab++;
 	Map properties = new HashMap(1);
 	properties.put("mapping", source);
@@ -413,48 +414,48 @@ protected void generateSourceIndividualTarget(PrintWriter output, String name, S
 	destination = destination.append(getPropertyFormat(PROPERTY_FEATURE));
 	destination = destination.append(name);
 	properties.put("dest", destination.toString());
-	printAntTask(output, tab, "${template}", null, TARGET_SRC, null, null, properties);
+	script.printAntTask(tab, "${template}", null, TARGET_SRC, null, null, properties);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 /**
  * Target responsible for delegating target calls to plug-in's build.xml scripts.
  */
-protected void generateAllPluginsTarget(PrintWriter output) throws CoreException {
+protected void generateAllPluginsTarget() throws CoreException {
 	int tab = 1;
 	List plugins = computeElements(false);
 	String[][] sortedPlugins = computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]));
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 	tab++;
 	for (int list = 0; list < 2; list++) {
 		for (int i = 0; i < sortedPlugins[list].length; i++) {
 			PluginModel plugin = getRegistry().getPlugin(sortedPlugins[list][i]);
 			String location = makeRelative(getPropertyFormat(PROPERTY_INSTALL), getModelLocation(plugin), installLocation);
-			printAntTask(output, tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+			script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 /**
  * Target responsible for delegating target calls to fragments's build.xml scripts.
  */
-protected void generateAllFragmentsTarget(PrintWriter output) throws CoreException {
+protected void generateAllFragmentsTarget() throws CoreException {
 	int tab = 1;
 	List fragments = computeElements(true);
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_ALL_FRAGMENTS, TARGET_INIT, null, null, null);
 	tab++;
 	for (Iterator iterator = fragments.iterator(); iterator.hasNext();) {
 		PluginModel fragment = (PluginModel) iterator.next();
 		String location = makeRelative(getPropertyFormat(PROPERTY_INSTALL), getModelLocation(fragment), installLocation);
-		printAntTask(output, tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
+		script.printAntTask(tab, "build.xml", location, getPropertyFormat(PROPERTY_TARGET), null, null, null);
 	}
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
@@ -584,26 +585,25 @@ protected HashMap computeCounts(String[][] mappings) {
 /**
  * Just ends the script.
  */
-protected void generateEpilogue(PrintWriter output) {
-	output.println();
-	output.println("</project>");
+protected void generateEpilogue() {
+	script.println();
+	script.printString(0, "</project>");
 }
 
 /**
  * Defines, the XML declaration, Ant project and init target.
  */
-protected void generatePrologue(PrintWriter output) {
+protected void generatePrologue() {
 	int tab = 1;
-	output.println(XML_PROLOG);
-	printProjectDeclaration(output, feature.getFeatureIdentifier(), TARGET_INIT, ".");
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_INIT, null, null, null, null);
+	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_INIT, ".");
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_INIT, null, null, null, null);
 	tab++;
-	printString(output, tab, "<initTemplate/>");
-	printProperty(output, tab, "feature", feature.getFeatureIdentifier());
-	printProperty(output, tab, "featureVersion", feature.getFeatureVersion());
+	script.printString(tab, "<initTemplate/>");
+	script.printProperty(tab, "feature", feature.getFeatureIdentifier());
+	script.printProperty(tab, "featureVersion", feature.getFeatureVersion());
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
 
@@ -693,11 +693,11 @@ protected String getFeatureRootLocation() {
  * Delegates some target call to all-template only if the property
  * includeChildren is set.
  */
-protected void generateChildrenTarget(PrintWriter output) {
-	output.println();
-	printTargetDeclaration(output, 1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
-	printAntCallTask(output, 2, TARGET_ALL_CHILDREN, null, null);
-	printString(output, 1, "</target>");
+protected void generateChildrenTarget() {
+	script.println();
+	script.printTargetDeclaration(1, TARGET_CHILDREN, null, PROPERTY_INCLUDE_CHILDREN, null, null);
+	script.printAntCallTask(2, TARGET_ALL_CHILDREN, null, null);
+	script.printString(1, "</target>");
 }
 
 }

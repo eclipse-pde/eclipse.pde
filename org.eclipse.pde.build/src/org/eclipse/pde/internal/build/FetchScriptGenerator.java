@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.internal.ant.AntScript;
 import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.FeatureExecutableFactory;
@@ -16,6 +17,11 @@ import org.eclipse.update.internal.core.FeatureExecutableFactory;
  * 
  */
 public class FetchScriptGenerator extends AbstractScriptGenerator {
+
+	/**
+	 * 
+	 */
+	protected AntScript script;
 
 	/**
 	 * 
@@ -67,12 +73,11 @@ public void generate() throws CoreException {
 		// if scriptName is not absolute, make it relative to the installLocation
 		if (!target.isAbsolute())
 			target = new File(root, scriptName);
-		PrintWriter output = new PrintWriter(new FileOutputStream(target));
+		script = new BuildAntScript(new FileOutputStream(target));
 		try {
-			generateFetchScript(output);
+			generateFetchScript();
 		} finally {
-			output.flush();
-			output.close();
+			script.close();
 		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
@@ -82,24 +87,24 @@ public void generate() throws CoreException {
 /**
  * Main call for generating the script.
  */
-protected void generateFetchScript(PrintWriter output) throws CoreException {
-	generatePrologue(output);
-	generateFetchTarget(output);
-	generateEpilogue(output);
+protected void generateFetchScript() throws CoreException {
+	generatePrologue();
+	generateFetchTarget();
+	generateEpilogue();
 }
 
 
-protected void generateFetchTarget(PrintWriter output) throws CoreException {
+protected void generateFetchTarget() throws CoreException {
 	int tab = 1;
-	output.println();
-	printTargetDeclaration(output, tab, TARGET_FETCH, null, null, null, null);
+	script.println();
+	script.printTargetDeclaration(tab, TARGET_FETCH, null, null, null, null);
 	tab++;
-	generateFetchEntry(output, tab, element);
+	generateFetchEntry(tab, element);
 	tab--;
-	printString(output, tab, "</target>");
+	script.printString(tab, "</target>");
 }
 
-protected void generateFetchEntry(PrintWriter output, int tab, String entry) throws CoreException {
+protected void generateFetchEntry(int tab, String entry) throws CoreException {
 	String cvsInfo = getCVSInfo(entry);
 	if (cvsInfo == null)
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ENTRY_MISSING, Policy.bind("error.missingDirectoryEntry", entry), null));
@@ -114,14 +119,14 @@ protected void generateFetchEntry(PrintWriter output, int tab, String entry) thr
 	String password = (cvsFields.length > 2) ? cvsFields[2] : null;
 
 	if (password != null)
-		printCVSPassTask(output, tab, cvsRoot, password, cvsPassFileLocation);
+		script.printCVSPassTask(tab, cvsRoot, password, cvsPassFileLocation);
 
-	generateMkdirs(output, tab, location);
-	printCVSTask(output, tab, null, cvsRoot, location, element, tag, getPropertyFormat(PROPERTY_QUIET), cvsPassFileLocation);
+	generateMkdirs(tab, location);
+	script.printCVSTask(tab, null, cvsRoot, location, element, tag, getPropertyFormat(PROPERTY_QUIET), cvsPassFileLocation);
 
 	if (fetchChildren && type.equals("feature")) {
 		Feature feature = retrieveFeature(element, cvsRoot, tag, password);
-		generateChildrenFetchScript(output, tab, feature);
+		generateChildrenFetchScript(tab, feature);
 	}
 }
 
@@ -129,21 +134,21 @@ protected void generateFetchEntry(PrintWriter output, int tab, String entry) thr
  * Helper method to control for what locations a mkdir Ant task was already
  * generated so we can reduce replication.
  */
-protected void generateMkdirs(PrintWriter output, int tab, String location) {
+protected void generateMkdirs(int tab, String location) {
 	if (mkdirLocations.contains(location))
 		return;
 	mkdirLocations.add(location);
-	printMkdirTask(output, tab, location);
+	script.printMkdirTask(tab, location);
 }
 
-protected void generateChildrenFetchScript(PrintWriter output, int tab, Feature feature) throws CoreException {
+protected void generateChildrenFetchScript(int tab, Feature feature) throws CoreException {
 	IPluginEntry[] children = feature.getPluginEntries();
 	for (int i = 0; i < children.length; i++) {
 		String elementId = children[i].getVersionedIdentifier().getIdentifier();
 		if (children[i].isFragment())
-			generateFetchEntry(output, tab, "fragment@" + elementId);
+			generateFetchEntry(tab, "fragment@" + elementId);
 		else
-			generateFetchEntry(output, tab, "plugin@" + elementId);
+			generateFetchEntry(tab, "plugin@" + elementId);
 	}
 }
 
@@ -151,20 +156,18 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 	File root = new File(installLocation);
 	File target = new File(root, "retrieve.xml");
 	try {
-		PrintWriter output = new PrintWriter(new FileOutputStream(target));
+		AntScript retrieve = new AntScript(new FileOutputStream(target));
 		try {
-			output.println(XML_PROLOG);
-			printProjectDeclaration(output, "RetrieveFeature", "main", ".");
-			printTargetDeclaration(output, 0, "main", null, null, null, null);
+			retrieve.printProjectDeclaration("RetrieveFeature", "main", ".");
+			retrieve.printTargetDeclaration(0, "main", null, null, null, null);
 			IPath module = new Path(element).append("feature.xml");
 			if (password != null)
-				printCVSPassTask(output, 0, cvsRoot, password, cvsPassFileLocation);
-			printCVSTask(output, 0, null, cvsRoot, null, module.toString(), tag, "true", cvsPassFileLocation);
-			output.println("</target>");
-			output.println("</project>");
+				retrieve.printCVSPassTask(0, cvsRoot, password, cvsPassFileLocation);
+			retrieve.printCVSTask(0, null, cvsRoot, null, module.toString(), tag, "true", cvsPassFileLocation);
+			retrieve.printString(0, "</target>");
+			retrieve.printString(0, "</project>");
 		} finally {
-			output.flush();
-			output.close();
+			retrieve.close();
 		}
 	} catch (IOException e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
@@ -255,21 +258,20 @@ protected void readDirectory() throws CoreException {
 /**
  * Defines, the XML declaration and Ant project.
  */
-protected void generatePrologue(PrintWriter output) {
-	output.println(XML_PROLOG);
-	output.println();
-	printComment(output, 0, "Fetch script for " + element);
-	output.println();
-	printProjectDeclaration(output, "FetchScript", TARGET_FETCH, ".");
-	printProperty(output, 1,PROPERTY_QUIET, "true");
+protected void generatePrologue() {
+	script.println();
+	script.printComment(0, "Fetch script for " + element);
+	script.println();
+	script.printProjectDeclaration("FetchScript", TARGET_FETCH, ".");
+	script.printProperty(1,PROPERTY_QUIET, "true");
 }
 
 /**
  * Just ends the script.
  */
-protected void generateEpilogue(PrintWriter output) {
-	output.println();
-	output.println("</project>");
+protected void generateEpilogue() {
+	script.println();
+	script.printString(0, "</project>");
 }
 
 	
