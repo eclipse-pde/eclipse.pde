@@ -24,14 +24,7 @@ protected Schema createSchema() {
 public IFile getFile() {
 	return file;
 }
-private URL getInstallURL() {
-	IPath platformPath = Platform.getLocation();
-	try {
-		return new URL("file:" + platformPath.toString());
-	} catch (MalformedURLException e) {
-	}
-	return null;
-}
+
 public String getPointId() {
 	IProject project = file.getProject();
 	String projectName = project.getName();
@@ -39,10 +32,13 @@ public String getPointId() {
 	int dotLoc = fileName.lastIndexOf('.');
 	return projectName + "."+fileName.substring(0, dotLoc);
 }
+
 public URL getSchemaURL() {
-	URL url = getInstallURL();
 	try {
-		return new URL(url.toString() + file.getFullPath().toString());
+		return new URL(
+			"file:"
+				+ file.getProject().getLocation().removeLastSegments(1)
+				+ file.getFullPath().toString());
 	} catch (MalformedURLException e) {
 	}
 	return null;
