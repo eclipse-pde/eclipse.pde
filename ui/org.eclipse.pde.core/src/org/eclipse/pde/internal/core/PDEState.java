@@ -79,7 +79,13 @@ public class PDEState {
 				saveState(timestamp);
 				savePluginInfo(timestamp);
 			} else {
-				fId = fState.getBundles().length;
+				if (fState != null) {
+					fId = fState.getBundles().length;
+				} else {
+					createState();
+					saveState(timestamp);
+					savePluginInfo(timestamp);					
+				}				
 			}
 			if (!readExtensionsCache(timestamp)) {
 				saveExtensions(timestamp);
@@ -169,7 +175,7 @@ public class PDEState {
 			try {
 				stream = new FileInputStream(file);
 				fState = stateObjectFactory.readState(stream);	
-				return true;
+				return fState != null;
 			} catch (IllegalStateException e) {
 				PDECore.log(e);
 			} catch (FileNotFoundException e) {
