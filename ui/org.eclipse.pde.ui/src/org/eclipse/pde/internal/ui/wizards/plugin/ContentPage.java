@@ -240,6 +240,7 @@ public abstract class ContentPage extends WizardPage {
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
 				presetNameField(id);
 				presetProviderField(id);
+				presetLibraryField();
 				fChangedGroups = oldfChanged;
 			}
 			// plugin class group
@@ -269,6 +270,15 @@ public abstract class ContentPage extends WizardPage {
 		return buffer.toString();
 	}
 
+	private void presetLibraryField(){
+		String fullName = fProjectProvider.getProjectName().trim();
+		StringTokenizer tok = new StringTokenizer(fullName, "."); //$NON-NLS-1$
+		while (tok.hasMoreTokens()) {
+			String token = tok.nextToken();
+			if (!tok.hasMoreTokens())
+				fLibraryText.setText(token + ".jar"); //$NON-NLS-1$
+		}
+	}
 	private void presetNameField(String id) {
 		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
