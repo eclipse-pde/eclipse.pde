@@ -4,7 +4,8 @@
    id="org.eclipse.pde.ui.tests"
    name="PDE JUnit Tests"
    version="3.1.0"
-   provider-name="Eclipse.org">
+   provider-name="Eclipse.org"
+   class="org.eclipse.ui.internal.macro.MacroPlugin">
    
    <runtime>
       <library name="tests.jar">
@@ -21,6 +22,75 @@
       <import plugin="org.eclipse.test.performance"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.core"/>
    </requires>
+
+   <extension-point id="macroSupport" name="Macro Support" schema="schema/macroSupport.exsd"/>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Sample Action Set"
+            visible="true"
+            id="org.eclipse.ui.macro.actionSet">
+         <menu
+               label="&amp;Macros..."
+               path="window/additions"
+               id="macro">
+            <separator name="group1"/>
+         </menu>
+         <action
+               toolbarPath="sampleGroup"
+               label="&amp;Start Recording"
+               class="org.eclipse.ui.internal.macro.RecordAction"
+               tooltip="Start Recording"
+               icon="icons/external_tools.gif"
+               menubarPath="window/macro/group1"
+               id="org.eclipse.ui.macro.actions.RecordAction"/>
+         <action
+               toolbarPath="sampleGroup"
+               label="S&amp;top Recording"
+               definitionId="org.eclipse.ui.macro.stopRecording"
+               icon="icons/terminate_co.gif"
+               tooltip="Stop Recording"
+               class="org.eclipse.ui.internal.macro.StopAction"
+               menubarPath="window/macro/group1"
+               id="org.eclipse.ui.macro.actions.StopAction"/>
+         <action
+               enablesFor="1"
+               toolbarPath="sampleGroup"
+               label="&amp;Playback"
+               icon="icons/run_exc.gif"
+               tooltip="&amp;Run Macro"
+               class="org.eclipse.ui.internal.macro.PlaybackAction"
+               menubarPath="window/macro/group1"
+               id="org.eclipse.ui.macro.actions.PlaybackAction">
+            <enablement>
+            	<and>
+   					<objectClass name="org.eclipse.core.resources.IFile"/>
+   						<objectState name="extension" value="emc"/>
+  				</and>
+ 			</enablement>
+ 		</action>
+     </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.tests.macroSupport">
+      <widgetResolver class="org.eclipse.ui.macro.DefaultWidgetResolver"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Stops the recording of the macro"
+            categoryId="org.eclipse.ui.category.window"
+            name="Stop Macro Recording"
+            id="org.eclipse.ui.macro.stopRecording"/>
+      <keyBinding
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            commandId="org.eclipse.ui.macro.stopRecording"
+            keySequence="Ctrl+Shift+F11"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
 
 </plugin>
