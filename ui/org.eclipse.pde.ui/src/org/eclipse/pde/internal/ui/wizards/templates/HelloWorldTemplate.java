@@ -40,7 +40,8 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	 * Constructor for HelloWorldTemplate.
 	 */
 	public HelloWorldTemplate() {
-
+		setPageCount(1);
+		createOptions();
 	}
 
 	public String getSectionId() {
@@ -52,10 +53,8 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
-
-	public void addPages(Wizard wizard) {
-		setPageCount(1);
-
+	
+	private void createOptions() {
 		addOption(
 			KEY_PACKAGE_NAME,
 			PDEPlugin.getResourceString(KEY_PACKAGE_LABEL),
@@ -76,11 +75,14 @@ public class HelloWorldTemplate extends PDETemplateSection {
 			PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),
 			true,
 			0);
-			
+	}
+
+	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		wizard.addPage(page);
+		markPagesAdded();
 	}
 
 	public void validateOptions(TemplateOption source) {

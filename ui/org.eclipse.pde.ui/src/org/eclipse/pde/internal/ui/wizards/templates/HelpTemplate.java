@@ -45,16 +45,19 @@ public class HelpTemplate extends PDETemplateSection {
 	private BooleanOption tasksOption;
 	private BooleanOption referenceOption;
 	private BooleanOption samplesOption;
-
-	public void addPages(Wizard wizard) {
+	
+	public HelpTemplate() {
 		setPageCount(1);
 		createOptions();
 		alterOptionStates();
+	}
 
+	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
 		wizard.addPage(page);
+		markPagesAdded();
 	}
 	
 	private void alterOptionStates() {

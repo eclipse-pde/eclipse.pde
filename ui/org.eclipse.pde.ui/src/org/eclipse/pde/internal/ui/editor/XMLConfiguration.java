@@ -52,11 +52,11 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
-		RuleBasedDamagerRepairer dr = new RuleBasedDamagerRepairer(getPDEScanner());
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getPDEScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr = new RuleBasedDamagerRepairer(getPDETagScanner());
+		dr = new DefaultDamagerRepairer(getPDETagScanner());
 		reconciler.setDamager(dr, PDEPartitionScanner.XML_TAG);
 		reconciler.setRepairer(dr, PDEPartitionScanner.XML_TAG);
 

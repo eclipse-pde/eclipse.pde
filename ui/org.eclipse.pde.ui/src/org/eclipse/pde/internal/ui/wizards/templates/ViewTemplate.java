@@ -47,6 +47,8 @@ public class ViewTemplate extends PDETemplateSection {
 	 * Constructor for HelloWorldTemplate.
 	 */
 	public ViewTemplate() {
+		setPageCount(2);
+		createOptions();
 	}
 	
 	public String getSectionId() {
@@ -104,8 +106,6 @@ public class ViewTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		setPageCount(2);
-		createOptions();
 		WizardPage page0 = createPage(0);
 		page0.setTitle(PDEPlugin.getResourceString(NL_TITLE0));
 		page0.setDescription(PDEPlugin.getResourceString(NL_DESC0));
@@ -115,6 +115,7 @@ public class ViewTemplate extends PDETemplateSection {
 		page1.setTitle(PDEPlugin.getResourceString(NL_TITLE1));
 		page1.setDescription(PDEPlugin.getResourceString(NL_DESC1));
 		wizard.addPage(page1);
+		markPagesAdded();
 	}
 
 	public void validateOptions(TemplateOption source) {

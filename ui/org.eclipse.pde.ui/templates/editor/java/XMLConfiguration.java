@@ -9,7 +9,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.RuleBasedDamagerRepairer;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -58,11 +58,11 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
-		RuleBasedDamagerRepairer dr = new RuleBasedDamagerRepairer(getXMLTagScanner());
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getXMLTagScanner());
 		reconciler.setDamager(dr, XMLPartitionScanner.XML_TAG);
 		reconciler.setRepairer(dr, XMLPartitionScanner.XML_TAG);
 
-		dr = new RuleBasedDamagerRepairer(getXMLScanner());
+		dr = new DefaultDamagerRepairer(getXMLScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 

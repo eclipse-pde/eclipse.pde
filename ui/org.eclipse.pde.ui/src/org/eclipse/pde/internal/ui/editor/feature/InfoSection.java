@@ -9,7 +9,7 @@ import java.net.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.RuleBasedPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
@@ -18,10 +18,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
@@ -60,7 +60,7 @@ public class InfoSection extends PDEFormSection {
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
-			new RuleBasedPartitioner(
+			new DefaultPartitioner(
 				new PDEPartitionScanner(),
 				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);

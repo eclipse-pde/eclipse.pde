@@ -42,17 +42,16 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	 * Constructor for PropertyPageTemplate.
 	 */
 	public PopupMenuTemplate() {
-		super();
+		setPageCount(1);
+		createOptions();
 	}
 
 	public void addPages(Wizard wizard) {
-		setPageCount(1);
-		createOptions();
-
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(NL_DESC));
 		wizard.addPage(page);
+		markPagesAdded();
 	}
 
 	private void createOptions() {

@@ -102,17 +102,6 @@ public class TemplateSelectionPage extends WizardPage {
 			IConfigurationElement element = elements[i];
 			addTemplate(element, candidates);
 		}
-		/*
-		candidates.add(new HelloWorldTemplate());
-		candidates.add(new ViewTemplate());
-		candidates.add(new EditorTemplate());
-		candidates.add(new MultiPageEditorTemplate());
-		candidates.add(new NewWizardTemplate());
-		candidates.add(new PreferencePageTemplate());
-		candidates.add(new PropertyPageTemplate());
-		candidates.add(new PopupMenuTemplate());
-		candidates.add(new PerspectiveExtensionsTemplate());
-		*/
 	}
 
 	private void addTemplate(IConfigurationElement config, ArrayList result) {
@@ -202,7 +191,7 @@ public class TemplateSelectionPage extends WizardPage {
 
 		for (int i = 0; i < sections.length; i++) {
 			ITemplateSection section = sections[i];
-			if (section.getPageCount() == 0)
+			if (section.getPagesAdded() == false)
 				section.addPages((Wizard) getWizard());
 
 			for (int j = 0; j < section.getPageCount(); j++) {

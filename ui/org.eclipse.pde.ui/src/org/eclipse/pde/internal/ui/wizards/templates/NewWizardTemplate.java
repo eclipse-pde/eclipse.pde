@@ -31,6 +31,8 @@ public class NewWizardTemplate extends PDETemplateSection {
 	private static final String KEY_FILE_LABEL = "NewWizardTemplate.fileName";
 
 	public NewWizardTemplate() {
+		setPageCount(1);
+		createOptions();
 	}
 	
 	public String getSectionId() {
@@ -75,12 +77,11 @@ public class NewWizardTemplate extends PDETemplateSection {
 	}
 	
 	public void addPages(Wizard wizard) {
-		setPageCount(1);
-		createOptions();
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		wizard.addPage(page);
+		markPagesAdded();
 	}
 
 	public void validateOptions(TemplateOption source) {

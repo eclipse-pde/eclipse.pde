@@ -7,7 +7,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.RuleBasedPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IEditable;
@@ -56,7 +56,7 @@ public class DescriptionSection extends PDEFormSection {
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
-			new RuleBasedPartitioner(
+			new DefaultPartitioner(
 				new PDEPartitionScanner(),
 				new String[] { PDEPartitionScanner.XML_TAG, PDEPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);

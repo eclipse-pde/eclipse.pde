@@ -54,6 +54,8 @@ public abstract class AbstractTemplateSection
 	public static final String KEY_PACKAGE_NAME = "packageName";
 
 	private static final String KEY_GENERATING = "AbstractTemplateSection.generating";
+	
+	private boolean pagesAdded=false;
 	/**
 	 * The default implementation of this method provides
 	 * values of the following keys: <samp>pluginClass</samp>,
@@ -128,6 +130,19 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#addPages(IBasePluginWizard)
 	 */
 	public void addPages(Wizard wizard) {
+	}
+	
+	public boolean getPagesAdded() {
+		return pagesAdded;
+	}
+	
+	/**
+	 * Marks that pages have been added to the wizard by this template.
+	 * Call this method in 'addPages'.
+	 * @see #addPages(Wizard)
+	 */
+	protected void markPagesAdded() {
+		pagesAdded = true;
 	}
 
 	/*

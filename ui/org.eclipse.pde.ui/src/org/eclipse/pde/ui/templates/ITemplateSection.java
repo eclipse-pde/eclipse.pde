@@ -81,15 +81,27 @@ public interface ITemplateSection {
 	public void addPages(Wizard wizard);
 
 	/**
-	 * Returns an array of wizard pages that have been 
-	 * contributed into the wizard.
-	 * @return an array of wizard pages (the size may be 0 if
-	 * no pages have been added).
+	 * Returns a wizard page at the provided index.
+	 * @return wizard page index.
 	 */
 
 	public WizardPage getPage(int pageIndex);
 	
+	/**
+	 * Returns number of pages that are contributed by this template.
+	 */
+	
 	public int getPageCount();
+	
+	/**
+	 * Tests whether this template have had a chance to create
+	 * its pages. This method returns true after 'addPages'
+	 * has been called.
+	 * @return <samp>true</samp> if wizard pages have been
+	 * created by this template.
+	 */
+	
+	public boolean getPagesAdded();
 
 	/**
 	 * Returns the number of work units that this template will

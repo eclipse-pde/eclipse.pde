@@ -119,7 +119,8 @@ public class ProjectStructurePage extends WizardPage {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null) {
 			IJavaProject javaProject = JavaCore.create(project);
-			JavaRuntime.setVM(javaProject, install);
+			// method is deprecated and does nothing.
+			//JavaRuntime.setVM(javaProject, install);
 		}
 	}
 	

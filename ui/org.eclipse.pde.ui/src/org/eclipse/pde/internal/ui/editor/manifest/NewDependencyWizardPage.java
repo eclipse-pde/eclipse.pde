@@ -28,8 +28,8 @@ public class NewDependencyWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "ManifestEditor.ImportListSection.new.title";
 	public static final String KEY_DESC = "ManifestEditor.ImportListSection.new.desc";
 	public static final String KEY_PLUGINS = "ManifestEditor.ImportListSection.new.label";
-	public static final String KEY_WORKSPACE_PLUGINS = "Preferences.AdvancedTracingPage.workspacePlugins";
-	public static final String KEY_EXTERNAL_PLUGINS = "Preferences.AdvancedTracingPage.externalPlugins";
+	public static final String KEY_WORKSPACE_PLUGINS = "AdvancedLauncherTab.workspacePlugins";
+	public static final String KEY_EXTERNAL_PLUGINS = "AdvancedLauncherTab.externalPlugins";
 	public static final String KEY_LOOP_WARNING = "ManifestEditor.ImportListSection.loopWarning";
 	private IPluginModelBase modelBase;
 	private CheckboxTreeViewer pluginTreeViewer;

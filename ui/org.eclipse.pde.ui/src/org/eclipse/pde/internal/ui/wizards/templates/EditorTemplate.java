@@ -37,15 +37,16 @@ public class EditorTemplate extends PDETemplateSection {
 	 * Constructor for EditorTemplate.
 	 */
 	public EditorTemplate() {
+		setPageCount(1);
+		createOptions();
 	}
 
 	public void addPages(Wizard wizard) {
-		setPageCount(1);
-		createOptions();
 		WizardPage page = createPage(0);
 		page.setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		page.setDescription(PDEPlugin.getResourceString(KEY_DESC));
 		wizard.addPage(page);
+		markPagesAdded();
 	}
 
 	private void createOptions() {

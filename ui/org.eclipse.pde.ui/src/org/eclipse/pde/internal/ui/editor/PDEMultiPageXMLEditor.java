@@ -9,7 +9,7 @@ import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.RuleBasedPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.PDEPartitionScanner;
 import org.eclipse.ui.IFileEditorInput;
@@ -33,7 +33,8 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 		}
 		protected void setDocumentContent(
 			IDocument document,
-			InputStream contentStream)
+			InputStream contentStream,
+			String encoding)
 			throws CoreException {
 
 			Reader in = null;
@@ -132,8 +133,8 @@ public abstract class PDEMultiPageXMLEditor extends PDEMultiPageEditor {
 		super();
 	}
 	protected IDocumentPartitioner createDocumentPartitioner() {
-		RuleBasedPartitioner partitioner =
-			new RuleBasedPartitioner(
+		DefaultPartitioner partitioner =
+			new DefaultPartitioner(
 				new PDEPartitionScanner(),
 				new String[] {
 					PDEPartitionScanner.XML_TAG,

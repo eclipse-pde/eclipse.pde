@@ -14,19 +14,13 @@ public class $editorClass$ extends TextEditor {
 	 */
 	public $editorClass$() {
 		super();
+		colorManager = new ColorManager();
+		setSourceViewerConfiguration(new XMLConfiguration(colorManager));
+		setDocumentProvider(new XMLDocumentProvider());
 	}
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on AbstractTextEditor
-	 */
-	protected void initializeEditor() {
-		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new XMLConfiguration(colorManager));
-		setDocumentProvider(new XMLDocumentProvider());
-	}
-
 }
