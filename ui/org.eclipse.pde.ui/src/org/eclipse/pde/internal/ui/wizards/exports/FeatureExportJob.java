@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.*;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.*;
@@ -309,6 +310,27 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		runner.setBuildFileLocation(location);
 		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener"); //$NON-NLS-1$
 		runner.setExecutionTargets(targets);
+		if (fSigningInfo != null) {
+			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
+			IAntClasspathEntry entry = preferences.getToolsJarEntry();
+			if (entry != null) {
+				IAntClasspathEntry[] classpath = preferences.getAntHomeClasspathEntries();
+				URL[] urls = new URL[classpath.length + 2];
+				for (int i = 0; i < classpath.length; i++) {
+					urls[i] = classpath[i].getEntryURL();
+				}
+				IPath path = new Path(entry.getEntryURL().toString()).removeLastSegments(2);
+				path = path.append("bin");
+				try {
+					urls[classpath.length] = new URL(path.toString());
+				} catch (MalformedURLException e) {
+					urls[classpath.length] = entry.getEntryURL();
+				} finally {
+					urls[classpath.length + 1] = entry.getEntryURL();		
+				}
+				runner.setCustomClasspath(urls);
+			}
+		}
 		runner.run(monitor);
 	}
 
