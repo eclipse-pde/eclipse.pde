@@ -83,7 +83,6 @@ public class Bundle extends BundleObject implements IBundle {
 	private void loadFragment(IFragment fragment) {
 		String pluginId = fragment.getPluginId();
 		String pluginVersion = fragment.getPluginVersion();
-		int pluginMatch = fragment.getRule();
 		StringBuffer hostBundle = new StringBuffer();
 
 		hostBundle.append(pluginId).append("; ");
@@ -112,7 +111,6 @@ public class Bundle extends BundleObject implements IBundle {
 			IPluginImport iimport = imports[i];
 			String id = iimport.getId();
 			String version = iimport.getVersion();
-			int match = iimport.getMatch();
 			if (i>0) requires.append(", ");
 			requires.append(id);
 			if (version!=null) {

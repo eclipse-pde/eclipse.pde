@@ -84,7 +84,6 @@ public class PropertiesUtil {
 		String writableName = createWritableName(name);
 		writer.print(writableName + " = ");
 
-		int indentLength = name.length() + 3;
 		writer.println(PropertiesUtil.createEscapedValue(value));
 	}
 

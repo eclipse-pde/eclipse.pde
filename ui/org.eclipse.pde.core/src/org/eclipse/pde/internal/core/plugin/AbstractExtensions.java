@@ -24,7 +24,6 @@ public abstract class AbstractExtensions
 	implements IExtensions {
 	private Vector extensions = new Vector();
 	private Vector extensionPoints = new Vector();
-	private String version;
 
 	public AbstractExtensions() {
 	}
