@@ -87,6 +87,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private String propertiesFileName = PROPERTIES_FILE;
 	private String buildScriptFileName = DEFAULT_BUILD_SCRIPT_FILENAME;
+	//This list is initialized by the generateBuildJarsTarget
+	private ArrayList compiledJarNames; 
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -177,7 +179,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildScript() throws CoreException {
 		generatePrologue();
 		generateBuildUpdateJarTarget();
-		generateGatherBinPartsTarget();
 
 		if (getBuildProperties().getProperty(SOURCE_PLUGIN, null) == null) { //$NON-NLS-1$
 			generateBuildJarsTarget(model);
@@ -185,6 +186,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateBuildJarsTargetForSourceGathering();
 			generateEmptyBuildSourcesTarget();
 		}
+		generateGatherBinPartsTarget();
 		generateBuildZipsTarget();
 		generateGatherSourcesTarget();
 		generateGatherLogTarget();
@@ -349,9 +351,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		destinations.add(destination);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
-		//Fix for Bug 38943 - This is not really satisfactory because it copies much more than what it should
-		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, replaceVariables(include, true), null, replaceVariables(exclude, true), null, null);
+		
+		//TODO This needs to be improved for . on the classpath and folders (if they don't have a / at the end)
+		if (compiledJarNames != null && compiledJarNames.size() != 0) {
+			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromCollection(compiledJarNames, ","), null, replaceVariables(exclude, true), null, null);	//$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] { fileSet }, true);
 		}
 		if (include != null || exclude != null) {
@@ -610,7 +613,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildJarsTarget(BundleDescription pluginModel) throws CoreException {
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
-		List jarNames = new ArrayList(availableJars.length);
+		compiledJarNames = new ArrayList(availableJars.length);
 		Map jars = new HashMap(availableJars.length);
 		for (int i = 0; i < availableJars.length; i++)
 			jars.put(availableJars[i].getName(false), availableJars[i]);
@@ -631,7 +634,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					continue;
 
 				String name = jar.getName(false);
-				jarNames.add(name);
+				compiledJarNames.add(name);
 				generateCompilationTarget(classpath.getClasspath(pluginModel, jar), jar);
 				generateSRCTarget(jar);
 				jars.remove(order[i]);
@@ -640,13 +643,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		for (Iterator iterator = jars.values().iterator(); iterator.hasNext();) {
 			CompiledEntry jar = (CompiledEntry) iterator.next();
 			String name = jar.getName(false);
-			jarNames.add(name);
+			compiledJarNames.add(name);
 			generateCompilationTarget(classpath.getClasspath(pluginModel, jar), jar);
 			generateSRCTarget(jar);
 		}
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.plugin.buildJars", pluginModel.getUniqueId())); //$NON-NLS-1$
-		for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
+		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
 			script.printAvailableTask(name, replaceVariables(getJARLocation(name), true));
 			script.printAntCallTask(name, null, null);
@@ -655,7 +658,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
-		for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
+		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String jarName = (String) iter.next();
 			String srcName = getSRCName(jarName);
 			script.printAvailableTask(srcName, getSRCLocation(jarName));
