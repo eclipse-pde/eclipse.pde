@@ -32,9 +32,6 @@
          <command type="item-select" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1">
             <item path="org.eclipse.jdt.ui.wizards.JavaProjectWizard"/>
          </command>
-         <command type="item-expand" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1" value="false">
-            <item path="org.eclipse.pde.PDE"/>
-         </command>
          <command type="item-expand" contextId="wizard-page/newWizardSelectionPage" widgetId="org.eclipse.swt.widgets.Tree#1" value="true">
             <item path="org.eclipse.pde.PDE"/>
          </command>
@@ -59,7 +56,10 @@
          <command type="focus" contextId="wizard-page/specPage" widgetId="org.eclipse.swt.widgets.Text#1"/>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard-page/pluginListPage" widgetId="org.eclipse.swt.widgets.Table#1"/>
-         <command type="select" contextId="wizard-page/pluginListPage" widgetId="org.eclipse.swt.widgets.Button#ButtonId=0"/>
+         <command type="select" contextId="wizard-page/pluginListPage" widgetId="org.eclipse.swt.widgets.Button#ButtonId=1"/>
+         <command type="item-check" contextId="wizard-page/pluginListPage" widgetId="org.eclipse.swt.widgets.Table#1" value="true">
+            <item path="com.example.test.plugin"/>
+         </command>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
          <command type="wait"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
