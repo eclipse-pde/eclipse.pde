@@ -261,6 +261,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 								fresult,
 								paths,
 								false,
+								false,
 								monitor);
 						if (errors != null
 							&& errors.getChildren().length > 0) {
