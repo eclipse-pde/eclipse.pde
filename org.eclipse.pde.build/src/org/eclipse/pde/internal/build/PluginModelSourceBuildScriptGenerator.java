@@ -92,10 +92,12 @@ protected void generateMainScript(AntScript script, PluginModel[] plugins, Plugi
 	script.printProjectDeclaration("Source Build", TARGET_MAIN, ".");
 	int tab = 1;
 	script.printTargetDeclaration(tab++, TARGET_MAIN, null, null, null, null);
+	script.printProperty(tab, PROPERTY_TARGET, TARGET_BUILD_JARS);
+	String target = getPropertyFormat(PROPERTY_TARGET);
 	PluginModel[] models = getCompileOrder(plugins, fragments);
 	for (int i = 0; i < models.length; i++) {
 		String location = getLocation(models[i]);
-		script.printAntTask(tab, scriptName, location, null, null, null, null);
+		script.printAntTask(tab, scriptName, location, target, null, null, null);
 	}
 	script.printEndTag(--tab, TARGET_TARGET);
 	script.printEndTag(--tab, "project");
@@ -197,7 +199,7 @@ protected void generate(AntScript script, PluginModel model) throws CoreExceptio
 //	generateGatherSourcesTarget();
 //	generateBuildSourcesTarget();
 //	generateGatherLogTarget();
-//	generateCleanTarget();
+	generateCleanTarget(script, model);
 //	generatePropertiesTarget();
 	generateEpilogue(script);
 }
@@ -233,6 +235,20 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	script.printEndTag(1, "target");
 }
 
+protected void generateCleanTarget(AntScript script, PluginModel model) throws CoreException {
+	Properties properties = getBuildProperties(model);
+	JAR[] availableJars = extractJars(properties);
+	script.println();
+	int tab = 1;
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, null, null, null, null);
+	for (int i = 0; i < availableJars.length; i++) {
+		String name = availableJars[i].getName();
+		script.printDeleteTask(tab, null, name, null);
+		script.printDeleteTask(tab, getTempJARFolder(name), null, null);
+	}
+	script.printEndTag(--tab, "target");
+}
+
 protected JAR[] extractJars(Properties properties) {
 	List result = new ArrayList(5);
 	int n = PROPERTY_SOURCE_PREFIX.length();
@@ -254,10 +270,7 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.println();
 	String name = jar.getName();
 	script.printTargetDeclaration(tab++, name, null, null, null, null);
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(basedir);
-	destination = destination.append(name + ".bin");
-	String destdir = destination.toString();
+	String destdir = getTempJARFolder(name);
 	script.printProperty(tab, "destdir", destdir);
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printMkdirTask(tab, destdir);
@@ -282,6 +295,14 @@ protected void generateJARTarget(AntScript script, PluginModel model, JAR jar) t
 	script.printJarTask(tab, name, destdir);
 	script.printDeleteTask(tab, destdir, null, null);
 	script.printEndTag(--tab, "target");
+}
+
+protected String getTempJARFolder(String jarName) {
+	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
+	IPath destination = new Path(basedir);
+	destination = destination.append(jarName + ".bin");
+	String destdir = destination.toString();
+	return destdir;
 }
 
 protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
@@ -310,6 +331,20 @@ protected String getClasspath(PluginModel model, JAR jar) throws CoreException {
 			if (jar.getName().equals(jars[i].getName()))
 				continue;
 			classpath.add(jars[i].getName());
+		}
+		// FIXME: optimize the following hack
+		LibraryModel[] libraries = model.getRuntime();
+		for (int i = 0; i < libraries.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < jars.length; j++) {
+				if (jars[j].getName().equals(libraries[i].getName())) {
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				continue;
+			classpath.add(libraries[i].getName());
 		}
 	} else {
 		// otherwise we add all the predecessor jars
