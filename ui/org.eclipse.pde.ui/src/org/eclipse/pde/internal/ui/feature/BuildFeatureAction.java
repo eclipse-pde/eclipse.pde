@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -33,6 +34,7 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 	public static final String KEY_UPDATING = "GenerateFeatureJars.updating";
 	private IWorkbenchPart targetPart;
 	private IFile featureFile;
+	private boolean errors;
 
 	public IFile getFeatureFile() {
 		return featureFile;
@@ -64,7 +66,9 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 		ProgressMonitorDialog pmd =
 			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			pmd.run(true, false, op);
+			errors = false;
+			pmd.run(false, false, op);
+			if (errors) return;
 			final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
@@ -82,12 +86,16 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 	}
 	
 	private void syncLogException(final Throwable e) {
-		final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				PDEPlugin.logException(e);
-			}
-		});
+		final Display display = SWTUtil.getStandardDisplay();
+		if (display!=null) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					PDEPlugin.logException(e);
+				}
+			});
+		}
+		else
+			PDEPlugin.log(e);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -116,8 +124,10 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 	private void doBuildFeature(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_VERIFYING), 3);
-		if (ensureValid(monitor) == false)
+		if (ensureValid(monitor) == false) {
+			errors = true;
 			return;
+		}
 		monitor.worked(1);
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(featureFile);
 		model.load();
@@ -137,19 +147,31 @@ public class BuildFeatureAction implements IObjectActionDelegate {
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
 		// Check if there are errors against feature file
-		IMarker[] markers =
-			featureFile.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-		if (markers.length > 0) {
+		if (hasErrors(featureFile)) {
 			// There are errors against this file - abort
 			String message;
 			message = PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE);
 			MessageDialog.openError(
-				PDEPlugin.getActiveWorkbenchShell(),
+				null,
 				PDEPlugin.getResourceString(KEY_ERRORS_TITLE),
 				message);
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean hasErrors(IFile file) throws CoreException {
+		// Check if there are errors against feature file
+		IMarker[] markers =file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+		for (int i=0; i<markers.length; i++) {
+			IMarker marker = markers[i];
+			Object att = marker.getAttribute(IMarker.SEVERITY);
+			if (att!=null && att instanceof Integer) {
+				Integer severity = (Integer)att;
+				if (severity.intValue()==IMarker.SEVERITY_ERROR) return true;
+			}
+		}
+		return false;
 	}
 
 	private void makeScripts(IFeatureModel model, IProgressMonitor monitor)

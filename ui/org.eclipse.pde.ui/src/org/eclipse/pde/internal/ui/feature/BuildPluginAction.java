@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -35,6 +36,7 @@ public class BuildPluginAction implements IObjectActionDelegate {
 	private IWorkbenchPart targetPart;
 	private IFile pluginBaseFile;
 	private boolean fragment;
+	private boolean errors;
 
 	public IFile getPluginBaseFile() {
 		return pluginBaseFile;
@@ -63,10 +65,12 @@ public class BuildPluginAction implements IObjectActionDelegate {
 				}
 			}
 		};
+		errors = false;
 		ProgressMonitorDialog pmd =
 			new ProgressMonitorDialog(PDEPlugin.getActiveWorkbenchShell());
 		try {
-			pmd.run(true, false, op);
+			pmd.run(false, false, op);
+			if (errors) return;
 			final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
@@ -84,12 +88,17 @@ public class BuildPluginAction implements IObjectActionDelegate {
 	}
 	
 	private void syncLogException(final Throwable e) {
-		final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				PDEPlugin.logException(e);
-			}
-		});
+		//final Display display = PDEPlugin.getActiveWorkbenchShell().getDisplay();
+		final Display display = SWTUtil.getStandardDisplay();
+		if (display!=null) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					PDEPlugin.logException(e);
+				}
+			});
+		}
+		else 
+			PDEPlugin.log(e);
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -121,8 +130,10 @@ public class BuildPluginAction implements IObjectActionDelegate {
 	private void doBuildPlugin(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		monitor.beginTask(PDEPlugin.getResourceString(KEY_VERIFYING), 3);
-		if (ensureValid(monitor) == false)
+		if (ensureValid(monitor) == false) {
+			errors = true;
 			return;
+		}
 		monitor.worked(1);
 		monitor.setTaskName(PDEPlugin.getResourceString(KEY_GENERATING));
 		makeScripts(monitor);
@@ -139,10 +150,8 @@ public class BuildPluginAction implements IObjectActionDelegate {
 		if (!project.getWorkspace().isAutoBuilding()) {
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
-		// Check if there are errors against feature file
-		IMarker[] markers =
-			pluginBaseFile.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-		if (markers.length > 0) {
+
+		if (hasErrors(pluginBaseFile)) {
 			// There are errors against this file - abort
 			String message;
 			if (fragment)
@@ -150,12 +159,26 @@ public class BuildPluginAction implements IObjectActionDelegate {
 			else
 				message = PDEPlugin.getResourceString(KEY_ERRORS_MESSAGE);
 			MessageDialog.openError(
-				PDEPlugin.getActiveWorkbenchShell(),
+				null,
 				PDEPlugin.getResourceString(KEY_ERRORS_TITLE),
 				message);
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean hasErrors(IFile file) throws CoreException {
+		// Check if there are errors against feature file
+		IMarker[] markers =file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+		for (int i=0; i<markers.length; i++) {
+			IMarker marker = markers[i];
+			Object att = marker.getAttribute(IMarker.SEVERITY);
+			if (att!=null && att instanceof Integer) {
+				Integer severity = (Integer)att;
+				if (severity.intValue()==IMarker.SEVERITY_ERROR) return true;
+			}
+		}
+		return false;
 	}
 
 	private void makeScripts(IProgressMonitor monitor)
