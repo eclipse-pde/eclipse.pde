@@ -372,7 +372,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.defaultBundle.name"
-            icon="icons/ctool16/defcon_wiz.gif"
+            icon="icons/ctool16/defbcon_wiz.gif"
             category="bundle"
             class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
             id="org.eclipse.pde.ui.projectGenerators.defaultBundle">
@@ -382,7 +382,7 @@
       </wizard>
       <wizard
             name="%projectGenerators.defaultBundleFragment.name"
-            icon="icons/ctool16/defcon_wiz.gif"
+            icon="icons/ctool16/defbcon_wiz.gif"
             category="bundleFragment"
             class="org.eclipse.pde.internal.ui.osgi.templates.DefaultBundleTemplateWizard"
             id="org.eclipse.pde.ui.projectGenerators.defaultBundleFragment">
@@ -633,9 +633,11 @@
             nameFilter="feature.xml"
             id="org.eclipse.pde.ui.featureToolSet">
          <menu
-         		id="org.eclipse.pde.ui.feature.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.feature.tools">
+            <separator
+                  name="group0">
+            </separator>
          </menu>
          <filter
                name="projectNature"
@@ -655,11 +657,17 @@
             nameFilter="plugin.xml"
             id="org.eclipse.pde.ui.pluginToolSet">
          <menu
-         		id="org.eclipse.pde.ui.plugin.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
-         	<separator name="group1"/>
-         	<separator name="group2"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.plugin.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
          </menu>
          <action
                label="%PluginSearch.references"
@@ -713,11 +721,17 @@
             nameFilter="fragment.xml"
             id="org.eclipse.pde.ui.fragmentToolSet">
          <menu
-         		id="org.eclipse.pde.ui.fragment.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
-         	<separator name="group1"/>
-         	<separator name="group2"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.fragment.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
+            </separator>
          </menu>
          <action
                label="%OpenDependenciesAction.label"
@@ -764,9 +778,11 @@
             nameFilter="site.xml"
             id="org.eclipse.pde.ui.siteToolSet">
          <menu
-         		id="org.eclipse.pde.ui.site.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.site.tools">
+            <separator
+                  name="group0">
+            </separator>
          </menu>
          <action
                label="%popupMenus.buildSite.label"
@@ -781,11 +797,15 @@
             adaptable="true"
             id="org.eclipse.pde.ui.pluginProjectToolSet">
          <menu
-         		id="org.eclipse.pde.ui.project.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
-         	<separator name="group1"/>
-          </menu>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.project.tools">
+            <separator
+                  name="group0">
+            </separator>
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
          <filter
                name="projectNature"
                value="org.eclipse.pde.PluginNature">
@@ -827,9 +847,11 @@
             nameFilter="*.mxsd"
             id="org.eclipse.pde.ui.PreviewReference1">
          <menu
-         		id="org.eclipse.pde.ui.schema.mxsd.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.schema.mxsd.tools">
+            <separator
+                  name="group0">
+            </separator>
          </menu>
          <action
                label="%PreviewReference.label"
@@ -845,9 +867,11 @@
             nameFilter="*.exsd"
             id="org.eclipse.pde.ui.schema.exsd.tools">
          <menu
-         		id="org.eclipse.pde.ui.schema.exsd.tools"
-         		label="%org.eclipse.pde.ui.tools">
-         	<separator name="group0"/>
+               label="%org.eclipse.pde.ui.tools"
+               id="org.eclipse.pde.ui.schema.exsd.tools">
+            <separator
+                  name="group0">
+            </separator>
          </menu>
          <action
                label="%PreviewReference.label"

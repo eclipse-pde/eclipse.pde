@@ -33,7 +33,7 @@ public class MigratePluginWizard extends Wizard {
 	public MigratePluginWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_MIGRATE_30_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString("MigrationWizard.title"));
 		setNeedsProgressMonitor(true);
 		this.selected = selected;

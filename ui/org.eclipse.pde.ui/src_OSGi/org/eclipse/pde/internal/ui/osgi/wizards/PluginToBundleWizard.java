@@ -24,7 +24,7 @@ public class PluginToBundleWizard extends Wizard {
 	public PluginToBundleWizard(IPluginModelBase[] selected) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN2BUNDLE_WIZ);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
 		setNeedsProgressMonitor(true);
 		this.selected = selected;
