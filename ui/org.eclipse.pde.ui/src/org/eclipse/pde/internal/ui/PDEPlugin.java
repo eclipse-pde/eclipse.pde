@@ -226,7 +226,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants, IPre
 		store.setDefault(PROP_JAVAC_FAIL_ON_ERROR, false);
 		store.setDefault(PROP_JAVAC_VERBOSE, true);
 		store.setDefault(PROP_JAVAC_SOURCE, "1.3");
-		store.setDefault(PROP_JAVAC_TARGET, "1.1");
+		store.setDefault(PROP_JAVAC_TARGET, "1.2");
 		ExtendedTextEditorPreferenceConstants.initializeDefaultValues(store);
 	}
 	
