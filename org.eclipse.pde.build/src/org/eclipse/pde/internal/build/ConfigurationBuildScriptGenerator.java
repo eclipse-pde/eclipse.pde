@@ -117,12 +117,11 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
 	output.println("    <antcall target=\"bin-copy\"/>");
 	
-	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	// make system call to create jar to preserve permissions on linux.
 	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r -y ../${configuration}${stamp}.jar .\"/>");
+	output.println("	   <arg line=\"-r ../${configuration}${stamp}.jar .\"/>");
 	output.println("	</exec>");
 	//output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
-
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 	

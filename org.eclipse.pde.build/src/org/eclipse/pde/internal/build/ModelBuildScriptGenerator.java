@@ -367,9 +367,9 @@ protected void generateModelDocTarget(PrintWriter output, PluginModel descriptor
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 	
-	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	// make system call to preserve permissions on linux
 	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + " .\"/>");
+	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + " .\"/>");
 	output.println("	</exec>");
 	
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
@@ -386,9 +386,10 @@ protected void generateModelLogTarget(PrintWriter output, PluginModel descriptor
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 
-	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	
+	// make system call to preserve permissions on linux
 	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + " .\"/>");
+	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + " .\"/>");
 	output.println("	</exec>");
 
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
@@ -405,9 +406,10 @@ protected void generateModelSrcTarget(PrintWriter output, PluginModel descriptor
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 	
-	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	
+	// make system call to preserve permissions on linux
 	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + " .\"/>");
+	output.println("	   <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + " .\"/>");
 	output.println("	</exec>");	
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\" basedir=\"${base}\"/>");
 
@@ -428,9 +430,10 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
 
-	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	
+	// make system call to preserve permissions on linux
 	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
-	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + " . -x *.bin.log \"/>");
+	output.println("	  <arg line=\"-r ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + " . -x *.bin.log \"/>");
 	output.println("	</exec>");
 	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
 
