@@ -105,6 +105,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 300;
+		gd.heightHint = 300;
 		viewer.getTable().setLayoutData(gd);
 		setControl(container);
 		if (realEntries!=null) initializeView();

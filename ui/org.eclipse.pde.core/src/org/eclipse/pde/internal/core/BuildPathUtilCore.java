@@ -247,7 +247,7 @@ public class BuildPathUtilCore {
 			else {
 				// missing entry - search fragments
 				if (!model.isFragmentModel()) {
-					resolveLibraryInFragments(model, library, result);
+					resolveLibraryInFragments(model, library, relative, result);
 				}
 			}
 		}
@@ -256,6 +256,7 @@ public class BuildPathUtilCore {
 	private static void resolveLibraryInFragments(
 		IPluginModelBase model,
 		IPluginLibrary library,
+		boolean relative,
 		Vector result) {
 
 		IPlugin plugin = (IPlugin) model.getPluginBase();
@@ -292,12 +293,15 @@ public class BuildPathUtilCore {
 					plugin.getId(),
 					plugin.getVersion(),
 					fragment.getRule())) {
-
+			IPath rootPath;
+			if (relative) rootPath = getRootPath(fmodel);
+			else
+				rootPath = new Path(fmodel.getInstallLocation());
 				IClasspathEntry entry =
 					PluginPathUpdater.createLibraryEntryFromFragment(
 						fmodel,
 						library,
-						getRootPath(fmodel),
+						rootPath,
 						false);
 				if (exists(fmodel, entry)) {
 					result.add(entry);

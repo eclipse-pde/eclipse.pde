@@ -112,7 +112,7 @@ public class PluginPathUpdater {
 
 			String name = expandLibraryName(library.getName());
 			IPath libraryPath = modelPath.append(name);
-			IPath[] sourceAnnot = getSourceAnnotation(plugin, modelPath, name);
+			IPath[] sourceAnnot = getSourceAnnotation(plugin, modelPath, name, relative);
 			int entryKind = relative ? IClasspathEntry.CPE_VARIABLE : IClasspathEntry.CPE_LIBRARY;
 			if (!isEntryAdded(libraryPath,
 				entryKind,
@@ -182,7 +182,7 @@ public class PluginPathUpdater {
 			else modelPath = new Path(fmodel.getInstallLocation());
 			IPath libraryPath = modelPath.append(name);
 			IPath[] sourceAnnot =
-				getSourceAnnotation(fmodel.getFragment(), modelPath, name);
+				getSourceAnnotation(fmodel.getFragment(), modelPath, name, relative);
 			IClasspathEntry libraryEntry =
 				relative ? 
 				JavaCore.newVariableEntry(
@@ -220,7 +220,7 @@ public class PluginPathUpdater {
 		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
 		IPath libraryPath = rootPath.append(name);
 		IPath[] sourceAnnot =
-			getSourceAnnotation(library.getPluginBase(), rootPath, name);
+			getSourceAnnotation(library.getPluginBase(), rootPath, name, variable);
 		if (variable)
 			return JavaCore.newVariableEntry(
 				libraryPath,
@@ -244,7 +244,7 @@ public class PluginPathUpdater {
 		boolean variable = rootPath.segment(0).equals("ECLIPSE_HOME");
 		IPath libraryPath = rootPath.append(name);
 		IPath[] sourceAnnot =
-			getSourceAnnotation(fragment.getPluginBase(), rootPath, name);
+			getSourceAnnotation(fragment.getPluginBase(), rootPath, name, true);
 			
 		// to accomodate cases where the fragment does not contain any library
 		// entries, yet contains .jar files referenced by the parent plug-in.
@@ -311,7 +311,8 @@ public class PluginPathUpdater {
 	private static IPath[] getSourceAnnotation(
 		IPluginBase pluginBase,
 		IPath rootPath,
-		String name) {
+		String name,
+		boolean relative) {
 		IPath[] annot = new IPath[2];
 		int dot = name.lastIndexOf('.');
 		if (dot != -1) {
@@ -321,7 +322,7 @@ public class PluginPathUpdater {
 				annot[0] = rootPath.append(zipName);
 			} else {
 				// must look up source locations
-				annot[0] = findSourceZip(pluginBase, zipName);
+				annot[0] = findSourceZip(pluginBase, zipName, relative);
 			}
 		}
 		return annot;
@@ -329,10 +330,20 @@ public class PluginPathUpdater {
 
 	private static IPath findSourceZip(
 		IPluginBase pluginBase,
-		String zipName) {
+		String zipName,
+		boolean relative) {
 		SourceLocationManager manager =
 			PDECore.getDefault().getSourceLocationManager();
-		return manager.findVariableRelativePath(pluginBase, new Path(zipName));
+		IPath sourcePath = manager.findVariableRelativePath(pluginBase, new Path(zipName));
+		if (sourcePath!=null && !relative) {
+			// expand the first segment as a variable
+			String var = sourcePath.segment(0);
+			IPath varPath = JavaCore.getClasspathVariable(var);
+			if (varPath!=null) {
+				sourcePath = varPath.append(sourcePath.removeFirstSegments(1));
+			}
+		}
+		return sourcePath;
 	}
 
 	private static boolean exists(

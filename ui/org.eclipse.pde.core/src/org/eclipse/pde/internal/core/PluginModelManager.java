@@ -171,6 +171,7 @@ public class PluginModelManager implements IAdaptable {
 		
 		for (int i=0; i<entries.length; i++) {
 			ModelEntry entry = entries[i];
+
 			if (entry.isAffected(changedPlugins)) {
 				try {
 					entry.updateClasspathContainer(true);

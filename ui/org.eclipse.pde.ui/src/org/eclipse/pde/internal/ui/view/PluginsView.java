@@ -50,6 +50,7 @@ public class PluginsView extends ViewPart {
 	private OpenDependenciesAction openDependenciesAction;
 	private Action openTextEditorAction;
 	private Action selectDependentAction;
+	private Action selectInJavaSearchAction;
 	private Action addToJavaSearchAction;
 	private Action removeFromJavaSearchAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
@@ -260,7 +261,13 @@ public class PluginsView extends ViewPart {
 				handleSelectDependent();
 			}
 		};
-		selectDependentAction.setText("Select Dependent Plug-ins");
+		selectDependentAction.setText("Dependent Plug-ins");
+		selectInJavaSearchAction = new Action() {
+			public void run() {
+				handleSelectInJavaSearch();
+			}
+		};
+		selectInJavaSearchAction.setText("Plug-ins in Java Search");
 
 		addToJavaSearchAction = new Action() {
 			public void run() {
@@ -382,8 +389,11 @@ public class PluginsView extends ViewPart {
 		}
 		copyAction.setSelection(selection);
 		manager.add(copyAction);
+		IMenuManager selectionMenu = new MenuManager("Select");
+		manager.add(selectionMenu);
 		if (selection.size() > 0)
-			manager.add(selectDependentAction);
+			selectionMenu.add(selectDependentAction);
+		selectionMenu.add(selectInJavaSearchAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator("Additions"));
@@ -644,6 +654,20 @@ public class PluginsView extends ViewPart {
 			addDependentEntries(entry, set);
 		}
 		treeViewer.setSelection(new StructuredSelection(set.toArray()));
+	}
+	private void handleSelectInJavaSearch() {
+		PluginsContentProvider provider = (PluginsContentProvider)treeViewer.getContentProvider();
+		Object [] elements = provider.getElements(treeViewer.getInput());
+		ArrayList result = new ArrayList();
+		for (int i = 0; i<elements.length; i++) {
+			Object element = elements[i];
+			if (element instanceof ModelEntry) {
+				ModelEntry entry = (ModelEntry)element;
+				if (entry.isInJavaSearch())
+					result.add(entry);
+			}
+		}
+		treeViewer.setSelection(new StructuredSelection(result.toArray()));
 	}
 
 	private void addDependentEntries(ModelEntry entry, Set set) {
