@@ -72,6 +72,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running";
 	public static final String PROPERTY_FEATURE = "feature";
 	public static final String PROPERTY_FEATURE_BASE = "feature.base";
+	public static final String PROPERTY_FEATURE_DESTINATION = "feature.destination";
 	public static final String PROPERTY_FEATURE_FULL_NAME = "feature.full.name";
 	public static final String PROPERTY_FEATURE_TEMP_FOLDER = "feature.temp.folder";
 	public static final String PROPERTY_FEATURE_VERSION_SUFFIX = "feature.version.suffix";
