@@ -130,7 +130,7 @@ public class JavaAttributeWizardPage extends WizardPage {
 		
 		setControl(container);
 		Dialog.applyDialogFont(container);
-		setPageComplete(classText.getText().length() > 0);
+		//setPageComplete(classText.getText().length() > 0);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
 	}
 	
@@ -468,20 +468,21 @@ public class JavaAttributeWizardPage extends WizardPage {
 		IStatus status = null;
 		if (searchButton.getSelection()) {
 			status = JavaConventions.validateJavaTypeName(searchText.getText());
+			setPageComplete(status.getSeverity() != IStatus.ERROR);
 		} else {
 			status = JavaConventions.validatePackageName(packageText.getText());
 			IStatus second = JavaConventions.validateJavaTypeName(classText.getText());
 			if (second.getSeverity() > status.getSeverity())
 				status = second;
+			setPageComplete(
+				status.getSeverity() != IStatus.ERROR
+					&& containerText.getText().length() > 0);
 		}
-		setPageComplete(
-			status.getSeverity() != IStatus.ERROR
-				&& containerText.getText().length() > 0);
 
 		String errorMessage = null;
 		if (status.getSeverity() == IStatus.ERROR)
 			errorMessage = status.getMessage();
-		if (errorMessage == null && containerText.getText().length() == 0)
+		if (errorMessage == null && !searchButton.getSelection() && containerText.getText().length() == 0)
 			errorMessage = PDEPlugin.getResourceString(KEY_MISSING_CONTAINER);
 
 		if (errorMessage != null)
