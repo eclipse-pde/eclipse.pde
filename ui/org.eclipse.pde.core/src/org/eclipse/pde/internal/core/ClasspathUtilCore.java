@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -170,7 +171,7 @@ public class ClasspathUtilCore {
 						dependency.getVersion(),
 						dependency.getMatch());
 				if (importedPlugin != null)
-					addDependency(importedPlugin, true, relative, true, result, alreadyAdded);
+					addDependency(importedPlugin, isExported, relative, true, result, alreadyAdded);
 			}
 		}
 	}
@@ -256,13 +257,23 @@ public class ClasspathUtilCore {
 		Vector result,
 		HashSet alreadyAdded)
 		throws CoreException {
-		IPlugin plugin =
+		IPlugin parent =
 			PDECore.getDefault().findPlugin(
 				fragment.getPluginId(),
 				fragment.getPluginVersion(),
 				fragment.getRule());
-		if (plugin != null)
-			addDependency(plugin, false, relative, false, result, alreadyAdded);
+		if (parent != null) {
+			addDependency(parent, false, relative, false, result, alreadyAdded);
+			IPluginImport[] imports = parent.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				if (!imports[i].isReexported()) {
+					IPlugin plugin = PDECore.getDefault().findPlugin(imports[i].getId(), imports[i].getVersion(), imports[i].getMatch());
+					if (plugin != null) {
+						addDependency(plugin, false, relative, true, result, alreadyAdded);
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -370,6 +381,8 @@ public class ClasspathUtilCore {
 					if (model == null)
 						return null;
 					path = new Path(model.getInstallLocation()).append(expandedName);
+				} else {
+					return null;
 				}
 			}
 
@@ -398,26 +411,29 @@ public class ClasspathUtilCore {
 	public static String expandLibraryName(String source) {
 		if (source == null || source.length() == 0)
 			return "";
-
-		StringBuffer buffer = new StringBuffer(source);
-
-		int index = buffer.indexOf("$arch$");
-		if (index != -1)
-			buffer.replace(index, index + 6, "arch" + Path.SEPARATOR + TargetPlatform.getOSArch());
-
-		index = buffer.indexOf("$nl$");
-		if (index != -1)
-			buffer.replace(index, index + 4, "nl" + Path.SEPARATOR + TargetPlatform.getNL());
-
-		index = buffer.indexOf("$os$");
-		if (index != -1)
-			buffer.replace(index, index + 4, "os" + Path.SEPARATOR + TargetPlatform.getOS());
-
-		index = buffer.indexOf("$ws$");
-		if (index != -1)
-			buffer.replace(index, index + 4, "ws" + Path.SEPARATOR + TargetPlatform.getWS());
-
-		return buffer.toString();
+		if (source.charAt(0) != '$')
+			return source;
+		IPath path = new Path(source);
+		String firstSegment = path.segment(0);
+		if (firstSegment.charAt(firstSegment.length() - 1) != '$')
+			return source;
+		String variable = firstSegment.substring(1, firstSegment.length() - 1);
+		variable = variable.toLowerCase();
+		if (variable.equals("ws")) {
+			variable = TargetPlatform.getWS();
+			if (variable != null)
+				variable = "ws" + File.separator + variable;
+		} else if (variable.equals("os")) {
+			variable = TargetPlatform.getOS();
+			if (variable != null)
+				variable = "os" + File.separator + variable;
+		} else
+			variable = null;
+		if (variable != null) {
+			path = path.removeFirstSegments(1);
+			return variable + IPath.SEPARATOR + path.toString();
+		}
+		return source;
 	}
 	
 	private static IBuildEntry[] getBuildEntries(

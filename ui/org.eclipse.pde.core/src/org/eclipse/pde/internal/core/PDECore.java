@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -199,12 +200,18 @@ public class PDECore extends Plugin {
 	}
 
 	public IFragment[] findFragmentsFor(String id, String version) {
-		IFragment[] wFragments = workspaceModelManager.getFragmentsFor(id, version);
+		HashMap result = new HashMap();
 		IFragment[] extFragments = externalModelManager.getFragmentsFor(id, version);
-		IFragment[] merged = new IFragment[wFragments.length + extFragments.length];
-		System.arraycopy(wFragments, 0, merged, 0, wFragments.length);
-		System.arraycopy(extFragments, 0, merged, wFragments.length, extFragments.length);
-		return merged;
+		for (int i = 0; i < extFragments.length; i++) {
+			if (extFragments[i].getModel().isEnabled())
+				result.put(extFragments[i].getId(), extFragments[i]);
+		}
+		
+		IFragment[] wFragments = workspaceModelManager.getFragmentsFor(id, version);
+		for (int i = 0; i < wFragments.length; i++) {
+			result.put(wFragments[i].getId(), wFragments[i]);
+		}
+		return (IFragment[])result.values().toArray(new IFragment[result.size()]);
 	}
 	
 	public IPlugin findPlugin(String id) {
