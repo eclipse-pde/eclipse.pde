@@ -121,9 +121,9 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <param name=\"destroot\" value=\"${basedir}/_temp___/\"/>");
 	output.println("    </antcall>");
 
-	output.println("    <property name=\"auto.includes\" value=\"install.xml\"/>");
-	output.println("    <property name=\"auto.excludes\" value=\"\"/>");
 	output.println("    <ant antfile=\"${template}\" target=\"bin\">");
+	output.println("      <property name=\"auto.includes\" value=\"install.xml\"/>");
+	output.println("      <property name=\"auto.excludes\" value=\"\"/>");
 
 	String inclusions = getSubstitution(componentModel,BIN_INCLUDES);
 	if (inclusions == null)
@@ -143,8 +143,6 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("  </target>");
 }
 protected void generateBuildScript(PrintWriter output) {
-	System.out.println("Generating component " + componentModel.getId());
-	
 	generatePrologue(output);
 	generatePluginTemplateTarget(output);
 	generateFragmentTemplateTarget(output);

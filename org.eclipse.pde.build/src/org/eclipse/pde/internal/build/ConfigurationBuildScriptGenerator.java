@@ -85,10 +85,10 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("    <antcall target=\"" + TARGET_COMPONENT_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + TARGET_BIN + "\"/>");
 	output.println("    </antcall>");
-	
-	output.println("    <property name=\"auto.includes\" value=\"install.xml\"/>");
-	output.println("    <property name=\"auto.excludes\" value=\"\"/>");
-	output.println("    <ant antfile=\"${template}\" target=\"bin\">");
+
+	output.println("    <ant antfile=\"${template}\" target=\"bin\">");	
+	output.println("      <property name=\"auto.includes\" value=\"install.xml\"/>");
+	output.println("      <property name=\"auto.excludes\" value=\"\"/>");
 
 	String inclusions = getSubstitution(configurationModel,BIN_INCLUDES);
 	if (inclusions == null)
@@ -126,8 +126,6 @@ protected void generateBinCopyTarget(PrintWriter output) {
 	output.println("  </target>");
 }
 protected void generateBuildScript(PrintWriter output) {
-	System.out.println("Generating configuration " + configurationModel.getId());
-	
 	generatePrologue(output);
 	generateComponentTemplateTarget(output);
 	generateBinTarget(output);

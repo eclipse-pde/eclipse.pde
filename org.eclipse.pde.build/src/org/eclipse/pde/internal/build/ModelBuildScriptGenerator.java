@@ -81,7 +81,6 @@ public void execute() {
 		retrieveCommandLineModels();
 		
 	for (int i = 0; i < modelsToGenerate.length; i++) {
-		System.out.println("Generating " + getModelTypeName() + " " + modelsToGenerate[i].getId());
 		System.out.flush();
 		
 		try {
