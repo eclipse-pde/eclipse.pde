@@ -62,7 +62,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 //			String message = Policy.bind("exception.readingFile", packagingPropertiesLocation); //$NON-NLS-1$
 //			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		}
-		unzipOrder = Utils.getArrayFromStringWithBlank(packagingProperties.getProperty("unzipOrder", ""), ",");
+		unzipOrder = Utils.getArrayFromStringWithBlank(packagingProperties.getProperty("unzipOrder", ""), ",");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	private void generateEpilogue() {
