@@ -6,18 +6,14 @@ package org.eclipse.pde.internal.ui.launcher;
  */
  
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
-import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
-import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.ui.*;
+import org.eclipse.jdt.debug.ui.launchConfigurations.*;
+import org.eclipse.jdt.internal.junit.launcher.*;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
 
 public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 	/**
@@ -30,6 +26,7 @@ public class JUnitTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AdvancedLauncherTab(false),
 			new TracingLauncherTab(),
 			new JavaSourceLookupTab(),
+			new EnvironmentTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);

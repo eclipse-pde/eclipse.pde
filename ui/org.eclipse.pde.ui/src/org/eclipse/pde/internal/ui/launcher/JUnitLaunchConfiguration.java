@@ -83,24 +83,37 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			throw e;
 		}
 	}
+	
 	/*
 	 * @see JUnitBaseLauncherDelegate#configureVM(IType[], int, String)
 	 */
-	protected VMRunnerConfiguration createVMRunner(ILaunchConfiguration configuration, IType[] testTypes, int port, String runMode) throws CoreException {
+	protected VMRunnerConfiguration createVMRunner(
+		ILaunchConfiguration configuration,
+		IType[] testTypes,
+		int port,
+		String runMode)
+		throws CoreException {
 		String[] classpath = LauncherUtils.constructClasspath();
 		if (classpath == null) {
 			abort(PDEPlugin.getResourceString(KEY_NO_STARTUP), null, IStatus.OK);
 		}
 
-		String[] programArgs = computeProgramArguments(configuration, testTypes, port, runMode);
+		// Program arguments
+		String[] programArgs =
+			computeProgramArguments(configuration, testTypes, port, runMode);
 		if (programArgs == null)
 			return null;
-			
+
+		// Environment variables
+		String[] envp =
+			DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+
 		VMRunnerConfiguration runnerConfig =
 			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
 		runnerConfig.setVMArguments(computeVMArguments(configuration));
 		runnerConfig.setProgramArguments(programArgs);
-		
+		runnerConfig.setEnvironment(envp);
+
 		return runnerConfig;
 	}
 

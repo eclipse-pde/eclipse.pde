@@ -81,14 +81,21 @@ public class WorkbenchLaunchConfigurationDelegate
 			String message = PDEPlugin.getResourceString(KEY_NO_STARTUP);
 			throw new CoreException(LauncherUtils.createErrorStatus(message));
 		}
+		
+		// Program arguments
 		String[] programArgs = getProgramArguments(configuration);
 		if (programArgs == null)
 			return null;
+
+		// Environment variables
+		String[] envp =
+			DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 
 		VMRunnerConfiguration runnerConfig =
 			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", classpath);
 		runnerConfig.setVMArguments(getVMArguments(configuration));
 		runnerConfig.setProgramArguments(programArgs);
+		runnerConfig.setEnvironment(envp);
 		return runnerConfig;
 	}
 	

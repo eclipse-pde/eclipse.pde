@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jdt.debug.ui.launchConfigurations.*;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
 
-public class WorkbenchLauncherTabGroup
-	extends AbstractLaunchConfigurationTabGroup {
+public class WorkbenchLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	/**
-	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
+	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
+	 *      String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs =
@@ -32,6 +31,7 @@ public class WorkbenchLauncherTabGroup
 				new AdvancedLauncherTab(),
 				new TracingLauncherTab(),
 				new JavaSourceLookupTab(),
+				new EnvironmentTab(),
 				new CommonTab()};
 		setTabs(tabs);
 	}
@@ -75,7 +75,9 @@ public class WorkbenchLauncherTabGroup
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.pde.ui.workbenchClasspathProvider");
+		configuration.setAttribute(
+			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+			"org.eclipse.pde.ui.workbenchClasspathProvider");
 	}
 
 }
