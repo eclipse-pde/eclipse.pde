@@ -83,7 +83,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 
 	public void createControl(Composite parent)  {
 		Composite result = new Composite(parent,SWT.NONE);
-		result.setLayout(new GridLayout(1,true));
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		result.setLayout(layout);
 		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
 		
 		createPatternSection(result);
@@ -115,16 +118,18 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 		
 	private void createPatternSection(Composite parent) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(PDEPlugin.getResourceString(KEY_SEARCH_STRING));
-		
 		Composite result = new Composite(parent, SWT.NONE);
 		result.setLayout(new GridLayout(2, false));
 		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		Label label = new Label(result, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		label.setText(PDEPlugin.getResourceString(KEY_SEARCH_STRING));
 
 		patternCombo = new Combo(result, SWT.SINGLE | SWT.BORDER);
-		patternCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
+		patternCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		caseSensitive = new Button(result, SWT.CHECK);
 		caseSensitive.setText(PDEPlugin.getResourceString(KEY_CASE_SENSITIVE));
