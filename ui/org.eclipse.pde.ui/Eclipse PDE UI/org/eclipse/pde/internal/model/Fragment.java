@@ -16,8 +16,8 @@ import org.eclipse.pde.internal.base.model.plugin.*;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class Fragment extends PluginBase implements IFragment {
-	private String pluginId;
-	private String pluginVersion;
+	private String pluginId="";
+	private String pluginVersion="";
 
 public Fragment() {
 }
@@ -39,8 +39,8 @@ void load(Node node) {
 	super.load(node);
 }
 public void reset() {
-	pluginId = null;
-	pluginVersion = null;
+	pluginId = "";
+	pluginVersion = "";
 	super.reset();
 }
 public void setPluginId(String newPluginId) throws CoreException {

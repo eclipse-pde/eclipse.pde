@@ -251,7 +251,11 @@ private void handleFileDelta(IResourceDelta delta) {
 
 	if (delta.getKind() == IResourceDelta.ADDED) {
 		// manifest added - add the model
-		addWorkspaceModel(createWorkspacePluginModel(file));
+		IPluginModelBase model = getWorkspaceModel(file);
+		if (model==null)
+		   addWorkspaceModel(createWorkspacePluginModel(file));
+		else
+			reloadWorkspaceModel(model);
 	} else {
 		IPluginModelBase model = getWorkspaceModel(file);
 		if (delta.getKind() == IResourceDelta.REMOVED) {

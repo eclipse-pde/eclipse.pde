@@ -180,9 +180,14 @@ public void reset() {
 	extensionPoints = new Vector();
 	libraries = new Vector();
 	providerName = null;
-	version = null;
-	this.name = null;
-	this.id=null;
+	version ="";
+	this.name ="";
+	this.id="";
+	if (getModel()!=null && getModel().getUnderlyingResource()!=null) {
+		this.id = getModel().getUnderlyingResource().getProject().getName();
+		this.name = this.id;
+		this.version = "0.0.0";
+	}
 }
 public void setProviderName(String providerName) throws CoreException {
 	ensureModelEditable();

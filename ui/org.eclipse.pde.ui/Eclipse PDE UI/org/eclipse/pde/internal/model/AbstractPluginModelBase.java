@@ -43,6 +43,11 @@ public void load(InputStream stream) throws CoreException {
 	XMLErrorHandler errorHandler = new XMLErrorHandler();
 	DOMParser parser = new DOMParser();
 	parser.setErrorHandler(errorHandler);
+	if (pluginBase == null) {
+		pluginBase = (PluginBase)createPluginBase();
+		pluginBase.setModel(this);
+	}
+	pluginBase.reset();
 	try {
 		InputSource source = new InputSource(stream);
 		parser.parse(source);
@@ -60,17 +65,13 @@ public void load(InputStream stream) throws CoreException {
 }
 private void processDocument(Document doc) {
 	Node pluginNode = doc.getDocumentElement();
-	if (pluginBase == null) {
-		pluginBase = (PluginBase)createPluginBase();
-		pluginBase.setModel(this);
-	} else {
-		pluginBase.reset();
-	}
 	pluginBase.load(pluginNode);
 }
 public void reload(InputStream stream) throws CoreException {
+/*
 	if (pluginBase != null)
 		pluginBase.reset();
+*/
 	load(stream);
 	fireModelChanged(
 		new ModelChangedEvent(
