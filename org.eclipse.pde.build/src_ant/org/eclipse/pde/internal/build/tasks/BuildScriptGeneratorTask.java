@@ -24,14 +24,6 @@ public class BuildScriptGeneratorTask extends Task implements IXMLConstants, IPD
 	 */
 	protected BuildScriptGenerator generator = new BuildScriptGenerator();
 
-	/**
-	 * Build variables.
-	 */
-	protected String buildVariableOS;
-	protected String buildVariableWS;
-	protected String buildVariableNL;
-	protected String buildVariableARCH;
-
 /**
  * Sets the children.
  */
@@ -54,21 +46,12 @@ public void setPluginPath(String pluginPath) {
 	generator.setPluginPath(Utils.getArrayFromString(pluginPath));
 }
 
-
-
-
-
-
 /**
  * Sets the elements.
  */
 public void setElements(String elements) {
 	generator.setElements(Utils.getArrayFromString(elements));
 }
-
-
-
-
 
 public void execute() throws BuildException {
 	try {
@@ -82,47 +65,11 @@ public void run() throws CoreException {
 	generator.run();
 }
 
-
-
-
-
-
-
-
-
 /**
  * Sets the installLocation.
  */
 public void setInstall(String installLocation) {
 	generator.setInstall(installLocation);
-}
-
-/**
- * Sets the buildVariableARCH.
- */
-public void setARCH(String buildVariableARCH) {
-	this.buildVariableARCH = buildVariableARCH;
-}
-
-/**
- * Sets the buildVariableNL.
- */
-public void setNL(String buildVariableNL) {
-	this.buildVariableNL = buildVariableNL;
-}
-
-/**
- * Sets the buildVariableOS.
- */
-public void setOS(String buildVariableOS) {
-	this.buildVariableOS = buildVariableOS;
-}
-
-/**
- * Sets the buildVariableWS.
- */
-public void setWS(String buildVariableWS) {
-	this.buildVariableWS = buildVariableWS;
 }
 
 }
