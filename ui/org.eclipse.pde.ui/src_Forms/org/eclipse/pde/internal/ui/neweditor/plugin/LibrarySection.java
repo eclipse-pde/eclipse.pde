@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.neweditor.*;
 import org.eclipse.pde.internal.ui.neweditor.build.JARFileFilter;
 import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.*;
@@ -54,7 +55,18 @@ public class LibrarySection
 	public static final String NEW_LIBRARY_ENTRY =
 		"ManifestEditor.LibrarySection.newLibraryEntry";
 
+	private RenameAction renameAction;
 	private TableViewer libraryTable;
+	
+	class RenameAction extends Action {
+		public RenameAction() {
+			super(PDEPlugin.getResourceString("EditableTablePart.renameAction")); //$NON-NLS-1$
+		}
+		public void run() {
+			doRename();
+		}
+		
+	}
 	
 	class LibraryFilter extends JARFileFilter {
 		public LibraryFilter(HashSet set) {
@@ -220,9 +232,10 @@ public class LibrarySection
 
 		if (!selection.isEmpty()) {
 			manager.add(new Separator());
-			IAction renameAction = getRenameAction();
+			renameAction = new RenameAction();
 			renameAction.setEnabled(model.isEditable());
 			manager.add(renameAction);
+			
 			Action deleteAction = new Action(PDEPlugin.getResourceString(POPUP_DELETE)) {
 				public void run() {
 					handleDelete();
@@ -408,5 +421,42 @@ public class LibrarySection
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (objects[0] instanceof IPluginLibrary) return true;
 		return false;
+	}
+	
+	private void doRename() {
+		TableViewer viewer = getTablePart().getTableViewer();
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.size()==1 && isEditable()) {
+			Object obj = selection.getFirstElement();
+			String oldName = "";
+			if (obj instanceof IPluginLibrary)
+				oldName = ((IPluginLibrary)obj).getName();
+			
+			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+			String[] libNames = new String[libraries.length];
+			for (int i = 0 ; i<libNames.length ; i++)
+				libNames[i] = libraries[i].getName();
+			
+			RenameDialog dialog = new RenameDialog(getTablePart().getControl().getShell(), false, libNames, oldName);
+			dialog.create();
+			dialog.getShell().setText(PDEPlugin.getResourceString("EditableTablePart.renameTitle")); //$NON-NLS-1$
+			SWTUtil.setDialogSize(dialog, 300,150);
+			
+			if (dialog.open()==Dialog.OK) {
+				entryModified(doFindItem(obj), dialog.getNewName());
+			}
+		}
+	}
+	
+	private Widget doFindItem(Object element) {
+		TableItem[] children = getTablePart().getTableViewer().getTable().getItems();
+		for (int i = 0; i < children.length; i++) {
+			TableItem item = children[i];
+			Object data = item.getData();
+			if (data != null && data.equals(element))
+				return item;
+		}
+		return null;
 	}
 }

@@ -10,26 +10,55 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.swt.SWT;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.*;
 
-public class RenameDialog extends Dialog {
+public class RenameDialog extends SelectionStatusDialog {
+	private ArrayList oldNames;
 	private String oldName;
 	private String newName;
 	private Text text;
+	private IStatus status;
+	private boolean isCaseSensitive;
 	
 	public RenameDialog(Shell shell, String oldName) {
 		super(shell);
+		this.isCaseSensitive = false;
+		initialize();
 		setOldName(oldName);
 	}
 	
+	public RenameDialog(Shell shell, boolean isCaseSensitive, String[] names, String oldName){
+		super(shell);
+		this.isCaseSensitive = isCaseSensitive;
+		initialize();
+		if (names!=null){
+			for (int i = 0; i<names.length; i++)
+				addOldName(names[i]);
+		}
+		setOldName(oldName);
+	}
+	
+	public void initialize(){
+		oldNames = new ArrayList();
+		setStatusLineAboveButtons(true);
+	}
+	public void addOldName(String oldName){
+		if (!oldNames.contains(oldName))
+			oldNames.add(oldName);
+		
+	}
 	public void setOldName(String oldName) {
 		this.oldName = oldName;
+		addOldName(oldName);
 		if (text!=null) 
 			text.setText(oldName);
 		this.newName = oldName;
@@ -55,19 +84,51 @@ public class RenameDialog extends Dialog {
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		text.setLayoutData(gd);
+		applyDialogFont(container);
 		return container;
 	}
 	
 	public int open() {
 		text.setText(oldName);
 		text.selectAll();
-		textChanged(oldName);
+		Button okButton = getButton(IDialogConstants.OK_ID);
+		
+		status = new Status(
+				IStatus.OK,
+				PDEPlugin.getPluginId(),
+				IStatus.OK,
+				"",
+				null);
+		updateStatus(status);
+		okButton.setEnabled(false);
 		return super.open();
 	}
 	
 	private void textChanged(String text) {
 		Button okButton = getButton(IDialogConstants.OK_ID);
-		okButton.setEnabled(text.equals(oldName)==false);
+		for (int i=0; i<oldNames.size(); i++){
+			if((isCaseSensitive && text.equals(oldNames.get(i))) ||
+					(!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))){
+				status =  new Status(
+						IStatus.ERROR,
+						PDEPlugin.getPluginId(),
+						IStatus.ERROR,
+						PDEPlugin.getResourceString(
+							"RenameDialog.validationError"),
+						null);
+				updateStatus(status);
+				okButton.setEnabled(false);
+				break;
+			}
+			okButton.setEnabled(true);
+			status = new Status(
+				IStatus.OK,
+				PDEPlugin.getPluginId(),
+				IStatus.OK,
+				"",
+				null);
+			updateStatus(status);
+		}
 	}
 	
 	public String getNewName() {
@@ -80,6 +141,14 @@ public class RenameDialog extends Dialog {
 	protected void okPressed() {
 		newName = text.getText();
 		super.okPressed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
+	 */
+	protected void computeResult() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
