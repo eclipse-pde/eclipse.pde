@@ -33,6 +33,8 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	//	adress of the site used as a base
 	private static String installedBaseLocation = null;
 
+	private boolean reportResolutionErrors;
+	
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
 	 * Note that the site object is not recomputed if no change has been done.
@@ -58,7 +60,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READ_DIRECTORY, message, null));
 			}
 
-			installedBaseURL = installedBaseLocation; //$NON-NLS-1$
+			installedBaseURL = installedBaseLocation;
 			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
@@ -95,6 +97,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		ISiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL);
 		site.setSiteContentProvider(contentProvider);
 		contentProvider.setSite(site);
+		((BuildTimeSite) site).setReportResolutionErrors(reportResolutionErrors);
 		return site;
 	}
 
@@ -155,4 +158,9 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		}
 		return features;
 	}
+
+	public void setReportResolutionErrors(boolean value) {
+		reportResolutionErrors = value;
+	}
+	
 }

@@ -47,6 +47,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private boolean generateAssembleScript = true;
 
+	/** 
+	 * flag indicating if the errors detected when the state is resolved must be reported or not.
+	 * For example in releng mode we are interested in reporting the errors. It is the default. 
+	 */
+	private boolean reportResolutionErrors = true;
+	
 	/**
 	 * 
 	 * @throws CoreException
@@ -85,6 +91,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected void generateModels(List models) throws CoreException {
 		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
 			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
+			generator.setReportResolutionErrors(reportResolutionErrors);
 			//Filtering is not required here, since we are only generating the
 			// build for a plugin or a fragment
 			String model = (String) iterator.next();
@@ -123,8 +130,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setCompiledElements(generator.getCompiledElements());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(true);
+			generator.setReportResolutionErrors(reportResolutionErrors);
 			generator.generate();
-
+			
 			if (generateAssembleScript == true) {
 				AssembleScriptGenerator assembler = new AssembleScriptGenerator(workingDirectory, assemblageInformation, featureId, null);
 				assembler.generate();
@@ -182,4 +190,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateAssembleScript(boolean generateAssembleScript) {
 		this.generateAssembleScript = generateAssembleScript;
 	}
+
+	/**
+	 * @param reportResolutionErrors The reportResolutionErrors to set.
+	 */
+	public void setReportResolutionErrors(boolean value) {
+		this.reportResolutionErrors = value;
+	}
+	
 }

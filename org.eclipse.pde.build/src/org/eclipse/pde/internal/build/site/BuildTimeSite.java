@@ -29,7 +29,12 @@ import org.osgi.framework.Version;
 public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IXMLConstants {
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
-
+	private boolean reportResolutionErrors;
+	
+	public void setReportResolutionErrors(boolean value) {
+		reportResolutionErrors = value;
+	}
+	
 	public Properties getFeatureVersions() {
 		if (repositoryVersions == null) {
 			repositoryVersions = new Properties();
@@ -66,19 +71,21 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			if (allBundles.length == resolvedBundles.length)
 				return state;
 
-			MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Policy.bind("exception.registryResolution"), null); //$NON-NLS-1$
-			BundleDescription[] all = state.getState().getBundles();
-			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-			for (int i = 0; i < all.length; i++) {
-				if (!all[i].isResolved()) {
-					VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
-					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
-						String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-						errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
+			if (reportResolutionErrors) {
+				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Policy.bind("exception.registryResolution"), null); //$NON-NLS-1$
+				BundleDescription[] all = state.getState().getBundles();
+				StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+				for (int i = 0; i < all.length; i++) {
+					if (!all[i].isResolved()) {
+						VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
+						for (int j = 0; j < unsatisfiedConstraints.length; j++) {
+							String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
+							errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
+						}
 					}
 				}
+				BundleHelper.getDefault().getLog().log(errors);
 			}
-			BundleHelper.getDefault().getLog().log(errors);
 		}
 		if (!state.getState().isResolved())
 			state.state.resolve(true);

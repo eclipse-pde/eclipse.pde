@@ -37,6 +37,8 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	private boolean includePlatformIndependent = true;
 
+	private boolean reportResolutionErrors;
+	
 	abstract protected Properties getBuildProperties() throws CoreException;
 
 	public void setDevEntries(String entries) {
@@ -82,8 +84,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (siteFactory != null && refresh == false)
 			return (BuildTimeSite) siteFactory.createSite();
 
-		if (siteFactory == null || refresh == true)
+		if (siteFactory == null || refresh == true) {
 			siteFactory = new BuildTimeSiteFactory();
+			siteFactory.setReportResolutionErrors(reportResolutionErrors);
+		}
 
 		siteFactory.setSitePaths(getPaths());
 		return (BuildTimeSite) siteFactory.createSite();
@@ -265,5 +269,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public void setCompiledElements(Set compiledElements) {
 		this.compiledElements = compiledElements;
 	}
+
+	public void setReportResolutionErrors(boolean value) {
+		reportResolutionErrors = value;
+	}
+	
 
 }
