@@ -14,10 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.site.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
@@ -44,7 +41,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			if (resource instanceof IFile) {
 				// see if this is it
 				IFile candidate = (IFile) resource;
-				if (isSiteFile(candidate)) {
+				if (candidate.getName().equals("site.xml")) { //$NON-NLS-1$
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {
 						checkFile(candidate, monitor);
@@ -56,9 +53,6 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	public UpdateSiteBuilder() {
-		super();
-	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 		throws CoreException {
 
@@ -83,107 +77,13 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		String message =
 			PDE.getFormattedMessage(BUILDERS_VERIFYING, file.getFullPath().toString());
 		monitor.subTask(message);
-		XMLErrorReporter reporter = new XMLErrorReporter(file);
+		UpdateSiteErrorReporter reporter = new UpdateSiteErrorReporter(file);
 		ValidatingSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
-			validateFile(file, reporter);
+			reporter.validateContent(monitor);
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 	}
 	
-	private boolean isSiteFile(IFile file) {
-		return file.getParent().equals(file.getProject())
-			&& file.getName().toLowerCase().equals("site.xml"); //$NON-NLS-1$
-	}
-
-	private void validateFile(IFile file, XMLErrorReporter reporter) {
-		WorkspaceSiteModel model = new WorkspaceSiteModel(file);
-		model.load();
-		if (model.isLoaded()) {
-			ISite site = model.getSite();
-			if (site != null) {
-				validateRequiredAttributes(site, reporter);
-			}
-		}
-	}
-	private void validateRequiredAttributes(
-		ISite site,
-		XMLErrorReporter reporter) {
-		ISiteFeature[] features = site.getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			ISiteFeature feature = features[i];
-			assertNotNull(
-				"url", //$NON-NLS-1$
-				"feature", //$NON-NLS-1$
-				getLine(feature),
-				feature.getURL(),
-				reporter);
-			ISiteCategory[] categories = feature.getCategories();
-			for (int j = 0; j < categories.length; j++) {
-				ISiteCategory category = categories[j];
-				assertNotNull(
-					"name", //$NON-NLS-1$
-					"category", //$NON-NLS-1$
-					getLine(category),
-					category.getName(),
-					reporter);
-			}
-		}
-		ISiteArchive[] archives = site.getArchives();
-		for (int i = 0; i < archives.length; i++) {
-			ISiteArchive archive = archives[i];
-			assertNotNull(
-				"path", //$NON-NLS-1$
-				"archive", //$NON-NLS-1$
-				getLine(archive),
-				archive.getPath(),
-				reporter);
-			assertNotNull(
-				"url", //$NON-NLS-1$
-				"archive", //$NON-NLS-1$
-				getLine(archive),
-				archive.getURL(),
-				reporter);
-		}
-		ISiteCategoryDefinition[] defs = site.getCategoryDefinitions();
-		for (int i = 0; i < defs.length; i++) {
-			ISiteCategoryDefinition def = defs[i];
-			assertNotNull(
-				"name", //$NON-NLS-1$
-				"category-def", //$NON-NLS-1$
-				getLine(def),
-				def.getName(),
-				reporter);
-			assertNotNull(
-				"label", //$NON-NLS-1$
-				"category-def", //$NON-NLS-1$
-				getLine(def),
-				def.getLabel(),
-				reporter);
-		}
-	}
-
-	private static int getLine(ISiteObject object) {
-		int line = -1;
-		if (object instanceof ISourceObject) {
-			line = ((ISourceObject) object).getStartLine();
-		}
-		return line;
-	}
-
-	private static void assertNotNull(
-		String att,
-		String el,
-		int line,
-		String value,
-		XMLErrorReporter reporter) {
-		if (value == null) {
-			String message =
-				PDE.getFormattedMessage(
-					"Builders.manifest.missingRequired", //$NON-NLS-1$
-					new String[] { att, el });
-			reporter.report(message, line, IMarker.SEVERITY_ERROR);
-		}
-	}
 }

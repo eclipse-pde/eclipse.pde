@@ -13,7 +13,7 @@ import org.eclipse.pde.internal.core.schema.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-public class ExtensionsErrorReporter extends XMLErrorReporter {
+public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
 	IPluginModelBase fModel;
 	
@@ -37,7 +37,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
 		} else {
-			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
+			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
 			if (severity != CompilerFlags.IGNORE) {
 				NamedNodeMap attrs = element.getAttributes();
 				for (int i = 0; i < attrs.getLength(); i++) {
@@ -61,7 +61,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 						if (severity != CompilerFlags.IGNORE)
 							reportIllegalElement(child, severity);
 					} else {
-						severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
+						severity = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
 						if (severity != CompilerFlags.IGNORE)
 							reportUnusedElement(child, severity);					
 					}
@@ -265,16 +265,7 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 				reportIllegalElement((Element)children.item(i), severity);
 		}
 	}
-	
-	protected boolean assertAttributeDefined(Element element, String attrName, int severity) {
-		Attr attr = element.getAttributeNode(attrName);
-		if (attr == null) {
-			reportMissingRequiredAttribute(element, attrName, severity);
-			return false;
-		}
-		return true;
-	}
-	
+		
 	protected void validateTranslatableString(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
@@ -383,65 +374,19 @@ public class ExtensionsErrorReporter extends XMLErrorReporter {
 		}
 	}
 	
-	protected void validateBoolean(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
-		if (severity == CompilerFlags.IGNORE)
-			return;
-		
-		String value = attr.getValue();
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		
-		reportIllegalAttributeValue(element, attr, severity);
-	}
-
 	protected void validateRestrictionAttribute(Element element, Attr attr, ISchemaRestriction restriction) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
-		if (severity != CompilerFlags.IGNORE) {
-			Object[] children = restriction.getChildren();
-			String value = attr.getValue();
-			for (int i = 0; i < children.length; i++) {
-				Object child = children[i];
-				if (child instanceof ISchemaEnumeration) {
-					ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
-					if (enumeration.getName().equals(value)) {
-						return;
-					}
+		Object[] children = restriction.getChildren();
+		String value = attr.getValue();
+		for (int i = 0; i < children.length; i++) {
+			Object child = children[i];
+			if (child instanceof ISchemaEnumeration) {
+				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+				if (enumeration.getName().equals(value)) {
+					return;
 				}
 			}
-			reportIllegalAttributeValue(element, attr, severity);
 		}
-	}
-
-	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
-		String message = PDE
-				.getFormattedMessage(
-						"Builders.Manifest.missingRequired", new String[] { attName, element.getNodeName() }); //$NON-NLS-1$			
-		report(message, getLine(element), severity);
-	}
-
-	protected void reportUnknownAttribute(Element element, String attName, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.attribute", //$NON-NLS-1$
-				attName);
-		report(message, getLine(element, attName), severity);
-	}
-
-	protected void reportIllegalAttributeValue(Element element, Attr attr, int severity) {
-		String message = PDE.getFormattedMessage("Builders.Manifest.att-value", //$NON-NLS-1$
-				new String[] { attr.getValue(), attr.getName() });
-		report(message, getLine(element, attr.getName()), severity);
-	}
-	
-	protected void reportIllegalElement(Element element, int severity) {
-		Node parent = element.getParentNode();
-		if (parent == null || parent instanceof Document) {
-			report(PDE.getResourceString("Builders.Manifest.illegalRoot"), getLine(element), severity); //$NON-NLS-1$
-		} else {
-			report(PDE.getFormattedMessage(
-					"Builders.Manifest.child", new String[] { //$NON-NLS-1$
-					element.getNodeName(), parent.getNodeName() }),
-					getLine(element), severity);
-		}
+		reportIllegalAttributeValue(element, attr);
 	}
 	
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {

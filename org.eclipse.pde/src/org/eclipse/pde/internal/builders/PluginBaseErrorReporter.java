@@ -61,26 +61,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if (attr != null)
 			validateTranslatableString(element, attr);	
 	}
-	
-	protected void validateVersionAttribute(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
-		if (severity != CompilerFlags.IGNORE) {
-			IStatus status = PluginVersionIdentifier.validateVersion(attr.getValue());
-			if (status.getSeverity() != IStatus.OK)
-				report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR);
-		}
-	}
-	
-	protected void validateMatch(Element element, Attr attr) {
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_ILLEGAL_ATT_VALUE);
-		if (severity != CompilerFlags.IGNORE) {
-			String value = attr.getValue();
-			if (!"perfect".equals(value) && !"equivalent".equals(value) //$NON-NLS-1$ //$NON-NLS-2$
-				&& !"greaterOrEqual".equals(value) && !"compatible".equals(value)) //$NON-NLS-1$ //$NON-NLS-2$
-				reportIllegalAttributeValue(element, attr, severity);
-		}
-	}
-	
+		
 	protected abstract String getRootElementName();
 
 	protected void validateRequires(Element element) {
@@ -135,7 +116,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 		
 		int unknownSev = CompilerFlags.getFlag(project, CompilerFlags.P_UNKNOWN_ELEMENT);
-		int deprecatedSev = CompilerFlags.getFlag(project, CompilerFlags.P_NOT_USED);
+		int deprecatedSev = CompilerFlags.getFlag(project, CompilerFlags.P_DEPRECATED);
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Element child = (Element)children.item(i);

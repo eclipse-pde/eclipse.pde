@@ -48,8 +48,6 @@ public class CompilerFlags {
 		"compilers.p.unknown-element"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_ATTRIBUTE =
 		"compilers.p.unknown-attribute"; //$NON-NLS-1$
-	public static final String P_ILLEGAL_ATT_VALUE =
-		"compilers.p.illegal-att-value"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_RESOURCE =
 		"compilers.p.unknown-resource"; //$NON-NLS-1$
@@ -59,8 +57,6 @@ public class CompilerFlags {
 		"compilers.p.not-externalized-att"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = 
 		"compilers.p.deprecated"; //$NON-NLS-1$
-	public static final String P_NOT_USED = 
-		"compilers.p.unused-element-or-attribute"; //$NON-NLS-1$
 
 	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
 	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
@@ -79,12 +75,10 @@ public class CompilerFlags {
 				P_NO_REQUIRED_ATT,
 				P_UNKNOWN_ELEMENT,
 				P_UNKNOWN_ATTRIBUTE,
-				P_ILLEGAL_ATT_VALUE,
+				P_DEPRECATED,
 				P_UNKNOWN_CLASS,
 				P_UNKNOWN_RESOURCE,
-				P_NOT_EXTERNALIZED,
-				P_DEPRECATED,
-				P_NOT_USED},
+				P_NOT_EXTERNALIZED},
 			{S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS}, {
 			F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES }, {
 		}
@@ -254,12 +248,10 @@ public class CompilerFlags {
 		pref.setDefault(P_NO_REQUIRED_ATT, ERROR);
 		pref.setDefault(P_UNKNOWN_ELEMENT, ERROR);
 		pref.setDefault(P_UNKNOWN_ATTRIBUTE, ERROR);
-		pref.setDefault(P_ILLEGAL_ATT_VALUE, ERROR);
 		pref.setDefault(P_UNKNOWN_CLASS, IGNORE);
 		pref.setDefault(P_UNKNOWN_RESOURCE, IGNORE);
 		pref.setDefault(P_NOT_EXTERNALIZED, IGNORE);
-		pref.setDefault(P_DEPRECATED, IGNORE);
-		pref.setDefault(P_NOT_USED, WARNING);
+		pref.setDefault(P_DEPRECATED, WARNING);
 
 		pref.setDefault(S_CREATE_DOCS, false);
 		pref.setDefault(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
