@@ -215,6 +215,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 					bWriter.write("osgi.splashPath=" + splashPath);
 					bWriter.newLine();
 				}
+				bWriter.write("eclipse.product=" + primaryFeatureId);
+				bWriter.newLine();
 			}
 			
 			bWriter.write("osgi.configuration.cascaded=false");
