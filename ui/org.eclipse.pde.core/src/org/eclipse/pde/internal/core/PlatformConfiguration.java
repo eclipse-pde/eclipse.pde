@@ -1226,7 +1226,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	private void computeFeaturesChangeStamp() {
-		if (featuresChangeStampIsValid)
+		/*if (featuresChangeStampIsValid)
 			return;
 
 		long result = 0;
@@ -1235,11 +1235,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			result ^= sites[i].getFeaturesChangeStamp();
 		}
 		featuresChangeStamp = result;
-		featuresChangeStampIsValid = true;
+		featuresChangeStampIsValid = true;*/
 	}
 
 	private void computePluginsChangeStamp() {
-		if (pluginsChangeStampIsValid)
+		/*if (pluginsChangeStampIsValid)
 			return;
 
 		long result = 0;
@@ -1248,7 +1248,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			result ^= sites[i].getPluginsChangeStamp();
 		}
 		pluginsChangeStamp = result;
-		pluginsChangeStampIsValid = true;
+		pluginsChangeStampIsValid = true;*/
 	}
 	
 	private void load(URL url) throws IOException {
