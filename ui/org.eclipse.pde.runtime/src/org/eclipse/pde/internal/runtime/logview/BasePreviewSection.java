@@ -43,6 +43,8 @@ public abstract class BasePreviewSection extends FormSection {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = SWT.DEFAULT;
 		text.setLayoutData(gd);
+		text.setEditable(false);
+		text.setBackground(factory.getBackgroundColor());
 		return container;
 	}
 	
