@@ -443,9 +443,6 @@ public class EventDetailsDialog extends Dialog {
 		stackTraceText = new Text(container, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 3;
-		gd.widthHint = 300;
-		gd.heightHint = 180;
 		stackTraceText.setLayoutData(gd);
 		stackTraceText.setEditable(false);
 	}
