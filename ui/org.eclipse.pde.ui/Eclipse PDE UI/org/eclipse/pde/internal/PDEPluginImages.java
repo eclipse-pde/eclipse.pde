@@ -27,7 +27,9 @@ public class PDEPluginImages {
 	
 	public final static String ICONS_PATH;
 	static {
-		if(Display.getCurrent().getIconDepth() > 4)
+		Display display = Display.getCurrent();
+		if (display==null) display = Display.getDefault();
+		if(display.getIconDepth() > 4)
 			ICONS_PATH = "icons/full/";//$NON-NLS-1$
 		else
 			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
