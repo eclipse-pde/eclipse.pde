@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntRunner;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -26,6 +27,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
@@ -286,6 +290,28 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		}
 
 	}
-		
+	
+	protected boolean isCustomBuild(IModel model) throws CoreException {
+		IBuildModel buildModel = null;
+		IFile buildFile =
+			model.getUnderlyingResource().getProject().getFile("build.properties");
+		if (buildFile.exists()) {
+			buildModel = new WorkspaceBuildModel(buildFile);
+			buildModel.load();
+		}
+		if (buildModel != null) {
+			IBuild build = buildModel.getBuild();
+			IBuildEntry entry = build.getEntry("custom");
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					if (tokens[i].equals("true"))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 }

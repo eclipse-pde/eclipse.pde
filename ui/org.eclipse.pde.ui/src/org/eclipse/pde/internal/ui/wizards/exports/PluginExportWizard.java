@@ -88,7 +88,9 @@ public class PluginExportWizard extends BaseExportWizard {
 
 	}
 	
-	public void deleteBuildFile(IPluginModelBase model) {
+	public void deleteBuildFile(IPluginModelBase model) throws CoreException{
+		if (isCustomBuild(model))
+			return;
 		String fileName = "build.xml";
 		File file = new File(model.getInstallLocation() + Path.SEPARATOR + fileName);
 		if (file.exists())
@@ -128,5 +130,5 @@ public class PluginExportWizard extends BaseExportWizard {
 		generator.setModelId(model.getPluginBase().getId());
 		generator.generate();
 	}
-	
+		
 }

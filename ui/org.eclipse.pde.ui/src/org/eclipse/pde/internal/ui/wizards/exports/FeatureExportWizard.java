@@ -107,7 +107,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		}
 	}
 
-	private void deleteBuildFiles(IFeatureModel model) {
+	private void deleteBuildFiles(IFeatureModel model) throws CoreException {
 		
 		deleteBuildFile(model);
 
@@ -124,9 +124,11 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 	}
 	
-	public void deleteBuildFile(IModel model) {
+	public void deleteBuildFile(IModel model) throws CoreException {
 		String scriptName = "build.xml";
 		String filename = "";
+		if (isCustomBuild(model))
+			return;
 		if (model instanceof IFeatureModel) {
 			filename = ((IFeatureModel)model).getInstallLocation() + Path.SEPARATOR + scriptName; 
 		} else {
