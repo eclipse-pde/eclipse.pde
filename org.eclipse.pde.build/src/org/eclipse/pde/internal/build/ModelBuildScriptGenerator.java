@@ -127,6 +127,13 @@ public IStatus execute() {
 		retrieveCommandLineModels();
 		
 	for (int i = 0; i < modelsToGenerate.length; i++) {
+		
+		// do we need to generate build.xml?
+		Properties properties = getProperties(modelsToGenerate[i]);
+		String custom = properties.getProperty(FLAG_CUSTOM);
+		if (custom != null && custom.equals("true"))
+			continue;
+		
 		try {
 			PrintWriter output = openOutput(modelsToGenerate[i]);
 			try {

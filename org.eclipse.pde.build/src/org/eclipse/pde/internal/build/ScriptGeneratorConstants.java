@@ -56,4 +56,7 @@ interface ScriptGeneratorConstants {
 	public final static int EXCEPTION_FILE_MISSING = 14;
 	public final static int EXCEPTION_OUTPUT = 15;
 	public final static int EXCEPTION_URL = 16;
+	
+	// flags
+	public static final String FLAG_CUSTOM = "custom";
 }
