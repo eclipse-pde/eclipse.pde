@@ -204,10 +204,21 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 				continue;
 			programArgs.add(token);
 		}
-		
+
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
-			programArgs.add(0, "-showsplash"); //$NON-NLS-1$
-			programArgs.add(1, computeShowsplashArgument());
+			// TODO temporary until the resolution of bug 84142
+			if (PDECore.getDefault().getTargetVersion().equals(ICoreConstants.TARGET31)) {
+				programArgs.add(0, "-launcher"); 
+				IPath path = ExternalModelManager.getEclipseHome().append("eclipse");
+				programArgs.add(1, path.toOSString()); //This could be the branded launcher if we want (also this does not bring much)
+				programArgs.add(2, "-name");
+				programArgs.add(3, "Eclipse");	//This should be the name of the product
+				programArgs.add(4, "-showsplash");
+				programArgs.add(5, "600");
+			} else {
+				programArgs.add(0, "-showsplash");
+				programArgs.add(1, computeShowsplashArgument());
+			}
 		}
 		if (!programArgs.contains("-os")) { //$NON-NLS-1$
 			programArgs.add("-os"); //$NON-NLS-1$
