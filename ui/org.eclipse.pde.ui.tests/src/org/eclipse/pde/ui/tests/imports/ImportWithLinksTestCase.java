@@ -25,27 +25,27 @@ public class ImportWithLinksTestCase extends PDETestCase {
 		return new TestSuite(ImportWithLinksTestCase.class);
 	}
 	
-	public void testPluginWithOneLibrary() {
+	public void testImportLinks1() {
 		playScript(Catalog.IMPORT_LINKS_1);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.core.filebuffers"));
 		} catch (CoreException e) {
-			fail("testPluginWithOneLibrary:" + e);
+			fail("testImportLinks1:" + e);
 		}
 	}
 
-	public void testPluginWithMultipleLibraries() {
+	public void testImportLinks2() {
 		playScript(Catalog.IMPORT_LINKS_2);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.osgi"));
 		} catch (CoreException e) {
-			fail("testPluginWithMultipleLibraries:" + e);
+			fail("testImportLinks2:" + e);
 		}
 	}
 	
-	public void testMultiplePlugins() {
+	public void testImportLinks3() {
 		playScript(Catalog.IMPORT_LINKS_3);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -55,7 +55,7 @@ public class ImportWithLinksTestCase extends PDETestCase {
 				verifyProject(projects[i]);				
 			}
 		} catch (CoreException e) {
-			fail("testMultiplePlugins:" + e);
+			fail("testImportLinks3:" + e);
 		}
 	}
 

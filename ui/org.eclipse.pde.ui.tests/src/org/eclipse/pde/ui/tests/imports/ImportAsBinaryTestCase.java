@@ -24,27 +24,27 @@ public class ImportAsBinaryTestCase extends PDETestCase {
 		return new TestSuite(ImportAsBinaryTestCase.class);
 	}
 	
-	public void testPluginWithOneLibrary() {
+	public void testImportBinary1() {
 		playScript(Catalog.IMPORT_BINARY_1);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.core.filebuffers"));
 		} catch (CoreException e) {
-			fail("testPluginWithOneLibrary:" + e);
+			fail("testImportBinary1:" + e);
 		}
 	}
 
-	public void testPluginWithMultipleLibraries() {
+	public void testImportBinary2() {
 		playScript(Catalog.IMPORT_BINARY_2);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.osgi"));
 		} catch (CoreException e) {
-			fail("testPluginWithMultipleLibraries:" + e);
+			fail("testImportBinary2:" + e);
 		}
 	}
 	
-	public void testMultiplePlugins() {
+	public void testImportBinary3() {
 		playScript(Catalog.IMPORT_BINARY_3);
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -54,7 +54,7 @@ public class ImportAsBinaryTestCase extends PDETestCase {
 				verifyProject(projects[i]);				
 			}
 		} catch (CoreException e) {
-			fail("testMultiplePlugins:" + e);
+			fail("testImportBinary3:" + e);
 		}
 	}
 
