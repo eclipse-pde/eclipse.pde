@@ -10,21 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.browser.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.builders.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.program.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.internal.builders.SchemaTransformer;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 
 public class ShowDescriptionAction extends Action {
@@ -105,6 +111,7 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showURL(String url) {
+/*
 		if (SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
 			Program.launch(url);
 		} else {
@@ -113,6 +120,18 @@ public class ShowDescriptionAction extends Action {
 				browser.displayURL("file://" + url); //$NON-NLS-1$
 			} catch (Exception e) {
 			}
+		}
+*/
+		try {
+			URL theURL = new URL("file:"+url);
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+			support.getExternalBrowser().openURL(theURL);
+		}
+		catch (MalformedURLException e) {
+			PDEPlugin.logException(e);
+		}
+		catch (PartInitException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 }
