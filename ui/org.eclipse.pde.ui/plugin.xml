@@ -172,7 +172,7 @@
             class="org.eclipse.pde.internal.ui.wizards.product.NewProductFileWizard"
             category="org.eclipse.pde.PDE"
             name="%new.product.config"
-            id="org.eclipse.pde.ui.productWizard">
+            id="org.eclipse.pde.ui.NewProductConfigurationWizard">
          <description>
             %new.product.desc
          </description>
