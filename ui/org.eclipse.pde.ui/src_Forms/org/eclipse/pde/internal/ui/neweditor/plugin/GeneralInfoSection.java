@@ -5,10 +5,13 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.plugin;
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.*;
@@ -162,27 +165,14 @@ public class GeneralInfoSection extends PDESection {
 			public void textValueChanged(FormEntry entry) {
 			}
 			public void linkActivated(HyperlinkEvent e) {
-				doOpenClass();
+				String value = fClassEntry.getValue();
+				if (value.length() > 0)
+					doOpenClass();
+				else
+					doOpenSelectionDialog();
 			}
 			public void browseButtonSelected(FormEntry entry) {
-				try {
-					Shell shell = PDEPlugin.getActiveWorkbenchShell();
-					IResource resource = getPluginBase().getModel().getUnderlyingResource();
-					IProject project = (resource == null) ? null : resource.getProject();
-					if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
-						SelectionDialog dialog = JavaUI.createTypeDialog(
-												shell,
-												new ProgressMonitorDialog(shell),
-												project,
-												IJavaElementSearchConstants.CONSIDER_CLASSES,
-												false);
-								if (dialog.open() == SelectionDialog.OK) {
-									IType type = (IType) dialog.getResult()[0];
-									fClassEntry.setValue(type.getFullyQualifiedName());
-								}
-					}
-				} catch (CoreException e) {
-				}
+				doOpenSelectionDialog();
 			}
 		});
 		fClassEntry.setEditable(isEditable());		
@@ -302,5 +292,48 @@ public class GeneralInfoSection extends PDESection {
 			// nothing
 			Display.getCurrent().beep();
 		}
+	}
+	
+	private void doOpenSelectionDialog() {
+		try {
+			Shell shell = PDEPlugin.getActiveWorkbenchShell();
+			IResource resource = getPluginBase().getModel()
+					.getUnderlyingResource();
+			IProject project = (resource == null) ? null : resource
+					.getProject();
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+				SelectionDialog dialog = JavaUI.createTypeDialog(shell,
+						new ProgressMonitorDialog(shell),
+						getSearchScope(project),
+						IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+				dialog.setTitle("Select Type");
+				if (dialog.open() == SelectionDialog.OK) {
+					IType type = (IType) dialog.getResult()[0];
+					fClassEntry.setValue(type.getFullyQualifiedName());
+				}
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
+	private IJavaSearchScope getSearchScope(IProject project) {
+		IJavaProject jProject = JavaCore.create(project);
+		return SearchEngine.createJavaSearchScope(getDirectRoots(jProject));
+	}
+	
+	private IPackageFragmentRoot[] getDirectRoots(IJavaProject project) {
+		ArrayList result = new ArrayList();
+		try {
+			IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
+						|| (roots[i].isArchive() && !roots[i].isExternal())) {
+					result.add(roots[i]);
+				}
+			}
+		} catch (JavaModelException e) {
+		}
+		
+		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 }

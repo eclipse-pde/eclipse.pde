@@ -160,8 +160,8 @@ public class FormEntry {
 	public void commit() {
 		if (dirty) {
 			value = text.getText();
-			if (value.length()==0)
-				value = null;
+			//if (value.length()==0)
+				//value = null;
 			//notify
 			if (listener != null)
 				listener.textValueChanged(this);
@@ -218,7 +218,7 @@ public class FormEntry {
 	public void setValue(String value) {
 		if (text != null)
 			text.setText(value != null ? value : "");
-		this.value = value;
+		this.value = (value != null) ? value : "";
 	}
 	/**
 	 * Sets the value of this entry with the possibility to turn the

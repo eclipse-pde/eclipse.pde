@@ -61,7 +61,6 @@ public void run() {
 	wizard.init(PlatformUI.getWorkbench(), selection);
 	WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 	wd.create();
-	wd.getShell().setSize(450, 600);
 	wd.open();
 }
 
