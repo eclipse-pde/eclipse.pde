@@ -324,15 +324,15 @@ public class SourcePreferencePage
 	
 	private void configureColumns(Table table) {
 		table.setHeaderVisible(true);
-		TableColumn column = new TableColumn(table, SWT.NULL);
+		TableColumn column = new TableColumn(table, SWT.H_SCROLL);
 		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.name")); //$NON-NLS-1$
 		
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.path")); //$NON-NLS-1$
 		
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(50, 150, true));
-		layout.addColumnData(new ColumnWeightData(50, 150, true));
+		layout.addColumnData(new ColumnWeightData(25, 150, true));
+		layout.addColumnData(new ColumnWeightData(75, 450, true));
 		table.setLayout(layout);
 	}
 

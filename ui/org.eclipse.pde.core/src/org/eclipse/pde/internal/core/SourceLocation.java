@@ -73,5 +73,13 @@ public class SourceLocation {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof SourceLocation) {
+			SourceLocation object = (SourceLocation)obj;
+			return object.getPath().equals(path) && object.getName().equals(name);
+		}
+		return false;
+	}
 
 }

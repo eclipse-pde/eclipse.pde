@@ -39,7 +39,8 @@ public class Schema extends PlatformObject implements ISchema {
 	private boolean disposed = false;
 	private Hashtable lineTable;
 	private boolean valid;
-
+	private int startLine, endLine;
+	
 	public Schema(String pluginId, String pointId, String name) {
 		this.pluginId = pluginId;
 		this.pointId = pointId;
@@ -680,6 +681,27 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		return SchemaAttribute.STRING;
 	}
+	
+	void setSourceLocation(Node node){
+			if (lineTable==null) return;
+			Integer [] lines = (Integer[]) lineTable.get(node);
+			if (lines != null) {
+				startLine = lines[0].intValue();
+				endLine = lines[1].intValue();
+			} else {
+				startLine = -1;
+				endLine = -1;
+			}
+	}
+	
+	public int getOverviewStartLine(){
+		return startLine;
+	}
+	
+	public int getOverviewEndLine(){
+		return endLine;
+	}
+	
 	private void processSchemaAnnotation(Node node) {
 		NodeList children = node.getChildNodes();
 		String section = "overview";
@@ -691,9 +713,10 @@ public class Schema extends PlatformObject implements ISchema {
 					String text =
 						getNormalizedText(child.getFirstChild().getNodeValue());
 					if (section != null) {
-						if (section.equals("overview"))
+						if (section.equals("overview")){
 							setDescription(text);
-						else {
+							setSourceLocation(child);
+						} else {
 							DocumentSection sec =
 								new DocumentSection(this, section, sectionName);
 							sec.bindSourceLocation(child, lineTable);
