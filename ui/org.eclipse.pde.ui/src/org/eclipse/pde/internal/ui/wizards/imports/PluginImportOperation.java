@@ -213,7 +213,11 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			if (isJavaProject) {
 				IJavaProject jProject = JavaCore.create(project);
 				jProject.setRawClasspath(new IClasspathEntry[0], jProject.getOutputLocation(), monitor);
-				modelIds.add(model.getPluginBase().getId());
+				if (model instanceof IFragmentModel) {
+					modelIds.add(0, model.getPluginBase().getId());
+				} else {
+					modelIds.add(model.getPluginBase().getId());
+				}
 			}
 		} finally {
 			monitor.done();
