@@ -10,28 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.swt.custom.SashForm;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.pde.internal.ui.editor.manifest.NullMenuManager;
-import org.eclipse.pde.internal.ui.editor.manifest.NullToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.views.properties.PropertySheetPage;
 
 public class TracingLauncherTab
 	extends AbstractLauncherTab
@@ -247,8 +245,10 @@ public class TracingLauncherTab
 		fPropertySheet.createControl(composite);
 		fPropertySheet.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPropertySheet.makeContributions(
-			new NullMenuManager(),
-			new NullToolBarManager(),
+			//new NullMenuManager(),
+			//new NullToolBarManager(),
+			  new MenuManager(),
+			  new ToolBarManager(),
 			null);
 	}
 

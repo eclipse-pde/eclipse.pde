@@ -137,7 +137,7 @@ public void makeContributions(
 	IStatusLineManager statusLineManager) {
 	fillLocalToolBar(toolBarManager);
 	fillLocalMenuBar(menuManager);
-	super.makeContributions(new NullMenuManager(), new NullToolBarManager(), statusLineManager);
+	super.makeContributions(new MenuManager(), new ToolBarManager(), statusLineManager);
 }
 protected void refreshInput() {
 	super.selectionChanged(currentPart, currentSelection);

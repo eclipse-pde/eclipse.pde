@@ -253,8 +253,10 @@ public class ExtensionsPropertySheet extends ManifestPropertySheet {
 		IToolBarManager toolBarManager,
 		IStatusLineManager statusLineManager) {
 		superMakeContributions(
-			new NullMenuManager(),
-			new NullToolBarManager(),
+			//new NullMenuManager(),
+			//new NullToolBarManager(),
+			new MenuManager(),
+			new ToolBarManager(),
 			statusLineManager);
 		// Create and fill custom element bars
 		customBars = new SubActionBars();
