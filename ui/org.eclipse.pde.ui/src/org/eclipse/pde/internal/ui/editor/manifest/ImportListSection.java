@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
+
 public class ImportListSection
 	extends TableSection
 	implements IModelChangedListener, IModelProviderListener {
@@ -317,12 +318,17 @@ public class ImportListSection
 	public void commitChanges(boolean onSave) {
 		if (onSave) {
 			IResource resource =
-				((IPluginModelBase) getFormPage().getModel()).getUnderlyingResource();
-			if (resource!=null) {
+				((IPluginModelBase) getFormPage().getModel())
+					.getUnderlyingResource();
+			if (resource != null) {
 				IProject project = resource.getProject();
 				if (WorkspaceModelManager.isJavaPluginProject(project)) {
-					boolean shouldUpdate = BuildpathPreferencePage.isManifestUpdate();
-					if (shouldUpdate)
+					boolean shouldUpdate =
+						BuildpathPreferencePage.isManifestUpdate();
+					PDESourcePage sourcePage =
+						(PDESourcePage) getFormPage().getEditor().getPage(
+							ManifestEditor.SOURCE_PAGE);
+					if (shouldUpdate && !sourcePage.containsError())
 						updateBuildPath();
 				}
 			}

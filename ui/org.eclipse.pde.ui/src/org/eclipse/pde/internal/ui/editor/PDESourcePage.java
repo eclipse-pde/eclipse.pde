@@ -212,4 +212,8 @@ public boolean canPaste(Clipboard clipboard) {
 public void setFocus() {
 }
 
+public boolean containsError() {
+	return errorMode;
+}
+
 }
