@@ -2,8 +2,10 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
@@ -117,6 +119,22 @@ public class JUnitArgumentsTab extends BasicLauncherTab {
 		config.setAttribute(PROGARGS, LauncherUtils.getDefaultProgramArguments());
 		config.setAttribute(ASKCLEAR, false);
 		config.setAttribute(VMARGS, "");
+		try {
+			String projectName =
+				config.getAttribute(
+					IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
+					"");
+			if (projectName.length() > 0) {
+				IResource project =
+					PDEPlugin.getWorkspace().getRoot().findMember(projectName);
+				if (project != null && project instanceof IProject) {
+					config.setAttribute(
+						APPLICATION,
+						JUnitLaunchConfiguration.getApplicationName((IProject) project));
+				}
+			}
+		} catch (CoreException e) {
+		}
 	}
 	
 	private String[] getApplicationNames() {
