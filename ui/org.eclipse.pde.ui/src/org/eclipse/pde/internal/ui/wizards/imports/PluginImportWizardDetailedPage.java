@@ -478,7 +478,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		}
 		implicit = findModel("org.eclipse.core.runtime");
 		if (implicit != null) {
-			checked.add(implicit);
+			addPluginAndDependent(implicit,checked);
 		}
 	}
 
