@@ -6,15 +6,15 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
-public class SampleWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
+public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
-	public SampleWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+	public ApplicationWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
 		super(configurer);
 	}
 
 	public ActionBarAdvisor createActionBarAdvisor(
 			IActionBarConfigurer configurer) {
-		return new SampleActionBarAdvisor(configurer);
+		return new ApplicationActionBarAdvisor(configurer);
 	}
 
 	public void preWindowOpen() {

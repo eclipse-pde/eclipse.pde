@@ -134,9 +134,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		
 		IPluginElement view = model.getPluginFactory().createElement(extension);
 		view.setName("view"); //$NON-NLS-1$
-		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".SampleView" ); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".View" ); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "View"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("id", id + ".sampleView"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 		
 		if (!extension.isInTheModel())

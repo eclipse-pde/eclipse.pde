@@ -12,8 +12,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-public class SampleView extends ViewPart {
-	public static final String ID = "$pluginId$.sampleView";
+public class View extends ViewPart {
+	public static final String ID = "$pluginId$.view";
 
 	private TableViewer viewer;
 

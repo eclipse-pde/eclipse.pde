@@ -10,7 +10,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 			IWorkbenchWindowConfigurer configurer) {
-		return new SampleWorkbenchWindowAdvisor(configurer);
+		return new ApplicationWorkbenchWindowAdvisor(configurer);
 	}
 
 	public String getInitialWindowPerspectiveId() {
