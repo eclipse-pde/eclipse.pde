@@ -173,7 +173,9 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_WRITING_SCRIPT, Policy.bind("exception.writeScript"), e));
 	}
 	try {
-		AntRunner.main("-file " + target.getAbsolutePath());
+		AntRunner runner = new AntRunner();
+		runner.setBuildFileLocation(target.getAbsolutePath());
+		runner.run();
 		target.delete();
 		FeatureExecutableFactory factory = new FeatureExecutableFactory();
 		File featureFolder = new File(root, element);
@@ -184,7 +186,7 @@ protected Feature retrieveFeature(String element, String cvsRoot, String tag, St
 		return feature;
 	} catch (Exception e) {
 		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_FEATURE_MISSING, Policy.bind("error.creatingFeature", new String[] {element}), e));
-	}	
+	}
 }
 
 /**

@@ -5,8 +5,7 @@ package org.eclipse.pde.internal.core;
  */
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.tasks.FetchTask;
+import org.eclipse.core.runtime.*;
 /**
  * 
  */
@@ -15,14 +14,49 @@ public class FetchScriptGeneratorApplication extends AbstractApplication {
 	/**
 	 * 
 	 */
-	protected FetchTask task;
+	protected boolean children = true;
+
+	/**
+	 * 
+	 */
+	protected String[] elements;
+
+	/**
+	 * 
+	 */
+	protected String installLocation;
+
+	/**
+	 * 
+	 */
+	protected String directoryLocation;
+
+	/**
+	 * 
+	 */
+	protected String cvsPassFileLocation;
+
+	/**
+	 * 
+	 */
+	protected String scriptName;
 
 public FetchScriptGeneratorApplication() {
-	task = new FetchTask();
 }
 
-protected void run() throws CoreException {
-	task.run();
+public void run() throws CoreException {
+	if (this.elements == null)
+		throw new CoreException(new Status(IStatus.ERROR, PI_PDECORE, EXCEPTION_ELEMENT_MISSING, Policy.bind("error.missingElement"), null));
+	FetchScriptGenerator generator = new FetchScriptGenerator();
+	generator.setDirectoryLocation(directoryLocation);
+	generator.setInstallLocation(installLocation);
+	generator.setFetchChildren(children);
+	generator.setCvsPassFileLocation(cvsPassFileLocation);
+	generator.setScriptName(scriptName);
+	for (int i = 0; i < elements.length; i++) {
+		generator.setElement(elements[i]);
+		generator.generate();
+	}
 }
 
 /**
@@ -33,19 +67,61 @@ protected void processCommandLine(List commands) {
 
 	// looks for flag-like commands
 	if (commands.remove(ARG_NO_CHILDREN)) 
-		task.setChildren(false);
+		children = false;
 
 	// looks for param/arg-like commands
-	task.internalSetElements(getArguments(commands, ARG_ELEMENTS));
+	elements = getArguments(commands, ARG_ELEMENTS);
 	String[] arguments = getArguments(commands, ARG_INSTALL_LOCATION);
-	task.setInstall(arguments[0]); // only consider one location
+	installLocation = arguments[0]; // only consider one location
 	arguments = getArguments(commands, ARG_DIRECTORY_LOCATION);
-	task.setDirectory(arguments[0]); // only consider one location
+	directoryLocation = arguments[0]; // only consider one location
 	arguments = getArguments(commands, ARG_CVS_PASSFILE_LOCATION);
 	if (arguments != null)
-		task.setCvsPassFile(arguments[0]); // only consider one location
+		cvsPassFileLocation = arguments[0]; // only consider one location
 	arguments = getArguments(commands, ARG_SCRIPT_NAME);
 	if (arguments != null)
-		task.setScriptName(arguments[0]); // only consider one name
+		scriptName = arguments[0]; // only consider one name
+}
+
+/**
+ * Sets the children.
+ */
+public void setChildren(boolean children) {
+	this.children = children;
+}
+
+/**
+ * Sets the cvsPassFileLocation.
+ */
+public void setCvsPassFile(String cvsPassFileLocation) {
+	this.cvsPassFileLocation = cvsPassFileLocation;
+}
+
+/**
+ * Sets the directoryLocation.
+ */
+public void setDirectory(String directoryLocation) {
+	this.directoryLocation = directoryLocation;
+}
+
+/**
+ * Sets the elements.
+ */
+public void setElements(String[] elements) {
+	this.elements = elements;
+}
+
+/**
+ * Sets the installLocation.
+ */
+public void setInstall(String installLocation) {
+	this.installLocation = installLocation;
+}
+
+/**
+ * Sets the scriptName.
+ */
+public void setScriptName(String scriptName) {
+	this.scriptName = scriptName;
 }
 }

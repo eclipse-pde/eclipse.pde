@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.tasks.BuildScriptGeneratorTask;
 
 /**
  * Application object that dispatches script generation calls to feature,
@@ -18,20 +17,20 @@ public class BuildScriptGeneratorApplication extends AbstractApplication {
 	/**
 	 * Where to find the elements.
 	 */
-	protected BuildScriptGeneratorTask task;
+	protected BuildScriptGenerator generator;
 
 /**
  * 
  */
 public BuildScriptGeneratorApplication() {
-	task = new BuildScriptGeneratorTask();
+	generator = new BuildScriptGenerator();
 }
 
 /**
  * 
  */
 public void run() throws CoreException {
-	task.run();
+	generator.run();
 }
 
 /**
@@ -42,16 +41,15 @@ protected void processCommandLine(List commands) {
 
 	// looks for flag-like commands
 	if (commands.remove(ARG_NO_CHILDREN)) 
-		task.setChildren(false);
+		generator.setChildren(false);
 
 	// looks for param/arg-like commands
-	task.internalSetElements(getArguments(commands, ARG_ELEMENTS));
-	task.internalSetDevEntries(getArguments(commands, ARG_DEV_ENTRIES));
-	task.internalSetPlugins(getArguments(commands, ARG_PLUGIN_PATH));
+	generator.setElements(getArguments(commands, ARG_ELEMENTS));
+	generator.setDevEntries(getArguments(commands, ARG_DEV_ENTRIES));
+	generator.setPlugins(getArguments(commands, ARG_PLUGIN_PATH));
 	String[] arguments = getArguments(commands, ARG_INSTALL_LOCATION);
-	task.setInstall(arguments[0]); // only consider one location
+	generator.setInstall(arguments[0]); // only consider one location
 }
-
 
 protected void printUsage(PrintWriter out) {
 	super.printUsage(out);

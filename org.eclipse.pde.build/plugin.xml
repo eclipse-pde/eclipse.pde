@@ -6,8 +6,6 @@
    provider-name="Object Technology International, Inc.">
 
 <requires>
-   <import plugin="org.apache.ant"/>
-   <import plugin="org.apache.xerces"/>
    <import plugin="org.eclipse.ant.core"/>
    <import plugin="org.eclipse.jdt.core"/>
    <import plugin="org.eclipse.update.core"/>
@@ -33,36 +31,43 @@
 </extension>
 
 
+<!-- Objects -->
+<extension point="org.eclipse.ant.core.antObjects">
+   <antObject
+      name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
+      class="org.eclipse.pde.internal.core.JDTCompilerAdapter"
+      library="lib/pdecore-ant.jar">
+   </antObject>
+</extension>
+
+
 <!-- Tasks -->
 
 <extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="initTemplate"
-         class="org.eclipse.pde.internal.core.tasks.InitTemplate">
+      name="initTemplate"
+      class="org.eclipse.pde.internal.core.tasks.InitTemplate"
+      library="lib/pdecore-ant.jar">
    </antTask>
-</extension>
-<extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="fetch"
-         class="org.eclipse.pde.internal.core.tasks.FetchTask">
+      name="fetch"
+      class="org.eclipse.pde.internal.core.tasks.FetchTask"
+      library="lib/pdecore-ant.jar">
    </antTask>
-</extension>
-<extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="buildscript"
-         class="org.eclipse.pde.internal.core.tasks.BuildScriptGeneratorTask">
+      name="buildscript"
+      class="org.eclipse.pde.internal.core.tasks.BuildScriptGeneratorTask"
+      library="lib/pdecore-ant.jar">
    </antTask>
-</extension>
-<extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="buildManifest"
-         class="org.eclipse.pde.internal.core.tasks.BuildManifestTask">
+      name="buildManifest"
+      class="org.eclipse.pde.internal.core.tasks.BuildManifestTask"
+      library="lib/pdecore-ant.jar">
    </antTask>
-</extension>
-<extension point="org.eclipse.ant.core.antTasks">
    <antTask
-         name="pluginLocation"
-         class="org.eclipse.pde.internal.core.tasks.PluginLocationTask">
+      name="pluginLocation"
+      class="org.eclipse.pde.internal.core.tasks.PluginLocationTask"
+      library="lib/pdecore-ant.jar">
    </antTask>
 </extension>
 
@@ -71,19 +76,10 @@
 
 <extension point="org.eclipse.ant.core.antTypes">
    <antType
-         name="stripMapper"
-         class="org.eclipse.pde.internal.core.types.StripMapper">
+      name="stripMapper"
+      class="org.eclipse.pde.internal.core.types.StripMapper"
+      library="lib/pdecore-ant.jar">
    </antType>
-</extension>
-
-
-<!-- Objects -->
-
-<extension point="org.eclipse.ant.core.antObjects">
-   <antObject
-         name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
-         class="org.eclipse.pde.internal.core.JDTCompilerAdapter">
-   </antObject>
 </extension>
 
 </plugin>
