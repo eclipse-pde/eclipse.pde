@@ -123,7 +123,7 @@ public class MigratePluginWizard extends Wizard {
 		IDocument document,
 		FindReplaceDocumentAdapter adapter) {
 		try {
-			IRegion region = adapter.search(-1, "<\\?xml.*\\?>", true, true, false, true);
+			IRegion region = adapter.find(-1, "<\\?xml.*\\?>", true, true, false, true);
 			if (region != null) {
 				String text = document.get(region.getOffset(), region.getLength());
 				adapter.replace(
@@ -164,7 +164,7 @@ public class MigratePluginWizard extends Wizard {
 	private IRegion findPointAttributeRegion(FindReplaceDocumentAdapter adapter, IRegion parentRegion) {
 		try {
 			IRegion region =
-			adapter.search(
+			adapter.find(
 					parentRegion.getOffset(),
 					"\\s+point\\s*=\\s*\"",
 					true,
@@ -175,7 +175,7 @@ public class MigratePluginWizard extends Wizard {
 					&& region.getOffset() + region.getLength()
 					<= parentRegion.getOffset() + parentRegion.getLength()) {
 				region =
-				adapter.search(
+				adapter.find(
 						region.getOffset() + region.getLength(),
 						"[^\"]*",
 						true,
@@ -198,10 +198,10 @@ public class MigratePluginWizard extends Wizard {
 		int length = -1;
 		try {
 			IRegion region =
-			adapter.search(start, "<extension\\s+", true, true, false, true);
+			adapter.find(start, "<extension\\s+", true, true, false, true);
 			if (region != null) {
 				offset = region.getOffset();
-				region = adapter.search(offset, ">", true, true, false, false);
+				region = adapter.find(offset, ">", true, true, false, false);
 				if (region != null) {
 					length = region.getOffset() - offset + 1;
 				}
@@ -255,9 +255,9 @@ public class MigratePluginWizard extends Wizard {
 				return;
 			
 			String space = "";
-			IRegion requiresRegion = adapter.search(0, "<requires>", true, false, false, false);
+			IRegion requiresRegion = adapter.find(0, "<requires>", true, false, false, false);
 			if (requiresRegion != null) {
-				IRegion spacerRegion = adapter.search(requiresRegion.getOffset() + requiresRegion.getLength(), "\\s*", true, true, false, true);
+				IRegion spacerRegion = adapter.find(requiresRegion.getOffset() + requiresRegion.getLength(), "\\s*", true, true, false, true);
 				if (spacerRegion != null) {
 					space = document.get(spacerRegion.getOffset(), spacerRegion.getLength());
 				}

@@ -150,7 +150,7 @@ public class PluginDocumentHandler extends DefaultHandler {
 	}
 	
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException{
-		return fFindReplaceAdapter.search(offset, name+"\\s*=\\s*\""+value+"\"", true, false, false, true);
+		return fFindReplaceAdapter.find(offset, name+"\\s*=\\s*\""+value+"\"", true, false, false, true);
 	}
 
 	
