@@ -125,8 +125,10 @@ public class Schema extends PlatformObject implements ISchema {
 	private String getAttribute(Node node, String name) {
 		NamedNodeMap map = node.getAttributes();
 		Node attNode = map.getNamedItem(name);
-		if (attNode != null)
-			return attNode.getNodeValue();
+		if (attNode != null) {
+			String value = attNode.getNodeValue();
+			if (value.length()>0) return value;
+		}
 		return null;
 	}
 	public ISchemaElement[] getCandidateChildren(ISchemaElement element) {

@@ -34,10 +34,13 @@ public String getPointId() {
 
 public URL getSchemaURL() {
 	try {
+/*
 		return new URL(
 			"file:"
 				+ file.getProject().getLocation().removeLastSegments(1)
 				+ file.getFullPath().toString());
+*/
+		return new URL("file:"+file.getLocation().toOSString());
 	} catch (MalformedURLException e) {
 	}
 	return null;
