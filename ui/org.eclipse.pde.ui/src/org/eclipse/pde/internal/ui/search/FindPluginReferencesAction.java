@@ -81,9 +81,13 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 				ModelEntry entry =
 					PDECore.getDefault().getModelManager().findEntry(
 						file.getProject());
-				IPluginModelBase model = entry.getActiveModel();
-				if (model != null)
-					searchString = model.getPluginBase().getId();
+				if (entry != null) {
+					IPluginModelBase model = entry.getActiveModel();
+					if (model != null)
+						searchString = model.getPluginBase().getId();
+				} else {
+					searchString = null;
+				}
 			}
 		}
 	}
