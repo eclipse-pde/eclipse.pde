@@ -119,6 +119,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			IActionBars actionBars) {
 		Label matchLabel = toolkit.createLabel(client, PDEPlugin.getResourceString(KEY_MATCH));
 		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		matchLabel.setLayoutData(new TableWrapData(TableWrapData.MIDDLE));
 		
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(client, toolkit, SWT.READ_ONLY);

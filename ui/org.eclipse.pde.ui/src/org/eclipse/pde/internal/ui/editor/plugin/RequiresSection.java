@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.search.*;
 import org.eclipse.pde.internal.ui.search.dependencies.*;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
@@ -84,6 +85,10 @@ public class RequiresSection
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		if (!isBundle())
+			gd.verticalSpan = 2;
+		section.setLayoutData(gd);
 		initialize();
 	}
 
@@ -439,6 +444,11 @@ public class RequiresSection
 	Action getBuildpathAction() {
 		return buildpathAction;
 	}
+	
+	private boolean isBundle() {
+		return getPage().getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
+	}
+
 /*
 	protected void doPaste(Object target, Object[] objects) {
 		IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();

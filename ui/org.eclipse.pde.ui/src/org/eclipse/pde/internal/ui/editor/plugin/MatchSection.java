@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
@@ -38,7 +37,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	protected IStructuredSelection multiSelection;
 	private boolean blockChanges = false;
 	private boolean addReexport = true;
-	private boolean osgiMode = false;
+
 	public static final String KEY_OPTIONAL = "ManifestEditor.MatchSection.optional"; //$NON-NLS-1$
 	public static final String KEY_REEXPORT = "ManifestEditor.MatchSection.reexport"; //$NON-NLS-1$
 	public static final String KEY_VERSION = "ManifestEditor.MatchSection.version"; //$NON-NLS-1$
@@ -104,38 +103,14 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		versionText.setFormEntryListener(new FormEntryAdapter(this, getPage()
 				.getEditor().getEditorSite().getActionBars()) {
 			public void textValueChanged(FormEntry text) {
-				try {
-					String value = text.getValue();
-					if (value != null && value.length() > 0) {
-						if (!isOsgiMode()) {
-							PluginVersionIdentifier pvi = new PluginVersionIdentifier(
-									text.getValue());
-							String formatted = pvi.toString();
-							text.setValue(formatted, true);
-							applyVersion(formatted);
-						} else {
-							applyVersion(value);
-						}
-					} else {
-						applyVersion(null);
-					}
-				} catch (RuntimeException e) {
-					text.setValue(currentImport.getVersion(), true);
-					String message = PDEPlugin
-							.getResourceString(KEY_VERSION_FORMAT);
-					MessageDialog.openError(
-							PDEPlugin.getActiveWorkbenchShell(), PDEPlugin
-									.getResourceString(KEY_VERSION_TITLE),
-							message);
-				}
+				applyVersion(text.getValue());
 			}
 			public void textDirty(FormEntry text) {
 				if (blockChanges)
 					return;
 				markDirty();
 				blockChanges = true;
-				if (!isOsgiMode())
-					resetMatchCombo(currentImport);
+				resetMatchCombo(currentImport);
 				blockChanges = false;
 			}
 		});
@@ -163,6 +138,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		initialize();
 		update((IPluginReference) null);
 		section.setClient(container);
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	private void createReexportButton(FormToolkit toolkit, Composite container) {
 		reexportButton = toolkit.createButton(container, PDEPlugin
@@ -265,7 +241,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
-		updateMode();
 	}
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
@@ -369,24 +344,5 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		versionText.setValue(currentImport.getVersion());
 		resetMatchCombo(currentImport);
 		blockChanges = false;
-	}
-	/**
-	 * @return Returns the osgiMode.
-	 */
-	public boolean isOsgiMode() {
-		return osgiMode;
-	}
-	/**
-	 * @param osgiMode
-	 *            The osgiMode to set.
-	 */
-	public void setOsgiMode(boolean osgiMode) {
-		this.osgiMode = osgiMode;
-		updateMode();
-	}
-	private void updateMode() {
-		// hide the match combo
-		matchLabel.setVisible(!isOsgiMode());
-		matchCombo.getControl().setVisible(!isOsgiMode());
 	}
 }

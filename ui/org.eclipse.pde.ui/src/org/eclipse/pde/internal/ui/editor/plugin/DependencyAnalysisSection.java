@@ -30,13 +30,9 @@ import org.eclipse.ui.forms.widgets.*;
 public class DependencyAnalysisSection extends PDESection implements IPartSelectionListener {
 	private FormText formText;
 	private ImportObject fSelectedDependency;
-	/**
-	 * @param page
-	 * @param parent
-	 * @param style
-	 */
-	public DependencyAnalysisSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.TWISTIE|Section.EXPANDED);
+
+	public DependencyAnalysisSection(PDEFormPage page, Composite parent, int style) {
+		super(page, parent, Section.TITLE_BAR|Section.TWISTIE|style);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -47,8 +43,8 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 		if (selection == null || selection.isEmpty()) {
 			fSelectedDependency = null;
 		} else {
-			IStructuredSelection ssel = (IStructuredSelection)selection;
-			fSelectedDependency = (ImportObject)ssel.getFirstElement();
+			Object object = ((IStructuredSelection)selection).getFirstElement();
+			fSelectedDependency = (object instanceof ImportObject) ? (ImportObject)object : null;
 		}
 	}
 	
@@ -69,8 +65,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEPlugin.getResourceString("DependencyAnalysisSection.title")); //$NON-NLS-1$
-		//toolkit.createCompositeSeparator(section);
-		
+
 		formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);		
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
@@ -88,6 +83,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 					doFindReferences();
 			}
 		});
+		
 		section.setClient(formText);
 	}
 
