@@ -113,15 +113,13 @@ public class ProjectNamesPage extends WizardPage {
 					empty=true;
 					break;
 				}
-				else {
-					IStatus nameStatus = PDEPlugin.getWorkspace().validateName(name, IResource.PROJECT);
-					if (!nameStatus.isOK()) {
-						setErrorMessage(nameStatus.getMessage());
-						setPageComplete(false);
-						return;
-					}
-					set.add(name);
+				IStatus nameStatus = PDEPlugin.getWorkspace().validateName(name, IResource.PROJECT);
+				if (!nameStatus.isOK()) {
+					setErrorMessage(nameStatus.getMessage());
+					setPageComplete(false);
+					return;
 				}
+				set.add(name);
 			}
 		}
 		if (empty) {
