@@ -94,7 +94,7 @@ public abstract class PluginBase
 		loadRuntime(bundleDescription, state);
 		loadImports(bundleDescription);
 		
-		String filename = bundleDescription.getHosts().length == 0 ? "plugin.xml" : "fragment.xml";
+		String filename = bundleDescription.getHost() == null ? "plugin.xml" : "fragment.xml";
 		File file = new File(getModel().getInstallLocation(), filename);
 		if (file.exists()) {
 			try {

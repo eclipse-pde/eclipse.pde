@@ -35,7 +35,11 @@ public class BundlePluginBase
 
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {
-			reset();
+			if (event.getChangeProvider().equals(model.getBundleModel())) {
+				reset();
+			}
+			getModel().fireModelChanged(event);
+		} else if (!event.getChangeProvider().equals(model.getBundleModel())) {
 			getModel().fireModelChanged(event);
 		}
 	}
@@ -338,11 +342,11 @@ public class BundlePluginBase
 	 */
 	public void swap(IPluginLibrary l1, IPluginLibrary l2)
 		throws CoreException {
-		if (imports != null) {
-			int index1 = imports.indexOf(l1);
-			int index2 = imports.indexOf(l2);
-			imports.set(index1, l2);
-			imports.set(index2, l1);
+		if (libraries != null) {
+			int index1 = libraries.indexOf(l1);
+			int index2 = libraries.indexOf(l2);
+			libraries.set(index1, l2);
+			libraries.set(index2, l1);
 			IBundle bundle = getBundle();
 			if (bundle != null) 
 				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
@@ -490,7 +494,7 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getId();
-			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, old);
+			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, id + ";singleton=true");
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}
 	}
@@ -531,6 +535,12 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) 
 			bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());		
+	}
+	
+	public void updateLibraries() {
+		IBundle bundle = getBundle();
+		if (bundle != null) 
+			bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());				
 	}
 	/*
 	 * (non-Javadoc)

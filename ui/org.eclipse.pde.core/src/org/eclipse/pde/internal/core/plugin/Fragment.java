@@ -42,7 +42,7 @@ public class Fragment extends PluginBase implements IFragment {
 	}
 
 	void load(BundleDescription bundleDescription, PDEState state) {
-		HostSpecification host = bundleDescription.getHosts()[0];
+		HostSpecification host = bundleDescription.getHost();
 		this.pluginId = host.getName();
 		VersionRange versionRange = host.getVersionRange();
 		if (versionRange != null) {

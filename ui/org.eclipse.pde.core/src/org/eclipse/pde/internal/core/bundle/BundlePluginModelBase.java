@@ -19,12 +19,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public abstract class BundlePluginModelBase extends AbstractModel
 		implements
 			IBundlePluginModelBase,
@@ -145,8 +140,13 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	public void fireModelChanged(IModelChangedEvent event) {
 		super.fireModelChanged(event);
 		Object[] objects = event.getChangedObjects();
-		if (objects.length > 0 && objects[0] instanceof IPluginImport)
-			((BundlePluginBase)fBundlePluginBase).updateImports();
+		if (objects.length > 0) {
+			if (objects[0] instanceof IPluginImport) {
+				((BundlePluginBase)fBundlePluginBase).updateImports();				
+			} else if (objects[0] instanceof IPluginLibrary) {
+				((BundlePluginBase)fBundlePluginBase).updateLibraries();
+			}
+		}
 	}
 	
 	/*

@@ -172,7 +172,7 @@ public class TargetPlatformRegistryLoader {
 	 */
 	private static IPluginModelBase createModelFromDescription(BundleDescription description, PDEState state) {
 		ExternalPluginModelBase model = null;
-		if (description.getHosts().length == 0)
+		if (description.getHost() == null)
 			model = new ExternalPluginModel();
 		else
 			model = new ExternalFragmentModel();
