@@ -310,7 +310,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected Object[] getFinalShape(String name, String version, byte type) {
 		String style = getPluginUnpackClause(name, version);
 		Properties currentProperties = type == BUNDLE ? pluginsPostProcessingSteps : featuresPostProcessingSteps;
-		if (currentProperties.size() != 0) {
+		if (currentProperties.size() > 0) {
 			String styleFromFile = currentProperties.getProperty(name);
 			if (styleFromFile == null)
 				styleFromFile = currentProperties.getProperty(DEFAULT_FINAL_SHAPE);
