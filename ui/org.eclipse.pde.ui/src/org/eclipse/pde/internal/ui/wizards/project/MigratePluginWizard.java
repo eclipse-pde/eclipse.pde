@@ -236,10 +236,11 @@ public class MigratePluginWizard extends Wizard {
 			for (int i = 0; i < list.size(); i++) {
 				StringBuffer buffer = new StringBuffer("<import plugin=\"");
 				buffer.append(list.get(i) + "\"");
-				if (uiImport.isReexported()) {
+				if (uiImport.isReexported())
 					buffer.append(" export=\"true\"");
-				}
-				buffer.append(" optional=\"true\"/>");
+				if (uiImport.isOptional())
+					buffer.append(" optional=\"true\"");
+				buffer.append("/>");
 				result.add(buffer.toString());
 			}
 		} else if (needsAdditionalUIImport(model)) {
