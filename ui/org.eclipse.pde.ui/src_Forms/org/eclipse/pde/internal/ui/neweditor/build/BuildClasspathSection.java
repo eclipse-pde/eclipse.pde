@@ -50,14 +50,9 @@ public class BuildClasspathSection
 		"BuildPropertiesEditor.BuildClasspathSection.popupAdd";
 	private final static String POPUP_DELETE =
 		"BuildPropertiesEditor.BuildClasspathSection.popupDelete";			
-	protected IBuildModel buildModel;
 	private TableViewer entryTable;
 	private Image entryImage;
 	protected Control sectionControl;
-	// TODO we should not use hard-coded colors
-	private static RGB LIGHT_GRAY =  new RGB(172, 168, 153);
-	// TODO we should not use hard-coded colors
-	private Color grayColor;
 	
 
 	/**
@@ -166,7 +161,6 @@ public class BuildClasspathSection
 				PDEPlugin.getResourceString(SECTION_REMOVE),
 				null,
 				null });
-		buildModel = getBuildModel();
 		getSection().setText(PDEPlugin.getResourceString(SECTION_TITLE));
 		getSection().setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 		initialize();
@@ -180,8 +174,8 @@ public class BuildClasspathSection
 	}
 
 	public void initialize(){
-		buildModel.addModelChangedListener(this);
-		IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		getBuildModel().addModelChangedListener(this);
+		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 		getSection().addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				//getPage().getManagedForm().reflow(true);
@@ -208,10 +202,9 @@ public class BuildClasspathSection
 
 		entryTable.setContentProvider(new TableContentProvider());
 		entryTable.setLabelProvider(new TableLabelProvider());
+		entryTable.setInput(getBuildModel());
 
 		toolkit.paintBordersFor(container);
-		entryTable.setInput(buildModel);
-		grayColor = new Color(section.getDisplay(), LIGHT_GRAY);
 		enableSection();
 		section.setClient(container);
 	}
@@ -221,17 +214,8 @@ public class BuildClasspathSection
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, false);
 		tablePart.getTableViewer().setSelection(null,false);
-		// TODO we should not use hardcoded colors
-		tablePart.getControl().setForeground(grayColor);
-		if (getSectionControl()!=null)
-			getSectionControl().setEnabled(false);
 	}
  
-	public void setSectionControl(Control control){
-		sectionControl = control;
-	}
-	
-	
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = entryTable.getSelection();
 
@@ -261,13 +245,8 @@ public class BuildClasspathSection
 			manager, false);
 	}
 	
-	public Control getSectionControl(){
-		return sectionControl;
-	}
-	
 	public void dispose() {
-		buildModel.removeModelChangedListener(this);
-		grayColor.dispose();
+		getBuildModel().removeModelChangedListener(this);
 		super.dispose();
 	}
 	
@@ -288,9 +267,6 @@ public class BuildClasspathSection
 		tablePart.setButtonEnabled(1, false);
 		tablePart.setButtonEnabled(0, true);
 		tablePart.getTableViewer().setSelection(null,false);
-		tablePart.getControl().setForeground(null);
-		if (getSectionControl()!=null)
-			getSectionControl().setEnabled(true);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -310,14 +286,15 @@ public class BuildClasspathSection
 				.getFirstElement();
 		int index = entryTable.getTable().getSelectionIndex();
 		if (selection != null && selection instanceof String) {
-			IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+			IBuild build = getBuildModel().getBuild();
+			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 			if (entry != null) {
 				try {
 					entry.removeToken(selection.toString());
 					entryTable.remove(selection);
 					String[] tokens=entry.getTokens();
 					if (tokens.length == 0) {
-						buildModel.getBuild().remove(entry);
+						build.remove(entry);
 					} else if (tokens.length >index){
 						entryTable.setSelection(new StructuredSelection(tokens[index]));
 					} else {
@@ -342,7 +319,7 @@ public class BuildClasspathSection
 		dialog.addFilter(new JARFileFilter());
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-		dialog.setInitialSelection(buildModel.getUnderlyingResource().getProject());
+		dialog.setInitialSelection(getBuildModel().getUnderlyingResource().getProject());
 
 	}
 	private void handleNew() {
@@ -369,11 +346,12 @@ public class BuildClasspathSection
 	}
 	
 	private void addClasspathToken(String tokenName){
-		IBuildEntry entry = buildModel.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+		IBuildModel model = getBuildModel();
+		IBuildEntry entry = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 		try {
 			if (entry==null){
-				entry = buildModel.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
-				buildModel.getBuild().add(entry);
+				entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+				model.getBuild().add(entry);
 			}
 			if (!entry.contains(tokenName))
 				entry.addToken(tokenName);
@@ -385,10 +363,7 @@ public class BuildClasspathSection
 	private String getRelativePathTokenName(IResource elem){
 		IPath path = elem.getFullPath();
 		IPath projectPath =
-			buildModel
-				.getUnderlyingResource()
-				.getProject()
-				.getFullPath();
+			getBuildModel().getUnderlyingResource().getProject().getFullPath();
 		int sameSegments = path.matchingFirstSegments(projectPath);
 		if (sameSegments > 0)
 			return path.removeFirstSegments(sameSegments).toString();

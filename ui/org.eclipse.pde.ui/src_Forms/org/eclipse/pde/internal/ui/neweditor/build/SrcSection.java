@@ -36,7 +36,7 @@ public class SrcSection
 
 	protected void initializeCheckState() {
 		super.initializeCheckState();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		
@@ -47,7 +47,7 @@ public class SrcSection
 	}
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry srcExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
@@ -61,7 +61,7 @@ public class SrcSection
 		boolean checked,
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);		
 		

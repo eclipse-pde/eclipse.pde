@@ -31,11 +31,11 @@ public abstract class BuildContentsSection extends TableSection
 			IModelChangedListener,
 			IResourceChangeListener,
 			IResourceDeltaVisitor {
-	protected CheckboxTreeViewer treeViewer;
-	private boolean doRefresh = false;
-	protected Control sectionControl;
-	protected IProject project;
-	protected IBuildModel buildModel;
+	protected CheckboxTreeViewer fTreeViewer;
+	private boolean fDoRefresh = false;
+	protected IProject fProject;
+	protected IBuildModel fBuildModel;
+	
 	public class TreeContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
@@ -108,18 +108,18 @@ public abstract class BuildContentsSection extends TableSection
 	}
 	public void createClient(final Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		buildModel = getBuildModel();
-		if (buildModel.getUnderlyingResource() != null)
-			project = buildModel.getUnderlyingResource().getProject();
+		fBuildModel = getBuildModel();
+		if (fBuildModel.getUnderlyingResource() != null)
+			fProject = fBuildModel.getUnderlyingResource().getProject();
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 2;
 		container.setLayout(layout);
-		treeViewer = new CheckboxTreeViewer(toolkit.createTree(container,
+		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container,
 				SWT.CHECK));
-		treeViewer.setContentProvider(new TreeContentProvider());
-		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
-		treeViewer.setAutoExpandLevel(0);
-		treeViewer.addCheckStateListener(new ICheckStateListener() {
+		fTreeViewer.setContentProvider(new TreeContentProvider());
+		fTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
+		fTreeViewer.setAutoExpandLevel(0);
+		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				final Object element = event.getElement();
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
@@ -138,27 +138,23 @@ public abstract class BuildContentsSection extends TableSection
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
 		gd.widthHint = 100;
-		treeViewer.getTree().setLayoutData(gd);
+		fTreeViewer.getTree().setLayoutData(gd);
 		initialize();
 		initializeCheckState();
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
 	public void disableSection() {
-		treeViewer.getTree().setEnabled(false);
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(false);
+		fTreeViewer.getTree().setEnabled(false);
 	}
 	public void enableSection() {
-		treeViewer.getTree().setEnabled(true);
-		if (getSectionControl() != null)
-			getSectionControl().setEnabled(true);
+		fTreeViewer.getTree().setEnabled(true);
 	}
 	protected void handleCheckStateChanged(IResource resource, boolean checked) {
-		treeViewer.setChecked(resource, checked);
-		treeViewer.setParentsGrayed(resource, true);
-		treeViewer.setGrayed(resource, false);
-		boolean wasTopParentChecked = treeViewer.getChecked(resource
+		fTreeViewer.setChecked(resource, checked);
+		fTreeViewer.setParentsGrayed(resource, true);
+		fTreeViewer.setGrayed(resource, false);
+		boolean wasTopParentChecked = fTreeViewer.getChecked(resource
 				.getParent());
 		if (checked) {
 			setParentsChecked(resource);
@@ -167,7 +163,7 @@ public abstract class BuildContentsSection extends TableSection
 		}
 		if (resource instanceof IFolder) {
 			IFolder folder = (IFolder) resource;
-			treeViewer.setSubtreeChecked(folder, checked);
+			fTreeViewer.setSubtreeChecked(folder, checked);
 			setChildrenGrayed(folder, false);
 			handleBuildCheckStateChange(folder, checked, wasTopParentChecked);
 		} else {
@@ -183,11 +179,11 @@ public abstract class BuildContentsSection extends TableSection
 			boolean uncheck = true;
 			IResource[] members = ((IFolder) parent).members();
 			for (int i = 0; i < members.length; i++) {
-				if (treeViewer.getChecked(members[i]))
+				if (fTreeViewer.getChecked(members[i]))
 					uncheck = false;
 			}
 			if (uncheck) {
-				treeViewer.setChecked(parent, false);
+				fTreeViewer.setChecked(parent, false);
 				return handleAllUnselected(parent);
 			}
 			return resource;
@@ -197,10 +193,10 @@ public abstract class BuildContentsSection extends TableSection
 		}
 	}
 	protected void setChildrenGrayed(IResource folder, boolean isGray) {
-		treeViewer.setGrayed(folder, isGray);
-		if (((TreeContentProvider) treeViewer.getContentProvider())
+		fTreeViewer.setGrayed(folder, isGray);
+		if (((TreeContentProvider) fTreeViewer.getContentProvider())
 				.hasChildren(folder)) {
-			Object[] members = ((TreeContentProvider) treeViewer
+			Object[] members = ((TreeContentProvider) fTreeViewer
 					.getContentProvider()).getFolderChildren(folder);
 			for (int i = 0; i < members.length; i++) {
 				setChildrenGrayed((IFolder) members[i], isGray);
@@ -209,7 +205,7 @@ public abstract class BuildContentsSection extends TableSection
 	}
 	protected void setParentsChecked(IResource resource) {
 		if (resource.getParent() != resource.getProject()) {
-			treeViewer.setChecked(resource.getParent(), true);
+			fTreeViewer.setChecked(resource.getParent(), true);
 			setParentsChecked(resource.getParent());
 		}
 	}
@@ -229,7 +225,7 @@ public abstract class BuildContentsSection extends TableSection
 			IBuildEntry excludes) {
 		Vector fileExt = new Vector();
 		String[] inclTokens, exclTokens = new String[0];
-		if (project == null || includes == null)
+		if (fProject == null || includes == null)
 			return;
 		inclTokens = includes.getTokens();
 		if (excludes != null)
@@ -244,22 +240,22 @@ public abstract class BuildContentsSection extends TableSection
 			String resource = iter.next().toString();
 			boolean isIncluded = includes.contains(resource);
 			if (resource.lastIndexOf(Path.SEPARATOR) == resource.length() - 1) {
-				IFolder folder = project.getFolder(resource);
-				treeViewer.setSubtreeChecked(folder, isIncluded);
-				treeViewer.setParentsGrayed(folder, true);
+				IFolder folder = fProject.getFolder(resource);
+				fTreeViewer.setSubtreeChecked(folder, isIncluded);
+				fTreeViewer.setParentsGrayed(folder, true);
 				if (isIncluded && folder.exists()) {
 					setParentsChecked(folder);
-					treeViewer.setGrayed(folder, false);
+					fTreeViewer.setGrayed(folder, false);
 				}
 			} else if (resource.startsWith("*.")) {
 				if (isIncluded)
 					fileExt.add(resource.substring(2));
 			} else {
-				IFile file = project.getFile(resource);
-				treeViewer.setChecked(file, isIncluded);
-				treeViewer.setParentsGrayed(file, true);
+				IFile file = fProject.getFile(resource);
+				fTreeViewer.setChecked(file, isIncluded);
+				fTreeViewer.setParentsGrayed(file, true);
 				if (isIncluded && file.exists()) {
-					treeViewer.setGrayed(file, false);
+					fTreeViewer.setGrayed(file, false);
 					setParentsChecked(file);
 				}
 			}
@@ -267,11 +263,11 @@ public abstract class BuildContentsSection extends TableSection
 		if (fileExt.size() == 0)
 			return;
 		try {
-			IResource[] members = project.members();
+			IResource[] members = fProject.members();
 			for (int i = 0; i < members.length; i++) {
 				if (!(members[i] instanceof IFolder)
 						&& (fileExt.contains(members[i].getFileExtension()))) {
-					treeViewer.setChecked((IFile) members[i], includes
+					fTreeViewer.setChecked((IFile) members[i], includes
 							.contains("*." + members[i].getFileExtension()));
 				}
 			}
@@ -286,9 +282,9 @@ public abstract class BuildContentsSection extends TableSection
 			boolean wasTopParentChecked, String PROPERTY_INCLUDES) {
 		try {
 			if (includes == null) {
-				includes = buildModel.getFactory().createEntry(
+				includes = fBuildModel.getFactory().createEntry(
 						PROPERTY_INCLUDES);
-				IBuild build = buildModel.getBuild();
+				IBuild build = fBuildModel.getBuild();
 				build.add(includes);
 			}
 			if ((!wasTopParentChecked && !includes.contains(resourceName))
@@ -320,11 +316,11 @@ public abstract class BuildContentsSection extends TableSection
 	protected void handleUncheck(IBuildEntry includes, IBuildEntry excludes,
 			String resourceName, IResource resource, String PROPERTY_EXCLUDES) {
 		try {
-			if (treeViewer.getChecked(resource.getParent())) {
+			if (fTreeViewer.getChecked(resource.getParent())) {
 				if (excludes == null) {
-					excludes = buildModel.getFactory().createEntry(
+					excludes = fBuildModel.getFactory().createEntry(
 							PROPERTY_EXCLUDES);
-					IBuild build = buildModel.getBuild();
+					IBuild build = fBuildModel.getBuild();
 					build.add(excludes);
 				}
 				if (!excludes.contains(resourceName)
@@ -337,7 +333,7 @@ public abstract class BuildContentsSection extends TableSection
 				if (includes.contains(resourceName))
 					includes.removeToken(resourceName);
 				if (includes.contains("*." + resource.getFileExtension())) {
-					IResource[] members = project.members();
+					IResource[] members = fProject.members();
 					for (int i = 0; i < members.length; i++) {
 						if (!(members[i] instanceof IFolder)
 								&& !members[i].getName().equals(
@@ -347,14 +343,14 @@ public abstract class BuildContentsSection extends TableSection
 							includes.addToken(members[i].getName());
 						}
 						IBuildEntry[] libraries = BuildUtil
-								.getBuildLibraries(buildModel.getBuild()
+								.getBuildLibraries(fBuildModel.getBuild()
 										.getBuildEntries());
 						if (resource.getFileExtension().equals("jar")
 								&& libraries.length != 0) {
 							for (int j = 0; j < libraries.length; j++) {
 								String libName = libraries[j].getName()
 										.substring(7);
-								IPath path = project.getFile(libName)
+								IPath path = fProject.getFile(libName)
 										.getProjectRelativePath();
 								if (path.segmentCount() == 1
 										&& !includes.contains(libName)
@@ -390,19 +386,19 @@ public abstract class BuildContentsSection extends TableSection
 		return resourceName;
 	}
 	public void initialize() {
-		if (treeViewer.getInput() == null) {
-			treeViewer.setUseHashlookup(true);
-			treeViewer.setInput(project);
+		if (fTreeViewer.getInput() == null) {
+			fTreeViewer.setUseHashlookup(true);
+			fTreeViewer.setInput(fProject);
 		}
-		buildModel.addModelChangedListener(this);
+		fBuildModel.addModelChangedListener(this);
 	}
 	public void dispose() {
-		buildModel.removeModelChangedListener(this);
+		fBuildModel.removeModelChangedListener(this);
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
 	protected void deleteEmptyEntries() {
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry[] entries = {
 				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES),
 				build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES),
@@ -418,20 +414,14 @@ public abstract class BuildContentsSection extends TableSection
 		}
 	}
 	public CheckboxTreeViewer getTreeViewer() {
-		return treeViewer;
-	}
-	public void setSectionControl(Control control) {
-		sectionControl = control;
-	}
-	public Control getSectionControl() {
-		return sectionControl;
+		return fTreeViewer;
 	}
 	public void refresh() {
 		initializeCheckState();
 	}
 	
 	public void uncheckAll() {
-		treeViewer.setCheckedElements(new Object[0]);
+		fTreeViewer.setCheckedElements(new Object[0]);
 	}
 	protected void removeChildren(IBuildEntry entry, String parentFolder) {
 		try {
@@ -450,14 +440,14 @@ public abstract class BuildContentsSection extends TableSection
 		}
 	}
 	public void resourceChanged(IResourceChangeEvent event) {
-		doRefresh = false;
+		fDoRefresh = false;
 		IResourceDelta delta = event.getDelta();
 		try {
 			if (delta != null)
 				delta.accept(this);
-			if (doRefresh) {
+			if (fDoRefresh) {
 				asyncRefresh();
-				doRefresh = false;
+				fDoRefresh = false;
 			}
 		} catch (CoreException e) {
 		}
@@ -466,21 +456,22 @@ public abstract class BuildContentsSection extends TableSection
 		IResource resource = delta.getResource();
 		if ((resource instanceof IFile || resource instanceof IFolder)
 				&& resource.getProject().equals(
-						buildModel.getUnderlyingResource().getProject())) {
+						fBuildModel.getUnderlyingResource().getProject())) {
 			if (delta.getKind() == IResourceDelta.ADDED
 					|| delta.getKind() == IResourceDelta.REMOVED) {
-				doRefresh = true;
+				fDoRefresh = true;
 				return false;
 			}
 		}
 		return true;
 	}
 	private void asyncRefresh() {
-		if (!getSectionControl().isDisposed()) {
-			getSectionControl().getDisplay().asyncExec(new Runnable() {
+		Control control = fTreeViewer.getControl();
+		if (!control.isDisposed()) {
+			control.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					if (!treeViewer.getControl().isDisposed()) {
-						treeViewer.refresh(true);
+					if (!fTreeViewer.getControl().isDisposed()) {
+						fTreeViewer.refresh(true);
 						initializeCheckState();
 					}
 				}

@@ -14,7 +14,6 @@ import java.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
@@ -82,9 +81,7 @@ public class PDEMultiPageContentOutline
 	public void selectionChanged(SelectionChangedEvent event) {
 		setSelection(event.getSelection());
 	}
-	private void doSetSelection(ISelection selection) {
 
-	}
 	public void setActionBars(IActionBars actionBars) {
 	}
 	public void setFocus() {

@@ -37,7 +37,7 @@ public class BinSection
 
 	protected void initializeCheckState() {
 		super.initializeCheckState();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		
@@ -48,7 +48,7 @@ public class BinSection
 	}
 
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry binExcl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 		String parentFolder = getResourceFolderName(folder.getProjectRelativePath().toString());
@@ -62,7 +62,7 @@ public class BinSection
 		boolean checked,
 		boolean wasTopParentChecked) {
 		String resourceName = resource.getFullPath().removeFirstSegments(1).toString();
-		IBuild build = buildModel.getBuild();
+		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
