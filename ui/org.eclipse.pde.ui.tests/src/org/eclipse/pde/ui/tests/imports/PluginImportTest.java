@@ -79,7 +79,7 @@ public class PluginImportTest extends TestCase {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		for (int i = 0; i < projects.length; i++) {
-			projects[i].delete(true, null);
+			projects[i].delete(true, new NullProgressMonitor());
 		}
 	}
 }
