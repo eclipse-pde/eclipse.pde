@@ -64,27 +64,16 @@ public class SourcePreferencePage
 		}
 	}
 
-	class SourceLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
+	class SourceLabelProvider extends LabelProvider {
+		
+		public String getText(Object obj) {
 			SourceLocation location = (SourceLocation) obj;
-			if (index == 0)
-				return location.getName();
-			if (index == 1)
-				return location.getPath().toOSString();
-			return ""; //$NON-NLS-1$
+			return location.getName() + " - " + location.getPath().toOSString();
 		}
 
-		public Image getColumnImage(Object obj, int index) {
-			if (index == 0) {
-				SourceLocation location = (SourceLocation) obj;
-				if (location.isUserDefined())
-					return userImage;
-				else
-					return extensionImage;
-			}
-			return null;
+		public Image getImage(Object obj) {
+			SourceLocation location = (SourceLocation) obj;
+			return (location.isUserDefined()) ? userImage : extensionImage;
 		}
 	}
 
@@ -309,7 +298,6 @@ public class SourcePreferencePage
 		tablePart.setMinimumSize(150, 200);
 		tablePart.createControl(container, SWT.BORDER, 2, null);
 		tableViewer = tablePart.getTableViewer();
-		configureColumns(tableViewer.getTable());
 		tableViewer.setContentProvider(new SourceProvider());
 		tableViewer.setLabelProvider(new SourceLabelProvider());
 		tableViewer.setInput(this);
@@ -320,20 +308,6 @@ public class SourcePreferencePage
 		return container;
 	}
 	
-	private void configureColumns(Table table) {
-		table.setHeaderVisible(true);
-		TableColumn column = new TableColumn(table, SWT.H_SCROLL);
-		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.name")); //$NON-NLS-1$
-		
-		column = new TableColumn(table, SWT.NULL);
-		column.setText(PDEPlugin.getResourceString("SourcePreferencePage.column.path")); //$NON-NLS-1$
-		
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(25, 150, true));
-		layout.addColumnData(new ColumnWeightData(75, 450, true));
-		table.setLayout(layout);
-	}
-
 	private void initializeStates() {
 		for (int i = 0; i < extensionLocations.length; i++) {
 			SourceLocation loc = (SourceLocation) extensionLocations[i];
@@ -345,51 +319,6 @@ public class SourcePreferencePage
 		}
 	}
 	
-	/*private SourceLocation parseSourceLocation(String text) {
-		String name = "";
-		String path = "";
-		boolean enabled = true;
-		int atLoc = text.indexOf('@');
-		if (atLoc != -1)
-			name = text.substring(0, atLoc);
-		else
-			atLoc = 0;
-		int commaLoc = text.lastIndexOf(',');
-		if (commaLoc != -1) {
-			String state = text.substring(commaLoc + 1);
-			if (state.equals("f"))
-				enabled = false;
-			path = text.substring(atLoc + 1, commaLoc);
-		} else
-			path = text.substring(atLoc + 1);
-		return new SourceLocation(name, new Path(path), enabled);
-	}
-	
-	private void parseSavedSourceLocations(String text, ArrayList entries) {
-		StringTokenizer stok = new StringTokenizer(text, File.pathSeparator);
-		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			SourceLocation location = parseSourceLocation(token);
-			entries.add(location);
-		}
-	}
-
-	private SourceLocation[] getSavedSourceLocations(String text) {
-		if (text == null || text.length() == 0)
-			return new SourceLocation[0];
-		ArrayList entries = new ArrayList();
-		parseSavedSourceLocations(text, entries);
-		return (SourceLocation[]) entries.toArray(
-			new SourceLocation[entries.size()]);
-	}*/
-	/*private boolean getSavedState(String name, SourceLocation[] list) {
-		for (int i = 0; i < list.length; i++) {
-			SourceLocation saved = list[i];
-			if (name.equals(saved.getName()))
-				return saved.isEnabled();
-		}
-		return true;
-	}*/
 	
 	private HashSet getAllLocationNames() {
 		HashSet set = new HashSet();
