@@ -29,13 +29,9 @@ public abstract class SchemaObjectPropertySource implements IPropertySource {
         }
 
         public String getText(Object obj) {
-            isSchemaObject = true;
-            Object val = getPropertyValue(property);
-            if (val instanceof Integer) {
-                Integer index = (Integer) getPropertyValue(property);
-                return table[index.intValue()];
-            }
-            return getPropertyValue(property).toString();
+        	isSchemaObject = true;
+        	Integer index = (Integer) getPropertyValue(property);
+        	return table[index.intValue()];
         }
     }
 
