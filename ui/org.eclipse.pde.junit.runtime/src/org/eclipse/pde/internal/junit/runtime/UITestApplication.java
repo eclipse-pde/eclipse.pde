@@ -40,7 +40,6 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 	 * is found.
 	 */
 	private IPlatformRunnable getApplication(String[] args) throws CoreException {
-		// Assume we are in 3.0 mode.
 		// Find the name of the application as specified by the PDE JUnit launcher.
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.

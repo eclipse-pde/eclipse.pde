@@ -36,8 +36,14 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 */
 	protected ClassLoader getClassLoader() {
 		if (Platform.getPluginRegistry().getPluginDescriptor(fTestPluginName) != null)
-			return Platform.getPluginRegistry().getPluginDescriptor(fTestPluginName).getPluginClassLoader();	
-		throw new IllegalArgumentException("No ClassLoader found for testplugin: " + fTestPluginName);
+			return Platform
+				.getPluginRegistry()
+				.getPluginDescriptor(fTestPluginName)
+				.getPluginClassLoader();
+		throw new IllegalArgumentException(
+			PdeJUnitPlugin.getResourceString("RemotePluginTestRunner.noClassloader")
+				+ " "
+				+ fTestPluginName);
 	}
 
 	protected void init(String[] args) {
@@ -46,13 +52,16 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	}
 
 	protected void setTestPluginName(String[] args) {
-		for(int i= 0; i < args.length; i++) {
-			if(args[i].toLowerCase().equals("-testpluginname")) {
-				if (i < args.length-1)
-					fTestPluginName= args[i+1];
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].toLowerCase().equals("-testpluginname")) {
+				if (i < args.length - 1)
+					fTestPluginName = args[i + 1];
 				return;
 			}
 		}
-		throw new IllegalArgumentException("Parameter -testpluginname not specified");
+		throw new IllegalArgumentException(
+			PdeJUnitPlugin.getFormattedMessage(
+				"RemotePluginTestRunner.noParam",
+				"-testpluginname"));
 	}
 }	

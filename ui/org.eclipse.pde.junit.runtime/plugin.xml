@@ -4,7 +4,8 @@
    id="org.eclipse.pde.junit.runtime"
    name="%pluginName"
    version="3.0.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.pde.internal.junit.runtime.PdeJUnitPlugin">
 
    <runtime>
       <library name="pdejunit.jar"/>
@@ -22,7 +23,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-            class="org.eclipse.pde.internal.junit.runtime.UITestApplication">
+               class="org.eclipse.pde.internal.junit.runtime.UITestApplication">
          </run>
       </application>
    </extension>
@@ -31,7 +32,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-            class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
+               class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
          </run>
       </application>
    </extension>
@@ -40,7 +41,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-            class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
+               class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
          </run>
       </application>
    </extension>
