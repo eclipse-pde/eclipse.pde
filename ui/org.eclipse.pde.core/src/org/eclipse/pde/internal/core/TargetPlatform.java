@@ -132,17 +132,29 @@ public class TargetPlatform implements IEnvironmentVariables {
 			long timestamp = runtimeDir.lastModified();
 			Iterator iter = map.values().iterator();
 			while (iter.hasNext()) {
-				IPluginModelBase model = (IPluginModelBase)iter.next();
-				if (model.getUnderlyingResource() != null) {
-					File properties = new File(model.getInstallLocation(), "plugin.properties"); //$NON-NLS-1$
-					if (properties.lastModified() > timestamp) {
-						CoreUtility.deleteContent(runtimeDir);
-						break;
-					}
-				}
+				if (hasChanged((IPluginModelBase)iter.next(), timestamp)) {
+                    CoreUtility.deleteContent(runtimeDir);
+                    break;
+                }
 			}
-		}
+ 		}
 	}
+    
+    private static boolean hasChanged(IPluginModelBase model, long timestamp) {
+        if (model.getUnderlyingResource() != null) {
+            File[] files = new File(model.getInstallLocation()).listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory())
+                    continue;
+                String name = files[i].getName();
+                if (name.startsWith("plugin") && name.endsWith(".properties")
+                        && files[i].lastModified() > timestamp) {
+                     return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	public static String getBundleURL(String id, Map pluginMap) {
 		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
