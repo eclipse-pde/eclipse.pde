@@ -11,8 +11,6 @@
 package org.eclipse.pde.internal.core;
 
 
-import java.io.*;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 
@@ -27,13 +25,6 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	}
 
 	public static void resetEclipseHomeVariables() {
-		String[] variables = JavaCore.getClasspathVariableNames();
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].startsWith(PDECore.ECLIPSE_HOME_VARIABLE)
-				&& !variables[i].equals(PDECore.ECLIPSE_HOME_VARIABLE)) {
-				JavaCore.removeClasspathVariable(variables[i], null);
-			}
-		}
 		try {
 			Preferences pref = PDECore.getDefault().getPluginPreferences();
 			String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);
@@ -41,45 +32,7 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 				PDECore.ECLIPSE_HOME_VARIABLE,
 				new Path(platformHome),
 				null);
-
-			File[] linkFiles = PluginPathFinder.getLinkFiles(platformHome);
-			if (linkFiles != null) {
-				for (int i = 0; i < linkFiles.length; i++) {
-					String path = PluginPathFinder.getPath(platformHome, linkFiles[i]);
-					if (path != null) {
-						String variable =
-							PDECore.ECLIPSE_HOME_VARIABLE
-								+ "_"
-								+ linkFiles[i].getName().replace('.', '_').toUpperCase();
-						JavaCore.setClasspathVariable(variable, new Path(path), null);
-					}
-				}
-			}
 		} catch (CoreException e) {
 		}
 	}
-
-	public static IPath createEclipseRelativeHome(String installLocation) {
-		IPath fullPath = new Path(installLocation);
-
-		String[] variables = JavaCore.getClasspathVariableNames();
-
-		String correctVariable = null;
-		int maxMatching = 0;
-
-		for (int i = 0; i < variables.length; i++) {
-			if (variables[i].startsWith(PDECore.ECLIPSE_HOME_VARIABLE)) {
-				IPath currentPath = JavaCore.getClasspathVariable(variables[i]);
-				int currentMatch = fullPath.matchingFirstSegments(currentPath);
-				if (currentMatch > maxMatching) {
-					maxMatching = currentMatch;
-					correctVariable = variables[i];
-				}
-			}
-		}
-		return (correctVariable == null)
-			? fullPath
-			: new Path(correctVariable).append(fullPath.removeFirstSegments(maxMatching));
-	}
-
 }
