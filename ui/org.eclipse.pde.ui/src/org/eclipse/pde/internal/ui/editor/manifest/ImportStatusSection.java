@@ -216,8 +216,8 @@ public void initialize(Object input) {
 
 public void initializeImages() {
 	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-	pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
-	fragmentImage = PDEPluginImages.get(PDEPluginImages.IMG_FRAGMENT_OBJ);
+	pluginImage = provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
+	fragmentImage = provider.get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 
 	importImage = provider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
 	loopNodeImage = provider.get(PDEPluginImages.DESC_LOOP_NODE_OBJ);

@@ -5,15 +5,14 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
-import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.*;
 
 public class ExtensionPropertySource extends ManifestPropertySource {
-	private Vector descriptors;
+	private PropertyDescriptor [] descriptors;
 	private final static String P_POINT = "point";
 	private final static String P_ID = "id";
 	private final static String P_NAME = "name";
@@ -43,27 +42,21 @@ public Object getEditableValue() {
 public IPluginExtension getExtension() {
 	return (IPluginExtension)object;
 }
-public String getNonzeroValue(String value) {
-	if (value!=null) return value;
-	return "";
-}
 public IPropertyDescriptor[] getPropertyDescriptors() {
 	if (descriptors == null) {
-		descriptors = new Vector();
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		PropertyDescriptor desc = createTextPropertyDescriptor(P_POINT, "point");
-		descriptors.addElement(desc);
-		desc.setLabelProvider(
-			new PropertyLabelProvider(
-				P_POINT,
-				provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ)));
-		desc = createTextPropertyDescriptor(P_ID, "id");
-		descriptors.addElement(desc);
-		desc = createTextPropertyDescriptor(P_NAME, "name");
-		descriptors.addElement(desc);
+		descriptors = new PropertyDescriptor[3];
+
+		descriptors[0] = createTextPropertyDescriptor(P_POINT, "point");
+		descriptors[0].setLabelProvider(
+		new PropertyLabelProvider(
+			P_POINT,
+			PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ)));
+		descriptors[1] = createTextPropertyDescriptor(P_ID, "id");
+		descriptors[2] = createTextPropertyDescriptor(P_NAME, "name");
 	}
-	return toDescriptorArray(descriptors);
+	return descriptors;
 }
+
 public Object getPropertyValue(Object name) {
 	if (name.equals(P_ID)) {
 		return getNonzeroValue(getExtension().getId());

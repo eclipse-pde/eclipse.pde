@@ -4,14 +4,11 @@ package org.eclipse.pde.internal.ui;
  * All Rights Reserved.
  */
 
-import java.net.MalformedURLException;
-import org.eclipse.core.runtime.*;
+import java.net.*;
 
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import java.net.URL;
-import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 
 /**
  * Bundle of all images used by the PDE plugin.
@@ -47,10 +44,12 @@ public class PDEPluginImages {
 	 */
 	public static final String IMG_FORM_WIZ = NAME_PREFIX+"FORM_WIZ";
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
-	public static final String IMG_PLUGIN_OBJ = NAME_PREFIX+"PLUGIN_OBJ";
-	public static final String IMG_FRAGMENT_OBJ = NAME_PREFIX+"FRAGMENT_OBJ";
-	public static final String IMG_ERR_PLUGIN_OBJ = NAME_PREFIX+"ERR_PLUGIN_OBJ";
-	public static final String IMG_ERR_FRAGMENT_OBJ = NAME_PREFIX+"ERR_FRAGMENT_OBJ";
+	public static final String IMG_ATT_CLASS_OBJ = NAME_PREFIX + "IMG_ATT_CLASS_OBJ";
+	public static final String IMG_ATT_FILE_OBJ  = NAME_PREFIX + "IMG_ATT_FILE_OBJ";
+	public static final String IMG_ATT_IMPL_OBJ  = NAME_PREFIX + "IMG_ATT_IMPL_OBJ";
+	public static final String IMG_ATT_REQ_OBJ   = NAME_PREFIX + "IMG_ATT_REQ_OBJ";
+	public static final String IMG_GENERIC_XML_OBJ  = NAME_PREFIX + "IMG_GENERIC_XML_OBJ";
+
 
 	/**
 	 * OBJ16
@@ -215,16 +214,11 @@ private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
 	manage(IMG_FORM_WIZ, DESC_FORM_WIZ);
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
-	
-	Image pluginImage = manage(IMG_PLUGIN_OBJ, DESC_PLUGIN_OBJ);
-	Image fragmentImage = manage(IMG_FRAGMENT_OBJ, DESC_FRAGMENT_OBJ);
-	// make some often used combinations
-	ImageDescriptor desc = new ImageOverlayIcon(pluginImage,
-		new ImageDescriptor [][] { {}, {}, { DESC_ERROR_CO }, {} });
-	manage(IMG_ERR_PLUGIN_OBJ, desc);
-	desc = new ImageOverlayIcon(fragmentImage,
-		new ImageDescriptor [][] { {}, {}, { DESC_ERROR_CO }, {} });	
-	manage(IMG_ERR_FRAGMENT_OBJ, desc);
+	manage(IMG_ATT_CLASS_OBJ,DESC_ATT_CLASS_OBJ);
+	manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
+	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
+	manage(IMG_ATT_REQ_OBJ,  DESC_ATT_REQ_OBJ);
+	manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
 }
 
 private static URL makeImageURL(String prefix, String name) {

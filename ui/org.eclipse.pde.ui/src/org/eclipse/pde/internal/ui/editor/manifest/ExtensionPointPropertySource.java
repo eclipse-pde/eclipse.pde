@@ -4,23 +4,18 @@ package org.eclipse.pde.internal.ui.editor.manifest;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import java.util.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.IOpenablePropertySource;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.*;
+import org.eclipse.ui.views.properties.*;
 
 public class ExtensionPointPropertySource extends ManifestPropertySource implements IOpenablePropertySource {
-	private Vector descriptors;
+	private PropertyDescriptor [] descriptors;
 	private final static String P_SCHEMA = "schema";
 	private final static String P_ID = "id";
 	private final static String P_NAME = "name";
@@ -52,30 +47,26 @@ public IPluginExtensionPoint getPoint() {
 }
 public IPropertyDescriptor [] getPropertyDescriptors() {
 	if (descriptors == null) {
-		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		descriptors = new Vector();
-		PropertyDescriptor desc = createTextPropertyDescriptor(P_ID, "id");
-		desc.setLabelProvider(
-			new PropertyLabelProvider(P_ID, provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ)));
-		descriptors.addElement(desc);
-		desc = createTextPropertyDescriptor(P_NAME, "name");
-		descriptors.addElement(desc);
-		desc = createTextPropertyDescriptor(P_SCHEMA, "schema");
-		descriptors.addElement(desc);
+		descriptors = new PropertyDescriptor[3];
+		descriptors[0] = createTextPropertyDescriptor(P_ID, "id");
+		descriptors[0].setLabelProvider(
+			new PropertyLabelProvider(P_ID, PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ)));
+		descriptors[1] = createTextPropertyDescriptor(P_NAME, "name");
+		descriptors[2] = createTextPropertyDescriptor(P_SCHEMA, "schema");
 	}
-	return toDescriptorArray(descriptors);
+	return descriptors;
 }
 public Object getPropertyValue(Object name) {
 	if (name.equals(P_ID)) {
-		return getPoint().getId();
+		return getNonzeroValue(getPoint().getId());
 	}
 	if (name.equals(P_NAME)) {
-		return getPoint().getName();
+		return getNonzeroValue(getPoint().getName());
 	}
 	if (name.equals(P_SCHEMA)) {
-		return getPoint().getSchema();
+		return getNonzeroValue(getPoint().getSchema());
 	}
-	return null;
+	return "";
 }
 public boolean isOpenable(IPropertySheetEntry entry) {
 	String value = entry.getValueAsString();

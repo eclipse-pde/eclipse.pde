@@ -126,11 +126,10 @@ protected PropertyDescriptor createPropertyDescriptor(ISchemaAttribute att) {
 }
 public void createPropertyDescriptors() {
 	descriptors = new Vector();
-	PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-	Image reqImage = provider.get(PDEPluginImages.DESC_ATT_REQ_OBJ);
-	Image classImage = provider.get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
-	Image resourceImage = provider.get(PDEPluginImages.DESC_ATT_FILE_OBJ);
-	Image elementImage = provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
+	Image reqImage = PDEPluginImages.get(PDEPluginImages.IMG_ATT_REQ_OBJ);
+	Image classImage = PDEPluginImages.get(PDEPluginImages.IMG_ATT_CLASS_OBJ);
+	Image resourceImage = PDEPluginImages.get(PDEPluginImages.IMG_ATT_FILE_OBJ);
+	Image elementImage = PDEPluginImages.get(PDEPluginImages.IMG_GENERIC_XML_OBJ);
 	ISchemaElement info = ((PluginElement)getElement()).getElementInfo();
 	ISchemaAttribute[] attributes = info.getAttributes();
 	

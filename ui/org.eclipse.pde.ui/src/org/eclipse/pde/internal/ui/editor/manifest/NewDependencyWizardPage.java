@@ -111,9 +111,9 @@ public class NewDependencyWizardPage extends WizardPage {
 		this.modelBase = modelBase;
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 		provider.connect(this);
-		pluginImage = PDEPluginImages.get(PDEPluginImages.IMG_PLUGIN_OBJ);
+		pluginImage = provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
 		errorPluginImage =
-			PDEPluginImages.get(PDEPluginImages.IMG_ERR_PLUGIN_OBJ);
+			provider.get(PDEPluginImages.DESC_PLUGIN_OBJ, PDELabelProvider.F_ERROR);
 		pluginsImage = provider.get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
 		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
 		setDescription(PDEPlugin.getResourceString(KEY_DESC));
