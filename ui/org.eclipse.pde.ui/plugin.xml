@@ -44,7 +44,7 @@
 
 
 <!-- Extension points -->
-   <extension-point id="projectGenerators" name="%expoint.projectGenerators.name" schema="schema/projectGenerators.exsd"/>
+   <extension-point id="pluginContent" name="%expoint.pluginContent.name" schema="schema/pluginContent.exsd"/>
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
@@ -240,77 +240,77 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.pde.ui.projectGenerators">
+         point="org.eclipse.pde.ui.pluginContent">
       <wizard
-            name="%projectGenerators.helloWorld.name"
+            name="%pluginContent.helloWorld.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.HelloWorldNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.helloWorld">
+            id="org.eclipse.pde.ui.pluginContent.helloWorld">
          <description>
-            %projectGenerators.helloWorld.description
+            %pluginContent.helloWorld.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.view.name"
+            name="%pluginContent.view.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.view">
+            id="org.eclipse.pde.ui.pluginContent.view">
          <description>
-            %projectGenerators.view.description
+            %pluginContent.view.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.multiPageEditor.name"
+            name="%pluginContent.multiPageEditor.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MultiPageEditorNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.multiPageEditor">
+            id="org.eclipse.pde.ui.pluginContent.multiPageEditor">
          <description>
-            %projectGenerators.multiPageEditor.description
+            %pluginContent.multiPageEditor.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.choice.name"
+            name="%pluginContent.choice.name"
             icon="icons/etool16/script_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.NewPluginTemplateChoiceWizard"
-            id="org.eclipse.pde.ui.projectGenerators.choice">
+            id="org.eclipse.pde.ui.pluginContent.choice">
          <description>
-            %projectGenerators.choice.description
+            %pluginContent.choice.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.perspectiveExtensions.name"
+            name="%pluginContent.perspectiveExtensions.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PerspectiveExtensionsNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.perspectiveExtensions">
+            id="org.eclipse.pde.ui.pluginContent.perspectiveExtensions">
          <description>
-            %projectGenerators.perspectiveExtensions.description
+            %pluginContent.perspectiveExtensions.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.propertyPages.name"
+            name="%pluginContent.propertyPages.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PropertyPageNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.propertyPages">
+            id="org.eclipse.pde.ui.pluginContent.propertyPages">
          <description>
-            %projectGenerators.propertyPages.description
+            %pluginContent.propertyPages.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.popupMenus.name"
+            name="%pluginContent.popupMenus.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.PopupMenuNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.popupMenus">
+            id="org.eclipse.pde.ui.pluginContent.popupMenus">
          <description>
-            %projectGenerators.popupMenus.description
+            %pluginContent.popupMenus.description
          </description>
       </wizard>
       <wizard
-            name="%projectGenerators.editor.name"
+            name="%pluginContent.editor.name"
             icon="icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.EditorNewWizard"
-            id="org.eclipse.pde.ui.projectGenerators.editor">
+            id="org.eclipse.pde.ui.pluginContent.editor">
          <description>
-            %projectGenerators.editor.description
+            %pluginContent.editor.description
          </description>
       </wizard>
    </extension>
@@ -459,7 +459,7 @@
             class="org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor"
             id="org.eclipse.pde.ui.manifestEditor">
       </editor>
-<!-- 
+<!--
       <editor
             name="%editors.pluginManifest.name"
             icon="icons/obj16/plugin_mf_obj.gif"
