@@ -91,24 +91,18 @@ public class DocSection extends PDESection {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 2;
-		layout.marginHeight = 2;
-		layout.verticalSpacing = 2;
+		layout.marginHeight = 5;
+		layout.verticalSpacing = 8;
 		container.setLayout(layout);
 		GridData gd;
 
 		schema = (ISchema) getPage().getModel();
-/*
-		Label label = toolkit.createLabel(container, null);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-*/
 		
 		tabFolder = new CTabFolder(container, SWT.FLAT|SWT.TOP);
 		toolkit.adapt(tabFolder, true, true);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = tabFolder.getTabHeight();
+		gd.heightHint = 2;
 		tabFolder.setLayoutData(gd);
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
@@ -319,12 +313,7 @@ public class DocSection extends PDESection {
 		item.setText(label);
 		item.setData(section);
 		updateTabImage(item);
-		updateTabHeight();
 	}
-	private void updateTabHeight() {
-		GridData gd = (GridData)tabFolder.getLayoutData();
-		gd.heightHint = tabFolder.getTabHeight();		
-	}	
 
 	private void updateTabImage(CTabItem item) {
 		if (item==null) return;

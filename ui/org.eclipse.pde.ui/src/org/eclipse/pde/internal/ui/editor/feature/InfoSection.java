@@ -90,8 +90,8 @@ public class InfoSection extends PDESection {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginWidth = 2;
-		layout.marginHeight =2;
-		//layout.verticalSpacing = 6;
+		layout.marginHeight = 5;
+		layout.verticalSpacing = 8;
 		container.setLayout(layout);
 		GridData gd;
 		
@@ -101,7 +101,7 @@ public class InfoSection extends PDESection {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		tabFolder.setLayoutData(gd);
-		gd.heightHint = tabFolder.getTabHeight();
+		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
 		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
@@ -365,11 +365,6 @@ public class InfoSection extends PDESection {
 		item.setText(label);
 		item.setData(info);
 		updateTabImage(item);
-		updateTabHeight();
-	}
-	private void updateTabHeight() {
-		GridData gd = (GridData)tabFolder.getLayoutData();
-		gd.heightHint = tabFolder.getTabHeight();		
 	}
 	private void updateTabImage(CTabItem item) {
 		if (item==null) return;
