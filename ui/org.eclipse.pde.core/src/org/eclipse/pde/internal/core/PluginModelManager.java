@@ -173,6 +173,7 @@ public class PluginModelManager implements IAdaptable {
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 		ArrayList changedPlugins = new ArrayList();
+		ArrayList oldIds=new ArrayList();
 
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
@@ -200,32 +201,34 @@ public class PluginModelManager implements IAdaptable {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
 				boolean workspace = model.getUnderlyingResource()!=null;
+				updateBundleDescription(model);
 				IPluginBase plugin = model.getPluginBase();
 				String id = plugin.getId();
 				if (id != null) {
 					ModelEntry entry = (ModelEntry)getEntryTable().get(plugin.getId());
+					String oldId=null;
 					if (entry!=null) {
 						if (workspace && model!=entry.getWorkspaceModel()) {
 							//wrong slot - id changed
-							handleIdChange(id, model, entry, delta);
+							oldId=handleIdChange(id, model, entry, delta);
 						}
 						else {
 							delta.addEntry(entry, PluginModelDelta.CHANGED);
-							changedPlugins.add(plugin);
-							updateBundleDescription(model);
 						}
 						changedPlugins.add(plugin);
 					}
 					else if (workspace) {
 						// model change, entry does not exist - must be
 						// id change
-						handleIdChange(id, model, null, delta);
+						oldId=handleIdChange(id, model, null, delta);
 						changedPlugins.add(plugin);
 					}
+					if (oldId!=null)
+						oldIds.add(oldId);
 				}
 			}
 		}
-		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]));
+		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
 		fireDelta(delta);
 	}
 	
@@ -241,8 +244,9 @@ public class PluginModelManager implements IAdaptable {
 		return null;
 	}
 
-	private void handleIdChange(String newId, IPluginModelBase model, ModelEntry newEntry, PluginModelDelta delta) {
+	private String handleIdChange(String newId, IPluginModelBase model, ModelEntry newEntry, PluginModelDelta delta) {
 		ModelEntry oldEntry = findOldEntry(model);
+		String oldId=null;
 		// we must remove the model from the old entry
 		if (oldEntry!=null) {
 			oldEntry.setWorkspaceModel(null);
@@ -255,6 +259,7 @@ public class PluginModelManager implements IAdaptable {
 				// just notify that the old entry has changed
 				delta.addEntry(oldEntry, PluginModelDelta.CHANGED);
 			}
+			oldId = oldEntry.getId();
 		}
 		// add the model to the new entry; if does not exist, create
 		if (newEntry!=null) {
@@ -268,9 +273,7 @@ public class PluginModelManager implements IAdaptable {
 			getEntryTable().put(newId, newEntry);
 			delta.addEntry(newEntry, PluginModelDelta.ADDED);
 		}
-		// make sure bundle description of this model is up to date
-		// if this is a bundle
-		updateBundleDescription(model);
+		return oldId;
 	}
 
 	private void updateTable(
@@ -321,14 +324,14 @@ public class PluginModelManager implements IAdaptable {
 		delta.addEntry(entry, kind);
 	}
 
-	private void updateAffectedEntries(IPluginBase [] changedPlugins) {
+	private void updateAffectedEntries(IPluginBase [] changedPlugins, ArrayList oldIds) {
 		// Reset classpath containers for affected entries
 		ModelEntry [] entries = getEntries();
 		Map map = new HashMap();
 		for (int i=0; i<entries.length; i++) {
 			ModelEntry entry = entries[i];
 
-			if (entry.isAffected(changedPlugins)) {
+			if (entry.isAffected(changedPlugins, oldIds)) {
 				try {
 					if (entry.shouldUpdateClasspathContainer(true, true)) {
 						IProject proj = entry.getWorkspaceModel().getUnderlyingResource().getProject();

@@ -157,7 +157,7 @@ public class ModelEntry extends PlatformObject {
 			null);
 	}
 
-	public boolean isAffected(IPluginBase[] changedPlugins) {
+	public boolean isAffected(IPluginBase[] changedPlugins, ArrayList oldIds) {
 		if (workspaceModel == null || !workspaceModel.isLoaded())
 			return false;
 		IPluginBase plugin = workspaceModel.getPluginBase();
@@ -171,6 +171,13 @@ public class ModelEntry extends PlatformObject {
 			if (isRequired(plugin, changedPlugin))
 				return true;
 		}
+		for (int i=0; i<oldIds.size(); i++) {
+			String oldId = (String)oldIds.get(i);
+			if (plugin.getId().equals(oldId))
+				return true;
+			if (isRequired(plugin, oldId))
+				return true;
+		}
 		return false;
 	}
 	
@@ -178,6 +185,10 @@ public class ModelEntry extends PlatformObject {
 		if (changedPlugin instanceof IFragment)
 			return false;
 		return getRequiredIds(plugin).contains(changedPlugin.getId());
+	}
+	
+	private boolean isRequired(IPluginBase plugin, String changedId) {
+		return getRequiredIds(plugin).contains(changedId);
 	}
 	
 	private HashSet getRequiredIds(IPluginBase plugin) {
