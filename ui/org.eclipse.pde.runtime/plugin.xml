@@ -57,5 +57,32 @@
             id="org.eclipse.pde.runtime.StatusSession">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

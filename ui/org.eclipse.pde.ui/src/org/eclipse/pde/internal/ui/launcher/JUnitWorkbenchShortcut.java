@@ -25,7 +25,25 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	protected ILaunchConfigurationType getJUnitLaunchConfigType() {
 		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
 		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		
-	}	
+	}
+	
+	protected void launchConfiguration(String mode, ILaunchConfiguration config) {
+		try {
+			if (!config
+				.getAttribute(ILauncherSettings.APPLICATION, getApplicationName())
+				.equals(getApplicationName())) {
+				ILaunchConfigurationWorkingCopy wc = null;
+				if (config.isWorkingCopy())
+					wc = (ILaunchConfigurationWorkingCopy) config;
+				else
+					wc = config.getWorkingCopy();
+				wc.setAttribute(ILauncherSettings.APPLICATION, getApplicationName());
+				wc.doSave();
+			}
+		} catch (CoreException e) {
+		}
+		super.launchConfiguration(mode, config);
+	}
 	
 	protected ILaunchConfiguration createConfiguration(
 		IJavaProject project, String name, String mainType, String container, String testName) {

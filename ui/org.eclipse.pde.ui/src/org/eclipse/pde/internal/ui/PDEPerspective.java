@@ -15,61 +15,81 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class PDEPerspective implements IPerspectiveFactory {
+	
+	private IPageLayout factory;
 
-public PDEPerspective() {
-	super();
-}
+	public PDEPerspective() {
+		super();
+	}
 
-public void createInitialLayout(IPageLayout factory) {
+	public void createInitialLayout(IPageLayout factory) {
+		this.factory = factory;
+		addViews();
+		addActionSets();
+		addNewWizardShortcuts();
+		addPerspectiveShortcuts();
+		addViewShortcuts();
+	}
+	
+	private void addPerspectiveShortcuts() {
+		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective");
+		factory.addPerspectiveShortcut("org.eclipse.jdt.ui.JavaPerspective");
+		factory.addPerspectiveShortcut("org.eclipse.debug.ui.DebugPerspective");		
+	}
+	
+	private void addViews() {
+		IFolderLayout topLeft =
+			factory.createFolder(
+				"topLeft",
+				IPageLayout.LEFT,
+				0.25f,
+				factory.getEditorArea());
+		topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
+		topLeft.addView(JavaUI.ID_PACKAGES);
+		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
+		topLeft.addView(PDEPlugin.PLUGINS_VIEW_ID);
 
-	// Top left folder.
-	IFolderLayout topLeft =
-		factory.createFolder(
-			"topLeft",
-			IPageLayout.LEFT,
-			(float) 0.25,
-			factory.getEditorArea());
-	topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
-	topLeft.addView(JavaUI.ID_PACKAGES);
-	topLeft.addView(JavaUI.ID_TYPE_HIERARCHY);
-	topLeft.addView(PDEPlugin.PLUGINS_VIEW_ID);
-
-	IFolderLayout bottom =
-		factory.createFolder(
-			"bottomRight",
-			IPageLayout.BOTTOM,
+		IFolderLayout bottom =
+			factory.createFolder(
+				"bottomRight",
+				IPageLayout.BOTTOM,
+				0.75f,
+				factory.getEditorArea());
+		bottom.addView("org.eclipse.pde.runtime.LogView");
+		bottom.addView(IPageLayout.ID_TASK_LIST);
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		bottom.addView(IPageLayout.ID_PROP_SHEET);
+		
+		factory.addView(
+			IPageLayout.ID_OUTLINE,
+			IPageLayout.RIGHT,
 			0.75f,
-			factory.getEditorArea());
-
-	bottom.addView(IPageLayout.ID_TASK_LIST);
-	bottom.addView("org.eclipse.pde.runtime.LogView");
-	bottom.addView(IDebugUIConstants.ID_CONSOLE_VIEW);
-	bottom.addView(IPageLayout.ID_PROP_SHEET);
-
-	factory.addView(
-		IPageLayout.ID_OUTLINE,
-		IPageLayout.RIGHT,
-		(float) 0.75,
-		factory.getEditorArea());
-
-	// Add action sets
-	factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
-	factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
-	factory.addActionSet(JavaUI.ID_ACTION_SET);
-	factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
+			factory.getEditorArea());		
+	}
 	
-	// new actions 
-	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.project.NewProjectWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.project.NewFragmentWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard");
-	factory.addNewWizardShortcut("org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard");
+	private void addActionSets() {
+		factory.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
+		factory.addActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
+		factory.addActionSet(JavaUI.ID_ACTION_SET);
+		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);		
+	}
 	
-	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard");	 //$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSnippetFileCreationWizard"); //$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
-	factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
-}
+	private void addNewWizardShortcuts() {
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProjectWizard");
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFragmentWizard");
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFeatureProjectWizard");
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewSchemaFileWizard");
+		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");
+		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");		
+	}
+	
+	private void addViewShortcuts() {
+		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
+		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView");
+		factory.addShowViewShortcut(PDEPlugin.PLUGINS_VIEW_ID);
+		factory.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
+		factory.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
+		factory.addShowViewShortcut(IPageLayout.ID_OUTLINE);
+	}
 }
