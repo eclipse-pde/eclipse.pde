@@ -191,14 +191,14 @@ public class PDECore extends Plugin {
 			return new IFragment[0];
 		HashMap result = new HashMap();
 		IFragment[] extFragments =
-			externalModelManager.getFragmentsFor(id, version);
+			getExternalModelManager().getFragmentsFor(id, version);
 		for (int i = 0; i < extFragments.length; i++) {
 			if (extFragments[i].getModel().isEnabled())
 				result.put(extFragments[i].getId(), extFragments[i]);
 		}
 
 		IFragment[] wFragments =
-			workspaceModelManager.getFragmentsFor(id, version);
+			getWorkspaceModelManager().getFragmentsFor(id, version);
 		for (int i = 0; i < wFragments.length; i++) {
 			result.put(wFragments[i].getId(), wFragments[i]);
 		}
