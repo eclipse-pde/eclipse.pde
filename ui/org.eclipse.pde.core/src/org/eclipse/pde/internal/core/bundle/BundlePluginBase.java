@@ -147,16 +147,22 @@ public class BundlePluginBase
 		}
 	}
 	
-	private String writeImports() {
+	private String writeImports(int bundleManifestVersion) {
 		StringBuffer buffer = new StringBuffer();
 		if (imports != null) {
 			for (int i = 0; i < imports.size(); i++) {
 				IPluginImport iimport = (IPluginImport)imports.get(i);
 				buffer.append(iimport.getId());
 				if (iimport.isOptional())
-					buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (bundleManifestVersion > 1)
+						buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$
+					else
+						buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (iimport.isReexported())
-					buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (bundleManifestVersion > 1)
+						buffer.append(";" + Constants.VISIBILITY_DIRECTIVE + ":=" + Constants.VISIBILITY_REEXPORT); //$NON-NLS-1$
+					else
+						buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
 				String version = iimport.getVersion();
 				if (version != null && version.trim().length() > 0)
 					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -244,6 +250,7 @@ public class BundlePluginBase
 				if (bundle != null) {
 					try {
 						String value = bundle.getHeader(Constants.REQUIRE_BUNDLE);
+						int bundleManifestVersion = getBundleManifestVersion(bundle);
 						if (value != null) {
 							ManifestElement[] elements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, value);
 							for (int i = 0; i < elements.length; i++) {
@@ -252,7 +259,7 @@ public class BundlePluginBase
 								importElement.setInTheModel(true);
 								importElement.setParent(this);
 								imports.add(importElement);
-								importElement.load(elements[i]);							
+								importElement.load(elements[i], bundleManifestVersion);		 		 		 		 		 		 		 
 							}
 						}
 					} catch (BundleException e) {
@@ -548,7 +555,7 @@ public class BundlePluginBase
 	public void updateImports() {
 		IBundle bundle = getBundle();
 		if (bundle != null) 
-			bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports());		
+			bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports(getBundleManifestVersion(bundle)));		
 	}
 	
 	public void updateLibraries() {
@@ -627,5 +634,16 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#setInTheModel(boolean)
 	 */
 	public void setInTheModel(boolean inModel) {
+	}
+
+	static public int getBundleManifestVersion(IBundle bundle) {
+		String version = bundle.getHeader(Constants.BUNDLE_MANIFESTVERSION);
+		if (version == null)
+			return 1; // default to 1
+		try {
+			return Integer.parseInt(version);
+		} catch (NumberFormatException e) {
+			return 1; // default to 1
+		}
 	}
 }

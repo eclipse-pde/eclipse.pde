@@ -58,10 +58,16 @@ public class PluginImport
 		this.id = description.getSymbolicName();
 	}
 	
-	public void load(ManifestElement element) {
+	public void load(ManifestElement element, int bundleManifestVersion) {
 		this.id = element.getValue();
-		this.optional = "true".equals(element.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
-		this.reexported ="true".equals(element.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
+		if (bundleManifestVersion >= 2) {
+			this.optional = Constants.RESOLUTION_OPTIONAL.equals(element.getDirective(Constants.RESOLUTION_DIRECTIVE));
+			this.reexported = Constants.VISIBILITY_REEXPORT.equals(element.getDirective(Constants.VISIBILITY_DIRECTIVE));
+		}
+		else {
+			this.optional = "true".equals(element.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+			this.reexported ="true".equals(element.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
+		}
 		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (bundleVersion != null) {
 			VersionRange versionRange = new VersionRange(bundleVersion);

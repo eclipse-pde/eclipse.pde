@@ -30,10 +30,9 @@ public interface ICoreConstants {
 	String USE_DEFAULT_JRE = "useDefaultJRE"; //$NON-NLS-1$
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 
+	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package";
 	public final static String REPROVIDE_ATTRIBUTE = "reprovide";
 	public final static String OPTIONAL_ATTRIBUTE = "optional";
-	public final static String REQUIRE_PACKAGES_ATTRIBUTE = "require-packages";
-
 }

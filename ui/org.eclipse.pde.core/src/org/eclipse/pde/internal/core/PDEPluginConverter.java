@@ -16,11 +16,13 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.*;
+import org.osgi.framework.Constants;
 import org.osgi.util.tracker.*;
 
 public class PDEPluginConverter {
 	
 	public static void convertToOSGIFormat(IProject project, String filename, IProgressMonitor monitor) throws CoreException {
+		String target = "3.0"; // TODO this need to be a param to this method.
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -29,7 +31,7 @@ public class PDEPluginConverter {
 					.getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
-			converter.convertManifest(inputFile, outputFile, false, null, true);
+			converter.convertManifest(inputFile, outputFile, false, target, true);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {
@@ -40,8 +42,8 @@ public class PDEPluginConverter {
 	}
 
 	public static void convertToOSGIFormat(IProject project, String filename, String[] packageNames, IProgressMonitor monitor) throws CoreException {
-		// TODO is this method ever used?
 		try {
+			String target = "3.0"; // TODO this need to be a param to this method.
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
 			File inputFile = new File(project.getLocation().append(filename).toOSString());
@@ -49,10 +51,13 @@ public class PDEPluginConverter {
 					.getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
-			Dictionary dictionary = converter.convertManifest(inputFile, false, null, true);
+			Dictionary dictionary = converter.convertManifest(inputFile, false, target, true);
 			String value = getPackageProvideValue(packageNames);
 			if (value.length() > 0)
-				dictionary.put(ICoreConstants.PROVIDE_PACKAGE,value);
+				if (ICoreConstants.TARGET31.equals(target))
+					dictionary.put(Constants.EXPORT_PACKAGE, value);
+				else
+					dictionary.put(ICoreConstants.PROVIDE_PACKAGE, value);
 			converter.writeManifest(outputFile, dictionary, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
