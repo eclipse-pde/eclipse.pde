@@ -182,6 +182,15 @@ public abstract class TemplateOption extends TemplateField {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < label.length(); i++) {
 			char c = label.charAt(i);
+			if (c == '(' && i < label.length() -1) {
+				char c2 = label.charAt(i+1);
+				if (c2 == '&') {
+					// DBCS mnemonic sequence "(&<char>)"
+					// It is OK to truncate the label 
+					// at this point
+					break;
+				}
+			}
 			if (c != '&' && c != ':')
 				buf.append(c);
 		}
