@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.runtime.logview;
 import java.io.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -37,7 +38,6 @@ public class LogView extends ViewPart implements ILogListener {
 	
 	private int MESSAGE_ORDER = -1;
 	private int PLUGIN_ORDER = -1;
-	private int DATE_ORDER = -1;
 	
 	private static final String C_SEVERITY = "LogView.column.severity";
 	private static final String KEY_PROPERTIES_TOOLTIP =
@@ -85,7 +85,6 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
 					}
 				});
-				tableTreeViewer.refresh();
 			}
 		});
 		tableColumn = new TableColumn(table, SWT.NULL);
@@ -100,21 +99,14 @@ public class LogView extends ViewPart implements ILogListener {
 						return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
 					}
 				});
-				tableTreeViewer.refresh();
 			}
 		});
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(PDERuntimePlugin.getResourceString(C_DATE));
 		tableColumn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				DATE_ORDER *= -1;
-				tableTreeViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
-						LogEntry entry1 = (LogEntry)e1;
-						LogEntry entry2 = (LogEntry)e2;
-						return super.compare(viewer, entry1.getDate(), entry2.getDate()) * DATE_ORDER;
-					}
-				});
+				tableTreeViewer.setSorter(null);
+				Collections.reverse(logs);
 				tableTreeViewer.refresh();
 			}
 		});
@@ -228,11 +220,13 @@ public class LogView extends ViewPart implements ILogListener {
 		deleteLogAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_DISABLED);
 		deleteLogAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REMOVE_LOG_HOVER);
 		
-		filterAction = new Action("Filter") {
+		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {
 			public void run() {
+				FilterDialog dialog = new FilterDialog(PDERuntimePlugin.getActiveWorkbenchShell());
+				dialog.open();
 			}
 		};
-		filterAction.setToolTipText("Filter");
+		filterAction.setToolTipText(PDERuntimePlugin.getResourceString("LogView.filter"));
 		filterAction.setImageDescriptor(PDERuntimePluginImages.DESC_FILTER);
 		filterAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_FILTER_DISABLED);
 		filterAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_FILTER_HOVER);
