@@ -60,6 +60,8 @@ public class PackageObject extends BundleObject {
     public String write() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(fName);
+        
+        appendSupportedAttributes(buffer);
 
         if (fElement == null)
             return buffer.toString();

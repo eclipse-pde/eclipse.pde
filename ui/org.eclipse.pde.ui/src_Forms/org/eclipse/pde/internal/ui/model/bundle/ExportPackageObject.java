@@ -20,7 +20,6 @@ public class ExportPackageObject extends PackageObject {
     private static final long serialVersionUID = 1L;
     
     private boolean fInternal;
-
      
     public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
         super(header, element, versionAttribute);

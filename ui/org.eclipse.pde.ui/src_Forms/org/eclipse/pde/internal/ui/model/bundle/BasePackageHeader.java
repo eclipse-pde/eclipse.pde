@@ -68,7 +68,9 @@ public abstract class BasePackageHeader extends ManifestHeader {
         while (iter.hasNext()) {
             buffer.append(((PackageObject)iter.next()).write());
             if (iter.hasNext()) {
-                buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                buffer.append(",");
+                buffer.append(System.getProperty("line.separator"));
+                buffer.append(" "); 
             }
         }
        fValue = buffer.toString();
