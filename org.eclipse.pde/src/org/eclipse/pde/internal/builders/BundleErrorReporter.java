@@ -478,6 +478,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		for (int i = 0; i < exportPackageElements.length; i++) {
 			String exportPackageStmt = exportPackageElements[i].getValue();
+			if (".".equals(exportPackageStmt.trim())) { //$NON-NLS-1$
+				// workaround for manifest converter generating "."
+				continue;
+			}
 
 			validateVersionAttribute(header, exportPackageElements[i]);
 
@@ -832,6 +836,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		for (int i = 0; i < exportPackageElements.length; i++) {
 			String exportPackageStmt = exportPackageElements[i].getValue();
+			if (".".equals(exportPackageStmt.trim())) { //$NON-NLS-1$
+				// workaround for manifest converter generating "."
+				continue;
+			}
 
 			validateSpecificationVersionAttribute(header,
 					exportPackageElements[i]);
