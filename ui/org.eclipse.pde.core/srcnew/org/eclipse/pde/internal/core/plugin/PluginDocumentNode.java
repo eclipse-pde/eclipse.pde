@@ -11,6 +11,9 @@
 package org.eclipse.pde.internal.core.plugin;
 
 
+import java.util.*;
+
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.w3c.dom.Node;
 
@@ -20,14 +23,18 @@ import org.w3c.dom.Node;
  */
 public class PluginDocumentNode implements IDocumentNode {
 
-	private IDocumentNode[] fChildren;
 	private IDocumentNode fParentNode;
 	private Node fDOMNode;
 	private IPluginObject fPluginObjectNode;
+	private ArrayList fChildrenList = new ArrayList();
+	private boolean fIsErrorNode = false;
 
-	public PluginDocumentNode(IDocumentNode[] children, Node domNode) {
-		fChildren= children;
-		fDOMNode= domNode;
+	public PluginDocumentNode(Node domNode) {
+		fDOMNode = domNode;
+	}
+	
+	public void addChild(IDocumentNode child) {
+		fChildrenList.add(child);
 	}
 
 	public String getText() {
@@ -49,7 +56,10 @@ public class PluginDocumentNode implements IDocumentNode {
 	}
 	
 	public IDocumentNode[] getChildren() {
-		return fChildren;
+		IPluginObject object = getPluginObjectNode();
+		if (object instanceof IPluginImport || object instanceof IPluginExtension || object instanceof IPluginLibrary)
+			return new IDocumentNode[0];
+		return (IDocumentNode[])fChildrenList.toArray(new IDocumentNode[fChildrenList.size()]);
 	}
 
 	public IDocumentNode getParent() {
@@ -79,6 +89,14 @@ public class PluginDocumentNode implements IDocumentNode {
 		if (model != null)
 			return model.getSourceRange(this);
 		return null;
+	}
+	
+	public void setIsErrorNode(boolean isErrorNode) {
+		fIsErrorNode = isErrorNode;
+	}
+	
+	public boolean isErrorNode() {
+		return fIsErrorNode;
 	}
 	
 }

@@ -11,106 +11,71 @@
 
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-
 
 /**
  * SourceRange.java
  */
 public class SourceRange implements ISourceRange {
 	
-	private int fStartLine= -1;
-	private int fStartColumn= -1; 
-	private int fEndLine= -1;
-	private int fEndColumn= -1;
+	private int fOffset = -1;
+	private int fLength = -1;
+	private int fStartLine = -1;
+	private int fEndLine = -1;
 	
 	/**
-	 * Constructor SourceRange.
-	 */
-	public SourceRange() {
-	}
-
-	public SourceRange(int startLine, int startColumn, int endLine, int endColumn) {
-		fStartLine= startLine;
-		fStartColumn= startColumn;
-		fEndLine= endLine;
-		fEndColumn= endColumn;
-	}
-
-	public static int getOffset(IDocument document, int line, int column) throws BadLocationException {
-		return document.getLineOffset(line-1) + column-1;
-	}
-
-	public int getStartOffset(IDocument document) throws BadLocationException {
-		return getOffset(document, fStartLine, fStartColumn);
-	}
-
-	public int getEndOffset(IDocument document) throws BadLocationException {
-		return getOffset(document, fEndLine, fEndColumn);
-	}
-
-	/**
-	 * Returns the fEndColumn.
-	 * @return int
-	 */
-	public int getEndColumn() {
-		return fEndColumn;
-	}
-
-	/**
-	 * Returns the fEndLine.
-	 * @return int
+	 * @return Returns the endLine.
 	 */
 	public int getEndLine() {
 		return fEndLine;
 	}
 
 	/**
-	 * Returns the fStartColumn.
-	 * @return int
+	 * @param endLine The endLine to set.
 	 */
-	public int getStartColumn() {
-		return fStartColumn;
+	public void setEndLine(int endLine) {
+		this.fEndLine = endLine;
 	}
 
 	/**
-	 * Returns the fStartLine.
-	 * @return int
+	 * @return Returns the length.
+	 */
+	public int getLength() {
+		return fLength;
+	}
+
+	/**
+	 * @param length The length to set.
+	 */
+	public void setLength(int length) {
+		this.fLength = length;
+	}
+
+	/**
+	 * @return Returns the offset.
+	 */
+	public int getOffset() {
+		return fOffset;
+	}
+
+	/**
+	 * @param offset The offset to set.
+	 */
+	public void setOffset(int offset) {
+		this.fOffset = offset;
+	}
+
+	/**
+	 * @return Returns the startLine.
 	 */
 	public int getStartLine() {
 		return fStartLine;
 	}
 
 	/**
-	 * Sets the fEndColumn.
-	 * @param fEndColumn The fEndColumn to set
+	 * @param startLine The startLine to set.
 	 */
-	public void setEndColumn(int fEndColumn) {
-		this.fEndColumn= fEndColumn;
+	public void setStartLine(int startLine) {
+		this.fStartLine = startLine;
 	}
 
-	/**
-	 * Sets the fEndLine.
-	 * @param fEndLine The fEndLine to set
-	 */
-	public void setEndLine(int fEndLine) {
-		this.fEndLine= fEndLine;
-	}
-
-	/**
-	 * Sets the fStartColumn.
-	 * @param fStartColumn The fStartColumn to set
-	 */
-	public void setStartColumn(int fStartColumn) {
-		this.fStartColumn= fStartColumn;
-	}
-
-	/**
-	 * Sets the fStartLine.
-	 * @param fStartLine The fStartLine to set
-	 */
-	public void setStartLine(int fStartLine) {
-		this.fStartLine= fStartLine;
-	}
 }

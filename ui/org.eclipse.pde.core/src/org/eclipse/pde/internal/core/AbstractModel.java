@@ -15,6 +15,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.xml.parsers.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PlatformObject;
@@ -23,6 +25,7 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
+import org.xml.sax.*;
 
 public abstract class AbstractModel
 	extends PlatformObject
@@ -33,6 +36,7 @@ public abstract class AbstractModel
 	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
 	private long timeStamp;
+	private static SAXParser fSaxParser;
 
 	public AbstractModel() {
 		super();
@@ -131,6 +135,13 @@ public abstract class AbstractModel
 				PDECore.getResourceString(KEY_ERROR),
 				null);
 		throw new CoreException(status);
+	}
+	
+	public static SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError  {
+		if (fSaxParser == null) {
+			fSaxParser = SAXParserFactory.newInstance().newSAXParser();
+		}
+		return fSaxParser;
 	}
 
 }

@@ -61,7 +61,7 @@ public class XMLOutlinePageContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		Object[] children= getChildren(inputElement);
+		Object[] children = getChildren(inputElement);
 		return children != null ? children : new Object[0];
 	}
 

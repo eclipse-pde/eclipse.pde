@@ -14,6 +14,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
@@ -26,16 +28,8 @@ public abstract class AbstractPluginModelBase
 	implements IPluginModelBase, IPluginModelFactory {
 	protected PluginBase pluginBase;
 	private boolean enabled;
-	private transient static SourceDOMParser parser;
-	private transient static XMLErrorHandler errorHandler;
 	private DocumentModel documentModel;
 	
-	static {
-		if (!XMLCore.NEW_CODE_PATHS) {
-			initializeParser();
-		}
-	}
-
 	public AbstractPluginModelBase() {
 		super();
 	}
@@ -147,12 +141,6 @@ public abstract class AbstractPluginModelBase
 		}
 	}
 	
-	private static void initializeParser() {
-		parser = new SourceDOMParser();
-		errorHandler = new XMLErrorHandler();
-		parser.setErrorHandler(errorHandler);
-	}
-
 	public synchronized void load(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		if (XMLCore.NEW_CODE_PATHS) {
@@ -172,24 +160,15 @@ public abstract class AbstractPluginModelBase
 		pluginBase.reset();
 		loaded = false;
 		try {
-			InputSource source = new InputSource(stream);
-			errorHandler.reset();
-			parser.parse(source);
-			//XMLErrorHandler errorHandler = new XMLErrorHandler();
-			//SourceDOMParser parser = new SourceDOMParser();
-			//parser.setErrorHandler(errorHandler);
-			//parser.parse(source);
-			if (errorHandler.getErrorCount() > 0
-				|| errorHandler.getFatalErrorCount() > 0) {
-				throwParseErrorsException();
-			}
-			processDocument(parser.getDocument(), parser.getLineTable());
+			SAXParser parser = getSaxParser();
+			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
-		} catch (SAXException e) {
-			throwParseErrorsException();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throwParseErrorsException();
 		}
 	}

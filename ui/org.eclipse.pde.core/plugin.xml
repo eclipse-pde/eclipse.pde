@@ -16,11 +16,11 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.text"/>
    </requires>
+
 
    <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
    <extension-point id="alternativeRuntimeSupport" name="%expoint.alternativeRuntime.name" schema="schema/alternativeRuntimeSupport.exsd"/>
@@ -59,10 +59,10 @@
             class="org.eclipse.pde.internal.core.DefaultRuntimeSupport"
             id="org.eclipse.pde.core.defaultRuntime">
       </runtime>
-       <runtime
+      <runtime
+            default="false"
             class="org.eclipse.pde.internal.core.osgi.OSGiRuntimeSupport"
-            id="org.eclipse.pde.core.osgi.osgiRuntime"
-            default="false">
+            id="org.eclipse.pde.core.osgi.osgiRuntime">
       </runtime>
    </extension>
 

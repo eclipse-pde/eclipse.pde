@@ -129,10 +129,13 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
 			Object first= structuredSelection.getFirstElement();
 			if (first instanceof IDocumentNode) {
-				ISourceRange sourceRange= ((IDocumentNode) first).getSourceRange();
+				IDocumentNode node = (IDocumentNode)first;
+				ISourceRange sourceRange= node.getSourceRange();
 				if (sourceRange != null) {
-					setHighlightRange(sourceRange, true);
-					return;
+					setHighlightRange(
+						sourceRange,
+						((PluginDocumentNode) node).getDOMNode().getNodeName(),
+						true);
 				}
 			}
 		}
@@ -140,24 +143,18 @@ public class ManifestSourcePageNew extends ManifestSourcePage implements IPDECol
 		resetHighlightRange();
 	}
 	
-	public void setHighlightRange(ISourceRange sourceRange, boolean moveCursor) {
-		ISourceViewer sourceViewer= getSourceViewer();
+	public void setHighlightRange(ISourceRange sourceRange, String nodeName, boolean moveCursor) {
+		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
 			return;
-		
-		IDocument document= sourceViewer.getDocument();
+
+		IDocument document = sourceViewer.getDocument();
 		if (document == null)
 			return;
-			
-		int offset, length;
-		try {
-			offset = sourceRange.getStartOffset(document);
-			length= sourceRange.getEndOffset(document) - offset;
-			setHighlightRange(offset, length, moveCursor);
-			sourceViewer.setSelectedRange(offset, length);
-		} catch (BadLocationException e) {
-			return;
-		}
+
+		int offset = sourceRange.getOffset();
+		setHighlightRange(offset, sourceRange.getLength(), moveCursor);
+		sourceViewer.setSelectedRange(offset + 1, nodeName.length());
 	}
 	
 	protected boolean isActivePart() {

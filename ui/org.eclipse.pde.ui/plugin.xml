@@ -19,7 +19,6 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.debug.core"/>
@@ -601,6 +600,7 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             id="org.eclipse.pde.ui.siteEditor">
       </editor>
+      <!--
       <editor
             name="%editors.extensionsManifest.name"
             default="true"
@@ -610,6 +610,7 @@
             class="org.eclipse.pde.internal.ui.editor.standalone.extensions.ExtensionsSourceEditor"
             id="org.eclipse.pde.ui.extensionsEditor">
       </editor>
+      -->
    </extension>
    <extension
          point="org.eclipse.ui.views">

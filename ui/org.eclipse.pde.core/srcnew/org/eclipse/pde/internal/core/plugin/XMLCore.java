@@ -50,17 +50,10 @@ public class XMLCore {
 	public void notifyDocumentModelListeners(DocumentModelChangeEvent event) {
 		Iterator i;
 		synchronized (fModelChangeListeners) {
-			i= new ArrayList(fModelChangeListeners).iterator();
+			i = new ArrayList(fModelChangeListeners).iterator();
 		}
 		while (i.hasNext()) {
-			((IDocumentModelListener)i.next()).documentModelChanged(event);
+			((IDocumentModelListener) i.next()).documentModelChanged(event);
 		}
 	}
-
-	public XMLDocumentModelBuilder createXMLModelBuilder(IDocumentModelFactory modelFactory) {
-		XMLDocumentModelBuilder builder= new XMLDocumentModelBuilder(new XEParserConfiguration(), fValidate);
-		builder.setDocumentModelFactory(modelFactory);
-		return builder;
-	}
-	
 }

@@ -14,10 +14,13 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -333,18 +336,18 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 
-	public void load(InputStream source) {
+	public void load(InputStream stream) {
 		try {
-			SourceDOMParser p = new SourceDOMParser();
-			p.parse(new InputSource(source));
-			Document doc = p.getDocument();
-			Node root = (Node) doc.getDocumentElement();
-			traverseDocumentTree(root, p.getLineTable());
-		} catch (SAXException se) {
-		} catch (IOException e) {
+			SAXParser parser = AbstractPluginModelBase.getSaxParser();
+			XMLDefaultHandler handler = new XMLDefaultHandler(stream);			
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			traverseDocumentTree(handler.getDocumentElement(), handler.getLineTable());
+		} catch (Exception e) {
 			PDECore.logException(e);
 		}
 	}
+	
 	private ISchemaAttribute processAttribute(
 		ISchemaElement element,
 		Node elementNode) {

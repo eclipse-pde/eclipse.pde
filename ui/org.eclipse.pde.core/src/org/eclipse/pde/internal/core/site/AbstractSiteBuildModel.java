@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.*;
 
-import org.apache.xerces.parsers.DOMParser;
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
@@ -61,18 +62,17 @@ public abstract class AbstractSiteBuildModel
 		return true;
 	}
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
-		DOMParser parser = new DOMParser();
-
 		try {
-			InputSource source = new InputSource(stream);
-			parser.parse(source);
-			processDocument(parser.getDocument());
+			SAXParser parser = getSaxParser();
+			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			processDocument(handler.getDocument());
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
-		} catch (SAXException e) {
-		} catch (IOException e) {
-			PDECore.logException(e);
+		} catch (Exception e) {
+			throwParseErrorsException();
 		}
 	}
 

@@ -14,39 +14,33 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.*;
 import java.util.Map;
 
-import org.apache.xerces.xni.XNIException;
-import org.apache.xerces.xni.parser.XMLInputSource;
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.w3c.dom.Node;
+import org.xml.sax.*;
 
 /**
  * PluginXMLDocumentModel.java
  */
 public class DocumentModel implements IDocumentNode {
 
-	private XMLDocumentModelBuilder fParser;
-	private XEErrorHandler fErrorHandler;
+	private SAXParser fParser;
+	private DocumentModelHandler fHandler;
 	private TicketManager fTicketManager = new TicketManager();
 	private IDocumentNode fRootNode;
-	private IDocumentNode[] fCachedChildren;
 	private AbstractPluginModelBase fPluginModelBase;
 	private Map fContentLineTable;
 
 	public DocumentModel(AbstractPluginModelBase pluginModelBase) {
 		super();
 		fPluginModelBase = pluginModelBase;
-		fParser =
-			XMLCore.getDefault().createXMLModelBuilder(
-				new PluginDocumentModelFactory());
-		fErrorHandler = new XEErrorHandler(null);
-		fParser.setErrorHandler(fErrorHandler);
 	}
 
 	public void setRootNode(IDocumentNode root) {
 		fRootNode = root;
-		fCachedChildren = null;
 		if (fRootNode != null)
 			fRootNode.setParent(this);
 	}
@@ -56,11 +50,7 @@ public class DocumentModel implements IDocumentNode {
 	}
 
 	public IDocumentNode[] getChildren() {
-		if (fCachedChildren == null && fRootNode != null) {
-			fCachedChildren = new IDocumentNode[1];
-			fCachedChildren[0] = fRootNode;
-		}
-		return fCachedChildren;
+		return new IDocumentNode[] { fRootNode };
 	}
 
 	public IDocumentNode getParent() {
@@ -130,33 +120,33 @@ public class DocumentModel implements IDocumentNode {
 			}
 
 			AbstractModelUpdateStrategy result;
-			boolean success;
+			boolean success = true;
 			try {
-				XMLInputSource source =
-					new XMLInputSource(null, null, null, stream, null);
-				fErrorHandler.reset();
-				fParser.parse(source);
-				success =
-					fErrorHandler.getErrorCount() == 0
-						&& fErrorHandler.getFatalErrorCount() == 0;
-			} catch (XNIException e) {
-				success = false;
-			} catch (IOException e) {
+				if (fParser == null)
+					fParser = AbstractPluginModelBase.getSaxParser();
+				if (fHandler == null)
+					fHandler = new DocumentModelHandler(stream);
+				else
+					fHandler.reset(stream);
+				fParser.setProperty("http://xml.org/sax/properties/lexical-handler", fHandler);
+				fParser.parse(new InputSource(new StringReader(fHandler.getText())), fHandler);
+			} catch (Exception e) {
 				success = false;
 			}
+			
 
 			final PluginBase tmpPluginBase;
 			tmpPluginBase = (PluginBase) fPluginModelBase.createPluginBase();
 			tmpPluginBase.setModel(fPluginModelBase);
 			final Node documentElement =
-				fParser.getDocument().getDocumentElement();
+				fHandler.getDocumentElement();
 			if (documentElement != null) {
 				tmpPluginBase.load(
 					documentElement,
-					fParser.getSchemaVersion(),
-					fParser.getLineTable());
+					fHandler.getSchemaVersion(),
+					fHandler.getLineTable());
 			}
-			DocumentModel.load(tmpPluginBase, fParser.getModelRoot());
+			DocumentModel.load(tmpPluginBase, fHandler.getModelRoot());
 
 			result = new AbstractModelUpdateStrategy(this, success) {
 				public void update() {
@@ -186,24 +176,8 @@ public class DocumentModel implements IDocumentNode {
 					}
 					fPluginModelBase.setLoaded(isSuccessful());
 
-					IDocumentNode modelRoot = fParser.getModelRoot();
-					if (modelRoot != null) {
-						IDocumentNode[] children = modelRoot.getChildren();
-						modelRoot = null;
-						if (children != null) {
-							for (int i = 0; i < children.length; i++) {
-								IDocumentNode node = children[i];
-								if (node instanceof PluginDocumentNode
-									&& ((PluginDocumentNode) node).getDOMNode()
-										== documentElement) {
-									modelRoot = node;
-									break;
-								}
-							}
-						}
-					}
-					setRootNode(modelRoot);
-					fContentLineTable = fParser.getLineTable();
+					setRootNode(fHandler.getModelRoot());
+					fContentLineTable = fHandler.getLineTable();
 					XMLCore.getDefault().notifyDocumentModelListeners(
 						new DocumentModelChangeEvent(DocumentModel.this));
 				}
@@ -214,24 +188,7 @@ public class DocumentModel implements IDocumentNode {
 	}
 
 	static void load(PluginBase tmpPluginBase, IDocumentNode docNode) {
-		IDocumentNode docRootNode = null;
-		if (docNode != null && docNode.getChildren() != null) {
-			IDocumentNode[] children = docNode.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				String name =
-					children[i] instanceof PluginDocumentNode
-						? ((PluginDocumentNode) children[i])
-							.getDOMNode()
-							.getNodeName()
-							.toLowerCase()
-						: null;
-				if ("plugin".equals(name) || "fragment".equals(name)) {
-					docRootNode = children[i];
-					break;
-				}
-			}
-		}
-
+		IDocumentNode docRootNode = docNode;
 		if (docRootNode instanceof PluginDocumentNode) {
 			PluginDocumentNode pluginDocNode = (PluginDocumentNode) docRootNode;
 			pluginDocNode.setPluginObjectNode(tmpPluginBase);
@@ -247,29 +204,19 @@ public class DocumentModel implements IDocumentNode {
 						PluginDocumentNode currentDocNode =
 							(PluginDocumentNode) children[i];
 						String name =
-							currentDocNode
-								.getDOMNode()
-								.getNodeName()
-								.toLowerCase();
+							currentDocNode.getDOMNode().getNodeName().toLowerCase();
 						if (name.equals("extension")) {
 							currentDocNode.setPluginObjectNode(
 								tmpPluginBase.getExtensions()[iExtension++]);
 						} else if (name.equals("extension-point")) {
 							currentDocNode.setPluginObjectNode(
-								tmpPluginBase
-									.getExtensionPoints()[iExtensionPoint++]);
+								tmpPluginBase.getExtensionPoints()[iExtensionPoint++]);
 						} else if (name.equals("runtime")) {
 							iLibrary =
-								processRuntime(
-									tmpPluginBase,
-									currentDocNode,
-									iLibrary);
+								processRuntime(tmpPluginBase, currentDocNode, iLibrary);
 						} else if (name.equals("requires")) {
 							iImport =
-								processRequires(
-									tmpPluginBase,
-									currentDocNode,
-									iImport);
+								processRequires(tmpPluginBase, currentDocNode, iImport);
 						}
 					}
 				}
@@ -285,10 +232,8 @@ public class DocumentModel implements IDocumentNode {
 			IDocumentNode[] children = docNode.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof PluginDocumentNode) {
-					PluginDocumentNode currentDocNode =
-						(PluginDocumentNode) children[i];
-					String name =
-						currentDocNode.getDOMNode().getNodeName().toLowerCase();
+					PluginDocumentNode currentDocNode = (PluginDocumentNode) children[i];
+					String name = currentDocNode.getDOMNode().getNodeName().toLowerCase();
 					if (name.equals("library")) {
 						currentDocNode.setPluginObjectNode(
 							pluginBase.getLibraries()[iLibrary++]);
@@ -307,10 +252,8 @@ public class DocumentModel implements IDocumentNode {
 			IDocumentNode[] children = docNode.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof PluginDocumentNode) {
-					PluginDocumentNode currentDocNode =
-						(PluginDocumentNode) children[i];
-					String name =
-						currentDocNode.getDOMNode().getNodeName().toLowerCase();
+					PluginDocumentNode currentDocNode = (PluginDocumentNode) children[i];
+					String name = currentDocNode.getDOMNode().getNodeName().toLowerCase();
 					if (name.equals("import")) {
 						currentDocNode.setPluginObjectNode(
 							pluginBase.getImports()[iImport++]);

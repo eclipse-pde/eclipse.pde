@@ -11,25 +11,19 @@
 
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-
 
 /**
  * ISourceRange.java
  */
 public interface ISourceRange {
 	
-	int getStartOffset(IDocument document) throws BadLocationException;
-	int getEndOffset(IDocument document) throws BadLocationException;
-
-	int getEndColumn();
-	int getEndLine();
-	int getStartColumn();
+	int getOffset();
+	int getLength();
 	int getStartLine();
+	int getEndLine();
 	
-	void setEndColumn(int fEndColumn);
-	void setEndLine(int fEndLine);
-	void setStartColumn(int fStartColumn);
-	void setStartLine(int fStartLine);
+	void setOffset(int offset);
+	void setLength(int length);
+	void setStartLine(int line);
+	void setEndLine(int line);
 }

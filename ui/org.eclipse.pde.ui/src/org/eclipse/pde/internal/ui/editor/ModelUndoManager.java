@@ -38,6 +38,7 @@ public abstract class ModelUndoManager
 	
 	public ModelUndoManager(PDEMultiPageEditor editor) {
 		this.editor = editor;
+		operations = new Vector();
 	}
 
 	/*
@@ -72,6 +73,7 @@ public abstract class ModelUndoManager
 	 * @see IModelUndoManager#isRedoable()
 	 */
 	public boolean isRedoable() {
+		if (operations == null) initialize();
 		return (cursor+1)<operations.size();
 	}
 

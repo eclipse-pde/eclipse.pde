@@ -14,6 +14,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.Hashtable;
 
+import javax.xml.parsers.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
@@ -54,32 +56,19 @@ public abstract class AbstractFeatureModel
 		return enabled;
 	}
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
-		SourceDOMParser parser = new SourceDOMParser();
-		XMLErrorHandler errorHandler = new XMLErrorHandler();
-		parser.setErrorHandler(errorHandler);
-
 		try {
-			parser.setFeature("http://xml.org/sax/features/validation", true);
-			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
-		}
-		catch (SAXException e) {
-		}
-
-		try {
+			SAXParser parser = getSaxParser();
 			InputSource source = new InputSource(stream);
 			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
-			parser.parse(source);
-			if (errorHandler.getErrorCount() > 0
-				|| errorHandler.getFatalErrorCount() > 0) {
-				throwParseErrorsException();
-			}
-			processDocument(parser.getDocument(), parser.getLineTable());
+			XMLDefaultHandler handler = new XMLDefaultHandler(stream);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
+			parser.parse(new InputSource(new StringReader(handler.getText())), handler);
+			processDocument(handler.getDocument(), handler.getLineTable());
 			loaded = true;
 			if (!outOfSync)
 				updateTimeStamp();
-		} catch (SAXException e) {
-		} catch (IOException e) {
+		} catch (Exception e) {
 			PDECore.logException(e);
 		}
 	}
