@@ -23,8 +23,6 @@ public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime";
 	private LibrarySection librarySection;
 	private ExportSection exportSection;
-	private PackagePrefixesSection prefixesSection;
-	private LibraryTypeSection typeSection;
 
 	public RuntimePage(FormEditor editor) {
 		super(editor, PAGE_ID, "Runtime");
@@ -33,7 +31,6 @@ public class RuntimePage extends PDEFormPage {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
 		form.setText(PDEPlugin.getResourceString("ManifestEditor.RuntimeForm.title"));
-		FormToolkit toolkit = mform.getToolkit();
 		GridLayout layout = new GridLayout();
 		form.getBody().setLayout(layout);
 		layout.numColumns = 2;
@@ -45,19 +42,11 @@ public class RuntimePage extends PDEFormPage {
 		librarySection = new LibrarySection(this, form.getBody());
 		librarySection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		prefixesSection = new PackagePrefixesSection(this, form.getBody());
-		prefixesSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		typeSection = new LibraryTypeSection(this, form.getBody());
-		typeSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		exportSection = new ExportSection(this, form.getBody());
 		exportSection.getSection().setLayoutData( new GridData(GridData.FILL_BOTH));
 
 		mform.addPart(librarySection);
-		mform.addPart(typeSection);
 		mform.addPart(exportSection);
-		mform.addPart(prefixesSection);
 		
 		boolean fragment = ((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel();
 
