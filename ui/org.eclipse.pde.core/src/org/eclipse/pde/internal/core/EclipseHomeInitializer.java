@@ -29,14 +29,14 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
 	public void initialize(String variable) {
-		try {
+		/*try {
 			Preferences pref = PDECore.getDefault().getPluginPreferences();
 			JavaCore.setClasspathVariable(
 				variable,
 				new Path(pref.getString(ICoreConstants.PLATFORM_PATH)),
 				new NullProgressMonitor());
 		} catch (JavaModelException e) {
-		}
+		}*/
 	}
 	
 }

@@ -212,6 +212,7 @@ public class SourcePreferencePage
 		preferences.setValue(ICoreConstants.P_EXT_LOCATIONS, encodeSourceLocations(extensionLocations));
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations(userLocations.toArray()));
 		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().getSourceLocationManager().initializeClasspathVariables(null);
 		return super.performOk();
 	}
 

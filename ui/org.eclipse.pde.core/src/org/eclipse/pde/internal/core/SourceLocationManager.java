@@ -22,15 +22,24 @@ import org.eclipse.pde.internal.core.plugin.Plugin;
 public class SourceLocationManager implements ICoreConstants {
 	private ArrayList userLocations = null;
 	private ArrayList extensionLocations = null;
+	private ArrayList orphanedExtensionLocations = null;
 
+	class VariableTask {
+		public VariableTask(String name, IPath path) {
+			this.name = name;
+			this.path = path;
+		}
+		String name; // name of the variable to set
+		IPath path; // path for the path to set or null deleted
+	}
 	
 	class SearchResult {
-		SourceLocation loc;
-		File file;
 		SearchResult(SourceLocation loc, File file) {
 			this.loc = loc;
 			this.file = file;
 		}
+		SourceLocation loc;
+		File file;
 	}
 
 	public ArrayList getUserLocationArray() {
@@ -119,6 +128,29 @@ public class SourceLocationManager implements ICoreConstants {
 		parseSavedSourceLocations(pref, userLocations);
 	}
 	
+	public void initializeClasspathVariables(IProgressMonitor monitor) {
+		initialize();
+		String[] variableNames = JavaCore.getClasspathVariableNames();
+		ArrayList tasks = new ArrayList();
+		addOrphanedLocations(variableNames, tasks);
+		addNewOrChangedLocations(variableNames, tasks);
+		if (tasks.size() == 0)
+			return;
+		String[] names = new String[tasks.size()];
+		IPath[] paths = new IPath[tasks.size()];
+		for (int i = 0; i < tasks.size(); i++) {
+			VariableTask task = (VariableTask) tasks.get(i);
+			names[i] = task.name;
+			paths[i] = task.path;
+		}
+		try {
+			JavaCore.setClasspathVariables(names, paths, monitor);
+			orphanedExtensionLocations = null;
+		} catch (JavaModelException e) {
+			PDECore.log(e);
+		}
+	}
+
 	private SourceLocation parseSourceLocation(String text) {
 		String name = "";
 		String path = "";
@@ -136,13 +168,6 @@ public class SourceLocationManager implements ICoreConstants {
 			path = text.substring(atLoc + 1, commaLoc);
 		} else
 			path = text.substring(atLoc + 1);
-			
-		// undo old behavior:
-		// delete classpath variables as we no longer use them for anything.
-		IPath value = JavaCore.getClasspathVariable(name);
-		if (value != null && value.toOSString().equals(path))
-			JavaCore.removeClasspathVariable(name, new NullProgressMonitor());
-		
 		return new SourceLocation(name, new Path(path), enabled);
 	}
 
@@ -174,11 +199,54 @@ public class SourceLocationManager implements ICoreConstants {
 				}
 			}
 		}
+		computeOrphanedLocations(storedLocations);
 	}
 
 	private String getComputedName(IPluginExtension extension, String pathValue) {
 		String name = ((Plugin)extension.getParent()).getId() + "_" + pathValue;
 		return name.replace('.','_').toUpperCase();
+	}
+
+	private void addOrphanedLocations(String[] variables, ArrayList tasks) {
+		if (orphanedExtensionLocations == null)
+			return;
+		for (int i = 0; i < orphanedExtensionLocations.size(); i++) {
+			SourceLocation orphanedLocation =
+				(SourceLocation) orphanedExtensionLocations.get(i);
+			if (isOnTheList(orphanedLocation.getName(), variables)) {
+				tasks.add(new VariableTask(orphanedLocation.getName(), null));
+			}
+		}
+	}
+
+	private void addNewOrChangedLocations(
+		String[] variables,
+		ArrayList tasks) {
+		addNewOrChangedLocations(variables, extensionLocations, tasks);
+		addNewOrChangedLocations(variables, userLocations, tasks);
+	}
+
+	private void addNewOrChangedLocations(
+		String[] variables,
+		ArrayList locations,
+		ArrayList tasks) {
+		for (int i = 0; i < locations.size(); i++) {
+			SourceLocation location = (SourceLocation) locations.get(i);
+			IPath varPath = JavaCore.getClasspathVariable(location.getName());
+			IPath locPath = location.getPath();
+			if (varPath == null || !varPath.equals(locPath)) {
+				tasks.add(
+					new VariableTask(location.getName(), location.getPath()));
+			}
+		}
+	}
+
+	private boolean isOnTheList(String name, String[] list) {
+		for (int i = 0; i < list.length; i++) {
+			if (name.equals(list[i]))
+				return true;
+		}
+		return false;
 	}
 
 	private boolean getSavedState(String name, SourceLocation[] list) {
@@ -208,6 +276,26 @@ public class SourceLocationManager implements ICoreConstants {
 			new SourceLocation[entries.size()]);
 	}
 
+	private void computeOrphanedLocations(SourceLocation[] storedLocations) {
+		if (orphanedExtensionLocations != null)
+			orphanedExtensionLocations.clear();
+		for (int i = 0; i < storedLocations.length; i++) {
+			SourceLocation storedLoc = storedLocations[i];
+			boolean found = false;
+			for (int j = 0; j < extensionLocations.size(); j++) {
+				SourceLocation loc = (SourceLocation) extensionLocations.get(j);
+				if (storedLoc.getName().equals(loc.getName())) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				if (orphanedExtensionLocations == null)
+					orphanedExtensionLocations = new ArrayList();
+				orphanedExtensionLocations.add(storedLoc);
+			}
+		}
+	}
 	private IPluginExtension[] getRegisteredSourceExtensions() {
 		Vector result = new Vector();
 		IPluginModel[] models = PDECore.getDefault().getExternalModelManager().getModels();
