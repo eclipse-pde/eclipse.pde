@@ -171,7 +171,7 @@ public class FormEntry {
 		}
 		dirty = false;
 	}
-	protected void editOccured(ModifyEvent e) {
+	private void editOccured(ModifyEvent e) {
 		if (ignoreModify)
 			return;
 		dirty = true;
@@ -211,7 +211,7 @@ public class FormEntry {
 	public boolean isDirty() {
 		return dirty;
 	}
-	protected void keyReleaseOccured(KeyEvent e) {
+	private void keyReleaseOccured(KeyEvent e) {
 		if (e.character == '\r') {
 			// commit value
 			if (dirty)

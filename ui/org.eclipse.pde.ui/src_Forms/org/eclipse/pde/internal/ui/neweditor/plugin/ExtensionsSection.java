@@ -41,6 +41,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.DrillDownAdapter;
+
+/**
+ *
+ */
 public class ExtensionsSection extends TreeSection
 		implements
 			IModelChangedListener {
@@ -348,7 +352,7 @@ public class ExtensionsSection extends TreeSection
 			}
 		}
 	}
-	void handleNew() {
+	private void handleNew() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
 		BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
 				new Runnable() {
@@ -412,15 +416,14 @@ public class ExtensionsSection extends TreeSection
 				.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 	public void refresh() {
-		extensionTree.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				extensionTree.refresh();
-				getManagedForm().fireSelectionChanged(ExtensionsSection.this,
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		extensionTree.setInput(model.getPluginBase());
+		selectFirstExtension();
+		getManagedForm().fireSelectionChanged(ExtensionsSection.this,
 						extensionTree.getSelection());
-			}
-		});
 		super.refresh();
 	}
+	
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
