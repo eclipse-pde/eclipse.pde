@@ -162,7 +162,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			// Test the version
 			IPlugin plugin = model.getPlugin();
 			validateVersion(plugin, reporter);
-			validateValues(plugin, reporter);
+			//validateValues(plugin, reporter);
 		}
 		model.release();
 	}
@@ -192,7 +192,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					line = ((ISourceObject) fragment).getStartLine();
 				reporter.reportError(message, line);
 			}
-			validateValues(fragment, reporter);
+			//validateValues(fragment, reporter);
 		}
 		model.release();
 	}
