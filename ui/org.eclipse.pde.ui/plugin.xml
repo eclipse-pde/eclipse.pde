@@ -600,6 +600,18 @@
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="site.xml"
+            id="org.eclipse.pde.ui.siteBuild">
+         <action
+               label="%popupMenus.buildSite.label"
+               class="org.eclipse.pde.internal.ui.feature.BuildSiteAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.BuildSiteAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
             nameFilter="plugin.xml"
             id="org.eclipse.pde.ui.UpdateClasspathAction1">
          <filter
