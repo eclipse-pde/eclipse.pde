@@ -104,7 +104,10 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		hookListeners();
 		setControl(container);
 		Dialog.applyDialogFont(container);
+		hookHelpContext(container);
 	}
+	
+	protected abstract void hookHelpContext(Control control);
 	
 	protected abstract void createUpdateJarsSection(Composite container);
 	

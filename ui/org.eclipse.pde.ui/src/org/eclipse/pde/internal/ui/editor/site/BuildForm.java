@@ -4,9 +4,10 @@ package org.eclipse.pde.internal.ui.editor.site;
  * All Rights Reserved.
  */
 
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class BuildForm extends ScrollableSectionForm {
@@ -14,9 +15,6 @@ public class BuildForm extends ScrollableSectionForm {
 	private BuildPage page;
 	private BuildControlSection controlSection;
 	private FeatureProjectSection featureSection;
-	//	private URLSection urlSection;
-	//	private FeatureSpecSection specSection;
-	//	private PortabilitySection portabilitySection;
 
 	public BuildForm(BuildPage page) {
 		this.page = page;
@@ -45,27 +43,11 @@ public class BuildForm extends ScrollableSectionForm {
 			new GridData(
 				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		control.setLayoutData(gd);
-		/*
-		
-		urlSection = new URLSection(page);
-		control = urlSection.createControl(parent, factory);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-		control.setLayoutData(gd);
-		
-		portabilitySection = new PortabilitySection(page);
-		control = portabilitySection.createControl(parent, factory);
-		gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
-		*/
 
 		registerSection(featureSection);
 		registerSection(controlSection);
-		//registerSection(urlSection);
-		//registerSection(portabilitySection);
 
-		//WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_SITE_BUILD);
 	}
 
 	public void expandTo(Object object) {

@@ -11,6 +11,7 @@ public interface IHelpContextIds {
     public static final String BUILDPATH_PREFERENCE_PAGE = PREFIX + "buildpath_preference_page";
     public static final String EDITOR_PREFERENCE_PAGE = PREFIX + "editor_preference_page";
 	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page";
+	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page";
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page";
  	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page";
  	
@@ -34,6 +35,12 @@ public interface IHelpContextIds {
  	
  	public static final String PLUGIN_IMPORT_FIRST_PAGE = PREFIX + "plugin_import_first_page";
  	public static final String PLUGIN_IMPORT_SECOND_PAGE = PREFIX + "plugin_import_second_page";
+ 	
+	public static final String FEATURE_IMPORT_FIRST_PAGE = PREFIX + "feature_import_first_page";
+	public static final String FEATURE_IMPORT_SECOND_PAGE = PREFIX + "feature_import_second_page";
+	
+	public static final String PLUGIN_EXPORT_WIZARD = PREFIX + "plugin_export_wizard";
+	public static final String FEATURE_EXPORT_WIZARD = PREFIX + "feature_export_wizard";	
  	
  	public static final String TEMPLATE_SELECTION = PREFIX + "template_selection";
  	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor";
@@ -69,6 +76,8 @@ public interface IHelpContextIds {
 	public static final String LAUNCHER_TRACING = PREFIX + "launcher_tracing";
 	public static final String SOURCE_ATTACHMENT = PREFIX + "source_attachment";
 	
+	// Generic source page
+	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page";
 	
  	// Manifest Editor
  	public static final String MANIFEST_WELCOME = PREFIX + "manifest_welcome";
@@ -97,6 +106,13 @@ public interface IHelpContextIds {
  	public static final String MANIFEST_FEATURE_CONTENT = PREFIX + "manifest_feature_content";
  	public static final String MANIFEST_FEATURE_ADVANCED = PREFIX + "manifest_feature_advanced";
  	
- 	public static final String FEATURE_SYNCHRONIZE_VERSIONS = PREFIX + "feature_synchronize_versions";	
+ 	public static final String FEATURE_SYNCHRONIZE_VERSIONS = PREFIX + "feature_synchronize_versions";
+
+	// Site Editor
+	public static final String MANIFEST_SITE_OVERVIEW = PREFIX + "manifest_site_overview";
+	public static final String MANIFEST_SITE_BUILD = PREFIX + "manifest_sute_build";
+	public static final String MANIFEST_SITE_FEATURES = PREFIX + "manifest_site_features";
+	public static final String MANIFEST_SITE_ARCHIVES = PREFIX + "manifest_site_archives";	
+	public static final String NEW_CATEGORY_DEF_DIALOG = PREFIX + "new_category_def_dialog";	
 	
 }

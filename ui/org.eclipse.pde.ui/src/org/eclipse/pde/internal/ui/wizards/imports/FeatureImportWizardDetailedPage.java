@@ -235,7 +235,7 @@ public class FeatureImportWizardDetailedPage extends StatusWizardPage {
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(
 			container,
-			IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
+			IHelpContextIds.FEATURE_IMPORT_SECOND_PAGE);
 	}
 
 	public void dispose() {

@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -10,7 +11,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 
 public class FeatureExportWizardPage extends BaseExportWizardPage {
@@ -22,6 +25,10 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			true);
 		setTitle(PDEPlugin.getResourceString("ExportWizard.Feature.pageTitle"));
 	}
+	
+	protected void hookHelpContext(Control control) {
+		WorkbenchHelp.setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
+	}	
 
 	public Object[] getListElements() {
 		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();

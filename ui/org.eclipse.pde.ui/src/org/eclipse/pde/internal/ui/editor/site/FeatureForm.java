@@ -5,9 +5,11 @@ package org.eclipse.pde.internal.ui.editor.site;
  */
 
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class FeatureForm extends ScrollableSectionForm {
@@ -67,7 +69,7 @@ public class FeatureForm extends ScrollableSectionForm {
 		registerSection(propertySection);
 		registerSection(categorySection);
 		
-		//WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_SITE_FEATURES);
 	}
 	
 	public void expandTo(Object object) {

@@ -13,10 +13,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -86,6 +88,8 @@ public abstract class PDESourcePage
 		super.createPartControl(parent);
 		Control[] children = parent.getChildren();
 		control = children[children.length - 1];
+		
+		WorkbenchHelp.setHelp(control, IHelpContextIds.MANIFEST_SOURCE_PAGE);
 
 		IDocument document =
 			getDocumentProvider().getDocument(getEditorInput());

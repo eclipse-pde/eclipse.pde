@@ -12,6 +12,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
@@ -20,6 +21,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class FeatureImportWizardFirstPage extends StatusWizardPage {
 
@@ -111,7 +113,7 @@ public class FeatureImportWizardFirstPage extends StatusWizardPage {
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		//WorkbenchHelp.setHelp(composite, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
 	}
 
 	private Label createMultiLineLabel(

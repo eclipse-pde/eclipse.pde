@@ -5,9 +5,11 @@ package org.eclipse.pde.internal.ui.editor.site;
  */
 
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.ui.forms.internal.*;
 
 public class ArchiveForm extends ScrollableSectionForm {
@@ -56,7 +58,7 @@ public class ArchiveForm extends ScrollableSectionForm {
 		registerSection(archiveSection);
 		registerSection(propertySection);
 		
-		//WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_SITE_ARCHIVES);
 	}
 	
 	public void expandTo(Object object) {

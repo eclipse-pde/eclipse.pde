@@ -17,12 +17,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  */
@@ -84,7 +86,7 @@ public class CompilersPreferencePage
 				 ((Text) control).addModifyListener(mlistener);
 		}
 		Dialog.applyDialogFont(parent);
-		//WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_ENVIRONMENT_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 		return container;
 	}
 
