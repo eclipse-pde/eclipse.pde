@@ -54,7 +54,6 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 
 	private WizardNewProjectCreationPage mainPage;
 	private PatchSpecPage specPage;
-	private PatchPluginListPage pluginListPage;
 	private IConfigurationElement config;
 	private FeaturePatchProvider provider;
 
@@ -115,29 +114,23 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		specPage.setInitialId(getDefaultValue(DEF_FEATURE_ID));
 		specPage.setInitialName(getDefaultValue(DEF_FEATURE_NAME));
 		addPage(specPage);
-		pluginListPage = new PatchPluginListPage(provider);
-		addPage(pluginListPage);
 	}
 
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return ((page == specPage && page.isPageComplete()) || (page == pluginListPage && page
-				.isPageComplete()));
+		return ((page == specPage && page.isPageComplete()));
 	}
 
 	public boolean performFinish() {
 		final IProject project = provider.getProject();
 		final IPath location = provider.getLocationPath();
-		final IFeaturePlugin[] plugins = pluginListPage.getSelectedPlugins() != null
-				? (IFeaturePlugin[]) pluginListPage.getSelectedPlugins()
-				: (new IFeaturePlugin[0]);
 		final IFeatureModel featureModel = provider.getFeatureToPatch();
 		final FeatureData data = provider.getFeatureData();
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 
 			public void execute(IProgressMonitor monitor) {
 				try {
-					createFeatureProject(project, location, plugins, featureModel, data,
+					createFeatureProject(project, location, featureModel, data,
 							monitor);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
@@ -166,8 +159,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 
 	/* finish methods */
 
-	private void createFeatureProject(IProject project, IPath location,
-			IFeaturePlugin[] plugins, IFeatureModel featureModel, FeatureData data,
+	private void createFeatureProject(IProject project, IPath location, IFeatureModel featureModel, FeatureData data,
 			IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask(PDEPlugin.getResourceString(CREATING_PROJECT), 3);
@@ -205,7 +197,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 			createBuildProperties(project, data);
 			monitor.worked(1);
 			// create feature.xml
-			IFile file = createFeatureManifest(project, plugins, featureModel, data);
+			IFile file = createFeatureManifest(project, featureModel, data);
 			monitor.worked(1);
 			// open manifest for editing
 			openFeatureManifest(file);
@@ -265,7 +257,7 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}
 
-	private IFile createFeatureManifest(IProject project, IFeaturePlugin[] plugins,
+	private IFile createFeatureManifest(IProject project,
 			IFeatureModel featureModel, FeatureData data) throws CoreException {
 		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
@@ -278,38 +270,6 @@ public class NewFeaturePatchWizard extends NewWizard implements IExecutableExten
 		if(data.hasCustomHandler){
 			feature.setInstallHandler(model.getFactory().createInstallHandler());
 		}
-
-		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
-		for (int i = 0; i < plugins.length; i++) {
-			added[i] = model.getFactory().createPlugin();
-			String name = feature.getId();
-			int loc = name.lastIndexOf("."); //$NON-NLS-1$
-			if (loc != -1 && loc != name.length())
-				name = name.substring(loc + 1, name.length());
-			String[] versionSegments = plugins[i].getVersion().split("\\."); //$NON-NLS-1$
-			StringBuffer version = new StringBuffer();
-			for (int j = 0; j < versionSegments.length; j++) {
-				if (j < 3) {
-					version.append(versionSegments[j]);
-					version.append("."); //$NON-NLS-1$
-				}
-			}
-			version.append(name);
-			IStatus status = PluginVersionIdentifier.validateVersion(version.toString());
-			if (status.isOK())
-				added[i].setVersion(version.toString());
-			else
-				added[i].setVersion(plugins[i].getVersion());
-			added[i].setId(plugins[i].getId());
-			added[i].setDownloadSize(plugins[i].getDownloadSize());
-			added[i].setArch(plugins[i].getArch());
-			added[i].setInstallSize(plugins[i].getInstallSize());
-			added[i].setLabel(plugins[i].getLabel());
-			added[i].setNL(plugins[i].getNL());
-			added[i].setOS(plugins[i].getOS());
-			added[i].setWS(plugins[i].getWS());
-		}
-		feature.addPlugins(added);
 
 		FeatureImport featureImport = (FeatureImport) model.getFactory().createImport();
 		if (featureModel != null){
