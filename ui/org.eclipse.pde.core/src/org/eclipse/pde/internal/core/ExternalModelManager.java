@@ -161,6 +161,21 @@ public class ExternalModelManager {
 		return allModels;
 	}
 	
+	public IPluginModelBase[] getAllEnabledModels() {
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < models.size(); i++) {
+			IPluginModelBase model = (IPluginModelBase) models.get(i);
+			if (model.isEnabled())
+				result.add(model);
+		}
+		for (int i = 0; i < fmodels.size(); i++) {
+			IPluginModelBase fmodel = (IPluginModelBase) fmodels.get(i);
+			if (fmodel.isEnabled())
+				result.add(fmodel);
+		}
+		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+	}
+	
 
 	public IPluginModel[] getModels() {
 		return (IPluginModel[]) models.toArray(new IPluginModel[models.size()]);
