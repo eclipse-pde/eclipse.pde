@@ -234,6 +234,34 @@ public class TargetPlatform implements IEnvironmentVariables {
 		createFeatureEntries(platformConfiguration, models, primaryFeatureId);
 		platformConfiguration.refresh();
 		platformConfiguration.save(configURL);
+
+		if (bootModel!=null) {
+			String version = bootModel.getPluginBase().getVersion();
+			if (version!=null) {
+				PluginVersionIdentifier bootVid = new PluginVersionIdentifier(version);
+				PluginVersionIdentifier breakVid = new PluginVersionIdentifier("2.0.3");
+				if (breakVid.isGreaterThan(bootVid))
+				// Platform configuration version changed in 2.1
+				// but the same fix is in 2.0.3.
+				// Must switch back to configuration 1.0 for 
+				// older configurations.
+				repairConfigurationVersion(configURL);
+			}
+		}
+	}
+
+	private static void repairConfigurationVersion(URL url) throws IOException {
+		File file = new File(url.getFile());
+		if (file.exists()) {
+			Properties p = new Properties();
+			FileInputStream fis = new FileInputStream(file);
+			p.load(fis);
+			p.setProperty("version", "1.0");
+			fis.close();
+			FileOutputStream fos = new FileOutputStream(file);
+			p.store(fos, (new Date()).toString());
+			fos.close();
+		}
 	}
 
 	private static void addToSite(
