@@ -145,8 +145,10 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 		fInitialTemplateId = initialTemplateId;
 	}
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
+			fContentPage.updateData();
 			wizardSelectionViewer.refresh();
+		}
 		super.setVisible(visible);
 	}
 }
