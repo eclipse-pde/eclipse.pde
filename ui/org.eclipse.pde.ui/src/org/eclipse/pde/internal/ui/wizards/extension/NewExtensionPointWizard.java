@@ -4,10 +4,10 @@ package org.eclipse.pde.internal.ui.wizards.extension;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.NewWizard;
 
 public class NewExtensionPointWizard extends NewWizard {
 	private NewExtensionPointMainPage mainPage;
@@ -23,10 +23,12 @@ public class NewExtensionPointWizard extends NewWizard {
 		this.project = project;
 		setNeedsProgressMonitor(true);
 	}
+
 	public void addPages() {
 		mainPage = new NewExtensionPointMainPage(project, model);
 		addPage(mainPage);
 	}
+
 	public boolean performFinish() {
 		return mainPage.finish();
 	}

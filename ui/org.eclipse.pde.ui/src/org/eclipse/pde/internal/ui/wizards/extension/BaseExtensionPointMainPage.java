@@ -12,9 +12,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.schema.*;
 
 import java.io.*;
+import java.util.ArrayList;
+
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
@@ -34,21 +37,18 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String KEY_SCHEMA = "BaseExtensionPoint.schema"; //$NON-NLS-1$
 	public static final String KEY_EDIT = "BaseExtensionPoint.edit"; //$NON-NLS-1$
 	public static final String KEY_MISSING_ID = "BaseExtensionPoint.missingId"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_OVERVIEW =
-		"BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_SINCE =
-		"BaseExtensionPoint.sections.since"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_USAGE =
-		"BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_OVERVIEW = "BaseExtensionPoint.sections.overview"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_SINCE = "BaseExtensionPoint.sections.since"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_USAGE = "BaseExtensionPoint.sections.usage"; //$NON-NLS-1$
 	public static final String KEY_GENERATING = "BaseExtensionPoint.generating"; //$NON-NLS-1$
 	public static final String KEY_SECTIONS_API = "BaseExtensionPoint.sections.api"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_SUPPLIED =
-		"BaseExtensionPoint.sections.supplied"; //$NON-NLS-1$
-	public static final String KEY_SECTIONS_COPYRIGHT =
-		"BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_SUPPLIED = "BaseExtensionPoint.sections.supplied"; //$NON-NLS-1$
+	public static final String KEY_SECTIONS_COPYRIGHT = "BaseExtensionPoint.sections.copyright"; //$NON-NLS-1$
+	public static final String SETTINGS_PLUGIN_ID =
+		"BaseExtensionPoint.settings.pluginId";
 	private IContainer container;
 	protected Text idText;
-	protected Text pluginIdText;
+	protected Combo pluginIdText;
 	protected Text nameText;
 	protected Text schemaText;
 	protected Button openSchemaButton;
@@ -67,9 +67,10 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (isPluginIdNeeded()) {
 			Label label = new Label(container, SWT.NONE);
 			label.setText(PDEPlugin.getResourceString(KEY_PLUGIN_ID));
-			pluginIdText = new Text(container, SWT.SINGLE | SWT.BORDER);
+			pluginIdText = new Combo(container, SWT.SINGLE | SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			pluginIdText.setLayoutData(gd);
+			loadSettings();
 			pluginIdText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					validatePage();
@@ -113,18 +114,23 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			idText.setFocus();
 		setControl(container);
-		WorkbenchHelp.setHelp(container,IHelpContextIds.NEW_SCHEMA);
+		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
-	private InputStream createSchemaStream(String pluginId, String pointId, String name) {
-		if (name.length()==0) name = pointId;
+	private InputStream createSchemaStream(
+		String pluginId,
+		String pointId,
+		String name) {
+		if (name.length() == 0)
+			name = pointId;
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name);
-		schema.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_OVERVIEW));
+		schema.setDescription(
+			PDEPlugin.getResourceString(KEY_SECTIONS_OVERVIEW));
 		DocumentSection section;
-		
+
 		section = new DocumentSection(schema, IDocumentSection.SINCE, "Since:");
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SINCE));
 		schema.addDocumentSection(section);
-		
+
 		SchemaElement element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
 		SchemaComplexType complexType = new SchemaComplexType(schema);
 		element.setType(complexType);
@@ -150,20 +156,17 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		section = new DocumentSection(schema, IDocumentSection.EXAMPLES, "Examples"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_USAGE));
 		schema.addDocumentSection(section);
-		section =
-			new DocumentSection(schema, IDocumentSection.API_INFO, "API Information"); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.API_INFO, "API Information"); //$NON-NLS-1$
 		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_API));
 		schema.addDocumentSection(section);
 
-		section =
-			new DocumentSection(
-				schema,
-				IDocumentSection.IMPLEMENTATION,
-				"Supplied Implementation"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_SUPPLIED));
+		section = new DocumentSection(schema, IDocumentSection.IMPLEMENTATION, "Supplied Implementation"); //$NON-NLS-1$
+		section.setDescription(
+			PDEPlugin.getResourceString(KEY_SECTIONS_SUPPLIED));
 		schema.addDocumentSection(section);
 		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright"); //$NON-NLS-1$
-		section.setDescription(PDEPlugin.getResourceString(KEY_SECTIONS_COPYRIGHT));
+		section.setDescription(
+			PDEPlugin.getResourceString(KEY_SECTIONS_COPYRIGHT));
 		schema.addDocumentSection(section);
 
 		StringWriter swriter = new StringWriter();
@@ -195,10 +198,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		IPath path = new Path(schema).removeLastSegments(1);
 
 		if (path.isEmpty() == false)
-			JavaCodeGenerator.ensureFoldersExist(
-				container.getProject(),
-				path.toString(),
-				"/"); //$NON-NLS-1$
+			JavaCodeGenerator.ensureFoldersExist(container.getProject(), path.toString(), "/"); //$NON-NLS-1$
 
 		InputStream source = createSchemaStream(pluginId, id, name);
 
@@ -227,7 +227,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
 				try {
-					IFile file = generateSchemaFile(getPluginId(), id, name, schema, monitor);
+					IFile file =
+						generateSchemaFile(
+							getPluginId(),
+							id,
+							name,
+							schema,
+							monitor);
 					if (file != null && openFile)
 						openSchemaFile(file);
 				} catch (CoreException e) {
@@ -245,6 +251,38 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		}
 		return ""; //$NON-NLS-1$
 	}
+
+	protected void loadSettings() {
+		if (pluginIdText != null) {
+			ArrayList items = new ArrayList();
+			IDialogSettings settings = getDialogSettings();
+			for (int i = 0; i < 6; i++) {
+				String curr =
+					settings.get(SETTINGS_PLUGIN_ID + String.valueOf(i));
+				if (curr != null && !items.contains(curr)) {
+					items.add(curr);
+				}
+			}
+			pluginIdText.setItems((String[]) items.toArray(new String[items.size()]));
+		}
+	}
+
+	protected void saveSettings() {
+		if (pluginIdText != null) {
+			IDialogSettings settings = getDialogSettings();
+			settings.put(
+				SETTINGS_PLUGIN_ID + String.valueOf(0),
+				pluginIdText.getText());
+			String[] items = pluginIdText.getItems();
+			int nEntries = Math.min(items.length, 5);
+			for (int i = 0; i < nEntries; i++) {
+				settings.put(
+					SETTINGS_PLUGIN_ID + String.valueOf(i + 1),
+					items[i]);
+			}
+		}
+	}
+
 	public String getSchemaLocation() {
 		return null;
 	}
@@ -259,7 +297,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			public void run() {
 				try {
 					String editorId = PDEPlugin.SCHEMA_EDITOR_ID;
-					ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
+					ww.getActivePage().openEditor(
+						new FileEditorInput(file),
+						editorId);
 				} catch (PartInitException e) {
 					PDEPlugin.logException(e);
 				}
@@ -267,7 +307,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		});
 	}
 	private void validatePage() {
-		if (!validateContainer()) return;
+		if (!validateContainer())
+			return;
 		String id = idText.getText();
 		boolean empty = id.length() == 0;
 		if (!empty && pluginIdText != null) {
@@ -285,7 +326,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		schemaText.setText(schema);
 	}
 	private boolean validateContainer() {
-		boolean exists = container!=null && container.exists();
+		boolean exists = container != null && container.exists();
 		if (!exists) {
 			setErrorMessage(PDEPlugin.getResourceString("BaseExtensionPointMainPage.noContainer")); //$NON-NLS-1$
 			setPageComplete(false);

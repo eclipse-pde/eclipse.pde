@@ -13,24 +13,25 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public static final String KEY_TITLE = "NewSchemaFileWizard.title";
 	public static final String KEY_DESC = "NewSchemaFileWizard.desc";
 
-public NewSchemaFileMainPage(IContainer container) {
-	super(container);
-	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-	setDescription(PDEPlugin.getResourceString(KEY_DESC));
-}
-public boolean finish() {
-	IRunnableWithProgress operation = getOperation();
-	try {
-		getContainer().run(false, true, operation);
-	} catch (InvocationTargetException e) {
-		PDEPlugin.logException(e);
-		return false;
-	} catch (InterruptedException e) {
-		return false;
+	public NewSchemaFileMainPage(IContainer container) {
+		super(container);
+		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
+		setDescription(PDEPlugin.getResourceString(KEY_DESC));
 	}
-	return true;
-}
-protected boolean isPluginIdNeeded() {
-	return true;
-}
+	public boolean finish() {
+		saveSettings();
+		IRunnableWithProgress operation = getOperation();
+		try {
+			getContainer().run(false, true, operation);
+		} catch (InvocationTargetException e) {
+			PDEPlugin.logException(e);
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
+		return true;
+	}
+	protected boolean isPluginIdNeeded() {
+		return true;
+	}
 }

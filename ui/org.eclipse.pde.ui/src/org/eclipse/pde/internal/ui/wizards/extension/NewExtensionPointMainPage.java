@@ -13,55 +13,57 @@ import org.eclipse.core.resources.*;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	private IProject project;
-	public static final String SCHEMA_DIR="schema";
-	public static final String KEY_TITLE ="NewExtensionPointWizard.title";
-	public static final String KEY_DESC ="NewExtensionPointWizard.desc";
+	public static final String SCHEMA_DIR = "schema";
+	public static final String KEY_TITLE = "NewExtensionPointWizard.title";
+	public static final String KEY_DESC = "NewExtensionPointWizard.desc";
 	private IPluginModelBase model;
 
-public NewExtensionPointMainPage(IProject project, IPluginModelBase model) {
-	super(project);
-	setTitle(PDEPlugin.getResourceString(KEY_TITLE));
-	setDescription(PDEPlugin.getResourceString(KEY_DESC));
-	this.project = project;
-	this.model = model;
-}
-public boolean finish() {
-	final String id = idText.getText();
-	final String name = nameText.getText();
-	final String schema = schemaText.getText();
-
-	IPluginBase plugin = model.getPluginBase();
-
-	IPluginExtensionPoint point = model.getFactory().createExtensionPoint();
-	try {
-		point.setId(id);
-		if (name.length() > 0)
-			point.setName(name);
-		if (schema.length() > 0)
-			point.setSchema(schema);
-
-		plugin.add(point);
-	} catch (CoreException e) {
-		PDEPlugin.logException(e);
+	public NewExtensionPointMainPage(
+		IProject project,
+		IPluginModelBase model) {
+		super(project);
+		setTitle(PDEPlugin.getResourceString(KEY_TITLE));
+		setDescription(PDEPlugin.getResourceString(KEY_DESC));
+		this.project = project;
+		this.model = model;
 	}
+	public boolean finish() {
+		final String id = idText.getText();
+		final String name = nameText.getText();
+		final String schema = schemaText.getText();
 
-	if (schema.length() > 0) {
-		IRunnableWithProgress operation = getOperation();
+		IPluginBase plugin = model.getPluginBase();
+
+		IPluginExtensionPoint point = model.getFactory().createExtensionPoint();
 		try {
-			getContainer().run(false, true, operation);
-		} catch (InvocationTargetException e) {
+			point.setId(id);
+			if (name.length() > 0)
+				point.setName(name);
+			if (schema.length() > 0)
+				point.setSchema(schema);
+
+			plugin.add(point);
+		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-			return false;
-		} catch (InterruptedException e) {
-			return false;
 		}
+
+		if (schema.length() > 0) {
+			IRunnableWithProgress operation = getOperation();
+			try {
+				getContainer().run(false, true, operation);
+			} catch (InvocationTargetException e) {
+				PDEPlugin.logException(e);
+				return false;
+			} catch (InterruptedException e) {
+				return false;
+			}
+		}
+		return true;
 	}
-	return true;
-}
-public String getPluginId() {
-	return model.getPluginBase().getId();
-}
-public String getSchemaLocation() {
-	return SCHEMA_DIR;
-}
+	public String getPluginId() {
+		return model.getPluginBase().getId();
+	}
+	public String getSchemaLocation() {
+		return SCHEMA_DIR;
+	}
 }
