@@ -215,9 +215,9 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		fDeselectAllButton.setEnabled(enabled);
 	}
 	private void disposePropertySources() {
-		for (Enumeration enum = fPropertySources.elements(); enum
+		for (Enumeration elements = fPropertySources.elements(); elements
 				.hasMoreElements();) {
-			TracingPropertySource source = (TracingPropertySource) enum
+			TracingPropertySource source = (TracingPropertySource) elements
 					.nextElement();
 			pageBook.removePage(source.getModel());
 		}
@@ -287,9 +287,9 @@ public class TracingLauncherTab extends AbstractLauncherTab
 			String id = (model == null) ? null : model.getPluginBase().getId();
 			config.setAttribute(TRACING_SELECTED_PLUGIN, id);
 			boolean changes = false;
-			for (Enumeration enum = fPropertySources.elements(); enum
+			for (Enumeration elements = fPropertySources.elements(); elements
 					.hasMoreElements();) {
-				TracingPropertySource source = (TracingPropertySource) enum
+				TracingPropertySource source = (TracingPropertySource) elements
 						.nextElement();
 				if (source.isModified()) {
 					changes = true;
