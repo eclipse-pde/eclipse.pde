@@ -13,10 +13,12 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class UpdateBuildpathWizardPage extends StatusWizardPage {
 	private IPluginModelBase[] selected;
@@ -50,6 +52,15 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
+		}
+		protected StructuredViewer createStructuredViewer(
+			Composite parent,
+			int style,
+			FormWidgetFactory factory) {
+			StructuredViewer viewer =
+				super.createStructuredViewer(parent, style, factory);
+			viewer.setSorter(ListUtil.PLUGIN_SORTER);
+			return viewer;
 		}
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -273,7 +274,7 @@ public class AdvancedLauncherTab
 
 			}
 		});
-		pluginTreeViewer.setSorter(new ViewerSorter() {
+		pluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
 			public int category(Object obj) {
 				if (obj == workspacePlugins)
 					return -1;

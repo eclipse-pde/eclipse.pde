@@ -16,6 +16,7 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
@@ -127,6 +128,15 @@ protected Control createPluginList(Composite parent) {
 	pluginTreeViewer = new CheckboxTreeViewer(parent, SWT.BORDER);
 	pluginTreeViewer.setContentProvider(new PluginContentProvider());
 	pluginTreeViewer.setLabelProvider(new PluginLabelProvider());
+	pluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
+		public int category(Object obj) {
+			if (obj == workspacePlugins)
+				return -1;
+			if (obj == externalPlugins)
+				return 1;
+			return 0;
+		}
+	});
 	pluginTreeViewer.setAutoExpandLevel(2);
 	pluginTreeViewer.addFilter(new ViewerFilter () {
 		public boolean select(Viewer v, Object parent, Object object) {

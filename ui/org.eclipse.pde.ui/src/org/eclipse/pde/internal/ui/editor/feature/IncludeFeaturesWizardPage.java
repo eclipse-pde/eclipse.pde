@@ -17,10 +17,12 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class IncludeFeaturesWizardPage extends WizardPage {
 	public static final String KEY_TITLE = "FeatureEditor.IncludedFeaturesSection.new.title";
@@ -49,6 +51,15 @@ public class IncludeFeaturesWizardPage extends WizardPage {
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			setPageComplete(count>0);
+		}
+		protected StructuredViewer createStructuredViewer(
+			Composite parent,
+			int style,
+			FormWidgetFactory factory) {
+			StructuredViewer viewer =
+				super.createStructuredViewer(parent, style, factory);
+			viewer.setSorter(ListUtil.FEATURE_SORTER);
+			return viewer;
 		}
 	}
 

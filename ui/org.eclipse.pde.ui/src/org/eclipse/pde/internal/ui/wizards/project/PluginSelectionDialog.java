@@ -14,6 +14,7 @@ import org.eclipse.swt.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.core.*;
@@ -116,6 +117,15 @@ public class PluginSelectionDialog extends SelectionDialog {
 					pluginSelected((IPluginModel) item);
 				else
 					pluginSelected(null);
+			}
+		});
+		treeViewer.setSorter(new ListUtil.PluginSorter() {
+			public int category(Object obj) {
+				if (obj == workspacePlugins)
+					return -1;
+				if (obj == externalPlugins)
+					return 1;
+				return 0;
 			}
 		});
 		Image pluginsImage =

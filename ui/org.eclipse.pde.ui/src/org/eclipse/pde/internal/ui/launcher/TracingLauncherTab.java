@@ -16,6 +16,7 @@ import org.eclipse.swt.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.*;
 import java.util.*;
 import org.eclipse.ui.views.properties.*;
@@ -219,6 +220,15 @@ public class TracingLauncherTab
 					return ((IPluginModel) object).isEnabled();
 				}
 				return true;
+			}
+		});
+		pluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
+			public int category(Object obj) {
+				if (obj == workspacePlugins)
+					return -1;
+				if (obj == externalPlugins)
+					return 1;
+				return 0;
 			}
 		});
 		pluginTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {

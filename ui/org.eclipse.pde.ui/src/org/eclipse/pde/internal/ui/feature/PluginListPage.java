@@ -11,6 +11,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
@@ -53,6 +54,7 @@ public class PluginListPage extends WizardPage {
 		CheckboxTableViewer pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		pluginViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
 		pluginViewer.setInput(PDECore.getDefault().getWorkspaceModelManager());

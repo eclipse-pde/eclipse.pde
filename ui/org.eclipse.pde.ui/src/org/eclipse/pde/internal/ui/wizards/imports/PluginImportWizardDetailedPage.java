@@ -18,10 +18,12 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class PluginImportWizardDetailedPage extends StatusWizardPage {
 	private static final String KEY_TITLE = "ImportWizard.DetailedPage.title";
@@ -83,6 +85,16 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			else
 				PluginImportWizardDetailedPage.this.buttonSelected(index);
 		}
+		protected StructuredViewer createStructuredViewer(
+			Composite parent,
+			int style,
+			FormWidgetFactory factory) {
+			StructuredViewer viewer =
+				super.createStructuredViewer(parent, style, factory);
+			viewer.setSorter(ListUtil.PLUGIN_SORTER);
+			return viewer;
+		}
+
 	}
 
 	public PluginImportWizardDetailedPage(PluginImportWizardFirstPage firstPage) {
@@ -306,8 +318,9 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				PDEPlugin.getResourceString(KEY_NO_PLUGINS));
 		}
 		if (tablePart.getSelectionCount() == 0) {
+			setPageComplete(false);
 			return createStatus(
-				IStatus.ERROR,
+				IStatus.INFO,
 				PDEPlugin.getResourceString(KEY_NO_SELECTED));
 		}
 		return createStatus(IStatus.OK, "");

@@ -8,6 +8,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
@@ -78,6 +79,15 @@ public class ExternalPluginsBlock {
 				selectNotInWorkspace();
 			else
 				super.buttonSelected(button, index);
+		}
+		protected StructuredViewer createStructuredViewer(
+			Composite parent,
+			int style,
+			FormWidgetFactory factory) {
+			StructuredViewer viewer =
+				super.createStructuredViewer(parent, style, factory);
+			viewer.setSorter(ListUtil.PLUGIN_SORTER);
+			return viewer;
 		}
 	}
 
