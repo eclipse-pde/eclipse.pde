@@ -45,7 +45,8 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	public void processHeader(String name, String value) {
-		headers.put(name, value);
+		if (value!=null)
+			headers.put(name, value);
 	}
 
 	public void reset() {

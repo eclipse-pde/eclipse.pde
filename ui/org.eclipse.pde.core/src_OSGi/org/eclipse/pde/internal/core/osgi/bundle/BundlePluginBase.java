@@ -182,33 +182,37 @@ public class BundlePluginBase
 	public IPluginImport[] getImports() {
 		if (imports == null) {
 			imports = new ArrayList();
-			addImportsFromRequiredBundles(imports);
+			Set uniqueIds = new HashSet();
+			addImportsFromRequiredBundles(imports, uniqueIds);
 			if (imports.size() == 0)
-				addImportsFromImportedPackages(imports);
+				addImportsFromImportedPackages(imports, uniqueIds);
 		}
 		return (IPluginImport[]) imports.toArray(
 			new IPluginImport[imports.size()]);
 	}
 
-	private void addImportsFromRequiredBundles(ArrayList imports) {
+	private void addImportsFromRequiredBundles(ArrayList imports, Set uniqueIds) {
 		StringTokenizer stok =
 			new StringTokenizer(getSafeHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().trim();
 			try {
-				IPluginImport iimport = model.createImport();
-				iimport.setId(token);
-				imports.add(iimport);
+				if (!uniqueIds.contains(token)) {
+					IPluginImport iimport = model.createImport();
+					iimport.setId(token);
+					uniqueIds.add(token);
+					imports.add(iimport);
+				}
 			} catch (CoreException e) {
 				PDECore.logException(e);
 			}
 		}
 	}
 
-	private void addImportsFromImportedPackages(ArrayList imports) {
+	private void addImportsFromImportedPackages(ArrayList imports, Set uniqueIds) {
 		StringTokenizer stok =
 			new StringTokenizer(getSafeHeader(IBundle.KEY_IMPORT_PACKAGE), ",");
-		HashSet uniqueIds = new HashSet();
+
 		while (stok.hasMoreTokens()) {
 			String packageName = stok.nextToken().trim();
 			try {
@@ -266,7 +270,7 @@ public class BundlePluginBase
 		IJavaSearchResultCollector collector =
 			new IJavaSearchResultCollector() {
 			public void aboutToStart() {
-				System.out.println("Looking for package: " + packageName);
+				//System.out.println("Looking for package: " + packageName);
 			}
 
 			public void accept(
