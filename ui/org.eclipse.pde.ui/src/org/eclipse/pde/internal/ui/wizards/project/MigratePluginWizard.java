@@ -98,7 +98,7 @@ public class MigratePluginWizard extends Wizard {
 		FindReplaceDocumentAdapter findAdapter = new FindReplaceDocumentAdapter(document);
 		addEclipseProcessingInstruction(document, findAdapter);
 		updateExtensions(document, findAdapter);
-		addNewImports(document, findAdapter, getAdditionalUIImports(model));
+		addNewImports(document, findAdapter, getAdditionalImports(model));
 		writeFile(document, file);
 	}
 	
@@ -107,11 +107,7 @@ public class MigratePluginWizard extends Wizard {
 		new BufferedReader(new FileReader(file.getLocation().toOSString()));
 		StringBuffer buffer = new StringBuffer();
 		while (reader.ready()) {
-			String line = reader.readLine();
-			if (line != null) {
-				buffer.append(line);
-				buffer.append(System.getProperty("line.separator"));
-			}
+			buffer.append((char)reader.read());
 		}
 		reader.close();
 		return new Document(buffer.toString());		
@@ -216,8 +212,9 @@ public class MigratePluginWizard extends Wizard {
 		return (offset != -1 && length != -1) ? new Region(offset, length) : null;
 	}
 	
-	private String[] getAdditionalUIImports(IPluginModelBase model) {
+	private String[] getAdditionalImports(IPluginModelBase model) {
 		ArrayList result = new ArrayList();
+		result.add("org.eclipse.core.runtime.compatibility");
 		IPluginImport uiImport = findImport(model, "org.eclipse.ui");
 		if (uiImport != null) {
 			ArrayList list = new ArrayList();
