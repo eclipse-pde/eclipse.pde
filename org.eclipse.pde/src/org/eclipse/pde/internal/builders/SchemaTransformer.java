@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.apache.tools.ant.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
