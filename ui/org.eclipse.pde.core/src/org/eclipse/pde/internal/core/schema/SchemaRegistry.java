@@ -25,9 +25,30 @@ public class SchemaRegistry
 
 	public SchemaRegistry() {
 	}
+	
 	private void addExtensionPoint(IFile file) {
-		FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
-		workspaceDescriptors.put(sd.getPointId(), sd);
+		IProject project = file.getProject();
+		IModel model = PDECore.getDefault().getWorkspaceModelManager().getWorkspaceModel(project);
+		if (model==null) return;
+		if (!(model instanceof IPluginModelBase)) return;
+		IPluginModelBase modelBase = (IPluginModelBase)model;
+		IPluginExtensionPoint [] points = modelBase.getPluginBase().getExtensionPoints();
+		if (points.length==0) return;
+
+		for (int i=0; i<points.length; i++) {
+			IPluginExtensionPoint point = points[i];
+			IPath path = project.getFullPath();
+			path = path.append(point.getSchema());
+			IFile schemaFile = file.getWorkspace().getRoot().getFile(path);
+			if (file.equals(schemaFile)) {
+				// The extension point is referencing this
+				// file and it is now added - OK to
+				// add the descriptor
+				FileSchemaDescriptor sd = new FileSchemaDescriptor(file);
+				workspaceDescriptors.put(point.getFullId(), sd);
+				return;
+			}
+		}
 	}
 
 	private AbstractSchemaDescriptor getSchemaDescriptor(String extensionPointId) {
@@ -300,6 +321,7 @@ public class SchemaRegistry
 			}
 		}
 	}
+	
 	private void removeWorkspaceDescriptors(IPluginModelBase model) {
 		IPluginBase pluginInfo = model.getPluginBase();
 		IProject project = model.getUnderlyingResource().getProject();
