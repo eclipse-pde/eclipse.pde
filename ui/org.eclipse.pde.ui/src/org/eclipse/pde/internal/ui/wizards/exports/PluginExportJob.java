@@ -66,7 +66,7 @@ public class PluginExportJob extends FeatureExportJob {
 				IPluginBase plugin = ((IPluginModelBase) fItems[i])
 						.getPluginBase();
 				writer.println("<plugin id=\"" + plugin.getId()
-						+ "\" version=\"" + plugin.getVersion() + "\"/>");
+						+ "\" version=\"0.0.0\"/>");
 			}
 		}
 		writer.println("</feature>");
