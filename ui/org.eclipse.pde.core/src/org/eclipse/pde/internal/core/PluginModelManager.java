@@ -248,7 +248,7 @@ public class PluginModelManager implements IAdaptable {
 			oldEntry.setWorkspaceModel(null);
 			if (oldEntry.isEmpty()) {
 				// remove the old entry completely
-				fEntries.remove(oldEntry.getId());
+				getEntryTable().remove(oldEntry.getId());
 				delta.addEntry(oldEntry, PluginModelDelta.REMOVED);
 			}
 			else {
@@ -265,7 +265,7 @@ public class PluginModelManager implements IAdaptable {
 		else {
 			// create the new entry
 			newEntry = new ModelEntry(this, newId);
-			fEntries.put(newId, newEntry);
+			getEntryTable().put(newId, newEntry);
 			delta.addEntry(newEntry, PluginModelDelta.ADDED);
 		}
 		// make sure bundle description of this model is up to date
