@@ -5,11 +5,14 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.neweditor.context;
+import java.io.*;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -115,7 +118,9 @@ public abstract class InputContext {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		public void execute(final IProgressMonitor monitor)
 				throws CoreException {
-				documentProvider.saveDocument(
+			IDocument doc = documentProvider.getDocument(input);
+			flushModel(doc, monitor);
+			documentProvider.saveDocument(
 					monitor,
 					input,
 					documentProvider.getDocument(input),
@@ -130,6 +135,28 @@ public abstract class InputContext {
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			PDEPlugin.logException(x);
+		}
+	}
+	private void flushModel(IDocument doc, IProgressMonitor monitor) {
+		// Flush data from the model into the document.
+		// The current implementation makes a wholesale overwrite
+		// of the document (users hate that :-).
+		// Using the new model, we should surgically modify the
+		// document while preserving the rest.
+		if (!(model instanceof IEditable)) return;
+		IEditable editable = (IEditable)model;
+		if (editable.isDirty()==false) return;
+		try {
+			// need to update the document
+			// NOTE: This is the part that we need to change
+			StringWriter swriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(swriter);
+			editable.save(writer);
+			writer.flush();
+			swriter.close();
+			doc.set(swriter.toString());
+		} catch (IOException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 	public boolean mustSave() {
@@ -162,5 +189,23 @@ public abstract class InputContext {
 	 */
 	public void setPrimary(boolean primary) {
 		this.primary = primary;
+	}
+	
+	public void setSourceEditingMode(boolean sourceMode) {
+		if (sourceMode) {
+			// entered source editing mode; in this mode,
+			// this context's document will be edited directly
+			// in the source editor. All changes in the model
+			// are caused by reconciliation and should not be 
+			// fired to the world.
+			IDocument doc = documentProvider.getDocument(input);
+			flushModel(doc, new NullProgressMonitor());
+		}
+		else {
+			// leaving source editing mode; if the document
+			// has been modified while in this mode,
+			// fire the 'world changed' event from the model
+			// to cause all the model listeners to become stale.
+		}
 	}
 }

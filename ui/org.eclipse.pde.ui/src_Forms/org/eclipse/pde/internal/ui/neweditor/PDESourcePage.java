@@ -86,6 +86,14 @@ public class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker 
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
+		if (active) {
+			// page becomes visible; notify the context
+			inputContext.setSourceEditingMode(true);
+		}
+		else {
+			// page becomes invisible; notify the context
+			inputContext.setSourceEditingMode(false);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()

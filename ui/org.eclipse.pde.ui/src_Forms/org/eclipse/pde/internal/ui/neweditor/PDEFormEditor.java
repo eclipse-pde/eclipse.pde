@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.neweditor.context.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -173,7 +174,13 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 	
 	private void commitFormPages(boolean onSave) {
-
+		IFormPage [] pages = getPages();
+		for (int i=0; i<pages.length; i++) {
+			IFormPage page = pages[i];
+			IManagedForm mform = page.getManagedForm();
+			if (mform!=null && mform.isDirty())
+				mform.commit(true);
+		}
 	}
 	/*
 	 * (non-Javadoc)
