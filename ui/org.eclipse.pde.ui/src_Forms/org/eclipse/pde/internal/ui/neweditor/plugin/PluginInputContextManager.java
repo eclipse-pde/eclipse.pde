@@ -10,6 +10,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.osgi.bundle.IBundleModel;
 import org.eclipse.pde.core.plugin.IExtensionsModel;
 import org.eclipse.pde.internal.core.osgi.bundle.*;
+import org.eclipse.pde.internal.ui.neweditor.build.*;
 import org.eclipse.pde.internal.ui.neweditor.context.*;
 
 /**

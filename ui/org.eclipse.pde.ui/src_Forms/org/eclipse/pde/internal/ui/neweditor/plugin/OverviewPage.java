@@ -8,6 +8,8 @@ package org.eclipse.pde.internal.ui.neweditor.plugin;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
+import org.eclipse.pde.internal.ui.neweditor.build.*;
+import org.eclipse.pde.internal.ui.neweditor.runtime.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;

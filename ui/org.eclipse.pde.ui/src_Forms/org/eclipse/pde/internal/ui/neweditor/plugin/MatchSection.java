@@ -10,40 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.neweditor.plugin;
 import java.util.Iterator;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.neweditor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.neweditor.PDEFormPage;
-import org.eclipse.pde.internal.ui.neweditor.PDESection;
-import org.eclipse.pde.internal.ui.newparts.ComboPart;
-import org.eclipse.pde.internal.ui.newparts.FormEntry;
+import org.eclipse.pde.internal.ui.neweditor.*;
+import org.eclipse.pde.internal.ui.newparts.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.IPartSelectionListener;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
  * 
@@ -175,6 +158,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			}
 		});
 		toolkit.paintBordersFor(container);
+		initialize();
 		update((IPluginReference) null);
 		section.setClient(container);
 	}
@@ -277,7 +261,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			((IModelChangeProvider) model).removeModelChangedListener(this);
 		super.dispose();
 	}
-	public void initialize() {
+	private void initialize() {
 		IModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).addModelChangedListener(this);
