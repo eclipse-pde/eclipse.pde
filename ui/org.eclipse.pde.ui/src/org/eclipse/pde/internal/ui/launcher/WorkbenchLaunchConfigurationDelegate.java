@@ -511,32 +511,30 @@ public class WorkbenchLaunchConfigurationDelegate
 			exmodel.getPluginBase().getId());
 	}
 
-
-
-
 	public static String getBuildOutputFolders(IPluginModelBase[] wsmodels) {
-		HashSet set = new HashSet();
-		set.add(new Path("bin"));
+		ArrayList result = new ArrayList();
+		result.add(new Path("bin"));
 		for (int i = 0; i < wsmodels.length; i++) {
-			IPluginModelBase model = wsmodels[i];
-			IProject project = model.getUnderlyingResource().getProject();
+			IProject project = wsmodels[i].getUnderlyingResource().getProject();
 			try {
 				if (project.hasNature(JavaCore.NATURE_ID)) {
-					set.add(
-						JavaCore.create(project).getOutputLocation().removeFirstSegments(
-							1));
+					IPath path = JavaCore.create(project).getOutputLocation();
+					if (path.segmentCount() > 1) {
+						path = path.removeFirstSegments(1);
+						if (!result.contains(path))
+							result.add(path);
+					}
 				}
-			} catch (JavaModelException e) {
-			} catch (CoreException e) {
+			} catch (Exception e) {
 			}
 		}
-		StringBuffer result = new StringBuffer();
-		for (Iterator iter = set.iterator(); iter.hasNext();) {
-			result.append(iter.next().toString());
-			if (iter.hasNext())
-				result.append(",");
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < result.size(); i++) {
+			buffer.append(result.get(i).toString());
+			if (i < result.size() -1)
+				buffer.append(",");
 		}
-		return result.toString();
+		return buffer.toString();
 	}
 
 	private static String computeShowsplashArgument(IProgressMonitor monitor) {
