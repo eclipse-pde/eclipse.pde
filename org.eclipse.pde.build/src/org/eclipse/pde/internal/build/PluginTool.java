@@ -4,6 +4,8 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.update.*;

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.pde.core"
    name="%pluginName"
    version="0.9.0"
    provider-name="Object Technology International, Inc.">
-
-<!-- Required plugins -->
 
 <requires>
    <import plugin="org.eclipse.ant.core"/>
@@ -14,18 +11,12 @@
    <import plugin="org.apache.xerces"/>
 </requires>
 
-<!-- Runtime -->
-
 <runtime>
    <library name="pdecore.jar">
       <export name="*"/>
    </library>
 </runtime>
 
-<!-- Extension points -->
-
-
-<!-- Extensions -->
 <extension point="org.eclipse.ant.core.antObjects">
    <antObject
          name="org.eclipse.pde.internal.core.JDTCompilerAdapter"
@@ -38,6 +29,13 @@
          class="org.eclipse.pde.internal.core.InitTemplate">
    </antTask>
 </extension>
+<extension point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="buildscript"
+         class="org.eclipse.pde.internal.core.ScriptBuilder">
+   </antTask>
+</extension>
+
 <extension point="org.eclipse.ant.core.antTypes">
    <antType
          name="stripMapper"
@@ -50,22 +48,24 @@
       <run class="org.eclipse.pde.internal.core.PluginBuildScriptGenerator"/>
    </application>
 </extension>
-
 <extension id="fragment" point="org.eclipse.core.runtime.applications">
    <application>
-      <run class="org.eclipse.pde.internal.core.FragmentuildScriptGenerator"/>
+      <run class="org.eclipse.pde.internal.core.FragmentBuildScriptGenerator"/>
    </application>
 </extension>
-
 <extension id="component" point="org.eclipse.core.runtime.applications">
    <application>
       <run class="org.eclipse.pde.internal.core.ComponentBuildScriptGenerator"/>
    </application>
 </extension>
-
 <extension id="configuration" point="org.eclipse.core.runtime.applications">
    <application>
       <run class="org.eclipse.pde.internal.core.ConfigurationBuildScriptGenerator"/>
+   </application>
+</extension>
+<extension id="fetch" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.Fetch"/>
    </application>
 </extension>
 
