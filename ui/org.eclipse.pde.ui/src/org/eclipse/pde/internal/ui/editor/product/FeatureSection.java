@@ -61,6 +61,10 @@ public class FeatureSection extends TableSection {
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 		
+		tablePart.setButtonEnabled(0, isEditable());
+		tablePart.setButtonEnabled(1, isEditable());
+		tablePart.setButtonEnabled(4, isEditable());
+		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		
