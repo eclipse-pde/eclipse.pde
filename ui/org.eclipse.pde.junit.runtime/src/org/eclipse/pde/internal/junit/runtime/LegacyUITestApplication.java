@@ -16,10 +16,6 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 
-/**
- * @author melhem
- *
- */
 public class LegacyUITestApplication implements IPlatformRunnable {
 
 	private static final String DEFAULT_APP_PRE_3_0 = "org.eclipse.ui.workbench"; //$NON-NLS-1$

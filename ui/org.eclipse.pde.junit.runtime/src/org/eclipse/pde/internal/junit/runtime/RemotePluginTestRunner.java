@@ -46,10 +46,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 				.getPluginRegistry()
 				.getPluginDescriptor(fTestPluginName)
 				.getPluginClassLoader();
-		throw new IllegalArgumentException(
-			PdeJUnitPlugin.getResourceString("RemotePluginTestRunner.noClassloader") //$NON-NLS-1$
-				+ " " //$NON-NLS-1$
-				+ fTestPluginName);
+		throw new IllegalArgumentException("No Classloader found for plug-in " + fTestPluginName); //$NON-NLS-1$
 	}
 
 	protected void init(String[] args) {
@@ -65,9 +62,6 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 				return;
 			}
 		}
-		throw new IllegalArgumentException(
-			PdeJUnitPlugin.getFormattedMessage(
-				"RemotePluginTestRunner.noParam", //$NON-NLS-1$
-				"-testpluginname")); //$NON-NLS-1$
+		throw new IllegalArgumentException("Parameter -testpluginnname not specified."); //$NON-NLS-1$
 	}
 }	

@@ -30,6 +30,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected static final String KEY_NO_STARTUP = "WorkbenchLauncherConfigurationDelegate.noStartup"; //$NON-NLS-1$
 		
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
+	public static final String LEGACY_CORE_APPLICATION = "org.eclipse.pde.junit.runtime.legacyCoretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication"; //$NON-NLS-1$
 	
@@ -355,8 +356,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	protected String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
 		try {
 			String application = configuration.getAttribute(APPLICATION, (String)null);
-			if (CORE_APPLICATION.equals(application) || !requiresUI(configuration))
-				return CORE_APPLICATION;
+			if (CORE_APPLICATION.equals(application) || !requiresUI(configuration)) {
+				if (PDECore.getDefault().getModelManager().isOSGiRuntime())
+					return CORE_APPLICATION;
+				return LEGACY_CORE_APPLICATION;
+			}			
 		} catch (CoreException e) {
 		}
 				

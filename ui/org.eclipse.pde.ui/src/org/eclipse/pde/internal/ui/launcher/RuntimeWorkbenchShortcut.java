@@ -268,13 +268,13 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			for (int i = 0; i < extensions.length; i++) {
 				IPluginExtension ext = extensions[i];
 				String point = ext.getPoint();
-				if ("org.eclipse.core.runtime.products".equals(point)) {
+				if ("org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
 					if (ext.getChildCount() == 1) {
 						IPluginElement prod = (IPluginElement)ext.getChildren()[0];
-						if (prod.getName().equals("product")) {
-							IPluginAttribute attr = prod.getAttribute("application");
+						if (prod.getName().equals("product")) { //$NON-NLS-1$
+							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
 							if (attr != null && appName.equals(attr.getValue())) {
-								return fModel.getPluginBase().getId() + "." + ext.getId();
+								return fModel.getPluginBase().getId() + "." + ext.getId(); //$NON-NLS-1$
 							}
 						}
 					}
