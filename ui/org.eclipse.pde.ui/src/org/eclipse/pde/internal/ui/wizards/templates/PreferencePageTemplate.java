@@ -13,11 +13,18 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.*;
 
 public class PreferencePageTemplate extends PDETemplateSection {
+	private static final String KEY_PAGE_NAME = "pageName"; //$NON-NLS-1$
+	private static final String KEY_PAGE_CLASS_NAME = "pageClassName"; //$NON-NLS-1$
+	private static final String KEY_PLUGIN_CLASS_NAME = "pluginClassName"; //$NON-NLS-1$
+	private static final String KEY_FULL_PLUGIN_CLASS_NAME = "fullPluginClassName"; //$NON-NLS-1$
+
 	private static final String NL_TITLE = "PreferencePageTemplate.title"; //$NON-NLS-1$
 	private static final String NL_DESC = "PreferencePageTemplate.desc"; //$NON-NLS-1$
 	private static final String NL_PACKAGE_NAME =
@@ -51,12 +58,12 @@ public class PreferencePageTemplate extends PDETemplateSection {
 			(String) null,
 			0);
 		addOption(
-			"pageClassName", //$NON-NLS-1$
+			KEY_PAGE_CLASS_NAME,
 			PDEPlugin.getResourceString(NL_CLASS_NAME),
 			"SamplePreferencePage", //$NON-NLS-1$
 			0);
 		addOption(
-			"pageName", //$NON-NLS-1$
+			KEY_PAGE_NAME,
 			PDEPlugin.getResourceString(NL_PAGE_NAME),
 			PDEPlugin.getResourceString(NL_DEFAULT_PAGE_NAME),
 			0);
@@ -77,14 +84,30 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		if (model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
 			mainClassName = plugin.getClassName();
+		} else if (model instanceof IFragmentModel) {
+			IFragment fragment = (IFragment) model.getPluginBase();
+			String pluginPluginId = fragment.getPluginId();
+			ModelEntry entry = PDECore.getDefault().getModelManager()
+					.findEntry(pluginPluginId);
+			if (entry != null) {
+				IPluginModelBase pluginModelBase = entry.getActiveModel();
+				if (pluginModelBase instanceof IPluginModel) {
+					IPlugin plugin = (IPlugin) pluginModelBase.getPluginBase();
+					mainClassName = plugin.getClassName();
+				}
+			}
+		}
+		if (mainClassName == null) {
+			mainClassName = pluginId + ".PreferenceClass"; //$NON-NLS-1$
 		}
 	}
 
 	public String getReplacementString(String fileName, String key) {
-		if (key.equals("fullPluginClassName")) //$NON-NLS-1$
+		if (key.equals(KEY_FULL_PLUGIN_CLASS_NAME))
 			return mainClassName;
-		if (key.equals("pluginClassName")) //$NON-NLS-1$
+		if (key.equals(KEY_PLUGIN_CLASS_NAME))
 			return getPluginClassName();
+		
 		return super.getReplacementString(fileName, key);
 	}
 
@@ -99,15 +122,19 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
-
-	public void addDefaultOption(boolean val){
-		addOption(
-			"hasDefault", //$NON-NLS-1$
-			null,
-			val,
-			0);
-	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
+	 */
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		if (schemaVersion == null)
+			return super.getDependencies(schemaVersion);
+		PluginReference[] deps = new PluginReference[2];
+		deps[0] = new PluginReference("org.eclipse.core.runtime", null, 0);
+		deps[1] = new PluginReference("org.eclipse.ui", null, 0);		
+		return deps;
+	}
+
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
 		page.setTitle(PDEPlugin.getResourceString(NL_TITLE));
@@ -133,17 +160,27 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		IPluginModelFactory factory = model.getPluginFactory();
 
 		String fullClassName =
-			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption("pageClassName"); //$NON-NLS-1$ //$NON-NLS-2$
+			getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(KEY_PAGE_CLASS_NAME); //$NON-NLS-1$
 
 		IPluginElement pageElement = factory.createElement(extension);
 		pageElement.setName("page"); //$NON-NLS-1$
 		pageElement.setAttribute("id", fullClassName); //$NON-NLS-1$
-		pageElement.setAttribute("name", getStringOption("pageName")); //$NON-NLS-1$ //$NON-NLS-2$
+		pageElement.setAttribute("name", getStringOption(KEY_PAGE_NAME)); //$NON-NLS-1$
 		pageElement.setAttribute("class", fullClassName); //$NON-NLS-1$
 		extension.add(pageElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
-	}
+
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			IPluginExtension extension2 = createExtension("org.eclipse.core.runtime.preferences", true); //$NON-NLS-1$
+			IPluginElement prefElement = factory.createElement(extension);
+			prefElement.setName("initializer"); //$NON-NLS-1$
+			prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME)+".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
+			extension2.add(prefElement);
+			if (!extension2.isInTheModel())
+				plugin.add(extension2);
+		}
+}
 	
 	/* (non-Javadoc)
      * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
