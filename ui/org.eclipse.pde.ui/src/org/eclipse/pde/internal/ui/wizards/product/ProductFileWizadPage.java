@@ -109,6 +109,9 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 			setErrorMessage(PDEPlugin.getResourceString("ProductFileWizadPage.error")); //$NON-NLS-1$
 			return false;
 		}
+		if (getFileName().trim().length() <= 8) {
+			return false;
+		}
 		return super.validatePage();
 	}
 	
@@ -168,6 +171,11 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		if (fProductButton.getSelection())
 			return USE_PRODUCT;
 		return USE_LAUNCH_CONFIG;
+	}
+	
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		setFileName(".product"); //$NON-NLS-1$
 	}
 	
 }
