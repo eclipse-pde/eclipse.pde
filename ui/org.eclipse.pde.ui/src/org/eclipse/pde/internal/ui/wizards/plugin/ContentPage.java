@@ -232,21 +232,22 @@ public abstract class ContentPage extends WizardPage {
 		}
 		
 		if (visible){
+			String id = computeId();
 			// properties group
 			if ((fChangedGroups & PROPERTIES_GROUP) == 0) {
 				int oldfChanged = fChangedGroups;
-				String id = computeId();
+				
 				fIdText.setText(id);
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
 				presetNameField(id);
 				presetProviderField(id);
-				presetLibraryField();
+				presetLibraryField(id);
 				fChangedGroups = oldfChanged;
 			}
 			// plugin class group
 			if (!fIsFragment && ((fChangedGroups & P_CLASS_GROUP) == 0)){
 				int oldfChanged = fChangedGroups;
-				presetClassField();
+				presetClassField(id);
 				fChangedGroups = oldfChanged;
 			}
 			if (isInitialized)
@@ -260,19 +261,16 @@ public abstract class ContentPage extends WizardPage {
 	private String computeId() {
 		String fullName = fProjectProvider.getProjectName();
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < fullName.length(); i++) {
-			char ch = fullName.charAt(i);
-			if (Character.isLetterOrDigit(ch) || ch == '.' || ch == '_')
-				buffer.append(ch);
-			else
-				buffer.append('_');
-		}
+		
+		String[] name = fullName.split("[^a-zA-Z0-9\\._]");
+		for (int i = 0; i<name.length; i++)
+			if (name[i].length() != 0)
+				buffer.append(name[i]);
 		return buffer.toString();
 	}
 
-	private void presetLibraryField(){
-		String fullName = fProjectProvider.getProjectName().trim();
-		StringTokenizer tok = new StringTokenizer(fullName, "."); //$NON-NLS-1$
+	private void presetLibraryField(String id){
+		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
 			if (!tok.hasMoreTokens())
@@ -299,11 +297,10 @@ public abstract class ContentPage extends WizardPage {
 			fProviderText.setText(tok.nextToken().toUpperCase());
 	}
 
-	private void presetClassField() {
-		String name = fProjectProvider.getProjectName();
+	private void presetClassField(String id) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < name.length(); i++) {
-			char ch = name.charAt(i);
+		for (int i = 0; i < id.length(); i++) {
+			char ch = id.charAt(i);
 			if (buffer.length() == 0) {
 				if (Character.isJavaIdentifierStart(ch))
 					buffer.append(ch);
