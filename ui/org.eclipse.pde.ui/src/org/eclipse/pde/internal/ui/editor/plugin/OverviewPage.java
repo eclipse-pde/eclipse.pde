@@ -54,14 +54,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEPlugin.getResourceString("ManifestEditor.OverviewPage.title")); //$NON-NLS-1$
-		if (isBundle())
-			fillBundleBody(createBody(managedForm, toolkit), managedForm, toolkit);
-		else
-			fillBody(createBody(managedForm, toolkit), managedForm, toolkit);
+		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 	}
 	
-	private Composite createBody(IManagedForm managedForm, FormToolkit toolkit) {
+	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.bottomMargin = 10;
@@ -72,10 +69,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
-		return body;
-	}
-	
-	private void fillBody(Composite body, IManagedForm managedForm, FormToolkit toolkit) {
+
 		// sections
 		GeneralInfoSection general = null;
 		if (isFragment())
@@ -88,32 +82,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		createExportingSection(managedForm, body, toolkit);
 	}
 	
-	private void fillBundleBody(Composite body, IManagedForm managedForm, FormToolkit toolkit) {
-		Composite left = toolkit.createComposite(body);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = 0;
-		layout.verticalSpacing = 15;
-		left.setLayout(layout);
-		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		GeneralInfoSection general = null;
-		if (isFragment())
-			general = new FragmentGeneralInfoSection(this, left);
-		else
-			general = new PluginGeneralInfoSection(this, left);
-		managedForm.addPart(general);
-		managedForm.addPart(new PlatformFilterSection(this, left));
-		
-		Composite right = toolkit.createComposite(body);
-		layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = 0;
-		layout.verticalSpacing = 15;
-		right.setLayout(layout);
-		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		createContentSection(managedForm, right, toolkit);
-		createTestingSection(managedForm, right, toolkit);
-		createExportingSection(managedForm, right, toolkit);
-	}
-
 	private void createContentSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(
