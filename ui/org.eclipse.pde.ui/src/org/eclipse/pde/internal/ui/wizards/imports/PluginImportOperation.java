@@ -29,6 +29,8 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		"ImportWizard.operation.creating2";
 	private static final String KEY_EXTRACTING =
 		"ImportWizard.operation.extracting";
+	private static final String KEY_COPYING_SOURCE =
+		"ImportWizard.operation.copyingSource";
 
 	public interface IReplaceQuery {
 
@@ -81,6 +83,26 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 				new IPluginModelBase[result.size()]);
 		} else
 			return models;
+	}
+	
+	private IFragment [] findFragmentsFor(IPlugin plugin) {
+		ArrayList result = new ArrayList();
+		for (int i=0; i<models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (model.isFragmentModel()) {
+				IFragment fragment = (IFragment)model.getPluginBase();
+				if (PDECore
+					.compare(
+					fragment.getPluginId(),
+					fragment.getPluginVersion(),
+					plugin.getId(),
+					plugin.getVersion(),
+					fragment.getRule())) {
+					result.add(fragment);
+				}
+			}
+		}
+		return (IFragment[])result.toArray(new IFragment[result.size()]);
 	}
 
 	/*
@@ -282,6 +304,17 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			throw new OperationCanceledException(e.getMessage());
 		}
 	}
+	
+	private IPath getSourceRootPath(IPath pluginPath) {
+		String pluginDir = pluginPath.lastSegment();
+		IPath sourcePath = pluginPath.removeLastSegments(2);
+		sourcePath = sourcePath.append("src");
+		sourcePath = sourcePath.append(pluginDir);
+		File sourceDir = sourcePath.toFile();
+		if (sourceDir.exists() == false || sourceDir.isDirectory() == false)
+			return null;
+		return sourcePath;
+	}
 
 	private void importSource(
 		IProject project,
@@ -289,24 +322,36 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IPath pluginPath,
 		IProgressMonitor monitor)
 		throws CoreException {
-		String pluginDir = pluginPath.lastSegment();
-		IPath sourcePath = pluginPath.removeLastSegments(2);
-		sourcePath = sourcePath.append("src");
-		sourcePath = sourcePath.append(pluginDir);
-		File sourceDir = sourcePath.toFile();
-		if (sourceDir.exists() == false || sourceDir.isDirectory() == false)
-			return;
+		IPath rootSourcePath = getSourceRootPath(pluginPath);
 		IPluginLibrary[] libraries = plugin.getLibraries();
-		monitor.beginTask("Copying source...", libraries.length);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_COPYING_SOURCE), libraries.length);
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
-			IPath libPath = new Path(library.getName());
+			String libraryName = library.getName();
+			IPath libPath = new Path(libraryName);
+			boolean variableReference = libraryName.indexOf('$') != -1;
 			IPath srcPath = UpdateClasspathOperation.getSourcePath(libPath);
 			if (srcPath!=null) {
-				IPath fullSrcPath = sourcePath.append(srcPath);
-				File srcFile = fullSrcPath.toFile();
-				if (srcFile.exists())
-					importSourceFile(project, srcFile, srcPath);
+				if (rootSourcePath!=null) {
+					IPath fullSrcPath = rootSourcePath.append(srcPath);
+					File srcFile = fullSrcPath.toFile();
+					if (srcFile.exists()) {
+						importSourceFile(project, srcFile, srcPath);
+						continue;
+					}
+				}
+				// if we are here, either root source path is null
+				// or full source file does not exist.
+				if (variableReference && plugin instanceof IPlugin) {
+					// contains '$' and cannot find in the plug-in
+					// try fragments.
+					IFragment [] fragments = findFragmentsFor((IPlugin)plugin);
+					for (int j=0; j<fragments.length; j++) {
+						IFragment fragment = fragments[j];
+						if (importCrossFragmentSource(project, (IPlugin)plugin, srcPath, fragment))
+							break;
+					}
+				}
 			}
 			monitor.worked(1);
 		}
@@ -334,6 +379,26 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					e.getMessage(),
 					e);
 			throw new CoreException(status);
+		}
+	}
+
+	private boolean importCrossFragmentSource(IProject project, IPlugin plugin, IPath srcPath, IFragment fragment) {
+		String fragmentDir = fragment.getModel().getInstallLocation();
+		IPath fragmentPath = new Path(fragmentDir);
+		IPath sourceRootPath = getSourceRootPath(fragmentPath);
+		if (sourceRootPath==null) return false;
+		String id = fragment.getId();
+		IProject fragmentProject = PDEPlugin.getWorkspace().getRoot().getProject(id);
+		if (!fragmentProject.exists()) return false;
+		IPath fullSourcePath = sourceRootPath.append(srcPath);
+		File srcFile = fullSourcePath.toFile();
+		if (srcFile.exists()==false) return false;
+		try {
+			importSourceFile(fragmentProject, srcFile, srcPath);
+			return true;
+		}
+		catch (CoreException e) {
+			return false;
 		}
 	}
 
