@@ -38,6 +38,7 @@ public class ElementSection extends TreeSection {
 	public static final String POPUP_NEW = "Menus.new.label";
 	public static final String POPUP_DELETE = "Actions.delete.label";
 	private FormWidgetFactory factory;
+	private PropertiesAction propertiesAction;
 
 	class ContentProvider
 		extends DefaultContentProvider
@@ -79,6 +80,7 @@ public class ElementSection extends TreeSection {
 		Composite container = createClientContainer(parent, 2, factory);
 		createTree(container, factory);
 		factory.paintBordersFor(container);
+		propertiesAction = new PropertiesAction(getFormPage().getEditor());
 		return container;
 	}
 
@@ -202,7 +204,7 @@ public class ElementSection extends TreeSection {
 		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
 			manager);
 		manager.add(new Separator());
-		manager.add(new PropertiesAction(getFormPage().getEditor()));
+		manager.add(propertiesAction);
 	}
 
 	private void handleDelete(IStructuredSelection selection) {
@@ -389,5 +391,8 @@ public class ElementSection extends TreeSection {
 			return false;
 		}
 		return true;
+	}
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		propertiesAction.run();
 	}
 }
