@@ -95,18 +95,16 @@ public class SourcePreferencePage
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
 				case 0 :
-					selectAll(true);
-					break;
-				case 1 :
-					selectAll(false);
-					break;
-				case 2 : // nothing
-					break;
-				case 3 :
 					handleAdd();
 					break;
-				case 4 :
+				case 1 :
 					handleDelete();
+					break;
+				case 2 :
+					selectAll(true);
+					break;
+				case 3 :
+					selectAll(false);
 					break;
 			}
 		}
@@ -139,7 +137,7 @@ public class SourcePreferencePage
 					break;
 				}
 			}
-			tablePart.setButtonEnabled(4, enabled);
+			tablePart.setButtonEnabled(1, enabled);
 		}
 		/**
 		 * @see org.eclipse.pde.internal.ui.parts.CheckboxTablePart#elementChecked(Object, boolean)
@@ -154,11 +152,11 @@ public class SourcePreferencePage
 		tablePart =
 			new LocationPart(
 				new String[] {
-					PDEPlugin.getResourceString(KEY_SELECT_ALL),
-					PDEPlugin.getResourceString(KEY_DESELECT_ALL),
-					null,
 					PDEPlugin.getResourceString(KEY_ADD),
-					PDEPlugin.getResourceString(KEY_DELETE)});
+					PDEPlugin.getResourceString(KEY_DELETE),
+					PDEPlugin.getResourceString(KEY_SELECT_ALL),
+					PDEPlugin.getResourceString(KEY_DESELECT_ALL)
+					});
 		extensionImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FOLDER);
