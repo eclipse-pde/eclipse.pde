@@ -8,32 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 30, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.IContextPart;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
  * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
  */
-public class BooleanAttributeRow extends ExtensionAttributeRow {
-	private Button button;
+public class BooleanAttributeRow extends ChoiceAttributeRow {
 	/**
 	 * @param att
 	 */
@@ -47,65 +32,10 @@ public class BooleanAttributeRow extends ExtensionAttributeRow {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
-		createLabel(parent, toolkit);
-		button = toolkit.createButton(parent, "", SWT.CHECK); //$NON-NLS-1$
-		GridData gd = new GridData();
-		//gd.horizontalIndent = 10;
-		gd.horizontalSpan = span - 1;
-		//gd.horizontalSpan = span;
-		button.setLayoutData(gd);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!blockNotification) markDirty();
-				updateText();
-			}
-		});
-		button.setEnabled(part.isEditable());
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
-	 */
-	protected void update() {
-		blockNotification = true;
-		String value = getValue();
-		boolean state = value != null && value.toLowerCase().equals("true"); //$NON-NLS-1$
-		if (value==null) {
-			//check the default
-			ISchemaAttribute att = getAttribute();
-			if (att.getUse()==ISchemaAttribute.DEFAULT) {
-				Object dvalue = att.getValue();
-				if (dvalue!=null && dvalue.equals("true")) //$NON-NLS-1$
-					state = true;
-			}
-		}
-		button.setSelection(state);
-		updateText();
-		blockNotification=false;
-	}
-	
-	private void updateText() {
-		String value = getValue();
-		boolean state = button.getSelection();
-		if (value!=null)
-			button.setText(state?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
-			button.setText(""); //$NON-NLS-1$
-	}
-	public void commit() {
-		if (dirty && input != null) {
-			try {
-				input.setAttribute(getName(), button.getSelection()
-						? "true" //$NON-NLS-1$
-						: "false"); //$NON-NLS-1$
-				dirty = false;
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
-		}
-	}
-	public void setFocus() {
-		button.setFocus();
+		super.createContents(parent, toolkit, span);
+		if (getUse()!=ISchemaAttribute.REQUIRED)
+			combo.add(""); //$NON-NLS-1$
+		combo.add("true"); //$NON-NLS-1$
+		combo.add("false"); //$NON-NLS-1$
 	}
 }
