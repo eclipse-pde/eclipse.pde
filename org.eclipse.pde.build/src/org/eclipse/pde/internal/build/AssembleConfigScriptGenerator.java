@@ -113,6 +113,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateInitializationSteps() {
 		script.printDeleteTask(getPropertyFormat(PROPERTY_TMP_DIR), null, null);
 		script.printMkdirTask(getPropertyFormat(PROPERTY_TMP_DIR));
+		script.printMkdirTask(getPropertyFormat(PROPERTY_BUILD_LABEL));
 	}
 
 	private void generateGatherBinPartsCalls() throws CoreException {
