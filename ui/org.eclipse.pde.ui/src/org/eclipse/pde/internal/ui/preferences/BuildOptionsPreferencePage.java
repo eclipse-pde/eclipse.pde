@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 /**
  * @see PreferencePage
  */
-public class BuildPropertiesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPreferenceConstants {
+public class BuildOptionsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 	private Button failOnError;
 	private Button verbose;
@@ -30,7 +30,7 @@ public class BuildPropertiesPreferencePage extends PreferencePage implements IWo
 	/**
 	 *
 	 */
-	public BuildPropertiesPreferencePage() {
+	public BuildOptionsPreferencePage() {
 		setDescription(PDEPlugin.getResourceString("BuildPropertiesPreferencePage.desc")); //$NON-NLS-1$
 	}
 

@@ -94,10 +94,10 @@
             id="org.eclipse.pde.ui.CompilersPreferencePage">
       </page>
       <page
-            name="%preferences.buildproperties.name"
+            name="%preferences.buildOptions.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.BuildPropertiesPreferencePage"
-            id="org.eclipse.pde.ui.buildPropertiesPreferencePage">
+            class="org.eclipse.pde.internal.ui.preferences.BuildOptionsPreferencePage"
+            id="org.eclipse.pde.ui.buildOptionsPreferencePage">
       </page>
    </extension>
    <extension
@@ -935,6 +935,7 @@
          point="org.eclipse.search.searchPages">
       <page
             showScopeSection="true"
+            canSearchEnclosingProjects="true"
             label="%PluginSearchPage.label"
             enabled="true"
             icon="icons/full/obj16/psearch_obj.gif"
