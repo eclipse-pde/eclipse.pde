@@ -118,25 +118,16 @@ public abstract class AbstractPluginModelBase
 				}	
 			}
 		} else {
-			list.add(Arrays.asList(getFragmentLocations()));
-		}
-		
+			if (pluginBase != null) {
+				String id = pluginBase.getId();
+				String version = pluginBase.getVersion();
+				addMatchingFragments(PDECore.getDefault().findFragmentsFor(id, version), list);
+			}
+		}		
 		return (URL[])list.toArray(new URL[list.size()]);	
 	}
 
-	protected URL[] getFragmentLocations() {
-		Vector result = new Vector();
-		if (pluginBase != null) {
-			String id = pluginBase.getId();
-			String version = pluginBase.getVersion();
-			addMatchingFragments(PDECore.getDefault().findFragmentsFor(id, version), result);
-		}
-		URL[] locations = new URL[result.size()];
-		result.copyInto(locations);
-		return locations;
-	}
-
-	private void addMatchingFragments(IFragment[] fragments, Vector result) {
+	private void addMatchingFragments(IFragment[] fragments, List result) {
 		for (int i = 0; i < fragments.length; i++) {
 			IFragment fragment = fragments[i];
 			URL location = ((IFragmentModel)fragment.getModel()).getNLLookupLocation();
