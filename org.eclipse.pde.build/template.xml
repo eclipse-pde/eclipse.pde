@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="build template" default="dist">
-<!--
   <target name="init">
     <property name="build.compiler" value="org.eclipse.pde.internal.core.JDTCompilerAdapter"/>
     <property name="rt" value="" />
   </target>
--->
-
   <commapatternset id="pattern.id" includes="${includes}" excludes="${excludes}"/>
   <commapatternset id="copy.id" includes="${includes}" excludes="**/*.java"/>
   <commapatternset id="includes.id" includes="${includes}"/>
@@ -20,8 +17,7 @@
   </path>
   <stripMapper id="stripMapper.id" from="${mapping}"/>
   
-  <target name="jar" depends="">
-    <property name="build.compiler" value="org.eclipse.pde.internal.core.JDTCompilerAdapter"/>
+  <target name="jar" depends="init">
     <property name="out" value="${dest}.bin"/>
     <delete dir="${out}"/>
     <mkdir dir="${out}"/>
@@ -46,7 +42,7 @@
     <delete dir="${out}"/>
   </target>
 
-  <target name="javadoc" depends="">
+  <target name="javadoc" depends="init">
     <javadoc 
       sourcepath="${sourcepath}"
       destdir="${out}"
@@ -56,29 +52,14 @@
     </javadoc>
   </target>
 
-  <target name="bin" depends="">
+  <target name="bin" depends="init">
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
       <fileset refid="file.id"/>
     </copy>
   </target>
 
-  <target name="includesExcludesCopy" depends="">
-    <mkdir dir="${dest}"/>
-    <copy todir="${dest}">
-      <fileset refid="file.id"/>
-    </copy>
-  </target>
-
-  <target name="mapperCopy" depends="">
-    <mkdir dir="${dest}" />
-    <copy todir="${dest}">
-      <fileset refid="file.id"/>
-      <mapper refid="stripMapper.id"/>
-    </copy>
-  </target>
-
-  <target name="src" depends="">
+  <target name="src" depends="init">
     <delete dir="${dest}.pdetemp" />
     <mkdir dir="${dest}.pdetemp" />
     <copy todir="${dest}.pdetemp">
@@ -93,7 +74,7 @@
     <delete dir="${dest}.pdetemp"/>
   </target>
 
-  <target name="log" depends="">
+  <target name="log" depends="init">
     <delete dir="${dest}"/>
     <mkdir dir="${dest}"/>
     <copy todir="${dest}">
@@ -102,13 +83,13 @@
     </copy>
   </target>
 
-  <target name="doc-copy" depends="" if="doc-exists">
+  <target name="doc-copy" depends="init" if="doc-exists">
     <copy todir="${dest}/doc">
       <fileset dir="doc" includes="*"/>
     </copy>
   </target>
 
-  <target name="doc" depends="">
+  <target name="doc" depends="init">
     <delete dir="${dest}/${plugin}/doc" />
     <mkdir dir="${dest}/${plugin}/doc" />
     <available property="doc-exists" file="doc"/>
@@ -118,7 +99,7 @@
     </copy>
   </target>
 
-  <target name="clean" depends="">
+  <target name="clean" depends="init">
     <delete>
       <fileset dir="." includes="*.bin" />
       <fileset dir="." includes="**/*.log" />
@@ -131,7 +112,7 @@
   <!-- Delegates the zip call to either the default task or an external program. -->
   <!-- In order to define which one to run, the user should set a property       -->
   <!-- called useExternalZip.                                                    -->
-  <target name="runZip" depends="">
+  <target name="runZip" depends="init">
     <antcall target="externalZip"/>
     <antcall target="antZip"/>
   </target>
@@ -139,7 +120,7 @@
   <!-- Executes an external zip program -->
   <target name="externalZip" if="useExternalZip">
     <exec dir="${targetDir}" executable="zip">
-      <arg line="-r ${resultingFile} ."/>
+		<arg line="-r ${resultingFile} ."/>
     </exec>
   </target>
 
@@ -151,7 +132,7 @@
   <!-- Delegates the jar call to either the default task or an external program. -->
   <!-- In order to define which one to run, the user should set a property       -->
   <!-- called useExternalZip.                                                    -->
-  <target name="runJar" depends="">
+  <target name="runJar" depends="init">
     <antcall target="externalZip"/>
     <antcall target="antJar"/>
   </target>

@@ -6,12 +6,13 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.types.Commandline;
 import org.eclipse.ant.core.EclipseProject;
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.Feature;
-import org.eclipse.pde.internal.core.antwrappers.*;
+import org.eclipse.core.runtime.model.*;
 
 public class Fetch extends PluginTool {
 	String[] elements;
@@ -21,27 +22,38 @@ public class Fetch extends PluginTool {
 	String passfile = null;
 	boolean recursive = true;
 	boolean children = false;
-	boolean featuresFound = false;
+	boolean componentsFound = false;
+	boolean configurationsFound = false;
 	boolean pluginsFound = false;
 	boolean fragmentsFound = false;
 	
 void addChildren() {
 	HashSet seen = new HashSet(10);
 	ModelRegistry modelRegistry = new ModelRegistry();
-	modelRegistry.seekFeatures(getInstall());
+	modelRegistry.seekComponents(getInstall());
+	modelRegistry.seekConfigurations(getInstall());
 	for (int i = 0; i < elements.length; i++) {
 		int index = elements[i].indexOf('@');
 		String type = elements[i].substring(0, index);
 		String element = elements[i].substring(index + 1);
-		if (type.equals("feature")) {
-			Feature feature = modelRegistry.getFeature(element);
-			if (feature == null)
+		if (type.equals("component")) {
+			ComponentModel model = modelRegistry.getComponent(element);
+			if (model == null)
 				continue;
-			IPluginEntry[] pluginList = feature.getPluginEntries();
-			for (int j = 0; j < pluginList.length; j++) {
-				IPluginEntry entry = pluginList[j];
-				seen.add((entry.isFragment() ? "fragment@" : "plugin@") + entry.getVersionIdentifier().getIdentifier());
-			}
+			PluginDescriptorModel[] plugins = model.getPlugins();
+			for (int j = 0; j < plugins.length; j++) 
+				seen.add("plugin@" + plugins[j].getId());
+			PluginFragmentModel[] fragments = model.getFragments();
+			for (int j = 0; j < fragments.length; j++) 
+				seen.add("fragment@" + fragments[j].getId());
+		}
+		if (type.equals("configuration")) {
+			ConfigurationModel model = modelRegistry.getConfiguration(element);
+			if (model == null)
+				continue;
+			ComponentModel[] list = model.getComponents();
+			for (int j = 0; j < list.length; j++)
+				seen.add("component@" + list[j].getId());
 		}
 	}
 	elements = (String[])seen.toArray(new String[seen.size()]);
@@ -57,7 +69,7 @@ public void execute() throws Exception {
 		addChildren();
 	Project project = generateFetchScript();
 	project.executeTarget("fetch");
-	if (recursive && featuresFound)
+	if (recursive && (configurationsFound || componentsFound))
 		fetchNextLevel();	
 }
 
@@ -86,21 +98,25 @@ protected void generateFetchEntry(Target output, String entry) {
 	String type = entry.substring(0, index);
 	String element = entry.substring(index + 1);
 	String location = getInstall() + "/";
-	if (type.equals("feature")) {
+	if (type.equals("component")) {
 		location += "install/" + type + "s";
-		featuresFound = true;
+		componentsFound = true;
 	} else {
-		if (type.equals("plugin")) {
-			location += type + "s";
-			pluginsFound = true;
+		if (type.equals("configuration")) {
+			location += "install/" + type + "s";
+			configurationsFound = true;
 		} else {
-			if (type.equals("fragment")) {
+			if (type.equals("plugin")) {
 				location += type + "s";
-				fragmentsFound = true;
+				pluginsFound = true;
+			} else {
+				if (type.equals("plugin")) {
+					location += type + "s";
+					pluginsFound = true;
+				}
 			}
 		}
 	}
-
 	// <cvspass cvsroot=":pserver:<user>@<host>:<repo>" password="abc123" [passfile="<file location>]"/>
 	boolean needLogout = false;
 	if (specFields.length == 3 && specFields[2].length() > 0) {
@@ -166,19 +182,23 @@ public Project generateFetchScript() {
 	return project;
 }
 protected void generateFetchTarget(Project output) {
+//	output.println("<target name=\"fetch\">");
 	Target target = new Target();
 	target.setName("fetch");
 	target.setDepends("mkdirs");
 	output.addTarget(target);
 	for (int i = 0; i < elements.length; i++)
 		generateFetchEntry(target, elements[i]);
+//	output.println("</target>");
 }
 protected void generateMkdirsTarget(Project output) {
 	Target target = new Target();
 	target.setName("mkdirs");
 	output.addTarget(target);
-	if (featuresFound) 
-		addMkdir(target, getInstall() + "/install/features");
+	if (configurationsFound) 
+		addMkdir(target, getInstall() + "/install/configurations");
+	if (componentsFound) 
+		addMkdir(target, getInstall() + "/install/components");
 	if (pluginsFound) 
 		addMkdir(target, getInstall() + "/plugins");
 	if (fragmentsFound) 
@@ -237,9 +257,6 @@ protected String[] processCommandLine(String[] args) {
 		if (args[i - 1].equalsIgnoreCase("-elements"))
 			elements = getArrayFromString(arg);
 
-		if (args[i - 1].equalsIgnoreCase("-elementFile"))
-			elements = readElementFile(arg);
-
 		if (args[i - 1].equalsIgnoreCase("-directory"))
 			directory = arg;
 
@@ -247,6 +264,6 @@ protected String[] processCommandLine(String[] args) {
 			passfile = arg;
 	}
 	return null;
-}
+}
 }
 

@@ -8,7 +8,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 public class ScriptBuilderTask extends Task {
-	boolean children = false;
+	boolean children;
 	String elements;
 	String install;
 
@@ -19,8 +19,8 @@ public void execute() throws BuildException {
 		args.add(install);
 		args.add("-elements");
 		args.add(elements);
-		if (children)
-			args.add("-children");
+		args.add("-children");
+		args.add(children ? "true" : "false");
 		String[] argArray = (String[])args.toArray(new String[args.size()]);
 		new ScriptBuilder().run(argArray);
 	} catch (Exception e) {

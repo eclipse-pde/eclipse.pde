@@ -2,12 +2,11 @@
 <plugin
    id="org.eclipse.pde.core"
    name="%pluginName"
-   version="2.1.1"
+   version="2.1.2"
    provider-name="Object Technology International, Inc.">
 
 <requires>
    <import plugin="org.eclipse.ant.core"/>
-   <import plugin="org.eclipse.update.core"/>
    <import plugin="org.eclipse.jdt.core"/>
    <import plugin="org.apache.xerces"/>
 </requires>
@@ -72,9 +71,14 @@
       <run class="org.eclipse.pde.internal.core.FragmentBuildScriptGenerator"/>
    </application>
 </extension>
-<extension id="feature" point="org.eclipse.core.runtime.applications">
+<extension id="component" point="org.eclipse.core.runtime.applications">
    <application>
-      <run class="org.eclipse.pde.internal.core.FeatureBuildScriptGenerator"/>
+      <run class="org.eclipse.pde.internal.core.ComponentBuildScriptGenerator"/>
+   </application>
+</extension>
+<extension id="configuration" point="org.eclipse.core.runtime.applications">
+   <application>
+      <run class="org.eclipse.pde.internal.core.ConfigurationBuildScriptGenerator"/>
    </application>
 </extension>
 <extension id="fetch" point="org.eclipse.core.runtime.applications">

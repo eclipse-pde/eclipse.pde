@@ -16,8 +16,7 @@ public FragmentBuildScriptGenerator(PluginModel modelsToGenerate[],PluginRegistr
 }
 
 protected String getComponentDirectoryName() {
-//	return "fragments/${fragment}_${version}";
-	return "fragments/${fragment}";
+	return "fragments/${fragment}_${version}";
 }
 
 protected String getModelTypeName() {
