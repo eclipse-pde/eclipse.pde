@@ -21,27 +21,16 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 
-/**
- * @author cgwong
- */
 public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
-	private boolean createSite = false;
 	
 	public static final String HTML_CHECK_LABEL = "SiteHTML.checkLabel"; //$NON-NLS-1$
 	public static final String HTML_WEB_LABEL = "SiteHTML.webLabel"; //$NON-NLS-1$
 	public static final String WEB_ERR = "SiteHTML.webError"; //$NON-NLS-1$
-	private static final int SIZING_TEXT_FIELD_WIDTH = 350;
 
-	protected Text webText;
-	private Button htmlButton;
-	private Label webLabel;
+	private Button fWebButton;
+	protected Text fWebText;
+	private Label fWebLabel;
 		
-	private Listener textModifyListener = new Listener(){
-		public void handleEvent(Event e){
-			setPageComplete(validatePage());
-		}
-	};
-	
 	/**
 	 * Creates a new project creation wizard page.
 	 *
@@ -70,57 +59,56 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		webGroup.setLayout(layout);
 		webGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		htmlButton = new Button(webGroup, SWT.CHECK | SWT.RIGHT);
-		htmlButton.setText(PDEPlugin.getResourceString(HTML_CHECK_LABEL));
+		fWebButton = new Button(webGroup, SWT.CHECK);
+		fWebButton.setText(PDEPlugin.getResourceString(HTML_CHECK_LABEL));
 		GridData gd = new GridData();
-		gd.horizontalSpan=2;
-		htmlButton.setLayoutData(gd);
-
-		webLabel = new Label(webGroup, SWT.NULL);
-		webLabel.setText(PDEPlugin.getResourceString(HTML_WEB_LABEL));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		webLabel.setLayoutData(gd);
-		webText = new Text(webGroup, SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		webText.setLayoutData(gd);
-		webText.setText("web"); //$NON-NLS-1$
-		webText.setEnabled(createSite);
-		webLabel.setEnabled(createSite);
-		webText.addListener(SWT.Modify, textModifyListener);
-
-		htmlButton.addSelectionListener(new SelectionAdapter(){
+		gd.horizontalSpan = 2;
+		fWebButton.setLayoutData(gd);
+		fWebButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
-				createSite = htmlButton.getSelection();
-				webLabel.setEnabled(createSite);
-				webText.setEnabled(createSite);
+				fWebLabel.setEnabled(fWebButton.getSelection());
+				fWebText.setEnabled(fWebButton.getSelection());
 				setPageComplete(validatePage());
 			}
 		});
 		
+		fWebLabel = new Label(webGroup, SWT.NULL);
+		fWebLabel.setText(PDEPlugin.getResourceString(HTML_WEB_LABEL));
+		fWebLabel.setEnabled(false);
+		
+		fWebText = new Text(webGroup, SWT.BORDER);
+		fWebText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fWebText.setText("web"); //$NON-NLS-1$
+		fWebText.setEnabled(false);
+		fWebText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(validatePage());
+			}
+		});
+
 		setPageComplete(validatePage());
 		setControl(webGroup);
 		Dialog.applyDialogFont(webGroup);
 		WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_SITE_MAIN);
 	}
 
-	public boolean isCreateUpdateSiteHTML(){
-		return createSite;
-	}
-		
 	public String getWebLocation(){
-		String text = webText.getText();
+		if (!fWebButton.getSelection())
+			return null;
+		
+		String text = fWebText.getText();
 		if (text.startsWith(File.separator) || text.startsWith("/")) //$NON-NLS-1$
 			text = text.substring(1);
 		if (text.endsWith(File.separator) || text.endsWith("/")) //$NON-NLS-1$
-			text= text.substring(0,text.length()-1);
-		return text;
+			text = text.substring(0,text.length()-1);
+		return text.trim();
 	}
 
 	protected boolean validatePage() {
 		if (!super.validatePage())
 			return false;
-		if (createSite && getWebLocation().equals("")){ //$NON-NLS-1$
+		String webLocation = getWebLocation();
+		if (webLocation != null && webLocation.trim().length() == 0){ //$NON-NLS-1$
 			setErrorMessage(PDEPlugin.getResourceString(WEB_ERR));
 			return false;
 		}

@@ -14,50 +14,59 @@ import java.io.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
+
 /**
  * A base of all site model objects.
  */
 public interface ISiteObject extends IWritable, IAdaptable, Serializable {
-/**
- * A property name that will be used to notify
- * about changes in the "label" field.
- */
-String P_LABEL = "label"; //$NON-NLS-1$
-/**
- * Returns the top-level site model object.
- * @return root feature object
- */
-public ISite getSite();
-/**
- * Returns the label of this feature model object'
- * @return feature object label
- */
-String getLabel();
-/**
- * Returns the site model that owns this model object.
- *
- * @return the site model
- */
-ISiteModel getModel();
+	/**
+	 * A property name that will be used to notify about changes in the "label"
+	 * field.
+	 */
+	String P_LABEL = "label"; //$NON-NLS-1$
 
-boolean isInTheModel();
-/**
- * Returns the parent of this model object.
- *
- * @return the model object parent
- */
-public ISiteObject getParent();
-/**
- * Sets the new label of this model object.
- * This method may throw a CoreException
- * if the model is not editable.
- *
- * @param label the new label
- */
-void setLabel(String label) throws CoreException;
-/**
- * Returns true if this object as all the
- * required attributes set, false otherwise.
- */
-boolean isValid();
+	/**
+	 * Returns the top-level site model object.
+	 * 
+	 * @return root feature object
+	 */
+	public ISite getSite();
+
+	/**
+	 * Returns the label of this feature model object'
+	 * 
+	 * @return feature object label
+	 */
+	String getLabel();
+
+	/**
+	 * Returns the site model that owns this model object.
+	 * 
+	 * @return the site model
+	 */
+	ISiteModel getModel();
+
+	boolean isInTheModel();
+
+	/**
+	 * Returns the parent of this model object.
+	 * 
+	 * @return the model object parent
+	 */
+	public ISiteObject getParent();
+
+	/**
+	 * Sets the new label of this model object. This method may throw a
+	 * CoreException if the model is not editable.
+	 * 
+	 * @param label
+	 *            the new label
+	 */
+	void setLabel(String label) throws CoreException;
+
+	/**
+	 * Returns true if this object as all the required attributes set, false
+	 * otherwise.
+	 */
+	boolean isValid();
 }
