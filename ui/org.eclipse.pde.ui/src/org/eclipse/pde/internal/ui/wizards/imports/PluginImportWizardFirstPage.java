@@ -295,7 +295,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 	
 	private void handleEnvChange() {
-		IPreferenceNode targetNode = new TargetEnvironmentPreferenceNode();
+		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		showPreferencePage(targetNode);
 	}
 

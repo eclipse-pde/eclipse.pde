@@ -39,6 +39,7 @@ public class TargetPlatformPreferencePage
 	private Preferences fPreferences = null;
 	private boolean fNeedsReload = false;
 	private String fOriginalText;
+	private EnvironmentBlock fEnvironmentBlock;
 	
 	/**
 	 * MainPreferencePage constructor comment.
@@ -100,16 +101,38 @@ public class TargetPlatformPreferencePage
 				handleBrowse();
 			}
 		});
-
-		Control block = fPluginsBlock.createContents(container);
-		GridData gd = new GridData(GridData.FILL_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL);
+		
+		
+		TabFolder folder = new TabFolder(container, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
-		block.setLayoutData(gd);	
-		fPluginsBlock.initialize();
+		folder.setLayoutData(gd);
+		
+		createPluginsTab(folder);
+		createEnvironmentTab(folder);
 		
 		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
+	}
+	
+	private void createPluginsTab(TabFolder folder) {
+		Control block = fPluginsBlock.createContents(folder);
+		block.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		fPluginsBlock.initialize();
+
+		TabItem tab = new TabItem(folder, SWT.NONE);
+		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.pluginsTab")); //$NON-NLS-1$
+		tab.setControl(block);	
+	}
+	
+	private void createEnvironmentTab(TabFolder folder) {
+		fEnvironmentBlock = new EnvironmentBlock();
+		Control block = fEnvironmentBlock.createContents(folder);
+		
+		TabItem tab = new TabItem(folder, SWT.NONE);
+		tab.setText(PDEPlugin.getResourceString("TargetPlatformPreferencePage.environmentTab")); //$NON-NLS-1$
+		tab.setControl(block);
 	}
 
 	String getPlatformPath() {
@@ -137,6 +160,7 @@ public class TargetPlatformPreferencePage
 	public void performDefaults() {
 		fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
 		fPluginsBlock.handleReload();
+		fEnvironmentBlock.performDefaults();
 		super.performDefaults();
 	}
 
@@ -158,6 +182,7 @@ public class TargetPlatformPreferencePage
 			fPluginsBlock.handleReload();
 		} 
 		fPluginsBlock.save();
+		fEnvironmentBlock.performOk();
 		return super.performOk();
 	}
 	

@@ -233,7 +233,7 @@ public abstract class BaseExportWizardPage extends WizardPage {
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				showPreferencePage(new TargetEnvironmentPreferenceNode());
+				showPreferencePage(new TargetPlatformPreferenceNode());
 			}
 		});
 		SWTUtil.setButtonDimensionHint(button);		
