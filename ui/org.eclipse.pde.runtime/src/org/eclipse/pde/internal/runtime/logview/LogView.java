@@ -385,12 +385,6 @@ public class LogView extends ViewPart implements ILogListener {
 		copyAction.setImageDescriptor(
 			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_TOOL_COPY));
-		copyAction.setDisabledImageDescriptor(
-			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY_DISABLED));
-		copyAction.setHoverImageDescriptor(
-			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY_HOVER));
 
 
 		filterAction = new Action(PDERuntimePlugin.getResourceString("LogView.filter")) {

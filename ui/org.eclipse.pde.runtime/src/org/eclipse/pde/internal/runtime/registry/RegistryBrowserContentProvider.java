@@ -208,7 +208,7 @@ public class RegistryBrowserContentProvider
 				try {
 					if (array == null || array.length == 0){
 						Object classpath = pd.getPlugin().getBundle().getHeaders().get(Constants.BUNDLE_CLASSPATH);
-						return classpath == null ? null : ManifestElement.parseClassPath(classpath.toString());
+						return classpath == null ? null : ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, classpath.toString());
 					}
 				} catch (BundleException e) {
 				} catch (CoreException e) {
