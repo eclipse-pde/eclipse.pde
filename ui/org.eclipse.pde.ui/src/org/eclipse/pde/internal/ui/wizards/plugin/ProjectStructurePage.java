@@ -111,7 +111,9 @@ public class ProjectStructurePage extends WizardPage {
 	
 	private Text createText(Composite container) {
 		Text text = new Text(container, SWT.BORDER | SWT.SINGLE);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 225;
+		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
