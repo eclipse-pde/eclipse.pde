@@ -124,10 +124,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generateAntTarTarget();
 		}
 	}
-	/**
-	 * 
-	 */
-	private void generateGatherSourceCalls() {
+
+	protected void generateGatherSourceCalls() {
 		Map properties = new HashMap(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 		for (int i = 0; i < plugins.length; i++) {

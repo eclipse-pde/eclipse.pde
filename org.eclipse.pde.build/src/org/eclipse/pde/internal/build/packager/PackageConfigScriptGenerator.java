@@ -82,4 +82,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			rootFileProviders.add("elt");	
 		}
 	}
+	
+	protected void generateGatherSourceCalls() {
+		//In the packager, we do not gather source
+	}
 }
