@@ -23,6 +23,7 @@ public class RuntimePage extends PDEFormPage {
 	public static final String PAGE_ID="runtime";
 	private LibrarySection librarySection;
 	private ExportSection exportSection;
+	private OSGiSection osgiSection;
 
 	public RuntimePage(FormEditor editor) {
 		super(editor, PAGE_ID, "Runtime");
@@ -38,18 +39,28 @@ public class RuntimePage extends PDEFormPage {
 		layout.horizontalSpacing = 15;
 		layout.verticalSpacing = 10;
 		layout.makeColumnsEqualWidth = true;
-
+		
 		librarySection = new LibrarySection(this, form.getBody());
 		librarySection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
-
+		
 		exportSection = new ExportSection(this, form.getBody());
 		exportSection.getSection().setLayoutData( new GridData(GridData.FILL_BOTH));
-
-		mform.addPart(librarySection);
-		mform.addPart(exportSection);
 		
 		boolean fragment = ((IPluginModelBase)getPDEEditor().getAggregateModel()).isFragmentModel();
-
+		if (!fragment){
+			osgiSection = new OSGiSection(this, form.getBody());
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.horizontalSpan = 2;
+			osgiSection.getSection().setLayoutData(gd);
+		}
+		
+		mform.addPart(librarySection);
+		mform.addPart(exportSection);
+		if (!fragment)
+			mform.addPart(osgiSection);
+		
+		
+		
 		if (fragment)
 			WorkbenchHelp.setHelp(form, IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
 		else
