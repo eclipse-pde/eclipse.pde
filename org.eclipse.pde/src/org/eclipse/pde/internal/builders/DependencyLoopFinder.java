@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 
 public class DependencyLoopFinder {
-	private static final String KEY_LOOP_NAME = "Builders.DependencyLoopFinder.loopName";	
+	private static final String KEY_LOOP_NAME = "Builders.DependencyLoopFinder.loopName";	 //$NON-NLS-1$
 	
 	public static DependencyLoop [] findLoops(IPlugin root) {
 		return findLoops(root, null);
@@ -58,7 +58,7 @@ public class DependencyLoopFinder {
 				loop.setMembers((IPlugin[]) path.toArray(new IPlugin[path.size()]));
 				String pattern = PDE.getResourceString(KEY_LOOP_NAME);
 				int no = loops.size() + 1;
-				loop.setName(PDE.getFormattedMessage(pattern, ("" + no)));
+				loop.setName(PDE.getFormattedMessage(pattern, ("" + no))); //$NON-NLS-1$
 				loops.add(loop);
 				return;
 			}

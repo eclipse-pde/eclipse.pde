@@ -23,10 +23,10 @@ import org.eclipse.pde.internal.core.plugin.*;
 import org.osgi.framework.*;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
-	public static final String BUILDERS_VERIFYING = "Builders.verifying";
-	public static final String BUILDERS_FRAGMENT_BROKEN_LINK = "Builders.Fragment.brokenLink";
-	public static final String BUILDERS_UPDATING = "Builders.updating";
-	public static final String BUILDERS_VERSION_FORMAT = "Builders.versionFormat";
+	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
+	public static final String BUILDERS_FRAGMENT_BROKEN_LINK = "Builders.Fragment.brokenLink"; //$NON-NLS-1$
+	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
+	public static final String BUILDERS_VERSION_FORMAT = "Builders.versionFormat"; //$NON-NLS-1$
 
 	private boolean javaDelta = false;
 	private boolean fileCompiled = false;
@@ -155,13 +155,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (!PDE.hasPluginNature(project))
 			return;
 
-		IPath path = project.getFullPath().append("plugin.xml");
+		IPath path = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
 		IWorkspace workspace = project.getWorkspace();
 		IFile file = workspace.getRoot().getFile(path);
 		if (file.exists()) {
 			checkFile(file, monitor);
 		} else {
-			path = project.getFullPath().append("fragment.xml");
+			path = project.getFullPath().append("fragment.xml"); //$NON-NLS-1$
 			file = workspace.getRoot().getFile(path);
 			if (file.exists()) {
 				checkFile(file, monitor);
@@ -199,9 +199,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		delta.accept(new DeltaVisitor(monitor));
 		if (javaDelta) {
 			IProject project = getProject();
-			IFile file = project.getFile("plugin.xml");
+			IFile file = project.getFile("plugin.xml"); //$NON-NLS-1$
 			if (!file.exists())
-				file = project.getFile("fragment.xml");
+				file = project.getFile("fragment.xml"); //$NON-NLS-1$
 			if (file.exists())
 				checkFile(file, monitor);
 		}
@@ -218,7 +218,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		ValidatingSAXParser.parse(file, reporter);
 
 		IFile bundleManifest = file.getProject()
-				.getFile("META-INF/MANIFEST.MF");
+				.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		boolean bundle = bundleManifest.exists();
 
 		if (reporter.getErrorCount() == 0) {
@@ -235,18 +235,18 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private boolean isFragment(IFile file) {
 		String name = file.getName().toLowerCase();
-		return name.equals("fragment.xml");
+		return name.equals("fragment.xml"); //$NON-NLS-1$
 	}
 	private boolean isManifestFile(IFile file) {
 		if (file.getParent() instanceof IFolder)
 			return false;
 		String name = file.getName().toLowerCase();
-		return name.equals("plugin.xml") || name.equals("fragment.xml");
+		return name.equals("plugin.xml") || name.equals("fragment.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean isJavaFile(IFile file) {
 		String name = file.getName().toLowerCase();
-		return name.endsWith(".java");
+		return name.endsWith(".java"); //$NON-NLS-1$
 	}
 
 	protected void startupOnInitialize() {
@@ -356,7 +356,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			PluginErrorReporter reporter) {
 		String version = pluginBase.getVersion();
 		if (version == null)
-			version = "";
+			version = ""; //$NON-NLS-1$
 		try {
 			PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
 			pvi.toString();
@@ -389,51 +389,51 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateRequiredAttributes(IPluginBase pluginBase,
 			PluginErrorReporter reporter) {
 		// validate name, id, version
-		String rootName = "plugin";
+		String rootName = "plugin"; //$NON-NLS-1$
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
-			rootName = "fragment";
-			assertNotNull("plugin-id", rootName, getLine(fragment), fragment
+			rootName = "fragment"; //$NON-NLS-1$
+			assertNotNull("plugin-id", rootName, getLine(fragment), fragment //$NON-NLS-1$
 					.getPluginId(), reporter);
-			assertNotNull("plugin-version", rootName, getLine(fragment),
+			assertNotNull("plugin-version", rootName, getLine(fragment), //$NON-NLS-1$
 					fragment.getPluginVersion(), reporter);
 		}
 
-		assertNotNull("name", rootName, getLine(pluginBase), pluginBase
+		assertNotNull("name", rootName, getLine(pluginBase), pluginBase //$NON-NLS-1$
 				.getName(), reporter);
-		assertNotNull("id", rootName, getLine(pluginBase), pluginBase.getId(),
+		assertNotNull("id", rootName, getLine(pluginBase), pluginBase.getId(), //$NON-NLS-1$
 				reporter);
-		assertNotNull("version", rootName, getLine(pluginBase), pluginBase
+		assertNotNull("version", rootName, getLine(pluginBase), pluginBase //$NON-NLS-1$
 				.getVersion(), reporter);
 
 		// validate libraries
 		IPluginLibrary[] libraries = pluginBase.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
-			assertNotNull("name", "library", getLine(library), library
+			assertNotNull("name", "library", getLine(library), library //$NON-NLS-1$ //$NON-NLS-2$
 					.getName(), reporter);
 		}
 		// validate imports
 		IPluginImport[] iimports = pluginBase.getImports();
 		for (int i = 0; i < iimports.length; i++) {
 			IPluginImport iimport = iimports[i];
-			assertNotNull("plugin", "import", getLine(iimport),
+			assertNotNull("plugin", "import", getLine(iimport), //$NON-NLS-1$ //$NON-NLS-2$
 					iimport.getId(), reporter);
 		}
 		// validate extensions
 		IPluginExtension[] extensions = pluginBase.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
-			assertNotNull("point", "extension", getLine(extension), extension
+			assertNotNull("point", "extension", getLine(extension), extension //$NON-NLS-1$ //$NON-NLS-2$
 					.getPoint(), reporter);
 		}
 		// validate extension points
 		IPluginExtensionPoint[] expoints = pluginBase.getExtensionPoints();
 		for (int i = 0; i < expoints.length; i++) {
 			IPluginExtensionPoint expoint = expoints[i];
-			assertNotNull("id", "extension-point", getLine(expoint), expoint
+			assertNotNull("id", "extension-point", getLine(expoint), expoint //$NON-NLS-1$ //$NON-NLS-2$
 					.getId(), reporter);
-			assertNotNull("name", "extension-point", getLine(expoint), expoint
+			assertNotNull("name", "extension-point", getLine(expoint), expoint //$NON-NLS-1$ //$NON-NLS-2$
 					.getName(), reporter);
 		}
 	}
@@ -442,7 +442,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			String value, PluginErrorReporter reporter) {
 		if (value == null) {
 			String message = PDE.getFormattedMessage(
-					"Builders.manifest.missingRequired", new String[]{att, el});
+					"Builders.manifest.missingRequired", new String[]{att, el}); //$NON-NLS-1$
 			reporter.reportError(message, line);
 		}
 	}
@@ -459,7 +459,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					&& PDECore.getDefault().findPlugin(iimport.getId(),
 							iimport.getVersion(), iimport.getMatch()) == null) {
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.dependency", iimport.getId()),
+						"Builders.Manifest.dependency", iimport.getId()), //$NON-NLS-1$
 						getLine(iimport), flag);
 			}
 		}
@@ -476,7 +476,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					.findExtensionPoint(extension.getPoint());
 			if (point == null) {
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.ex-point", extension.getPoint()),
+						"Builders.Manifest.ex-point", extension.getPoint()), //$NON-NLS-1$
 						getLine(extension), CompilerFlags
 								.getFlag(CompilerFlags.P_UNRESOLVED_EX_POINTS));
 			} else {
@@ -523,7 +523,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (!allowedElements.contains(name)) {
 				// Invalid
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.child", new String[]{
+						"Builders.Manifest.child", new String[]{ //$NON-NLS-1$
 								child.getName(), parent.getName()}),
 						getLine(child), CompilerFlags
 								.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
@@ -582,12 +582,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 		if (!valid) {
 			reporter.report(PDE.getFormattedMessage(
-					"Builders.Manifest.element", element.getName()),
+					"Builders.Manifest.element", element.getName()), //$NON-NLS-1$
 					getLine(element), CompilerFlags
 							.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
 		} else {
 			if (executableElement) {
-				validateJava(element.getAttribute("class"), parentSchema
+				validateJava(element.getAttribute("class"), parentSchema //$NON-NLS-1$
 						.getAttribute(element.getName()), reporter);
 				return;
 			} else {
@@ -618,7 +618,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					.getAttribute(att.getName());
 			if (attInfo == null) {
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.attribute", att.getName()),
+						"Builders.Manifest.attribute", att.getName()), //$NON-NLS-1$
 						getLine(att.getParent()), CompilerFlags
 								.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE));
 			} else
@@ -637,7 +637,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateJava(att, attInfo, reporter);
 		} else if (kind == ISchemaAttribute.RESOURCE) {
 			validateResource(att, attInfo, reporter);
-		} else if (type.getName().equals("boolean")) {
+		} else if (type.getName().equals("boolean")) { //$NON-NLS-1$
 			validateBoolean(att, reporter);
 		}
 	}
@@ -656,7 +656,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value",
+		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value", //$NON-NLS-1$
 				new String[]{value, att.getName()}), getLine(att.getParent()),
 				CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
@@ -664,11 +664,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void validateBoolean(IPluginAttribute att,
 			PluginErrorReporter reporter) {
 		String value = att.getValue();
-		if (value.equalsIgnoreCase("true"))
+		if (value.equalsIgnoreCase("true")) //$NON-NLS-1$
 			return;
-		if (value.equalsIgnoreCase("false"))
+		if (value.equalsIgnoreCase("false")) //$NON-NLS-1$
 			return;
-		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value",
+		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value", //$NON-NLS-1$
 				new String[]{value, att.getName()}), getLine(att.getParent()),
 				CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
@@ -681,12 +681,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		try {
 			// be careful: people have the option to use the format:
 			// fullqualifiedName:staticMethod
-			int index = qName.indexOf(":");
+			int index = qName.indexOf(":"); //$NON-NLS-1$
 			if (index != -1)
 				qName = qName.substring(0, index);
 			
 			int dot = qName.lastIndexOf('.');
-			String packageName = (dot != -1) ? qName.substring(0, dot).trim() : "";
+			String packageName = (dot != -1) ? qName.substring(0, dot).trim() : ""; //$NON-NLS-1$
 			String className = qName.substring(dot+1).trim();
 
 			TypeNameRequestor requestor = new TypeNameRequestor();
@@ -702,7 +702,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			
 			if (requestor.isEmpty()) {
 				reporter.report(PDE.getFormattedMessage(
-						"Builders.Manifest.class", new String[]{qName,
+						"Builders.Manifest.class", new String[]{qName, //$NON-NLS-1$
 								att.getName()}), getLine(att.getParent()),
 						CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS));
 			}
@@ -724,7 +724,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IResource resource = project.findMember(new Path(path));
 		if (resource == null) {
 			reporter.report(PDE.getFormattedMessage(
-					"Builders.Manifest.resource", new String[]{path,
+					"Builders.Manifest.resource", new String[]{path, //$NON-NLS-1$
 							att.getName()}), getLine(att.getParent()),
 					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE));
 		}
@@ -748,7 +748,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				}
 				if (!valid) {
 					reporter.report(PDE.getFormattedMessage(
-							"Builders.Manifest.required", attInfo.getName()),
+							"Builders.Manifest.required", attInfo.getName()), //$NON-NLS-1$
 							getLine(element), CompilerFlags
 									.getFlag(CompilerFlags.P_NO_REQUIRED_ATT));
 				}

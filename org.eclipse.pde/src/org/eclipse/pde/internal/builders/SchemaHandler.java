@@ -122,7 +122,7 @@ public class SchemaHandler extends PluginErrorReporter {
 				String line = reader.readLine();
 				if (line != null) {
 					buffer.append(line);
-					buffer.append(System.getProperty("line.separator"));
+					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 				}
 			}
 			fTextDocument = new Document(buffer.toString());
@@ -139,7 +139,7 @@ public class SchemaHandler extends PluginErrorReporter {
 		if (colNumber < 0)
 			colNumber = getLastCharColumn(lineNumber);
 		int offset = fTextDocument.getLineOffset(lineNumber - 1) + colNumber - 1;
-		IRegion region = fFindReplaceAdapter.find(offset, "<" + elementName, false, false, false, false);
+		IRegion region = fFindReplaceAdapter.find(offset, "<" + elementName, false, false, false, false); //$NON-NLS-1$
 		return new Integer(fTextDocument.getLineOfOffset(region.getOffset()) + 1);
 	}
 	

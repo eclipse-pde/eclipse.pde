@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.*;
  * Window>Preferences>Java>Code Generation.
  */
 public class SchemaMarkerFactory implements IMarkerFactory {
-	public static final String MARKER_ID = "org.eclipse.pde.validation-marker";
+	public static final String MARKER_ID = "org.eclipse.pde.validation-marker"; //$NON-NLS-1$
 	private String point;
 	
 	public SchemaMarkerFactory() {
@@ -41,7 +41,7 @@ public class SchemaMarkerFactory implements IMarkerFactory {
 	 */
 	public IMarker createMarker(IFile file) throws CoreException {
 		IMarker marker = file.createMarker(MARKER_ID);
-		marker.setAttribute("point", point);
+		marker.setAttribute("point", point); //$NON-NLS-1$
 		return marker;
 	}
 }

@@ -26,12 +26,12 @@ import org.eclipse.pde.internal.core.schema.FileSchemaDescriptor;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
-		"Builders.Schema.compiling";
+		"Builders.Schema.compiling"; //$NON-NLS-1$
 	public static final String BUILDERS_SCHEMA_COMPILING_SCHEMAS =
-		"Builders.Schema.compilingSchemas";
-	public static final String BUILDERS_UPDATING = "Builders.updating";
+		"Builders.Schema.compilingSchemas"; //$NON-NLS-1$
+	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
 	public static final String BUILDERS_SCHEMA_REMOVING =
-		"Builders.Schema.removing";
+		"Builders.Schema.removing"; //$NON-NLS-1$
 
 	private ISchemaTransformer transformer;
 	private URL cssURL;
@@ -129,7 +129,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				ensureFoldersExist(file.getProject(), docLocation);
 				IFile outputFile = workspace.getRoot().getFile(outputPath);
 				ByteArrayInputStream target =
-					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 				if (!workspace.getRoot().exists(outputPath)) {
 					// the file does not exist - create it
 					outputFile.create(target, true, monitor);
@@ -150,7 +150,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					if (schemaCSSFile.exists())
 						schemaCSSFile.delete(true,false,null);			
 					stringWriter.close();
-					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 					schemaCSSFile.create(target, true, monitor);
 				}
 
@@ -168,7 +168,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					if (cssFile.exists())
 						cssFile.delete(true,false,null);
 					stringWriter.close();
-					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8"));
+					target = new ByteArrayInputStream(stringWriter.toString().getBytes("UTF8")); //$NON-NLS-1$
 					cssFile.create(target, true, monitor);
 				}
 			}
@@ -194,7 +194,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			cssFile =
 				new File(
 					BootLoader.getInstallURL().getFile()
-						+ "/plugins/"
+						+ "/plugins/" //$NON-NLS-1$
 						+ descriptor.toString() + File.separator 
 						+ SchemaTransformer.getPlatformCSSName());
 		} else if (outputPath.toFile().getName().equals(SchemaTransformer.getSchemaCSSName())){
@@ -204,7 +204,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			cssFile =
 				new File(
 					BootLoader.getInstallURL().getFile()
-						+ "/plugins/"
+						+ "/plugins/" //$NON-NLS-1$
 						+ descriptor.toString() + File.separator 
 						+ SchemaTransformer.getSchemaCSSName());
 		} else{
@@ -271,10 +271,10 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	private String getOutputFileName(IFile file) {
 		String fileName = file.getName();
 		int dot = fileName.lastIndexOf('.');
-		String pageName = fileName.substring(0, dot) + ".html";
+		String pageName = fileName.substring(0, dot) + ".html"; //$NON-NLS-1$
 		String mangledPluginId = getMangledPluginId(file);
 		if (mangledPluginId!=null)
-		   pageName = mangledPluginId + "_"+pageName;
+		   pageName = mangledPluginId + "_"+pageName; //$NON-NLS-1$
 		IPath path =
 			file.getProject().getFullPath().append(getDocLocation()).append(
 				pageName);
@@ -311,7 +311,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isSchemaFile(IFile file) {
-		return "exsd".equals(file.getFileExtension());
+		return "exsd".equals(file.getFileExtension()); //$NON-NLS-1$
 	}
 	
 	private void removeOutputFile(IFile file, IProgressMonitor monitor) {

@@ -20,8 +20,8 @@ import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.site.*;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
-	public static final String BUILDERS_VERIFYING = "Builders.verifying";
-	public static final String BUILDERS_UPDATING = "Builders.updating";
+	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
+	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -69,7 +69,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
 			IProject project = getProject();
-			IFile file = project.getFile("site.xml");
+			IFile file = project.getFile("site.xml"); //$NON-NLS-1$
 			if (file.exists()) {
 				checkFile(file, monitor);
 			}
@@ -94,7 +94,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	
 	private boolean isSiteFile(IFile file) {
 		return file.getParent().equals(file.getProject())
-			&& file.getName().toLowerCase().equals("site.xml");
+			&& file.getName().toLowerCase().equals("site.xml"); //$NON-NLS-1$
 	}
 
 	private void validateFile(IFile file, PluginErrorReporter reporter) {
@@ -114,8 +114,8 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		for (int i = 0; i < features.length; i++) {
 			ISiteFeature feature = features[i];
 			assertNotNull(
-				"url",
-				"feature",
+				"url", //$NON-NLS-1$
+				"feature", //$NON-NLS-1$
 				getLine(feature),
 				feature.getURL(),
 				reporter);
@@ -123,8 +123,8 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			for (int j = 0; j < categories.length; j++) {
 				ISiteCategory category = categories[j];
 				assertNotNull(
-					"name",
-					"category",
+					"name", //$NON-NLS-1$
+					"category", //$NON-NLS-1$
 					getLine(category),
 					category.getName(),
 					reporter);
@@ -134,14 +134,14 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		for (int i = 0; i < archives.length; i++) {
 			ISiteArchive archive = archives[i];
 			assertNotNull(
-				"path",
-				"archive",
+				"path", //$NON-NLS-1$
+				"archive", //$NON-NLS-1$
 				getLine(archive),
 				archive.getPath(),
 				reporter);
 			assertNotNull(
-				"url",
-				"archive",
+				"url", //$NON-NLS-1$
+				"archive", //$NON-NLS-1$
 				getLine(archive),
 				archive.getURL(),
 				reporter);
@@ -150,14 +150,14 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		for (int i = 0; i < defs.length; i++) {
 			ISiteCategoryDefinition def = defs[i];
 			assertNotNull(
-				"name",
-				"category-def",
+				"name", //$NON-NLS-1$
+				"category-def", //$NON-NLS-1$
 				getLine(def),
 				def.getName(),
 				reporter);
 			assertNotNull(
-				"label",
-				"category-def",
+				"label", //$NON-NLS-1$
+				"category-def", //$NON-NLS-1$
 				getLine(def),
 				def.getLabel(),
 				reporter);
@@ -181,7 +181,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		if (value == null) {
 			String message =
 				PDE.getFormattedMessage(
-					"Builders.manifest.missingRequired",
+					"Builders.manifest.missingRequired", //$NON-NLS-1$
 					new String[] { att, el });
 			reporter.reportError(message, line);
 		}

@@ -22,12 +22,12 @@ import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
-	public static final String BUILDERS_VERIFYING = "Builders.verifying";
+	public static final String BUILDERS_VERIFYING = "Builders.verifying"; //$NON-NLS-1$
 	public static final String BUILDERS_FEATURE_REFERENCE =
-		"Builders.Feature.reference";
+		"Builders.Feature.reference"; //$NON-NLS-1$
 	public static final String BUILDERS_FEATURE_FREFERENCE =
-		"Builders.Feature.freference";
-	public static final String BUILDERS_UPDATING = "Builders.updating";
+		"Builders.Feature.freference"; //$NON-NLS-1$
+	public static final String BUILDERS_UPDATING = "Builders.updating"; //$NON-NLS-1$
 	
 	private boolean fileCompiled=false;
 
@@ -134,7 +134,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void checkProject(IProject project, IProgressMonitor monitor) {
-		IFile file = project.getFile("feature.xml");
+		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			checkFile(file, monitor);
 		}
@@ -155,7 +155,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isManifestFile(IFile file) {
-		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase().equals("feature.xml");
+		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase().equals("feature.xml"); //$NON-NLS-1$
 	}
 	
 	private boolean isValidReference(IFeaturePlugin plugin) {
@@ -249,14 +249,14 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IFeature feature,
 		PluginErrorReporter reporter) {
 		assertNotNull(
-			"id",
-			"feature",
+			"id", //$NON-NLS-1$
+			"feature", //$NON-NLS-1$
 			getLine(feature),
 			feature.getId(),
 			reporter);
 		assertNotNull(
-			"version",
-			"feature",
+			"version", //$NON-NLS-1$
+			"feature", //$NON-NLS-1$
 			getLine(feature),
 			feature.getVersion(),
 			reporter);
@@ -265,14 +265,14 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		for (int i = 0; i < children.length; i++) {
 			IFeatureChild child = children[i];
 			assertNotNull(
-				"id",
-				"includes",
+				"id", //$NON-NLS-1$
+				"includes", //$NON-NLS-1$
 				getLine(child),
 				child.getId(),
 				reporter);
 			assertNotNull(
-				"version",
-				"includes",
+				"version", //$NON-NLS-1$
+				"includes", //$NON-NLS-1$
 				getLine(child),
 				child.getVersion(),
 				reporter);
@@ -281,14 +281,14 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		for (int i = 0; i < plugins.length; i++) {
 			IFeaturePlugin plugin = plugins[i];
 			assertNotNull(
-				"id",
-				"plugin",
+				"id", //$NON-NLS-1$
+				"plugin", //$NON-NLS-1$
 				getLine(plugin),
 				plugin.getId(),
 				reporter);
 			assertNotNull(
-				"version",
-				"plugin",
+				"version", //$NON-NLS-1$
+				"plugin", //$NON-NLS-1$
 				getLine(plugin),
 				plugin.getVersion(),
 				reporter);
@@ -297,8 +297,8 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		for (int i = 0; i < data.length; i++) {
 			IFeatureData entry = data[i];
 			assertNotNull(
-				"id",
-				"data",
+				"id", //$NON-NLS-1$
+				"data", //$NON-NLS-1$
 				getLine(entry),
 				entry.getId(),
 				reporter);
@@ -308,8 +308,8 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			IFeatureImport fimport = fimports[i];
 			if (fimport.getType()==IFeatureImport.PLUGIN) {
 				assertNotNull(
-				"plugin",
-				"import",
+				"plugin", //$NON-NLS-1$
+				"import", //$NON-NLS-1$
 				getLine(fimport),
 				fimport.getId(),
 				reporter);
@@ -334,7 +334,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		if (value == null) {
 			String message =
 				PDE.getFormattedMessage(
-					"Builders.manifest.missingRequired",
+					"Builders.manifest.missingRequired", //$NON-NLS-1$
 					new String[] { att, el });
 			reporter.reportError(message, line);
 		}

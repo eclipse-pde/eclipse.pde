@@ -38,30 +38,30 @@ public class CompilerFlags {
 
 	// Manifest compiler flags
 	public static final String P_UNRESOLVED_IMPORTS =
-		"compilers.p.unresolved-import";
+		"compilers.p.unresolved-import"; //$NON-NLS-1$
 	public static final String P_UNRESOLVED_EX_POINTS =
-		"compilers.p.unresolved-ex-points";
+		"compilers.p.unresolved-ex-points"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_ELEMENT =
-		"compilers.p.unknown-element";
+		"compilers.p.unknown-element"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_ATTRIBUTE =
-		"compilers.p.unknown-attribute";
+		"compilers.p.unknown-attribute"; //$NON-NLS-1$
 	public static final String P_ILLEGAL_ATT_VALUE =
-		"compilers.p.illegal-att-value";
-	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class";
+		"compilers.p.illegal-att-value"; //$NON-NLS-1$
+	public static final String P_UNKNOWN_CLASS = "compilers.p.unknown-class"; //$NON-NLS-1$
 	public static final String P_UNKNOWN_RESOURCE =
-		"compilers.p.unknown-resource";
+		"compilers.p.unknown-resource"; //$NON-NLS-1$
 	public static final String P_NO_REQUIRED_ATT =
-		"compilers.p.no-required-att";
+		"compilers.p.no-required-att"; //$NON-NLS-1$
 
-	public static final String S_CREATE_DOCS = "compilers.s.create-docs";
-	public static final String S_DOC_FOLDER = "compilers.s.doc-folder";
-	public static final String S_OPEN_TAGS = "compilers.s.open-tags";
-	public static final String S_FORBIDDEN_END_TAGS = "compilers.s.forbidden-end-tags";
-	public static final String S_OPTIONAL_END_TAGS = "compilers.s.optional-end-tags";
+	public static final String S_CREATE_DOCS = "compilers.s.create-docs"; //$NON-NLS-1$
+	public static final String S_DOC_FOLDER = "compilers.s.doc-folder"; //$NON-NLS-1$
+	public static final String S_OPEN_TAGS = "compilers.s.open-tags"; //$NON-NLS-1$
+	public static final String S_FORBIDDEN_END_TAGS = "compilers.s.forbidden-end-tags"; //$NON-NLS-1$
+	public static final String S_OPTIONAL_END_TAGS = "compilers.s.optional-end-tags"; //$NON-NLS-1$
 	public static final String F_UNRESOLVED_PLUGINS =
-		"compilers.f.unresolved-plugins";
+		"compilers.f.unresolved-plugins"; //$NON-NLS-1$
 	public static final String F_UNRESOLVED_FEATURES =
-		"compilers.f.unresolved-features";
+		"compilers.f.unresolved-features"; //$NON-NLS-1$
 
 	private static final String[][] flags =
 		{
@@ -145,7 +145,7 @@ public class CompilerFlags {
 		pref.setDefault(P_NO_REQUIRED_ATT, WARNING);
 
 		pref.setDefault(S_CREATE_DOCS, false);
-		pref.setDefault(S_DOC_FOLDER, "doc");
+		pref.setDefault(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
 		pref.setDefault(S_OPEN_TAGS, WARNING);
 		pref.setDefault(S_FORBIDDEN_END_TAGS, WARNING);
 		pref.setDefault(S_OPTIONAL_END_TAGS, IGNORE);

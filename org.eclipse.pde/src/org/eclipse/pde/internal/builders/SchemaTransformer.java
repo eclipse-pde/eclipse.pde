@@ -25,64 +25,64 @@ import org.w3c.dom.*;
 
 public class SchemaTransformer implements ISchemaTransformer {
 	private static final String KEY_BOOLEAN_INVALID =
-		"Builders.Schema.Verifier.booleanInvalid";
+		"Builders.Schema.Verifier.booleanInvalid"; //$NON-NLS-1$
 	private static final String KEY_RESTRICTION_INVALID =
-		"Builders.Schema.Verifier.restrictionInvalid";
+		"Builders.Schema.Verifier.restrictionInvalid"; //$NON-NLS-1$
 	private static final String KEY_BASED_ON_INVALID =
-		"Builders.Schema.Verifier.basedOnInvalid";
+		"Builders.Schema.Verifier.basedOnInvalid"; //$NON-NLS-1$
 	private static final String KEY_VALUE_WITHOUT_DEFAULT =
-		"Builders.Schema.Verifier.valueWithoutDefault";
+		"Builders.Schema.Verifier.valueWithoutDefault"; //$NON-NLS-1$
 	private static final String KEY_DEFAULT_WITHOUT_VALUE =
-		"Builders.Schema.Verifier.defaultWithoutValue";
+		"Builders.Schema.Verifier.defaultWithoutValue"; //$NON-NLS-1$
 	public static final String KEY_DEPRECATED_TYPE =
-		"Builders.Schema.deprecatedType";
+		"Builders.Schema.deprecatedType"; //$NON-NLS-1$
 	public static final String REPORT_UNMATCHED =
-		"SchemaTransformer.Validator.unmatched";
+		"SchemaTransformer.Validator.unmatched"; //$NON-NLS-1$
 	public static final String REPORT_FORBIDDEN =
-		"SchemaTransformer.Validator.forbidden";
+		"SchemaTransformer.Validator.forbidden"; //$NON-NLS-1$
 	public static final String REPORT_OPTIONAL =
-		"SchemaTransformer.Validator.optional";
+		"SchemaTransformer.Validator.optional"; //$NON-NLS-1$
 	public static final String REPORT_GENERAL =
-		"SchemaTransformer.Validator.general";
+		"SchemaTransformer.Validator.general"; //$NON-NLS-1$
 	public static final String REPORT_OPEN =
-		"SchemaTransformer.Validator.open_tag";
+		"SchemaTransformer.Validator.open_tag"; //$NON-NLS-1$
 	public static final String PLATFORM_PLUGIN_DOC =
-		"org.eclipse.platform.doc.isv";
+		"org.eclipse.platform.doc.isv"; //$NON-NLS-1$
 	public static final byte TEMP = 0x00;
 	public static final byte BUILD = 0x01;
 	public static final byte GENERATE_DOC = 0x02;
 	public static final String[] forbiddenEndTagKeys =
 		{
-			"area",
-			"base",
-			"basefont",
-			"br",
-			"col",
-			"frame",
-			"hr",
-			"img",
-			"input",
-			"isindex",
-			"link",
-			"meta",
-			"param" };
+			"area", //$NON-NLS-1$
+			"base", //$NON-NLS-1$
+			"basefont", //$NON-NLS-1$
+			"br", //$NON-NLS-1$
+			"col", //$NON-NLS-1$
+			"frame", //$NON-NLS-1$
+			"hr", //$NON-NLS-1$
+			"img", //$NON-NLS-1$
+			"input", //$NON-NLS-1$
+			"isindex", //$NON-NLS-1$
+			"link", //$NON-NLS-1$
+			"meta", //$NON-NLS-1$
+			"param" }; //$NON-NLS-1$
 	private static final String[] optionalEndTagKeys =
 		{
-			"body",
-			"colgroup",
-			"dd",
-			"dt",
-			"head",
-			"html",
-			"li",
-			"option",
-			"p",
-			"tbody",
-			"td",
-			"tfoot",
-			"th",
-			"thead",
-			"tr" };
+			"body", //$NON-NLS-1$
+			"colgroup", //$NON-NLS-1$
+			"dd", //$NON-NLS-1$
+			"dt", //$NON-NLS-1$
+			"head", //$NON-NLS-1$
+			"html", //$NON-NLS-1$
+			"li", //$NON-NLS-1$
+			"option", //$NON-NLS-1$
+			"p", //$NON-NLS-1$
+			"tbody", //$NON-NLS-1$
+			"td", //$NON-NLS-1$
+			"tfoot", //$NON-NLS-1$
+			"th", //$NON-NLS-1$
+			"thead", //$NON-NLS-1$
+			"tr" }; //$NON-NLS-1$
 
 	private void appendAttlist(
 		PrintWriter out,
@@ -90,13 +90,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 		int maxWidth) {
 		// add three spaces
 //		out.print("<p class=code id=dtd>&nbsp;&nbsp;");
-		out.print("<p class=code id=dtdAttlist>");
+		out.print("<p class=code id=dtdAttlist>"); //$NON-NLS-1$
 		// add name
 		out.print(att.getName());
 		// fill spaces to align data type
 		int delta = maxWidth - att.getName().length();
 		for (int i = 0; i < delta + 1; i++) {
-			out.print("&nbsp;");
+			out.print("&nbsp;"); //$NON-NLS-1$
 		}
 		// add data type
 		ISchemaSimpleType type = att.getType();
@@ -105,25 +105,25 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (type != null)
 			restriction = type.getRestriction();
 		String typeName =
-			type != null ? type.getName().toLowerCase() : "string";
-		if (typeName.equals("boolean")) {
-			out.print("(true | false) ");
+			type != null ? type.getName().toLowerCase() : "string"; //$NON-NLS-1$
+		if (typeName.equals("boolean")) { //$NON-NLS-1$
+			out.print("(true | false) "); //$NON-NLS-1$
 			choices = true;
 		} else if (restriction != null) {
 			appendRestriction(restriction, out);
 			choices = true;
 		} else {
-			out.print("CDATA ");
+			out.print("CDATA "); //$NON-NLS-1$
 		}
 
 		// add use
 		if (att.getUse() == ISchemaAttribute.REQUIRED) {
 			if (!choices)
-				out.print("#REQUIRED");
+				out.print("#REQUIRED"); //$NON-NLS-1$
 		} else if (att.getUse() == ISchemaAttribute.DEFAULT) {
-			out.print("\"" + att.getValue() + "\"");
+			out.print("\"" + att.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (!choices)
-			out.print("#IMPLIED");
+			out.print("#IMPLIED"); //$NON-NLS-1$
 	}
 	private void appendRestriction(
 		ISchemaRestriction restriction,
@@ -131,13 +131,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (restriction instanceof ChoiceRestriction) {
 			ChoiceRestriction cr = (ChoiceRestriction) restriction;
 			String[] choices = cr.getChoicesAsStrings();
-			out.print("(");
+			out.print("("); //$NON-NLS-1$
 			for (int i = 0; i < choices.length; i++) {
 				if (i > 0)
-					out.print("|");
+					out.print("|"); //$NON-NLS-1$
 				out.print(choices[i]);
 			}
-			out.print(") ");
+			out.print(") "); //$NON-NLS-1$
 		}
 	}
 	private int calculateMaxAttributeWidth(ISchemaAttribute[] attributes) {
@@ -153,7 +153,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (loc + 5 >= text.length())
 			return false;
 		String tag = text.substring(loc, loc + 6);
-		if (tag.toLowerCase().equals("</pre>"))
+		if (tag.toLowerCase().equals("</pre>")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -161,7 +161,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (loc + 4 >= text.length())
 			return false;
 		String tag = text.substring(loc, loc + 5);
-		if (tag.toLowerCase().equals("<pre>"))
+		if (tag.toLowerCase().equals("<pre>")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -221,7 +221,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		int dot = name.lastIndexOf('.');
 		if (dot != -1) {
 			String ext = name.substring(dot + 1);
-			if (ext.equalsIgnoreCase("xsd")) {
+			if (ext.equalsIgnoreCase("xsd")) { //$NON-NLS-1$
 				String message = PDE.getResourceString(KEY_DEPRECATED_TYPE);
 				reporter.reportWarning(message);
 			}
@@ -243,7 +243,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (attribute.getKind() != ISchemaAttribute.STRING) {
 			if (type != null) {
-				if (type.getName().equals("boolean")) {
+				if (type.getName().equals("boolean")) { //$NON-NLS-1$
 					message =
 						PDE.getFormattedMessage(KEY_BOOLEAN_INVALID, args);
 					// this kind cannot have boolean type
@@ -268,7 +268,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				errors++;
 			}
 		}
-		if (type != null && type.getName().equals("boolean")) {
+		if (type != null && type.getName().equals("boolean")) { //$NON-NLS-1$
 			if (type instanceof SchemaSimpleType
 				&& ((SchemaSimpleType) type).getRestriction() != null) {
 				// should not have restriction
@@ -299,10 +299,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	public static String getSchemaCSSName() {
-		return "schema.css";
+		return "schema.css"; //$NON-NLS-1$
 	}
 	public static String getPlatformCSSName() {
-		return "book.css";
+		return "book.css"; //$NON-NLS-1$
 	}
 
 	public void addCSS(PrintWriter out, URL cssURL, byte cssPurpose) {
@@ -310,15 +310,15 @@ public class SchemaTransformer implements ISchemaTransformer {
 
 		if (cssURL == null) {
 			if (cssPurpose == GENERATE_DOC) {
-				out.println("<!-- default platform documentation stylesheets -->");
+				out.println("<!-- default platform documentation stylesheets -->"); //$NON-NLS-1$
 				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ getPlatformCSSName()+ "\"/>");
-				out.println("<style>@import url(\"" + getPlatformCSSName() + "\");</style>");
+				out.println("<style>@import url(\"" + getPlatformCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} else if (cssPurpose == BUILD) {
 				out.println(
-					"<!-- default platform documentation stylesheets -->");
+					"<!-- default platform documentation stylesheets -->"); //$NON-NLS-1$
 				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"+ getPlatformCSSName()+ "\"/>");	
-				out.println("<style>@import url(\"../../" + getPlatformCSSName() + "\");</style>");
+				out.println("<style>@import url(\"../../" + getPlatformCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} else { // cssPurpose is TEMP
 				IPluginDescriptor descriptor =
@@ -331,26 +331,26 @@ public class SchemaTransformer implements ISchemaTransformer {
 				cssFile =
 					new File(
 						BootLoader.getInstallURL().getFile()
-							+ "/plugins/"
+							+ "/plugins/" //$NON-NLS-1$
 							+ descriptor.toString() + File.separator 
 							+ getPlatformCSSName());
 			}
 		} else {
 			cssFile = new File(cssURL.getFile());
 			if (cssPurpose == GENERATE_DOC) {
-				out.println("<!-- custom platform documentation stylesheets -->");
+				out.println("<!-- custom platform documentation stylesheets -->"); //$NON-NLS-1$
 				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + cssFile.getName()+ "\"/>");
-				out.println("<style>@import url(\"" + cssFile.getName() + "\");</style>");
+				out.println("<style>@import url(\"" + cssFile.getName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} else if (cssPurpose == BUILD) {
-				out.println("<!-- custom platform documentation stylesheets -->");
+				out.println("<!-- custom platform documentation stylesheets -->"); //$NON-NLS-1$
 				//out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\""+ cssURL.toString()+ "\"/>");
-				out.println("<style>@import url(\"" + cssURL.toString() + "\");</style>");
+				out.println("<style>@import url(\"" + cssURL.toString() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
 		try {
-			File tempCSSFile = File.createTempFile("book", ".css");
+			File tempCSSFile = File.createTempFile("book", ".css"); //$NON-NLS-1$ //$NON-NLS-2$
 			tempCSSFile.deleteOnExit();
 			FileReader freader = new FileReader(cssFile);
 			BufferedReader breader = new BufferedReader(freader);
@@ -359,12 +359,12 @@ public class SchemaTransformer implements ISchemaTransformer {
 			while (breader.ready()) {
 				pwriter.println(breader.readLine());
 			}
-			out.println("<!-- temporary documentation stylesheets -->");
+			out.println("<!-- temporary documentation stylesheets -->"); //$NON-NLS-1$
 //			out.println(
 //				"<link rel=\"stylesheet\" type=\"text/css\" href=\""
 //					+ tempCSSFile.getName()
 //					+ "\"/>");
-			out.println("<style>@import url(\"" + tempCSSFile.getName() + "\");</style>");
+			out.println("<style>@import url(\"" + tempCSSFile.getName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 			pwriter.close();
 			breader.close();
 			freader.close();
@@ -385,44 +385,44 @@ public class SchemaTransformer implements ISchemaTransformer {
 		URL cssURL,
 		byte cssPurpose) {
 		out.println(
-			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
-		out.print("<HEAD>");
+			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"); //$NON-NLS-1$
+		out.print("<HEAD>"); //$NON-NLS-1$
 		out.println(
-			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
 
 		addCSS(out, cssURL, cssPurpose);
 		addSchemaStyle(out, cssPurpose);
 
-		out.println("</HEAD>");
-		out.println("<HTML>");
-		out.println("<BODY>");
-		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>");
-		out.println("<p></p>");
-		out.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>");
+		out.println("</HEAD>"); //$NON-NLS-1$
+		out.println("<HTML>"); //$NON-NLS-1$
+		out.println("<BODY>"); //$NON-NLS-1$
+		out.println("<H1><CENTER>" + schema.getName() + "</CENTER></H1>"); //$NON-NLS-1$ //$NON-NLS-2$
+		out.println("<p></p>"); //$NON-NLS-1$
+		out.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>"); //$NON-NLS-1$
 		out.print(schema.getQualifiedPointId());
-		out.println("<p></p>");
-		transformSection(out, schema, "Since:", IDocumentSection.SINCE);
+		out.println("<p></p>"); //$NON-NLS-1$
+		transformSection(out, schema, "Since:", IDocumentSection.SINCE); //$NON-NLS-1$
 		transformDescription(out, schema);
 		out.println(
-			"<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>");
+			"<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>"); //$NON-NLS-1$
 		transformMarkup(out, schema);
-		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES);
+		transformSection(out, schema, "Examples:", IDocumentSection.EXAMPLES); //$NON-NLS-1$
 		transformSection(
 			out,
 			schema,
-			"API Information:",
+			"API Information:", //$NON-NLS-1$
 			IDocumentSection.API_INFO);
 		transformSection(
 			out,
 			schema,
-			"Supplied Implementation:",
+			"Supplied Implementation:", //$NON-NLS-1$
 			IDocumentSection.IMPLEMENTATION);
-		out.println("<br>");
-		out.println("<p class=note id=copyright>");
+		out.println("<br>"); //$NON-NLS-1$
+		out.println("<p class=note id=copyright>"); //$NON-NLS-1$
 		transformSection(out, schema, IDocumentSection.COPYRIGHT);
-		out.println("</p>");
-		out.println("</BODY>");
-		out.println("</HTML>");
+		out.println("</p>"); //$NON-NLS-1$
+		out.println("</BODY>"); //$NON-NLS-1$
+		out.println("</HTML>"); //$NON-NLS-1$
 	}
 
 	private void addSchemaStyle(PrintWriter out, byte cssPurpose) {
@@ -437,26 +437,26 @@ public class SchemaTransformer implements ISchemaTransformer {
 							PLATFORM_PLUGIN_DOC);
 					if (descriptor == null)
 						return;
-					addCSS(out,new URL(BootLoader.getInstallURL()+  "/plugins/"+ descriptor.toString() + File.separator+ getSchemaCSSName()),cssPurpose);
+					addCSS(out,new URL(BootLoader.getInstallURL()+  "/plugins/"+ descriptor.toString() + File.separator+ getSchemaCSSName()),cssPurpose); //$NON-NLS-1$
 					break;
 				case (GENERATE_DOC) :
 					out.println(
-						"<!-- default schema documentation stylesheets -->");
+						"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
 //					out.println(
 //						"<link rel=\"stylesheet\" type=\"text/css\" href=\""
 //							+ getSchemaCSSName()
 //							+ "\"/>");
-					out.println("<style>@import url(\"" + getSchemaCSSName() + "\");</style>");
+					out.println("<style>@import url(\"" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 				case (BUILD) :
 					out.println(
-						"<!-- default schema documentation stylesheets -->");
+						"<!-- default schema documentation stylesheets -->"); //$NON-NLS-1$
 //					out.println(
 //						"<link rel=\"stylesheet\" type=\"text/css\" href=\"../../"
 //							+ getSchemaCSSName()
 //							+ "\"/>");
 					// defect 43227
-				out.println("<style>@import url(\"../../" + getSchemaCSSName() + "\");</style>");
+				out.println("<style>@import url(\"../../" + getSchemaCSSName() + "\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 				default :
 					break;
@@ -467,81 +467,81 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 
 	private void transformDescription(PrintWriter out, ISchema schema) {
-		out.println("<p>");
-		out.print("<h6 class=CaptionFigColumn id=header>Description: </h6>");
+		out.println("<p>"); //$NON-NLS-1$
+		out.print("<h6 class=CaptionFigColumn id=header>Description: </h6>"); //$NON-NLS-1$
 		transformText(out, schema.getDescription());
 		ISchemaInclude[] includes = schema.getIncludes();
 		for (int i = 0; i < includes.length; i++) {
 
 			ISchema ischema = includes[i].getIncludedSchema();
 			if (ischema != null) {
-				out.println("<p>");
+				out.println("<p>"); //$NON-NLS-1$
 				transformText(out, ischema.getDescription());
 			}
 		}
-		out.println("</p>");
+		out.println("</p>"); //$NON-NLS-1$
 	}
 
 	private void transformElement(PrintWriter out, ISchemaElement element) {
 		String name = element.getName();
 		String dtd = element.getDTDRepresentation(true);
-		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>";
+		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		out.print(
-			"<p class=code id=dtd>&lt;!ELEMENT "
+			"<p class=code id=dtd>&lt;!ELEMENT " //$NON-NLS-1$
 				+ nameLink
-				+ " "
+				+ " " //$NON-NLS-1$
 				+ dtd);
-		out.println("&gt;</p>");
+		out.println("&gt;</p>"); //$NON-NLS-1$
 
 		ISchemaAttribute[] attributes = element.getAttributes();
 
 		if (attributes.length > 0) { 
 			out.println(
-				"<p class=code id=dtd>&lt;!ATTLIST "
+				"<p class=code id=dtd>&lt;!ATTLIST " //$NON-NLS-1$
 					+ name
-					+ "</p>");
+					+ "</p>"); //$NON-NLS-1$
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
 				appendAttlist(out, attributes[i], maxWidth);
 			}
-			out.println("&gt;</p>");
+			out.println("&gt;</p>"); //$NON-NLS-1$
 			
 		}
-		out.println("<p></p>");
+		out.println("<p></p>"); //$NON-NLS-1$
 		
 		// inserted desc here for element
 		String description = element.getDescription();
 
 		if (description != null && description.trim().length() > 0) {
-			out.println("<p class=ConfigMarkup id=elementDesc>"); 
+			out.println("<p class=ConfigMarkup id=elementDesc>");  //$NON-NLS-1$
 			transformText(out, description);
-			out.println("</p>");
+			out.println("</p>"); //$NON-NLS-1$
 		} 
 		// end of inserted desc for element
 		if (attributes.length == 0){
-			out.println("<br><br>");
+			out.println("<br><br>"); //$NON-NLS-1$
 			return;
 		} else if (description != null && description.trim().length() > 0){
-			out.println("<br>");
+			out.println("<br>"); //$NON-NLS-1$
 		}
 		
-		out.println("<ul class=ConfigMarkup id=attlistDesc>");
+		out.println("<ul class=ConfigMarkup id=attlistDesc>"); //$NON-NLS-1$
 		for (int i = 0; i < attributes.length; i++) {
 			ISchemaAttribute att = attributes[i];
-			if (name.equals("extension")) {
+			if (name.equals("extension")) { //$NON-NLS-1$
 				if (att.getDescription() == null
 					|| att.getDescription().trim().length() == 0) {
 					continue;
 				}
 			}
-			out.print("<li><b>" + att.getName() + "</b> - ");
+			out.print("<li><b>" + att.getName() + "</b> - "); //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(out, att.getDescription());
-			out.println("</li>");			
+			out.println("</li>");			 //$NON-NLS-1$
 		}
-		out.println("</ul>");
+		out.println("</ul>"); //$NON-NLS-1$
 		// adding spaces for new shifted view
-		out.print("<br>");
+		out.print("<br>"); //$NON-NLS-1$
 	}
 	private void transformMarkup(PrintWriter out, ISchema schema) {
 		ISchemaElement[] elements = schema.getResolvedElements();
@@ -614,11 +614,11 @@ public class SchemaTransformer implements ISchemaTransformer {
 		if (desc == null || desc.trim().length() == 0)
 			return false;
 
-		StringTokenizer text = new StringTokenizer(desc, "<>", true);
+		StringTokenizer text = new StringTokenizer(desc, "<>", true); //$NON-NLS-1$
 
 		while (text.countTokens() > 0) {
 			String next = text.nextToken();
-			if (next.equals("<")) {
+			if (next.equals("<")) { //$NON-NLS-1$
 				openTag = true;
 
 				if (text.hasMoreTokens()) {
@@ -631,19 +631,19 @@ public class SchemaTransformer implements ISchemaTransformer {
 					if (tag.indexOf('\n') != -1)
 						tag = tag.replace('\n', ' ');
 
-					int loc = tag.indexOf(" ");
-					int locEnd = tag.lastIndexOf("/");
+					int loc = tag.indexOf(" "); //$NON-NLS-1$
+					int locEnd = tag.lastIndexOf("/"); //$NON-NLS-1$
 
 					// trim all attributes if existing (i.e. color=blue)
 					// ignore opened tag if it is empty, ends itself or is a
 					// comment
-					if (tag.equalsIgnoreCase(">")
+					if (tag.equalsIgnoreCase(">") //$NON-NLS-1$
 						|| (locEnd == tag.length() - 1
 							&& text.hasMoreTokens()
-							&& text.nextToken().equals(">"))
-						|| (tag.indexOf("!") == 0
+							&& text.nextToken().equals(">")) //$NON-NLS-1$
+						|| (tag.indexOf("!") == 0 //$NON-NLS-1$
 							&& text.hasMoreTokens()
-							&& text.nextToken().equals(">"))) {
+							&& text.nextToken().equals(">"))) { //$NON-NLS-1$
 						openTag = false;
 						linenum += getLineBreakCount(tempTag);
 						continue;
@@ -652,7 +652,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					tag = (loc == -1 ? tag : tag.substring(0, loc));
 
 					if (locEnd != 0) { // assert it is not an end tag
-						if (tag.equalsIgnoreCase("pre") && !isPre) {
+						if (tag.equalsIgnoreCase("pre") && !isPre) { //$NON-NLS-1$
 							isPre = true;
 							tagStack.push(tag);
 							lineStack.push(new Integer(linenum));
@@ -666,7 +666,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 						tag = tag.substring(1);
 						// take off "/" prefix and all existing attributes
 						if (isPre) {
-							if (tag.equalsIgnoreCase("pre")) {
+							if (tag.equalsIgnoreCase("pre")) { //$NON-NLS-1$
 								isPre = false;
 								tagStack.pop();
 								lineStack.pop();
@@ -684,8 +684,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 						} else if (forbiddenEndTag(tag)) {
 							if (flagForbidden) {
 								report(
-									"FORBIDDEN",
-									"/" + tag,
+									"FORBIDDEN", //$NON-NLS-1$
+									"/" + tag, //$NON-NLS-1$
 									linenum,
 									container,
 									reporter);
@@ -694,8 +694,8 @@ public class SchemaTransformer implements ISchemaTransformer {
 							tagStack.isEmpty() || tagStack.search(tag) == -1) {
 							if (flagGeneral) {
 								report(
-									"GENERAL",
-									"/" + tag,
+									"GENERAL", //$NON-NLS-1$
+									"/" + tag, //$NON-NLS-1$
 									linenum,
 									container,
 									reporter);
@@ -719,7 +719,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 											.peek()
 											.toString())) {
 										report(
-											"GENERAL",
+											"GENERAL", //$NON-NLS-1$
 											tagStack.pop().toString(),
 											((Integer) lineStack.pop())
 												.intValue(),
@@ -742,7 +742,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 										&& optionalEndTag(
 											tagStack.peek().toString())) {
 										report(
-											"OPTIONAL",
+											"OPTIONAL", //$NON-NLS-1$
 											tagStack.pop().toString(),
 											((Integer) lineStack.pop())
 												.intValue(),
@@ -762,21 +762,21 @@ public class SchemaTransformer implements ISchemaTransformer {
 						}
 					}
 
-					if (text.hasMoreTokens() && text.nextToken().equals(">")) {
+					if (text.hasMoreTokens() && text.nextToken().equals(">")) { //$NON-NLS-1$
 						openTag = false;
 					} else {
 						if (flagGeneral) {
 							if (locEnd == -1) {
 								report(
-									"OPEN_TAG",
-									"null",
+									"OPEN_TAG", //$NON-NLS-1$
+									"null", //$NON-NLS-1$
 									linenum,
 									container,
 									reporter);
 							} else {
 								report(
-									"OPEN_TAG",
-									"null",
+									"OPEN_TAG", //$NON-NLS-1$
+									"null", //$NON-NLS-1$
 									linenum,
 									container,
 									reporter);
@@ -793,7 +793,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		}
 
 		if (openTag) {
-			report("OPEN_TAG", "null", linenum, container, reporter);
+			report("OPEN_TAG", "null", linenum, container, reporter); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		while (!tagStack.isEmpty()) {
@@ -804,7 +804,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					lineStack.pop();
 				} else {
 					report(
-						"OPTIONAL",
+						"OPTIONAL", //$NON-NLS-1$
 						tagStack.pop().toString(),
 						((Integer) lineStack.pop()).intValue(),
 						container,
@@ -816,7 +816,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					lineStack.pop();
 				} else {
 					report(
-						"GENERAL",
+						"GENERAL", //$NON-NLS-1$
 						tagStack.pop().toString(),
 						((Integer) lineStack.pop()).intValue(),
 						container,
@@ -836,7 +836,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 		PlatformObject container,
 		PluginErrorReporter reporter) {
 		if (container instanceof SchemaObject) {
-			if (errTag.equals("")) {
+			if (errTag.equals("")) { //$NON-NLS-1$
 				reporter.report(
 					PDE.getResourceString(REPORT_UNMATCHED),
 					((SchemaObject) container).getStartLine() + linenum,
@@ -844,7 +844,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
 			} else {
-				if (errType.equals("FORBIDDEN")) {
+				if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 						((SchemaObject) container).getStartLine() + linenum,
@@ -853,7 +853,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					return CompilerFlags.getFlag(
 						CompilerFlags.S_FORBIDDEN_END_TAGS)
 						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPTIONAL")) {
+				} else if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 						((SchemaObject) container).getStartLine() + linenum,
@@ -862,7 +862,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					return CompilerFlags.getFlag(
 						CompilerFlags.S_OPTIONAL_END_TAGS)
 						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPEN_TAG")) {
+				} else if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getResourceString(REPORT_OPEN),
 						((SchemaObject) container).getStartLine() + linenum,
@@ -879,7 +879,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				}
 			}
 		} else { //i.e. if (container instanceof Schema)
-			if (errTag.equals("")) {
+			if (errTag.equals("")) { //$NON-NLS-1$
 				reporter.report(
 					PDE.getResourceString(REPORT_UNMATCHED),
 					((Schema) container).getOverviewStartLine() + linenum,
@@ -887,7 +887,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 				return CompilerFlags.getFlag(CompilerFlags.S_OPEN_TAGS)
 					== CompilerFlags.ERROR;
 			} else {
-				if (errType.equals("FORBIDDEN")) {
+				if (errType.equals("FORBIDDEN")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getFormattedMessage(REPORT_FORBIDDEN, errTag),
 						((Schema) container).getOverviewStartLine() + linenum,
@@ -896,7 +896,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					return CompilerFlags.getFlag(
 						CompilerFlags.S_FORBIDDEN_END_TAGS)
 						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPTIONAL")) {
+				} else if (errType.equals("OPTIONAL")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getFormattedMessage(REPORT_OPTIONAL, errTag),
 						((Schema) container).getOverviewStartLine() + linenum,
@@ -905,7 +905,7 @@ public class SchemaTransformer implements ISchemaTransformer {
 					return CompilerFlags.getFlag(
 						CompilerFlags.S_OPTIONAL_END_TAGS)
 						== CompilerFlags.ERROR;
-				} else if (errType.equals("OPEN_TAG")) {
+				} else if (errType.equals("OPEN_TAG")) { //$NON-NLS-1$
 					reporter.report(
 						PDE.getResourceString(REPORT_OPEN),
 						((Schema) container).getOverviewStartLine() + linenum,
@@ -979,10 +979,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 			return;
 		if (title != null)
 			out.print(
-				"<h6 class=CaptionFigColumn id=header>" + title + " </h6>");
+				"<h6 class=CaptionFigColumn id=header>" + title + " </h6>"); //$NON-NLS-1$ //$NON-NLS-2$
 		transformText(out, description);
 		out.println();
-		out.println("<p></p>");
+		out.println("<p></p>"); //$NON-NLS-1$
 		out.println();
 	}
 	private void transformText(PrintWriter out, String text) {
@@ -996,13 +996,13 @@ public class SchemaTransformer implements ISchemaTransformer {
 			char c = text.charAt(i);
 			if (c == '<') {
 				if (isPreStart(text, i)) {
-					out.print("<pre>");
+					out.print("<pre>"); //$NON-NLS-1$
 					i += 4;
 					preformatted = true;
 					continue;
 				}
 				if (isPreEnd(text, i)) {
-					out.print("</pre>");
+					out.print("</pre>"); //$NON-NLS-1$
 					i += 5;
 					preformatted = false;
 					inTag = false;
@@ -1014,32 +1014,32 @@ public class SchemaTransformer implements ISchemaTransformer {
 				switch (c) {
 					case '<' :
 						inTag = true;
-						out.print("<p class=code id=tag>");
-						out.print("&lt;");
+						out.print("<p class=code id=tag>"); //$NON-NLS-1$
+						out.print("&lt;"); //$NON-NLS-1$
 						break;
 					case '>' :
-						out.print("&gt;");
-						out.print("</p>");
+						out.print("&gt;"); //$NON-NLS-1$
+						out.print("</p>"); //$NON-NLS-1$
 						inTag = false;
 						inCstring = false;
 						break;
 					case '&' :
-						out.print("&amp;");
+						out.print("&amp;"); //$NON-NLS-1$
 						break;
 					case '\'' :
-						out.print("&apos;");
+						out.print("&apos;"); //$NON-NLS-1$
 						break;
 					case '\"' :
 						if (inTag) {
 							if (inCstring) {
-								out.print("&quot;");
-								out.print("</p>");
-								out.print("<p class=code id=tag>");
+								out.print("&quot;"); //$NON-NLS-1$
+								out.print("</p>"); //$NON-NLS-1$
+								out.print("<p class=code id=tag>"); //$NON-NLS-1$
 								inCstring = false;
 							} else {
 								inCstring = true;
-								out.print("<p class=code id=cstring>");
-								out.print("&quot;");
+								out.print("<p class=code id=cstring>"); //$NON-NLS-1$
+								out.print("&quot;"); //$NON-NLS-1$
 							}
 						}
 						break;
@@ -1052,10 +1052,10 @@ public class SchemaTransformer implements ISchemaTransformer {
 	}
 	
 	public int getLineBreakCount(String tag){
-		StringTokenizer tokenizer = new StringTokenizer(tag, "\n", true);
+		StringTokenizer tokenizer = new StringTokenizer(tag, "\n", true); //$NON-NLS-1$
 		int token = 0;
 		while (tokenizer.hasMoreTokens()){
-			if (tokenizer.nextToken().equals("\n"))
+			if (tokenizer.nextToken().equals("\n")) //$NON-NLS-1$
 				token++;
 		}
 		return token;
