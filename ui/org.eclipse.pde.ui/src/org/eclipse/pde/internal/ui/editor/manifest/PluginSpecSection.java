@@ -282,8 +282,8 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 						: PDEPlugin.getResourceString(
 							"ManifestEditor.PluginSpecSection.plugin")),
 				SWT.CHECK);
-		String version = model.getPluginBase().getVersion();
-		fCompatibilityButton.setSelection(version != null && version.equals("3.0"));
+
+	fCompatibilityButton.setSelection(model.getPluginBase().getVersion() == null);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fCompatibilityButton.setLayoutData(gd);
@@ -292,9 +292,9 @@ public Composite createClient(Composite parent, FormWidgetFactory factory) {
 				try {
 					IPluginModelBase model = (IPluginModelBase) getFormPage().getModel();
 					if (fCompatibilityButton.getSelection()) {
-						model.getPluginBase().setSchemaVersion("3.0");
-					} else {
 						model.getPluginBase().setSchemaVersion(null);
+					} else {
+						model.getPluginBase().setSchemaVersion("3.0");
 					}
 					forceDirty();
 				} catch (CoreException e1) {
@@ -432,8 +432,7 @@ public void update(Object input) {
 	} else {
 		setIfDefined(classText, ((IPlugin) pluginBase).getClassName());
 	}
-	String version = pluginBase.getSchemaVersion();
-	fCompatibilityButton.setSelection(version != null && version.equals("3.0"));
+	fCompatibilityButton.setSelection(pluginBase.getSchemaVersion() == null);
 	updateNeeded = false;
 }
 /**
