@@ -30,7 +30,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.model.plugin.IMatchRules;
 import org.eclipse.pde.internal.util.SWTUtil;
 import java.util.ArrayList;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.view.PluginsViewAdapterFactory;
+import org.eclipse.pde.internal.core.*;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -383,6 +384,9 @@ public class PDEPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(new SchemaAdapterFactory(), ISchemaObject.class);
 		manager.registerAdapters(new PluginAdapterFactory(), IPluginObject.class);
 		manager.registerAdapters(new FeatureAdapterFactory(), IFeatureObject.class);
+		PluginsViewAdapterFactory factory = new PluginsViewAdapterFactory();
+		manager.registerAdapters(factory, ModelEntry.class);
+		manager.registerAdapters(factory, FileAdapter.class);
 		// set eclipse home variable if not sets
 
 		getWorkspaceModelManager().reset();

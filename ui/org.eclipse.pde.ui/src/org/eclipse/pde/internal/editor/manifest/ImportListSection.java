@@ -230,6 +230,9 @@ public class ImportListSection
 		PDEPlugin.getDefault().getWorkspaceModelManager().addModelProviderListener(
 			this);
 		PDEPlugin.getDefault().getExternalModelManager().addModelProviderListener(this);
+		newAction.setEnabled(model.isEditable());
+		deleteAction.setEnabled(model.isEditable());
+		buildpathAction.setEnabled(model.isEditable());
 	}
 
 	private void makeActions() {

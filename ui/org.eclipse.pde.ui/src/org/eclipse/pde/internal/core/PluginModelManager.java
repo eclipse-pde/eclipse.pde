@@ -4,11 +4,8 @@ import org.eclipse.pde.internal.model.*;
 import org.eclipse.pde.model.IModel;
 import org.eclipse.pde.model.plugin.*;
 import java.util.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.pde.internal.preferences.*;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.WorkspaceModelManager;
+import org.eclipse.pde.internal.ExternalModelManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 

@@ -39,6 +39,7 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.pde.internal.model.ModelDataTransfer;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.jface.util.*;
+import java.io.File;
 
 public class DetailExtensionSection
 	extends TreeSection
@@ -355,6 +356,7 @@ public class DetailExtensionSection
 			delAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
 			manager.add(delAction);
 			manager.add(new Separator());
+			delAction.setEnabled(!isReadOnly());
 		}
 		if (newMenu == null) {
 			newMenu = new MenuManager(PDEPlugin.getResourceString(POPUP_NEW));
@@ -497,6 +499,7 @@ public class DetailExtensionSection
 		};
 		newExtensionAction.setText(PDEPlugin.getResourceString(POPUP_NEW_EXTENSION));
 		newExtensionAction.setImageDescriptor(PDEPluginImages.DESC_EXTENSION_OBJ);
+		newExtensionAction.setEnabled(editable);
 	}
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
@@ -592,17 +595,12 @@ public class DetailExtensionSection
 		String iconPathName) {
 		IPluginModelBase model = element.getModel();
 		URL modelURL = null;
-		String path = null;
+		String path = model.getInstallLocation();
 
-		if (model.getUnderlyingResource() == null) {
-			// External
-			path = model.getInstallLocation();
-		} else {
-			// Workspace
-			path = model.getUnderlyingResource().getLocation().toOSString();
-		}
 		try {
-			modelURL = new URL("file:" + path);
+			if (!path.startsWith("file:"))
+				path = "file:"+path;
+			modelURL = new URL(path+File.separator);
 			return PDEPlugin.getDefault().getLabelProvider().getImageFromURL(
 				modelURL,
 				iconPathName);
@@ -735,6 +733,7 @@ public class DetailExtensionSection
 		}
 	}
 	private void updateUpDownButtons(Object item) {
+		if (isReadOnly()) return;
 		boolean upEnabled = false;
 		boolean downEnabled = false;
 		if (item != null) {

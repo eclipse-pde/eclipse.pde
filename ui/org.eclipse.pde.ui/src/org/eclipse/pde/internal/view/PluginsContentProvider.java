@@ -13,13 +13,15 @@ public class PluginsContentProvider
 	implements ITreeContentProvider, IStructuredContentProvider, IPluginModelListener {
 	private PluginModelManager manager;
 	private TreeViewer viewer;
+	private PluginsView view;
 
 	/**
 	 * Constructor for PluginsContentProvider.
 	 */
-	public PluginsContentProvider(PluginModelManager manager) {
+	public PluginsContentProvider(PluginsView view, PluginModelManager manager) {
 		this.manager = manager;
 		manager.addPluginModelListener(this);
+		this.view = view;
 	}
 
 	public void dispose() {
@@ -27,6 +29,7 @@ public class PluginsContentProvider
 	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer) viewer;
+		view.updateTitle(newInput);
 	}
 
 	/**
@@ -97,10 +100,11 @@ public class PluginsContentProvider
 		viewer.getTree().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				int kind = delta.getKind();
-				if (viewer.getTree().isDisposed()) return;
+				if (viewer.getTree().isDisposed())
+					return;
 				if ((kind & PluginModelDelta.ADDED) != 0) {
 					ModelEntry[] added = delta.getAddedEntries();
-					for (int i=0; i<added.length; i++) {
+					for (int i = 0; i < added.length; i++) {
 						if (isVisible(added[i]))
 							viewer.add(manager, added[i]);
 					}
@@ -122,10 +126,11 @@ public class PluginsContentProvider
 		});
 	}
 	private boolean isVisible(ModelEntry entry) {
-		ViewerFilter [] filters = viewer.getFilters();
-		for (int i=0; i<filters.length; i++) {
+		ViewerFilter[] filters = viewer.getFilters();
+		for (int i = 0; i < filters.length; i++) {
 			ViewerFilter filter = filters[i];
-			if (!filter.select(viewer, manager, entry)) return false;
+			if (!filter.select(viewer, manager, entry))
+				return false;
 		}
 		return true;
 	}

@@ -30,6 +30,7 @@ public NewElementAction(ISchemaElement elementInfo, IPluginParent parent) {
 	setImageDescriptor(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	IResource resource = parent.getModel().getUnderlyingResource();
 	if (resource!=null) project = resource.getProject();
+	setEnabled(parent.getModel().isEditable());
 }
 public String createDefaultClassName(ISchemaAttribute attInfo, int counter) {
 	String tag = attInfo.getParent().getName();

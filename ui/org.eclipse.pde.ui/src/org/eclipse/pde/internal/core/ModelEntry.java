@@ -2,10 +2,12 @@ package org.eclipse.pde.internal.core;
 
 import org.eclipse.pde.model.plugin.IPluginModelBase;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.core.resources.IResource;
 import java.io.*;
 
-public class ModelEntry implements IAdaptable {
+public class ModelEntry extends PlatformObject {
 	public static final int AUTOMATIC = 0;
 	public static final int WORKSPACE = 1;
 	public static final int EXTERNAL = 2;
@@ -16,10 +18,6 @@ public class ModelEntry implements IAdaptable {
 
 	public ModelEntry(String id) {
 		this.id = id;
-	}
-	
-	public Object getAdapter(Class key) {
-		return null;
 	}
 
 	public IPluginModelBase getActiveModel() {
@@ -34,9 +32,9 @@ public class ModelEntry implements IAdaptable {
 	public String getId() {
 		return id;
 	}
-	
-	public Object [] getChildren() {
-		if (workspaceModel==null && externalModel!=null) {
+
+	public Object[] getChildren() {
+		if (workspaceModel == null && externalModel != null) {
 			String location = externalModel.getInstallLocation();
 			File file = new File(location);
 			FileAdapter adapter = new EntryFileAdapter(this, file);
@@ -60,6 +58,6 @@ public class ModelEntry implements IAdaptable {
 		return externalModel;
 	}
 	public boolean isEmpty() {
-		return workspaceModel==null && externalModel==null;
+		return workspaceModel == null && externalModel == null;
 	}
 }

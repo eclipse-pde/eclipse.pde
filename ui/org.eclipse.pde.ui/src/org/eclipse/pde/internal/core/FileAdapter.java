@@ -3,21 +3,39 @@ package org.eclipse.pde.internal.core;
 import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.pde.model.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDEPlugin;
+import org.eclipse.pde.internal.view.*;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-public class FileAdapter implements IAdaptable {
+public class FileAdapter extends PlatformObject {
 	private File file;
 	private Object[] children;
 	private FileAdapter parent;
+	private String editorId;
 
 	/**
 	 * Constructor for FileAdapter.
 	 */
 	public FileAdapter(FileAdapter parent, File file) {
 		this.file = file;
+		String fileName = file.getName();
+		if (fileName.equals("plugin.xml") ||
+			fileName.equals("fragment.xml")) {
+				editorId = PDEPlugin.MANIFEST_EDITOR_ID;
+		}
+		this.parent = parent;
 	}
 	
 	public FileAdapter getParent() {
 		return parent;
+	}
+	
+	public void setEditorId(String editorId) {
+		this.editorId = editorId;
+	}
+	
+	public String getEditorId() {
+		return editorId;
 	}
 	
 	public File getFile() {
@@ -26,13 +44,6 @@ public class FileAdapter implements IAdaptable {
 	
 	public boolean isDirectory() {
 		return file.isDirectory();
-	}
-	
-	/**
-	 * @see IAdapterFactory#getAdapter(Object, Class)
-	 */
-	public Object getAdapter(Class key) {
-		return null;
 	}
 	
 	public boolean hasChildren() {

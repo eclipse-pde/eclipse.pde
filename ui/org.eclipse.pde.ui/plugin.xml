@@ -749,5 +749,12 @@
             id="org.eclipse.pde.binaryProjectDecorator">
       </decorator>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.pde.internal.editor.SystemFileEditorInputFactory"
+            id="org.eclipse.pde.systemFileEditorInputFactory">
+      </factory>
+   </extension>
 
 </plugin>

@@ -13,6 +13,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.PDEPluginImages;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import java.net.*;
+import java.io.File;
 
 /**
  * @version 	1.0

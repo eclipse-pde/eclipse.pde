@@ -58,7 +58,7 @@ public class PluginsLabelProvider extends LabelProvider {
 		IPluginModelBase model = entry.getActiveModel();
 		String text = sharedProvider.getText(model);
 		if (model.isEnabled()==false)
-			text += " (disabled)";
+			text += " - disabled";
 		return text;
 	}
 

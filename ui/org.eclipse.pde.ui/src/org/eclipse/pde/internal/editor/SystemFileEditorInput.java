@@ -9,44 +9,52 @@ import org.eclipse.core.runtime.*;
 import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.pde.internal.*;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.internal.PDEPlugin;
 
-public class SystemFileEditorInput implements IStorageEditorInput {
-	private File file;
+public class SystemFileEditorInput implements IStorageEditorInput, IPersistableElement {
+	private SystemFileStorage storage;
+	private static final String FACTORY_ID = PDEPlugin.getPluginId()+".systemFileEditorInputFactory";
 
-public SystemFileEditorInput(File file) {
-	this.file = file;
-}
-public boolean exists() {
-	return false;
-}
-public Object getAdapter(Class adapter) {
-	if (adapter.equals(File.class)) return file;
-	return null;
-}
-public InputStream getContents() throws CoreException {
-	InputStream stream = null;
-	try {
-	   stream = new FileInputStream(file);
+	public SystemFileEditorInput(File file) {
+		storage = new SystemFileStorage(file);;
 	}
-	catch (IOException e) {
-		Status status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, e.getMessage(), e);
-		throw new CoreException(status);
+	public boolean exists() {
+		return storage.getFile().exists();
 	}
-	return stream;
-}
-public org.eclipse.jface.resource.ImageDescriptor getImageDescriptor() {
-	return null;
-}
-public String getName() {
-	return file.getName();
-}
-public IPersistableElement getPersistable() {
-	return null;
-}
-public org.eclipse.core.resources.IStorage getStorage() throws org.eclipse.core.runtime.CoreException {
-	return null;
-}
-public String getToolTipText() {
-	return getName();
-}
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(File.class))
+			return storage.getFile();
+		return null;
+	}
+	public ImageDescriptor getImageDescriptor() {
+		return null;
+	}
+	public String getName() {
+		return storage.getFile().getName();
+	}
+	public IPersistableElement getPersistable() {
+		return this;
+	}
+	public void saveState(IMemento memento) {
+		memento.putString("path", storage.getFile().getAbsolutePath());
+	}
+	public String getFactoryId() {
+		return FACTORY_ID;
+	}
+	public IStorage getStorage() {
+		return storage;
+	}
+	public String getToolTipText() {
+		return storage.getFile().getAbsolutePath();
+	}
+	public boolean equals(Object object) {
+		return object instanceof SystemFileEditorInput &&
+		 getStorage().equals(((SystemFileEditorInput)object).getStorage());
+	}
+	
+	public int hashCode() {
+		return getStorage().hashCode();
+	}
 }
