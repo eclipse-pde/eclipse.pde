@@ -27,6 +27,7 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	protected String os = null;
 	protected String ws = null;
 	protected String nl = null;
+	protected String stamp = "";
 	
 	public final static String PI_PDECORE = "org.eclipse.pde.core";	
 	private static final String USAGE = "-?";
@@ -36,6 +37,7 @@ public abstract class PluginTool implements IPlatformRunnable, ScriptGeneratorCo
 	private static final String OS_ARG = "-os";
 	private static final String WS_ARG = "-ws";
 	private static final String NL_ARG = "-nl";
+	private static final String STAMP = "-stamp";
 	private static final String PROPERTYASSIGNMENT_PREFIX = "${";
 	private static final String PROPERTYASSIGNMENT_SUFFIX = "}";
 
@@ -259,6 +261,10 @@ protected String[] processCommandLine(String[] args) {
 		// check for the NL arg
 		if (args[i - 1].equalsIgnoreCase(NL_ARG))
 			nl = arg;
+		
+		// check for the STAMP arg
+		if (args[i - 1].equalsIgnoreCase(STAMP))
+			stamp = arg;
 			
 		// check for the install location arg
 		if (args[i - 1].equalsIgnoreCase(INSTALL))

@@ -30,7 +30,10 @@
       </fileset>
       <mapper refid="stripMapper.id"/>
     </copy>
-    <jar jarfile="${dest}" basedir="${out}"/>
+    <delete file="${dest}"/>
+    <exec dir="${out}" executable="zip">
+		<arg line="-r -y ${dest} ."/>
+    </exec>
     <copy file="${out}.log" todir="${basedir}"/>
     <delete dir="${out}"/>
   </target>
@@ -60,7 +63,9 @@
       <mapper refid="stripMapper.id"/>
     </copy>
     <delete file="${dest}"/>
-    <zip zipfile="${dest}" basedir="${dest}.pdetemp"/>
+    <exec dir="${dest}.pdetemp" executable="zip">
+		<arg line="-r -y ${dest} ."/>
+    </exec>
     <delete dir="${dest}.pdetemp"/>
   </target>
 

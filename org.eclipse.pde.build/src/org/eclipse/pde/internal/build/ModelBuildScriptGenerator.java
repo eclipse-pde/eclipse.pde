@@ -360,39 +360,57 @@ protected void generateLogTarget(PrintWriter output, PluginModel descriptor) {
 protected void generateModelDocTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_DOC_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/doc.zip.pdetemp/\"/>");
+	output.println("    <property name=\"base\" value=\"${basedir}/doc.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"doc\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
+	
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_DOC + " .\"/>");
+	output.println("	</exec>");
+	
+	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_DOC + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
 protected void generateModelLogTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_LOG_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/log.zip.pdetemp/\"/>");
+	output.println("    <property name=\"base\" value=\"${basedir}/log.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"log\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
+
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_LOG + " .\"/>");
+	output.println("	</exec>");
+
+	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_LOG + "\" basedir=\"${base}\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
 protected void generateModelSrcTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
 	output.println("  <target name=\"" + TARGET_SRC_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/src.zip.pdetemp/\"/>");
+	output.println("    <property name=\"base\" value=\"${basedir}/src.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"src\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\" basedir=\"${base}\"/>");
+	
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_SRC + " .\"/>");
+	output.println("	</exec>");	
+	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_SRC + "\" basedir=\"${base}\"/>");
+
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -400,7 +418,7 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println();
 	output.println("  <target name=\"" + getModelTypeName() + ".zip" + "\" depends=\"" + TARGET_BIN_ZIP + "\"/>");
 	output.println("  <target name=\"" + TARGET_BIN_ZIP + "\" depends=\"init\">");
-	output.println("    <property name=\"base\" value=\"${basedir}/bin.zip.pdetemp/\"/>");
+	output.println("    <property name=\"base\" value=\"${basedir}/bin.zip.pdetemp\"/>");
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("    <mkdir dir=\"${base}\"/>");
 	output.println("    <antcall target=\"jar\">");
@@ -409,7 +427,13 @@ protected void generateModelTarget(PrintWriter output, PluginModel descriptor) {
 	output.println("    <antcall target=\"bin\">");
 	output.println("      <param name =\"destroot\" value=\"${base}/" + getComponentDirectoryName() + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
+
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${base}\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ${basedir}/" + getModelFileBase() + DEFAULT_FILENAME_BIN + " . -x *.bin.log \"/>");
+	output.println("	</exec>");
+	//output.println("    <zip zipfile=\"" + getModelFileBase() + DEFAULT_FILENAME_BIN + "\" basedir=\"${base}\" excludes=\"**/*.bin.log\"/>");
+
 	output.println("    <delete dir=\"${base}\"/>");
 	output.println("  </target>");
 }
@@ -423,6 +447,8 @@ protected void generatePrologue(PrintWriter output, PluginModel descriptor) {
 	output.println("  <target name=\"init\" depends=\"initTemplate\">");
 	output.println("    <property name=\"" + getModelTypeName() + "\" value=\"" + descriptor.getId() + "\"/>");
 	output.println("    <property name=\"version\" value=\"" + descriptor.getVersion() + "\"/>");
+	String stampString = stamp.length() == 0 ? stamp : "-" + stamp;
+	output.println("    <property name=\"stamp\" value=\"" + stampString + "\"/>");
 	// output the settings of the commandline supplied arguments before doing the ones from the 
 	// build.properties file.  This way you can override the values without changing the file.
 	if (os != null)

@@ -133,7 +133,12 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("      <property name=\"excludes\" value=\"" + exclusions + "\"/>");
 	output.println("      <property name=\"dest\" value=\"${basedir}/_temp___/install/components/${component}_${compVersion}\"/>");
 	output.println("    </ant>");
-	output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ../${component}${stamp}.jar .\"/>");
+	output.println("	</exec>");
+	
+	//output.println("    <jar jarfile=\"${component}_${compVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
@@ -158,10 +163,10 @@ protected void generateCleanTarget(PrintWriter output) {
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"clean\"/>");
 	output.println("    </antcall>");
-	output.println("    <delete file=\"${component}_${compVersion}.jar\"/>");
-	output.println("    <delete file=\"" + DEFAULT_FILENAME_LOG + "\"/>");
-	output.println("    <delete file=\"" + DEFAULT_FILENAME_DOC + "\"/>");
-	output.println("    <delete file=\"" + DEFAULT_FILENAME_SRC + "\"/>");
+	output.println("    <delete>");
+	output.println("		<fileset dir=\".\" includes=\"${component}*.jar\"/>");
+	output.println("		<fileset dir=\".\" includes=\"${component}*.zip\"/>");
+	output.println("	</delete>");
 	output.println("  </target>");
 }
 protected void generateDocTarget(PrintWriter output) {
@@ -173,9 +178,15 @@ protected void generateDocTarget(PrintWriter output) {
 	output.println("      <param name=\"target\" value=\"doc\"/>");
 	output.println("      <param name=\"docdir\" value=\"${tempdir}\"/>");
 	output.println("    </antcall>");
-	output.println("    <delete file=\"" + DEFAULT_FILENAME_DOC + "\"/>");
-	output.println("    <zip zipfile=\"" + DEFAULT_FILENAME_DOC + "\" basedir=\"${tempdir}\"/>");
-	output.println("    <delete dir=\"${tempdir}\"/>");
+	output.println("    <delete>");
+	output.println("	  <fileset dir=\".\" includes=\"${component}.doc*.zip\"/>");
+	output.println("	</delete>");
+	
+	// on linux make system call to preserve permissions.
+	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ../${component}.doc${stamp}.zip .\"/>");
+	output.println("	</exec>");
+	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
 protected void generateEpilogue(PrintWriter output) {
@@ -197,14 +208,18 @@ protected void generateGatherTemplateCall(PrintWriter output, String targetName,
 	output.println("  <target name=\"" + targetName + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + targetName + "\"/>");
-	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
+	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___\"/>");
 	output.println("    </antcall>");
 	if (outputTerminatingTag)
 		output.println("  </target>");
 }
 protected void generateLogTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_LOG,false);
-	output.println("    <zip zipfile=\"" + DEFAULT_FILENAME_LOG + "\" basedir=\"${basedir}/_temp___/\"/>");
+	
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ../${component}.log${stamp}.zip .\"/>");
+	output.println("	</exec>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
@@ -216,6 +231,8 @@ protected void generatePrologue(PrintWriter output) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"component\" value=\"" + componentModel.getId() + "\"/>");
 	output.println("    <property name=\"compVersion\" value=\"" + componentModel.getVersion() + "\"/>");
+	String stampString = stamp.length() == 0 ? stamp : "-" + stamp;
+	output.println("    <property name=\"stamp\" value=\"" + stampString + "\"/>");
 	Map map = getPropertyAssignments(componentModel);
 	Iterator keys = map.keySet().iterator();
 	while (keys.hasNext()) {
@@ -226,7 +243,13 @@ protected void generatePrologue(PrintWriter output) {
 }
 protected void generateSrcTarget(PrintWriter output) {
 	generateGatherTemplateCall(output,TARGET_SRC,false);
-	output.println("    <jar jarfile=\"" + DEFAULT_FILENAME_SRC + "\" basedir=\"${basedir}/_temp___/\"/>");
+	
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ../${component}.src${stamp}.jar .\"/>");
+	output.println("	</exec>");
+
+	//output.println("    <jar jarfile=\"" + DEFAULT_FILENAME_SRC + "\" basedir=\"${basedir}/_temp___/\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 }
@@ -252,7 +275,7 @@ protected void generateTemplateTargetCall(PrintWriter output, String target) {
 	output.println("  <target name=\"" + target + "\" depends=\"init\">");
 	output.println("    <antcall target=\"" + TARGET_ALL_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + target + "\"/>");
-	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___/\"/>");
+	output.println("      <param name=\"destbase\" value=\"${basedir}/_temp___\"/>");
 	output.println("    </antcall>");
 	output.println("  </target>");
 }

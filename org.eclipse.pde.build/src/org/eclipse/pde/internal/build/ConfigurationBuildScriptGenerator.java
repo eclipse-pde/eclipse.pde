@@ -116,8 +116,13 @@ protected void generateBinTarget(PrintWriter output) {
 	output.println("    <property name=\"binDest\" value=\"${basedir}/_temp___\"/>");
 	output.println("    <available file=\"${binSource}\" property=\"binSource.exists\"/>");
 	output.println("    <antcall target=\"bin-copy\"/>");
+	
+	// on linux call shell script to create jar.  Unable to make direct system call to zip using Ant due to incorrect path inside jar.
+	output.println("	<exec dir=\"${basedir}/_temp___\" executable=\"zip\">");
+	output.println("	  <arg line=\"-r -y ../${configuration}${stamp}.jar .\"/>");
+	output.println("	</exec>");
+	//output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 
-	output.println("    <jar jarfile=\"${configuration}_${configVersion}.jar\" basedir=\"${basedir}/_temp___\"/>");
 	output.println("    <delete dir=\"${basedir}/_temp___\"/>");
 	output.println("  </target>");
 	
@@ -146,7 +151,9 @@ protected void generateCleanTarget(PrintWriter output) {
 	output.println("    <antcall target=\"" + TARGET_COMPONENT_TEMPLATE + "\">");
 	output.println("      <param name=\"target\" value=\"" + TARGET_CLEAN + "\"/>");
 	output.println("    </antcall>");
-	output.println("    <delete file=\"${configuration}_${configVersion}.jar\"/>");
+	output.println("    <delete>");
+	output.println(" 	  <fileset dir=\".\" includes=\"${configuration}*.jar\"/>");
+	output.println("	</delete>");
 	output.println("  </target>");
 }
 protected void generateComponentTemplateTarget(PrintWriter output) {
@@ -171,7 +178,9 @@ protected void generatePrologue(PrintWriter output) {
 	output.println("    <initTemplate/>");
 	output.println("    <property name=\"configuration\" value=\"" + configurationModel.getId() + "\"/>");
 	output.println("    <property name=\"configVersion\" value=\"" + configurationModel.getVersion() + "\"/>");
-	
+	String stampString = stamp.length() == 0 ? stamp : "-" + stamp;
+	output.println("    <property name=\"stamp\" value=\"" + stampString + "\"/>");
+
 	Map map = getPropertyAssignments(configurationModel);
 	Iterator keys = map.keySet().iterator();
 	while (keys.hasNext()) {
