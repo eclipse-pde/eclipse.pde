@@ -564,7 +564,7 @@ protected void generateBuildJarsTarget(AntScript script, PluginModel model) thro
 	}
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.plugin.buildJars", model.getId())); //$NON-NLS-1$ 
 	for (Iterator iter = jarNames.iterator(); iter.hasNext();) {
 		String name = (String) iter.next();
 		script.printAvailableTask(tab, name, getJARLocation(name));
@@ -596,7 +596,7 @@ protected void generateJARTarget(AntScript script, String classpath, JAR jar) th
 	int tab = 1;
 	script.println();
 	String name = jar.getName();
-	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, name, null);
+	script.printTargetDeclaration(tab++, name, TARGET_INIT, null, name, Policy.bind("build.plugin.jar", name));  //$NON-NLS-1$
 	String destdir = getTempJARFolderLocation(name);
 	script.printProperty(tab, "destdir", destdir); //$NON-NLS-1$
 	script.printDeleteTask(tab, destdir, null, null);

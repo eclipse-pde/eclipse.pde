@@ -108,7 +108,7 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	script.println();
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
-	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.plugin.clean", model.getId()));  //$NON-NLS-1$
 	for (int i = 0; i < availableJars.length; i++) {
 		String jarName = availableJars[i].getName();
 		script.printDeleteTask(tab, null, getJARLocation(jarName), null);
@@ -241,7 +241,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 protected void generateZipPluginTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, Policy.bind("build.plugin.zipPlugin", model.getId())); //$NON-NLS-1$ 
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, TEMP_FOLDER);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);
@@ -265,7 +265,7 @@ protected void generateZipPluginTarget(AntScript script) throws CoreException {
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, Policy.bind("build.plugin.buildUpdateJar", model.getId())); //$NON-NLS-1$
 	script.printDeleteTask(tab, TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, TEMP_FOLDER);
 	script.printAntCallTask(tab, TARGET_BUILD_JARS, null, null);

@@ -227,7 +227,7 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
 	IPath basedir = new Path(FEATURE_DESTINATION);
-	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, Policy.bind("build.feature.clean", featureID)); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".jar").toString(), null); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), null); //$NON-NLS-1$
 	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".log.zip").toString(), null); //$NON-NLS-1$
@@ -316,7 +316,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, Policy.bind("build.feature.buildUpdateJar", featureID));  //$NON-NLS-1$
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
@@ -342,7 +342,7 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 protected void generateZipDistributionWholeTarget(AntScript script) {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, Policy.bind("build.feature.zips",featureID)); //$NON-NLS-1$
 	script.printDeleteTask(tab, FEATURE_TEMP_FOLDER, null, null);
 	script.printMkdirTask(tab, FEATURE_TEMP_FOLDER);
 	Map params = new HashMap(1);
@@ -418,7 +418,7 @@ protected void generatePrologue(AntScript script) {
 	int tab = 1;
 	script.printProjectDeclaration(feature.getFeatureIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_INIT, null, null, null, null); 
 	script.printProperty(tab, PROPERTY_FEATURE, feature.getFeatureIdentifier());
 	script.printProperty(tab, PROPERTY_FEATURE_VERSION_SUFFIX, "_" + feature.getFeatureVersion()); //$NON-NLS-1$
 	script.printProperty(tab, PROPERTY_FEATURE_FULL_NAME, getPropertyFormat(PROPERTY_FEATURE) + getPropertyFormat(PROPERTY_FEATURE_VERSION_SUFFIX));
@@ -557,13 +557,13 @@ protected void generateChildrenTarget(AntScript script) {
 protected void generateBuildJarsTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_BUILD_JARS, TARGET_INIT, null, null, Policy.bind("build.feature.buildJars", featureID)); //$NON-NLS-1$
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_JARS);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 	script.printTargetEnd(--tab);
 	script.println();
-	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
+	script.printTargetDeclaration(tab++, TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null); 
 	params.clear();
 	params.put(PROPERTY_TARGET, TARGET_BUILD_SOURCES);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
