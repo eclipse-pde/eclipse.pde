@@ -94,6 +94,7 @@ public class ProductExportJob extends FeatureExportJob {
 			createBuildPropertiesFile(fFeatureLocation);
 			createConfigIniFile();
 			createEclipseProductFile();
+			createLauncherIniFile();
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(),
 					TargetPlatform.getWS(), TargetPlatform.getOSArch(), monitor);
 		} catch (IOException e) {
@@ -202,8 +203,52 @@ public class ProductExportJob extends FeatureExportJob {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
 		if (model != null)
 			properties.put("version", model.getPluginBase().getVersion());
-		save(new File(fFeatureLocation, "temp/.eclipseproduct"), properties, "Eclipse Product File");
+		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File");
 	}
+	
+	private void createLauncherIniFile() {
+		String programArgs = getProgramArguments();
+		String vmArgs = getVMArguments();
+		
+		if (programArgs.length() == 0 && vmArgs.length() == 0)
+			return;
+		
+		File dir = new File(fFeatureLocation, "temp");
+		if (!dir.exists() || !dir.isDirectory())
+			dir.mkdirs();
+		
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName())));
+			if (programArgs.length() > 0) {
+				StringTokenizer tokenizer = new StringTokenizer(programArgs);
+				while (tokenizer.hasMoreTokens())
+					writer.println(tokenizer.nextToken());
+			}
+			if (vmArgs.length() > 0) {
+				writer.println("-vmargs");
+				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
+				while (tokenizer.hasMoreTokens())
+					writer.println(tokenizer.nextToken());
+			}	
+		} catch (IOException e) {
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}			
+		}
+	}
+
+	private String getProgramArguments() {
+		IArgumentsInfo info = fProduct.getLauncherArguments();
+		return (info != null) ? CoreUtility.normalize(info.getProgramArguments()) : "";
+	}
+	
+	private String getVMArguments() {
+		IArgumentsInfo info = fProduct.getLauncherArguments();
+		return (info != null) ? CoreUtility.normalize(info.getVMArguments()) : "";
+	}	
+	
 	
 	private void createConfigIniFile() {
 		File dir = new File(fFeatureLocation, "temp/configuration");
@@ -281,12 +326,10 @@ public class ProductExportJob extends FeatureExportJob {
 	
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
 		HashMap properties = super.createAntBuildProperties(os, ws, arch);
+		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
+		
 		ILauncherInfo info = fProduct.getLauncherInfo();	
-		//Just to make sure, Here the values that are put in properties must be passed to the script.
 		if (info != null) {
-			String name = info.getLauncherName();
-			if (name != null && name.length() > 0)
-				properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, name);
 			String images = null;
 			if (os.equals("win32")) {
 				images = getWin32Images(info);
@@ -301,12 +344,25 @@ public class ProductExportJob extends FeatureExportJob {
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
 		}
 		
-		String root = info.getRootDirectory();
-		if (root == null || root.trim().length() == 0)
-			root = "eclipse";
+		String root = "eclipse";
+		if (info != null) {
+			root = info.getRootDirectory();
+			if (root == null || root.trim().length() == 0)
+				root = "eclipse";
+		}
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, root); //$NON-NLS-1$  This value and the next one can be set to the product name if the user desires it
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, root);	// or it can be more than one segment ( like bar/eclipse ) 
 		return properties;
+	}
+	
+	private String getLauncherName() {
+		ILauncherInfo info = fProduct.getLauncherInfo();	
+		if (info != null) {
+			String name = info.getLauncherName();
+			if (name != null && name.length() > 0)
+				return name.trim();
+		}
+		return "eclipse";	
 	}
 	
 	private String getWin32Images(ILauncherInfo info) {

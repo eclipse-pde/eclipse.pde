@@ -117,7 +117,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		if (fLauncherName != null && fLauncherName.length() > 0)
 			writer.print(" name=\"" + fLauncherName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fDirectory != null && fDirectory.length() > 0)
-			writer.print(" " + P_DIRECTORY + "=\"" + fDirectory + "\"");
+			writer.print(" " + P_DIRECTORY + "=\"" + fDirectory + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 		
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$

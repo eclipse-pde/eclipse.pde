@@ -49,6 +49,7 @@ public class ConfigurationPage extends PDEFormPage {
 		else
 			managedForm.addPart(new PluginSection(this, body));	
 		managedForm.addPart(new ConfigurationSection(this, body));
+		managedForm.addPart(new ArgumentsSection(this, body));
 	}
 	
 

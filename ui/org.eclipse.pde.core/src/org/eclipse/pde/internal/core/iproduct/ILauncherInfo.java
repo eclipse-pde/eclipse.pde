@@ -21,7 +21,7 @@ public interface ILauncherInfo extends IProductObject {
 	public static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
 	public static final String P_ICO_PATH = "icoFile"; //$NON-NLS-1$
 	public static final String P_LAUNCHER = "launcher"; //$NON-NLS-1$
-	public static final String P_DIRECTORY = "directory";
+	public static final String P_DIRECTORY = "directory"; //$NON-NLS-1$
 	
 	String getLauncherName();
 	

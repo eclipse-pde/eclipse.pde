@@ -103,12 +103,12 @@ public class SWTLaunchConfiguration extends
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		for (int i = vmArgs.length - 1; i >= 0; i--) {
 			if (vmArgs[i].startsWith("-Djava.library.path")) { //$NON-NLS-1$
-				vmArgs[i] +=  ";" + location;
+				vmArgs[i] +=  ";" + location; //$NON-NLS-1$
 				return vmArgs;
 			}
 		}
 		String[] all = new String[vmArgs.length + 1];
-		all[0] = "-Djava.library.path=" + location; 
+		all[0] = "-Djava.library.path=" + location;  //$NON-NLS-1$
 		System.arraycopy(vmArgs, 0, all, 1, vmArgs.length);
 		return all;
 	}
@@ -132,9 +132,9 @@ public class SWTLaunchConfiguration extends
 		buffer.append(TargetPlatform.getOS());
 		buffer.append(IPath.SEPARATOR);
 		buffer.append(TargetPlatform.getOSArch());
-		if (buffer.indexOf(" ") != -1) {
-			buffer.insert(0, "\"");
-			buffer.append("\"");
+		if (buffer.indexOf(" ") != -1) { //$NON-NLS-1$
+			buffer.insert(0, "\""); //$NON-NLS-1$
+			buffer.append("\""); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}

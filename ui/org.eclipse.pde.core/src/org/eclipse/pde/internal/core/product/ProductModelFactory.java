@@ -55,4 +55,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new ProductFeature(fModel);
 	}
 
+	public IArgumentsInfo createLauncherArguments() {
+		return new ArgumentsInfo(fModel);
+	}
+
 }

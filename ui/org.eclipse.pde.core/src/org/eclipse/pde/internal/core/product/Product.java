@@ -26,6 +26,7 @@ public class Product extends ProductObject implements IProduct {
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
 	private boolean fIncludeSource;
+	private IArgumentsInfo fLauncherArgs;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -117,6 +118,11 @@ public class Product extends ProductObject implements IProduct {
 		if (fConfigIniInfo != null) {
 			writer.println();
 			fConfigIniInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+		
+		if (fLauncherArgs != null) {
+			writer.println();
+			fLauncherArgs.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
 		if (fWindowImages != null) {
@@ -216,6 +222,9 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("launcher")) { //$NON-NLS-1$
 						fLauncherInfo = factory.createLauncherInfo();
 						fLauncherInfo.parse(child);
+					} else if (name.equals("launcherArgs")) { //$NON-NLS-1$
+						fLauncherArgs = factory.createLauncherArguments();
+						fLauncherArgs.parse(child);
 					}
 				}
 			}
@@ -387,6 +396,14 @@ public class Product extends ProductObject implements IProduct {
 		fIncludeSource = includeSource;
 		if (isEditable())
 			firePropertyChanged(P_INCLUDE_SOURCE, Boolean.toString(old), Boolean.toString(fIncludeSource));
+	}
+
+	public IArgumentsInfo getLauncherArguments() {
+		return fLauncherArgs;
+	}
+
+	public void setLauncherArguments(IArgumentsInfo info) {
+		fLauncherArgs = info;
 	}
 
 }

@@ -61,6 +61,8 @@ public class LaunchAction extends Action {
 
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		wc.setAttribute(ILauncherSettings.PRODUCT, fProduct.getId());
+		wc.setAttribute(ILauncherSettings.VMARGS, getVMArguments()); 
+		wc.setAttribute(ILauncherSettings.PROGARGS, getProgramArguments());
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		IPluginModelBase[] models = getModels();
@@ -81,6 +83,16 @@ public class LaunchAction extends Action {
 			wc.setAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, configIni);
 		return wc.doSave();
 	}
+	
+	private String getProgramArguments() {
+		IArgumentsInfo info = fProduct.getLauncherArguments();
+		return (info != null) ? CoreUtility.normalize(info.getProgramArguments()) : ""; //$NON-NLS-1$
+	}
+	
+	private String getVMArguments() {
+		IArgumentsInfo info = fProduct.getLauncherArguments();
+		return (info != null) ? CoreUtility.normalize(info.getVMArguments()) : ""; //$NON-NLS-1$
+	}	
 	
 	private IPluginModelBase[] getModels() {
 		HashMap map = new HashMap();
@@ -191,8 +203,6 @@ public class LaunchAction extends Action {
 		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
 		wc.setAttribute(ILauncherSettings.LOCATION + "0", RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
-		wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
-		wc.setAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$
 		wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 		wc.setAttribute(ILauncherSettings.USE_DEFAULT, false);
 		wc.setAttribute(ILauncherSettings.DOCLEAR, false);

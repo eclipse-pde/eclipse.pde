@@ -18,5 +18,7 @@ public interface IProductModelFactory {
 	ISplashInfo createSplashInfo();
 	
 	ILauncherInfo createLauncherInfo();
+	
+	IArgumentsInfo createLauncherArguments();
 
 }
