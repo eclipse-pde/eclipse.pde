@@ -81,7 +81,7 @@ public class DependencyAnalysisSection extends PDESection implements IPartSelect
 			IPlugin plugin = ((IPluginModel)model).getPlugin();
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
 			if (loops.length == 0)
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), "Dependency Loops", "The dependency graph of this plug-in does contain cycles.");
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), "Dependency Loops", "The dependency graph of this plug-in does not contain cycles.");
 			else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();
