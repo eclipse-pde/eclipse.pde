@@ -159,14 +159,14 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath root = new Path(BASEDIR);
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null);
 	script.printString(--tab, "</target>");
 }
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath basedir = new Path(BASEDIR);
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
 	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".jar").toString(), null);
 	script.printDeleteTask(tab, null, basedir.append(FEATURE_FULL_NAME + ".bin.dist.zip").toString(), null);
@@ -175,7 +175,7 @@ protected void generateCleanTarget(AntScript script) throws CoreException {
 	script.printString(--tab, "</target>");
 }
 protected void generateZipLogsTarget(AntScript script) {
-	IPath base = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath base = new Path(BASEDIR);
 	base = base.append("_temp_");
 	int tab = 1;
 	script.println();
@@ -188,7 +188,7 @@ protected void generateZipLogsTarget(AntScript script) {
 	params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 	params.put(PROPERTY_DESTINATION, new Path(baseProperty).append("plugins").toString());
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, "false", params);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR)).append(FEATURE_FULL_NAME + ".log.zip");
+	IPath destination = new Path(BASEDIR).append(FEATURE_FULL_NAME + ".log.zip");
 	script.printZipTask(tab, destination.toString(), baseProperty, true, null);
 	script.printDeleteTask(tab, baseProperty, null, null);
 	script.printString(--tab, "</target>");
@@ -200,7 +200,7 @@ protected void generateZipSourcesTarget(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_ZIP_SOURCES, TARGET_INIT, null, null, null);
 	tab++;
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath destination = new Path(BASEDIR);
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("zip.sources.pdetemp").toString());
 	script.printDeleteTask(tab, featurebase, null, null);
 	script.printMkdirTask(tab, featurebase);
@@ -226,7 +226,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	String root = "${feature.base}/" + FEATURE_FOLDER_NAME;
 	script.printMkdirTask(tab, root);
 	if (include != null || exclude != null) {
-		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}	
 	script.printString(--tab, "</target>");
@@ -238,7 +238,7 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	Map params = new HashMap(1);
 	params.put(PROPERTY_TARGET, TARGET_BUILD_UPDATE_JAR);
 	script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath destination = new Path(BASEDIR);
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));
@@ -259,7 +259,7 @@ protected void generateZipDistributionWholeTarget(AntScript script) {
 	script.println();
 	script.printTargetDeclaration(tab, TARGET_ZIP_DISTRIBUTION, TARGET_INIT, null, null, null);
 	tab++;
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath destination = new Path(BASEDIR);
 	script.printProperty(tab, PROPERTY_FEATURE_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_FEATURE_BASE));

@@ -87,6 +87,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes";
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes";
 	public static final String PROPERTY_TARGET = "target";
+	public static final String PROPERTY_TEMP_FOLDER = "pde.temp.folder";
 	public static final String PROPERTY_VERSION_SUFFIX = "version.suffix";
 	public static final String PROPERTY_WS = "ws";
 }

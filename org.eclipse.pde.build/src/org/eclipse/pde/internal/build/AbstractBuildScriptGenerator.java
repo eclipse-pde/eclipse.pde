@@ -68,6 +68,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 			return source;
 		}
 	}
+	
+	/** constants */
+	protected static final String BASEDIR = getPropertyFormat(PROPERTY_BASEDIR);
+	protected static final String TEMP_FOLDER = getPropertyFormat(PROPERTY_TEMP_FOLDER);
 
 public AbstractBuildScriptGenerator() {
 	buildProperties = new HashMap();
@@ -377,15 +381,13 @@ protected String getLogName(String jarName) {
 }
 
 protected String getJARLocation(String jarName) {
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(basedir);
+	IPath destination = new Path(BASEDIR);
 	destination = destination.append(jarName);
 	return destination.toString();
 }
 
 protected String getTempJARFolderLocation(String jarName) {
-	String basedir = getPropertyFormat(PROPERTY_BASEDIR);
-	IPath destination = new Path(basedir);
+	IPath destination = new Path(BASEDIR);
 	destination = destination.append(jarName + ".bin");
 	return destination.toString();
 }

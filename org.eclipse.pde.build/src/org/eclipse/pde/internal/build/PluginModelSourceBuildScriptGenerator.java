@@ -192,7 +192,7 @@ protected void generateInstallTarget(AntScript script, PluginModel model) throws
 	script.printMkdirTask(tab, root);
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
 	if (include != null) {
-		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, null, null, null);
+		FileSet fileSet = new FileSet(BASEDIR, null, include, null, null, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}
 	script.printEndTag(--tab, "target");

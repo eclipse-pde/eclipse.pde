@@ -83,7 +83,7 @@ protected void generateBuildScript(AntScript script) throws CoreException {
 protected void generateCleanTarget(AntScript script) throws CoreException {
 	int tab = 1;
 	script.println();
-	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath basedir = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	script.printTargetDeclaration(tab++, TARGET_CLEAN, TARGET_INIT, null, null, null);
@@ -109,7 +109,7 @@ protected void generateGatherLogTarget(AntScript script) throws CoreException {
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath baseSource = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
@@ -132,7 +132,7 @@ protected void generateZipIndividualTarget(AntScript script, String zipName, Str
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, zipName, TARGET_INIT, null, null, null);
-	IPath root = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath root = new Path(BASEDIR);
 	script.printZipTask(tab, root.append(zipName).toString(), root.append(source).toString(), false, null);
 	script.printString(--tab, "</target>");
 }
@@ -145,7 +145,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 	IPath baseDestination = new Path(getPropertyFormat(PROPERTY_DESTINATION));
 	baseDestination = baseDestination.append(FULL_NAME);
 	List destinations = new ArrayList(5);
-	IPath baseSource = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath baseSource = new Path(BASEDIR);
 	Properties properties = getBuildProperties(model);
 	JAR[] availableJars = extractJars(properties);
 	for (int i = 0; i < availableJars.length; i++) {
@@ -161,7 +161,7 @@ protected void generateGatherSourcesTarget(AntScript script) throws CoreExceptio
 	String include = (String) getBuildProperties(model).get(PROPERTY_SRC_INCLUDES);
 	String exclude = (String) getBuildProperties(model).get(PROPERTY_SRC_EXCLUDES);
 	if (include != null || exclude != null) {
-		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, baseDestination.toString(), new FileSet[]{ fileSet });
 	}
 	script.printString(--tab, "</target>");
@@ -179,7 +179,7 @@ protected void generateGatherBinPartsTarget(AntScript script) throws CoreExcepti
 	String include = (String) getBuildProperties(model).get(PROPERTY_BIN_INCLUDES);
 	String exclude = (String) getBuildProperties(model).get(PROPERTY_BIN_EXCLUDES);
 	if (include != null || exclude != null) {
-		FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
+		FileSet fileSet = new FileSet(BASEDIR, null, include, null, exclude, null, null);
 		script.printCopyTask(tab, null, root, new FileSet[]{ fileSet });
 	}
 	script.printEndTag(--tab, "target");
@@ -189,7 +189,7 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 	int tab = 1;
 	script.println();
 	script.printTargetDeclaration(tab++, TARGET_ZIP_PLUGIN, TARGET_INIT, null, null, null);
-	IPath basedir = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	IPath basedir = new Path(BASEDIR);
 	IPath destination = basedir.append("bin.zip.pdetemp");
 	script.printProperty(tab, PROPERTY_BASE, destination.toString());
 	script.printDeleteTask(tab, destination.toString(), null, null);
@@ -211,9 +211,8 @@ protected void generateZipPluginTarget(AntScript script, PluginModel model) thro
 protected void generateBuildUpdateJarTarget(AntScript script) {
 	int tab = 1;
 	script.println();
-	script.printTargetDeclaration(tab, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
-	tab++;
-	IPath destination = new Path(getPropertyFormat(PROPERTY_BASEDIR));
+	script.printTargetDeclaration(tab++, TARGET_BUILD_UPDATE_JAR, TARGET_INIT, null, null, null);
+	IPath destination = new Path(BASEDIR);
 	script.printProperty(tab, PROPERTY_BASE, destination.append("bin.zip.pdetemp").toString());
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
 	script.printMkdirTask(tab, getPropertyFormat(PROPERTY_BASE));
@@ -225,8 +224,7 @@ protected void generateBuildUpdateJarTarget(AntScript script) {
 	script.printDeleteTask(tab, null, null, new FileSet[] {fileSet});
 	script.printZipTask(tab, destination.append(FULL_NAME + ".jar").toString(), getPropertyFormat(PROPERTY_BASE) + "/" + FULL_NAME, false, null);
 	script.printDeleteTask(tab, getPropertyFormat(PROPERTY_BASE), null, null);
-	tab--;
-	script.printString(tab, "</target>");
+	script.printString(--tab, "</target>");
 }
 
 /**
