@@ -68,6 +68,10 @@ public class OSGiWorkspaceModelManager
 	public OSGiWorkspaceModelManager() {
 		super();
 	}
+	
+	public boolean isInitialized() {
+		return initialized;
+	}
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
 	}

@@ -58,6 +58,9 @@ public class WorkspaceModelManager
 	public WorkspaceModelManager() {
 		super();
 	}
+	public boolean isInitialized() {
+		return initialized;
+	}
 	public void addModelProviderListener(IModelProviderListener listener) {
 		listeners.add(listener);
 	}
@@ -340,7 +343,7 @@ public class WorkspaceModelManager
 	}
 
 	public IPluginModelBase[] getAllModels() {
-		if (workspaceModels == null) {
+		if (!initialized) {
 			initializeWorkspacePluginModels();
 		}
 		validate();

@@ -25,6 +25,7 @@ public class OSGiExternalModelManager implements IExternalModelManager {
 	private Vector models = new Vector();
 	private Vector fmodels = new Vector();
 	private Vector listeners = new Vector();
+	private boolean initialized;
 
 	public static String computeDefaultPlatformPath() {
 		URL installURL = BootLoader.getInstallURL();
@@ -223,6 +224,11 @@ public class OSGiExternalModelManager implements IExternalModelManager {
 		else
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initializeAllModels();
+		initialized=true;
+	}
+	
+	public boolean isInitialized() {
+		return initialized;
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {

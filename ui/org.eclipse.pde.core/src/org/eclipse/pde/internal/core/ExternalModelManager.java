@@ -24,11 +24,16 @@ public class ExternalModelManager implements IExternalModelManager {
 	private Vector models = new Vector();
 	private Vector fmodels = new Vector();
 	private Vector listeners = new Vector();
+	private boolean initialized;
 
 	public static String computeDefaultPlatformPath() {
 		URL installURL = BootLoader.getInstallURL();
 		IPath ppath = new Path(installURL.getFile()).removeTrailingSeparator();
 		return getCorrectPath(ppath.toOSString());
+	}
+	
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 	private static String getCorrectPath(String path) {
@@ -222,6 +227,7 @@ public class ExternalModelManager implements IExternalModelManager {
 		else
 			RegistryLoader.reload(pluginPaths, models, fmodels, monitor);
 		initializeAllModels();
+		initialized=true;
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {

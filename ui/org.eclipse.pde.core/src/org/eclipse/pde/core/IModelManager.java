@@ -22,5 +22,6 @@ public interface IModelManager {
 	IPluginModelBase[] getAllModels();
 	IFragment[] getFragmentsFor(String pluginId, String version);
 	void shutdown();
+	boolean isInitialized();
 
 }
