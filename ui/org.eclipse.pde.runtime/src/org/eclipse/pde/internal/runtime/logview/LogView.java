@@ -211,7 +211,7 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 		
 		TableLayout tlayout = new TableLayout();
-		tlayout.addColumnData(new ColumnPixelData(10));
+		tlayout.addColumnData(new ColumnPixelData(21));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_1).intValue()));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_2).intValue()));
 		tlayout.addColumnData(new ColumnPixelData(memento.getInteger(P_COLUMN_3).intValue()));
@@ -247,7 +247,8 @@ public class LogView extends ViewPart implements ILogListener {
 		readLogAction =
 			new Action(PDERuntimePlugin.getResourceString("LogView.readLog.restore")) {
 			public void run() {
-				loadWorkspaceLog();
+				inputFile = Platform.getLogFileLocation().toFile();
+				reloadLog();
 			}
 		};
 		readLogAction.setToolTipText(
@@ -415,7 +416,7 @@ public class LogView extends ViewPart implements ILogListener {
 		dialog.create();
 		dialog.getShell().setText(PDERuntimePlugin.getResourceString("LogView.FilterDialog.title"));
 		if (dialog.open() == FilterDialog.OK)
-			loadWorkspaceLog();
+			reloadLog();
 		
 	}
 	private void doDeleteLog() {
@@ -458,11 +459,10 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		});
 	}
-	protected void loadWorkspaceLog() {
+	protected void reloadLog() {
 		BusyIndicator
 			.showWhile(tableTreeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				inputFile = Platform.getLogFileLocation().toFile();
 				readLogAction.setText(
 					PDERuntimePlugin.getResourceString("LogView.readLog.restore"));
 				readLogAction.setToolTipText(
@@ -484,12 +484,13 @@ public class LogView extends ViewPart implements ILogListener {
 			return;
 			
 		if (firstEvent) {
-			loadWorkspaceLog();
+			reloadLog();
 			firstEvent = false;
 		} else {
 			pushStatus(status);
 		}
 	}
+	
 	private void pushStatus(IStatus status) {
 		LogEntry entry = new LogEntry(status);
 		LogReader.addEntry(entry, logs, memento, true);

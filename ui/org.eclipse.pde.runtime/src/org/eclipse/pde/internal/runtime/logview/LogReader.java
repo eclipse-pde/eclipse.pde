@@ -123,10 +123,13 @@ class LogReader {
 		switch(severity) {
 			case IStatus.INFO:
 				doAdd = memento.getString(LogView.P_LOG_INFO).equals("true");
+				break;
 			case IStatus.WARNING:
 				doAdd = memento.getString(LogView.P_LOG_WARNING).equals("true");
+				break;
 			case IStatus.ERROR:
 				doAdd = memento.getString(LogView.P_LOG_ERROR).equals("true");
+				break;
 		}
 		if (doAdd) {
 			if (useCurrentSession)
