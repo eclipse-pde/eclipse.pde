@@ -376,7 +376,6 @@ public class InfoSection extends PDEFormSection {
 				updateEditorInput(info, true);
 			}
 		});
-		sectionCombo.pack();
 		sectionCombo.select(0);
 	}
 
