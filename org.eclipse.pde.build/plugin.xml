@@ -17,20 +17,6 @@
    </library>
 </runtime>
 
-<!-- Applications -->
-
-<extension id="buildScript" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.build.BuildScriptGeneratorApplication"/>
-   </application>
-</extension>
-<extension id="fetchScript" point="org.eclipse.core.runtime.applications">
-   <application>
-      <run class="org.eclipse.pde.internal.build.FetchScriptGeneratorApplication"/>
-   </application>
-</extension>
-
-
 <!-- Tasks -->
 
 <extension point="org.eclipse.ant.core.antTasks">
