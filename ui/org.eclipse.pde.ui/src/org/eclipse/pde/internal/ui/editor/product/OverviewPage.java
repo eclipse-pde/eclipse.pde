@@ -1,24 +1,34 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.lang.reflect.*;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.progress.*;
 
 
-public class OverviewPage extends PDEFormPage {
+public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
@@ -56,15 +66,6 @@ public class OverviewPage extends PDEFormPage {
 		managedForm.addPart(new ExportSection(this, body));
 	}
 	
-	/*private void createContentSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText("Product Configuration");
-		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.content"), toolkit);
-		text.setImage("page", getImage(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT));
-		section.setClient(text);
-	}*/
-	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
@@ -72,6 +73,7 @@ public class OverviewPage extends PDEFormPage {
 		FormText text = createClient(section, PDEPlugin.getResourceString("Product.overview.testing"), toolkit); //$NON-NLS-1$
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
+		text.addHyperlinkListener(this);
 		section.setClient(text);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
@@ -98,5 +100,43 @@ public class OverviewPage extends PDEFormPage {
 		return lp.get(desc, overlay);
 	}
 
+	public void linkEntered(HyperlinkEvent e) {
+		getStatusLineManager().setMessage(e.getLabel());
+	}
 
+	public void linkExited(HyperlinkEvent e) {
+		getStatusLineManager().setMessage(null);
+	}
+
+	public void linkActivated(HyperlinkEvent e) {
+		String href = (String) e.getHref();
+		if (href.equals("action.debug")) { //$NON-NLS-1$
+		} else if (href.equals("action.run")) {
+		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
+			handleSynchronize();
+		}
+	}
+	
+	private void handleSynchronize() {
+		try {
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
+			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
+			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
+			MessageDialog.openInformation(getSite().getShell(), "Synchronize", "The product's defining plug-in has been successfully synchronized");
+		} catch (InterruptedException e) {
+		} catch (InvocationTargetException e) {		
+			MessageDialog.openError(getSite().getShell(), PDEPlugin.getResourceString("ProductDefinitionWizard.error"), e.getTargetException().getMessage()); //$NON-NLS-1$
+		}
+	}
+	
+	private IProduct getProduct() {
+		IBaseModel model = getPDEEditor().getAggregateModel();
+		return ((IProductModel)model).getProduct();
+	}
+
+	private IStatusLineManager getStatusLineManager() {
+		IEditorSite site = getEditor().getEditorSite();
+		return site.getActionBars().getStatusLineManager();
+	}
+	
 }
