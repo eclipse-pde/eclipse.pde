@@ -110,11 +110,8 @@ public class SWTLaunchConfiguration extends
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.swt"); //$NON-NLS-1$
 		if (plugin != null) {
 			IFragment[] fragments = PDECore.getDefault().findFragmentsFor("org.eclipse.swt", plugin.getVersion()); //$NON-NLS-1$
-			for (int i = 0; i < fragments.length; i++) {
-				if (fragments[i].getId().equals("org.eclipse.swt." + TargetPlatform.getWS())) { //$NON-NLS-1$
-					return fragments[i];
-				}
-			}
+			if (fragments.length > 0)
+				return fragments[0];
 		}
 		return null;
 	}
