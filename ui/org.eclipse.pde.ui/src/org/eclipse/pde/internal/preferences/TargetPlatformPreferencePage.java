@@ -96,11 +96,33 @@ public static void initializePlatformPath() {
 		URL installURL = BootLoader.getInstallURL();
 		String file = installURL.getFile();
 		IPath ppath = new Path(file).removeTrailingSeparator();
-		path = ppath.toOSString();
+		path = getCorrectPath(ppath.toOSString());
 		store.setDefault(PROP_PLATFORM_PATH, path);
 		store.setValue(PROP_PLATFORM_PATH, path);
 	}
 }
+
+private static String getCorrectPath(String path) {
+	StringBuffer buf = new StringBuffer();
+	for (int i=0; i<path.length(); i++) {
+		char c = path.charAt(i);
+		if (BootLoader.getOS().equals("win32")) {
+			if (i==0 && c=='/') continue;
+		}
+		// Some VMs may return %20 instead of a space
+		if (c=='%' && i+2<path.length()) {
+			char c1 = path.charAt(i+1);
+			char c2 = path.charAt(i+2);
+			if (c1=='2' && c2=='0') {
+				i+=2;
+				continue;
+			}
+		}
+		buf.append(c);
+	}
+	return buf.toString();
+}
+
 /** 
  *
  */

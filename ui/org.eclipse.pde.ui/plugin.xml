@@ -320,7 +320,7 @@
    </objectContribution>
    <objectContribution
          objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="*install.xml"
+         nameFilter="install.xml"
          id="org.eclipse.pde.componentJar">
       <filter
             name="projectNature"
@@ -336,11 +336,11 @@
    </objectContribution>
    <objectContribution
          objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="*plugin.xml"
+         nameFilter="plugin.xml"
          id="org.eclipse.pde.pluginBuild">
       <filter
             name="projectNature"
-            value="org.eclipse.pde.PluginNature">
+            value="org.eclipse.jdt.core.javanature">
       </filter>
       <action
             label="%popupMenus.buildPlugin.label"
@@ -352,11 +352,11 @@
    </objectContribution>
    <objectContribution
          objectClass="org.eclipse.core.resources.IFile"
-         nameFilter="*fragment.xml"
+         nameFilter="fragment.xml"
          id="org.eclipse.pde.fragmentBuild">
       <filter
             name="projectNature"
-            value="org.eclipse.pde.PluginNature">
+            value="org.eclipse.jdt.core.javanature">
       </filter>
       <action
             label="%popupMenus.buildFragment.label"
@@ -406,7 +406,7 @@
          id="org.eclipse.pde.UpdateClasspathAction3">
       <filter
             name="projectNature"
-            value="org.eclipse.jdt.core.javanature">
+            value="org.eclipse.pde.PluginNature">
       </filter>
       <action
             label="%UpdateClasspathAction.label"
