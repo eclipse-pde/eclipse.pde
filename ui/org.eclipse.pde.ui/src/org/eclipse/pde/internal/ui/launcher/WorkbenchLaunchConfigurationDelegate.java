@@ -221,10 +221,6 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			programArgs.add("-arch"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOSArch());
 		}
-		if (!programArgs.contains("-nl")) { //$NON-NLS-1$
-			programArgs.add("-nl"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getNL());
-		}
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
 	}
 	

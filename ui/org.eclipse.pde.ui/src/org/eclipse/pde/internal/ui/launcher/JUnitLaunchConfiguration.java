@@ -259,10 +259,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			programArgs.add("-arch"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOSArch());
 		}
-		if (!programArgs.contains("-nl")) { //$NON-NLS-1$
-			programArgs.add("-nl"); //$NON-NLS-1$
-			programArgs.add(TargetPlatform.getNL());
-		}
 			
 		if (keepAlive(configuration) && runMode.equals(ILaunchManager.DEBUG_MODE))
 			programArgs.add("-keepalive"); //$NON-NLS-1$
