@@ -799,6 +799,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setPluginPath(getPluginPath());
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.setCompiledElements(getCompiledElements());
+			generator.setDevEntries(devEntries);
 			generator.generate();
 		}
 	}
@@ -901,7 +902,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Policy.bind("build.feature.refresh", featureIdentifier)); //$NON-NLS-1$
 		script.printConvertPathTask(new Path(featureRootLocation).removeLastSegments(0).toOSString().replace('\\','/'), PROPERTY_RESOURCE_PATH, false);
-		script.printRefreshLocalTask(getPropertyFormat(featureFullName), "infinite"); //$NON-NLS-1$
+		script.printRefreshLocalTask(getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 
 		Map params = new HashMap(2);
 		params.put(PROPERTY_TARGET, TARGET_REFRESH);

@@ -418,7 +418,7 @@ public abstract class ModelBuildScriptGenerator extends AbstractBuildScriptGener
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null,  Policy.bind("build.plugin.refresh")); //$NON-NLS-1$
 		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\','/'), PROPERTY_RESOURCE_PATH, false);
-		script.printRefreshLocalTask(model.getId(), "infinite"); //$NON-NLS-1$
+		script.printRefreshLocalTask(getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
 
