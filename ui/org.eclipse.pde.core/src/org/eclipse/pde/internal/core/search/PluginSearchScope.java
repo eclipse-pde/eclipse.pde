@@ -14,7 +14,6 @@ import java.util.*;
 
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
 
 /**
  * @author W Melhem
@@ -86,7 +85,7 @@ public class PluginSearchScope {
 		ModelEntry[] entries = modelManager.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			IPluginModelBase candidate = entries[i].getActiveModel();
-			if (candidate instanceof WorkspacePluginModelBase) {
+			if (candidate.getUnderlyingResource() != null) {
 				addWorkspaceModel(candidate, result);
 			} else {
 				addExternalModel(candidate, result);
