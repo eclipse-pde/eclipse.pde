@@ -216,7 +216,8 @@ public class BasicLauncherTab
 
 	static String getDefaultWorkspace() {
 		IPath path =
-			PDEPlugin.getWorkspace().getRoot().getLocation().append(RT_WORKSPACE);
+			PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
+		path = path.append(RT_WORKSPACE);
 		return path.toOSString();
 	}
 
