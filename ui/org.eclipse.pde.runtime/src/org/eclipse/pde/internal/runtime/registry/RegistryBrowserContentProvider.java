@@ -17,7 +17,7 @@ public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {
 	private Hashtable pluginMap = new Hashtable();
-	private byte showType;
+	private boolean showRunning;
 	public boolean isInExtensionSet;
 	private TreeViewer viewer;
 
@@ -46,10 +46,10 @@ public class RegistryBrowserContentProvider
 		}
 	}
 	
-	public RegistryBrowserContentProvider(TreeViewer viewer){
+	public RegistryBrowserContentProvider(TreeViewer viewer, boolean showRunning){
 		super();
 		this.viewer = viewer;
-		showType = ShowPluginsMenu.SHOW_RUNNING_PLUGINS;
+		this.showRunning = showRunning;
 	}
 	protected PluginObjectAdapter createAdapter(Object object, int id) {
 		if (id == IPluginFolder.F_EXTENSIONS)
@@ -91,24 +91,15 @@ public class RegistryBrowserContentProvider
 			if (plugins == null)
 				return new Object[0];
 			
-			if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS){ //|| searchType != RegistrySearchMenu.NO_SEARCH){
-				boolean matchesShowCriteria = true;
+			if (showRunning){
 				ArrayList resultList = new ArrayList();
 				for (int i = 0; i < plugins.length; i++) {
 					if (plugins[i] instanceof PluginObjectAdapter) {
 						Object object = ((PluginObjectAdapter) plugins[i])
 								.getObject();
-						if (object instanceof IPluginDescriptor) {
-							IPluginDescriptor desc = (IPluginDescriptor) object;
-										
-							// handle showing criteria
-							if (showType != ShowPluginsMenu.SHOW_ALL_PLUGINS)
-								matchesShowCriteria = (showType == ShowPluginsMenu.SHOW_RUNNING_PLUGINS && desc.isPluginActivated()) ||
-										(showType == ShowPluginsMenu.SHOW_NON_RUNNING_PLUGINS && !desc.isPluginActivated());
-						}
+						if (object instanceof IPluginDescriptor && ((IPluginDescriptor) object).isPluginActivated())
+							resultList.add(plugins[i]);
 					}
-					if (matchesShowCriteria)
-						resultList.add(plugins[i]);
 				}
 				return resultList.toArray(new Object[resultList.size()]);
 			}
@@ -223,10 +214,10 @@ public class RegistryBrowserContentProvider
 	public boolean isDeleted(Object element) {
 		return false;
 	}
-	public void setShowType(byte type){
-		this.showType = type;
+	public void setShowRunning(boolean showRunning){
+		this.showRunning = showRunning;
 	}
-	public byte getShowType(){
-		return showType;
+	public boolean isShowRunning(){
+		return showRunning;
 	}
 }

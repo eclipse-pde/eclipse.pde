@@ -13,8 +13,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.runtime.*;
-import org.eclipse.pde.internal.runtime.IHelpContextIds;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.layout.*;
@@ -25,16 +23,20 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 import org.osgi.framework.*;
 public class RegistryBrowser extends ViewPart
-		implements
-			BundleListener,
-			IRegistryChangeListener {
+implements
+BundleListener,
+IRegistryChangeListener {
 	public static final String KEY_REFRESH_LABEL = "RegistryView.refresh.label";
 	public static final String KEY_REFRESH_TOOLTIP = "RegistryView.refresh.tooltip";
-	public static final String SEARCH_BY = "RegistryBrowser.menu.searchBy";
-	public static final String SHOW_ONLY = "RegistryBrowser.menu.show";
+	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label";
+	public static final String KEY_COLLAPSE_ALL_LABEL = "RegistryView.collapseAll.label";
 	private TreeViewer treeViewer;
 	private Action refreshAction;
+	private Action showPluginsAction;
+	private Action collapseAllAction;
 	private DrillDownAdapter drillDownAdapter;
+	private IMemento memento;
+
 	//attributes view
 	private SashForm fSashForm;
 	private Label fPropertyLabel;
@@ -42,22 +44,19 @@ public class RegistryBrowser extends ViewPart
 	private PropertySheetPage fPropertySheet;
 	public RegistryBrowser() {
 		super();
-		makeActions();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
-		PDEPlugin.getDefault().getBundleContext().addBundleListener(this);
+		PDERuntimePlugin.getDefault().getBundleContext()
+		.addBundleListener(this);
 	}
 	public void makeActions() {
 		refreshAction = new Action("refresh") {
 			public void run() {
 				BusyIndicator.showWhile(treeViewer.getTree().getDisplay(),
 						new Runnable() {
-							public void run() {
-								((RegistryBrowserContentProvider) treeViewer
-										.getContentProvider())
-										.setShowType(ShowPluginsMenu.SHOW_ALL_PLUGINS);
-								treeViewer.refresh();
-							}
-						});
+					public void run() {
+						treeViewer.refresh();
+					}
+				});
 			}
 		};
 		refreshAction.setText(PDERuntimePlugin
@@ -66,14 +65,33 @@ public class RegistryBrowser extends ViewPart
 				.getResourceString(KEY_REFRESH_TOOLTIP));
 		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
 		refreshAction
-				.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
+		.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
 		refreshAction
-				.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_HOVER);
+		.setHoverImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_HOVER);
+		
+		showPluginsAction = new Action(PDERuntimePlugin.getResourceString(SHOW_RUNNING_PLUGINS)){
+			public void run(){
+				((RegistryBrowserContentProvider) treeViewer.getContentProvider())
+			.setShowRunning(showPluginsAction.isChecked());
+				handleShowRunningPlugins(showPluginsAction.isChecked());
+			}
+		};
+		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true"));
+		
+		collapseAllAction = new Action("collapseAll"){
+			public void run(){
+				treeViewer.collapseAll();
+			}
+		};
+		collapseAllAction.setText(PDERuntimePlugin.getResourceString(KEY_COLLAPSE_ALL_LABEL));
+		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
+		collapseAllAction.setHoverImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL_HOVER);
 	}
 	public void dispose() {
-		super.dispose();
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-		PDEPlugin.getDefault().getBundleContext().removeBundleListener(this);
+		PDERuntimePlugin.getDefault().getBundleContext().removeBundleListener(
+				this);
+		super.dispose();
 	}
 	public void setFocus() {
 	}
@@ -83,50 +101,34 @@ public class RegistryBrowser extends ViewPart
 		fSashForm.setLayout(new GridLayout());
 		fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setSashForm(fSashForm);
+		makeActions();
 		createTreeViewer();
 		createAttributesViewer();
+		fillToolBar();
 		treeViewer.refresh();
 	}
 	private void createTreeViewer() {
 		Tree tree = new Tree(getSashForm(), SWT.FLAT);
 		treeViewer = new TreeViewer(tree);
-		treeViewer.setContentProvider(new RegistryBrowserContentProvider(
-				treeViewer));
+		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false;
+		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
 		treeViewer
-				.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
+		.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setSorter(new ViewerSorter() {
 		});
-		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mng) {
-				fillContextMenu(mng);
-			}
-		};
-		popupMenuManager.setRemoveAllWhenShown(true);
-		popupMenuManager.addMenuListener(listener);
-		Menu menu = popupMenuManager.createContextMenu(tree);
-		tree.setMenu(menu);
-		drillDownAdapter = new DrillDownAdapter(treeViewer);
-		IViewSite site = getViewSite();
-		IToolBarManager mng = site.getActionBars().getToolBarManager();
-		drillDownAdapter.addNavigationActions(mng);
-		mng.add(new Separator());
-		mng.add(refreshAction);
-		treeViewer.setInput(new PluginObjectAdapter(Platform
-				.getPluginRegistry()));
-		site.setSelectionProvider(treeViewer);
+		treeViewer.setInput(new PluginObjectAdapter(Platform.getPluginRegistry()));
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selection = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
+				.getFirstElement();
 				updateAttributesView(selection);
 			}
 		});
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				Object selection = ((IStructuredSelection) event.getSelection())
-						.getFirstElement();
+				.getFirstElement();
 				updateAttributesView(selection);
 				if (selection != null && treeViewer.isExpandable(selection))
 					treeViewer.setExpandedState(selection, !treeViewer
@@ -151,12 +153,32 @@ public class RegistryBrowser extends ViewPart
 		});
 		WorkbenchHelp.setHelp(treeViewer.getControl(),
 				IHelpContextIds.REGISTRY_VIEW);
+		
+		getViewSite().setSelectionProvider(treeViewer);
+		
+		MenuManager popupMenuManager = new MenuManager();
+		IMenuListener listener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mng) {
+				fillContextMenu(mng);
+			}
+		};
+		popupMenuManager.setRemoveAllWhenShown(true);
+		popupMenuManager.addMenuListener(listener);
+		Menu menu = popupMenuManager.createContextMenu(tree);
+		tree.setMenu(menu);
+	}
+	private void fillToolBar(){
+		drillDownAdapter = new DrillDownAdapter(treeViewer);
+		IActionBars bars = getViewSite().getActionBars();
+		IToolBarManager mng = bars.getToolBarManager();
+		drillDownAdapter.addNavigationActions(mng);
+		mng.add(refreshAction);
+		mng.add(new Separator());
+		mng.add(collapseAllAction);
+		IMenuManager mgr = bars.getMenuManager();
+		mgr.add(showPluginsAction);
 	}
 	public void fillContextMenu(IMenuManager manager) {
-		MenuManager showMenu = new MenuManager(PDERuntimePlugin
-				.getResourceString(SHOW_ONLY));
-		manager.add(showMenu);
-		new ShowPluginsMenu(showMenu, false, treeViewer);
 		manager.add(refreshAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
@@ -164,6 +186,27 @@ public class RegistryBrowser extends ViewPart
 	}
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
+	}
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if (memento == null)
+			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW");
+		else
+			this.memento = memento;
+		initializeMemento();
+	}
+	private void initializeMemento() {
+		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
+			memento.putString(SHOW_RUNNING_PLUGINS, "true");
+	}
+	public void saveState(IMemento memento) {
+		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
+				.getContentProvider()).isShowRunning();
+		if (showRunning)
+			this.memento.putString(SHOW_RUNNING_PLUGINS, "true");
+		else
+			this.memento.putString(SHOW_RUNNING_PLUGINS, "false");
+		memento.putMemento(this.memento);
 	}
 	/* add attributes viewer */
 	protected void createAttributesViewer() {
@@ -174,6 +217,7 @@ public class RegistryBrowser extends ViewPart
 		layout.makeColumnsEqualWidth = false;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		fPropertyImage = new Label(composite, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL);
 		gd.widthHint = 20;
@@ -181,7 +225,8 @@ public class RegistryBrowser extends ViewPart
 		fPropertyLabel = new Label(composite, SWT.NULL);
 		fPropertyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createPropertySheet(composite);
-	}
+	}	
+	
 	protected void createPropertySheet(Composite parent) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout();
@@ -222,7 +267,7 @@ public class RegistryBrowser extends ViewPart
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer
 				.getContentProvider());
 		final IPluginDescriptor descriptor = Platform.getPluginRegistry()
-				.getPluginDescriptor(event.getBundle().getGlobalName());
+		.getPluginDescriptor(event.getBundle().getGlobalName());
 		if (descriptor == null)
 			return;
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
@@ -232,8 +277,8 @@ public class RegistryBrowser extends ViewPart
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
 						PluginObjectAdapter plugin = (PluginObjectAdapter) items[i]
-								.getData();
-						if (adapter != null) {
+																				 .getData();
+						if (plugin != null) {
 							Object object = plugin.getObject();
 							if (object instanceof IPluginDescriptor) {
 								IPluginDescriptor desc = (IPluginDescriptor) object;
@@ -245,21 +290,10 @@ public class RegistryBrowser extends ViewPart
 						}
 					}
 				}
-				switch (provider.getShowType()) {
-					case ShowPluginsMenu.SHOW_ALL_PLUGINS :
-						treeViewer.add(treeViewer.getInput(), adapter);
-						break;
-					case ShowPluginsMenu.SHOW_RUNNING_PLUGINS :
-						if (descriptor.isPluginActivated())
-							treeViewer.add(treeViewer.getInput(), adapter);
-						break;
-					case ShowPluginsMenu.SHOW_NON_RUNNING_PLUGINS :
-						if (!descriptor.isPluginActivated())
-							treeViewer.add(treeViewer.getInput(), adapter);
-						break;
-					default :
-						break;
-				}
+				if (provider.isShowRunning() && descriptor.isPluginActivated())
+					treeViewer.add(treeViewer.getInput(), adapter);
+				else
+					treeViewer.add(treeViewer.getInput(), adapter);
 			}
 		});
 	}
@@ -274,25 +308,49 @@ public class RegistryBrowser extends ViewPart
 					IExtension ext = deltas[i].getExtension();
 					IExtensionPoint extPoint = deltas[i].getExtensionPoint();
 					IPluginDescriptor descriptor = extPoint
-							.getDeclaringPluginDescriptor();
+					.getDeclaringPluginDescriptor();
 					PluginObjectAdapter adapter = new PluginObjectAdapter(
 							descriptor);
-
 					if (deltas[i].getKind() == IExtensionDelta.ADDED) {
 						if (ext != null)
 							treeViewer.add(adapter, ext);
 						if (extPoint != null)
 							treeViewer.add(adapter, extPoint);
-					} else { 
+					} else {
 						if (ext != null)
 							treeViewer.remove(ext);
 						if (extPoint != null)
 							treeViewer.remove(extPoint);
 						treeViewer.refresh();
 					}
-
 				}
 			}
 		});
+	}
+	protected void handleShowRunningPlugins(boolean showRunning){
+		if (showRunning){
+			TreeItem[] items = treeViewer.getTree().getItems();
+			if (items == null)
+				return;
+			
+			for (int i = 0; i < items.length; i++) {
+				PluginObjectAdapter plugin = (PluginObjectAdapter) items[i].getData();
+				if (plugin != null) {
+					Object object = plugin.getObject();
+					if (object instanceof IPluginDescriptor) {
+						IPluginDescriptor desc = (IPluginDescriptor) object;
+						if (!desc.isPluginActivated())
+							treeViewer.remove(plugin);
+					}
+				}
+			}
+			
+		} else {
+			IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
+			for (int i = 0; i<descriptors.length; i++){
+				if (!descriptors[i].isPluginActivated())
+					treeViewer.add(treeViewer.getInput(), new PluginObjectAdapter(descriptors[i]));
+			}
+		}
 	}
 }

@@ -127,6 +127,11 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_IMPORT_DISABLED =
 		create(PATH_LCL_DISABLED, "import_log.gif");
 	
+	public static final ImageDescriptor DESC_COLLAPSE_ALL =
+		create(PATH_LCL, "collapseall.gif");
+	public static final ImageDescriptor DESC_COLLAPSE_ALL_HOVER =
+		create(PATH_LCL_HOVER, "collapseall.gif");
+	
 	/*
 	 * Event Details
 	 */

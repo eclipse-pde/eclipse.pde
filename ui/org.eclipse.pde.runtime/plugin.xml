@@ -17,8 +17,8 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.pde.ui"/>
    </requires>
+
 
 <!-- Extensions -->
    <extension
@@ -69,4 +69,5 @@
          </viewShortcut>
       </perspectiveExtension>
    </extension>
+
 </plugin>

@@ -10,18 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.registry.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.runtime.registry.PluginObjectAdapter;
+import org.eclipse.pde.internal.runtime.registry.RegistryPropertySourceFactory;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
 	
 	private static PDERuntimePlugin inst;
 	private ResourceBundle resourceBundle;
+	private BundleContext context;
 
 	public PDERuntimePlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -83,5 +93,15 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 			new RegistryPropertySourceFactory();
 		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		this.context = context;
+	}
 	
+	public BundleContext getBundleContext() {
+		return this.context;
+	}
 }

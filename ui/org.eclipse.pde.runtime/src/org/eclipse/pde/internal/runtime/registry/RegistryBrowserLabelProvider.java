@@ -135,7 +135,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			
 		}
 		if (element instanceof IExtensionPoint) {
-			return ((IExtensionPoint) element).getUniqueIdentifier();
+			String pluginId = ((IExtensionPoint)element).getParentIdentifier();
+			String extPointId = ((IExtensionPoint) element).getUniqueIdentifier();
+			return extPointId.substring(pluginId.length()+1);
 		}
 		if (element instanceof IPluginPrerequisite) {
 			return ((IPluginPrerequisite) element).getUniqueIdentifier();
