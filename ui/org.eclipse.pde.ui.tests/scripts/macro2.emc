@@ -30,6 +30,5 @@
       <command type="select" contextId="menus" widgetId="contribid/close">
          <parent widgetId="file"/>
       </command>
-      <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
    </shell>
 </macro>
