@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
@@ -79,6 +80,7 @@ public abstract class ReferenceWizardPage extends WizardPage {
 		createPluginList(container);
 		initialize();
 		setControl(container);
+		Dialog.applyDialogFont(container);
 	}
 
 	protected void createPluginList(Composite parent) {

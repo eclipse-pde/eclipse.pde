@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardPage;
@@ -79,6 +80,7 @@ public void createControl(Composite parent) {
 	useReferencesButton.setLayoutData(gd);  
 
 	setControl(container);
+	Dialog.applyDialogFont(container);
 	loadSettings();
 	WorkbenchHelp.setHelp(container, IHelpContextIds.FEATURE_SYNCHRONIZE_VERSIONS);
 }

@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.layout.*;
@@ -121,6 +122,7 @@ public class ConvertedProjectsPage extends WizardPage {
 			//defect 17757
 			tablePart.updateCounter(0);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);
 	}
 

@@ -6,6 +6,7 @@ package org.eclipse.pde.ui.templates;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.swt.SWT;
@@ -77,6 +78,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 		if (helpContextId!=null)
 			WorkbenchHelp.setHelp(container, helpContextId);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 	}
 	/**
 	 * Initializes the options that require late initialization when

@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.core.*;
 
@@ -250,7 +251,7 @@ public class PointSelectionPage
 		createDescriptionIn(outerContainer);
 		initialize();
 		setControl(outerContainer);
-
+		Dialog.applyDialogFont(outerContainer);
 		WorkbenchHelp.setHelp(
 			outerContainer,
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);

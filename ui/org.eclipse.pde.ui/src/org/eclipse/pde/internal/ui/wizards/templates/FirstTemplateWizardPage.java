@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -270,7 +271,7 @@ public class FirstTemplateWizardPage extends WizardPage {
 		}
 		presetFields();
 		setControl(container);
-		
+		Dialog.applyDialogFont(container);
 		if (fragment) 
 			WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FRAGMENT_REQUIRED_DATA);
 		else

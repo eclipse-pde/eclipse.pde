@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -170,6 +171,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		hookListeners();
 
 		setControl(composite);
+		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.PLUGIN_IMPORT_FIRST_PAGE);
 	}
 

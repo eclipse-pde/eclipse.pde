@@ -4,6 +4,7 @@ package org.eclipse.pde.internal.ui.feature;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
@@ -62,6 +63,7 @@ public class PluginListPage extends WizardPage {
 		pluginViewer.setInput(PDECore.getDefault().getWorkspaceModelManager());
 		tablePart.setSelection(new Object[0]);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
 	}
 

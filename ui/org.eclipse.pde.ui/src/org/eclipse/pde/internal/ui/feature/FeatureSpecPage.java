@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.feature;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.pde.internal.ui.*;
@@ -82,6 +83,7 @@ public void createControl(Composite parent) {
 
 	verifyComplete();
 	setControl(container);
+	Dialog.applyDialogFont(container);
 	WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_FEATURE_DATA);
 }
 

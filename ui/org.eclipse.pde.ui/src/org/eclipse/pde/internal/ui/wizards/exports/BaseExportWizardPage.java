@@ -6,6 +6,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
@@ -112,6 +113,7 @@ public class BaseExportWizardPage extends WizardPage {
 		pageChanged();
 		hookListeners();
 		setControl(container);
+		Dialog.applyDialogFont(container);
 	}
 
 	private void hookListeners() {

@@ -7,6 +7,8 @@ package org.eclipse.pde.internal.ui.wizards.project;
 import java.lang.reflect.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.swt.widgets.*;
@@ -19,10 +21,10 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.PDE;
@@ -105,7 +107,7 @@ public class ProjectCodeGeneratorsPage extends WizardListSelectionPage {
 		wizardList = super.wizardSelectionViewer.getControl();
 		getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(outerContainer);
-		
+		Dialog.applyDialogFont(outerContainer);
 		if (fragment)
 			WorkbenchHelp.setHelp(outerContainer,IHelpContextIds.NEW_FRAGMENT_CODE_GEN_PAGE);
 		else

@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jdt.ui.wizards.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.*;
@@ -163,6 +164,7 @@ public class RequiredPluginsContainerPage
 			container,
 			IHelpContextIds.PLUGINS_CONTAINER_PAGE);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		if (realEntries != null)
 			initializeView();
 	}

@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.*;
 import org.eclipse.swt.events.*;
@@ -124,6 +125,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			idText.setFocus();
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
 	private InputStream createSchemaStream(

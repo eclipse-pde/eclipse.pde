@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
@@ -207,6 +208,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		gd.heightHint = 300;
 		gd.widthHint = 300;
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 

@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.pde.ui.templates.ITemplateSection;
@@ -53,6 +54,7 @@ public class NewExtensionMainPage extends WizardTreeSelectionPage {
 	}
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ADD_EXTENSIONS_MAIN);
 		
 	}

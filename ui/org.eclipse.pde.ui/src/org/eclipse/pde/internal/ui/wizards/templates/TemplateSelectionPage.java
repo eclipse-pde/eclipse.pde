@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.ui.*;
@@ -149,6 +150,7 @@ public class TemplateSelectionPage extends WizardPage {
 		viewer.setInput(PDEPlugin.getDefault());
 		tablePart.selectAll(true);
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
 	}
 

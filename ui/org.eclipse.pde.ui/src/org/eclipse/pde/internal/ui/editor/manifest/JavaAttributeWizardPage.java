@@ -6,6 +6,9 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 
 import org.eclipse.ui.*;
 import java.lang.reflect.*;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -22,7 +25,6 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.codegen.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.build.*;
 
@@ -123,6 +125,7 @@ public void createControl(Composite parent) {
 	createSearchPage();
 	createGeneratePage();
 	setControl(container);
+	Dialog.applyDialogFont(container);
 	WorkbenchHelp.setHelp(container, IHelpContextIds.JAVA_ATTRIBUTE_WIZARD_PAGE);
 }
 private void createGeneratePage() {

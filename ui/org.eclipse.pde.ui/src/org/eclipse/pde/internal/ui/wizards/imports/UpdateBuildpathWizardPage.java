@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -104,7 +105,7 @@ public class UpdateBuildpathWizardPage extends StatusWizardPage {
 		pluginListViewer.setInput(PDEPlugin.getDefault());
 		tablePart.setSelection(selected);
 		setControl(container);
-		
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.UPDATE_CLASSPATH);
 	}
 

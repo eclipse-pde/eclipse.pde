@@ -7,6 +7,7 @@ package org.eclipse.pde.internal.ui.editor.manifest;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
@@ -152,6 +153,7 @@ public class NewDependencyWizardPage extends WizardPage {
 
 		initialize();
 		setControl(container);
+		Dialog.applyDialogFont(container);
 		WorkbenchHelp.setHelp(container, IHelpContextIds.MANIFEST_ADD_DEPENDENCIES);
 	}
 
