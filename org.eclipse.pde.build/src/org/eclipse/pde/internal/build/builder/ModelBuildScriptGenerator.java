@@ -212,7 +212,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				String[] includes = Utils.getArrayFromString(includeString);
 				for (int i = 0; i < includes.length; i++)
 					if (includes[i].equals(DOT))
-						includes[i] = null;
+						includes[i] = EXPANDED_DOT + '/';
 				properties.setProperty(PROPERTY_BIN_INCLUDES, Utils.getStringFromArray(includes, ",")); //$NON-NLS-1$
 			}
 			return true;
@@ -378,6 +378,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetEnd();
 	}
 
+	//Check if the string contains *.jar
 	private boolean containsStarDotJar(String[] strings) {
 		for (int i = 0; i < strings.length; i++) {
 			if (strings[i].trim().equalsIgnoreCase("*.jar")) //$NON-NLS-1$
@@ -408,10 +409,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		boolean allJars = containsStarDotJar(splitIncludes);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
+		boolean dotIncluded = allJars;
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
 			String formatedName = entry.getName(false) + (entry.getType() == CompiledEntry.FOLDER ? "/" : ""); //$NON-NLS-1$//$NON-NLS-2$
 			if (allJars || Utils.isStringIn(splitIncludes, formatedName)) {
+				if (dotOnTheClasspath && formatedName.startsWith(EXPANDED_DOT)) {
+					dotIncluded = true;
+					continue;
+				}
 				fileSetValues[count++] = formatedName;
 				continue;
 			}
@@ -420,7 +426,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), null, Utils.getStringFromArray(fileSetValues, ","), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
-		if (dotOnTheClasspath && compiledJarNames.size() != 0) {
+		//Dot on the classpath need to be copied in a special way
+		if (dotIncluded) {
 			FileSet fileSet = new FileSet(getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT, null, "**", null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true);
 		}
