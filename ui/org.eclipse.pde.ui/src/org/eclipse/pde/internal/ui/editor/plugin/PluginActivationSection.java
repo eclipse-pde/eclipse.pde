@@ -13,24 +13,20 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.swt.*;
@@ -42,7 +38,7 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.*;
 import org.osgi.framework.*;
 
 public class PluginActivationSection extends TableSection
@@ -375,12 +371,8 @@ public class PluginActivationSection extends TableSection
 					.getPDEEditor().getAggregateModel();
 			IResource resource = model.getUnderlyingResource();
 			
-			TreeSet list = new TreeSet();
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				addLibraryPackageFragments(resource.getProject(), libraries[i], list);
-			}
-			PDEPluginConverter.convertToOSGIFormat(resource.getProject(), resource.getName(), (String[]) list.toArray(new String[list.size()]), new NullProgressMonitor()); //$NON-NLS-1$
+			String target = PDECore.getDefault().getModelManager().getTargetVersion();
+			PDEPluginConverter.convertToOSGIFormat(resource.getProject(), resource.getName(), target, ClasspathHelper.getDevDictionary(model), new NullProgressMonitor()); //$NON-NLS-1$
 
 			InputContextManager mgr = getPage().getPDEEditor().getContextManager();
 			InputContext context = mgr.findContext(PluginInputContext.CONTEXT_ID);
@@ -404,70 +396,6 @@ public class PluginActivationSection extends TableSection
 		} catch (Exception e1) {
 		}
 		
-	}
-	
-	private void addLibraryPackageFragments(IProject project,
-			IPluginLibrary library, Set set) {
-		try {
-			if (!project.hasNature(JavaCore.NATURE_ID))
-				return;
-			
-			if (library.isFullyExported()) {
-				IPackageFragmentRoot[] roots = getPackageFragmentRoots(
-						project, ClasspathUtilCore.expandLibraryName(library.getName()));
-				for (int i = 0; i < roots.length; i++) {
-					IJavaElement[] fragments = roots[i].getChildren();
-					for (int j = 0; j < fragments.length; j++) {
-						if (fragments[j] instanceof IPackageFragment) {
-							if (((IPackageFragment)fragments[j]).hasChildren())
-								set.add(fragments[j].getElementName());
-						}
-					}
-				}
-			}
-
-			String[] filters = library.getContentFilters();
-			for (int i = 0; i < filters.length; i++) {
-				String filter = filters[i].trim();
-				if (filter.endsWith(".*")) { //$NON-NLS-1$
-					set.add(filter.substring(0, filter.length() - 2));
-				} else {
-					set.add(filter);
-				}
-			}
-		} catch (CoreException e) {
-			return;
-		}
-	}
-	
-	private IPackageFragmentRoot[] getPackageFragmentRoots(IProject project, String libraryName) {
-		IJavaProject jProject = JavaCore.create(project);
-		IResource resource = project.findMember(libraryName);
-		if (resource != null) {
-			IPackageFragmentRoot root = jProject.getPackageFragmentRoot(libraryName);
-			if (root.exists())
-				return new IPackageFragmentRoot[] {root};
-		}
-			
-		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
-		if (context != null) {
-			IBuildModel model = (IBuildModel)context.getModel();
-			IBuildEntry entry = model.getBuild().getEntry("source." + libraryName); //$NON-NLS-1$
-			if (entry != null) {
-				String[] tokens = entry.getTokens();
-				ArrayList list = new ArrayList();
-				for (int i = 0; i < tokens.length; i++) {
-					resource = project.findMember(tokens[i]);
-					if (resource != null) {
-						IPackageFragmentRoot root = jProject.getPackageFragmentRoot(resource);
-						if (root.exists())
-							list.add(root);
-					}
-				}
-				return (IPackageFragmentRoot[])list.toArray(new IPackageFragmentRoot[list.size()]);
-			}
-		}
-		return new IPackageFragmentRoot[0];
 	}
 	
 	private TextEdit editRootElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) {

@@ -81,6 +81,17 @@ public class ClasspathHelper {
 		}
 		return buffer.toString();
 	}
+	
+	public static Dictionary getDevDictionary(IPluginModelBase model) {
+		String id = model.getPluginBase().getId();
+		if (id == null || id.trim().length() == 0)
+			return null;
+		IPath[] paths = getOutputFolders(model, false);
+		String entry = writeEntry(paths);
+		Hashtable map = new Hashtable(1);
+		map.put(id, entry.length() > 0 ? entry : "bin");
+		return map;		
+	}
 
 	private static IPath[] getOutputFolders(IPluginModelBase model, boolean checkExcluded) {
 		ArrayList result = new ArrayList();
