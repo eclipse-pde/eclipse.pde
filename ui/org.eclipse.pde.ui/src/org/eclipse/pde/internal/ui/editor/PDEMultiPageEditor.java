@@ -11,13 +11,12 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.EditorPreferencePage;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
@@ -56,7 +55,6 @@ public abstract class PDEMultiPageEditor
 	protected IModelUndoManager undoManager;
 	protected Clipboard clipboard;
 	private boolean validated;
-	private int verificationCounter;
 
 	public PDEMultiPageEditor() {
 		formWorkbook = new CustomWorkbook();
@@ -141,15 +139,8 @@ public abstract class PDEMultiPageEditor
 					if (formPage.getSelection() != null)
 						setSelection(formPage.getSelection());
 				}
-				IPDEEditorPage pdePage = (IPDEEditorPage)page;
+				IPDEEditorPage pdePage = (IPDEEditorPage) page;
 				pdePage.setFocus();
-				verificationCounter++;
-				if (verificationCounter==2) {
-					// Skip the first time the page is switched,
-					// ask the second time (user switch)
-					// and ignore afterwards.
-					verifyDefaultPage(pdePage.isSource());
-				}
 			}
 		});
 		MenuManager manager = new MenuManager();
@@ -167,13 +158,16 @@ public abstract class PDEMultiPageEditor
 			IFormPage page = (IFormPage) iter.next();
 			formWorkbook.addPage(page);
 		}
-		if (EditorPreferencePage.getUseSourcePage())
+		String storedFirstPageId = loadDefaultPage();
+		if (storedFirstPageId != null)
+			firstPageId = storedFirstPageId;
+		else if (EditorPreferencePage.getUseSourcePage())
 			firstPageId = getSourcePageId();
 		if (firstPageId != null)
 			showPage(firstPageId);
 	}
 	public void dispose() {
-		//verifyDefaultPage();
+		storeDefaultPage();
 		setSelection(new StructuredSelection());
 		for (int i = 0; i < pages.size(); i++) {
 			IWorkbenchPart part = (IWorkbenchPart) pages.elementAt(i);
@@ -192,37 +186,67 @@ public abstract class PDEMultiPageEditor
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		disposed = true;
 	}
-	
-	private void verifyDefaultPage(boolean usingSource) {
-		boolean askDefault = EditorPreferencePage.getAskDefaultPage();
-		boolean shouldUseSource = EditorPreferencePage.getUseSourcePage();
-		if (!askDefault) return;
 
-		boolean ask=false;
-		String msg="";
-		if (usingSource && !shouldUseSource) {
-			// Ask if source page should be the default
-			// the next time
-			msg = PDEPlugin.getResourceString("MultiPageEditor.defaultPage.source");			
-			ask = true;
-		}
-		if (!usingSource && shouldUseSource) {
-			// Ask if overview page should be the default
-			// the next time
-			msg = PDEPlugin.getResourceString("MultiPageEditor.defaultPage.overview");
-			ask = true;
-		}
-		if (ask) {
-			DefaultPageDialog dialog = new DefaultPageDialog(PDEPlugin.getActiveWorkbenchShell(), msg);
-			boolean doIt = (dialog.open()==0);
-			boolean stopAsking = dialog.getStopAsking();
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			store.setValue(EditorPreferencePage.P_ASK_DEFAULT_PAGE, !stopAsking);
-			if (doIt)
-				store.setValue(EditorPreferencePage.P_USE_SOURCE_PAGE, usingSource);
+	private void storeDefaultPage() {
+		IEditorInput input = getEditorInput();
+		String pageId = getPageId(getCurrentPage());
+
+		if (input instanceof IFileEditorInput) {
+			// load the setting from the resource
+			IFile file = ((IFileEditorInput) input).getFile();
+			if (file != null) {
+				//set the settings on the resouce
+				try {
+					file.setPersistentProperty(
+						IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY,
+						pageId);
+				} catch (CoreException e) {
+				}
+			}
+		} else if (input instanceof SystemFileEditorInput) {
+			File file =
+				(File) ((SystemFileEditorInput) input).getAdapter(File.class);
+			if (file == null)
+				return;
+			IDialogSettings section = getSettingsSection();
+
+			section.put(file.getPath(), pageId);
 		}
 	}
-	
+
+	private String loadDefaultPage() {
+		IEditorInput input = getEditorInput();
+
+		if (input instanceof IFileEditorInput) {
+			// load the setting from the resource
+			IFile file = ((IFileEditorInput) input).getFile();
+			try {
+				return file.getPersistentProperty(
+					IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY);
+			} catch (CoreException e) {
+				return null;
+			}
+		} else if (input instanceof SystemFileEditorInput) {
+			File file =
+				(File) ((SystemFileEditorInput) input).getAdapter(File.class);
+			if (file == null)
+				return null;
+			IDialogSettings section = getSettingsSection();
+			String key = file.getPath();
+			return section.get(key);
+		}
+		return null;
+	}
+
+	private IDialogSettings getSettingsSection() {
+		// store the setting in dialog settings
+		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = root.getSection("multi-page-editor");
+		if (section == null)
+			section = root.addNewSection("multi-page-editor");
+		return section;
+	}
+
 	public void doSave(IProgressMonitor monitor) {
 		final IEditorInput input = getEditorInput();
 		commitFormPages(true);
@@ -265,9 +289,10 @@ public abstract class PDEMultiPageEditor
 			contributor.updateActions();
 		validateEdit();
 	}
-	
+
 	private void validateEdit() {
-		if (!isDirty()) return;
+		if (!isDirty())
+			return;
 		if (!validated) {
 			IEditorInput input = getEditorInput();
 			if (input instanceof IFileEditorInput) {
@@ -277,13 +302,17 @@ public abstract class PDEMultiPageEditor
 					PDEPlugin.getWorkspace().validateEdit(
 						new IFile[] { file },
 						shell);
-				if (validateStatus.getCode()!=IStatus.OK)
-					ErrorDialog.openError(shell, getTitle(), null, validateStatus);
+				if (validateStatus.getCode() != IStatus.OK)
+					ErrorDialog.openError(
+						shell,
+						getTitle(),
+						null,
+						validateStatus);
 			}
 			validated = true;
 		}
 	}
-	
+
 	public IAction getAction(String id) {
 		return getContributor().getGlobalAction(id);
 	}
@@ -312,6 +341,16 @@ public abstract class PDEMultiPageEditor
 	public IPDEEditorPage getCurrentPage() {
 		return (IPDEEditorPage) formWorkbook.getCurrentPage();
 	}
+	public String getPageId(IPDEEditorPage page) {
+		for (Enumeration enum = table.keys(); enum.hasMoreElements();) {
+			String key = enum.nextElement().toString();
+			Object value = table.get(key);
+			if (value.equals(page))
+				return key;
+		}
+		return null;
+	}
+
 	public IDocumentProvider getDocumentProvider() {
 		return documentProvider;
 	}
@@ -510,13 +549,13 @@ public abstract class PDEMultiPageEditor
 	}
 	public void openTo(Object obj, IMarker marker) {
 		if (EditorPreferencePage.getUseSourcePage()) {
-			PDESourcePage sourcePage = (PDESourcePage)showPage(getSourcePageId());
-			if (marker!=null)
+			PDESourcePage sourcePage =
+				(PDESourcePage) showPage(getSourcePageId());
+			if (marker != null)
 				sourcePage.openTo(marker);
-		}
-		else {
+		} else {
 			IPDEEditorPage page = getPageFor(obj);
-			if (page!=null) {
+			if (page != null) {
 				showPage(page);
 				page.openTo(obj);
 			}
@@ -621,7 +660,6 @@ public abstract class PDEMultiPageEditor
 		}
 		return false;
 	}
-	
 
 	public boolean canCopy(ISelection selection) {
 		return selection != null && !selection.isEmpty();
@@ -632,7 +670,7 @@ public abstract class PDEMultiPageEditor
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
 	}
-	
+
 	protected IPDEEditorPage getPageFor(Object object) {
 		return null;
 	}

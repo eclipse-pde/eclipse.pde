@@ -1,5 +1,7 @@
 package org.eclipse.pde.internal.ui;
 
+import org.eclipse.core.runtime.QualifiedName;
+
 /**
  * @author dejan
  *
@@ -23,4 +25,7 @@ public interface IPDEUIConstants {
 	String RUN_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchRunLauncher";
 	String DEBUG_LAUNCHER_ID = PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 	String MARKER_SYSTEM_FILE_PATH = PLUGIN_ID + "."+ "systemFilePath";
+
+	QualifiedName DEFAULT_EDITOR_PAGE_KEY =
+		new QualifiedName(PLUGIN_ID, "default-editor-page");	
 }
