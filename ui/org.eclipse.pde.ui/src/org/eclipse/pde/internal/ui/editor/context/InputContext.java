@@ -190,9 +190,9 @@ public abstract class InputContext {
 				if (model instanceof IEditable)
 					((IEditable)model).setDirty(false);
 			} catch (MalformedTreeException e) {
-				e.printStackTrace();
+				PDEPlugin.logException(e);
 			} catch (BadLocationException e) {
-				e.printStackTrace();
+				PDEPlugin.logException(e);
 			}
 		}	
 	}
