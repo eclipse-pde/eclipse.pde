@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.*;
 import java.net.*;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.project;
+package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,7 +20,7 @@ import org.eclipse.pde.ui.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.dialogs.*;
 
-public class NewProjectWizard
+public class NewPluginProjectWizard
 	extends NewWizard
 	implements IExecutableExtension {
 
@@ -42,7 +42,7 @@ public class NewProjectWizard
 		"NewProjectWizard.ProjectCodeGeneratorsPage.message";
 	private static final String KEY_WTITLE = "NewProjectWizard.title";
 
-	public NewProjectWizard() {
+	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));

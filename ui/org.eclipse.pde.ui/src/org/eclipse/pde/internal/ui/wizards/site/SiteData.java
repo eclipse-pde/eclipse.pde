@@ -8,18 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.project;
+package org.eclipse.pde.internal.ui.wizards.site;
 
-import org.eclipse.pde.internal.ui.*;
 
-public class NewFragmentProjectWizard extends NewProjectWizard {
-private static final String KEY_TITLE = "NewFragmentProjectWizard.title";
+public class SiteData {
+	String name;
+	String type;
+	String url;
 
-public NewFragmentProjectWizard() {
-	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
-	setWindowTitle(PDEPlugin.getResourceString(KEY_TITLE));
-}
-public boolean isFragmentWizard() {
-	return true;
+public SiteData() {
 }
 }

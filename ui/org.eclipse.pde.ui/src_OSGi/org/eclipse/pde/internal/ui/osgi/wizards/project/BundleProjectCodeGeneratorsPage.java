@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.codegen.JavaCodeGenerator;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
+import org.eclipse.pde.internal.ui.wizards.plugin.ProjectStructurePage;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;

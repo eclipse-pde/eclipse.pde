@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.wizards.feature;
 
-
-public class SiteData {
+public class FeatureData {
+	String id;
 	String name;
-	String type;
-	String url;
+	String version;
+	String provider;
 
-public SiteData() {
+public FeatureData() {
 }
 }

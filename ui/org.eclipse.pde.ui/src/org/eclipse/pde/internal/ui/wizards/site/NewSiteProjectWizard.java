@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.io.*;
 import java.lang.reflect.*;

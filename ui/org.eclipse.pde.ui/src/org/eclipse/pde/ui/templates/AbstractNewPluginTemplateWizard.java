@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.manifest.ManifestEditor;
-import org.eclipse.pde.internal.ui.wizards.project.ProjectStructurePage;
+import org.eclipse.pde.internal.ui.wizards.plugin.ProjectStructurePage;
 import org.eclipse.pde.internal.ui.wizards.templates.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.widgets.Display;

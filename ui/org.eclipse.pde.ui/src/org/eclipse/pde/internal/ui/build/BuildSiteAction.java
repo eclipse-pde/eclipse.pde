@@ -1,7 +1,7 @@
 /*
  * Created on Oct 6, 2003
  */
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.*;
 

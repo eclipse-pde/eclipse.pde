@@ -8,14 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.wizards.plugin;
 
-public class FeatureData {
-	String id;
-	String name;
-	String version;
-	String provider;
+import org.eclipse.pde.internal.ui.*;
 
-public FeatureData() {
+public class NewFragmentProjectWizard extends NewPluginProjectWizard {
+private static final String KEY_TITLE = "NewFragmentProjectWizard.title";
+
+public NewFragmentProjectWizard() {
+	setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
+	setWindowTitle(PDEPlugin.getResourceString(KEY_TITLE));
+}
+public boolean isFragmentWizard() {
+	return true;
 }
 }

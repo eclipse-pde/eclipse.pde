@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.feature;
+package org.eclipse.pde.internal.ui.wizards.feature;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -31,7 +31,7 @@ import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.feature.NewFeatureProjectWizard.*;
+import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard.*;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
@@ -224,8 +224,8 @@ public class FeatureCustomHandlerPage extends WizardPage {
 			IProjectDescription desc =
 				project.getWorkspace().newProjectDescription(project.getName());
 			desc.setLocation(provider.getLocationPath());
-			if (!project.hasNature(PDE.PLUGIN_NATURE))
-				CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
+			if (!project.hasNature(PDE.FEATURE_BUILDER_ID))
+				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE, monitor);
 
 			if (!project.hasNature(JavaCore.NATURE_ID)
 					&& customChoice.getSelection()) {

@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.site.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.feature.*;
+import org.eclipse.pde.internal.ui.build.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
