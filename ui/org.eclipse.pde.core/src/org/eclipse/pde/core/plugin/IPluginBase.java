@@ -4,6 +4,8 @@ package org.eclipse.pde.core.plugin;
  * All Rights Reserved.
  */
 
+import java.io.Serializable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
 /**
@@ -17,7 +19,7 @@ import org.eclipse.pde.core.IIdentifiable;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IPluginBase extends IPluginObject, IIdentifiable {
+public interface IPluginBase extends IPluginObject, IIdentifiable, Serializable {
 	/**
 	 * A property that will be used to notify that
 	 * the provider name has changed.

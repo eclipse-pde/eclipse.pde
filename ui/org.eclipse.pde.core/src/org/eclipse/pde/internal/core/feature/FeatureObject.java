@@ -15,8 +15,8 @@ import org.w3c.dom.Node;
 public abstract class FeatureObject
 	extends PlatformObject
 	implements IFeatureObject {
-	IFeatureModel model;
-	IFeatureObject parent;
+	transient IFeatureModel model;
+	transient IFeatureObject parent;
 	protected String label;
 	boolean inTheModel;
 

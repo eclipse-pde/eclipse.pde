@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
 
@@ -119,5 +121,13 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 
 	public String toString() {
 		return getLabel();
+	}
+	
+	public void setModel(IFeatureModel model) {
+		this.model = model;
+	}
+	
+	public void setParent(IFeatureObject parent) {
+		this.parent = parent;
 	}
 }

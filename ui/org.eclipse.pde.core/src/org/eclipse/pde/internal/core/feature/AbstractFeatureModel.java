@@ -17,8 +17,8 @@ import org.xml.sax.*;
 public abstract class AbstractFeatureModel
 	extends AbstractModel
 	implements IFeatureModel {
-	protected Feature feature;
-	private IFeatureModelFactory factory;
+	protected transient Feature feature;
+	private transient IFeatureModelFactory factory;
 	private boolean enabled = true;
 
 	public AbstractFeatureModel() {

@@ -12,7 +12,7 @@ import org.eclipse.pde.core.IWritable;
 /**
  * A base of all feature model objects.
  */
-public interface IFeatureObject extends IWritable, IAdaptable {
+public interface IFeatureObject extends IWritable, IAdaptable, Serializable {
 /**
  * A property name that will be used to notify
  * about changes in the "label" field.

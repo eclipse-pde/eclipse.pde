@@ -388,13 +388,14 @@ public class ImportListSection
 		}
 	}
 	protected boolean canPaste(Object target, Object[] objects) {
-		if (objects[0] instanceof ImportObject)
-			return true;
-		return false;
+		for (int i = 0; i < objects.length; i++) {
+			if (!(objects[i] instanceof ImportObject))
+				return false;
+		}
+		return true;
 	}
 	public boolean canPaste(Clipboard clipboard) {
-		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
-		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
+		Object [] objects = (Object[])clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects!=null && objects.length>0) {
 			return canPaste(null, objects);
 		}

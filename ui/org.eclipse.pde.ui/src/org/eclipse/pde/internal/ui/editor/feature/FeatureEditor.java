@@ -9,6 +9,7 @@ import java.io.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
@@ -48,6 +49,11 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 		return new FeatureUndoManager(this);
 	}
 
+	public boolean canCopy(ISelection selection) {
+		return (getCurrentPage() instanceof FeatureFormPage)
+			? true
+			: super.canCopy(selection);
+	}
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);

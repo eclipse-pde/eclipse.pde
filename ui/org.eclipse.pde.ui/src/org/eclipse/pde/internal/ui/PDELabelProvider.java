@@ -85,7 +85,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			text = name + " (" + pluginBase.getVersion() + ")";
 		else
 			text = name;
-		if (!pluginBase.getModel().isInSync())
+		if (pluginBase.getModel() != null && !pluginBase.getModel().isInSync())
 			text += " " + PDEPlugin.getResourceString(KEY_OUT_OF_SYNC);
 		return text;
 	}

@@ -5,6 +5,7 @@ package org.eclipse.pde.internal.core;
  */
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -16,7 +17,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
 
-public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProvider {
+public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProvider, Serializable {
 	private Vector listeners = new Vector();
 	protected boolean loaded;
 	protected NLResourceHelper nlHelper;
