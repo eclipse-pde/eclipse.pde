@@ -35,7 +35,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	// Points to the map files containing references to cvs repository
 	protected String directoryLocation;
-	protected static Properties directory;
+	protected static Properties directory;	//TODO Should be passed around
 
 	// The location of the CVS password file.
 	protected String cvsPassFileLocation;
