@@ -15,6 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
 public class ModifiedTextCellEditor extends TextCellEditor {
+	private Listener traverseListener;
+	
 	public ModifiedTextCellEditor(Composite parent) {
 		super(parent);
 		setValueValid(true);
@@ -28,7 +30,7 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 	public Control createControl(Composite parent) {
 		Text text = (Text) super.createControl(parent);
 
-		text.addListener(SWT.Traverse, new Listener() {
+		traverseListener = new Listener() {
 			public void handleEvent(Event e) {
 				// do whatever it is you want to do on commit
 				handleEnter();
@@ -36,8 +38,17 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 				// traversing to the button
 				e.doit = false;
 			}
-		});
+		};
+		text.addListener(SWT.Traverse, traverseListener);		
 		return text;
+	}
+	
+	public void dispose() {
+		Control c = getControl();
+		if (c!=null && traverseListener!=null) {
+			c.removeListener(SWT.Traverse, traverseListener);
+		}
+		super.dispose();
 	}
 	
 	public void forceCommit() {
