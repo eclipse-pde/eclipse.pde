@@ -605,6 +605,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			ISchemaCompositor compositor = complexType.getCompositor();
 			if (compositor != null)
 				computeAllowedElements(compositor, elementSet);
+			
+			ISchemaAttribute[] attrs = complexType.getAttributes();
+			for (int i = 0; i < attrs.length; i++) {
+				if (attrs[i].getKind() == ISchemaAttribute.JAVA)
+					elementSet.add(attrs[i].getName());
+			}
 		}
 	}
 
@@ -631,8 +637,19 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		ISchema schema,
 		PluginErrorReporter reporter) {
 		ISchemaElement schemaElement = schema.findElement(element.getName());
+		boolean valid = schemaElement != null;
+		boolean executableElement = false;
+		ISchemaElement parentSchema = schema.findElement(element.getParent().getName());
 		if (schemaElement == null) {
-			// Invalid
+			if (parentSchema != null) {
+				ISchemaAttribute attr = parentSchema.getAttribute(element.getName());
+				if (attr != null && attr.getKind() == ISchemaAttribute.JAVA) {
+					valid = true;
+					executableElement = true;
+				}
+			}
+		}
+		if (!valid) {
 			reporter.report(
 				PDE.getFormattedMessage(
 					"Builders.Manifest.element",
@@ -640,9 +657,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				getLine(element),
 				CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
 		} else {
-			IPluginAttribute[] atts = element.getAttributes();
-			validateExistingAttributes(atts, schemaElement, reporter);
-			validateRequiredAttributes(element, schemaElement, reporter);
+			if (executableElement) {
+				validateJava(element.getAttribute("class"), parentSchema.getAttribute(element.getName()), reporter);
+				return;
+			} else {
+				IPluginAttribute[] atts = element.getAttributes();
+				validateExistingAttributes(atts, schemaElement, reporter);
+				validateRequiredAttributes(element, schemaElement, reporter);
+			}
 		}
 
 		if (schemaElement != null)
@@ -745,6 +767,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject project = att.getModel().getUnderlyingResource().getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
+			int index = value.indexOf(":");
+			if (index != -1)
+				value = value.substring(0, index);
 			IType element = javaProject.findType(value);
 			if (element == null) {
 				reporter.report(
@@ -795,21 +820,27 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateRequiredAttributes(
-		IPluginElement element,
-		ISchemaElement schemaElement,
-		PluginErrorReporter reporter) {
+	private void validateRequiredAttributes(IPluginElement element,
+			ISchemaElement schemaElement, PluginErrorReporter reporter) {
 		ISchemaAttribute[] attInfos = schemaElement.getAttributes();
 		for (int i = 0; i < attInfos.length; i++) {
 			ISchemaAttribute attInfo = attInfos[i];
 			if (attInfo.getUse() == ISchemaAttribute.REQUIRED) {
-				if (element.getAttribute(attInfo.getName()) == null) {
-					reporter.report(
-						PDE.getFormattedMessage(
-							"Builders.Manifest.required",
-							attInfo.getName()),
-						getLine(element),
-						CompilerFlags.getFlag(CompilerFlags.P_NO_REQUIRED_ATT));
+				boolean valid = (element.getAttribute(attInfo.getName()) != null);
+				if (!valid && attInfo.getKind() == ISchemaAttribute.JAVA) {
+					IPluginObject[] children = element.getChildren();
+					for (int j = 0; j < children.length; j++) {
+						if (attInfo.getName().equals(children[j].getName())) {
+							valid = true;
+							break;
+						}
+					}
+				}
+				if (!valid) {
+					reporter.report(PDE.getFormattedMessage(
+							"Builders.Manifest.required", attInfo.getName()),
+							getLine(element), CompilerFlags
+									.getFlag(CompilerFlags.P_NO_REQUIRED_ATT));
 				}
 			}
 		}
