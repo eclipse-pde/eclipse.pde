@@ -123,8 +123,9 @@ public class WorkbenchLaunchConfigurationDelegate
 			} else {
 				AdvancedLauncherTab.ExternalState es =
 					exstates.getState(model.getPluginBase().getId());
-				if (es != null && es.state) {
-					res.add(model);
+				if (es != null) {
+					if(es.state)
+						res.add(model);
 				} else if (model.isEnabled())
 					res.add(model);
 			}

@@ -37,7 +37,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	public void setChanged(boolean changed) {
 		this.changed = changed;
 	}
-	
+
 	protected void createStartingSpace(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
 		GridData data = new GridData();
