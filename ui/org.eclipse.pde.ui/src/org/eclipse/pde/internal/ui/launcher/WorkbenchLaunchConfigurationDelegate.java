@@ -232,14 +232,24 @@ public class WorkbenchLaunchConfigurationDelegate
 
 	private void ensureProductFilesExist(IPath productArea) {
 		File productDir = productArea.toFile();
+		
 		File marker = new File(productDir, ".eclipseproduct");
-		File ini = new File(productDir, "install.ini");
-		if (marker.exists() && ini.exists()) return;
 		IPath eclipsePath = ExternalModelManager.getEclipseHome();
 		if (!marker.exists()) 
 			copyFile(eclipsePath, ".eclipseproduct", marker);
-		if (!ini.exists())
-			copyFile(eclipsePath, "install.ini", ini);
+		
+		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			File configDir = new File(productDir, "configuration");
+			if (!configDir.exists())
+				configDir.mkdirs();		
+			File ini = new File(configDir, "config.ini");			
+			if (!ini.exists())
+				copyFile(eclipsePath.append("configuration"), "config.ini", ini);
+		} else {
+			File ini = new File(productDir, "install.ini");
+			if (!ini.exists()) 
+				copyFile(eclipsePath, "install.ini", ini);		
+		}
 	}
 
 	private void copyFile(IPath eclipsePath, String name, File target) {

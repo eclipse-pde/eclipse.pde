@@ -564,33 +564,26 @@ public class LauncherUtils {
 	}
 
 	public static String getPrimaryFeatureId() {
-		Properties properties = getInstallProperties();
-		return (properties == null) ? null : properties.getProperty("feature.default.id");
+		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
+		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		
+		Properties properties = getConfigIniProperties(filename);		
+
+		String property = isOSGi ? "eclipse.product" : "feature.default.id";
+		return (properties == null) ? null : properties.getProperty(property);
 	}
 
 	public static String getDefaultApplicationName() {
-		Properties properties = getInstallProperties();
-		String appName = (properties != null) ? properties
-				.getProperty("feature.default.application") : null;
-		if (appName == null) {
-			appName = PDECore.getDefault().getModelManager().isOSGiRuntime()
-					? "org.eclipse.ui.ide.workbench"
-					: "org.eclipse.ui.workbench";
-		}
-		return appName;
+		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
+			return "org.eclipse.ui.workbench";
+		
+		Properties properties = getConfigIniProperties("configuration/config.ini");
+		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null;
+		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench";
 	}
 	
-	public static Properties getInstallProperties() {
-		File iniFile = null;
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.platform");
-		if (entry != null && entry.getActiveModel().getUnderlyingResource() != null) {
-			IProject project = entry.getActiveModel().getUnderlyingResource().getProject();
-			iniFile = new File(project.getFile("install.ini").getLocation().toOSString());
-		}
-		if (iniFile == null || !iniFile.exists()) {
-			IPath eclipsePath = ExternalModelManager.getEclipseHome();
-			iniFile = new File(eclipsePath.toFile(), "install.ini");
-		}
+	public static Properties getConfigIniProperties(String filename) {
+		IPath eclipsePath = ExternalModelManager.getEclipseHome();
+		File iniFile = new File(eclipsePath.toFile(), filename);
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
