@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.neweditor;
 
 import java.io.File;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -31,12 +32,42 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public abstract class PDEFormEditor extends FormEditor {
 	private Clipboard clipboard;
 	private Menu contextMenu;
+	private Hashtable inputContexts;
 	/**
 	 *  
 	 */
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		inputContexts = new Hashtable();
 	}
+	
+	public void init(IEditorInput input, IEditorSite site) throws PartInitException {
+		super.init(site, input);
+		createInputContexts(inputContexts);
+	}
+/**
+ * Tests whether this editor has a context with
+ * a provided id. The test can be used to check
+ * whether to add certain pages.
+ * @param contextId
+ * @return <code>true</code> if provided context is
+ * present, <code>false</code> otherwise.
+ */	
+	public boolean hasInputContext(String contextId) {
+		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
+			InputContext context = (InputContext)enum.nextElement();
+			if (contextId.equals(context.getId()))
+				return true;
+		}
+		return false;
+	}
+	
+	protected void createInputContexts(Dictionary contexts) {
+		IEditorInput input = getEditorInput();
+		inputContexts.put(input, createInputContext(input));
+	}
+	
+	protected abstract InputContext createInputContext(IEditorInput input);
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -89,6 +120,17 @@ public abstract class PDEFormEditor extends FormEditor {
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
+		commitFormPages(true);
+		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
+			InputContext context = (InputContext)enum.nextElement();
+			if (context.mustSave())
+				context.doSave(monitor);
+		}
+		fireDirtyStateChanged();
+	}
+	
+	private void commitFormPages(boolean onSave) {
+
 	}
 	/*
 	 * (non-Javadoc)
@@ -179,7 +221,40 @@ public abstract class PDEFormEditor extends FormEditor {
 			clipboard.dispose();
 			clipboard = null;
 		}
+		// dispose input contexts
+		for (Enumeration enum=inputContexts.elements();enum.hasMoreElements();) {
+			InputContext context = (InputContext)enum.nextElement();
+			context.dispose();
+		}
+		inputContexts.clear();
 	}
+	
+	public void fireDirtyStateChanged() {
+		firePropertyChange(PROP_DIRTY);
+		//PDEEditorContributor contributor = getContributor();
+		//if (contributor != null)
+			//contributor.updateActions();
+	}
+	
+	public boolean isDirty() {
+		for (Enumeration enum=inputContexts.elements(); enum.hasMoreElements();) {
+			InputContext context = (InputContext)enum.nextElement();
+			if (context.mustSave())
+				return true;
+		}
+		return false;
+	}
+
+	public void fireSaveNeeded(IEditorInput input) {
+		fireDirtyStateChanged();
+		validateEdit(input);
+	}
+	
+	private void validateEdit(IEditorInput input) {
+		InputContext context = (InputContext)inputContexts.get(input);
+		context.validateEdit();
+	}
+	
 	private IDialogSettings getSettingsSection() {
 		// store the setting in dialog settings
 		IDialogSettings root = PDEPlugin.getDefault().getDialogSettings();
