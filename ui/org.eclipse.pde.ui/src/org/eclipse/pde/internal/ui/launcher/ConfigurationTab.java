@@ -47,12 +47,17 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	private String fLastEnteredConfigArea = ""; //$NON-NLS-1$
 	private String fConfigName;
 	private boolean fBlockChanges;
+	private boolean fJUnitConfig;
 	
 	
 	public ConfigurationTab() {
-		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
+		this(false);
 	}
 	
+	public ConfigurationTab(boolean isJUnitConfig) {
+		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
+		fJUnitConfig = isJUnitConfig;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -262,7 +267,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(CONFIG_USE_DEFAULT_AREA, true);
 		configuration.setAttribute(CONFIG_LOCATION, ""); //$NON-NLS-1$
-		configuration.setAttribute(CONFIG_CLEAR_AREA, false);
+		configuration.setAttribute(CONFIG_CLEAR_AREA, fJUnitConfig);
 		configuration.setAttribute(CONFIG_GENERATE_DEFAULT, true);
 		configuration.setAttribute(CONFIG_TEMPLATE_LOCATION, ""); //$NON-NLS-1$
 	}

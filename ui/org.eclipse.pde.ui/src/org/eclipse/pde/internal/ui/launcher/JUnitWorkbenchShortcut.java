@@ -34,6 +34,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(ILauncherSettings.USE_DEFAULT, true);
 			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
 			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
+			wc.setAttribute(ILauncherSettings.CONFIG_CLEAR_AREA, true);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
 				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
@@ -43,6 +44,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR, container);
 			if (testName.length() > 0)
 				wc.setAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, testName);	
+			if (!JUnitLaunchConfiguration.requiresUI(wc))
+				wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
 			config= wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.log(ce);
