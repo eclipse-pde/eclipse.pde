@@ -188,6 +188,7 @@ public class WorkbenchLauncherDelegate
 				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
 		});
+		PDEPlugin.getDefault().registerLaunch(launch);
 	}
 
 	private void showErrorDialog(final String message, final IStatus status) {

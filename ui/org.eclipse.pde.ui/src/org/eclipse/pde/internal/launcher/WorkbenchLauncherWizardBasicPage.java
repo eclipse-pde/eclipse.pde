@@ -26,22 +26,37 @@ import org.eclipse.pde.internal.PDEPlugin;
 public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private static final String KEY_DESC = "";
 
-	private static final String KEY_WORKSPACE = "WorkbenchLauncherWizardBasicPage.workspace";
-	private static final String KEY_BROWSE = "WorkbenchLauncherWizardBasicPage.browse";
-	private static final String KEY_CLEAR = "WorkbenchLauncherWizardBasicPage.clear";
+	private static final String KEY_WORKSPACE =
+		"WorkbenchLauncherWizardBasicPage.workspace";
+	private static final String KEY_BROWSE =
+		"WorkbenchLauncherWizardBasicPage.browse";
+	private static final String KEY_CLEAR =
+		"WorkbenchLauncherWizardBasicPage.clear";
 	private static final String KEY_JRE = "WorkbenchLauncherWizardBasicPage.jre";
-	private static final String KEY_VMARGS = "WorkbenchLauncherWizardBasicPage.vmArgs";
-	private static final String KEY_PARGS = "WorkbenchLauncherWizardBasicPage.programArgs";
-	private static final String KEY_APPNAME = "WorkbenchLauncherWizardBasicPage.appName";
-	private static final String KEY_TRACING = "WorkbenchLauncherWizardBasicPage.tracing";
-	private static final String KEY_RESTORE = "WorkbenchLauncherWizardBasicPage.restore";
-	private static final String KEY_RESTORE_TEXT = "WorkbenchLauncherWizardBasicPage.restoreText";
-	private static final String KEY_WTITLE = "WorkbenchLauncherWizardBasicPage.workspace.title";
-	private static final String KEY_WMESSAGE = "WorkbenchLauncherWizardBasicPage.workspace.message";
-	private static final String KEY_NO_JRE = "WorkbenchLauncherWizardBasicPage.noJRE";
-	private static final String KEY_ENTER_WORKSPACE = "WorkbenchLauncherWizardBasicPage.enterWorkspace";
-	private static final String KEY_INVALID_WORKSPACE = "WorkbenchLauncherWizardBasicPage.invalidWorkspace";
-	private static final String KEY_EXISTING_WORKSPACE = "WorkbenchLauncherWizardBasicPage.workspaceExisting";
+	private static final String KEY_VMARGS =
+		"WorkbenchLauncherWizardBasicPage.vmArgs";
+	private static final String KEY_PARGS =
+		"WorkbenchLauncherWizardBasicPage.programArgs";
+	private static final String KEY_APPNAME =
+		"WorkbenchLauncherWizardBasicPage.appName";
+	private static final String KEY_TRACING =
+		"WorkbenchLauncherWizardBasicPage.tracing";
+	private static final String KEY_RESTORE =
+		"WorkbenchLauncherWizardBasicPage.restore";
+	private static final String KEY_RESTORE_TEXT =
+		"WorkbenchLauncherWizardBasicPage.restoreText";
+	private static final String KEY_WTITLE =
+		"WorkbenchLauncherWizardBasicPage.workspace.title";
+	private static final String KEY_WMESSAGE =
+		"WorkbenchLauncherWizardBasicPage.workspace.message";
+	private static final String KEY_NO_JRE =
+		"WorkbenchLauncherWizardBasicPage.noJRE";
+	private static final String KEY_ENTER_WORKSPACE =
+		"WorkbenchLauncherWizardBasicPage.enterWorkspace";
+	private static final String KEY_INVALID_WORKSPACE =
+		"WorkbenchLauncherWizardBasicPage.invalidWorkspace";
+	private static final String KEY_EXISTING_WORKSPACE =
+		"WorkbenchLauncherWizardBasicPage.workspaceExisting";
 
 	private static final String SETTINGS_VMARGS = "vmargs";
 	private static final String SETTINGS_PROGARGS = "progargs";
@@ -78,6 +93,12 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 
 		vmInstallations = getAllVMInstances();
 	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		if (running!=null) updateStatus(running);
+	}	
 
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
@@ -127,20 +148,23 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 
 		applicationNameText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fillIntoGrid(applicationNameText, 2, false);
-		
+
 		tracingCheck = new Button(composite, SWT.CHECK);
 		tracingCheck.setText(PDEPlugin.getResourceString(KEY_TRACING));
 		fillIntoGrid(tracingCheck, 2, false);
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
- 		fillIntoGrid(label, 3, false);
+		fillIntoGrid(label, 3, false);
 
 		defaultsButton = new Button(composite, SWT.PUSH);
 		defaultsButton.setText(PDEPlugin.getResourceString(KEY_RESTORE));
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		data.widthHint =
+			Math.max(
+				widthHint,
+				defaultsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		defaultsButton.setLayoutData(data);
 
 		label = new Label(composite, SWT.NULL);
@@ -176,7 +200,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
-		
+
 		String defaultWorkspace = getDefaultWorkspace(pstore);
 
 		if (initialSettings != null) {
@@ -220,9 +244,10 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		progArgsText.setText(progArgs);
 		applicationNameText.setText(appName);
 		workspaceCombo.setItems(workspaceSelectionItems);
-		if (workspaceSelectionItems.length>0) workspaceCombo.select(0);
-		else 
-		   workspaceCombo.setText(defaultWorkspace);
+		if (workspaceSelectionItems.length > 0)
+			workspaceCombo.select(0);
+		else
+			workspaceCombo.setText(defaultWorkspace);
 		clearWorkspaceCheck.setSelection(doClear);
 		tracingCheck.setSelection(tracing);
 		//validate
@@ -230,18 +255,19 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		jreSelectionStatus = validateJRESelection();
 		updateStatus();
 	}
-	
+
 	private static String getDefaultWorkspace(IPreferenceStore pstore) {
 		TargetPlatformPreferencePage.initializePlatformPath();
-		IPath ppath = new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
+		IPath ppath =
+			new Path(pstore.getString(TargetPlatformPreferencePage.PROP_PLATFORM_PATH));
 		IPath runtimeWorkspace = ppath.append(RT_WORKSPACE);
 		return runtimeWorkspace.toOSString();
 	}
 
-/**
- * Load the stored settings into the provided data object to be
- * used by the headless launcher
- */
+	/**
+	 * Load the stored settings into the provided data object to be
+	 * used by the headless launcher
+	 */
 	static void setLauncherData(IDialogSettings settings, LauncherData data) {
 		IVMInstall launcher = null;
 		int jreSelectionIndex = 0;
@@ -250,7 +276,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		String appName = "org.eclipse.ui.workbench";
 		String[] workspaceSelectionItems = new String[0];
 		boolean doClear = false;
-		String defaultWorkspace="";
+		String defaultWorkspace = "";
 		boolean tracing = false;
 
 		IPreferenceStore pstore = PDEPlugin.getDefault().getPreferenceStore();
@@ -284,9 +310,8 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 						break;
 					}
 				}
-			}
-			else
-			   launcher = vmInstallations[0];
+			} else
+				launcher = vmInstallations[0];
 			//doClear= initialSettings.getBoolean(SETTINGS_DOCLEAR);
 		}
 		// Initialize launcher data
@@ -297,7 +322,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		data.setClearWorkspace(doClear);
 		data.setWorkspaceLocation(new Path(defaultWorkspace));
 		data.setTracingEnabled(tracing);
-	}	
+	}
 
 	private static boolean isDefault(String value) {
 		return value.equals(DEFAULT_VALUE);
@@ -317,7 +342,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 		clearWorkspaceCheck.setSelection(false);
 		tracingCheck.setSelection(false);
 	}
-	
+
 	private void hookListeners() {
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -354,7 +379,11 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	}
 
 	private void updateStatus() {
-		updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		if (running != null)
+			updateStatus(running);
+		else
+			updateStatus(getMoreSevere(workspaceSelectionStatus, jreSelectionStatus));
 	}
 
 	public void storeSettings(boolean finishPressed) {
@@ -406,10 +435,14 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	private IStatus validateWorkspaceSelection() {
 		IPath curr = getWorkspaceLocation();
 		if (curr.segmentCount() == 0) {
-			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_ENTER_WORKSPACE));
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_ENTER_WORKSPACE));
 		}
 		if (!Path.ROOT.isValidPath(workspaceCombo.getText())) {
-			return createStatus(IStatus.ERROR, PDEPlugin.getResourceString(KEY_INVALID_WORKSPACE));
+			return createStatus(
+				IStatus.ERROR,
+				PDEPlugin.getResourceString(KEY_INVALID_WORKSPACE));
 		}
 
 		File file = curr.toFile();
@@ -468,7 +501,7 @@ public class WorkbenchLauncherWizardBasicPage extends StatusWizardPage {
 	public String getApplicationName() {
 		return applicationNameText.getText();
 	}
-	
+
 	/**
 	 * Returns true if tracing is enabled
 	 */

@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.preferences.*;
 import org.eclipse.jface.dialogs.*;
 import java.net.URL;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.debug.core.model.IProcess;
 
 public class PDEPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde";
@@ -53,6 +54,8 @@ public class PDEPlugin extends AbstractUIPlugin {
 		PLUGIN_ID + "." + "WorkbenchDebugLauncher";
 
 	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME";
+	
+	private static final String KEY_RUNNING = "RunningEclipse.message";
 
 	// Shared instance
 	private static PDEPlugin inst;
@@ -77,6 +80,7 @@ public class PDEPlugin extends AbstractUIPlugin {
 	private java.util.Hashtable counters;
 	private WorkspaceModelManager workspaceModelManager;
 	private Vector pluginListeners = new Vector();
+	private ILaunch currentLaunch = null;
 
 	public PDEPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -317,5 +321,30 @@ public class PDEPlugin extends AbstractUIPlugin {
 			return null;
 		}
 	}
-
+	
+	public void registerLaunch(ILaunch launch) {
+		this.currentLaunch = launch;
+	}
+	
+	public IStatus getCurrentLaunchStatus() {
+		if (currentLaunch==null) return null;
+		IProcess [] processes = currentLaunch.getProcesses();
+		boolean terminated = true;
+		for (int i=0; i<processes.length; i++) {
+			IProcess process = processes[i];
+			if (process.isTerminated()==false) {
+				terminated = false;
+				break;
+			}
+		}
+		if (terminated) {
+			currentLaunch = null;
+			return null;
+		}
+		// The run-time workbench is still running
+		String message = getResourceString(KEY_RUNNING);
+		Status status =
+			new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, null);
+		return status;
+	}
 }

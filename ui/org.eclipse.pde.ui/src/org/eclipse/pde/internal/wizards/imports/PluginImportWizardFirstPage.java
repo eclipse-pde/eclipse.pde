@@ -68,6 +68,12 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 
 		dropLocationStatus = createStatus(IStatus.OK, "");
 	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		if (running!=null) updateStatus(running);
+	}
 
 	/*
 	 * @see IDialogPage#createControl(Composite)
@@ -138,8 +144,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (runtimeLocationButton.getSelection()) {
 					setOtherEnabled(false);
-					validateDropLocation();
-					updateStatus(dropLocationStatus);
+					updateStatus();
 				}
 			}
 		});
@@ -147,8 +152,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (otherLocationButton.getSelection()) {
 					setOtherEnabled(true);
-					validateDropLocation();
-					updateStatus(dropLocationStatus);
+					updateStatus();
 				}
 			}
 		});
@@ -168,17 +172,26 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		});
 		dropLocation.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				validateDropLocation();
-				updateStatus(dropLocationStatus);
+				updateStatus();
 			}
 		});
 		dropLocation.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				validateDropLocation();
-				updateStatus(dropLocationStatus);
+				updateStatus();
 			}
 		});
 		setControl(composite);
+	}
+	
+	private void updateStatus() {
+		IStatus running = PDEPlugin.getDefault().getCurrentLaunchStatus();
+		if (running!=null) {
+			updateStatus(running);
+		}
+		else {
+			validateDropLocation();
+			updateStatus(dropLocationStatus);
+		}
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {
