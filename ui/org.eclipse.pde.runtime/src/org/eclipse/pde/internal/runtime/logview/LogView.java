@@ -35,7 +35,8 @@ public class LogView extends ViewPart implements ILogListener {
 	private static final String C_DATE = "LogView.column.date";
 	private Action propertiesAction;
 	private Action clearAction;
-	private Action readLogAction;
+	private Action readLogAction; 
+	private Action deleteLogAction;
 	private LogSession thisSession;
 
 	public LogView() {
@@ -153,6 +154,18 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		});
 		
+		deleteLogAction =
+			new Action(PDERuntimePlugin.getResourceString("LogView.delete")) {
+			public void run() {
+				File logFile = Platform.getLogFileLocation().toFile();
+				if (logFile.exists()) {
+					logFile.delete();
+					logs.clear();
+					tableTreeViewer.refresh();
+				}
+			}
+		};
+		
 		WorkbenchHelp.setHelp(tableTree,IHelpContextIds.LOG_VIEW);
 	}
 	public void dispose() {
@@ -162,6 +175,7 @@ public class LogView extends ViewPart implements ILogListener {
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(readLogAction);
 		manager.add(clearAction);
+		manager.add(deleteLogAction);
 		manager.add(new Separator());
 		manager.add(propertiesAction);
 	}
