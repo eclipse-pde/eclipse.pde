@@ -32,14 +32,14 @@ public class ProductExportAction extends Action {
 		if (!validateExportDestination(model.getProduct()))
 			return;
 		
-		ProductExportJob job = new ProductExportJob("Exporting an Eclipse product", model);
+		ProductExportJob job = new ProductExportJob(PDEPlugin.getResourceString("ProductExportAction.jobName"), model); //$NON-NLS-1$
 		job.schedule();
 	}
 	
 	private boolean validateExportDestination(IProduct product) {
 		String zipFile = product.getExportDestination();
 		if (zipFile == null || zipFile.trim().length() == 0) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), "Product Export", "An export destination has not been specified,");
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getResourceString("ProductExportAction.errorTitle"), PDEPlugin.getResourceString("ProductExportAction.noDestination")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		

@@ -30,24 +30,16 @@ public abstract class ContentPage extends WizardPage {
 	protected Text fVersionText;
 	protected Text fNameText;
 	protected Text fProviderText;
-	protected Text fPluginIdText;
-	protected Text fPluginVersion;
-	protected Combo fMatchCombo;
-	protected AbstractFieldData fData;
-	protected IProjectProvider fProjectProvider;
 	protected Label fLibraryLabel;
 	protected Text fLibraryText;
-	
+
+	protected NewProjectCreationPage fMainPage;
+	protected AbstractFieldData fData;
+	protected IProjectProvider fProjectProvider;
+
 	protected final static int PROPERTIES_GROUP = 1;
-	protected final static int P_CLASS_GROUP = 2;
 	
 	protected int fChangedGroups = 0;
-	
-	protected ModifyListener listener = new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			validatePage();
-		}
-	};
 	
 	protected ModifyListener propertiesListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -60,11 +52,6 @@ public abstract class ContentPage extends WizardPage {
 	protected static final String KEY_MATCH_EQUIVALENT = "ManifestEditor.MatchSection.equivalent"; //$NON-NLS-1$
 	protected static final String KEY_MATCH_COMPATIBLE = "ManifestEditor.MatchSection.compatible"; //$NON-NLS-1$
 	protected static final String KEY_MATCH_GREATER = "ManifestEditor.MatchSection.greater"; //$NON-NLS-1$
-	protected Text fClassText;
-	protected Button fGenerateClass;
-	protected Button fUIPlugin;
-	protected Label fClassLabel;
-	protected NewProjectCreationPage fMainPage;
 
 	
 	public ContentPage(String pageName, IProjectProvider provider,

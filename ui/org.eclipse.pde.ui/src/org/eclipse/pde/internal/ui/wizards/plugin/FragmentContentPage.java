@@ -25,6 +25,16 @@ import org.eclipse.ui.help.*;
 
 public class FragmentContentPage extends ContentPage {
 
+	private Text fPluginIdText;
+	private Text fPluginVersion;
+	private Combo fMatchCombo;
+
+	protected ModifyListener listener = new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			validatePage();
+		}
+	};
+	
 	public FragmentContentPage(String pageName, IProjectProvider provider,
 			NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);

@@ -1,12 +1,15 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
+import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.wizards.product.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -92,8 +95,21 @@ public class ProductInfoSection extends PDESection {
 		
 		Button button = toolkit.createButton(client, PDEPlugin.getResourceString("ProductInfoSection.new"), SWT.PUSH); //$NON-NLS-1$
 		button.setEnabled(isEditable());
-		
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleNewDefinition();
+			}
+		});	
 		fProductCombo.getControl().setEnabled(isEditable());
+	}
+
+	private void handleNewDefinition() {
+		ProductDefinitionWizard wizard = new ProductDefinitionWizard();
+		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		SWTUtil.setDialogSize(dialog, 400, 500);
+		if (dialog.open() == WizardDialog.OK) {
+		}
 	}
 
 	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {

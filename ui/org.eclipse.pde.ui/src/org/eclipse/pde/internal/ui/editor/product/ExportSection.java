@@ -144,9 +144,9 @@ public class ExportSection extends PDESection implements IHyperlinkListener{
 
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
-		if (href.equals("action.export"))  {
+		if (href.equals("action.export"))  { //$NON-NLS-1$
 			getExportAction().run();
-		} else if (href.equals("action.synchronize")) {
+		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
 			
 		}
 	}

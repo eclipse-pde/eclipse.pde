@@ -25,7 +25,14 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 public class PluginContentPage extends ContentPage {
-    private Label fLabel;
+	protected final static int P_CLASS_GROUP = 2;
+
+	private Text fClassText;
+	private Button fGenerateClass;
+	private Button fUIPlugin;
+	private Label fClassLabel;
+
+	private Label fLabel;
     private Button fYesButton;
     private Button fNoButton;
     
