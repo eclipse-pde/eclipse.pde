@@ -4,69 +4,53 @@ package org.eclipse.pde.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
 import java.util.*;
 
 public class NLResourceHelper {
-	protected ResourceBundle bundle = null; // abc.properties
-	private Locale locale = null; // bundle locale
-	private String name = null; // abc
-	private URL [] locations = null;
-	private boolean notFound = false; // marker to prevent unnecessary lookups
-
 	public static final String KEY_PREFIX = "%";
 	public static final String KEY_DOUBLE_PREFIX = "%%";
+	private PropertyResourceBundle bundle = null;
 
-	public NLResourceHelper(String name, URL [] locations) {
-		this.name = name;
-		this.locations = locations;
-	}
-	public ResourceBundle getResourceBundle()
-		throws MissingResourceException {
-
-		return getResourceBundle(Locale.getDefault());
-	}
-	public ResourceBundle getResourceBundle(Locale locale)
-		throws MissingResourceException {
-
-		// we cache the bundle for a single locale 
-		if (bundle != null && this.locale.equals(locale))
-			return bundle;
-
-		// check if we already tried and failed
-		if (notFound)
-			throw new MissingResourceException(
-				"resourceNotFound" + name + "_" + locale,
-				name + "_" + locale,
-				"");
-
-		ClassLoader resourceLoader = new URLClassLoader(locations);
+	public NLResourceHelper(String name, URL[] locations) {
 		try {
-			this.bundle = ResourceBundle.getBundle(name, locale, resourceLoader);
-			this.locale = locale;
-			notFound = false;
-		} catch (MissingResourceException e) {
-			notFound = true;
-			this.bundle = null;
-			this.locale = null;
-			throw e;
+			InputStream stream = getResourceStream(name, locations);
+			if (stream != null) {
+				bundle = new PropertyResourceBundle(stream);
+				stream.close();
+			}
+		} catch (IOException e) {
 		}
-		return bundle;
+	}
+	
+	public void dispose() {
+		bundle = null;
 	}
 
-	public void dispose() {
+	private InputStream getResourceStream(String name, URL[] locations) {
+		URLClassLoader resourceLoader = new URLClassLoader(locations);
+		Locale locale = Locale.getDefault();
+		String suffix1 = "_" + locale.getLanguage() + "_" + locale.getCountry() + "_" + locale.getVariant();
+		String suffix2 = "_" + locale.getLanguage() + "_" + locale.getCountry();
+		String suffix3 = "_" + locale.getLanguage();
+		String suffix4 = "";
+
+		String[] suffices = new String[] { suffix1, suffix2, suffix3, suffix4 };
+
+		InputStream stream = null;
+		for (int i = 0; i < suffices.length; i++) {
+			stream =
+				resourceLoader.getResourceAsStream(
+					name + suffices[i] + ".properties");
+			if (stream != null)
+				break;
+		}
+		return stream;
 	}
 
 	public String getResourceString(String value) {
-		ResourceBundle b = null;
-		try {
-			b = getResourceBundle();
-		} catch (MissingResourceException e) {
-		};
-		return getResourceString(value, b);
-	}
-	public String getResourceString(String value, ResourceBundle b) {
-
 		String s = value.trim();
 
 		if (!s.startsWith(KEY_PREFIX))
@@ -79,13 +63,14 @@ public class NLResourceHelper {
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 
-		if (b == null)
+		if (bundle == null)
 			return dflt;
 
 		try {
-			return b.getString(key.substring(1));
+			return bundle.getString(key.substring(1));
 		} catch (MissingResourceException e) {
 			return dflt;
 		}
 	}
+
 }

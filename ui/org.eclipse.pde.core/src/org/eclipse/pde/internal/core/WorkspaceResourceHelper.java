@@ -24,6 +24,7 @@ implements IResourceChangeListener {
 	
 	public void dispose() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
 	}
 	
 	public void setFile(IFile file) {
