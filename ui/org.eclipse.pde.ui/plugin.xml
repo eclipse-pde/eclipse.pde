@@ -32,6 +32,7 @@
       <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -693,29 +694,29 @@
          </action>
       </objectContribution>
       <objectContribution
-      		objectClass="org.eclipse.core.resources.IFile"
-      		nameFilter="*.mxsd"
-      		id="org.eclipse.pde.ui.PreviewReference1">
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.mxsd"
+            id="org.eclipse.pde.ui.PreviewReference1">
          <action
-             label="%PreviewReference.label"
-             helpContextId="org.eclipse.pde.doc.user.preview_reference"
-             class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-             menubarPath="additions"
-             enablesFor="1"
-             id="org.eclipse.pde.ui.PreviewReference">
+               label="%PreviewReference.label"
+               helpContextId="org.eclipse.pde.doc.user.preview_reference"
+               class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.PreviewReference">
          </action>
       </objectContribution>
       <objectContribution
-         	objectClass="org.eclipse.core.resources.IFile"
-         	nameFilter="*.exsd"
-         	id="org.eclipse.pde.ui.PreviewReference2">
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.exsd"
+            id="org.eclipse.pde.ui.PreviewReference2">
          <action
-             label="%PreviewReference.label"
-             helpContextId="org.eclipse.pde.doc.user.preview_reference"
-             class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
-             menubarPath="additions"
-             enablesFor="1"
-             id="org.eclipse.pde.ui.PreviewReference">
+               label="%PreviewReference.label"
+               helpContextId="org.eclipse.pde.doc.user.preview_reference"
+               class="org.eclipse.pde.internal.ui.search.PreviewReferenceAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.PreviewReference">
          </action>
       </objectContribution>
    </extension>
