@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
-import java.util.ArrayList;
+import java.util.*;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 
 /**
  * An implementation of the standard wizard page that creates its contents from
@@ -81,7 +81,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 			IWizard wizard = getWizard();
 			if (wizard instanceof AbstractNewPluginTemplateWizard) {
 				AbstractNewPluginTemplateWizard templateWizard = (AbstractNewPluginTemplateWizard) wizard;
-				section.initializeFields((IFieldData) templateWizard.getData());
+				section.initializeFields(templateWizard.getData());
 			}
 		}
 		super.setVisible(visible);

@@ -17,6 +17,7 @@ import org.eclipse.pde.ui.templates.*;
 
 public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	private static final String KEY_WTITLE = "MultiPageEditorNewWizard.wtitle"; //$NON-NLS-1$
+	private static String fileExtension;
 	/**
 	 * Constructor for MultiPageEditorNewWizard.
 	 */
@@ -26,6 +27,17 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDEPlugin.getResourceString(KEY_WTITLE));
+		fileExtension = "mpe"; //$NON-NLS-1$
+	}
+	
+	public void setFileExtension(String ext){
+		fileExtension = ext;
+	}
+	
+	public String getFileExtension(){
+		if (fileExtension == null || fileExtension.length() == 0)
+			return "mpe"; //$NON-NLS-1$
+		return fileExtension;
 	}
 
 	/*
@@ -33,7 +45,7 @@ public class MultiPageEditorNewWizard extends NewPluginTemplateWizard {
 	 */
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection [] {
-				new MultiPageEditorTemplate(),
-				new NewWizardTemplate() };
+				new MultiPageEditorTemplate(this),
+				new NewWizardTemplate(this) };
 	}
 }

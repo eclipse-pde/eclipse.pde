@@ -34,11 +34,17 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		"MultiPageEditorTemplate.defaultEditorName"; //$NON-NLS-1$
 	private static final String KEY_EXTENSIONS_LABEL =
 		"MultiPageEditorTemplate.extensions"; //$NON-NLS-1$
+	private MultiPageEditorNewWizard wizard;
 
 	/**
 	 * Constructor for MultiPageEditorTemplate.
 	 */
 	public MultiPageEditorTemplate() {
+		this(null);
+	}
+	
+	public MultiPageEditorTemplate(MultiPageEditorNewWizard wizard){
+		this.wizard = wizard;
 		setPageCount(1);
 		createOptions();
 	}
@@ -94,7 +100,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		addOption(
 			"extensions", //$NON-NLS-1$
 			PDEPlugin.getResourceString(KEY_EXTENSIONS_LABEL),
-			"mpe", //$NON-NLS-1$
+			(String)null, 
 			0);
 	}
 
@@ -103,6 +109,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		// model has not been created
 		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, id + ".editors"); //$NON-NLS-1$
+		initializeOption("extensions", wizard==null ? "mpe" : wizard.getFileExtension()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -139,6 +146,8 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 				flagMissingRequiredOption(nextOption);
 				return;
 			}
+			if (nextOption.getName().equals("extensions")) //$NON-NLS-1$
+				wizard.setFileExtension((String)nextOption.getValue());
 		}
 		resetPageState();
 	}
@@ -168,4 +177,5 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
+	
 }
