@@ -30,5 +30,5 @@ public interface IPluginModel extends IPluginModelBase {
 	 * 
 	 * @return a root model instance
 	 */
-	public IPlugin getPlugin();
+	IPlugin getPlugin();
 }

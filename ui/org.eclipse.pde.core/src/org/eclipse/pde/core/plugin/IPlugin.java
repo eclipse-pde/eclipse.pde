@@ -20,7 +20,7 @@ public interface IPlugin extends IPluginBase {
 	 * A property that will be used when "className"
 	 * field is changed.
 	 */
-	public static final String P_CLASS_NAME = "class";
+	String P_CLASS_NAME = "class";
 
 	/**
 	 * Returns a plug-in class name.

@@ -21,7 +21,7 @@ public interface IPluginExtensionPoint extends IPluginObject, IIdentifiable {
 	 * A property name that will be used to notify
 	 * about changes to the schema value.
 	 */
-	public static final String P_SCHEMA = "schema";
+	String P_SCHEMA = "schema";
 	/**
 	 * Returns the full extension point Id that
 	 * is composed as "pluginId.pointId". This full

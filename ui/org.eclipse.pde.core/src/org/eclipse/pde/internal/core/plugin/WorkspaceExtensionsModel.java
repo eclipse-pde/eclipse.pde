@@ -193,7 +193,7 @@ public class WorkspaceExtensionsModel
 		fBundleModel = model;
 	}
 	
-	public IBundlePluginModelBase getBundleModel() {
+	public IBundlePluginModelBase getBundlePluginModel() {
 		return fBundleModel;
 	}
 	

@@ -21,31 +21,31 @@ public interface IPluginLibrary extends IPluginObject {
 	 * A name of the property that will be used to
 	 * notify about changes of the "exported" field.
 	 */
-	public static final String P_EXPORTED = "export";
+	String P_EXPORTED = "export";
 	/**
 	 * A name of the property that will be used to
 	 * notify about changes in the content filters.
 	 */
-	public static final String P_PACKAGES = "packages";
+	String P_PACKAGES = "packages";
 	
 	/**
 	 * A name of the property that will be used to
 	 * notify about changes in the content filters.
 	 */
-	public static final String P_CONTENT_FILTERS = "contentFilters";
+	String P_CONTENT_FILTERS = "contentFilters";
 	/**
 	 * A name of the property that will be used to
 	 * notify about of the 'type' field.
 	 */
-	public static final String P_TYPE = "type";
+	String P_TYPE = "type";
 	/**
 	 * A library type indicating the library contains code.
 	 */
-	public static final String CODE = "code";
+	String CODE = "code";
 	/**
 	 * A library type indicating the library contains resource files.
 	 */
-	public static final String RESOURCE = "resource";
+	String RESOURCE = "resource";
 	/**
 	 * Returns optional context filters that
 	 * should be applied to calculate what classes
@@ -81,7 +81,7 @@ public interface IPluginLibrary extends IPluginObject {
 	/**
 	 * Returns a type of this library (CODE or RESOURCE)
 	 */
-	public String getType();
+	String getType();
 	/**
 	 * Sets the optional content filters for
 	 * this library. This method may throw

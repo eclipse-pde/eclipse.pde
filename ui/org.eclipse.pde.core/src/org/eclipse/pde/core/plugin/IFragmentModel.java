@@ -22,7 +22,7 @@ package org.eclipse.pde.core.plugin;
  * editable, it will attempt to obtain an exclusive
  * editable copy of plugin.jars model.
  * <p>
- * The plug-in model can be disabled. Disabling the
+ * The fragment model can be disabled. Disabling the
  * model will not change its data. Users of the
  * model will have to decide if the disabled state
  * if of any importance to them or not.
@@ -37,5 +37,5 @@ public interface IFragmentModel extends IPluginModelBase {
 	 *
 	 * @return a root model instance
 	 */
-	public IFragment getFragment();
+	IFragment getFragment();
 }

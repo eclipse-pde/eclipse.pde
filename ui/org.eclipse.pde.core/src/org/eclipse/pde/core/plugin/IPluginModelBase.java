@@ -67,9 +67,11 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	 *
 	 *@return true if the model is enabled
 	 */
-	public boolean isEnabled();
+	boolean isEnabled();
 	/**
-	 * @return boolean
+	 * Tests if this model is for the plug-in fragment.
+	 * @return <code>true</code> if the model is for the fragment,
+	 * <code>false</code> otherwise.
 	 */
 	boolean isFragmentModel();
 	/**
@@ -77,12 +79,35 @@ public interface IPluginModelBase extends ISharedPluginModel, IModelChangeProvid
 	 *
 	 * @param enabled the new enable state
 	 */
-	public void setEnabled(boolean enabled);
-	
+	void setEnabled(boolean enabled);
+	/**
+	 * Returns the factory that can be used to
+	 * create new objects for this model
+	 * @return the plug-in model factory
+	 */
 	IPluginModelFactory getPluginFactory();
+	/**
+	 * Returns the location where property file containing
+	 * translations of names in this model can be found.
+	 * @return the location of the property file with translations
+	 */
 	URL getNLLookupLocation();
-	
+	/**
+	 * Returns the bundle description of the plug-in
+	 * in case the plug-in uses the new OSGi bundle layout. 
+	 * @return bundle description if this is an OSGi plug-in,
+	 * or <code>null</code> if the plug-in is in a classic
+	 * format.
+	 * @since 3.0
+	 */
 	BundleDescription getBundleDescription();
-	
+	/**
+	 * Associates the bundle description of the plug-in
+	 * with this model in case the plug-in uses the new
+	 * OSGi bundle layout.
+	 * @param description bundle description to associate
+	 * with this model
+	 * @since 3.0
+	 */
 	void setBundleDescription(BundleDescription description);
 }

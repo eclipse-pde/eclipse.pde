@@ -22,30 +22,30 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * A property that will be used to notify that
 	 * the provider name has changed.
 	 */
-	public static final String P_PROVIDER = "provider-name";
+	String P_PROVIDER = "provider-name";
 	/**
 	 * A property that will be used to notify
 	 * that a version has changed.
 	 */
-	public static final String P_VERSION = "version";
+	String P_VERSION = "version";
 
 	/**
 	 * A property that will be used to notify
 	 * that library order in a plug-in has changed. 
 	 */
-	public static final String P_LIBRARY_ORDER = "library_order";
+	String P_LIBRARY_ORDER = "library_order";
 	
 	/**
 	 * A property that will be used to notify
 	 * that import order in a plug-in has changed. 
 	 */
-	public static final String P_IMPORT_ORDER = "import_order";
+	String P_IMPORT_ORDER = "import_order";
 	
 	/**
 	 * A property that will be used to notify
 	 * that 3.0 release compatibility flag has been changed. 
 	 */
-	public static final String P_SCHEMA_VERSION = "schema-version";
+	String P_SCHEMA_VERSION = "schema-version";
 	/**
 	 * Adds a new library to this plugin.
 	 * This method will throw a CoreException if
@@ -130,7 +130,6 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * @param l2 the second library object
 	 */
 	void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException;
-	
 	
 	/**
 	 * Swaps the positions of the plug-ins provided in

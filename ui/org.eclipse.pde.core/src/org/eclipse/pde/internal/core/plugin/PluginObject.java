@@ -89,8 +89,8 @@ public abstract class PluginObject
 	}
 	
 	public IPluginModelBase getPluginModel() {
-		if (model instanceof IBundleModelProvider)
-			return ((IBundleModelProvider)model).getBundleModel();
+		if (model instanceof IBundlePluginModelProvider)
+			return ((IBundlePluginModelProvider)model).getBundlePluginModel();
 		
 		return model instanceof IPluginModelBase? (IPluginModelBase)model : null;
 	}

@@ -20,26 +20,26 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * A name of the property that will be used to notify
 	 * about changes in the "reexported" field.
 	 */
-	public static final String P_REEXPORTED = "export";
+	String P_REEXPORTED = "export";
 	/**
 	 * A name of the property that will be used to notify
 	 * about changes in the "optional" field.
 	 */
-	public static final String P_OPTIONAL = "optional";
+	String P_OPTIONAL = "optional";
 	/**
 	 * Tests whether the imported plug-in is reexported for
 	 * plug-ins that will use this plug-in.
 	 *
 	 * @return true if the required plug-in libraries are reexported
 	 */
-	public boolean isReexported();
+	boolean isReexported();
 	/**
 	 * Tests whether this import is optional. Optional imports will
 	 * not create an error condition when they cannot be resolved.
 	 *
 	 * @return true if this import is optional
 	 */
-	public boolean isOptional();
+	boolean isOptional();
 	/**
 	 * Sets whether the libraries of the required plug-in will
 	 * be reexported.
@@ -48,12 +48,12 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 *
 	 * @param value true if reexporting is desired
 	 */
-	public void setReexported(boolean value) throws CoreException;
+	void setReexported(boolean value) throws CoreException;
 	/**
 	 * Sets whether this import is optional. Optional imports will
 	 * not create an error condition when they cannot be resolved.
 	 *
 	 * @param value true if import is optional
 	 */
-	public void setOptional(boolean value) throws CoreException;
+	void setOptional(boolean value) throws CoreException;
 }

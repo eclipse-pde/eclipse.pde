@@ -32,23 +32,11 @@ import org.eclipse.pde.core.*;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
- * <p>
- * <b>Note:</b> This interface is part of an interim API that is still under development and expected to
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	/**
 	 * Returns a factory object that should be used
 	 * to create new instances of the model objects.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
 	IExtensionsModelFactory getFactory();
 	/**
@@ -59,12 +47,6 @@ public interface ISharedPluginModel extends IModel, IModelChangeProvider {
 	 * @return a location of the external model, or
 	 * <samp>null</samp> if the model is created
 	 * from a resource.
-	 * <p>
-	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
-	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
-	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
-	 * (repeatedly) as the API evolves.
-	 * </p>
 	 */
-	public String getInstallLocation();
+	String getInstallLocation();
 }

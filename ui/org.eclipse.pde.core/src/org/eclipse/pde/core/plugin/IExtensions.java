@@ -15,14 +15,21 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * A model object that represents the content of a plug-in or
- * fragment manifest. This object contains data that is common
- * for bo plug-ins and fragments.
+ * A model object that contains the portion of the plug-in model
+ * responsible for extensions and extension points. If
+ * the plug-in contains OSGi manifest file, plugin.xml is
+ * reduced to extensions and extension points only.
+ * 
+ * @since 3.0
  */
 public interface IExtensions extends IPluginObject, Serializable {
-	public static final String P_EXTENSION_ORDER = "extension_order";
 	/**
-	 * Adds a new extension to this plugin. This
+	 * A model property that will be used when order of extensions
+	 * changes in this object.
+	 */
+	String P_EXTENSION_ORDER = "extension_order";
+	/**
+	 * Adds a new extension to this object. This
 	 * method will throw a CoreException if
 	 * model is not editable.
 	 *
@@ -34,18 +41,18 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 */
 	void add(IPluginExtensionPoint extension) throws CoreException;
 	/**
-	 * Returns extension points defined in this plug-in.
+	 * Returns extension points defined in this object.
 	 * @return an array of extension point objects
 	 */
 	IPluginExtensionPoint[] getExtensionPoints();
 	/**
-	 * Returns extensions defined in this plug-in.
+	 * Returns extensions defined in this object.
 	 *
 	 * @return an array of extension objects
 	 */
 	IPluginExtension[] getExtensions();
 	/**
-	 * Removes an extension from the plugin. This
+	 * Removes an extension from this object. This
 	 * method will throw a CoreException if
 	 * the model is not editable.
 	 *
@@ -53,7 +60,7 @@ public interface IExtensions extends IPluginObject, Serializable {
 	 */
 	void remove(IPluginExtension extension) throws CoreException;
 	/**
-	 * Removes an extension point from the plugin. This
+	 * Removes an extension point from this object. This
 	 * method will throw a CoreException if
 	 * the model is not editable.
 	 *

@@ -12,7 +12,9 @@ package org.eclipse.pde.core.plugin;
 
 /**
  * This factory should be used to create
- * instances of the plug-in model objects.
+ * instances of the extensions model objects.
+ * 
+ * @since 3.0
  */
 public interface IExtensionsModelFactory {
 	/**

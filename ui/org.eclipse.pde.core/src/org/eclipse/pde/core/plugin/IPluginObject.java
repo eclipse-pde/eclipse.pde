@@ -62,13 +62,13 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 *
 	 * @return the object's parent
 	 */
-	public IPluginObject getParent();
+	IPluginObject getParent();
 	/**
 	 * Returns the top-level model object.
 	 *
 	 * @return the top-level model object
 	 */
-	public IPluginBase getPluginBase();
+	IPluginBase getPluginBase();
 	/**
 	 * Returns a string by locating the provided
 	 * key in the resource bundle associated with

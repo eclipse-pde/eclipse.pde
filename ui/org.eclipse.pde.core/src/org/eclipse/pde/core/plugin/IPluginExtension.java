@@ -23,7 +23,7 @@ public interface IPluginExtension extends IPluginParent, IIdentifiable {
 	 * A name of the property that will be used to
 	 * notify about the "point" change
 	 */
-	public static final String P_POINT = "point";
+	String P_POINT = "point";
 	/**
 	 * Returns the full Id of the extension point that this extension
 	 * is plugged into.
