@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.ui; singleton:=true
 Bundle-Version: 3.1.0
-Bundle-ClassPath: pdeui.jar
 Bundle-Activator: org.eclipse.pde.internal.ui.PDEPlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
