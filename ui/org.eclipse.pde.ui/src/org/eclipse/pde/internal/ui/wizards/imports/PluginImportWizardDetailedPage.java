@@ -350,13 +350,19 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 			IPluginModelBase curr = (IPluginModelBase) models[i];
 			String id = curr.getPluginBase().getId();
 			IProject proj = (IProject) root.findMember(id);
-			if (proj != null && !hasSourceFolder(proj)) {
-				selected.add(curr);
+			try {
+				if (proj != null
+					&& proj.hasNature(JavaCore.NATURE_ID)
+					&& !hasSourceFolder(proj)) {
+					selected.add(curr);
+				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		}
 		return selected;
 	}
-
+	
 	private ArrayList selectExternalProjects() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		ArrayList selected = new ArrayList();
@@ -372,21 +378,16 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 		return selected;
 	}
 
-	private boolean hasSourceFolder(IProject project) {
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-				for (int i = 0; i < entries.length; i++) {
-					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						return true;
-					}
-				}
+	private boolean hasSourceFolder(IProject project) throws CoreException {
+		IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				return true;
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
 		return false;
 	}
+	
 	private ArrayList selectDependentPlugins() {
 		HashSet checked = new HashSet();
 		Object[] selected = tablePart.getSelection();
