@@ -7,30 +7,15 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.StatusWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class PluginImportWizardFirstPage extends StatusWizardPage {
@@ -83,7 +68,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	//private Button otherLocationButton;
 	private Button browseButton;
 	private Combo dropLocation;
-	//private Button doImportCheck;
+	private Button doImportCheck;
 	private Button doExtractCheck;
 
 	private IStatus dropLocationStatus;
@@ -152,11 +137,11 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = fillHorizontal(label, 3, false);
 		gd.heightHint = 20;
-/*
-		doImportCheck = new Button(composite, SWT.CHECK);
-		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
-		fillHorizontal(doImportCheck, 3, false);
-*/
+
+//		doImportCheck = new Button(composite, SWT.CHECK);
+//		doImportCheck.setText(PDEPlugin.getResourceString(KEY_IMPORT_CHECK));
+//		doImportCheck.setEnabled(false);
+//		fillHorizontal(doImportCheck, 3, false);
 
 		doExtractCheck = new Button(composite, SWT.CHECK);
 		doExtractCheck.setText(PDEPlugin.getResourceString(KEY_EXTRACT_CHECK));
@@ -259,23 +244,21 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 			}
 		});
 */
-/*
-		doImportCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
-*/
+//		doImportCheck.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//			}
+//		});
+
 		doExtractCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateStatus();
-				/*
+
 				if (doExtractCheck.getSelection()) {
-					if (!doImportCheck.getSelection()) {
-						doImportCheck.setSelection(true);
-					}
+					//if (!doImportCheck.getSelection()) {
+						//doImportCheck.setSelection(true);
+					//}
 				}
-				doImportCheck.setEnabled(!doExtractCheck.getSelection());
-				*/
+				//doImportCheck.setEnabled(!doExtractCheck.getSelection());
 			}
 		});
 		dropLocation.addSelectionListener(new SelectionAdapter() {
@@ -316,6 +299,7 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 		String[] dropItems = new String[0];
 		boolean doExtract = false;
 		boolean doOther = false;
+		boolean doImport = true;
 
 		if (initialSettings != null) {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
@@ -425,8 +409,8 @@ public class PluginImportWizardFirstPage extends StatusWizardPage {
 	 * Returns the drop location.
 	 */
 	public boolean doImportToWorkspace() {
-		//return doImportCheck.getSelection();
 		return true;
+		//return doImportCheck.getSelection();
 	}
 
 	/**

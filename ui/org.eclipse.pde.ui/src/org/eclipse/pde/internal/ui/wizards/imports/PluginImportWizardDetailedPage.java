@@ -399,8 +399,7 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 					String property =
 						proj.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);
-					if (property != null
-						&& property.equals(PDECore.BINARY_PROJECT_VALUE)) {
+					if (property != null) {
 						selected.add(curr);
 					}
 				}

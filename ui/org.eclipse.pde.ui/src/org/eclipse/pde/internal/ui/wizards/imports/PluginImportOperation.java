@@ -4,55 +4,24 @@
  */
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.team.core.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.*;
 
 public class PluginImportOperation implements IWorkspaceRunnable {
 	private static final String KEY_TITLE = "ImportWizard.messages.title";
@@ -184,10 +153,14 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						deleteContent,
 						true,
 						new SubProgressMonitor(monitor, 1));
+					try {
+						RepositoryProvider.unmap(project);
+					} catch (TeamException e) {
+					}
 				} else {
 					return;
 				}
-			} else { 
+			} else {
 				monitor.worked(1);
 			}
 
@@ -195,9 +168,9 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			if (!project.isOpen()) {
 				project.open(null);
 			}
+			File pluginDir = new File(model.getInstallLocation());
 
 			if (doImport) {
-				File pluginDir = new File(model.getInstallLocation());
 				importContent(
 					pluginDir,
 					project.getFullPath(),
@@ -210,23 +183,37 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					new Path(pluginDir.getPath()),
 					new SubProgressMonitor(monitor, 1));
 			} else {
-				monitor.worked(2);
+				linkContent(
+					pluginDir,
+					project,
+					new SubProgressMonitor(monitor, 2));
 			}
 
-			boolean isJavaProject = model.getPluginBase().getLibraries().length > 0;
+			boolean isJavaProject =
+				model.getPluginBase().getLibraries().length > 0;
 
 			setProjectDescription(project, isJavaProject, monitor);
+			if (!doImport) {
+				try {
+					RepositoryProvider.map(
+						project,
+						PDECore.BINARY_REPOSITORY_PROVIDER);
+				} catch (TeamException e) {
+					// should report
+				}
+			}
 
 			boolean sourceFound = false;
-			if (isJavaProject & extractSource) 
+			if (isJavaProject & extractSource)
 				sourceFound = doExtractSource(project, model, monitor);
-				
+
 			//Mark this project so that we can show image overlay
 			// using the label decorator
-			if (!isJavaProject || !sourceFound)
+			if (doImport && (!isJavaProject || !sourceFound)) {
 				project.setPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
 					PDECore.BINARY_PROJECT_VALUE);
+			}
 
 			if (isJavaProject) {
 				IJavaProject jProject = JavaCore.create(project);
@@ -372,18 +359,46 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			PDEPlugin.getWorkspace().getRoot().getProject(id);
 		if (!fragmentProject.exists())
 			return false;
-			
+
 		IFile fragmentFile = fragmentProject.getFile(srcPath);
 		// No need to do anything if exists
-		if (fragmentFile.exists()) return true;
+		if (fragmentFile.exists())
+			return true;
 
 		File srcFile = manager.findSourceFile(fragment, srcPath);
-		if (srcFile==null) return false;
+		if (srcFile == null)
+			return false;
 		try {
 			importSourceFile(fragmentProject, srcFile, srcPath);
 			return true;
 		} catch (CoreException e) {
 			return false;
+		}
+	}
+
+	private void linkContent(
+		File sourceDir,
+		IProject project,
+		IProgressMonitor monitor)
+		throws CoreException {
+		File[] items = sourceDir.listFiles();
+		monitor.beginTask("Linking content...", items.length);
+		for (int i = 0; i < items.length; i++) {
+			File sourceFile = items[i];
+			if (sourceFile.isDirectory()) {
+				IFolder folder = project.getFolder(sourceFile.getName());
+				folder.createLink(
+					new Path(sourceFile.getPath()),
+					IResource.NONE,
+					new SubProgressMonitor(monitor, 1));
+			} else {
+				IFile file = project.getFile(sourceFile.getName());
+				file.createLink(
+					new Path(sourceFile.getPath()),
+					IResource.NONE,
+					new SubProgressMonitor(monitor, 1));
+			}
+			monitor.worked(1);
 		}
 	}
 
@@ -396,17 +411,20 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		IPluginModelBase model,
 		IProgressMonitor monitor)
 		throws CoreException {
-			
+
 		boolean sourceFound = false;
-			
+
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 
-		IClasspathEntry[] entries =
-			new IClasspathEntry[libraries.length];
+		IClasspathEntry[] entries = new IClasspathEntry[libraries.length];
 		for (int i = 0; i < libraries.length; i++) {
-			entries[i] = UpdateClasspathOperation.getLibraryEntry(project, libraries[i], true);
+			entries[i] =
+				UpdateClasspathOperation.getLibraryEntry(
+					project,
+					libraries[i],
+					true);
 		}
-		
+
 		monitor.beginTask(
 			PDEPlugin.getResourceString(KEY_EXTRACTING),
 			entries.length * 2);
@@ -417,7 +435,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
 				IPath curr = entry.getPath();
-				String entryName = "source."+curr.lastSegment();
+				String entryName = "source." + curr.lastSegment();
 				IBuildEntry buildEntry = null;
 
 				IPath sourceAttach = entry.getSourceAttachmentPath();
@@ -426,11 +444,12 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 					if (res instanceof IFile) {
 						String name = curr.removeFileExtension().lastSegment();
 						IFolder dest = project.getFolder("src-" + name);
-						if (buildEntry==null) {
-							buildEntry = buildModel.getFactory().createEntry(entryName);
+						if (buildEntry == null) {
+							buildEntry =
+								buildModel.getFactory().createEntry(entryName);
 							build.add(buildEntry);
 						}
-						buildEntry.addToken(dest.getName()+"/");
+						buildEntry.addToken(dest.getName() + "/");
 						if (!dest.exists()) {
 							dest.create(true, true, null);
 						}
@@ -439,7 +458,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 							dest,
 							new SubProgressMonitor(monitor, 1));
 						sourceFound = true;
-							
+
 						// extract resources from the library JAR
 						res = root.findMember(curr);
 						if (res instanceof IFile) {
@@ -458,7 +477,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 						} else {
 							monitor.worked(1);
 						}
-													
+
 					} else {
 						monitor.worked(2);
 					}
@@ -666,7 +685,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 		}
 		return true;
 	}
-	
+
 	private void setProjectDescription(
 		IProject project,
 		boolean needsJavaNature,
@@ -680,5 +699,5 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			desc.setNatureIds(new String[] { PDE.PLUGIN_NATURE });
 		project.setDescription(desc, new SubProgressMonitor(monitor, 1));
 	}
-	
+
 }

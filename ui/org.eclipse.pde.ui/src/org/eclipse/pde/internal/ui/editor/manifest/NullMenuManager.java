@@ -123,4 +123,6 @@ public class NullMenuManager implements IMenuManager {
 	}
 	public void setEnabledAllowed(boolean value) {
 	}
+	public void dispose() {
+	}
 }

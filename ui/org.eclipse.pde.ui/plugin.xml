@@ -29,6 +29,7 @@
       <import plugin="org.eclipse.help.ui"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.core"/>
    </requires>
 
 
@@ -968,16 +969,24 @@
                <objectClass
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
-               <objectState
-                     name="persistentProperty"
-                     value="org.eclipse.pde.core.imported = binary">
-               </objectState>
-               <not>
+               <or>
+                  <and>
+                     <objectState
+                           name="persistentProperty"
+                           value="org.eclipse.pde.core.imported = binary">
+                     </objectState>
+                     <not>
+                        <objectState
+                              name="sessionProperty"
+                              value="org.eclipse.team.core.repository">
+                        </objectState>
+                     </not>
+                  </and>
                   <objectState
-                        name="sessionProperty"
-                        value="org.eclipse.team.core.repository">
+                        name="persistentProperty"
+                        value="org.eclipse.pde.core.imported = external">
                   </objectState>
-               </not>
+               </or>
             </and>
          </enablement>
       </decorator>

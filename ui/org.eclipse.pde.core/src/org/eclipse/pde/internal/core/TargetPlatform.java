@@ -129,6 +129,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	private static String createURL(IPluginModelBase model) {
+		String linkedURL = createLinkedURL(model);
+		if (linkedURL!=null) return linkedURL;
 		String prefix = "file:" + model.getInstallLocation() + File.separator;
 
 		if (model instanceof IPluginModel) {
@@ -137,6 +139,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 			return prefix + "fragment.xml";
 		} else
 			return "";
+	}
+	
+	private static String createLinkedURL(IPluginModelBase model) {
+		IResource resource = model.getUnderlyingResource();
+		if (resource==null || !resource.isLinked()) return null;
+		// linked resource - redirect
+		IPath path = resource.getLocation();
+		return "file:"+resource.getLocation().toOSString();
 	}
 
 	public static String getOS() {

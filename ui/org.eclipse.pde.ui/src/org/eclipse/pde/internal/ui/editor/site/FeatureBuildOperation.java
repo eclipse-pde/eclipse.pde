@@ -163,7 +163,7 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		generator.setBuildScriptName(scriptName);
 		generator.setFeatureRootLocation(
 			featureFile.getParent().getLocation().toOSString());
-		//generator.setTargetLocation(workingFolder.getPath());
+		generator.setScriptTargetLocation(workingFolder.getPath());
 		IPath platform =
 			Platform.getLocation().append(featureFile.getProject().getName());
 		generator.setInstallLocation(platform.toOSString());
