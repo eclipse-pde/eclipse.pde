@@ -23,25 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class ResourceAttributeCellEditor extends DialogCellEditor {
-	class ContentProvider extends WorkbenchContentProvider {
-		public boolean hasChildren(Object element) {
-			Object[] children = getChildren(element);
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IFolder) {
-					return true;
-				}
-				if (children[i] instanceof IFile) {
-					String extension = ((IFile) children[i]).getFileExtension();
-					if (extension == null)
-						continue;
-					if (extension.equals("bmp") || extension.equals("gif") || extension.equals("ico") || extension.equals("jpeg") || extension.equals("png"))
-						return true;
-				}
-			}
-			return false;
-		}
-		
-	}
 	public static final String TITLE = "ManifestEditor.ResourceAttributeCellEditor.title";
 	private Label label;
 
@@ -63,17 +44,11 @@ protected Object openDialogBox(Control cellEditorWindow) {
 		new ElementTreeSelectionDialog(
 			PDEPlugin.getActiveWorkbenchShell(),
 			new WorkbenchLabelProvider(),
-			new ContentProvider());
+			new WorkbenchContentProvider());
 	dialog.setInput(project.getWorkspace());
 	
 	dialog.addFilter(new ViewerFilter() {		
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IFile) {
-				String extension = ((IFile) element).getFileExtension();
-				if (extension == null)
-					return false;
-				return (extension.equals("bmp") || extension.equals("gif") || extension.equals("ico") || extension.equals("jpeg") || extension.equals("png"));
-			} 
 			if (element instanceof IProject)
 				return ((IProject)element).equals(project);
 			return true;
