@@ -54,7 +54,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 
 	protected HashMap createProperties(String destination, boolean exportZip) {		
 		HashMap map = new HashMap(5);
-		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result");
 		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
 		map.put("feature.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse");
 		if (exportZip) {
@@ -101,6 +100,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 				destination,
 				exportZip,
 				exportSource,
+				createProperties(destination, exportZip),
 				new SubProgressMonitor(monitor, 9));
 		} finally {
 			deleteBuildFiles(feature);

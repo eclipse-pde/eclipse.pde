@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.FragmentBuildScriptGenerator;
 import org.eclipse.pde.internal.build.ModelBuildScriptGenerator;
@@ -47,9 +48,9 @@ public class PluginExportWizard extends BaseExportWizard {
 		return new PluginExportWizardPage(getSelection());
 	}
 
-	protected HashMap createProperties(String destination, boolean exportZip) {
+	protected HashMap createProperties(String destination, IPluginBase model) {
 		HashMap map = new HashMap(4);
-		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result");
+		map.put("build.result.folder", buildTempLocation + Path.SEPARATOR + "build_result" + Path.SEPARATOR + model.getId());
 		map.put("temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("destination.temp.folder", buildTempLocation + Path.SEPARATOR + "eclipse" + Path.SEPARATOR + "plugins");
 		map.put("plugin.destination", destination);
@@ -79,6 +80,7 @@ public class PluginExportWizard extends BaseExportWizard {
 				destination,
 				exportZip,
 				exportSource,
+				createProperties(destination, modelBase.getPluginBase()),
 				new SubProgressMonitor(monitor, 9));
 		} finally {
 			deleteBuildFile(modelBase);
@@ -127,6 +129,5 @@ public class PluginExportWizard extends BaseExportWizard {
 		generator.setModelId(model.getPluginBase().getId());
 		generator.generate();
 	}
-
 	
 }

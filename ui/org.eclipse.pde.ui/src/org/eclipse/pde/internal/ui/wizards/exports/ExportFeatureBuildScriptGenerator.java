@@ -11,10 +11,16 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.model.PluginModel;
 import org.eclipse.pde.internal.build.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.build.Policy;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.ant.AntScript;
 
 public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerator {
@@ -42,6 +48,30 @@ public class ExportFeatureBuildScriptGenerator extends FeatureBuildScriptGenerat
 			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, FEATURE_TEMP_FOLDER + "/" + "plugins"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			script.printAntCallTask(tab, TARGET_ALL_CHILDREN, null, params);
 			script.printTargetEnd(--tab);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.build.FeatureBuildScriptGenerator#generateAllPluginsTarget(org.eclipse.pde.internal.build.ant.AntScript)
+	 */
+	protected void generateAllPluginsTarget(AntScript script) throws CoreException {
+		int tab = 1;
+		List plugins = computeElements(false);
+		List fragments = computeElements(true);
+	
+		String[] sortedPlugins = Utils.computePrerequisiteOrder((PluginModel[]) plugins.toArray(new PluginModel[plugins.size()]), (PluginModel[]) fragments.toArray(new PluginModel[fragments.size()]));
+		script.println();
+		script.printTargetDeclaration(tab++, TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
+			for (int i = 0; i < sortedPlugins.length; i++) {
+				PluginModel plugin = getRegistry().getPlugin(sortedPlugins[i]);
+				if (plugin==null)
+					plugin = getRegistry().getFragment(sortedPlugins[i]);
+				
+				IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getFeatureRootLocation()));
+				Map params = new HashMap(1);
+				params.put(PROPERTY_BUILD_RESULT_FOLDER, FEATURE_TEMP_FOLDER + "/build_result/" + plugin.getPluginId());
+				script.printAntTask(tab, buildScriptName, location.toString(), getPropertyFormat(PROPERTY_TARGET), null, null, params);
+			}
+		script.printTargetEnd(--tab);
 	}
 
 }

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
@@ -85,8 +85,6 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 
 	protected abstract BaseExportWizardPage createPage1();
 
-	protected abstract HashMap createProperties(String destination, boolean exportZip);
-	
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -127,9 +125,11 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 				model,
 				new SubProgressMonitor(monitor, 1));
 		}
-		cleanup(zipFileName, destination, createProperties(destination, exportZip), new SubProgressMonitor(monitor,1));
+		
+		cleanup(zipFileName, destination, new SubProgressMonitor(monitor,1));
 	}
 
+	
 	public IStructuredSelection getSelection() {
 		return selection;
 	}
@@ -209,69 +209,17 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		return true;
 	}
 	
-	protected void cleanup(
-		String filename,
-		String destination,
-		HashMap properties,
-		IProgressMonitor monitor) {
-		try {
-			String path =
-				PDEPlugin
-					.getDefault()
-					.getStateLocation()
-					.addTrailingSeparator()
-					.toOSString();
-			File zip = new File(path + "zip.xml");
-			if (zip.exists()) {
-				zip.delete();
-				zip.createNewFile();
-			}
-			writer = new PrintWriter(new FileWriter(zip), true);
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
-			writer.println("<target name=\"clean\">");
-			writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
-			writer.println("</target>");
-			if (filename != null) {
-				writer.println("<target name=\"zip.folder\">");
-				writer.println("<delete dir=\"${build.result.folder}\"/>");
-				writer.println(
-					"<zip zipfile=\""
-						+ destination
-						+ "/"
-						+ filename
-						+ "\" basedir=\""
-						+ buildTempLocation
-						+ "\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
-				writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
-				writer.println("</target>");
-			}
-			writer.println("</project>");
-			writer.close();
-
-			AntRunner runner = new AntRunner();
-			runner.addUserProperties(properties);
-			runner.setBuildFileLocation(zip.getAbsolutePath());
-			if (filename != null) {
-				runner.setExecutionTargets(new String[] { "zip.folder" });
-			}
-			runner.run(monitor);
-			zip.delete();
-		} catch (IOException e) {
-		} catch (CoreException e) {
-		}
-
-	}
 	
 	protected void runScript(
 		String location,
 		String destination,
 		boolean exportZip,
 		boolean exportSource,
+		Map properties,
 		IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		AntRunner runner = new AntRunner();
-		runner.addUserProperties(createProperties(destination, exportZip));
+		runner.addUserProperties(properties);
 		runner.setAntHome(location);
 		runner.setBuildFileLocation(
 			location
@@ -296,5 +244,49 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard {
 		}
 		return (String[]) targets.toArray(new String[targets.size()]);
 	}
+	
+	protected void cleanup(String filename, String destination, IProgressMonitor monitor) {
+		try {
+			String path =
+				PDEPlugin
+					.getDefault()
+					.getStateLocation()
+					.addTrailingSeparator()
+					.toOSString();
+			File zip = new File(path + "zip.xml");
+			if (zip.exists()) {
+				zip.delete();
+				zip.createNewFile();
+			}
+			writer = new PrintWriter(new FileWriter(zip), true);
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<project name=\"temp\" default=\"clean\" basedir=\".\">");
+			writer.println("<target name=\"clean\">");
+			writer.println("<delete dir=\"" + buildTempLocation + "\"/>");
+			writer.println("</target>");
+			if (filename != null) {
+				writer.println("<target name=\"zip.folder\">");
+				writer.println("<delete dir=\""+ buildTempLocation + "/build_result" + "\"/>");
+				writer.println("<delete dir=\"" + buildTempLocation + "/eclipse/build_result"+ "\"/>");
+				writer.println("<zip zipfile=\"" + destination+ "/"+ filename + "\" basedir=\""
+						+ buildTempLocation + "\" filesonly=\"true\" update=\"no\" excludes=\"**/*.bin.log\"/>");
+				writer.println("</target>");
+			}
+			writer.println("</project>");
+			writer.close();
+
+			AntRunner runner = new AntRunner();
+			runner.setBuildFileLocation(zip.getAbsolutePath());
+			if (filename != null) {
+				runner.setExecutionTargets(new String[] { "zip.folder", "clean" });
+			}
+			runner.run(monitor);
+			zip.delete();
+		} catch (IOException e) {
+		} catch (CoreException e) {
+		}
+
+	}
+		
 	
 }
