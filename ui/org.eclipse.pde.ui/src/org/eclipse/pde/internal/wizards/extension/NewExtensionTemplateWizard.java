@@ -28,6 +28,7 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.IExtensionWizard;
+import org.eclipse.pde.internal.wizards.templates.GenericTemplateSection;
 
 /**
  * This wizard should be used as a base class for 
@@ -79,6 +80,9 @@ public class NewExtensionTemplateWizard
 
 	public void addPages() {
 		section.addPages(this);
+		if (section instanceof GenericTemplateSection) {
+			((GenericTemplateSection)section).initializeFields(model);
+		}
 	}
 
 	public boolean performFinish() {

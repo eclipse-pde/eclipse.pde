@@ -19,8 +19,11 @@ public class BooleanOption extends TemplateOption {
 	}
 	public void setSelected(boolean selected) {
 		setValue(selected?Boolean.TRUE:Boolean.FALSE);
+	}
+	public void setValue(Object value) {
+		super.setValue(value);
 		if (button!=null)
-			button.setSelection(selected);
+			button.setSelection(isSelected());
 	}
 	public void createControl(
 		Composite parent,
@@ -39,9 +42,15 @@ public class BooleanOption extends TemplateOption {
 		button.setSelection(isSelected());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setValue(button.getSelection()?Boolean.TRUE:Boolean.FALSE);
+				BooleanOption.super.setValue(button.getSelection()?Boolean.TRUE:Boolean.FALSE);
 				getSection().validateOptions(BooleanOption.this);
 			}
 		});
+		button.setEnabled(isEnabled());
+	}
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		if (button!=null)
+			button.setEnabled(enabled);
 	}
 }

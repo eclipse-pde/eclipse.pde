@@ -187,7 +187,7 @@ public class PreprocessorParser {
 	private void parse() throws Exception {
 		for (;;) {
 			int token = getNextToken();
-			//System.out.println("Token: " + token + ", val=" + tvalue);
+			//System.out.println("Token: " + token + ", val=\"" + tvalue+"\"");
 			if (token == T_EOF)
 				break;
 
@@ -338,6 +338,7 @@ public class PreprocessorParser {
 			}
 			if (variable) {
 				if (!Character.isJavaIdentifierPart(c)) {
+					loc--;
 					tvalue = line.substring(vloc, loc);
 					variable = false;
 					return T_VAR;

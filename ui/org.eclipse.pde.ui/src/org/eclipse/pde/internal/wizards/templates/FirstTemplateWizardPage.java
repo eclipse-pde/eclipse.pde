@@ -508,15 +508,15 @@ public class FirstTemplateWizardPage extends WizardPage {
 		monitor.worked(1);
 	}
 	
-
-
-
-	
 	public IPluginReference [] getDependencies() {
 		IPluginReference [] dependencies = new IPluginReference[2];
 		dependencies[0] = new PluginReference("org.eclipse.core.resources", null, 0);
 		dependencies[1] = new PluginReference("org.eclipse.ui", null, 0);
 		return dependencies;
+	}
+	
+	IPluginStructureData getStructureData() {
+		return structureData;
 	}
 
 }

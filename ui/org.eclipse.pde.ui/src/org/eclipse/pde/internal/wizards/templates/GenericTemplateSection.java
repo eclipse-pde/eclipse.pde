@@ -5,33 +5,46 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.*;
 import java.util.*;
+import org.eclipse.pde.model.plugin.IPluginModelBase;
+import org.eclipse.pde.IPluginStructureData;
 
 public abstract class GenericTemplateSection extends AbstractTemplateSection {
 	protected Hashtable options = new Hashtable();
 	
-	protected void addOption(String name, String label, boolean value, ArrayList list) {
+	protected TemplateOption addOption(String name, String label, boolean value, ArrayList list) {
 		BooleanOption option = new BooleanOption(this, name, label);
-		option.setSelected(value);
-		list.add(option);
-		registerOption(option);
+		addOption(option, value?Boolean.TRUE:Boolean.FALSE, list);
+		return option;
 	}
 
-	protected void addOption(String name, String label, String value, ArrayList list) {
+	protected TemplateOption addOption(String name, String label, String value, ArrayList list) {
 		StringOption option = new StringOption(this, name, label);
-		option.setText(value);
-		list.add(option);
-		registerOption(option);
+		addOption(option, value, list);
+		return option;
 	}	
 	
-	protected void addOption(String name, String label, String [][] choices, String value, ArrayList list) {
+	protected TemplateOption addOption(String name, String label, String [][] choices, String value, ArrayList list) {
 		ChoiceOption option = new ChoiceOption(this, name, label, choices);
+		addOption(option, value, list);
+		return option;
+	}
+	
+	private void addOption(TemplateOption option, Object value, ArrayList list) {
 		option.setValue(value);
 		list.add(option);
 		registerOption(option);
 	}
 	
+	protected void initializeOption(String key, Object value) {
+		TemplateOption option = getOption(key);
+		if (option!=null) {
+			// Only initialize options that have no value set
+			if (option.getValue()==null)
+				option.setValue(value);
+		}
+	}
+	
 	protected void registerOption(TemplateOption option) {
-		System.out.println("Registering "+option+", key="+option.getName());
 		options.put(option.getName(), option);
 	}
 	
@@ -51,10 +64,30 @@ public abstract class GenericTemplateSection extends AbstractTemplateSection {
 		return false;
 	}
 	
+	public void setOptionEnabled(String key, boolean enabled) {
+		TemplateOption option = (TemplateOption)options.get(key);
+		if (option!=null)
+			option.setEnabled(enabled);
+	}
+	
 	public Object getValue(String key) {
 		TemplateOption option = (TemplateOption)options.get(key);
 		if (option!=null) return option.getValue();
 		return super.getValue(key);
+	}
+	
+	protected TemplateOption getOption(String key) {
+		return (TemplateOption)options.get(key);
+	}
+	
+	public boolean isDependentOnFirstPage() {
+		return false;
+	}
+	
+	protected void initializeFields(IPluginStructureData sdata, FieldData data) {
+	}
+	
+	public void initializeFields(IPluginModelBase model) {
 	}
 	
 	public abstract void validateOptions(TemplateOption changed);

@@ -8,6 +8,7 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
+	private Control labelControl;
 	private Button[] buttons;
 	private boolean blockListener;
 
@@ -38,8 +39,9 @@ public class ChoiceOption extends TemplateOption {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		container.setLayout(layout);
-		Label label = createLabel(container, span, factory);
-		fill(label, span);
+		labelControl = createLabel(container, span, factory);
+		labelControl.setEnabled(isEnabled());
+		fill(labelControl, span);
 
 		buttons = new Button[choices.length];
 
@@ -49,7 +51,8 @@ public class ChoiceOption extends TemplateOption {
 				if (blockListener)
 					return;
 				if (b.getSelection()) {
-					setValue(b.getData().toString());
+					ChoiceOption.super.setValue(b.getData().toString());
+					getSection().validateOptions(ChoiceOption.this);
 				}
 			}
 		};
@@ -59,6 +62,7 @@ public class ChoiceOption extends TemplateOption {
 			Button button = createRadioButton(parent, span, factory, choice);
 			buttons[i] = button;
 			button.addSelectionListener(listener);
+			button.setEnabled(isEnabled());
 		}
 		if (getChoice() != null)
 			selectChoice(getChoice());
@@ -110,6 +114,16 @@ public class ChoiceOption extends TemplateOption {
 		super.setValue(value);
 		if (buttons != null && value != null) {
 			selectChoice(value.toString());
+		}
+	}
+	
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		if (labelControl!=null) {
+			labelControl.setEnabled(enabled);
+			for (int i=0; i<buttons.length; i++) {
+				buttons[i].setEnabled(isEnabled());
+			}
 		}
 	}
 

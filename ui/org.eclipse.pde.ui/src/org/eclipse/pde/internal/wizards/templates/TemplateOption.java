@@ -7,6 +7,8 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 public abstract class TemplateOption extends TemplateField {
 	private String name;
 	private Object value;
+	private boolean enabled=true;
+	private boolean required;
 	
 	public TemplateOption(GenericTemplateSection section, String name, String label) {
 		super(section, label);
@@ -28,7 +30,31 @@ public abstract class TemplateOption extends TemplateField {
 		return false;
 	}
 	
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+	public boolean isRequired() {
+		return required;
+	}
+	
 	public void setValue(Object value) {
 		this.value = value;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	public String getMessageLabel() {
+		String label = getLabel();
+		if (label.indexOf('&')== -1) return label;
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<label.length(); i++) {
+			char c = label.charAt(i);
+			if (c!='&') buf.append(c);
+		}
+		return buf.toString();
 	}
 }

@@ -18,6 +18,8 @@ import java.io.File;
 
 public abstract class PDETemplateSection extends GenericTemplateSection {
 	public static final String TEMPLATE_DIRECTORY = "templates";
+	protected WizardPage [] pages;
+	protected ArrayList [] lists;
 	/**
 	 * Constructor for HelloWorldTemplate.
 	 */
@@ -55,5 +57,31 @@ public abstract class PDETemplateSection extends GenericTemplateSection {
 	public String getDescription() {
 		String key = "template."+getSectionId()+".desc";
 		return getPluginResourceString(key);
+	}
+
+	protected void flagMissingRequiredOption(TemplateOption option) {
+		if (pages==null || lists == null) return;
+		int pageIndex = -1;
+		for (int i=0; i<lists.length; i++) {
+			ArrayList list = lists[i];
+			if (list.contains(option)) {
+				pageIndex = i;
+				break;
+			}
+		}
+		if (pageIndex>=0 && pageIndex <pages.length) {
+			WizardPage page = pages[pageIndex];
+			page.setPageComplete(false);
+			String message = "Template option \""+option.getMessageLabel()+"\" must be set.";
+			page.setErrorMessage(message);
+		}
+	}
+
+	protected void resetPageState() {
+		if (pages==null) return;
+		IWizardContainer container = pages[0].getWizard().getContainer();
+		WizardPage currentPage = (WizardPage)container.getCurrentPage();
+		currentPage.setErrorMessage(null);
+		currentPage.setPageComplete(true);
 	}
 }

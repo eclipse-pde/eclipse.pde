@@ -43,6 +43,9 @@ public class TemplateControlStack {
 			if (!stack.isEmpty())
 				stack.pop();
 		}
+		else {
+			// a preprocessor comment - ignore it
+		}
 	}
 	
 	public boolean getCurrentState() {

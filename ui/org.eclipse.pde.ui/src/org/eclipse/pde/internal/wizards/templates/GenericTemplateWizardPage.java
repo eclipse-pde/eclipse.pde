@@ -28,4 +28,16 @@ public class GenericTemplateWizardPage extends WizardPage {
 		}
 		setControl(container);
 	}
+
+	public void setVisible(boolean visible) {
+		if (visible && section.isDependentOnFirstPage()) {
+			IWizardPage page1 = getWizard().getStartingPage();
+			if (page1 instanceof FirstTemplateWizardPage) {
+				FirstTemplateWizardPage firstPage = (FirstTemplateWizardPage)page1;
+				FieldData data = firstPage.createFieldData();
+				section.initializeFields(firstPage.getStructureData(), data);
+			}
+		}
+		super.setVisible(visible);
+	}
 }
