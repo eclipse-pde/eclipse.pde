@@ -7,45 +7,23 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Vector;
+import java.util.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.RegistryLoader;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * @author Wassim Melhem
@@ -154,13 +132,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		variables.setLayout(new GridLayout());
 		variables.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Text text = new Text(variables, SWT.WRAP);
+		Label text = new Label(variables, SWT.WRAP);
 		GridData gd = new GridData();
 		gd.widthHint = 470;
 		text.setLayoutData(gd);
-		text.setEditable(false);
 		text.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.variables"));
-	
 		Button envButton = new Button(variables, SWT.PUSH);
 		envButton.setText(PDEPlugin.getResourceString("ImportWizard.FirstPage.env"));
 		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END| GridData.FILL_HORIZONTAL));
