@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
@@ -251,23 +251,34 @@ public class CompilersPreferencePage
 	}
 
 	private void doFullBuild() {
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
-					try {
-						PDEPlugin.getWorkspace().build(
+		Job buildJob = new Job(PDEPlugin.getResourceString("CompilersPreferencePage.building")) { //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					PDEPlugin.getWorkspace().build(
 							IncrementalProjectBuilder.FULL_BUILD,
 							monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
 				}
-			});
-		} catch (InterruptedException e) {
-			// cancelled by user
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-		}
+				finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
+			}
+		};
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.setUser(true); 
+		buildJob.schedule();
 	}
 }
