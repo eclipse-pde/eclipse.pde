@@ -359,6 +359,8 @@ public class DependenciesView extends PageBookView implements
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+		if(memento == null)
+			return;
 		String id = memento.getString(MEMENTO_KEY_INPUT);
 		if (id != null) {
 			IPlugin plugin = PDECore.getDefault().findPlugin(id);
