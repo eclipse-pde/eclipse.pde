@@ -34,7 +34,8 @@ public class IdUtil {
         for (int i = 0; i < name.length(); i++) {
             char c = name.charAt(i);
             if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c)
-                    && (c < '0' || '9' < c) && c != '_') {
+                    && (c < '0' || '9' < c) && c != '_'
+					&& c != '-'/* temporary allow "-" */) {
                 return false;
             }
         }
