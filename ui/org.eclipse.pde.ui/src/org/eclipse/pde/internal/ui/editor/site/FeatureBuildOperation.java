@@ -34,24 +34,33 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 	private static final String BUILD_LISTENER_CLASS =
 		"org.eclipse.pde.internal.ui.ant.SiteBuildListener";
 	private ArrayList features;
+	private StateListener stateListener;
+	private boolean scrubOutput;
 	private boolean fullBuild;
 
 	private File logFile = null;
 
 	private static FeatureBuildOperation instance;
 
-	public FeatureBuildOperation(ArrayList features, boolean fullBuild) {
+	public FeatureBuildOperation(
+		ArrayList features,
+		StateListener stateListener,
+		boolean scrubOutput,
+		boolean fullBuild) {
 		this.features = features;
+		this.stateListener = stateListener;
 		instance = this;
 		this.fullBuild = fullBuild;
+		this.scrubOutput = scrubOutput;
 	}
 
 	public FeatureBuildOperation(
 		ISiteBuildFeature sbfeature,
-		boolean fullBuild) {
+		boolean scrubOutput) {
 		this.features = new ArrayList();
 		features.add(sbfeature);
-		this.fullBuild = fullBuild;
+		this.scrubOutput = scrubOutput;
+		this.fullBuild = false;
 		instance = this;
 	}
 
@@ -63,9 +72,9 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		throws InvocationTargetException, InterruptedException {
 		try {
 			int count =
-				fullBuild ? 2 * features.size() + 1 : 2 * features.size();
+				scrubOutput ? 2 * features.size() + 1 : 2 * features.size();
 			monitor.beginTask("Building:", count);
-			if (fullBuild) {
+			if (scrubOutput) {
 				monitor.setTaskName("Scrubbing output folders ...");
 				scrubOutput(
 					(ISiteBuildFeature) features.get(0),
@@ -83,6 +92,11 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 						2,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 				doBuildFeature(sbfeature, subMonitor);
+			}
+			if (fullBuild && stateListener!=null) {
+				if (stateListener.isActive()==false)
+					stateListener.setActive(true);
+				stateListener.removeAllProjects();
 			}
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -141,6 +155,8 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		buildProject.refreshLocal(
 			IResource.DEPTH_INFINITE,
 			new SubProgressMonitor(monitor, 1));
+		if (stateListener != null)
+			stateListener.setBuilt(sbfeature);
 
 	}
 
@@ -232,9 +248,9 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 		createLogFile(buildModel);
 		runner.setBuildFileLocation(scriptFile.getLocation().toOSString());
 		runner.setArguments(computeBuildArguments(buildModel));
-		URL [] customURLs = computeCustomClasspath();
+		URL[] customURLs = computeCustomClasspath();
 		//if (customURLs!=null)
-			//runner.setCustomClasspath(customURLs);
+		//runner.setCustomClasspath(customURLs);
 		runner.setExecutionTargets(computeTargets());
 		runner.setMessageOutputLevel(Project.MSG_ERR);
 		runner.addBuildListener(BUILD_LISTENER_CLASS);
@@ -243,17 +259,17 @@ public class FeatureBuildOperation implements IRunnableWithProgress {
 
 	private URL[] computeCustomClasspath() {
 		// Add this plug-in's space
-		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-		URL [] defaultAntURLs = preferences.getDefaultAntURLs();
+		AntCorePreferences preferences =
+			AntCorePlugin.getPlugin().getPreferences();
+		URL[] defaultAntURLs = preferences.getDefaultAntURLs();
 		URL installURL = PDEPlugin.getDefault().getDescriptor().getInstallURL();
 		try {
 			int length = defaultAntURLs.length;
-			URL [] customURLs = new URL[length+1];
+			URL[] customURLs = new URL[length + 1];
 			System.arraycopy(defaultAntURLs, 0, customURLs, 0, length);
 			customURLs[length] = new URL(installURL, "bin/");
 			return customURLs;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			PDEPlugin.logException(e);
 			return null;
 		}

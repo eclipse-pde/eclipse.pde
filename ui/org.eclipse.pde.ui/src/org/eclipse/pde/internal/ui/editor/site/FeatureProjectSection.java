@@ -199,7 +199,8 @@ public class FeatureProjectSection extends CheckboxObjectListSection {
 		}
 		if (result.size() == 0) {
 		} else {
-			FeatureBuildOperation op = new FeatureBuildOperation(result, false);
+			SiteEditor editor = (SiteEditor)getFormPage().getEditor();
+			FeatureBuildOperation op = new FeatureBuildOperation(result, editor.getStateListener(), false, false);
 			ProgressMonitorDialog dialog =
 				new ProgressMonitorDialog(tableViewer.getControl().getShell());
 			try {

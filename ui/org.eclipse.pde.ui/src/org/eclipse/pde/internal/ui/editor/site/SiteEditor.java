@@ -38,6 +38,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 	public static final String SOURCE_PAGE_TITLE =
 		"MultiPageSiteEditor.SourcePage.title";
 	private boolean storageModel = false;
+	private StateListener stateListener;
 
 	public SiteEditor() {
 		super();
@@ -112,7 +113,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
-		//return cleanModel ? model : null;
+		stateListener = new StateListener(model);
 		return model;
 	}
 	
@@ -143,6 +144,10 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		return null;
 	}
 	
+	public StateListener getStateListener() {
+		return stateListener;
+	}
+	
 	public void dispose() {
 		super.dispose();
 		IModelProvider provider =
@@ -158,6 +163,8 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 			if (buildModel != null)
 				provider.disconnect(buildModel.getUnderlyingResource(), this);
 		}
+		if (stateListener!=null)
+			stateListener.dispose();
 	}
 
 	public IPDEEditorPage getHomePage() {

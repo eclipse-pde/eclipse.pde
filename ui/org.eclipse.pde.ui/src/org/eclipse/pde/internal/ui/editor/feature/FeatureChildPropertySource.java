@@ -9,7 +9,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.TargetPlatform;
+//import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.views.properties.*;
@@ -75,6 +75,8 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 				PDEPlugin.getResourceString(KEY_SEARCH_LOCATION),
 				new String[] { "root", "self", "both" });
 		descriptors.addElement(desc);
+		// Hiding this support for 2.1
+		/*
 		desc =
 			createChoicePropertyDescriptor(
 				P_OS,
@@ -93,6 +95,7 @@ public class FeatureChildPropertySource extends FeaturePropertySource {
 				P_ARCH,
 				TargetPlatform.getArchChoices());
 		descriptors.addElement(desc);
+		*/
 
 	}
 

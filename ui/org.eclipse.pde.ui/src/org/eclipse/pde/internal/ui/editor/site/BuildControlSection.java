@@ -42,6 +42,8 @@ public class BuildControlSection extends PDEFormSection {
 		"SiteEditor.BuildControlSection.scrubOutput";
 	public static final String SECTION_BUILD =
 		"SiteEditor.BuildControlSection.build";
+	public static final String SECTION_REBUILD_ALL =
+		"SiteEditor.BuildControlSection.rebuildAll";
 
 	private FormEntry pluginDest;
 	private FormEntry featureDest;
@@ -50,6 +52,8 @@ public class BuildControlSection extends PDEFormSection {
 	private Button autobuildButton;
 	private Button scrubOutputButton;
 	private Button buildButton;
+	private Button rebuildAllButton;
+	private StateListener resourceListener;
 
 	private boolean updateNeeded;
 
@@ -58,6 +62,7 @@ public class BuildControlSection extends PDEFormSection {
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
 	}
+
 	public void commitChanges(boolean onSave) {
 		pluginDest.commit();
 		featureDest.commit();
@@ -120,37 +125,37 @@ public class BuildControlSection extends PDEFormSection {
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
-		
-		GridData gd;
-/*
-		consoleButton =
-			factory.createButton(
-				container,
-				PDEPlugin.getResourceString(SECTION_CONSOLE),
-				SWT.CHECK);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		consoleButton.setLayoutData(gd);
-		consoleButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setShowConsole(consoleButton.getSelection());
-			}
-		});
 
-		autobuildButton =
-			factory.createButton(
-				container,
-				PDEPlugin.getResourceString(SECTION_AUTOBUILD),
-				SWT.CHECK);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 3;
-		autobuildButton.setLayoutData(gd);
-		autobuildButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setAutobuild(autobuildButton.getSelection());
-			}
-		});
-*/
+		GridData gd;
+		/*
+				consoleButton =
+					factory.createButton(
+						container,
+						PDEPlugin.getResourceString(SECTION_CONSOLE),
+						SWT.CHECK);
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				gd.horizontalSpan = 3;
+				consoleButton.setLayoutData(gd);
+				consoleButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						setShowConsole(consoleButton.getSelection());
+					}
+				});
+		
+				autobuildButton =
+					factory.createButton(
+						container,
+						PDEPlugin.getResourceString(SECTION_AUTOBUILD),
+						SWT.CHECK);
+				gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				gd.horizontalSpan = 3;
+				autobuildButton.setLayoutData(gd);
+				autobuildButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						setAutobuild(autobuildButton.getSelection());
+					}
+				});
+		*/
 
 		scrubOutputButton =
 			factory.createButton(
@@ -184,7 +189,7 @@ public class BuildControlSection extends PDEFormSection {
 				SWT.PUSH);
 		buildButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBuild(getFormPage().getEditor());
+				handleBuild((SiteEditor) getFormPage().getEditor(), false);
 			}
 		});
 		gd =
@@ -192,6 +197,22 @@ public class BuildControlSection extends PDEFormSection {
 				GridData.HORIZONTAL_ALIGN_BEGINNING
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		buildButton.setLayoutData(gd);
+
+		rebuildAllButton =
+			factory.createButton(
+				buttonContainer,
+				PDEPlugin.getResourceString(SECTION_REBUILD_ALL),
+				SWT.PUSH);
+		rebuildAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleBuild((SiteEditor) getFormPage().getEditor(), true);
+			}
+		});
+		gd =
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_BEGINNING
+					| GridData.VERTICAL_ALIGN_BEGINNING);
+		rebuildAllButton.setLayoutData(gd);
 
 		SelectableFormLabel openLogLink =
 			factory.createSelectableLabel(buttonContainer, "Build Log");
@@ -313,25 +334,44 @@ public class BuildControlSection extends PDEFormSection {
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getFormPage().getModel();
 		model.removeModelChangedListener(this);
+		PDEPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 		super.dispose();
 	}
 
-	static void handleBuild(PDEMultiPageEditor editor) {
+	static void handleBuild(SiteEditor editor, boolean fullBuild) {
+		StateListener stateListener = editor.getStateListener();
 		ISiteModel model = (ISiteModel) editor.getModel();
 		ISiteBuildModel buildModel = model.getBuildModel();
 		ISiteBuild siteBuild = buildModel.getSiteBuild();
 		ISiteBuildFeature[] features = siteBuild.getFeatures();
+		if (stateListener!=null && !stateListener.isActive())
+			fullBuild = true;
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
 			ISiteBuildFeature sbfeature = features[i];
-			if (sbfeature.getReferencedFeature() != null)
-				result.add(sbfeature);
+			if (sbfeature.getReferencedFeature() != null) {
+				boolean shouldBuild = false;
+				if (fullBuild)
+					shouldBuild = true;
+				else {
+					shouldBuild =
+						stateListener != null
+							? stateListener.isDirty(sbfeature)
+							: true;
+				}
+				if (shouldBuild)
+					result.add(sbfeature);
+			}
 		}
 		if (result.size() == 0)
 			return;
 
 		FeatureBuildOperation op =
-			new FeatureBuildOperation(result, siteBuild.getScrubOutput());
+			new FeatureBuildOperation(
+				result,
+				stateListener,
+				siteBuild.getScrubOutput(),
+				fullBuild);
 		ProgressMonitorDialog dialog =
 			new ProgressMonitorDialog(editor.getControl().getShell());
 		try {
@@ -416,5 +456,4 @@ public class BuildControlSection extends PDEFormSection {
 	public boolean canPaste(Clipboard clipboard) {
 		return (clipboard.getContents(TextTransfer.getInstance()) != null);
 	}
-
 }

@@ -19,7 +19,7 @@ public class ReferenceForm extends ScrollableSectionForm {
 	private PluginSection pluginSection;
 	private RequiresSection requiresSection;
 	private FeatureMatchSection matchSection;
-	private PortabilitySection portabilitySection;
+//	private PortabilitySection portabilitySection;
 
 public ReferenceForm(FeatureReferencePage page) {
 	this.page = page;
@@ -64,7 +64,8 @@ protected void createFormClient(Composite parent) {
 	control = matchSection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
-	
+
+/*	
 	String title = PDEPlugin.getResourceString(KEY_P_TITLE);
 	String desc = PDEPlugin.getResourceString(KEY_P_DESC);
 
@@ -72,15 +73,16 @@ protected void createFormClient(Composite parent) {
 	control = portabilitySection.createControl(right, factory);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	control.setLayoutData(gd);
+*/
 
 	SectionChangeManager manager = new SectionChangeManager();
 	manager.linkSections(requiresSection, matchSection);
-	manager.linkSections(requiresSection, portabilitySection);
+//	manager.linkSections(requiresSection, portabilitySection);
 
 	registerSection(pluginSection);
 	registerSection(requiresSection);
 	registerSection(matchSection);
-	registerSection(portabilitySection);
+//	registerSection(portabilitySection);
 	
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 }
