@@ -349,8 +349,8 @@ public class BuildControlSection extends PDEFormSection {
 		if (buildModel.isEditable() == false) {
 			featureDest.getControl().setEditable(false);
 			pluginDest.getControl().setEditable(false);
-			autobuildButton.setEnabled(false);
-			consoleButton.setEnabled(false);
+			//autobuildButton.setEnabled(false);
+			//consoleButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
 	}
@@ -404,8 +404,9 @@ public class BuildControlSection extends PDEFormSection {
 				siteBuild.getPluginLocation() != null
 					? siteBuild.getPluginLocation().toOSString()
 					: null);
-			consoleButton.setSelection(siteBuild.getShowConsole());
-			autobuildButton.setSelection(siteBuild.isAutobuild());
+			//consoleButton.setSelection(siteBuild.getShowConsole());
+			//autobuildButton.setSelection(siteBuild.isAutobuild());
+			scrubOutputButton.setSelection(siteBuild.getScrubOutput());
 		}
 		updateNeeded = false;
 	}

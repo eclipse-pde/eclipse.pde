@@ -6,8 +6,11 @@
  */
 package org.eclipse.pde.internal.ui.editor.site;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.SiteObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 
 /**
@@ -32,14 +35,16 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	protected String getPageId(Object obj) {
-/*
-		if (obj instanceof IFeature || obj instanceof IFeatureURL)
-			return FeatureEditor.FEATURE_PAGE;
-		if (obj instanceof IFeaturePlugin || obj instanceof IFeatureImport)
-			return FeatureEditor.REFERENCE_PAGE;
-		if (obj instanceof IFeatureData || obj instanceof IFeatureChild)
-			return FeatureEditor.ADVANCED_PAGE;
-*/
+		if (obj instanceof ISiteBuildFeature)
+			return SiteEditor.BUILD_PAGE;
+		if (obj instanceof ISiteFeature)
+			return SiteEditor.FEATURE_PAGE;
+		if (obj instanceof ISiteArchive)
+			return SiteEditor.ARCHIVE_PAGE;
+		if (obj instanceof ISiteCategory)
+			return SiteEditor.FEATURE_PAGE;
+		if (obj instanceof ISiteCategoryDefinition)
+			return SiteEditor.SITE_PAGE;
 		return null;
 	}
 
@@ -78,51 +83,57 @@ public class SiteUndoManager extends ModelUndoManager {
 	}
 
 	private void executeAdd(Object[] elements) {
-/*
-		IFeature feature = model.getFeature();
+		ISite site = model.getSite();
+		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 
-				if (element instanceof IFeaturePlugin) {
-					feature.addPlugins(new IFeaturePlugin [] {(IFeaturePlugin) element});
-				} else if (element instanceof IFeatureData) {
-					feature.addData(new IFeatureData [] {(IFeatureData) element});
-				} else if (element instanceof IFeatureImport) {
-					feature.addImport((IFeatureImport) element);
-				} else if (element instanceof IFeatureChild) {
-					feature.addIncludedFeatures(new IFeatureChild [] {(IFeatureChild) element});
+				if (element instanceof ISiteFeature) {
+					site.addFeatures(new ISiteFeature [] {(ISiteFeature) element});
+				} else if (element instanceof ISiteBuildFeature) {
+					siteBuild.addFeatures(new ISiteBuildFeature [] {(ISiteBuildFeature) element});
+				} else if (element instanceof ISiteArchive) {
+					site.addArchives(new ISiteArchive[] {(ISiteArchive) element});
+				} else if (element instanceof ISiteCategoryDefinition) {
+					site.addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
+				} else if (element instanceof ISiteCategory) {
+					ISiteCategory category = (ISiteCategory)element;
+					ISiteFeature feature = (ISiteFeature)category.getParent();
+					feature.addCategories(new ISiteCategory[] {category});
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-*/
 	}
 
 	private void executeRemove(Object[] elements) {
-/*
-		IFeature feature = model.getFeature();
+		ISite site = model.getSite();
+		ISiteBuild siteBuild = model.getBuildModel().getSiteBuild();
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
 				Object element = elements[i];
 
-				if (element instanceof IFeaturePlugin) {
-					feature.removePlugins(new IFeaturePlugin [] {(IFeaturePlugin) element});
-				} else if (element instanceof IFeatureData) {
-					feature.removeData(new IFeatureData [] {(IFeatureData) element});
-				} else if (element instanceof IFeatureImport) {
-					feature.removeImport((IFeatureImport) element);
-				} else if (element instanceof IFeatureChild) {
-					feature.removeIncludedFeatures(new IFeatureChild [] {(IFeatureChild) element});
+				if (element instanceof ISiteFeature) {
+					site.removeFeatures(new ISiteFeature [] {(ISiteFeature) element});
+				} else if (element instanceof ISiteBuildFeature) {
+					siteBuild.removeFeatures(new ISiteBuildFeature [] {(ISiteBuildFeature) element});
+				} else if (element instanceof ISiteArchive) {
+					site.removeArchives(new ISiteArchive[] {(ISiteArchive) element});
+				} else if (element instanceof ISiteCategoryDefinition) {
+					site.removeCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
+				} else if (element instanceof ISiteCategory) {
+					ISiteCategory category = (ISiteCategory)element;
+					ISiteFeature feature = (ISiteFeature)category.getParent();
+					feature.removeCategories(new ISiteCategory[] {category});
 				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-*/
 	}
 
 	private void executeChange(
@@ -130,16 +141,15 @@ public class SiteUndoManager extends ModelUndoManager {
 		String propertyName,
 		Object oldValue,
 		Object newValue) {
-/*
-		if (element instanceof FeatureObject) {
-			FeatureObject pobj = (FeatureObject) element;
+
+		if (element instanceof SiteObject) {
+			SiteObject sobj = (SiteObject) element;
 			try {
-				pobj.restoreProperty(propertyName, oldValue, newValue);
+				sobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 		}
-*/
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
