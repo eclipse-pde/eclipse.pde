@@ -318,7 +318,6 @@ public class PluginImportWizardDetailedPage extends StatusWizardPage {
 				PDEPlugin.getResourceString(KEY_NO_PLUGINS));
 		}
 		if (tablePart.getSelectionCount() == 0) {
-			setPageComplete(false);
 			return createStatus(
 				IStatus.INFO,
 				PDEPlugin.getResourceString(KEY_NO_SELECTED));

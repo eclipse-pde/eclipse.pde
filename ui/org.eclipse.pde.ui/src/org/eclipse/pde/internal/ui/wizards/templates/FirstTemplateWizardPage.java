@@ -199,7 +199,6 @@ public class FirstTemplateWizardPage extends WizardPage {
 				}
 			});
 			matchCombo = createMatchCombo(container);
-			verifyPluginFields();
 		} else
 			classField = createField(container, PDEPlugin.getResourceString(KEY_CLASS));
 
@@ -388,6 +387,8 @@ public class FirstTemplateWizardPage extends WizardPage {
 				provider = "";
 			}
 		}
+		setErrorMessage(null);
+		setPageComplete(false);
 	}
 
 	
