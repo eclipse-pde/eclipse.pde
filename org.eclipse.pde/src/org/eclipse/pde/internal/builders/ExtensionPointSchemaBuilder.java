@@ -11,19 +11,16 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.*;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDERS_SCHEMA_COMPILING =
@@ -290,7 +287,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
+		IWorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
 		IModel model = manager.getWorkspaceModel(project);
 		if (model instanceof IPluginModelBase) {
 			IPluginBase plugin = ((IPluginModelBase)model).getPluginBase();

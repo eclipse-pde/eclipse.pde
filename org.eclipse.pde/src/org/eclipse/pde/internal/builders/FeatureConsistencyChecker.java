@@ -16,10 +16,9 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.xml.sax.*;
@@ -117,7 +116,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		WorkspaceModelManager wmanager =
+		IWorkspaceModelManager wmanager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
 		if (thisModel != null && thisModel instanceof IFeatureModel)
@@ -184,12 +183,12 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		return file.getParent().equals(file.getProject()) && file.getName().toLowerCase().equals("feature.xml");
 	}
 	private boolean isValidReference(IFeaturePlugin plugin) {
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
 		IPluginModelBase[] models =
 			plugin.isFragment()
-				? (IPluginModelBase[]) manager.getWorkspaceFragmentModels()
-				: (IPluginModelBase[]) manager.getWorkspacePluginModels();
+				? (IPluginModelBase[]) manager.getFragmentModels()
+				: (IPluginModelBase[]) manager.getPluginModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			if (model.getPluginBase().getId().equals(plugin.getId())) {
@@ -200,9 +199,9 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isValidReference(IFeatureChild child) {
-		WorkspaceModelManager manager =
+		IWorkspaceModelManager manager =
 			PDECore.getDefault().getWorkspaceModelManager();
-		IFeatureModel[] models = manager.getWorkspaceFeatureModels();
+		IFeatureModel[] models = manager.getFeatureModels();
 
 		for (int i = 0; i < models.length; i++) {
 			IFeatureModel model = models[i];
