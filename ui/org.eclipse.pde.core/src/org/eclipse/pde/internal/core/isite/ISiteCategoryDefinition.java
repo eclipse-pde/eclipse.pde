@@ -12,10 +12,6 @@ package org.eclipse.pde.internal.core.isite;
 
 import org.eclipse.core.runtime.*;
 
-/**
- * @author dejan
- *
- */
 public interface ISiteCategoryDefinition extends ISiteObject {
 	String P_NAME = "name"; //$NON-NLS-1$
 	String P_DESCRIPTION = "description"; //$NON-NLS-1$

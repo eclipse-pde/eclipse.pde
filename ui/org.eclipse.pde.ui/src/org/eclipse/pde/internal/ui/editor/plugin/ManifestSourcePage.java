@@ -22,10 +22,6 @@ import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.eclipse.swt.graphics.*;
 
-/**
- * @author melhem
- *
- */
 public class ManifestSourcePage extends XMLSourcePage {
 	
 	private Object fLibraries = new Object();

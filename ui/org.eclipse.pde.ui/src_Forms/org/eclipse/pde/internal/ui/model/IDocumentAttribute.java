@@ -12,10 +12,6 @@ package org.eclipse.pde.internal.ui.model;
 
 import java.io.*;
 
-/**
- * @author melhem
- *
- */
 public interface IDocumentAttribute extends Serializable {
 	
 	void setEnclosingElement(IDocumentNode node);	

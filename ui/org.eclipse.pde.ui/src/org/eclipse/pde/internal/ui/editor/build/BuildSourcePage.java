@@ -18,10 +18,7 @@ import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.eclipse.pde.internal.ui.model.build.*;
 import org.eclipse.swt.graphics.*;
-/**
- * @author melhem
- *  
- */
+
 public class BuildSourcePage extends KeyValueSourcePage {
 	class BuildOutlineContentProvider extends DefaultContentProvider
 			implements

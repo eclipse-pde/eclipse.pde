@@ -14,10 +14,6 @@ import java.io.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public class ManifestHeader extends BundleObject implements IDocumentKey {
 	private int fOffset = -1;
 	private int fLength = -1;

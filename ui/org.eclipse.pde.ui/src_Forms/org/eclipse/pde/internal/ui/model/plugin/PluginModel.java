@@ -14,10 +14,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginModel extends PluginModelBase implements IPluginModel {
 	
 	public PluginModel(IDocument document, boolean isReconciling) {

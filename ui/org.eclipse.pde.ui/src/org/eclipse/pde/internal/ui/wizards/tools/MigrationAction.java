@@ -25,9 +25,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-/**
- * @author melhem
- */
 public class MigrationAction implements IObjectActionDelegate {
 
 	private ISelection fSelection;

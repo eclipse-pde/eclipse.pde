@@ -18,10 +18,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
 	
 	

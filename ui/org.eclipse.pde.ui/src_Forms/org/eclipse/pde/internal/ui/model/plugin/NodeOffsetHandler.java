@@ -13,10 +13,6 @@ package org.eclipse.pde.internal.ui.model.plugin;
 import org.eclipse.pde.internal.ui.model.*;
 import org.xml.sax.*;
 
-/**
- * @author melhem
- *
- */
 public class NodeOffsetHandler extends AbstractPluginDocumentHandler {
 
 	/**

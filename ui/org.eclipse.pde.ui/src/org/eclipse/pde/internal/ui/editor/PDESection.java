@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 28, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.pde.core.*;
@@ -23,12 +17,6 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.Section;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart {
 	public static final int CLIENT_VSPACING = 4;
 	private PDEFormPage page;

@@ -17,10 +17,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 
-/**
- * @author melhem
- *
- */
 public class PackageSelectionDialog extends ElementListSelectionDialog {
 
 	public static final String PACKAGE_MESSAGE = "PackageSelectionDialog.label"; //$NON-NLS-1$

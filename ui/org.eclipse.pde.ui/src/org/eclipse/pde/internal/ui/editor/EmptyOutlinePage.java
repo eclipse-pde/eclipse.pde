@@ -21,12 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+
 public class EmptyOutlinePage implements ISortableContentOutlinePage {
 	private Composite control;
 	/**

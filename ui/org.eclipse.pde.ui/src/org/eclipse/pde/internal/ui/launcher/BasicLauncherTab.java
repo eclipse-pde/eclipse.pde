@@ -18,7 +18,6 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
-import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -199,7 +198,7 @@ public class BasicLauncherTab
 		});
 		
 		fProductCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
-		fProductCombo.setItems(getProductNames());
+		fProductCombo.setItems(TargetPlatform.getProductNames());
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -213,7 +212,7 @@ public class BasicLauncherTab
 		fApplicationButton.setText(PDEPlugin.getResourceString("BasicLauncherTab.runApplication")); //$NON-NLS-1$
 			
 		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
-		fApplicationCombo.setItems(getApplicationNames());
+		fApplicationCombo.setItems(TargetPlatform.getApplicationNames());
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fApplicationCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -222,49 +221,6 @@ public class BasicLauncherTab
 		});		
 	}
 	
-	protected String[] getApplicationNames() {
-		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
-					String id = extensions[j].getPluginBase().getId();
-					if (id == null || id.trim().length() == 0 || id.startsWith("org.eclipse.pde.junit.runtime")) //$NON-NLS-1$
-						continue;
-					if (extensions[j].getId() != null)
-						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
-				}
-			}
-		}
-		return (String[])result.toArray(new String[result.size()]);
-	}
-
-	public static String[] getProductNames() {
-		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
-					IPluginObject[] children = extensions[j].getChildren();
-					if (children.length != 1)
-						continue;
-					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
-						continue;
-					String id = extensions[j].getPluginBase().getId();
-					if (id == null || id.trim().length() == 0)
-						continue;
-					if (extensions[j].getId() != null)
-						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
-				}
-			}
-		}
-		return (String[])result.toArray(new String[result.size()]);
-	}
-
 	protected String getApplicationAttribute() {
 		return APPLICATION;
 	}

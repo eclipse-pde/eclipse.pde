@@ -14,10 +14,6 @@ import java.util.*;
 
 import org.eclipse.pde.internal.ui.model.*;
 
-/**
- * @author melhem
- *
- */
 public abstract class PluginDocumentNode implements IDocumentNode {
 	
 	private IDocumentNode fParent;

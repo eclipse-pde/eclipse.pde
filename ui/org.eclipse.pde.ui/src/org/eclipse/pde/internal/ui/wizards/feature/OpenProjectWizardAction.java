@@ -20,10 +20,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 
-/**
- * @author melhem
- *
- */
 public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
 	/**
 	 * @param text

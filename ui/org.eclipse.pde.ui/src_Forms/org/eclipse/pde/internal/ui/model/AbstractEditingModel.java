@@ -21,10 +21,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
-/**
- * @author melhem
- *
- */
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
 	private ArrayList fListeners = new ArrayList();
 	protected boolean fReconciling;

@@ -17,10 +17,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
-/**
- * @author melhem
- *
- */
 public class PluginExportTask extends BaseExportTask {
 	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
 

@@ -17,10 +17,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
-/**
- * @author melhem
- *
- */
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
 	

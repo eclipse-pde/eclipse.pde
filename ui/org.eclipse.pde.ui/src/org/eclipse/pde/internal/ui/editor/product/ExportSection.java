@@ -4,6 +4,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
@@ -26,17 +27,16 @@ public class ExportSection extends PDESection {
 		section.setDescription("To package and export this product:");
 		
 		Composite comp = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+		GridLayout layout = new GridLayout();
+		layout.marginLeft = layout.marginRight = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = 3;
-		layout.verticalSpacing = 10;
 		comp.setLayout(layout);
 		
 		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.validate"), true, false);
-		TableWrapData td = new TableWrapData();
-		td.colspan = 3;
-		text.setLayoutData(td);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		text.setLayoutData(gd);
 				
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fArchiveEntry = new FormEntry(comp, toolkit, null, "Browse...", false, 25);
@@ -47,17 +47,17 @@ public class ExportSection extends PDESection {
 			}
 		});
 		fArchiveEntry.setEditable(isEditable());
-		fArchiveEntry.getText().setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		fArchiveEntry.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		text = toolkit.createFormText(comp, true);
 		text.setText(PDEPlugin.getResourceString("Product.overview.export"), true, false);
-		td = new TableWrapData();
-		td.colspan = 3;
-		text.setLayoutData(td);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		text.setLayoutData(gd);
 		
 		toolkit.paintBordersFor(comp);
 		section.setClient(comp);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
 	/* (non-Javadoc)

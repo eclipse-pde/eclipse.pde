@@ -23,10 +23,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.CoreUtility;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
 import org.eclipse.pde.ui.IPluginFieldData;
-/**
- * @author melhem
- *  
- */
+
 public class PluginClassCodeGenerator {
 	private IPluginFieldData fPluginData;
 	private IProject fProject;

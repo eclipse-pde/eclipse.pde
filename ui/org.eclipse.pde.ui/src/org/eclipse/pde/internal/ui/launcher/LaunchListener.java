@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
@@ -21,13 +20,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- * @author dejan
- * 
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates. To enable and disable the creation of type
- * comments go to Window>Preferences>Java>Code Generation.
- */
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
     private ArrayList managedLaunches;
     // maximum log file size

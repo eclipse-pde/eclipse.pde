@@ -39,10 +39,6 @@ import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.wizards.newresource.*;
 
-/**
- * @author cgwong
- *  
- */
 public class NewFeaturePatchWizard extends NewWizard implements IExecutableExtension {
 
 	public static final String KEY_WTITLE = "FeaturePatch.wtitle"; //$NON-NLS-1$

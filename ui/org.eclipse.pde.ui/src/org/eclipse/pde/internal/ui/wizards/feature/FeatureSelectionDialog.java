@@ -16,9 +16,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 
-/**
- * @author cgwong
- */
 public class FeatureSelectionDialog extends ElementListSelectionDialog {
 
 	/**

@@ -19,12 +19,6 @@ package org.eclipse.pde.internal.core.util;
 import java.io.*;
 import java.util.*;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class PropertiesUtil {
 	private static final char[] HEX =
 		{

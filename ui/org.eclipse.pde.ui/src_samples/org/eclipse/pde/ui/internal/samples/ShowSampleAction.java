@@ -24,12 +24,7 @@ import org.eclipse.ui.intro.config.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.standalone.InstallCommand;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
 	private static final String SAMPLE_FEATURE_VERSION = "3.0.0"; //$NON-NLS-1$

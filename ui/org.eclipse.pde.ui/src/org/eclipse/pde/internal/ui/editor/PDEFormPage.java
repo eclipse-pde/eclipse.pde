@@ -8,12 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 27, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.core.IBaseModel;
@@ -28,12 +22,7 @@ import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public abstract class PDEFormPage extends FormPage {
 	/**
 	 * @param editor

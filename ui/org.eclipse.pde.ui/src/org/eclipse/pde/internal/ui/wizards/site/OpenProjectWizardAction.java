@@ -19,10 +19,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.*;
 
-/**
- * @author melhem
- *
- */
 public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
 	/**
 	 * @param text

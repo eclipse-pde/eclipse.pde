@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -18,9 +17,6 @@ import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
-/**
- * @author dejan
- */
 public abstract class XMLSourcePage extends PDESourcePage {
 	public static final String ERROR_MESSAGE = "SourcePage.errorMessage"; //$NON-NLS-1$
 	protected IColorManager colorManager;

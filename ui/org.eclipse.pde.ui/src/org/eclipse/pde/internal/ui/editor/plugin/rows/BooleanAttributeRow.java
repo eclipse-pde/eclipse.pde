@@ -8,16 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
-/**
- * @author dejan
- * 
- */
+
 public class BooleanAttributeRow extends ChoiceAttributeRow {
 	/**
 	 * @param att

@@ -18,10 +18,6 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-/**
- * @author melhem
- *
- */
 public class XMLDefaultHandler extends DefaultHandler {
 	
 	private org.w3c.dom.Document fDocument;

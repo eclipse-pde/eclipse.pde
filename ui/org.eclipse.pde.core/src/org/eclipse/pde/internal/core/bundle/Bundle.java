@@ -13,10 +13,6 @@ package org.eclipse.pde.internal.core.bundle;
 import java.util.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 
-/**
- * @author melhem
- *
- */
 public class Bundle extends BundleObject implements IBundle {
 	private Properties fProperties;
 

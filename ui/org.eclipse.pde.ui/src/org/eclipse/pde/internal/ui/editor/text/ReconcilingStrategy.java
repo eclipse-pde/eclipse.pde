@@ -15,10 +15,6 @@ import java.util.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.reconciler.*;
 
-/**
- * @author melhem
- *
- */
 public class ReconcilingStrategy implements IReconcilingStrategy {
 	
 	private IDocument fDocument;

@@ -12,10 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.pde.ui.*;
 
-/**
- * @author melhem
- *
- */
 public class FragmentFieldData extends AbstractFieldData implements IFragmentFieldData {
 
 	private String fPluginId;

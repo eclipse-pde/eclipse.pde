@@ -15,14 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class SourceAttachmentManager {
 	private Hashtable entries;
 	private static final String KEY_PLATFORM_PATH = "platform-path"; //$NON-NLS-1$

@@ -24,9 +24,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-/**
- * @author cgwong
- */
 public class ConvertProjectsAction implements IObjectActionDelegate {
 
 	private ISelection fSelection;

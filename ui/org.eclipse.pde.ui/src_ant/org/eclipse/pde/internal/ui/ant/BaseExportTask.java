@@ -14,10 +14,7 @@ import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
-/**
- * @author melhem
- *
- */
+
 public abstract class BaseExportTask extends Task {
 	
 	protected String fDestination;

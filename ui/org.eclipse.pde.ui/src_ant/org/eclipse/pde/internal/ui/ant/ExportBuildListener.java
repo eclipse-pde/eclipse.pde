@@ -18,14 +18,6 @@ import org.apache.tools.ant.Project;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.exports.*;
 
-/**
- * @author wassimm
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
- */
 public class ExportBuildListener implements BuildListener {
 	
 	PrintWriter writer = null;

@@ -24,12 +24,6 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.*;
 
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class SampleOperation implements IRunnableWithProgress {
 	private static final String SAMPLE_PROPERTIES = "sample.properties"; //$NON-NLS-1$
 

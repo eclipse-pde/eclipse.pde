@@ -341,5 +341,48 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static String getProperty(String key) {
 		return PDECore.getDefault().getPluginPreferences().getString(key);
 	}
+	
+	public static String[] getApplicationNames() {
+		TreeSet result = new TreeSet();
+		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
+					String id = extensions[j].getPluginBase().getId();
+					if (id == null || id.trim().length() == 0 || id.startsWith("org.eclipse.pde.junit.runtime")) //$NON-NLS-1$
+						continue;
+					if (extensions[j].getId() != null)
+						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
+				}
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
+	
+	public static String[] getProductNames() {
+		TreeSet result = new TreeSet();
+		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+					IPluginObject[] children = extensions[j].getChildren();
+					if (children.length != 1)
+						continue;
+					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+						continue;
+					String id = extensions[j].getPluginBase().getId();
+					if (id == null || id.trim().length() == 0)
+						continue;
+					if (extensions[j].getId() != null)
+						result.add(id+ "." + extensions[j].getId());					 //$NON-NLS-1$
+				}
+			}
+		}
+		return (String[])result.toArray(new String[result.size()]);
+	}
 
 }

@@ -12,12 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.runtime.*;
 
-/**
- * @author dejan
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- */
 public class SourceLocation {
 	private IPath path;
 	private boolean userDefined = true;

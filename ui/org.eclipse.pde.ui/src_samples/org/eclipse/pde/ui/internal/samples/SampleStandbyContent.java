@@ -29,12 +29,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
 import org.eclipse.ui.part.*;
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
+
 public class SampleStandbyContent implements IStandbyContentPart {
 	private ScrolledForm form;
 	private Hyperlink moreLink;

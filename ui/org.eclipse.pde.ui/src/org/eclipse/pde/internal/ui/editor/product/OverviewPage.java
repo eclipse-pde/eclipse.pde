@@ -8,6 +8,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -15,8 +16,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 
 public class OverviewPage extends PDEFormPage {
@@ -41,11 +40,11 @@ public class OverviewPage extends PDEFormPage {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.bottomMargin = 10;
-		layout.topMargin = 5;
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
+		GridLayout layout = new GridLayout();
+		layout.marginBottom = 10;
+		layout.marginTop = 5;
+		layout.marginLeft = 10;
+		layout.marginRight = 10;
 		layout.numColumns = 2;
 		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
@@ -75,7 +74,7 @@ public class OverviewPage extends PDEFormPage {
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		section.setClient(text);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
 	private FormText createClient(Section section, String content,
@@ -87,7 +86,7 @@ public class OverviewPage extends PDEFormPage {
 			text.setText("", false, false);
 		}
 		section.setClient(text);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
 	}
 	

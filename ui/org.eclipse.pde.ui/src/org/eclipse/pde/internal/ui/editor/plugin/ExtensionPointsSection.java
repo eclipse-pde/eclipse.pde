@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
@@ -37,12 +36,6 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.*;
 
-/**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
- */
 public class ExtensionPointsSection extends TableSection {
 	public static final String SECTION_TITLE = "ManifestEditor.DetailExtensionPointSection.title"; //$NON-NLS-1$
 	public static final String SECTION_DESC = "ManifestEditor.DetailExtensionPointSection.desc"; //$NON-NLS-1$

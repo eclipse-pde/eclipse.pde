@@ -19,10 +19,6 @@ import org.eclipse.pde.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-/**
- * @author melhem
- *
- */
 public abstract class XMLEditingModel extends AbstractEditingModel {
 	
 	private SAXParser fParser;

@@ -6,8 +6,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -50,7 +50,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		
 		fProductCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fProductCombo.setItems(BasicLauncherTab.getProductNames());
+		fProductCombo.setItems(TargetPlatform.getProductNames());
 		
 		fLaunchConfigButton = new Button(group, SWT.RADIO);
 		fLaunchConfigButton.setText("Use an existing launch configuration:");

@@ -21,10 +21,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.model.*;
 import org.xml.sax.helpers.*;
 
-/**
- * @author melhem
- *
- */
 public abstract class PluginModelBase extends XMLEditingModel implements IPluginModelBase {
 
 	private PluginBaseNode fPluginBase;

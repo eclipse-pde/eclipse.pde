@@ -19,12 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 
-/**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class ReviewPage extends WizardPage {
 	private SampleWizard wizard;
 	private ScrolledFormText formText;

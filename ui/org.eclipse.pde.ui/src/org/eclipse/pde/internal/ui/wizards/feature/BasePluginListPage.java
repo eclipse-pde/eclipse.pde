@@ -17,10 +17,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.widgets.*;
 
-
-/**
- * @author cgwong
- */
 public class BasePluginListPage extends WizardPage {
 	protected WizardCheckboxTablePart tablePart;
 	/**

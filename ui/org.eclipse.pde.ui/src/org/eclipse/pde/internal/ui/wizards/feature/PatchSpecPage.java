@@ -21,9 +21,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 
-/**
- * @author cgwong
- */
 public class PatchSpecPage extends BaseFeatureSpecPage {
 
 	public PatchSpecPage(WizardNewProjectCreationPage mainPage) {

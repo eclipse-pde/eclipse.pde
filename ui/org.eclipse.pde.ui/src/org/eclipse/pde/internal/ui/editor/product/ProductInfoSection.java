@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.*;
@@ -8,6 +9,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
@@ -15,10 +17,10 @@ public class ProductInfoSection extends PDESection {
 
 	private FormEntry fNameEntry;
 	private FormEntry fIdEntry;
-	private FormEntry fAppIdEntry;
+	private ComboPart fAppCombo;
 
 	public ProductInfoSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION);
+		super(page, parent, Section.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
@@ -27,7 +29,6 @@ public class ProductInfoSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Product Definition");
-		section.setDescription("Define the product and the default application that will run when running the product:");
 		
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -43,9 +44,9 @@ public class ProductInfoSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
-		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.TOP);
-		td.rowspan = 2;
-		section.setLayoutData(td);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
+		gd.verticalSpan = 2;
+		section.setLayoutData(gd);
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -71,15 +72,18 @@ public class ProductInfoSection extends PDESection {
 	}
 
 	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fAppIdEntry = new FormEntry(client, toolkit, "Application ID:", "Browse...", false); //$NON-NLS-1$
-		fAppIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getProduct().setApplication(entry.getValue());
-			}
-			public void browseButtonSelected(FormEntry entry) {				
-			}
-		});
-		fAppIdEntry.setEditable(isEditable());
+		Label label = toolkit.createLabel(client, "Application:");
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		
+		fAppCombo = new ComboPart();
+		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		fAppCombo.getControl().setLayoutData(gd);
+		fAppCombo.setItems(TargetPlatform.getApplicationNames());
+		fAppCombo.add("");
+		
+		fAppCombo.getControl().setEnabled(isEditable());
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +92,6 @@ public class ProductInfoSection extends PDESection {
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
 		fIdEntry.commit();
-		fAppIdEntry.commit();
 		super.commit(onSave);
 	}
 	
@@ -98,7 +101,6 @@ public class ProductInfoSection extends PDESection {
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
 		fIdEntry.cancelEdit();
-		fAppIdEntry.cancelEdit();
 		super.cancelEdit();
 	}
 	
@@ -114,7 +116,7 @@ public class ProductInfoSection extends PDESection {
 		IProduct product = getProduct();
 		fNameEntry.setValue(product.getName(), true);
 		fIdEntry.setValue(product.getId(), true);
-		fAppIdEntry.setValue(product.getApplication(), true);
+		fAppCombo.setText(product.getApplication());
 		super.refresh();
 	}
 

@@ -24,9 +24,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
-/**
- * @author cgwong
- */
 public class PatchPluginListPage extends BasePluginListPage {
 
 	public static final String PAGE_TITLE = "PatchPlugins.title"; //$NON-NLS-1$

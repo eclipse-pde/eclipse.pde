@@ -14,10 +14,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.*;
 
-/**
- * @author melhem
- *
- */
 public class FragmentModel extends PluginModelBase implements IFragmentModel{
 	
 	public FragmentModel(IDocument document, boolean isReconciling) {

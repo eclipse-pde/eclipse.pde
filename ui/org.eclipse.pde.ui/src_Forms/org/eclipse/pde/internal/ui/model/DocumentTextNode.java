@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model;
 
-/**
- * @author melhem
- *
- */
 public class DocumentTextNode implements IDocumentTextNode {
 	private int fOffset = -1;
 	private int fLength = 0;
