@@ -88,7 +88,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	public IPluginLibrary[] getLibraries() {
 		if (libraries==null) {
 			libraries = new ArrayList();
-			StringTokenizer stok = new StringTokenizer(getBundle().getHeader(IBundle.KEY_CLASSPATH), ",");
+			StringTokenizer stok = new StringTokenizer(getSafeHeader(IBundle.KEY_CLASSPATH), ",");
 			while (stok.hasMoreTokens()) {
 				String token = stok.nextToken().trim();
 				try {
@@ -110,7 +110,7 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 	public IPluginImport[] getImports() {
 		if (imports==null) {
 			imports = new ArrayList();
-			StringTokenizer stok = new StringTokenizer(getBundle().getHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
+			StringTokenizer stok = new StringTokenizer(getSafeHeader(IBundle.KEY_REQUIRE_BUNDLE), ",");
 			String token = stok.nextToken().trim();
 			try {
 				IPluginImport iimport = model.createImport();
@@ -362,5 +362,10 @@ public class BundlePlugin extends PlatformObject implements IBundlePluginBase {
 				message,
 				null);
 		throw new CoreException(status);
+	}
+	
+	private String getSafeHeader(String key) {
+		String value = getBundle().getHeader(key);
+		return value!=null?value:"";
 	}
 }

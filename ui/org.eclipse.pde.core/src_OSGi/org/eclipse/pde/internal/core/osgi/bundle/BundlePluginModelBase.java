@@ -28,6 +28,9 @@ public class BundlePluginModelBase extends AbstractModel implements IBundlePlugi
 	private IBundlePluginBase bundlePluginBase;
 	private IBuildModel buildModel;
 	private boolean enabled;
+	
+	public BundlePluginModelBase() {
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.osgi.bundle.IBundlePluginModelBase#getBundleModel()
