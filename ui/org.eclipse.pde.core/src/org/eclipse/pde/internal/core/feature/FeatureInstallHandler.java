@@ -18,9 +18,9 @@ import org.w3c.dom.Node;
 public class FeatureInstallHandler
 	extends FeatureObject
 	implements IFeatureInstallHandler {
-		private URL url;
-		private String library;
-		private String handlerName;
+	private URL url;
+	private String library;
+	private String handlerName;
 
 	/*
 	 * @see IFeatureInstallHandler#getURL()
@@ -60,7 +60,7 @@ public class FeatureInstallHandler
 		ensureModelEditable();
 		Object oldValue = this.library;
 		this.library = library;
-		firePropertyChanged(P_URL, oldValue, library);
+		firePropertyChanged(P_LIBRARY, oldValue, library);
 	}
 
 	/*
@@ -70,32 +70,42 @@ public class FeatureInstallHandler
 		ensureModelEditable();
 		Object oldValue = this.handlerName;
 		this.handlerName = handlerName;
-		firePropertyChanged(P_URL, oldValue, handlerName);
+		firePropertyChanged(P_HANDLER_NAME, oldValue, handlerName);
+	}
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_URL)) {
+			setURL((URL) newValue);
+		} else if (name.equals(P_LIBRARY)) {
+			setLibrary((String) newValue);
+		} else if (name.equals(P_HANDLER_NAME)) {
+			setHandlerName((String) newValue);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
 	}
 	protected void parse(Node node) {
 		String urlName = getNodeAttribute(node, "url");
-		if (urlName!=null) {
+		if (urlName != null) {
 			try {
 				url = new URL(urlName);
-			}
-			catch (MalformedURLException e) {
+			} catch (MalformedURLException e) {
 			}
 		}
 		library = getNodeAttribute(node, "library");
 		handlerName = getNodeAttribute(node, "handler");
 	}
-public void write(String indent, PrintWriter writer) {
-	writer.print(indent+"<install-handler");
-	if (url!=null) {
-		writer.print(" url=\""+url.toString()+"\"");
+	public void write(String indent, PrintWriter writer) {
+		writer.print(indent + "<install-handler");
+		if (url != null) {
+			writer.print(" url=\"" + url.toString() + "\"");
+		}
+		if (library != null) {
+			writer.print(" library=\"" + library + "\"");
+		}
+		if (handlerName != null) {
+			writer.print(" handler=\"" + handlerName + "\"");
+		}
+		writer.println(">");
+		writer.println(indent + "</install-handler>");
 	}
-	if (library!=null) {
-		writer.print(" library=\""+library+"\"");
-	}
-	if (handlerName!=null) {
-		writer.print(" handler=\""+handlerName+"\"");
-	}
-	writer.println(">");
-	writer.println(indent+"</install-handler>");
-}
 }

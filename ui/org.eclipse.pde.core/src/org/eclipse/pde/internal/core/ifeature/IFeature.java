@@ -32,6 +32,11 @@ public static final String P_LICENSE = "license";
 public static final String P_PROVIDER = "provider";
 /**
  * The name of the property that will be used to notify
+ * about changes in "image" field
+ */
+public static final String P_IMAGE = "image";
+/**
+ * The name of the property that will be used to notify
  * about changes in "url" field
  */
 public static final String P_URL = "url";
@@ -127,6 +132,12 @@ public IFeatureChild [] getIncludedFeatures();
  */
 public String getProviderName();
 /**
+ * Returns a feature image name
+ *
+ * @return the feature image name, or <samp>null</samp> if not set
+ */
+public String getImageName();
+/**
  *
  */
 IPluginModelBase getReferencedModel(IFeaturePlugin reference);
@@ -175,6 +186,14 @@ public void removeImport(IFeatureImport iimport) throws CoreException;
  * @param the new provider name
  */
 public void setProviderName(String providerName) throws CoreException;
+/**
+ * Sets the image name of this feature. This method
+ * may throw a CoreException if the model is not editable.
+ *
+ * @param the new image name
+ */
+public void setImageName(String imageName) throws CoreException;
+/**
 /**
  * Sets the URL model object of this feature.
  *

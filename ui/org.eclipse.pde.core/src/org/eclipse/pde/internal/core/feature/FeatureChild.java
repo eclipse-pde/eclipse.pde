@@ -68,6 +68,13 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		hookWithWorkspace();
 	}
 	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_VERSION)) {
+			setVersion((String)newValue);
+		}
+		else super.restoreProperty(name, oldValue, newValue);
+	}
+	
 	public void setId(String id) throws CoreException {
 		super.setId(id);
 		hookWithWorkspace();

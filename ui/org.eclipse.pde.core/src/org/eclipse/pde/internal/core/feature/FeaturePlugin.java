@@ -43,6 +43,14 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		firePropertyChanged(this, P_VERSION, oldValue, version);
 	}
 
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_VERSION)) {
+			setVersion(newValue != null ? newValue.toString() : null);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
+	}
+
 	public void setFragment(boolean fragment) throws CoreException {
 		ensureModelEditable();
 		this.fragment = fragment;

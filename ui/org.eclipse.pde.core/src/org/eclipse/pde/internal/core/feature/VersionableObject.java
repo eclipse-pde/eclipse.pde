@@ -28,6 +28,14 @@ public class VersionableObject
 		this.version = version;
 		firePropertyChanged(this, P_VERSION, oldValue, version);
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_VERSION)) {
+			setVersion(newValue != null ? newValue.toString() : null);
+		}
+		else super.restoreProperty(name, oldValue, newValue);
+	}
 
 	protected void reset() {
 		super.reset();

@@ -26,6 +26,13 @@ public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 		this.id = id;
 		firePropertyChanged(this, P_ID, oldValue, id);
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_ID)) {
+			setId(newValue!=null ? newValue.toString() : null);
+		}
+		else super.restoreProperty(name, oldValue, newValue);
+	}
 
 	protected void reset() {
 		super.reset();

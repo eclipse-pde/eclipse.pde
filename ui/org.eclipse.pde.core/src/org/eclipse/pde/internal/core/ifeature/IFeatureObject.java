@@ -34,6 +34,8 @@ String getLabel();
  * @return the feature model
  */
 IFeatureModel getModel();
+
+boolean isInTheModel();
 /**
  * Returns the parent of this model object.
  *

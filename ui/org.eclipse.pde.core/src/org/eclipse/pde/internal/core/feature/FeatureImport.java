@@ -20,11 +20,11 @@ public class FeatureImport
 
 	public FeatureImport() {
 	}
-	
+
 	public IPlugin getPlugin() {
 		return plugin;
 	}
-	
+
 	public void setPlugin(IPlugin plugin) {
 		this.plugin = plugin;
 	}
@@ -56,18 +56,27 @@ public class FeatureImport
 		firePropertyChanged(P_MATCH, oldValue, new Integer(match));
 	}
 
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_MATCH)) {
+			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
+	}
+
 	public void write(String indent, PrintWriter writer) {
-		writer.print(indent+"<import plugin=\""+getId()+"\"");
-		if (getVersion()!=null) {
-			writer.print(" version=\""+getVersion()+"\"");
+		writer.print(indent + "<import plugin=\"" + getId() + "\"");
+		if (getVersion() != null) {
+			writer.print(" version=\"" + getVersion() + "\"");
 		}
-		if (match!=NONE) {
-			writer.print(" match=\""+RULE_NAME_TABLE[match]+"\"");
+		if (match != NONE) {
+			writer.print(" match=\"" + RULE_NAME_TABLE[match] + "\"");
 		}
 		writer.println("/>");
 	}
 	public String toString() {
-		if (plugin!=null) return plugin.getTranslatedName();
+		if (plugin != null)
+			return plugin.getTranslatedName();
 		return getId();
 	}
 }

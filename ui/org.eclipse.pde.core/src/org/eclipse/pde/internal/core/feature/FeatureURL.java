@@ -19,11 +19,13 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
 		discoveries.add(discovery);
+		((FeatureURLElement)discovery).setInTheModel(true);
 		fireStructureChanged(discovery, IModelChangedEvent.INSERT);
 	}
 	public void addUpdate(IFeatureURLElement update) throws CoreException {
 		ensureModelEditable();
 		updates.add(update);
+		((FeatureURLElement)update).setInTheModel(true);
 		fireStructureChanged(update, IModelChangedEvent.INSERT);
 	}
 	public IFeatureURLElement[] getDiscoveries() {
@@ -52,10 +54,14 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 					IFeatureURLElement element =
 						getModel().getFactory().createURLElement(this, urlType);
 					((FeatureURLElement) element).parse(child);
-					if (urlType == IFeatureURLElement.UPDATE)
+					if (urlType == IFeatureURLElement.UPDATE) {
+						((FeatureURLElement)element).setInTheModel(true);
 						updates.add(element);
-					else if (urlType == IFeatureURLElement.DISCOVERY)
+					}
+					else if (urlType == IFeatureURLElement.DISCOVERY) {
+						((FeatureURLElement)element).setInTheModel(true);			
 						discoveries.add(element);
+					}
 				}
 			}
 		}
@@ -64,10 +70,12 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		throws CoreException {
 		ensureModelEditable();
 		discoveries.remove(discovery);
+		((FeatureURLElement)discovery).setInTheModel(false);
 		fireStructureChanged(discovery, IModelChangedEvent.REMOVE);
 	}
 	public void removeUpdate(IFeatureURLElement update) throws CoreException {
 		ensureModelEditable();
+		((FeatureURLElement)update).setInTheModel(false);
 		updates.remove(update);
 		fireStructureChanged(update, IModelChangedEvent.REMOVE);
 	}

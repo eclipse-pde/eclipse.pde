@@ -59,6 +59,16 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		this.url = url;
 		firePropertyChanged(P_URL, oldValue, url);
 	}
+	
+	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
+		if (name.equals(P_DESC)) {
+			setDescription(newValue!=null ? newValue.toString() : null);
+		}
+		else if (name.equals(P_URL)) {
+			setURL((URL)newValue);
+		}
+		else super.restoreProperty(name, oldValue, newValue);
+	}
 
 	/*
 	 * @see IFeatureInfo#setDescription(String)

@@ -41,6 +41,10 @@ public class FeatureEditor extends PDEMultiPageXMLEditor {
 	public FeatureEditor() {
 		super();
 	}
+	
+	protected IModelUndoManager createModelUndoManager() {
+		return new FeatureUndoManager(this);
+	}
 
 	protected Object createModel(Object input) throws CoreException {
 		if (input instanceof IFile)

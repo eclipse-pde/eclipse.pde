@@ -27,6 +27,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String ws;
 	private String nl;
 	private String arch;
+	private String imageName;
 	private IFeatureInstallHandler handler;
 	private boolean primary;
 
@@ -34,6 +35,7 @@ public class Feature extends VersionableObject implements IFeature {
 		ensureModelEditable();
 		for (int i = 0; i < newPlugins.length; i++) {
 			plugins.add(newPlugins[i]);
+			((FeaturePlugin) newPlugins[i]).setInTheModel(true);
 		}
 		fireStructureChanged(newPlugins, IModelChangedEvent.INSERT);
 	}
@@ -42,6 +44,7 @@ public class Feature extends VersionableObject implements IFeature {
 		ensureModelEditable();
 		for (int i = 0; i < newData.length; i++) {
 			data.add(newData[i]);
+			((FeatureData) newData[i]).setInTheModel(true);
 		}
 		fireStructureChanged(newData, IModelChangedEvent.INSERT);
 	}
@@ -51,6 +54,7 @@ public class Feature extends VersionableObject implements IFeature {
 		ensureModelEditable();
 		for (int i = 0; i < features.length; i++) {
 			children.add(features[i]);
+			((FeatureChild) features[i]).setInTheModel(true);
 		}
 		fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
@@ -58,6 +62,7 @@ public class Feature extends VersionableObject implements IFeature {
 	public void addImport(IFeatureImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.add(iimport);
+		((FeatureImport) iimport).setInTheModel(true);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
 
@@ -109,20 +114,12 @@ public class Feature extends VersionableObject implements IFeature {
 		return handler;
 	}
 
-	public boolean isPrimary() {
-		return primary;
+	public IFeatureInfo getFeatureInfo(int index) {
+		return infos[index];
 	}
 
-	public void setPrimary(boolean newValue) throws CoreException {
-		if (this.primary == newValue)
-			return;
-		ensureModelEditable();
-		Boolean oldValue = this.primary ? Boolean.TRUE : Boolean.FALSE;
-		this.primary = newValue;
-		firePropertyChanged(
-			P_PRIMARY,
-			oldValue,
-			newValue ? Boolean.TRUE : Boolean.FALSE);
+	public boolean isPrimary() {
+		return primary;
 	}
 
 	protected void parse(Node node) {
@@ -131,6 +128,7 @@ public class Feature extends VersionableObject implements IFeature {
 		os = getNodeAttribute(node, "os");
 		ws = getNodeAttribute(node, "ws");
 		nl = getNodeAttribute(node, "nl");
+		imageName = getNodeAttribute(node, "image");
 		NodeList children = node.getChildNodes();
 
 		for (int i = 0; i < children.getLength(); i++) {
@@ -140,19 +138,23 @@ public class Feature extends VersionableObject implements IFeature {
 				if (tag.equals("description")) {
 					IFeatureInfo info =
 						getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
+					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child);
 					infos[IFeature.INFO_DESCRIPTION] = info;
 				} else if (tag.equals("license")) {
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
+					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child);
 					infos[IFeature.INFO_LICENSE] = info;
 				} else if (tag.equals("copyright")) {
 					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
+					((FeatureInfo) info).setInTheModel(true);
 					((FeatureInfo) info).parse(child);
 					infos[IFeature.INFO_COPYRIGHT] = info;
 				} else if (tag.equals("url")) {
 					if (url == null) {
 						url = getModel().getFactory().createURL();
+						((FeatureURL) url).setInTheModel(true);
 						((FeatureURL) url).parse(child);
 					}
 				} else if (tag.equals("requires")) {
@@ -160,18 +162,22 @@ public class Feature extends VersionableObject implements IFeature {
 				} else if (tag.equals("install-handler")) {
 					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
 					((FeatureInstallHandler) handler).parse(child);
+					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.handler = handler;
 				} else if (tag.equals("plugin")) {
 					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
 					((FeaturePlugin) plugin).parse(child);
+					((FeaturePlugin) plugin).setInTheModel(true);
 					plugins.add(plugin);
 				} else if (tag.equals("data")) {
 					IFeatureData newData = getModel().getFactory().createData();
 					((FeatureData) newData).parse(child);
+					((FeatureData) newData).setInTheModel(true);
 					data.add(newData);
 				} else if (tag.equals("includes")) {
 					IFeatureChild newChild = getModel().getFactory().createChild();
 					((FeatureChild) newChild).parse(child);
+					((FeatureChild) newChild).setInTheModel(true);
 					this.children.add(newChild);
 				}
 			}
@@ -185,6 +191,7 @@ public class Feature extends VersionableObject implements IFeature {
 				if (child.getNodeName().equalsIgnoreCase("import")) {
 					IFeatureImport iimport = getModel().getFactory().createImport();
 					((FeatureImport) iimport).parse(child);
+					((FeatureImport) iimport).setInTheModel(true);
 					imports.add(iimport);
 				}
 			}
@@ -239,6 +246,7 @@ public class Feature extends VersionableObject implements IFeature {
 			iimport.setId(id);
 			iimport.setVersion(version);
 			iimport.setMatch(match);
+			((FeatureImport) iimport).setInTheModel(true);
 			imports.add(iimport);
 			IPlugin p =
 				PDECore.getDefault().findPlugin(
@@ -283,28 +291,35 @@ public class Feature extends VersionableObject implements IFeature {
 
 	public void removePlugins(IFeaturePlugin[] removed) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < removed.length; i++)
+		for (int i = 0; i < removed.length; i++) {
 			plugins.remove(removed[i]);
+			((FeaturePlugin) removed[i]).setInTheModel(false);
+		}
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
 
 	public void removeData(IFeatureData[] removed) throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < removed.length; i++)
+		for (int i = 0; i < removed.length; i++) {
 			data.remove(removed[i]);
+			((FeatureData) removed[i]).setInTheModel(false);
+		}
 		fireStructureChanged(removed, IModelChangedEvent.REMOVE);
 	}
 
 	public void removeIncludedFeatures(IFeatureChild[] features)
 		throws CoreException {
 		ensureModelEditable();
-		for (int i = 0; i < features.length; i++)
+		for (int i = 0; i < features.length; i++) {
 			children.remove(features[i]);
+			((FeatureChild) features[i]).setInTheModel(false);
+		}
 		fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 	public void removeImport(IFeatureImport iimport) throws CoreException {
 		ensureModelEditable();
 		imports.remove(iimport);
+		((FeatureImport) iimport).setInTheModel(false);
 		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
 	}
 
@@ -349,20 +364,16 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(P_ARCH, oldValue, arch);
 	}
 
-	public void reset() {
-		super.reset();
-		data.clear();
-		plugins.clear();
-		imports.clear();
-		url = null;
-		providerName = null;
-		os = null;
-		ws = null;
-		nl = null;
-		arch = null;
-		infos[0] = null;
-		infos[1] = null;
-		infos[2] = null;
+	public void setPrimary(boolean newValue) throws CoreException {
+		if (this.primary == newValue)
+			return;
+		ensureModelEditable();
+		Boolean oldValue = this.primary ? Boolean.TRUE : Boolean.FALSE;
+		this.primary = newValue;
+		firePropertyChanged(
+			P_PRIMARY,
+			oldValue,
+			newValue ? Boolean.TRUE : Boolean.FALSE);
 	}
 
 	public void setProviderName(String providerName) throws CoreException {
@@ -374,6 +385,9 @@ public class Feature extends VersionableObject implements IFeature {
 	public void setURL(IFeatureURL url) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.url;
+		if (this.url != null) {
+			((FeatureURL) this.url).setInTheModel(false);
+		}
 		this.url = url;
 		firePropertyChanged(P_URL, oldValue, url);
 	}
@@ -381,17 +395,19 @@ public class Feature extends VersionableObject implements IFeature {
 		throws CoreException {
 		ensureModelEditable();
 		Object oldValue = this.handler;
+		if (this.handler != null) {
+			((FeatureInstallHandler) this.handler).setInTheModel(false);
+		}
 		this.handler = handler;
 		firePropertyChanged(P_INSTALL_HANDLER, oldValue, handler);
-	}
-
-	public IFeatureInfo getFeatureInfo(int index) {
-		return infos[index];
 	}
 
 	public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException {
 		ensureModelEditable();
 		Object oldValue = infos[index];
+		if (oldValue != null) {
+			((FeatureInfo) oldValue).setInTheModel(true);
+		}
 		infos[index] = info;
 		String property;
 		switch (index) {
@@ -410,6 +426,63 @@ public class Feature extends VersionableObject implements IFeature {
 		firePropertyChanged(property, oldValue, info);
 	}
 
+	/**
+	 * Sets the imageName.
+	 * @param imageName The imageName to set
+	 */
+	public void setImageName(String imageName) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.imageName;
+		this.imageName = imageName;
+		firePropertyChanged(P_IMAGE, oldValue, imageName);
+	}
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_OS)) {
+			setOS((String) newValue);
+		} else if (name.equals(P_WS)) {
+			setWS((String) newValue);
+		} else if (name.equals(P_NL)) {
+			setNL((String) newValue);
+		} else if (name.equals(P_ARCH)) {
+			setArch((String) newValue);
+		} else if (name.equals(P_PRIMARY)) {
+			setPrimary(newValue != null ? ((Boolean) newValue).booleanValue() : false);
+		} else if (name.equals(P_PROVIDER)) {
+			setProviderName((String) newValue);
+		} else if (name.equals(P_URL)) {
+			setURL((IFeatureURL) newValue);
+		} else if (name.equals(P_INSTALL_HANDLER)) {
+			setInstallHandler((IFeatureInstallHandler) newValue);
+		} else if (name.equals(P_DESCRIPTION)) {
+			setFeatureInfo((IFeatureInfo)newValue, INFO_DESCRIPTION);
+		} else if (name.equals(P_LICENSE)) {
+			setFeatureInfo((IFeatureInfo)newValue, INFO_LICENSE);
+		} else if (name.equals(P_COPYRIGHT)) {
+			setFeatureInfo((IFeatureInfo)newValue, INFO_COPYRIGHT);
+		} else if (name.equals(P_IMAGE)) {
+			setImageName((String) newValue);
+		} else
+			super.restoreProperty(name, oldValue, newValue);
+	}
+
+	public void reset() {
+		super.reset();
+		data.clear();
+		plugins.clear();
+		imports.clear();
+		url = null;
+		providerName = null;
+		os = null;
+		ws = null;
+		nl = null;
+		arch = null;
+		infos[0] = null;
+		infos[1] = null;
+		infos[2] = null;
+	}
+
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<feature");
 		String indent2 = indent + INDENT;
@@ -426,6 +499,7 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "ws", ws);
 		writeIfDefined(indenta, writer, "nl", nl);
 		writeIfDefined(indenta, writer, "arch", arch);
+		writeIfDefined(indenta, writer, "image", imageName);
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\"");
@@ -483,5 +557,12 @@ public class Feature extends VersionableObject implements IFeature {
 			return;
 		writer.println();
 		writer.print(indent + attName + "=\"" + attValue + "\"");
+	}
+	/**
+	 * Gets the imageName.
+	 * @return Returns a String
+	 */
+	public String getImageName() {
+		return imageName;
 	}
 }

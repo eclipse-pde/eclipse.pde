@@ -18,6 +18,15 @@ public abstract class FeatureObject
 	IFeatureModel model;
 	IFeatureObject parent;
 	protected String label;
+	boolean inTheModel;
+
+	void setInTheModel(boolean value) {
+		inTheModel = value;
+	}
+
+	public boolean isInTheModel() {
+		return inTheModel;
+	}
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
@@ -162,6 +171,13 @@ public abstract class FeatureObject
 			}
 		}
 		return buf.toString();
+	}
+
+	public void restoreProperty(String name, Object oldValue, Object newValue)
+		throws CoreException {
+		if (name.equals(P_LABEL)) {
+			setLabel(newValue != null ? newValue.toString() : null);
+		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
