@@ -24,6 +24,12 @@ import org.eclipse.pde.internal.core.*;
 
 public class WorkbenchLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate, ILauncherSettings {
+	private static final String KEY_NO_JRE = "WorkbenchLauncherConfigurationDelegate.noJRE";
+	private static final String KEY_STARTING = "WorkbenchLauncherConfigurationDelegate.starting";
+	private static final String KEY_NO_BOOT = "WorkbenchLauncherConfigurationDelegate.noBoot";
+	private static final String KEY_PROBLEMS_DELETING = "WorkbenchLauncherConfigurationDelegate.problemsDeleting";
+	private static final String KEY_TITLE = "WorkbenchLauncherConfigurationDelegate.title";
+	private static final String KEY_SLIMLAUNCHER = "WorkbenchLauncherConfigurationDelegate.slimlauncher";
 
 	/*
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -56,8 +62,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		} else
 			launcher = vmInstallations[0];
 		if (launcher == null) {
-			String message =
-				"Cannot locate JRE definition: \"" + vmInstallName + "\". Launch aborted.";
+			String message = PDEPlugin.getFormattedMessage(KEY_NO_JRE, vmInstallName);
 			throw new CoreException(createErrorStatus(message));
 		}
 		IVMRunner runner = launcher.getVMRunner(mode);
@@ -143,7 +148,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Starting Eclipse Workbench...", 2);
+		monitor.beginTask(PDEPlugin.getResourceString(KEY_STARTING), 2);
 		try {
 			File propertiesFile =
 				TargetPlatform.createPropertiesFile(plugins, targetWorkbenchLocation);
@@ -166,8 +171,7 @@ public class WorkbenchLaunchConfigurationDelegate
 
 			String[] classpath = constructClasspath(plugins);
 			if (classpath == null) {
-				String message =
-					"Launching failed.\nPlugin 'org.eclipse.core.boot' is missing or does not contain 'boot.jar'\n(If in workspace, check that boot.jar is on its classpath)";
+				String message = PDEPlugin.getResourceString(KEY_NO_BOOT);
 				throw new CoreException(createErrorStatus(message));
 			}
 
@@ -180,8 +184,7 @@ public class WorkbenchLaunchConfigurationDelegate
 				try {
 					deleteContent(targetWorkbenchLocation.toFile());
 				} catch (IOException e) {
-					String message =
-						"Problems while deleting files in workspace. Launch will continue";
+					String message = PDEPlugin.getResourceString(KEY_PROBLEMS_DELETING);
 					showWarningDialog(message);
 				}
 			}
@@ -251,7 +254,7 @@ public class WorkbenchLaunchConfigurationDelegate
 		Display display = getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				String title = "Eclipse Workbench Launcher";
+				String title = PDEPlugin.getResourceString(KEY_TITLE);
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 			}
 		});
@@ -267,7 +270,7 @@ public class WorkbenchLaunchConfigurationDelegate
 			PDEPlugin.getFileInPlugin(new Path("launcher/slimlauncher.jar"));
 		if (slimLauncher == null || !slimLauncher.exists()) {
 			PDEPlugin.logErrorMessage(
-				"PluginLauncherDelegate: slimlauncher.jar not existing");
+				PDEPlugin.getResourceString(KEY_SLIMLAUNCHER));
 			return null;
 		}
 		IPluginModelBase model = findModel("org.eclipse.core.boot", plugins);
