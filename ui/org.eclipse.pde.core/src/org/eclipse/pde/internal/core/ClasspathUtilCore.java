@@ -499,14 +499,10 @@ public class ClasspathUtilCore {
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
-				String[] exports = libraries[i].getContentFilters();
-				for (int j = 0; j < exports.length; j++) {
-					String export = exports[j];
-					if (!export.startsWith("**."))
-						export = "**." + export;
-					IPath path = new Path(export.replaceAll("\\.", "/"));
-					if (!list.contains(path))
-						list.add(path);
+				IPath[] paths = getInclusionPatterns(libraries[i]);
+				for (int j = 0; j < paths.length; j++) {
+					if (!list.contains(paths[j]))
+						list.add(paths[j]);
 				}
 			}
 		}
@@ -518,7 +514,10 @@ public class ClasspathUtilCore {
 		String[] exports = library.getContentFilters();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < exports.length; i++) {
-			list.add(new Path(exports[i].replaceAll("\\.", "/"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String export = exports[i].replaceAll("\\.", "/");
+			if (!export.endsWith("/*"))
+				export = export + "/*";
+			list.add(new Path(export)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return (IPath[])list.toArray(new IPath[list.size()]);
 	}

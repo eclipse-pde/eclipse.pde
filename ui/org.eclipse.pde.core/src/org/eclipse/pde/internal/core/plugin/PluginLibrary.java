@@ -48,7 +48,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		}
 		if (!isExported())
 			return new String[0];
-		return isFullyExported() ? new String[] {"*"} : fContentFilters;
+		return isFullyExported() ? new String[] {"**"} : fContentFilters;
 	}
 	
 	/* (non-Javadoc)
@@ -83,6 +83,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	
 	public void load(String name) {
 		this.name = name;
+		fExported = true;
 	}
 	
 	void load(Node node, Hashtable lineTable) {
