@@ -9,8 +9,8 @@ import org.eclipse.pde.internal.ui.model.*;
  *
  */
 public class ManifestHeader extends BundleObject implements IDocumentKey {
-	private int fOffset;
-	private int fLength;
+	private int fOffset = -1;
+	private int fLength = -1;
 	private String fName;
 	private String fValue;
 

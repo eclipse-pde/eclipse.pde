@@ -3,7 +3,6 @@ package org.eclipse.pde.internal.ui.model.bundle;
 import java.util.*;
 import java.util.jar.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.model.*;
 
@@ -48,7 +47,8 @@ public class Bundle implements IBundle {
 				
 				if (currentKey != null) {
 					if (!line.startsWith(" ")) {
-						currentKey.setLength(offset - 1 - currentKey.getOffset());
+						IRegion region = document.getLineInformation(i-1);
+						currentKey.setLength(region.getOffset() + region.getLength() - currentKey.getOffset());
 						currentKey = null;
 					}
 				} 
@@ -58,8 +58,9 @@ public class Bundle implements IBundle {
 					String name = (index != -1) ? line.substring(0, index) : line;
 					currentKey = (IDocumentKey)fDocumentHeaders.get(name);
 					if (currentKey != null) {
-						currentKey.setOffset(offset);
-						currentKey.setLength(offset + document.getLineLength(i) - currentKey.getOffset());
+						IRegion region = document.getLineInformation(i);
+						currentKey.setOffset(region.getOffset());
+						currentKey.setLength(region.getLength());
 					}
 				}
 			}

@@ -68,16 +68,18 @@ public class BundleInputContext extends UTF8InputContext {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
-				ManifestHeader header = (ManifestHeader)object;
-				TextEdit op = (TextEdit)fOperationTable.get(header);
-				if (op != null) {
-					fOperationTable.remove(header);
-					ops.remove(op);
-				}
-				if (header.getValue() == null || header.getValue().trim().length() == 0) {
-						deleteKey(header, ops);						
-				} else {
-					modifyKey(header, ops);
+				if (object instanceof ManifestHeader) {
+					ManifestHeader header = (ManifestHeader)object;
+					TextEdit op = (TextEdit)fOperationTable.get(header);
+					if (op != null) {
+						fOperationTable.remove(header);
+						ops.remove(op);
+					}
+					if (header.getValue() == null || header.getValue().trim().length() == 0) {
+							deleteKey(header, ops);						
+					} else {
+						modifyKey(header, ops);
+					}
 				}
 			}
 		}
@@ -92,7 +94,17 @@ public class BundleInputContext extends UTF8InputContext {
 	
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		InsertEdit op = new InsertEdit(doc.getLength(), key.write() + System.getProperty("line.separator"));
+		int offset = doc.getLength();
+		for (int i = doc.getNumberOfLines() - 1; i >= 0; i--) {
+			try {
+				if (doc.get(doc.getLineOffset(i), doc.getLineLength(i)).trim().length() > 0) {
+					break;
+				}
+				offset = doc.getLineOffset(i);
+			} catch (BadLocationException e) {
+			}
+		}
+		InsertEdit op = new InsertEdit(offset, key.write() + System.getProperty("line.separator"));
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
@@ -109,6 +121,7 @@ public class BundleInputContext extends UTF8InputContext {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
+			//((AbstractEditingModel)getModel()).getDocument().get(key.getOffset(), key.getLength())
 			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
 			fOperationTable.put(key, op);
 			ops.add(op);

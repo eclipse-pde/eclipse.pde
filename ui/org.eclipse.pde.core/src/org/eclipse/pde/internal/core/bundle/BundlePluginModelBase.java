@@ -140,7 +140,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	public void fireModelChanged(IModelChangedEvent event) {
 		super.fireModelChanged(event);
 		Object[] objects = event.getChangedObjects();
-		if (objects.length > 0) {
+		if (objects!= null && objects.length > 0) {
 			if (objects[0] instanceof IPluginImport) {
 				((BundlePluginBase)fBundlePluginBase).updateImports();				
 			} else if (objects[0] instanceof IPluginLibrary) {
