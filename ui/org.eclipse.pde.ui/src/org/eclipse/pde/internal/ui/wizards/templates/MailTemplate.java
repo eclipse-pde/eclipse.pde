@@ -155,9 +155,9 @@ public class MailTemplate extends PDETemplateSection {
 		view.setName("view"); //$NON-NLS-1$
 		view.setAttribute("allowMultiple", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("icon", "icons/sample3.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".NonCloseableView" ); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".NavigationView" ); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("name", "Mailboxes"); //$NON-NLS-1$ //$NON-NLS-2$
-		view.setAttribute("id", id + ".noncloseableView"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("id", id + ".navigationView"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
 		
 		if (!extension.isInTheModel())
