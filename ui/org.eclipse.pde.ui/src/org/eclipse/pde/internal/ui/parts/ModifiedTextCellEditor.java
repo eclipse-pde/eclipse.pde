@@ -13,6 +13,12 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 		super(parent);
 		setValueValid(true);
 	}
+	
+	protected void doSetValue(Object object) {
+		// Workaround for 32926
+		if (object==null) object = "";
+		super.doSetValue(object);
+	}
 	public Control createControl(Composite parent) {
 		Text text = (Text) super.createControl(parent);
 

@@ -50,7 +50,6 @@ public class FeatureEntryPropertySource extends FeaturePropertySource {
 			createTextPropertyDescriptor(
 				P_DOWNLOAD_SIZE,
 				PDEPlugin.getResourceString(KEY_DOWNLOAD_SIZE));
-		//desc.setLabelProvider(new VersionProvider());
 		descriptors.addElement(desc);
 
 		desc = createChoicePropertyDescriptor(P_OS, P_OS, getOSChoices());
