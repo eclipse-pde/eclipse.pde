@@ -190,10 +190,15 @@ public abstract class BaseBuildAction
 			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, store.getBoolean(PROP_JAVAC_DEBUG_INFO) ? "on" : "off"); //$NON-NLS-1$ //$NON-NLS-2$ 
 			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, store.getString(PROP_JAVAC_VERBOSE));
 			
-			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
-			properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
-			properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
-
+			if (!project.hasNature(JavaCore.NATURE_ID)) {
+				Preferences pref = JavaCore.getPlugin().getPluginPreferences();
+				properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 
+				properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM)); 
+			} else {
+				IJavaProject jProject = JavaCore.create(project);
+				properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, jProject.getOption(JavaCore.COMPILER_SOURCE, true)); 
+				properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, jProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true)); 				
+			}
 			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, getBootClasspath()); 
 			
 			launchCopy.setAttribute(
