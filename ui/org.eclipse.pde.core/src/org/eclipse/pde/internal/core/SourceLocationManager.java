@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginBase;
 
 /**
@@ -15,6 +17,25 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 public class SourceLocationManager implements ICoreConstants {
 	private ArrayList userLocations = null;
 	private ArrayList extensionLocations = null;
+	private ArrayList orphanedExtensionLocations = null;
+
+	class VariableTask {
+		public VariableTask(String name, IPath path) {
+			this.name = name;
+			this.path = path;
+		}
+		String name; // name of the variable to set
+		IPath path; // path for the path to set or null deleted
+	}
+	
+	class SearchResult {
+		SearchResult(SourceLocation loc, File file) {
+			this.loc = loc;
+			this.file = file;
+		}
+		SourceLocation loc;
+		File file;
+	}
 
 	public ArrayList getUserLocationArray() {
 		initializeUserLocations();
@@ -36,51 +57,59 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
-		initialize();
-		String pluginDir = pluginBase.getId()+"_"+pluginBase.getVersion();
-		IPath locationRelativePath = new Path(pluginDir);
-		locationRelativePath = locationRelativePath.append(sourcePath);
-		File file = findSourceFile(extensionLocations, locationRelativePath);
-		if (file != null)
-			return file;
-		file = findSourceFile(userLocations, sourcePath);
-		return file;
+		IPath relativePath = getRelativePath(pluginBase, sourcePath);
+		SearchResult result = findSourceLocation(pluginBase, relativePath);
+		if (result!=null)
+			return result.file;
+		else
+			return null;
 	}
 	
-	private File findSourceFile(ArrayList list, IPath sourcePath) {
+	public IPath findVariableRelativePath(IPluginBase pluginBase, IPath sourcePath) {
+		IPath relativePath = getRelativePath(pluginBase, sourcePath);
+		SearchResult result = findSourceLocation(pluginBase, relativePath);
+		if (result!=null) {
+			Path path = new Path(result.loc.getName());
+			return path.append(relativePath);
+		}
+		else
+			return null;
+	}
+	
+	private IPath getRelativePath(IPluginBase pluginBase, IPath sourcePath) {
+		String pluginDir = pluginBase.getId() + "_" + pluginBase.getVersion();
+		IPath locationRelativePath = new Path(pluginDir);
+		return locationRelativePath.append(sourcePath);
+	}
+	
+	public SearchResult findSourceLocation(IPluginBase pluginBase, IPath relativePath) {
+		initialize();
+		SearchResult result = findSourceFile(extensionLocations, relativePath);
+		if (result != null)
+			return result;
+		return findSourceFile(userLocations, relativePath);
+	}
+
+	private SearchResult findSourceFile(ArrayList list, IPath sourcePath) {
 		for (int i = 0; i < list.size(); i++) {
 			SourceLocation location = (SourceLocation) list.get(i);
 			if (location.isEnabled() == false)
 				continue;
-			File file = findSourcePath(location, sourcePath);
-			if (file != null)
-				return file;
+			SearchResult result = findSourcePath(location, sourcePath);
+			if (result != null)
+				return result;
 		}
 		return null;
 	}
 
-	private File findSourcePath(SourceLocation location, IPath sourcePath) {
+	private SearchResult findSourcePath(SourceLocation location, IPath sourcePath) {
 		IPath locationPath = location.getPath();
 		IPath fullPath = locationPath.append(sourcePath);
 		File file = fullPath.toFile();
 		if (file.exists())
-			return file;
+			return new SearchResult(location, file);
 		else
 			return null;
-	}
-
-	public SourceLocation[] getAllLocations() {
-		initialize();
-		int size = userLocations.size() + extensionLocations.size();
-		SourceLocation[] array = new SourceLocation[size];
-		for (int i = 0; i < extensionLocations.size(); i++) {
-			array[i] = (SourceLocation) extensionLocations.get(i);
-		}
-		int offset = extensionLocations.size();
-		for (int i = 0; i < userLocations.size(); i++) {
-			array[i + offset] = (SourceLocation) userLocations.get(i);
-		}
-		return array;
 	}
 
 	private void initialize() {
@@ -96,75 +125,92 @@ public class SourceLocationManager implements ICoreConstants {
 		String pref = settings.getString(P_SOURCE_LOCATIONS);
 		if (pref == null)
 			return;
-		String[] entries = parseSourceLocations(pref);
-		for (int i = 0; i < entries.length; i++) {
-			String entry = entries[i];
-			boolean enabled = true;
-			String name = "?";
-			int atLoc = entry.indexOf('@');
-			if (atLoc!= -1) {
-				name = entry.substring(0, atLoc);
-			}
-			else atLoc = 0;
-			int commaLoc = entry.lastIndexOf(',');
-			if (commaLoc != -1) {
-				enabled = entry.substring(commaLoc + 1).equals("t");
-				entry = entry.substring(atLoc+1, commaLoc);
-			}
-			userLocations.add(new SourceLocation(name, new Path(entry), enabled));
-		}
+		parseSavedSourceLocations(pref, userLocations);
 	}
 
 	public void setUserLocations(ArrayList locations) {
+		SourceLocation [] oldLocations = getUserLocations();
 		userLocations = locations;
+		if (oldLocations.length>0)
+			computeOrphanedLocations(oldLocations);
 		storeSourceLocations();
-	}
-
-	private String[] parseSourceLocations(String text) {
-		ArrayList entries = new ArrayList();
-		if (text != null) {
-			StringTokenizer stok =
-				new StringTokenizer(text, File.pathSeparator);
-			while (stok.hasMoreTokens()) {
-				String token = stok.nextToken();
-				entries.add(token);
-			}
-		}
-		return (String[]) entries.toArray(new String[entries.size()]);
 	}
 
 	public void storeSourceLocations() {
 		CoreSettings settings = PDECore.getDefault().getSettings();
+
 		if (extensionLocations != null) {
-			StringBuffer buf = new StringBuffer();
-			for (int i = 0; i < extensionLocations.size(); i++) {
-				SourceLocation loc = (SourceLocation) extensionLocations.get(i);
-				if (i > 0)
-					buf.append(File.pathSeparatorChar);
-				if (!loc.isEnabled())
-					buf.append(loc.getPath().toOSString());
-			}
-			settings.setValue(P_EXT_LOCATIONS, buf.toString());
+			String value = encodeSourceLocations(extensionLocations);
+			settings.setValue(P_EXT_LOCATIONS, value);
 		}
 		if (userLocations == null)
 			return;
+		String value = encodeSourceLocations(userLocations);
+		settings.setValue(P_SOURCE_LOCATIONS, value);
+		settings.store();
+		initializeClasspathVariables(null);
+	}
+	
+	public void initializeClasspathVariables(IProgressMonitor monitor) {
+		initialize();
+		String[] variableNames = JavaCore.getClasspathVariableNames();
+		ArrayList tasks = new ArrayList();
+		addOrphanedLocations(variableNames, tasks);
+		addNewOrChangedLocations(variableNames, tasks);
+		if (tasks.size() == 0)
+			return;
+		String[] names = new String[tasks.size()];
+		IPath[] paths = new IPath[tasks.size()];
+		for (int i = 0; i < tasks.size(); i++) {
+			VariableTask task = (VariableTask) tasks.get(i);
+			names[i] = task.name;
+			paths[i] = task.path;
+		}
+		try {
+			JavaCore.setClasspathVariables(names, paths, monitor);
+			orphanedExtensionLocations = null;
+		} catch (JavaModelException e) {
+			PDECore.log(e);
+		}
+	}
+
+	private String encodeSourceLocations(ArrayList locations) {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < userLocations.size(); i++) {
+		for (int i = 0; i < locations.size(); i++) {
+			SourceLocation loc = (SourceLocation) locations.get(i);
 			if (i > 0)
 				buf.append(File.pathSeparatorChar);
-			SourceLocation location = (SourceLocation) userLocations.get(i);
-			String name = location.getName();
-			buf.append(name+"@");
-			IPath path = location.getPath();
-			buf.append(path.toOSString());
-			if (location.isEnabled())
-				buf.append(",t");
-			else
-				buf.append(",f");
+			buf.append(encodeSourceLocation(loc));
 		}
-		settings.setValue(P_SOURCE_LOCATIONS, buf.toString());
-		settings.store();
-		
+		return buf.toString();
+	}
+
+	private String encodeSourceLocation(SourceLocation location) {
+		return location.getName()
+			+ "@"
+			+ location.getPath().toOSString()
+			+ ","
+			+ (location.isEnabled() ? "t" : "f");
+	}
+
+	private SourceLocation parseSourceLocation(String text) {
+		String name = "";
+		String path = "";
+		boolean enabled = true;
+		int atLoc = text.indexOf('@');
+		if (atLoc != -1)
+			name = text.substring(0, atLoc);
+		else
+			atLoc = 0;
+		int commaLoc = text.lastIndexOf(',');
+		if (commaLoc != -1) {
+			String state = text.substring(commaLoc + 1);
+			if (state.equals("f"))
+				enabled = false;
+			path = text.substring(atLoc + 1, commaLoc);
+		} else
+			path = text.substring(atLoc + 1);
+		return new SourceLocation(name, new Path(path), enabled);
 	}
 
 	private void initializeExtensionLocations() {
@@ -173,29 +219,112 @@ public class SourceLocationManager implements ICoreConstants {
 		extensionLocations = new ArrayList();
 		CoreSettings settings = PDECore.getDefault().getSettings();
 		String pref = settings.getString(P_EXT_LOCATIONS);
-		String[] entries = parseSourceLocations(pref);
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements =
 			registry.getConfigurationElementsFor(
 				PDECore.getPluginId(),
 				"source");
-		String[] disabledLocations = parseSourceLocations(pref);
+		SourceLocation[] storedLocations = getSavedSourceLocations(pref);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase("location")) {
 				SourceLocation location = new SourceLocation(element);
-				if (isOnTheList(location, disabledLocations))
-					location.setEnabled(false);
+				location.setEnabled(getSavedState(location.getName(), storedLocations));
 				extensionLocations.add(location);
 			}
 		}
+		computeOrphanedLocations(storedLocations);
 	}
-	private boolean isOnTheList(SourceLocation loc, String[] list) {
-		String pathName = loc.getPath().toOSString();
+
+
+
+	private void addOrphanedLocations(String[] variables, ArrayList tasks) {
+		if (orphanedExtensionLocations == null)
+			return;
+		for (int i = 0; i < orphanedExtensionLocations.size(); i++) {
+			SourceLocation orphanedLocation =
+				(SourceLocation) orphanedExtensionLocations.get(i);
+			if (isOnTheList(orphanedLocation.getName(), variables)) {
+				tasks.add(new VariableTask(orphanedLocation.getName(), null));
+			}
+		}
+	}
+
+	private void addNewOrChangedLocations(
+		String[] variables,
+		ArrayList tasks) {
+		addNewOrChangedLocations(variables, extensionLocations, tasks);
+		addNewOrChangedLocations(variables, userLocations, tasks);
+	}
+
+	private void addNewOrChangedLocations(
+		String[] variables,
+		ArrayList locations,
+		ArrayList tasks) {
+		for (int i = 0; i < locations.size(); i++) {
+			SourceLocation location = (SourceLocation) locations.get(i);
+			IPath varPath = JavaCore.getClasspathVariable(location.getName());
+			IPath locPath = location.getPath();
+			if (varPath == null || !varPath.equals(locPath)) {
+				tasks.add(
+					new VariableTask(location.getName(), location.getPath()));
+			}
+		}
+	}
+
+	private boolean isOnTheList(String name, String[] list) {
 		for (int i = 0; i < list.length; i++) {
-			if (pathName.equals(list[i]))
+			if (name.equals(list[i]))
 				return true;
 		}
 		return false;
+	}
+
+	private boolean getSavedState(String name, SourceLocation[] list) {
+		for (int i = 0; i < list.length; i++) {
+			SourceLocation saved = list[i];
+			if (name.equals(saved.getName()))
+				return saved.isEnabled();
+		}
+		return true;
+	}
+
+	private void parseSavedSourceLocations(String text, ArrayList entries) {
+		StringTokenizer stok = new StringTokenizer(text, File.pathSeparator);
+		while (stok.hasMoreTokens()) {
+			String token = stok.nextToken();
+			SourceLocation location = parseSourceLocation(token);
+			entries.add(location);
+		}
+	}
+
+	private SourceLocation[] getSavedSourceLocations(String text) {
+		if (text == null)
+			return new SourceLocation[0];
+		ArrayList entries = new ArrayList();
+		parseSavedSourceLocations(text, entries);
+		return (SourceLocation[]) entries.toArray(
+			new SourceLocation[entries.size()]);
+	}
+
+	private void computeOrphanedLocations(SourceLocation[] storedLocations) {
+		if (orphanedExtensionLocations != null)
+			orphanedExtensionLocations.clear();
+		for (int i = 0; i < storedLocations.length; i++) {
+			SourceLocation storedLoc = storedLocations[i];
+			boolean found = false;
+			for (int j = 0; j < extensionLocations.size(); j++) {
+				SourceLocation loc = (SourceLocation) extensionLocations.get(j);
+				if (storedLoc.getName().equals(loc.getName())) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				if (orphanedExtensionLocations == null)
+					orphanedExtensionLocations = new ArrayList();
+				orphanedExtensionLocations.add(storedLoc);
+			}
+		}
 	}
 }

@@ -36,7 +36,7 @@ public class SourceLocation {
 		if (providedName!=null) return providedName;
 		String computedName = config.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 		computedName = computedName.replace('.', '_');
-		return computedName.toUpperCase();
+		return "_"+computedName.toUpperCase();
 	}
 	
 	public String getName() {

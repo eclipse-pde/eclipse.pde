@@ -23,16 +23,6 @@ public class PDECore extends Plugin {
 	public static final String EXTERNAL_PROJECT_VALUE = "external";
 	public static final String BINARY_PROJECT_VALUE = "binary";
 
-	private static boolean inVAJ;
-	static {
-		try {
-			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
-			inVAJ = true;
-		} catch (Exception e) {
-			inVAJ = false;
-		}
-	}
-
 	// Shared instance
 	private static PDECore inst;
 	// Resource bundle
@@ -45,6 +35,7 @@ public class PDECore extends Plugin {
 	private SchemaRegistry schemaRegistry;
 	private WorkspaceModelManager workspaceModelManager;
 	private PluginModelManager modelManager;
+	private SourceLocationManager sourceLocationManager;
 	private CoreSettings settings;
 
 	public PDECore(IPluginDescriptor descriptor) {
@@ -52,7 +43,8 @@ public class PDECore extends Plugin {
 		inst = this;
 		try {
 			resourceBundle =
-				ResourceBundle.getBundle("org.eclipse.pde.internal.core.pderesources");
+				ResourceBundle.getBundle(
+					"org.eclipse.pde.internal.core.pderesources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -123,12 +115,11 @@ public class PDECore extends Plugin {
 			return false;
 		PluginVersionIdentifier pid1 = null;
 		PluginVersionIdentifier pid2 = null;
-		
+
 		try {
 			pid1 = new PluginVersionIdentifier(version1);
 			pid2 = new PluginVersionIdentifier(version2);
-		}
-		catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			// something is wrong with either - try direct comparison
 			return version2.equals(version1);
 		}
@@ -230,6 +221,11 @@ public class PDECore extends Plugin {
 	public PluginModelManager getModelManager() {
 		return modelManager;
 	}
+	public SourceLocationManager getSourceLocationManager() {
+		if (sourceLocationManager == null)
+			sourceLocationManager = new SourceLocationManager();
+		return sourceLocationManager;
+	}
 	private void initializePlatformPath() {
 		ExternalModelManager.initializePlatformPath();
 	}
@@ -238,7 +234,13 @@ public class PDECore extends Plugin {
 	}
 
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
+		log(
+			new Status(
+				IStatus.ERROR,
+				getPluginId(),
+				IStatus.ERROR,
+				message,
+				null));
 	}
 
 	public static void logException(
@@ -256,7 +258,13 @@ public class PDECore extends Plugin {
 				message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+			status =
+				new Status(
+					IStatus.ERROR,
+					getPluginId(),
+					IStatus.OK,
+					message,
+					e);
 		}
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -273,7 +281,12 @@ public class PDECore extends Plugin {
 			status = ((CoreException) e).getStatus();
 		else
 			status =
-				new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+				new Status(
+					IStatus.ERROR,
+					getPluginId(),
+					IStatus.OK,
+					e.getMessage(),
+					e);
 		log(status);
 	}
 
@@ -283,14 +296,12 @@ public class PDECore extends Plugin {
 		workspaceModelManager = new WorkspaceModelManager();
 		externalModelManager = new ExternalModelManager();
 
-		if (inVAJ == false)
-			initializePlatformPath();
+		initializePlatformPath();
 
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-					//This causes PDE to bomb - problem in Debug UI
-		//JavaRuntime.initializeJREVariables(monitor);
-	getExternalModelManager().getEclipseHome(monitor);
+				getExternalModelManager().getEclipseHome(monitor);
+				getSourceLocationManager().initializeClasspathVariables(monitor);
 			}
 		};
 		try {
