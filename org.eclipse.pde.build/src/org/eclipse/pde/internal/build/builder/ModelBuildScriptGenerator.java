@@ -725,7 +725,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
 		for (int i = 0; i < sources.length; i++)
-			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java", null, null); //$NON-NLS-1$
+			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java, **/package.htm*", null, null); //$NON-NLS-1$
 		script.printCopyTask(null, destdir, fileSets, true);
 
 		String jarLocation = getJARLocation(entry.getName(true));
