@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
 import java.util.*;
@@ -17,22 +15,20 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.plugin.*;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	public static final String BUILDERS_VERIFYING = "Builders.verifying";
-	public static final String BUILDERS_FRAGMENT_BROKEN_LINK =
-		"Builders.Fragment.brokenLink";
+	public static final String BUILDERS_FRAGMENT_BROKEN_LINK = "Builders.Fragment.brokenLink";
 	public static final String BUILDERS_UPDATING = "Builders.updating";
-	public static final String BUILDERS_VERSION_FORMAT =
-		"Builders.versionFormat";
+	public static final String BUILDERS_VERSION_FORMAT = "Builders.versionFormat";
 
 	private boolean javaDelta = false;
 	private boolean fileCompiled = false;
-	private boolean ignoreJavaChanges=false;
+	private boolean ignoreJavaChanges = false;
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
@@ -51,7 +47,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				// see if this is it
 				IFile candidate = (IFile) resource;
 				if (isManifestFile(candidate)) {
-					// That's it, but only check it if it has been added or changed
+					// That's it, but only check it if it has been added or
+					// changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {
 						checkFile(candidate, monitor);
 						return false;
@@ -98,12 +95,13 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		super();
 	}
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 
 		IProject project = getProject();
 		fileCompiled = false;
 		javaDelta = false;
-		ignoreJavaChanges = CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS)==CompilerFlags.IGNORE;
+		ignoreJavaChanges = CompilerFlags
+				.getFlag(CompilerFlags.P_UNKNOWN_CLASS) == CompilerFlags.IGNORE;
 
 		// Ignore binary plug-in projects
 		if (WorkspaceModelManager.isBinaryPluginProject(project))
@@ -121,22 +119,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject[] interestingProjects = null;
 
 		// Compute interesting projects
-		WorkspaceModelManager wmanager =
-			PDECore.getDefault().getWorkspaceModelManager();
+		WorkspaceModelManager wmanager = PDECore.getDefault()
+				.getWorkspaceModelManager();
 		IModel thisModel = wmanager.getWorkspaceModel(project);
 		if (thisModel != null && thisModel instanceof IPluginModelBase)
-			interestingProjects =
-				computeInterestingProjects((IPluginModelBase) thisModel);
+			interestingProjects = computeInterestingProjects((IPluginModelBase) thisModel);
 		// If not compiled already, see if there are interesting
 		// changes in referenced projects that may cause us
 		// to compile
-		if (!fileCompiled
-			&& kind != FULL_BUILD
-			&& interestingProjects != null) {
-			checkInterestingProjectDeltas(
-				project,
-				interestingProjects,
-				monitor);
+		if (!fileCompiled && kind != FULL_BUILD && interestingProjects != null) {
+			checkInterestingProjectDeltas(project, interestingProjects, monitor);
 		}
 		return interestingProjects;
 	}
@@ -159,11 +151,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void checkInterestingProjectDeltas(
-		IProject project,
-		IProject[] interestingProjects,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void checkInterestingProjectDeltas(IProject project,
+			IProject[] interestingProjects, IProgressMonitor monitor)
+			throws CoreException {
 		// although we didn't have any changes we care about in this project,
 		// there may be changes in referenced projects that affect us
 		ReferenceDeltaVisitor rvisitor = new ReferenceDeltaVisitor();
@@ -186,7 +176,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void processDelta(IResourceDelta delta, IProgressMonitor monitor)
-		throws CoreException {
+			throws CoreException {
 		javaDelta = false;
 		delta.accept(new DeltaVisitor(monitor));
 		if (javaDelta) {
@@ -203,25 +193,27 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		PluginErrorReporter reporter = new PluginErrorReporter(file);
 		if (WorkspaceModelManager.isBinaryPluginProject(file.getProject()))
 			return;
-		String message =
-			PDE.getFormattedMessage(
-				BUILDERS_VERIFYING,
-				file.getFullPath().toString());
+		String message = PDE.getFormattedMessage(BUILDERS_VERIFYING, file
+				.getFullPath().toString());
 		monitor.subTask(message);
 
 		ValidatingSAXParser.parse(file, reporter);
+
+		IFile bundleManifest = file.getProject()
+				.getFile("META-INF/MANIFEST.MF");
+		boolean bundle = bundleManifest.exists();
 
 		if (reporter.getErrorCount() == 0) {
 			if (isFragment(file)) {
 				validateFragment(file, reporter);
 			} else {
-				validatePlugin(file, reporter);
+				validatePlugin(file, reporter, bundle);
 			}
 		}
 		monitor.subTask(PDE.getResourceString(BUILDERS_UPDATING));
 		monitor.done();
 		fileCompiled = true;
-	}	
+	}
 
 	private boolean isFragment(IFile file) {
 		String name = file.getName().toLowerCase();
@@ -243,17 +235,20 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		super.startupOnInitialize();
 	}
 
-	private void validatePlugin(IFile file, PluginErrorReporter reporter) {
+	private void validatePlugin(IFile file, PluginErrorReporter reporter,
+			boolean bundle) {
 		WorkspacePluginModel model = new WorkspacePluginModel(file);
 		model.load();
 
 		if (model.isLoaded()) {
 			// Test the version
 			IPlugin plugin = model.getPlugin();
-			validateRequiredAttributes(plugin, reporter);
+			if (!bundle)
+				validateRequiredAttributes(plugin, reporter);
 			if (reporter.getErrorCount() == 0) {
-				validateVersion(plugin, reporter);
-				validateValues(plugin, reporter);
+				if (!bundle)
+					validateVersion(plugin, reporter);
+				validateValues(plugin, reporter, bundle);
 			}
 		}
 		model.dispose();
@@ -273,24 +268,19 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				String pluginId = fragment.getPluginId();
 				String pluginVersion = fragment.getPluginVersion();
 				int match = fragment.getRule();
-				IPlugin plugin =
-					PDECore.getDefault().findPlugin(
-						pluginId,
-						pluginVersion,
-						match);
+				IPlugin plugin = PDECore.getDefault().findPlugin(pluginId,
+						pluginVersion, match);
 				if (plugin == null) {
 					// broken fragment link
-					String[] args = { pluginId, pluginVersion };
-					String message =
-						PDE.getFormattedMessage(
-							BUILDERS_FRAGMENT_BROKEN_LINK,
-							args);
+					String[] args = {pluginId, pluginVersion};
+					String message = PDE.getFormattedMessage(
+							BUILDERS_FRAGMENT_BROKEN_LINK, args);
 					int line = 1;
 					if (fragment instanceof ISourceObject)
 						line = ((ISourceObject) fragment).getStartLine();
 					reporter.reportError(message, line);
 				}
-				validateValues(fragment, reporter);
+				validateValues(fragment, reporter, false);
 			}
 		}
 		model.dispose();
@@ -300,8 +290,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IPluginBase plugin = model.getPluginBase();
 		if (plugin == null)
 			return null;
-		PluginModelManager modelManager =
-			PDECore.getDefault().getModelManager();
+		PluginModelManager modelManager = PDECore.getDefault()
+				.getModelManager();
 		ArrayList projects = new ArrayList();
 		// Add all projects for imported plug-ins that
 		// are in the workspace
@@ -310,50 +300,40 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			IPluginImport iimport = iimports[i];
 			if (iimport.getId() == null)
 				continue;
-			IPluginModelBase importModel =
-				modelManager.findPlugin(
-					iimport.getId(),
-					iimport.getVersion(),
-					iimport.getMatch());
+			IPluginModelBase importModel = modelManager.findPlugin(iimport
+					.getId(), iimport.getVersion(), iimport.getMatch());
 			addInterestingProject(iimport.getId(), importModel, projects);
 		}
 		// If fragment, also add the referenced plug-in
-		// if in the workspace 
+		// if in the workspace
 		if (model.isFragmentModel()) {
 			IFragment fragment = (IFragment) plugin;
 			if (fragment.getPluginId() != null
-				&& fragment.getPluginVersion() != null) {
-				IPluginModelBase refPlugin =
-					modelManager.findPlugin(
-						fragment.getPluginId(),
-						fragment.getPluginVersion(),
-						fragment.getRule());
-				addInterestingProject(
-					fragment.getPluginId(),
-					refPlugin,
-					projects);
+					&& fragment.getPluginVersion() != null) {
+				IPluginModelBase refPlugin = modelManager.findPlugin(fragment
+						.getPluginId(), fragment.getPluginVersion(), fragment
+						.getRule());
+				addInterestingProject(fragment.getPluginId(), refPlugin,
+						projects);
 			}
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
 
-	private void addInterestingProject(
-		String id,
-		IPluginModelBase model,
-		ArrayList list) {
+	private void addInterestingProject(String id, IPluginModelBase model,
+			ArrayList list) {
 		if (model != null && model.isEnabled()) {
 			if (model.getUnderlyingResource() != null)
 				list.add(model.getUnderlyingResource().getProject());
 		} else {
-			IProject missingProject =
-				PDECore.getWorkspace().getRoot().getProject(id);
+			IProject missingProject = PDECore.getWorkspace().getRoot()
+					.getProject(id);
 			list.add(missingProject);
 		}
 	}
 
-	private void validateVersion(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+	private void validateVersion(IPluginBase pluginBase,
+			PluginErrorReporter reporter) {
 		String version = pluginBase.getVersion();
 		if (version == null)
 			version = "";
@@ -361,8 +341,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
 			pvi.toString();
 		} catch (Throwable e) {
-			String message =
-				PDE.getFormattedMessage(BUILDERS_VERSION_FORMAT, version);
+			String message = PDE.getFormattedMessage(BUILDERS_VERSION_FORMAT,
+					version);
 			int line = 1;
 			if (pluginBase instanceof ISourceObject)
 				line = ((ISourceObject) pluginBase).getStartLine();
@@ -370,181 +350,118 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateValues(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+	private void validateValues(IPluginBase pluginBase,
+			PluginErrorReporter reporter, boolean bundle) {
 
 		if (!CompilerFlags.isGroupActive(CompilerFlags.PLUGIN_FLAGS))
 			return;
 
-		// Validate requires
-		validateRequires(
-			pluginBase,
-			reporter,
-			CompilerFlags.getFlag(CompilerFlags.P_UNRESOLVED_IMPORTS));
+		if (!bundle)
+			// Validate requires
+			validateRequires(pluginBase, reporter, CompilerFlags
+					.getFlag(CompilerFlags.P_UNRESOLVED_IMPORTS));
 		// Validate extensions
 		validateExtensions(pluginBase, reporter);
 		// Validate extension points
 		validateExtensionPoints(pluginBase, reporter);
 	}
 
-	private void validateRequiredAttributes(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+	private void validateRequiredAttributes(IPluginBase pluginBase,
+			PluginErrorReporter reporter) {
 		// validate name, id, version
 		String rootName = "plugin";
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
 			rootName = "fragment";
-			assertNotNull(
-				"plugin-id",
-				rootName,
-				getLine(fragment),
-				fragment.getPluginId(),
-				reporter);
-			assertNotNull(
-				"plugin-version",
-				rootName,
-				getLine(fragment),
-				fragment.getPluginVersion(),
-				reporter);
+			assertNotNull("plugin-id", rootName, getLine(fragment), fragment
+					.getPluginId(), reporter);
+			assertNotNull("plugin-version", rootName, getLine(fragment),
+					fragment.getPluginVersion(), reporter);
 		}
 
-		assertNotNull(
-			"name",
-			rootName,
-			getLine(pluginBase),
-			pluginBase.getName(),
-			reporter);
-		assertNotNull(
-			"id",
-			rootName,
-			getLine(pluginBase),
-			pluginBase.getId(),
-			reporter);
-		assertNotNull(
-			"version",
-			rootName,
-			getLine(pluginBase),
-			pluginBase.getVersion(),
-			reporter);
+		assertNotNull("name", rootName, getLine(pluginBase), pluginBase
+				.getName(), reporter);
+		assertNotNull("id", rootName, getLine(pluginBase), pluginBase.getId(),
+				reporter);
+		assertNotNull("version", rootName, getLine(pluginBase), pluginBase
+				.getVersion(), reporter);
 
 		// validate libraries
 		IPluginLibrary[] libraries = pluginBase.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IPluginLibrary library = libraries[i];
-			assertNotNull(
-				"name",
-				"library",
-				getLine(library),
-				library.getName(),
-				reporter);
+			assertNotNull("name", "library", getLine(library), library
+					.getName(), reporter);
 		}
 		// validate imports
 		IPluginImport[] iimports = pluginBase.getImports();
 		for (int i = 0; i < iimports.length; i++) {
 			IPluginImport iimport = iimports[i];
-			assertNotNull(
-				"plugin",
-				"import",
-				getLine(iimport),
-				iimport.getId(),
-				reporter);
+			assertNotNull("plugin", "import", getLine(iimport),
+					iimport.getId(), reporter);
 		}
 		// validate extensions
 		IPluginExtension[] extensions = pluginBase.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
-			assertNotNull(
-				"point",
-				"extension",
-				getLine(extension),
-				extension.getPoint(),
-				reporter);
+			assertNotNull("point", "extension", getLine(extension), extension
+					.getPoint(), reporter);
 		}
 		// validate extension points
 		IPluginExtensionPoint[] expoints = pluginBase.getExtensionPoints();
 		for (int i = 0; i < expoints.length; i++) {
 			IPluginExtensionPoint expoint = expoints[i];
-			assertNotNull(
-				"id",
-				"extension-point",
-				getLine(expoint),
-				expoint.getId(),
-				reporter);
-			assertNotNull(
-					"name",
-					"extension-point",
-					getLine(expoint),
-					expoint.getName(),
-					reporter);
+			assertNotNull("id", "extension-point", getLine(expoint), expoint
+					.getId(), reporter);
+			assertNotNull("name", "extension-point", getLine(expoint), expoint
+					.getName(), reporter);
 		}
 	}
 
-	private static void assertNotNull(
-		String att,
-		String el,
-		int line,
-		String value,
-		PluginErrorReporter reporter) {
+	private static void assertNotNull(String att, String el, int line,
+			String value, PluginErrorReporter reporter) {
 		if (value == null) {
-			String message =
-				PDE.getFormattedMessage(
-					"Builders.manifest.missingRequired",
-					new String[] { att, el });
+			String message = PDE.getFormattedMessage(
+					"Builders.manifest.missingRequired", new String[]{att, el});
 			reporter.reportError(message, line);
 		}
 	}
 
-	private void validateRequires(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter,
-		int flag) {
+	private void validateRequires(IPluginBase pluginBase,
+			PluginErrorReporter reporter, int flag) {
 		// Try to find the plug-ins
 		if (flag == CompilerFlags.IGNORE)
 			return;
 		IPluginImport[] imports = pluginBase.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			IPluginImport iimport = imports[i];
-			if (!imports[i].isOptional() && PDECore
-				.getDefault()
-				.findPlugin(
-					iimport.getId(),
-					iimport.getVersion(),
-					iimport.getMatch())
-				== null) {
-				reporter.report(
-					PDE.getFormattedMessage(
-						"Builders.Manifest.dependency",
-						iimport.getId()),
-					getLine(iimport),
-					flag);
+			if (!imports[i].isOptional()
+					&& PDECore.getDefault().findPlugin(iimport.getId(),
+							iimport.getVersion(), iimport.getMatch()) == null) {
+				reporter.report(PDE.getFormattedMessage(
+						"Builders.Manifest.dependency", iimport.getId()),
+						getLine(iimport), flag);
 			}
 		}
 	}
 
-	private void validateExtensions(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+	private void validateExtensions(IPluginBase pluginBase,
+			PluginErrorReporter reporter) {
 		IPluginExtension[] extensions = pluginBase.getExtensions();
 		SchemaMarkerFactory factory = new SchemaMarkerFactory();
 
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
-			IPluginExtensionPoint point =
-				PDECore.getDefault().findExtensionPoint(extension.getPoint());
+			IPluginExtensionPoint point = PDECore.getDefault()
+					.findExtensionPoint(extension.getPoint());
 			if (point == null) {
-				reporter.report(
-					PDE.getFormattedMessage(
-						"Builders.Manifest.ex-point",
-						extension.getPoint()),
-					getLine(extension),
-					CompilerFlags.getFlag(
-						CompilerFlags.P_UNRESOLVED_EX_POINTS));
+				reporter.report(PDE.getFormattedMessage(
+						"Builders.Manifest.ex-point", extension.getPoint()),
+						getLine(extension), CompilerFlags
+								.getFlag(CompilerFlags.P_UNRESOLVED_EX_POINTS));
 			} else {
-				ISchema schema =
-					PDECore.getDefault().getSchemaRegistry().getSchema(
-						extension.getPoint());
+				ISchema schema = PDECore.getDefault().getSchemaRegistry()
+						.getSchema(extension.getPoint());
 				if (schema != null) {
 					factory.setPoint(extension.getPoint());
 					reporter.setMarkerFactory(factory);
@@ -555,10 +472,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateExtensionContent(
-		IPluginExtension extension,
-		ISchema schema,
-		PluginErrorReporter reporter) {
+	private void validateExtensionContent(IPluginExtension extension,
+			ISchema schema, PluginErrorReporter reporter) {
 
 		IPluginObject[] elements = extension.getChildren();
 		for (int i = 0; i < elements.length; i++) {
@@ -567,17 +482,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateContentModel(
-		IPluginParent parent,
-		ISchemaElement elementInfo,
-		PluginErrorReporter reporter) {
+	private void validateContentModel(IPluginParent parent,
+			ISchemaElement elementInfo, PluginErrorReporter reporter) {
 		IPluginObject[] children = parent.getChildren();
 		ISchemaType type = elementInfo.getType();
 
-		// Compare the content model defined in the 'type' 
+		// Compare the content model defined in the 'type'
 		// to the actual content of this parent.
 		// Errors should be:
-		//   - Elements that should not appear according to the content model 
+		//   - Elements that should not appear according to the content model
 		//   - Elements that appear too few or too many times
 		//   - No elements when the type requires some
 		//   - Elements in the wrong order
@@ -589,12 +502,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			String name = child.getName();
 			if (!allowedElements.contains(name)) {
 				// Invalid
-				reporter.report(
-					PDE.getFormattedMessage(
-						"Builders.Manifest.child",
-						new String[] { child.getName(), parent.getName()}),
-					getLine(child),
-					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
+				reporter.report(PDE.getFormattedMessage(
+						"Builders.Manifest.child", new String[]{
+								child.getName(), parent.getName()}),
+						getLine(child), CompilerFlags
+								.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
 			}
 		}
 	}
@@ -605,7 +517,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			ISchemaCompositor compositor = complexType.getCompositor();
 			if (compositor != null)
 				computeAllowedElements(compositor, elementSet);
-			
+
 			ISchemaAttribute[] attrs = complexType.getAttributes();
 			for (int i = 0; i < attrs.length; i++) {
 				if (attrs[i].getKind() == ISchemaAttribute.JAVA)
@@ -614,16 +526,15 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void computeAllowedElements(
-		ISchemaCompositor compositor,
-		HashSet elementSet) {
+	private void computeAllowedElements(ISchemaCompositor compositor,
+			HashSet elementSet) {
 		ISchemaObject[] children = compositor.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			ISchemaObject child = children[i];
 			if (child instanceof ISchemaObjectReference) {
 				ISchemaObjectReference ref = (ISchemaObjectReference) child;
-				ISchemaElement refElement =
-					(ISchemaElement) ref.getReferencedObject();
+				ISchemaElement refElement = (ISchemaElement) ref
+						.getReferencedObject();
 				if (refElement != null)
 					elementSet.add(refElement.getName());
 			} else if (child instanceof ISchemaCompositor) {
@@ -632,17 +543,17 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateElement(
-		IPluginElement element,
-		ISchema schema,
-		PluginErrorReporter reporter) {
+	private void validateElement(IPluginElement element, ISchema schema,
+			PluginErrorReporter reporter) {
 		ISchemaElement schemaElement = schema.findElement(element.getName());
 		boolean valid = schemaElement != null;
 		boolean executableElement = false;
-		ISchemaElement parentSchema = schema.findElement(element.getParent().getName());
+		ISchemaElement parentSchema = schema.findElement(element.getParent()
+				.getName());
 		if (schemaElement == null) {
 			if (parentSchema != null) {
-				ISchemaAttribute attr = parentSchema.getAttribute(element.getName());
+				ISchemaAttribute attr = parentSchema.getAttribute(element
+						.getName());
 				if (attr != null && attr.getKind() == ISchemaAttribute.JAVA) {
 					valid = true;
 					executableElement = true;
@@ -650,15 +561,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			}
 		}
 		if (!valid) {
-			reporter.report(
-				PDE.getFormattedMessage(
-					"Builders.Manifest.element",
-					element.getName()),
-				getLine(element),
-				CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
+			reporter.report(PDE.getFormattedMessage(
+					"Builders.Manifest.element", element.getName()),
+					getLine(element), CompilerFlags
+							.getFlag(CompilerFlags.P_UNKNOWN_ELEMENT));
 		} else {
 			if (executableElement) {
-				validateJava(element.getAttribute("class"), parentSchema.getAttribute(element.getName()), reporter);
+				validateJava(element.getAttribute("class"), parentSchema
+						.getAttribute(element.getName()), reporter);
 				return;
 			} else {
 				IPluginAttribute[] atts = element.getAttributes();
@@ -680,29 +590,23 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateExistingAttributes(
-		IPluginAttribute[] atts,
-		ISchemaElement schemaElement,
-		PluginErrorReporter reporter) {
+	private void validateExistingAttributes(IPluginAttribute[] atts,
+			ISchemaElement schemaElement, PluginErrorReporter reporter) {
 		for (int i = 0; i < atts.length; i++) {
 			IPluginAttribute att = atts[i];
-			ISchemaAttribute attInfo =
-				schemaElement.getAttribute(att.getName());
+			ISchemaAttribute attInfo = schemaElement
+					.getAttribute(att.getName());
 			if (attInfo == null) {
-				reporter.report(
-					PDE.getFormattedMessage(
-						"Builders.Manifest.attribute",
-						att.getName()),
-					getLine(att.getParent()),
-					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE));
+				reporter.report(PDE.getFormattedMessage(
+						"Builders.Manifest.attribute", att.getName()),
+						getLine(att.getParent()), CompilerFlags
+								.getFlag(CompilerFlags.P_UNKNOWN_ATTRIBUTE));
 			} else
 				validateAttribute(att, attInfo, reporter);
 		}
 	}
-	private void validateAttribute(
-		IPluginAttribute att,
-		ISchemaAttribute attInfo,
-		PluginErrorReporter reporter) {
+	private void validateAttribute(IPluginAttribute att,
+			ISchemaAttribute attInfo, PluginErrorReporter reporter) {
 		ISchemaSimpleType type = attInfo.getType();
 		ISchemaRestriction restriction = type.getRestriction();
 		if (restriction != null) {
@@ -718,10 +622,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateRestriction(
-		IPluginAttribute att,
-		ISchemaRestriction restriction,
-		PluginErrorReporter reporter) {
+	private void validateRestriction(IPluginAttribute att,
+			ISchemaRestriction restriction, PluginErrorReporter reporter) {
 
 		Object[] children = restriction.getChildren();
 		String value = att.getValue();
@@ -734,34 +636,25 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		reporter.report(
-			PDE.getFormattedMessage(
-				"Builders.Manifest.att-value",
-				new String[] { value, att.getName()}),
-			getLine(att.getParent()),
-			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
+		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value",
+				new String[]{value, att.getName()}), getLine(att.getParent()),
+				CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
 
-	private void validateBoolean(
-		IPluginAttribute att,
-		PluginErrorReporter reporter) {
+	private void validateBoolean(IPluginAttribute att,
+			PluginErrorReporter reporter) {
 		String value = att.getValue();
 		if (value.equalsIgnoreCase("true"))
 			return;
 		if (value.equalsIgnoreCase("false"))
 			return;
-		reporter.report(
-			PDE.getFormattedMessage(
-				"Builders.Manifest.att-value",
-				new String[] { value, att.getName()}),
-			getLine(att.getParent()),
-			CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
+		reporter.report(PDE.getFormattedMessage("Builders.Manifest.att-value",
+				new String[]{value, att.getName()}), getLine(att.getParent()),
+				CompilerFlags.getFlag(CompilerFlags.P_ILLEGAL_ATT_VALUE));
 	}
 
-	private void validateJava(
-		IPluginAttribute att,
-		ISchemaAttribute attInfo,
-		PluginErrorReporter reporter) {
+	private void validateJava(IPluginAttribute att, ISchemaAttribute attInfo,
+			PluginErrorReporter reporter) {
 		String value = att.getValue();
 		String basedOn = attInfo.getBasedOn();
 		IProject project = att.getModel().getUnderlyingResource().getProject();
@@ -772,12 +665,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				value = value.substring(0, index);
 			IType element = javaProject.findType(value);
 			if (element == null) {
-				reporter.report(
-					PDE.getFormattedMessage(
-						"Builders.Manifest.class",
-						new String[] { value, att.getName()}),
-					getLine(att.getParent()),
-					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS));
+				reporter.report(PDE.getFormattedMessage(
+						"Builders.Manifest.class", new String[]{value,
+								att.getName()}), getLine(att.getParent()),
+						CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_CLASS));
 			} else if (basedOn != null) {
 				// Test the type conditions
 				String baseType;
@@ -793,8 +684,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				if (baseTypeElement != null) {
 				}
 				if (baseInterface != null) {
-					IJavaElement baseInterfaceElement =
-						javaProject.findType(baseInterface);
+					IJavaElement baseInterfaceElement = javaProject
+							.findType(baseInterface);
 					if (baseInterfaceElement != null) {
 					}
 				}
@@ -803,20 +694,16 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateResource(
-		IPluginAttribute att,
-		ISchemaAttribute attInfo,
-		PluginErrorReporter reporter) {
+	private void validateResource(IPluginAttribute att,
+			ISchemaAttribute attInfo, PluginErrorReporter reporter) {
 		String path = att.getValue();
 		IProject project = att.getModel().getUnderlyingResource().getProject();
 		IResource resource = project.findMember(new Path(path));
 		if (resource == null) {
-			reporter.report(
-				PDE.getFormattedMessage(
-					"Builders.Manifest.resource",
-					new String[] { path, att.getName()}),
-				getLine(att.getParent()),
-				CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE));
+			reporter.report(PDE.getFormattedMessage(
+					"Builders.Manifest.resource", new String[]{path,
+							att.getName()}), getLine(att.getParent()),
+					CompilerFlags.getFlag(CompilerFlags.P_UNKNOWN_RESOURCE));
 		}
 	}
 
@@ -846,9 +733,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void validateExtensionPoints(
-		IPluginBase pluginBase,
-		PluginErrorReporter reporter) {
+	private void validateExtensionPoints(IPluginBase pluginBase,
+			PluginErrorReporter reporter) {
 	}
 
 	private static int getLine(IPluginObject object) {
