@@ -140,7 +140,7 @@ public class PluginImportOperation implements IWorkspaceRunnable {
 			
 			setProjectDescription(project, model);
 
-			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null)
+			if (project.hasNature(JavaCore.NATURE_ID) && project.findMember(".classpath") == null) //$NON-NLS-1$
 				setClasspath(project, model);
 		} finally {
 			monitor.done();

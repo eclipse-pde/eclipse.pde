@@ -467,8 +467,10 @@ public class CompilersConfigurationBlock {
 					fBuilders.add(PDE.MANIFEST_BUILDER_ID);
 				else if (control.getParent().equals(fSchemaPage))
 					fBuilders.add(PDE.SCHEMA_BUILDER_ID);
-				else if (control.getParent().equals(fFeaturePage))
+				else if (control.getParent().equals(fFeaturePage)) {
 					fBuilders.add(PDE.FEATURE_BUILDER_ID);
+					fBuilders.add(PDE.SITE_BUILDER_ID);
+				}		
 			}
 			if (project == null) {
 				CompilerFlags.save();

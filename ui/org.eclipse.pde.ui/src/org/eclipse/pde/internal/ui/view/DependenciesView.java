@@ -568,8 +568,8 @@ public class DependenciesView extends PageBookView implements
 						"DependenciesView.callers.list.title", name); //$NON-NLS-1$
 			}
 			if(fLoops != NO_LOOPS){
-				title = title + " " + PDEPlugin.getResourceString(
-						"DependenciesView.cycles.title");
+				title = title + " " + PDEPlugin.getResourceString( //$NON-NLS-1$
+						"DependenciesView.cycles.title"); //$NON-NLS-1$
 			}
 			setContentDescription(title); //$NON-NLS-1$
 		}

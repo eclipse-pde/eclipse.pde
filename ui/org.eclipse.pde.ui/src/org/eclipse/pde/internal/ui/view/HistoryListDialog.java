@@ -137,7 +137,7 @@ public class HistoryListDialog extends StatusDialog {
 	private void createListButtons(Composite parent) {
 		fRemoveButton = new Button(parent, SWT.PUSH);
 		fRemoveButton.setText(PDEPlugin
-				.getResourceString("HistoryListDialog.remove.button"));
+				.getResourceString("HistoryListDialog.remove.button")); //$NON-NLS-1$
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false,
 				false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
