@@ -31,15 +31,18 @@ public abstract class DevelopmentSchemaDescriptor extends AbstractSchemaDescript
 		if (entry==null) return null;
 		IPluginModelBase model = entry.getActiveModel();
 		if (model==null) return null;
-		if (model.getUnderlyingResource()==null) {
-			//external - check the source location
-			File sourceFile = getSourceLocationFile(model, path);
-			if (sourceFile.exists())
-				return new Path(sourceFile.getAbsolutePath());
-		}
+		
 		String location = model.getInstallLocation();
-		return new Path(location).append(path);
+		IPath schemaPath = new Path(location).append(path);
+		if (schemaPath.toFile().exists())
+			return schemaPath;
+		
+		File sourceFile = getSourceLocationFile(model, path);
+		if (sourceFile != null && sourceFile.exists())
+			return new Path(sourceFile.getAbsolutePath());
+		return null;
 	}
+	
 	private File getSourceLocationFile(IPluginModelBase model, IPath path) {
 		SourceLocationManager sourceManager =
 			PDECore.getDefault().getSourceLocationManager();
