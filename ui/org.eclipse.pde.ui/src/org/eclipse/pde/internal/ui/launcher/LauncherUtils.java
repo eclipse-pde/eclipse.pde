@@ -244,21 +244,21 @@ public class LauncherUtils {
 		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
 			list.add("org.eclipse.core.boot");
 		} else {
-			try {
+			//try {
 				list.add("org.eclipse.osgi");
-				if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
+				//if (config.getAttribute(ILauncherSettings.CONFIG_USE_DEFAULT, true)) {
 					list.add("org.eclipse.osgi.services");
 					list.add("org.eclipse.osgi.util");
 					list.add("org.eclipse.core.runtime");
 					list.add("org.eclipse.update.configurator");
-				} else {
+				/*} else {
 					String selected = config.getAttribute(ILauncherSettings.CONFIG_AUTO_START, "");
 					StringTokenizer tokenizer = new StringTokenizer(selected, ",");
 					while (tokenizer.hasMoreTokens())
 						list.add(tokenizer.nextToken());
 				}
 			} catch (CoreException e) {
-			}
+			}*/
 		}		
 		return list;
 	}

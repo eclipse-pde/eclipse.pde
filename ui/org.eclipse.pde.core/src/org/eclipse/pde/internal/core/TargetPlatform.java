@@ -218,14 +218,11 @@ public class TargetPlatform implements IEnvironmentVariables {
 			bWriter.newLine();
 			
 			if (autoStartPlugins.size() > 0) {
-				StringBuffer buffer = new StringBuffer();
-				// skip org.eclipse.osgi (first one)
-				for (int i = 1; i < autoStartPlugins.size(); i++) {
-					buffer.append(getOSGiLocation(autoStartPlugins.get(i).toString(), pluginMap));
-					buffer.append("@" + i);
-					if (i < autoStartPlugins.size() - 1)
-						buffer.append(",");					
-				}
+				StringBuffer buffer = new StringBuffer();				
+				buffer.append(getOSGiLocation("org.eclipse.osgi.services", pluginMap) + ",");
+				buffer.append(getOSGiLocation("org.eclipse.osgi.util", pluginMap) + ",");
+				buffer.append(getOSGiLocation("org.eclipse.core.runtime", pluginMap) + "@2,");
+				buffer.append(getOSGiLocation("org.eclipse.update.configurator", pluginMap) + "@3");
 				bWriter.write("osgi.bundles=" + buffer.toString());
 				bWriter.newLine();
 			}
