@@ -122,8 +122,7 @@ public abstract class PluginDocumentNode implements IDocumentNode {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#getLength()
 	 */
 	public int getLength() {
-		return fLength;
-		//return fLength + fLengthDelta;
+		return fLength + fLengthDelta;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentNode#setAttribute(org.eclipse.pde.internal.ui.model.IDocumentAttribute)
