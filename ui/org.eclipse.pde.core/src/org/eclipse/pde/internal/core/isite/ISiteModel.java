@@ -43,4 +43,8 @@ public boolean isEnabled();
  * @param enabled the new enable state
  */
 public void setEnabled(boolean enabled);
+
+public ISiteBuildModel getBuildModel();
+
+public void setBuildModel(ISiteBuildModel model);
 }

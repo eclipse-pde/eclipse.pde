@@ -1,43 +1,44 @@
-package org.eclipse.pde.internal.ui.editor.feature;
+package org.eclipse.pde.internal.ui.editor.site;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.site.WorkspaceSiteBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.feature.OpenReferenceAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
-public class DataSection
+public class FeatureProjectSection
 	extends TableSection
 	implements IModelProviderListener {
-	private static final String SECTION_TITLE = "FeatureEditor.DataSection.title";
-	private static final String SECTION_DESC = "FeatureEditor.DataSection.desc";
-	private static final String KEY_NEW = "FeatureEditor.DataSection.new";
+	private static final String SECTION_TITLE =
+		"SiteEditor.FeatureProjectSection.title";
+	private static final String SECTION_DESC =
+		"SiteEditor.FeatureProjectSection.desc";
+	private static final String KEY_NEW =
+		"SiteEditor.FeatureProjectSection.new";
 	private static final String POPUP_NEW = "Menus.new.label";
 	private static final String POPUP_DELETE = "Actions.delete.label";
 	private boolean updateNeeded;
-	private PropertiesAction propertiesAction;
-	private TableViewer dataViewer;
+	private TableViewer projectViewer;
 	private Action newAction;
 	private Action openAction;
 	private Action deleteAction;
@@ -46,14 +47,14 @@ public class DataSection
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IFeature) {
-				return ((IFeature) parent).getData();
+			if (parent instanceof ISiteBuild) {
+				return ((ISiteBuild) parent).getFeatures();
 			}
 			return new Object[0];
 		}
 	}
 
-	public DataSection(FeatureAdvancedPage page) {
+	public FeatureProjectSection(BuildPage page) {
 		super(page, new String[] { PDEPlugin.getResourceString(KEY_NEW)});
 		setHeaderText(PDEPlugin.getResourceString(SECTION_TITLE));
 		setDescription(PDEPlugin.getResourceString(SECTION_DESC));
@@ -65,18 +66,28 @@ public class DataSection
 	}
 
 	public void commitChanges(boolean onSave) {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (onSave
+			&& buildModel instanceof WorkspaceSiteBuildModel
+			&& ((WorkspaceSiteBuildModel) buildModel).isDirty()) {
+			((WorkspaceSiteBuildModel) buildModel).save();
+		}
 	}
 
-	public Composite createClient(Composite parent, FormWidgetFactory factory) {
+	public Composite createClient(
+		Composite parent,
+		FormWidgetFactory factory) {
 		Composite container = createClientContainer(parent, 2, factory);
 		GridLayout layout = (GridLayout) container.getLayout();
 		layout.verticalSpacing = 9;
 
 		createViewerPartControl(container, SWT.MULTI, 2, factory);
 		TablePart tablePart = getTablePart();
-		dataViewer = tablePart.getTableViewer();
-		dataViewer.setContentProvider(new PluginContentProvider());
-		dataViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		projectViewer = tablePart.getTableViewer();
+		projectViewer.setContentProvider(new PluginContentProvider());
+		projectViewer.setLabelProvider(
+			PDEPlugin.getDefault().getLabelProvider());
 		factory.paintBordersFor(container);
 		makeActions();
 		return container;
@@ -92,15 +103,20 @@ public class DataSection
 	}
 
 	public void dispose() {
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
 		model.removeModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		if (buildModel!=null)
+			buildModel.removeModelChangedListener(this);
+		WorkspaceModelManager mng =
+			PDECore.getDefault().getWorkspaceModelManager();
 		mng.removeModelProviderListener(this);
 		super.dispose();
 	}
+
 	public void expandTo(Object object) {
-		if (object instanceof IFeatureData) {
-			dataViewer.setSelection(new StructuredSelection(object), true);
+		if (object instanceof ISiteBuildFeature) {
+			projectViewer.setSelection(new StructuredSelection(object), true);
 		}
 	}
 	protected void fillContextMenu(IMenuManager manager) {
@@ -109,88 +125,77 @@ public class DataSection
 		manager.add(newAction);
 		manager.add(deleteAction);
 		manager.add(new Separator());
-		getFormPage().getEditor().getContributor().contextMenuAboutToShow(manager);
-		manager.add(new Separator());
-		manager.add(propertiesAction);
+		getFormPage().getEditor().getContributor().contextMenuAboutToShow(
+			manager);
 	}
 
 	private void handleNew() {
-		final IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IResource resource = model.getUnderlyingResource();
-		final IContainer folder = resource.getParent();
+		final ISiteModel model = (ISiteModel) getFormPage().getModel();
+		final ISiteBuildModel buildModel = model.getBuildModel();
 
-		BusyIndicator.showWhile(dataViewer.getTable().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(projectViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
-				ResourceSelectionDialog dialog =
-					new ResourceSelectionDialog(dataViewer.getTable().getShell(), folder, null);
+				BuiltFeaturesWizard wizard =
+					new BuiltFeaturesWizard(buildModel);
+				WizardDialog dialog =
+					new WizardDialog(
+						projectViewer.getControl().getShell(),
+						wizard);
 				dialog.open();
-				Object[] result = dialog.getResult();
-				processNewResult(model, folder, result);
+				forceDirty();
 			}
 		});
 	}
-	private void processNewResult(
-		IFeatureModel model,
-		IContainer folder,
-		Object[] result) {
-		if (result==null || result.length==0) return;
-		IPath folderPath = folder.getProjectRelativePath();
-		ArrayList entries = new ArrayList();
-		for (int i = 0; i < result.length; i++) {
-			Object item = result[i];
-			if (item instanceof IFile) {
-				IFile file = (IFile) item;
-				IPath filePath = file.getProjectRelativePath();
-				int matching = filePath.matchingFirstSegments(folderPath);
-				IPath relativePath = filePath.removeFirstSegments(matching);
-				entries.add(relativePath);
-			}
-		}
-		if (entries.size() > 0) {
-			try {
-				IFeatureData[] array = new IFeatureData[entries.size()];
-				for (int i = 0; i < array.length; i++) {
-					IFeatureData data = model.getFactory().createData();
-					IPath path = (IPath) entries.get(i);
-					data.setId(path.toString());
-					array[i] = data;
-				}
-				model.getFeature().addData(array);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
-			}
+	
+	private void forceDirty() {
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (((IEditable) buildModel).isDirty()) {
+			setDirty(true);
+			((IEditable) model).setDirty(true);
+			getFormPage().getEditor().fireSaveNeeded();
 		}
 	}
+
 	private void handleSelectAll() {
 		IStructuredContentProvider provider =
-			(IStructuredContentProvider) dataViewer.getContentProvider();
-		Object[] elements = provider.getElements(dataViewer.getInput());
+			(IStructuredContentProvider) projectViewer.getContentProvider();
+		Object[] elements = provider.getElements(projectViewer.getInput());
 		StructuredSelection ssel = new StructuredSelection(elements);
-		dataViewer.setSelection(ssel);
+		projectViewer.setSelection(ssel);
 	}
+
 	private void handleDelete() {
-		IStructuredSelection ssel = (IStructuredSelection) dataViewer.getSelection();
+		IStructuredSelection ssel =
+			(IStructuredSelection) projectViewer.getSelection();
 
 		if (ssel.isEmpty())
 			return;
-		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
-		IFeature feature = model.getFeature();
+		ISiteModel model = (ISiteModel) getFormPage().getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		ISiteBuild build = buildModel.getSiteBuild();
 
 		try {
-			IFeatureData[] removed = new IFeatureData[ssel.size()];
+			ISiteBuildFeature[] removed = new ISiteBuildFeature[ssel.size()];
 			int i = 0;
 			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				IFeatureData iobj = (IFeatureData) iter.next();
+				ISiteBuildFeature iobj = (ISiteBuildFeature) iter.next();
 				removed[i++] = iobj;
 			}
-			feature.removeData(removed);
+			build.removeFeatures(removed);
+			forceDirty();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
+
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(org.eclipse.ui.IWorkbenchActionConstants.DELETE)) {
-			BusyIndicator.showWhile(dataViewer.getTable().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(
+					projectViewer.getTable().getDisplay(),
+					new Runnable() {
 				public void run() {
 					handleDelete();
 				}
@@ -198,7 +203,10 @@ public class DataSection
 			return true;
 		}
 		if (actionId.equals(IWorkbenchActionConstants.SELECT_ALL)) {
-			BusyIndicator.showWhile(dataViewer.getTable().getDisplay(), new Runnable() {
+			BusyIndicator
+				.showWhile(
+					projectViewer.getTable().getDisplay(),
+					new Runnable() {
 				public void run() {
 					handleSelectAll();
 				}
@@ -221,11 +229,15 @@ public class DataSection
 		getFormPage().setSelection(selection);
 	}
 	public void initialize(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
+		ISiteModel model = (ISiteModel) input;
 		update(input);
-		getTablePart().setButtonEnabled(0, model.isEditable());
+
+		ISiteBuildModel buildModel = model.getBuildModel();
+		getTablePart().setButtonEnabled(0, buildModel.isEditable());
 		model.addModelChangedListener(this);
-		WorkspaceModelManager mng = PDECore.getDefault().getWorkspaceModelManager();
+		buildModel.addModelChangedListener(this);
+		WorkspaceModelManager mng =
+			PDECore.getDefault().getWorkspaceModelManager();
 		mng.addModelProviderListener(this);
 	}
 
@@ -237,19 +249,20 @@ public class DataSection
 			}
 		} else {
 			Object obj = e.getChangedObjects()[0];
-			if (obj instanceof IFeatureData && !(obj instanceof IFeaturePlugin)) {
+			if (obj instanceof ISiteBuildFeature) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					dataViewer.update(obj, null);
+					projectViewer.update(obj, null);
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					dataViewer.add(e.getChangedObjects());
+					projectViewer.add(e.getChangedObjects());
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					dataViewer.remove(e.getChangedObjects());
+					projectViewer.remove(e.getChangedObjects());
 				}
 			}
 		}
 	}
+
 	private void makeActions() {
-		IModel model = (IModel)getFormPage().getModel();
+		IModel model = (IModel) getFormPage().getModel();
 		newAction = new Action() {
 			public void run() {
 				handleNew();
@@ -260,7 +273,10 @@ public class DataSection
 
 		deleteAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(dataViewer.getTable().getDisplay(), new Runnable() {
+				BusyIndicator
+					.showWhile(
+						projectViewer.getTable().getDisplay(),
+						new Runnable() {
 					public void run() {
 						handleDelete();
 					}
@@ -269,8 +285,7 @@ public class DataSection
 		};
 		deleteAction.setEnabled(model.isEditable());
 		deleteAction.setText(PDEPlugin.getResourceString(POPUP_DELETE));
-		openAction = new OpenReferenceAction(dataViewer);
-		propertiesAction = new PropertiesAction(getFormPage().getEditor());
+		openAction = new OpenReferenceAction(projectViewer);
 	}
 
 	public void modelsChanged(IModelProviderEvent event) {
@@ -279,8 +294,8 @@ public class DataSection
 	}
 
 	public void setFocus() {
-		if (dataViewer != null)
-			dataViewer.getTable().setFocus();
+		if (projectViewer != null)
+			projectViewer.getTable().setFocus();
 	}
 
 	public void update() {
@@ -290,36 +305,42 @@ public class DataSection
 	}
 
 	public void update(Object input) {
-		IFeatureModel model = (IFeatureModel) input;
-		IFeature feature = model.getFeature();
-		dataViewer.setInput(feature);
+		ISiteModel model = (ISiteModel) input;
+		ISiteBuildModel buildModel = model.getBuildModel();
+		ISiteBuild build = buildModel.getSiteBuild();
+		projectViewer.setInput(build);
 		updateNeeded = false;
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object, Object[])
 	 */
 	protected boolean canPaste(Object target, Object[] objects) {
+		/*
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof FeaturePlugin || !(objects[i] instanceof FeatureData))
 				return false;
 		}
+		*/
 		return true;
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
 	protected void doPaste() {
+		/*
 		Clipboard clipboard = getFormPage().getEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object [] objects = (Object[])clipboard.getContents(modelTransfer);
 		if (objects != null) {
 			doPaste(null, objects);
 		}
+		*/
 	}
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object, Object[])
 	 */
 	protected void doPaste(Object target, Object[] objects) {
+		/*
 		IFeatureModel model = (IFeatureModel) getFormPage().getModel();
 		IFeature feature = model.getFeature();
 		FeatureData[] fData = new FeatureData[objects.length];
@@ -336,5 +357,6 @@ public class DataSection
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
+		*/
 	}
 }

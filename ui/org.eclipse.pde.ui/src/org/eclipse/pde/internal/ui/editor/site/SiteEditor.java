@@ -7,11 +7,13 @@ package org.eclipse.pde.internal.ui.editor.site;
 import java.io.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -35,7 +37,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		"MultiPageSiteEditor.ArchivePage.title";
 	public static final String SOURCE_PAGE_TITLE =
 		"MultiPageSiteEditor.SourcePage.title";
-	private boolean storageModel=false;
+	private boolean storageModel = false;
 
 	public SiteEditor() {
 		super();
@@ -52,16 +54,14 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		if (input instanceof IFile)
 			return createResourceModel((IFile) input);
 		if (input instanceof IStorage)
-			return createStorageModel((IStorage)input);
+			return createStorageModel((IStorage) input);
 		return null;
 	}
 	protected void createPages() {
 		firstPageId = SITE_PAGE;
 		formWorkbook.setFirstPageSelected(false);
 		SitePage sitePage =
-			new SitePage(
-				this,
-				PDEPlugin.getResourceString(SITE_PAGE_TITLE));
+			new SitePage(this, PDEPlugin.getResourceString(SITE_PAGE_TITLE));
 		BuildPage buildPage =
 			new BuildPage(
 				sitePage,
@@ -80,8 +80,7 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		addPage(ARCHIVE_PAGE, archivePage);
 		addPage(SOURCE_PAGE, new SiteSourcePage(this));
 	}
-	private ISiteModel createResourceModel(IFile file)
-		throws CoreException {
+	private ISiteModel createResourceModel(IFile file) throws CoreException {
 		InputStream stream = null;
 		stream = file.getContents(false);
 
@@ -95,6 +94,17 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		} catch (CoreException e) {
 			cleanModel = false;
 		}
+		String buildName = ".sitebuild";
+		IPath buildPath = file.getProject().getFullPath().append(buildName);
+		IFile buildFile = file.getWorkspace().getRoot().getFile(buildPath);
+		provider.connect(buildFile, this);
+		ISiteBuildModel buildModel =
+			(ISiteBuildModel) provider.getModel(buildFile, this);
+		try {
+			buildModel.load();
+		} catch (CoreException e) {
+		}
+		model.setBuildModel(buildModel);
 		try {
 			stream.close();
 		} catch (IOException e) {
@@ -133,11 +143,17 @@ public class SiteEditor extends PDEMultiPageXMLEditor {
 		super.dispose();
 		IModelProvider provider =
 			PDECore.getDefault().getWorkspaceModelManager();
-		IModel model = (IModel) getModel();
-		if (storageModel)
+		ISiteModel model = (ISiteModel) getModel();
+		ISiteBuildModel buildModel = model.getBuildModel();
+		if (storageModel) {
 			model.dispose();
-		else
+			if (buildModel != null)
+				buildModel.dispose();
+		} else {
 			provider.disconnect(model.getUnderlyingResource(), this);
+			if (buildModel != null)
+				provider.disconnect(buildModel.getUnderlyingResource(), this);
+		}
 	}
 
 	public IPDEEditorPage getHomePage() {

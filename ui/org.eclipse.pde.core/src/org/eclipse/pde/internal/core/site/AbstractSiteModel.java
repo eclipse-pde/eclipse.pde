@@ -20,6 +20,7 @@ public abstract class AbstractSiteModel
 	protected transient Site site;
 	private transient ISiteModelFactory factory;
 	private boolean enabled = true;
+	private ISiteBuildModel siteBuildModel;
 
 	public AbstractSiteModel() {
 		super();
@@ -31,6 +32,12 @@ public abstract class AbstractSiteModel
 			this.site = s;
 		}
 		return site;
+	}
+	public ISiteBuildModel getBuildModel() {
+		return siteBuildModel;
+	}
+	public void setBuildModel(ISiteBuildModel buildModel) {
+		this.siteBuildModel = buildModel;
 	}
 	public ISiteModelFactory getFactory() {
 		if (factory == null)
@@ -46,19 +53,22 @@ public abstract class AbstractSiteModel
 	public boolean isEnabled() {
 		return enabled;
 	}
-	public void load(InputStream stream, boolean outOfSync) throws CoreException {
+	public void load(InputStream stream, boolean outOfSync)
+		throws CoreException {
 		SourceDOMParser parser = new SourceDOMParser();
 		XMLErrorHandler errorHandler = new XMLErrorHandler();
 		parser.setErrorHandler(errorHandler);
 		try {
 			parser.setFeature("http://xml.org/sax/features/validation", true);
-			parser.setFeature("http://apache.org/xml/features/validation/dynamic", true);
-		}
-		catch (SAXException e) {
+			parser.setFeature(
+				"http://apache.org/xml/features/validation/dynamic",
+				true);
+		} catch (SAXException e) {
 		}
 		try {
 			InputSource source = new InputSource(stream);
-			URL dtdLocation = PDECore.getDefault().getDescriptor().getInstallURL();
+			URL dtdLocation =
+				PDECore.getDefault().getDescriptor().getInstallURL();
 			source.setSystemId(dtdLocation.toString());
 			parser.parse(source);
 			if (errorHandler.getErrorCount() > 0

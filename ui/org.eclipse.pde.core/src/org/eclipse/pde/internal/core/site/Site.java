@@ -98,7 +98,7 @@ public class Site extends SiteObject implements ISite {
 		for (int i = 0; i < archs.length; i++) {
 			ISiteArchive archive = archs[i];
 			((SiteArchive) archive).setInTheModel(true);
-			features.add(archs[i]);
+			archives.add(archs[i]);
 		}
 		fireStructureChanged(archs, IModelChangedEvent.INSERT);
 	}

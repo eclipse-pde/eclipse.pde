@@ -78,6 +78,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISiteCategoryDefinition) {
 			return getObjectText((ISiteCategoryDefinition)obj);
 		}
+		if (obj instanceof ISiteBuildFeature) {
+			return getObjectText((ISiteBuildFeature)obj);
+		}
 		return super.getText(obj);
 	}
 
@@ -185,6 +188,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ISiteCategoryDefinition obj) {
 		return obj.getLabel();
 	}
+	public String getObjectText(ISiteBuildFeature obj) {
+		return obj.getId() + " (" + obj.getVersion() + ")";
+	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
@@ -265,6 +271,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteCategoryDefinition) {
 			return getObjectImage((ISiteCategoryDefinition)obj);
+		}
+		if (obj instanceof ISiteBuildFeature) {
+			return getObjectImage((ISiteBuildFeature)obj);
 		}
 		return super.getImage(obj);
 	}
@@ -459,6 +468,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	public Image getObjectImage(ISiteCategoryDefinition obj) {
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ);
+	}
+	
+	public Image getObjectImage(ISiteBuildFeature obj) {
+		int flags = 0;
+		if (obj.getReferencedFeature()==null)
+		   flags = F_ERROR;
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, flags);
 	}
 
 	public boolean isFullNameModeEnabled() {

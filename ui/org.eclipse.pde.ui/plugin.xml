@@ -155,7 +155,7 @@
             name="%new.site.name"
             icon="icons/full/ctool16/newftrprj_wiz.gif"
             category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.site.NewSiteProjectWizard"
+            class="org.eclipse.pde.internal.ui.feature.NewSiteProjectWizard"
             project="true"
             id="org.eclipse.pde.ui.NewSiteProjectWizard">
          <description>
