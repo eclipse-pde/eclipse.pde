@@ -362,11 +362,10 @@ public class ClasspathUtilCore {
 
 	private static IClasspathEntry createLibraryEntry(
 		IPluginLibrary library,
-		boolean unconditionallyExport) {
+		boolean exported) {
 		try {
 			String name = library.getName();
 			String expandedName = expandLibraryName(name);
-			boolean isExported = unconditionallyExport ? true : library.isFullyExported();
 
 			IPluginModelBase model = library.getPluginModel();
 			IPath path = getPath(model, expandedName);
@@ -382,7 +381,7 @@ public class ClasspathUtilCore {
 				path,
 				getSourceAnnotation(model, expandedName),
 				null,
-				isExported);
+				exported);
 		} catch (CoreException e) {
 			return null;
 		}
