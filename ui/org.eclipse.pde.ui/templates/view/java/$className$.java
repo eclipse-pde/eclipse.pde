@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IAdaptable;
 % viewCategoryId
 % viewCategoryName
 % viewType
-% react
 % doubleClick
 % popup
 % localToolbar

@@ -35,7 +35,6 @@ public class ViewTemplate extends PDETemplateSection {
 	private static final String NL_SELECT = "ViewTemplate.select";
 	private static final String NL_TABLE = "ViewTemplate.table";
 	private static final String NL_TREE = "ViewTemplate.tree";
-	private static final String NL_REACT = "ViewTemplate.react";
 	private static final String NL_DOUBLE_CLICK = "ViewTemplate.doubleClick";
 	private static final String NL_POPUP = "ViewTemplate.popup";
 	private static final String NL_TOOLBAR = "ViewTemplate.toolbar";
@@ -77,7 +76,6 @@ public class ViewTemplate extends PDETemplateSection {
 						"tableViewer", 0);
 		addToPerspective = (BooleanOption)addOption("addToPerspective",PDEPlugin.getResourceString(NL_ADD_TO_PERSPECTIVE),true,0);
 		// second page
-		addOption("react", PDEPlugin.getResourceString(NL_REACT), true, 1);
 		addOption("doubleClick", PDEPlugin.getResourceString(NL_DOUBLE_CLICK), true, 1);
 		addOption("popup", PDEPlugin.getResourceString(NL_POPUP), true, 1);
 		addOption("localToolbar", PDEPlugin.getResourceString(NL_TOOLBAR), true, 1);
